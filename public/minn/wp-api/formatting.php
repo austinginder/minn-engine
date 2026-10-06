@@ -223,7 +223,7 @@ function sanitize_html_class($classname, $fallback = '')
 
 function remove_accents($text, $locale = '')
 {
-    return Accents::strip((string) $text);
+    return Accents::strip((string) $text, (string) ($locale !== '' ? $locale : get_locale()));
 }
 
 function sanitize_title($title, $fallback_title = '', $context = 'save')
@@ -239,17 +239,7 @@ function sanitize_title($title, $fallback_title = '', $context = 'save')
 
 function sanitize_title_with_dashes($title, $raw_title = '', $context = 'display')
 {
-    return Slug::dashes((string) $title, $context === 'save', static fn (string $text, int $length) => _minn_utf8_uri_encode($text, $length));
-}
-
-/** @internal percent-encodes non-ASCII bytes the way slugs need */
-function _minn_utf8_uri_encode(string $utf8, int $length = 0): string
-{
-    $out = '';
-    foreach (str_split($utf8) as $byte) {
-        $out .= ord($byte) < 0x80 ? $byte : '%' . strtolower(bin2hex($byte));
-    }
-    return $out;
+    return Slug::dashes((string) $title, $context === 'save', static fn (string $text, int $length) => utf8_uri_encode($text, $length));
 }
 
 /**
@@ -743,9 +733,10 @@ function wp_iso_descrambler($subject)
     return $subject;
 }
 
+/** Non-ASCII as lower-case percent escapes, whole characters up to $length bytes; ASCII too (as rawurlencode does) when asked. */
 function utf8_uri_encode($utf8_string, $length = 0, $encode_ascii_characters = false)
 {
-    return _minn_utf8_uri_encode((string) $utf8_string, (int) $length);
+    return Slug::uriEncode((string) $utf8_string, (int) $length, static fn (string $char): string => $encode_ascii_characters ? rawurlencode($char) : $char);
 }
 
 function seems_utf8($str)

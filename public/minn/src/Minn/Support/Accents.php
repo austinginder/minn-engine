@@ -6,26 +6,46 @@ namespace Minn\Support;
 
 use Normalizer;
 
-/** Accented and special Latin characters to their plain ASCII spelling; a character with no ASCII form stays as it is. */
+/**
+ * Accented and special characters to their plain spelling, from the
+ * reference's own table (data/accents.json, captured with
+ * tests/tools/accents-capture.php): text is put in composed form first, a
+ * locale with spellings of its own (German, Danish, Catalan, Serbian,
+ * Bosnian) has them, and a string that is not UTF-8 is read as Latin-1.
+ * Anything the table does not name stays as it is.
+ */
 final class Accents
 {
-    private const SPELLINGS = ['ß' => 'ss', 'Æ' => 'AE', 'æ' => 'ae', 'Œ' => 'OE', 'œ' => 'oe', 'Ø' => 'O', 'ø' => 'o', 'Đ' => 'D', 'đ' => 'd', 'Ł' => 'L', 'ł' => 'l', 'Þ' => 'TH', 'þ' => 'th', 'Ð' => 'D', 'ð' => 'd', '€' => 'E', '£' => '', '“' => '', '”' => '', '‘' => '', '’' => '', '–' => '-', '—' => '-', '…' => ''];
+    /** @var array{table: array<string, string>, locales: array<string, array<string, string>>, latin1: array<string, string>}|null */
+    private static ?array $data = null;
 
-    /** The text with accented letters replaced by their plain forms. */
-    public static function strip(string $text): string
+    /** The text with its accented characters spelled plainly, as the locale spells them. */
+    public static function strip(string $text, string $locale = ''): string
     {
         if (!preg_match('/[\x80-\xff]/', $text)) {
             return $text;
         }
-        $out = '';
-        foreach (preg_split('//u', strtr($text, self::SPELLINGS), -1, PREG_SPLIT_NO_EMPTY) ?: [] as $char) {
-            if (ord($char) < 0x80) {
-                $out .= $char;
-                continue;
+        $data = self::data();
+        if (!mb_check_encoding($text, 'UTF-8')) {
+            $bytes = [];
+            foreach ($data['latin1'] as $hex => $plain) {
+                $bytes[(string) hex2bin((string) $hex)] = $plain;
             }
-            $stripped = (string) preg_replace('/\p{Mn}+/u', '', (string) Normalizer::normalize($char, Normalizer::FORM_D));
-            $out .= $stripped === '' || preg_match('/[\x80-\xff]/', $stripped) ? $char : $stripped;
+            return strtr($text, $bytes);
         }
-        return $out;
+        if (class_exists(Normalizer::class) && !Normalizer::isNormalized($text)) {
+            $text = (string) (Normalizer::normalize($text) ?: $text);
+        }
+        return strtr($text, ($data['locales'][$locale] ?? []) + $data['table']);
+    }
+
+    /** @return array{table: array<string, string>, locales: array<string, array<string, string>>, latin1: array<string, string>} */
+    private static function data(): array
+    {
+        if (self::$data === null) {
+            $decoded = json_decode((string) file_get_contents(dirname(__DIR__, 3) . '/data/accents.json'), true);
+            self::$data = (is_array($decoded) ? $decoded : []) + ['table' => [], 'locales' => [], 'latin1' => []];
+        }
+        return self::$data;
     }
 }

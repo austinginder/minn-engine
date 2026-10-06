@@ -1,0 +1,512 @@
+[
+    [
+        "title Order &ndash; Oct 06, 2026 @ 03:07 PM",
+        [
+            "order-oct-06-2026-0307-pm",
+            "order-oct-06-2026-0307-pm",
+            "order-oct-06-2026-0307-pm",
+            "order-oct-06-2026-0307-pm"
+        ]
+    ],
+    [
+        "title A: b",
+        [
+            "a-b",
+            "a-b",
+            "a-b",
+            "a-b"
+        ]
+    ],
+    [
+        "title x&amp;y",
+        [
+            "xy",
+            "xy",
+            "xy",
+            "xy"
+        ]
+    ],
+    [
+        "title café & crème",
+        [
+            "cafe-creme",
+            "caf%c3%a9-cr%c3%a8me",
+            "caf%c3%a9-cr%c3%a8me",
+            "caf%c3%a9-cr%c3%a8me"
+        ]
+    ],
+    [
+        "title a — b – c",
+        [
+            "a-b-c",
+            "a-b-c",
+            "a-%e2%80%94-b-%e2%80%93-c",
+            "a-%e2%80%94-b-%e2%80%93-c"
+        ]
+    ],
+    [
+        "title 10:30",
+        [
+            "1030",
+            "1030",
+            "1030",
+            "1030"
+        ]
+    ],
+    [
+        "title a.b.c",
+        [
+            "a-b-c",
+            "a-b-c",
+            "a-b-c",
+            "a-b-c"
+        ]
+    ],
+    [
+        "title it's",
+        [
+            "its",
+            "its",
+            "its",
+            "its"
+        ]
+    ],
+    [
+        "title a/b\\c",
+        [
+            "a-bc",
+            "a-bc",
+            "abc",
+            "abc"
+        ]
+    ],
+    [
+        "title %20 spaced",
+        [
+            "%20-spaced",
+            "%20-spaced",
+            "%20-spaced",
+            "%20-spaced"
+        ]
+    ],
+    [
+        "title 50% off!",
+        [
+            "50-off",
+            "50-off",
+            "50-off",
+            "50-off"
+        ]
+    ],
+    [
+        "title Ünïcödé",
+        [
+            "unicode",
+            "%c3%bcn%c3%afc%c3%b6d%c3%a9",
+            "%c3%bcn%c3%afc%c3%b6d%c3%a9",
+            "%c3%bcn%c3%afc%c3%b6d%c3%a9"
+        ]
+    ],
+    [
+        "title &#8211; dash",
+        [
+            "dash",
+            "dash",
+            "dash",
+            "dash"
+        ]
+    ],
+    [
+        "title a&nbsp;b",
+        [
+            "a-b",
+            "a-b",
+            "ab",
+            "ab"
+        ]
+    ],
+    [
+        "title <b>bold</b> title",
+        [
+            "bold-title",
+            "bold-title",
+            "bold-title",
+            "bold-title"
+        ]
+    ],
+    [
+        "title a…b",
+        [
+            "ab",
+            "ab",
+            "a%e2%80%a6b",
+            "a%e2%80%a6b"
+        ]
+    ],
+    [
+        "title “quoted”",
+        [
+            "quoted",
+            "quoted",
+            "%e2%80%9cquoted%e2%80%9d",
+            "%e2%80%9cquoted%e2%80%9d"
+        ]
+    ],
+    [
+        "title x × y",
+        [
+            "x-x-y",
+            "x-x-y",
+            "x-%c3%97-y",
+            "x-%c3%97-y"
+        ]
+    ],
+    [
+        "title 1920×1080",
+        [
+            "1920x1080",
+            "1920x1080",
+            "1920%c3%971080",
+            "1920%c3%971080"
+        ]
+    ],
+    [
+        "title C++ & C#",
+        [
+            "c-c",
+            "c-c",
+            "c-c",
+            "c-c"
+        ]
+    ],
+    [
+        "title Привет мир",
+        [
+            "%d0%bf%d1%80%d0%b8%d0%b2%d0%b5%d1%82-%d0%bc%d0%b8%d1%80",
+            "%d0%bf%d1%80%d0%b8%d0%b2%d0%b5%d1%82-%d0%bc%d0%b8%d1%80",
+            "%d0%bf%d1%80%d0%b8%d0%b2%d0%b5%d1%82-%d0%bc%d0%b8%d1%80",
+            "%d0%bf%d1%80%d0%b8%d0%b2%d0%b5%d1%82-%d0%bc%d0%b8%d1%80"
+        ]
+    ],
+    [
+        "title Γειά σου",
+        [
+            "%ce%b3%ce%b5%ce%b9%ce%ac-%cf%83%ce%bf%cf%85",
+            "%ce%b3%ce%b5%ce%b9%ce%ac-%cf%83%ce%bf%cf%85",
+            "%ce%b3%ce%b5%ce%b9%ce%ac-%cf%83%ce%bf%cf%85",
+            "%ce%b3%ce%b5%ce%b9%ce%ac-%cf%83%ce%bf%cf%85"
+        ]
+    ],
+    [
+        "title éte",
+        [
+            "ete",
+            "ete",
+            "e%cc%81te",
+            "e%cc%81te"
+        ]
+    ],
+    [
+        "title aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        [
+            "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        ]
+    ],
+    [
+        "title 漢漢漢漢漢漢漢漢漢漢漢漢漢漢漢漢漢漢漢漢漢漢漢漢漢漢漢漢漢漢漢漢漢漢漢漢漢漢漢漢",
+        [
+            "%e6%bc%a2%e6%bc%a2%e6%bc%a2%e6%bc%a2%e6%bc%a2%e6%bc%a2%e6%bc%a2%e6%bc%a2%e6%bc%a2%e6%bc%a2%e6%bc%a2%e6%bc%a2%e6%bc%a2%e6%bc%a2%e6%bc%a2%e6%bc%a2%e6%bc%a2%e6%bc%a2%e6%bc%a2%e6%bc%a2%e6%bc%a2%e6%bc%a2",
+            "%e6%bc%a2%e6%bc%a2%e6%bc%a2%e6%bc%a2%e6%bc%a2%e6%bc%a2%e6%bc%a2%e6%bc%a2%e6%bc%a2%e6%bc%a2%e6%bc%a2%e6%bc%a2%e6%bc%a2%e6%bc%a2%e6%bc%a2%e6%bc%a2%e6%bc%a2%e6%bc%a2%e6%bc%a2%e6%bc%a2%e6%bc%a2%e6%bc%a2",
+            "%e6%bc%a2%e6%bc%a2%e6%bc%a2%e6%bc%a2%e6%bc%a2%e6%bc%a2%e6%bc%a2%e6%bc%a2%e6%bc%a2%e6%bc%a2%e6%bc%a2%e6%bc%a2%e6%bc%a2%e6%bc%a2%e6%bc%a2%e6%bc%a2%e6%bc%a2%e6%bc%a2%e6%bc%a2%e6%bc%a2%e6%bc%a2%e6%bc%a2",
+            "%e6%bc%a2%e6%bc%a2%e6%bc%a2%e6%bc%a2%e6%bc%a2%e6%bc%a2%e6%bc%a2%e6%bc%a2%e6%bc%a2%e6%bc%a2%e6%bc%a2%e6%bc%a2%e6%bc%a2%e6%bc%a2%e6%bc%a2%e6%bc%a2%e6%bc%a2%e6%bc%a2%e6%bc%a2%e6%bc%a2%e6%bc%a2%e6%bc%a2"
+        ]
+    ],
+    [
+        "title ab漢ab漢ab漢ab漢ab漢ab漢ab漢ab漢ab漢ab漢ab漢ab漢ab漢a",
+        [
+            "ab%e6%bc%a2ab%e6%bc%a2ab%e6%bc%a2ab%e6%bc%a2ab%e6%bc%a2ab%e6%bc%a2ab%e6%bc%a2ab%e6%bc%a2ab%e6%bc%a2ab%e6%bc%a2ab%e6%bc%a2ab%e6%bc%a2ab%e6%bc%a2ab%e6%bc%a2ab%e6%bc%a2ab%e6%bc%a2ab%e6%bc%a2ab%e6%bc%a2ab",
+            "ab%e6%bc%a2ab%e6%bc%a2ab%e6%bc%a2ab%e6%bc%a2ab%e6%bc%a2ab%e6%bc%a2ab%e6%bc%a2ab%e6%bc%a2ab%e6%bc%a2ab%e6%bc%a2ab%e6%bc%a2ab%e6%bc%a2ab%e6%bc%a2ab%e6%bc%a2ab%e6%bc%a2ab%e6%bc%a2ab%e6%bc%a2ab%e6%bc%a2ab",
+            "ab%e6%bc%a2ab%e6%bc%a2ab%e6%bc%a2ab%e6%bc%a2ab%e6%bc%a2ab%e6%bc%a2ab%e6%bc%a2ab%e6%bc%a2ab%e6%bc%a2ab%e6%bc%a2ab%e6%bc%a2ab%e6%bc%a2ab%e6%bc%a2ab%e6%bc%a2ab%e6%bc%a2ab%e6%bc%a2ab%e6%bc%a2ab%e6%bc%a2ab",
+            "ab%e6%bc%a2ab%e6%bc%a2ab%e6%bc%a2ab%e6%bc%a2ab%e6%bc%a2ab%e6%bc%a2ab%e6%bc%a2ab%e6%bc%a2ab%e6%bc%a2ab%e6%bc%a2ab%e6%bc%a2ab%e6%bc%a2ab%e6%bc%a2ab%e6%bc%a2ab%e6%bc%a2ab%e6%bc%a2ab%e6%bc%a2ab%e6%bc%a2ab"
+        ]
+    ],
+    [
+        "an empty title falls back",
+        [
+            "Fall Back",
+            "x"
+        ]
+    ],
+    [
+        "utf8_uri_encode",
+        [
+            "a%c3%a9%e6%bc%a2",
+            "a%c3%a9%e6%bc%a2",
+            "a",
+            "a%c3%a9",
+            "ab",
+            "a%20b%2Fc",
+            "a",
+            "AZaz09-_.~%21"
+        ]
+    ],
+    [
+        "remove_accents across ranges",
+        {
+            "00A3": "",
+            "00AA": "a",
+            "00BA": "o",
+            "00C0": "A",
+            "00C1": "A",
+            "00C2": "A",
+            "00C3": "A",
+            "00C4": "A",
+            "00C5": "A",
+            "00C6": "AE",
+            "00C7": "C",
+            "00C8": "E",
+            "00C9": "E",
+            "00CA": "E",
+            "00CB": "E",
+            "00CC": "I",
+            "00CD": "I",
+            "00CE": "I",
+            "00CF": "I",
+            "00D0": "D",
+            "00D1": "N",
+            "00D2": "O",
+            "00D3": "O",
+            "00D4": "O",
+            "00D5": "O",
+            "00D6": "O",
+            "00D8": "O",
+            "00D9": "U",
+            "00DA": "U",
+            "00DB": "U",
+            "00DC": "U",
+            "00DD": "Y",
+            "00DE": "TH",
+            "00DF": "s",
+            "00E0": "a",
+            "00E1": "a",
+            "00E2": "a",
+            "00E3": "a",
+            "00E4": "a",
+            "00E5": "a",
+            "00E6": "ae",
+            "00E7": "c",
+            "00E8": "e",
+            "00E9": "e",
+            "00EA": "e",
+            "00EB": "e",
+            "00EC": "i",
+            "00ED": "i",
+            "00EE": "i",
+            "00EF": "i",
+            "00F0": "d",
+            "00F1": "n",
+            "00F2": "o",
+            "00F3": "o",
+            "00F4": "o",
+            "00F5": "o",
+            "00F6": "o",
+            "00F8": "o",
+            "00F9": "u",
+            "00FA": "u",
+            "00FB": "u",
+            "00FC": "u",
+            "00FD": "y",
+            "00FE": "th",
+            "00FF": "y",
+            "0100": "A",
+            "0101": "a",
+            "0102": "A",
+            "0103": "a",
+            "0104": "A",
+            "0105": "a",
+            "0106": "C",
+            "0107": "c",
+            "0108": "C",
+            "0109": "c",
+            "010A": "C",
+            "010B": "c",
+            "010C": "C",
+            "010D": "c",
+            "010E": "D",
+            "010F": "d",
+            "0110": "D",
+            "0111": "d",
+            "0112": "E",
+            "0113": "e",
+            "0114": "E",
+            "0115": "e",
+            "0116": "E",
+            "0117": "e",
+            "0118": "E",
+            "0119": "e",
+            "011A": "E",
+            "011B": "e",
+            "011C": "G",
+            "011D": "g",
+            "011E": "G",
+            "011F": "g",
+            "0120": "G",
+            "0121": "g",
+            "0122": "G",
+            "0123": "g",
+            "0124": "H",
+            "0125": "h",
+            "0126": "H",
+            "0127": "h",
+            "0128": "I",
+            "0129": "i",
+            "012A": "I",
+            "012B": "i",
+            "012C": "I",
+            "012D": "i",
+            "012E": "I",
+            "012F": "i",
+            "0130": "I",
+            "0131": "i",
+            "0132": "IJ",
+            "0133": "ij",
+            "0134": "J",
+            "0135": "j",
+            "0136": "K",
+            "0137": "k",
+            "0138": "k",
+            "0139": "L",
+            "013A": "l",
+            "013B": "L",
+            "013C": "l",
+            "013D": "L",
+            "013E": "l",
+            "013F": "L",
+            "0140": "l",
+            "0141": "L",
+            "0142": "l",
+            "0143": "N",
+            "0144": "n",
+            "0145": "N",
+            "0146": "n",
+            "0147": "N",
+            "0148": "n",
+            "0149": "n",
+            "014A": "N",
+            "014B": "n",
+            "014C": "O",
+            "014D": "o",
+            "014E": "O",
+            "014F": "o",
+            "0150": "O",
+            "0151": "o",
+            "0152": "OE",
+            "0153": "oe",
+            "0154": "R",
+            "0155": "r",
+            "0156": "R",
+            "0157": "r",
+            "0158": "R",
+            "0159": "r",
+            "015A": "S",
+            "015B": "s",
+            "015C": "S",
+            "015D": "s",
+            "015E": "S",
+            "015F": "s",
+            "0160": "S",
+            "0161": "s",
+            "0162": "T",
+            "0163": "t",
+            "0164": "T",
+            "0165": "t",
+            "0166": "T",
+            "0167": "t",
+            "0168": "U",
+            "0169": "u",
+            "016A": "U",
+            "016B": "u",
+            "016C": "U",
+            "016D": "u",
+            "016E": "U",
+            "016F": "u",
+            "0170": "U",
+            "0171": "u",
+            "0172": "U",
+            "0173": "u",
+            "0174": "W",
+            "0175": "w",
+            "0176": "Y",
+            "0177": "y",
+            "0178": "Y",
+            "0179": "Z",
+            "017A": "z",
+            "017B": "Z",
+            "017C": "z",
+            "017D": "Z",
+            "017E": "z",
+            "017F": "s",
+            "018F": "E",
+            "01A1": "o",
+            "01B0": "u",
+            "01CE": "a",
+            "01D1": "O",
+            "01D4": "u",
+            "01D7": "U",
+            "01DA": "u",
+            "01DD": "e",
+            "0219": "s",
+            "1EA0": "A",
+            "1EA5": "a",
+            "1EAA": "A",
+            "1EAF": "a",
+            "1EB4": "A",
+            "1EB9": "e",
+            "1EBE": "E",
+            "1EC3": "e",
+            "1EC8": "I",
+            "1ECD": "o",
+            "1ED2": "O",
+            "1ED7": "o",
+            "1EDC": "O",
+            "1EE1": "o",
+            "1EE6": "U",
+            "1EEB": "u",
+            "1EF0": "U",
+            "1EF5": "y",
+            "2000": " ",
+            "20AC": "E"
+        }
+    ],
+    [
+        "remove_accents in de_DE",
+        "Ae Oe Ue ss SS a ae o A D d l·l e"
+    ],
+    [
+        "remove_accents in da_DK",
+        "A O U s ẞ aa ae oe Aa D d l·l e"
+    ],
+    [
+        "remove_accents in ca",
+        "A O U s ẞ a ae o A D d ll e"
+    ],
+    [
+        "remove_accents in sr_RS",
+        "A O U s ẞ a ae o A DJ dj l·l e"
+    ],
+    [
+        "remove_accents in bs_BA",
+        "A O U s ẞ a ae o A DJ dj l·l e"
+    ],
+    [
+        "remove_accents in fr_FR",
+        "A O U s ẞ a ae o A D d l·l e"
+    ],
+    [
+        "remove_accents of Latin-1 bytes",
+        "6165624f457373"
+    ]
+]

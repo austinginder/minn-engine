@@ -6,7 +6,6 @@ namespace Minn\Runtime;
 
 use Closure;
 use Minn\Content\PostWriter;
-use Minn\Content\Slug;
 
 /**
  * The decisions behind wp_insert_post: which columns a postarr fills, when
@@ -124,9 +123,9 @@ final readonly class PostInsert
         $title = (string) ($columns['post_title'] ?? $existing['post_title'] ?? '');
         $slug = (string) ($columns['post_name'] ?? $existing['post_name'] ?? '');
         if ($slug === '' && !in_array($status, ['draft', 'pending', 'auto-draft'], true)) {
-            $slug = Slug::sanitize($title);
+            $slug = (string) \sanitize_title($title);
         } elseif ($slug !== '' && (!$update || $slug !== (string) $existing['post_name'])) {
-            $slug = Slug::sanitize($slug);
+            $slug = (string) \sanitize_title($slug);
         }
         if ($slug !== '') {
             $slug = $this->writer->uniqueSlug($slug, $update ? (int) $existing['ID'] : 0);
