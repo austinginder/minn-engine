@@ -1,0 +1,225 @@
+<?php
+/**
+ * Hook-trace parity: what plugins are told about a write. The same REST
+ * writes (posts, pages, media, terms, users, comments, settings) run on
+ * both stacks as an administrator with the fixture mu-plugin
+ * tests/fixtures/mu-plugins/minn-test-trace.php recording every action
+ * each request fires, with its arguments described in terms that mean the
+ * same on both stacks. The sequences from the REST server's start to the
+ * response are compared after dropping the bookkeeping actions that do not
+ * describe the write (query parsing, cache stamps, settings registration).
+ *
+ * A step whose sequence still differs is listed in DIVERGENT with the
+ * reason; the list may only shrink. A listed step that now agrees fails
+ * with "agrees now: drop it", as the allow suite does.
+ *
+ *   php tests/hook-trace.test.php [--show=<step>]
+ */
+
+declare(strict_types=1);
+
+require __DIR__ . '/lib.php';
+
+const DIVERGENT = [
+    'media-upload' => 'the media controller writes attachments without the runtime',
+    'media-edit' => 'the media controller writes attachments without the runtime',
+    'media-delete' => 'the media controller deletes attachments without the runtime',
+    'term-create' => 'the terms controller writes terms without the runtime',
+    'term-edit' => 'the terms controller writes terms without the runtime',
+    'term-delete' => 'the terms controller deletes terms without the runtime',
+    'user-create' => 'the users controller writes users without the runtime',
+    'user-edit' => 'the users controller writes users without the runtime',
+    'user-delete' => 'the users controller deletes users without the runtime',
+];
+
+/**
+ * What the reference tells plugins that Minn does not do on purpose, dropped
+ * from both sides. Pingbacks, trackbacks and enclosure checks are Mute
+ * (contracts/lexicon.md): on every save of a published post the reference
+ * queues them as _pingme and _encloseme and puts do_pings on the cron
+ * calendar; Minn sends none, so it queues none (contracts/round-trip.md).
+ */
+const DELIBERATE = [
+    '/^(add|added)_post_meta\(int,(int,)?\'_(pingme|encloseme)\'/',
+    '/^(update_option\(\'cron\'|update_option_cron\(|updated_option\(\'cron\')/',
+];
+
+/** Actions that describe how a stack looked something up, not what it told plugins about the write. */
+const NOISE = '/^(register_setting|parse_term_query|pre_get_terms|wp_cache_set_last_changed|metadata_lazyloader_queued_objects|parse_tax_query|parse_query|pre_get_posts|posts_selection|the_post|wp_default_scripts|wp_default_styles|wp_error_added|is_wp_error_instance|parse_comment_query|pre_get_comments|pre_get_users|pre_user_query|parse_site_query|loop_start|loop_end|shutdown|rest_api_init|set_current_user|clean_object_term_cache|delete_transient_is_multi_author|update_option_wp_calendar_block_has_published_posts|wp_rest_server_class)$/';
+
+$ENGINE = minn_test_url();
+$REF = minn_test_reference_url();
+$SITE = minn_test_site_root();
+$WP = '/opt/homebrew/bin/wp --path=' . escapeshellarg($SITE . '/wp-reference');
+$show = null;
+foreach (array_slice($argv, 1) as $arg) {
+    if (str_starts_with($arg, '--show=')) {
+        $show = substr($arg, 7);
+    }
+}
+
+[$ph] = minn_test_fetch($REF . '/?rest_route=/', 3);
+if (($ph['status'] ?? 0) !== 200) {
+    echo "SKIP: reference WordPress not running at {$REF}\n";
+    exit(0);
+}
+
+$pass = 0;
+$fail = 0;
+$check = static function (string $label, bool $ok, string $detail = '') use (&$pass, &$fail): void {
+    if ($ok) {
+        $pass++;
+        echo "  ok   {$label}\n";
+    } else {
+        $fail++;
+        echo "  FAIL {$label}" . ($detail !== '' ? "\n       {$detail}" : '') . "\n";
+    }
+};
+
+// The tracer lives in both mu-plugin folders, and records, only while the suite runs.
+$fixture = dirname(__DIR__) . '/tests/fixtures/mu-plugins/minn-test-trace.php';
+$stacks = ['reference' => [$REF, $SITE . '/wp-reference/wp-content'], 'engine' => [$ENGINE, $SITE . '/public/wp-content']];
+$description = trim((string) shell_exec("{$WP} option get blogdescription 2>/dev/null"));
+foreach ($stacks as [, $content]) {
+    if (!is_link("{$content}/mu-plugins/minn-test-trace.php")) {
+        symlink($fixture, "{$content}/mu-plugins/minn-test-trace.php");
+    }
+    @mkdir("{$content}/minn-trace", 0755, true);
+}
+register_shutdown_function(static function () use ($stacks, $WP, $description): void {
+    foreach ($stacks as [, $content]) {
+        @unlink("{$content}/mu-plugins/minn-test-trace.php");
+        array_map('unlink', glob("{$content}/minn-trace/*") ?: []);
+        @rmdir("{$content}/minn-trace");
+    }
+    shell_exec("{$WP} option update blogdescription " . escapeshellarg($description) . ' >/dev/null 2>&1');
+    shell_exec("{$WP} user delete \$({$WP} user list --field=ID --login__in=tracer-reference,tracer-engine 2>/dev/null) --reassign=1 --yes >/dev/null 2>&1");
+});
+
+$mint = json_decode((string) shell_exec("{$WP} eval-file " . escapeshellarg(dirname(__DIR__) . '/tests/tools/mint-session.php') . ' 1 2>/dev/null'), true);
+if (!is_array($mint) || empty($mint['cookie'])) {
+    echo "SKIP: could not mint a reference session\n";
+    exit(0);
+}
+$cookie = 'Cookie: wordpress_logged_in_' . md5($ENGINE) . '=' . rawurlencode($mint['cookie']) . '; wordpress_logged_in_' . md5($REF) . '=' . rawurlencode($mint['cookie']);
+
+/** One traced REST call; returns [status, decoded body, the actions it fired]. */
+$call = static function (string $base, string $content, string $run, string $method, string $route, $body = null, array $headers = []) use ($cookie, $mint): array {
+    touch("{$content}/minn-trace/{$run}.open");
+    $query = '';
+    if (str_contains($route, '?')) {
+        [$route, $query] = explode('?', $route, 2);
+        $query = '&' . $query;
+    }
+    $sent = [$cookie, 'X-WP-Nonce: ' . $mint['nonce'], 'X-Minn-Trace: ' . $run, ...$headers];
+    if (is_array($body)) {
+        $sent[] = 'Content-Type: application/json';
+        $body = json_encode($body);
+    }
+    $ch = curl_init($base . '/?rest_route=' . rawurlencode($route) . $query);
+    curl_setopt_array($ch, [CURLOPT_RETURNTRANSFER => true, CURLOPT_CUSTOMREQUEST => $method, CURLOPT_HTTPHEADER => $sent, CURLOPT_SSL_VERIFYPEER => false, CURLOPT_SSL_VERIFYHOST => 0, CURLOPT_TIMEOUT => 60]);
+    if ($body !== null) {
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $body);
+    }
+    $raw = curl_exec($ch);
+    $status = curl_getinfo($ch, CURLINFO_RESPONSE_CODE);
+    $lines = @file("{$content}/minn-trace/{$run}.ndjson", FILE_IGNORE_NEW_LINES) ?: [];
+    @unlink("{$content}/minn-trace/{$run}.open");
+    return [$status, json_decode((string) $raw, true), $lines];
+};
+
+/** The part of a trace that describes the write: from the REST server's start, bookkeeping dropped, repeats kept. */
+$window = static function (array $lines): array {
+    $out = [];
+    $started = false;
+    foreach ($lines as $line) {
+        [$hook, $args] = json_decode($line, true);
+        if ($hook === 'rest_api_init') {
+            $started = true;
+            continue;
+        }
+        // What runs after the response (the reference's cron spawn) is not the write.
+        if ($started && $hook === 'shutdown') {
+            break;
+        }
+        if (!$started || preg_match(NOISE, $hook) === 1) {
+            continue;
+        }
+        $line = $hook . '(' . implode(',', $args) . ')';
+        foreach (DELIBERATE as $pattern) {
+            if (preg_match($pattern, $line) === 1) {
+                continue 2;
+            }
+        }
+        $out[] = $line;
+    }
+    return $out;
+};
+
+$png = (string) base64_decode('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==');
+$steps = [];
+foreach ($stacks as $stack => [$base, $content]) {
+    $ids = [];
+    $run = static function (string $name, string $method, string $route, $body = null, array $headers = []) use ($stack, $base, $content, $call, $window, &$steps): array {
+        [$status, $data, $lines] = $call($base, $content, "{$stack}-{$name}", $method, $route, $body, $headers);
+        $steps[$name][$stack] = ['status' => $status, 'trace' => $window($lines)];
+        return is_array($data) ? $data : [];
+    };
+    $ids['post'] = (int) ($run('post-create-draft', 'POST', '/wp/v2/posts', ['title' => 'Trace post', 'content' => 'Body', 'status' => 'draft'])['id'] ?? 0);
+    $run('post-publish', 'POST', "/wp/v2/posts/{$ids['post']}", ['status' => 'publish']);
+    $run('post-edit', 'POST', "/wp/v2/posts/{$ids['post']}", ['title' => 'Trace post edited']);
+    $run('post-trash', 'DELETE', "/wp/v2/posts/{$ids['post']}");
+    $run('post-delete', 'DELETE', "/wp/v2/posts/{$ids['post']}?force=true");
+    $ids['page'] = (int) ($run('page-create', 'POST', '/wp/v2/pages', ['title' => 'Trace page', 'status' => 'publish'])['id'] ?? 0);
+    $run('page-delete', 'DELETE', "/wp/v2/pages/{$ids['page']}?force=true");
+    $ids['media'] = (int) ($run('media-upload', 'POST', '/wp/v2/media', $png, ['Content-Type: image/png', 'Content-Disposition: attachment; filename="trace.png"'])['id'] ?? 0);
+    $run('media-edit', 'POST', "/wp/v2/media/{$ids['media']}", ['alt_text' => 'Trace']);
+    $run('media-delete', 'DELETE', "/wp/v2/media/{$ids['media']}?force=true");
+    $ids['term'] = (int) ($run('term-create', 'POST', '/wp/v2/categories', ['name' => "Trace category {$stack}"])['id'] ?? 0);
+    $run('term-edit', 'POST', "/wp/v2/categories/{$ids['term']}", ['description' => 'Traced']);
+    $run('term-delete', 'DELETE', "/wp/v2/categories/{$ids['term']}?force=true");
+    $ids['user'] = (int) ($run('user-create', 'POST', '/wp/v2/users', ['username' => "tracer-{$stack}", 'email' => "tracer-{$stack}@minn-engine.localhost", 'password' => 'Trace-pass-1!', 'roles' => ['author']])['id'] ?? 0);
+    $run('user-edit', 'POST', "/wp/v2/users/{$ids['user']}", ['first_name' => 'Trace']);
+    $run('user-delete', 'DELETE', "/wp/v2/users/{$ids['user']}?force=true&reassign=1");
+    $ids['comment'] = (int) ($run('comment-create', 'POST', '/wp/v2/comments', ['post' => 1, 'content' => "Traced comment from the {$stack}"])['id'] ?? 0);
+    $run('comment-unapprove', 'POST', "/wp/v2/comments/{$ids['comment']}", ['status' => 'hold']);
+    $run('comment-delete', 'DELETE', "/wp/v2/comments/{$ids['comment']}?force=true");
+    $run('settings', 'POST', '/wp/v2/settings', ['description' => "Traced on the {$stack}"]);
+}
+
+$listed = DIVERGENT;
+foreach ($steps as $name => $pair) {
+    $reference = $pair['reference'];
+    $engine = $pair['engine'];
+    if ($show === $name) {
+        echo "--- {$name}: reference | engine\n";
+        $rows = max(count($reference['trace']), count($engine['trace']));
+        for ($i = 0; $i < $rows; $i++) {
+            $r = $reference['trace'][$i] ?? '';
+            $e = $engine['trace'][$i] ?? '';
+            printf("%s %-70s | %s\n", $r === $e ? ' ' : '*', substr($r, 0, 70), $e);
+        }
+    }
+    $check("{$name}: both stacks answer the same status", $reference['status'] === $engine['status'], "reference {$reference['status']}, engine {$engine['status']}");
+    $agrees = $reference['trace'] === $engine['trace'];
+    $first = 0;
+    while ($first < count($reference['trace']) && ($reference['trace'][$first] ?? null) === ($engine['trace'][$first] ?? null)) {
+        $first++;
+    }
+    $detail = sprintf('%d of %d actions agree before the first difference: reference %s, engine %s', $first, count($reference['trace']), $reference['trace'][$first] ?? '(end)', $engine['trace'][$first] ?? '(end)');
+    if (isset($listed[$name])) {
+        $check("{$name}: still listed as divergent ({$listed[$name]})", !$agrees, 'agrees now: drop it from DIVERGENT');
+        unset($listed[$name]);
+        if (!$agrees) {
+            echo "       {$detail}\n";
+        }
+        continue;
+    }
+    $check("{$name}: plugins are told the same, in the same order", $agrees, $detail);
+}
+foreach ($listed as $name => $reason) {
+    $check("DIVERGENT names a step that exists ({$name})", false);
+}
+
+echo "\n{$pass} passed, {$fail} failed\n";
+exit($fail === 0 ? 0 : 1);

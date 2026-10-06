@@ -122,40 +122,86 @@ final readonly class TermWriter
 
     /**
      * Makes an object's relationships in a taxonomy exactly $keep (or $old
-     * plus $keep when appending), firing the relationship actions the way the
-     * reference does, and recounts.
+     * plus $keep when appending), in the reference's order: each new
+     * relationship between add_term_relationship and
+     * added_term_relationship, the counts of those terms, then the ones
+     * that went, between delete_term_relationships and
+     * deleted_term_relationships, and their counts. $count recounts a list
+     * of term_taxonomy ids and tells plugins (wp_update_term_count); without
+     * it the taxonomy is recounted quietly.
      *
      * @param list<int> $keep term_taxonomy ids
      * @param list<int> $old the object's current term_taxonomy ids in the taxonomy
+     * @param (Closure(list<int>): void)|null $count
      */
-    public function relate(int $objectId, array $keep, array $old, string $taxonomy): void
+    public function relate(int $objectId, array $keep, array $old, string $taxonomy, ?Closure $count = null): void
     {
+        $count ??= fn (array $ttIds) => $this->posts->recount($taxonomy);
         $hooks = Runtime::hooks();
-        foreach (array_diff($old, $keep) as $ttId) {
-            $hooks->action('delete_term_relationships', [$objectId, [$ttId], $taxonomy]);
-            $this->db->execute("DELETE FROM {$this->db->table('term_relationships')} WHERE object_id = ? AND term_taxonomy_id = ?", [$objectId, $ttId]);
-            $hooks->action('deleted_term_relationships', [$objectId, [$ttId], $taxonomy]);
-        }
+        $added = [];
         foreach ($keep as $ttId) {
-            if (in_array($ttId, $old, true)) {
+            if (in_array($ttId, $old, true) || in_array($ttId, $added, true)) {
                 continue;
             }
             $hooks->action('add_term_relationship', [$objectId, $ttId, $taxonomy]);
             $this->db->execute("INSERT IGNORE INTO {$this->db->table('term_relationships')} (object_id, term_taxonomy_id, term_order) VALUES (?, ?, 0)", [$objectId, $ttId]);
             $hooks->action('added_term_relationship', [$objectId, $ttId, $taxonomy]);
+            $added[] = $ttId;
         }
-        $this->posts->recount($taxonomy);
+        if ($added !== []) {
+            $count($added);
+        }
+        $this->unrelate($objectId, array_values(array_diff($old, $keep)), $taxonomy, $count);
     }
 
-    /** Removes the given relationships; true when any row went. @param list<int> $ttIds */
-    public function unrelate(int $objectId, array $ttIds, string $taxonomy): bool
+    /**
+     * Removes the given relationships between delete_term_relationships and
+     * deleted_term_relationships, then recounts those terms; true when any
+     * row went.
+     *
+     * @param list<int> $ttIds
+     * @param (Closure(list<int>): void)|null $count
+     */
+    public function unrelate(int $objectId, array $ttIds, string $taxonomy, ?Closure $count = null): bool
     {
-        $removed = 0;
-        foreach ($ttIds as $ttId) {
-            $removed += $this->db->execute("DELETE FROM {$this->db->table('term_relationships')} WHERE object_id = ? AND term_taxonomy_id = ?", [$objectId, $ttId]);
+        if ($ttIds === []) {
+            return false;
         }
-        $this->posts->recount($taxonomy);
+        $count ??= fn (array $ids) => $this->posts->recount($taxonomy);
+        $hooks = Runtime::hooks();
+        $hooks->action('delete_term_relationships', [$objectId, $ttIds, $taxonomy]);
+        $removed = $this->db->execute("DELETE FROM {$this->db->table('term_relationships')} WHERE object_id = ? AND term_taxonomy_id IN (" . implode(',', array_map('intval', $ttIds)) . ')', [$objectId]);
+        $hooks->action('deleted_term_relationships', [$objectId, $ttIds, $taxonomy]);
+        $count($ttIds);
         return $removed > 0;
+    }
+
+    /** How many published objects a term holds, as the stored count keeps it. */
+    public function publishedCount(int $ttId): int
+    {
+        return (int) $this->db->value(
+            "SELECT COUNT(*) FROM {$this->db->table('term_relationships')} tr
+             JOIN {$this->db->table('posts')} p ON p.ID = tr.object_id
+             WHERE tr.term_taxonomy_id = ? AND p.post_status = 'publish'",
+            [$ttId],
+        );
+    }
+
+    /** Stores a term's count. */
+    public function storeCount(int $ttId, int $count): void
+    {
+        $this->db->execute("UPDATE {$this->db->table('term_taxonomy')} SET count = ? WHERE term_taxonomy_id = ?", [$count, $ttId]);
+    }
+
+    /** The term ids behind term_taxonomy ids, as stored (strings), in the order given. @param list<int> $ttIds @return list<string> */
+    public function termIdsOf(array $ttIds): array
+    {
+        if ($ttIds === []) {
+            return [];
+        }
+        $rows = $this->db->rows("SELECT term_taxonomy_id, term_id FROM {$this->db->table('term_taxonomy')} WHERE term_taxonomy_id IN (" . implode(',', array_map('intval', $ttIds)) . ')');
+        $byTt = array_column($rows, 'term_id', 'term_taxonomy_id');
+        return array_values(array_map('strval', array_filter(array_map(static fn (int $tt) => $byTt[$tt] ?? null, $ttIds), static fn ($v) => $v !== null)));
     }
 
     private function ttIdOf(int $termId, string $taxonomy): int

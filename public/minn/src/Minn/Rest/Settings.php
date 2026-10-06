@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Minn\Rest;
 
+use Closure;
 use Minn\Content\Site;
 
 /**
@@ -99,22 +100,34 @@ final readonly class Settings
         return $out;
     }
 
-    /** Writes the registered keys in a body, already validated against SCHEMA; unregistered keys are ignored. */
-    public function store(array $body): void
+    /**
+     * Writes the registered keys in a body, already validated against
+     * SCHEMA; unregistered keys are ignored. $write, when given, takes each
+     * option and its value as the reference's controller hands it to
+     * update_option (an int, a boolean, a string), so plugins are told;
+     * without it the stored form is written directly.
+     *
+     * @param (Closure(string, mixed): void)|null $write
+     */
+    public function store(array $body, ?Closure $write = null): void
     {
         foreach ($body as $key => $value) {
             if (!isset(self::REGISTRY[$key])) {
                 continue;
             }
             [$option, $type] = self::REGISTRY[$key];
-            $stored = match ($type) {
-                'int' => (string) (int) $value,
-                'bool' => SchemaValues::toBoolean($value) ? '1' : '',
+            $typed = match ($type) {
+                'int' => (int) $value,
+                'bool' => SchemaValues::toBoolean($value),
                 'language' => $value === 'en_US' ? '' : (string) $value,
-                'int_or_null' => $value === null ? '' : (string) (int) $value,
+                'int_or_null' => $value === null ? '' : (int) $value,
                 default => (string) $value,
             };
-            $this->site->setOption($option, $stored);
+            if ($write !== null) {
+                $write($option, $typed);
+                continue;
+            }
+            $this->site->setOption($option, is_bool($typed) ? ($typed ? '1' : '') : (string) $typed);
         }
     }
 }

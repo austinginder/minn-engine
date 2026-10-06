@@ -214,6 +214,32 @@ final readonly class Comments
         return $lengths;
     }
 
+    /** The ids of every comment on a post, whatever its status, oldest first. @return list<int> */
+    public function idsOf(int $postId): array
+    {
+        return array_map('intval', array_column($this->db->rows("SELECT comment_ID FROM {$this->db->table('comments')} WHERE comment_post_ID = ? ORDER BY comment_ID ASC", [$postId]), 'comment_ID'));
+    }
+
+    /** Every comment on a post as id => status, which the trash keeps to give back. @return array<int, string> */
+    public function statusesOf(int $postId): array
+    {
+        $out = [];
+        foreach ($this->db->rows("SELECT comment_ID, comment_approved FROM {$this->db->table('comments')} WHERE comment_post_ID = ? ORDER BY comment_ID ASC", [$postId]) as $row) {
+            $comment = CommentRecord::fromRow($row);
+            $out[$comment->id] = $comment->approved;
+        }
+        return $out;
+    }
+
+    /** Sets one status on the given comments. @param list<int> $ids */
+    public function setStatusOf(array $ids, string $status): void
+    {
+        if ($ids === []) {
+            return;
+        }
+        $this->db->execute("UPDATE {$this->db->table('comments')} SET comment_approved = ? WHERE comment_ID IN (" . implode(',', array_map('intval', $ids)) . ')', [$status]);
+    }
+
     /** A deleted comment's replies move up to its parent. */
     public function orphanReplies(int $id, int $parent): void
     {

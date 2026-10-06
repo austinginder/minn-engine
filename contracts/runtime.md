@@ -3040,3 +3040,124 @@ chain's own refusals (`empty_*`, `invalid_username`, `invalid_email`,
 sentence, which does not say whether the username exists. A plugin that
 returns a `WP_User` signs that user in, as on the reference.
 
+## Writes tell plugins (2026-10-06)
+
+Minn's own REST controllers (which Minn Admin uses) wrote rows and told
+plugins nothing, so nothing reacted to an edit made on Minn: notification
+plugins, Smush, newsletters, WooCommerce's stamps. They now fire the
+reference's actions, in its order, with its arguments. Suite `hook-trace`
+records every action each REST write fires on both stacks (fixture
+mu-plugin `tests/fixtures/mu-plugins/minn-test-trace.php`, recording only
+for a request naming a run the suite opened) and compares the sequences
+from `rest_api_init` to `shutdown`, query bookkeeping aside. Posts, pages,
+comments and settings agree action for action; media, terms and users are
+listed in its shrink-only `DIVERGENT` list. A quick tracer for any core
+function on the reference: a `wp eval-file` that hangs a recorder on `all`
+and keeps actions only (an action is counted before `all` runs, a filter
+is not).
+
+How it is built: the facade owns the lifecycle (`_minn_post_before_save`,
+`_minn_post_saved`, `wp_after_insert_post`, `wp_trash_post`,
+`wp_untrash_post`, `wp_delete_post`, the comment functions); the engine's
+controllers call it through `Runtime\PostEvents` and
+`Runtime\CommentEvents`, which write exactly as before when no runtime is
+booted. Trash, untrash and force delete of posts, and every comment
+change, go through the facade functions themselves. What the reference
+does that the facade now does too:
+
+- **A post save**: `pre_post_insert` (new) or `pre_post_update`; the
+  categories set again through `wp_set_post_categories` (so
+  `set_object_terms` fires even when nothing changes); `clean_post_cache`
+  with the copy the cache held (an update reports the old status);
+  `clean_page_cache` for a page; the transition actions; `edit_post_{type}`,
+  `edit_post`, `post_updated` for an update; `save_post_{type}`,
+  `save_post`, `wp_insert_post`; through REST `rest_insert_{type}`, the
+  request's terms and fields, `rest_after_insert_{type}`; and last
+  `wp_after_insert_post`, from which the revision is saved (its own
+  `pre_post_insert`, transition `new` to `inherit`, save actions and
+  `_wp_put_post_revision(revision id, post id)`). The old slug and date
+  come from the `post_updated` defaults, so a site that unhooks them keeps
+  none, as on the reference.
+- **Trash**: `wp_trash_post`, the three trash metas through
+  `add_post_meta` (with their actions), the save above,
+  `trash_post_comments` (every comment becomes `post-trashed`, statuses kept
+  in `_wp_trash_meta_comments_status`, `trashed_post_comments`), then
+  `trashed_post`, then over REST `rest_delete_{type}`. `wp_trash_post`
+  answers with the post as it was. Untrash mirrors it.
+- **Delete**: `before_delete_post`, the trash metas, the term
+  relationships, the revisions (each with `before_delete_post`,
+  `delete_post_revision`, `delete_post`, `deleted_post_revision`,
+  `deleted_post`, `after_delete_post`, `wp_delete_post_revision`), the
+  post's comments (deleted for good, each with its own actions: the
+  engine used to leave them behind), the remaining meta row by row
+  (`delete_metadata_by_mid`), then `delete_post_{type}`, `delete_post`,
+  `deleted_post_{type}`, `deleted_post`, `clean_post_cache`,
+  `after_delete_post`.
+- **Terms on a post**: `wp_set_object_terms` adds each new relationship
+  between `add_term_relationship` and `added_term_relationship`, counts
+  them, then removes the rest between `delete_term_relationships` and
+  `deleted_term_relationships` (one call, every id) and counts those, then
+  `set_object_terms`. Counting runs the taxonomy's `update_count_callback`
+  (default `_update_post_term_count`: `update_term_count(tt id, taxonomy,
+  count)`, `edit_term_taxonomy(tt id, taxonomy, [])`, the write,
+  `edited_term_taxonomy`), then `clean_term_cache(term ids, taxonomy,
+  false)`.
+- **Meta**: post meta also fires the older `update_postmeta`,
+  `updated_postmeta`, `delete_postmeta`, `deleted_postmeta`.
+  `get_metadata_by_mid`, `update_metadata_by_mid` and
+  `delete_metadata_by_mid` are real (they were placeholders; Yoast and
+  Rank Math call them): the row under its own column names (`umeta_id` and
+  `user_id` for users), the value decoded.
+- **Options**: an `update_option` to an unchanged value writes nothing and
+  tells nobody; `delete_option` of a missing option tells nobody.
+- **Comments**: `wp_transition_comment_status` (`transition_comment_status`
+  and `comment_{old}_to_{new}` when the status moves,
+  `comment_{status}_{type}` always), `clean_comment_cache`,
+  `wp_update_comment_count_now` (`clean_post_cache`,
+  `wp_update_comment_count`, `edit_post_{type}`, `edit_post`).
+  `wp_update_comment` writes and tells plugins even when nothing changed.
+  `wp_set_comment_status` and `wp_delete_comment` follow the reference's
+  order (delete: `delete_comment`, `deleted_comment`, `clean_comment_cache`,
+  `wp_set_comment_status(id, 'delete')`, the transition to `delete`, and a
+  recount only for an approved comment). `wp_allow_comment` fires
+  `check_comment_flood`. Over REST: create is `wp_insert_comment` (no
+  notice to the moderator: the reference sends none through REST, so the
+  engine stopped sending one), update is `wp_update_comment` then the
+  status in words (`approve`, `hold`) or `wp_spam_comment` /
+  `wp_trash_comment`, then `rest_insert_comment` and
+  `rest_after_insert_comment`; delete ends with `rest_delete_comment`.
+- **Settings** go through `update_option` with the typed value.
+
+**The reference's default callbacks**, registered in its order (each was a
+data difference: the facade registered none): `_transition_post_status`
+(5, a post leaving `future` leaves the cron calendar),
+`_update_term_count_on_transition_post_status` (only a move into or out of
+`publish`), `_wp_auto_add_pages_to_menu` (a top-level page published
+joins menus set to auto-add), `__clear_multi_author_cache`, the calendar
+block's `wp_calendar_block_has_published_posts` (posts only, publish
+moves only; on delete only for a published post); `_delete_option_fresh_site`
+(`fresh_site` becomes `'0'` on publish_post and publish_page);
+`_future_post_hook` (a scheduled post gets its `publish_future_post`
+event: **without it a post scheduled on Minn never published after a
+swap back**) and `check_and_publish_future_post` (publishes when due,
+schedules again when early); `delete_get_calendar_cache`;
+`_reset_front_page_settings_for_post` (trash or delete of the front page
+sets `show_on_front` to `posts` and `page_on_front` to 0, of the posts
+page `page_for_posts` to 0); `_reset_privacy_policy_page_for_post`
+(delete only); `_wp_delete_post_menu_item` (menu items pointing at a
+deleted post go with it); `_delete_attachment_theme_mod` (`custom_logo`);
+`_clear_modified_cache_on_transition_comment_status`;
+`default_password_nag_edit_user`. `wp_publish_post` fires the save
+actions without `post_updated`, as the reference does.
+
+Kept different on purpose: pingbacks, trackbacks and enclosure checks are
+Mute (`contracts/lexicon.md`), so a published save queues no `_pingme`,
+`_encloseme` or `do_pings`; the suite drops those from both sides.
+
+Still open: media, terms and users over REST; the engine's own cron
+publishes due posts by row without these actions; `apply_filters(
+'the_content')` called by a plugin has none of the reference's defaults
+behind it, so a newsletter renders raw block markup (round trip on
+shop-dogfood); `wp_new_comment` and `wp_check_comment_flood` are still
+missing (placeholder / absent).
+

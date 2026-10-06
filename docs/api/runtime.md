@@ -15,6 +15,7 @@ the WordPress runtime plugins load against
 | [`BlockTemplates`](#blocktemplates) | final class | 66 | Block templates plugins register at runtime, by their namespaced name |
 | [`BlockWidget`](#blockwidget) | final class | 30 | A block widget's legacy class name. Every widget the block editor saves |
 | [`CommentCloser`](#commentcloser) | final readonly class | 22 | The Discussion setting that closes comments on old posts. Observed on the |
+| [`CommentEvents`](#commentevents) | final readonly class | 110 | What the reference's REST comments controller tells plugins, for the |
 | [`CommentQuery`](#commentquery) | final readonly class | 117 | Comment reads in the get_comments() shape: arguments to rows or a count, and the approval breakdown wp_count_comments reports. |
 | [`Connectors`](#connectors) | final class | 212 | The connectors registry: the external services a site talks to (AI |
 | [`Constants`](#constants) | final class | 66 | The constants plugin code expects: the fixed set from data/constants.json |
@@ -24,7 +25,7 @@ the WordPress runtime plugins load against
 | [`Hooks`](#hooks) | final class | 264 | The hook registry plugin code registers into and the engine fires. |
 | [`Interactivity`](#interactivity) | final class | 509 | Server-side directive processing for the Interactivity API: the state and |
 | [`MainQuery`](#mainquery) | final class | 34 | The query variables the reference's main query would carry for a URL the |
-| [`Meta`](#meta) | final readonly class | 143 | The four meta tables behind get_metadata and friends: reads by object, and the row-level writes the update and delete rules need. |
+| [`Meta`](#meta) | final readonly class | 175 | The four meta tables behind get_metadata and friends: reads by object, and the row-level writes the update and delete rules need. |
 | [`MetaClause`](#metaclause) | final class | 120 | The meta side of a post query: meta_key and its friends as one clause, |
 | [`MetaTypes`](#metatypes) | final class | 21 | Meta types a plugin brought, by the table it named on $wpdb as |
 | [`NavMenu`](#navmenu) | final class | 303 | Nav-menu item decoration for wp_nav_menu(): the reference's class tokens |
@@ -39,6 +40,7 @@ the WordPress runtime plugins load against
 | [`Placeholders`](#placeholders) | final class | 49 | The printf placeholders plugin code hands wpdb::prepare, filled the way |
 | [`PluginUpdates`](#pluginupdates) | final class | 65 | The update offers the site's own plugins publish. A plugin that hosts |
 | [`Plugins`](#plugins) | final class | 213 | Loads the site's plugins into the runtime the way the reference does: |
+| [`PostEvents`](#postevents) | final readonly class | 96 | What the reference's REST controllers tell plugins about a post they |
 | [`PostInsert`](#postinsert) | final readonly class | 160 | The decisions behind wp_insert_post: which columns a postarr fills, when |
 | [`PostLookup`](#postlookup) | final readonly class | 85 | The post reads plugin code asks for by shape: a page by title, revisions, counts. |
 | [`PostQuery`](#postquery) | final class | 383 | The query WP_Query runs: its variables become one SELECT over the posts |
@@ -58,7 +60,7 @@ the WordPress runtime plugins load against
 | [`TagEditor`](#tageditor) | final class | 149 | Edits one start tag's attributes in place the way the reference's tag |
 | [`TaxonomyClause`](#taxonomyclause) | final class | 178 | The taxonomy side of a post query: every query var the reference reads |
 | [`TermQuery`](#termquery) | final readonly class | 393 | Term reads in the shapes plugin code asks for: get_terms() arguments to |
-| [`TermWriter`](#termwriter) | final readonly class | 146 | The decisions behind wp_insert_term, wp_update_term, wp_delete_term, and |
+| [`TermWriter`](#termwriter) | final readonly class | 192 | The decisions behind wp_insert_term, wp_update_term, wp_delete_term, and |
 | [`TreeWalk`](#treewalk) | final class | 74 | The Walker contract's traversal: elements keyed by the walker's |
 | [`UserInsert`](#userinsert) | final readonly class | 111 | The decisions behind wp_insert_user: what a new account needs, which email |
 | [`UserQuery`](#userquery) | final readonly class | 49 | The user listing behind WP_User_Query: role filtering through the |
@@ -537,6 +539,66 @@ __construct(bool $enabled, int $days)
 Whether comments stay open on a post under the close-after-days setting.
 
 
+## CommentEvents
+
+`final readonly class Minn\Runtime\CommentEvents` · `public/minn/src/Minn/Runtime/CommentEvents.php`
+
+What the reference's REST comments controller tells plugins, for the
+engine's own: with plugins loaded every change goes through the
+runtime's comment functions (wp_insert_comment, wp_update_comment,
+wp_set_comment_status, wp_trash_comment, wp_delete_comment), which fire
+the reference's actions in its order, and the REST actions follow.
+Without a booted runtime the rows are written as before and nothing is
+told.
+
+Used by: `Minn\Rest\CommentsController`
+
+```php
+__construct(Minn\Content\Comments $comments)
+```
+
+
+### `live(): bool`
+
+Whether plugins are loaded to be told anything.
+
+### `allow(string $address, string $email, string $dateGmt): void`
+
+The check a new comment passes on the reference before it is written: check_comment_flood, with the address, the email and the GMT date.
+
+### `insert(array $columns): int`
+
+Writes a new comment and returns its id; an approved one is counted on its post. @param array<string, mixed> $columns
+
+- `@param array<string, mixed> $columns`
+
+### `update(Minn\Content\CommentRecord $comment, array $columns, ?string $status): void`
+
+An edit through REST: the fields, as wp_update_comment writes them
+(which tells plugins even when nothing changed), then the status
+through wp_set_comment_status when it moves.
+
+- `@param array<string, string> $columns`
+
+### `trash(Minn\Content\CommentRecord $comment): void`
+
+Moves a comment to the trash, keeping its status and the time for the way back.
+
+### `delete(Minn\Content\CommentRecord $comment): void`
+
+Removes a comment for good.
+
+### `restSaved(int $id, Minn\Http\Request $request, ?Minn\Content\CommentRecord $before): void`
+
+rest_insert_comment, then rest_after_insert_comment, with the comment as it stands and the request; no $before is a new comment.
+
+### `restDeleted(Minn\Content\CommentRecord $comment, array $data, Minn\Http\Request $request): void`
+
+rest_delete_comment, after a trash or a delete, with the comment as it was and the response. @param array<string, mixed> $data
+
+- `@param array<string, mixed> $data`
+
+
 ## CommentQuery
 
 `final readonly class Minn\Runtime\CommentQuery` · `public/minn/src/Minn/Runtime/CommentQuery.php`
@@ -1000,6 +1062,28 @@ the reference's precedence for WP_Meta_Query::parse_query_vars.
 Every row of an object's meta, values as stored, grouped by key in id order. @return array<string, list<string>>
 
 - `@return array<string, list<string>>`
+
+### `rowsOf(string $type, int $objectId): array`
+
+Every row of an object's meta in id order, for removing them one by one. @return list<array{meta_id: int, meta_key: string, meta_value: string}>
+
+- `@return list<array{meta_id: int, meta_key: string, meta_value: string}>`
+
+### `byId(string $type, int $metaId): ?array`
+
+One meta row by its id, under the table's own column names, values as stored; null when there is none. @return array<string, string>|null
+
+- `@return array<string, string>|null`
+
+### `columns(string $type): array`
+
+The column holding the object's id, and the one holding the row's: post_id and meta_id, user_id and umeta_id. @return array{0: string, 1: string}
+
+- `@return array{0: string, 1: string}`
+
+### `rewrite(string $type, int $metaId, string $key, string $stored): void`
+
+Sets one row's key and stored value.
 
 ### `add(string $type, int $objectId, string $key, string $stored): int`
 
@@ -1570,6 +1654,66 @@ True when the named plugin file is running as code this request.
 Internals: `boot()` (private, line 67), `loadThemeFunctions()` (private, line 123), `rememberThemeDomain()` (private, line 146), `includeFile()` (private, line 180), `registerRealpath()` (private, line 211), `isolatedInclude()` (private, line 226)
 
 
+## PostEvents
+
+`final readonly class Minn\Runtime\PostEvents` · `public/minn/src/Minn/Runtime/PostEvents.php`
+
+What the reference's REST controllers tell plugins about a post they
+write, for the engine's own controllers: the same actions in the same
+order with the same arguments, fired through the facade's lifecycle
+functions so the facade's own writes say the same (contracts/runtime.md
+"Writes tell plugins"). Without a booted runtime every method does
+nothing, so a write with no plugins loaded is exactly what it was.
+
+Used by: `Minn\Rest\PostsWriteController`
+
+### `live(): bool`
+
+Whether plugins are loaded to be told anything.
+
+### `beforeSave(array $columns, ?Minn\Content\PostRecord $existing): void`
+
+Before the row is written: pre_post_insert for a new post, pre_post_update for one that exists. @param array<string, mixed> $columns
+
+- `@param array<string, mixed> $columns`
+
+### `saved(int $id, ?Minn\Content\PostRecord $before): void`
+
+Once the row is written: the caches, the status transition, the edit actions of an update, the save actions.
+
+### `ensureCategory(Minn\Content\PostWriter $writer, int $id): void`
+
+A post keeps a category through every save, the default when it has
+none: through wp_set_post_categories with plugins loaded (which tells
+them, set_object_terms included), quietly without.
+
+### `applyTerms(Minn\Content\PostWriter $writer, int $id, array $body): void`
+
+The terms a REST body names, set through wp_set_object_terms with plugins loaded, quietly without. @param array<string, mixed> $body
+
+- `@param array<string, mixed> $body`
+
+### `restInserted(int $id, Minn\Http\Request $request, ?Minn\Content\PostRecord $before): void`
+
+rest_insert_{type}, before the request's own terms and fields are applied; a post with no $before is a new one.
+
+### `restAfterInsert(int $id, Minn\Http\Request $request, ?Minn\Content\PostRecord $before): void`
+
+rest_after_insert_{type}, once the request's terms and fields are in; a post with no $before is a new one.
+
+### `afterInsert(int $id, ?Minn\Content\PostRecord $before): void`
+
+wp_after_insert_post, last; the revision of an update is saved from it.
+
+### `restDeleted(Minn\Content\PostRecord $post, array $data, Minn\Http\Request $request): void`
+
+rest_delete_{type}, after a trash or a delete, with the post as it was answered and the response. @param array<string, mixed> $data
+
+- `@param array<string, mixed> $data`
+
+Internals: `rest()` (private, line 99), `wpPost()` (private, line 111)
+
+
 ## PostInsert
 
 `final readonly class Minn\Runtime\PostInsert` · `public/minn/src/Minn/Runtime/PostInsert.php`
@@ -1976,7 +2120,7 @@ The WordPress runtime the engine offers plugin code: the procedural
 facade under minn/wp-api/ plus the services it delegates to. One per
 request; the facade reaches it through these statics.
 
-Used by: `Minn\Admin\BootPayload`, `Minn\Auth\Authenticator`, `Minn\Blocks\Dynamic\Theme\Navigation`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Blocks\ImageTags`, `Minn\Blocks\RenderState`, `Minn\Cli\Runtime`, `Minn\Content\Blocks`, `Minn\Content\Reader`, `Minn\Content\Site`, `Minn\Content\Terms`, `Minn\Db`, `Minn\Engine`, `Minn\Extension\Extensions`, `Minn\Front\Feeds`, `Minn\Front\Permalinks`, `Minn\Front\PluginRules`, `Minn\Front\Resolver`, `Minn\Login\LoginHooks`, `Minn\Mail\Mailer`, `Minn\Media\Images`, `Minn\Rest\AbilitiesController`, `Minn\Rest\Api`, `Minn\Rest\Services`, `Minn\Runtime\Abilities`, `Minn\Runtime\AjaxController`, `Minn\Runtime\BlockFilters`, `Minn\Runtime\BlockHooks`, `Minn\Runtime\Constants`, `Minn\Runtime\Interactivity`, `Minn\Runtime\NavMenu`, `Minn\Runtime\PackageDownload`, `Minn\Runtime\Patterns`, `Minn\Runtime\PlaceholderTrace`, `Minn\Runtime\PluginUpdates`, `Minn\Runtime\Plugins`, `Minn\Runtime\PostQuery`, `Minn\Runtime\ScriptModules`, `Minn\Runtime\TermWriter`, `Minn\Theme\ArchiveTitle`, `Minn\Theme\ClassicContent`, `Minn\Theme\ClassicRenderer`, `Minn\Theme\MainQueryBridge`, `Minn\Theme\PageRenderer`, `Minn\Theme\Templates`
+Used by: `Minn\Admin\BootPayload`, `Minn\Auth\Authenticator`, `Minn\Blocks\Dynamic\Theme\Navigation`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Blocks\ImageTags`, `Minn\Blocks\RenderState`, `Minn\Cli\Runtime`, `Minn\Content\Blocks`, `Minn\Content\Reader`, `Minn\Content\Site`, `Minn\Content\Terms`, `Minn\Db`, `Minn\Engine`, `Minn\Extension\Extensions`, `Minn\Front\Feeds`, `Minn\Front\Permalinks`, `Minn\Front\PluginRules`, `Minn\Front\Resolver`, `Minn\Login\LoginHooks`, `Minn\Mail\Mailer`, `Minn\Media\Images`, `Minn\Rest\AbilitiesController`, `Minn\Rest\Api`, `Minn\Rest\Services`, `Minn\Rest\SettingsController`, `Minn\Runtime\Abilities`, `Minn\Runtime\AjaxController`, `Minn\Runtime\BlockFilters`, `Minn\Runtime\BlockHooks`, `Minn\Runtime\CommentEvents`, `Minn\Runtime\Constants`, `Minn\Runtime\Interactivity`, `Minn\Runtime\NavMenu`, `Minn\Runtime\PackageDownload`, `Minn\Runtime\Patterns`, `Minn\Runtime\PlaceholderTrace`, `Minn\Runtime\PluginUpdates`, `Minn\Runtime\Plugins`, `Minn\Runtime\PostEvents`, `Minn\Runtime\PostQuery`, `Minn\Runtime\ScriptModules`, `Minn\Runtime\TermWriter`, `Minn\Theme\ArchiveTitle`, `Minn\Theme\ClassicContent`, `Minn\Theme\ClassicRenderer`, `Minn\Theme\MainQueryBridge`, `Minn\Theme\PageRenderer`, `Minn\Theme\Templates`
 
 ```php
 __construct(Minn\Context $context, bool $isAdmin = false)
@@ -2724,22 +2868,45 @@ default one. Returns the object ids the term was attached to.
 - `@param array<string, mixed> $row`
 - `@return list<int>`
 
-### `relate(int $objectId, array $keep, array $old, string $taxonomy): void`
+### `relate(int $objectId, array $keep, array $old, string $taxonomy, ?Closure $count = NULL): void`
 
 Makes an object's relationships in a taxonomy exactly $keep (or $old
-plus $keep when appending), firing the relationship actions the way the
-reference does, and recounts.
+plus $keep when appending), in the reference's order: each new
+relationship between add_term_relationship and
+added_term_relationship, the counts of those terms, then the ones
+that went, between delete_term_relationships and
+deleted_term_relationships, and their counts. $count recounts a list
+of term_taxonomy ids and tells plugins (wp_update_term_count); without
+it the taxonomy is recounted quietly.
 
 - `@param list<int> $keep term_taxonomy ids`
 - `@param list<int> $old the object's current term_taxonomy ids in the taxonomy`
+- `@param (Closure(list<int>): void)|null $count`
 
-### `unrelate(int $objectId, array $ttIds, string $taxonomy): bool`
+### `unrelate(int $objectId, array $ttIds, string $taxonomy, ?Closure $count = NULL): bool`
 
-Removes the given relationships; true when any row went. @param list<int> $ttIds
+Removes the given relationships between delete_term_relationships and
+deleted_term_relationships, then recounts those terms; true when any
+row went.
 
 - `@param list<int> $ttIds`
+- `@param (Closure(list<int>): void)|null $count`
 
-Internals: `ttIdOf()` (private, line 161)
+### `publishedCount(int $ttId): int`
+
+How many published objects a term holds, as the stored count keeps it.
+
+### `storeCount(int $ttId, int $count): void`
+
+Stores a term's count.
+
+### `termIdsOf(array $ttIds): array`
+
+The term ids behind term_taxonomy ids, as stored (strings), in the order given. @param list<int> $ttIds @return list<string>
+
+- `@param list<int> $ttIds @return list<string>`
+
+Internals: `ttIdOf()` (private, line 207)
 
 
 ## TreeWalk

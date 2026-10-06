@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Minn\Rest;
 
+use Minn\Runtime\Runtime;
 use Minn\Http\Access;
 use Minn\Http\Method;
 use Minn\Http\Request;
@@ -32,7 +33,8 @@ final readonly class SettingsController
             throw new RestError('rest_forbidden', 'Sorry, you are not allowed to do that.', 403);
         }
         if ($request->method !== Method::Get) {
-            $this->settings->store($request->json());
+            // With plugins loaded each option goes through update_option, so they are told.
+            $this->settings->store($request->json(), Runtime::booted() ? static fn (string $option, mixed $value) => \update_option($option, $value) : null);
         }
         return Reply::item($this->settings->payload(), Fields::fromQuery($request->query));
     }

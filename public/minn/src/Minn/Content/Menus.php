@@ -465,6 +465,34 @@ final readonly class Menus
         }
     }
 
+    /** The ids of the menu items, in any menu or none, that point at an object of a kind (post_type, taxonomy). @return list<int> */
+    public function itemsPointingAt(int $objectId, string $type): array
+    {
+        $posts = $this->db->table('posts');
+        $meta = $this->db->table('postmeta');
+        return array_map('intval', array_column($this->db->rows(
+            "SELECT p.ID FROM {$posts} p
+             JOIN {$meta} o ON o.post_id = p.ID AND o.meta_key = '_menu_item_object_id' AND o.meta_value = ?
+             JOIN {$meta} t ON t.post_id = p.ID AND t.meta_key = '_menu_item_type' AND t.meta_value = ?
+             WHERE p.post_type = 'nav_menu_item' ORDER BY p.ID ASC",
+            [(string) $objectId, $type],
+        ), 'ID'));
+    }
+
+    /** Adds a page to the end of a menu, titled by the page itself, as a menu set to add new pages takes it. */
+    public function appendPage(int $menuId, int $pageId, int $authorId): int
+    {
+        $last = 0;
+        foreach ($this->items($menuId) as $item) {
+            $last = max($last, $item->menuOrder);
+        }
+        return $this->createItem([
+            'title' => '', 'url' => '', 'type' => 'post_type', 'object' => 'page', 'objectId' => $pageId, 'parent' => 0,
+            'menuOrder' => $last + 1, 'target' => '', 'status' => 'publish', 'menuId' => $menuId, 'attrTitle' => '',
+            'description' => '', 'authorId' => $authorId,
+        ]);
+    }
+
     /** Hard-deletes one item. */
     public function deleteItem(int $id): void
     {

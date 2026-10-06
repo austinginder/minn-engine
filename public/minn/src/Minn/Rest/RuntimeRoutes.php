@@ -83,8 +83,8 @@ final class RuntimeRoutes
         return new Response($response->status, $response->headers, (string) json_encode($data));
     }
 
-    /** The request as the runtime's server reads it. */
-    private static function wpRequest(Request $request): \WP_REST_Request
+    /** The request as the runtime's server reads it, and as a REST action hands it to plugins. */
+    public static function wpRequest(Request $request): \WP_REST_Request
     {
         $wpRequest = new \WP_REST_Request($request->method->value, $request->path);
         $wpRequest->set_query_params($request->query);

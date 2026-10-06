@@ -90,6 +90,9 @@ function clean_post_cache($post)
     wp_cache_delete($post->ID, 'posts');
     wp_cache_delete($post->ID, 'post_meta');
     do_action('clean_post_cache', $post->ID, $post);
+    if ($post->post_type === 'page') {
+        do_action('clean_page_cache', $post->ID);
+    }
 }
 
 function get_the_ID()
@@ -857,20 +860,63 @@ function wp_insert_post($postarr, $wp_error = false, $fire_after_hooks = true)
         return $wp_error ? new WP_Error('empty_content', 'Content, title, and excerpt are empty.') : 0;
     }
     $columns = $insert->resolve($columns, $before);
-    if ($update) {
-        do_action('pre_post_update', $existing->ID, $columns);
-    }
+    _minn_post_before_save($columns, $update ? $existing->ID : 0);
     $id = $insert->persist($columns, $existing?->ID, static fn (int $id): string => home_url('/?p=' . $id));
     wp_cache_delete($id, 'posts');
-    $post = get_post($id);
     $type = $columns['post_type'] ?? $existing->post_type;
     _minn_post_inputs($id, $postarr, $type, $columns['post_status'], $update);
     _minn_post_writer()->recountTaxonomiesOf($id);
+    $post = _minn_post_saved($id, $update, $existing);
     if ($fire_after_hooks) {
         // The revision is saved from wp_after_insert_post (priority 9), as on the reference.
         wp_after_insert_post($post, $update, $existing);
     }
     return $id;
+}
+
+/** @internal A save sets a post's categories again, as the reference's insert does, telling plugins even when nothing changes. */
+function _minn_post_keep_categories(WP_Post $post): void
+{
+    if (is_object_in_taxonomy($post->post_type, 'category')) {
+        wp_set_post_categories($post->ID, wp_get_post_categories($post->ID));
+    }
+}
+
+/** @internal What the reference tells plugins before a post's row is written: pre_post_insert for a new post, pre_post_update for one that exists. */
+function _minn_post_before_save(array $data, int $post_id = 0): void
+{
+    if ($post_id > 0) {
+        do_action('pre_post_update', $post_id, $data);
+        return;
+    }
+    do_action('pre_post_insert', $data);
+}
+
+/**
+ * @internal What the reference tells plugins once a post's row and its own
+ * terms are written, in its order: the caches let go, the status
+ * transition, the edit actions for an update, the save actions.
+ * wp_after_insert_post is the caller's to fire, after whatever else it
+ * writes (the REST controllers' terms and meta).
+ */
+function _minn_post_saved(int $post_id, bool $update, ?WP_Post $post_before): ?WP_Post
+{
+    // The reference lets go of the copy it had cached, which still holds the post as it was.
+    clean_post_cache($post_before ?? $post_id);
+    $post = get_post($post_id);
+    if ($post === null) {
+        return null;
+    }
+    wp_transition_post_status($post->post_status, $post_before instanceof WP_Post ? $post_before->post_status : 'new', $post);
+    if ($update && $post_before instanceof WP_Post) {
+        do_action("edit_post_{$post->post_type}", $post->ID, $post);
+        do_action('edit_post', $post->ID, $post);
+        do_action('post_updated', $post->ID, $post, $post_before);
+    }
+    do_action("save_post_{$post->post_type}", $post->ID, $post, $update);
+    do_action('save_post', $post->ID, $post, $update);
+    do_action('wp_insert_post', $post->ID, $post, $update);
+    return $post;
 }
 
 /** @internal the terms, meta, and template a postarr carries beside the columns */
@@ -904,16 +950,6 @@ function wp_after_insert_post($post, $update, $post_before)
     if ($post === null) {
         return;
     }
-    $previous = $post_before instanceof WP_Post ? $post_before->post_status : 'new';
-    wp_transition_post_status($post->post_status, $previous, $post);
-    if ($update && $post_before instanceof WP_Post) {
-        do_action("edit_post_{$post->post_type}", $post->ID, $post);
-        do_action('edit_post', $post->ID, $post);
-        do_action('post_updated', $post->ID, $post, $post_before);
-    }
-    do_action("save_post_{$post->post_type}", $post->ID, $post, $update);
-    do_action('save_post', $post->ID, $post, $update);
-    do_action('wp_insert_post', $post->ID, $post, $update);
     do_action('wp_after_insert_post', $post->ID, $post, $update, $post_before);
 }
 
@@ -962,20 +998,14 @@ function wp_save_post_revision($post_id)
     if ($post === null) {
         return null;
     }
-    $before = array_keys(wp_get_post_revisions($post_id));
-    _minn_post_writer()->maybeSaveRevision($post->ID, get_current_user_id());
-    $after = array_keys(wp_get_post_revisions($post_id));
-    $new = array_values(array_diff($after, $before));
-    if ($new === []) {
+    $columns = _minn_post_writer()->revisionColumns($post->ID, get_current_user_id());
+    if ($columns === null) {
         return null;
     }
-    $revision = get_post($new[0]);
-    wp_transition_post_status('inherit', 'new', $revision);
-    do_action('save_post_revision', $revision->ID, $revision, false);
-    do_action('save_post', $revision->ID, $revision, false);
-    do_action('wp_insert_post', $revision->ID, $revision, false);
-    do_action('wp_after_insert_post', $revision->ID, $revision, false, null);
-    do_action('_wp_put_post_revision', $revision->ID, $revision);
+    _minn_post_before_save($columns);
+    $revision = _minn_post_saved(_minn_post_writer()->insertRevision($columns), false, null);
+    wp_after_insert_post($revision, false, null);
+    do_action('_wp_put_post_revision', $revision->ID, $post->ID);
     return $revision->ID;
 }
 
@@ -1011,23 +1041,93 @@ function wp_update_post($postarr = [], $wp_error = false, $fire_after_hooks = tr
 
 function wp_publish_post($post)
 {
-    $post = get_post($post);
-    if ($post === null || $post->post_status === 'publish') {
+    $before = get_post($post);
+    if ($before === null || $before->post_status === 'publish') {
         return;
     }
-    $old = $post->post_status;
-    $before = $post;
-    _minn_post_writer()->update($post->ID, ['post_status' => 'publish']);
-    wp_cache_delete($post->ID, 'posts');
-    $post = get_post($post->ID);
-    _minn_post_writer()->recountTaxonomiesOf($post->ID);
-    wp_transition_post_status('publish', $old, $post);
+    $columns = ['post_status' => 'publish'];
+    // A floating date settles when the post goes out.
+    if ($before->post_date_gmt === '0000-00-00 00:00:00') {
+        $columns['post_date_gmt'] = get_gmt_from_date($before->post_date);
+    }
+    _minn_post_writer()->update($before->ID, $columns);
+    clean_post_cache($before);
+    $post = get_post($before->ID);
+    wp_transition_post_status('publish', $before->post_status, $post);
     do_action("edit_post_{$post->post_type}", $post->ID, $post);
     do_action('edit_post', $post->ID, $post);
     do_action("save_post_{$post->post_type}", $post->ID, $post, true);
     do_action('save_post', $post->ID, $post, true);
     do_action('wp_insert_post', $post->ID, $post, true);
-    do_action('wp_after_insert_post', $post->ID, $post, true, $before);
+    wp_after_insert_post($post, true, $before);
+}
+
+/** The publish_future_post event's work: a scheduled post whose time has come goes out; one early is scheduled again for its time. */
+function check_and_publish_future_post($post)
+{
+    $post = get_post($post);
+    if ($post === null || $post->post_status !== 'future') {
+        return;
+    }
+    $time = strtotime($post->post_date_gmt . ' GMT');
+    if ($time > time()) {
+        wp_clear_scheduled_hook('publish_future_post', [$post->ID]);
+        wp_schedule_single_event($time, 'publish_future_post', [$post->ID]);
+        return;
+    }
+    return wp_publish_post($post->ID);
+}
+
+/** The default on future_post and future_page: a scheduled post is put on the cron calendar for its time, which is how WordPress publishes it. */
+function _future_post_hook($deprecated, $post)
+{
+    wp_clear_scheduled_hook('publish_future_post', [$post->ID]);
+    wp_schedule_single_event(strtotime(get_gmt_from_date($post->post_date) . ' GMT'), 'publish_future_post', [$post->ID]);
+}
+
+/** The first default on transition_post_status: a post that stops being scheduled leaves the cron calendar. */
+function _transition_post_status($new_status, $old_status, $post)
+{
+    if ($old_status === 'future' && $new_status !== 'future') {
+        wp_clear_scheduled_hook('publish_future_post', [$post->ID]);
+    }
+}
+
+/** The default on publish_post and publish_page: a site that has published something is no longer fresh. */
+function _delete_option_fresh_site()
+{
+    update_option('fresh_site', '0', false);
+}
+
+/** The default on wp_trash_post and before_delete_post: a page that stops existing stops being the front page or the posts page. */
+function _reset_front_page_settings_for_post($post_id)
+{
+    $post = get_post($post_id);
+    if ($post === null || $post->post_type !== 'page') {
+        return;
+    }
+    if ((int) get_option('page_on_front') === $post->ID) {
+        update_option('show_on_front', 'posts');
+        update_option('page_on_front', 0);
+    }
+    if ((int) get_option('page_for_posts') === $post->ID) {
+        update_option('page_for_posts', 0);
+    }
+}
+
+/** The default on before_delete_post: a deleted privacy policy page is no longer the site's policy. */
+function _reset_privacy_policy_page_for_post($post_id)
+{
+    $post = get_post($post_id);
+    if ($post !== null && $post->post_type === 'page' && (int) get_option('wp_page_for_privacy_policy') === $post->ID) {
+        update_option('wp_page_for_privacy_policy', 0);
+    }
+}
+
+/** The default on save_post and delete_post: the calendar is drawn again. */
+function delete_get_calendar_cache()
+{
+    wp_cache_delete('get_calendar', 'calendar');
 }
 
 function wp_trash_post($post_id = 0)
@@ -1041,12 +1141,19 @@ function wp_trash_post($post_id = 0)
         return $check;
     }
     do_action('wp_trash_post', $post->ID, $post->post_status);
-    // The slug gains __trashed, the status and time are kept, a revision is taken: Content\PostWriter::trash.
-    _minn_post_writer()->trash(_minn_posts()->find($post->ID), get_current_user_id());
-    wp_cache_delete($post->ID, 'posts');
-    wp_cache_delete($post->ID, 'post_meta');
-    wp_transition_post_status('trash', $post->post_status, get_post($post->ID));
+    // The status, the time and the slug it had are kept for the way back; then the save itself, as wp_update_post makes it.
+    add_post_meta($post->ID, '_wp_trash_meta_status', $post->post_status);
+    add_post_meta($post->ID, '_wp_trash_meta_time', time());
+    add_post_meta($post->ID, '_wp_desired_post_slug', $post->post_name);
+    clean_post_cache($post->ID);
+    _minn_post_before_save(['post_status' => 'trash', 'post_name' => $post->post_name . '__trashed'] + $post->to_array(), $post->ID);
+    _minn_post_writer()->trash(_minn_posts()->find($post->ID));
+    _minn_post_keep_categories($post);
+    $trashed = _minn_post_saved($post->ID, true, $post);
+    wp_after_insert_post($trashed, true, $post);
+    wp_trash_post_comments($post->ID);
     do_action('trashed_post', $post->ID, $post->post_status);
+    // The reference answers with the post as it was before the trash.
     return $post;
 }
 
@@ -1072,10 +1179,12 @@ function wp_untrash_post($post_id = 0)
         $columns['post_name'] = _minn_post_writer()->uniqueSlug($desired, $post->ID);
     }
     delete_post_meta($post->ID, '_wp_desired_post_slug');
+    _minn_post_before_save($columns + $post->to_array(), $post->ID);
     _minn_post_writer()->update($post->ID, $columns);
-    wp_cache_delete($post->ID, 'posts');
-    _minn_post_writer()->recountTaxonomiesOf($post->ID);
-    wp_transition_post_status($new, 'trash', get_post($post->ID));
+    _minn_post_keep_categories($post);
+    $restored = _minn_post_saved($post->ID, true, $post);
+    wp_after_insert_post($restored, true, $post);
+    wp_untrash_post_comments($post->ID);
     do_action('untrashed_post', $post->ID, $previous);
     return $post;
 }
@@ -1089,25 +1198,45 @@ function wp_delete_post($post_id = 0, $force_delete = false)
     if (!$force_delete && in_array($post->post_type, ['post', 'page'], true) && $post->post_status !== 'trash' && EMPTY_TRASH_DAYS) {
         return wp_trash_post($post_id);
     }
+    if ($post->post_type === 'attachment') {
+        return wp_delete_attachment($post_id, $force_delete);
+    }
     $check = apply_filters('pre_delete_post', null, $post, $force_delete);
     if ($check !== null) {
         return $check;
     }
     do_action('before_delete_post', $post->ID, $post);
+    delete_post_meta($post->ID, '_wp_trash_meta_status');
+    delete_post_meta($post->ID, '_wp_trash_meta_time');
+    wp_delete_object_term_relationships($post->ID, get_object_taxonomies($post->post_type));
+    _minn_post_writer()->reparentChildren($post->ID, (int) $post->post_parent, $post->post_type === 'page' ? ['page', 'attachment'] : ['attachment']);
     foreach (wp_get_post_revisions($post->ID) as $revision) {
         wp_delete_post_revision($revision);
     }
-    $writer = _minn_post_writer();
-    $writer->reparentChildren($post->ID, (int) $post->post_parent, $post->post_type === 'page' ? ['page', 'attachment'] : ['attachment']);
-    do_action('delete_post', $post->ID, $post);
-    $taxonomies = $writer->taxonomiesOf($post->ID);
-    $writer->destroy($post->ID);
-    foreach ($taxonomies as $taxonomy) {
-        $writer->recount($taxonomy);
+    foreach (_minn_comments()->idsOf($post->ID) as $comment_id) {
+        wp_delete_comment($comment_id, true);
     }
-    wp_cache_delete($post->ID, 'posts');
-    wp_cache_delete($post->ID, 'post_meta');
+    _minn_post_delete_meta($post->ID);
+    return _minn_post_remove($post);
+}
+
+/** @internal Each meta row of a post removed by its id, as the reference removes them before the post, with the hooks of each. */
+function _minn_post_delete_meta(int $post_id): void
+{
+    foreach (_minn_meta()->rowsOf('post', $post_id) as $row) {
+        delete_metadata_by_mid('post', (int) $row['meta_id']);
+    }
+}
+
+/** @internal The row itself, between the delete actions, typed and untyped, and the caches let go after. */
+function _minn_post_remove(WP_Post $post): WP_Post
+{
+    do_action("delete_post_{$post->post_type}", $post->ID, $post);
+    do_action('delete_post', $post->ID, $post);
+    _minn_post_writer()->destroy($post->ID);
+    do_action("deleted_post_{$post->post_type}", $post->ID, $post);
     do_action('deleted_post', $post->ID, $post);
+    clean_post_cache($post);
     do_action('after_delete_post', $post->ID, $post);
     return $post;
 }
@@ -1115,16 +1244,13 @@ function wp_delete_post($post_id = 0, $force_delete = false)
 function wp_delete_post_revision($revision)
 {
     $revision = get_post($revision);
-    if ($revision === null) {
+    if ($revision === null || $revision->post_type !== 'revision') {
         return $revision;
     }
     do_action('before_delete_post', $revision->ID, $revision);
-    do_action('delete_post', $revision->ID, $revision);
-    _minn_post_writer()->destroy($revision->ID);
-    wp_cache_delete($revision->ID, 'posts');
-    do_action('deleted_post', $revision->ID, $revision);
+    $removed = _minn_post_remove($revision);
     do_action('wp_delete_post_revision', $revision->ID, $revision);
-    return $revision;
+    return $removed;
 }
 
 

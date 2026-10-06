@@ -90,6 +90,10 @@ function update_option($option, $value, $autoload = null)
     $old = get_option($option);
     $value = apply_filters("pre_update_option_{$option}", $value, $old, $option);
     $value = apply_filters('pre_update_option', $value, $option, $old);
+    // An unchanged value is no update: nothing is written and nobody is told.
+    if ($value === $old || maybe_serialize($value) === maybe_serialize($old)) {
+        return false;
+    }
     if (Runtime::options()->get($option) === null) {
         return add_option($option, $value, '', $autoload);
     }
@@ -110,7 +114,7 @@ function update_site_option($option, $value)
 function delete_option($option)
 {
     $option = trim((string) $option);
-    if ($option === '' || Options::guarded($option)) {
+    if ($option === '' || Options::guarded($option) || !Runtime::options()->exists($option)) {
         return false;
     }
     do_action('delete_option', $option);

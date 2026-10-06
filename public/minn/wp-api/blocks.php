@@ -1064,3 +1064,37 @@ function block_core_post_template_uses_featured_image($inner_blocks)
     }
     return false;
 }
+
+/** Whether the site has a published post, as the calendar block stores it. */
+function block_core_calendar_has_published_posts()
+{
+    $has = get_option('wp_calendar_block_has_published_posts', null);
+    return $has === null ? block_core_calendar_update_has_published_posts() : (bool) $has;
+}
+
+/** Stores whether the site has a published post, for the calendar block. */
+function block_core_calendar_update_has_published_posts()
+{
+    $has = _minn_posts()->hasPublished('post');
+    update_option('wp_calendar_block_has_published_posts', $has);
+    return $has;
+}
+
+/** The default on transition_post_status: a post moving into or out of publish asks the calendar's question again. */
+function block_core_calendar_update_has_published_post_on_transition_post_status($new_status, $old_status, $post)
+{
+    if ($new_status === $old_status || get_post_type($post) !== 'post' || ($new_status !== 'publish' && $old_status !== 'publish')) {
+        return;
+    }
+    block_core_calendar_update_has_published_posts();
+}
+
+/** The default on delete_post: a published post going away asks the calendar's question again. */
+function block_core_calendar_update_has_published_post_on_delete($post_id)
+{
+    $post = get_post($post_id);
+    if ($post === null || $post->post_type !== 'post' || $post->post_status !== 'publish') {
+        return;
+    }
+    block_core_calendar_update_has_published_posts();
+}

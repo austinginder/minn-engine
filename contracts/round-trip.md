@@ -69,7 +69,12 @@ Two pieces make the copy fit to test on:
   catcher (Mailpit on 127.0.0.1:1025) from `phpmailer_init`, whatever SMTP
   server or mail plugin the site is set up with: a copy of a live site
   keeps its live mail settings. Both stacks load it, so a day's footprint is
-  the work and nothing else.
+  the work and nothing else. Requests to the site's own address are
+  refused too: the parked WordPress serves from 127.0.0.1 under the site's
+  name, so its loopbacks (Action Scheduler's async runner, a plugin's
+  background upload) reached Minn through the web server, and once Minn
+  answered admin-ajax.php it ran WordPress's background jobs mid-day.
+  `php -S` could never answer its own loopbacks anyway.
 - **Refusing HTTP is not enough on a shop.** `pre_http_request` sees only
   what goes through WordPress's HTTP API, and some plugins bring their own
   client. On shop-dogfood, WooCommerce Xero refreshes its OAuth token
@@ -209,15 +214,14 @@ shop-dogfood's first days added these:
 
 Found by the round trip and not done yet:
 
-- **The engine's own REST writes do not tell plugins.** Posts, media,
-  users and terms saved through Minn's `/wp/v2` controllers (which Minn
-  Admin uses) fire none of `transition_post_status`, `save_post`,
-  `add_attachment`, `profile_update` and the rest, so plugins that react to
-  an edit do nothing on Minn. On shop-dogfood that is 51 new-post
-  notifications Better Notifications never queued, Smush never compressing
-  the upload, CaptainCore's newsletter not sent, WooCommerce's
-  `last_update` not stamped: almost all of the day's remaining
-  differences. The facade's own `wp_insert_post` path does fire them.
+- **The engine's own REST writes tell plugins now** for posts, pages,
+  comments and settings (`contracts/runtime.md`, "Writes tell plugins"):
+  on shop-dogfood Minn's day sends the same 51 new-post notifications.
+  Their bodies differ: the newsletter renders the post through
+  `apply_filters('the_content')`, which on Minn has none of the
+  reference's defaults behind it, so the mail carries raw block markup.
+  Media, terms and users over REST are next; Smush and WooCommerce's
+  `last_update` wait on them.
 - WordPress's own update checks on `admin_init` (`_maybe_update_*`) do
   not run on Minn (the engine has its own updater, and the reference
   skips them on `admin-ajax.php` anyway).

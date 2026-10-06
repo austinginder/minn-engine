@@ -121,6 +121,7 @@ function wp_insert_comment($commentdata)
         wp_update_comment_count($columns['comment_post_ID']);
     }
     wp_cache_delete($columns['comment_post_ID'], 'posts');
+    clean_comment_cache($id);
     $comment = get_comment($id);
     do_action('wp_insert_comment', $id, $comment);
     return $id;
@@ -128,17 +129,20 @@ function wp_insert_comment($commentdata)
 
 function wp_update_comment_count($post_id, $do_deferred = false)
 {
+    return wp_update_comment_count_now($post_id);
+}
+
+/** Recounts a post's approved comments now, telling plugins the old and new counts. */
+function wp_update_comment_count_now($post_id)
+{
     $post_id = (int) $post_id;
-    if ($post_id <= 0) {
-        return false;
-    }
-    $post = get_post($post_id);
+    $post = $post_id > 0 ? get_post($post_id) : null;
     if ($post === null) {
         return false;
     }
     $old = (int) $post->comment_count;
     _minn_comments()->recount($post_id);
-    wp_cache_delete($post_id, 'posts');
+    clean_post_cache($post_id);
     $new = (int) get_post($post_id)->comment_count;
     do_action('wp_update_comment_count', $post_id, $new, $old);
     do_action("edit_post_{$post->post_type}", $post_id, get_post($post_id));
@@ -157,13 +161,16 @@ function wp_update_comment($commentarr, $wp_error = false)
     if (is_wp_error($columns)) {
         return $wp_error ? $columns : 0;
     }
-    if ($columns === []) {
-        return 0;
+    // The reference writes and tells plugins even when nothing changed, and answers 0 then.
+    if ($columns !== []) {
+        _minn_comments()->update($comment->comment_ID, $columns);
     }
-    _minn_comments()->update($comment->comment_ID, $columns);
+    clean_comment_cache($comment->comment_ID);
     wp_update_comment_count((int) $comment->comment_post_ID);
-    do_action('edit_comment', $comment->comment_ID, get_comment($comment->comment_ID)->to_array());
-    return 1;
+    $updated = get_comment($comment->comment_ID);
+    do_action('edit_comment', $comment->comment_ID, $updated->to_array());
+    wp_transition_comment_status(_minn_comment_status_word($updated->comment_approved), _minn_comment_status_word($comment->comment_approved), $updated);
+    return $columns === [] ? 0 : 1;
 }
 
 function wp_set_comment_status($comment_id, $comment_status, $wp_error = false)
@@ -183,9 +190,84 @@ function wp_set_comment_status($comment_id, $comment_status, $wp_error = false)
         return false;
     }
     _minn_comments()->update($comment->comment_ID, ['comment_approved' => $status]);
-    wp_update_comment_count((int) $comment->comment_post_ID);
+    clean_comment_cache($comment->comment_ID);
+    $updated = get_comment($comment->comment_ID);
     do_action('wp_set_comment_status', $comment->comment_ID, $comment_status);
+    wp_transition_comment_status(_minn_comment_status_word($status), _minn_comment_status_word($comment->comment_approved), $updated);
+    wp_update_comment_count((int) $comment->comment_post_ID);
     return true;
+}
+
+/** @internal A stored comment status in the words the transition actions use: approved, unapproved, spam, trash. */
+function _minn_comment_status_word(string $stored): string
+{
+    return match ($stored) {
+        '1', 'approve' => 'approved',
+        '0', 'hold' => 'unapproved',
+        default => $stored,
+    };
+}
+
+/** What plugins are told when a comment changes status; a comment that keeps its status hears only comment_{status}_{type}. */
+function wp_transition_comment_status($new_status, $old_status, $comment)
+{
+    $new = _minn_comment_status_word((string) $new_status);
+    $old = _minn_comment_status_word((string) $old_status);
+    if ($new !== $old) {
+        do_action('transition_comment_status', $new, $old, $comment);
+        do_action("comment_{$old}_to_{$new}", $comment);
+    }
+    $type = $comment->comment_type === '' ? 'comment' : $comment->comment_type;
+    do_action("comment_{$new}_{$type}", $comment->comment_ID, $comment);
+}
+
+/** Lets go of comments' cached rows and meta, telling plugins about each. */
+function clean_comment_cache($ids)
+{
+    foreach ((array) $ids as $id) {
+        wp_cache_delete((int) $id, 'comment');
+        wp_cache_delete((int) $id, 'comment_meta');
+        do_action('clean_comment_cache', (int) $id);
+    }
+}
+
+/** The trash takes a post's comments with it: each becomes post-trashed, and their statuses are kept to give back. */
+function wp_trash_post_comments($post = null)
+{
+    $post = get_post($post);
+    if ($post === null) {
+        return;
+    }
+    do_action('trash_post_comments', $post->ID);
+    $statuses = _minn_comments()->statusesOf($post->ID);
+    if ($statuses === []) {
+        return;
+    }
+    add_post_meta($post->ID, '_wp_trash_meta_comments_status', $statuses);
+    _minn_comments()->setStatusOf(array_keys($statuses), 'post-trashed');
+    clean_comment_cache(array_keys($statuses));
+    do_action('trashed_post_comments', $post->ID, $statuses);
+    return count($statuses);
+}
+
+/** A post back from the trash gives its comments their statuses back. */
+function wp_untrash_post_comments($post = null)
+{
+    $post = get_post($post);
+    if ($post === null) {
+        return;
+    }
+    $statuses = get_post_meta($post->ID, '_wp_trash_meta_comments_status', true);
+    if (!is_array($statuses) || $statuses === []) {
+        return true;
+    }
+    do_action('untrash_post_comments', $post->ID);
+    foreach (array_keys(array_flip(array_map('strval', $statuses))) as $status) {
+        _minn_comments()->setStatusOf(array_map('intval', array_keys($statuses, $status, false)), $status);
+    }
+    clean_comment_cache(array_keys($statuses));
+    delete_post_meta($post->ID, '_wp_trash_meta_comments_status');
+    do_action('untrashed_post_comments', $post->ID);
 }
 
 function wp_delete_comment($comment_id, $force_delete = false)
@@ -201,7 +283,13 @@ function wp_delete_comment($comment_id, $force_delete = false)
     _minn_comments()->orphanReplies((int) $comment->comment_ID, (int) $comment->comment_parent);
     _minn_comments()->delete((int) $comment->comment_ID);
     do_action('deleted_comment', $comment->comment_ID, $comment);
-    wp_update_comment_count((int) $comment->comment_post_ID);
+    clean_comment_cache($comment->comment_ID);
+    do_action('wp_set_comment_status', $comment->comment_ID, 'delete');
+    wp_transition_comment_status('delete', $comment->comment_approved, $comment);
+    // Only an approved comment was counted.
+    if ($comment->comment_approved === '1') {
+        wp_update_comment_count((int) $comment->comment_post_ID);
+    }
     return true;
 }
 
@@ -436,6 +524,7 @@ function wp_allow_comment($commentdata, $wp_error = false)
         $message = apply_filters('comment_duplicate_message', 'Duplicate comment detected; it looks as though you&#8217;ve already said that!');
         return $wp_error ? new WP_Error('comment_duplicate', $message, 409) : wp_die($message, 409);
     }
+    do_action('check_comment_flood', (string) ($commentdata['comment_author_IP'] ?? ''), (string) ($commentdata['comment_author_email'] ?? ''), (string) ($commentdata['comment_date_gmt'] ?? ''), $wp_error);
     if ($refusal === 'comment_flood') {
         do_action('comment_flood_trigger', time() - CommentModeration::FLOOD_SECONDS, time());
         $message = apply_filters('comment_flood_message', 'You are posting comments too quickly. Slow down.');
@@ -1166,4 +1255,14 @@ function comment_time($format = '', $comment_id = 0)
 function wp_get_comment_fields_max_lengths()
 {
     return apply_filters('wp_get_comment_fields_max_lengths', _minn_comments()->fieldLengths());
+}
+
+/** The default on transition_comment_status: the last-modified time of comments is asked again. */
+function _clear_modified_cache_on_transition_comment_status($new_status, $old_status)
+{
+    if ($new_status === 'approved' || $old_status === 'approved') {
+        foreach (['server', 'gmt', 'blog'] as $timezone) {
+            wp_cache_delete("lastcommentmodified:{$timezone}", 'timeinfo');
+        }
+    }
 }

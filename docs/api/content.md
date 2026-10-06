@@ -10,12 +10,12 @@ the repositories and records: posts, users, terms, comments, and the render pipe
 | [`CommentFilter`](#commentfilter) | final readonly class | 46 | What a comment listing is narrowed to. Every field is optional; the id |
 | [`CommentModeration`](#commentmoderation) | final readonly class | 43 | Whether a comment may be stored and in what state: the duplicate and |
 | [`CommentRecord`](#commentrecord) | final readonly class | 114 | One row of the comments table, read by name: $comment->author, ->content, |
-| [`Comments`](#comments) | final readonly class | 283 | Reads and writes over the comments table. |
+| [`Comments`](#comments) | final readonly class | 309 | Reads and writes over the comments table. |
 | [`ContentScan`](#contentscan) | final class | 196 | What a site's stored content asks of the engine: shortcodes, block |
 | [`Excerpt`](#excerpt) | final class | 101 | The reference's generated excerpt, as captured from probe posts: |
 | [`Inventory`](#inventory) | final readonly class | 253 | Plugins, themes, must-use plugins, and drop-ins as they sit on disk. |
 | [`MenuItem`](#menuitem) | final readonly class | 22 | One classic nav_menu_item, fields resolved from the post, its |
-| [`Menus`](#menus) | final readonly class | 485 | Classic nav_menu terms and nav_menu_item posts. The front uses these |
+| [`Menus`](#menus) | final readonly class | 513 | Classic nav_menu terms and nav_menu_item posts. The front uses these |
 | [`MoreTag`](#moretag) | final class | 20 | The `<!--more-->` marker that splits a post into the part a listing shows |
 | [`Page`](#page) | final readonly class | 49 | One page of a listing: the rows on it and how many rows the whole |
 | [`PasswordGate`](#passwordgate) | final class | 34 | A password-protected post on the front end: its body is the password |
@@ -24,8 +24,8 @@ the repositories and records: posts, users, terms, comments, and the render pipe
 | [`PostFilter`](#postfilter) | final readonly class | 55 | What a listing is narrowed to. Every field is optional and the object is |
 | [`PostRecord`](#postrecord) | final readonly class | 156 | One row of the posts table, read by name. The columns keep their |
 | [`PostStatus`](#poststatus) | enum | 42 | The statuses a post row can hold; the value is the column's own spelling. |
-| [`PostWriter`](#postwriter) | final readonly class | 400 | Every write to the posts table and its satellites: rows, meta, term |
-| [`Posts`](#posts) | final readonly class | 496 | Reads over the posts table. A single post comes back as a PostRecord and |
+| [`PostWriter`](#postwriter) | final readonly class | 435 | Every write to the posts table and its satellites: rows, meta, term |
+| [`Posts`](#posts) | final readonly class | 502 | Reads over the posts table. A single post comes back as a PostRecord and |
 | [`Reader`](#reader) | final class | 72 | Who is reading this request: their user id, whether they may read |
 | [`Revisions`](#revisions) | final readonly class | 86 | Revision rows: the plain snapshots and the per-author autosave slots. |
 | [`Site`](#site) | final readonly class | 73 | Site-wide options and the site's clock. |
@@ -179,7 +179,7 @@ One row of the comments table, read by name: $comment->author, ->content,
 ->postId, ->parentId, and isApproved() for the status the reference
 stores as '1'. Array access is the migration bridge, read-only.
 
-Used by: `Minn\Admin\Notifications`, `Minn\Blocks\Context`, `Minn\Blocks\Dynamic\LatestComments`, `Minn\Blocks\Dynamic\Theme\Comments`, `Minn\Content\Comments`, `Minn\Front\CommentList`, `Minn\Front\Feeds`, `Minn\Rest\CommentObject`, `Minn\Rest\CommentsController`
+Used by: `Minn\Admin\Notifications`, `Minn\Blocks\Context`, `Minn\Blocks\Dynamic\LatestComments`, `Minn\Blocks\Dynamic\Theme\Comments`, `Minn\Content\Comments`, `Minn\Front\CommentList`, `Minn\Front\Feeds`, `Minn\Rest\CommentObject`, `Minn\Rest\CommentsController`, `Minn\Runtime\CommentEvents`
 
 - readonly `int $id`
 - readonly `int $postId`
@@ -255,7 +255,7 @@ Reads and writes over the comments table.
 - const `UPDATABLE` = `array (   0 => 'comment_post_ID',   1 => 'comment_author',   2 => 'comment_author_email',   3 => 'comment_author_url',   4 => 'comment_author_IP',   5 => 'comment_date',   6 => 'comment_date_gmt',   7 => 'comment_content',   8 => 'comment_karma',   9 => 'comment_approved',   10 => 'comment_agent',   11 => 'comment_type',   12 => 'comment_parent',   13 => 'user_id', )`
 - const `FIELD_LENGTHS` = `array (   'comment_author' => 245,   'comment_author_email' => 100,   'comment_author_url' => 200,   'comment_content' => 65525, )` — The comment form fields whose length the table limits, with the length a stock table gives each.
 
-Used by: `Minn\Blocks\Dynamic\Theme\Comments`, `Minn\Content\CommentModeration`, `Minn\Engine`, `Minn\Front\CommentPostController`, `Minn\Front\Feeds`, `Minn\Rest\CommentObject`, `Minn\Rest\CommentsController`, `Minn\Rest\Services`, `Minn\Theme\PageRenderer`
+Used by: `Minn\Blocks\Dynamic\Theme\Comments`, `Minn\Content\CommentModeration`, `Minn\Engine`, `Minn\Front\CommentPostController`, `Minn\Front\Feeds`, `Minn\Rest\CommentObject`, `Minn\Rest\CommentsController`, `Minn\Rest\Services`, `Minn\Runtime\CommentEvents`, `Minn\Theme\PageRenderer`
 
 ```php
 __construct(Minn\Db $db)
@@ -322,6 +322,24 @@ fewer than it holds. A column the schema does not describe keeps the
 stock table's length.
 
 - `@return array<string, int>`
+
+### `idsOf(int $postId): array`
+
+The ids of every comment on a post, whatever its status, oldest first. @return list<int>
+
+- `@return list<int>`
+
+### `statusesOf(int $postId): array`
+
+Every comment on a post as id => status, which the trash keeps to give back. @return array<int, string>
+
+- `@return array<int, string>`
+
+### `setStatusOf(array $ids, string $status): void`
+
+Sets one status on the given comments. @param list<int> $ids
+
+- `@param list<int> $ids`
 
 ### `orphanReplies(int $id, int $parent): void`
 
@@ -657,11 +675,21 @@ Applies the given fields to one item, stored the way the reference stores them.
 
 - `@param array<string, mixed> $fields`
 
+### `itemsPointingAt(int $objectId, string $type): array`
+
+The ids of the menu items, in any menu or none, that point at an object of a kind (post_type, taxonomy). @return list<int>
+
+- `@return list<int>`
+
+### `appendPage(int $menuId, int $pageId, int $authorId): int`
+
+Adds a page to the end of a menu, titled by the page itself, as a menu set to add new pages takes it.
+
 ### `deleteItem(int $id): void`
 
 Hard-deletes one item.
 
-Internals: `hydrate()` (private, line 185), `meta()` (private, line 242), `menuIdOf()` (private, line 255), `classList()` (private, line 267), `xfnList()` (private, line 277), `writeMeta()` (private, line 474), `writer()` (private, line 488), `site()` (private, line 496)
+Internals: `hydrate()` (private, line 185), `meta()` (private, line 242), `menuIdOf()` (private, line 255), `classList()` (private, line 267), `xfnList()` (private, line 277), `writeMeta()` (private, line 502), `writer()` (private, line 516), `site()` (private, line 524)
 
 
 ## MoreTag
@@ -875,7 +903,7 @@ Array access is the migration bridge: code that still reads
 $post['post_title'] keeps working while it is moved over. New code
 reads the properties. The style suite counts the bracket reads down.
 
-Used by: `Minn\Blocks\Context`, `Minn\Blocks\Dynamic\LatestPosts`, `Minn\Blocks\Dynamic\Theme\Navigation`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Content\Excerpt`, `Minn\Content\Page`, `Minn\Content\PasswordGate`, `Minn\Content\PostStatus`, `Minn\Content\PostWriter`, `Minn\Content\Posts`, `Minn\Engine`, `Minn\Extension\SeamRunner`, `Minn\Front\Canonical`, `Minn\Front\CommentPostController`, `Minn\Front\Feeds`, `Minn\Front\Permalinks`, `Minn\Front\Renderer`, `Minn\Front\Resolution`, `Minn\Front\Resolver`, `Minn\Front\SingleAddresses`, `Minn\Front\Sitemaps`, `Minn\Media\Writer`, `Minn\Rest\CommentsController`, `Minn\Rest\GlobalStylesController`, `Minn\Rest\GlobalStylesObject`, `Minn\Rest\MediaController`, `Minn\Rest\MediaObject`, `Minn\Rest\PostObject`, `Minn\Rest\PostsController`, `Minn\Rest\PostsWriteController`, `Minn\Rest\RevisionsController`, `Minn\Rest\SearchController`, `Minn\Runtime\CommentCloser`, `Minn\Theme\ClassicContent`, `Minn\Theme\HeadLinks`, `Minn\Theme\UserStyles`
+Used by: `Minn\Blocks\Context`, `Minn\Blocks\Dynamic\LatestPosts`, `Minn\Blocks\Dynamic\Theme\Navigation`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Content\Excerpt`, `Minn\Content\Page`, `Minn\Content\PasswordGate`, `Minn\Content\PostStatus`, `Minn\Content\PostWriter`, `Minn\Content\Posts`, `Minn\Engine`, `Minn\Extension\SeamRunner`, `Minn\Front\Canonical`, `Minn\Front\CommentPostController`, `Minn\Front\Feeds`, `Minn\Front\Permalinks`, `Minn\Front\Renderer`, `Minn\Front\Resolution`, `Minn\Front\Resolver`, `Minn\Front\SingleAddresses`, `Minn\Front\Sitemaps`, `Minn\Media\Writer`, `Minn\Rest\GlobalStylesController`, `Minn\Rest\GlobalStylesObject`, `Minn\Rest\MediaController`, `Minn\Rest\MediaObject`, `Minn\Rest\PostObject`, `Minn\Rest\PostsController`, `Minn\Rest\PostsWriteController`, `Minn\Rest\RevisionsController`, `Minn\Rest\SearchController`, `Minn\Runtime\CommentCloser`, `Minn\Runtime\PostEvents`, `Minn\Theme\ClassicContent`, `Minn\Theme\HeadLinks`, `Minn\Theme\UserStyles`
 
 - readonly `int $id`
 - readonly `int $authorId`
@@ -1007,7 +1035,7 @@ and format side effects, and revision snapshots.
 - const `FLOATING` = `array (   0 => 'draft',   1 => 'pending',   2 => 'auto-draft', )` — The statuses whose post may have a floating date (no GMT date yet).
 - const `ZERO_DATE` = `'0000-00-00 00:00:00'`
 
-Used by: `Minn\Admin\EditorController`, `Minn\Content\Menus`, `Minn\Content\Revisions`, `Minn\Cron\Cron`, `Minn\Media\Writer`, `Minn\Rest\PostsWriteController`, `Minn\Rest\Services`, `Minn\Runtime\PostInsert`, `Minn\Runtime\TermWriter`, `Minn\Theme\TemplateWriter`, `Minn\Theme\UserStyles`
+Used by: `Minn\Admin\EditorController`, `Minn\Content\Menus`, `Minn\Content\Revisions`, `Minn\Cron\Cron`, `Minn\Media\Writer`, `Minn\Rest\PostsWriteController`, `Minn\Rest\Services`, `Minn\Runtime\PostEvents`, `Minn\Runtime\PostInsert`, `Minn\Runtime\TermWriter`, `Minn\Theme\TemplateWriter`, `Minn\Theme\UserStyles`
 
 ```php
 __construct(Minn\Db $db, Minn\Content\Posts $posts, Minn\Content\Site $site)
@@ -1057,12 +1085,13 @@ one, once.
 
 Gives a post the site's default category when it has none, as every save of a post does in the reference.
 
-### `trash(Minn\Content\PostRecord $post, int $userId): void`
+### `trash(Minn\Content\PostRecord $post): void`
 
-Moves a post to the trash as the reference does: the slug gains
-__trashed (the one it had waits in _wp_desired_post_slug), the status
-it had and the time are kept, the modified time moves, a post keeps a
-category, and the save is a revision like any other.
+The row of a post moving to the trash, as the reference writes it: the
+slug gains __trashed, the modified time moves, a floating draft's date
+settles, a post keeps a category, and the published counts follow. What
+the trash keeps for the way back (the status, the time, the slug it
+had) is meta the caller adds, and the revision comes from the save.
 
 ### `deleteMeta(int $id, string $key): void`
 
@@ -1114,12 +1143,34 @@ The side effects shared by create and update: sticky, format, featured media, fo
 
 Assigns categories, tags, and pattern categories from a write body, replacing existing links.
 
+### static `requestedTerms(array $body): array`
+
+The terms a REST body names, by taxonomy: categories, tags, and pattern
+categories, each only when the body has the field.
+
+- `@param array<string, mixed> $body`
+- `@return array<string, list<int>>`
+
 ### `maybeSaveRevision(int $id, int $userId): void`
 
 Snapshots the post's NEW state as a revision exactly when the
 reference would: compared against the latest revision, identical
 content-bearing fields add nothing, and the first update always
 snapshots.
+
+### `revisionColumns(int $id, int $userId): ?array`
+
+The row of the revision a post's current state calls for, or null
+when it calls for none (an unrevisioned type, or nothing changed
+since the latest revision).
+
+- `@return array<string, mixed>|null`
+
+### `insertRevision(array $columns): int`
+
+Writes a revision row and gives it its guid; returns its id. @param array<string, mixed> $columns
+
+- `@param array<string, mixed> $columns`
 
 ### `reparentChildren(int $id, int $parent, array $types): void`
 
@@ -1139,7 +1190,7 @@ The database door this writer writes through, for a caller wrapping several of i
 
 Hard-deletes a post with its revisions and its meta.
 
-Internals: `saveSticky()` (private, line 256)
+Internals: `saveSticky()` (private, line 253)
 
 
 ## Posts
@@ -1208,6 +1259,10 @@ missing URL.
 ### `published(string $type = 'post', int $page = 1, int $perPage = 10): Minn\Content\Page`
 
 The published posts of one type, newest first: the everyday listing.
+
+### `hasPublished(string $type): bool`
+
+Whether any post of a type is published.
 
 ### `count(Minn\Content\PostFilter $filter): int`
 
@@ -1311,7 +1366,7 @@ The newest autosave of a post by one author, or null.
 
 The slug of the post's first category, or null.
 
-Internals: `record()` (private, line 21), `byName()` (private, line 49), `byPath()` (private, line 96), `scope()` (private, line 202), `like()` (private, line 228), `neighbour()` (private, line 303), `weekMode()` (private, line 428), `monthBeside()` (private, line 463), `latest()` (private, line 472)
+Internals: `record()` (private, line 21), `byName()` (private, line 49), `byPath()` (private, line 96), `scope()` (private, line 208), `like()` (private, line 234), `neighbour()` (private, line 309), `weekMode()` (private, line 434), `monthBeside()` (private, line 469), `latest()` (private, line 478)
 
 
 ## Reader

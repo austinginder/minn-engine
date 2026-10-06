@@ -381,3 +381,12 @@ function is_user_member_of_blog($user_id = 0, $blog_id = 0)
     $user_id = $user_id ?: get_current_user_id();
     return $user_id > 0 && get_userdata($user_id) !== false;
 }
+
+/** The default on profile_update: a user who changed the generated password stops being reminded to. */
+function default_password_nag_edit_user($user_ID, $old_data)
+{
+    $user = get_userdata($user_ID);
+    if ($user && $old_data instanceof WP_User && $user->user_pass !== $old_data->user_pass && get_user_meta($user_ID, 'default_password_nag', true)) {
+        delete_user_meta($user_ID, 'default_password_nag');
+    }
+}

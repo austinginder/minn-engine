@@ -14,7 +14,7 @@ the wp/v2 surface: shapes and controllers
 | [`Caller`](#caller) | final class | 95 | Who is making this REST call. Resolved once from the cookie and nonce; |
 | [`Catalogue`](#catalogue) | final class | 70 | The route table read from the classes alone: every #[Route] under |
 | [`CommentObject`](#commentobject) | final readonly class | 75 | The wp/v2 comment object; edit context adds the moderation-desk fields. |
-| [`CommentsController`](#commentscontroller) | final readonly class | 280 | wp/v2/comments: the status tabs with pagination headers, single, |
+| [`CommentsController`](#commentscontroller) | final readonly class | 284 | wp/v2/comments: the status tabs with pagination headers, single, |
 | [`Context`](#context) | enum | 18 | The view a REST caller asked for. View is the public shape, edit adds the |
 | [`DeclaredPostsController`](#declaredpostscontroller) | final readonly class | 56 | wp/v2/{rest_base} for extra post types declared by an active extension. |
 | [`Embed`](#embed) | final class | 180 | The _embed decoration and the embed context. Every embeddable link in an |
@@ -36,7 +36,7 @@ the wp/v2 surface: shapes and controllers
 | [`PolicyGate`](#policygate) | final readonly class | 91 | Judges a route's policy against the caller, with the reference's |
 | [`PostObject`](#postobject) | final readonly class | 482 | Builds the wp/v2 post and page objects in the reference's shape: the |
 | [`PostsController`](#postscontroller) | final readonly class | 182 | wp/v2 posts and pages, read side. |
-| [`PostsWriteController`](#postswritecontroller) | final readonly class | 365 | wp/v2 posts and pages, write side: create, update, trash, and force |
+| [`PostsWriteController`](#postswritecontroller) | final readonly class | 424 | wp/v2 posts and pages, write side: create, update, trash, and force |
 | [`Reply`](#reply) | final class | 47 | JSON responses in the reference's shape: its header set, its json_encode |
 | [`RestUrl`](#resturl) | final readonly class | 38 | REST URLs in the form the reference emits for the site's permalink mode: |
 | [`RevisionsController`](#revisionscontroller) | final readonly class | 142 | wp/v2 revisions and autosaves under posts, pages, and blocks. |
@@ -49,8 +49,8 @@ the wp/v2 surface: shapes and controllers
 | [`SchemaValues`](#schemavalues) | final class | 206 | The value side of JSON Schema, as the reference applies it: what counts |
 | [`SearchController`](#searchcontroller) | final readonly class | 121 | wp/v2 search over published content: id, title, url, type, and the |
 | [`Services`](#services) | final class | 387 | The objects one REST request shares, each made once, on first use, from |
-| [`Settings`](#settings) | final readonly class | 108 | The registered settings the Settings views read and write, mapped to |
-| [`SettingsController`](#settingscontroller) | final readonly class | 24 | wp/v2/settings: read and write, both behind manage_options. |
+| [`Settings`](#settings) | final readonly class | 120 | The registered settings the Settings views read and write, mapped to |
+| [`SettingsController`](#settingscontroller) | final readonly class | 25 | wp/v2/settings: read and write, both behind manage_options. |
 | [`Subjects`](#subjects) | final readonly class | 41 | Whether the record a route capture names exists, for the policy gate to |
 | [`Taxonomies`](#taxonomies) | final class | 48 | The taxonomy registry the wp/v2 surface describes: the core set seeded |
 | [`TaxonomiesController`](#taxonomiescontroller) | final readonly class | 47 | wp/v2 taxonomies: the registry, whole or per type, in view or edit context. |
@@ -540,7 +540,7 @@ Route: `DELETE /wp/v2/comments/{id:\d+} (cap moderate_comments; comment {id} mus
 
 Trash remembers where the comment came from; force removes it outright.
 
-Internals: `notifyModerator()` (private, line 148), `filter()` (private, line 216), `guarded()` (private, line 239), `date()` (private, line 270), `plainComment()` (private, line 285), `cleanComment()` (private, line 299)
+Internals: `events()` (private, line 149), `filter()` (private, line 219), `guarded()` (private, line 242), `date()` (private, line 273), `plainComment()` (private, line 288), `cleanComment()` (private, line 302)
 
 
 ## Context
@@ -1494,7 +1494,7 @@ Trashes a post of any type, or deletes it with force.
 
 A field that may arrive as a scalar or as {raw: ...}.
 
-Internals: `writeNewPost()` (private, line 110), `rememberOld()` (private, line 230), `floatingDate()` (private, line 254), `scheduledIfFuture()` (private, line 264), `fieldColumns()` (private, line 283), `statusColumns()` (private, line 328), `checkStickyPasswordConflict()` (private, line 358), `validStatus()` (private, line 370), `clean()` (private, line 379)
+Internals: `events()` (private, line 120), `newColumns()` (private, line 131), `writeNewPost()` (private, line 165), `trash()` (private, line 270), `rememberOld()` (private, line 289), `floatingDate()` (private, line 314), `scheduledIfFuture()` (private, line 324), `fieldColumns()` (private, line 343), `statusColumns()` (private, line 388), `checkStickyPasswordConflict()` (private, line 418), `validStatus()` (private, line 430), `clean()` (private, line 439)
 
 
 ## Reply
@@ -1688,7 +1688,7 @@ their turn; the runtime's say before the engine answers at all (an
 authentication refusal, a pre-dispatch answer, a removed endpoint);
 and the runtime's namespaces folded into the index.
 
-Used by: `Minn\Rest\Api`
+Used by: `Minn\Rest\Api`, `Minn\Runtime\CommentEvents`, `Minn\Runtime\PostEvents`
 
 ### static `gate(Minn\Http\Request $request): ?Minn\Http\Response`
 
@@ -1706,7 +1706,11 @@ Null when the runtime has no route for the request either.
 
 The engine's index plus the namespaces and routes the runtime holds.
 
-Internals: `wpRequest()` (private, line 87), `ensure()` (private, line 103), `toResponse()` (private, line 110)
+### static `wpRequest(Minn\Http\Request $request): WP_REST_Request`
+
+The request as the runtime's server reads it, and as a REST action hands it to plugins.
+
+Internals: `ensure()` (private, line 103), `toResponse()` (private, line 110)
 
 
 ## Schema
@@ -2104,9 +2108,15 @@ __construct(Minn\Content\Site $site)
 
 Every registered setting with its current value.
 
-### `store(array $body): void`
+### `store(array $body, ?Closure $write = NULL): void`
 
-Writes the registered keys in a body, already validated against SCHEMA; unregistered keys are ignored.
+Writes the registered keys in a body, already validated against
+SCHEMA; unregistered keys are ignored. $write, when given, takes each
+option and its value as the reference's controller hands it to
+update_option (an int, a boolean, a string), so plugins are told;
+without it the stored form is written directly.
+
+- `@param (Closure(string, mixed): void)|null $write`
 
 
 ## SettingsController

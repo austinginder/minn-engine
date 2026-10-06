@@ -168,6 +168,12 @@ final readonly class Posts
         return $this->archive(PostFilter::types($type), $page, $perPage);
     }
 
+    /** Whether any post of a type is published. */
+    public function hasPublished(string $type): bool
+    {
+        return $this->db->value("SELECT ID FROM {$this->db->table('posts')} WHERE post_type = ? AND post_status = 'publish' LIMIT 1", [$type]) !== null;
+    }
+
     /** How many posts a filter reaches, without fetching any. */
     public function count(PostFilter $filter): int
     {

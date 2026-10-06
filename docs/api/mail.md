@@ -488,7 +488,7 @@ The option's JSON, secrets included, for the settings surface.
 Sends a Message through the configured transport. Failures are logged
 and reported as false; nothing here throws into a request.
 
-Used by: `Minn\Cli\MinnCommand`, `Minn\Cli\UserCommand`, `Minn\Engine`, `Minn\Front\CommentPostController`, `Minn\Login\LoginController`, `Minn\Mail\Composer`, `Minn\Rest\CommentsController`
+Used by: `Minn\Cli\MinnCommand`, `Minn\Cli\UserCommand`, `Minn\Engine`, `Minn\Front\CommentPostController`, `Minn\Login\LoginController`, `Minn\Mail\Composer`
 
 ```php
 __construct(Minn\Mail\MailSettings $settings, string $logFile)

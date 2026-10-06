@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace Minn\Rest;
 
+use Minn\Runtime\CommentEvents;
 use Minn\Http\Policy;
 use Minn\Http\Args;
 use Minn\Http\Subject;
 use Minn\Http\Access;
 use Minn\Content\CommentFilter;
 use Minn\Content\CommentRecord;
-use Minn\Content\PostRecord;
 use Minn\Content\Comments;
 use Minn\Content\Posts;
 use Minn\Content\Site;
@@ -21,7 +21,6 @@ use Minn\Http\Route;
 use Minn\RestError;
 use Minn\Support\Email;
 use Minn\Support\Kses;
-use Minn\Mail\Mailer;
 
 /**
  * wp/v2/comments: the status tabs with pagination headers, single,
@@ -119,14 +118,15 @@ final readonly class CommentsController
         // A moderator self-approves; everyone else lands in the queue (the
         // previously-approved shortcut is a recorded gap).
         $approved = $this->caller->can('moderate_comments') ? '1' : '0';
-        $id = $this->comments->insert([
+        $now = gmdate('Y-m-d H:i:s');
+        $columns = [
             'comment_post_ID' => $postId,
             'comment_author' => $user->displayName,
             'comment_author_email' => $user->email,
             'comment_author_url' => $user->url,
             'comment_author_IP' => $request->remoteAddress,
             'comment_date' => $this->site->localNow(),
-            'comment_date_gmt' => gmdate('Y-m-d H:i:s'),
+            'comment_date_gmt' => $now,
             'comment_content' => $content,
             'comment_karma' => 0,
             'comment_approved' => $approved,
@@ -134,21 +134,21 @@ final readonly class CommentsController
             'comment_type' => 'comment',
             'comment_parent' => (int) ($body['parent'] ?? 0),
             'user_id' => $session->id(),
-        ]);
-        if ($approved === '1') {
-            $this->comments->recount($postId);
-        } elseif (($this->site->option('moderation_notify') ?? '1') === '1') {
-            $this->notifyModerator($post, $content, $user->displayName);
-        }
+        ];
+        // Through REST the reference writes the comment with wp_insert_comment,
+        // which sends no notice: a held comment waits in the queue unannounced.
+        $events = $this->events();
+        $events->allow($request->remoteAddress, $user->email, $now);
+        $id = $events->insert($columns);
+        $events->restSaved($id, $request, null);
         return Reply::item($this->object->build($this->comments->find($id), Context::Edit), Fields::fromQuery($request->query), 201)
             ->withHeader('Location', $this->object->url()->to('/wp/v2/comments/' . $id));
     }
 
-    /** A comment in the queue is announced to the site's address when moderation_notify is on. */
-    private function notifyModerator(PostRecord $post, string $content, string $author): void
+    /** Tells plugins about the writes, through the runtime's comment functions. */
+    private function events(): CommentEvents
     {
-        $notice = Mailer::noticesFor($this->site)->moderation((string) ($this->site->option('admin_email') ?? ''), $post->title, $author, $content);
-        Mailer::forSite($this->site)->send($notice);
+        return new CommentEvents($this->comments);
     }
 
     /** Status flips and content or author edits, for moderators. */
@@ -163,25 +163,28 @@ final readonly class CommentsController
             throw $this->caller->refuse('rest_cannot_edit', 'Sorry, you are not allowed to edit this comment.');
         }
         $body = $request->json();
+        $status = null;
         if (isset($body['status'])) {
             $tokens = Comments::tokensFor((string) $body['status']);
             if ($tokens === null || count($tokens) > 1) {
                 throw new RestError('rest_invalid_param', 'Invalid parameter(s): status', 400);
             }
-            $this->comments->update($commentId, ['comment_approved' => $tokens[0]]);
-            $this->comments->recount($comment->postId);
+            $status = $tokens[0];
         }
+        $columns = [];
+        $fields = ['author_name' => 'comment_author', 'author_email' => 'comment_author_email', 'author_url' => 'comment_author_url'];
         if (isset($body['content'])) {
             $content = is_array($body['content']) ? (string) ($body['content']['raw'] ?? '') : (string) $body['content'];
-            $this->comments->update($commentId, ['comment_content' => $this->cleanComment($content)]);
+            $columns += ['comment_content' => $this->cleanComment($content)];
         }
-        $columns = ['author_name' => 'comment_author', 'author_email' => 'comment_author_email', 'author_url' => 'comment_author_url'];
-        foreach ($columns as $field => $column) {
+        foreach ($fields as $field => $column) {
             if (isset($body[$field])) {
-                $value = $column === 'comment_author_url' ? Kses::url((string) $body[$field]) : Kses::text((string) $body[$field]);
-                $this->comments->update($commentId, [$column => $value]);
+                $columns[$column] = $column === 'comment_author_url' ? Kses::url((string) $body[$field]) : Kses::text((string) $body[$field]);
             }
         }
+        $events = $this->events();
+        $events->update($comment, $columns, $status);
+        $events->restSaved($commentId, $request, $comment);
         return Reply::item($this->object->build($this->comments->find($commentId), Context::Edit), Fields::fromQuery($request->query));
     }
 
@@ -194,22 +197,22 @@ final readonly class CommentsController
         if (!$this->caller->can('moderate_comments')) {
             throw $this->caller->refuse('rest_cannot_delete', 'Sorry, you are not allowed to delete this comment.');
         }
-        $postId = $comment->postId;
         $fields = Fields::fromQuery($request->query);
+        $events = $this->events();
         if ($request->flag('force')) {
-            $previous = $this->object->build($comment, Context::Edit);
-            $this->comments->delete($commentId);
-            $this->comments->recount($postId);
-            return Reply::item(['deleted' => true, 'previous' => $previous], $fields);
+            $data = ['deleted' => true, 'previous' => $this->object->build($comment, Context::Edit)];
+            $events->delete($comment);
+            $events->restDeleted($comment, $data, $request);
+            return Reply::item($data, $fields);
         }
         if ($comment->approved === 'trash') {
             throw new RestError('rest_already_trashed', 'The comment has already been trashed.', 410);
         }
-        $this->comments->addMeta($commentId, '_wp_trash_meta_status', $comment->approved);
-        $this->comments->addMeta($commentId, '_wp_trash_meta_time', (string) time());
-        $this->comments->update($commentId, ['comment_approved' => 'trash']);
-        $this->comments->recount($postId);
-        return Reply::item($this->object->build($this->comments->find($commentId), Context::Edit), $fields);
+        $events->trash($comment);
+        $trashed = $this->comments->find($commentId);
+        $data = $this->object->build($trashed, Context::Edit);
+        $events->restDeleted($trashed, $data, $request);
+        return Reply::item($data, $fields);
     }
 
     /** The collection parameters as the reference reads them; the caps are checked by guarded(). */

@@ -388,7 +388,7 @@ function wp_set_object_terms($object_id, $terms, $taxonomy, $append = false)
     $old = wp_get_object_terms($object_id, $taxonomy, ['fields' => 'tt_ids', 'orderby' => 'none']);
     $old = is_wp_error($old) ? [] : array_map('intval', $old);
     $keep = $append ? array_values(array_unique([...$old, ...array_map('intval', $ttIds)])) : array_map('intval', $ttIds);
-    _minn_term_writer()->relate($object_id, $keep, $old, (string) $taxonomy);
+    _minn_term_writer()->relate($object_id, $keep, $old, (string) $taxonomy, static fn (array $tt_ids) => wp_update_term_count($tt_ids, (string) $taxonomy));
     wp_cache_delete($object_id, 'post_meta');
     do_action('set_object_terms', $object_id, $terms, $ttIds, $taxonomy, $append, $old);
     return $ttIds;
@@ -406,7 +406,7 @@ function wp_remove_object_terms($object_id, $terms, $taxonomy)
             $ttIds[] = (int) $info['term_taxonomy_id'];
         }
     }
-    return _minn_term_writer()->unrelate((int) $object_id, $ttIds, (string) $taxonomy);
+    return _minn_term_writer()->unrelate((int) $object_id, $ttIds, (string) $taxonomy, static fn (array $tt_ids) => wp_update_term_count($tt_ids, (string) $taxonomy));
 }
 
 function wp_add_object_terms($object_id, $terms, $taxonomy)
@@ -610,13 +610,25 @@ function clean_object_term_cache($object_ids, $object_type)
 
 function wp_update_term_count($terms, $taxonomy, $do_deferred = false)
 {
-    _minn_post_writer()->recount((string) $taxonomy);
-    return true;
+    $terms = array_values(array_filter(array_map('intval', (array) $terms)));
+    if ($terms === []) {
+        return false;
+    }
+    return wp_update_term_count_now($terms, $taxonomy);
 }
 
+/** Recounts terms by term_taxonomy id through the taxonomy's count callback, then lets their caches go. */
 function wp_update_term_count_now($terms, $taxonomy)
 {
-    return wp_update_term_count($terms, $taxonomy);
+    $terms = array_values(array_unique(array_map('intval', (array) $terms)));
+    $tax = get_taxonomy($taxonomy);
+    if (!$tax) {
+        return false;
+    }
+    $callback = is_callable($tax->update_count_callback ?? '') ? $tax->update_count_callback : '_update_post_term_count';
+    call_user_func($callback, $terms, $tax);
+    clean_term_cache(_minn_term_writer()->termIdsOf($terms), (string) $taxonomy, false);
+    return true;
 }
 
 function wp_defer_term_counting($defer = null)
@@ -754,8 +766,35 @@ function _update_post_term_count($terms, $taxonomy)
     if ($name === '') {
         return null;
     }
-    (new PostWriter(Runtime::current()->db, _minn_posts(), Runtime::current()->site))->recount($name);
+    foreach (array_map('intval', (array) $terms) as $tt_id) {
+        $count = _minn_term_writer()->publishedCount($tt_id);
+        do_action('update_term_count', $tt_id, $name, $count);
+        do_action('edit_term_taxonomy', $tt_id, $name, []);
+        _minn_term_writer()->storeCount($tt_id, $count);
+        do_action('edited_term_taxonomy', $tt_id, $name, []);
+    }
     return null;
+}
+
+/** The default on transition_post_status: a post that changes status changes its terms' published counts. */
+function _update_term_count_on_transition_post_status($new_status, $old_status, $post)
+{
+    // Only a move into or out of publish changes a published count.
+    if ($new_status === $old_status || ($new_status !== 'publish' && $old_status !== 'publish')) {
+        return;
+    }
+    foreach ((array) get_object_taxonomies($post->post_type) as $taxonomy) {
+        $tt_ids = wp_get_object_terms($post->ID, $taxonomy, ['fields' => 'tt_ids']);
+        if (!is_wp_error($tt_ids)) {
+            wp_update_term_count($tt_ids, $taxonomy);
+        }
+    }
+}
+
+/** The default on transition_post_status: whether the site has more than one author is asked again. */
+function __clear_multi_author_cache()
+{
+    delete_transient('is_multi_author');
 }
 
 /** Term meta per id, as the cache primer hands it back; false for an empty list. */
@@ -1225,4 +1264,26 @@ function _minn_join_list(array $items): string
     }
     $last = array_pop($items);
     return implode(', ', $items) . ' and ' . $last;
+}
+
+/** The default on delete_post: the menu items that point at a deleted post go with it. */
+function _wp_delete_post_menu_item($object_id)
+{
+    foreach (_minn_menus()->itemsPointingAt((int) $object_id, 'post_type') as $item_id) {
+        wp_delete_post($item_id, true);
+    }
+}
+
+/** The default on transition_post_status: a top-level page that is published joins every menu set to add new pages. */
+function _wp_auto_add_pages_to_menu($new_status, $old_status, $post)
+{
+    if ($new_status !== 'publish' || $old_status === 'publish' || $post->post_type !== 'page' || (int) $post->post_parent !== 0) {
+        return;
+    }
+    $options = get_option('nav_menu_options');
+    foreach ((array) ($options['auto_add'] ?? []) as $menu_id) {
+        if (is_nav_menu($menu_id)) {
+            _minn_menus()->appendPage((int) $menu_id, (int) $post->ID, get_current_user_id());
+        }
+    }
 }

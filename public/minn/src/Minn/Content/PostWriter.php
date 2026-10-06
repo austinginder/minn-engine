@@ -124,12 +124,13 @@ final readonly class PostWriter
     }
 
     /**
-     * Moves a post to the trash as the reference does: the slug gains
-     * __trashed (the one it had waits in _wp_desired_post_slug), the status
-     * it had and the time are kept, the modified time moves, a post keeps a
-     * category, and the save is a revision like any other.
+     * The row of a post moving to the trash, as the reference writes it: the
+     * slug gains __trashed, the modified time moves, a floating draft's date
+     * settles, a post keeps a category, and the published counts follow. What
+     * the trash keeps for the way back (the status, the time, the slug it
+     * had) is meta the caller adds, and the revision comes from the save.
      */
-    public function trash(PostRecord $post, int $userId): void
+    public function trash(PostRecord $post): void
     {
         $id = $post->id;
         $local = $this->site->localNow();
@@ -137,14 +138,10 @@ final readonly class PostWriter
         // A floating draft's date settles on now as it leaves for the trash.
         $settled = self::floating($post) ? ['post_date' => $local, 'post_date_gmt' => $gmt] : [];
         $this->update($id, ['post_status' => 'trash', 'post_name' => $post->slug . '__trashed'] + $settled + ['post_modified' => $local, 'post_modified_gmt' => $gmt]);
-        $this->setMeta($id, '_wp_trash_meta_status', $post->status);
-        $this->setMeta($id, '_wp_trash_meta_time', (string) time());
-        $this->setMeta($id, '_wp_desired_post_slug', $post->slug);
         if ($post->type === 'post') {
             $this->ensureCategory($id);
         }
         $this->recountTaxonomiesOf($id);
-        $this->maybeSaveRevision($id, $userId);
     }
 
     /** Removes every meta row with this key from a post. */
@@ -315,11 +312,27 @@ final readonly class PostWriter
     /** Assigns categories, tags, and pattern categories from a write body, replacing existing links. */
     public function applyTerms(int $id, array $body): void
     {
+        foreach (self::requestedTerms($body) as $taxonomy => $termIds) {
+            $this->setTerms($id, $taxonomy, $termIds);
+        }
+    }
+
+    /**
+     * The terms a REST body names, by taxonomy: categories, tags, and pattern
+     * categories, each only when the body has the field.
+     *
+     * @param array<string, mixed> $body
+     * @return array<string, list<int>>
+     */
+    public static function requestedTerms(array $body): array
+    {
+        $out = [];
         foreach (['categories' => 'category', 'tags' => 'post_tag', 'wp_pattern_category' => 'wp_pattern_category'] as $field => $taxonomy) {
             if (array_key_exists($field, $body) && is_array($body[$field])) {
-                $this->setTerms($id, $taxonomy, array_map(intval(...), $body[$field]));
+                $out[$taxonomy] = array_map(intval(...), $body[$field]);
             }
         }
+        return $out;
     }
 
     /**
@@ -330,9 +343,24 @@ final readonly class PostWriter
      */
     public function maybeSaveRevision(int $id, int $userId): void
     {
+        $columns = $this->revisionColumns($id, $userId);
+        if ($columns !== null) {
+            $this->insertRevision($columns);
+        }
+    }
+
+    /**
+     * The row of the revision a post's current state calls for, or null
+     * when it calls for none (an unrevisioned type, or nothing changed
+     * since the latest revision).
+     *
+     * @return array<string, mixed>|null
+     */
+    public function revisionColumns(int $id, int $userId): ?array
+    {
         $post = $this->posts->find($id);
         if ($post === null || !in_array($post['post_type'], ['post', 'page', 'wp_global_styles'], true)) {
-            return;
+            return null;
         }
         $latest = $this->db->row(
             "SELECT post_title, post_content, post_excerpt FROM {$this->db->table('posts')}
@@ -344,9 +372,9 @@ final readonly class PostWriter
             && $latest['post_title'] === $post['post_title']
             && $latest['post_content'] === $post['post_content']
             && $latest['post_excerpt'] === $post['post_excerpt']) {
-            return;
+            return null;
         }
-        $revisionId = $this->insert([
+        return [
             'post_author' => $userId,
             'post_date' => $post['post_modified'],
             'post_date_gmt' => $post['post_modified_gmt'],
@@ -369,8 +397,15 @@ final readonly class PostWriter
             'post_type' => 'revision',
             'post_mime_type' => '',
             'comment_count' => 0,
-        ]);
+        ];
+    }
+
+    /** Writes a revision row and gives it its guid; returns its id. @param array<string, mixed> $columns */
+    public function insertRevision(array $columns): int
+    {
+        $revisionId = $this->insert($columns);
         $this->update($revisionId, ['guid' => rtrim($this->site->option('home') ?? '', '/') . '/?p=' . $revisionId]);
+        return $revisionId;
     }
 
     /** Removes a post, its revisions, term links, and meta. */

@@ -71,6 +71,38 @@ final readonly class Meta
         return $out;
     }
 
+    /** Every row of an object's meta in id order, for removing them one by one. @return list<array{meta_id: int, meta_key: string, meta_value: string}> */
+    public function rowsOf(string $type, int $objectId): array
+    {
+        [$table, $column, $id] = $this->spec($type);
+        return array_map(
+            static fn (array $r): array => ['meta_id' => (int) $r['meta_id'], 'meta_key' => (string) $r['meta_key'], 'meta_value' => (string) $r['meta_value']],
+            $this->db->rows("SELECT {$id} AS meta_id, meta_key, meta_value FROM {$table} WHERE {$column} = ? ORDER BY {$id} ASC", [$objectId]),
+        );
+    }
+
+    /** One meta row by its id, under the table's own column names, values as stored; null when there is none. @return array<string, string>|null */
+    public function byId(string $type, int $metaId): ?array
+    {
+        [$table, $column, $id] = $this->spec($type);
+        $row = $this->db->row("SELECT {$id}, {$column}, meta_key, meta_value FROM {$table} WHERE {$id} = ? LIMIT 1", [$metaId]);
+        return $row === null ? null : array_map('strval', $row);
+    }
+
+    /** The column holding the object's id, and the one holding the row's: post_id and meta_id, user_id and umeta_id. @return array{0: string, 1: string} */
+    public function columns(string $type): array
+    {
+        [, $column, $id] = $this->spec($type);
+        return [$column, $id];
+    }
+
+    /** Sets one row's key and stored value. */
+    public function rewrite(string $type, int $metaId, string $key, string $stored): void
+    {
+        [$table, , $id] = $this->spec($type);
+        $this->db->execute("UPDATE {$table} SET meta_key = ?, meta_value = ? WHERE {$id} = ?", [$key, $stored, $metaId]);
+    }
+
     /** Inserts a meta row and returns its id. */
     public function add(string $type, int $objectId, string $key, string $stored): int
     {

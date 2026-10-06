@@ -330,3 +330,11 @@ function get_theme_updates()
     }
     return $out;
 }
+
+/** The default on delete_attachment: a deleted image stops being the site's logo. */
+function _delete_attachment_theme_mod($id)
+{
+    if ((int) get_theme_mod('custom_logo') === (int) $id) {
+        remove_theme_mod('custom_logo');
+    }
+}

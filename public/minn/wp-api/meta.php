@@ -120,12 +120,12 @@ function update_metadata($meta_type, $object_id, $meta_key, $meta_value, $prev_v
         return false;
     }
     foreach ($ids as $id) {
-        do_action("update_{$meta_type}_meta", $id, $object_id, $meta_key, $meta_value);
+        _minn_meta_action('update', (string) $meta_type, [$id, $object_id, $meta_key, $meta_value], [$id, $object_id, $meta_key, $meta_value]);
     }
     _minn_meta()->updateRows((string) $meta_type, $ids, $stored);
     wp_cache_delete($object_id, $meta_type . '_meta');
     foreach ($ids as $id) {
-        do_action("updated_{$meta_type}_meta", $id, $object_id, $meta_key, $meta_value);
+        _minn_meta_action('updated', (string) $meta_type, [$id, $object_id, $meta_key, $meta_value], [$id, $object_id, $meta_key, $meta_value]);
     }
     return true;
 }
@@ -148,12 +148,12 @@ function delete_metadata($meta_type, $object_id, $meta_key, $meta_value = '', $d
         return false;
     }
     $ids = array_map(static fn (array $r) => (int) $r['meta_id'], $rows);
-    do_action("delete_{$meta_type}_meta", $ids, $object_id, $meta_key, $meta_value);
+    _minn_meta_action('delete', (string) $meta_type, [$ids, $object_id, $meta_key, $meta_value], [$ids]);
     _minn_meta()->deleteRows((string) $meta_type, $ids);
     foreach ($rows as $row) {
         wp_cache_delete((int) $row['object_id'], $meta_type . '_meta');
     }
-    do_action("deleted_{$meta_type}_meta", $ids, $object_id, $meta_key, $meta_value);
+    _minn_meta_action('deleted', (string) $meta_type, [$ids, $object_id, $meta_key, $meta_value], [$ids]);
     return true;
 }
 
@@ -276,4 +276,75 @@ function add_comment_meta($comment_id, $meta_key, $meta_value, $unique = false)
 function delete_comment_meta($comment_id, $meta_key, $meta_value = '')
 {
     return delete_metadata('comment', $comment_id, $meta_key, $meta_value);
+}
+
+/**
+ * @internal A meta write's action, {verb}_{type}_meta, and for post meta the
+ * older {verb}_postmeta the reference still fires beside it, each with
+ * its own arguments.
+ */
+function _minn_meta_action(string $verb, string $meta_type, array $args, array $legacy): void
+{
+    do_action("{$verb}_{$meta_type}_meta", ...$args);
+    if ($meta_type === 'post') {
+        do_action("{$verb}_postmeta", ...$legacy);
+    }
+}
+
+/** One meta row by its id: an object under the table's own column names, the value decoded; false when there is none. */
+function get_metadata_by_mid($meta_type, $meta_id)
+{
+    if (!_minn_meta_table((string) $meta_type) || !is_numeric($meta_id) || (int) $meta_id <= 0) {
+        return false;
+    }
+    $row = _minn_meta()->byId((string) $meta_type, (int) $meta_id);
+    if ($row === null) {
+        return false;
+    }
+    $row['meta_value'] = maybe_unserialize($row['meta_value']);
+    return (object) $row;
+}
+
+/** Rewrites one meta row by its id, its key too when one is given, with the update actions for that row. */
+function update_metadata_by_mid($meta_type, $meta_id, $meta_value, $meta_key = false)
+{
+    $meta = get_metadata_by_mid($meta_type, $meta_id);
+    if ($meta === false) {
+        return false;
+    }
+    $check = apply_filters("update_{$meta_type}_metadata_by_mid", null, $meta_id, $meta_value, $meta_key);
+    if ($check !== null) {
+        return (bool) $check;
+    }
+    [$column] = _minn_meta()->columns((string) $meta_type);
+    $object_id = (int) $meta->{$column};
+    $key = $meta_key === false ? $meta->meta_key : (string) $meta_key;
+    $value = sanitize_meta($key, wp_unslash($meta_value), $meta_type);
+    $args = [(int) $meta_id, $object_id, $key, $value];
+    _minn_meta_action('update', (string) $meta_type, $args, $args);
+    _minn_meta()->rewrite((string) $meta_type, (int) $meta_id, $key, Options::toStorage($value));
+    wp_cache_delete($object_id, $meta_type . '_meta');
+    _minn_meta_action('updated', (string) $meta_type, $args, $args);
+    return true;
+}
+
+/** Removes one meta row by its id, with the delete actions for that row. */
+function delete_metadata_by_mid($meta_type, $meta_id)
+{
+    $meta = get_metadata_by_mid($meta_type, $meta_id);
+    if ($meta === false) {
+        return false;
+    }
+    $check = apply_filters("delete_{$meta_type}_metadata_by_mid", null, $meta_id);
+    if ($check !== null) {
+        return (bool) $check;
+    }
+    [$column] = _minn_meta()->columns((string) $meta_type);
+    $object_id = (int) $meta->{$column};
+    $args = [[(int) $meta_id], $object_id, $meta->meta_key, $meta->meta_value];
+    _minn_meta_action('delete', (string) $meta_type, $args, [(int) $meta_id]);
+    _minn_meta()->deleteRows((string) $meta_type, [(int) $meta_id]);
+    wp_cache_delete($object_id, $meta_type . '_meta');
+    _minn_meta_action('deleted', (string) $meta_type, $args, [(int) $meta_id]);
+    return true;
 }

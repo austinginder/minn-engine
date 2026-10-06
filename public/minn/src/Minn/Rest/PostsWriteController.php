@@ -8,6 +8,7 @@ use Minn\Http\Policy;
 use Minn\Http\Subject;
 use Minn\Http\Access;
 use Minn\Content\PostRecord;
+use Minn\Runtime\PostEvents;
 use Minn\Auth\TypeCapabilities;
 use Minn\Content\PostStatus;
 use Minn\Content\Posts;
@@ -94,22 +95,42 @@ final readonly class PostsWriteController
             $slug = $this->writer->uniqueSlug($title, 0);
         }
 
-        // The row, its extended fields, its guid and its terms are one post:
-        // a failure part-way through leaves none of it rather than a stub.
-        $id = $this->writer->db()->transaction(fn (): int => $this->writeNewPost($body, $type, $author, $status, $slug, $date, $dateGmt, $modified, $modifiedGmt, $title));
+        $columns = $this->newColumns($body, $type, $author, $status, $slug, $date, $dateGmt, $modified, $modifiedGmt, $title);
+        $events = $this->events();
+        $events->beforeSave($columns, null);
+        // The row, its default category and its guid are the post the save
+        // actions describe; the request's own fields and terms follow
+        // rest_insert_{type}, as on the reference.
+        $id = $this->writer->db()->transaction(fn (): int => $this->writeNewPost($columns));
+        if ($type === 'post') {
+            $events->ensureCategory($this->writer, $id);
+        }
+        $events->saved($id, null);
+        $events->restInserted($id, $request, null);
+        $this->writer->applyExtendedFields($id, $body, $type);
+        $events->applyTerms($this->writer, $id, $body);
+        $events->restAfterInsert($id, $request, null);
+        $events->afterInsert($id, null);
 
         return Reply::item($this->object->edit($this->posts->find($id), $userId), Fields::fromQuery($request->query), 201)
             ->withHeader('Location', $this->url->to('/wp/v2/' . $base . '/' . $id));
     }
 
+    /** Tells plugins about the writes, through the runtime's lifecycle. */
+    private function events(): PostEvents
+    {
+        return new PostEvents();
+    }
+
     /**
-     * Writes a new post and everything that belongs to it, as one unit.
+     * The row of a new post, from the body and what the create settled.
      *
      * @param array<string, mixed> $body
+     * @return array<string, mixed>
      */
-    private function writeNewPost(array $body, string $type, int $author, string $status, string $slug, string $date, string $dateGmt, string $modified, string $modifiedGmt, string $title): int
+    private function newColumns(array $body, string $type, int $author, string $status, string $slug, string $date, string $dateGmt, string $modified, string $modifiedGmt, string $title): array
     {
-        $id = $this->writer->insert([
+        return [
             'post_author' => $author,
             'post_date' => $date,
             'post_date_gmt' => $dateGmt,
@@ -130,16 +151,21 @@ final readonly class PostsWriteController
             'to_ping' => '',
             'pinged' => '',
             'post_content_filtered' => '',
-        ]);
-        $this->writer->applyExtendedFields($id, $body, $type);
-        // Inside the insert a post lands in the default category and the guid
-        // becomes the permalink as of now (pretty only when live); the body's
-        // own terms are applied after, so categories: [] leaves none.
-        if ($type === 'post') {
-            $this->writer->ensureCategory($id);
-        }
+        ];
+    }
+
+    /**
+     * Writes a new post's row as the insert does: its guid becomes the
+     * permalink as of now (pretty only when live). The default category
+     * follows, and the body's own terms come after rest_insert_{type}, so
+     * categories: [] leaves none.
+     *
+     * @param array<string, mixed> $columns
+     */
+    private function writeNewPost(array $columns): int
+    {
+        $id = $this->writer->insert($columns);
         $this->writer->update($id, ['guid' => $this->object->permalink($this->posts->find($id))]);
-        $this->writer->applyTerms($id, $body);
         return $id;
     }
 
@@ -170,19 +196,28 @@ final readonly class PostsWriteController
         $columns = [...$this->floatingDate($body, $post), ...$this->fieldColumns($body, $post, $type), ...$this->statusColumns($body, $post, $type)];
         $columns['post_modified'] = $this->site->localNow();
         $columns['post_modified_gmt'] = gmdate('Y-m-d H:i:s');
+        $events = $this->events();
+        $events->beforeSave($columns, $post);
         $this->writer->update($postId, $columns);
-
         if ($type === 'post') {
-            $this->writer->ensureCategory($postId);
+            $events->ensureCategory($this->writer, $postId);
         }
-        $this->writer->applyTerms($postId, $body);
-        $this->writer->applyExtendedFields($postId, $body, $type);
-        $this->rememberOld($post, $this->posts->find($postId));
-        // A publish/unpublish transition changes the terms' published counts.
-        if (array_key_exists('status', $body) && $body['status'] !== $post->status) {
+        // A publish/unpublish transition changes the terms' published counts;
+        // with plugins loaded the reference's transition default recounts them.
+        if (!$events->live() && array_key_exists('status', $body) && $body['status'] !== $post->status) {
             $this->writer->recountTaxonomiesOf($postId);
         }
-        $this->writer->maybeSaveRevision($postId, $userId);
+        $events->saved($postId, $post);
+        $events->restInserted($postId, $request, $post);
+        $events->applyTerms($this->writer, $postId, $body);
+        $this->writer->applyExtendedFields($postId, $body, $type);
+        $events->restAfterInsert($postId, $request, $post);
+        $this->rememberOld($post, $this->posts->find($postId));
+        if (!$events->live()) {
+            $this->writer->maybeSaveRevision($postId, $userId);
+        }
+        // The revision of the update is saved from wp_after_insert_post, as on the reference.
+        $events->afterInsert($postId, $post);
 
         return Reply::item($this->object->edit($this->posts->find($postId), $userId), Fields::fromQuery($request->query));
     }
@@ -208,17 +243,41 @@ final readonly class PostsWriteController
         }
         $fields = Fields::fromQuery($request->query);
 
+        $events = $this->events();
         if (!$request->flag('force')) {
             if ($post->isTrashed()) {
                 throw new RestError('rest_already_trashed', 'The post has already been deleted.', 410);
             }
-            $this->writer->trash($post, $userId);
-            return Reply::item($this->object->edit($this->posts->find($postId), $userId), $fields);
+            $this->trash($post, $userId);
+            $trashed = $this->posts->find($postId);
+            $data = $this->object->edit($trashed, $userId);
+            $events->restDeleted($trashed, $data, $request);
+            return Reply::item($data, $fields);
         }
 
         $previous = $this->object->edit($post, $userId);
-        $this->writer->destroy($postId);
-        return Reply::item(['deleted' => true, 'previous' => $previous], $fields);
+        $events->live() ? \wp_delete_post($postId, true) : $this->writer->destroy($postId);
+        $data = ['deleted' => true, 'previous' => $previous];
+        $events->restDeleted($post, $data, $request);
+        return Reply::item($data, $fields);
+    }
+
+    /**
+     * Moves a post to the trash through the runtime's wp_trash_post, which
+     * tells plugins and keeps what the way back needs; without plugins
+     * loaded, the same rows by hand.
+     */
+    private function trash(PostRecord $post, int $userId): void
+    {
+        if ($this->events()->live()) {
+            \wp_trash_post($post->id);
+            return;
+        }
+        $this->writer->trash($post);
+        $this->writer->setMeta($post->id, '_wp_trash_meta_status', $post->status);
+        $this->writer->setMeta($post->id, '_wp_trash_meta_time', (string) time());
+        $this->writer->setMeta($post->id, '_wp_desired_post_slug', $post->slug);
+        $this->writer->maybeSaveRevision($post->id, $userId);
     }
 
     /**
@@ -235,7 +294,8 @@ final readonly class PostsWriteController
         if ($before->isTrashed() && !$after->isTrashed() && $after->slug !== $before->slug) {
             $this->writer->deleteMeta($after->id, '_wp_desired_post_slug');
         }
-        if ($after->status !== PostStatus::Publish->value || $after->type === 'page') {
+        // With plugins loaded the reference's own post_updated hooks keep the old slug and date, and a site may unhook them.
+        if ($this->events()->live() || $after->status !== PostStatus::Publish->value || $after->type === 'page') {
             return;
         }
         $this->writer->rememberOld($after->id, '_wp_old_slug', $before->slug, $after->slug);

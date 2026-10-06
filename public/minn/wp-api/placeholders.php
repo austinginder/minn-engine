@@ -121,12 +121,6 @@ function clean_attachment_cache($id, $clean_terms = false)
     return null;
 }
 
-function clean_comment_cache($ids)
-{
-    \Minn\Runtime\PlaceholderTrace::hit('clean_comment_cache');
-    return null;
-}
-
 function clean_user_cache($user)
 {
     \Minn\Runtime\PlaceholderTrace::hit('clean_user_cache');
@@ -136,12 +130,6 @@ function clean_user_cache($user)
 function create_initial_taxonomies()
 {
     \Minn\Runtime\PlaceholderTrace::hit('create_initial_taxonomies');
-    return null;
-}
-
-function delete_metadata_by_mid($meta_type, $meta_id)
-{
-    \Minn\Runtime\PlaceholderTrace::hit('delete_metadata_by_mid');
     return null;
 }
 
@@ -292,12 +280,6 @@ function get_importers()
 function get_inline_data($post)
 {
     \Minn\Runtime\PlaceholderTrace::hit('get_inline_data');
-    return null;
-}
-
-function get_metadata_by_mid($meta_type, $meta_id)
-{
-    \Minn\Runtime\PlaceholderTrace::hit('get_metadata_by_mid');
     return null;
 }
 
@@ -562,12 +544,6 @@ function unzip_file($file, $to)
 function update_core($from, $to)
 {
     \Minn\Runtime\PlaceholderTrace::hit('update_core');
-    return null;
-}
-
-function update_metadata_by_mid($meta_type, $meta_id, $meta_value, $meta_key = false)
-{
-    \Minn\Runtime\PlaceholderTrace::hit('update_metadata_by_mid');
     return null;
 }
 
@@ -937,21 +913,9 @@ function wp_tinymce_inline_scripts()
     return null;
 }
 
-function wp_trash_post_comments($post = NULL)
-{
-    \Minn\Runtime\PlaceholderTrace::hit('wp_trash_post_comments');
-    return null;
-}
-
 function wp_unspam_comment($comment_id)
 {
     \Minn\Runtime\PlaceholderTrace::hit('wp_unspam_comment');
-    return null;
-}
-
-function wp_untrash_post_comments($post = NULL)
-{
-    \Minn\Runtime\PlaceholderTrace::hit('wp_untrash_post_comments');
     return null;
 }
 
