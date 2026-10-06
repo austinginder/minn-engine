@@ -116,12 +116,25 @@ final readonly class PostsWriteController
         $events->saved($id, null);
         $events->restInserted($id, $request, null);
         $this->writer->applyExtendedFields($id, $body, $type);
-        $events->applyTerms($this->writer, $id, $body);
+        $events->applyTerms($this->writer, $id, $body, $type);
+        $events->applyRegisteredMeta($id, $body, $type);
         $events->restAfterInsert($id, $request, null);
         $events->afterInsert($id, null);
 
         return Reply::item($this->object->edit($this->posts->find($id), $userId), Fields::fromQuery($request->query), 201)
             ->withHeader('Location', $this->url->to('/wp/v2/' . $base . '/' . $id));
+    }
+
+    /** Whether a type's posts take a parent: pages, and a plugin's hierarchical type. */
+    private static function hasParent(string $type): bool
+    {
+        return $type === 'page' || (bool) RegisteredType::of($type)?->hierarchical();
+    }
+
+    /** Whether a type's posts take an order: pages, and a plugin's type with page attributes. */
+    private static function hasOrder(string $type): bool
+    {
+        return $type === 'page' || (bool) RegisteredType::of($type)?->supports('page-attributes');
     }
 
     /** Tells plugins about the writes, through the runtime's lifecycle. */
@@ -150,8 +163,8 @@ final readonly class PostsWriteController
             'ping_status' => in_array($body['ping_status'] ?? '', ['open', 'closed'], true) ? $body['ping_status'] : $this->site->defaultDiscussion($type, 'pingback'),
             'post_password' => (string) ($body['password'] ?? ''),
             'post_name' => $slug,
-            'post_parent' => $type === 'page' ? (int) ($body['parent'] ?? 0) : 0,
-            'menu_order' => $type === 'page' ? (int) ($body['menu_order'] ?? 0) : 0,
+            'post_parent' => self::hasParent($type) ? (int) ($body['parent'] ?? 0) : 0,
+            'menu_order' => self::hasOrder($type) ? (int) ($body['menu_order'] ?? 0) : 0,
             'post_modified' => $modified,
             'post_modified_gmt' => $modifiedGmt,
             'post_type' => $type,
@@ -223,8 +236,9 @@ final readonly class PostsWriteController
         }
         $events->saved($postId, $post);
         $events->restInserted($postId, $request, $post);
-        $events->applyTerms($this->writer, $postId, $body);
+        $events->applyTerms($this->writer, $postId, $body, $type);
         $this->writer->applyExtendedFields($postId, $body, $type);
+        $events->applyRegisteredMeta($postId, $body, $type);
         $events->restAfterInsert($postId, $request, $post);
         $this->rememberOld($post, $this->posts->find($postId));
         if (!$events->live()) {
@@ -269,7 +283,8 @@ final readonly class PostsWriteController
             return Reply::item($data, $fields);
         }
 
-        $previous = $this->object->edit($post, $userId);
+        // The deleted post as data, without its links, as the reference's previous carries it.
+        $previous = array_diff_key($this->object->edit($post, $userId), ['_links' => true]);
         $events->live() ? \wp_delete_post($postId, true) : $this->writer->destroy($postId);
         $data = ['deleted' => true, 'previous' => $previous];
         $events->restDeleted($post, $data, $request);
@@ -371,11 +386,9 @@ final readonly class PostsWriteController
         if (array_key_exists('password', $body)) {
             $columns['post_password'] = (string) $body['password'];
         }
-        if ($type === 'page') {
-            foreach (['parent' => 'post_parent', 'menu_order' => 'menu_order'] as $field => $column) {
-                if (isset($body[$field])) {
-                    $columns[$column] = (int) $body[$field];
-                }
+        foreach (['parent' => ['post_parent', self::hasParent($type)], 'menu_order' => ['menu_order', self::hasOrder($type)]] as $field => [$column, $takes]) {
+            if ($takes && isset($body[$field])) {
+                $columns[$column] = (int) $body[$field];
             }
         }
         if (isset($body['date']) && (string) $body['date'] !== '') {

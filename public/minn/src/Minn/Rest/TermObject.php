@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace Minn\Rest;
 
+use Minn\Http\RouteMiss;
+
+use Minn\Runtime\Runtime;
+
 use Minn\Content\TermRecord;
 use Minn\Db;
 use Minn\Front\Permalinks;
@@ -46,7 +50,30 @@ final readonly class TermObject
      */
     public static function config(string $restBase): array
     {
-        return self::TAXONOMIES[$restBase];
+        return self::TAXONOMIES[$restBase] ?? self::registered($restBase) ?? throw new RouteMiss();
+    }
+
+    /**
+     * A taxonomy plugin code registered to show in REST under wp/v2, by its
+     * REST base (probe rest-plugin-types), as a term route's config: its
+     * terms nest when it is hierarchical, and its posts are those of the
+     * first type it belongs to.
+     *
+     * @return array{taxonomy: string, has_parent: bool, post_arg: string, post_base: string}|null
+     */
+    public static function registered(string $restBase): ?array
+    {
+        if (!Runtime::booted() || $restBase === '') {
+            return null;
+        }
+        foreach (\get_taxonomies(['show_in_rest' => true], 'objects') as $taxonomy) {
+            if (!empty($taxonomy->_builtin) || ($taxonomy->rest_base ?: $taxonomy->name) !== $restBase || ($taxonomy->rest_namespace ?: 'wp/v2') !== 'wp/v2') {
+                continue;
+            }
+            $type = \get_post_type_object((string) (((array) $taxonomy->object_type)[0] ?? 'post'));
+            return ['taxonomy' => (string) $taxonomy->name, 'has_parent' => (bool) $taxonomy->hierarchical, 'post_arg' => $restBase, 'post_base' => (string) ($type?->rest_base ?: $type?->name ?? 'posts')];
+        }
+        return null;
     }
 
     /** The wp/v2 term shape. */

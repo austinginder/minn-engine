@@ -4,9 +4,9 @@
     "summary": {
         "minn": 638,
         "composes": 912,
-        "leaf": 651,
+        "leaf": 652,
         "noop": 1832,
-        "functions": 3963,
+        "functions": 3964,
         "minnMethods": 660,
         "leafLinesOver15": 12
     },
@@ -9293,6 +9293,13 @@
             "minn": [
                 "Minn\\Rest\\RouteMatch::find"
             ],
+            "composes": []
+        },
+        "WP_REST_Server::query_text": {
+            "file": "classes/WP_REST_Server.php",
+            "lines": 9,
+            "kind": "leaf",
+            "minn": [],
             "composes": []
         },
         "WP_REST_Server::register_route": {

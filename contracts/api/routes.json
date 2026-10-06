@@ -1,7 +1,7 @@
 {
     "engine": "0.0.1",
-    "routes": 266,
-    "withPolicy": 260,
+    "routes": 273,
+    "withPolicy": 267,
     "entries": [
         {
             "method": "GET",
@@ -3242,6 +3242,167 @@
                 "access": "Type",
                 "describe": "declared type {base}",
                 "param": "base"
+            },
+            "args": [],
+            "body": [],
+            "index": true
+        },
+        {
+            "method": "GET",
+            "pattern": "/wp/v2/{base:[a-z0-9_-]+}",
+            "name": "Minn\\Rest\\DeclaredTermsController::list",
+            "handler": "Minn\\Rest\\DeclaredTermsController::list",
+            "summary": "A registered taxonomy's terms.",
+            "policy": {
+                "access": "Taxonomy",
+                "describe": "registered taxonomy {base}",
+                "param": "base",
+                "signIn": {
+                    "code": "rest_not_logged_in",
+                    "message": "You are not currently logged in."
+                },
+                "refuse": {
+                    "code": "rest_forbidden",
+                    "message": "Sorry, you are not allowed to do that."
+                }
+            },
+            "args": [],
+            "body": [],
+            "index": true
+        },
+        {
+            "method": "GET",
+            "pattern": "/wp/v2/{base:[a-z0-9_-]+}/{id:[\\d]+}",
+            "name": "Minn\\Rest\\DeclaredTermsController::single",
+            "handler": "Minn\\Rest\\DeclaredTermsController::single",
+            "summary": "One term of a registered taxonomy.",
+            "policy": {
+                "access": "Taxonomy",
+                "describe": "registered taxonomy {base}",
+                "param": "base",
+                "signIn": {
+                    "code": "rest_not_logged_in",
+                    "message": "You are not currently logged in."
+                },
+                "refuse": {
+                    "code": "rest_forbidden",
+                    "message": "Sorry, you are not allowed to do that."
+                }
+            },
+            "args": [],
+            "body": [],
+            "index": true
+        },
+        {
+            "method": "POST",
+            "pattern": "/wp/v2/{base:[a-z0-9_-]+}",
+            "name": "Minn\\Rest\\DeclaredTermsController::create",
+            "handler": "Minn\\Rest\\DeclaredTermsController::create",
+            "summary": "Creates a term in a registered taxonomy.",
+            "policy": {
+                "access": "Taxonomy",
+                "describe": "registered taxonomy {base}",
+                "param": "base",
+                "signIn": {
+                    "code": "rest_not_logged_in",
+                    "message": "You are not currently logged in."
+                },
+                "refuse": {
+                    "code": "rest_forbidden",
+                    "message": "Sorry, you are not allowed to do that."
+                }
+            },
+            "args": [],
+            "body": [],
+            "index": true
+        },
+        {
+            "method": "POST",
+            "pattern": "/wp/v2/{base:[a-z0-9_-]+}/{id:[\\d]+}",
+            "name": "Minn\\Rest\\DeclaredTermsController::update",
+            "handler": "Minn\\Rest\\DeclaredTermsController::update",
+            "summary": "Updates a term of a registered taxonomy.",
+            "policy": {
+                "access": "Taxonomy",
+                "describe": "registered taxonomy {base}",
+                "param": "base",
+                "signIn": {
+                    "code": "rest_not_logged_in",
+                    "message": "You are not currently logged in."
+                },
+                "refuse": {
+                    "code": "rest_forbidden",
+                    "message": "Sorry, you are not allowed to do that."
+                }
+            },
+            "args": [],
+            "body": [],
+            "index": true
+        },
+        {
+            "method": "PUT",
+            "pattern": "/wp/v2/{base:[a-z0-9_-]+}/{id:[\\d]+}",
+            "name": "Minn\\Rest\\DeclaredTermsController::update",
+            "handler": "Minn\\Rest\\DeclaredTermsController::update",
+            "summary": "Updates a term of a registered taxonomy.",
+            "policy": {
+                "access": "Taxonomy",
+                "describe": "registered taxonomy {base}",
+                "param": "base",
+                "signIn": {
+                    "code": "rest_not_logged_in",
+                    "message": "You are not currently logged in."
+                },
+                "refuse": {
+                    "code": "rest_forbidden",
+                    "message": "Sorry, you are not allowed to do that."
+                }
+            },
+            "args": [],
+            "body": [],
+            "index": true
+        },
+        {
+            "method": "PATCH",
+            "pattern": "/wp/v2/{base:[a-z0-9_-]+}/{id:[\\d]+}",
+            "name": "Minn\\Rest\\DeclaredTermsController::update",
+            "handler": "Minn\\Rest\\DeclaredTermsController::update",
+            "summary": "Updates a term of a registered taxonomy.",
+            "policy": {
+                "access": "Taxonomy",
+                "describe": "registered taxonomy {base}",
+                "param": "base",
+                "signIn": {
+                    "code": "rest_not_logged_in",
+                    "message": "You are not currently logged in."
+                },
+                "refuse": {
+                    "code": "rest_forbidden",
+                    "message": "Sorry, you are not allowed to do that."
+                }
+            },
+            "args": [],
+            "body": [],
+            "index": true
+        },
+        {
+            "method": "DELETE",
+            "pattern": "/wp/v2/{base:[a-z0-9_-]+}/{id:[\\d]+}",
+            "name": "Minn\\Rest\\DeclaredTermsController::delete",
+            "handler": "Minn\\Rest\\DeclaredTermsController::delete",
+            "summary": "Deletes a term of a registered taxonomy.",
+            "policy": {
+                "access": "Taxonomy",
+                "describe": "registered taxonomy {base}",
+                "param": "base",
+                "signIn": {
+                    "code": "rest_not_logged_in",
+                    "message": "You are not currently logged in."
+                },
+                "refuse": {
+                    "code": "rest_forbidden",
+                    "message": "Sorry, you are not allowed to do that."
+                }
             },
             "args": [],
             "body": [],

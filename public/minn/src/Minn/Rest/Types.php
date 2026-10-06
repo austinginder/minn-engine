@@ -129,20 +129,35 @@ final class Types
         return null;
     }
 
-    /** The rest_base of every type an extension declared. @return list<string> */
+    /** The rest_base of every type an extension declared or plugin code registered under wp/v2. @return list<string> */
     public function declaredBases(): array
     {
         $bases = [];
-        foreach (array_keys($this->declared) as $slug) {
+        foreach (array_keys($this->declared + $this->servedRegistered()) as $slug) {
             $bases[] = $this->restBase((string) $slug);
         }
         return $bases;
     }
 
-    /** Whether an extension declared this type. */
+    /** Whether the engine serves this type through its {base} routes: an extension declared it, or plugin code registered it to show in REST under wp/v2 (probe rest-plugin-types). */
     public function isDeclared(string $slug): bool
     {
-        return isset($this->declared[$slug]);
+        return isset($this->declared[$slug]) || isset($this->servedRegistered()[$slug]);
+    }
+
+    /** Whether plugin code registered the type (not a built-in, not an extension's). */
+    public function isRegistered(string $slug): bool
+    {
+        return Runtime::booted() && isset($this->registered()[$slug]);
+    }
+
+    /** @return array<string, array> the registered types under wp/v2 */
+    private function servedRegistered(): array
+    {
+        if (!Runtime::booted()) {
+            return [];
+        }
+        return array_filter($this->registered(), static fn (array $type): bool => $type['rest_namespace'] === 'wp/v2');
     }
 
     /** The rest_base of a type slug. */

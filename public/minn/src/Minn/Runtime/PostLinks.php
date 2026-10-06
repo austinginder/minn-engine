@@ -112,7 +112,8 @@ final class PostLinks
         $sample = (bool) ($flags & self::SAMPLE);
         $type = \get_post_type_object($post->post_type);
         $struct = (string) \_minn_rewrite()->get_extra_permastruct($post->post_type);
-        $plain = self::plain($post, $flags);
+        // A plugin type's sample is pretty whatever its status, a trashed post's too (probe rest-plugin-types).
+        $plain = !$sample && self::plain($post, $flags);
         $slug = $type?->hierarchical ? (string) \get_page_uri($post) : (string) $post->post_name;
         if ($struct !== '' && !$plain) {
             $link = \home_url(\user_trailingslashit($leavename ? $struct : str_replace("%{$post->post_type}%", $slug, $struct)));

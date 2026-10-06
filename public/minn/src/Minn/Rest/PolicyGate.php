@@ -48,6 +48,7 @@ final readonly class PolicyGate
             Access::Cap, Access::Floor => $this->capabilities($policy),
             Access::Own => $this->own($policy, $captures),
             Access::Type => $this->type($captures),
+            Access::Taxonomy => TermObject::registered((string) ($captures['base'] ?? '')) === null ? throw new RouteMiss() : null,
         };
         if ($policy->edit !== null && Context::of($request)->isEdit()) {
             $this->judge($policy->edit, $request, $captures);

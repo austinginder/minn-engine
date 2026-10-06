@@ -368,7 +368,7 @@ final readonly class MediaController
         if (!$request->flag('force')) {
             throw new RestError('rest_trash_not_supported', "The post does not support trashing. Set 'force=true' to delete.", 501);
         }
-        $data = ['deleted' => true, 'previous' => $this->object->build($attachment, Context::Edit)];
+        $data = ['deleted' => true, 'previous' => array_diff_key($this->object->build($attachment, Context::Edit), ['_links' => true])];
         $events = new PostEvents();
         $events->live() ? \wp_delete_attachment($attachmentId, true) : $this->library->remove($attachment);
         $events->restDeleted($attachment, $data, $request);

@@ -22,4 +22,6 @@ enum Access
     case Own;
     /** Any caller, on a route whose {base} capture must name a declared post type; the route declines otherwise and the handler judges the rest. */
     case Type;
+    /** Any caller, on a route whose {base} capture must name a taxonomy plugin code registered to show in REST; the route declines otherwise and the handler judges the rest. */
+    case Taxonomy;
 }

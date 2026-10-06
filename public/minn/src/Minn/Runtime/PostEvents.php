@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Minn\Runtime;
 
+use Minn\Rest\RegisteredType;
+
 use Minn\Content\PostRecord;
 use Minn\Content\PostWriter;
 use Minn\Media\Uploads;
@@ -57,15 +59,54 @@ final readonly class PostEvents
         \wp_set_post_categories($id, \wp_get_post_categories($id));
     }
 
-    /** The terms a REST body names, set through wp_set_object_terms with plugins loaded, quietly without. @param array<string, mixed> $body */
-    public function applyTerms(PostWriter $writer, int $id, array $body): void
+    /**
+     * The terms a REST body names, set through wp_set_object_terms with
+     * plugins loaded, quietly without: a plugin's type takes its own REST
+     * taxonomies under their REST bases (probe rest-plugin-types).
+     *
+     * @param array<string, mixed> $body
+     */
+    public function applyTerms(PostWriter $writer, int $id, array $body, string $type = ''): void
     {
         if (!$this->live()) {
             $writer->applyTerms($id, $body);
             return;
         }
-        foreach (PostWriter::requestedTerms($body) as $taxonomy => $termIds) {
+        $registered = RegisteredType::of($type);
+        foreach (PostWriter::requestedTerms($body, $registered?->taxonomies()) as $taxonomy => $termIds) {
             \wp_set_object_terms($id, $termIds, $taxonomy);
+        }
+    }
+
+    /**
+     * The meta a REST body names for a plugin's type, through update_post_meta
+     * (a list replaced value by value, null deleting): only the keys
+     * registered to show in REST for the type.
+     *
+     * @param array<string, mixed> $body
+     */
+    public function applyRegisteredMeta(int $id, array $body, string $type): void
+    {
+        $registered = RegisteredType::of($type);
+        if ($registered === null || !is_array($body['meta'] ?? null)) {
+            return;
+        }
+        $keys = \get_registered_meta_keys('post', $type) + \get_registered_meta_keys('post');
+        foreach ($body['meta'] as $key => $value) {
+            $args = $keys[$key] ?? null;
+            if ($args === null || empty($args['show_in_rest'])) {
+                continue;
+            }
+            if ($value === null) {
+                \delete_post_meta($id, (string) $key);
+            } elseif (!empty($args['single'])) {
+                \update_post_meta($id, (string) $key, $value);
+            } else {
+                \delete_post_meta($id, (string) $key);
+                foreach ((array) $value as $one) {
+                    \add_post_meta($id, (string) $key, $one);
+                }
+            }
         }
     }
 

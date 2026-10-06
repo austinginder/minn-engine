@@ -4388,3 +4388,31 @@ wp/v2/types serves the edit context (probe `rest-types-edit`):
   - A plugin type's labels gain `template_name`.
 - **Not done.** A plugin type's own REST routes (`/wp/v2/product`) are
   still not served. That is the next unit.
+
+A plugin's post types and taxonomies are served over REST with the
+default controllers' shape (probe `rest-plugin-types`):
+- **Routes.** A type or taxonomy registered to show in REST under wp/v2 is
+  served at its REST base: list, single, create, update, trash and delete.
+  One kept out of REST, or in another namespace, is not served under wp/v2.
+- **Fields follow supports.** Title, editor, excerpt, author, thumbnail,
+  comments, custom fields, page attributes and revisions each add their
+  fields and links. Taxonomies appear under their REST bases, and
+  registered meta under `meta`, cast to its type.
+- **Edit links.** `assign-author` only with author support. Each taxonomy
+  adds its create and assign actions (create needs `edit_terms` when
+  hierarchical, `assign_terms` otherwise).
+- **Writes.** A create or update sets the terms named under each
+  taxonomy's REST base and the registered meta.
+- **Lists.** Filter by each taxonomy's REST base; the terms routes filter
+  by `post`.
+- **Links.** A plugin type's plain link is `?post_type=X&p=ID`. A term link
+  nests its parents only for categories, tags, or a hierarchical rewrite.
+- **Fixes along the way.**
+  - A trashed post's content renders in the edit context, as it does in
+    the reference (the engine left it empty).
+  - A delete's `previous` leaves out `_links`, for posts, terms, users,
+    media and comments.
+  - Query values plugin code sets as numbers or booleans on an
+    in-process request are read as the text a query string carries.
+- **Not done.** A type registered under its own namespace (`zz/v1`) is
+  not served there yet.

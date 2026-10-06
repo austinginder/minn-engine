@@ -330,7 +330,7 @@ final readonly class UsersController
                 throw new RestError('rest_user_invalid_reassign', 'Invalid user ID for reassignment.', 400);
             }
         }
-        $data = ['deleted' => true, 'previous' => $this->object->edit($user)];
+        $data = ['deleted' => true, 'previous' => array_diff_key($this->object->edit($user), ['_links' => true])];
         (new UserEvents())->delete($userId, $target > 0 ? $target : null, $data, $request, function () use ($userId, $target): void {
             $posts = $this->db->table('posts');
             if ($target > 0) {

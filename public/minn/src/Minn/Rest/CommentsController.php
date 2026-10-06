@@ -214,7 +214,7 @@ final readonly class CommentsController
         $fields = Fields::fromQuery($request->query);
         $events = $this->events();
         if ($request->flag('force')) {
-            $data = ['deleted' => true, 'previous' => $this->object->build($comment, Context::Edit)];
+            $data = ['deleted' => true, 'previous' => array_diff_key($this->object->build($comment, Context::Edit), ['_links' => true])];
             $events->delete($comment);
             $events->restDeleted($comment, $data, $request);
             return Reply::item($data, $fields);

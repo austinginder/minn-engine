@@ -49,8 +49,8 @@ final readonly class ListQuery
     /** The list parameters that name terms, by the taxonomy they filter on. */
     private const TERM_ARGS = ['categories' => 'category', 'tags' => 'post_tag', 'wp_pattern_category' => 'wp_pattern_category'];
 
-    /** The list parameters read from the request. */
-    public static function fromRequest(Request $request): self
+    /** The list parameters read from the request; a plugin's type names the taxonomies it filters on. @param array<string, string>|null $taxonomies */
+    public static function fromRequest(Request $request, ?array $taxonomies = null): self
     {
         $menuOrder = (string) $request->query('menu_order', '');
         return new self(
@@ -67,16 +67,16 @@ final readonly class ListQuery
             menuOrder: preg_match('/^-?\d+$/', $menuOrder) === 1 ? (int) $menuOrder : null,
             orderBy: (string) $request->query('orderby', 'date'),
             order: strtoupper((string) $request->query('order', 'desc')) === 'ASC' ? 'ASC' : 'DESC',
-            terms: self::termFilters($request, ''),
-            termsExclude: self::termFilters($request, '_exclude'),
+            terms: self::termFilters($request, '', $taxonomies ?? self::TERM_ARGS),
+            termsExclude: self::termFilters($request, '_exclude', $taxonomies ?? self::TERM_ARGS),
         );
     }
 
-    /** @return array<string, list<int>> */
-    private static function termFilters(Request $request, string $suffix): array
+    /** @param array<string, string> $taxonomies list parameter => the taxonomy it filters on @return array<string, list<int>> */
+    private static function termFilters(Request $request, string $suffix, array $taxonomies): array
     {
         $filters = [];
-        foreach (self::TERM_ARGS as $arg => $taxonomy) {
+        foreach ($taxonomies as $arg => $taxonomy) {
             $ids = self::ids((string) $request->query($arg . $suffix, ''));
             if ($ids !== []) {
                 $filters[$taxonomy] = $ids;

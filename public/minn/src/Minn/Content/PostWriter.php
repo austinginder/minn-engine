@@ -334,12 +334,13 @@ final readonly class PostWriter
      * categories, each only when the body has the field.
      *
      * @param array<string, mixed> $body
+     * @param array<string, string>|null $map REST field => taxonomy; the core taxonomies when null
      * @return array<string, list<int>>
      */
-    public static function requestedTerms(array $body): array
+    public static function requestedTerms(array $body, ?array $map = null): array
     {
         $out = [];
-        foreach (['categories' => 'category', 'tags' => 'post_tag', 'wp_pattern_category' => 'wp_pattern_category'] as $field => $taxonomy) {
+        foreach ($map ?? ['categories' => 'category', 'tags' => 'post_tag', 'wp_pattern_category' => 'wp_pattern_category'] as $field => $taxonomy) {
             if (array_key_exists($field, $body) && is_array($body[$field])) {
                 $out[$taxonomy] = array_map(intval(...), $body[$field]);
             }

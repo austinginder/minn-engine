@@ -116,6 +116,7 @@ final readonly class Policy
             Access::Floor => 'floor ' . implode(' + ', $this->capabilities()),
             Access::Own => "cap {$this->cap} on {{$this->param}}",
             Access::Type => 'declared type {' . $this->param . '}',
+            Access::Taxonomy => 'registered taxonomy {' . $this->param . '}',
         };
         if ($this->subject !== null) {
             $line .= '; ' . strtolower((string) preg_replace('/(?<!^)[A-Z]/', ' $0', $this->subject->name)) . " {{$this->param}} must exist";

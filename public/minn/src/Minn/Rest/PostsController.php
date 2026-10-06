@@ -51,7 +51,8 @@ final readonly class PostsController
     /** The list for any post type, with the reference's status and visibility rules. */
     public function serveList(Request $request, string $type): Response
     {
-        $query = ListQuery::fromRequest($request);
+        // A plugin's type filters on its own REST taxonomies, under their REST bases (probe rest-plugin-types).
+        $query = ListQuery::fromRequest($request, RegisteredType::of($type)?->taxonomies());
         $context = Context::of($request);
         $statuses = $this->visibleStatuses($request, $type, $context);
         $needsAuth = $context->isEdit() || $statuses !== ['publish'];

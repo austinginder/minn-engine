@@ -231,7 +231,7 @@ final readonly class TermsController
         if (!$request->flag('force')) {
             throw new RestError('rest_trash_not_supported', "Terms do not support trashing. Set 'force=true' to delete.", 501);
         }
-        $data = ['deleted' => true, 'previous' => $this->object->view($term, $base)];
+        $data = ['deleted' => true, 'previous' => array_diff_key($this->object->view($term, $base), ['_links' => true])];
         (new TermEvents())->delete($termId, $taxonomy, $data, $request, fn () => $this->terms->delete(TermRecord::fromRow($term->row() + ['taxonomy' => $taxonomy]), $config['has_parent']));
         return Reply::item($data, Fields::fromQuery($request->query));
     }

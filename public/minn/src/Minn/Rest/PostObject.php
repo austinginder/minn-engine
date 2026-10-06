@@ -7,7 +7,6 @@ namespace Minn\Rest;
 use Minn\Runtime\Runtime;
 use Minn\Content\PostRecord;
 use Minn\Auth\TypeCapabilities;
-use Minn\Content\PostStatus;
 use Minn\Content\Posts;
 use Minn\Content\Slug;
 use Minn\Content\Users;
@@ -137,6 +136,10 @@ final readonly class PostObject
         }
         if ($p->type === self::BLOCK) {
             return $this->blockView($p);
+        }
+        $registered = RegisteredType::of($p->type);
+        if ($registered !== null) {
+            return (new RegisteredPostFields($this->posts, $this->permalinks, $this->url))->view($p, $registered, fn (int $id): array => $this->allow($id), fn (string $local, string $gmt): string => $this->gmt($local, $gmt));
         }
         $protected = $p->isProtected();
         $object = [
@@ -310,13 +313,19 @@ final readonly class PostObject
             // A pattern's title stays raw-only; its content gains only the block version.
             $view['content'] = ['raw' => $p->content, 'protected' => $protected, 'block_version' => str_contains($p->content, '<!-- wp:') ? 1 : 0];
         } else {
-            $view['title'] = ['raw' => $p->title, 'rendered' => RenderedFields::title($p)];
-            $view['content'] = [
-                'raw' => $p->content,
-                'rendered' => PostStatus::of($p) === PostStatus::Trash ? '' : RenderedFields::content($p),
-                'protected' => $protected,
-                'block_version' => str_contains($p->content, '<!-- wp:') ? 1 : 0,
-            ];
+            // A plugin's type has only the fields it supports, so only those gain their raw halves.
+            $registered = RegisteredType::of($p->type);
+            if ($registered === null || isset($view['title'])) {
+                $view['title'] = ['raw' => $p->title, 'rendered' => RenderedFields::title($p)];
+            }
+            if ($registered === null || isset($view['content'])) {
+                $view['content'] = [
+                    'raw' => $p->content,
+                    'rendered' => RenderedFields::content($p),
+                    'protected' => $protected,
+                    'block_version' => str_contains($p->content, '<!-- wp:') ? 1 : 0,
+                ];
+            }
         }
         if (isset($view['excerpt'])) {
             $view['excerpt'] = [
@@ -350,7 +359,7 @@ final readonly class PostObject
             unset($ordered['wp_pattern_sync_status']);
             $ordered['wp_pattern_sync_status'] = $sync;
         }
-        $ordered['_links'] = $this->editLinks($p, $userId);
+        $ordered['_links'] = $this->editLinks($p, $userId, $view['_links'] ?? null);
         return $ordered;
     }
 
@@ -409,16 +418,17 @@ final readonly class PostObject
     }
 
     /** The view links plus the caller's verbs and cap-gated wp:action-* entries. */
-    public function editLinks(PostRecord $p, int $userId): array
+    public function editLinks(PostRecord $p, int $userId, ?array $viewLinks = null): array
     {
         $id = $p->id;
         $type = $p->type;
         $can = fn (string $cap, ?int $postId = null): bool => $this->caller->capabilities()->can($userId, $cap, $postId);
-        $links = $this->links($p);
+        $registered = RegisteredType::of($type);
+        $links = $registered !== null && $viewLinks !== null ? $viewLinks : $this->links($p);
 
         $links['self'][0]['targetHints']['allow'] = $this->allow($id, $userId);
 
-        $self = '/wp/v2/' . self::restBase($type) . '/' . $id;
+        $self = ($registered?->base() ?? '/wp/v2/' . self::restBase($type)) . '/' . $id;
         $others = TypeCapabilities::editOthers($type);
         $publish = TypeCapabilities::publish($type);
 
@@ -429,7 +439,7 @@ final readonly class PostObject
         if ($can('unfiltered_html')) {
             $actions['wp:action-unfiltered-html'] = true;
         }
-        if ($can($others) && $type !== self::NAVIGATION && $type !== self::BLOCK) {
+        if ($can($others) && $type !== self::NAVIGATION && $type !== self::BLOCK && ($registered === null || $registered->supports('author'))) {
             if ($type === 'post') {
                 $actions['wp:action-sticky'] = true;
             }
@@ -442,9 +452,18 @@ final readonly class PostObject
             }
             $actions['wp:action-assign-wp_pattern_category'] = true;
         }
+        $taxonomyRels = [];
+        foreach ($registered?->taxonomies() ?? [] as $restBase => $taxonomy) {
+            // A plugin's type: create and assign for each of its REST taxonomies, create needing the
+            // taxonomy's edit_terms when it nests and assign_terms when it does not (probe rest-plugin-types).
+            $caps = \get_taxonomy($taxonomy)?->cap;
+            $actions["wp:action-create-{$restBase}"] = $caps !== null && $can(\is_taxonomy_hierarchical($taxonomy) ? $caps->edit_terms : $caps->assign_terms);
+            $actions["wp:action-assign-{$restBase}"] = $caps !== null && $can($caps->assign_terms);
+            array_push($taxonomyRels, "wp:action-create-{$restBase}", "wp:action-assign-{$restBase}");
+        }
         // Taxonomy actions belong to types with taxonomies (posts, not pages);
         // assign is broadly held, create is gated per taxonomy.
-        if ($type !== 'page' && $type !== self::NAVIGATION && $type !== self::BLOCK) {
+        if ($registered === null && $type !== 'page' && $type !== self::NAVIGATION && $type !== self::BLOCK) {
             if ($can('manage_categories')) {
                 $actions['wp:action-create-categories'] = true;
             }
@@ -460,6 +479,7 @@ final readonly class PostObject
             'wp:action-publish', 'wp:action-unfiltered-html', 'wp:action-sticky', 'wp:action-assign-author',
             'wp:action-create-wp_pattern_category', 'wp:action-assign-wp_pattern_category',
             'wp:action-create-categories', 'wp:action-assign-categories', 'wp:action-create-tags', 'wp:action-assign-tags',
+            ...$taxonomyRels,
         ];
         $curies = $links['curies'];
         unset($links['curies']);

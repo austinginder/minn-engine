@@ -101,7 +101,9 @@ final readonly class Permalinks
             if ($this->isPretty() && $this->hasPrettyLink($post)) {
                 return $this->url('/' . $this->typeSlug($post->type) . '/' . $post->slug . '/');
             }
-            return $this->url('/?p=' . $id);
+            // A plugin's type names itself in the plain address (probe rest-plugin-types).
+            $registered = $this->registry === null ? null : ($this->registry)()?->postType($post->type);
+            return $registered !== null && empty($registered['_builtin']) ? $this->url('/?post_type=' . $post->type . '&p=' . $id) : $this->url('/?p=' . $id);
         }
         if (!$this->isPretty() || !$this->hasPrettyLink($post)) {
             return $this->url('/?p=' . $id);
@@ -175,7 +177,11 @@ final readonly class Permalinks
             'post_tag' => 'tag',
             default => $this->taxonomySlug($taxonomy) ?? $taxonomy,
         };
-        return $this->url("/{$base}/" . $this->terms->pathOf($term) . '/');
+        // A term's ancestors join its address only where the taxonomy's rewrite nests (categories do; a plugin's
+        // taxonomy does when it says so), probe rest-plugin-types.
+        $row = $this->registry === null ? null : ($this->registry)()?->taxonomy($taxonomy);
+        $nested = in_array($taxonomy, ['category', 'post_tag'], true) || $row === null || !empty($row['rewrite']['hierarchical']);
+        return $this->url("/{$base}/" . ($nested ? $this->terms->pathOf($term) : (string) $term['slug']) . '/');
     }
 
     /** An author's archive URL. */

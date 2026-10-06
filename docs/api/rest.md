@@ -6,7 +6,7 @@ the wp/v2 surface: shapes and controllers
 |---|---|---|---|
 | [`AbilitiesController`](#abilitiescontroller) | final readonly class | 142 | wp-abilities/v1: what this site can be asked to do, and the doing of it. |
 | [`AdditionalFields`](#additionalfields) | final class | 46 | Which object type a wp/v2 route serves, so fields registered for that type can ride on the engine's own responses. |
-| [`Api`](#api) | final readonly class | 228 | The REST API: wires the controllers for one request and dispatches a |
+| [`Api`](#api) | final readonly class | 229 | The REST API: wires the controllers for one request and dispatches a |
 | [`ApplicationPasswordsController`](#applicationpasswordscontroller) | final readonly class | 170 | wp/v2/users/{id}/application-passwords: list, create, rename, delete, |
 | [`ArgCheck`](#argcheck) | final readonly class | 83 | Judges a route's declared arguments against the request before the |
 | [`BatchController`](#batchcontroller) | final readonly class | 159 | batch/v1 as the reference answers it (probe rest-batch): up to 25 |
@@ -20,6 +20,7 @@ the wp/v2 surface: shapes and controllers
 | [`CommentsController`](#commentscontroller) | final readonly class | 326 | wp/v2/comments: the status tabs with pagination headers, single, |
 | [`Context`](#context) | enum | 18 | The view a REST caller asked for. View is the public shape, edit adds the |
 | [`DeclaredPostsController`](#declaredpostscontroller) | final readonly class | 56 | wp/v2/{rest_base} for extra post types declared by an active extension. |
+| [`DeclaredTermsController`](#declaredtermscontroller) | final readonly class | 43 | wp/v2/{rest_base} for the taxonomies plugin code registers to show in |
 | [`Embed`](#embed) | final class | 180 | The _embed decoration and the embed context. Every embeddable link in an |
 | [`EngineRoutes`](#engineroutes) | final class | 66 | The engine's own REST routes in the reference's regex form, for the |
 | [`Fields`](#fields) | final readonly class | 92 | The _fields response filter. Dot paths descend ("title.rendered"); the |
@@ -39,10 +40,12 @@ the wp/v2 surface: shapes and controllers
 | [`OEmbedController`](#oembedcontroller) | final readonly class | 72 | oembed/1.0 as the reference answers it (probe oembed). embed is the |
 | [`ParamCheck`](#paramcheck) | final class | 75 | The required / validate / sanitize pass over a request's declared arguments. |
 | [`PluginsController`](#pluginscontroller) | final readonly class | 236 | wp/v2 plugins: what sits in wp-content/plugins, in the reference's |
-| [`PolicyGate`](#policygate) | final readonly class | 91 | Judges a route's policy against the caller, with the reference's |
-| [`PostObject`](#postobject) | final readonly class | 494 | Builds the wp/v2 post and page objects in the reference's shape: the |
-| [`PostsController`](#postscontroller) | final readonly class | 182 | wp/v2 posts and pages, read side. |
-| [`PostsWriteController`](#postswritecontroller) | final readonly class | 436 | wp/v2 posts and pages, write side: create, update, trash, and force |
+| [`PolicyGate`](#policygate) | final readonly class | 92 | Judges a route's policy against the caller, with the reference's |
+| [`PostObject`](#postobject) | final readonly class | 515 | Builds the wp/v2 post and page objects in the reference's shape: the |
+| [`PostsController`](#postscontroller) | final readonly class | 183 | wp/v2 posts and pages, read side. |
+| [`PostsWriteController`](#postswritecontroller) | final readonly class | 449 | wp/v2 posts and pages, write side: create, update, trash, and force |
+| [`RegisteredPostFields`](#registeredpostfields) | final readonly class | 89 | The REST object of a post whose type plugin code registered (probe rest-plugin-types), built by what the type supports. |
+| [`RegisteredType`](#registeredtype) | final readonly class | 76 | A post type plugin code registered, as its REST object follows it |
 | [`RenderedFields`](#renderedfields) | final class | 49 | A post's rendered title, content and excerpt as a REST response carries |
 | [`Reply`](#reply) | final class | 47 | JSON responses in the reference's shape: its header set, its json_encode |
 | [`RestUrl`](#resturl) | final readonly class | 38 | REST URLs in the form the reference emits for the site's permalink mode: |
@@ -68,9 +71,9 @@ the wp/v2 surface: shapes and controllers
 | [`TaxonomiesController`](#taxonomiescontroller) | final readonly class | 48 | wp/v2 taxonomies: the registry, whole or per type, in view or edit context. |
 | [`TemplateObject`](#templateobject) | final readonly class | 100 | The wp/v2/templates and wp/v2/template-parts resource. |
 | [`TemplatesController`](#templatescontroller) | final readonly class | 249 | wp/v2/templates and wp/v2/template-parts: the block theme's templates as |
-| [`TermObject`](#termobject) | final readonly class | 84 | The wp/v2 category and tag objects. |
+| [`TermObject`](#termobject) | final readonly class | 107 | The wp/v2 category and tag objects. |
 | [`TermsController`](#termscontroller) | final readonly class | 215 | wp/v2 categories, tags, and pattern categories: list, single, and the create/update/delete the taxonomy admin drives. |
-| [`Types`](#types) | final class | 147 | The engine's registry of built-in post types, seeded from the observed |
+| [`Types`](#types) | final class | 162 | The engine's registry of built-in post types, seeded from the observed |
 | [`TypesController`](#typescontroller) | final readonly class | 70 | wp/v2 types. In the edit context (probe rest-types-edit) a type adds its |
 | [`UserObject`](#userobject) | final readonly class | 106 | The wp/v2 user objects: the public view shape and the edit-context shape. |
 | [`UsersController`](#userscontroller) | final readonly class | 338 | wp/v2 users: me, list, single, and the create/update/delete-with-reassign the Users view drives. |
@@ -221,7 +224,7 @@ runtime's server calls for a core route, so a route the engine
 declines cannot bounce between the two. $as is the caller's own
 request object, which the route's parameters are set on.
 
-Internals: `controllers()` (private, line 73), `engineResponse()` (private, line 230), `options()` (private, line 246), `withAllow()` (private, line 259)
+Internals: `controllers()` (private, line 73), `engineResponse()` (private, line 231), `options()` (private, line 247), `withAllow()` (private, line 260)
 
 
 ## ApplicationPasswordsController
@@ -755,6 +758,57 @@ Trashes or deletes a post of a declared type.
 Internals: `slug()` (private, line 68)
 
 
+## DeclaredTermsController
+
+`final readonly class Minn\Rest\DeclaredTermsController` · `public/minn/src/Minn/Rest/DeclaredTermsController.php`
+
+wp/v2/{rest_base} for the taxonomies plugin code registers to show in
+REST (probe rest-plugin-types), answered as the core taxonomies are.
+Registered after the declared post types; a base no such taxonomy names
+declines, so a plugin's own route under wp/v2 is not shadowed.
+
+Used by: `Minn\Rest\Api`
+
+```php
+__construct(Minn\Rest\TermsController $terms)
+```
+
+
+### `list(Minn\Http\Request $request, string $base): Minn\Http\Response`
+
+Route: `GET /wp/v2/{base:[a-z0-9_-]+} (registered taxonomy {base})`
+
+A registered taxonomy's terms.
+
+### `single(Minn\Http\Request $request, string $base, string $id): Minn\Http\Response`
+
+Route: `GET /wp/v2/{base:[a-z0-9_-]+}/{id:[\d]+} (registered taxonomy {base})`
+
+One term of a registered taxonomy.
+
+### `create(Minn\Http\Request $request, string $base): Minn\Http\Response`
+
+Route: `POST /wp/v2/{base:[a-z0-9_-]+} (registered taxonomy {base})`
+
+Creates a term in a registered taxonomy.
+
+### `update(Minn\Http\Request $request, string $base, string $id): Minn\Http\Response`
+
+Route: `POST /wp/v2/{base:[a-z0-9_-]+}/{id:[\d]+} (registered taxonomy {base})`
+
+Route: `PUT /wp/v2/{base:[a-z0-9_-]+}/{id:[\d]+} (registered taxonomy {base})`
+
+Route: `PATCH /wp/v2/{base:[a-z0-9_-]+}/{id:[\d]+} (registered taxonomy {base})`
+
+Updates a term of a registered taxonomy.
+
+### `delete(Minn\Http\Request $request, string $base, string $id): Minn\Http\Response`
+
+Route: `DELETE /wp/v2/{base:[a-z0-9_-]+}/{id:[\d]+} (registered taxonomy {base})`
+
+Deletes a term of a registered taxonomy.
+
+
 ## Embed
 
 `final class Minn\Rest\Embed` · `public/minn/src/Minn/Rest/Embed.php`
@@ -1093,9 +1147,11 @@ __construct(int $page = 1, int $perPage = 10, array $include = array ( ), array 
 - readonly `array $terms`
 - readonly `array $termsExclude`
 
-### static `fromRequest(Minn\Http\Request $request): self`
+### static `fromRequest(Minn\Http\Request $request, ?array $taxonomies = NULL): self`
 
-The list parameters read from the request.
+The list parameters read from the request; a plugin's type names the taxonomies it filters on. @param array<string, string>|null $taxonomies
+
+- `@param array<string, string>|null $taxonomies`
 
 ### `clauses(): array`
 
@@ -1596,7 +1652,7 @@ Throws the refusal the policy names, or returns.
 
 - `@param array<string, string> $captures`
 
-Internals: `subject()` (private, line 64), `type()` (private, line 77), `capabilities()` (private, line 85), `own()` (private, line 99)
+Internals: `subject()` (private, line 65), `type()` (private, line 78), `capabilities()` (private, line 86), `own()` (private, line 100)
 
 
 ## PostObject
@@ -1610,7 +1666,7 @@ fields, and cap-gated wp:action-* links), and their _links blocks.
 - const `NAVIGATION` = `'wp_navigation'` — The one post type whose REST shape is not post-shaped.
 - const `BLOCK` = `'wp_block'` — The other: a pattern carries its content raw, its category, and its sync status.
 
-Used by: `Minn\Rest\Api`, `Minn\Rest\CommentObject`, `Minn\Rest\GlobalStylesObject`, `Minn\Rest\MediaObject`, `Minn\Rest\PostsController`, `Minn\Rest\PostsWriteController`, `Minn\Rest\RevisionsController`, `Minn\Rest\Services`, `Minn\Rest\UserObject`
+Used by: `Minn\Rest\Api`, `Minn\Rest\CommentObject`, `Minn\Rest\GlobalStylesObject`, `Minn\Rest\MediaObject`, `Minn\Rest\PostsController`, `Minn\Rest\PostsWriteController`, `Minn\Rest\RegisteredPostFields`, `Minn\Rest\RevisionsController`, `Minn\Rest\Services`, `Minn\Rest\UserObject`
 
 ```php
 __construct(Minn\Db $db, Minn\Content\Posts $posts, Minn\Content\Users $users, Minn\Front\Permalinks $permalinks, Minn\Rest\RestUrl $url, Minn\Rest\Caller $caller)
@@ -1651,7 +1707,7 @@ Whether a live post carries an autosave newer than its saved revision.
 
 The OTHER user holding a live _edit_lock (150 second window), or null.
 
-### `editLinks(Minn\Content\PostRecord $p, int $userId): array`
+### `editLinks(Minn\Content\PostRecord $p, int $userId, ?array $viewLinks = NULL): array`
 
 The view links plus the caller's verbs and cap-gated wp:action-* entries.
 
@@ -1659,7 +1715,7 @@ The view links plus the caller's verbs and cap-gated wp:action-* entries.
 
 A MySQL datetime in the reference's ISO form.
 
-Internals: `navigationView()` (private, line 77), `blockView()` (private, line 107), `viewFields()` (private, line 133), `viewTerms()` (private, line 172), `typeFields()` (private, line 188), `classList()` (private, line 217), `format()` (private, line 239), `termLinks()` (private, line 283), `editFields()` (private, line 302), `allow()` (private, line 483), `gmt()` (private, line 502)
+Internals: `navigationView()` (private, line 76), `blockView()` (private, line 106), `viewFields()` (private, line 132), `viewTerms()` (private, line 175), `typeFields()` (private, line 191), `classList()` (private, line 220), `format()` (private, line 242), `termLinks()` (private, line 286), `editFields()` (private, line 305), `allow()` (private, line 503), `gmt()` (private, line 522)
 
 
 ## PostsController
@@ -1699,7 +1755,7 @@ One post or page.
 
 One post of any type, with the reference's read rules.
 
-Internals: `visibleStatuses()` (private, line 104), `visibility()` (private, line 141), `orderSql()` (private, line 155)
+Internals: `visibleStatuses()` (private, line 105), `visibility()` (private, line 142), `orderSql()` (private, line 156)
 
 
 ## PostsWriteController
@@ -1759,7 +1815,81 @@ Trashes a post of any type, or deletes it with force.
 
 A field that may arrive as a scalar or as {raw: ...}.
 
-Internals: `events()` (private, line 128), `newColumns()` (private, line 139), `writeNewPost()` (private, line 173), `trash()` (private, line 284), `rememberOld()` (private, line 303), `floatingDate()` (private, line 328), `scheduledIfFuture()` (private, line 338), `fieldColumns()` (private, line 357), `statusColumns()` (private, line 402), `checkStickyPasswordConflict()` (private, line 432), `validStatus()` (private, line 444), `clean()` (private, line 453)
+Internals: `hasParent()` (private, line 129), `hasOrder()` (private, line 135), `events()` (private, line 141), `newColumns()` (private, line 152), `writeNewPost()` (private, line 186), `trash()` (private, line 299), `rememberOld()` (private, line 318), `floatingDate()` (private, line 343), `scheduledIfFuture()` (private, line 353), `fieldColumns()` (private, line 372), `statusColumns()` (private, line 415), `checkStickyPasswordConflict()` (private, line 445), `validStatus()` (private, line 457), `clean()` (private, line 466)
+
+
+## RegisteredPostFields
+
+`final readonly class Minn\Rest\RegisteredPostFields` · `public/minn/src/Minn/Rest/RegisteredPostFields.php`
+
+The REST object of a post whose type plugin code registered (probe rest-plugin-types), built by what the type supports.
+
+Used by: `Minn\Rest\PostObject`
+
+```php
+__construct(Minn\Content\Posts $posts, Minn\Front\Permalinks $permalinks, Minn\Rest\RestUrl $url)
+```
+
+
+### `view(Minn\Content\PostRecord $p, Minn\Rest\RegisteredType $type, Closure $allow, Closure $gmt): array`
+
+A plugin's type in the view context (probe rest-plugin-types): the
+shared fields, then only what the type supports (title, editor,
+excerpt, author, thumbnail, page attributes, comments, formats, custom
+fields), its parent when hierarchical, each REST taxonomy's term ids
+under its REST base, the class list and links.
+
+- `@param Closure(int): list<string> $allow the methods the caller may use on a post`
+- `@param Closure(string, string): string $gmt a GMT date as the object writes it`
+- `@return array<string, mixed>`
+
+Internals: `links()` (private, line 79)
+
+
+## RegisteredType
+
+`final readonly class Minn\Rest\RegisteredType` · `public/minn/src/Minn/Rest/RegisteredType.php`
+
+A post type plugin code registered, as its REST object follows it
+(probe rest-plugin-types): what it supports, whether it is hierarchical,
+the taxonomies it shows in REST under their REST bases, and the meta
+registered for it to show in REST. Only once the runtime has loaded the
+plugins that register it.
+
+Used by: `Minn\Rest\PostObject`, `Minn\Rest\PostsController`, `Minn\Rest\PostsWriteController`, `Minn\Rest\RegisteredPostFields`, `Minn\Runtime\PostEvents`
+
+- readonly `string $name`
+
+### static `of(string $type): ?self`
+
+The type when plugin code registered it (not a built-in), or null.
+
+### `supports(string $feature): bool`
+
+Whether the type supports the feature (title, editor, author...).
+
+### `hierarchical(): bool`
+
+Whether the type's posts have parents.
+
+### `base(): string`
+
+The REST base the type's routes live under, with its namespace.
+
+### `taxonomies(): array`
+
+The taxonomies the type shows in REST, REST base => taxonomy, in registration order. @return array<string, string>
+
+- `@return array<string, string>`
+
+### `meta(int $postId): array`
+
+The meta registered for the type to show in REST, key => value: a
+single value cast to its type (its default when unset), or the list.
+
+- `@return array<string, mixed>`
+
+Internals: `cast()` (private, line 82)
 
 
 ## RenderedFields
@@ -1773,7 +1903,7 @@ up as it sets it up: the_title over the stored title, the engine's
 render of the content then the rest of the_content (shortcodes and every
 plugin's callback), and get_the_excerpt then the_excerpt.
 
-Used by: `Minn\Rest\PostObject`
+Used by: `Minn\Rest\PostObject`, `Minn\Rest\RegisteredPostFields`
 
 ### static `title(Minn\Content\PostRecord $p): string`
 
@@ -1830,7 +1960,7 @@ REST URLs in the form the reference emits for the site's permalink mode:
 {home}/index.php?rest_route=/wp/v2/... with the route value URL-encoded
 when query args ride along.
 
-Used by: `Minn\Engine`, `Minn\Rest\AbilitiesController`, `Minn\Rest\ApplicationPasswordsController`, `Minn\Rest\BlockTypesController`, `Minn\Rest\CommentObject`, `Minn\Rest\GlobalStylesObject`, `Minn\Rest\IndexController`, `Minn\Rest\InstalledThemesController`, `Minn\Rest\MediaObject`, `Minn\Rest\MenuItemObject`, `Minn\Rest\MenuObject`, `Minn\Rest\MenusController`, `Minn\Rest\PluginsController`, `Minn\Rest\PostObject`, `Minn\Rest\PostsWriteController`, `Minn\Rest\RevisionsController`, `Minn\Rest\RouteCatalogue`, `Minn\Rest\SearchController`, `Minn\Rest\Services`, `Minn\Rest\SidebarsController`, `Minn\Rest\StatusesController`, `Minn\Rest\Taxonomies`, `Minn\Rest\TemplateObject`, `Minn\Rest\TermObject`, `Minn\Rest\Types`, `Minn\Rest\UserObject`, `Minn\Rest\UsersController`, `Minn\Rest\WidgetObject`
+Used by: `Minn\Engine`, `Minn\Rest\AbilitiesController`, `Minn\Rest\ApplicationPasswordsController`, `Minn\Rest\BlockTypesController`, `Minn\Rest\CommentObject`, `Minn\Rest\GlobalStylesObject`, `Minn\Rest\IndexController`, `Minn\Rest\InstalledThemesController`, `Minn\Rest\MediaObject`, `Minn\Rest\MenuItemObject`, `Minn\Rest\MenuObject`, `Minn\Rest\MenusController`, `Minn\Rest\PluginsController`, `Minn\Rest\PostObject`, `Minn\Rest\PostsWriteController`, `Minn\Rest\RegisteredPostFields`, `Minn\Rest\RevisionsController`, `Minn\Rest\RouteCatalogue`, `Minn\Rest\SearchController`, `Minn\Rest\Services`, `Minn\Rest\SidebarsController`, `Minn\Rest\StatusesController`, `Minn\Rest\Taxonomies`, `Minn\Rest\TemplateObject`, `Minn\Rest\TermObject`, `Minn\Rest\Types`, `Minn\Rest\UserObject`, `Minn\Rest\UsersController`, `Minn\Rest\WidgetObject`
 
 ```php
 __construct(Minn\Front\Permalinks $permalinks)
@@ -2914,7 +3044,7 @@ The wp/v2 category and tag objects.
 
 - const `TAXONOMIES` = `array (   'categories' =>    array (     'taxonomy' => 'category',     'has_parent' => true,     'post_arg' => 'categories',     'post_base' => 'posts',   ),   'tags' =>    array (     'taxonomy' => 'post_tag',     'has_parent' => false,     'post_arg' => 'tags',     'post_base' => 'posts',   ),   'wp_pattern_category' =>    array (     'taxonomy' => 'wp_pattern_category',     'has_parent' => false,     'post_arg' => 'wp_pattern_category',     'post_base' => 'blocks',   ), )`
 
-Used by: `Minn\Rest\Api`, `Minn\Rest\Services`, `Minn\Rest\TermsController`
+Used by: `Minn\Rest\Api`, `Minn\Rest\PolicyGate`, `Minn\Rest\Services`, `Minn\Rest\TermsController`
 
 ```php
 __construct(Minn\Db $db, Minn\Front\Permalinks $permalinks, Minn\Rest\RestUrl $url, Minn\Rest\Caller $caller)
@@ -2935,7 +3065,16 @@ The taxonomy behind a rest_base.
 
 - `@return array{taxonomy: string, has_parent: bool, post_arg: string, post_base: string}`
 
-Internals: `viewFields()` (private, line 53), `allowedVerbs()` (private, line 86)
+### static `registered(string $restBase): ?array`
+
+A taxonomy plugin code registered to show in REST under wp/v2, by its
+REST base (probe rest-plugin-types), as a term route's config: its
+terms nest when it is hierarchical, and its posts are those of the
+first type it belongs to.
+
+- `@return array{taxonomy: string, has_parent: bool, post_arg: string, post_base: string}|null`
+
+Internals: `viewFields()` (private, line 80), `allowedVerbs()` (private, line 113)
 
 
 ## TermsController
@@ -2946,7 +3085,7 @@ wp/v2 categories, tags, and pattern categories: list, single, and the create/upd
 
 - const `ORDER_BY` = `array (   'name' => 't.name',   'count' => 'tt.count',   'id' => 't.term_id',   'slug' => 't.slug', )`
 
-Used by: `Minn\Rest\Api`
+Used by: `Minn\Rest\Api`, `Minn\Rest\DeclaredTermsController`
 
 ```php
 __construct(Minn\Db $db, Minn\Content\Terms $terms, Minn\Content\Site $site, Minn\Rest\TermObject $object, Minn\Rest\Caller $caller)
@@ -3023,19 +3162,23 @@ The type behind a rest_base, or null.
 
 ### `declaredBases(): array`
 
-The rest_base of every type an extension declared. @return list<string>
+The rest_base of every type an extension declared or plugin code registered under wp/v2. @return list<string>
 
 - `@return list<string>`
 
 ### `isDeclared(string $slug): bool`
 
-Whether an extension declared this type.
+Whether the engine serves this type through its {base} routes: an extension declared it, or plugin code registered it to show in REST under wp/v2 (probe rest-plugin-types).
+
+### `isRegistered(string $slug): bool`
+
+Whether plugin code registered the type (not a built-in, not an extension's).
 
 ### `restBase(string $slug): string`
 
 The rest_base of a type slug.
 
-Internals: `core()` (private, line 37), `registered()` (private, line 78)
+Internals: `core()` (private, line 37), `registered()` (private, line 78), `servedRegistered()` (private, line 155)
 
 
 ## TypesController

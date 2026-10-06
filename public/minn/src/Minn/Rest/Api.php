@@ -73,6 +73,7 @@ final readonly class Api
     private static function controllers(Services $s, Router $router): array
     {
         $caller = $s->caller();
+        $terms = new TermsController($s->db(), $s->terms(), $s->site(), $s->termObject(), $caller);
         $postsController = new PostsController($s->db(), $s->posts(), $s->postObject(), $caller);
         $postsWrite = new PostsWriteController($s->posts(), $s->writer(), $s->site(), $s->postObject(), $s->url(), $caller);
         $controllers = [
@@ -82,7 +83,7 @@ final readonly class Api
             new OverviewController($s->db(), $s->site(), $s->dashboard(), $s->users(), $caller),
             new EditorController($s->writer(), $caller),
             new SiteController($s->db(), $s->site(), $s->posts(), $s->permalinks(), $caller),
-            new TermsController($s->db(), $s->terms(), $s->site(), $s->termObject(), $caller),
+            $terms,
             new UsersController($s->db(), $s->users(), $s->site(), $s->userObject(), $s->url(), $caller, $s->capabilities()->roles()),
             new ApplicationPasswordsController($s->users(), $s->site(), $s->applicationPasswords(), $s->url(), $caller, $s->schema()),
             new TypesController($s->types()),
@@ -127,7 +128,7 @@ final readonly class Api
         if ($templates !== null && $templateWriter !== null) {
             $controllers[] = new TemplatesController($templates, $templateWriter, new TemplateObject($templates, $s->posts(), $s->url(), $caller), $caller);
         }
-        return [...$controllers, $postsController, $postsWrite, new NavigationController($postsController, $postsWrite), new BlocksController($postsController, $postsWrite, $s->posts(), $caller), new DeclaredPostsController($s->types(), $postsController, $postsWrite)];
+        return [...$controllers, $postsController, $postsWrite, new NavigationController($postsController, $postsWrite), new BlocksController($postsController, $postsWrite, $s->posts(), $caller), new DeclaredPostsController($s->types(), $postsController, $postsWrite), new DeclaredTermsController($terms)];
     }
 
     /** Who is making this request. */

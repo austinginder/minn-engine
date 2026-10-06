@@ -256,12 +256,26 @@ class WP_REST_Server
         return $response;
     }
 
+    /** Query values plugin code set as numbers or booleans, as text the way a query string carries them. */
+    private static function query_text(array $query): array
+    {
+        foreach ($query as $key => $value) {
+            $query[$key] = match (true) {
+                is_array($value) => self::query_text($value),
+                is_bool($value) => $value ? '1' : '0',
+                is_int($value), is_float($value) => (string) $value,
+                default => $value,
+            };
+        }
+        return $query;
+    }
+
     /** A core route answered by the engine's own REST layer, as the response object plugin code expects. */
     protected function engine_response(WP_REST_Request $request): ?WP_REST_Response
     {
         $runtime = Runtime::current();
         $route = '/' . ltrim((string) $request->get_route(), '/');
-        $query = $request->get_query_params();
+        $query = self::query_text($request->get_query_params());
         $headers = [];
         foreach ($request->get_headers() as $name => $values) {
             $headers[str_replace('_', '-', $name)] = implode(',', $values);
