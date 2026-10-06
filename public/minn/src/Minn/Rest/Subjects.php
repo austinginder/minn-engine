@@ -45,6 +45,18 @@ final readonly class Subjects
         };
     }
 
+    /** Whether a post of the type exists. */
+    public function postOfType(int $id, string $type): bool
+    {
+        return $this->post($id, $type);
+    }
+
+    /** Whether a term of the taxonomy exists. */
+    public function termOf(int $id, string $taxonomy): bool
+    {
+        return $this->term($id, $taxonomy);
+    }
+
     private function post(int $id, string $type): bool
     {
         return $id > 0 && $this->db->value("SELECT ID FROM {$this->db->table('posts')} WHERE ID = ? AND post_type = ?", [$id, $type]) !== null;

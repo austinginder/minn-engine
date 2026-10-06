@@ -28,6 +28,7 @@ final readonly class Policy
      * @param string|null $missing the 404 code when the subject does not exist; the subject's own when null
      * @param string|null $missingMessage its message; the subject's own when null
      * @param int $signInStatus the status a signed-out caller is refused with (the reference answers some routes' signed-out writes 404, not 401)
+     * @param string|null $verb what a Type or Taxonomy route does (create, edit, delete), judged with the type's or taxonomy's own capabilities
      */
     public function __construct(
         public Access $access = Access::Public,
@@ -43,6 +44,7 @@ final readonly class Policy
         public ?string $missing = null,
         public ?string $missingMessage = null,
         public int $signInStatus = 401,
+        public ?string $verb = null,
     ) {
     }
 

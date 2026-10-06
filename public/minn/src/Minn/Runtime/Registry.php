@@ -114,6 +114,8 @@ final class Registry
         $labels['template_name'] ??= sprintf(\function_exists('__') ? \__('Single item: %s') : 'Single item: %s', (string) $labels['singular_name']);
         $public = (bool) ($args['public'] ?? false);
         $capabilityType = $args['capability_type'] ?? 'post';
+        // Meta capabilities are mapped by default only for the post and page families (probe rest-plugin-caps).
+        $mapMetaCap = (bool) ($args['map_meta_cap'] ?? in_array($capabilityType, ['post', 'page'], true));
         $hasArchive = $args['has_archive'] ?? false;
         $publiclyQueryable = (bool) ($args['publicly_queryable'] ?? $public);
         $showUi = (bool) ($args['show_ui'] ?? $public);
@@ -144,7 +146,7 @@ final class Registry
             'menu_position' => $args['menu_position'] ?? null,
             'menu_icon' => $args['menu_icon'] ?? null,
             'capability_type' => $capabilityType,
-            'map_meta_cap' => (bool) ($args['map_meta_cap'] ?? true),
+            'map_meta_cap' => $mapMetaCap,
             'taxonomies' => array_values(array_map('strval', (array) ($args['taxonomies'] ?? []))),
             'has_archive' => $hasArchive,
             'query_var' => $args['query_var'] ?? true,
@@ -154,7 +156,7 @@ final class Registry
             'template_lock' => $args['template_lock'] ?? false,
             '_builtin' => false,
             '_edit_link' => (string) ($args['_edit_link'] ?? 'post.php?post=%d'),
-            'cap' => self::capabilities($capabilityType, (array) ($args['capabilities'] ?? []), (bool) ($args['map_meta_cap'] ?? true)),
+            'cap' => self::capabilities($capabilityType, (array) ($args['capabilities'] ?? []), $mapMetaCap),
             'rewrite' => $rewrite,
             'show_in_rest' => (bool) ($args['show_in_rest'] ?? false),
             'rest_base' => $args['rest_base'] ?? false,

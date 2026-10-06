@@ -42,7 +42,7 @@ final readonly class DeclaredPostsController
     }
 
     /** Creates a post of a declared type. */
-    #[Route(Method::Post, '/wp/v2/{base:[a-z0-9_-]+}', policy: new Policy(Access::Type, param: 'base'))]
+    #[Route(Method::Post, '/wp/v2/{base:[a-z0-9_-]+}', policy: new Policy(Access::Type, param: 'base', verb: 'create'))]
     public function create(Request $request, string $base): Response
     {
         $slug = $this->slug($base);
@@ -50,16 +50,16 @@ final readonly class DeclaredPostsController
     }
 
     /** Updates a post of a declared type. */
-    #[Route(Method::Post, '/wp/v2/{base:[a-z0-9_-]+}/{id:[\d]+}', policy: new Policy(Access::Type, param: 'base'))]
-    #[Route(Method::Put, '/wp/v2/{base:[a-z0-9_-]+}/{id:[\d]+}', policy: new Policy(Access::Type, param: 'base'))]
-    #[Route(Method::Patch, '/wp/v2/{base:[a-z0-9_-]+}/{id:[\d]+}', policy: new Policy(Access::Type, param: 'base'))]
+    #[Route(Method::Post, '/wp/v2/{base:[a-z0-9_-]+}/{id:[\d]+}', policy: new Policy(Access::Type, param: 'base', verb: 'edit'))]
+    #[Route(Method::Put, '/wp/v2/{base:[a-z0-9_-]+}/{id:[\d]+}', policy: new Policy(Access::Type, param: 'base', verb: 'edit'))]
+    #[Route(Method::Patch, '/wp/v2/{base:[a-z0-9_-]+}/{id:[\d]+}', policy: new Policy(Access::Type, param: 'base', verb: 'edit'))]
     public function update(Request $request, string $base, string $id): Response
     {
         return $this->writes->serveUpdate($request, $this->slug($base), $id);
     }
 
     /** Trashes or deletes a post of a declared type. */
-    #[Route(Method::Delete, '/wp/v2/{base:[a-z0-9_-]+}/{id:[\d]+}', policy: new Policy(Access::Type, param: 'base'))]
+    #[Route(Method::Delete, '/wp/v2/{base:[a-z0-9_-]+}/{id:[\d]+}', policy: new Policy(Access::Type, param: 'base', verb: 'delete'))]
     public function delete(Request $request, string $base, string $id): Response
     {
         return $this->writes->serveDelete($request, $this->slug($base), $id);

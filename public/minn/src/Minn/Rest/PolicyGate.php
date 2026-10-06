@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Minn\Rest;
 
+use Minn\Auth\TypeCapabilities;
 use Minn\Http\Access;
 use Closure;
 use Minn\Http\Policy;
@@ -47,8 +48,8 @@ final readonly class PolicyGate
             Access::SignedIn => $this->caller->require($policy->signIn, $policy->signInMessage, $policy->signInStatus),
             Access::Cap, Access::Floor => $this->capabilities($policy),
             Access::Own => $this->own($policy, $captures),
-            Access::Type => $this->type($captures),
-            Access::Taxonomy => TermObject::registered((string) ($captures['base'] ?? '')) === null ? throw new RouteMiss() : null,
+            Access::Type => $this->type($policy, $captures),
+            Access::Taxonomy => $this->taxonomy($policy, $captures),
         };
         if ($policy->edit !== null && Context::of($request)->isEdit()) {
             $this->judge($policy->edit, $request, $captures);
@@ -74,12 +75,67 @@ final readonly class PolicyGate
         }
     }
 
-    /** A {base} that names no declared type declines the route, so the next one may take it. @param array<string, string> $captures */
-    private function type(array $captures): void
+    /**
+     * A {base} that names no declared type declines the route, so the next
+     * one may take it. A write is judged with the type's own capabilities
+     * (probe rest-plugin-caps): a missing post first (404), then the
+     * caller (401 signed out, 403 refused).
+     *
+     * @param array<string, string> $captures
+     */
+    private function type(Policy $policy, array $captures): void
     {
         $slug = $this->types->slugForRestBase((string) ($captures['base'] ?? ''));
         if ($slug === null || !$this->types->isDeclared($slug)) {
             throw new RouteMiss();
+        }
+        $id = (int) ($captures['id'] ?? 0);
+        [$code, $message, $capability] = match ($policy->verb) {
+            'create' => ['rest_cannot_create', 'Sorry, you are not allowed to create posts as this user.', TypeCapabilities::create($slug)],
+            'edit' => ['rest_cannot_edit', 'Sorry, you are not allowed to edit this post.', 'edit_post'],
+            'delete' => ['rest_cannot_delete', 'Sorry, you are not allowed to delete this post.', 'delete_post'],
+            default => [null, '', ''],
+        };
+        if ($code === null) {
+            return;
+        }
+        if ($policy->verb !== 'create' && !$this->subjects->postOfType($id, $slug)) {
+            throw new RestError('rest_post_invalid_id', 'Invalid post ID.', 404);
+        }
+        if (!$this->caller->can($capability, $policy->verb === 'create' ? null : $id)) {
+            throw $this->caller->refuse($code, $message);
+        }
+    }
+
+    /**
+     * A {base} that names no registered taxonomy declines the route. A
+     * write is judged with the taxonomy's own capabilities (probe
+     * rest-plugin-caps): a missing term first (404), then the caller.
+     *
+     * @param array<string, string> $captures
+     */
+    private function taxonomy(Policy $policy, array $captures): void
+    {
+        $config = TermObject::registered((string) ($captures['base'] ?? ''));
+        if ($config === null) {
+            throw new RouteMiss();
+        }
+        $taxonomy = (string) $config['taxonomy'];
+        $id = (int) ($captures['id'] ?? 0);
+        [$code, $message, $capability] = match ($policy->verb) {
+            'create' => ['rest_cannot_create', 'Sorry, you are not allowed to create terms in this taxonomy.', TermsController::createCapability($taxonomy)],
+            'edit' => ['rest_cannot_update', 'Sorry, you are not allowed to edit this term.', 'edit_term'],
+            'delete' => ['rest_cannot_delete', 'Sorry, you are not allowed to delete this term.', 'delete_term'],
+            default => [null, '', ''],
+        };
+        if ($code === null) {
+            return;
+        }
+        if ($policy->verb !== 'create' && !$this->subjects->termOf($id, $taxonomy)) {
+            throw new RestError('rest_term_invalid', 'Term does not exist.', 404);
+        }
+        if (!$this->caller->can($capability, $policy->verb === 'create' ? null : $id)) {
+            throw $this->caller->refuse($code, $message);
         }
     }
 

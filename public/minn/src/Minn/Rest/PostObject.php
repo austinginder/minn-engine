@@ -173,7 +173,7 @@ final readonly class PostObject
         ];
         $terms = $p->type === 'page' ? [] : $this->viewTerms($p);
         $object = [...$object, ...$this->typeFields($p, $terms)];
-        $object['class_list'] = $this->classList($p, $object['featured_media'] > 0, $terms);
+        $object['class_list'] = RenderedFields::classes($this->classList($p, $object['featured_media'] > 0, $terms), $p->id);
         $object['_links'] = $this->links($p);
         return $object;
     }

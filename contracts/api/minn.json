@@ -8170,16 +8170,18 @@
             "namespace": "Minn\\Auth",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Auth/Capabilities.php",
-            "lines": 230,
+            "lines": 260,
             "doc": "The capability engine: a user's roles from {prefix}capabilities usermeta,\nwhat those roles and the user's own capabilities grant, and the meta-capability mapping for\nedit_post, delete_post, and read_post.",
             "implements": [],
             "extends": null,
             "uses": [
+                "Minn\\Auth\\RegisteredCaps",
                 "Minn\\Auth\\Roles",
                 "Minn\\Auth\\TypeCapabilities",
                 "Minn\\Content\\PostRecord",
                 "Minn\\Content\\Users",
                 "Minn\\Db",
+                "Minn\\Runtime\\Runtime",
                 "Minn\\Support\\Serialized"
             ],
             "usedBy": [
@@ -8532,7 +8534,43 @@
                         }
                     ],
                     "line": 190,
-                    "end": 227
+                    "end": 232
+                },
+                {
+                    "routes": [],
+                    "name": "mapTermCapability",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "mapTermCapability(string $capability, int $userId, ?int $termId): ?array",
+                    "doc": "A term capability on a plugin's taxonomy as the reference maps it\n(probe rest-plugin-caps): the taxonomy's own name for it (edit_terms,\ndelete_terms, assign_terms), mapped in turn; nothing for a term that\ndoes not exist or a default term's deletion. Null for the built-in\ntaxonomies, whose mapping is fixed.",
+                    "shapes": [
+                        "@return list<string>|null"
+                    ],
+                    "params": [
+                        {
+                            "name": "capability",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "userId",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "termId",
+                            "type": "?int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 243,
+                    "end": 257
                 },
                 {
                     "routes": [],
@@ -8561,8 +8599,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 233,
-                    "end": 236
+                    "line": 263,
+                    "end": 266
                 },
                 {
                     "routes": [],
@@ -8581,8 +8619,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 238,
-                    "end": 245
+                    "line": 268,
+                    "end": 275
                 }
             ]
         },
@@ -9873,6 +9911,71 @@
             ]
         },
         {
+            "name": "Minn\\Auth\\RegisteredCaps",
+            "short": "RegisteredCaps",
+            "namespace": "Minn\\Auth",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Auth/RegisteredCaps.php",
+            "lines": 22,
+            "doc": "The capability names a plugin's post type or taxonomy registered, read\nfrom the runtime's registry once plugins are loaded (probe\nrest-plugin-caps): a type's cap object (create_posts, edit_posts,\npublish_posts...) and whether it maps meta capabilities, a taxonomy's\nterm capabilities. Null for the built-in ones, whose names the engine\nknows, and when no runtime is up.",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\Runtime\\Runtime"
+            ],
+            "usedBy": [
+                "Minn\\Auth\\Capabilities",
+                "Minn\\Auth\\TypeCapabilities",
+                "Minn\\Rest\\TermsController"
+            ],
+            "constructor": null,
+            "cases": [],
+            "constants": [],
+            "properties": [],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "ofType",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "ofType(string $type): ?WP_Post_Type",
+                    "doc": "A plugin's post type, or null.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "type",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 20,
+                    "end": 27
+                },
+                {
+                    "routes": [],
+                    "name": "ofTaxonomy",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "ofTaxonomy(string $taxonomy): ?WP_Taxonomy",
+                    "doc": "A plugin's taxonomy, or null.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "taxonomy",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 30,
+                    "end": 37
+                }
+            ]
+        },
+        {
             "name": "Minn\\Auth\\Roles",
             "short": "Roles",
             "namespace": "Minn\\Auth",
@@ -10839,13 +10942,16 @@
             "namespace": "Minn\\Auth",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Auth/TypeCapabilities.php",
-            "lines": 41,
-            "doc": "The capability names a post type's permissions are built from. Posts and\npages own their families (edit_posts, edit_others_pages, ...). Navigation\nmenus fold every one of them onto edit_theme_options, which is why an\neditor may read a menu and only an administrator may change one; the\nreference's own registration says the same thing.",
+            "lines": 51,
+            "doc": "The capability names a post type's permissions are built from. Posts and\npages own their families (edit_posts, edit_others_pages, ...). Navigation\nmenus fold every one of them onto edit_theme_options, which is why an\neditor may read a menu and only an administrator may change one; the\nreference's own registration says the same thing. A plugin's type\nanswers with the names it registered.",
             "implements": [],
             "extends": null,
-            "uses": [],
+            "uses": [
+                "Minn\\Auth\\RegisteredCaps"
+            ],
             "usedBy": [
                 "Minn\\Auth\\Capabilities",
+                "Minn\\Rest\\PolicyGate",
                 "Minn\\Rest\\PostObject",
                 "Minn\\Rest\\PostsController",
                 "Minn\\Rest\\PostsWriteController"
@@ -10868,7 +10974,7 @@
                     "static": true,
                     "visibility": "public",
                     "signature": "of(string $type, string $capability): string",
-                    "doc": "A cap name built from the post/page family, folded when the type folds.",
+                    "doc": "A cap name built from the post/page family, folded when the type folds, or the plugin type's own name for it (probe rest-plugin-caps).",
                     "shapes": [],
                     "params": [
                         {
@@ -10886,8 +10992,28 @@
                             "doc": ""
                         }
                     ],
-                    "line": 20,
-                    "end": 23
+                    "line": 21,
+                    "end": 28
+                },
+                {
+                    "routes": [],
+                    "name": "create",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "create(string $type): string",
+                    "doc": "The capability creating a post of the type needs: the edit capability, or a plugin type's create_posts.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "type",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 31,
+                    "end": 34
                 },
                 {
                     "routes": [],
@@ -10906,8 +11032,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 26,
-                    "end": 29
+                    "line": 37,
+                    "end": 40
                 },
                 {
                     "routes": [],
@@ -10926,8 +11052,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 32,
-                    "end": 35
+                    "line": 43,
+                    "end": 46
                 },
                 {
                     "routes": [],
@@ -10946,8 +11072,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 38,
-                    "end": 41
+                    "line": 49,
+                    "end": 52
                 },
                 {
                     "routes": [],
@@ -10966,8 +11092,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 44,
-                    "end": 47
+                    "line": 55,
+                    "end": 58
                 },
                 {
                     "routes": [],
@@ -10986,8 +11112,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 50,
-                    "end": 53
+                    "line": 61,
+                    "end": 64
                 }
             ]
         },
@@ -31370,6 +31496,7 @@
                 "Minn\\Front\\Sitemaps",
                 "Minn\\Rest\\MenuObject",
                 "Minn\\Rest\\MenusController",
+                "Minn\\Rest\\TermFilters",
                 "Minn\\Rest\\TermObject",
                 "Minn\\Rest\\TermsController",
                 "Minn\\Runtime\\TermWriter"
@@ -57698,7 +57825,7 @@
             "namespace": "Minn\\Http",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Http/Policy.php",
-            "lines": 106,
+            "lines": 108,
             "doc": "What a route requires of its caller, as data on the route: the router\nenforces it before the handler runs, so a grep over the attributes is\nthe authorization surface. The two refusals are the reference's: a\ncaller who is not signed in gets the sign-in code (401), a signed-in\ncaller who lacks the capability gets the refusal code (403); how a bad\nnonce is answered belongs to whoever judges the policy. A policy that\nnames a subject has the record looked up first, and answers the\nrecord's 404 before either refusal, which is the reference's order.\n\nWritten inline in the attribute with `new`, which is what an attribute\nargument allows: `policy: new Policy(Access::Cap, 'upload_files',\nrefuse: 'rest_cannot_create', message: '...')`.",
             "implements": [],
             "extends": null,
@@ -57768,7 +57895,7 @@
                 "Minn\\Runtime\\AjaxController"
             ],
             "constructor": {
-                "signature": "__construct(Minn\\Http\\Access $access = Minn\\Http\\Access::Public, ?string $cap = NULL, array $caps = array ( ), ?string $param = NULL, string $signIn = 'rest_not_logged_in', string $signInMessage = 'You are not currently logged in.', string $refuse = 'rest_forbidden', string $message = 'Sorry, you are not allowed to do that.', ?Minn\\Http\\Policy $edit = NULL, ?Minn\\Http\\Subject $subject = NULL, ?string $missing = NULL, ?string $missingMessage = NULL, int $signInStatus = 401)",
+                "signature": "__construct(Minn\\Http\\Access $access = Minn\\Http\\Access::Public, ?string $cap = NULL, array $caps = array ( ), ?string $param = NULL, string $signIn = 'rest_not_logged_in', string $signInMessage = 'You are not currently logged in.', string $refuse = 'rest_forbidden', string $message = 'Sorry, you are not allowed to do that.', ?Minn\\Http\\Policy $edit = NULL, ?Minn\\Http\\Subject $subject = NULL, ?string $missing = NULL, ?string $missingMessage = NULL, int $signInStatus = 401, ?string $verb = NULL)",
                 "doc": "",
                 "shapes": [
                     "@param list<string> $caps further capabilities every one of which the caller must hold"
@@ -57864,11 +57991,18 @@
                         "shape": "",
                         "default": "401",
                         "doc": "the status a signed-out caller is refused with (the reference answers some routes' signed-out writes 404, not 401)"
+                    },
+                    {
+                        "name": "verb",
+                        "type": "?string",
+                        "shape": "string|null",
+                        "default": "NULL",
+                        "doc": "what a Type or Taxonomy route does (create, edit, delete), judged with the type's or taxonomy's own capabilities"
                     }
                 ],
                 "visibility": "public",
-                "line": 32,
-                "end": 47
+                "line": 33,
+                "end": 49
             },
             "cases": [],
             "constants": [],
@@ -57989,6 +58123,15 @@
                     "doc": "",
                     "visibility": "public",
                     "promoted": true
+                },
+                {
+                    "name": "verb",
+                    "type": "?string",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "public",
+                    "promoted": true
                 }
             ],
             "methods": [
@@ -58001,8 +58144,8 @@
                     "doc": "Whether the route is open to anyone with nothing to look up, so the gate need not run at all.",
                     "shapes": [],
                     "params": [],
-                    "line": 50,
-                    "end": 53
+                    "line": 52,
+                    "end": 55
                 },
                 {
                     "routes": [],
@@ -58013,8 +58156,8 @@
                     "doc": "The 404 code a missing subject earns.",
                     "shapes": [],
                     "params": [],
-                    "line": 56,
-                    "end": 59
+                    "line": 58,
+                    "end": 61
                 },
                 {
                     "routes": [],
@@ -58025,8 +58168,8 @@
                     "doc": "The 404 message a missing subject earns.",
                     "shapes": [],
                     "params": [],
-                    "line": 62,
-                    "end": 65
+                    "line": 64,
+                    "end": 67
                 },
                 {
                     "routes": [],
@@ -58039,8 +58182,8 @@
                         "@return list<string>"
                     ],
                     "params": [],
-                    "line": 73,
-                    "end": 80
+                    "line": 75,
+                    "end": 82
                 },
                 {
                     "routes": [],
@@ -58053,8 +58196,8 @@
                         "@return array<string, mixed>"
                     ],
                     "params": [],
-                    "line": 83,
-                    "end": 107
+                    "line": 85,
+                    "end": 109
                 },
                 {
                     "routes": [],
@@ -58065,8 +58208,8 @@
                     "doc": "The policy in one line, for the route index and the docs.",
                     "shapes": [],
                     "params": [],
-                    "line": 110,
-                    "end": 125
+                    "line": 112,
+                    "end": 127
                 }
             ]
         },
@@ -82812,6 +82955,7 @@
                 "Minn\\Rest\\Caller",
                 "Minn\\Rest\\Context",
                 "Minn\\Rest\\PostObject",
+                "Minn\\Rest\\RenderedFields",
                 "Minn\\Rest\\RestMeta",
                 "Minn\\Rest\\RestUrl",
                 "Minn\\Rest\\RuntimePrepare",
@@ -84817,11 +84961,12 @@
             "namespace": "Minn\\Rest",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Rest/PolicyGate.php",
-            "lines": 92,
+            "lines": 147,
             "doc": "Judges a route's policy against the caller, with the reference's\nrefusals: a caller who is not signed in gets the policy's sign-in code\nat 401, a bad nonce is always 403 rest_cookie_invalid_nonce, and a\nsigned-in caller who lacks a capability gets the refusal code at 403.\nA subject the policy names is looked up first and answers its 404\nbefore any of those. The edit-context policy is judged as well when\nthe request asks for it.",
             "implements": [],
             "extends": null,
             "uses": [
+                "Minn\\Auth\\TypeCapabilities",
                 "Minn\\Http\\Access",
                 "Minn\\Http\\Policy",
                 "Minn\\Http\\Request",
@@ -84831,6 +84976,7 @@
                 "Minn\\Rest\\Context",
                 "Minn\\Rest\\Subjects",
                 "Minn\\Rest\\TermObject",
+                "Minn\\Rest\\TermsController",
                 "Minn\\Rest\\Types"
             ],
             "usedBy": [
@@ -84864,8 +85010,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 25,
-                "end": 27
+                "line": 26,
+                "end": 28
             },
             "cases": [],
             "constants": [],
@@ -84908,8 +85054,8 @@
                     "doc": "The judge as the router takes it.",
                     "shapes": [],
                     "params": [],
-                    "line": 30,
-                    "end": 33
+                    "line": 31,
+                    "end": 34
                 },
                 {
                     "routes": [],
@@ -84944,8 +85090,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 40,
-                    "end": 56
+                    "line": 41,
+                    "end": 57
                 },
                 {
                     "routes": [],
@@ -84973,20 +85119,27 @@
                             "doc": ""
                         }
                     ],
-                    "line": 65,
-                    "end": 75
+                    "line": 66,
+                    "end": 76
                 },
                 {
                     "routes": [],
                     "name": "type",
                     "static": false,
                     "visibility": "private",
-                    "signature": "type(array $captures): void",
-                    "doc": "A {base} that names no declared type declines the route, so the next one may take it. @param array<string, string> $captures",
+                    "signature": "type(Minn\\Http\\Policy $policy, array $captures): void",
+                    "doc": "A {base} that names no declared type declines the route, so the next\none may take it. A write is judged with the type's own capabilities\n(probe rest-plugin-caps): a missing post first (404), then the\ncaller (401 signed out, 403 refused).",
                     "shapes": [
                         "@param array<string, string> $captures"
                     ],
                     "params": [
+                        {
+                            "name": "policy",
+                            "type": "Minn\\Http\\Policy",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
                         {
                             "name": "captures",
                             "type": "array",
@@ -84995,8 +85148,37 @@
                             "doc": ""
                         }
                     ],
-                    "line": 78,
-                    "end": 84
+                    "line": 86,
+                    "end": 108
+                },
+                {
+                    "routes": [],
+                    "name": "taxonomy",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "taxonomy(Minn\\Http\\Policy $policy, array $captures): void",
+                    "doc": "A {base} that names no registered taxonomy declines the route. A\nwrite is judged with the taxonomy's own capabilities (probe\nrest-plugin-caps): a missing term first (404), then the caller.",
+                    "shapes": [
+                        "@param array<string, string> $captures"
+                    ],
+                    "params": [
+                        {
+                            "name": "policy",
+                            "type": "Minn\\Http\\Policy",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "captures",
+                            "type": "array",
+                            "shape": "array<string, string>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 117,
+                    "end": 140
                 },
                 {
                     "routes": [],
@@ -85015,8 +85197,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 86,
-                    "end": 97
+                    "line": 142,
+                    "end": 153
                 },
                 {
                     "routes": [],
@@ -85044,8 +85226,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 100,
-                    "end": 113
+                    "line": 156,
+                    "end": 169
                 }
             ]
         },
@@ -87519,7 +87701,7 @@
             "namespace": "Minn\\Rest",
             "kind": "final class",
             "file": "public/minn/src/Minn/Rest/RenderedFields.php",
-            "lines": 49,
+            "lines": 65,
             "doc": "A post's rendered title, content and excerpt as a REST response carries\nthem. Without plugins they are Minn's own render. With plugins loaded\nthey pass the filters the reference's controller runs, with the post set\nup as it sets it up: the_title over the stored title, the engine's\nrender of the content then the rest of the_content (shortcodes and every\nplugin's callback), and get_the_excerpt then the_excerpt.",
             "implements": [],
             "extends": null,
@@ -87531,6 +87713,7 @@
                 "Minn\\Runtime\\Runtime"
             ],
             "usedBy": [
+                "Minn\\Rest\\MediaObject",
                 "Minn\\Rest\\PostObject",
                 "Minn\\Rest\\RegisteredPostFields"
             ],
@@ -87598,6 +87781,36 @@
                     ],
                     "line": 38,
                     "end": 44
+                },
+                {
+                    "routes": [],
+                    "name": "classes",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "classes(array $classes, int $postId): array",
+                    "doc": "A post's class list as get_post_class hands it back once plugin code\nfilters post_class (WooCommerce drops hentry and adds a product's\nstock and type): the filter's answer without repeats, in order.",
+                    "shapes": [
+                        "@param list<string> $classes",
+                        "@return list<string>"
+                    ],
+                    "params": [
+                        {
+                            "name": "classes",
+                            "type": "array",
+                            "shape": "list<string>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "postId",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 79,
+                    "end": 85
                 },
                 {
                     "routes": [],
@@ -93201,7 +93414,7 @@
             "namespace": "Minn\\Rest",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Rest/Subjects.php",
-            "lines": 41,
+            "lines": 53,
             "doc": "Whether the record a route capture names exists, for the policy gate to\nask before it judges the caller. A post kind reads its type from the\n{base} capture when the route has one, a term kind its taxonomy; the\nfixed kinds name their own. Status is not consulted: a trashed post\nexists, and what the caller may do with it is the policy's question.",
             "implements": [],
             "extends": null,
@@ -93295,6 +93508,60 @@
                 },
                 {
                     "routes": [],
+                    "name": "postOfType",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "postOfType(int $id, string $type): bool",
+                    "doc": "Whether a post of the type exists.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "id",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "type",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 49,
+                    "end": 52
+                },
+                {
+                    "routes": [],
+                    "name": "termOf",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "termOf(int $id, string $taxonomy): bool",
+                    "doc": "Whether a term of the taxonomy exists.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "id",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "taxonomy",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 55,
+                    "end": 58
+                },
+                {
+                    "routes": [],
                     "name": "post",
                     "static": false,
                     "visibility": "private",
@@ -93317,8 +93584,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 48,
-                    "end": 51
+                    "line": 60,
+                    "end": 63
                 },
                 {
                     "routes": [],
@@ -93344,8 +93611,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 53,
-                    "end": 56
+                    "line": 65,
+                    "end": 68
                 }
             ]
         },
@@ -94468,6 +94735,122 @@
             ]
         },
         {
+            "name": "Minn\\Rest\\TermFilters",
+            "short": "TermFilters",
+            "namespace": "Minn\\Rest",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Rest/TermFilters.php",
+            "lines": 59,
+            "doc": "Terms a REST read answers with, as plugin code filters them on the\nreference (probe rest-term-filters): each through get_term and\nget_{taxonomy}, a list as well through get_terms with its taxonomies and\nthe query's arguments. What a filter changes (a count, a name) is what\nthe answer shows. Without the runtime, or with nothing hooked, the\nengine's own rows stand.",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\Content\\TermRecord",
+                "Minn\\Runtime\\Runtime"
+            ],
+            "usedBy": [
+                "Minn\\Rest\\TermsController"
+            ],
+            "constructor": null,
+            "cases": [],
+            "constants": [],
+            "properties": [],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "one",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "one(Minn\\Content\\TermRecord $term, string $taxonomy): Minn\\Content\\TermRecord",
+                    "doc": "A term as get_term hands it back.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "term",
+                            "type": "Minn\\Content\\TermRecord",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "taxonomy",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 21,
+                    "end": 28
+                },
+                {
+                    "routes": [],
+                    "name": "page",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "page(array $terms, string $taxonomy, array $args): array",
+                    "doc": "A page of terms as get_terms hands it back.",
+                    "shapes": [
+                        "@param list<TermRecord> $terms",
+                        "@param array<string, mixed> $args the query's arguments, over WP_Term_Query's defaults",
+                        "@return list<TermRecord>"
+                    ],
+                    "params": [
+                        {
+                            "name": "terms",
+                            "type": "array",
+                            "shape": "list<TermRecord>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "taxonomy",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "args",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": "the query's arguments, over WP_Term_Query's defaults"
+                        }
+                    ],
+                    "line": 37,
+                    "end": 62
+                },
+                {
+                    "routes": [],
+                    "name": "record",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "record(WP_Term $object, Minn\\Content\\TermRecord $term): Minn\\Content\\TermRecord",
+                    "doc": "The record with the fields a filter may have changed.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "object",
+                            "type": "WP_Term",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "term",
+                            "type": "Minn\\Content\\TermRecord",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 65,
+                    "end": 75
+                }
+            ]
+        },
+        {
             "name": "Minn\\Rest\\TermObject",
             "short": "TermObject",
             "namespace": "Minn\\Rest",
@@ -94725,11 +95108,12 @@
             "namespace": "Minn\\Rest",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Rest/TermsController.php",
-            "lines": 215,
+            "lines": 240,
             "doc": "wp/v2 categories, tags, and pattern categories: list, single, and the create/update/delete the taxonomy admin drives.",
             "implements": [],
             "extends": null,
             "uses": [
+                "Minn\\Auth\\RegisteredCaps",
                 "Minn\\Content\\Site",
                 "Minn\\Content\\TermRecord",
                 "Minn\\Content\\Terms",
@@ -94747,13 +95131,15 @@
                 "Minn\\Rest\\Context",
                 "Minn\\Rest\\Fields",
                 "Minn\\Rest\\Reply",
+                "Minn\\Rest\\TermFilters",
                 "Minn\\Rest\\TermObject",
                 "Minn\\Runtime\\TermEvents",
                 "Minn\\Support\\Kses"
             ],
             "usedBy": [
                 "Minn\\Rest\\Api",
-                "Minn\\Rest\\DeclaredTermsController"
+                "Minn\\Rest\\DeclaredTermsController",
+                "Minn\\Rest\\PolicyGate"
             ],
             "constructor": {
                 "signature": "__construct(Minn\\Db $db, Minn\\Content\\Terms $terms, Minn\\Content\\Site $site, Minn\\Rest\\TermObject $object, Minn\\Rest\\Caller $caller)",
@@ -94797,8 +95183,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 28,
-                "end": 35
+                "line": 29,
+                "end": 36
             },
             "cases": [],
             "constants": [
@@ -94883,8 +95269,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 39,
-                    "end": 99
+                    "line": 40,
+                    "end": 111
                 },
                 {
                     "routes": [
@@ -94919,8 +95305,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 103,
-                    "end": 120
+                    "line": 115,
+                    "end": 132
                 },
                 {
                     "routes": [
@@ -94949,8 +95335,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 125,
-                    "end": 165
+                    "line": 137,
+                    "end": 177
                 },
                 {
                     "routes": [
@@ -94987,8 +95373,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 171,
-                    "end": 204
+                    "line": 183,
+                    "end": 216
                 },
                 {
                     "routes": [
@@ -95023,8 +95409,28 @@
                             "doc": ""
                         }
                     ],
-                    "line": 216,
-                    "end": 237
+                    "line": 228,
+                    "end": 249
+                },
+                {
+                    "routes": [],
+                    "name": "createCapability",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "createCapability(string $taxonomy): string",
+                    "doc": "What creating a term needs (probe rest-plugin-caps): a plugin's\ntaxonomy, its edit_terms when hierarchical and its assign_terms when\nflat; categories, manage_categories; the others, edit_posts.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "taxonomy",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 256,
+                    "end": 263
                 },
                 {
                     "routes": [],
@@ -95050,8 +95456,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 207,
-                    "end": 212
+                    "line": 219,
+                    "end": 224
                 }
             ]
         },
@@ -106898,7 +107304,7 @@
             "namespace": "Minn\\Runtime",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Runtime/PostInsert.php",
-            "lines": 170,
+            "lines": 167,
             "doc": "The decisions behind wp_insert_post: which columns a postarr fills, when\nthe post counts as empty, the status a publish request lands in, the dates\nand the slug, the categories a new post gets. The rows are written by\nContent\\PostWriter; the facade fires the hooks around each step.",
             "implements": [],
             "extends": null,
@@ -107132,7 +107538,7 @@
                         }
                     ],
                     "line": 88,
-                    "end": 142
+                    "end": 139
                 },
                 {
                     "routes": [],
@@ -107165,8 +107571,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 145,
-                    "end": 156
+                    "line": 142,
+                    "end": 153
                 },
                 {
                     "routes": [],
@@ -107223,8 +107629,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 166,
-                    "end": 179
+                    "line": 163,
+                    "end": 176
                 },
                 {
                     "routes": [],
@@ -107250,8 +107656,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 181,
-                    "end": 184
+                    "line": 178,
+                    "end": 181
                 }
             ]
         },
@@ -109612,7 +110018,7 @@
             "namespace": "Minn\\Runtime",
             "kind": "final class",
             "file": "public/minn/src/Minn/Runtime/Registry.php",
-            "lines": 390,
+            "lines": 392,
             "doc": "Post types, taxonomies, and statuses as plugin code registers and reads\nthem. The built-in set is data/registry.json, captured from the\nreference; registrations derive their defaults the way the content\nprobe observed (contracts/fixtures/api/content.json).",
             "implements": [],
             "extends": null,
@@ -109833,7 +110239,7 @@
                         }
                     ],
                     "line": 98,
-                    "end": 178
+                    "end": 180
                 },
                 {
                     "routes": [],
@@ -109852,8 +110258,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 226,
-                    "end": 236
+                    "line": 228,
+                    "end": 238
                 },
                 {
                     "routes": [],
@@ -109886,8 +110292,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 243,
-                    "end": 251
+                    "line": 245,
+                    "end": 253
                 },
                 {
                     "routes": [],
@@ -109913,8 +110319,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 254,
-                    "end": 257
+                    "line": 256,
+                    "end": 259
                 },
                 {
                     "routes": [],
@@ -109935,8 +110341,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 264,
-                    "end": 267
+                    "line": 266,
+                    "end": 269
                 },
                 {
                     "routes": [],
@@ -109971,8 +110377,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 274,
-                    "end": 334
+                    "line": 276,
+                    "end": 336
                 },
                 {
                     "routes": [],
@@ -109983,8 +110389,8 @@
                     "doc": "Whether a registered rewrite settles into its full form: with pretty permalinks or in the admin; otherwise it stays as given.",
                     "shapes": [],
                     "params": [],
-                    "line": 337,
-                    "end": 340
+                    "line": 339,
+                    "end": 342
                 },
                 {
                     "routes": [],
@@ -110003,8 +110409,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 343,
-                    "end": 350
+                    "line": 345,
+                    "end": 352
                 },
                 {
                     "routes": [],
@@ -110030,8 +110436,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 353,
-                    "end": 362
+                    "line": 355,
+                    "end": 364
                 },
                 {
                     "routes": [],
@@ -110057,8 +110463,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 365,
-                    "end": 372
+                    "line": 367,
+                    "end": 374
                 },
                 {
                     "routes": [],
@@ -110086,8 +110492,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 379,
-                    "end": 401
+                    "line": 381,
+                    "end": 403
                 },
                 {
                     "routes": [],
@@ -110108,8 +110514,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 181,
-                    "end": 192
+                    "line": 183,
+                    "end": 194
                 },
                 {
                     "routes": [],
@@ -110144,8 +110550,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 195,
-                    "end": 223
+                    "line": 197,
+                    "end": 225
                 }
             ]
         },
@@ -110185,6 +110591,8 @@
             "usedBy": [
                 "Minn\\Admin\\BootPayload",
                 "Minn\\Auth\\Authenticator",
+                "Minn\\Auth\\Capabilities",
+                "Minn\\Auth\\RegisteredCaps",
                 "Minn\\Blocks\\Dynamic\\Theme\\Comments",
                 "Minn\\Blocks\\Dynamic\\Theme\\Navigation",
                 "Minn\\Blocks\\Dynamic\\Theme\\PostBlocks",
@@ -110235,6 +110643,7 @@
                 "Minn\\Rest\\SidebarsController",
                 "Minn\\Rest\\StatusesController",
                 "Minn\\Rest\\TemplatesController",
+                "Minn\\Rest\\TermFilters",
                 "Minn\\Rest\\TermObject",
                 "Minn\\Rest\\Types",
                 "Minn\\Rest\\TypesController",

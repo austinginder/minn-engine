@@ -70,7 +70,7 @@ final readonly class RegisteredPostFields
                 $classes[] = $taxonomy . '-' . $term[1];
             }
         }
-        $object['class_list'] = $classes;
+        $object['class_list'] = RenderedFields::classes($classes, $p->id);
         $object['_links'] = $this->links($p, $type, $featured, array_keys($terms), $allow);
         return $object;
     }

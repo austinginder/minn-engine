@@ -39,14 +39,14 @@ the wp/v2 surface: shapes and controllers
 | [`OEmbedController`](#oembedcontroller) | final readonly class | 72 | oembed/1.0 as the reference answers it (probe oembed). embed is the |
 | [`ParamCheck`](#paramcheck) | final class | 75 | The required / validate / sanitize pass over a request's declared arguments. |
 | [`PluginsController`](#pluginscontroller) | final readonly class | 236 | wp/v2 plugins: what sits in wp-content/plugins, in the reference's |
-| [`PolicyGate`](#policygate) | final readonly class | 92 | Judges a route's policy against the caller, with the reference's |
+| [`PolicyGate`](#policygate) | final readonly class | 147 | Judges a route's policy against the caller, with the reference's |
 | [`PostObject`](#postobject) | final readonly class | 530 | Builds the wp/v2 post and page objects in the reference's shape: the |
 | [`PostsController`](#postscontroller) | final readonly class | 183 | wp/v2 posts and pages, read side. |
 | [`PostsWriteController`](#postswritecontroller) | final readonly class | 459 | wp/v2 posts and pages, write side: create, update, trash, and force |
 | [`RegisteredFields`](#registeredfields) | final class | 105 | The fields plugin code adds to an object type with register_rest_field, |
 | [`RegisteredPostFields`](#registeredpostfields) | final readonly class | 89 | The REST object of a post whose type plugin code registered (probe rest-plugin-types), built by what the type supports. |
 | [`RegisteredType`](#registeredtype) | final readonly class | 46 | A post type plugin code registered, as its REST object follows it |
-| [`RenderedFields`](#renderedfields) | final class | 49 | A post's rendered title, content and excerpt as a REST response carries |
+| [`RenderedFields`](#renderedfields) | final class | 65 | A post's rendered title, content and excerpt as a REST response carries |
 | [`Reply`](#reply) | final class | 47 | JSON responses in the reference's shape: its header set, its json_encode |
 | [`RestMeta`](#restmeta) | final class | 238 | An object's meta field over REST, from the keys registered to show |
 | [`RestUrl`](#resturl) | final readonly class | 38 | REST URLs in the form the reference emits for the site's permalink mode: |
@@ -67,13 +67,14 @@ the wp/v2 surface: shapes and controllers
 | [`SettingsController`](#settingscontroller) | final readonly class | 32 | wp/v2/settings: read and write, both behind manage_options; with plugins loaded, every registered setting (LiveSettings). |
 | [`SidebarsController`](#sidebarscontroller) | final readonly class | 192 | wp/v2/sidebars and wp/v2/widget-types as the reference answers them |
 | [`StatusesController`](#statusescontroller) | final readonly class | 97 | wp/v2/statuses as the reference answers it (probe rest-statuses): every |
-| [`Subjects`](#subjects) | final readonly class | 41 | Whether the record a route capture names exists, for the policy gate to |
+| [`Subjects`](#subjects) | final readonly class | 53 | Whether the record a route capture names exists, for the policy gate to |
 | [`Taxonomies`](#taxonomies) | final class | 48 | The taxonomy registry the wp/v2 surface describes: the core set seeded |
 | [`TaxonomiesController`](#taxonomiescontroller) | final readonly class | 48 | wp/v2 taxonomies: the registry, whole or per type, in view or edit context. |
 | [`TemplateObject`](#templateobject) | final readonly class | 100 | The wp/v2/templates and wp/v2/template-parts resource. |
 | [`TemplatesController`](#templatescontroller) | final readonly class | 249 | wp/v2/templates and wp/v2/template-parts: the block theme's templates as |
+| [`TermFilters`](#termfilters) | final class | 59 | Terms a REST read answers with, as plugin code filters them on the |
 | [`TermObject`](#termobject) | final readonly class | 107 | The wp/v2 category and tag objects. |
-| [`TermsController`](#termscontroller) | final readonly class | 215 | wp/v2 categories, tags, and pattern categories: list, single, and the create/update/delete the taxonomy admin drives. |
+| [`TermsController`](#termscontroller) | final readonly class | 240 | wp/v2 categories, tags, and pattern categories: list, single, and the create/update/delete the taxonomy admin drives. |
 | [`Types`](#types) | final class | 162 | The engine's registry of built-in post types, seeded from the observed |
 | [`TypesController`](#typescontroller) | final readonly class | 70 | wp/v2 types. In the edit context (probe rest-types-edit) a type adds its |
 | [`UserObject`](#userobject) | final readonly class | 106 | The wp/v2 user objects: the public view shape and the edit-context shape. |
@@ -1639,7 +1640,7 @@ Throws the refusal the policy names, or returns.
 
 - `@param array<string, string> $captures`
 
-Internals: `subject()` (private, line 65), `type()` (private, line 78), `capabilities()` (private, line 86), `own()` (private, line 100)
+Internals: `subject()` (private, line 66), `type()` (private, line 86), `taxonomy()` (private, line 117), `capabilities()` (private, line 142), `own()` (private, line 156)
 
 
 ## PostObject
@@ -1927,7 +1928,7 @@ up as it sets it up: the_title over the stored title, the engine's
 render of the content then the rest of the_content (shortcodes and every
 plugin's callback), and get_the_excerpt then the_excerpt.
 
-Used by: `Minn\Rest\PostObject`, `Minn\Rest\RegisteredPostFields`
+Used by: `Minn\Rest\MediaObject`, `Minn\Rest\PostObject`, `Minn\Rest\RegisteredPostFields`
 
 ### static `title(Minn\Content\PostRecord $p): string`
 
@@ -1940,6 +1941,15 @@ The rendered content.
 ### static `excerpt(Minn\Content\PostRecord $p): string`
 
 The rendered excerpt.
+
+### static `classes(array $classes, int $postId): array`
+
+A post's class list as get_post_class hands it back once plugin code
+filters post_class (WooCommerce drops hentry and adds a product's
+stock and type): the filter's answer without repeats, in order.
+
+- `@param list<string> $classes`
+- `@return list<string>`
 
 Internals: `withPost()` (private, line 52)
 
@@ -2927,7 +2937,15 @@ Whether the record exists.
 
 - `@param array<string, string> $captures the route's captures, for the {base} a kind reads`
 
-Internals: `post()` (private, line 48), `term()` (private, line 53)
+### `postOfType(int $id, string $type): bool`
+
+Whether a post of the type exists.
+
+### `termOf(int $id, string $taxonomy): bool`
+
+Whether a term of the taxonomy exists.
+
+Internals: `post()` (private, line 60), `term()` (private, line 65)
 
 
 ## Taxonomies
@@ -3111,6 +3129,34 @@ Deletes a customised template part.
 Internals: `listing()` (private, line 120), `lookup()` (private, line 144), `single()` (private, line 162), `save()` (private, line 171), `delete()` (private, line 198), `trashed()` (private, line 215), `record()` (private, line 237), `readable()` (private, line 247), `requireWrite()` (private, line 258), `text()` (private, line 267)
 
 
+## TermFilters
+
+`final class Minn\Rest\TermFilters` · `public/minn/src/Minn/Rest/TermFilters.php`
+
+Terms a REST read answers with, as plugin code filters them on the
+reference (probe rest-term-filters): each through get_term and
+get_{taxonomy}, a list as well through get_terms with its taxonomies and
+the query's arguments. What a filter changes (a count, a name) is what
+the answer shows. Without the runtime, or with nothing hooked, the
+engine's own rows stand.
+
+Used by: `Minn\Rest\TermsController`
+
+### static `one(Minn\Content\TermRecord $term, string $taxonomy): Minn\Content\TermRecord`
+
+A term as get_term hands it back.
+
+### static `page(array $terms, string $taxonomy, array $args): array`
+
+A page of terms as get_terms hands it back.
+
+- `@param list<TermRecord> $terms`
+- `@param array<string, mixed> $args the query's arguments, over WP_Term_Query's defaults`
+- `@return list<TermRecord>`
+
+Internals: `record()` (private, line 65)
+
+
 ## TermObject
 
 `final readonly class Minn\Rest\TermObject` · `public/minn/src/Minn/Rest/TermObject.php`
@@ -3160,7 +3206,7 @@ wp/v2 categories, tags, and pattern categories: list, single, and the create/upd
 
 - const `ORDER_BY` = `array (   'name' => 't.name',   'count' => 'tt.count',   'id' => 't.term_id',   'slug' => 't.slug', )`
 
-Used by: `Minn\Rest\Api`, `Minn\Rest\DeclaredTermsController`
+Used by: `Minn\Rest\Api`, `Minn\Rest\DeclaredTermsController`, `Minn\Rest\PolicyGate`
 
 ```php
 __construct(Minn\Db $db, Minn\Content\Terms $terms, Minn\Content\Site $site, Minn\Rest\TermObject $object, Minn\Rest\Caller $caller)
@@ -3203,7 +3249,13 @@ Route: `DELETE /wp/v2/{base:categories|tags|wp_pattern_category}/{id:[\d]+} (cap
 
 The default category is capability-denied before the force check.
 
-Internals: `requireParent()` (private, line 207)
+### static `createCapability(string $taxonomy): string`
+
+What creating a term needs (probe rest-plugin-caps): a plugin's
+taxonomy, its edit_terms when hierarchical and its assign_terms when
+flat; categories, manage_categories; the others, edit_posts.
+
+Internals: `requireParent()` (private, line 219)
 
 
 ## Types

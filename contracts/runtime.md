@@ -4508,3 +4508,33 @@ record). `$wp->query_vars['rest_route']` names the route, and
 `REST_REQUEST` is defined, so `wp_is_serving_rest_request()` is true.
 Plugins that read these (ACF registers its field by them) see a REST
 request. Before, they saw neither.
+
+A plugin's types and taxonomies are guarded by their own capabilities
+(probe `rest-plugin-caps`). Before, they took the post and category
+family's: an author could create, publish and delete posts of a type with
+its own capability type (a store's products), and anyone with edit_posts
+could add terms to a plugin's taxonomy.
+- **Post types.** A type's capability names come from its post type object
+  (create_posts, edit_posts, publish_posts...). A type that maps no meta
+  capabilities asks for its primitive one.
+- **Mapping meta capabilities.** It defaults on only for the post and page
+  families, as on the reference.
+- **Taxonomies.** edit_term, delete_term and assign_term map through the
+  taxonomy's own term capabilities, and a default term is never deleted.
+  Creating a term needs edit_terms when the taxonomy is hierarchical,
+  assign_terms when flat. Reading in the edit context and updating need
+  edit_term; deleting needs delete_term.
+- **Allow.** The routes of a plugin's types and taxonomies judge their
+  writes in the gate (a missing object 404 first, then the caller). Allow
+  now lists only what the caller may do, so a visitor sees GET.
+- **wp_insert_post** no longer turns a publish into pending for a user who
+  may not publish. The reference publishes; only REST refuses.
+
+Term reads go through the term filters plugins hook (probe
+`rest-term-filters`). Each term passes get_term and get_{taxonomy}; a list
+also passes get_terms, with the query's arguments. A store's category
+counts (WooCommerce counts only visible products there) now match.
+- **Class lists.** A post's class list passes post_class
+  (WooCommerce drops hentry and adds a product's classes).
+- **Not done.** get_terms_args and terms_clauses wait for the term query's
+  SQL to be the reference's.

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Minn\Rest;
 
+use Minn\Auth\RegisteredCaps;
 use Minn\Runtime\TermEvents;
 use Minn\Http\Policy;
 use Minn\Http\Args;
@@ -90,8 +91,19 @@ final readonly class TermsController
              WHERE {$where} ORDER BY {$orderBy} {$order} LIMIT ?, ?",
             [...$params, ($page - 1) * $perPage, $perPage],
         );
+        $records = TermFilters::page(TermRecord::fromRows($rows), $config['taxonomy'], [
+            'orderby' => (string) $request->query('orderby', 'name'),
+            'order' => strtolower($order),
+            'hide_empty' => $request->flag('hide_empty'),
+            'include' => $include,
+            'exclude' => $exclude,
+            'number' => $perPage,
+            'offset' => ($page - 1) * $perPage,
+            'slug' => $slug === '' ? [] : array_values(array_filter(explode(',', $slug), static fn (string $s) => $s !== '')),
+            'search' => $search,
+        ]);
         return Reply::list(
-            array_map(fn (TermRecord $term) => $this->object->view($term, $base), TermRecord::fromRows($rows)),
+            array_map(fn (TermRecord $term) => $this->object->view($term, $base), $records),
             $total,
             (int) ceil($total / $perPage),
             Fields::fromQuery($request->query),
@@ -113,10 +125,10 @@ final readonly class TermsController
         if ($row === null) {
             throw new RestError('rest_term_invalid', 'Term does not exist.', 404);
         }
-        if (Context::of($request)->isEdit() && !$this->caller->can('manage_categories')) {
+        if (Context::of($request)->isEdit() && !$this->caller->can('edit_term', (int) $id)) {
             throw $this->caller->refuse('rest_forbidden_context', 'Sorry, you are not allowed to edit this term.');
         }
-        return Reply::item($this->object->view(TermRecord::fromRow($row), $base), Fields::fromQuery($request->query));
+        return Reply::item($this->object->view(TermFilters::one(TermRecord::fromRow($row), $config['taxonomy']), $base), Fields::fromQuery($request->query));
     }
 
     /** Tags and pattern categories are open to edit_posts holders; categories need manage_categories. */
@@ -128,7 +140,7 @@ final readonly class TermsController
         $taxonomy = $config['taxonomy'];
         $refusal = 'Sorry, you are not allowed to create terms in this taxonomy.';
         $this->caller->require('rest_cannot_create', $refusal);
-        if (!$this->caller->can($taxonomy === 'category' ? 'manage_categories' : 'edit_posts')) {
+        if (!$this->caller->can(self::createCapability($taxonomy))) {
             throw new RestError('rest_cannot_create', $refusal, 403);
         }
         $body = $request->json();
@@ -177,7 +189,7 @@ final readonly class TermsController
         if ($term === null) {
             throw new RestError('rest_term_invalid', 'Term does not exist.', 404);
         }
-        if (!$this->caller->can('manage_categories')) {
+        if (!$this->caller->can('edit_term', $termId)) {
             throw $this->caller->refuse('rest_cannot_update', 'Sorry, you are not allowed to edit this term.');
         }
         $body = $request->json();
@@ -222,7 +234,7 @@ final readonly class TermsController
         if ($term === null) {
             throw new RestError('rest_term_invalid', 'Term does not exist.', 404);
         }
-        if (!$this->caller->can('manage_categories')) {
+        if (!$this->caller->can('delete_term', $termId)) {
             throw $this->caller->refuse('rest_cannot_delete', 'Sorry, you are not allowed to delete this term.');
         }
         if ($taxonomy === 'category' && $termId === (int) ($this->site->option('default_category') ?? 0)) {
@@ -234,5 +246,19 @@ final readonly class TermsController
         $data = ['deleted' => true, 'previous' => array_diff_key($this->object->view($term, $base), ['_links' => true])];
         (new TermEvents())->delete($termId, $taxonomy, $data, $request, fn () => $this->terms->delete(TermRecord::fromRow($term->row() + ['taxonomy' => $taxonomy]), $config['has_parent']));
         return Reply::item($data, Fields::fromQuery($request->query));
+    }
+
+    /**
+     * What creating a term needs (probe rest-plugin-caps): a plugin's
+     * taxonomy, its edit_terms when hierarchical and its assign_terms when
+     * flat; categories, manage_categories; the others, edit_posts.
+     */
+    public static function createCapability(string $taxonomy): string
+    {
+        $registered = RegisteredCaps::ofTaxonomy($taxonomy);
+        if ($registered === null) {
+            return $taxonomy === 'category' ? 'manage_categories' : 'edit_posts';
+        }
+        return (string) ($registered->hierarchical ? $registered->cap->edit_terms : $registered->cap->assign_terms);
     }
 }

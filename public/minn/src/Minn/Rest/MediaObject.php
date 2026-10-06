@@ -75,7 +75,7 @@ final readonly class MediaObject
         if ($edit) {
             [$object['permalink_template'], $object['generated_slug']] = Runtime::booted() ? \get_sample_permalink($id, $p->title, '') : [$this->url->home('/?attachment_id=' . $id), Slug::sanitize($p->title)];
         }
-        $object['class_list'] = ['post-' . $id, 'attachment', 'type-attachment', 'status-' . $p->status, 'hentry'];
+        $object['class_list'] = RenderedFields::classes(['post-' . $id, 'attachment', 'type-attachment', 'status-' . $p->status, 'hentry'], $id);
         $object['minn_attached_to'] = null;
         $object['description'] = $dual($p->content, $isImage ? $this->descriptionHtml($meta, $fullUrl, $alt) : '');
         $object['caption'] = $dual($p->excerpt, $caption);

@@ -67,4 +67,20 @@ final class RenderedFields
             }
         }
     }
+
+    /**
+     * A post's class list as get_post_class hands it back once plugin code
+     * filters post_class (WooCommerce drops hentry and adds a product's
+     * stock and type): the filter's answer without repeats, in order.
+     *
+     * @param list<string> $classes
+     * @return list<string>
+     */
+    public static function classes(array $classes, int $postId): array
+    {
+        if (!Runtime::booted() || !\has_filter('post_class')) {
+            return $classes;
+        }
+        return array_values(array_unique(array_map('strval', (array) \apply_filters('post_class', $classes, [], $postId))));
+    }
 }

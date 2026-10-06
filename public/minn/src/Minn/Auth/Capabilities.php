@@ -119,10 +119,10 @@ final readonly class Capabilities
             'delete_page' => $this->mapPostCapability('delete_post', $userId, (int) $postId),
             'edit_categories', 'delete_categories', 'manage_post_tags', 'edit_post_tags', 'delete_post_tags' => ['manage_categories'],
             'assign_categories', 'assign_post_tags' => ['edit_posts'],
-            'edit_term', 'delete_term' => ['manage_categories'],
+            'edit_term', 'delete_term' => $this->mapTermCapability($capability, $userId, $postId) ?? ['manage_categories'],
             'edit_user' => $postId !== null && $postId === $userId ? [] : ['edit_users'],
             'edit_css' => ['unfiltered_html'],
-            'assign_term' => ['edit_posts'],
+            'assign_term' => $this->mapTermCapability($capability, $userId, $postId) ?? ['edit_posts'],
             default => $this->mapMore($capability, $userId, $postId),
         };
     }
@@ -197,11 +197,16 @@ final readonly class Capabilities
             return ['do_not_allow'];
         }
         $record = PostRecord::fromRow($post + ['ID' => $postId]);
+        // A plugin's type that does not map meta capabilities asks for its own primitive one.
+        $registered = RegisteredCaps::ofType($record->type);
+        if ($registered !== null && !$registered->map_meta_cap) {
+            return [(string) ($registered->cap->{$capability} ?? $capability)];
+        }
         $isAuthor = $record->authorId > 0 && $record->authorId === $userId;
         $plural = TypeCapabilities::plural($record->type);
         if ($capability === 'read_post') {
             if ($record->status === 'publish' || $isAuthor) {
-                return ['read'];
+                return [TypeCapabilities::of($record->type, 'read')];
             }
             if ($record->status === 'private') {
                 return [TypeCapabilities::of($record->type, "read_private_{$plural}")];
@@ -224,6 +229,31 @@ final readonly class Capabilities
         $required = self::fold($record->type, $required);
         // The privacy policy page is the privacy settings' too.
         return (int) ($this->db->option('wp_page_for_privacy_policy') ?? 0) === $postId ? [...$required, 'manage_options'] : $required;
+    }
+
+    /**
+     * A term capability on a plugin's taxonomy as the reference maps it
+     * (probe rest-plugin-caps): the taxonomy's own name for it (edit_terms,
+     * delete_terms, assign_terms), mapped in turn; nothing for a term that
+     * does not exist or a default term's deletion. Null for the built-in
+     * taxonomies, whose mapping is fixed.
+     *
+     * @return list<string>|null
+     */
+    private function mapTermCapability(string $capability, int $userId, ?int $termId): ?array
+    {
+        if ($termId === null) {
+            return null;
+        }
+        $taxonomy = $this->db->value("SELECT taxonomy FROM {$this->db->table('term_taxonomy')} WHERE term_id = ? LIMIT 1", [$termId]);
+        $registered = is_string($taxonomy) ? RegisteredCaps::ofTaxonomy($taxonomy) : null;
+        if ($registered === null) {
+            return $taxonomy === null && \Minn\Runtime\Runtime::booted() ? ['do_not_allow'] : null;
+        }
+        if ($capability === 'delete_term' && in_array($termId, [(int) ($this->db->option("default_{$taxonomy}") ?? 0), (int) ($this->db->option("default_term_{$taxonomy}") ?? 0)], true)) {
+            return ['do_not_allow'];
+        }
+        return $this->map((string) ($registered->cap->{$capability . 's'} ?? $capability), $userId, $termId);
     }
 
     /**

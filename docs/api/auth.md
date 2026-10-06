@@ -9,7 +9,7 @@ passwords, sessions, cookies, nonces, roles and capabilities
 | [`AuthFailure`](#authfailure) | final readonly class | 18 | Why a request is not authenticated, as the reference's error code: a |
 | [`Authenticated`](#authenticated) | final readonly class | 16 | A validated session: the user row and the raw session token behind it. |
 | [`Authenticator`](#authenticator) | final readonly class | 124 | Resolves the current user two ways. A page load carries the cookie alone; |
-| [`Capabilities`](#capabilities) | final readonly class | 230 | The capability engine: a user's roles from {prefix}capabilities usermeta, |
+| [`Capabilities`](#capabilities) | final readonly class | 260 | The capability engine: a user's roles from {prefix}capabilities usermeta, |
 | [`Cookie`](#cookie) | final readonly class | 75 | The logged_in auth cookie: username\|expiration\|token\|hmac, with |
 | [`FastHash`](#fasthash) | final class | 23 | The reference's hash for high-entropy secrets ("$generic$", WordPress 6.8 |
 | [`LoginThrottle`](#loginthrottle) | final readonly class | 78 | Failed sign-ins per address, so a password guesser meets a wall: twenty |
@@ -18,11 +18,12 @@ passwords, sessions, cookies, nonces, roles and capabilities
 | [`PasswordReset`](#passwordreset) | final readonly class | 57 | Password reset keys in the reference's storage shape: user_activation_key |
 | [`Phpass`](#phpass) | final class | 62 | The portable phpass hash ($P$), from Openwall's public description of the |
 | [`PortableHash`](#portablehash) | final class | 61 | The portable phpass hash ("$P$"), the shape the reference stores in |
+| [`RegisteredCaps`](#registeredcaps) | final class | 22 | The capability names a plugin's post type or taxonomy registered, read |
 | [`Roles`](#roles) | final class | 68 | Role definitions from the site's {prefix}user_roles option, parsed by a |
 | [`Salts`](#salts) | final class | 35 | The site's own secret material, read from the constants wp-config.php |
 | [`Sessions`](#sessions) | final readonly class | 166 | The session_tokens usermeta store: {sha256(token): {expiration, ip, ua, |
 | [`SignIn`](#signin) | final readonly class | 70 | The door itself: what a sign-in surface needs beyond checking a |
-| [`TypeCapabilities`](#typecapabilities) | final readonly class | 41 | The capability names a post type's permissions are built from. Posts and |
+| [`TypeCapabilities`](#typecapabilities) | final readonly class | 51 | The capability names a post type's permissions are built from. Posts and |
 
 ## ApplicationPasswords
 
@@ -290,7 +291,7 @@ The primitives a capability requires, all of which must be held.
 
 - `@return list<string>`
 
-Internals: `mapMore()` (private, line 139), `mapCommentCapability()` (private, line 167), `mapPostCapability()` (private, line 190), `fold()` (private, line 233), `trashedFrom()` (private, line 238)
+Internals: `mapMore()` (private, line 139), `mapCommentCapability()` (private, line 167), `mapPostCapability()` (private, line 190), `mapTermCapability()` (private, line 243), `fold()` (private, line 263), `trashedFrom()` (private, line 268)
 
 
 ## Cookie
@@ -540,6 +541,28 @@ Whether a password matches a portable hash from the published algorithm.
 Internals: `crypt()` (private, line 34), `encode()` (private, line 49)
 
 
+## RegisteredCaps
+
+`final class Minn\Auth\RegisteredCaps` · `public/minn/src/Minn/Auth/RegisteredCaps.php`
+
+The capability names a plugin's post type or taxonomy registered, read
+from the runtime's registry once plugins are loaded (probe
+rest-plugin-caps): a type's cap object (create_posts, edit_posts,
+publish_posts...) and whether it maps meta capabilities, a taxonomy's
+term capabilities. Null for the built-in ones, whose names the engine
+knows, and when no runtime is up.
+
+Used by: `Minn\Auth\Capabilities`, `Minn\Auth\TypeCapabilities`, `Minn\Rest\TermsController`
+
+### static `ofType(string $type): ?WP_Post_Type`
+
+A plugin's post type, or null.
+
+### static `ofTaxonomy(string $taxonomy): ?WP_Taxonomy`
+
+A plugin's taxonomy, or null.
+
+
 ## Roles
 
 `final class Minn\Auth\Roles` · `public/minn/src/Minn/Auth/Roles.php`
@@ -724,15 +747,20 @@ The capability names a post type's permissions are built from. Posts and
 pages own their families (edit_posts, edit_others_pages, ...). Navigation
 menus fold every one of them onto edit_theme_options, which is why an
 editor may read a menu and only an administrator may change one; the
-reference's own registration says the same thing.
+reference's own registration says the same thing. A plugin's type
+answers with the names it registered.
 
 - const `FOLDED` = `array (   'wp_navigation' => 'edit_theme_options', )` — Types whose whole cap family collapses to a single name.
 
-Used by: `Minn\Auth\Capabilities`, `Minn\Rest\PostObject`, `Minn\Rest\PostsController`, `Minn\Rest\PostsWriteController`
+Used by: `Minn\Auth\Capabilities`, `Minn\Rest\PolicyGate`, `Minn\Rest\PostObject`, `Minn\Rest\PostsController`, `Minn\Rest\PostsWriteController`
 
 ### static `of(string $type, string $capability): string`
 
-A cap name built from the post/page family, folded when the type folds.
+A cap name built from the post/page family, folded when the type folds, or the plugin type's own name for it (probe rest-plugin-caps).
+
+### static `create(string $type): string`
+
+The capability creating a post of the type needs: the edit capability, or a plugin type's create_posts.
 
 ### static `plural(string $type): string`
 

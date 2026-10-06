@@ -55,7 +55,7 @@ final readonly class PostsWriteController
     public function serveCreate(Request $request, string $type, string $base): Response
     {
         $userId = $this->caller->require('rest_cannot_create', 'Sorry, you are not allowed to create posts as this user.')->id();
-        if (!$this->caller->can(TypeCapabilities::edit($type))) {
+        if (!$this->caller->can(TypeCapabilities::create($type))) {
             throw new RestError('rest_cannot_create', 'Sorry, you are not allowed to create posts as this user.', 403);
         }
 

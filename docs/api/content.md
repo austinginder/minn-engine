@@ -1722,7 +1722,7 @@ One term with its taxonomy row, read by name: $term->name, ->slug,
 when the query that built the record did not select them. Array access
 is the migration bridge, read-only.
 
-Used by: `Minn\Blocks\Dynamic\Categories`, `Minn\Blocks\Dynamic\TagCloud`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Content\Menus`, `Minn\Content\Terms`, `Minn\Front\Permalinks`, `Minn\Front\Resolution`, `Minn\Front\Resolver`, `Minn\Front\Sitemaps`, `Minn\Rest\MenuObject`, `Minn\Rest\MenusController`, `Minn\Rest\TermObject`, `Minn\Rest\TermsController`, `Minn\Runtime\TermWriter`
+Used by: `Minn\Blocks\Dynamic\Categories`, `Minn\Blocks\Dynamic\TagCloud`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Content\Menus`, `Minn\Content\Terms`, `Minn\Front\Permalinks`, `Minn\Front\Resolution`, `Minn\Front\Resolver`, `Minn\Front\Sitemaps`, `Minn\Rest\MenuObject`, `Minn\Rest\MenusController`, `Minn\Rest\TermFilters`, `Minn\Rest\TermObject`, `Minn\Rest\TermsController`, `Minn\Runtime\TermWriter`
 
 - readonly `int $id`
 - readonly `string $name`

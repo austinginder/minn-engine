@@ -93,9 +93,6 @@ final readonly class PostInsert
         if ($type === 'attachment' && !in_array($status, ['inherit', 'private', 'trash', 'auto-draft'], true)) {
             $status = 'inherit';
         }
-        if ($status === 'publish' && $this->userId > 0 && !($this->canPublish)($type)) {
-            $status = 'pending';
-        }
         $now = ($this->now)(false);
         $date = (string) ($columns['post_date'] ?? '');
         if ($date === '' || str_starts_with($date, '0000-00-00')) {
