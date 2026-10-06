@@ -715,12 +715,6 @@ function wp_maybe_auto_update()
     return null;
 }
 
-function wp_new_comment($commentdata, $wp_error = false)
-{
-    \Minn\Runtime\PlaceholderTrace::hit('wp_new_comment');
-    return null;
-}
-
 function wp_parse_widget_id($id)
 {
     \Minn\Runtime\PlaceholderTrace::hit('wp_parse_widget_id');

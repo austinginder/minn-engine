@@ -97,8 +97,7 @@ add_filter('wp_robots', 'wp_robots_noindex_embeds');
 add_filter('wp_robots', 'wp_robots_noindex_search');
 add_filter('wp_robots', 'wp_robots_max_image_preview_large');
 
-// The author name, term description, and link description are always filtered.
-add_filter('pre_comment_author_name', 'wp_filter_kses');
+// The term description and link description are always filtered (a comment author's name below, in its chain).
 add_filter('pre_term_description', 'wp_filter_kses');
 add_filter('pre_link_description', 'wp_filter_kses');
 // The footnotes meta the editor writes is registered for every post type that supports the editor.
@@ -123,14 +122,29 @@ if (Minn\Runtime\Runtime::booted()) {
 add_filter('authenticate', 'wp_authenticate_username_password', 20, 3);
 add_filter('authenticate', 'wp_authenticate_email_password', 20, 3);
 add_filter('authenticate', 'wp_authenticate_spam_check', 99);
+// A comment's fields on the way in, each chain in the reference's order (probe comment-fields); kses on the content comes from kses_init.
 add_filter('pre_comment_author_name', 'sanitize_text_field');
+add_filter('pre_comment_author_name', 'wp_filter_kses');
 add_filter('pre_comment_author_name', '_wp_specialchars', 30);
+add_filter('pre_comment_author_url', 'wp_strip_all_tags');
+add_filter('pre_comment_author_url', 'sanitize_url');
+add_filter('pre_comment_author_url', 'wp_filter_kses');
 add_filter('pre_comment_author_email', 'trim');
 add_filter('pre_comment_author_email', 'sanitize_email');
-add_filter('pre_comment_author_url', 'strip_tags');
-add_filter('pre_comment_author_url', 'trim');
-add_filter('pre_comment_author_url', 'wp_filter_kses');
-add_filter('pre_comment_author_url', 'esc_url_raw');
+add_filter('pre_comment_author_email', 'wp_filter_kses');
+add_filter('pre_comment_content', 'convert_invalid_entities');
+add_filter('pre_comment_content', '_wp_kses_sanitize_note_mention_classes', 11);
+add_filter('pre_comment_content', 'wp_rel_ugc', 15);
+add_filter('pre_comment_content', 'balanceTags', 50);
+// The comment form: the legacy flood hook attaches the database check, a new comment notifies, the commenter is remembered.
+add_action('check_comment_flood', 'check_comment_flood_db', 10, 4);
+add_filter('comment_flood_filter', 'wp_throttle_comment_flood', 10, 3);
+add_action('comment_post', 'wp_new_comment_notify_moderator');
+add_action('comment_post', 'wp_new_comment_notify_postauthor');
+add_action('set_comment_cookies', 'wp_set_comment_cookies', 10, 3);
+// What a user may post unfiltered is settled once WordPress is up and again whenever the user changes.
+add_action('init', 'kses_init');
+add_action('set_current_user', 'kses_init');
 
 // Comment text on display.
 add_filter('comment_text', 'wptexturize');

@@ -104,13 +104,35 @@ final readonly class Comments
     /** The same words on the same post from the same person, in any status but trash or spam. */
     public function duplicate(int $postId, string $author, string $email, string $content, int $userId): bool
     {
+        return $this->duplicateId($postId, $author, $email, $content, $userId) !== null;
+    }
+
+    /** The id of a comment this one would repeat (same post, same author, same words, not spam or trash), or null. */
+    public function duplicateId(int $postId, string $author, string $email, string $content, int $userId): ?int
+    {
         $table = $this->db->table('comments');
         $who = $userId > 0 ? 'user_id = ?' : '(comment_author = ? AND comment_author_email = ?)';
         $params = $userId > 0 ? [$postId, $userId, $content] : [$postId, $author, $email, $content];
-        return $this->db->value(
+        $id = $this->db->value(
             "SELECT comment_ID FROM {$table} WHERE comment_post_ID = ? AND comment_approved IN ('0', '1') AND {$who} AND comment_content = ? LIMIT 1",
             $params,
-        ) !== null;
+        );
+        return $id === null ? null : (int) $id;
+    }
+
+    /**
+     * When the commenter last commented since the GMT time given, as a Unix
+     * time: matched by user id when signed in, else by address, or by email
+     * either way. Null when they have not.
+     */
+    public function lastCommentTime(int $userId, string $address, string $email, string $sinceGmt): ?int
+    {
+        $who = $userId > 0 ? 'user_id = ?' : 'comment_author_IP = ?';
+        $date = $this->db->value(
+            "SELECT comment_date_gmt FROM {$this->db->table('comments')} WHERE comment_date_gmt >= ? AND ({$who} OR comment_author_email = ?) ORDER BY comment_date_gmt DESC LIMIT 1",
+            [$sinceGmt, $userId > 0 ? $userId : $address, $email],
+        );
+        return $date === null ? null : (int) strtotime($date . ' UTC');
     }
 
     /** A comment from the same address or email within the window. */

@@ -10,7 +10,7 @@ the repositories and records: posts, users, terms, comments, and the render pipe
 | [`CommentFilter`](#commentfilter) | final readonly class | 46 | What a comment listing is narrowed to. Every field is optional; the id |
 | [`CommentModeration`](#commentmoderation) | final readonly class | 43 | Whether a comment may be stored and in what state: the duplicate and |
 | [`CommentRecord`](#commentrecord) | final readonly class | 114 | One row of the comments table, read by name: $comment->author, ->content, |
-| [`Comments`](#comments) | final readonly class | 309 | Reads and writes over the comments table. |
+| [`Comments`](#comments) | final readonly class | 331 | Reads and writes over the comments table. |
 | [`ContentScan`](#contentscan) | final class | 196 | What a site's stored content asks of the engine: shortcodes, block |
 | [`Emoji`](#emoji) | final class | 68 | Emoji as the reference's mail and feeds carry them, from the list the |
 | [`Excerpt`](#excerpt) | final class | 101 | The reference's generated excerpt, as captured from probe posts: |
@@ -36,7 +36,7 @@ the repositories and records: posts, users, terms, comments, and the render pipe
 | [`TermLinks`](#termlinks) | final class | 39 | A post's terms rendered as links, in the two shapes the reference |
 | [`TermRecord`](#termrecord) | final readonly class | 88 | One term with its taxonomy row, read by name: $term->name, ->slug, |
 | [`Terms`](#terms) | final readonly class | 178 |  |
-| [`TextFilters`](#textfilters) | final class | 80 | The small text filters the reference runs over content, titles and |
+| [`TextFilters`](#textfilters) | final class | 130 | The small text filters the reference runs over content, titles and |
 | [`Texturize`](#texturize) | final class | 51 | The texturize subset the reference applies to rendered text: straight |
 | [`UserRecord`](#userrecord) | final readonly class | 96 | One row of the users table, read by name. Columns keep their WordPress |
 | [`Users`](#users) | final readonly class | 267 |  |
@@ -288,6 +288,16 @@ narrowed by the filter.
 ### `duplicate(int $postId, string $author, string $email, string $content, int $userId): bool`
 
 The same words on the same post from the same person, in any status but trash or spam.
+
+### `duplicateId(int $postId, string $author, string $email, string $content, int $userId): ?int`
+
+The id of a comment this one would repeat (same post, same author, same words, not spam or trash), or null.
+
+### `lastCommentTime(int $userId, string $address, string $email, string $sinceGmt): ?int`
+
+When the commenter last commented since the GMT time given, as a Unix
+time: matched by user id when signed in, else by address, or by email
+either way. Null when they have not.
 
 ### `hasApprovedByEmail(string $email): bool`
 
@@ -1761,8 +1771,8 @@ Internals: `record()` (private, line 17), `refreshHierarchy()` (private, line 15
 
 The small text filters the reference runs over content, titles and
 comments, each from its observed rules (contracts/runtime.md "The content
-filters"): smilies, the capital P, insecure home addresses, and the
-feed's embed clean-up.
+filters", "The comment form"): smilies, the capital P, insecure home
+addresses, the feed's embed clean-up, and a comment's links and spans.
 
 - const `IMAGE` = `'/\\.(png|gif|jpe?g|svg|webp)$/i'`
 - const `IGNORED` = `array (   0 => 'code',   1 => 'pre',   2 => 'script',   3 => 'style',   4 => 'textarea', )`
@@ -1792,7 +1802,20 @@ The site's own http address made https, escaped forms included.
 
 A feed carries an embedded post's iframe without the style that hides it until its script runs.
 
-Internals: `ignoring()` (private, line 44), `words()` (private, line 53)
+### static `relUgc(string $slashed, Closure $internal): string`
+
+Every link in a comment marked as user-generated, on slashed text as
+the comment filters carry it: rel gains "nofollow ugc" after whatever
+it held ("ugc" alone for a link to the site's own host), moves to the
+end of the tag, and each attribute is written double-quoted.
+
+- `@param Closure(string $href): bool $internal whether an href points at the site itself`
+
+### static `noteMentionClasses(string $slashed): string`
+
+A span keeps no class in a comment (where a note's mention would be faked); slashed text in, slashed out.
+
+Internals: `ignoring()` (private, line 44), `words()` (private, line 53), `attributes()` (private, line 134)
 
 
 ## Texturize

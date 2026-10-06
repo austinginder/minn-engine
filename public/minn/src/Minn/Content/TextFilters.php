@@ -9,8 +9,8 @@ use Closure;
 /**
  * The small text filters the reference runs over content, titles and
  * comments, each from its observed rules (contracts/runtime.md "The content
- * filters"): smilies, the capital P, insecure home addresses, and the
- * feed's embed clean-up.
+ * filters", "The comment form"): smilies, the capital P, insecure home
+ * addresses, the feed's embed clean-up, and a comment's links and spans.
  */
 final class TextFilters
 {
@@ -90,5 +90,55 @@ final class TextFilters
             static fn (array $m): string => str_replace('style="position: absolute; visibility: hidden;"', '', $m[0]),
             $content,
         );
+    }
+
+    /**
+     * Every link in a comment marked as user-generated, on slashed text as
+     * the comment filters carry it: rel gains "nofollow ugc" after whatever
+     * it held ("ugc" alone for a link to the site's own host), moves to the
+     * end of the tag, and each attribute is written double-quoted.
+     *
+     * @param Closure(string $href): bool $internal whether an href points at the site itself
+     */
+    public static function relUgc(string $slashed, Closure $internal): string
+    {
+        return (string) preg_replace_callback('/<a\s([^>]*)>/i', static function (array $m) use ($internal): string {
+            $attributes = self::attributes(stripslashes($m[1]));
+            $rel = array_values(array_filter(preg_split('/\s+/', (string) ($attributes['rel'] ?? '')) ?: [], static fn (string $v): bool => $v !== ''));
+            unset($attributes['rel']);
+            $add = $internal((string) ($attributes['href'] ?? '')) ? ['ugc'] : ['nofollow', 'ugc'];
+            $rel = array_values(array_unique([...$rel, ...$add]));
+            if ($add === ['ugc']) {
+                $rel = array_values(array_diff($rel, ['nofollow']));
+            }
+            $attributes['rel'] = implode(' ', $rel);
+            $out = '';
+            foreach ($attributes as $name => $value) {
+                $out .= ' ' . $name . '="' . $value . '"';
+            }
+            return addslashes('<a' . $out . '>');
+        }, $slashed);
+    }
+
+    /** A span keeps no class in a comment (where a note's mention would be faked); slashed text in, slashed out. */
+    public static function noteMentionClasses(string $slashed): string
+    {
+        $plain = (string) preg_replace_callback('/<span\b([^>]*)>/i', static function (array $m): string {
+            $rest = trim((string) preg_replace('/\s*\bclass\s*=\s*("[^"]*"|\'[^\']*\'|[^\s>]+)/i', '', $m[1]));
+            return '<span ' . $rest . '>';
+        }, stripslashes($slashed));
+        return addslashes($plain);
+    }
+
+    /** A tag's attributes in order, name => value (quotes removed; a bare name has an empty value). @return array<string, string> */
+    private static function attributes(string $raw): array
+    {
+        preg_match_all('/([\w:-]+)(?:\s*=\s*("([^"]*)"|\'([^\']*)\'|([^\s>"\']+)))?/', $raw, $found, PREG_SET_ORDER);
+        $attributes = [];
+        foreach ($found as $one) {
+            $name = strtolower($one[1]);
+            $attributes[$name] ??= ($one[3] ?? '') !== '' ? $one[3] : (($one[4] ?? '') !== '' ? $one[4] : ($one[5] ?? ''));
+        }
+        return $attributes;
     }
 }

@@ -11,7 +11,7 @@ URL resolution, permalinks, feeds, sitemaps and the public page
 | [`CalendarLabels`](#calendarlabels) | final readonly class | 44 | The words a calendar prints: weekday names Sunday first, the short form |
 | [`Canonical`](#canonical) | final class | 28 | Where a URL should redirect to, by the engine's own resolution: the |
 | [`CommentList`](#commentlist) | final class | 52 | The classic threaded comment walk: top-level comments in order (or |
-| [`CommentPostController`](#commentpostcontroller) | final readonly class | 139 | wp-comments-post.php: the comment form's target. The reference's |
+| [`CommentPostController`](#commentpostcontroller) | final readonly class | 174 | wp-comments-post.php: the comment form's target. The reference's |
 | [`DocumentTitle`](#documenttitle) | final class | 47 | The document title as parts (title, tagline, page, site) in the order the |
 | [`FeedController`](#feedcontroller) | final readonly class | 94 | The feeds: the site's, the comments', a post's or an archive's by the |
 | [`Feeds`](#feeds) | final readonly class | 316 | The syndication feeds, byte for byte in the reference's shape: RSS 2.0 |
@@ -258,7 +258,7 @@ Route: `* /wp-comments-post.php (public)`
 
 The comment form's target.
 
-Internals: `approval()` (private, line 135), `rememberAuthor()` (private, line 142), `moderationHash()` (private, line 152), `notifyModerator()` (private, line 157), `refusal()` (private, line 164)
+Internals: `postWithoutPlugins()` (private, line 62), `postWithPlugins()` (private, line 150), `approval()` (private, line 171), `rememberAuthor()` (private, line 178), `moderationHash()` (private, line 188), `notifyModerator()` (private, line 193), `refusal()` (private, line 200)
 
 
 ## DocumentTitle

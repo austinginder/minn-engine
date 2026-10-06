@@ -974,3 +974,16 @@ function sanitize_sql_orderby($orderby)
     }
     return false;
 }
+
+/** A comment's links marked user-generated (Minn\Content\TextFilters::relUgc); a link to the site's own host is ugc alone. */
+function wp_rel_ugc($text)
+{
+    $home = strtolower((string) parse_url(home_url(), PHP_URL_HOST));
+    return \Minn\Content\TextFilters::relUgc((string) $text, static fn (string $href): bool => $home !== '' && strtolower((string) parse_url($href, PHP_URL_HOST)) === $home);
+}
+
+/** A span in a comment keeps no class, so a note's mention cannot be faked (Minn\Content\TextFilters::noteMentionClasses). */
+function _wp_kses_sanitize_note_mention_classes($content)
+{
+    return \Minn\Content\TextFilters::noteMentionClasses((string) $content);
+}

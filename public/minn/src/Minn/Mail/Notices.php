@@ -68,6 +68,23 @@ final readonly class Notices
             TEXT);
     }
 
+    /** An approved comment on a post, announced to the post's author. */
+    public function newComment(string $authorEmail, string $postTitle, string $author, string $comment, string $link): Message
+    {
+        $text = strip_tags($comment);
+        return Message::to($authorEmail, $this->subject('Comment: "' . $postTitle . '"'), <<<TEXT
+            New comment on your post "{$postTitle}".
+
+            Author: {$author}
+            Comment:
+            {$text}
+
+            See the comments on the post:
+            {$link}#comments
+
+            TEXT);
+    }
+
     /** Every notice the reference sends carries the site's name in brackets. */
     private function subject(string $subject): string
     {

@@ -22556,7 +22556,7 @@
             "namespace": "Minn\\Content",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Content/Comments.php",
-            "lines": 309,
+            "lines": 331,
             "doc": "Reads and writes over the comments table.",
             "implements": [],
             "extends": null,
@@ -22792,7 +22792,96 @@
                         }
                     ],
                     "line": 105,
-                    "end": 114
+                    "end": 108
+                },
+                {
+                    "routes": [],
+                    "name": "duplicateId",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "duplicateId(int $postId, string $author, string $email, string $content, int $userId): ?int",
+                    "doc": "The id of a comment this one would repeat (same post, same author, same words, not spam or trash), or null.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "postId",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "author",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "email",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "content",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "userId",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 111,
+                    "end": 121
+                },
+                {
+                    "routes": [],
+                    "name": "lastCommentTime",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "lastCommentTime(int $userId, string $address, string $email, string $sinceGmt): ?int",
+                    "doc": "When the commenter last commented since the GMT time given, as a Unix\ntime: matched by user id when signed in, else by address, or by email\neither way. Null when they have not.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "userId",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "address",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "email",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "sinceGmt",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 128,
+                    "end": 136
                 },
                 {
                     "routes": [],
@@ -22811,8 +22900,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 118,
-                    "end": 127
+                    "line": 140,
+                    "end": 149
                 },
                 {
                     "routes": [],
@@ -22845,8 +22934,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 130,
-                    "end": 137
+                    "line": 152,
+                    "end": 159
                 },
                 {
                     "routes": [],
@@ -22865,8 +22954,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 140,
-                    "end": 151
+                    "line": 162,
+                    "end": 173
                 },
                 {
                     "routes": [],
@@ -22892,8 +22981,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 154,
-                    "end": 163
+                    "line": 176,
+                    "end": 185
                 },
                 {
                     "routes": [],
@@ -22914,8 +23003,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 170,
-                    "end": 175
+                    "line": 192,
+                    "end": 197
                 },
                 {
                     "routes": [],
@@ -22943,8 +23032,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 182,
-                    "end": 187
+                    "line": 204,
+                    "end": 209
                 },
                 {
                     "routes": [],
@@ -22957,8 +23046,8 @@
                         "@return array<string, int>"
                     ],
                     "params": [],
-                    "line": 200,
-                    "end": 215
+                    "line": 222,
+                    "end": 237
                 },
                 {
                     "routes": [],
@@ -22979,8 +23068,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 218,
-                    "end": 221
+                    "line": 240,
+                    "end": 243
                 },
                 {
                     "routes": [],
@@ -23001,8 +23090,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 224,
-                    "end": 232
+                    "line": 246,
+                    "end": 254
                 },
                 {
                     "routes": [],
@@ -23030,8 +23119,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 235,
-                    "end": 241
+                    "line": 257,
+                    "end": 263
                 },
                 {
                     "routes": [],
@@ -23057,8 +23146,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 244,
-                    "end": 247
+                    "line": 266,
+                    "end": 269
                 },
                 {
                     "routes": [],
@@ -23077,8 +23166,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 250,
-                    "end": 254
+                    "line": 272,
+                    "end": 276
                 },
                 {
                     "routes": [],
@@ -23097,8 +23186,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 257,
-                    "end": 265
+                    "line": 279,
+                    "end": 287
                 },
                 {
                     "routes": [],
@@ -23117,8 +23206,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 268,
-                    "end": 275
+                    "line": 290,
+                    "end": 297
                 },
                 {
                     "routes": [],
@@ -23139,8 +23228,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 282,
-                    "end": 291
+                    "line": 304,
+                    "end": 313
                 },
                 {
                     "routes": [],
@@ -23170,8 +23259,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 301,
-                    "end": 317
+                    "line": 323,
+                    "end": 339
                 },
                 {
                     "routes": [],
@@ -30959,8 +31048,8 @@
             "namespace": "Minn\\Content",
             "kind": "final class",
             "file": "public/minn/src/Minn/Content/TextFilters.php",
-            "lines": 80,
-            "doc": "The small text filters the reference runs over content, titles and\ncomments, each from its observed rules (contracts/runtime.md \"The content\nfilters\"): smilies, the capital P, insecure home addresses, and the\nfeed's embed clean-up.",
+            "lines": 130,
+            "doc": "The small text filters the reference runs over content, titles and\ncomments, each from its observed rules (contracts/runtime.md \"The content\nfilters\", \"The comment form\"): smilies, the capital P, insecure home\naddresses, the feed's embed clean-up, and a comment's links and spans.",
             "implements": [],
             "extends": null,
             "uses": [],
@@ -31116,6 +31205,55 @@
                 },
                 {
                     "routes": [],
+                    "name": "relUgc",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "relUgc(string $slashed, Closure $internal): string",
+                    "doc": "Every link in a comment marked as user-generated, on slashed text as\nthe comment filters carry it: rel gains \"nofollow ugc\" after whatever\nit held (\"ugc\" alone for a link to the site's own host), moves to the\nend of the tag, and each attribute is written double-quoted.",
+                    "shapes": [
+                        "@param Closure(string $href): bool $internal whether an href points at the site itself"
+                    ],
+                    "params": [
+                        {
+                            "name": "slashed",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "internal",
+                            "type": "Closure",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 103,
+                    "end": 121
+                },
+                {
+                    "routes": [],
+                    "name": "noteMentionClasses",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "noteMentionClasses(string $slashed): string",
+                    "doc": "A span keeps no class in a comment (where a note's mention would be faked); slashed text in, slashed out.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "slashed",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 124,
+                    "end": 131
+                },
+                {
+                    "routes": [],
                     "name": "ignoring",
                     "static": true,
                     "visibility": "private",
@@ -31176,6 +31314,28 @@
                     ],
                     "line": 53,
                     "end": 64
+                },
+                {
+                    "routes": [],
+                    "name": "attributes",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "attributes(string $raw): array",
+                    "doc": "A tag's attributes in order, name => value (quotes removed; a bare name has an empty value). @return array<string, string>",
+                    "shapes": [
+                        "@return array<string, string>"
+                    ],
+                    "params": [
+                        {
+                            "name": "raw",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 134,
+                    "end": 143
                 }
             ]
         },
@@ -38048,7 +38208,7 @@
             "namespace": "Minn\\Front",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Front/CommentPostController.php",
-            "lines": 139,
+            "lines": 174,
             "doc": "wp-comments-post.php: the comment form's target. The reference's\nanswers, captured: 302 to the comment's anchor (with unapproved and\nmoderation-hash when held), plain pages with 200 for a missing field,\n403 when comments are closed, 409 for a duplicate, 429 for posting too\nquickly, and 405 for anything but POST.",
             "implements": [],
             "extends": null,
@@ -38073,6 +38233,7 @@
                 "Minn\\Http\\Response",
                 "Minn\\Http\\Route",
                 "Minn\\Mail\\Mailer",
+                "Minn\\Runtime\\Runtime",
                 "Minn\\Support\\Html",
                 "Minn\\Support\\Kses"
             ],
@@ -38135,8 +38296,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 39,
-                "end": 48
+                "line": 40,
+                "end": 49
             },
             "cases": [],
             "constants": [
@@ -38232,8 +38393,48 @@
                             "doc": ""
                         }
                     ],
-                    "line": 52,
-                    "end": 132
+                    "line": 53,
+                    "end": 59
+                },
+                {
+                    "routes": [],
+                    "name": "postWithoutPlugins",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "postWithoutPlugins(Minn\\Http\\Request $request): Minn\\Http\\Response",
+                    "doc": "The engine's own submission, from the reference's captured answers: what answers when no runtime is booted.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "request",
+                            "type": "Minn\\Http\\Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 62,
+                    "end": 139
+                },
+                {
+                    "routes": [],
+                    "name": "postWithPlugins",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "postWithPlugins(Minn\\Http\\Request $request): Minn\\Http\\Response",
+                    "doc": "With plugins loaded, the reference's own submission and redirect\n(contracts/runtime.md \"The comment form\"), so a spam plugin's checks,\nthe notifications and the commenter cookies are WordPress's: a refusal\nwith a status is the refusal page, one without is a blank page; else\nset_comment_cookies, the comment's link (or redirect_to), the held\ncomment's id and hash when the commenter is not remembered,\ncomment_post_redirect, and wp_safe_redirect's checks.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "request",
+                            "type": "Minn\\Http\\Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 150,
+                    "end": 168
                 },
                 {
                     "routes": [],
@@ -38266,8 +38467,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 135,
-                    "end": 139
+                    "line": 171,
+                    "end": 175
                 },
                 {
                     "routes": [],
@@ -38314,8 +38515,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 142,
-                    "end": 150
+                    "line": 178,
+                    "end": 186
                 },
                 {
                     "routes": [],
@@ -38334,8 +38535,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 152,
-                    "end": 155
+                    "line": 188,
+                    "end": 191
                 },
                 {
                     "routes": [],
@@ -38368,8 +38569,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 157,
-                    "end": 161
+                    "line": 193,
+                    "end": 197
                 },
                 {
                     "routes": [],
@@ -38395,8 +38596,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 164,
-                    "end": 172
+                    "line": 200,
+                    "end": 208
                 }
             ]
         },
@@ -65176,7 +65377,7 @@
             "namespace": "Minn\\Mail",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Mail/Notices.php",
-            "lines": 65,
+            "lines": 82,
             "doc": "The messages the engine itself sends, worded as the reference words them\nand built in one place, so a controller and a CLI verb that announce the\nsame thing say the same thing.",
             "implements": [],
             "extends": null,
@@ -65351,6 +65552,54 @@
                 },
                 {
                     "routes": [],
+                    "name": "newComment",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "newComment(string $authorEmail, string $postTitle, string $author, string $comment, string $link): Minn\\Mail\\Message",
+                    "doc": "An approved comment on a post, announced to the post's author.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "authorEmail",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "postTitle",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "author",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "comment",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "link",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 72,
+                    "end": 86
+                },
+                {
+                    "routes": [],
                     "name": "subject",
                     "static": false,
                     "visibility": "private",
@@ -65366,8 +65615,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 72,
-                    "end": 75
+                    "line": 89,
+                    "end": 92
                 }
             ]
         },
@@ -91255,6 +91504,130 @@
             ]
         },
         {
+            "name": "Minn\\Runtime\\CommentForm",
+            "short": "CommentForm",
+            "namespace": "Minn\\Runtime",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Runtime/CommentForm.php",
+            "lines": 107,
+            "doc": "The comment form's submission with plugins loaded\n(wp_handle_comment_submission), in the order the reference runs it\n(contracts/runtime.md \"The comment form\"): a reply to a comment still\nheld is refused; the post is looked at, each refusal with its action\n(comment_id_not_found, comment_closed, comment_on_trash, comment_on_draft,\ncomment_on_password_protected) and pre_comment_on_post when it takes\ncomments; the signed-in user's own name and addresses replace the form's,\nor a site that requires sign-in refuses; the required fields, an empty\ncomment (allow_empty_comment) and the column lengths are checked; then\nwp_new_comment stores it, where preprocess_comment, the duplicate and\nflood checks and pre_comment_approved have their say. A refusal is a\nWP_Error whose data is the status the form answers with; none means a\nblank page.",
+            "implements": [],
+            "extends": null,
+            "uses": [],
+            "usedBy": [],
+            "constructor": null,
+            "cases": [],
+            "constants": [],
+            "properties": [],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "submit",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "submit(array $form): WP_Comment|WP_Error",
+                    "doc": "The stored comment, or the refusal the form answers with.",
+                    "shapes": [
+                        "@param array<string, mixed> $form the posted fields, unslashed"
+                    ],
+                    "params": [
+                        {
+                            "name": "form",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": "the posted fields, unslashed"
+                        }
+                    ],
+                    "line": 29,
+                    "end": 68
+                },
+                {
+                    "routes": [],
+                    "name": "store",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "store(array $data, string $content): WP_Comment|WP_Error",
+                    "doc": "The comment checked for content and length, then stored through wp_new_comment. @param array<string, mixed> $data",
+                    "shapes": [
+                        "@param array<string, mixed> $data"
+                    ],
+                    "params": [
+                        {
+                            "name": "data",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "content",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 71,
+                    "end": 86
+                },
+                {
+                    "routes": [],
+                    "name": "postRefusal",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "postRefusal(int $postId): ?WP_Error",
+                    "doc": "Why the post takes no comment, or null after pre_comment_on_post when it does.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "postId",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 89,
+                    "end": 115
+                },
+                {
+                    "routes": [],
+                    "name": "fieldRefusal",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "fieldRefusal(WP_User $user, string $author, string $email): ?WP_Error",
+                    "doc": "A signed-out commenter's name and email, when the site requires them.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "user",
+                            "type": "WP_User",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "author",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "email",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 118,
+                    "end": 127
+                }
+            ]
+        },
+        {
             "name": "Minn\\Runtime\\CommentQuery",
             "short": "CommentQuery",
             "namespace": "Minn\\Runtime",
@@ -92436,7 +92809,7 @@
             "namespace": "Minn\\Runtime",
             "kind": "final class",
             "file": "public/minn/src/Minn/Runtime/Hooks.php",
-            "lines": 282,
+            "lines": 311,
             "doc": "The hook registry plugin code registers into and the engine fires.\nSemantics come from contracts/fixtures/api/hooks.json: callbacks run\nby ascending priority then insertion order; a callback added at a\nhigher priority during a run takes part in that run, one added at the\ncurrent or a lower priority waits for the next; a callback removed\nbefore its turn is skipped; the \"all\" hook sees every firing with the\nhook name first and every argument regardless of its accepted count.",
             "implements": [],
             "extends": null,
@@ -92847,6 +93220,64 @@
                 },
                 {
                     "routes": [],
+                    "name": "actionRefArray",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "actionRefArray(string $hook, array $args): void",
+                    "doc": "do_action_ref_array: the action's callbacks get the arguments, and an\n'all' callback gets them as the one array they were passed in, as the\nreference hands them on.",
+                    "shapes": [
+                        "@param list<mixed> $args"
+                    ],
+                    "params": [
+                        {
+                            "name": "hook",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "args",
+                            "type": "array",
+                            "shape": "list<mixed>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 188,
+                    "end": 192
+                },
+                {
+                    "routes": [],
+                    "name": "filterRefArray",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "filterRefArray(string $hook, array $args): mixed",
+                    "doc": "apply_filters_ref_array: as filter(), with an 'all' callback handed\nthe arguments as one array.",
+                    "shapes": [
+                        "@param list<mixed> $args"
+                    ],
+                    "params": [
+                        {
+                            "name": "hook",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "args",
+                            "type": "array",
+                            "shape": "list<mixed>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 200,
+                    "end": 204
+                },
+                {
+                    "routes": [],
                     "name": "actionsDone",
                     "static": false,
                     "visibility": "public",
@@ -92862,8 +93293,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 182,
-                    "end": 185
+                    "line": 207,
+                    "end": 210
                 },
                 {
                     "routes": [],
@@ -92882,8 +93313,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 188,
-                    "end": 191
+                    "line": 213,
+                    "end": 216
                 },
                 {
                     "routes": [],
@@ -92894,8 +93325,8 @@
                     "doc": "The hook running now, or false.",
                     "shapes": [],
                     "params": [],
-                    "line": 194,
-                    "end": 197
+                    "line": 219,
+                    "end": 222
                 },
                 {
                     "routes": [],
@@ -92914,8 +93345,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 200,
-                    "end": 203
+                    "line": 225,
+                    "end": 228
                 },
                 {
                     "routes": [],
@@ -92928,18 +93359,20 @@
                         "@return array<string, array<int, list<callable>>> a read-only view for diagnostics"
                     ],
                     "params": [],
-                    "line": 210,
-                    "end": 220
+                    "line": 235,
+                    "end": 245
                 },
                 {
                     "routes": [],
                     "name": "run",
                     "static": false,
                     "visibility": "private",
-                    "signature": "run(string $hook, array $args, bool $isFilter, array $skip = array ( )): mixed",
+                    "signature": "run(string $hook, array $args, bool $isFilter, array $skip = array ( ), ?array $allArgs = NULL): mixed",
                     "doc": "",
                     "shapes": [
-                        "@param list<mixed> $args @param array<string, int> $skip function name => priority, passed over"
+                        "@param list<mixed> $args",
+                        "@param array<string, int> $skip function name => priority, passed over",
+                        "@param list<mixed>|null $allArgs what an 'all' callback gets after the hook's name; the arguments when null"
                     ],
                     "params": [
                         {
@@ -92954,7 +93387,7 @@
                             "type": "array",
                             "shape": "list<mixed>",
                             "default": null,
-                            "doc": "@param array<string, int> $skip function name => priority, passed over"
+                            "doc": ""
                         },
                         {
                             "name": "isFilter",
@@ -92966,13 +93399,20 @@
                         {
                             "name": "skip",
                             "type": "array",
-                            "shape": "",
+                            "shape": "array<string, int>",
                             "default": "array ( )",
-                            "doc": ""
+                            "doc": "function name => priority, passed over"
+                        },
+                        {
+                            "name": "allArgs",
+                            "type": "?array",
+                            "shape": "list<mixed>|null",
+                            "default": "NULL",
+                            "doc": "what an 'all' callback gets after the hook's name; the arguments when null"
                         }
                     ],
-                    "line": 223,
-                    "end": 260
+                    "line": 252,
+                    "end": 289
                 },
                 {
                     "routes": [],
@@ -92998,8 +93438,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 262,
-                    "end": 271
+                    "line": 291,
+                    "end": 300
                 },
                 {
                     "routes": [],
@@ -93027,8 +93467,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 274,
-                    "end": 285
+                    "line": 303,
+                    "end": 314
                 },
                 {
                     "routes": [],
@@ -93047,8 +93487,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 288,
-                    "end": 298
+                    "line": 317,
+                    "end": 327
                 }
             ]
         },
@@ -99688,6 +100128,7 @@
                 "Minn\\Db",
                 "Minn\\Engine",
                 "Minn\\Extension\\Extensions",
+                "Minn\\Front\\CommentPostController",
                 "Minn\\Front\\Feeds",
                 "Minn\\Front\\Permalinks",
                 "Minn\\Front\\PluginRules",

@@ -108,7 +108,8 @@ endif;
 if (!function_exists('wp_safe_redirect')) :
 function wp_safe_redirect($location, $status = 302, $x_redirect_by = 'WordPress')
 {
-    return wp_redirect(wp_validate_redirect(apply_filters('wp_safe_redirect_fallback', admin_url(), $status) ? $location : $location, apply_filters('wp_safe_redirect_fallback', admin_url(), $status)), $status, $x_redirect_by);
+    $fallback = apply_filters('wp_safe_redirect_fallback', admin_url(), $status);
+    return wp_redirect(wp_validate_redirect(wp_sanitize_redirect((string) $location), $fallback), $status, $x_redirect_by);
 }
 endif;
 
@@ -213,8 +214,61 @@ endif;
 
 
 if (!function_exists('wp_notify_moderator')) :
+/**
+ * Tells the moderators of a held comment when moderation_notify is on:
+ * Minn's own notice (it points to Minn Admin), the reference's filters over
+ * its recipients, headers, text and subject, sent through wp_mail so a mail
+ * plugin delivers it. True when there was nothing to send.
+ */
 function wp_notify_moderator($comment_id)
 {
+    if ((string) get_option('moderation_notify') !== '1') {
+        return true;
+    }
+    $comment = get_comment($comment_id);
+    $post = $comment === null ? null : get_post((int) $comment->comment_post_ID);
+    if ($post === null) {
+        return false;
+    }
+    $notice = \Minn\Mail\Mailer::noticesFor(Runtime::current()->site)->moderation((string) get_option('admin_email'), (string) $post->post_title, (string) $comment->comment_author, (string) $comment->comment_content);
+    $emails = (array) apply_filters('comment_moderation_recipients', $notice->to, (int) $comment_id);
+    $headers = apply_filters('comment_moderation_headers', '', (int) $comment_id);
+    $text = apply_filters('comment_moderation_text', $notice->body, (int) $comment_id);
+    $subject = apply_filters('comment_moderation_subject', $notice->subject, (int) $comment_id);
+    foreach ($emails as $email) {
+        wp_mail((string) $email, wp_specialchars_decode((string) $subject), (string) $text, $headers);
+    }
+    return true;
+}
+endif;
+
+if (!function_exists('wp_notify_postauthor')) :
+/**
+ * Tells a post's author of a comment on it: Minn's notice, the reference's
+ * comment_notification_* filters, wp_mail. An author commenting on their own
+ * post is not told unless comment_notification_notify_author says so.
+ */
+function wp_notify_postauthor($comment_id, $deprecated = null)
+{
+    $comment = get_comment($comment_id);
+    $post = $comment === null ? null : get_post((int) $comment->comment_post_ID);
+    $author = $post === null ? false : get_userdata((int) $post->post_author);
+    $emails = $author instanceof WP_User && (string) $author->user_email !== '' ? [(string) $author->user_email] : [];
+    $emails = array_values(array_filter((array) apply_filters('comment_notification_recipients', $emails, (int) $comment_id)));
+    $own = $author instanceof WP_User && $comment !== null && (int) $comment->user_id === (int) $author->ID;
+    if ($own && !apply_filters('comment_notification_notify_author', false, (int) $comment_id)) {
+        $emails = array_values(array_diff($emails, [(string) $author->user_email]));
+    }
+    if ($post === null || $emails === []) {
+        return false;
+    }
+    $notice = \Minn\Mail\Mailer::noticesFor(Runtime::current()->site)->newComment($emails[0], (string) $post->post_title, (string) $comment->comment_author, (string) $comment->comment_content, (string) get_permalink($post));
+    $text = apply_filters('comment_notification_text', $notice->body, (int) $comment_id);
+    $subject = apply_filters('comment_notification_subject', $notice->subject, (int) $comment_id);
+    $headers = apply_filters('comment_notification_headers', '', (int) $comment_id);
+    foreach ($emails as $email) {
+        wp_mail((string) $email, wp_specialchars_decode((string) $subject), (string) $text, $headers);
+    }
     return true;
 }
 endif;

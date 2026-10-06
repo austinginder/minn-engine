@@ -1,0 +1,134 @@
+[
+    [
+        "wp_rel_ugc #0",
+        "<a href=\\\"https://elsewhere.example/\\\" rel=\\\"nofollow ugc\\\">out</a>"
+    ],
+    [
+        "wp_rel_ugc #1",
+        "<a href=\\\"https://elsewhere.example/\\\" rel=\\\"nofollow ugc\\\">out</a>"
+    ],
+    [
+        "wp_rel_ugc #2",
+        "<a href=\\\"https://elsewhere.example/\\\" target=\\\"_blank\\\" rel=\\\"noopener nofollow ugc\\\">out</a>"
+    ],
+    [
+        "wp_rel_ugc #3",
+        "<a href=\\\"{home}/inside/\\\" rel=\\\"ugc\\\">in</a>"
+    ],
+    [
+        "wp_rel_ugc #4",
+        "<a href=\\\"/relative/\\\" rel=\\\"nofollow ugc\\\">rel</a>"
+    ],
+    [
+        "wp_rel_ugc #5",
+        "<a href=\\\"#top\\\" rel=\\\"nofollow ugc\\\">anchor</a>"
+    ],
+    [
+        "wp_rel_ugc #6",
+        "no link"
+    ],
+    [
+        "_wp_kses_sanitize_note_mention_classes #0",
+        "<a class=\\\"mention\\\" href=\\\"https://elsewhere.example/\\\">@a</a>"
+    ],
+    [
+        "_wp_kses_sanitize_note_mention_classes #1",
+        "<a class=\\\"mention other\\\" href=\\\"https://elsewhere.example/\\\">@b</a>"
+    ],
+    [
+        "_wp_kses_sanitize_note_mention_classes #2",
+        "<span >@c</span>"
+    ],
+    [
+        "_wp_kses_sanitize_note_mention_classes #3",
+        "<a class=\\\"other\\\" href=\\\"https://elsewhere.example/\\\">d</a>"
+    ],
+    [
+        "_wp_kses_sanitize_note_mention_classes #4",
+        "plain"
+    ],
+    [
+        "_wp_kses_sanitize_note_mention_classes #5",
+        "<span >e</span>"
+    ],
+    [
+        "_wp_kses_sanitize_note_mention_classes #6",
+        "<b class=\\\"mention extra\\\" id=\\\"i\\\">f</b>"
+    ],
+    [
+        "_wp_kses_sanitize_note_mention_classes #7",
+        "<span >g</span><em class=\\\"x mention\\\">h</em>"
+    ],
+    [
+        "pre_comment_content #0",
+        "Hello <b>bold</b> and alert(1) <a href=\\\"https://elsewhere.example/\\\" rel=\\\"nofollow ugc\\\">link</a>"
+    ],
+    [
+        "pre_comment_content #1",
+        "paradiv<blockquote cite=\\\"c\\\">q</blockquote>"
+    ],
+    [
+        "pre_comment_content #2",
+        "unclosed <b>bold <i>italic"
+    ],
+    [
+        "pre_comment_content #3",
+        "entity &#128512; and &#x92; and &amp; ampersand"
+    ],
+    [
+        "pre_comment_content #4",
+        "<a href=\\\"{home}/inside/\\\" rel=\\\"ugc\\\">in</a> <a href=\\\"https://elsewhere.example/\\\" rel=\\\"nofollow ugc\\\">out</a>"
+    ],
+    [
+        "pre_comment_author_name #0",
+        "Plain Name"
+    ],
+    [
+        "pre_comment_author_name #1",
+        "Bold Name"
+    ],
+    [
+        "pre_comment_author_name #2",
+        "Name &amp; \\\"quotes\\\""
+    ],
+    [
+        "pre_comment_author_name #3",
+        "spaced name"
+    ],
+    [
+        "pre_comment_author_url #0",
+        "https://elsewhere.example/path"
+    ],
+    [
+        "pre_comment_author_url #1",
+        "http://elsewhere.example"
+    ],
+    [
+        "pre_comment_author_url #2",
+        ""
+    ],
+    [
+        "pre_comment_author_url #3",
+        "https://x.example"
+    ],
+    [
+        "pre_comment_author_url #4",
+        ""
+    ],
+    [
+        "pre_comment_author_email #0",
+        "reader@example.com"
+    ],
+    [
+        "pre_comment_author_email #1",
+        "Reader@Example.com"
+    ],
+    [
+        "pre_comment_author_email #2",
+        ""
+    ],
+    [
+        "pre_comment_author_email #3",
+        "ba@b.cob"
+    ]
+]

@@ -178,6 +178,31 @@ final class Hooks
         $this->run($hook, $args, false);
     }
 
+    /**
+     * do_action_ref_array: the action's callbacks get the arguments, and an
+     * 'all' callback gets them as the one array they were passed in, as the
+     * reference hands them on.
+     *
+     * @param list<mixed> $args
+     */
+    public function actionRefArray(string $hook, array $args): void
+    {
+        $this->actionsDone[$hook] = ($this->actionsDone[$hook] ?? 0) + 1;
+        $this->run($hook, $args, false, [], [$args]);
+    }
+
+    /**
+     * apply_filters_ref_array: as filter(), with an 'all' callback handed
+     * the arguments as one array.
+     *
+     * @param list<mixed> $args
+     */
+    public function filterRefArray(string $hook, array $args): mixed
+    {
+        $this->filtersDone[$hook] = ($this->filtersDone[$hook] ?? 0) + 1;
+        return $this->run($hook, $args, true, [], [$args]);
+    }
+
     /** How often an action has run. */
     public function actionsDone(string $hook): int
     {
@@ -219,12 +244,16 @@ final class Hooks
         return $out;
     }
 
-    /** @param list<mixed> $args @param array<string, int> $skip function name => priority, passed over */
-    private function run(string $hook, array $args, bool $isFilter, array $skip = []): mixed
+    /**
+     * @param list<mixed> $args
+     * @param array<string, int> $skip function name => priority, passed over
+     * @param list<mixed>|null $allArgs what an 'all' callback gets after the hook's name; the arguments when null
+     */
+    private function run(string $hook, array $args, bool $isFilter, array $skip = [], ?array $allArgs = null): mixed
     {
         $value = $isFilter ? ($args[0] ?? null) : null;
         if ($hook !== 'all' && isset($this->hooks['all'])) {
-            $this->fireAll($hook, $args);
+            $this->fireAll($hook, $allArgs ?? $args);
         }
         if (!isset($this->hooks[$hook])) {
             return $value;

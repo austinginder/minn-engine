@@ -3346,3 +3346,67 @@ About sixty core routes Minn does not serve at all (`/wp/v2/statuses`,
 `block-types`, `themes`, `sidebars`, `widgets`, `oembed/1.0`,
 `font-families`, `wp-site-health/v1`, `block-patterns`, `view-config` and
 others) answer `rest_no_route`; that is the next REST gap.
+
+## The comment form (2026-10-06)
+
+`wp-comments-post.php` was Minn's own: it checked and stored a comment
+correctly but told plugins nothing, so a spam plugin (CleanTalk, on most of
+the fleet; Akismet) never saw a front-end comment, notifications went
+around `wp_mail` and its SMTP plugin, and the commenter cookies were
+Minn's. With plugins loaded it now runs WordPress's submission, captured
+three ways: suite `hook-trace` step `comment-form` (actions, signed out,
+the filter window opened at `wp_loaded`), probe `comment-fields` (each
+field's chain, 33 rows), and suite `comment-form` (the same form posted to
+both stacks: status, redirect, cookies, the refusal's words, the stored
+comment; with fixture plugin `minn-test-comment-guard` judging comments as
+spam plugins do).
+
+The order (`Runtime\CommentForm` and the facade): a reply to a held comment
+is refused (403); the post's refusals each fire their action
+(`comment_id_not_found` and `comment_on_trash`, `comment_on_draft` for a
+reader who may not see it, `comment_on_password_protected` answer a blank
+200; `comment_closed` 403), else `pre_comment_on_post`; a signed-in user's
+own name and addresses replace the form's (an administrator's comment is
+kses'd after all unless the form carried its unfiltered-html nonce), or
+`comment_registration` refuses (403); the required fields, an empty comment
+(`allow_empty_comment`) and the column lengths answer 200 with the error;
+then `wp_new_comment` on slashed data: `preprocess_comment` (where a plugin
+may `wp_die`), the ids, parent, address, agent and dates filled in,
+`wp_allow_comment` (`duplicate_comment_id` is handed null or the duplicate's
+id and refuses with 409; `check_comment_flood`, whose legacy callback
+`check_comment_flood_db` attaches `wp_check_comment_flood` to
+`wp_is_comment_flood`, refuses a comment within fifteen seconds of the last
+from the same address or email, through `comment_flood_filter` and
+`comment_flood_trigger`, with 429; then the approval: the post's author
+and a moderator approved, anyone else through `check_comment`, which counts
+links in the comment as `comment_text` shows it, the disallowed words to
+the trash, `pre_comment_approved` last, an error refusing), the
+`pre_comment_*` filters (user, agent, name, content, address, url, email),
+the approval judged a second time on what they left, `wp_insert_comment`,
+`comment_post`, whose two callbacks tell the moderator of a held comment
+and the post's author of an approved one. Then `set_comment_cookies`
+(`wp_set_comment_cookies`: a year, `path=/`, `secure` on https, no
+SameSite; blank values to forget a commenter who did not consent), the
+comment's link or `redirect_to`, the held comment's id and
+`wp_hash(comment_date_gmt)` for a commenter not remembered,
+`comment_post_redirect`, `wp_safe_redirect`.
+
+The field chains, as the reference registers them: author name
+`sanitize_text_field`, `wp_filter_kses`, `_wp_specialchars` at 30; url
+`wp_strip_all_tags`, `sanitize_url`, `wp_filter_kses`; email `trim`,
+`sanitize_email`, `wp_filter_kses`; content `convert_invalid_entities`, kses
+(from `kses_init`, now hooked on `init` and `set_current_user` as on the
+reference), `_wp_kses_sanitize_note_mention_classes` at 11 (a span loses
+its class), `wp_rel_ugc` at 15 (rel gains "nofollow ugc" after what it held,
+"ugc" alone for the site's own host, and moves last), `balanceTags` at 50.
+The chains work on slashed text, as the reference's do.
+
+Mail: the moderator's notice keeps Minn's wording (it points to Minn Admin)
+and goes through `comment_moderation_recipients`, `_headers`, `_text`,
+`_subject` and `wp_mail`, so a mail plugin delivers it; the post author's
+through the `comment_notification_*` filters. Also: `do_action_ref_array` and
+`apply_filters_ref_array` hand an `all` callback the arguments as the one
+array they came in (`phpmailer_init`'s mailer, for one).
+
+Without plugins loaded, the engine's own path answers as before; it still
+differs where the reference does not apply (its refusal page is Minn's).

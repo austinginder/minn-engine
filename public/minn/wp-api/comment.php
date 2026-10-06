@@ -494,10 +494,10 @@ function wp_check_comment_data_max_lengths($comment_data)
     return true;
 }
 
-/** Each field through its pre_comment_* filter, marked filtered. */
+/** Each field through its pre_comment_* filter, in the reference's order (the user first, the email last), marked filtered. */
 function wp_filter_comment($commentdata)
 {
-    $map = ['comment_author' => 'pre_comment_author_name', 'comment_author_email' => 'pre_comment_author_email', 'comment_author_url' => 'pre_comment_author_url', 'comment_content' => 'pre_comment_content', 'comment_author_IP' => 'pre_comment_user_ip', 'comment_agent' => 'pre_comment_user_agent'];
+    $map = ['comment_agent' => 'pre_comment_user_agent', 'comment_author' => 'pre_comment_author_name', 'comment_content' => 'pre_comment_content', 'comment_author_IP' => 'pre_comment_user_ip', 'comment_author_url' => 'pre_comment_author_url', 'comment_author_email' => 'pre_comment_author_email'];
     if (isset($commentdata['user_ID'])) {
         $commentdata['user_id'] = apply_filters('pre_user_id', $commentdata['user_ID']);
     } elseif (isset($commentdata['user_id'])) {
@@ -512,29 +512,165 @@ function wp_filter_comment($commentdata)
     return $commentdata;
 }
 
-/** 1, 0, "spam" or "trash" for a comment that may be stored; a duplicate or a flood refuses (WP_Error or wp_die). */
+/**
+ * 1, 0, "spam" or "trash" for a comment that may be stored, in the
+ * reference's order (contracts/runtime.md "The comment form"): a duplicate,
+ * which duplicate_comment_id may name or clear, refuses with 409;
+ * check_comment_flood (its legacy callback attaches the database check)
+ * and wp_is_comment_flood refuse a flood with 429; then the approval.
+ * WP_Error with $wp_error, else wp_die, for a refusal.
+ */
 function wp_allow_comment($commentdata, $wp_error = false)
 {
-    $userId = (int) ($commentdata['user_id'] ?? 0);
-    $moderator = $userId > 0 && user_can($userId, 'moderate_comments');
-    $moderation = new CommentModeration(_minn_comments());
-    $refusal = $moderation->refusal($commentdata, $moderator);
-    if ($refusal === 'comment_duplicate') {
-        do_action('comment_duplicate_trigger', $commentdata);
+    $data = (array) $commentdata;
+    $field = static fn (string $key): string => (string) wp_unslash($data[$key] ?? '');
+    $dupe = apply_filters('duplicate_comment_id', _minn_comments()->duplicateId((int) ($data['comment_post_ID'] ?? 0), $field('comment_author'), $field('comment_author_email'), $field('comment_content'), (int) ($data['user_id'] ?? 0)), $data);
+    if ($dupe) {
+        do_action('comment_duplicate_trigger', $data);
         $message = apply_filters('comment_duplicate_message', 'Duplicate comment detected; it looks as though you&#8217;ve already said that!');
         return $wp_error ? new WP_Error('comment_duplicate', $message, 409) : wp_die($message, 409);
     }
-    do_action('check_comment_flood', (string) ($commentdata['comment_author_IP'] ?? ''), (string) ($commentdata['comment_author_email'] ?? ''), (string) ($commentdata['comment_date_gmt'] ?? ''), $wp_error);
-    if ($refusal === 'comment_flood') {
-        do_action('comment_flood_trigger', time() - CommentModeration::FLOOD_SECONDS, time());
+    do_action('check_comment_flood', $field('comment_author_IP'), $field('comment_author_email'), $field('comment_date_gmt'), $wp_error);
+    if (apply_filters('wp_is_comment_flood', false, $field('comment_author_IP'), $field('comment_author_email'), $field('comment_date_gmt'), $wp_error)) {
         $message = apply_filters('comment_flood_message', 'You are posting comments too quickly. Slow down.');
         return $wp_error ? new WP_Error('comment_flood', $message, 429) : wp_die($message, 429);
     }
-    $approved = (int) $moderation->approval($moderator, (string) ($commentdata['comment_author'] ?? ''), (string) ($commentdata['comment_author_email'] ?? ''), static fn (string $n) => Runtime::current()->site->option($n));
-    if (wp_check_comment_disallowed_list((string) ($commentdata['comment_author'] ?? ''), (string) ($commentdata['comment_author_email'] ?? ''), (string) ($commentdata['comment_author_url'] ?? ''), (string) ($commentdata['comment_content'] ?? ''), (string) ($commentdata['comment_author_IP'] ?? ''), (string) ($commentdata['comment_agent'] ?? ''))) {
-        $approved = 'trash';
+    return _minn_comment_approval($data);
+}
+
+/**
+ * @internal a comment's approval as the reference judges it, once as it
+ * arrives and again once the pre_comment_* filters have had it: the post's
+ * author and a moderator are approved; anyone else's comment passes
+ * check_comment or is held, and the disallowed words send it to the trash;
+ * pre_comment_approved has the last word.
+ */
+function _minn_comment_approval(array $data)
+{
+    $field = static fn (string $key): string => (string) wp_unslash($data[$key] ?? '');
+    $userId = (int) ($data['user_id'] ?? 0);
+    $post = get_post((int) ($data['comment_post_ID'] ?? 0));
+    if ($userId > 0 && (($post !== null && (int) $post->post_author === $userId) || user_can($userId, 'moderate_comments'))) {
+        $approved = 1;
+    } else {
+        $approved = check_comment($field('comment_author'), $field('comment_author_email'), $field('comment_author_url'), $field('comment_content'), $field('comment_author_IP'), $field('comment_agent'), $field('comment_type')) ? 1 : 0;
+        if (wp_check_comment_disallowed_list($field('comment_author'), $field('comment_author_email'), $field('comment_author_url'), $field('comment_content'), $field('comment_author_IP'), $field('comment_agent'))) {
+            $approved = defined('EMPTY_TRASH_DAYS') && !EMPTY_TRASH_DAYS ? 'spam' : 'trash';
+        }
     }
-    return apply_filters('pre_comment_approved', $approved, $commentdata);
+    return apply_filters('pre_comment_approved', $approved, $data);
+}
+
+/**
+ * A comment from outside, stored the way the comment form stores one:
+ * preprocess_comment; the ids, user, parent, address, agent and dates
+ * filled in; wp_allow_comment; the pre_comment_* filters; the approval
+ * judged again on what they left; wp_insert_comment; comment_post (where
+ * the moderator and the post's author are told). The id, or a WP_Error
+ * with $wp_error (false without).
+ */
+function wp_new_comment($commentdata, $wp_error = false)
+{
+    $data = _minn_comment_defaults((array) apply_filters('preprocess_comment', $commentdata));
+    $approved = wp_allow_comment($data, $wp_error);
+    if (is_wp_error($approved)) {
+        return $wp_error ? $approved : false;
+    }
+    $data['comment_approved'] = $approved;
+    $data = wp_filter_comment($data);
+    $data['comment_approved'] = _minn_comment_approval($data);
+    if (is_wp_error($data['comment_approved'])) {
+        return $wp_error ? $data['comment_approved'] : false;
+    }
+    $id = wp_insert_comment($data);
+    if (!$id) {
+        return $wp_error ? new WP_Error('db_insert_error', 'Could not insert comment into the database.') : false;
+    }
+    do_action('comment_post', (int) $id, $data['comment_approved'], $data);
+    return (int) $id;
+}
+
+/** @internal what wp_new_comment fills in: integer ids, the user from user_ID, a parent only when it is approved or held, the request's address and agent, the dates now, the type "comment". */
+function _minn_comment_defaults(array $data): array
+{
+    if (isset($data['user_ID'])) {
+        $data['user_ID'] = (int) $data['user_ID'];
+        $data['user_id'] = $data['user_ID'];
+    }
+    $data['comment_post_ID'] = (int) ($data['comment_post_ID'] ?? 0);
+    $data['user_id'] = (int) ($data['user_id'] ?? 0);
+    $parent = (int) ($data['comment_parent'] ?? 0);
+    $data['comment_parent'] = $parent > 0 && in_array(wp_get_comment_status($parent), ['approved', 'unapproved'], true) ? $parent : 0;
+    $request = Runtime::current()->request;
+    $data['comment_author_IP'] = (string) preg_replace('/[^0-9a-fA-F:., ]/', '', (string) ($data['comment_author_IP'] ?? ($request?->remoteAddress ?? '')));
+    $data['comment_agent'] = substr((string) ($data['comment_agent'] ?? ($request?->header('user-agent') ?? '')), 0, 254);
+    $data['comment_date'] ??= current_time('mysql');
+    $data['comment_date_gmt'] ??= current_time('mysql', true);
+    $data['comment_type'] = (string) ($data['comment_type'] ?? '') === '' ? 'comment' : $data['comment_type'];
+    return $data;
+}
+
+/** The legacy callback on check_comment_flood: attaches the database flood check to wp_is_comment_flood, so a plugin that unhooks it switches flood checks off. */
+function check_comment_flood_db()
+{
+    add_filter('wp_is_comment_flood', 'wp_check_comment_flood', 10, 5);
+}
+
+/**
+ * Whether this commenter commented too recently: an administrator or a
+ * moderator never floods; otherwise their last comment in the past hour
+ * (by user when signed in, else by address, or by email) goes through
+ * comment_flood_filter (wp_throttle_comment_flood: fifteen seconds), and a
+ * flood fires comment_flood_trigger.
+ */
+function wp_check_comment_flood($is_flood, $ip, $email, $date, $avoid_die = false)
+{
+    if ($is_flood === true || current_user_can('manage_options') || current_user_can('moderate_comments')) {
+        return $is_flood === true;
+    }
+    $now = $date !== '' ? (int) strtotime($date . ' UTC') : time();
+    $last = _minn_comments()->lastCommentTime(get_current_user_id(), (string) $ip, (string) $email, gmdate('Y-m-d H:i:s', $now - HOUR_IN_SECONDS));
+    if ($last === null || !apply_filters('comment_flood_filter', false, $last, $now)) {
+        return false;
+    }
+    do_action('comment_flood_trigger', $last, $now);
+    if ($avoid_die) {
+        return true;
+    }
+    return wp_die(apply_filters('comment_flood_message', 'You are posting comments too quickly. Slow down.'), 429);
+}
+
+/** comment_flood_filter's default: fifteen seconds between comments. */
+function wp_throttle_comment_flood($block, $time_lastcomment, $time_newcomment)
+{
+    return $block ? $block : ((int) $time_newcomment - (int) $time_lastcomment) < 15;
+}
+
+/**
+ * Remembers a signed-out commenter for a year in three cookies (secure
+ * when the site is https), or forgets them when they did not consent;
+ * comment_cookie_lifetime may change the year.
+ */
+function wp_set_comment_cookies($comment, $user, $cookies_consent = true)
+{
+    if ($user instanceof WP_User && $user->exists()) {
+        return;
+    }
+    $hash = defined('COOKIEHASH') ? COOKIEHASH : md5(site_url());
+    $secure = parse_url(home_url(), PHP_URL_SCHEME) === 'https';
+    $path = defined('COOKIEPATH') ? COOKIEPATH : '/';
+    $domain = defined('COOKIE_DOMAIN') ? (string) COOKIE_DOMAIN : '';
+    $expires = $cookies_consent === false ? time() - YEAR_IN_SECONDS : time() + (int) apply_filters('comment_cookie_lifetime', YEAR_IN_SECONDS);
+    $values = $cookies_consent === false ? [' ', ' ', ' '] : [(string) $comment->comment_author, (string) $comment->comment_author_email, esc_url((string) $comment->comment_author_url)];
+    foreach (['comment_author_', 'comment_author_email_', 'comment_author_url_'] as $i => $name) {
+        setcookie($name . $hash, $values[$i], ['expires' => $expires, 'path' => $path, 'domain' => $domain, 'secure' => $secure]);
+    }
+}
+
+/** The comment form's submission (wp-comments-post.php), as Minn\Runtime\CommentForm handles it: the stored comment, or the WP_Error the form answers with. */
+function wp_handle_comment_submission($comment_data)
+{
+    return \Minn\Runtime\CommentForm::submit((array) $comment_data);
 }
 
 /** approved, unapproved, spam, trash, or false for an unknown comment. */
@@ -1076,66 +1212,51 @@ function _close_comments_for_old_post($open, $post_id)
 }
 
 /**
- * Whether a new comment may be approved outright, the reference's option
- * gauntlet: manual moderation, the link budget, the moderation keys, and
- * the previously-approved-author requirement (both probe cases refused
- * under the dev defaults because the authors had no approved history).
+ * Whether a comment needs no moderation: off when moderation is on; the
+ * links counted in the comment as comment_text shows it
+ * (comment_max_links_url may recount) against comment_max_links; the
+ * moderation words; and, when asked, an earlier approved comment from the
+ * same author.
  */
 function check_comment($author, $email, $url, $comment, $user_ip, $user_agent, $comment_type)
 {
     if ((string) get_option('comment_moderation') === '1') {
         return false;
     }
+    $shown = (string) apply_filters('comment_text', (string) $comment, null, []);
     $max = (int) get_option('comment_max_links');
-    if ($max > 0 && preg_match_all('#(https?://|<a [^>]*href)#i', (string) $comment) >= $max) {
+    if ($max > 0 && (int) apply_filters('comment_max_links_url', preg_match_all('/<a [^>]*href/i', $shown), $url, $comment) >= $max) {
         return false;
     }
     foreach (explode("\n", (string) get_option('moderation_keys')) as $word) {
         $word = trim($word);
-        if ($word !== '' && preg_match('#' . preg_quote($word, '#') . '#i', $author . ' ' . $email . ' ' . $url . ' ' . $comment . ' ' . $user_ip . ' ' . $user_agent)) {
+        if ($word !== '' && preg_match('#' . preg_quote($word, '#') . '#iu', $author . ' ' . $email . ' ' . $url . ' ' . $comment . ' ' . $user_ip . ' ' . $user_agent)) {
             return false;
         }
     }
-    if ((string) get_option('comment_previously_approved') === '1') {
-        return _minn_comments()->hasApprovedByEmail((string) $email);
+    if ((string) get_option('comment_previously_approved') === '1' && !in_array($comment_type, ['trackback', 'pingback'], true)) {
+        return (string) $author !== '' && (string) $email !== '' && _minn_comments()->previouslyApproved((string) $author, (string) $email);
     }
     return true;
 }
 
-/** Mails the moderation queue notice to the site admin; gated by the notify_moderator filter over the option. */
+/** comment_post's first callback: a held comment is the moderator's to see (notify_moderator may say otherwise), sent by wp_notify_moderator. */
 function wp_new_comment_notify_moderator($comment_id)
 {
     $comment = get_comment($comment_id);
-    $notify = (bool) apply_filters('notify_moderator', (string) get_option('moderation_notify') === '1', (int) $comment_id);
-    if ($comment === null || !$notify) {
-        return false;
-    }
-    $post = get_post((int) $comment->comment_post_ID);
-    $subject = '[' . wp_specialchars_decode((string) get_option('blogname'), ENT_QUOTES) . '] Please moderate: "' . ($post->post_title ?? '') . '"';
-    $message = sprintf("A new comment on the post \"%s\" is waiting for your approval\n%s\n\n", $post->post_title ?? '', get_permalink($post))
-        . sprintf("Author: %s\nEmail: %s\n\nComment:\n%s\n\n", $comment->comment_author, $comment->comment_author_email, $comment->comment_content)
-        . 'Moderate it here: ' . admin_url('comment.php?action=approve&c=' . (int) $comment_id) . "\n";
-    return (bool) wp_mail((string) get_option('admin_email'), $subject, $message);
+    $notify = apply_filters('notify_moderator', $comment !== null && (string) $comment->comment_approved === '0', (int) $comment_id);
+    return $notify ? wp_notify_moderator((int) $comment_id) : false;
 }
 
-/** Mails the post's author about a new comment; gated by the notify_post_author filter over the option. */
+/** comment_post's second callback: the post's author hears of an approved comment when comments_notify is on (notify_post_author may say otherwise). */
 function wp_new_comment_notify_postauthor($comment_id)
 {
     $comment = get_comment($comment_id);
-    $notify = (bool) apply_filters('notify_post_author', (string) get_option('comments_notify') === '1', (int) $comment_id);
-    if ($comment === null || !$notify) {
+    $notify = apply_filters('notify_post_author', get_option('comments_notify'), (int) $comment_id);
+    if (!$notify || $comment === null || (string) $comment->comment_approved !== '1') {
         return false;
     }
-    $post = get_post((int) $comment->comment_post_ID);
-    $author = $post === null ? null : get_userdata((int) $post->post_author);
-    if ($author === false || $author === null || (int) ($comment->user_id ?? 0) === (int) $post->post_author || (string) $author->user_email === '') {
-        return false;
-    }
-    $subject = '[' . wp_specialchars_decode((string) get_option('blogname'), ENT_QUOTES) . '] Comment: "' . $post->post_title . '"';
-    $message = sprintf("New comment on your post \"%s\"\n", $post->post_title)
-        . sprintf("Author: %s\nEmail: %s\n\nComment:\n%s\n\n", $comment->comment_author, $comment->comment_author_email, $comment->comment_content)
-        . 'See all comments on this post here: ' . get_permalink($post) . "#comments\n";
-    return (bool) wp_mail((string) $author->user_email, $subject, $message);
+    return wp_notify_postauthor((int) $comment_id);
 }
 
 /**

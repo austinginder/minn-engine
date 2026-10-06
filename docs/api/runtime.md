@@ -16,13 +16,14 @@ the WordPress runtime plugins load against
 | [`BlockWidget`](#blockwidget) | final class | 30 | A block widget's legacy class name. Every widget the block editor saves |
 | [`CommentCloser`](#commentcloser) | final readonly class | 22 | The Discussion setting that closes comments on old posts. Observed on the |
 | [`CommentEvents`](#commentevents) | final readonly class | 110 | What the reference's REST comments controller tells plugins, for the |
+| [`CommentForm`](#commentform) | final class | 107 | The comment form's submission with plugins loaded |
 | [`CommentQuery`](#commentquery) | final readonly class | 117 | Comment reads in the get_comments() shape: arguments to rows or a count, and the approval breakdown wp_count_comments reports. |
 | [`Connectors`](#connectors) | final class | 212 | The connectors registry: the external services a site talks to (AI |
 | [`Constants`](#constants) | final class | 66 | The constants plugin code expects: the fixed set from data/constants.json |
 | [`CronTable`](#crontable) | final class | 131 | The cron option's shape, operated on as data: timestamp => hook => key => |
 | [`DbDelta`](#dbdelta) | final readonly class | 125 | dbDelta as the reference does it: a CREATE TABLE statement creates the |
 | [`EarlyFilters`](#earlyfilters) | final class | 20 | Filters that run before the runtime exists, over the hooks added that |
-| [`Hooks`](#hooks) | final class | 282 | The hook registry plugin code registers into and the engine fires. |
+| [`Hooks`](#hooks) | final class | 311 | The hook registry plugin code registers into and the engine fires. |
 | [`Interactivity`](#interactivity) | final class | 509 | Server-side directive processing for the Interactivity API: the state and |
 | [`MainQuery`](#mainquery) | final class | 34 | The query variables the reference's main query would carry for a URL the |
 | [`Meta`](#meta) | final readonly class | 175 | The four meta tables behind get_metadata and friends: reads by object, and the row-level writes the update and delete rules need. |
@@ -601,6 +602,33 @@ rest_delete_comment, after a trash or a delete, with the comment as it was and t
 - `@param array<string, mixed> $data`
 
 
+## CommentForm
+
+`final class Minn\Runtime\CommentForm` · `public/minn/src/Minn/Runtime/CommentForm.php`
+
+The comment form's submission with plugins loaded
+(wp_handle_comment_submission), in the order the reference runs it
+(contracts/runtime.md "The comment form"): a reply to a comment still
+held is refused; the post is looked at, each refusal with its action
+(comment_id_not_found, comment_closed, comment_on_trash, comment_on_draft,
+comment_on_password_protected) and pre_comment_on_post when it takes
+comments; the signed-in user's own name and addresses replace the form's,
+or a site that requires sign-in refuses; the required fields, an empty
+comment (allow_empty_comment) and the column lengths are checked; then
+wp_new_comment stores it, where preprocess_comment, the duplicate and
+flood checks and pre_comment_approved have their say. A refusal is a
+WP_Error whose data is the status the form answers with; none means a
+blank page.
+
+### static `submit(array $form): WP_Comment|WP_Error`
+
+The stored comment, or the refusal the form answers with.
+
+- `@param array<string, mixed> $form the posted fields, unslashed`
+
+Internals: `store()` (private, line 71), `postRefusal()` (private, line 89), `fieldRefusal()` (private, line 118)
+
+
 ## CommentQuery
 
 `final readonly class Minn\Runtime\CommentQuery` · `public/minn/src/Minn/Runtime/CommentQuery.php`
@@ -939,6 +967,21 @@ Runs an action with exactly the arguments given, none included
 
 - `@param list<mixed> $args`
 
+### `actionRefArray(string $hook, array $args): void`
+
+do_action_ref_array: the action's callbacks get the arguments, and an
+'all' callback gets them as the one array they were passed in, as the
+reference hands them on.
+
+- `@param list<mixed> $args`
+
+### `filterRefArray(string $hook, array $args): mixed`
+
+apply_filters_ref_array: as filter(), with an 'all' callback handed
+the arguments as one array.
+
+- `@param list<mixed> $args`
+
 ### `actionsDone(string $hook): int`
 
 How often an action has run.
@@ -961,7 +1004,7 @@ Every hook with callbacks, by name.
 
 - `@return array<string, array<int, list<callable>>> a read-only view for diagnostics`
 
-Internals: `run()` (private, line 223), `nextPriority()` (private, line 262), `fireAll()` (private, line 274), `id()` (private, line 288)
+Internals: `run()` (private, line 252), `nextPriority()` (private, line 291), `fireAll()` (private, line 303), `id()` (private, line 317)
 
 
 ## Interactivity
@@ -2161,7 +2204,7 @@ blocks, texturize, paragraphs, shortcodes, block hooks, and the image
 attributes. What it has not (smilies, the capital P, insecure home
 addresses) runs with the plugins' own callbacks.
 
-Used by: `Minn\Admin\BootPayload`, `Minn\Auth\Authenticator`, `Minn\Blocks\Dynamic\Theme\Navigation`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Blocks\ImageTags`, `Minn\Blocks\RenderState`, `Minn\Cli\Runtime`, `Minn\Content\Blocks`, `Minn\Content\Reader`, `Minn\Content\Site`, `Minn\Content\Terms`, `Minn\Cron\Cron`, `Minn\Db`, `Minn\Engine`, `Minn\Extension\Extensions`, `Minn\Front\Feeds`, `Minn\Front\Permalinks`, `Minn\Front\PluginRules`, `Minn\Front\Resolver`, `Minn\Login\LoginHooks`, `Minn\Mail\Mailer`, `Minn\Media\Images`, `Minn\Rest\AbilitiesController`, `Minn\Rest\Api`, `Minn\Rest\Caller`, `Minn\Rest\RuntimeEnvelope`, `Minn\Rest\Services`, `Minn\Rest\SettingsController`, `Minn\Runtime\Abilities`, `Minn\Runtime\AjaxController`, `Minn\Runtime\BlockFilters`, `Minn\Runtime\BlockHooks`, `Minn\Runtime\CommentEvents`, `Minn\Runtime\Constants`, `Minn\Runtime\Interactivity`, `Minn\Runtime\NavMenu`, `Minn\Runtime\PackageDownload`, `Minn\Runtime\Patterns`, `Minn\Runtime\PlaceholderTrace`, `Minn\Runtime\PluginUpdates`, `Minn\Runtime\Plugins`, `Minn\Runtime\PostEvents`, `Minn\Runtime\PostQuery`, `Minn\Runtime\ScriptModules`, `Minn\Runtime\TermEvents`, `Minn\Runtime\TermWriter`, `Minn\Runtime\UserEvents`, `Minn\Theme\ArchiveTitle`, `Minn\Theme\ClassicContent`, `Minn\Theme\ClassicRenderer`, `Minn\Theme\MainQueryBridge`, `Minn\Theme\PageRenderer`, `Minn\Theme\Templates`
+Used by: `Minn\Admin\BootPayload`, `Minn\Auth\Authenticator`, `Minn\Blocks\Dynamic\Theme\Navigation`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Blocks\ImageTags`, `Minn\Blocks\RenderState`, `Minn\Cli\Runtime`, `Minn\Content\Blocks`, `Minn\Content\Reader`, `Minn\Content\Site`, `Minn\Content\Terms`, `Minn\Cron\Cron`, `Minn\Db`, `Minn\Engine`, `Minn\Extension\Extensions`, `Minn\Front\CommentPostController`, `Minn\Front\Feeds`, `Minn\Front\Permalinks`, `Minn\Front\PluginRules`, `Minn\Front\Resolver`, `Minn\Login\LoginHooks`, `Minn\Mail\Mailer`, `Minn\Media\Images`, `Minn\Rest\AbilitiesController`, `Minn\Rest\Api`, `Minn\Rest\Caller`, `Minn\Rest\RuntimeEnvelope`, `Minn\Rest\Services`, `Minn\Rest\SettingsController`, `Minn\Runtime\Abilities`, `Minn\Runtime\AjaxController`, `Minn\Runtime\BlockFilters`, `Minn\Runtime\BlockHooks`, `Minn\Runtime\CommentEvents`, `Minn\Runtime\Constants`, `Minn\Runtime\Interactivity`, `Minn\Runtime\NavMenu`, `Minn\Runtime\PackageDownload`, `Minn\Runtime\Patterns`, `Minn\Runtime\PlaceholderTrace`, `Minn\Runtime\PluginUpdates`, `Minn\Runtime\Plugins`, `Minn\Runtime\PostEvents`, `Minn\Runtime\PostQuery`, `Minn\Runtime\ScriptModules`, `Minn\Runtime\TermEvents`, `Minn\Runtime\TermWriter`, `Minn\Runtime\UserEvents`, `Minn\Theme\ArchiveTitle`, `Minn\Theme\ClassicContent`, `Minn\Theme\ClassicRenderer`, `Minn\Theme\MainQueryBridge`, `Minn\Theme\PageRenderer`, `Minn\Theme\Templates`
 
 ```php
 __construct(Minn\Context $context, bool $isAdmin = false)

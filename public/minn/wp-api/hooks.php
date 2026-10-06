@@ -51,12 +51,12 @@ function do_action($hook_name, ...$arg)
 
 function apply_filters_ref_array($hook_name, $args)
 {
-    return Runtime::hooks()->filter((string) $hook_name, array_values((array) $args));
+    return Runtime::hooks()->filterRefArray((string) $hook_name, array_values((array) $args));
 }
 
 function do_action_ref_array($hook_name, $args)
 {
-    Runtime::hooks()->actionRef((string) $hook_name, array_values((array) $args));
+    Runtime::hooks()->actionRefArray((string) $hook_name, array_values((array) $args));
 }
 
 function current_filter()

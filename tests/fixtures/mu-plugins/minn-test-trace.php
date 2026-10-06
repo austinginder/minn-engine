@@ -54,8 +54,9 @@ function minn_test_trace_describe($value): string
     return $value === null ? 'null' : gettype($value);
 }
 
-// With X-Minn-Trace-Filters as well, the distinct filters applied from the REST server's start to shutdown, written once at the end.
-$minnTraceFilters = isset($_SERVER['HTTP_X_MINN_TRACE_FILTERS']) ? ['open' => false, 'seen' => []] : null;
+// With X-Minn-Trace-Filters as well, the distinct filters applied from the action it names (1: the REST server's start) to shutdown, written once at the end.
+$minnTraceFrom = (string) ($_SERVER['HTTP_X_MINN_TRACE_FILTERS'] ?? '');
+$minnTraceFilters = $minnTraceFrom !== '' ? ['open' => false, 'seen' => [], 'from' => preg_match('/^[a-z_]{2,40}$/', $minnTraceFrom) === 1 ? $minnTraceFrom : 'rest_api_init'] : null;
 if ($minnTraceFilters !== null) {
     register_shutdown_function(static function () use (&$minnTraceFilters, $minnTraceDir, $minnTraceRun): void {
         file_put_contents("{$minnTraceDir}/{$minnTraceRun}.filters.json", json_encode(array_keys($minnTraceFilters['seen'])));
@@ -70,8 +71,8 @@ add_action('all', static function (string $hook) use ($minnTraceDir, $minnTraceR
         }
         return;
     }
-    if ($minnTraceFilters !== null && ($hook === 'rest_api_init' || $hook === 'shutdown')) {
-        $minnTraceFilters['open'] = $hook === 'rest_api_init';
+    if ($minnTraceFilters !== null && ($hook === $minnTraceFilters['from'] || $hook === 'shutdown')) {
+        $minnTraceFilters['open'] = $hook === $minnTraceFilters['from'];
     }
     $args = array_map('minn_test_trace_describe', array_slice(func_get_args(), 1));
     file_put_contents("{$minnTraceDir}/{$minnTraceRun}.ndjson", json_encode([$hook, $args], JSON_UNESCAPED_SLASHES) . "\n", FILE_APPEND);

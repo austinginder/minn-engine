@@ -141,7 +141,8 @@ check(!isset($e['headers']['set-cookie']) || !str_contains($e['headers']['set-co
 sleep(16);
 $xss = page("$ENGINE/wp-comments-post.php", 'comment_post_ID=1&author=Yan+Reader<script>x</script>&email=yan@example.com&comment=zz+reader+<b>b</b><script>alert(1)</script><a+href="http://x"+onclick="1">l</a>');
 $row = wp("db query \"SELECT comment_author, comment_content FROM wp_comments WHERE comment_author LIKE 'Yan Reader%' ORDER BY comment_ID DESC LIMIT 1\" --skip-column-names");
-check($row === "Yan Reader\tzz reader <b>b</b>alert(1)<a href=\"http://x\" rel=\"nofollow ugc\">l</a>", 'front-end comments go through the comment allowlist with ugc links', $row);
+// The reference strips the tags from a name and keeps their text (strip_tags), so the script's "x" stays.
+check($row === "Yan Readerx\tzz reader <b>b</b>alert(1)<a href=\"http://x\" rel=\"nofollow ugc\">l</a>", 'front-end comments go through the comment allowlist with ugc links', $row);
 
 // 2. Post passwords: the cookie the reference minted unlocks here, and the other way round.
 $pp = (int) wp("post create --post_status=publish --post_title='zz reader locked' --post_password=secret --post_content='<!-- wp:paragraph --><p>hidden words</p><!-- /wp:paragraph -->' --porcelain");

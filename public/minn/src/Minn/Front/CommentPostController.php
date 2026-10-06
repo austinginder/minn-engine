@@ -22,6 +22,7 @@ use Minn\Http\Access;
 use Minn\Http\Policy;
 use Minn\Http\Route;
 use Minn\Mail\Mailer;
+use Minn\Runtime\Runtime;
 use Minn\Support\Html;
 use Minn\Support\Kses;
 
@@ -54,6 +55,12 @@ final readonly class CommentPostController
         if ($request->method !== Method::Post) {
             return new Response(405, ['Allow' => 'POST', 'Content-Type' => 'text/plain;charset=UTF-8'], 'Error: Method not allowed.');
         }
+        return Runtime::booted() ? $this->postWithPlugins($request) : $this->postWithoutPlugins($request);
+    }
+
+    /** The engine's own submission, from the reference's captured answers: what answers when no runtime is booted. */
+    private function postWithoutPlugins(Request $request): Response
+    {
         $post = $this->posts->find((int) ($request->form['comment_post_ID'] ?? 0));
         if ($post === null) {
             return self::refusal('Invalid post.', 404);
@@ -129,6 +136,35 @@ final readonly class CommentPostController
         }
         $response = Response::redirect($location, 302);
         return $remember ? $this->rememberAuthor($response, $author, $email, $url, $request->secure) : $response;
+    }
+
+    /**
+     * With plugins loaded, the reference's own submission and redirect
+     * (contracts/runtime.md "The comment form"), so a spam plugin's checks,
+     * the notifications and the commenter cookies are WordPress's: a refusal
+     * with a status is the refusal page, one without is a blank page; else
+     * set_comment_cookies, the comment's link (or redirect_to), the held
+     * comment's id and hash when the commenter is not remembered,
+     * comment_post_redirect, and wp_safe_redirect's checks.
+     */
+    private function postWithPlugins(Request $request): Response
+    {
+        $comment = \wp_handle_comment_submission($request->form);
+        if ($comment instanceof \WP_Error) {
+            $status = (int) $comment->get_error_data();
+            return $status > 0 ? self::refusal($comment->get_error_message(), $status) : new Response(200, ['Content-Type' => 'text/html; charset=UTF-8'], '');
+        }
+        $consent = isset($request->form['wp-comment-cookies-consent']);
+        \do_action('set_comment_cookies', $comment, \wp_get_current_user(), $consent);
+        $redirect = (string) ($request->form['redirect_to'] ?? '');
+        $location = $redirect === '' ? (string) \get_comment_link($comment) : $redirect . '#comment-' . $comment->comment_ID;
+        if (!$consent && \wp_get_comment_status($comment) === 'unapproved' && (string) $comment->comment_author_email !== '') {
+            $location = \add_query_arg(['unapproved' => $comment->comment_ID, 'moderation-hash' => \wp_hash($comment->comment_date_gmt)], $location);
+        }
+        \wp_safe_redirect(\apply_filters('comment_post_redirect', $location, $comment));
+        $sent = (array) Runtime::current()->get('redirect', []);
+        $response = Response::redirect((string) ($sent['location'] ?? $location), (int) ($sent['status'] ?? 302));
+        return is_string($sent['by'] ?? null) ? $response->withHeader('X-Redirect-By', (string) $sent['by']) : $response;
     }
 
     /** A moderator's own comment is approved; otherwise the moderation settings decide. */

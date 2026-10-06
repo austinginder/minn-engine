@@ -24,7 +24,6 @@ declare(strict_types=1);
 require __DIR__ . '/lib.php';
 
 const DIVERGENT = [
-    'comment-form' => 'wp-comments-post.php is the engine\'s own: it fires none of the submission\'s actions (pre_comment_on_post, the flood and disallowed-list checks, wp_insert_comment, comment_post, set_comment_cookies)',
 ];
 
 /**
@@ -86,7 +85,7 @@ foreach ($stacks as [, $content]) {
 // The form's comments, matched exactly by their author's address (a wp-cli filter it ignores would match every comment).
 // Swept before each form post too: the stacks share a database, and one stack's comment is the other's flood.
 $sweepReaders = static function () use ($WP): void {
-    $comments = json_decode((string) shell_exec("{$WP} comment list --status=all --fields=comment_ID,comment_author_email --format=json 2>/dev/null"), true);
+    $comments = json_decode((string) shell_exec("{$WP} comment list --status=any --fields=comment_ID,comment_author_email --format=json 2>/dev/null"), true);
     foreach (is_array($comments) ? $comments : [] as $comment) {
         if (($comment['comment_author_email'] ?? '') === 'reader@minn-engine.localhost') {
             shell_exec("{$WP} comment delete " . (int) $comment['comment_ID'] . ' --force >/dev/null 2>&1');
@@ -124,7 +123,7 @@ $call = static function (string $base, string $content, string $run, string $met
         [$route, $query] = explode('?', $route, 2);
         $query = '&' . $query;
     }
-    $sent = [...($form ? [] : [$cookie, 'X-WP-Nonce: ' . $mint['nonce']]), 'X-Minn-Trace: ' . $run, ...($filters ? ['X-Minn-Trace-Filters: 1'] : []), ...$headers];
+    $sent = [...($form ? [] : [$cookie, 'X-WP-Nonce: ' . $mint['nonce']]), 'X-Minn-Trace: ' . $run, ...($filters ? ['X-Minn-Trace-Filters: ' . ($form ? 'wp_loaded' : '1')] : []), ...$headers];
     if (is_array($body) && $form) {
         $body = http_build_query($body);
     } elseif (is_array($body)) {
@@ -185,8 +184,13 @@ foreach ($stacks as $stack => [$base, $content]) {
     $run('post-publish', 'POST', "/wp/v2/posts/{$ids['post']}", ['status' => 'publish']);
     $run('post-edit', 'POST', "/wp/v2/posts/{$ids['post']}", ['title' => 'Trace post edited']);
     $run('post-trash', 'DELETE', "/wp/v2/posts/{$ids['post']}");
+    // The reference's cron removes the ping and enclosure queue when it gets to it (Minn queues neither, DELIBERATE);
+    // gone before the delete, the delete is the same whenever cron ran.
+    $unqueue = static fn (int $id): string => $stack === 'reference' ? (string) shell_exec("{$WP} post meta delete {$id} _pingme >/dev/null 2>&1; {$WP} post meta delete {$id} _encloseme >/dev/null 2>&1") : '';
+    $unqueue($ids['post']);
     $run('post-delete', 'DELETE', "/wp/v2/posts/{$ids['post']}?force=true");
     $ids['page'] = (int) ($run('page-create', 'POST', '/wp/v2/pages', ['title' => 'Trace page', 'status' => 'publish'])['id'] ?? 0);
+    $unqueue($ids['page']);
     $run('page-delete', 'DELETE', "/wp/v2/pages/{$ids['page']}?force=true");
     $ids['media'] = (int) ($run('media-upload', 'POST', '/wp/v2/media', $png, ['Content-Type: image/png', 'Content-Disposition: attachment; filename="trace.png"'])['id'] ?? 0);
     $run('media-edit', 'POST', "/wp/v2/media/{$ids['media']}", ['alt_text' => 'Trace']);
