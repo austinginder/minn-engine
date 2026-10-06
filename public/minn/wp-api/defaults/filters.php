@@ -212,6 +212,13 @@ add_filter('the_content', 'convert_smilies', 20);
 add_filter('comments_open', '_close_comments_for_old_post', 10, 2);
 // Widgets register at init 1, as the reference schedules them, so a theme's
 // sidebar has its widgets by the time it renders.
+// Theme supports as the reference sets them up (probe rest-themes): a block theme's defaults before its own
+// setup, the custom header's and background's once WordPress has loaded.
+add_action('setup_theme', 'create_initial_theme_features', 0);
+add_action('after_setup_theme', '_add_default_theme_supports', 1);
+add_action('after_setup_theme', 'wp_setup_widgets_block_editor', 1);
+add_action('after_setup_theme', 'wp_enable_block_templates', 1);
+add_action('wp_loaded', '_custom_header_background_just_in_time');
 add_action('init', 'wp_widgets_init', 1);
 add_action('init', '_wp_connectors_init', 15);
 add_action('init', '_wp_register_default_connector_settings', 20);

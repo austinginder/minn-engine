@@ -1,0 +1,30 @@
+[
+    {
+        "area": "uncategorized",
+        "label": "General",
+        "description": "General templates often perform a specific role like displaying post content, and are not tied to any particular area.",
+        "icon": "layout",
+        "area_tag": "div"
+    },
+    {
+        "area": "header",
+        "label": "Header",
+        "description": "The Header template defines a page area that typically contains a title, logo, and main navigation.",
+        "icon": "header",
+        "area_tag": "header"
+    },
+    {
+        "area": "footer",
+        "label": "Footer",
+        "description": "The Footer template defines a page area that typically contains site credits, social links, or any other combination of blocks.",
+        "icon": "footer",
+        "area_tag": "footer"
+    },
+    {
+        "area": "navigation-overlay",
+        "label": "Navigation Overlay",
+        "description": "The Navigation Overlay template defines an overlay area that typically contains navigation links and can be toggled open and closed.",
+        "icon": "navigation-overlay",
+        "area_tag": "div"
+    }
+]

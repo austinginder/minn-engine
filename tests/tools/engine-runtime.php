@@ -38,3 +38,5 @@ if ($theme !== null) {
     // The theme's blocks (template parts, post blocks, comments) register the way a page render does.
     Minn\Theme\PageRenderer::create($db, $theme, Minn\Front\Permalinks::fromDb($db), 10);
 }
+// The theme's setup, as a request's boot runs it: its functions.php, after_setup_theme (its supports) and wp_loaded.
+Minn\Runtime\Plugins::loadTheme($runtime);

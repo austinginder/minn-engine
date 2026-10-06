@@ -2,6 +2,7 @@
 /** Theme lookups and theme mods. */
 
 use Minn\Front\CustomLogo;
+use Minn\Runtime\ThemeSupports;
 use Minn\Runtime\Runtime;
 
 function wp_get_theme($stylesheet = '', $theme_root = '')
@@ -67,15 +68,8 @@ function remove_theme_mods()
 
 function get_theme_support($feature, ...$args)
 {
-    $supports = Runtime::current()->get('theme_supports', []);
-    if (!array_key_exists($feature, $supports) && wp_is_block_theme()) {
-        // A block theme carries the reference's implied supports.
-        $implied = ['html5' => [['comment-list', 'comment-form', 'search-form', 'gallery', 'caption', 'style', 'script']], 'post-thumbnails' => true, 'responsive-embeds' => true, 'editor-styles' => true, 'automatic-feed-links' => true, 'title-tag' => true, 'wp-block-styles' => true, 'align-wide' => true];
-        if (isset($implied[$feature])) {
-            $supports[$feature] = $implied[$feature];
-        }
-    }
-    if (!array_key_exists($feature, $supports) || $supports[$feature] === false) {
+    $supports = ThemeSupports::all();
+    if (!array_key_exists($feature, $supports)) {
         return false;
     }
     if ($args === [] || $supports[$feature] === true) {
@@ -92,20 +86,15 @@ function current_theme_supports($feature, ...$args)
     return apply_filters("current_theme_supports-{$feature}", get_theme_support($feature, ...$args) !== false, $args, get_theme_support($feature));
 }
 
+/** Declares a feature (Runtime\ThemeSupports): bare it is on, otherwise its arguments, merged as WordPress merges each. */
 function add_theme_support($feature, ...$args)
 {
-    $supports = Runtime::current()->get('theme_supports', []);
-    $supports[$feature] = $args === [] ? true : $args;
-    Runtime::current()->set('theme_supports', $supports);
+    return ThemeSupports::add((string) $feature, $args) ? null : false;
 }
 
 function remove_theme_support($feature)
 {
-    // Recorded as false rather than dropped, so a block theme's implied support does not come back.
-    $supports = Runtime::current()->get('theme_supports', []);
-    $supports[$feature] = false;
-    Runtime::current()->set('theme_supports', $supports);
-    return true;
+    return ThemeSupports::remove((string) $feature);
 }
 
 function wp_theme_has_theme_json()
@@ -339,4 +328,50 @@ function _delete_attachment_theme_mod($id)
     if ((int) get_theme_mod('custom_logo') === (int) $id) {
         remove_theme_mod('custom_logo');
     }
+}
+
+/** Registers a theme feature and how REST shows it (Runtime\ThemeSupports); a WP_Error when it cannot be. */
+function register_theme_feature($feature, $args = [])
+{
+    return ThemeSupports::register((string) $feature, (array) $args);
+}
+
+/** Core's theme features, then those registered since. */
+function get_registered_theme_features()
+{
+    return ThemeSupports::features();
+}
+
+function get_registered_theme_feature($feature)
+{
+    return ThemeSupports::features()[$feature] ?? null;
+}
+
+/** Core's features are data (data/theme-features.json); nothing to register. */
+function create_initial_theme_features()
+{
+}
+
+/** What every block theme supports before its own setup runs. */
+function _add_default_theme_supports()
+{
+    ThemeSupports::blockThemeDefaults();
+}
+
+/** The custom header's and background's defaults, filled in once WordPress has loaded. */
+function _custom_header_background_just_in_time()
+{
+    ThemeSupports::justInTime();
+}
+
+/** A block theme's templates are its own. */
+function wp_enable_block_templates()
+{
+    ThemeSupports::editorDefaults('block-templates');
+}
+
+/** Widgets are edited as blocks unless a theme or plugin takes the support away. */
+function wp_setup_widgets_block_editor()
+{
+    ThemeSupports::editorDefaults('widgets-block-editor');
 }

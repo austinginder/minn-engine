@@ -114,6 +114,22 @@ final class Plugins
     }
 
     /**
+     * The theme's setup without the plugins: setup_theme, the theme's
+     * functions.php, after_setup_theme, then wp_loaded. The probe runtime
+     * ends its boot with this, so a theme's supports are what a request's
+     * would be and a late declaration is judged as one; it skips init,
+     * whose work the probes compare on their own.
+     */
+    public static function loadTheme(Runtime $runtime): void
+    {
+        $hooks = Runtime::hooks();
+        $hooks->action('setup_theme', []);
+        self::loadThemeFunctions($runtime);
+        $hooks->action('after_setup_theme', []);
+        $hooks->action('wp_loaded', []);
+    }
+
+    /**
      * The active theme's functions.php, child first then parent, between
      * setup_theme and after_setup_theme as the reference loads them. Each
      * file goes through the same symbol gate as a plugin folder and is

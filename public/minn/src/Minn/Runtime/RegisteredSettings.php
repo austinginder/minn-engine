@@ -96,11 +96,11 @@ final class RegisteredSettings
         \do_action('unregister_setting', $group, $name);
     }
 
-    /** filter_default_option: the registered default, unless the reader named its own. */
-    public static function defaultOf(mixed $default, string $option, bool $passed): mixed
+    /** A setting's registered default, or $default when it registered none. */
+    public static function defaultOf(string $option, mixed $default): mixed
     {
         $registered = self::all();
-        if ($passed || empty($registered[$option]) || !array_key_exists('default', $registered[$option])) {
+        if (empty($registered[$option]) || !array_key_exists('default', $registered[$option])) {
             return $default;
         }
         return $registered[$option]['default'];

@@ -44,7 +44,7 @@ the WordPress runtime plugins load against
 | [`PlaceholderTrace`](#placeholdertrace) | final class | 27 | Records every call into a generated placeholder while a site opts in by |
 | [`Placeholders`](#placeholders) | final class | 49 | The printf placeholders plugin code hands wpdb::prepare, filled the way |
 | [`PluginUpdates`](#pluginupdates) | final class | 65 | The update offers the site's own plugins publish. A plugin that hosts |
-| [`Plugins`](#plugins) | final class | 213 | Loads the site's plugins into the runtime the way the reference does: |
+| [`Plugins`](#plugins) | final class | 229 | Loads the site's plugins into the runtime the way the reference does: |
 | [`PostData`](#postdata) | final class | 65 | The loop's view of a post, as the reference's generate_postdata and |
 | [`PostEvents`](#postevents) | final readonly class | 145 | What the reference's REST controllers tell plugins about a post they |
 | [`PostInsert`](#postinsert) | final readonly class | 166 | The decisions behind wp_insert_post: which columns a postarr fills, when |
@@ -74,6 +74,7 @@ the WordPress runtime plugins load against
 | [`TermQuery`](#termquery) | final readonly class | 440 | Term reads in the shapes plugin code asks for: get_terms() arguments to |
 | [`TermSave`](#termsave) | final class | 199 | wp_insert_term and wp_update_term in the reference's order (probe |
 | [`TermWriter`](#termwriter) | final readonly class | 119 | The decisions behind wp_delete_term and the object-term relationships: |
+| [`ThemeSupports`](#themesupports) | final class | 159 | What a theme supports, as add_theme_support keeps it (probe rest-themes): |
 | [`TreeWalk`](#treewalk) | final class | 74 | The Walker contract's traversal: elements keyed by the walker's |
 | [`UserEvents`](#userevents) | final readonly class | 96 | What the reference's REST users controller tells plugins, for the |
 | [`UserInsert`](#userinsert) | final readonly class | 112 | The decisions behind wp_insert_user: what a new account needs, which email |
@@ -1874,6 +1875,14 @@ Loads the active plugins as code and fires the boot hooks. Recovery
 is armed for exactly this window: a failure here is one every
 visitor would hit, so it may be recorded against its extension.
 
+### static `loadTheme(Minn\Runtime\Runtime $runtime): void`
+
+The theme's setup without the plugins: setup_theme, the theme's
+functions.php, after_setup_theme, then wp_loaded. The probe runtime
+ends its boot with this, so a theme's supports are what a request's
+would be and a late declaration is judged as one; it skips init,
+whose work the probes compare on their own.
+
 ### static `loaded(): array`
 
 The plugins that loaded.
@@ -1890,7 +1899,7 @@ The plugins the symbol gate refused, with what they lacked.
 
 True when the named plugin file is running as code this request.
 
-Internals: `boot()` (private, line 67), `loadThemeFunctions()` (private, line 123), `rememberThemeDomain()` (private, line 146), `includeFile()` (private, line 180), `registerRealpath()` (private, line 211), `isolatedInclude()` (private, line 226)
+Internals: `boot()` (private, line 67), `loadThemeFunctions()` (private, line 139), `rememberThemeDomain()` (private, line 162), `includeFile()` (private, line 196), `registerRealpath()` (private, line 227), `isolatedInclude()` (private, line 242)
 
 
 ## PostData
@@ -2482,9 +2491,9 @@ register_setting: $args an array, or (as it once was) the sanitize callback alon
 
 unregister_setting: the setting, its sanitize callback and its default gone, unregister_setting fired.
 
-### static `defaultOf(mixed $default, string $option, bool $passed): mixed`
+### static `defaultOf(string $option, mixed $default): mixed`
 
-filter_default_option: the registered default, unless the reader named its own.
+A setting's registered default, or $default when it registered none.
 
 ### static `registerCore(): void`
 
@@ -2605,7 +2614,7 @@ blocks, texturize, paragraphs, shortcodes, block hooks, and the image
 attributes. What it has not (smilies, the capital P, insecure home
 addresses) runs with the plugins' own callbacks.
 
-Used by: `Minn\Admin\BootPayload`, `Minn\Auth\Authenticator`, `Minn\Blocks\Dynamic\Theme\Comments`, `Minn\Blocks\Dynamic\Theme\Navigation`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Blocks\ImageTags`, `Minn\Blocks\RenderState`, `Minn\Cli\Runtime`, `Minn\Content\Blocks`, `Minn\Content\Reader`, `Minn\Content\Site`, `Minn\Content\Terms`, `Minn\Cron\Cron`, `Minn\Db`, `Minn\Engine`, `Minn\Extension\Extensions`, `Minn\Front\CommentPostController`, `Minn\Front\Feeds`, `Minn\Front\Permalinks`, `Minn\Front\PluginRules`, `Minn\Front\Resolver`, `Minn\Login\LoginHooks`, `Minn\Mail\Mailer`, `Minn\Media\Icons`, `Minn\Media\Images`, `Minn\Rest\AbilitiesController`, `Minn\Rest\Api`, `Minn\Rest\Caller`, `Minn\Rest\CommentObject`, `Minn\Rest\MediaController`, `Minn\Rest\MediaObject`, `Minn\Rest\PostObject`, `Minn\Rest\RenderedFields`, `Minn\Rest\RuntimeEnvelope`, `Minn\Rest\RuntimePrepare`, `Minn\Rest\RuntimeRoutes`, `Minn\Rest\Services`, `Minn\Rest\SettingsController`, `Minn\Rest\StatusesController`, `Minn\Rest\UsersController`, `Minn\Runtime\Abilities`, `Minn\Runtime\AjaxController`, `Minn\Runtime\BlockFilters`, `Minn\Runtime\BlockHooks`, `Minn\Runtime\CommentEvents`, `Minn\Runtime\Constants`, `Minn\Runtime\Deferrals`, `Minn\Runtime\FileUpload`, `Minn\Runtime\Interactivity`, `Minn\Runtime\NavMenu`, `Minn\Runtime\PackageDownload`, `Minn\Runtime\Patterns`, `Minn\Runtime\PlaceholderTrace`, `Minn\Runtime\PluginUpdates`, `Minn\Runtime\Plugins`, `Minn\Runtime\PostEvents`, `Minn\Runtime\PostQuery`, `Minn\Runtime\PostSave`, `Minn\Runtime\RegisteredSettings`, `Minn\Runtime\ScriptModules`, `Minn\Runtime\TermEvents`, `Minn\Runtime\TermSave`, `Minn\Runtime\TermWriter`, `Minn\Runtime\UserEvents`, `Minn\Theme\ArchiveTitle`, `Minn\Theme\ClassicContent`, `Minn\Theme\ClassicRenderer`, `Minn\Theme\MainQueryBridge`, `Minn\Theme\PageRenderer`, `Minn\Theme\Templates`
+Used by: `Minn\Admin\BootPayload`, `Minn\Auth\Authenticator`, `Minn\Blocks\Dynamic\Theme\Comments`, `Minn\Blocks\Dynamic\Theme\Navigation`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Blocks\ImageTags`, `Minn\Blocks\RenderState`, `Minn\Cli\Runtime`, `Minn\Content\Blocks`, `Minn\Content\Reader`, `Minn\Content\Site`, `Minn\Content\Terms`, `Minn\Cron\Cron`, `Minn\Db`, `Minn\Engine`, `Minn\Extension\Extensions`, `Minn\Front\CommentPostController`, `Minn\Front\Feeds`, `Minn\Front\Permalinks`, `Minn\Front\PluginRules`, `Minn\Front\Resolver`, `Minn\Login\LoginHooks`, `Minn\Mail\Mailer`, `Minn\Media\Icons`, `Minn\Media\Images`, `Minn\Rest\AbilitiesController`, `Minn\Rest\Api`, `Minn\Rest\Caller`, `Minn\Rest\CommentObject`, `Minn\Rest\InstalledThemesController`, `Minn\Rest\MediaController`, `Minn\Rest\MediaObject`, `Minn\Rest\PostObject`, `Minn\Rest\RenderedFields`, `Minn\Rest\RuntimeEnvelope`, `Minn\Rest\RuntimePrepare`, `Minn\Rest\RuntimeRoutes`, `Minn\Rest\Services`, `Minn\Rest\SettingsController`, `Minn\Rest\StatusesController`, `Minn\Rest\UsersController`, `Minn\Runtime\Abilities`, `Minn\Runtime\AjaxController`, `Minn\Runtime\BlockFilters`, `Minn\Runtime\BlockHooks`, `Minn\Runtime\CommentEvents`, `Minn\Runtime\Constants`, `Minn\Runtime\Deferrals`, `Minn\Runtime\FileUpload`, `Minn\Runtime\Interactivity`, `Minn\Runtime\NavMenu`, `Minn\Runtime\PackageDownload`, `Minn\Runtime\Patterns`, `Minn\Runtime\PlaceholderTrace`, `Minn\Runtime\PluginUpdates`, `Minn\Runtime\Plugins`, `Minn\Runtime\PostEvents`, `Minn\Runtime\PostQuery`, `Minn\Runtime\PostSave`, `Minn\Runtime\RegisteredSettings`, `Minn\Runtime\ScriptModules`, `Minn\Runtime\TermEvents`, `Minn\Runtime\TermSave`, `Minn\Runtime\TermWriter`, `Minn\Runtime\ThemeSupports`, `Minn\Runtime\UserEvents`, `Minn\Theme\ArchiveTitle`, `Minn\Theme\ClassicContent`, `Minn\Theme\ClassicRenderer`, `Minn\Theme\MainQueryBridge`, `Minn\Theme\PageRenderer`, `Minn\Theme\Templates`
 
 ```php
 __construct(Minn\Context $context, bool $isAdmin = false)
@@ -3505,6 +3514,79 @@ The term ids behind term_taxonomy ids, as stored (strings), in the order given. 
 - `@param list<int> $ttIds @return list<string>`
 
 Internals: `ttIdOf()` (private, line 133)
+
+
+## ThemeSupports
+
+`final class Minn\Runtime\ThemeSupports` · `public/minn/src/Minn/Runtime/ThemeSupports.php`
+
+What a theme supports, as add_theme_support keeps it (probe rest-themes):
+a bare feature is true, anything else its arguments. html5 lists add up
+(repeats and all), post thumbnails stay on for every type once on, post
+formats keep only real formats, the custom logo fills in its defaults at
+once (flexible both ways when asked for bare), and the custom header and
+background get theirs as WordPress finishes loading, a header with no
+width or height made flexible that way. title-tag declared after loading
+is refused. A block theme supports thumbnails, responsive embeds, editor
+styles, HTML5 markup and feed links before its own setup runs.
+
+The features themselves (data/theme-features.json, and any a theme
+registers) say how each is shown in REST: its schema, or the default
+when the theme does not support it.
+
+- const `KEY` = `'theme_supports'`
+- const `FEATURES` = `'theme_features'`
+- const `LOGO` = `array (   'width' => NULL,   'height' => NULL,   'flex-width' => false,   'flex-height' => false,   'header-text' => '',   'unlink-homepage-logo' => false, )`
+- const `HEADER` = `array (   'default-image' => '',   'random-default' => false,   'width' => 0,   'height' => 0,   'flex-height' => false,   'flex-width' => false,   'default-text-color' => '',   'header-text' => true,   'uploads' => true,   'wp-head-callback' => '',   'admin-head-callback' => '',   'admin-preview-callback' => '',   'video' => false,   'video-active-callback' => 'is_front_page', )`
+- const `BACKGROUND` = `array (   'default-image' => '',   'default-preset' => 'default',   'default-position-x' => 'left',   'default-position-y' => 'top',   'default-size' => 'auto',   'default-repeat' => 'repeat',   'default-attachment' => 'scroll',   'default-color' => '',   'wp-head-callback' => '_custom_background_cb',   'admin-head-callback' => '',   'admin-preview-callback' => '', )`
+- const `FORMATS` = `array (   0 => 'aside',   1 => 'chat',   2 => 'gallery',   3 => 'link',   4 => 'image',   5 => 'quote',   6 => 'status',   7 => 'video',   8 => 'audio', )`
+- const `TYPES` = `array (   0 => 'boolean',   1 => 'integer',   2 => 'number',   3 => 'string',   4 => 'array',   5 => 'object', )`
+
+Used by: `Minn\Rest\InstalledThemesController`
+
+### static `all(): array`
+
+Every feature the theme has declared, as stored. @return array<string, mixed>
+
+- `@return array<string, mixed>`
+
+### static `add(string $feature, array $args): bool`
+
+add_theme_support: false when refused. @param list<mixed> $args
+
+- `@param list<mixed> $args`
+
+### static `remove(string $feature): bool`
+
+remove_theme_support: false when the theme did not support it.
+
+### static `blockThemeDefaults(): void`
+
+_add_default_theme_supports: what every block theme supports before its own setup.
+
+### static `editorDefaults(string $which): void`
+
+wp_enable_block_templates and wp_setup_widgets_block_editor: a block theme's templates, and the block widget editor for any theme.
+
+### static `justInTime(): void`
+
+_custom_header_background_just_in_time: the header's and background's defaults filled in once loaded.
+
+### static `register(string $feature, array $args): WP_Error|true`
+
+register_theme_feature: true, or why the feature cannot be registered.
+
+### static `features(): array`
+
+Core's features, then those registered since. @return array<string, array<string, mixed>>
+
+- `@return array<string, array<string, mixed>>`
+
+### static `forRest(WP_REST_Request $request): array`
+
+The active theme's supports as wp/v2/themes shows them: each feature shown in REST, shaped by its schema. @return array<string, mixed>
+
+- `@return array<string, mixed>`
 
 
 ## TreeWalk

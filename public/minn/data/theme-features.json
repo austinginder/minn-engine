@@ -1,0 +1,579 @@
+{
+    "align-wide": {
+        "type": "boolean",
+        "variadic": false,
+        "description": "Whether theme opts in to wide alignment CSS class.",
+        "show_in_rest": {
+            "schema": {
+                "description": "Whether theme opts in to wide alignment CSS class.",
+                "type": "boolean",
+                "default": false
+            },
+            "name": "align-wide",
+            "prepare_callback": null
+        }
+    },
+    "automatic-feed-links": {
+        "type": "boolean",
+        "variadic": false,
+        "description": "Whether posts and comments RSS feed links are added to head.",
+        "show_in_rest": {
+            "schema": {
+                "description": "Whether posts and comments RSS feed links are added to head.",
+                "type": "boolean",
+                "default": false
+            },
+            "name": "automatic-feed-links",
+            "prepare_callback": null
+        }
+    },
+    "block-templates": {
+        "type": "boolean",
+        "variadic": false,
+        "description": "Whether a theme uses block-based templates.",
+        "show_in_rest": {
+            "schema": {
+                "description": "Whether a theme uses block-based templates.",
+                "type": "boolean",
+                "default": false
+            },
+            "name": "block-templates",
+            "prepare_callback": null
+        }
+    },
+    "block-template-parts": {
+        "type": "boolean",
+        "variadic": false,
+        "description": "Whether a theme uses block-based template parts.",
+        "show_in_rest": {
+            "schema": {
+                "description": "Whether a theme uses block-based template parts.",
+                "type": "boolean",
+                "default": false
+            },
+            "name": "block-template-parts",
+            "prepare_callback": null
+        }
+    },
+    "custom-background": {
+        "type": "object",
+        "variadic": false,
+        "description": "Custom background if defined by the theme.",
+        "show_in_rest": {
+            "schema": {
+                "description": "Custom background if defined by the theme.",
+                "type": [
+                    "boolean",
+                    "object"
+                ],
+                "default": false,
+                "properties": {
+                    "default-image": {
+                        "type": "string",
+                        "format": "uri"
+                    },
+                    "default-preset": {
+                        "type": "string",
+                        "enum": [
+                            "default",
+                            "fill",
+                            "fit",
+                            "repeat",
+                            "custom"
+                        ]
+                    },
+                    "default-position-x": {
+                        "type": "string",
+                        "enum": [
+                            "left",
+                            "center",
+                            "right"
+                        ]
+                    },
+                    "default-position-y": {
+                        "type": "string",
+                        "enum": [
+                            "left",
+                            "center",
+                            "right"
+                        ]
+                    },
+                    "default-size": {
+                        "type": "string",
+                        "enum": [
+                            "auto",
+                            "contain",
+                            "cover"
+                        ]
+                    },
+                    "default-repeat": {
+                        "type": "string",
+                        "enum": [
+                            "repeat-x",
+                            "repeat-y",
+                            "repeat",
+                            "no-repeat"
+                        ]
+                    },
+                    "default-attachment": {
+                        "type": "string",
+                        "enum": [
+                            "scroll",
+                            "fixed"
+                        ]
+                    },
+                    "default-color": {
+                        "type": "string"
+                    }
+                },
+                "additionalProperties": false
+            },
+            "name": "custom-background",
+            "prepare_callback": null
+        }
+    },
+    "custom-header": {
+        "type": "object",
+        "variadic": false,
+        "description": "Custom header if defined by the theme.",
+        "show_in_rest": {
+            "schema": {
+                "description": "Custom header if defined by the theme.",
+                "type": [
+                    "boolean",
+                    "object"
+                ],
+                "default": false,
+                "properties": {
+                    "default-image": {
+                        "type": "string",
+                        "format": "uri"
+                    },
+                    "random-default": {
+                        "type": "boolean"
+                    },
+                    "width": {
+                        "type": "integer"
+                    },
+                    "height": {
+                        "type": "integer"
+                    },
+                    "flex-height": {
+                        "type": "boolean"
+                    },
+                    "flex-width": {
+                        "type": "boolean"
+                    },
+                    "default-text-color": {
+                        "type": "string"
+                    },
+                    "header-text": {
+                        "type": "boolean"
+                    },
+                    "uploads": {
+                        "type": "boolean"
+                    },
+                    "video": {
+                        "type": "boolean"
+                    }
+                },
+                "additionalProperties": false
+            },
+            "name": "custom-header",
+            "prepare_callback": null
+        }
+    },
+    "custom-logo": {
+        "type": "object",
+        "variadic": false,
+        "description": "Custom logo if defined by the theme.",
+        "show_in_rest": {
+            "schema": {
+                "description": "Custom logo if defined by the theme.",
+                "type": [
+                    "boolean",
+                    "object"
+                ],
+                "default": false,
+                "properties": {
+                    "width": {
+                        "type": "integer"
+                    },
+                    "height": {
+                        "type": "integer"
+                    },
+                    "flex-width": {
+                        "type": "boolean"
+                    },
+                    "flex-height": {
+                        "type": "boolean"
+                    },
+                    "header-text": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "unlink-homepage-logo": {
+                        "type": "boolean"
+                    }
+                },
+                "additionalProperties": false
+            },
+            "name": "custom-logo",
+            "prepare_callback": null
+        }
+    },
+    "customize-selective-refresh-widgets": {
+        "type": "boolean",
+        "variadic": false,
+        "description": "Whether the theme enables Selective Refresh for Widgets being managed with the Customizer.",
+        "show_in_rest": {
+            "schema": {
+                "description": "Whether the theme enables Selective Refresh for Widgets being managed with the Customizer.",
+                "type": "boolean",
+                "default": false
+            },
+            "name": "customize-selective-refresh-widgets",
+            "prepare_callback": null
+        }
+    },
+    "dark-editor-style": {
+        "type": "boolean",
+        "variadic": false,
+        "description": "Whether theme opts in to the dark editor style UI.",
+        "show_in_rest": {
+            "schema": {
+                "description": "Whether theme opts in to the dark editor style UI.",
+                "type": "boolean",
+                "default": false
+            },
+            "name": "dark-editor-style",
+            "prepare_callback": null
+        }
+    },
+    "disable-custom-colors": {
+        "type": "boolean",
+        "variadic": false,
+        "description": "Whether the theme disables custom colors.",
+        "show_in_rest": {
+            "schema": {
+                "description": "Whether the theme disables custom colors.",
+                "type": "boolean",
+                "default": false
+            },
+            "name": "disable-custom-colors",
+            "prepare_callback": null
+        }
+    },
+    "disable-custom-font-sizes": {
+        "type": "boolean",
+        "variadic": false,
+        "description": "Whether the theme disables custom font sizes.",
+        "show_in_rest": {
+            "schema": {
+                "description": "Whether the theme disables custom font sizes.",
+                "type": "boolean",
+                "default": false
+            },
+            "name": "disable-custom-font-sizes",
+            "prepare_callback": null
+        }
+    },
+    "disable-custom-gradients": {
+        "type": "boolean",
+        "variadic": false,
+        "description": "Whether the theme disables custom gradients.",
+        "show_in_rest": {
+            "schema": {
+                "description": "Whether the theme disables custom gradients.",
+                "type": "boolean",
+                "default": false
+            },
+            "name": "disable-custom-gradients",
+            "prepare_callback": null
+        }
+    },
+    "disable-layout-styles": {
+        "type": "boolean",
+        "variadic": false,
+        "description": "Whether the theme disables generated layout styles.",
+        "show_in_rest": {
+            "schema": {
+                "description": "Whether the theme disables generated layout styles.",
+                "type": "boolean",
+                "default": false
+            },
+            "name": "disable-layout-styles",
+            "prepare_callback": null
+        }
+    },
+    "editor-color-palette": {
+        "type": "array",
+        "variadic": false,
+        "description": "Custom color palette if defined by the theme.",
+        "show_in_rest": {
+            "schema": {
+                "description": "Custom color palette if defined by the theme.",
+                "type": [
+                    "boolean",
+                    "array"
+                ],
+                "default": false,
+                "items": {
+                    "type": "object",
+                    "properties": {
+                        "name": {
+                            "type": "string"
+                        },
+                        "slug": {
+                            "type": "string"
+                        },
+                        "color": {
+                            "type": "string"
+                        }
+                    },
+                    "additionalProperties": false
+                }
+            },
+            "name": "editor-color-palette",
+            "prepare_callback": null
+        }
+    },
+    "editor-font-sizes": {
+        "type": "array",
+        "variadic": false,
+        "description": "Custom font sizes if defined by the theme.",
+        "show_in_rest": {
+            "schema": {
+                "description": "Custom font sizes if defined by the theme.",
+                "type": [
+                    "boolean",
+                    "array"
+                ],
+                "default": false,
+                "items": {
+                    "type": "object",
+                    "properties": {
+                        "name": {
+                            "type": "string"
+                        },
+                        "size": {
+                            "type": "number"
+                        },
+                        "slug": {
+                            "type": "string"
+                        }
+                    },
+                    "additionalProperties": false
+                }
+            },
+            "name": "editor-font-sizes",
+            "prepare_callback": null
+        }
+    },
+    "editor-gradient-presets": {
+        "type": "array",
+        "variadic": false,
+        "description": "Custom gradient presets if defined by the theme.",
+        "show_in_rest": {
+            "schema": {
+                "description": "Custom gradient presets if defined by the theme.",
+                "type": [
+                    "boolean",
+                    "array"
+                ],
+                "default": false,
+                "items": {
+                    "type": "object",
+                    "properties": {
+                        "name": {
+                            "type": "string"
+                        },
+                        "gradient": {
+                            "type": "string"
+                        },
+                        "slug": {
+                            "type": "string"
+                        }
+                    },
+                    "additionalProperties": false
+                }
+            },
+            "name": "editor-gradient-presets",
+            "prepare_callback": null
+        }
+    },
+    "editor-spacing-sizes": {
+        "type": "array",
+        "variadic": false,
+        "description": "Custom spacing sizes if defined by the theme.",
+        "show_in_rest": {
+            "schema": {
+                "description": "Custom spacing sizes if defined by the theme.",
+                "type": [
+                    "boolean",
+                    "array"
+                ],
+                "default": false,
+                "items": {
+                    "type": "object",
+                    "properties": {
+                        "name": {
+                            "type": "string"
+                        },
+                        "size": {
+                            "type": "string"
+                        },
+                        "slug": {
+                            "type": "string"
+                        }
+                    },
+                    "additionalProperties": false
+                }
+            },
+            "name": "editor-spacing-sizes",
+            "prepare_callback": null
+        }
+    },
+    "editor-styles": {
+        "type": "boolean",
+        "variadic": false,
+        "description": "Whether theme opts in to the editor styles CSS wrapper.",
+        "show_in_rest": {
+            "schema": {
+                "description": "Whether theme opts in to the editor styles CSS wrapper.",
+                "type": "boolean",
+                "default": false
+            },
+            "name": "editor-styles",
+            "prepare_callback": null
+        }
+    },
+    "html5": {
+        "type": "array",
+        "variadic": false,
+        "description": "Allows use of HTML5 markup for search forms, comment forms, comment lists, gallery, and caption.",
+        "show_in_rest": {
+            "schema": {
+                "description": "Allows use of HTML5 markup for search forms, comment forms, comment lists, gallery, and caption.",
+                "type": [
+                    "boolean",
+                    "array"
+                ],
+                "default": false,
+                "items": {
+                    "type": "string",
+                    "enum": [
+                        "search-form",
+                        "comment-form",
+                        "comment-list",
+                        "gallery",
+                        "caption",
+                        "script",
+                        "style"
+                    ]
+                }
+            },
+            "name": "html5",
+            "prepare_callback": null
+        }
+    },
+    "post-formats": {
+        "type": "array",
+        "variadic": false,
+        "description": "Post formats supported.",
+        "show_in_rest": {
+            "schema": {
+                "description": "Post formats supported.",
+                "type": "array",
+                "default": [
+                    "standard"
+                ],
+                "items": {
+                    "type": "string",
+                    "enum": {
+                        "standard": "standard",
+                        "aside": "aside",
+                        "chat": "chat",
+                        "gallery": "gallery",
+                        "link": "link",
+                        "image": "image",
+                        "quote": "quote",
+                        "status": "status",
+                        "video": "video",
+                        "audio": "audio"
+                    }
+                }
+            },
+            "name": "formats",
+            "prepare_callback": null
+        }
+    },
+    "post-thumbnails": {
+        "type": "array",
+        "variadic": false,
+        "description": "The post types that support thumbnails or true if all post types are supported.",
+        "show_in_rest": {
+            "schema": {
+                "description": "The post types that support thumbnails or true if all post types are supported.",
+                "type": [
+                    "boolean",
+                    "array"
+                ],
+                "default": false,
+                "items": {
+                    "type": "string"
+                }
+            },
+            "name": "post-thumbnails",
+            "prepare_callback": null,
+            "type": [
+                "boolean",
+                "array"
+            ]
+        }
+    },
+    "responsive-embeds": {
+        "type": "boolean",
+        "variadic": false,
+        "description": "Whether the theme supports responsive embedded content.",
+        "show_in_rest": {
+            "schema": {
+                "description": "Whether the theme supports responsive embedded content.",
+                "type": "boolean",
+                "default": false
+            },
+            "name": "responsive-embeds",
+            "prepare_callback": null
+        }
+    },
+    "title-tag": {
+        "type": "boolean",
+        "variadic": false,
+        "description": "Whether the theme can manage the document title tag.",
+        "show_in_rest": {
+            "schema": {
+                "description": "Whether the theme can manage the document title tag.",
+                "type": "boolean",
+                "default": false
+            },
+            "name": "title-tag",
+            "prepare_callback": null
+        }
+    },
+    "wp-block-styles": {
+        "type": "boolean",
+        "variadic": false,
+        "description": "Whether theme opts in to default WordPress block styles for viewing.",
+        "show_in_rest": {
+            "schema": {
+                "description": "Whether theme opts in to default WordPress block styles for viewing.",
+                "type": "boolean",
+                "default": false
+            },
+            "name": "wp-block-styles",
+            "prepare_callback": null
+        }
+    }
+}

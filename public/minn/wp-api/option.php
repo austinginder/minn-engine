@@ -491,7 +491,7 @@ function get_registered_settings()
 /** A registered setting's default, for get_option when the reader named none. */
 function filter_default_option($default_value, $option, $passed_default)
 {
-    return RegisteredSettings::defaultOf($default_value, (string) $option, (bool) $passed_default);
+    return $passed_default ? $default_value : RegisteredSettings::defaultOf((string) $option, $default_value);
 }
 
 /** Core's settings, registered as the REST server starts. */

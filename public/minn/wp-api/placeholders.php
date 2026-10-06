@@ -229,12 +229,6 @@ function get_default_block_editor_settings()
     return null;
 }
 
-function get_default_block_template_types()
-{
-    \Minn\Runtime\PlaceholderTrace::hit('get_default_block_template_types');
-    return null;
-}
-
 function get_default_post_to_edit($post_type = 'post', $create_in_db = false)
 {
     \Minn\Runtime\PlaceholderTrace::hit('get_default_post_to_edit');

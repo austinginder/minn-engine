@@ -1146,3 +1146,15 @@ function apply_block_hooks_to_content_from_post_object($content, $post = null, $
     $post = get_post($post);
     return $post === null ? $content : apply_block_hooks_to_content((string) $content, $post, $callback);
 }
+
+/** The template types a block theme may define (data/template-types.json), through default_template_types. */
+function get_default_block_template_types()
+{
+    return apply_filters('default_template_types', json_decode((string) file_get_contents(MINN_ENGINE_DIR . '/data/template-types.json'), true));
+}
+
+/** The areas a template part may belong to (data/template-part-areas.json), through default_wp_template_part_areas. */
+function get_allowed_block_template_part_areas()
+{
+    return apply_filters('default_wp_template_part_areas', json_decode((string) file_get_contents(MINN_ENGINE_DIR . '/data/template-part-areas.json'), true));
+}

@@ -53665,6 +53665,7 @@
                 "Minn\\Rest\\DeclaredPostsController",
                 "Minn\\Rest\\GlobalStylesController",
                 "Minn\\Rest\\IndexController",
+                "Minn\\Rest\\InstalledThemesController",
                 "Minn\\Rest\\MediaController",
                 "Minn\\Rest\\MenusController",
                 "Minn\\Rest\\NavigationController",
@@ -53740,6 +53741,7 @@
                 "Minn\\Rest\\ApplicationPasswordsController",
                 "Minn\\Rest\\ArgCheck",
                 "Minn\\Rest\\CommentsController",
+                "Minn\\Rest\\InstalledThemesController",
                 "Minn\\Rest\\MediaController",
                 "Minn\\Rest\\PostsController",
                 "Minn\\Rest\\SearchController",
@@ -56098,6 +56100,7 @@
                 "Minn\\Rest\\Embed",
                 "Minn\\Rest\\GlobalStylesController",
                 "Minn\\Rest\\IndexController",
+                "Minn\\Rest\\InstalledThemesController",
                 "Minn\\Rest\\MediaController",
                 "Minn\\Rest\\MenusController",
                 "Minn\\Rest\\NavigationController",
@@ -56575,6 +56578,7 @@
                 "Minn\\Rest\\DeclaredPostsController",
                 "Minn\\Rest\\GlobalStylesController",
                 "Minn\\Rest\\IndexController",
+                "Minn\\Rest\\InstalledThemesController",
                 "Minn\\Rest\\MediaController",
                 "Minn\\Rest\\MenusController",
                 "Minn\\Rest\\NavigationController",
@@ -57302,6 +57306,7 @@
                 "Minn\\Rest\\Embed",
                 "Minn\\Rest\\GlobalStylesController",
                 "Minn\\Rest\\IndexController",
+                "Minn\\Rest\\InstalledThemesController",
                 "Minn\\Rest\\ListQuery",
                 "Minn\\Rest\\MediaController",
                 "Minn\\Rest\\MenusController",
@@ -57889,6 +57894,7 @@
                 "Minn\\Rest\\Embed",
                 "Minn\\Rest\\GlobalStylesController",
                 "Minn\\Rest\\IndexController",
+                "Minn\\Rest\\InstalledThemesController",
                 "Minn\\Rest\\MediaController",
                 "Minn\\Rest\\MenusController",
                 "Minn\\Rest\\NavigationController",
@@ -58283,6 +58289,7 @@
                 "Minn\\Rest\\DeclaredPostsController",
                 "Minn\\Rest\\GlobalStylesController",
                 "Minn\\Rest\\IndexController",
+                "Minn\\Rest\\InstalledThemesController",
                 "Minn\\Rest\\MediaController",
                 "Minn\\Rest\\MenusController",
                 "Minn\\Rest\\NavigationController",
@@ -74178,6 +74185,7 @@
                 "Minn\\Rest\\CommentsController",
                 "Minn\\Rest\\Embed",
                 "Minn\\Rest\\GlobalStylesController",
+                "Minn\\Rest\\InstalledThemesController",
                 "Minn\\Rest\\LiveSettings",
                 "Minn\\Rest\\MediaController",
                 "Minn\\Rest\\MenusController",
@@ -74785,7 +74793,7 @@
             "namespace": "Minn\\Rest",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Rest/Api.php",
-            "lines": 193,
+            "lines": 194,
             "doc": "The REST API: wires the controllers for one request and dispatches a\nroute. Errors thrown anywhere underneath become the reference's error\npayload under the reference's headers.",
             "implements": [],
             "extends": null,
@@ -74824,6 +74832,7 @@
                 "Minn\\Rest\\GlobalStylesController",
                 "Minn\\Rest\\GlobalStylesObject",
                 "Minn\\Rest\\IndexController",
+                "Minn\\Rest\\InstalledThemesController",
                 "Minn\\Rest\\LiveSettings",
                 "Minn\\Rest\\MediaController",
                 "Minn\\Rest\\MenuItemObject",
@@ -74988,8 +74997,8 @@
                     "doc": "Who is making this request.",
                     "shapes": [],
                     "params": [],
-                    "line": 118,
-                    "end": 121
+                    "line": 119,
+                    "end": 122
                 },
                 {
                     "routes": [],
@@ -75000,8 +75009,8 @@
                     "doc": "The wp/v2 post shape.",
                     "shapes": [],
                     "params": [],
-                    "line": 124,
-                    "end": 127
+                    "line": 125,
+                    "end": 128
                 },
                 {
                     "routes": [],
@@ -75012,8 +75021,8 @@
                     "doc": "The wp/v2 term shape.",
                     "shapes": [],
                     "params": [],
-                    "line": 130,
-                    "end": 133
+                    "line": 131,
+                    "end": 134
                 },
                 {
                     "routes": [],
@@ -75024,8 +75033,8 @@
                     "doc": "The wp/v2 user shape.",
                     "shapes": [],
                     "params": [],
-                    "line": 136,
-                    "end": 139
+                    "line": 137,
+                    "end": 140
                 },
                 {
                     "routes": [],
@@ -75036,8 +75045,8 @@
                     "doc": "The post types the surface knows.",
                     "shapes": [],
                     "params": [],
-                    "line": 142,
-                    "end": 145
+                    "line": 143,
+                    "end": 146
                 },
                 {
                     "routes": [],
@@ -75063,8 +75072,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 152,
-                    "end": 159
+                    "line": 153,
+                    "end": 160
                 },
                 {
                     "routes": [],
@@ -75083,8 +75092,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 162,
-                    "end": 191
+                    "line": 163,
+                    "end": 192
                 },
                 {
                     "routes": [],
@@ -75110,8 +75119,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 200,
-                    "end": 211
+                    "line": 201,
+                    "end": 212
                 },
                 {
                     "routes": [],
@@ -75140,7 +75149,7 @@
                         }
                     ],
                     "line": 72,
-                    "end": 115
+                    "end": 116
                 },
                 {
                     "routes": [],
@@ -75159,8 +75168,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 213,
-                    "end": 217
+                    "line": 214,
+                    "end": 218
                 },
                 {
                     "routes": [],
@@ -75186,8 +75195,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 223,
-                    "end": 227
+                    "line": 224,
+                    "end": 228
                 }
             ]
         },
@@ -76237,6 +76246,7 @@
                 "Minn\\Rest\\CommentsController",
                 "Minn\\Rest\\GlobalStylesController",
                 "Minn\\Rest\\GlobalStylesObject",
+                "Minn\\Rest\\InstalledThemesController",
                 "Minn\\Rest\\MediaController",
                 "Minn\\Rest\\MediaObject",
                 "Minn\\Rest\\MenuItemObject",
@@ -78016,6 +78026,7 @@
                 "Minn\\Rest\\Embed",
                 "Minn\\Rest\\GlobalStylesController",
                 "Minn\\Rest\\IndexController",
+                "Minn\\Rest\\InstalledThemesController",
                 "Minn\\Rest\\MediaController",
                 "Minn\\Rest\\MenusController",
                 "Minn\\Rest\\PluginsController",
@@ -79028,6 +79039,243 @@
                     "params": [],
                     "line": 90,
                     "end": 119
+                }
+            ]
+        },
+        {
+            "name": "Minn\\Rest\\InstalledThemesController",
+            "short": "InstalledThemesController",
+            "namespace": "Minn\\Rest",
+            "kind": "final readonly class",
+            "file": "public/minn/src/Minn/Rest/InstalledThemesController.php",
+            "lines": 136,
+            "doc": "wp/v2/themes as the reference answers it (probe rest-themes): the\ninstalled themes, or only those with a status (active, inactive), each\nwith its style.css headers raw and rendered, where it lives, and whether\nit is a block theme. The active theme also carries its supports as the\neditor reads them, the template types and part areas it may define, and\na link to the theme export; any theme with user styles links to them. Anyone who can edit\na type shown in REST may read the active theme; listing the others takes\nswitch_themes. Each theme goes through rest_prepare_theme. Served with\nplugins loaded, since a theme's supports come from its own code.",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\Http\\Access",
+                "Minn\\Http\\Args",
+                "Minn\\Http\\Method",
+                "Minn\\Http\\Policy",
+                "Minn\\Http\\Request",
+                "Minn\\Http\\Response",
+                "Minn\\Http\\Route",
+                "Minn\\RestError",
+                "Minn\\Rest\\Caller",
+                "Minn\\Rest\\Fields",
+                "Minn\\Rest\\Reply",
+                "Minn\\Rest\\RestUrl",
+                "Minn\\Rest\\RuntimePrepare",
+                "Minn\\Runtime\\Runtime",
+                "Minn\\Runtime\\ThemeSupports"
+            ],
+            "usedBy": [
+                "Minn\\Rest\\Api"
+            ],
+            "constructor": {
+                "signature": "__construct(Minn\\Rest\\RestUrl $url, Minn\\Rest\\Caller $caller)",
+                "doc": "",
+                "shapes": [],
+                "params": [
+                    {
+                        "name": "url",
+                        "type": "Minn\\Rest\\RestUrl",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    },
+                    {
+                        "name": "caller",
+                        "type": "Minn\\Rest\\Caller",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    }
+                ],
+                "visibility": "public",
+                "line": 33,
+                "end": 35
+            },
+            "cases": [],
+            "constants": [
+                {
+                    "name": "STATUS",
+                    "value": "array (   'status' =>    array (     'type' => 'array',     'items' =>      array (       'type' => 'string',       'enum' =>        array (         0 => 'active',         1 => 'inactive',       ),     ),     'description' => 'Limit result set to themes assigned one or more statuses.',     'required' => false,   ), )",
+                    "doc": "",
+                    "visibility": "private"
+                }
+            ],
+            "properties": [
+                {
+                    "name": "url",
+                    "type": "Minn\\Rest\\RestUrl",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
+                },
+                {
+                    "name": "caller",
+                    "type": "Minn\\Rest\\Caller",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
+                }
+            ],
+            "methods": [
+                {
+                    "routes": [
+                        "GET /wp/v2/themes (public)"
+                    ],
+                    "name": "list",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "list(Minn\\Http\\Request $request): Minn\\Http\\Response",
+                    "doc": "The installed themes the caller may see.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "request",
+                            "type": "Minn\\Http\\Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 39,
+                    "end": 55
+                },
+                {
+                    "routes": [
+                        "GET /wp/v2/themes/{stylesheet:[^/:<>*?\"|]+(?:/[^/:<>*?\"|]+)?} (public)"
+                    ],
+                    "name": "single",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "single(Minn\\Http\\Request $request, string $stylesheet): Minn\\Http\\Response",
+                    "doc": "One theme by its stylesheet.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "request",
+                            "type": "Minn\\Http\\Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "stylesheet",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 59,
+                    "end": 73
+                },
+                {
+                    "routes": [],
+                    "name": "item",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "item(WP_Theme $theme): array",
+                    "doc": "",
+                    "shapes": [
+                        "@return array<string, mixed>"
+                    ],
+                    "params": [
+                        {
+                            "name": "theme",
+                            "type": "WP_Theme",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 76,
+                    "end": 107
+                },
+                {
+                    "routes": [],
+                    "name": "links",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "links(WP_Theme $theme): array",
+                    "doc": "",
+                    "shapes": [
+                        "@return array<string, list<array<string, mixed>>>"
+                    ],
+                    "params": [
+                        {
+                            "name": "theme",
+                            "type": "WP_Theme",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 110,
+                    "end": 130
+                },
+                {
+                    "routes": [],
+                    "name": "viewsThemes",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "viewsThemes(): bool",
+                    "doc": "May list the installed themes.",
+                    "shapes": [],
+                    "params": [],
+                    "line": 133,
+                    "end": 136
+                },
+                {
+                    "routes": [],
+                    "name": "viewsActive",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "viewsActive(): bool",
+                    "doc": "May read the active theme: anyone who lists themes, or edits a type shown in REST.",
+                    "shapes": [],
+                    "params": [],
+                    "line": 139,
+                    "end": 150
+                },
+                {
+                    "routes": [],
+                    "name": "status",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "status(string $stylesheet): string",
+                    "doc": "",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "stylesheet",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 152,
+                    "end": 155
+                },
+                {
+                    "routes": [],
+                    "name": "requireRuntime",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "requireRuntime(): void",
+                    "doc": "A theme's supports come from its own code: without the runtime there is no answer to give.",
+                    "shapes": [],
+                    "params": [],
+                    "line": 158,
+                    "end": 163
                 }
             ]
         },
@@ -84303,6 +84551,7 @@
                 "Minn\\Rest\\CommentsController",
                 "Minn\\Rest\\GlobalStylesController",
                 "Minn\\Rest\\IndexController",
+                "Minn\\Rest\\InstalledThemesController",
                 "Minn\\Rest\\MediaController",
                 "Minn\\Rest\\MenusController",
                 "Minn\\Rest\\PluginsController",
@@ -84484,6 +84733,7 @@
                 "Minn\\Rest\\CommentObject",
                 "Minn\\Rest\\GlobalStylesObject",
                 "Minn\\Rest\\IndexController",
+                "Minn\\Rest\\InstalledThemesController",
                 "Minn\\Rest\\MediaObject",
                 "Minn\\Rest\\MenuItemObject",
                 "Minn\\Rest\\MenuObject",
@@ -85575,6 +85825,7 @@
             "usedBy": [
                 "Minn\\Rest\\Api",
                 "Minn\\Rest\\CommentObject",
+                "Minn\\Rest\\InstalledThemesController",
                 "Minn\\Rest\\MediaObject",
                 "Minn\\Rest\\PostObject",
                 "Minn\\Rest\\StatusesController",
@@ -100294,7 +100545,7 @@
             "namespace": "Minn\\Runtime",
             "kind": "final class",
             "file": "public/minn/src/Minn/Runtime/Plugins.php",
-            "lines": 213,
+            "lines": 229,
             "doc": "Loads the site's plugins into the runtime the way the reference does:\nmu-plugins first, then active_plugins in stored order, each file\nincluded once. A plugin loads only when the static symbol read finds\nnothing the runtime lacks; otherwise it is reported and skipped so the\nsite keeps rendering. The lifecycle actions fire between the phases.",
             "implements": [],
             "extends": null,
@@ -100372,6 +100623,26 @@
                 },
                 {
                     "routes": [],
+                    "name": "loadTheme",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "loadTheme(Minn\\Runtime\\Runtime $runtime): void",
+                    "doc": "The theme's setup without the plugins: setup_theme, the theme's\nfunctions.php, after_setup_theme, then wp_loaded. The probe runtime\nends its boot with this, so a theme's supports are what a request's\nwould be and a late declaration is judged as one; it skips init,\nwhose work the probes compare on their own.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "runtime",
+                            "type": "Minn\\Runtime\\Runtime",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 123,
+                    "end": 130
+                },
+                {
+                    "routes": [],
                     "name": "loaded",
                     "static": true,
                     "visibility": "public",
@@ -100381,8 +100652,8 @@
                         "@return list<string>"
                     ],
                     "params": [],
-                    "line": 159,
-                    "end": 162
+                    "line": 175,
+                    "end": 178
                 },
                 {
                     "routes": [],
@@ -100395,8 +100666,8 @@
                         "@return array<string, array<string, mixed>> plugin file => why it did not load"
                     ],
                     "params": [],
-                    "line": 169,
-                    "end": 172
+                    "line": 185,
+                    "end": 188
                 },
                 {
                     "routes": [],
@@ -100415,8 +100686,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 175,
-                    "end": 178
+                    "line": 191,
+                    "end": 194
                 },
                 {
                     "routes": [],
@@ -100455,8 +100726,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 123,
-                    "end": 139
+                    "line": 139,
+                    "end": 155
                 },
                 {
                     "routes": [],
@@ -100482,8 +100753,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 146,
-                    "end": 152
+                    "line": 162,
+                    "end": 168
                 },
                 {
                     "routes": [],
@@ -100516,8 +100787,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 180,
-                    "end": 203
+                    "line": 196,
+                    "end": 219
                 },
                 {
                     "routes": [],
@@ -100550,8 +100821,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 211,
-                    "end": 223
+                    "line": 227,
+                    "end": 239
                 },
                 {
                     "routes": [],
@@ -100570,8 +100841,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 226,
-                    "end": 231
+                    "line": 242,
+                    "end": 247
                 }
             ]
         },
@@ -103749,17 +104020,10 @@
                     "name": "defaultOf",
                     "static": true,
                     "visibility": "public",
-                    "signature": "defaultOf(mixed $default, string $option, bool $passed): mixed",
-                    "doc": "filter_default_option: the registered default, unless the reader named its own.",
+                    "signature": "defaultOf(string $option, mixed $default): mixed",
+                    "doc": "A setting's registered default, or $default when it registered none.",
                     "shapes": [],
                     "params": [
-                        {
-                            "name": "default",
-                            "type": "mixed",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
                         {
                             "name": "option",
                             "type": "string",
@@ -103768,8 +104032,8 @@
                             "doc": ""
                         },
                         {
-                            "name": "passed",
-                            "type": "bool",
+                            "name": "default",
+                            "type": "mixed",
                             "shape": "",
                             "default": null,
                             "doc": ""
@@ -104386,6 +104650,7 @@
                 "Minn\\Rest\\Api",
                 "Minn\\Rest\\Caller",
                 "Minn\\Rest\\CommentObject",
+                "Minn\\Rest\\InstalledThemesController",
                 "Minn\\Rest\\MediaController",
                 "Minn\\Rest\\MediaObject",
                 "Minn\\Rest\\PostObject",
@@ -104420,6 +104685,7 @@
                 "Minn\\Runtime\\TermEvents",
                 "Minn\\Runtime\\TermSave",
                 "Minn\\Runtime\\TermWriter",
+                "Minn\\Runtime\\ThemeSupports",
                 "Minn\\Runtime\\UserEvents",
                 "Minn\\Theme\\ArchiveTitle",
                 "Minn\\Theme\\ClassicContent",
@@ -109316,6 +109582,242 @@
                     ],
                     "line": 133,
                     "end": 136
+                }
+            ]
+        },
+        {
+            "name": "Minn\\Runtime\\ThemeSupports",
+            "short": "ThemeSupports",
+            "namespace": "Minn\\Runtime",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Runtime/ThemeSupports.php",
+            "lines": 159,
+            "doc": "What a theme supports, as add_theme_support keeps it (probe rest-themes):\na bare feature is true, anything else its arguments. html5 lists add up\n(repeats and all), post thumbnails stay on for every type once on, post\nformats keep only real formats, the custom logo fills in its defaults at\nonce (flexible both ways when asked for bare), and the custom header and\nbackground get theirs as WordPress finishes loading, a header with no\nwidth or height made flexible that way. title-tag declared after loading\nis refused. A block theme supports thumbnails, responsive embeds, editor\nstyles, HTML5 markup and feed links before its own setup runs.\n\nThe features themselves (data/theme-features.json, and any a theme\nregisters) say how each is shown in REST: its schema, or the default\nwhen the theme does not support it.",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\Runtime\\Runtime"
+            ],
+            "usedBy": [
+                "Minn\\Rest\\InstalledThemesController"
+            ],
+            "constructor": null,
+            "cases": [],
+            "constants": [
+                {
+                    "name": "KEY",
+                    "value": "'theme_supports'",
+                    "doc": "",
+                    "visibility": "private"
+                },
+                {
+                    "name": "FEATURES",
+                    "value": "'theme_features'",
+                    "doc": "",
+                    "visibility": "private"
+                },
+                {
+                    "name": "LOGO",
+                    "value": "array (   'width' => NULL,   'height' => NULL,   'flex-width' => false,   'flex-height' => false,   'header-text' => '',   'unlink-homepage-logo' => false, )",
+                    "doc": "",
+                    "visibility": "private"
+                },
+                {
+                    "name": "HEADER",
+                    "value": "array (   'default-image' => '',   'random-default' => false,   'width' => 0,   'height' => 0,   'flex-height' => false,   'flex-width' => false,   'default-text-color' => '',   'header-text' => true,   'uploads' => true,   'wp-head-callback' => '',   'admin-head-callback' => '',   'admin-preview-callback' => '',   'video' => false,   'video-active-callback' => 'is_front_page', )",
+                    "doc": "",
+                    "visibility": "private"
+                },
+                {
+                    "name": "BACKGROUND",
+                    "value": "array (   'default-image' => '',   'default-preset' => 'default',   'default-position-x' => 'left',   'default-position-y' => 'top',   'default-size' => 'auto',   'default-repeat' => 'repeat',   'default-attachment' => 'scroll',   'default-color' => '',   'wp-head-callback' => '_custom_background_cb',   'admin-head-callback' => '',   'admin-preview-callback' => '', )",
+                    "doc": "",
+                    "visibility": "private"
+                },
+                {
+                    "name": "FORMATS",
+                    "value": "array (   0 => 'aside',   1 => 'chat',   2 => 'gallery',   3 => 'link',   4 => 'image',   5 => 'quote',   6 => 'status',   7 => 'video',   8 => 'audio', )",
+                    "doc": "",
+                    "visibility": "private"
+                },
+                {
+                    "name": "TYPES",
+                    "value": "array (   0 => 'boolean',   1 => 'integer',   2 => 'number',   3 => 'string',   4 => 'array',   5 => 'object', )",
+                    "doc": "",
+                    "visibility": "private"
+                }
+            ],
+            "properties": [],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "all",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "all(): array",
+                    "doc": "Every feature the theme has declared, as stored. @return array<string, mixed>",
+                    "shapes": [
+                        "@return array<string, mixed>"
+                    ],
+                    "params": [],
+                    "line": 39,
+                    "end": 42
+                },
+                {
+                    "routes": [],
+                    "name": "add",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "add(string $feature, array $args): bool",
+                    "doc": "add_theme_support: false when refused. @param list<mixed> $args",
+                    "shapes": [
+                        "@param list<mixed> $args"
+                    ],
+                    "params": [
+                        {
+                            "name": "feature",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "args",
+                            "type": "array",
+                            "shape": "list<mixed>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 45,
+                    "end": 63
+                },
+                {
+                    "routes": [],
+                    "name": "remove",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "remove(string $feature): bool",
+                    "doc": "remove_theme_support: false when the theme did not support it.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "feature",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 66,
+                    "end": 75
+                },
+                {
+                    "routes": [],
+                    "name": "blockThemeDefaults",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "blockThemeDefaults(): void",
+                    "doc": "_add_default_theme_supports: what every block theme supports before its own setup.",
+                    "shapes": [],
+                    "params": [],
+                    "line": 78,
+                    "end": 86
+                },
+                {
+                    "routes": [],
+                    "name": "editorDefaults",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "editorDefaults(string $which): void",
+                    "doc": "wp_enable_block_templates and wp_setup_widgets_block_editor: a block theme's templates, and the block widget editor for any theme.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "which",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 89,
+                    "end": 96
+                },
+                {
+                    "routes": [],
+                    "name": "justInTime",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "justInTime(): void",
+                    "doc": "_custom_header_background_just_in_time: the header's and background's defaults filled in once loaded.",
+                    "shapes": [],
+                    "params": [],
+                    "line": 99,
+                    "end": 115
+                },
+                {
+                    "routes": [],
+                    "name": "register",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "register(string $feature, array $args): WP_Error|true",
+                    "doc": "register_theme_feature: true, or why the feature cannot be registered.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "feature",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "args",
+                            "type": "array",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 118,
+                    "end": 144
+                },
+                {
+                    "routes": [],
+                    "name": "features",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "features(): array",
+                    "doc": "Core's features, then those registered since. @return array<string, array<string, mixed>>",
+                    "shapes": [
+                        "@return array<string, array<string, mixed>>"
+                    ],
+                    "params": [],
+                    "line": 147,
+                    "end": 152
+                },
+                {
+                    "routes": [],
+                    "name": "forRest",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "forRest(WP_REST_Request $request): array",
+                    "doc": "The active theme's supports as wp/v2/themes shows them: each feature shown in REST, shaped by its schema. @return array<string, mixed>",
+                    "shapes": [
+                        "@return array<string, mixed>"
+                    ],
+                    "params": [
+                        {
+                            "name": "request",
+                            "type": "WP_REST_Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 155,
+                    "end": 179
                 }
             ]
         },

@@ -1,7 +1,7 @@
 {
     "engine": "0.0.1",
-    "routes": 237,
-    "withPolicy": 230,
+    "routes": 239,
+    "withPolicy": 232,
     "entries": [
         {
             "method": "GET",
@@ -3231,6 +3231,70 @@
             "args": [],
             "body": [],
             "index": false
+        },
+        {
+            "method": "GET",
+            "pattern": "/wp/v2/themes",
+            "name": "Minn\\Rest\\InstalledThemesController::list",
+            "handler": "Minn\\Rest\\InstalledThemesController::list",
+            "summary": "The installed themes the caller may see.",
+            "policy": {
+                "access": "Public",
+                "describe": "public"
+            },
+            "args": {
+                "context": {
+                    "description": "Scope under which the request is made; determines fields present in response.",
+                    "type": "string",
+                    "enum": [
+                        "view",
+                        "embed",
+                        "edit"
+                    ],
+                    "default": "view",
+                    "required": false
+                },
+                "status": {
+                    "type": "array",
+                    "items": {
+                        "type": "string",
+                        "enum": [
+                            "active",
+                            "inactive"
+                        ]
+                    },
+                    "description": "Limit result set to themes assigned one or more statuses.",
+                    "required": false
+                }
+            },
+            "body": [],
+            "index": true
+        },
+        {
+            "method": "GET",
+            "pattern": "/wp/v2/themes/{stylesheet:[^/:<>*?\"|]+(?:/[^/:<>*?\"|]+)?}",
+            "name": "Minn\\Rest\\InstalledThemesController::single",
+            "handler": "Minn\\Rest\\InstalledThemesController::single",
+            "summary": "One theme by its stylesheet.",
+            "policy": {
+                "access": "Public",
+                "describe": "public"
+            },
+            "args": {
+                "context": {
+                    "description": "Scope under which the request is made; determines fields present in response.",
+                    "type": "string",
+                    "enum": [
+                        "view",
+                        "embed",
+                        "edit"
+                    ],
+                    "default": "view",
+                    "required": false
+                }
+            },
+            "body": [],
+            "index": true
         },
         {
             "method": "GET",

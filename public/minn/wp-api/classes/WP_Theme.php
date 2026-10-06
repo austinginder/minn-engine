@@ -85,13 +85,30 @@ class WP_Theme implements ArrayAccess
         return $value;
     }
 
+    /** A header as shown: feature tags by name in the admin, and with markup tags joined, the author linked to their address, addresses escaped. */
     public function display($header, $markup = true, $translate = true)
     {
         $value = $this->get($header);
+        if ($translate && $header === 'Tags' && is_array($value) && is_admin()) {
+            // In the admin, where the reference has its theme feature list loaded, feature tags read as their
+            // names (data/theme-tags.json); a REST or front request gets them as written.
+            static $names = null;
+            $names ??= (array) json_decode((string) file_get_contents(MINN_ENGINE_DIR . '/data/theme-tags.json'), true);
+            $value = array_map(static fn ($tag) => $names[$tag] ?? $tag, $value);
+        }
+        if (!$markup || !is_string($value) && !is_array($value)) {
+            return $value;
+        }
         if (is_array($value)) {
             return implode(', ', $value);
         }
-        return $markup && is_string($value) ? wp_kses($value, ['a' => ['href' => true, 'title' => true], 'abbr' => ['title' => true], 'acronym' => ['title' => true], 'code' => [], 'em' => [], 'strong' => []]) : $value;
+        $value = wp_kses($value, ['a' => ['href' => true, 'title' => true], 'abbr' => ['title' => true], 'acronym' => ['title' => true], 'code' => [], 'em' => [], 'strong' => []]);
+        $authorUri = (string) $this->get('AuthorURI');
+        return match (true) {
+            $header === 'Author' && $value !== '' && $authorUri !== '' => sprintf('<a href="%1$s">%2$s</a>', esc_url($authorUri), $value),
+            $header === 'AuthorURI', $header === 'ThemeURI' => esc_url($value),
+            default => $value,
+        };
     }
 
     public function get_stylesheet()

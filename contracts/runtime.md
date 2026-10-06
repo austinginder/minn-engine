@@ -3908,3 +3908,49 @@ its own `WP_REST_Request` through: the server sets the route's URL
 parameters, defaults and attributes on that object, as the reference's
 dispatch does, and the `rest_prepare_*` filters are handed that request.
 Before, plugins got an empty request with no context.
+
+## Themes over REST, and theme supports (2026-10-06)
+
+`wp/v2/themes` (`Rest\InstalledThemesController`, probe `rest-themes`, also
+compared over HTTP) lists the installed themes, or those with a given
+status. Each theme carries its `style.css` headers, raw and rendered, where
+it lives, and whether it is a block theme. The active theme also carries
+its supports as the editor reads them, the template types and part areas it
+may define, and a link to the theme export. Any theme with user styles links
+to them.
+- **Permissions.** Anyone who can edit a type shown in REST may read the
+  active theme; listing the others takes `switch_themes`.
+- **Tags.** Feature tags read as their names only in the admin; REST returns
+  them as written, as the reference does when wp-admin's feature list is
+  not loaded.
+- **Runtime.** The route is served with plugins loaded, since a theme's
+  supports come from its own code.
+
+Theme supports now behave as the reference keeps them (`Runtime\ThemeSupports`):
+- **Declaring.** A bare feature is true, otherwise its arguments.
+  - html5 lists add up, repeats included.
+  - Post thumbnails stay on for every type once they are on.
+  - Post formats keep only real formats.
+  - The custom logo fills in its defaults at once, flexible both ways when
+    declared bare.
+  - The custom header and background get their defaults on `wp_loaded`, and
+    a header without a width or height is flexible that way.
+  - `title-tag` declared after loading is refused.
+- **Block themes.** A block theme's supports are added on
+  `after_setup_theme` (priority 1): thumbnails, responsive embeds, editor
+  styles, html5 and feed links, plus block templates and the widgets block
+  editor. They were previously implied at read time, and that list wrongly
+  included `title-tag`, `wp-block-styles` and `align-wide`.
+- **Feature registry.** `register_theme_feature` and
+  `get_registered_theme_features` exist, with core's features as data
+  (`data/theme-features.json`). REST shapes each feature by its schema, or
+  shows the default when the theme does not support it.
+
+`get_default_block_template_types` and `get_allowed_block_template_part_areas`
+are implemented, and `WP_Theme::display` links the author as the reference
+does.
+
+The api probe runtime now runs the theme's setup as a request's boot does:
+`setup_theme`, the theme's `functions.php`, `after_setup_theme`, then
+`wp_loaded`. It still skips `init`, whose work the probes compare
+separately.
