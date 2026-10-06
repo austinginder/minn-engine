@@ -690,11 +690,13 @@ function rt_remove_added( string $dir, array $before, array $after ): void {
 
 /**
  * The guard every round-trip copy runs under, on both stacks: no outbound
- * HTTP but to this machine, no cron on page loads, and every message any
+ * HTTP but to this machine, no cron on page loads, every message any
  * mailer sends goes to the local mail catcher (Mailpit on 127.0.0.1:1025)
- * whatever SMTP server or API the site is set up with. A copy of a live
- * site keeps the live site's mail settings, so without it a day of work
- * mails real people.
+ * whatever SMTP server or API the site is set up with, and the services
+ * a plugin calls with its own HTTP client (past pre_http_request) are
+ * switched off by their settings. A copy of a live site keeps the live
+ * site's credentials, so without it a day of work mails real people,
+ * books invoices, and texts customers.
  */
 const RT_GUARD = <<<'PHP'
 <?php
@@ -728,6 +730,30 @@ add_action(
 		$mailer->SMTPAutoTLS = false;
 	},
 	PHP_INT_MAX
+);
+
+// Services a plugin reaches with its own HTTP client, where pre_http_request
+// never sees the call. The copy keeps the live site's credentials, so these
+// are switched off by their settings instead of trusted to fail.
+// WooCommerce Xero refreshes its OAuth token through Guzzle before it
+// invoices, and invoices when an order is completed: no connection, manual
+// invoices, no payments.
+add_filter( 'pre_option_xero_oauth_options', '__return_empty_array' );
+add_filter( 'pre_option_wc_xero_send_invoices', static fn () => 'manual' );
+add_filter( 'pre_option_wc_xero_send_payments', static fn () => 'off' );
+// Twilio texts from Gravity Forms feeds: no account to text from.
+add_filter( 'pre_option_gravityformsaddon_gravityformstwilio_settings', '__return_empty_array' );
+// Gravity SMTP sends through its own connectors; its test mode holds every message.
+add_filter(
+	'option_gravitysmtp_config',
+	static function ( $value ) {
+		$config = is_string( $value ) ? json_decode( $value, true ) : null;
+		if ( ! is_array( $config ) ) {
+			return $value;
+		}
+		$config['test_mode'] = 'true';
+		return wp_json_encode( $config );
+	}
 );
 PHP;
 

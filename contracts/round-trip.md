@@ -70,6 +70,23 @@ Two pieces make the copy fit to test on:
   server or mail plugin the site is set up with: a copy of a live site
   keeps its live mail settings. Both stacks load it, so a day's footprint is
   the work and nothing else.
+- **Refusing HTTP is not enough on a shop.** `pre_http_request` sees only
+  what goes through WordPress's HTTP API, and some plugins bring their own
+  client. On shop-dogfood, WooCommerce Xero refreshes its OAuth token
+  through Guzzle before it invoices, and it invoices when an order is
+  completed, which the day does; the copy still holds the live site's
+  credentials. The guard therefore also switches such services off by
+  their settings, on both stacks: Xero's stored connection reads empty and
+  it invoices manually with no payments, Twilio's Gravity Forms account
+  reads empty, and Gravity SMTP's test mode is forced on (it holds every
+  message before any connector runs). Checked on the 2026-10-05 run, before
+  the guard had these lines: `xero_oauth_options` did not change on either
+  day (a refreshed token is written back), no order gained Xero meta, the
+  day submits no forms, and all 51 messages Gravity SMTP logged say "Test
+  mode is enabled, sandboxing email". The order itself is direct bank
+  transfer, never paid, so no gateway is asked. A copy of another live
+  site needs its own list: look for plugins whose credentials are in the
+  database and whose client is not `wp_remote_*`.
 - **The oracle stands in for the site over HTTPS.** `php -S 127.0.0.1:8129
   router.php` serves a request as HTTPS when it carries `X-Forwarded-Proto:
   https`, and the suite sends `Host: cove-minn.localhost` with it, so
@@ -185,6 +202,8 @@ shop-dogfood's first days added these:
 | A floating draft kept its old date through a save or a trash | `contracts/rest/writes.md` |
 | `category_children` was never rewritten, so WordPress would miss new child categories | `contracts/rest/terms.md` |
 | Old addresses with a page number or trackback answered 500; comment-page addresses 404'd | `contracts/front/permalinks.md` |
+| `admin-ajax.php` answered only the nonce refresh: no plugin's `wp_ajax_*` or `wp_ajax_nopriv_*` handler ran (Gravity Forms' submissions and feeds, CleanTalk's checks, WooCommerce's cart) | `contracts/runtime.md` |
+| The `authenticate` chain never ran, so no plugin could refuse a sign-in or add a factor | `contracts/runtime.md` |
 
 ## Open
 
@@ -199,18 +218,14 @@ Found by the round trip and not done yet:
   the upload, CaptainCore's newsletter not sent, WooCommerce's
   `last_update` not stamped: almost all of the day's remaining
   differences. The facade's own `wp_insert_post` path does fire them.
-- Plugin work WordPress does on `admin-ajax.php` and in `admin_init`
-  (update checkers, Action Scheduler's async runner) does not happen on
-  Minn, where that endpoint is not an admin request.
+- WordPress's own update checks on `admin_init` (`_maybe_update_*`) do
+  not run on Minn (the engine has its own updater, and the reference
+  skips them on `admin-ajax.php` anyway).
 - Gravity Forms counts a form view on Minn where WordPress does not (one
   row on shop-dogfood), not yet looked into.
 
 - Comments are not paged: with `page_comments` on, `comment-page-N`
   serves the post with every comment.
-- `authenticate` and the other sign-in filters do not run, so a plugin
-  cannot refuse a sign-in or add a second factor.
-- `admin-ajax.php` answers only `rest-nonce`; a plugin's `wp_ajax_*` and
-  `wp_ajax_nopriv_*` actions are not dispatched.
 - A stored object of a class a plugin has loaded comes back a plain object
   where the reference instantiates the class, so plugin code calling its
   methods fails on Minn. Written back it now keeps its class
