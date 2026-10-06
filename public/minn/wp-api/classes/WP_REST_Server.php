@@ -272,9 +272,12 @@ class WP_REST_Server
         }
         $minnRequest = new Request($method, '/wp-json' . $route, $query, $headers, $runtime->request?->cookies ?? [], $body, $runtime->isSecure(), $runtime->request?->host ?? (string) parse_url(home_url(), PHP_URL_HOST), $form);
         $api = Api::forRequest($runtime->db, $minnRequest);
-        if (($runtime->reader?->userId ?? 0) > 0) {
-            // An in-process call carries no nonce; it runs as the outer request's user.
-            $api->actingAs($runtime->reader->userId, $runtime->reader->sessionToken);
+        // An in-process call carries no nonce; it runs as whoever is current now
+        // (a plugin may have switched with wp_set_current_user), with the outer
+        // request's session when that is the same user.
+        $userId = get_current_user_id();
+        if ($userId > 0) {
+            $api->actingAs($userId, $userId === ($runtime->reader?->userId ?? 0) ? (string) $runtime->reader->sessionToken : '');
         }
         $response = $api->handleEngineOnly($route);
         if ($response === null) {

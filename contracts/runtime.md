@@ -3582,3 +3582,55 @@ or `illegal_user_logins` names it (`rest_invalid_param`, with
 `rest_user_invalid_username` in its details), as the reference's username
 argument refuses it. A refusal from the save is the route's 400; Minn no
 longer writes the account itself when the runtime's save refuses.
+
+## Terms plugins can change (2026-10-06)
+
+`sanitize_term` and `sanitize_term_field` handed back what they were given,
+and `wp_insert_term` ran `pre_insert_term` and nothing else: a tag named
+`<b>two</b> & co` was stored with its tags and a bare ampersand, no
+`pre_term_*` filter ran, and neither did the slug, data, duplicate and id
+filters. Now (`Runtime\TermFields`, `Runtime\TermSave`):
+
+- A field in a context is as the reference makes it (probe `term-sanitize`,
+  105 rows): the numeric fields are whole numbers, never below zero, in every
+  context; `edit` runs `edit_term_{field}` and `edit_{taxonomy}_{field}` and
+  escapes text for a form; `db` runs `pre_term_{field}` and
+  `pre_{taxonomy}_{field}` (a slug also `pre_category_nicename`); `rss` runs
+  the `_rss` pair; any other context the display pair, escaped for an
+  attribute or a script when it names one. A lookup with no taxonomy hands
+  `false` to the filters. The defaults are the reference's: `pre_term_name`
+  is `sanitize_text_field`, `wp_filter_kses`, `_wp_specialchars` at 30;
+  `pre_term_slug` `sanitize_title`; `term_name` texturizes, converts and
+  escapes; `term_name_rss` converts. `get_term`, `get_term_by`,
+  `get_category` and `get_tag` put a term in the context asked for after
+  their own filters, on a copy; `get_term_field` answers in `display` by
+  default; `WP_Term::filter()` works.
+- Looking a term up by name compares the name as saving stores it (probe
+  `term-lookup`, 23 rows): `get_terms` with `name` runs each through the
+  first taxonomy's name filters, `get_term_by('name')` through the
+  taxonomy's, and `term_exists` tries the slug first, then the name, a
+  parent narrowing both (0 to the top level). A digit string is a name, not
+  an id. Under a parent with no children `get_terms` answers at once (a
+  count of 0) without looking at names.
+- A save runs in the reference's order (probe `term-insert-filters`, 31
+  rows, filters and actions compared): `pre_insert_term`; an empty name or a
+  missing parent refused; every field through its `db` filters; a name the
+  parent already has refused (in a flat taxonomy, a name the taxonomy has),
+  the error carrying the existing id; `wp_unique_term_slug`, which adds the
+  parents' slugs to a taken slug before
+  `wp_unique_term_slug_is_bad_slug` and numbers past any term holding it in
+  any taxonomy; `wp_insert_term_data`; a slug left empty becomes the id;
+  `wp_insert_term_duplicate_term_check` (a plugin may name a term to keep
+  instead); `create_term`, `term_id_filter`, `created_term`, `saved_term`.
+  An update merges the stored term, slashed so a backslash survives, under
+  the change, refuses an empty name after the filters, asks
+  `wp_update_term_parent` (default `wp_check_term_hierarchy_for_loops`: a
+  parent that would put the term under itself becomes 0) and refuses a slug a
+  sibling holds; one taken under another parent is made unique.
+- Over REST with plugins loaded (probe `rest-term-save`), the controller
+  builds the prepared term from the fields the request sends (name and slug
+  cleaned by the schema), runs `rest_pre_insert_{taxonomy}`, and hands it to
+  the save; a name in use is the 400 with the existing id. A parent that is
+  not there is `rest_term_invalid` before anything is saved, on both paths.
+  A plugin's in-process `rest_do_request` runs as the current user (one it
+  switched to included), and a form-encoded body reads as its fields.

@@ -35,7 +35,7 @@ the repositories and records: posts, users, terms, comments, and the render pipe
 | [`TagBalancer`](#tagbalancer) | final class | 82 | Closes what markup leaves open and drops what it closes without opening, |
 | [`TermLinks`](#termlinks) | final class | 39 | A post's terms rendered as links, in the two shapes the reference |
 | [`TermRecord`](#termrecord) | final readonly class | 88 | One term with its taxonomy row, read by name: $term->name, ->slug, |
-| [`Terms`](#terms) | final readonly class | 178 |  |
+| [`Terms`](#terms) | final readonly class | 221 |  |
 | [`TextFilters`](#textfilters) | final class | 130 | The small text filters the reference runs over content, titles and |
 | [`Texturize`](#texturize) | final class | 51 | The texturize subset the reference applies to rendered text: straight |
 | [`UserRecord`](#userrecord) | final readonly class | 96 | One row of the users table, read by name. Columns keep their WordPress |
@@ -1715,7 +1715,7 @@ Records are read-only; writes go through the repository.
 
 `final readonly class Minn\Content\Terms` · `public/minn/src/Minn/Content/Terms.php`
 
-Used by: `Minn\Blocks\Dynamic\Theme\Navigation`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Content\Menus`, `Minn\Front\Permalinks`, `Minn\Front\Resolver`, `Minn\Rest\Services`, `Minn\Rest\TermsController`, `Minn\Runtime\TermWriter`, `Minn\Theme\TemplateWriter`, `Minn\Theme\UserStyles`
+Used by: `Minn\Blocks\Dynamic\Theme\Navigation`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Content\Menus`, `Minn\Front\Permalinks`, `Minn\Front\Resolver`, `Minn\Rest\Services`, `Minn\Rest\TermsController`, `Minn\Runtime\TermSave`, `Minn\Runtime\TermWriter`, `Minn\Theme\TemplateWriter`, `Minn\Theme\UserStyles`
 
 ```php
 __construct(Minn\Db $db)
@@ -1746,6 +1746,27 @@ A slug unique within the taxonomy: base, -2, -3 on collision.
 
 Inserts a term and its taxonomy row and returns the term id.
 
+### `insertRow(array $data): int`
+
+Inserts a terms row alone (name, slug, term_group), as the reference
+writes it before the taxonomy row; returns the term id.
+
+- `@param array{name: string, slug: string, term_group: int} $data`
+
+### `addToTaxonomy(int $termId, string $taxonomy, string $description, int $parent): int`
+
+Puts a term in a taxonomy; returns the term_taxonomy id.
+
+### `updateRow(int $termId, array $data): void`
+
+Rewrites a terms row (name, slug, term_group).
+
+- `@param array{name: string, slug: string, term_group: int} $data`
+
+### `dropRows(int $termId, int $ttId): void`
+
+Drops a term's rows that a plugin's duplicate check said to give up.
+
 ### `rename(int $termId, string $name, string $slug): void`
 
 Changes a term's name and slug.
@@ -1762,7 +1783,7 @@ Reparents children to the grandparent, detaches relationships, drops the rows.
 
 "parent/child" for hierarchical taxonomies, the bare slug otherwise.
 
-Internals: `record()` (private, line 17), `refreshHierarchy()` (private, line 151), `keepsHierarchy()` (private, line 167)
+Internals: `record()` (private, line 17), `refreshHierarchy()` (private, line 194), `keepsHierarchy()` (private, line 210)
 
 
 ## TextFilters

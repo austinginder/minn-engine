@@ -11,89 +11,15 @@ use Minn\Content\Terms;
 use Minn\Db;
 
 /**
- * The decisions behind wp_insert_term, wp_update_term, wp_delete_term, and
- * the object-term relationships: duplicate rules, slug uniqueness, parent
- * checks, which relationships to add and remove. The rows themselves come
+ * The decisions behind wp_delete_term and the object-term relationships:
+ * which relationships to add and remove (saves are Runtime\TermSave). The rows themselves come
  * from Content\Terms; the lifecycle actions fire from here in the
  * reference's order. Behaviour pinned by contracts/fixtures/api/content.json.
  */
 final readonly class TermWriter
 {
-    /** @param Closure(string): string $slug the slug sanitiser, so the reference's filters apply */
-    public function __construct(private Db $db, private Terms $terms, private TermQuery $query, private PostWriter $posts, private Closure $slug)
+    public function __construct(private Db $db, private Terms $terms, private TermQuery $query, private PostWriter $posts)
     {
-    }
-
-    /**
-     * Inserts a term, or the refusal.
-     *
-     * @param array{slug?: string, description?: string, parent?: int|string, alias_of?: string} $args
-     * @return array{term_id: int, term_taxonomy_id: int}|Refusal
-     */
-    public function insert(string $name, string $taxonomy, array $args, bool $hierarchical): array|Refusal
-    {
-        if (trim($name) === '') {
-            return new Refusal('empty_term_name', 'A name is required for this term.');
-        }
-        $parent = (int) ($args['parent'] ?? 0);
-        if ($parent > 0 && $this->query->exists($parent, $taxonomy, null) === null) {
-            return new Refusal('missing_parent', 'Parent term does not exist.');
-        }
-        $wantedSlug = (string) ($args['slug'] ?? '');
-        $existing = $this->query->find('name', $name, $taxonomy);
-        if ($existing !== null) {
-            $row = $this->query->row($existing['term_id'], $taxonomy) ?? [];
-            if (!$hierarchical || (int) ($row['parent'] ?? 0) === $parent) {
-                $slugMatch = $wantedSlug === '' || ($this->slug)($wantedSlug) === ($row['slug'] ?? '');
-                if ($slugMatch || !$hierarchical) {
-                    return new Refusal('term_exists', 'A term with the name provided already exists in this taxonomy.', $existing['term_id']);
-                }
-            }
-        }
-        $base = ($this->slug)($wantedSlug !== '' ? $wantedSlug : $name);
-        $slug = $this->terms->uniqueSlug($base, $taxonomy);
-        if ($wantedSlug !== '' && $slug !== $base && $this->query->find('slug', $base, $taxonomy) !== null) {
-            return new Refusal('duplicate_term_slug', sprintf('The slug &#8220;%s&#8221; is already in use by another term.', $base));
-        }
-        $termId = $this->terms->create($name, $slug, $taxonomy, (string) ($args['description'] ?? ''), $parent);
-        $row = $this->query->row($termId, $taxonomy);
-        return ['term_id' => $termId, 'term_taxonomy_id' => (int) ($row['term_taxonomy_id'] ?? 0)];
-    }
-
-    /**
-     * Updates a term, or the refusal.
-     *
-     * @param array<string, mixed> $current the term's row
-     * @param array<string, mixed> $args
-     * @return array{name: string, slug: string, description: string, parent: int}|Refusal what to write
-     */
-    public function update(array $current, string $taxonomy, array $args): array|Refusal
-    {
-        $termId = (int) $current['term_id'];
-        $name = isset($args['name']) ? trim((string) $args['name']) : (string) $current['name'];
-        if ($name === '') {
-            return new Refusal('empty_term_name', 'A name is required for this term.');
-        }
-        $parent = isset($args['parent']) ? (int) $args['parent'] : (int) $current['parent'];
-        if ($parent > 0 && $this->query->exists($parent, $taxonomy, null) === null) {
-            return new Refusal('missing_parent', 'Parent term does not exist.');
-        }
-        $slug = isset($args['slug']) && $args['slug'] !== '' ? ($this->slug)((string) $args['slug']) : (string) $current['slug'];
-        if ($slug !== (string) $current['slug'] || (isset($args['name']) && !isset($args['slug']) && $slug === '')) {
-            $slug = $this->terms->uniqueSlug($slug === '' ? $name : $slug, $taxonomy, $termId);
-        }
-        $duplicate = $this->query->find('slug', $slug, $taxonomy);
-        if ($duplicate !== null && $duplicate['term_id'] !== $termId) {
-            return new Refusal('duplicate_term_slug', sprintf('The slug &#8220;%s&#8221; is already in use by another term.', $slug));
-        }
-        return ['name' => $name, 'slug' => $slug, 'description' => isset($args['description']) ? (string) $args['description'] : (string) $current['description'], 'parent' => $parent];
-    }
-
-    /** Writes an update() decision. @param array{name: string, slug: string, description: string, parent: int} $change */
-    public function apply(int $termId, string $taxonomy, array $change): void
-    {
-        $this->terms->rename($termId, $change['name'], $change['slug']);
-        $this->terms->describe($termId, $taxonomy, $change['description'], $change['parent']);
     }
 
     /**

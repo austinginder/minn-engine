@@ -13,7 +13,7 @@ uploads, image sizes and attachment metadata
 | [`Sizing`](#sizing) | final class | 207 | The image size arithmetic the media functions share: the crop or scale a |
 | [`Upload`](#upload) | final readonly class | 76 | One file arriving for the library, on either transport: a multipart |
 | [`Uploads`](#uploads) | final readonly class | 179 | The uploads directory: paths, URLs, the allowed types, and landing a file. |
-| [`Writer`](#writer) | final readonly class | 137 | The writes the media library makes. An Upload becomes an attachment: the |
+| [`Writer`](#writer) | final readonly class | 154 | The writes the media library makes. An Upload becomes an attachment: the |
 
 ## Canvas
 
@@ -321,7 +321,7 @@ The uploads directory: paths, URLs, the allowed types, and landing a file.
 
 - const `MIMES` = `array (   'png' => 'image/png',   'jpg' => 'image/jpeg',   'jpeg' => 'image/jpeg',   'gif' => 'image/gif',   'webp' => 'image/webp',   'pdf' => 'application/pdf',   'txt' => 'text/plain',   'mp4' => 'video/mp4',   'mp3' => 'audio/mpeg',   'zip' => 'application/zip', )` — extension => canonical mime
 
-Used by: `Minn\Blocks\ImageTags`, `Minn\Blocks\Renderer`, `Minn\Media\Upload`, `Minn\Media\Writer`, `Minn\Rest\MediaObject`, `Minn\Rest\Services`
+Used by: `Minn\Blocks\ImageTags`, `Minn\Blocks\Renderer`, `Minn\Media\Upload`, `Minn\Media\Writer`, `Minn\Rest\MediaObject`, `Minn\Rest\Services`, `Minn\Runtime\PostEvents`
 
 ```php
 __construct(Minn\Content\Site $site, Minn\Front\Permalinks $permalinks, string $baseDir)
@@ -414,6 +414,16 @@ The attachment for a file already in the uploads folder (one the
 runtime's wp_handle_upload stored, plugins' filters and all): its row
 and, for an image the engine sizes, its metadata.
 
+### `prepareRow(string $relative, string $mime, int $parent, int $authorId): Minn\Media\PreparedUpload`
+
+The attachment's row alone, its sizes left to be cut once it exists:
+with plugins loaded, the runtime's wp_generate_attachment_metadata
+cuts them after the insert, as the reference does.
+
+### `pathOf(string $relative): string`
+
+A stored file's path on disk.
+
 ### `relativeOf(string $absolutePath): ?string`
 
 A stored file's path relative to the uploads folder, or null for one outside it.
@@ -450,5 +460,5 @@ Sets an attachment's alt text.
 
 Removes an attachment: its files, every generated size, its meta, and its row.
 
-Internals: `imageMetadata()` (private, line 149)
+Internals: `imageMetadata()` (private, line 166)
 

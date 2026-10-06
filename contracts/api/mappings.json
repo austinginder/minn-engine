@@ -2,12 +2,12 @@
     "generated": "2026-10-06",
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line)",
     "summary": {
-        "minn": 570,
-        "composes": 841,
+        "minn": 571,
+        "composes": 843,
         "leaf": 635,
-        "noop": 1790,
-        "functions": 3766,
-        "minnMethods": 592,
+        "noop": 1789,
+        "functions": 3768,
+        "minnMethods": 596,
         "leafLinesOver15": 13
     },
     "functions": {
@@ -8922,7 +8922,7 @@
         },
         "WP_REST_Server::engine_response": {
             "file": "classes/WP_REST_Server.php",
-            "lines": 32,
+            "lines": 35,
             "kind": "minn",
             "minn": [
                 "Minn\\Http\\Method::tryFrom",
@@ -8934,6 +8934,7 @@
                 "Minn\\Runtime\\Runtime::isSecure"
             ],
             "composes": [
+                "get_current_user_id",
                 "home_url",
                 "parse_url"
             ]
@@ -10454,7 +10455,9 @@
             "lines": 1,
             "kind": "noop",
             "minn": [],
-            "composes": []
+            "composes": [
+                "sanitize_term"
+            ]
         },
         "WP_Term::get_instance": {
             "file": "classes/WP_Term.php",
@@ -14948,13 +14951,6 @@
                 "wp_scripts"
             ]
         },
-        "_minn_refused": {
-            "file": "taxonomy.php",
-            "lines": 1,
-            "kind": "noop",
-            "minn": [],
-            "composes": []
-        },
         "_minn_register_core_rss_block": {
             "file": "feed.php",
             "lines": 5,
@@ -15263,6 +15259,21 @@
             ],
             "composes": []
         },
+        "_minn_term_lookup": {
+            "file": "taxonomy.php",
+            "lines": 7,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Runtime\\TermQuery::hasChildren",
+                "Minn\\Runtime\\TermQuery::lookup"
+            ],
+            "composes": [
+                "_minn_term_query",
+                "sanitize_term_field",
+                "sanitize_title",
+                "wp_unslash"
+            ]
+        },
         "_minn_term_query": {
             "file": "taxonomy.php",
             "lines": 1,
@@ -15285,6 +15296,17 @@
             ],
             "composes": [
                 "_minn_term_query"
+            ]
+        },
+        "_minn_term_slug_under_parents": {
+            "file": "taxonomy.php",
+            "lines": 14,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "get_term",
+                "is_taxonomy_hierarchical",
+                "term_exists"
             ]
         },
         "_minn_term_taxonomy_ids": {
@@ -15311,8 +15333,7 @@
             "composes": [
                 "_minn_post_writer",
                 "_minn_term_query",
-                "_minn_terms",
-                "sanitize_title"
+                "_minn_terms"
             ]
         },
         "_minn_terms": {
@@ -21186,7 +21207,7 @@
         },
         "get_term": {
             "file": "taxonomy.php",
-            "lines": 26,
+            "lines": 31,
             "kind": "composes",
             "minn": [],
             "composes": [
@@ -21197,7 +21218,7 @@
         },
         "get_term_by": {
             "file": "taxonomy.php",
-            "lines": 5,
+            "lines": 8,
             "kind": "minn",
             "minn": [
                 "Minn\\Runtime\\TermQuery::find"
@@ -21205,7 +21226,9 @@
             "composes": [
                 "_minn_term_query",
                 "get_term",
-                "taxonomy_exists"
+                "sanitize_term_field",
+                "taxonomy_exists",
+                "wp_unslash"
             ]
         },
         "get_term_children": {
@@ -21222,11 +21245,12 @@
         },
         "get_term_field": {
             "file": "taxonomy.php",
-            "lines": 5,
+            "lines": 8,
             "kind": "composes",
             "minn": [],
             "composes": [
-                "get_term"
+                "get_term",
+                "sanitize_term_field"
             ]
         },
         "get_term_link": {
@@ -21282,10 +21306,11 @@
         },
         "get_terms": {
             "file": "taxonomy.php",
-            "lines": 25,
+            "lines": 33,
             "kind": "minn",
             "minn": [
                 "Minn\\Runtime\\TermQuery::count",
+                "Minn\\Runtime\\TermQuery::hasChildren",
                 "Minn\\Runtime\\TermQuery::normalise",
                 "Minn\\Runtime\\TermQuery::rows",
                 "Minn\\Runtime\\TermQuery::shape"
@@ -21293,9 +21318,11 @@
             "composes": [
                 "_minn_term_query",
                 "apply_filters",
+                "sanitize_term_field",
                 "taxonomy_exists",
                 "wp_is_numeric_array",
-                "wp_parse_args"
+                "wp_parse_args",
+                "wp_unslash"
             ]
         },
         "get_the_ID": {
@@ -25548,14 +25575,18 @@
             "file": "taxonomy.php",
             "lines": 1,
             "kind": "noop",
-            "minn": [],
+            "minn": [
+                "Minn\\Runtime\\TermFields::term"
+            ],
             "composes": []
         },
         "sanitize_term_field": {
             "file": "taxonomy.php",
             "lines": 1,
             "kind": "noop",
-            "minn": [],
+            "minn": [
+                "Minn\\Runtime\\TermFields::field"
+            ],
             "composes": []
         },
         "sanitize_text_field": {
@@ -26287,13 +26318,15 @@
         },
         "term_exists": {
             "file": "taxonomy.php",
-            "lines": 11,
+            "lines": 13,
             "kind": "minn",
             "minn": [
                 "Minn\\Runtime\\TermQuery::exists"
             ],
             "composes": [
-                "_minn_term_query"
+                "_minn_term_lookup",
+                "_minn_term_query",
+                "wp_unslash"
             ]
         },
         "term_is_ancestor_of": {
@@ -28071,6 +28104,15 @@
                 "get_current_user_id",
                 "get_post",
                 "get_post_meta"
+            ]
+        },
+        "wp_check_term_hierarchy_for_loops": {
+            "file": "taxonomy.php",
+            "lines": 10,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "_minn_term_row"
             ]
         },
         "wp_checkdate": {
@@ -30212,22 +30254,13 @@
         },
         "wp_insert_term": {
             "file": "taxonomy.php",
-            "lines": 24,
+            "lines": 4,
             "kind": "minn",
             "minn": [
-                "Minn\\Runtime\\TermWriter::insert"
+                "Minn\\Runtime\\TermSave::insert"
             ],
             "composes": [
-                "_minn_refused",
-                "_minn_term_writer",
-                "apply_filters",
-                "clean_term_cache",
-                "do_action",
-                "is_taxonomy_hierarchical",
-                "is_wp_error",
-                "taxonomy_exists",
-                "wp_parse_args",
-                "wp_unslash"
+                "taxonomy_exists"
             ]
         },
         "wp_insert_user": {
@@ -32959,15 +32992,17 @@
         },
         "wp_unique_term_slug": {
             "file": "taxonomy.php",
-            "lines": 3,
+            "lines": 18,
             "kind": "minn",
             "minn": [
-                "Minn\\Content\\Terms::__construct",
-                "Minn\\Runtime\\Runtime::current",
-                "Minn\\Runtime\\Runtime::db"
+                "Minn\\Runtime\\TermQuery::slugTaken"
             ],
             "composes": [
-                "apply_filters"
+                "_minn_term_query",
+                "_minn_term_slug_under_parents",
+                "apply_filters",
+                "get_term_by",
+                "term_exists"
             ]
         },
         "wp_unregister_ability": {
@@ -33187,20 +33222,13 @@
         },
         "wp_update_term": {
             "file": "taxonomy.php",
-            "lines": 25,
+            "lines": 4,
             "kind": "minn",
             "minn": [
-                "Minn\\Runtime\\TermWriter::apply",
-                "Minn\\Runtime\\TermWriter::update"
+                "Minn\\Runtime\\TermSave::update"
             ],
             "composes": [
-                "_minn_refused",
-                "_minn_term_writer",
-                "clean_term_cache",
-                "do_action",
-                "get_term",
-                "taxonomy_exists",
-                "wp_unslash"
+                "taxonomy_exists"
             ]
         },
         "wp_update_term_count": {

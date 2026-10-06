@@ -19,7 +19,7 @@ the WordPress runtime plugins load against
 | [`CommentForm`](#commentform) | final class | 107 | The comment form's submission with plugins loaded |
 | [`CommentQuery`](#commentquery) | final readonly class | 117 | Comment reads in the get_comments() shape: arguments to rows or a count, and the approval breakdown wp_count_comments reports. |
 | [`Connectors`](#connectors) | final class | 212 | The connectors registry: the external services a site talks to (AI |
-| [`Constants`](#constants) | final class | 66 | The constants plugin code expects: the fixed set from data/constants.json |
+| [`Constants`](#constants) | final class | 83 | The constants plugin code expects: the fixed set from data/constants.json |
 | [`CronTable`](#crontable) | final class | 131 | The cron option's shape, operated on as data: timestamp => hook => key => |
 | [`DbDelta`](#dbdelta) | final readonly class | 125 | dbDelta as the reference does it: a CREATE TABLE statement creates the |
 | [`EarlyFilters`](#earlyfilters) | final class | 20 | Filters that run before the runtime exists, over the hooks added that |
@@ -43,7 +43,7 @@ the WordPress runtime plugins load against
 | [`Placeholders`](#placeholders) | final class | 49 | The printf placeholders plugin code hands wpdb::prepare, filled the way |
 | [`PluginUpdates`](#pluginupdates) | final class | 65 | The update offers the site's own plugins publish. A plugin that hosts |
 | [`Plugins`](#plugins) | final class | 213 | Loads the site's plugins into the runtime the way the reference does: |
-| [`PostEvents`](#postevents) | final readonly class | 146 | What the reference's REST controllers tell plugins about a post they |
+| [`PostEvents`](#postevents) | final readonly class | 145 | What the reference's REST controllers tell plugins about a post they |
 | [`PostInsert`](#postinsert) | final readonly class | 166 | The decisions behind wp_insert_post: which columns a postarr fills, when |
 | [`PostLookup`](#postlookup) | final readonly class | 85 | The post reads plugin code asks for by shape: a page by title, revisions, counts. |
 | [`PostQuery`](#postquery) | final class | 383 | The query WP_Query runs: its variables become one SELECT over the posts |
@@ -63,9 +63,11 @@ the WordPress runtime plugins load against
 | [`Symbols`](#symbols) | final class | 275 | A static read of what a plugin's PHP calls: global functions and classes |
 | [`TagEditor`](#tageditor) | final class | 149 | Edits one start tag's attributes in place the way the reference's tag |
 | [`TaxonomyClause`](#taxonomyclause) | final class | 178 | The taxonomy side of a post query: every query var the reference reads |
-| [`TermEvents`](#termevents) | final readonly class | 62 | What the reference's REST terms controller tells plugins, for the |
-| [`TermQuery`](#termquery) | final readonly class | 393 | Term reads in the shapes plugin code asks for: get_terms() arguments to |
-| [`TermWriter`](#termwriter) | final readonly class | 192 | The decisions behind wp_insert_term, wp_update_term, wp_delete_term, and |
+| [`TermEvents`](#termevents) | final readonly class | 111 | What the reference's REST terms controller tells plugins, for the |
+| [`TermFields`](#termfields) | final class | 65 | A term's fields in a context, as the reference's sanitize_term_field |
+| [`TermQuery`](#termquery) | final readonly class | 440 | Term reads in the shapes plugin code asks for: get_terms() arguments to |
+| [`TermSave`](#termsave) | final class | 199 | wp_insert_term and wp_update_term in the reference's order (probe |
+| [`TermWriter`](#termwriter) | final readonly class | 119 | The decisions behind wp_delete_term and the object-term relationships: |
 | [`TreeWalk`](#treewalk) | final class | 74 | The Walker contract's traversal: elements keyed by the walker's |
 | [`UserEvents`](#userevents) | final readonly class | 96 | What the reference's REST users controller tells plugins, for the |
 | [`UserInsert`](#userinsert) | final readonly class | 112 | The decisions behind wp_insert_user: what a new account needs, which email |
@@ -757,6 +759,8 @@ Used by: `Minn\Runtime\Runtime`
 ### static `define(Minn\Runtime\Runtime $runtime): void`
 
 Defines the constants the reference defines at boot.
+
+Internals: `maxMemoryLimit()` (private, line 82)
 
 
 ## CronTable
@@ -1820,13 +1824,14 @@ add_attachment, once a new attachment's row and file are in.
 
 edit_attachment and attachment_updated, after an attachment's row changed.
 
-### `attachmentMetadata(Minn\Media\Writer $library, int $id, array $metadata): void`
+### `attachmentGenerated(int $id, string $file, string $mime): void`
 
-A new attachment's metadata: with plugins loaded it passes through
-wp_generate_attachment_metadata (where an image optimiser works) and
-is stored by wp_update_attachment_metadata; without, as built.
-
-- `@param array<string, mixed> $metadata`
+A new attachment's metadata made by the runtime, as the reference's
+REST upload makes it: wp_generate_attachment_metadata over the stored
+file (the sizes cut with the attachment's id, the metadata stored as
+each one lands, so an optimiser hooked there finds it), then
+wp_update_attachment_metadata. Only for the images the engine sizes,
+as without plugins.
 
 ### `altText(Minn\Media\Writer $library, int $id, string $alt): void`
 
@@ -2215,7 +2220,7 @@ Internals: `pluginFile()` (private, line 90), `activePlugins()` (private, line 1
 
 A refused operation, the way plugin code expects to read it: a code, a message, optional data. The facade turns it into WP_Error.
 
-Used by: `Minn\Blocks\BlockName`, `Minn\Content\Menus`, `Minn\Ops\Updates`, `Minn\Rest\ArgCheck`, `Minn\Rest\MenusController`, `Minn\Rest\ParamCheck`, `Minn\Rest\RouteMatch`, `Minn\Rest\Schema`, `Minn\Runtime\Connectors`, `Minn\Runtime\PackageDownload`, `Minn\Runtime\Patterns`, `Minn\Runtime\TermWriter`, `Minn\Runtime\UserInsert`, `Minn\Runtime\UserSave`
+Used by: `Minn\Blocks\BlockName`, `Minn\Content\Menus`, `Minn\Ops\Updates`, `Minn\Rest\ArgCheck`, `Minn\Rest\MenusController`, `Minn\Rest\ParamCheck`, `Minn\Rest\RouteMatch`, `Minn\Rest\Schema`, `Minn\Runtime\Connectors`, `Minn\Runtime\PackageDownload`, `Minn\Runtime\Patterns`, `Minn\Runtime\UserInsert`, `Minn\Runtime\UserSave`
 
 ```php
 __construct(string $code, string $message, mixed $data = NULL)
@@ -2340,7 +2345,7 @@ blocks, texturize, paragraphs, shortcodes, block hooks, and the image
 attributes. What it has not (smilies, the capital P, insecure home
 addresses) runs with the plugins' own callbacks.
 
-Used by: `Minn\Admin\BootPayload`, `Minn\Auth\Authenticator`, `Minn\Blocks\Dynamic\Theme\Comments`, `Minn\Blocks\Dynamic\Theme\Navigation`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Blocks\ImageTags`, `Minn\Blocks\RenderState`, `Minn\Cli\Runtime`, `Minn\Content\Blocks`, `Minn\Content\Reader`, `Minn\Content\Site`, `Minn\Content\Terms`, `Minn\Cron\Cron`, `Minn\Db`, `Minn\Engine`, `Minn\Extension\Extensions`, `Minn\Front\CommentPostController`, `Minn\Front\Feeds`, `Minn\Front\Permalinks`, `Minn\Front\PluginRules`, `Minn\Front\Resolver`, `Minn\Login\LoginHooks`, `Minn\Mail\Mailer`, `Minn\Media\Images`, `Minn\Rest\AbilitiesController`, `Minn\Rest\Api`, `Minn\Rest\Caller`, `Minn\Rest\MediaController`, `Minn\Rest\RuntimeEnvelope`, `Minn\Rest\RuntimePrepare`, `Minn\Rest\Services`, `Minn\Rest\SettingsController`, `Minn\Rest\UsersController`, `Minn\Runtime\Abilities`, `Minn\Runtime\AjaxController`, `Minn\Runtime\BlockFilters`, `Minn\Runtime\BlockHooks`, `Minn\Runtime\CommentEvents`, `Minn\Runtime\Constants`, `Minn\Runtime\FileUpload`, `Minn\Runtime\Interactivity`, `Minn\Runtime\NavMenu`, `Minn\Runtime\PackageDownload`, `Minn\Runtime\Patterns`, `Minn\Runtime\PlaceholderTrace`, `Minn\Runtime\PluginUpdates`, `Minn\Runtime\Plugins`, `Minn\Runtime\PostEvents`, `Minn\Runtime\PostQuery`, `Minn\Runtime\PostSave`, `Minn\Runtime\ScriptModules`, `Minn\Runtime\TermEvents`, `Minn\Runtime\TermWriter`, `Minn\Runtime\UserEvents`, `Minn\Theme\ArchiveTitle`, `Minn\Theme\ClassicContent`, `Minn\Theme\ClassicRenderer`, `Minn\Theme\MainQueryBridge`, `Minn\Theme\PageRenderer`, `Minn\Theme\Templates`
+Used by: `Minn\Admin\BootPayload`, `Minn\Auth\Authenticator`, `Minn\Blocks\Dynamic\Theme\Comments`, `Minn\Blocks\Dynamic\Theme\Navigation`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Blocks\ImageTags`, `Minn\Blocks\RenderState`, `Minn\Cli\Runtime`, `Minn\Content\Blocks`, `Minn\Content\Reader`, `Minn\Content\Site`, `Minn\Content\Terms`, `Minn\Cron\Cron`, `Minn\Db`, `Minn\Engine`, `Minn\Extension\Extensions`, `Minn\Front\CommentPostController`, `Minn\Front\Feeds`, `Minn\Front\Permalinks`, `Minn\Front\PluginRules`, `Minn\Front\Resolver`, `Minn\Login\LoginHooks`, `Minn\Mail\Mailer`, `Minn\Media\Images`, `Minn\Rest\AbilitiesController`, `Minn\Rest\Api`, `Minn\Rest\Caller`, `Minn\Rest\MediaController`, `Minn\Rest\RuntimeEnvelope`, `Minn\Rest\RuntimePrepare`, `Minn\Rest\Services`, `Minn\Rest\SettingsController`, `Minn\Rest\UsersController`, `Minn\Runtime\Abilities`, `Minn\Runtime\AjaxController`, `Minn\Runtime\BlockFilters`, `Minn\Runtime\BlockHooks`, `Minn\Runtime\CommentEvents`, `Minn\Runtime\Constants`, `Minn\Runtime\FileUpload`, `Minn\Runtime\Interactivity`, `Minn\Runtime\NavMenu`, `Minn\Runtime\PackageDownload`, `Minn\Runtime\Patterns`, `Minn\Runtime\PlaceholderTrace`, `Minn\Runtime\PluginUpdates`, `Minn\Runtime\Plugins`, `Minn\Runtime\PostEvents`, `Minn\Runtime\PostQuery`, `Minn\Runtime\PostSave`, `Minn\Runtime\ScriptModules`, `Minn\Runtime\TermEvents`, `Minn\Runtime\TermSave`, `Minn\Runtime\TermWriter`, `Minn\Runtime\UserEvents`, `Minn\Theme\ArchiveTitle`, `Minn\Theme\ClassicContent`, `Minn\Theme\ClassicRenderer`, `Minn\Theme\MainQueryBridge`, `Minn\Theme\PageRenderer`, `Minn\Theme\Templates`
 
 ```php
 __construct(Minn\Context $context, bool $isAdmin = false)
@@ -2960,11 +2965,10 @@ Internals: `taxonomyClauses()` (private, line 50), `taxonomySql()` (private, lin
 `final readonly class Minn\Runtime\TermEvents` · `public/minn/src/Minn/Runtime/TermEvents.php`
 
 What the reference's REST terms controller tells plugins, for the
-engine's own: with plugins loaded a term is written through the
-runtime's wp_insert_term, wp_update_term and wp_delete_term (create_term,
-the cache cleaning that rebuilds a taxonomy's children map, created_term,
-saved_term and their families), and the REST actions follow. Without a
-booted runtime each write is the engine's own, given as a closure.
+engine's own: with plugins loaded a term is saved as that controller
+saves one (rest_pre_insert_{taxonomy}, then the runtime's wp_insert_term
+or wp_update_term, and wp_delete_term), and the REST actions follow.
+Without a booted runtime each write is the engine's own.
 
 Used by: `Minn\Rest\TermsController`
 
@@ -2972,19 +2976,22 @@ Used by: `Minn\Rest\TermsController`
 
 Whether plugins are loaded to be told anything.
 
-### `create(string $name, string $taxonomy, array $args, Closure $quietly): int`
+### `restCreate(string $taxonomy, array $body, Minn\Http\Request $request): int`
 
-Creates a term and returns its id.
+A term created over REST with plugins loaded, as the reference's
+controller creates one (probe rest-term-save): the request's fields
+as the prepared term, through rest_pre_insert_{taxonomy}, into
+wp_insert_term; a refusal is its REST error.
 
-- `@param array{slug: string, description: string, parent: int} $args`
-- `@param Closure(): int $quietly the engine's own write`
+- `@param array<string, mixed> $body`
 
-### `update(int $termId, string $taxonomy, array $args, Closure $quietly): void`
+### `restUpdate(int $termId, string $taxonomy, array $body, Minn\Http\Request $request): void`
 
-Updates a term's name, slug, description or parent.
+A term changed over REST with plugins loaded: the fields the request
+sends, through rest_pre_insert_{taxonomy}, into wp_update_term (when
+any are left); a refusal is its REST error.
 
-- `@param array<string, mixed> $args the fields the request changes`
-- `@param Closure(): void $quietly the engine's own write`
+- `@param array<string, mixed> $body`
 
 ### `delete(int $termId, string $taxonomy, array $data, Minn\Http\Request $request, Closure $quietly): void`
 
@@ -2996,6 +3003,38 @@ Deletes a term, then tells plugins over REST with the term as it was and the res
 ### `restSaved(int $termId, string $taxonomy, Minn\Http\Request $request, string $verb): void`
 
 rest_insert_{taxonomy}, then rest_after_insert_{taxonomy}, with the term as it stands and the request.
+
+Internals: `prepared()` (private, line 72), `refusal()` (private, line 92)
+
+
+## TermFields
+
+`final class Minn\Runtime\TermFields` · `public/minn/src/Minn/Runtime/TermFields.php`
+
+A term's fields in a context, as the reference's sanitize_term_field
+treats them (probe term-sanitize): the numeric fields are whole numbers,
+never below zero, in every context, and raw stops there. edit runs
+edit_term_{field} and edit_{taxonomy}_{field}; db runs pre_term_{field}
+and pre_{taxonomy}_{field}, where the saving defaults live, and a slug
+also pre_category_nicename; rss runs term_{field}_rss and
+{taxonomy}_{field}_rss; any other context runs term_{field} and
+{taxonomy}_{field} with the context named. Then a text field is escaped
+for where it goes: a form (edit), an attribute, a script (js).
+
+- const `FIELDS` = `array (   0 => 'term_id',   1 => 'name',   2 => 'description',   3 => 'slug',   4 => 'count',   5 => 'parent',   6 => 'term_group',   7 => 'term_taxonomy_id',   8 => 'object_id', )` — The fields sanitize_term runs, in its order.
+- const `NUMBERS` = `array (   0 => 'parent',   1 => 'term_id',   2 => 'count',   3 => 'term_group',   4 => 'term_taxonomy_id',   5 => 'object_id', )`
+- const `ESCAPES` = `array (   'edit' => 'esc_html',   'attribute' => 'esc_attr',   'js' => 'esc_js', )`
+
+### static `field(string $field, mixed $value, int $termId, string|false $taxonomy, string $context): mixed`
+
+One field's value in a context; a lookup with no taxonomy names false, and its filters get false.
+
+### static `term(object|array $term, string $taxonomy, string $context): object|array`
+
+A term (object or array) with each of its fields in the context, and
+its filter set to the context; the term's own id goes to the filters.
+
+Internals: `filtered()` (private, line 66), `saving()` (private, line 77)
 
 
 ## TermQuery
@@ -3036,6 +3075,25 @@ Whether a term (by id, or by slug or name) exists, optionally under a
 taxonomy and parent; the ids when it does.
 
 - `@return array{term_id: int, term_taxonomy_id: int}|null`
+
+### `lookup(string $field, string $value, ?string $taxonomy, ?int $parent): ?array`
+
+The term whose slug or name (as stored) is exactly the value,
+optionally in a taxonomy and under a parent (0 for the top level).
+
+- `@return array{term_id: int, term_taxonomy_id: int}|null`
+
+### `hasChildren(int $parent, ?array $taxonomies): bool`
+
+Whether any term in the taxonomies (any taxonomy for null) sits
+under the parent: the reference answers a lookup under a childless
+parent with nothing before it looks.
+
+- `@param list<string>|null $taxonomies`
+
+### `slugTaken(string $slug, int $exceptTermId): bool`
+
+Whether a term other than the one named holds the slug, in any taxonomy.
 
 ### `normalise(array $args): array`
 
@@ -3087,45 +3145,58 @@ tolerated on the way in.
 
 - `@param Closure(mixed): list<int> $idList the caller's id-list parser`
 
-Internals: `idList()` (private, line 173), `descendants()` (private, line 180), `where()` (private, line 199), `metaClauses()` (private, line 273), `ids()` (private, line 358), `like()` (private, line 367)
+Internals: `idList()` (private, line 220), `descendants()` (private, line 227), `where()` (private, line 246), `metaClauses()` (private, line 320), `ids()` (private, line 405), `like()` (private, line 414)
+
+
+## TermSave
+
+`final class Minn\Runtime\TermSave` · `public/minn/src/Minn/Runtime/TermSave.php`
+
+wp_insert_term and wp_update_term in the reference's order (probe
+term-insert-filters, contracts/runtime.md "Terms plugins can change").
+An insert asks pre_insert_term, refuses an empty name or a missing
+parent, runs every field through its db filters (sanitize_term), refuses
+a name the parent (or, for tags, the taxonomy) already has, makes the
+slug unique, hands the row to wp_insert_term_data, writes it (a slug left
+empty becomes the term's id), puts it in the taxonomy, lets a plugin
+name a duplicate to keep instead, and tells plugins. An update merges
+the stored term (slashed, so a backslash in it survives) under the
+changes, runs the same filters, asks wp_update_term_parent (where a
+parent that would put the term under itself becomes 0), and refuses a
+slug a sibling holds.
+
+- const `DEFAULTS` = `array (   'alias_of' => '',   'description' => '',   'parent' => 0,   'slug' => '', )`
+
+### static `insert(mixed $term, string $taxonomy, array $args): WP_Error|array`
+
+A new term's ids, or why not.
+
+- `@param array<string, mixed> $args`
+- `@return array{term_id: int, term_taxonomy_id: int}|\WP_Error`
+
+### static `update(int $termId, string $taxonomy, array $changes): WP_Error|array`
+
+A changed term's ids, or why not.
+
+- `@param array<string, mixed> $changes`
+- `@return array{term_id: int, term_taxonomy_id: int}|\WP_Error`
+
+Internals: `write()` (private, line 127), `nameTaken()` (private, line 160), `updatedSlug()` (private, line 184), `slugFromId()` (private, line 203), `row()` (private, line 216)
 
 
 ## TermWriter
 
 `final readonly class Minn\Runtime\TermWriter` · `public/minn/src/Minn/Runtime/TermWriter.php`
 
-The decisions behind wp_insert_term, wp_update_term, wp_delete_term, and
-the object-term relationships: duplicate rules, slug uniqueness, parent
-checks, which relationships to add and remove. The rows themselves come
+The decisions behind wp_delete_term and the object-term relationships:
+which relationships to add and remove (saves are Runtime\TermSave). The rows themselves come
 from Content\Terms; the lifecycle actions fire from here in the
 reference's order. Behaviour pinned by contracts/fixtures/api/content.json.
 
 ```php
-__construct(Minn\Db $db, Minn\Content\Terms $terms, Minn\Runtime\TermQuery $query, Minn\Content\PostWriter $posts, Closure $slug)
+__construct(Minn\Db $db, Minn\Content\Terms $terms, Minn\Runtime\TermQuery $query, Minn\Content\PostWriter $posts)
 ```
-- `@param Closure(string): string $slug the slug sanitiser, so the reference's filters apply`
 
-
-### `insert(string $name, string $taxonomy, array $args, bool $hierarchical): Minn\Runtime\Refusal|array`
-
-Inserts a term, or the refusal.
-
-- `@param array{slug?: string, description?: string, parent?: int|string, alias_of?: string} $args`
-- `@return array{term_id: int, term_taxonomy_id: int}|Refusal`
-
-### `update(array $current, string $taxonomy, array $args): Minn\Runtime\Refusal|array`
-
-Updates a term, or the refusal.
-
-- `@param array<string, mixed> $current the term's row`
-- `@param array<string, mixed> $args`
-- `@return array{name: string, slug: string, description: string, parent: int}|Refusal what to write`
-
-### `apply(int $termId, string $taxonomy, array $change): void`
-
-Writes an update() decision. @param array{name: string, slug: string, description: string, parent: int} $change
-
-- `@param array{name: string, slug: string, description: string, parent: int} $change`
 
 ### `delete(array $row, string $taxonomy, bool $hierarchical, int $default): array`
 
@@ -3173,7 +3244,7 @@ The term ids behind term_taxonomy ids, as stored (strings), in the order given. 
 
 - `@param list<int> $ttIds @return list<string>`
 
-Internals: `ttIdOf()` (private, line 207)
+Internals: `ttIdOf()` (private, line 133)
 
 
 ## TreeWalk

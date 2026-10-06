@@ -1,0 +1,561 @@
+[
+    [
+        "a category",
+        {
+            "result": "ids",
+            "filters": [
+                "pre_insert_term('zz term probe one' | 'category' | 'array[description]')",
+                "pre_term_name('zz term probe one' | 'category')",
+                "pre_category_name('zz term probe one')",
+                "pre_term_description('About <script>x</script> it' | 'category')",
+                "pre_category_description('About x it')",
+                "pre_term_slug('' | 'category')",
+                "pre_category_slug('')",
+                "pre_category_nicename('')",
+                "pre_term_parent(0 | 'category')",
+                "pre_category_parent(0)",
+                "pre_term_name('zz term probe one' | 'category')",
+                "pre_category_name('zz term probe one')",
+                "pre_term_name('zz-term-probe-one' | false)",
+                "pre__name('zz-term-probe-one')",
+                "wp_unique_term_slug_is_bad_slug(false | 'zz-term-probe-one' | 'object:stdClass')",
+                "wp_unique_term_slug('zz-term-probe-one' | 'object:stdClass' | 'zz-term-probe-one')",
+                "wp_insert_term_data('array[name,slug,term_group]' | 'category' | 'array[alias_of,description,filter,name,parent,slug,taxonomy]')",
+                "wp_insert_term_duplicate_term_check(NULL | 'zz term probe one' | 'category' | 'array[alias_of,description,filter,name,parent,slug,taxonomy]' | {id})",
+                "create_term({id} | {id} | 'category' | 'array[alias_of,description,filter,name,parent,slug,taxonomy]')",
+                "term_id_filter({id} | {id} | 'array[alias_of,description,filter,name,parent,slug,taxonomy]')",
+                "created_term({id} | {id} | 'category' | 'array[alias_of,description,filter,name,parent,slug,taxonomy]')",
+                "saved_term({id} | {id} | 'category' | false | 'array[alias_of,description,filter,name,parent,slug,taxonomy]')"
+            ]
+        }
+    ],
+    [
+        "a tag needing a clean name",
+        {
+            "result": "ids",
+            "filters": [
+                "pre_insert_term('  zz term probe <b>two</b> & co ' | 'post_tag' | 'array[]')",
+                "pre_term_name('  zz term probe <b>two</b> & co ' | 'post_tag')",
+                "pre_post_tag_name('zz term probe two &amp; co')",
+                "pre_term_description('' | 'post_tag')",
+                "pre_post_tag_description('')",
+                "pre_term_slug('' | 'post_tag')",
+                "pre_post_tag_slug('')",
+                "pre_category_nicename('')",
+                "pre_term_parent(0 | 'post_tag')",
+                "pre_post_tag_parent(0)",
+                "pre_term_name('zz term probe two &amp; co' | 'post_tag')",
+                "pre_post_tag_name('zz term probe two &amp; co')",
+                "pre_term_name('zz-term-probe-two-co' | false)",
+                "pre__name('zz-term-probe-two-co')",
+                "wp_unique_term_slug_is_bad_slug(false | 'zz-term-probe-two-co' | 'object:stdClass')",
+                "wp_unique_term_slug('zz-term-probe-two-co' | 'object:stdClass' | 'zz-term-probe-two-co')",
+                "wp_insert_term_data('array[name,slug,term_group]' | 'post_tag' | 'array[alias_of,description,filter,name,parent,slug,taxonomy]')",
+                "wp_insert_term_duplicate_term_check(NULL | '  zz term probe <b>two</b> & co ' | 'post_tag' | 'array[alias_of,description,filter,name,parent,slug,taxonomy]' | {id})",
+                "create_term({id} | {id} | 'post_tag' | 'array[alias_of,description,filter,name,parent,slug,taxonomy]')",
+                "term_id_filter({id} | {id} | 'array[alias_of,description,filter,name,parent,slug,taxonomy]')",
+                "created_term({id} | {id} | 'post_tag' | 'array[alias_of,description,filter,name,parent,slug,taxonomy]')",
+                "saved_term({id} | {id} | 'post_tag' | false | 'array[alias_of,description,filter,name,parent,slug,taxonomy]')"
+            ]
+        }
+    ],
+    [
+        "an edit",
+        {
+            "result": "ids",
+            "filters": [
+                "pre_term_term_id({id} | 'category')",
+                "pre_term_name('zz term probe one edited' | 'category')",
+                "pre_category_name('zz term probe one edited')",
+                "pre_term_description('New <em>words</em>' | 'category')",
+                "pre_category_description('New <em>words</em>')",
+                "pre_term_slug('zz-term-probe-one' | 'category')",
+                "pre_category_slug('zz-term-probe-one')",
+                "pre_category_nicename('zz-term-probe-one')",
+                "pre_term_count(0 | 'category')",
+                "pre_term_parent(0 | 'category')",
+                "pre_category_parent(0)",
+                "pre_term_term_group(0 | 'category')",
+                "pre_term_term_taxonomy_id({id} | 'category')",
+                "wp_update_term_parent(0 | {id} | 'category' | 'array[alias_of,count,description,filter,name,parent,slug,taxonomy,term_group,term_id,term_taxonomy_id]' | 'array[alias_of,count,description,filter,name,parent,slug,taxonomy,term_group,term_id,term_taxonomy_id]')",
+                "edit_terms({id} | 'category' | 'array[alias_of,count,description,filter,name,parent,slug,taxonomy,term_group,term_id,term_taxonomy_id]')",
+                "wp_update_term_data('array[name,slug,term_group]' | {id} | 'category' | 'array[alias_of,count,description,filter,name,parent,slug,taxonomy,term_group,term_id,term_taxonomy_id]')",
+                "edited_terms({id} | 'category' | 'array[alias_of,count,description,filter,name,parent,slug,taxonomy,term_group,term_id,term_taxonomy_id]')",
+                "edit_term_taxonomy({id} | 'category' | 'array[alias_of,count,description,filter,name,parent,slug,taxonomy,term_group,term_id,term_taxonomy_id]')",
+                "edited_term_taxonomy({id} | 'category' | 'array[alias_of,count,description,filter,name,parent,slug,taxonomy,term_group,term_id,term_taxonomy_id]')",
+                "edit_term({id} | {id} | 'category' | 'array[alias_of,count,description,filter,name,parent,slug,taxonomy,term_group,term_id,term_taxonomy_id]')",
+                "term_id_filter({id} | {id} | 'array[alias_of,count,description,filter,name,parent,slug,taxonomy,term_group,term_id,term_taxonomy_id]')",
+                "edited_term({id} | {id} | 'category' | 'array[alias_of,count,description,filter,name,parent,slug,taxonomy,term_group,term_id,term_taxonomy_id]')",
+                "saved_term({id} | {id} | 'category' | true | 'array[alias_of,count,description,filter,name,parent,slug,taxonomy,term_group,term_id,term_taxonomy_id]')"
+            ]
+        }
+    ],
+    [
+        "the edit stored",
+        [
+            "zz term probe one edited",
+            "zz-term-probe-one",
+            "New <em>words</em>"
+        ]
+    ],
+    [
+        "the tag stored",
+        [
+            "zz term probe two &amp; co",
+            "zz-term-probe-two-co"
+        ]
+    ],
+    [
+        "a name already taken",
+        {
+            "result": [
+                "term_exists",
+                "A term with the name provided already exists with this parent.",
+                "{term0}"
+            ],
+            "filters": [
+                "pre_insert_term('zz term probe one edited' | 'category' | 'array[]')",
+                "pre_term_name('zz term probe one edited' | 'category')",
+                "pre_category_name('zz term probe one edited')",
+                "pre_term_description('' | 'category')",
+                "pre_category_description('')",
+                "pre_term_slug('' | 'category')",
+                "pre_category_slug('')",
+                "pre_category_nicename('')",
+                "pre_term_parent(0 | 'category')",
+                "pre_category_parent(0)",
+                "pre_term_name('zz term probe one edited' | 'category')",
+                "pre_category_name('zz term probe one edited')"
+            ]
+        }
+    ],
+    [
+        "a missing parent",
+        {
+            "result": [
+                "missing_parent",
+                "Parent term does not exist.",
+                "null"
+            ],
+            "filters": [
+                "pre_insert_term('zz term probe orphan' | 'category' | 'array[parent]')"
+            ]
+        }
+    ],
+    [
+        "an empty name",
+        {
+            "result": [
+                "empty_term_name",
+                "A name is required for this term.",
+                "null"
+            ],
+            "filters": [
+                "pre_insert_term('   ' | 'category' | 'array[]')"
+            ]
+        }
+    ],
+    [
+        "a tag name already taken",
+        {
+            "result": [
+                "term_exists",
+                "A term with the name provided already exists in this taxonomy.",
+                "{term1}"
+            ],
+            "filters": [
+                "pre_insert_term('  zz term probe <b>two</b> & co ' | 'post_tag' | 'array[]')",
+                "pre_term_name('  zz term probe <b>two</b> & co ' | 'post_tag')",
+                "pre_post_tag_name('zz term probe two &amp; co')",
+                "pre_term_description('' | 'post_tag')",
+                "pre_post_tag_description('')",
+                "pre_term_slug('' | 'post_tag')",
+                "pre_post_tag_slug('')",
+                "pre_category_nicename('')",
+                "pre_term_parent(0 | 'post_tag')",
+                "pre_post_tag_parent(0)",
+                "pre_term_name('zz term probe two &amp; co' | 'post_tag')",
+                "pre_post_tag_name('zz term probe two &amp; co')"
+            ]
+        }
+    ],
+    [
+        "a kid whose slug is taken",
+        {
+            "result": "ids",
+            "filters": [
+                "pre_insert_term('zz term probe kid' | 'category' | 'array[parent,slug]')",
+                "pre_term_name('zz term probe kid' | 'category')",
+                "pre_category_name('zz term probe kid')",
+                "pre_term_description('' | 'category')",
+                "pre_category_description('')",
+                "pre_term_slug('zz-term-probe-one' | 'category')",
+                "pre_category_slug('zz-term-probe-one')",
+                "pre_category_nicename('zz-term-probe-one')",
+                "pre_term_parent({term3} | 'category')",
+                "pre_category_parent({term3})",
+                "pre_term_name('zz-term-probe-one-zz-term-probe-dad' | false)",
+                "pre__name('zz-term-probe-one-zz-term-probe-dad')",
+                "wp_unique_term_slug_is_bad_slug(true | 'zz-term-probe-one' | 'object:stdClass')",
+                "wp_unique_term_slug('zz-term-probe-one-zz-term-probe-dad' | 'object:stdClass' | 'zz-term-probe-one')",
+                "wp_insert_term_data('array[name,slug,term_group]' | 'category' | 'array[alias_of,description,filter,name,parent,slug,taxonomy]')",
+                "wp_insert_term_duplicate_term_check(NULL | 'zz term probe kid' | 'category' | 'array[alias_of,description,filter,name,parent,slug,taxonomy]' | {id})",
+                "create_term({id} | {id} | 'category' | 'array[alias_of,description,filter,name,parent,slug,taxonomy]')",
+                "term_id_filter({id} | {id} | 'array[alias_of,description,filter,name,parent,slug,taxonomy]')",
+                "created_term({id} | {id} | 'category' | 'array[alias_of,description,filter,name,parent,slug,taxonomy]')",
+                "saved_term({id} | {id} | 'category' | false | 'array[alias_of,description,filter,name,parent,slug,taxonomy]')"
+            ]
+        }
+    ],
+    [
+        "a slug asked for and taken",
+        {
+            "result": "ids",
+            "filters": [
+                "pre_insert_term('zz term probe other' | 'category' | 'array[slug]')",
+                "pre_term_name('zz term probe other' | 'category')",
+                "pre_category_name('zz term probe other')",
+                "pre_term_description('' | 'category')",
+                "pre_category_description('')",
+                "pre_term_slug('zz-term-probe-dad' | 'category')",
+                "pre_category_slug('zz-term-probe-dad')",
+                "pre_category_nicename('zz-term-probe-dad')",
+                "pre_term_parent(0 | 'category')",
+                "pre_category_parent(0)",
+                "pre_term_name('zz term probe other' | 'category')",
+                "pre_category_name('zz term probe other')",
+                "wp_unique_term_slug_is_bad_slug(true | 'zz-term-probe-dad' | 'object:stdClass')",
+                "wp_unique_term_slug('zz-term-probe-dad-2' | 'object:stdClass' | 'zz-term-probe-dad')",
+                "wp_insert_term_data('array[name,slug,term_group]' | 'category' | 'array[alias_of,description,filter,name,parent,slug,taxonomy]')",
+                "wp_insert_term_duplicate_term_check(NULL | 'zz term probe other' | 'category' | 'array[alias_of,description,filter,name,parent,slug,taxonomy]' | {id})",
+                "create_term({id} | {id} | 'category' | 'array[alias_of,description,filter,name,parent,slug,taxonomy]')",
+                "term_id_filter({id} | {id} | 'array[alias_of,description,filter,name,parent,slug,taxonomy]')",
+                "created_term({id} | {id} | 'category' | 'array[alias_of,description,filter,name,parent,slug,taxonomy]')",
+                "saved_term({id} | {id} | 'category' | false | 'array[alias_of,description,filter,name,parent,slug,taxonomy]')"
+            ]
+        }
+    ],
+    [
+        "a name with no slug in it",
+        {
+            "result": "ids",
+            "filters": [
+                "pre_insert_term('%%%' | 'category' | 'array[]')",
+                "pre_term_name('%%%' | 'category')",
+                "pre_category_name('%%%')",
+                "pre_term_description('' | 'category')",
+                "pre_category_description('')",
+                "pre_term_slug('' | 'category')",
+                "pre_category_slug('')",
+                "pre_category_nicename('')",
+                "pre_term_parent(0 | 'category')",
+                "pre_category_parent(0)",
+                "pre_term_name('%%%' | 'category')",
+                "pre_category_name('%%%')",
+                "wp_unique_term_slug_is_bad_slug(false | '' | 'object:stdClass')",
+                "wp_unique_term_slug('' | 'object:stdClass' | '')",
+                "wp_insert_term_data('array[name,slug,term_group]' | 'category' | 'array[alias_of,description,filter,name,parent,slug,taxonomy]')",
+                "edit_terms({id} | 'category' | 'array[alias_of,description,filter,name,parent,slug,taxonomy]')",
+                "edited_terms({id} | 'category' | 'array[alias_of,description,filter,name,parent,slug,taxonomy]')",
+                "wp_insert_term_duplicate_term_check(NULL | '%%%' | 'category' | 'array[alias_of,description,filter,name,parent,slug,taxonomy]' | {id})",
+                "create_term({id} | {id} | 'category' | 'array[alias_of,description,filter,name,parent,slug,taxonomy]')",
+                "term_id_filter({id} | {id} | 'array[alias_of,description,filter,name,parent,slug,taxonomy]')",
+                "created_term({id} | {id} | 'category' | 'array[alias_of,description,filter,name,parent,slug,taxonomy]')",
+                "saved_term({id} | {id} | 'category' | false | 'array[alias_of,description,filter,name,parent,slug,taxonomy]')"
+            ]
+        }
+    ],
+    [
+        "its slug",
+        "{id}"
+    ],
+    [
+        "an edit to an empty name",
+        {
+            "result": [
+                "empty_term_name",
+                "A name is required for this term.",
+                "null"
+            ],
+            "filters": [
+                "pre_term_term_id({term0} | 'category')",
+                "pre_term_name('  ' | 'category')",
+                "pre_category_name('')",
+                "pre_term_description('New <em>words</em>' | 'category')",
+                "pre_category_description('New <em>words</em>')",
+                "pre_term_slug('zz-term-probe-one' | 'category')",
+                "pre_category_slug('zz-term-probe-one')",
+                "pre_category_nicename('zz-term-probe-one')",
+                "pre_term_count(0 | 'category')",
+                "pre_term_parent(0 | 'category')",
+                "pre_category_parent(0)",
+                "pre_term_term_group(0 | 'category')",
+                "pre_term_term_taxonomy_id({term0} | 'category')"
+            ]
+        }
+    ],
+    [
+        "an edit to a taken slug",
+        {
+            "result": [
+                "duplicate_term_slug",
+                "The slug &#8220;zz-term-probe-dad&#8221; is already in use by another term.",
+                "null"
+            ],
+            "filters": [
+                "pre_term_term_id({term0} | 'category')",
+                "pre_term_name('zz term probe one edited' | 'category')",
+                "pre_category_name('zz term probe one edited')",
+                "pre_term_description('New <em>words</em>' | 'category')",
+                "pre_category_description('New <em>words</em>')",
+                "pre_term_slug('zz-term-probe-dad' | 'category')",
+                "pre_category_slug('zz-term-probe-dad')",
+                "pre_category_nicename('zz-term-probe-dad')",
+                "pre_term_count(0 | 'category')",
+                "pre_term_parent(0 | 'category')",
+                "pre_category_parent(0)",
+                "pre_term_term_group(0 | 'category')",
+                "pre_term_term_taxonomy_id({term0} | 'category')",
+                "wp_update_term_parent(0 | {term0} | 'category' | 'array[alias_of,count,description,filter,name,parent,slug,taxonomy,term_group,term_id,term_taxonomy_id]' | 'array[alias_of,count,description,filter,name,parent,slug,taxonomy,term_group,term_id,term_taxonomy_id]')"
+            ]
+        }
+    ],
+    [
+        "an edit to its own parent",
+        {
+            "result": "ids",
+            "filters": [
+                "pre_term_term_id({id} | 'category')",
+                "pre_term_name('zz term probe one edited' | 'category')",
+                "pre_category_name('zz term probe one edited')",
+                "pre_term_description('New <em>words</em>' | 'category')",
+                "pre_category_description('New <em>words</em>')",
+                "pre_term_slug('zz-term-probe-one' | 'category')",
+                "pre_category_slug('zz-term-probe-one')",
+                "pre_category_nicename('zz-term-probe-one')",
+                "pre_term_count(0 | 'category')",
+                "pre_term_parent({id} | 'category')",
+                "pre_category_parent({id})",
+                "pre_term_term_group(0 | 'category')",
+                "pre_term_term_taxonomy_id({id} | 'category')",
+                "wp_update_term_parent({id} | {id} | 'category' | 'array[alias_of,count,description,filter,name,parent,slug,taxonomy,term_group,term_id,term_taxonomy_id]' | 'array[alias_of,count,description,filter,name,parent,slug,taxonomy,term_group,term_id,term_taxonomy_id]')",
+                "edit_terms({id} | 'category' | 'array[alias_of,count,description,filter,name,parent,slug,taxonomy,term_group,term_id,term_taxonomy_id]')",
+                "wp_update_term_data('array[name,slug,term_group]' | {id} | 'category' | 'array[alias_of,count,description,filter,name,parent,slug,taxonomy,term_group,term_id,term_taxonomy_id]')",
+                "edited_terms({id} | 'category' | 'array[alias_of,count,description,filter,name,parent,slug,taxonomy,term_group,term_id,term_taxonomy_id]')",
+                "edit_term_taxonomy({id} | 'category' | 'array[alias_of,count,description,filter,name,parent,slug,taxonomy,term_group,term_id,term_taxonomy_id]')",
+                "edited_term_taxonomy({id} | 'category' | 'array[alias_of,count,description,filter,name,parent,slug,taxonomy,term_group,term_id,term_taxonomy_id]')",
+                "edit_term({id} | {id} | 'category' | 'array[alias_of,count,description,filter,name,parent,slug,taxonomy,term_group,term_id,term_taxonomy_id]')",
+                "term_id_filter({id} | {id} | 'array[alias_of,count,description,filter,name,parent,slug,taxonomy,term_group,term_id,term_taxonomy_id]')",
+                "edited_term({id} | {id} | 'category' | 'array[alias_of,count,description,filter,name,parent,slug,taxonomy,term_group,term_id,term_taxonomy_id]')",
+                "saved_term({id} | {id} | 'category' | true | 'array[alias_of,count,description,filter,name,parent,slug,taxonomy,term_group,term_id,term_taxonomy_id]')"
+            ]
+        }
+    ],
+    [
+        "its own parent stored",
+        0
+    ],
+    [
+        "an edit making a loop",
+        {
+            "result": "ids",
+            "filters": [
+                "pre_term_term_id({id} | 'category')",
+                "pre_term_name('zz term probe dad' | 'category')",
+                "pre_category_name('zz term probe dad')",
+                "pre_term_description('' | 'category')",
+                "pre_category_description('')",
+                "pre_term_slug('zz-term-probe-dad' | 'category')",
+                "pre_category_slug('zz-term-probe-dad')",
+                "pre_category_nicename('zz-term-probe-dad')",
+                "pre_term_count(0 | 'category')",
+                "pre_term_parent({term8} | 'category')",
+                "pre_category_parent({term8})",
+                "pre_term_term_group(0 | 'category')",
+                "pre_term_term_taxonomy_id({id} | 'category')",
+                "wp_update_term_parent({term8} | {id} | 'category' | 'array[alias_of,count,description,filter,name,parent,slug,taxonomy,term_group,term_id,term_taxonomy_id]' | 'array[alias_of,count,description,filter,name,parent,slug,taxonomy,term_group,term_id,term_taxonomy_id]')",
+                "edit_terms({id} | 'category' | 'array[alias_of,count,description,filter,name,parent,slug,taxonomy,term_group,term_id,term_taxonomy_id]')",
+                "wp_update_term_data('array[name,slug,term_group]' | {id} | 'category' | 'array[alias_of,count,description,filter,name,parent,slug,taxonomy,term_group,term_id,term_taxonomy_id]')",
+                "edited_terms({id} | 'category' | 'array[alias_of,count,description,filter,name,parent,slug,taxonomy,term_group,term_id,term_taxonomy_id]')",
+                "edit_term_taxonomy({id} | 'category' | 'array[alias_of,count,description,filter,name,parent,slug,taxonomy,term_group,term_id,term_taxonomy_id]')",
+                "edited_term_taxonomy({id} | 'category' | 'array[alias_of,count,description,filter,name,parent,slug,taxonomy,term_group,term_id,term_taxonomy_id]')",
+                "edit_term({id} | {id} | 'category' | 'array[alias_of,count,description,filter,name,parent,slug,taxonomy,term_group,term_id,term_taxonomy_id]')",
+                "term_id_filter({id} | {id} | 'array[alias_of,count,description,filter,name,parent,slug,taxonomy,term_group,term_id,term_taxonomy_id]')",
+                "edited_term({id} | {id} | 'category' | 'array[alias_of,count,description,filter,name,parent,slug,taxonomy,term_group,term_id,term_taxonomy_id]')",
+                "saved_term({id} | {id} | 'category' | true | 'array[alias_of,count,description,filter,name,parent,slug,taxonomy,term_group,term_id,term_taxonomy_id]')"
+            ]
+        }
+    ],
+    [
+        "the loop stored",
+        [
+            0,
+            "kid under dad"
+        ]
+    ],
+    [
+        "a name with a backslash",
+        {
+            "result": "ids",
+            "filters": [
+                "pre_insert_term('zz term probe back\\\\slash \\\\\"q\\\\\"' | 'post_tag' | 'array[]')",
+                "pre_term_name('zz term probe back\\\\slash \\\\\"q\\\\\"' | 'post_tag')",
+                "pre_post_tag_name('zz term probe backslash \\\\\"q\\\\\"')",
+                "pre_term_description('' | 'post_tag')",
+                "pre_post_tag_description('')",
+                "pre_term_slug('' | 'post_tag')",
+                "pre_post_tag_slug('')",
+                "pre_category_nicename('')",
+                "pre_term_parent(0 | 'post_tag')",
+                "pre_post_tag_parent(0)",
+                "pre_term_name('zz term probe backslash \"q\"' | 'post_tag')",
+                "pre_post_tag_name('zz term probe backslash \\\\\"q\\\\\"')",
+                "pre_term_name('zz-term-probe-backslash-q' | false)",
+                "pre__name('zz-term-probe-backslash-q')",
+                "wp_unique_term_slug_is_bad_slug(false | 'zz-term-probe-backslash-q' | 'object:stdClass')",
+                "wp_unique_term_slug('zz-term-probe-backslash-q' | 'object:stdClass' | 'zz-term-probe-backslash-q')",
+                "wp_insert_term_data('array[name,slug,term_group]' | 'post_tag' | 'array[alias_of,description,filter,name,parent,slug,taxonomy]')",
+                "wp_insert_term_duplicate_term_check(NULL | 'zz term probe back\\\\slash \\\\\"q\\\\\"' | 'post_tag' | 'array[alias_of,description,filter,name,parent,slug,taxonomy]' | {id})",
+                "create_term({id} | {id} | 'post_tag' | 'array[alias_of,description,filter,name,parent,slug,taxonomy]')",
+                "term_id_filter({id} | {id} | 'array[alias_of,description,filter,name,parent,slug,taxonomy]')",
+                "created_term({id} | {id} | 'post_tag' | 'array[alias_of,description,filter,name,parent,slug,taxonomy]')",
+                "saved_term({id} | {id} | 'post_tag' | false | 'array[alias_of,description,filter,name,parent,slug,taxonomy]')"
+            ]
+        }
+    ],
+    [
+        "the backslash stored",
+        [
+            "zz term probe backslash \"q\"",
+            "zz-term-probe-backslash-q"
+        ]
+    ],
+    [
+        "a backslash described",
+        "Kept in C:\\files\\x"
+    ],
+    [
+        "kept through a rename",
+        "Kept in C:\\files\\x"
+    ],
+    [
+        "a number another taxonomy holds",
+        {
+            "result": "ids",
+            "filters": [
+                "pre_insert_term('zz term probe third' | 'category' | 'array[slug]')",
+                "pre_term_name('zz term probe third' | 'category')",
+                "pre_category_name('zz term probe third')",
+                "pre_term_description('' | 'category')",
+                "pre_category_description('')",
+                "pre_term_slug('zz-term-probe-dad' | 'category')",
+                "pre_category_slug('zz-term-probe-dad')",
+                "pre_category_nicename('zz-term-probe-dad')",
+                "pre_term_parent(0 | 'category')",
+                "pre_category_parent(0)",
+                "pre_term_name('zz term probe third' | 'category')",
+                "pre_category_name('zz term probe third')",
+                "wp_unique_term_slug_is_bad_slug(true | 'zz-term-probe-dad' | 'object:stdClass')",
+                "wp_unique_term_slug('zz-term-probe-dad-4' | 'object:stdClass' | 'zz-term-probe-dad')",
+                "wp_insert_term_data('array[name,slug,term_group]' | 'category' | 'array[alias_of,description,filter,name,parent,slug,taxonomy]')",
+                "wp_insert_term_duplicate_term_check(NULL | 'zz term probe third' | 'category' | 'array[alias_of,description,filter,name,parent,slug,taxonomy]' | {id})",
+                "create_term({id} | {id} | 'category' | 'array[alias_of,description,filter,name,parent,slug,taxonomy]')",
+                "term_id_filter({id} | {id} | 'array[alias_of,description,filter,name,parent,slug,taxonomy]')",
+                "created_term({id} | {id} | 'category' | 'array[alias_of,description,filter,name,parent,slug,taxonomy]')",
+                "saved_term({id} | {id} | 'category' | false | 'array[alias_of,description,filter,name,parent,slug,taxonomy]')"
+            ]
+        }
+    ],
+    [
+        "numbered past it",
+        "zz-term-probe-dad-4"
+    ],
+    [
+        "a slug only another taxonomy holds",
+        {
+            "result": "ids",
+            "filters": [
+                "pre_insert_term('zz term probe shared' | 'post_tag' | 'array[slug]')",
+                "pre_term_name('zz term probe shared' | 'post_tag')",
+                "pre_post_tag_name('zz term probe shared')",
+                "pre_term_description('' | 'post_tag')",
+                "pre_post_tag_description('')",
+                "pre_term_slug('zz-term-probe-dad' | 'post_tag')",
+                "pre_post_tag_slug('zz-term-probe-dad')",
+                "pre_category_nicename('zz-term-probe-dad')",
+                "pre_term_parent(0 | 'post_tag')",
+                "pre_post_tag_parent(0)",
+                "pre_term_name('zz term probe shared' | 'post_tag')",
+                "pre_post_tag_name('zz term probe shared')",
+                "wp_unique_term_slug_is_bad_slug(false | 'zz-term-probe-dad' | 'object:stdClass')",
+                "wp_unique_term_slug('zz-term-probe-dad' | 'object:stdClass' | 'zz-term-probe-dad')",
+                "wp_insert_term_data('array[name,slug,term_group]' | 'post_tag' | 'array[alias_of,description,filter,name,parent,slug,taxonomy]')",
+                "wp_insert_term_duplicate_term_check(NULL | 'zz term probe shared' | 'post_tag' | 'array[alias_of,description,filter,name,parent,slug,taxonomy]' | {id})",
+                "create_term({id} | {id} | 'post_tag' | 'array[alias_of,description,filter,name,parent,slug,taxonomy]')",
+                "term_id_filter({id} | {id} | 'array[alias_of,description,filter,name,parent,slug,taxonomy]')",
+                "created_term({id} | {id} | 'post_tag' | 'array[alias_of,description,filter,name,parent,slug,taxonomy]')",
+                "saved_term({id} | {id} | 'post_tag' | false | 'array[alias_of,description,filter,name,parent,slug,taxonomy]')"
+            ]
+        }
+    ],
+    [
+        "kept as asked",
+        "zz-term-probe-dad"
+    ],
+    [
+        "an edit clearing the slug",
+        {
+            "result": "ids",
+            "filters": [
+                "pre_term_term_id({id} | 'category')",
+                "pre_term_name('zz term probe one edited' | 'category')",
+                "pre_category_name('zz term probe one edited')",
+                "pre_term_description('' | 'category')",
+                "pre_category_description('')",
+                "pre_term_slug('' | 'category')",
+                "pre_category_slug('')",
+                "pre_category_nicename('')",
+                "pre_term_count(0 | 'category')",
+                "pre_term_parent(0 | 'category')",
+                "pre_category_parent(0)",
+                "pre_term_term_group(0 | 'category')",
+                "pre_term_term_taxonomy_id({id} | 'category')",
+                "wp_update_term_parent(0 | {id} | 'category' | 'array[alias_of,count,description,filter,name,parent,slug,taxonomy,term_group,term_id,term_taxonomy_id]' | 'array[alias_of,count,description,filter,name,parent,slug,taxonomy,term_group,term_id,term_taxonomy_id]')",
+                "edit_terms({id} | 'category' | 'array[alias_of,count,description,filter,name,parent,slug,taxonomy,term_group,term_id,term_taxonomy_id]')",
+                "wp_update_term_data('array[name,slug,term_group]' | {id} | 'category' | 'array[alias_of,count,description,filter,name,parent,slug,taxonomy,term_group,term_id,term_taxonomy_id]')",
+                "edited_terms({id} | 'category' | 'array[alias_of,count,description,filter,name,parent,slug,taxonomy,term_group,term_id,term_taxonomy_id]')",
+                "edit_term_taxonomy({id} | 'category' | 'array[alias_of,count,description,filter,name,parent,slug,taxonomy,term_group,term_id,term_taxonomy_id]')",
+                "edited_term_taxonomy({id} | 'category' | 'array[alias_of,count,description,filter,name,parent,slug,taxonomy,term_group,term_id,term_taxonomy_id]')",
+                "edit_term({id} | {id} | 'category' | 'array[alias_of,count,description,filter,name,parent,slug,taxonomy,term_group,term_id,term_taxonomy_id]')",
+                "term_id_filter({id} | {id} | 'array[alias_of,count,description,filter,name,parent,slug,taxonomy,term_group,term_id,term_taxonomy_id]')",
+                "edited_term({id} | {id} | 'category' | 'array[alias_of,count,description,filter,name,parent,slug,taxonomy,term_group,term_id,term_taxonomy_id]')",
+                "saved_term({id} | {id} | 'category' | true | 'array[alias_of,count,description,filter,name,parent,slug,taxonomy,term_group,term_id,term_taxonomy_id]')"
+            ]
+        }
+    ],
+    [
+        "the cleared slug",
+        "zz-term-probe-one-edited"
+    ],
+    [
+        "a plugin changes the save",
+        [
+            "zz term probe changed (pre)",
+            "zz-term-probe-changed-pre-zz",
+            7
+        ]
+    ],
+    [
+        "pre_insert_term refuses",
+        {
+            "result": [
+                "zz_refused",
+                "Refused by a plugin.",
+                "null"
+            ],
+            "filters": [
+                "pre_insert_term('zz term probe refused' | 'category' | 'array[]')"
+            ]
+        }
+    ]
+]

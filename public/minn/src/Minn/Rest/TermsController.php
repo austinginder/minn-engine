@@ -136,6 +136,14 @@ final readonly class TermsController
         if ($name === '') {
             throw RestError::missingParams(['name']);
         }
+        $this->requireParent($config['has_parent'] ? (int) ($body['parent'] ?? 0) : 0, $taxonomy);
+        $events = new TermEvents();
+        if ($events->live()) {
+            $termId = $events->restCreate($taxonomy, $body, $request);
+            $events->restSaved($termId, $taxonomy, $request, 'create');
+            return Reply::item($this->object->view($this->terms->row($termId, $taxonomy), $base), Fields::fromQuery($request->query), 201)
+                ->withHeader('Location', $this->object->url()->to("/wp/v2/{$base}/{$termId}"));
+        }
         // A same-name term is the reference's term_exists refusal, which hands
         // the existing id back in data AND in an additional_data list.
         $existing = $this->terms->idByName($name, $taxonomy);
@@ -150,8 +158,7 @@ final readonly class TermsController
         }
         $slug = $this->terms->uniqueSlug((string) ($body['slug'] ?? '') !== '' ? (string) $body['slug'] : $name, $taxonomy);
         $args = ['slug' => $slug, 'description' => Kses::comment((string) ($body['description'] ?? '')), 'parent' => $config['has_parent'] ? (int) ($body['parent'] ?? 0) : 0];
-        $events = new TermEvents();
-        $termId = $events->create($name, $taxonomy, $args, fn (): int => $this->terms->create($name, $slug, $taxonomy, $args['description'], $args['parent']));
+        $termId = $this->terms->create($name, $slug, $taxonomy, $args['description'], $args['parent']);
         $events->restSaved($termId, $taxonomy, $request, 'create');
         return Reply::item($this->object->view($this->terms->row($termId, $taxonomy), $base), Fields::fromQuery($request->query), 201)
             ->withHeader('Location', $this->object->url()->to("/wp/v2/{$base}/{$termId}"));
@@ -174,23 +181,34 @@ final readonly class TermsController
             throw $this->caller->refuse('rest_cannot_update', 'Sorry, you are not allowed to edit this term.');
         }
         $body = $request->json();
+        $this->requireParent($config['has_parent'] ? (int) ($body['parent'] ?? 0) : 0, $taxonomy);
+        $events = new TermEvents();
+        if ($events->live()) {
+            $events->restUpdate($termId, $taxonomy, $body, $request);
+            $events->restSaved($termId, $taxonomy, $request, 'update');
+            return Reply::item($this->object->view($this->terms->row($termId, $taxonomy), $base), Fields::fromQuery($request->query));
+        }
         $args = array_filter([
             'name' => isset($body['name']) ? Kses::text((string) $body['name']) : null,
             'slug' => isset($body['slug']) ? $this->terms->uniqueSlug((string) $body['slug'], $taxonomy, $termId) : null,
             'description' => isset($body['description']) ? Kses::comment((string) $body['description']) : null,
             'parent' => $config['has_parent'] && isset($body['parent']) ? (int) $body['parent'] : null,
         ], static fn ($v) => $v !== null);
-        $events = new TermEvents();
-        $events->update($termId, $taxonomy, $args, function () use ($termId, $taxonomy, $term, $args): void {
-            if (isset($args['name']) || isset($args['slug'])) {
-                $this->terms->rename($termId, (string) ($args['name'] ?? $term['name']), (string) ($args['slug'] ?? $term['slug']));
-            }
-            if (isset($args['description']) || isset($args['parent'])) {
-                $this->terms->describe($termId, $taxonomy, (string) ($args['description'] ?? $term['description']), (int) ($args['parent'] ?? $term['parent']));
-            }
-        });
-        $events->restSaved($termId, $taxonomy, $request, 'update');
+        if (isset($args['name']) || isset($args['slug'])) {
+            $this->terms->rename($termId, (string) ($args['name'] ?? $term['name']), (string) ($args['slug'] ?? $term['slug']));
+        }
+        if (isset($args['description']) || isset($args['parent'])) {
+            $this->terms->describe($termId, $taxonomy, (string) ($args['description'] ?? $term['description']), (int) ($args['parent'] ?? $term['parent']));
+        }
         return Reply::item($this->object->view($this->terms->row($termId, $taxonomy), $base), Fields::fromQuery($request->query));
+    }
+
+    /** The reference's refusal of a parent that is not there, before anything is saved. */
+    private function requireParent(int $parent, string $taxonomy): void
+    {
+        if ($parent > 0 && $this->terms->row($parent, $taxonomy) === null) {
+            throw new RestError('rest_term_invalid', 'Parent term does not exist.', 400);
+        }
     }
 
     /** The default category is capability-denied before the force check. */

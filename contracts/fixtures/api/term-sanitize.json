@@ -1,0 +1,1136 @@
+[
+    [
+        "raw name category",
+        {
+            "out": " A <b>\"bold\"</b> & &amp; 'quoted' <script>x()</script>\nline ",
+            "filters": []
+        }
+    ],
+    [
+        "raw name post_tag",
+        {
+            "out": " A <b>\"bold\"</b> & &amp; 'quoted' <script>x()</script>\nline ",
+            "filters": []
+        }
+    ],
+    [
+        "raw description category",
+        {
+            "out": " A <b>\"bold\"</b> & &amp; 'quoted' <script>x()</script>\nline ",
+            "filters": []
+        }
+    ],
+    [
+        "raw slug category",
+        {
+            "out": " Some Slug & Co ",
+            "filters": []
+        }
+    ],
+    [
+        "raw slug post_tag",
+        {
+            "out": " Some Slug & Co ",
+            "filters": []
+        }
+    ],
+    [
+        "raw parent category",
+        {
+            "out": 12,
+            "filters": []
+        }
+    ],
+    [
+        "raw term_id category",
+        {
+            "out": 7,
+            "filters": []
+        }
+    ],
+    [
+        "raw count category",
+        {
+            "out": 0,
+            "filters": []
+        }
+    ],
+    [
+        "raw term_group category",
+        {
+            "out": 0,
+            "filters": []
+        }
+    ],
+    [
+        "raw term_taxonomy_id category",
+        {
+            "out": 0,
+            "filters": []
+        }
+    ],
+    [
+        "raw object_id category",
+        {
+            "out": 9,
+            "filters": []
+        }
+    ],
+    [
+        "edit name category",
+        {
+            "out": " A &lt;b&gt;&quot;bold&quot;&lt;/b&gt; &amp; &amp; &#039;quoted&#039; &lt;script&gt;x()&lt;/script&gt;\nline ",
+            "filters": [
+                "edit_term_name(' A <b>\"bold\"</b> & &amp; \\'quoted\\' <script>x()</script>\nline ' | 3 | 'category')",
+                "edit_category_name(' A <b>\"bold\"</b> & &amp; \\'quoted\\' <script>x()</script>\nline ' | 3)"
+            ]
+        }
+    ],
+    [
+        "edit name post_tag",
+        {
+            "out": " A &lt;b&gt;&quot;bold&quot;&lt;/b&gt; &amp; &amp; &#039;quoted&#039; &lt;script&gt;x()&lt;/script&gt;\nline ",
+            "filters": [
+                "edit_term_name(' A <b>\"bold\"</b> & &amp; \\'quoted\\' <script>x()</script>\nline ' | 3 | 'post_tag')",
+                "edit_post_tag_name(' A <b>\"bold\"</b> & &amp; \\'quoted\\' <script>x()</script>\nline ' | 3)"
+            ]
+        }
+    ],
+    [
+        "edit description category",
+        {
+            "out": " A &lt;b&gt;&quot;bold&quot;&lt;/b&gt; &amp; &amp; &#039;quoted&#039; &lt;script&gt;x()&lt;/script&gt;\nline ",
+            "filters": [
+                "edit_term_description(' A <b>\"bold\"</b> & &amp; \\'quoted\\' <script>x()</script>\nline ' | 3 | 'category')",
+                "edit_category_description(' A <b>\"bold\"</b> & &amp; \\'quoted\\' <script>x()</script>\nline ' | 3)"
+            ]
+        }
+    ],
+    [
+        "edit slug category",
+        {
+            "out": " Some Slug &amp; Co ",
+            "filters": [
+                "edit_term_slug(' Some Slug & Co ' | 3 | 'category')",
+                "edit_category_slug(' Some Slug & Co ' | 3)"
+            ]
+        }
+    ],
+    [
+        "edit slug post_tag",
+        {
+            "out": " Some Slug &amp; Co ",
+            "filters": [
+                "edit_term_slug(' Some Slug & Co ' | 3 | 'post_tag')",
+                "edit_post_tag_slug(' Some Slug & Co ' | 3)"
+            ]
+        }
+    ],
+    [
+        "edit parent category",
+        {
+            "out": 12,
+            "filters": [
+                "edit_term_parent(12 | 3 | 'category')",
+                "edit_category_parent(12 | 3)"
+            ]
+        }
+    ],
+    [
+        "edit term_id category",
+        {
+            "out": 7,
+            "filters": [
+                "edit_term_term_id(7 | 3 | 'category')",
+                "edit_category_term_id(7 | 3)"
+            ]
+        }
+    ],
+    [
+        "edit count category",
+        {
+            "out": 0,
+            "filters": [
+                "edit_term_count(0 | 3 | 'category')",
+                "edit_category_count(0 | 3)"
+            ]
+        }
+    ],
+    [
+        "edit term_group category",
+        {
+            "out": 0,
+            "filters": [
+                "edit_term_term_group(0 | 3 | 'category')",
+                "edit_category_term_group(0 | 3)"
+            ]
+        }
+    ],
+    [
+        "edit term_taxonomy_id category",
+        {
+            "out": 0,
+            "filters": [
+                "edit_term_term_taxonomy_id(0 | 3 | 'category')",
+                "edit_category_term_taxonomy_id(0 | 3)"
+            ]
+        }
+    ],
+    [
+        "edit object_id category",
+        {
+            "out": 9,
+            "filters": [
+                "edit_term_object_id(9 | 3 | 'category')",
+                "edit_category_object_id(9 | 3)"
+            ]
+        }
+    ],
+    [
+        "db name category",
+        {
+            "out": "A \\\"bold\\\" &amp; &amp; \\'quoted\\' line",
+            "filters": [
+                "pre_term_name(' A <b>\"bold\"</b> & &amp; \\'quoted\\' <script>x()</script>\nline ' | 'category')",
+                "pre_category_name('A \\\\\"bold\\\\\" &amp; &amp; \\\\\\'quoted\\\\\\' line')"
+            ]
+        }
+    ],
+    [
+        "db name post_tag",
+        {
+            "out": "A \\\"bold\\\" &amp; &amp; \\'quoted\\' line",
+            "filters": [
+                "pre_term_name(' A <b>\"bold\"</b> & &amp; \\'quoted\\' <script>x()</script>\nline ' | 'post_tag')",
+                "pre_post_tag_name('A \\\\\"bold\\\\\" &amp; &amp; \\\\\\'quoted\\\\\\' line')"
+            ]
+        }
+    ],
+    [
+        "db description category",
+        {
+            "out": " A <b>\\\"bold\\\"</b> &amp; &amp; \\'quoted\\' x()\nline ",
+            "filters": [
+                "pre_term_description(' A <b>\"bold\"</b> & &amp; \\'quoted\\' <script>x()</script>\nline ' | 'category')",
+                "pre_category_description(' A <b>\\\\\"bold\\\\\"</b> &amp; &amp; \\\\\\'quoted\\\\\\' x()\nline ')"
+            ]
+        }
+    ],
+    [
+        "db slug category",
+        {
+            "out": "some-slug-co",
+            "filters": [
+                "pre_term_slug(' Some Slug & Co ' | 'category')",
+                "pre_category_slug('some-slug-co')"
+            ]
+        }
+    ],
+    [
+        "db slug post_tag",
+        {
+            "out": "some-slug-co",
+            "filters": [
+                "pre_term_slug(' Some Slug & Co ' | 'post_tag')",
+                "pre_post_tag_slug('some-slug-co')"
+            ]
+        }
+    ],
+    [
+        "db parent category",
+        {
+            "out": 12,
+            "filters": [
+                "pre_term_parent(12 | 'category')",
+                "pre_category_parent(12)"
+            ]
+        }
+    ],
+    [
+        "db term_id category",
+        {
+            "out": 7,
+            "filters": [
+                "pre_term_term_id(7 | 'category')",
+                "pre_category_term_id(7)"
+            ]
+        }
+    ],
+    [
+        "db count category",
+        {
+            "out": 0,
+            "filters": [
+                "pre_term_count(0 | 'category')",
+                "pre_category_count(0)"
+            ]
+        }
+    ],
+    [
+        "db term_group category",
+        {
+            "out": 0,
+            "filters": [
+                "pre_term_term_group(0 | 'category')",
+                "pre_category_term_group(0)"
+            ]
+        }
+    ],
+    [
+        "db term_taxonomy_id category",
+        {
+            "out": 0,
+            "filters": [
+                "pre_term_term_taxonomy_id(0 | 'category')",
+                "pre_category_term_taxonomy_id(0)"
+            ]
+        }
+    ],
+    [
+        "db object_id category",
+        {
+            "out": 9,
+            "filters": [
+                "pre_term_object_id(9 | 'category')",
+                "pre_category_object_id(9)"
+            ]
+        }
+    ],
+    [
+        "display name category",
+        {
+            "out": " A &lt;b&gt;&#8220;bold&#8221;&lt;/b&gt; &#038; &amp; &#8216;quoted&#8217; &lt;script&gt;x()&lt;/script&gt;\nline ",
+            "filters": [
+                "term_name(' A <b>\"bold\"</b> & &amp; \\'quoted\\' <script>x()</script>\nline ' | 3 | 'category' | 'display')",
+                "category_name(' A &lt;b&gt;&#8220;bold&#8221;&lt;/b&gt; &#038; &amp; &#8216;quoted&#8217; &lt;script&gt;x()&lt;/script&gt;\nline ' | 3 | 'display')"
+            ]
+        }
+    ],
+    [
+        "display name post_tag",
+        {
+            "out": " A &lt;b&gt;&#8220;bold&#8221;&lt;/b&gt; &#038; &amp; &#8216;quoted&#8217; &lt;script&gt;x()&lt;/script&gt;\nline ",
+            "filters": [
+                "term_name(' A <b>\"bold\"</b> & &amp; \\'quoted\\' <script>x()</script>\nline ' | 3 | 'post_tag' | 'display')",
+                "post_tag_name(' A &lt;b&gt;&#8220;bold&#8221;&lt;/b&gt; &#038; &amp; &#8216;quoted&#8217; &lt;script&gt;x()&lt;/script&gt;\nline ' | 3 | 'display')"
+            ]
+        }
+    ],
+    [
+        "display description category",
+        {
+            "out": "<p> A <b>&#8220;bold&#8221;</b> &#038; &amp; &#8216;quoted&#8217; <script>x()</script><br />\nline </p>\n",
+            "filters": [
+                "term_description(' A <b>\"bold\"</b> & &amp; \\'quoted\\' <script>x()</script>\nline ' | 3 | 'category' | 'display')",
+                "category_description('<p> A <b>&#8220;bold&#8221;</b> &#038; &amp; &#8216;quoted&#8217; <script>x()</script><br />\nline </p>\n' | 3 | 'display')"
+            ]
+        }
+    ],
+    [
+        "display slug category",
+        {
+            "out": " Some Slug & Co ",
+            "filters": [
+                "term_slug(' Some Slug & Co ' | 3 | 'category' | 'display')",
+                "category_slug(' Some Slug & Co ' | 3 | 'display')"
+            ]
+        }
+    ],
+    [
+        "display slug post_tag",
+        {
+            "out": " Some Slug & Co ",
+            "filters": [
+                "term_slug(' Some Slug & Co ' | 3 | 'post_tag' | 'display')",
+                "post_tag_slug(' Some Slug & Co ' | 3 | 'display')"
+            ]
+        }
+    ],
+    [
+        "display parent category",
+        {
+            "out": 12,
+            "filters": [
+                "term_parent(12 | 3 | 'category' | 'display')",
+                "category_parent(12 | 3 | 'display')"
+            ]
+        }
+    ],
+    [
+        "display term_id category",
+        {
+            "out": 7,
+            "filters": [
+                "term_term_id(7 | 3 | 'category' | 'display')",
+                "category_term_id(7 | 3 | 'display')"
+            ]
+        }
+    ],
+    [
+        "display count category",
+        {
+            "out": 0,
+            "filters": [
+                "term_count(0 | 3 | 'category' | 'display')",
+                "category_count(0 | 3 | 'display')"
+            ]
+        }
+    ],
+    [
+        "display term_group category",
+        {
+            "out": 0,
+            "filters": [
+                "term_term_group(0 | 3 | 'category' | 'display')",
+                "category_term_group(0 | 3 | 'display')"
+            ]
+        }
+    ],
+    [
+        "display term_taxonomy_id category",
+        {
+            "out": 0,
+            "filters": [
+                "term_term_taxonomy_id(0 | 3 | 'category' | 'display')",
+                "category_term_taxonomy_id(0 | 3 | 'display')"
+            ]
+        }
+    ],
+    [
+        "display object_id category",
+        {
+            "out": 9,
+            "filters": [
+                "term_object_id(9 | 3 | 'category' | 'display')",
+                "category_object_id(9 | 3 | 'display')"
+            ]
+        }
+    ],
+    [
+        "attribute name category",
+        {
+            "out": " A &lt;b&gt;&#8220;bold&#8221;&lt;/b&gt; &#038; &amp; &#8216;quoted&#8217; &lt;script&gt;x()&lt;/script&gt;\nline ",
+            "filters": [
+                "term_name(' A <b>\"bold\"</b> & &amp; \\'quoted\\' <script>x()</script>\nline ' | 3 | 'category' | 'attribute')",
+                "category_name(' A &lt;b&gt;&#8220;bold&#8221;&lt;/b&gt; &#038; &amp; &#8216;quoted&#8217; &lt;script&gt;x()&lt;/script&gt;\nline ' | 3 | 'attribute')"
+            ]
+        }
+    ],
+    [
+        "attribute name post_tag",
+        {
+            "out": " A &lt;b&gt;&#8220;bold&#8221;&lt;/b&gt; &#038; &amp; &#8216;quoted&#8217; &lt;script&gt;x()&lt;/script&gt;\nline ",
+            "filters": [
+                "term_name(' A <b>\"bold\"</b> & &amp; \\'quoted\\' <script>x()</script>\nline ' | 3 | 'post_tag' | 'attribute')",
+                "post_tag_name(' A &lt;b&gt;&#8220;bold&#8221;&lt;/b&gt; &#038; &amp; &#8216;quoted&#8217; &lt;script&gt;x()&lt;/script&gt;\nline ' | 3 | 'attribute')"
+            ]
+        }
+    ],
+    [
+        "attribute description category",
+        {
+            "out": "&lt;p&gt; A &lt;b&gt;&#8220;bold&#8221;&lt;/b&gt; &#038; &amp; &#8216;quoted&#8217; &lt;script&gt;x()&lt;/script&gt;&lt;br /&gt;\nline &lt;/p&gt;\n",
+            "filters": [
+                "term_description(' A <b>\"bold\"</b> & &amp; \\'quoted\\' <script>x()</script>\nline ' | 3 | 'category' | 'attribute')",
+                "category_description('<p> A <b>&#8220;bold&#8221;</b> &#038; &amp; &#8216;quoted&#8217; <script>x()</script><br />\nline </p>\n' | 3 | 'attribute')"
+            ]
+        }
+    ],
+    [
+        "attribute slug category",
+        {
+            "out": " Some Slug &amp; Co ",
+            "filters": [
+                "term_slug(' Some Slug & Co ' | 3 | 'category' | 'attribute')",
+                "category_slug(' Some Slug & Co ' | 3 | 'attribute')"
+            ]
+        }
+    ],
+    [
+        "attribute slug post_tag",
+        {
+            "out": " Some Slug &amp; Co ",
+            "filters": [
+                "term_slug(' Some Slug & Co ' | 3 | 'post_tag' | 'attribute')",
+                "post_tag_slug(' Some Slug & Co ' | 3 | 'attribute')"
+            ]
+        }
+    ],
+    [
+        "attribute parent category",
+        {
+            "out": 12,
+            "filters": [
+                "term_parent(12 | 3 | 'category' | 'attribute')",
+                "category_parent(12 | 3 | 'attribute')"
+            ]
+        }
+    ],
+    [
+        "attribute term_id category",
+        {
+            "out": 7,
+            "filters": [
+                "term_term_id(7 | 3 | 'category' | 'attribute')",
+                "category_term_id(7 | 3 | 'attribute')"
+            ]
+        }
+    ],
+    [
+        "attribute count category",
+        {
+            "out": 0,
+            "filters": [
+                "term_count(0 | 3 | 'category' | 'attribute')",
+                "category_count(0 | 3 | 'attribute')"
+            ]
+        }
+    ],
+    [
+        "attribute term_group category",
+        {
+            "out": 0,
+            "filters": [
+                "term_term_group(0 | 3 | 'category' | 'attribute')",
+                "category_term_group(0 | 3 | 'attribute')"
+            ]
+        }
+    ],
+    [
+        "attribute term_taxonomy_id category",
+        {
+            "out": 0,
+            "filters": [
+                "term_term_taxonomy_id(0 | 3 | 'category' | 'attribute')",
+                "category_term_taxonomy_id(0 | 3 | 'attribute')"
+            ]
+        }
+    ],
+    [
+        "attribute object_id category",
+        {
+            "out": 9,
+            "filters": [
+                "term_object_id(9 | 3 | 'category' | 'attribute')",
+                "category_object_id(9 | 3 | 'attribute')"
+            ]
+        }
+    ],
+    [
+        "js name category",
+        {
+            "out": " A &lt;b&gt;&#8220;bold&#8221;&lt;/b&gt; &#038; &amp; &#8216;quoted&#8217; &lt;script&gt;x()&lt;/script&gt;\\nline ",
+            "filters": [
+                "term_name(' A <b>\"bold\"</b> & &amp; \\'quoted\\' <script>x()</script>\nline ' | 3 | 'category' | 'js')",
+                "category_name(' A &lt;b&gt;&#8220;bold&#8221;&lt;/b&gt; &#038; &amp; &#8216;quoted&#8217; &lt;script&gt;x()&lt;/script&gt;\nline ' | 3 | 'js')"
+            ]
+        }
+    ],
+    [
+        "js name post_tag",
+        {
+            "out": " A &lt;b&gt;&#8220;bold&#8221;&lt;/b&gt; &#038; &amp; &#8216;quoted&#8217; &lt;script&gt;x()&lt;/script&gt;\\nline ",
+            "filters": [
+                "term_name(' A <b>\"bold\"</b> & &amp; \\'quoted\\' <script>x()</script>\nline ' | 3 | 'post_tag' | 'js')",
+                "post_tag_name(' A &lt;b&gt;&#8220;bold&#8221;&lt;/b&gt; &#038; &amp; &#8216;quoted&#8217; &lt;script&gt;x()&lt;/script&gt;\nline ' | 3 | 'js')"
+            ]
+        }
+    ],
+    [
+        "js description category",
+        {
+            "out": "&lt;p&gt; A &lt;b&gt;&#8220;bold&#8221;&lt;/b&gt; &#038; &amp; &#8216;quoted&#8217; &lt;script&gt;x()&lt;/script&gt;&lt;br /&gt;\\nline &lt;/p&gt;\\n",
+            "filters": [
+                "term_description(' A <b>\"bold\"</b> & &amp; \\'quoted\\' <script>x()</script>\nline ' | 3 | 'category' | 'js')",
+                "category_description('<p> A <b>&#8220;bold&#8221;</b> &#038; &amp; &#8216;quoted&#8217; <script>x()</script><br />\nline </p>\n' | 3 | 'js')"
+            ]
+        }
+    ],
+    [
+        "js slug category",
+        {
+            "out": " Some Slug &amp; Co ",
+            "filters": [
+                "term_slug(' Some Slug & Co ' | 3 | 'category' | 'js')",
+                "category_slug(' Some Slug & Co ' | 3 | 'js')"
+            ]
+        }
+    ],
+    [
+        "js slug post_tag",
+        {
+            "out": " Some Slug &amp; Co ",
+            "filters": [
+                "term_slug(' Some Slug & Co ' | 3 | 'post_tag' | 'js')",
+                "post_tag_slug(' Some Slug & Co ' | 3 | 'js')"
+            ]
+        }
+    ],
+    [
+        "js parent category",
+        {
+            "out": 12,
+            "filters": [
+                "term_parent(12 | 3 | 'category' | 'js')",
+                "category_parent(12 | 3 | 'js')"
+            ]
+        }
+    ],
+    [
+        "js term_id category",
+        {
+            "out": 7,
+            "filters": [
+                "term_term_id(7 | 3 | 'category' | 'js')",
+                "category_term_id(7 | 3 | 'js')"
+            ]
+        }
+    ],
+    [
+        "js count category",
+        {
+            "out": 0,
+            "filters": [
+                "term_count(0 | 3 | 'category' | 'js')",
+                "category_count(0 | 3 | 'js')"
+            ]
+        }
+    ],
+    [
+        "js term_group category",
+        {
+            "out": 0,
+            "filters": [
+                "term_term_group(0 | 3 | 'category' | 'js')",
+                "category_term_group(0 | 3 | 'js')"
+            ]
+        }
+    ],
+    [
+        "js term_taxonomy_id category",
+        {
+            "out": 0,
+            "filters": [
+                "term_term_taxonomy_id(0 | 3 | 'category' | 'js')",
+                "category_term_taxonomy_id(0 | 3 | 'js')"
+            ]
+        }
+    ],
+    [
+        "js object_id category",
+        {
+            "out": 9,
+            "filters": [
+                "term_object_id(9 | 3 | 'category' | 'js')",
+                "category_object_id(9 | 3 | 'js')"
+            ]
+        }
+    ],
+    [
+        "rss name category",
+        {
+            "out": " A <b>\"bold\"</b> &#038; &amp; 'quoted' <script>x()</script>\nline ",
+            "filters": [
+                "term_name_rss(' A <b>\"bold\"</b> & &amp; \\'quoted\\' <script>x()</script>\nline ' | 'category')",
+                "category_name_rss(' A <b>\"bold\"</b> &#038; &amp; \\'quoted\\' <script>x()</script>\nline ')"
+            ]
+        }
+    ],
+    [
+        "rss name post_tag",
+        {
+            "out": " A <b>\"bold\"</b> &#038; &amp; 'quoted' <script>x()</script>\nline ",
+            "filters": [
+                "term_name_rss(' A <b>\"bold\"</b> & &amp; \\'quoted\\' <script>x()</script>\nline ' | 'post_tag')",
+                "post_tag_name_rss(' A <b>\"bold\"</b> &#038; &amp; \\'quoted\\' <script>x()</script>\nline ')"
+            ]
+        }
+    ],
+    [
+        "rss description category",
+        {
+            "out": " A <b>\"bold\"</b> & &amp; 'quoted' <script>x()</script>\nline ",
+            "filters": [
+                "term_description_rss(' A <b>\"bold\"</b> & &amp; \\'quoted\\' <script>x()</script>\nline ' | 'category')",
+                "category_description_rss(' A <b>\"bold\"</b> & &amp; \\'quoted\\' <script>x()</script>\nline ')"
+            ]
+        }
+    ],
+    [
+        "rss slug category",
+        {
+            "out": " Some Slug & Co ",
+            "filters": [
+                "term_slug_rss(' Some Slug & Co ' | 'category')",
+                "category_slug_rss(' Some Slug & Co ')"
+            ]
+        }
+    ],
+    [
+        "rss slug post_tag",
+        {
+            "out": " Some Slug & Co ",
+            "filters": [
+                "term_slug_rss(' Some Slug & Co ' | 'post_tag')",
+                "post_tag_slug_rss(' Some Slug & Co ')"
+            ]
+        }
+    ],
+    [
+        "rss parent category",
+        {
+            "out": 12,
+            "filters": [
+                "term_parent_rss(12 | 'category')",
+                "category_parent_rss(12)"
+            ]
+        }
+    ],
+    [
+        "rss term_id category",
+        {
+            "out": 7,
+            "filters": [
+                "term_term_id_rss(7 | 'category')",
+                "category_term_id_rss(7)"
+            ]
+        }
+    ],
+    [
+        "rss count category",
+        {
+            "out": 0,
+            "filters": [
+                "term_count_rss(0 | 'category')",
+                "category_count_rss(0)"
+            ]
+        }
+    ],
+    [
+        "rss term_group category",
+        {
+            "out": 0,
+            "filters": [
+                "term_term_group_rss(0 | 'category')",
+                "category_term_group_rss(0)"
+            ]
+        }
+    ],
+    [
+        "rss term_taxonomy_id category",
+        {
+            "out": 0,
+            "filters": [
+                "term_term_taxonomy_id_rss(0 | 'category')",
+                "category_term_taxonomy_id_rss(0)"
+            ]
+        }
+    ],
+    [
+        "rss object_id category",
+        {
+            "out": 9,
+            "filters": [
+                "term_object_id_rss(9 | 'category')",
+                "category_object_id_rss(9)"
+            ]
+        }
+    ],
+    [
+        "other name category",
+        {
+            "out": " A &lt;b&gt;&#8220;bold&#8221;&lt;/b&gt; &#038; &amp; &#8216;quoted&#8217; &lt;script&gt;x()&lt;/script&gt;\nline ",
+            "filters": [
+                "term_name(' A <b>\"bold\"</b> & &amp; \\'quoted\\' <script>x()</script>\nline ' | 3 | 'category' | 'other')",
+                "category_name(' A &lt;b&gt;&#8220;bold&#8221;&lt;/b&gt; &#038; &amp; &#8216;quoted&#8217; &lt;script&gt;x()&lt;/script&gt;\nline ' | 3 | 'other')"
+            ]
+        }
+    ],
+    [
+        "other name post_tag",
+        {
+            "out": " A &lt;b&gt;&#8220;bold&#8221;&lt;/b&gt; &#038; &amp; &#8216;quoted&#8217; &lt;script&gt;x()&lt;/script&gt;\nline ",
+            "filters": [
+                "term_name(' A <b>\"bold\"</b> & &amp; \\'quoted\\' <script>x()</script>\nline ' | 3 | 'post_tag' | 'other')",
+                "post_tag_name(' A &lt;b&gt;&#8220;bold&#8221;&lt;/b&gt; &#038; &amp; &#8216;quoted&#8217; &lt;script&gt;x()&lt;/script&gt;\nline ' | 3 | 'other')"
+            ]
+        }
+    ],
+    [
+        "other description category",
+        {
+            "out": "<p> A <b>&#8220;bold&#8221;</b> &#038; &amp; &#8216;quoted&#8217; <script>x()</script><br />\nline </p>\n",
+            "filters": [
+                "term_description(' A <b>\"bold\"</b> & &amp; \\'quoted\\' <script>x()</script>\nline ' | 3 | 'category' | 'other')",
+                "category_description('<p> A <b>&#8220;bold&#8221;</b> &#038; &amp; &#8216;quoted&#8217; <script>x()</script><br />\nline </p>\n' | 3 | 'other')"
+            ]
+        }
+    ],
+    [
+        "other slug category",
+        {
+            "out": " Some Slug & Co ",
+            "filters": [
+                "term_slug(' Some Slug & Co ' | 3 | 'category' | 'other')",
+                "category_slug(' Some Slug & Co ' | 3 | 'other')"
+            ]
+        }
+    ],
+    [
+        "other slug post_tag",
+        {
+            "out": " Some Slug & Co ",
+            "filters": [
+                "term_slug(' Some Slug & Co ' | 3 | 'post_tag' | 'other')",
+                "post_tag_slug(' Some Slug & Co ' | 3 | 'other')"
+            ]
+        }
+    ],
+    [
+        "other parent category",
+        {
+            "out": 12,
+            "filters": [
+                "term_parent(12 | 3 | 'category' | 'other')",
+                "category_parent(12 | 3 | 'other')"
+            ]
+        }
+    ],
+    [
+        "other term_id category",
+        {
+            "out": 7,
+            "filters": [
+                "term_term_id(7 | 3 | 'category' | 'other')",
+                "category_term_id(7 | 3 | 'other')"
+            ]
+        }
+    ],
+    [
+        "other count category",
+        {
+            "out": 0,
+            "filters": [
+                "term_count(0 | 3 | 'category' | 'other')",
+                "category_count(0 | 3 | 'other')"
+            ]
+        }
+    ],
+    [
+        "other term_group category",
+        {
+            "out": 0,
+            "filters": [
+                "term_term_group(0 | 3 | 'category' | 'other')",
+                "category_term_group(0 | 3 | 'other')"
+            ]
+        }
+    ],
+    [
+        "other term_taxonomy_id category",
+        {
+            "out": 0,
+            "filters": [
+                "term_term_taxonomy_id(0 | 3 | 'category' | 'other')",
+                "category_term_taxonomy_id(0 | 3 | 'other')"
+            ]
+        }
+    ],
+    [
+        "other object_id category",
+        {
+            "out": 9,
+            "filters": [
+                "term_object_id(9 | 3 | 'category' | 'other')",
+                "category_object_id(9 | 3 | 'other')"
+            ]
+        }
+    ],
+    [
+        "sanitize_term db",
+        {
+            "object": {
+                "term_id": 4,
+                "name": "A &amp; B",
+                "slug": "a-b",
+                "term_group": 0,
+                "term_taxonomy_id": 6,
+                "taxonomy": "category",
+                "description": "<em>d</em>",
+                "parent": 0,
+                "count": 2,
+                "filter": "db"
+            },
+            "array": {
+                "term_id": 4,
+                "name": "A &amp; B",
+                "slug": "a-b",
+                "term_group": 0,
+                "term_taxonomy_id": 6,
+                "taxonomy": "category",
+                "description": "<em>d</em>",
+                "parent": 0,
+                "count": 2,
+                "filter": "db"
+            }
+        }
+    ],
+    [
+        "sanitize_term display",
+        {
+            "object": {
+                "term_id": 4,
+                "name": "A &#038; B",
+                "slug": "a-b",
+                "term_group": 0,
+                "term_taxonomy_id": 6,
+                "taxonomy": "category",
+                "description": "<p><em>d</em></p>\n",
+                "parent": 0,
+                "count": 2,
+                "filter": "display"
+            },
+            "array": {
+                "term_id": 4,
+                "name": "A &#038; B",
+                "slug": "a-b",
+                "term_group": 0,
+                "term_taxonomy_id": 6,
+                "taxonomy": "category",
+                "description": "<p><em>d</em></p>\n",
+                "parent": 0,
+                "count": 2,
+                "filter": "display"
+            }
+        }
+    ],
+    [
+        "sanitize_term edit",
+        {
+            "object": {
+                "term_id": 4,
+                "name": "A &amp; B",
+                "slug": "a-b",
+                "term_group": 0,
+                "term_taxonomy_id": 6,
+                "taxonomy": "category",
+                "description": "&lt;em&gt;d&lt;/em&gt;",
+                "parent": 0,
+                "count": 2,
+                "filter": "edit"
+            },
+            "array": {
+                "term_id": 4,
+                "name": "A &amp; B",
+                "slug": "a-b",
+                "term_group": 0,
+                "term_taxonomy_id": 6,
+                "taxonomy": "category",
+                "description": "&lt;em&gt;d&lt;/em&gt;",
+                "parent": 0,
+                "count": 2,
+                "filter": "edit"
+            }
+        }
+    ],
+    [
+        "sanitize_term raw",
+        {
+            "object": {
+                "term_id": 4,
+                "name": "A & B",
+                "slug": "a-b",
+                "term_group": 0,
+                "term_taxonomy_id": 6,
+                "taxonomy": "category",
+                "description": "<em>d</em>",
+                "parent": 0,
+                "count": 2,
+                "filter": "raw"
+            },
+            "array": {
+                "term_id": 4,
+                "name": "A & B",
+                "slug": "a-b",
+                "term_group": 0,
+                "term_taxonomy_id": 6,
+                "taxonomy": "category",
+                "description": "<em>d</em>",
+                "parent": 0,
+                "count": 2,
+                "filter": "raw"
+            }
+        }
+    ],
+    [
+        "sanitize_term without an id",
+        {
+            "name": "A &#038; B",
+            "slug": "a-b",
+            "term_group": 0,
+            "term_taxonomy_id": 6,
+            "taxonomy": "category",
+            "description": "<p><em>d</em></p>\n",
+            "parent": 0,
+            "count": 2,
+            "filter": "display"
+        }
+    ],
+    [
+        "sanitize_term already in that context",
+        {
+            "term_id": 4,
+            "name": "A &#038; B",
+            "slug": "a-b",
+            "term_group": 0,
+            "term_taxonomy_id": 6,
+            "taxonomy": "category",
+            "description": "<p><em>d</em></p>\n",
+            "parent": 0,
+            "count": 2,
+            "filter": "display"
+        }
+    ],
+    [
+        "get_term display",
+        {
+            "out": [
+                "display",
+                "Uncategorized",
+                1
+            ],
+            "filters": [
+                "term_name('Uncategorized' | 1 | 'category' | 'display')",
+                "category_name('Uncategorized' | 1 | 'display')"
+            ]
+        }
+    ],
+    [
+        "get_term edit as array",
+        {
+            "out": "edit",
+            "filters": [
+                "edit_term_name('Uncategorized' | 1 | 'category')",
+                "edit_category_name('Uncategorized' | 1)"
+            ]
+        }
+    ],
+    [
+        "get_term raw",
+        {
+            "out": "raw",
+            "filters": []
+        }
+    ],
+    [
+        "get_term_field name",
+        {
+            "out": "Uncategorized",
+            "filters": [
+                "term_name('Uncategorized' | 1 | 'category' | 'display')",
+                "category_name('Uncategorized' | 1 | 'display')"
+            ]
+        }
+    ],
+    [
+        "get_term_field name raw",
+        {
+            "out": "Uncategorized",
+            "filters": []
+        }
+    ],
+    [
+        "get_term_field unknown",
+        {
+            "out": "",
+            "filters": []
+        }
+    ],
+    [
+        "get_term_field missing term",
+        {
+            "out": "",
+            "filters": []
+        }
+    ],
+    [
+        "WP_Term filter",
+        {
+            "out": [
+                null,
+                "display"
+            ],
+            "filters": [
+                "term_name('Uncategorized' | 1 | 'category' | 'display')",
+                "category_name('Uncategorized' | 1 | 'display')"
+            ]
+        }
+    ],
+    [
+        "get_category display",
+        {
+            "out": "display",
+            "filters": [
+                "term_name('Uncategorized' | 1 | 'category' | 'display')",
+                "category_name('Uncategorized' | 1 | 'display')"
+            ]
+        }
+    ],
+    [
+        "get_term_by display",
+        {
+            "out": "display",
+            "filters": [
+                "term_name('Uncategorized' | 1 | 'category' | 'display')",
+                "category_name('Uncategorized' | 1 | 'display')"
+            ]
+        }
+    ],
+    [
+        "default chains",
+        {
+            "pre_term_name": [
+                "10 sanitize_text_field 1",
+                "10 wp_filter_kses 1",
+                "30 _wp_specialchars 1"
+            ],
+            "pre_term_description": [
+                "10 wp_filter_kses 1"
+            ],
+            "pre_term_slug": [
+                "10 sanitize_title 1"
+            ],
+            "pre_term_parent": [],
+            "term_name": [
+                "10 wptexturize 1",
+                "10 convert_chars 1",
+                "10 esc_html 1",
+                "30 _wp_specialchars 1"
+            ],
+            "term_description": [
+                "10 wptexturize 1",
+                "10 convert_chars 1",
+                "10 wpautop 1",
+                "10 shortcode_unautop 1"
+            ],
+            "term_name_rss": [
+                "10 convert_chars 1"
+            ],
+            "term_description_rss": [],
+            "edit_term_name": [],
+            "edit_term_description": [],
+            "pre_category_name": [],
+            "pre_post_tag_name": [],
+            "category_description": [],
+            "term_slug": [],
+            "pre_category_nicename": [],
+            "pre_term_term_group": [],
+            "pre_term_count": [],
+            "wp_unique_term_slug": [],
+            "wp_insert_term_data": [],
+            "wp_update_term_data": [],
+            "term_id_filter": [],
+            "pre_insert_term": []
+        }
+    ]
+]

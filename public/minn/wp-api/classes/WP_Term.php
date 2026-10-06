@@ -38,9 +38,10 @@ final class WP_Term
         }
     }
 
+    /** Puts the term's fields in a context (display, edit, db and the rest) in place. */
     public function filter($filter)
     {
-        return $this;
+        sanitize_term($this, $this->taxonomy, $filter);
     }
 
     public function to_array()

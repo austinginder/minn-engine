@@ -102,6 +102,49 @@ final readonly class Terms
         });
     }
 
+    /**
+     * Inserts a terms row alone (name, slug, term_group), as the reference
+     * writes it before the taxonomy row; returns the term id.
+     *
+     * @param array{name: string, slug: string, term_group: int} $data
+     */
+    public function insertRow(array $data): int
+    {
+        $this->db->execute("INSERT INTO {$this->db->table('terms')} (name, slug, term_group) VALUES (?, ?, ?)", [$data['name'], $data['slug'], $data['term_group']]);
+        return $this->db->insertId();
+    }
+
+    /** Puts a term in a taxonomy; returns the term_taxonomy id. */
+    public function addToTaxonomy(int $termId, string $taxonomy, string $description, int $parent): int
+    {
+        $this->db->execute(
+            "INSERT INTO {$this->db->table('term_taxonomy')} (term_id, taxonomy, description, parent, count) VALUES (?, ?, ?, ?, 0)",
+            [$termId, $taxonomy, $description, $parent],
+        );
+        $ttId = $this->db->insertId();
+        if ($parent > 0 || $this->keepsHierarchy($taxonomy)) {
+            $this->refreshHierarchy($taxonomy);
+        }
+        return $ttId;
+    }
+
+    /**
+     * Rewrites a terms row (name, slug, term_group).
+     *
+     * @param array{name: string, slug: string, term_group: int} $data
+     */
+    public function updateRow(int $termId, array $data): void
+    {
+        $this->db->execute("UPDATE {$this->db->table('terms')} SET name = ?, slug = ?, term_group = ? WHERE term_id = ?", [$data['name'], $data['slug'], $data['term_group'], $termId]);
+    }
+
+    /** Drops a term's rows that a plugin's duplicate check said to give up. */
+    public function dropRows(int $termId, int $ttId): void
+    {
+        $this->db->execute("DELETE FROM {$this->db->table('term_taxonomy')} WHERE term_taxonomy_id = ?", [$ttId]);
+        $this->db->execute("DELETE FROM {$this->db->table('terms')} WHERE term_id = ?", [$termId]);
+    }
+
     /** Changes a term's name and slug. */
     public function rename(int $termId, string $name, string $slug): void
     {

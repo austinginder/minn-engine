@@ -99,6 +99,53 @@ final readonly class TermQuery
         return $row === null ? null : ['term_id' => (int) $row['term_id'], 'term_taxonomy_id' => (int) $row['term_taxonomy_id']];
     }
 
+    /**
+     * The term whose slug or name (as stored) is exactly the value,
+     * optionally in a taxonomy and under a parent (0 for the top level).
+     *
+     * @return array{term_id: int, term_taxonomy_id: int}|null
+     */
+    public function lookup(string $field, string $value, ?string $taxonomy, ?int $parent): ?array
+    {
+        $column = $field === 'slug' ? 't.slug' : 't.name';
+        $sql = "SELECT t.term_id, tt.term_taxonomy_id FROM {$this->db->table('terms')} t JOIN {$this->db->table('term_taxonomy')} tt ON tt.term_id = t.term_id WHERE {$column} = ?";
+        $params = [$value];
+        if ($taxonomy !== null) {
+            $sql .= ' AND tt.taxonomy = ?';
+            $params[] = $taxonomy;
+            if ($parent !== null) {
+                $sql .= ' AND tt.parent = ?';
+                $params[] = $parent;
+            }
+        }
+        $row = $this->db->row($sql . ' ORDER BY tt.term_taxonomy_id ASC LIMIT 1', $params);
+        return $row === null ? null : ['term_id' => (int) $row['term_id'], 'term_taxonomy_id' => (int) $row['term_taxonomy_id']];
+    }
+
+    /**
+     * Whether any term in the taxonomies (any taxonomy for null) sits
+     * under the parent: the reference answers a lookup under a childless
+     * parent with nothing before it looks.
+     *
+     * @param list<string>|null $taxonomies
+     */
+    public function hasChildren(int $parent, ?array $taxonomies): bool
+    {
+        $sql = "SELECT 1 FROM {$this->db->table('term_taxonomy')} WHERE parent = ?";
+        $params = [$parent];
+        if ($taxonomies !== null) {
+            $sql .= ' AND taxonomy IN (?)';
+            $params[] = $taxonomies;
+        }
+        return $this->db->value($sql . ' LIMIT 1', $params) !== null;
+    }
+
+    /** Whether a term other than the one named holds the slug, in any taxonomy. */
+    public function slugTaken(string $slug, int $exceptTermId): bool
+    {
+        return $this->db->value("SELECT term_id FROM {$this->db->table('terms')} WHERE slug = ? AND term_id != ? LIMIT 1", [$slug, $exceptTermId]) !== null;
+    }
+
     /** get_terms() arguments normalised: the "get all" shortcut, integer lists, sanitised slugs. */
     public function normalise(array $args): array
     {

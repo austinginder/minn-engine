@@ -1,0 +1,270 @@
+[
+    [
+        "term_exists the raw name",
+        {
+            "found": {
+                "term": 0,
+                "types": [
+                    "string",
+                    "string"
+                ]
+            },
+            "filters": []
+        }
+    ],
+    [
+        "term_exists the stored name",
+        {
+            "found": {
+                "term": 0,
+                "types": [
+                    "string",
+                    "string"
+                ]
+            },
+            "filters": []
+        }
+    ],
+    [
+        "term_exists the raw name, no taxonomy",
+        {
+            "found": {
+                "term": 0,
+                "type": "string"
+            },
+            "filters": []
+        }
+    ],
+    [
+        "term_exists a child by raw name and parent",
+        {
+            "found": {
+                "term": 1,
+                "types": [
+                    "string",
+                    "string"
+                ]
+            },
+            "filters": []
+        }
+    ],
+    [
+        "term_exists a child by stored name and parent",
+        {
+            "found": {
+                "term": 1,
+                "types": [
+                    "string",
+                    "string"
+                ]
+            },
+            "filters": []
+        }
+    ],
+    [
+        "term_exists a child under the wrong parent",
+        {
+            "found": null,
+            "filters": []
+        }
+    ],
+    [
+        "term_exists a slug that is another name",
+        {
+            "found": {
+                "term": 2,
+                "types": [
+                    "string",
+                    "string"
+                ]
+            },
+            "filters": []
+        }
+    ],
+    [
+        "term_exists by id string",
+        {
+            "found": null,
+            "filters": [
+                "pre_term_name [\"{term2}\",\"category\"]",
+                "pre_category_name [\"{term2}\"]"
+            ]
+        }
+    ],
+    [
+        "term_exists by id",
+        {
+            "found": {
+                "term": 2,
+                "type": "string"
+            },
+            "filters": []
+        }
+    ],
+    [
+        "term_exists by id, wrong taxonomy",
+        {
+            "found": null,
+            "filters": []
+        }
+    ],
+    [
+        "get_term_by raw name",
+        {
+            "found": {
+                "term": 0
+            },
+            "filters": [
+                "pre_term_name [\"zz lookup A & B\",\"category\"]",
+                "pre_category_name [\"zz lookup A &amp; B\"]"
+            ]
+        }
+    ],
+    [
+        "get_term_by stored name",
+        {
+            "found": {
+                "term": 0
+            },
+            "filters": [
+                "pre_term_name [\"zz lookup A &amp; B\",\"category\"]",
+                "pre_category_name [\"zz lookup A &amp; B\"]"
+            ]
+        }
+    ],
+    [
+        "get_term_by slug of a name",
+        {
+            "found": {
+                "term": 0
+            },
+            "filters": []
+        }
+    ],
+    [
+        "get_terms raw name",
+        {
+            "found": [
+                {
+                    "term": 0
+                }
+            ],
+            "filters": [
+                "pre_term_name [\"zz lookup A & B\",\"category\"]",
+                "pre_category_name [\"zz lookup A &amp; B\"]"
+            ]
+        }
+    ],
+    [
+        "get_terms stored name",
+        {
+            "found": [
+                {
+                    "term": 0
+                }
+            ],
+            "filters": [
+                "pre_term_name [\"zz lookup A &amp; B\",\"category\"]",
+                "pre_category_name [\"zz lookup A &amp; B\"]"
+            ]
+        }
+    ],
+    [
+        "get_terms name list",
+        {
+            "found": [
+                {
+                    "term": 1
+                },
+                {
+                    "term": 2
+                }
+            ],
+            "filters": [
+                "pre_term_name [\"zz lookup one\",\"category\"]",
+                "pre_category_name [\"zz lookup one\"]",
+                "pre_term_name [\"zz lookup child & co\",\"category\"]",
+                "pre_category_name [\"zz lookup child &amp; co\"]"
+            ]
+        }
+    ],
+    [
+        "get_terms name, no taxonomy",
+        {
+            "found": [
+                {
+                    "term": 2
+                }
+            ],
+            "filters": [
+                "pre_term_name [\"zz lookup one\",false]",
+                "pre__name [\"zz lookup one\"]"
+            ]
+        }
+    ],
+    [
+        "term_exists a quoted name",
+        {
+            "found": {
+                "term": 4,
+                "types": [
+                    "string",
+                    "string"
+                ]
+            },
+            "filters": [
+                "pre_term_name [\"zz lookup \\\"quoted\\\" one\",\"category\"]",
+                "pre_category_name [\"zz lookup \\\\\\\"quoted\\\\\\\" one\"]"
+            ]
+        }
+    ],
+    [
+        "get_term_by a quoted name",
+        {
+            "found": {
+                "term": 4
+            },
+            "filters": [
+                "pre_term_name [\"zz lookup \\\"quoted\\\" one\",\"category\"]",
+                "pre_category_name [\"zz lookup \\\\\\\"quoted\\\\\\\" one\"]"
+            ]
+        }
+    ],
+    [
+        "get_terms a quoted name",
+        {
+            "found": [
+                {
+                    "term": 4
+                }
+            ],
+            "filters": [
+                "pre_term_name [\"zz lookup \\\"quoted\\\" one\",\"category\"]",
+                "pre_category_name [\"zz lookup \\\\\\\"quoted\\\\\\\" one\"]"
+            ]
+        }
+    ],
+    [
+        "get_terms under a childless parent",
+        {
+            "found": [],
+            "filters": []
+        }
+    ],
+    [
+        "a count under a childless parent",
+        {
+            "found": 0,
+            "filters": []
+        }
+    ],
+    [
+        "stored",
+        [
+            "zz lookup A &amp; B",
+            "zz-lookup-a-b",
+            "zz lookup child &amp; co",
+            "zz-lookup-child-co"
+        ]
+    ]
+]

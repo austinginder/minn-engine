@@ -5,10 +5,11 @@ use Minn\Content\TermLinks;
 
 use Minn\Content\Terms;
 use Minn\Runtime\Meta;
-use Minn\Runtime\Refusal;
 use Minn\Front\TermLists;
 use Minn\Content\PostWriter;
 use Minn\Runtime\Runtime;
+use Minn\Runtime\TermFields;
+use Minn\Runtime\TermSave;
 use Minn\Runtime\TermQuery;
 use Minn\Runtime\TermWriter;
 
@@ -21,19 +22,13 @@ function _minn_term_query(): TermQuery
 /** @internal */
 function _minn_term_writer(): TermWriter
 {
-    return new TermWriter(Runtime::current()->db, _minn_terms(), _minn_term_query(), _minn_post_writer(), static fn (string $s): string => sanitize_title($s));
+    return new TermWriter(Runtime::current()->db, _minn_terms(), _minn_term_query(), _minn_post_writer());
 }
 
 /** @internal a term row joined with its taxonomy row, by id (and taxonomy when known) */
 function _minn_term_row(int $termId, ?string $taxonomy): ?array
 {
     return _minn_term_query()->row($termId, $taxonomy);
-}
-
-/** @internal the WP_Error a refusal reads as */
-function _minn_refused(Refusal $refusal): WP_Error
-{
-    return new WP_Error($refusal->code, $refusal->message, $refusal->data);
 }
 
 /** @internal */
@@ -172,6 +167,11 @@ function get_term($term, $taxonomy = '', $output = OBJECT, $filter = 'raw')
     }
     $object = apply_filters('get_term', $object, $taxonomy);
     $object = apply_filters("get_{$object->taxonomy}", $object, $object->taxonomy);
+    // Plugins' filters see the raw term; then it is put in the context asked for, on a copy of a term the caller handed in.
+    if ($filter !== 'raw' && $object instanceof WP_Term) {
+        $object = $object === $term ? clone $object : $object;
+        $object->filter((string) $filter);
+    }
     if ($output === ARRAY_A) {
         return $object->to_array();
     }
@@ -186,23 +186,47 @@ function get_term_by($field, $value, $taxonomy = '', $output = OBJECT, $filter =
     if ($taxonomy !== '' && !taxonomy_exists($taxonomy) && $field !== 'term_taxonomy_id') {
         return false;
     }
+    if ($field === 'name') {
+        $value = wp_unslash((string) sanitize_term_field('name', $value, 0, $taxonomy === '' ? false : (string) $taxonomy, 'db'));
+    }
     $found = _minn_term_query()->find((string) $field, $value, $taxonomy === '' ? null : (string) $taxonomy);
     return $found === null ? false : get_term($found['term_id'], $found['taxonomy'], $output, $filter);
 }
 
+/**
+ * A term by id, or by slug and then by name as saving would store it
+ * (probe term-lookup): a digit string is a name, a parent narrows both
+ * lookups (0 to the top level) and a parent with no children finds
+ * nothing. The ids come back as strings, the term_id alone without a
+ * taxonomy.
+ */
 function term_exists($term, $taxonomy = '', $parent_term = null)
 {
-    if ($term === null || $term === '' || $term === 0 || $term === '0') {
+    if ($term === null || $term === '' || $term === 0) {
         return null;
     }
-    $found = _minn_term_query()->exists(is_int($term) ? $term : (string) $term, $taxonomy === '' ? null : (string) $taxonomy, $parent_term === null ? null : (int) $parent_term);
+    $tax = $taxonomy === '' || $taxonomy === null ? null : (string) $taxonomy;
+    if (is_int($term)) {
+        $found = _minn_term_query()->exists($term, $tax, null);
+    } else {
+        $found = _minn_term_lookup(trim(wp_unslash((string) $term)), $tax, $parent_term === null || $tax === null ? null : (int) $parent_term);
+    }
     if ($found === null) {
         return null;
     }
-    if ($taxonomy === '') {
-        return (string) $found['term_id'];
+    return $tax === null ? (string) $found['term_id'] : ['term_id' => (string) $found['term_id'], 'term_taxonomy_id' => (string) $found['term_taxonomy_id']];
+}
+
+/** @internal term_exists() for a string: the slug it makes, then the name as saved */
+function _minn_term_lookup(string $term, ?string $taxonomy, ?int $parent): ?array
+{
+    $query = _minn_term_query();
+    if ($term === '' || ($parent !== null && $parent > 0 && !$query->hasChildren($parent, [$taxonomy]))) {
+        return null;
     }
-    return ['term_id' => (string) $found['term_id'], 'term_taxonomy_id' => (string) $found['term_taxonomy_id']];
+    $slug = sanitize_title($term);
+    $found = $slug === '' ? null : $query->lookup('slug', $slug, $taxonomy, $parent);
+    return $found ?? $query->lookup('name', wp_unslash((string) sanitize_term_field('name', $term, 0, $taxonomy ?? false, 'db')), $taxonomy, $parent);
 }
 
 function get_terms($args = [], $deprecated = '')
@@ -226,6 +250,14 @@ function get_terms($args = [], $deprecated = '')
     }
     $query = _minn_term_query();
     $args = $query->normalise((array) apply_filters('get_terms_args', $args, $taxonomies ?? []));
+    // Under a parent with no children there is nothing to find, and the names are not looked at.
+    if ($args['parent'] !== '' && (int) $args['parent'] > 0 && !$query->hasChildren((int) $args['parent'], $taxonomies)) {
+        return $args['fields'] === 'count' || $args['count'] ? 0 : TermQuery::shape(apply_filters('get_terms', [], $taxonomies ?? [], $args, []), (string) $args['fields']);
+    }
+    // Names are looked up as saving stores them, through the first taxonomy's name filters.
+    if ($args['name'] !== '' && $args['name'] !== []) {
+        $args['name'] = array_map(static fn ($name) => wp_unslash((string) sanitize_term_field('name', $name, 0, $taxonomies[0] ?? false, 'db')), (array) $args['name']);
+    }
     if ($args['fields'] === 'count' || $args['count']) {
         return (string) $query->count($args, $taxonomies);
     }
@@ -484,61 +516,22 @@ function in_category($category, $post = null)
     return has_category($category, $post);
 }
 
+/** A new term, its fields through their filters in the reference's order (Runtime\TermSave). */
 function wp_insert_term($term, $taxonomy, $args = [])
 {
     if (!taxonomy_exists($taxonomy)) {
         return new WP_Error('invalid_taxonomy', 'Invalid taxonomy.');
     }
-    $term = apply_filters('pre_insert_term', wp_unslash((string) $term), $taxonomy, $args);
-    if (is_wp_error($term)) {
-        return $term;
-    }
-    if (is_int($term) && $term === 0) {
-        return new WP_Error('invalid_term_id', 'Invalid term ID.');
-    }
-    $args = wp_parse_args(wp_unslash((array) $args), ['alias_of' => '', 'description' => '', 'parent' => 0, 'slug' => '']);
-    $made = _minn_term_writer()->insert((string) $term, (string) $taxonomy, $args, is_taxonomy_hierarchical($taxonomy));
-    if ($made instanceof Refusal) {
-        return _minn_refused($made);
-    }
-    [$termId, $ttId] = [$made['term_id'], $made['term_taxonomy_id']];
-    do_action('create_term', $termId, $ttId, $taxonomy, $args);
-    do_action("create_{$taxonomy}", $termId, $ttId, $args);
-    clean_term_cache($termId, $taxonomy);
-    do_action('created_term', $termId, $ttId, $taxonomy, $args);
-    do_action("created_{$taxonomy}", $termId, $ttId, $args);
-    do_action('saved_term', $termId, $ttId, $taxonomy, false, $args);
-    do_action("saved_{$taxonomy}", $termId, $ttId, false, $args);
-    return ['term_id' => $termId, 'term_taxonomy_id' => $ttId];
+    return TermSave::insert($term, (string) $taxonomy, (array) $args);
 }
 
+/** A term changed, its fields through their filters in the reference's order (Runtime\TermSave). */
 function wp_update_term($term_id, $taxonomy, $args = [])
 {
     if (!taxonomy_exists($taxonomy)) {
         return new WP_Error('invalid_taxonomy', 'Invalid taxonomy.');
     }
-    $term = get_term((int) $term_id, $taxonomy);
-    if (!$term instanceof WP_Term) {
-        return new WP_Error('invalid_term', 'Empty Term.');
-    }
-    $args = wp_unslash((array) $args);
-    $change = _minn_term_writer()->update($term->to_array(), (string) $taxonomy, $args);
-    if ($change instanceof Refusal) {
-        return _minn_refused($change);
-    }
-    do_action('edit_terms', $term->term_id, $taxonomy, $args);
-    _minn_term_writer()->apply($term->term_id, (string) $taxonomy, $change);
-    do_action('edited_terms', $term->term_id, $taxonomy, $args);
-    do_action('edit_term_taxonomy', $term->term_taxonomy_id, $taxonomy, $args);
-    do_action('edited_term_taxonomy', $term->term_taxonomy_id, $taxonomy, $args);
-    do_action('edit_term', $term->term_id, $term->term_taxonomy_id, $taxonomy, $args);
-    do_action("edit_{$taxonomy}", $term->term_id, $term->term_taxonomy_id, $args);
-    clean_term_cache($term->term_id, $taxonomy);
-    do_action('edited_term', $term->term_id, $term->term_taxonomy_id, $taxonomy, $args);
-    do_action("edited_{$taxonomy}", $term->term_id, $term->term_taxonomy_id, $args);
-    do_action('saved_term', $term->term_id, $term->term_taxonomy_id, $taxonomy, true, $args);
-    do_action("saved_{$taxonomy}", $term->term_id, $term->term_taxonomy_id, true, $args);
-    return ['term_id' => $term->term_id, 'term_taxonomy_id' => $term->term_taxonomy_id];
+    return TermSave::update((int) $term_id, (string) $taxonomy, (array) $args);
 }
 
 function wp_delete_term($term, $taxonomy, $args = [])
@@ -654,23 +647,29 @@ function wp_defer_term_counting($defer = null)
     return false;
 }
 
+/** A field of a term in a context (display by default); '' for a field it does not have. */
 function get_term_field($field, $term, $taxonomy = '', $context = 'display')
 {
     $term = get_term($term, $taxonomy);
     if (!$term instanceof WP_Term) {
         return $term ?? '';
     }
-    return $term->{$field} ?? '';
+    if (!isset($term->{$field})) {
+        return '';
+    }
+    return sanitize_term_field((string) $field, $term->{$field}, $term->term_id, $term->taxonomy, (string) $context);
 }
 
+/** Each field of a term (object or array) in a context, through the field filters; the term says which context it is in. */
 function sanitize_term($term, $taxonomy, $context = 'display')
 {
-    return $term;
+    return TermFields::term($term, (string) $taxonomy, (string) $context);
 }
 
+/** One field of a term in a context: raw, edit, db (saving), display, attribute, js or rss. */
 function sanitize_term_field($field, $value, $term_id, $taxonomy, $context)
 {
-    return $value;
+    return TermFields::field((string) $field, $value, (int) $term_id, $taxonomy === false ? false : (string) $taxonomy, (string) $context);
 }
 
 function wp_cache_set_terms_last_changed()
@@ -769,12 +768,66 @@ function is_object_in_taxonomy($object_type, $taxonomy)
     return $row !== null && in_array((string) $object_type, (array) $row['object_type'], true);
 }
 
-/** The slug, or the first "-N" form of it, that no other term of the taxonomy holds. */
+/**
+ * A slug no other term of the taxonomy holds (probe term-insert-filters):
+ * one taken in the taxonomy gets its parents' slugs added, nearest first,
+ * until it is free (wp_unique_term_slug_is_bad_slug decides whether it was
+ * taken), then "-2", "-3" past any term holding it in any taxonomy.
+ */
 function wp_unique_term_slug($slug, $term)
 {
     $term = (object) $term;
-    $unique = (new Terms(Runtime::current()->db))->uniqueSlug((string) $slug, (string) $term->taxonomy, (int) ($term->term_id ?? 0));
-    return apply_filters('wp_unique_term_slug', $unique, $term, $slug);
+    $original = (string) $slug;
+    $taxonomy = (string) ($term->taxonomy ?? '');
+    $taken = term_exists($original) !== null && get_term_by('slug', $original, $taxonomy) !== false;
+    $slug = $taken ? _minn_term_slug_under_parents($original, $term) : $original;
+    if (apply_filters('wp_unique_term_slug_is_bad_slug', $taken, $original, $term)) {
+        $query = _minn_term_query();
+        $except = (int) ($term->term_id ?? 0);
+        if ($query->slugTaken($slug, $except)) {
+            $base = $slug;
+            for ($n = 2; $query->slugTaken("{$base}-{$n}", $except); $n++) {
+            }
+            $slug = "{$base}-{$n}";
+        }
+    } else {
+        $slug = $original;
+    }
+    return apply_filters('wp_unique_term_slug', $slug, $term, $original);
+}
+
+/** @internal a taken slug with the term's parents' slugs added, nearest first, until no term holds it */
+function _minn_term_slug_under_parents(string $slug, object $term): string
+{
+    $taxonomy = (string) ($term->taxonomy ?? '');
+    $parentId = is_taxonomy_hierarchical($taxonomy) ? (int) ($term->parent ?? 0) : 0;
+    while ($parentId > 0) {
+        $parent = get_term($parentId, $taxonomy);
+        if (!$parent instanceof WP_Term) {
+            break;
+        }
+        $slug .= '-' . $parent->slug;
+        if (term_exists($slug) === null) {
+            break;
+        }
+        $parentId = (int) $parent->parent;
+    }
+    return $slug;
+}
+
+/** The default on wp_update_term_parent: no term may sit under itself, however far down; such a parent becomes 0. */
+function wp_check_term_hierarchy_for_loops($parent_term, $term_id, $taxonomy)
+{
+    $parent = (int) $parent_term;
+    $term_id = (int) $term_id;
+    $seen = [];
+    for ($at = $parent; $at > 0 && !isset($seen[$at]); $at = (int) (_minn_term_row($at, (string) $taxonomy)['parent'] ?? 0)) {
+        if ($at === $term_id) {
+            return 0;
+        }
+        $seen[$at] = true;
+    }
+    return $parent;
 }
 
 /** Recounts the published objects behind each term_taxonomy id. */

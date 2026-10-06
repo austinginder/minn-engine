@@ -24,7 +24,7 @@ request, response, routing, and the outgoing client
 | [`Policy`](#policy) | final readonly class | 105 | What a route requires of its caller, as data on the route: the router |
 | [`Punycode`](#punycode) | final class | 103 | Internationalized host names in ASCII: each label that is not ASCII is |
 | [`RawResponse`](#rawresponse) | final class | 82 | An HTTP response as text, the way the Requests library hands it from |
-| [`Request`](#request) | final readonly class | 128 | An immutable picture of the incoming request. Built once from the PHP |
+| [`Request`](#request) | final readonly class | 139 | An immutable picture of the incoming request. Built once from the PHP |
 | [`RequestFailed`](#requestfailed) | final class | 7 | Thrown by Exchange::throw() when no response arrived or it was not a 2xx; the exchange rides along. |
 | [`RequestsNames`](#requestsnames) | final class | 18 | The Requests library's PSR-0 class names (Requests_Exception_HTTP_404, |
 | [`Response`](#response) | final readonly class | 111 | What a handler returns. Nothing is written to the client until the |
@@ -770,7 +770,7 @@ The request PHP received, read once from the superglobals.
 
 ### `json(): array`
 
-The JSON body as an array, or the form fields when the body is empty.
+The JSON body as an array, or the form fields when the body is empty or a form.
 
 ### `withPath(string $path): self`
 

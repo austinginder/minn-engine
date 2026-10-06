@@ -76,14 +76,25 @@ final readonly class Request
         );
     }
 
-    /** The JSON body as an array, or the form fields when the body is empty. */
+    /** The JSON body as an array, or the form fields when the body is empty or a form. */
     public function json(): array
     {
         if (trim($this->body) === '') {
             return $this->form;
         }
         $decoded = json_decode($this->body, true);
-        return is_array($decoded) ? $decoded : [];
+        if (is_array($decoded)) {
+            return $decoded;
+        }
+        // A form-encoded body (a form post, or a plugin's in-process call with body params) reads as its fields.
+        if ($this->form !== []) {
+            return $this->form;
+        }
+        if (str_contains(strtolower((string) $this->header('content-type')), 'application/x-www-form-urlencoded')) {
+            parse_str($this->body, $fields);
+            return $fields;
+        }
+        return [];
     }
 
     /** The same request addressed to another path (a REST route carried in ?rest_route=). */

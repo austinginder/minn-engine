@@ -25,7 +25,7 @@ the wp/v2 surface: shapes and controllers
 | [`IndexController`](#indexcontroller) | final readonly class | 96 | The API index at /wp-json/: the site facts monitors read (name, url, |
 | [`Links`](#links) | final class | 52 | Response link relations compacted through CURIEs: a rel that matches a CURIE's template becomes `name:suffix`, and the used CURIEs ride along. |
 | [`ListQuery`](#listquery) | final readonly class | 170 | The collection parameters a wp/v2 list accepts, read once from the |
-| [`MediaController`](#mediacontroller) | final readonly class | 259 | wp/v2/media: list, single, upload on both transports (multipart field |
+| [`MediaController`](#mediacontroller) | final readonly class | 261 | wp/v2/media: list, single, upload on both transports (multipart field |
 | [`MediaObject`](#mediaobject) | final readonly class | 165 | The wp/v2 media object, view and edit context. |
 | [`MenuItemObject`](#menuitemobject) | final readonly class | 74 | The wp/v2/menu-items resource. |
 | [`MenuObject`](#menuobject) | final readonly class | 37 | The wp/v2/menus resource: a nav_menu term plus locations and auto_add. |
@@ -59,7 +59,7 @@ the wp/v2 surface: shapes and controllers
 | [`TemplateObject`](#templateobject) | final readonly class | 98 | The wp/v2/templates and wp/v2/template-parts resource. |
 | [`TemplatesController`](#templatescontroller) | final readonly class | 205 | wp/v2/templates and wp/v2/template-parts: the block theme's templates as |
 | [`TermObject`](#termobject) | final readonly class | 84 | The wp/v2 category and tag objects. |
-| [`TermsController`](#termscontroller) | final readonly class | 197 | wp/v2 categories, tags, and pattern categories: list, single, and the create/update/delete the taxonomy admin drives. |
+| [`TermsController`](#termscontroller) | final readonly class | 215 | wp/v2 categories, tags, and pattern categories: list, single, and the create/update/delete the taxonomy admin drives. |
 | [`Types`](#types) | final class | 97 | The engine's registry of built-in post types, seeded from the observed |
 | [`TypesController`](#typescontroller) | final readonly class | 24 | wp/v2 types. |
 | [`UserObject`](#userobject) | final readonly class | 106 | The wp/v2 user objects: the public view shape and the edit-context shape. |
@@ -1020,7 +1020,7 @@ Route: `DELETE /wp/v2/media/{id:[\d]+} (cap delete_post on {id}; attachment {id}
 
 Attachments cannot be trashed; force removes the row, its meta, and its files.
 
-Internals: `libraryClauses()` (private, line 76), `restDate()` (private, line 100), `storeWithPlugins()` (private, line 175), `inserted()` (private, line 195), `attachment()` (private, line 280)
+Internals: `libraryClauses()` (private, line 76), `restDate()` (private, line 100), `storeWithPlugins()` (private, line 175), `inserted()` (private, line 195), `attachment()` (private, line 282)
 
 
 ## MediaObject
@@ -2535,6 +2535,8 @@ Updates a category or tag.
 Route: `DELETE /wp/v2/{base:categories|tags|wp_pattern_category}/{id:[\d]+} (cap manage_categories; term {id} must exist)`
 
 The default category is capability-denied before the force check.
+
+Internals: `requireParent()` (private, line 207)
 
 
 ## Types

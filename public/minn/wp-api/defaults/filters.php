@@ -43,6 +43,17 @@ add_filter('the_excerpt', 'wpautop');
 add_filter('the_excerpt', 'shortcode_unautop');
 add_filter('the_excerpt', 'wp_replace_insecure_home_url');
 add_filter('the_excerpt', 'wp_filter_content_tags', 12);
+// A term's fields on the way in and on display, each chain in the reference's order (probe term-sanitize).
+add_filter('pre_term_name', 'sanitize_text_field');
+add_filter('pre_term_name', 'wp_filter_kses');
+add_filter('pre_term_name', '_wp_specialchars', 30);
+add_filter('pre_term_slug', 'sanitize_title');
+add_filter('wp_update_term_parent', 'wp_check_term_hierarchy_for_loops', 10, 3);
+add_filter('term_name', 'wptexturize');
+add_filter('term_name', 'convert_chars');
+add_filter('term_name', 'esc_html');
+add_filter('term_name', '_wp_specialchars', 30);
+add_filter('term_name_rss', 'convert_chars');
 add_filter('term_description', 'wptexturize');
 add_filter('term_description', 'convert_chars');
 add_filter('term_description', 'wpautop');

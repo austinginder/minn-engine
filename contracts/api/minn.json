@@ -30778,7 +30778,7 @@
             "namespace": "Minn\\Content",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Content/Terms.php",
-            "lines": 178,
+            "lines": 221,
             "doc": "",
             "implements": [],
             "extends": null,
@@ -30798,6 +30798,7 @@
                 "Minn\\Front\\Resolver",
                 "Minn\\Rest\\Services",
                 "Minn\\Rest\\TermsController",
+                "Minn\\Runtime\\TermSave",
                 "Minn\\Runtime\\TermWriter",
                 "Minn\\Theme\\TemplateWriter",
                 "Minn\\Theme\\UserStyles"
@@ -31025,6 +31026,125 @@
                 },
                 {
                     "routes": [],
+                    "name": "insertRow",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "insertRow(array $data): int",
+                    "doc": "Inserts a terms row alone (name, slug, term_group), as the reference\nwrites it before the taxonomy row; returns the term id.",
+                    "shapes": [
+                        "@param array{name: string, slug: string, term_group: int} $data"
+                    ],
+                    "params": [
+                        {
+                            "name": "data",
+                            "type": "array",
+                            "shape": "array{name: string, slug: string, term_group: int}",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 111,
+                    "end": 115
+                },
+                {
+                    "routes": [],
+                    "name": "addToTaxonomy",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "addToTaxonomy(int $termId, string $taxonomy, string $description, int $parent): int",
+                    "doc": "Puts a term in a taxonomy; returns the term_taxonomy id.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "termId",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "taxonomy",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "description",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "parent",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 118,
+                    "end": 129
+                },
+                {
+                    "routes": [],
+                    "name": "updateRow",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "updateRow(int $termId, array $data): void",
+                    "doc": "Rewrites a terms row (name, slug, term_group).",
+                    "shapes": [
+                        "@param array{name: string, slug: string, term_group: int} $data"
+                    ],
+                    "params": [
+                        {
+                            "name": "termId",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "data",
+                            "type": "array",
+                            "shape": "array{name: string, slug: string, term_group: int}",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 136,
+                    "end": 139
+                },
+                {
+                    "routes": [],
+                    "name": "dropRows",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "dropRows(int $termId, int $ttId): void",
+                    "doc": "Drops a term's rows that a plugin's duplicate check said to give up.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "termId",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "ttId",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 142,
+                    "end": 146
+                },
+                {
+                    "routes": [],
                     "name": "rename",
                     "static": false,
                     "visibility": "public",
@@ -31054,8 +31174,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 106,
-                    "end": 109
+                    "line": 149,
+                    "end": 152
                 },
                 {
                     "routes": [],
@@ -31095,8 +31215,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 112,
-                    "end": 121
+                    "line": 155,
+                    "end": 164
                 },
                 {
                     "routes": [],
@@ -31122,8 +31242,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 124,
-                    "end": 142
+                    "line": 167,
+                    "end": 185
                 },
                 {
                     "routes": [],
@@ -31142,8 +31262,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 173,
-                    "end": 186
+                    "line": 216,
+                    "end": 229
                 },
                 {
                     "routes": [],
@@ -31184,8 +31304,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 151,
-                    "end": 164
+                    "line": 194,
+                    "end": 207
                 },
                 {
                     "routes": [],
@@ -31204,8 +31324,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 167,
-                    "end": 170
+                    "line": 210,
+                    "end": 213
                 }
             ]
         },
@@ -56998,7 +57118,7 @@
             "namespace": "Minn\\Http",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Http/Request.php",
-            "lines": 128,
+            "lines": 139,
             "doc": "An immutable picture of the incoming request. Built once from the PHP\nglobals at the edge; handlers only ever see this object.",
             "implements": [],
             "extends": null,
@@ -57314,11 +57434,11 @@
                     "static": false,
                     "visibility": "public",
                     "signature": "json(): array",
-                    "doc": "The JSON body as an array, or the form fields when the body is empty.",
+                    "doc": "The JSON body as an array, or the form fields when the body is empty or a form.",
                     "shapes": [],
                     "params": [],
                     "line": 80,
-                    "end": 87
+                    "end": 98
                 },
                 {
                     "routes": [],
@@ -57337,8 +57457,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 90,
-                    "end": 93
+                    "line": 101,
+                    "end": 104
                 },
                 {
                     "routes": [],
@@ -57364,8 +57484,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 96,
-                    "end": 100
+                    "line": 107,
+                    "end": 111
                 },
                 {
                     "routes": [],
@@ -57384,8 +57504,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 103,
-                    "end": 106
+                    "line": 114,
+                    "end": 117
                 },
                 {
                     "routes": [],
@@ -57404,8 +57524,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 109,
-                    "end": 112
+                    "line": 120,
+                    "end": 123
                 },
                 {
                     "routes": [],
@@ -57424,8 +57544,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 115,
-                    "end": 118
+                    "line": 126,
+                    "end": 129
                 },
                 {
                     "routes": [],
@@ -57444,8 +57564,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 121,
-                    "end": 124
+                    "line": 132,
+                    "end": 135
                 },
                 {
                     "routes": [],
@@ -57456,8 +57576,8 @@
                     "doc": "The path split into non-empty segments: \"/a/b/\" becomes [\"a\", \"b\"].",
                     "shapes": [],
                     "params": [],
-                    "line": 127,
-                    "end": 130
+                    "line": 138,
+                    "end": 141
                 },
                 {
                     "routes": [],
@@ -57476,8 +57596,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 133,
-                    "end": 137
+                    "line": 144,
+                    "end": 148
                 }
             ]
         },
@@ -68936,7 +69056,8 @@
                 "Minn\\Media\\Upload",
                 "Minn\\Media\\Writer",
                 "Minn\\Rest\\MediaObject",
-                "Minn\\Rest\\Services"
+                "Minn\\Rest\\Services",
+                "Minn\\Runtime\\PostEvents"
             ],
             "constructor": {
                 "signature": "__construct(Minn\\Content\\Site $site, Minn\\Front\\Permalinks $permalinks, string $baseDir)",
@@ -69290,7 +69411,7 @@
             "namespace": "Minn\\Media",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Media/Writer.php",
-            "lines": 137,
+            "lines": 154,
             "doc": "The writes the media library makes. An Upload becomes an attachment: the\nfile lands in the dated uploads directory under a unique name, the row is\ninserted with the stored name as its title and slug, and an image gets\nits sub-sizes and the serialized metadata blob. Edits stamp the row\nmodified; removal takes the files with the row.",
             "implements": [],
             "extends": null,
@@ -69499,7 +69620,68 @@
                         }
                     ],
                     "line": 59,
-                    "end": 90
+                    "end": 64
+                },
+                {
+                    "routes": [],
+                    "name": "prepareRow",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "prepareRow(string $relative, string $mime, int $parent, int $authorId): Minn\\Media\\PreparedUpload",
+                    "doc": "The attachment's row alone, its sizes left to be cut once it exists:\nwith plugins loaded, the runtime's wp_generate_attachment_metadata\ncuts them after the insert, as the reference does.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "relative",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "mime",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "parent",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "authorId",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 71,
+                    "end": 101
+                },
+                {
+                    "routes": [],
+                    "name": "pathOf",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "pathOf(string $relative): string",
+                    "doc": "A stored file's path on disk.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "relative",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 104,
+                    "end": 107
                 },
                 {
                     "routes": [],
@@ -69518,8 +69700,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 93,
-                    "end": 96
+                    "line": 110,
+                    "end": 113
                 },
                 {
                     "routes": [],
@@ -69538,8 +69720,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 99,
-                    "end": 102
+                    "line": 116,
+                    "end": 119
                 },
                 {
                     "routes": [],
@@ -69565,8 +69747,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 105,
-                    "end": 108
+                    "line": 122,
+                    "end": 125
                 },
                 {
                     "routes": [],
@@ -69594,8 +69776,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 111,
-                    "end": 114
+                    "line": 128,
+                    "end": 131
                 },
                 {
                     "routes": [],
@@ -69621,8 +69803,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 117,
-                    "end": 122
+                    "line": 134,
+                    "end": 139
                 },
                 {
                     "routes": [],
@@ -69650,8 +69832,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 125,
-                    "end": 130
+                    "line": 142,
+                    "end": 147
                 },
                 {
                     "routes": [],
@@ -69677,8 +69859,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 133,
-                    "end": 136
+                    "line": 150,
+                    "end": 153
                 },
                 {
                     "routes": [],
@@ -69697,8 +69879,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 139,
-                    "end": 146
+                    "line": 156,
+                    "end": 163
                 },
                 {
                     "routes": [],
@@ -69726,8 +69908,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 149,
-                    "end": 155
+                    "line": 166,
+                    "end": 172
                 }
             ]
         },
@@ -73376,6 +73558,7 @@
                 "Minn\\Rest\\TypesController",
                 "Minn\\Rest\\UsersController",
                 "Minn\\Runtime\\PostSave",
+                "Minn\\Runtime\\TermEvents",
                 "Minn\\Runtime\\UserEvents"
             ],
             "constructor": {
@@ -78764,7 +78947,7 @@
             "namespace": "Minn\\Rest",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Rest/MediaController.php",
-            "lines": 259,
+            "lines": 261,
             "doc": "wp/v2/media: list, single, upload on both transports (multipart field\n\"file\", or a raw body with Content-Disposition), field edits, and force\ndelete with the files.",
             "implements": [],
             "extends": null,
@@ -78994,8 +79177,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 217,
-                    "end": 259
+                    "line": 219,
+                    "end": 261
                 },
                 {
                     "routes": [
@@ -79023,8 +79206,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 263,
-                    "end": 278
+                    "line": 265,
+                    "end": 280
                 },
                 {
                     "routes": [],
@@ -79137,7 +79320,7 @@
                         }
                     ],
                     "line": 195,
-                    "end": 211
+                    "end": 213
                 },
                 {
                     "routes": [],
@@ -79156,8 +79339,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 280,
-                    "end": 287
+                    "line": 282,
+                    "end": 289
                 }
             ]
         },
@@ -88498,7 +88681,7 @@
             "namespace": "Minn\\Rest",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Rest/TermsController.php",
-            "lines": 197,
+            "lines": 215,
             "doc": "wp/v2 categories, tags, and pattern categories: list, single, and the create/update/delete the taxonomy admin drives.",
             "implements": [],
             "extends": null,
@@ -88722,7 +88905,7 @@
                         }
                     ],
                     "line": 125,
-                    "end": 158
+                    "end": 165
                 },
                 {
                     "routes": [
@@ -88759,8 +88942,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 164,
-                    "end": 194
+                    "line": 171,
+                    "end": 204
                 },
                 {
                     "routes": [
@@ -88795,8 +88978,35 @@
                             "doc": ""
                         }
                     ],
-                    "line": 198,
-                    "end": 219
+                    "line": 216,
+                    "end": 237
+                },
+                {
+                    "routes": [],
+                    "name": "requireParent",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "requireParent(int $parent, string $taxonomy): void",
+                    "doc": "The reference's refusal of a parent that is not there, before anything is saved.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "parent",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "taxonomy",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 207,
+                    "end": 212
                 }
             ]
         },
@@ -92765,7 +92975,7 @@
             "namespace": "Minn\\Runtime",
             "kind": "final class",
             "file": "public/minn/src/Minn/Runtime/Constants.php",
-            "lines": 66,
+            "lines": 83,
             "doc": "The constants plugin code expects: the fixed set from data/constants.json\n(captured from the reference) and the per-site ones computed here. Nothing\nalready defined is touched, so wp-config.php keeps the last word.",
             "implements": [],
             "extends": null,
@@ -92800,6 +93010,18 @@
                     ],
                     "line": 15,
                     "end": 76
+                },
+                {
+                    "routes": [],
+                    "name": "maxMemoryLimit",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "maxMemoryLimit(): string",
+                    "doc": "256M, unless PHP starts with no limit or a higher one, which is then\nkept as written (probe: the reference started at 128M, 300M, 1G, -1).",
+                    "shapes": [],
+                    "params": [],
+                    "line": 82,
+                    "end": 93
                 }
             ]
         },
@@ -98244,7 +98466,7 @@
             "namespace": "Minn\\Runtime",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Runtime/PostEvents.php",
-            "lines": 146,
+            "lines": 145,
             "doc": "What the reference's REST controllers tell plugins about a post they\nwrite, for the engine's own controllers: the same actions in the same\norder with the same arguments, fired through the facade's lifecycle\nfunctions so the facade's own writes say the same (contracts/runtime.md\n\"Writes tell plugins\"). Without a booted runtime every method does\nnothing, so a write with no plugins loaded is exactly what it was.",
             "implements": [],
             "extends": null,
@@ -98252,6 +98474,7 @@
                 "Minn\\Content\\PostRecord",
                 "Minn\\Content\\PostWriter",
                 "Minn\\Http\\Request",
+                "Minn\\Media\\Uploads",
                 "Minn\\Media\\Writer",
                 "Minn\\Rest\\RuntimeRoutes",
                 "Minn\\Runtime\\Runtime"
@@ -98274,8 +98497,8 @@
                     "doc": "Whether plugins are loaded to be told anything.",
                     "shapes": [],
                     "params": [],
-                    "line": 24,
-                    "end": 27
+                    "line": 25,
+                    "end": 28
                 },
                 {
                     "routes": [],
@@ -98303,8 +98526,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 30,
-                    "end": 35
+                    "line": 31,
+                    "end": 36
                 },
                 {
                     "routes": [],
@@ -98330,8 +98553,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 38,
-                    "end": 43
+                    "line": 39,
+                    "end": 44
                 },
                 {
                     "routes": [],
@@ -98357,8 +98580,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 50,
-                    "end": 57
+                    "line": 51,
+                    "end": 58
                 },
                 {
                     "routes": [],
@@ -98393,8 +98616,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 60,
-                    "end": 69
+                    "line": 61,
+                    "end": 70
                 },
                 {
                     "routes": [],
@@ -98427,8 +98650,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 72,
-                    "end": 75
+                    "line": 73,
+                    "end": 76
                 },
                 {
                     "routes": [],
@@ -98447,8 +98670,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 78,
-                    "end": 84
+                    "line": 79,
+                    "end": 85
                 },
                 {
                     "routes": [],
@@ -98474,27 +98697,18 @@
                             "doc": ""
                         }
                     ],
-                    "line": 87,
-                    "end": 96
+                    "line": 88,
+                    "end": 97
                 },
                 {
                     "routes": [],
-                    "name": "attachmentMetadata",
+                    "name": "attachmentGenerated",
                     "static": false,
                     "visibility": "public",
-                    "signature": "attachmentMetadata(Minn\\Media\\Writer $library, int $id, array $metadata): void",
-                    "doc": "A new attachment's metadata: with plugins loaded it passes through\nwp_generate_attachment_metadata (where an image optimiser works) and\nis stored by wp_update_attachment_metadata; without, as built.",
-                    "shapes": [
-                        "@param array<string, mixed> $metadata"
-                    ],
+                    "signature": "attachmentGenerated(int $id, string $file, string $mime): void",
+                    "doc": "A new attachment's metadata made by the runtime, as the reference's\nREST upload makes it: wp_generate_attachment_metadata over the stored\nfile (the sizes cut with the attachment's id, the metadata stored as\neach one lands, so an optimiser hooked there finds it), then\nwp_update_attachment_metadata. Only for the images the engine sizes,\nas without plugins.",
+                    "shapes": [],
                     "params": [
-                        {
-                            "name": "library",
-                            "type": "Minn\\Media\\Writer",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
                         {
                             "name": "id",
                             "type": "int",
@@ -98503,14 +98717,21 @@
                             "doc": ""
                         },
                         {
-                            "name": "metadata",
-                            "type": "array",
-                            "shape": "array<string, mixed>",
+                            "name": "file",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "mime",
+                            "type": "string",
+                            "shape": "",
                             "default": null,
                             "doc": ""
                         }
                     ],
-                    "line": 105,
+                    "line": 107,
                     "end": 113
                 },
                 {
@@ -100796,7 +101017,6 @@
                 "Minn\\Runtime\\Connectors",
                 "Minn\\Runtime\\PackageDownload",
                 "Minn\\Runtime\\Patterns",
-                "Minn\\Runtime\\TermWriter",
                 "Minn\\Runtime\\UserInsert",
                 "Minn\\Runtime\\UserSave"
             ],
@@ -101480,6 +101700,7 @@
                 "Minn\\Runtime\\PostSave",
                 "Minn\\Runtime\\ScriptModules",
                 "Minn\\Runtime\\TermEvents",
+                "Minn\\Runtime\\TermSave",
                 "Minn\\Runtime\\TermWriter",
                 "Minn\\Runtime\\UserEvents",
                 "Minn\\Theme\\ArchiveTitle",
@@ -104622,12 +104843,13 @@
             "namespace": "Minn\\Runtime",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Runtime/TermEvents.php",
-            "lines": 62,
-            "doc": "What the reference's REST terms controller tells plugins, for the\nengine's own: with plugins loaded a term is written through the\nruntime's wp_insert_term, wp_update_term and wp_delete_term (create_term,\nthe cache cleaning that rebuilds a taxonomy's children map, created_term,\nsaved_term and their families), and the REST actions follow. Without a\nbooted runtime each write is the engine's own, given as a closure.",
+            "lines": 111,
+            "doc": "What the reference's REST terms controller tells plugins, for the\nengine's own: with plugins loaded a term is saved as that controller\nsaves one (rest_pre_insert_{taxonomy}, then the runtime's wp_insert_term\nor wp_update_term, and wp_delete_term), and the REST actions follow.\nWithout a booted runtime each write is the engine's own.",
             "implements": [],
             "extends": null,
             "uses": [
                 "Minn\\Http\\Request",
+                "Minn\\RestError",
                 "Minn\\Rest\\RuntimeRoutes",
                 "Minn\\Runtime\\Runtime"
             ],
@@ -104653,23 +104875,15 @@
                 },
                 {
                     "routes": [],
-                    "name": "create",
+                    "name": "restCreate",
                     "static": false,
                     "visibility": "public",
-                    "signature": "create(string $name, string $taxonomy, array $args, Closure $quietly): int",
-                    "doc": "Creates a term and returns its id.",
+                    "signature": "restCreate(string $taxonomy, array $body, Minn\\Http\\Request $request): int",
+                    "doc": "A term created over REST with plugins loaded, as the reference's\ncontroller creates one (probe rest-term-save): the request's fields\nas the prepared term, through rest_pre_insert_{taxonomy}, into\nwp_insert_term; a refusal is its REST error.",
                     "shapes": [
-                        "@param array{slug: string, description: string, parent: int} $args",
-                        "@param Closure(): int $quietly the engine's own write"
+                        "@param array<string, mixed> $body"
                     ],
                     "params": [
-                        {
-                            "name": "name",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
                         {
                             "name": "taxonomy",
                             "type": "string",
@@ -104678,33 +104892,32 @@
                             "doc": ""
                         },
                         {
-                            "name": "args",
+                            "name": "body",
                             "type": "array",
-                            "shape": "array{slug: string, description: string, parent: int}",
+                            "shape": "array<string, mixed>",
                             "default": null,
                             "doc": ""
                         },
                         {
-                            "name": "quietly",
-                            "type": "Closure",
-                            "shape": "Closure(): int",
+                            "name": "request",
+                            "type": "Minn\\Http\\Request",
+                            "shape": "",
                             "default": null,
-                            "doc": "the engine's own write"
+                            "doc": ""
                         }
                     ],
-                    "line": 33,
-                    "end": 40
+                    "line": 35,
+                    "end": 43
                 },
                 {
                     "routes": [],
-                    "name": "update",
+                    "name": "restUpdate",
                     "static": false,
                     "visibility": "public",
-                    "signature": "update(int $termId, string $taxonomy, array $args, Closure $quietly): void",
-                    "doc": "Updates a term's name, slug, description or parent.",
+                    "signature": "restUpdate(int $termId, string $taxonomy, array $body, Minn\\Http\\Request $request): void",
+                    "doc": "A term changed over REST with plugins loaded: the fields the request\nsends, through rest_pre_insert_{taxonomy}, into wp_update_term (when\nany are left); a refusal is its REST error.",
                     "shapes": [
-                        "@param array<string, mixed> $args the fields the request changes",
-                        "@param Closure(): void $quietly the engine's own write"
+                        "@param array<string, mixed> $body"
                     ],
                     "params": [
                         {
@@ -104722,22 +104935,22 @@
                             "doc": ""
                         },
                         {
-                            "name": "args",
+                            "name": "body",
                             "type": "array",
                             "shape": "array<string, mixed>",
                             "default": null,
-                            "doc": "the fields the request changes"
+                            "doc": ""
                         },
                         {
-                            "name": "quietly",
-                            "type": "Closure",
-                            "shape": "Closure(): void",
+                            "name": "request",
+                            "type": "Minn\\Http\\Request",
+                            "shape": "",
                             "default": null,
-                            "doc": "the engine's own write"
+                            "doc": ""
                         }
                     ],
-                    "line": 48,
-                    "end": 51
+                    "line": 52,
+                    "end": 62
                 },
                 {
                     "routes": [],
@@ -104787,8 +105000,8 @@
                             "doc": "the engine's own delete"
                         }
                     ],
-                    "line": 59,
-                    "end": 68
+                    "line": 108,
+                    "end": 117
                 },
                 {
                     "routes": [],
@@ -104828,8 +105041,267 @@
                             "doc": ""
                         }
                     ],
-                    "line": 71,
-                    "end": 79
+                    "line": 120,
+                    "end": 128
+                },
+                {
+                    "routes": [],
+                    "name": "prepared",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "prepared(string $taxonomy, array $body, Minn\\Http\\Request $request): array",
+                    "doc": "The prepared term: the fields the request sends, in the reference's\norder, the name and slug cleaned as its schema cleans them; then\nrest_pre_insert_{taxonomy}.",
+                    "shapes": [
+                        "@param array<string, mixed> $body",
+                        "@return array<string, mixed>"
+                    ],
+                    "params": [
+                        {
+                            "name": "taxonomy",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "body",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "request",
+                            "type": "Minn\\Http\\Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 72,
+                    "end": 89
+                },
+                {
+                    "routes": [],
+                    "name": "refusal",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "refusal(WP_Error $error): Minn\\RestError",
+                    "doc": "A save's refusal as REST serves it: a name in use with the term's id, anything else with its own status or 500.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "error",
+                            "type": "WP_Error",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 92,
+                    "end": 100
+                }
+            ]
+        },
+        {
+            "name": "Minn\\Runtime\\TermFields",
+            "short": "TermFields",
+            "namespace": "Minn\\Runtime",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Runtime/TermFields.php",
+            "lines": 65,
+            "doc": "A term's fields in a context, as the reference's sanitize_term_field\ntreats them (probe term-sanitize): the numeric fields are whole numbers,\nnever below zero, in every context, and raw stops there. edit runs\nedit_term_{field} and edit_{taxonomy}_{field}; db runs pre_term_{field}\nand pre_{taxonomy}_{field}, where the saving defaults live, and a slug\nalso pre_category_nicename; rss runs term_{field}_rss and\n{taxonomy}_{field}_rss; any other context runs term_{field} and\n{taxonomy}_{field} with the context named. Then a text field is escaped\nfor where it goes: a form (edit), an attribute, a script (js).",
+            "implements": [],
+            "extends": null,
+            "uses": [],
+            "usedBy": [],
+            "constructor": null,
+            "cases": [],
+            "constants": [
+                {
+                    "name": "FIELDS",
+                    "value": "array (   0 => 'term_id',   1 => 'name',   2 => 'description',   3 => 'slug',   4 => 'count',   5 => 'parent',   6 => 'term_group',   7 => 'term_taxonomy_id',   8 => 'object_id', )",
+                    "doc": "The fields sanitize_term runs, in its order.",
+                    "visibility": "public"
+                },
+                {
+                    "name": "NUMBERS",
+                    "value": "array (   0 => 'parent',   1 => 'term_id',   2 => 'count',   3 => 'term_group',   4 => 'term_taxonomy_id',   5 => 'object_id', )",
+                    "doc": "",
+                    "visibility": "private"
+                },
+                {
+                    "name": "ESCAPES",
+                    "value": "array (   'edit' => 'esc_html',   'attribute' => 'esc_attr',   'js' => 'esc_js', )",
+                    "doc": "",
+                    "visibility": "private"
+                }
+            ],
+            "properties": [],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "field",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "field(string $field, mixed $value, int $termId, string|false $taxonomy, string $context): mixed",
+                    "doc": "One field's value in a context; a lookup with no taxonomy names false, and its filters get false.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "field",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "value",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "termId",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "taxonomy",
+                            "type": "string|false",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "context",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 28,
+                    "end": 40
+                },
+                {
+                    "routes": [],
+                    "name": "term",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "term(object|array $term, string $taxonomy, string $context): object|array",
+                    "doc": "A term (object or array) with each of its fields in the context, and\nits filter set to the context; the term's own id goes to the filters.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "term",
+                            "type": "object|array",
+                            "shape": "T",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "taxonomy",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "context",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 50,
+                    "end": 63
+                },
+                {
+                    "routes": [],
+                    "name": "filtered",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "filtered(string $field, mixed $value, int $termId, string|false $taxonomy, string $context): mixed",
+                    "doc": "The field's own filters for the context, in the reference's order.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "field",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "value",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "termId",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "taxonomy",
+                            "type": "string|false",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "context",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 66,
+                    "end": 74
+                },
+                {
+                    "routes": [],
+                    "name": "saving",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "saving(string $field, mixed $value, string|false $taxonomy): mixed",
+                    "doc": "The db context's filters: the field's, the taxonomy's, and a slug's old category one.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "field",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "value",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "taxonomy",
+                            "type": "string|false",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 77,
+                    "end": 81
                 }
             ]
         },
@@ -104839,7 +105311,7 @@
             "namespace": "Minn\\Runtime",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Runtime/TermQuery.php",
-            "lines": 393,
+            "lines": 440,
             "doc": "Term reads in the shapes plugin code asks for: get_terms() arguments to\nrows, the tree filters (child_of, exclude_tree), the fields shapes, and\nthe single-term lookups. Behaviour pinned by contracts/fixtures/api/content.json.",
             "implements": [],
             "extends": null,
@@ -105014,6 +105486,105 @@
                 },
                 {
                     "routes": [],
+                    "name": "lookup",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "lookup(string $field, string $value, ?string $taxonomy, ?int $parent): ?array",
+                    "doc": "The term whose slug or name (as stored) is exactly the value,\noptionally in a taxonomy and under a parent (0 for the top level).",
+                    "shapes": [
+                        "@return array{term_id: int, term_taxonomy_id: int}|null"
+                    ],
+                    "params": [
+                        {
+                            "name": "field",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "value",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "taxonomy",
+                            "type": "?string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "parent",
+                            "type": "?int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 108,
+                    "end": 123
+                },
+                {
+                    "routes": [],
+                    "name": "hasChildren",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "hasChildren(int $parent, ?array $taxonomies): bool",
+                    "doc": "Whether any term in the taxonomies (any taxonomy for null) sits\nunder the parent: the reference answers a lookup under a childless\nparent with nothing before it looks.",
+                    "shapes": [
+                        "@param list<string>|null $taxonomies"
+                    ],
+                    "params": [
+                        {
+                            "name": "parent",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "taxonomies",
+                            "type": "?array",
+                            "shape": "list<string>|null",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 132,
+                    "end": 141
+                },
+                {
+                    "routes": [],
+                    "name": "slugTaken",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "slugTaken(string $slug, int $exceptTermId): bool",
+                    "doc": "Whether a term other than the one named holds the slug, in any taxonomy.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "slug",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "exceptTermId",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 144,
+                    "end": 147
+                },
+                {
+                    "routes": [],
                     "name": "normalise",
                     "static": false,
                     "visibility": "public",
@@ -105029,8 +105600,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 103,
-                    "end": 113
+                    "line": 150,
+                    "end": 160
                 },
                 {
                     "routes": [],
@@ -105056,8 +105627,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 116,
-                    "end": 120
+                    "line": 163,
+                    "end": 167
                 },
                 {
                     "routes": [],
@@ -105086,8 +105657,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 129,
-                    "end": 170
+                    "line": 176,
+                    "end": 217
                 },
                 {
                     "routes": [],
@@ -105108,8 +105679,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 288,
-                    "end": 299
+                    "line": 335,
+                    "end": 346
                 },
                 {
                     "routes": [],
@@ -105137,8 +105708,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 302,
-                    "end": 317
+                    "line": 349,
+                    "end": 364
                 },
                 {
                     "routes": [],
@@ -105173,8 +105744,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 320,
-                    "end": 328
+                    "line": 367,
+                    "end": 375
                 },
                 {
                     "routes": [],
@@ -105202,8 +105773,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 336,
-                    "end": 355
+                    "line": 383,
+                    "end": 402
                 },
                 {
                     "routes": [],
@@ -105231,8 +105802,8 @@
                             "doc": "the caller's id-list parser"
                         }
                     ],
-                    "line": 379,
-                    "end": 406
+                    "line": 426,
+                    "end": 453
                 },
                 {
                     "routes": [],
@@ -105253,8 +105824,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 173,
-                    "end": 177
+                    "line": 220,
+                    "end": 224
                 },
                 {
                     "routes": [],
@@ -105282,8 +105853,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 180,
-                    "end": 196
+                    "line": 227,
+                    "end": 243
                 },
                 {
                     "routes": [],
@@ -105311,8 +105882,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 199,
-                    "end": 270
+                    "line": 246,
+                    "end": 317
                 },
                 {
                     "routes": [],
@@ -105333,8 +105904,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 273,
-                    "end": 280
+                    "line": 320,
+                    "end": 327
                 },
                 {
                     "routes": [],
@@ -105355,8 +105926,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 358,
-                    "end": 365
+                    "line": 405,
+                    "end": 412
                 },
                 {
                     "routes": [],
@@ -105375,8 +105946,322 @@
                             "doc": ""
                         }
                     ],
-                    "line": 367,
-                    "end": 370
+                    "line": 414,
+                    "end": 417
+                }
+            ]
+        },
+        {
+            "name": "Minn\\Runtime\\TermSave",
+            "short": "TermSave",
+            "namespace": "Minn\\Runtime",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Runtime/TermSave.php",
+            "lines": 199,
+            "doc": "wp_insert_term and wp_update_term in the reference's order (probe\nterm-insert-filters, contracts/runtime.md \"Terms plugins can change\").\nAn insert asks pre_insert_term, refuses an empty name or a missing\nparent, runs every field through its db filters (sanitize_term), refuses\na name the parent (or, for tags, the taxonomy) already has, makes the\nslug unique, hands the row to wp_insert_term_data, writes it (a slug left\nempty becomes the term's id), puts it in the taxonomy, lets a plugin\nname a duplicate to keep instead, and tells plugins. An update merges\nthe stored term (slashed, so a backslash in it survives) under the\nchanges, runs the same filters, asks wp_update_term_parent (where a\nparent that would put the term under itself becomes 0), and refuses a\nslug a sibling holds.",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\Content\\Terms",
+                "Minn\\Runtime\\Runtime"
+            ],
+            "usedBy": [],
+            "constructor": null,
+            "cases": [],
+            "constants": [
+                {
+                    "name": "DEFAULTS",
+                    "value": "array (   'alias_of' => '',   'description' => '',   'parent' => 0,   'slug' => '', )",
+                    "doc": "",
+                    "visibility": "private"
+                }
+            ],
+            "properties": [],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "insert",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "insert(mixed $term, string $taxonomy, array $args): WP_Error|array",
+                    "doc": "A new term's ids, or why not.",
+                    "shapes": [
+                        "@param array<string, mixed> $args",
+                        "@return array{term_id: int, term_taxonomy_id: int}|\\WP_Error"
+                    ],
+                    "params": [
+                        {
+                            "name": "term",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "taxonomy",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "args",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 33,
+                    "end": 81
+                },
+                {
+                    "routes": [],
+                    "name": "update",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "update(int $termId, string $taxonomy, array $changes): WP_Error|array",
+                    "doc": "A changed term's ids, or why not.",
+                    "shapes": [
+                        "@param array<string, mixed> $changes",
+                        "@return array{term_id: int, term_taxonomy_id: int}|\\WP_Error"
+                    ],
+                    "params": [
+                        {
+                            "name": "termId",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "taxonomy",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "changes",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 89,
+                    "end": 118
+                },
+                {
+                    "routes": [],
+                    "name": "write",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "write(WP_Term $term, array $data, string $description, int $parent, array $args): array",
+                    "doc": "The update's writes and their actions, in the reference's order.",
+                    "shapes": [
+                        "@param array{name: string, slug: string, term_group: int} $data",
+                        "@param array<string, mixed> $args",
+                        "@return array{term_id: int, term_taxonomy_id: int}"
+                    ],
+                    "params": [
+                        {
+                            "name": "term",
+                            "type": "WP_Term",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "data",
+                            "type": "array",
+                            "shape": "array{name: string, slug: string, term_group: int}",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "description",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "parent",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "args",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 127,
+                    "end": 150
+                },
+                {
+                    "routes": [],
+                    "name": "nameTaken",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "nameTaken(string $name, string $taxonomy, array $args): ?WP_Error",
+                    "doc": "The refusal for a name already in use: under the same parent in a\nhierarchical taxonomy (unless a different slug was asked for), or\nanywhere in a flat one. The lookup sanitizes the name again, as the\nreference's does.",
+                    "shapes": [
+                        "@param array<string, mixed> $args"
+                    ],
+                    "params": [
+                        {
+                            "name": "name",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "taxonomy",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "args",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 160,
+                    "end": 175
+                },
+                {
+                    "routes": [],
+                    "name": "updatedSlug",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "updatedSlug(string $slug, string $asked, int $parent, int $termId, array $args): WP_Error|string",
+                    "doc": "An update's slug: as asked when no other term holds it; made unique\nwhen it was made from the name (none was asked for) or the holder\nsits under another parent; refused otherwise.",
+                    "shapes": [
+                        "@param array<string, mixed> $args"
+                    ],
+                    "params": [
+                        {
+                            "name": "slug",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "asked",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "parent",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "termId",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "args",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 184,
+                    "end": 194
+                },
+                {
+                    "routes": [],
+                    "name": "slugFromId",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "slugFromId(Minn\\Content\\Terms $terms, int $termId, string $taxonomy, array $data, array $args): void",
+                    "doc": "A slug saving left empty (a name with nothing a slug can keep) becomes\nthe term's id, between edit_terms and edited_terms.",
+                    "shapes": [
+                        "@param array{name: string, slug: string, term_group: int} $data",
+                        "@param array<string, mixed> $args"
+                    ],
+                    "params": [
+                        {
+                            "name": "terms",
+                            "type": "Minn\\Content\\Terms",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "termId",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "taxonomy",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "data",
+                            "type": "array",
+                            "shape": "array{name: string, slug: string, term_group: int}",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "args",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 203,
+                    "end": 208
+                },
+                {
+                    "routes": [],
+                    "name": "row",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "row(mixed $data): array",
+                    "doc": "The row a plugin's filter handed back, with the columns it dropped\nput back.",
+                    "shapes": [
+                        "@return array{name: string, slug: string, term_group: int}"
+                    ],
+                    "params": [
+                        {
+                            "name": "data",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 216,
+                    "end": 220
                 }
             ]
         },
@@ -105386,8 +106271,8 @@
             "namespace": "Minn\\Runtime",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Runtime/TermWriter.php",
-            "lines": 192,
-            "doc": "The decisions behind wp_insert_term, wp_update_term, wp_delete_term, and\nthe object-term relationships: duplicate rules, slug uniqueness, parent\nchecks, which relationships to add and remove. The rows themselves come\nfrom Content\\Terms; the lifecycle actions fire from here in the\nreference's order. Behaviour pinned by contracts/fixtures/api/content.json.",
+            "lines": 119,
+            "doc": "The decisions behind wp_delete_term and the object-term relationships:\nwhich relationships to add and remove (saves are Runtime\\TermSave). The rows themselves come\nfrom Content\\Terms; the lifecycle actions fire from here in the\nreference's order. Behaviour pinned by contracts/fixtures/api/content.json.",
             "implements": [],
             "extends": null,
             "uses": [
@@ -105395,17 +106280,14 @@
                 "Minn\\Content\\TermRecord",
                 "Minn\\Content\\Terms",
                 "Minn\\Db",
-                "Minn\\Runtime\\Refusal",
                 "Minn\\Runtime\\Runtime",
                 "Minn\\Runtime\\TermQuery"
             ],
             "usedBy": [],
             "constructor": {
-                "signature": "__construct(Minn\\Db $db, Minn\\Content\\Terms $terms, Minn\\Runtime\\TermQuery $query, Minn\\Content\\PostWriter $posts, Closure $slug)",
+                "signature": "__construct(Minn\\Db $db, Minn\\Content\\Terms $terms, Minn\\Runtime\\TermQuery $query, Minn\\Content\\PostWriter $posts)",
                 "doc": "",
-                "shapes": [
-                    "@param Closure(string): string $slug the slug sanitiser, so the reference's filters apply"
-                ],
+                "shapes": [],
                 "params": [
                     {
                         "name": "db",
@@ -105434,18 +106316,11 @@
                         "shape": "",
                         "default": null,
                         "doc": ""
-                    },
-                    {
-                        "name": "slug",
-                        "type": "Closure",
-                        "shape": "Closure(string): string",
-                        "default": null,
-                        "doc": "the slug sanitiser, so the reference's filters apply"
                     }
                 ],
                 "visibility": "public",
-                "line": 23,
-                "end": 25
+                "line": 21,
+                "end": 23
             },
             "cases": [],
             "constants": [],
@@ -105485,136 +106360,9 @@
                     "doc": "",
                     "visibility": "private",
                     "promoted": true
-                },
-                {
-                    "name": "slug",
-                    "type": "Closure",
-                    "readonly": true,
-                    "static": false,
-                    "doc": "",
-                    "visibility": "private",
-                    "promoted": true
                 }
             ],
             "methods": [
-                {
-                    "routes": [],
-                    "name": "insert",
-                    "static": false,
-                    "visibility": "public",
-                    "signature": "insert(string $name, string $taxonomy, array $args, bool $hierarchical): Minn\\Runtime\\Refusal|array",
-                    "doc": "Inserts a term, or the refusal.",
-                    "shapes": [
-                        "@param array{slug?: string, description?: string, parent?: int|string, alias_of?: string} $args",
-                        "@return array{term_id: int, term_taxonomy_id: int}|Refusal"
-                    ],
-                    "params": [
-                        {
-                            "name": "name",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "taxonomy",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "args",
-                            "type": "array",
-                            "shape": "array{slug?: string, description?: string, parent?: int|string, alias_of?: string}",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "hierarchical",
-                            "type": "bool",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 33,
-                    "end": 61
-                },
-                {
-                    "routes": [],
-                    "name": "update",
-                    "static": false,
-                    "visibility": "public",
-                    "signature": "update(array $current, string $taxonomy, array $args): Minn\\Runtime\\Refusal|array",
-                    "doc": "Updates a term, or the refusal.",
-                    "shapes": [
-                        "@param array<string, mixed> $current the term's row",
-                        "@param array<string, mixed> $args",
-                        "@return array{name: string, slug: string, description: string, parent: int}|Refusal what to write"
-                    ],
-                    "params": [
-                        {
-                            "name": "current",
-                            "type": "array",
-                            "shape": "array<string, mixed>",
-                            "default": null,
-                            "doc": "the term's row"
-                        },
-                        {
-                            "name": "taxonomy",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "args",
-                            "type": "array",
-                            "shape": "array<string, mixed>",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 70,
-                    "end": 90
-                },
-                {
-                    "routes": [],
-                    "name": "apply",
-                    "static": false,
-                    "visibility": "public",
-                    "signature": "apply(int $termId, string $taxonomy, array $change): void",
-                    "doc": "Writes an update() decision. @param array{name: string, slug: string, description: string, parent: int} $change",
-                    "shapes": [
-                        "@param array{name: string, slug: string, description: string, parent: int} $change"
-                    ],
-                    "params": [
-                        {
-                            "name": "termId",
-                            "type": "int",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "taxonomy",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "change",
-                            "type": "array",
-                            "shape": "array{name: string, slug: string, description: string, parent: int}",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 93,
-                    "end": 97
-                },
                 {
                     "routes": [],
                     "name": "delete",
@@ -105656,8 +106404,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 106,
-                    "end": 121
+                    "line": 32,
+                    "end": 47
                 },
                 {
                     "routes": [],
@@ -105708,8 +106456,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 137,
-                    "end": 155
+                    "line": 63,
+                    "end": 81
                 },
                 {
                     "routes": [],
@@ -105752,8 +106500,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 165,
-                    "end": 177
+                    "line": 91,
+                    "end": 103
                 },
                 {
                     "routes": [],
@@ -105772,8 +106520,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 180,
-                    "end": 188
+                    "line": 106,
+                    "end": 114
                 },
                 {
                     "routes": [],
@@ -105799,8 +106547,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 191,
-                    "end": 194
+                    "line": 117,
+                    "end": 120
                 },
                 {
                     "routes": [],
@@ -105821,8 +106569,8 @@
                             "doc": "@return list<string>"
                         }
                     ],
-                    "line": 197,
-                    "end": 205
+                    "line": 123,
+                    "end": 131
                 },
                 {
                     "routes": [],
@@ -105848,8 +106596,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 207,
-                    "end": 210
+                    "line": 133,
+                    "end": 136
                 }
             ]
         },
