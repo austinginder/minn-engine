@@ -459,7 +459,7 @@
         [
             false,
             "probe-image.png",
-            "{home}/wp-content/uploads/2026/09/probe-image.png",
+            "{home}/wp-content/uploads/{month}/probe-image.png",
             "image/png",
             true
         ]
@@ -554,7 +554,7 @@
     ],
     [
         "stored metadata blob",
-        "a:6:{s:5:\"width\";i:1200;s:6:\"height\";i:800;s:4:\"file\";s:23:\"2026/09/probe-image.png\";s:8:\"filesize\";i:4609;s:5:\"sizes\";a"
+        "a:6:{s:5:\"width\";i:1200;s:6:\"height\";i:800;s:4:\"file\";s:23:\"{month}/probe-image.png\";s:8:\"filesize\";i:4609;s:5:\"sizes\";a"
     ],
     [
         "update_attached_file",

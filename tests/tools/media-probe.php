@@ -21,7 +21,9 @@ foreach (['home_url', 'site_url', 'option_home', 'option_siteurl'] as $devHook) 
     remove_all_filters($devHook);
 }
 $home = home_url();
-$rel = static fn ($v) => is_string($v) ? str_replace([$home, str_replace('https://', 'http://', $home)], '{home}', $v) : $v;
+// The upload month is the day's, not the fixture's: masked like the host.
+$month = ltrim((string) wp_get_upload_dir()['subdir'], '/');
+$rel = static fn ($v) => is_string($v) ? str_replace([$home, str_replace('https://', 'http://', $home), $month . '/'], ['{home}', '{home}', '{month}/'], $v) : $v;
 $cleanup = static function (): void {
     foreach (get_posts(['post_type' => 'attachment', 'post_status' => 'any', 'numberposts' => -1, 'fields' => 'ids', 's' => 'Probe image']) as $id) {
         wp_delete_attachment($id, true);
@@ -98,7 +100,7 @@ $generated = wp_generate_attachment_metadata($newId, $upload['file']);
 $say('wp_generate_attachment_metadata', [array_keys($generated), $generated['width'], $generated['height'], isset($generated['filesize']), array_map(static fn ($s) => [$s['width'], $s['height'], $s['mime-type'], isset($s['filesize'])], $generated['sizes']), array_keys($generated['image_meta'] ?? []), basename($generated['file']) === basename($upload['file'])]);
 $say('generated files exist', array_map(static fn ($s) => file_exists(dirname($upload['file']) . '/' . $s['file']), $generated['sizes']));
 $say('wp_update_attachment_metadata', [wp_update_attachment_metadata($newId, $generated), wp_get_attachment_metadata($newId) == $generated, wp_update_attachment_metadata($newId, $generated)]);
-$say('stored metadata blob', preg_replace('/probe-image(-\d+)?/', 'probe-image', (string) get_post_meta($newId, '_wp_attachment_metadata', true) === '' ? 'empty' : substr((string) $GLOBALS['wpdb']->get_var($GLOBALS['wpdb']->prepare("SELECT meta_value FROM {$GLOBALS['wpdb']->postmeta} WHERE post_id = %d AND meta_key = '_wp_attachment_metadata'", $newId)), 0, 120)));
+$say('stored metadata blob', $rel(preg_replace('/probe-image(-\d+)?/', 'probe-image', (string) get_post_meta($newId, '_wp_attachment_metadata', true) === '' ? 'empty' : substr((string) $GLOBALS['wpdb']->get_var($GLOBALS['wpdb']->prepare("SELECT meta_value FROM {$GLOBALS['wpdb']->postmeta} WHERE post_id = %d AND meta_key = '_wp_attachment_metadata'", $newId)), 0, 120))));
 $say('update_attached_file', [update_attached_file($newId, $upload['file']), update_attached_file(999999, '/x.png')]);
 $say('get_attached_file new', basename(get_attached_file($newId)) === basename($upload['file']));
 $say('image_src new medium', array_slice(wp_get_attachment_image_src($newId, 'medium'), 1));
