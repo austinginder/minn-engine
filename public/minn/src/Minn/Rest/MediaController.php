@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Minn\Rest;
 
+use Minn\Runtime\Runtime;
 use Minn\Runtime\PostEvents;
 use Minn\Http\Policy;
 use Minn\Http\Args;
@@ -138,7 +139,11 @@ final readonly class MediaController
         }
         // The refusal code names the transport: a multipart field is an "unknown
         // error", a raw body a "sideload error"; the message and status are one.
-        $refused = static fn (): RestError => new RestError($upload->movedFrom === null ? 'rest_upload_sideload_error' : 'rest_upload_unknown_error', 'Sorry, you are not allowed to upload this file type.', 500);
+        $refused = static fn (string $message = 'Sorry, you are not allowed to upload this file type.'): RestError => new RestError($upload->movedFrom === null ? 'rest_upload_sideload_error' : 'rest_upload_unknown_error', $message, 500);
+        if (Runtime::booted()) {
+            [$relative, $type] = $this->storeWithPlugins($upload, $request, $refused);
+            return $this->inserted($this->library->prepareStored($relative, $type, $upload->parent, $userId), $request);
+        }
         if ($upload->mime() === null) {
             throw $refused();
         }
@@ -153,8 +158,43 @@ final readonly class MediaController
                 $upload = $upload->renamedFor($sniffed);
             }
         }
+        return $this->inserted($this->library->prepare($upload, $userId), $request);
+    }
+
+    /**
+     * With plugins loaded, the file goes through the runtime's
+     * wp_handle_sideload (a raw body) or wp_handle_upload (a form field),
+     * as the reference's REST upload sends it: their prefilters, the allowed
+     * types (upload_mimes), the content check, the name, the move and
+     * wp_handle_upload, where SVG and security plugins work. A refusal is the
+     * engine's REST error with the runtime's words.
+     *
+     * @param \Closure(string): RestError $refused
+     * @return array{0: string, 1: string} the path relative to the uploads folder, and the type
+     */
+    private function storeWithPlugins(Upload $upload, Request $request, \Closure $refused): array
+    {
+        $tmp = $upload->movedFrom;
+        if ($tmp === null) {
+            $tmp = (string) tempnam(sys_get_temp_dir(), 'minn-upload');
+            file_put_contents($tmp, (string) $upload->raw);
+        }
+        $file = ['name' => $upload->filename, 'type' => (string) ($request->header('content-type') ?? ''), 'tmp_name' => $tmp, 'error' => 0, 'size' => (int) filesize($tmp)];
+        $result = $upload->movedFrom === null ? \wp_handle_sideload($file, ['test_form' => false]) : \wp_handle_upload($file, ['test_form' => false]);
+        if (is_file($tmp) && $upload->movedFrom === null) {
+            @unlink($tmp);
+        }
+        $relative = isset($result['file']) ? $this->library->relativeOf((string) $result['file']) : null;
+        if (!empty($result['error']) || $relative === null) {
+            throw $refused((string) ($result['error'] ?? 'Sorry, you are not allowed to upload this file type.'));
+        }
+        return [$relative, (string) ($result['type'] ?? '')];
+    }
+
+    /** The attachment's row written and the reference's actions told, for a file already stored. */
+    private function inserted(\Minn\Media\PreparedUpload $prepared, Request $request): Response
+    {
         $events = new PostEvents();
-        $prepared = $this->library->prepare($upload, $userId);
         $events->beforeSave($prepared->columns, null);
         $id = $this->library->insert($prepared);
         $events->attachedFile($this->library, $id, $prepared->relative);

@@ -969,22 +969,18 @@ function _minn_attachment_js_fields(WP_Post $attachment, string $type, string $s
     ];
 }
 
+/** A form's uploaded file, taken as the reference takes one (Minn\Runtime\FileUpload): the stored file, url and type, or an error. */
 function wp_handle_upload(&$file, $overrides = false, $time = null)
 {
-    if (empty($file['tmp_name']) || !is_uploaded_file($file['tmp_name']) && !is_file($file['tmp_name'])) {
-        return ['error' => 'No file was uploaded.'];
-    }
-    $upload = wp_upload_bits((string) $file['name'], null, (string) file_get_contents($file['tmp_name']), $time);
-    if ($upload['error']) {
-        return ['error' => $upload['error']];
-    }
-    @unlink($file['tmp_name']);
-    return apply_filters('wp_handle_upload', ['file' => $upload['file'], 'url' => $upload['url'], 'type' => $upload['type']], 'upload');
+    $file = (array) $file;
+    return \Minn\Runtime\FileUpload::handle($file, is_array($overrides) ? $overrides : false, $time === null ? null : (string) $time, 'wp_handle_upload');
 }
 
+/** A file from elsewhere (a download, a request body), taken as the reference takes one (Minn\Runtime\FileUpload). */
 function wp_handle_sideload(&$file, $overrides = false, $time = null)
 {
-    return wp_handle_upload($file, $overrides, $time);
+    $file = (array) $file;
+    return \Minn\Runtime\FileUpload::handle($file, is_array($overrides) ? $overrides : false, $time === null ? null : (string) $time, 'wp_handle_sideload');
 }
 
 function media_handle_sideload($file_array, $post_id = 0, $desc = null, $post_data = [])

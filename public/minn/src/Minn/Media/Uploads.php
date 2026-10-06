@@ -107,6 +107,13 @@ final readonly class Uploads
         return "{$subdir}/{$try}";
     }
 
+    /** A stored file's path relative to the uploads folder, or null for a file outside it. */
+    public function relativeOf(string $absolutePath): ?string
+    {
+        $base = rtrim($this->baseDir, '/') . '/';
+        return str_starts_with($absolutePath, $base) ? substr($absolutePath, strlen($base)) : null;
+    }
+
     /** Removes the original and every generated size; a size name that leaves the file's own folder is ignored. */
     public function remove(string $relativePath, array $sizes): void
     {

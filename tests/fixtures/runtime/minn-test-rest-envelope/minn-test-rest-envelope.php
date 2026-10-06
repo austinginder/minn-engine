@@ -196,3 +196,21 @@ if (in_array('prepare', $minnEnvelopeModes, true)) {
         }, 10, 3);
     }
 }
+
+// An upload a plugin allows, checks or refuses, as SVG and security plugins do.
+if (in_array('svg', $minnEnvelopeModes, true)) {
+    add_filter('upload_mimes', static fn (array $mimes): array => $mimes + ['svg' => 'image/svg+xml']);
+    add_filter('wp_check_filetype_and_ext', static fn ($data, $file, $filename) => str_ends_with((string) $filename, '.svg') ? ['ext' => 'svg', 'type' => 'image/svg+xml', 'proper_filename' => false] : $data, 10, 3);
+    add_filter('wp_handle_sideload_prefilter', static function (array $file): array {
+        if (str_contains((string) file_get_contents($file['tmp_name']), '<script')) {
+            $file['error'] = 'The SVG carried a script.';
+        }
+        return $file;
+    });
+}
+if (in_array('refuse-upload', $minnEnvelopeModes, true)) {
+    add_filter('wp_handle_sideload_prefilter', static function (array $file): array {
+        $file['error'] = 'Uploads are closed.';
+        return $file;
+    });
+}

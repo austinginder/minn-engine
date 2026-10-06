@@ -252,19 +252,51 @@ function _minn_utf8_uri_encode(string $utf8, int $length = 0): string
     return $out;
 }
 
+/**
+ * A file name safe to store, as the reference cleans one (probe
+ * upload-filters): accents transliterated, the special characters out,
+ * spaces and runs of dashes as one dash, no dots or dashes at the ends; an
+ * inner part that looks like an extension but is no type the site allows
+ * gets an underscore (x.php.png is x.php_.png); a name that is only an
+ * extension becomes unnamed-file.{ext}; sanitize_file_name has the last word.
+ */
 function sanitize_file_name($filename)
 {
     $raw = (string) $filename;
     $special = ['?', '[', ']', '/', '\\', '=', '<', '>', ':', ';', ',', "'", '"', '&', '$', '#', '*', '(', ')', '|', '~', '`', '!', '{', '}', '%', '+', '’', '«', '»', '”', '“', chr(0)];
     $special = apply_filters('sanitize_file_name_chars', $special, $raw);
-    $filename = str_replace("\x00", '', $raw);
-    $filename = preg_replace("#\x{00a0}#siu", ' ', $filename);
+    $filename = remove_accents(str_replace("\x00", '', $raw));
+    $filename = (string) preg_replace("#\x{00a0}#siu", ' ', $filename);
     $filename = str_replace($special, '', $filename);
     $filename = str_replace(['%20', '+'], '-', $filename);
-    $filename = preg_replace('/\.{2,}/', '.', $filename);
-    $filename = preg_replace('/[\r\n\t -]+/', '-', $filename);
+    $filename = (string) preg_replace('/\.{2,}/', '.', $filename);
+    $filename = (string) preg_replace('/[\r\n\t -]+/', '-', $filename);
     $filename = trim($filename, '.-_');
+    $filename = _minn_neutralize_inner_extensions($filename);
+    if (!str_contains($filename, '.')) {
+        $named = wp_check_filetype('test.' . $filename, _minn_mime_table()['mime']);
+        if ($named['ext'] !== false && $named['ext'] === $filename) {
+            $filename = 'unnamed-file.' . $named['ext'];
+        }
+    }
     return apply_filters('sanitize_file_name', $filename, $raw);
+}
+
+/** @internal an inner part of a file name that looks like an extension (two to five letters, maybe a digit) and is no allowed type gets an underscore */
+function _minn_neutralize_inner_extensions(string $filename): string
+{
+    $parts = explode('.', $filename);
+    if (count($parts) <= 2) {
+        return $filename;
+    }
+    $first = array_shift($parts);
+    $last = array_pop($parts);
+    $allowed = array_keys(get_allowed_mime_types());
+    foreach ($parts as $i => $part) {
+        $known = array_filter($allowed, static fn (string $pattern): bool => preg_match('!^(' . $pattern . ')$!i', $part) === 1) !== [];
+        $parts[$i] = preg_match('/^[a-zA-Z]{2,5}\d?$/', $part) === 1 && !$known ? $part . '_' : $part;
+    }
+    return implode('.', [$first, ...$parts, $last]);
 }
 
 function sanitize_email($email)

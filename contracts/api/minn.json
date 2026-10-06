@@ -68317,7 +68317,8 @@
             "extends": null,
             "uses": [],
             "usedBy": [
-                "Minn\\Media\\Writer"
+                "Minn\\Media\\Writer",
+                "Minn\\Rest\\MediaController"
             ],
             "constructor": {
                 "signature": "__construct(array $columns, string $relative, ?array $metadata)",
@@ -68897,7 +68898,7 @@
             "namespace": "Minn\\Media",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Media/Uploads.php",
-            "lines": 172,
+            "lines": 179,
             "doc": "The uploads directory: paths, URLs, the allowed types, and landing a file.",
             "implements": [],
             "extends": null,
@@ -69104,6 +69105,26 @@
                 },
                 {
                     "routes": [],
+                    "name": "relativeOf",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "relativeOf(string $absolutePath): ?string",
+                    "doc": "A stored file's path relative to the uploads folder, or null for a file outside it.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "absolutePath",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 111,
+                    "end": 115
+                },
+                {
+                    "routes": [],
                     "name": "remove",
                     "static": false,
                     "visibility": "public",
@@ -69126,8 +69147,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 111,
-                    "end": 122
+                    "line": 118,
+                    "end": 129
                 },
                 {
                     "routes": [],
@@ -69164,8 +69185,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 132,
-                    "end": 157
+                    "line": 139,
+                    "end": 164
                 },
                 {
                     "routes": [],
@@ -69235,8 +69256,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 166,
-                    "end": 182
+                    "line": 173,
+                    "end": 189
                 }
             ]
         },
@@ -69246,7 +69267,7 @@
             "namespace": "Minn\\Media",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Media/Writer.php",
-            "lines": 121,
+            "lines": 137,
             "doc": "The writes the media library makes. An Upload becomes an attachment: the\nfile lands in the dated uploads directory under a unique name, the row is\ninserted with the stored name as its title and slug, and an image gets\nits sub-sizes and the serialized metadata blob. Edits stamp the row\nmodified; removal takes the files with the row.",
             "implements": [],
             "extends": null,
@@ -69414,7 +69435,68 @@
                         }
                     ],
                     "line": 47,
-                    "end": 80
+                    "end": 52
+                },
+                {
+                    "routes": [],
+                    "name": "prepareStored",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "prepareStored(string $relative, string $mime, int $parent, int $authorId): Minn\\Media\\PreparedUpload",
+                    "doc": "The attachment for a file already in the uploads folder (one the\nruntime's wp_handle_upload stored, plugins' filters and all): its row\nand, for an image the engine sizes, its metadata.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "relative",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "mime",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "parent",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "authorId",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 59,
+                    "end": 90
+                },
+                {
+                    "routes": [],
+                    "name": "relativeOf",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "relativeOf(string $absolutePath): ?string",
+                    "doc": "A stored file's path relative to the uploads folder, or null for one outside it.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "absolutePath",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 93,
+                    "end": 96
                 },
                 {
                     "routes": [],
@@ -69433,8 +69515,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 83,
-                    "end": 86
+                    "line": 99,
+                    "end": 102
                 },
                 {
                     "routes": [],
@@ -69460,8 +69542,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 89,
-                    "end": 92
+                    "line": 105,
+                    "end": 108
                 },
                 {
                     "routes": [],
@@ -69489,8 +69571,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 95,
-                    "end": 98
+                    "line": 111,
+                    "end": 114
                 },
                 {
                     "routes": [],
@@ -69516,8 +69598,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 101,
-                    "end": 106
+                    "line": 117,
+                    "end": 122
                 },
                 {
                     "routes": [],
@@ -69545,8 +69627,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 109,
-                    "end": 114
+                    "line": 125,
+                    "end": 130
                 },
                 {
                     "routes": [],
@@ -69572,8 +69654,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 117,
-                    "end": 120
+                    "line": 133,
+                    "end": 136
                 },
                 {
                     "routes": [],
@@ -69592,8 +69674,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 123,
-                    "end": 130
+                    "line": 139,
+                    "end": 146
                 },
                 {
                     "routes": [],
@@ -69621,8 +69703,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 133,
-                    "end": 139
+                    "line": 149,
+                    "end": 155
                 }
             ]
         },
@@ -78658,7 +78740,7 @@
             "namespace": "Minn\\Rest",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Rest/MediaController.php",
-            "lines": 220,
+            "lines": 259,
             "doc": "wp/v2/media: list, single, upload on both transports (multipart field\n\"file\", or a raw body with Content-Disposition), field edits, and force\ndelete with the files.",
             "implements": [],
             "extends": null,
@@ -78674,6 +78756,7 @@
                 "Minn\\Http\\Response",
                 "Minn\\Http\\Route",
                 "Minn\\Http\\Subject",
+                "Minn\\Media\\PreparedUpload",
                 "Minn\\Media\\Upload",
                 "Minn\\Media\\Writer",
                 "Minn\\RestError",
@@ -78685,6 +78768,7 @@
                 "Minn\\Rest\\PostsWriteController",
                 "Minn\\Rest\\Reply",
                 "Minn\\Runtime\\PostEvents",
+                "Minn\\Runtime\\Runtime",
                 "Minn\\Support\\Kses"
             ],
             "usedBy": [
@@ -78732,8 +78816,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 31,
-                "end": 38
+                "line": 32,
+                "end": 39
             },
             "cases": [],
             "constants": [],
@@ -78804,8 +78888,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 42,
-                    "end": 66
+                    "line": 43,
+                    "end": 67
                 },
                 {
                     "routes": [
@@ -78833,8 +78917,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 112,
-                    "end": 121
+                    "line": 113,
+                    "end": 122
                 },
                 {
                     "routes": [
@@ -78855,8 +78939,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 125,
-                    "end": 171
+                    "line": 126,
+                    "end": 162
                 },
                 {
                     "routes": [
@@ -78886,8 +78970,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 177,
-                    "end": 219
+                    "line": 217,
+                    "end": 259
                 },
                 {
                     "routes": [
@@ -78915,8 +78999,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 223,
-                    "end": 238
+                    "line": 263,
+                    "end": 278
                 },
                 {
                     "routes": [],
@@ -78937,8 +79021,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 75,
-                    "end": 97
+                    "line": 76,
+                    "end": 98
                 },
                 {
                     "routes": [],
@@ -78964,8 +79048,72 @@
                             "doc": ""
                         }
                     ],
-                    "line": 99,
-                    "end": 108
+                    "line": 100,
+                    "end": 109
+                },
+                {
+                    "routes": [],
+                    "name": "storeWithPlugins",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "storeWithPlugins(Minn\\Media\\Upload $upload, Minn\\Http\\Request $request, Closure $refused): array",
+                    "doc": "With plugins loaded, the file goes through the runtime's\nwp_handle_sideload (a raw body) or wp_handle_upload (a form field),\nas the reference's REST upload sends it: their prefilters, the allowed\ntypes (upload_mimes), the content check, the name, the move and\nwp_handle_upload, where SVG and security plugins work. A refusal is the\nengine's REST error with the runtime's words.",
+                    "shapes": [
+                        "@param \\Closure(string): RestError $refused",
+                        "@return array{0: string, 1: string} the path relative to the uploads folder, and the type"
+                    ],
+                    "params": [
+                        {
+                            "name": "upload",
+                            "type": "Minn\\Media\\Upload",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "request",
+                            "type": "Minn\\Http\\Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "refused",
+                            "type": "Closure",
+                            "shape": "\\Closure(string): RestError",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 175,
+                    "end": 192
+                },
+                {
+                    "routes": [],
+                    "name": "inserted",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "inserted(Minn\\Media\\PreparedUpload $prepared, Minn\\Http\\Request $request): Minn\\Http\\Response",
+                    "doc": "The attachment's row written and the reference's actions told, for a file already stored.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "prepared",
+                            "type": "Minn\\Media\\PreparedUpload",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "request",
+                            "type": "Minn\\Http\\Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 195,
+                    "end": 211
                 },
                 {
                     "routes": [],
@@ -78984,8 +79132,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 240,
-                    "end": 247
+                    "line": 280,
+                    "end": 287
                 }
             ]
         },
@@ -101261,6 +101409,7 @@
                 "Minn\\Rest\\AbilitiesController",
                 "Minn\\Rest\\Api",
                 "Minn\\Rest\\Caller",
+                "Minn\\Rest\\MediaController",
                 "Minn\\Rest\\RuntimeEnvelope",
                 "Minn\\Rest\\RuntimePrepare",
                 "Minn\\Rest\\Services",

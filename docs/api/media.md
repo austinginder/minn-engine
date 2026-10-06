@@ -12,8 +12,8 @@ uploads, image sizes and attachment metadata
 | [`PreparedUpload`](#preparedupload) | final readonly class | 13 | An upload made ready for its attachment: the file stored, its sizes cut, |
 | [`Sizing`](#sizing) | final class | 207 | The image size arithmetic the media functions share: the crop or scale a |
 | [`Upload`](#upload) | final readonly class | 76 | One file arriving for the library, on either transport: a multipart |
-| [`Uploads`](#uploads) | final readonly class | 172 | The uploads directory: paths, URLs, the allowed types, and landing a file. |
-| [`Writer`](#writer) | final readonly class | 121 | The writes the media library makes. An Upload becomes an attachment: the |
+| [`Uploads`](#uploads) | final readonly class | 179 | The uploads directory: paths, URLs, the allowed types, and landing a file. |
+| [`Writer`](#writer) | final readonly class | 137 | The writes the media library makes. An Upload becomes an attachment: the |
 
 ## Canvas
 
@@ -192,7 +192,7 @@ An upload made ready for its attachment: the file stored, its sizes cut,
 the row it will be. The row is written apart, so what plugins hear
 before it (pre_post_insert) comes between.
 
-Used by: `Minn\Media\Writer`
+Used by: `Minn\Media\Writer`, `Minn\Rest\MediaController`
 
 ```php
 __construct(array $columns, string $relative, ?array $metadata)
@@ -356,6 +356,10 @@ is joined with an underscore, so "shell.php.png" lands as
 Lands content in the dated directory under a unique name and returns
 the relative path ("2026/08/name.png").
 
+### `relativeOf(string $absolutePath): ?string`
+
+A stored file's path relative to the uploads folder, or null for a file outside it.
+
 ### `remove(string $relativePath, array $sizes): void`
 
 Removes the original and every generated size; a size name that leaves the file's own folder is ignored.
@@ -404,6 +408,16 @@ The new attachment's id. The mime is the caller's to check first.
 Stores the file and cuts its sizes, before the row exists: a decode
 that fails leaves files to sweep, never a headless attachment.
 
+### `prepareStored(string $relative, string $mime, int $parent, int $authorId): Minn\Media\PreparedUpload`
+
+The attachment for a file already in the uploads folder (one the
+runtime's wp_handle_upload stored, plugins' filters and all): its row
+and, for an image the engine sizes, its metadata.
+
+### `relativeOf(string $absolutePath): ?string`
+
+A stored file's path relative to the uploads folder, or null for one outside it.
+
 ### `insert(Minn\Media\PreparedUpload $prepared): int`
 
 Writes a prepared attachment's row; returns its id.
@@ -436,5 +450,5 @@ Sets an attachment's alt text.
 
 Removes an attachment: its files, every generated size, its meta, and its row.
 
-Internals: `imageMetadata()` (private, line 133)
+Internals: `imageMetadata()` (private, line 149)
 

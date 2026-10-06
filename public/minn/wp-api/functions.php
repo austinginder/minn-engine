@@ -146,9 +146,16 @@ function wp_ext2type($ext)
     return null;
 }
 
+/** The types a user may upload, through upload_mimes: never Flash or executables, and web pages and scripts only for those who may post unfiltered HTML. */
 function get_allowed_mime_types($user = null)
 {
-    return apply_filters('upload_mimes', _minn_mime_table()['allowed'], $user);
+    $types = _minn_mime_table()['allowed'];
+    $unfiltered = $user === null ? current_user_can('unfiltered_html') : user_can($user, 'unfiltered_html');
+    if ($unfiltered) {
+        $all = _minn_mime_table()['mime'];
+        $types += array_intersect_key($all, ['htm|html' => 0, 'js' => 0]);
+    }
+    return apply_filters('upload_mimes', $types, $user);
 }
 
 function wp_check_filetype($filename, $mimes = null)
@@ -167,10 +174,13 @@ function wp_check_filetype($filename, $mimes = null)
     return compact('ext', 'type');
 }
 
+/** A file's extension and type from its content as much as its name (Minn\Runtime\FileTypeCheck), with a corrected name when an image carried the wrong extension. */
 function wp_check_filetype_and_ext($file, $filename, $mimes = null)
 {
-    $check = wp_check_filetype($filename, $mimes);
-    return ['ext' => $check['ext'], 'type' => $check['type'], 'proper_filename' => false];
+    $images = (array) apply_filters('getimagesize_mimes_to_exts', \Minn\Runtime\FileTypeCheck::IMAGES);
+    $checked = \Minn\Runtime\FileTypeCheck::check((string) $file, (string) $filename, is_array($mimes) ? $mimes : null, $images);
+    $result = ['ext' => $checked['ext'], 'type' => $checked['type'], 'proper_filename' => $checked['proper_filename']];
+    return apply_filters('wp_check_filetype_and_ext', $result, $file, $filename, $mimes, $checked['real_mime']);
 }
 
 function wp_get_image_mime($file)
@@ -262,17 +272,32 @@ function get_temp_dir()
     return trailingslashit(sys_get_temp_dir());
 }
 
+/**
+ * A clean name no file in the folder has: the name sanitized, its extension
+ * lowercased, a callback's name when one is given, else -1, -2... before the
+ * extension; wp_unique_filename has the last word.
+ */
 function wp_unique_filename($dir, $filename, $unique_filename_callback = null)
 {
     $filename = sanitize_file_name($filename);
-    $ext = pathinfo($filename, PATHINFO_EXTENSION);
-    $name = pathinfo($filename, PATHINFO_FILENAME);
-    $candidate = $filename;
-    $n = 1;
-    while (file_exists(rtrim((string) $dir, '/') . '/' . $candidate)) {
-        $candidate = $name . '-' . (++$n) . ($ext !== '' ? '.' . $ext : '');
+    $dot = strrpos($filename, '.');
+    $ext = $dot === false ? '' : substr($filename, $dot);
+    $name = $dot === false ? $filename : substr($filename, 0, $dot);
+    // The reference looks at the type and the uploads folder here, for an image's sub-size names.
+    wp_check_filetype($filename);
+    wp_upload_dir();
+    $dir = rtrim((string) $dir, '/');
+    $number = '';
+    if ($unique_filename_callback !== null && is_callable($unique_filename_callback)) {
+        $candidate = (string) call_user_func($unique_filename_callback, $dir, $name, $ext);
+    } else {
+        $candidate = $name . strtolower($ext);
+        while (file_exists($dir . '/' . $candidate)) {
+            $number = $number === '' ? 1 : $number + 1;
+            $candidate = $name . '-' . $number . strtolower($ext);
+        }
     }
-    return $candidate;
+    return apply_filters('wp_unique_filename', $candidate, $ext, $dir, $unique_filename_callback, [], $number);
 }
 
 

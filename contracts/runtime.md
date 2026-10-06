@@ -3518,3 +3518,39 @@ defaults at priority 1: `install_languages` for whoever may update core or
 install plugins or themes, `resume_plugins` and `resume_themes` for whoever
 may activate plugins or switch themes, `view_site_health_checks` for whoever
 may install plugins.
+
+## Uploads (2026-10-06)
+
+`wp_handle_upload` and `wp_handle_sideload`, which plugins call for their own
+upload forms and downloads, stored any file under its own name: no
+prefilter, no content check, no clean name (a plugin's refusal, a text file
+named `.png` and `x.php.png` all went through), and, with `unfiltered_upload`
+granted to administrators (see Capabilities), an administrator's `.php`
+went in too. They now take a file as the reference takes one
+(`Runtime\FileUpload`; probe `upload-filters`, 38 rows, every filter and its
+arguments compared): `{action}_prefilter`, where a plugin sanitizes a file
+or refuses it with an error; `{action}_overrides`; PHP's upload error, an
+empty file, and for a form upload the form's action and the upload itself;
+the type from the content (`wp_check_filetype_and_ext`, `Runtime\FileTypeCheck`):
+an image the server can measure is what its bytes say, its name corrected
+when the extension is another image's (`a.png` holding a JPEG is `a.jpg`),
+anything claiming to be such an image and not being one has no type, any
+other type must match the content (plain text standing for txt, csv and a
+few more), and the type must be allowed; refused unless the user may
+upload anything; `wp_upload_dir`; `wp_unique_filename` (the name through
+`sanitize_file_name`, the extension lowercased, `-1`, `-2`... for a name
+taken, the filter with the number); `pre_move_uploaded_file`; the move;
+`wp_handle_upload`.
+
+`sanitize_file_name` transliterates accents, gives an inner part that looks
+like an extension and is no allowed type an underscore (`x.php_.png`,
+`shell.phtml_.jpg`), and names a file that is only an extension
+`unnamed-file.{ext}`. `get_allowed_mime_types` adds web pages and scripts
+for a user who may post unfiltered HTML, as the reference does.
+
+With plugins loaded, Minn's REST media route stores the file through the
+same path (`wp_handle_sideload` for a request body, `wp_handle_upload` for a
+form field), so an SVG plugin's `upload_mimes` and prefilter, a security
+plugin's refusal, an optimizer's `wp_handle_upload` all work on uploads made
+in Minn Admin; a refusal answers the route's 500 with the plugin's words.
+Unbooted, the engine's own check answers, as strict (suite `rest-envelope`).

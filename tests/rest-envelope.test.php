@@ -63,9 +63,10 @@ foreach ($links as $link) {
 }
 // What a request below creates if a stack fails to refuse it, swept by its exact title (a draft may have no slug).
 $sweep = static function () use ($WP): void {
-    $posts = json_decode((string) shell_exec("{$WP} post list --post_type=post --post_status=any --fields=ID,post_title --format=json 2>/dev/null"), true);
+    $posts = json_decode((string) shell_exec("{$WP} post list --post_type=post,attachment --post_status=any --fields=ID,post_title --format=json 2>/dev/null"), true);
     foreach (is_array($posts) ? $posts : [] as $post) {
-        if (($post['post_title'] ?? '') === 'zz envelope create' || str_starts_with((string) ($post['post_title'] ?? ''), 'zz envelope save')) {
+        $title = (string) ($post['post_title'] ?? '');
+        if ($title === 'zz envelope create' || str_starts_with($title, 'zz envelope save') || str_starts_with($title, 'zz-envelope-')) {
             shell_exec("{$WP} post delete " . (int) $post['ID'] . ' --force >/dev/null 2>&1');
         }
     }
@@ -107,13 +108,18 @@ $ask = static function (string $base, string $method, string $route, string $mod
         $headers[] = $cookie;
         $headers[] = 'X-WP-Nonce: ' . $mint['nonce'];
     }
-    if ($body !== null) {
+    // A body of __raw is a file sent as the request body, the way the media route takes one.
+    $raw = is_array($body) && isset($body['__raw']) ? $body : null;
+    if ($raw !== null) {
+        $headers[] = 'Content-Type: ' . $raw['__type'];
+        $headers[] = 'Content-Disposition: attachment; filename="' . $raw['__name'] . '"';
+    } elseif ($body !== null) {
         $headers[] = 'Content-Type: application/json';
     }
     $ch = curl_init($base . '/?rest_route=' . rawurlencode($route) . $query);
     curl_setopt_array($ch, [CURLOPT_RETURNTRANSFER => true, CURLOPT_HEADER => true, CURLOPT_CUSTOMREQUEST => $method, CURLOPT_HTTPHEADER => $headers, CURLOPT_SSL_VERIFYPEER => false, CURLOPT_SSL_VERIFYHOST => 0, CURLOPT_TIMEOUT => 60]);
     if ($body !== null) {
-        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($body));
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $raw !== null ? $raw['__raw'] : json_encode($body));
     }
     $raw = (string) curl_exec($ch);
     $size = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
@@ -135,6 +141,7 @@ $project = static function (string $how, $body) {
         'code' => is_array($body) ? [$body['code'] ?? null, $body['data']['status'] ?? null] : $body,
         'id' => is_array($body) ? [$body['id'] ?? null, $body['code'] ?? null] : $body,
         'prepared' => is_array($body) ? (array_is_list($body) ? array_map(static fn ($item) => [$item['minn_prepared'] ?? null, isset($item['_links']['wp:minn-prepared'])], $body) : [$body['minn_prepared'] ?? null, isset($body['_links']['wp:minn-prepared']), $body['_links']['curies'] ?? null]) : $body,
+        'upload' => is_array($body) ? [$body['mime_type'] ?? null, isset($body['source_url']) ? basename((string) $body['source_url']) : null, $body['code'] ?? null, $body['message'] ?? null] : $body,
         'save' => is_array($body) ? [$body['title']['raw'] ?? null, $body['slug'] ?? null, $body['excerpt']['raw'] ?? null, $body['status'] ?? null, $body['code'] ?? null, $body['data']['status'] ?? null] : $body,
         default => $body,
     };
@@ -183,6 +190,11 @@ $requests = [
     'rest_prepare_comment' => ['GET', '/wp/v2/comments?per_page=1', 'prepare', true, null, 'prepared'],
     'rest_prepare_category' => ['GET', '/wp/v2/categories/1', 'prepare', true, null, 'prepared'],
     'rest_prepare_attachment' => ['GET', '/wp/v2/media?per_page=1', 'prepare', true, null, 'prepared'],
+    // An upload a plugin allows, checks or refuses.
+    'an svg a plugin allows' => ['POST', '/wp/v2/media', 'svg', true, ['__raw' => '<svg xmlns="http://www.w3.org/2000/svg"><rect/></svg>', '__name' => 'zz-envelope-icon.svg', '__type' => 'image/svg+xml'], 'upload'],
+    'an svg a plugin refuses for its script' => ['POST', '/wp/v2/media', 'svg', true, ['__raw' => '<svg xmlns="http://www.w3.org/2000/svg"><script>alert(1)</script></svg>', '__name' => 'zz-envelope-evil.svg', '__type' => 'image/svg+xml'], 'upload'],
+    'an svg with no plugin to allow it' => ['POST', '/wp/v2/media', '', true, ['__raw' => '<svg xmlns="http://www.w3.org/2000/svg"></svg>', '__name' => 'zz-envelope-plain.svg', '__type' => 'image/svg+xml'], 'upload'],
+    'every upload refused by a plugin' => ['POST', '/wp/v2/media', 'refuse-upload', true, ['__raw' => base64_decode('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg=='), '__name' => 'zz-envelope-closed.png', '__type' => 'image/png'], 'upload'],
     'an edit through wp_insert_post_data' => ['POST', "/wp/v2/posts/{$guarded}", 'save-data', true, ['title' => 'zz envelope guarded'], 'save'],
 ];
 

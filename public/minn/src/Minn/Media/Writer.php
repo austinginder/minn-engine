@@ -47,8 +47,17 @@ final readonly class Writer
     public function prepare(Upload $upload, int $authorId): PreparedUpload
     {
         $filename = Uploads::sanitizeName($upload->filename);
-        $mime = (string) $upload->mime();
         $relative = $this->uploads->store($filename, $upload->movedFrom, $upload->raw);
+        return $this->prepareStored($relative, (string) $upload->mime(), $upload->parent, $authorId);
+    }
+
+    /**
+     * The attachment for a file already in the uploads folder (one the
+     * runtime's wp_handle_upload stored, plugins' filters and all): its row
+     * and, for an image the engine sizes, its metadata.
+     */
+    public function prepareStored(string $relative, string $mime, int $parent, int $authorId): PreparedUpload
+    {
         $title = (string) preg_replace('/\.[^.]+$/', '', basename($relative));
         $now = $this->site->localNow();
         $nowGmt = gmdate('Y-m-d H:i:s');
@@ -69,14 +78,21 @@ final readonly class Writer
             'post_modified' => $now,
             'post_modified_gmt' => $nowGmt,
             'post_content_filtered' => '',
-            'post_parent' => $upload->parent,
+            'post_parent' => $parent,
             'guid' => $this->uploads->urlFor($relative),
             'menu_order' => 0,
             'post_type' => 'attachment',
             'post_mime_type' => $mime,
             'comment_count' => 0,
         ];
-        return new PreparedUpload($columns, $relative, $upload->isImage() ? $this->imageMetadata($relative, $mime) : null);
+        $sized = str_starts_with($mime, 'image/') && $mime !== 'image/svg+xml' && in_array($mime, Uploads::MIMES, true);
+        return new PreparedUpload($columns, $relative, $sized ? $this->imageMetadata($relative, $mime) : null);
+    }
+
+    /** A stored file's path relative to the uploads folder, or null for one outside it. */
+    public function relativeOf(string $absolutePath): ?string
+    {
+        return $this->uploads->relativeOf($absolutePath);
     }
 
     /** Writes a prepared attachment's row; returns its id. */
