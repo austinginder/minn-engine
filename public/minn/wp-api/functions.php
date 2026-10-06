@@ -943,3 +943,59 @@ function wp_removable_query_args()
     $args = ['activate', 'activated', 'admin_email_remind_later', 'approved', 'core-major-auto-updates-saved', 'deactivate', 'delete_count', 'deleted', 'disabled', 'doing_wp_cron', 'enabled', 'error', 'hotkeys_highlight_first', 'hotkeys_highlight_last', 'ids', 'locked', 'message', 'same', 'saved', 'settings-updated', 'skipped', 'spammed', 'trashed', 'unspammed', 'untrashed', 'update', 'updated', 'wp-post-new-reload'];
     return apply_filters('removable_query_args', $args);
 }
+
+/**
+ * The call stack as plugin debugging reads it (Support\Backtrace): outermost
+ * first as a string, innermost first as a list, leaving out a class named in
+ * $ignore_class and $skip_frames frames below this one; an included file's
+ * path loses the content folder, then the install's path.
+ */
+function wp_debug_backtrace_summary($ignore_class = null, $skip_frames = 0, $pretty = true)
+{
+    $names = Minn\Support\Backtrace::summary(debug_backtrace(), $ignore_class === null ? null : (string) $ignore_class, (int) $skip_frames + 1, [wp_normalize_path(WP_CONTENT_DIR), wp_normalize_path(ABSPATH)]);
+    return $pretty ? implode(', ', array_reverse($names)) : $names;
+}
+
+// PHP 8.4's array functions, which the reference provides on older PHP.
+if (!function_exists('array_find')) {
+    function array_find(array $array, callable $callback)
+    {
+        foreach ($array as $key => $value) {
+            if ($callback($value, $key)) {
+                return $value;
+            }
+        }
+        return null;
+    }
+}
+
+if (!function_exists('array_find_key')) {
+    function array_find_key(array $array, callable $callback)
+    {
+        foreach ($array as $key => $value) {
+            if ($callback($value, $key)) {
+                return $key;
+            }
+        }
+        return null;
+    }
+}
+
+if (!function_exists('array_any')) {
+    function array_any(array $array, callable $callback): bool
+    {
+        return array_find_key($array, $callback) !== null;
+    }
+}
+
+if (!function_exists('array_all')) {
+    function array_all(array $array, callable $callback): bool
+    {
+        foreach ($array as $key => $value) {
+            if (!$callback($value, $key)) {
+                return false;
+            }
+        }
+        return true;
+    }
+}

@@ -21,6 +21,7 @@ the minn-admin/v1 namespace and serving the Minn Admin app
 | [`Notifications`](#notifications) | final readonly class | 202 | The bell feed: pending and recent comments, translation and core update |
 | [`OverviewController`](#overviewcontroller) | final readonly class | 141 | The Overview of minn-admin/v1: the payload, the drill-down behind one |
 | [`PackagesController`](#packagescontroller) | final readonly class | 108 | Adding and removing themes and extensions from the Extensions view. |
+| [`PostListMarkup`](#postlistmarkup) | final class | 39 | The markup a post list writes beside each post, as the reference writes |
 | [`PreferencesController`](#preferencescontroller) | final readonly class | 115 | A person's own settings in minn-admin/v1: their appearance, the views |
 | [`RenderController`](#rendercontroller) | final readonly class | 52 | The editor's island previews: block markup rendered by the same |
 | [`SessionsController`](#sessionscontroller) | final readonly class | 72 | A person's sign-in sessions, read from the same session_tokens store |
@@ -700,6 +701,31 @@ Route: `GET /minn-admin/v1/plugins/info (floor edit_posts + install_plugins)`
 One wordpress.org plugin's details.
 
 Internals: `uploaded()` (private, line 115)
+
+
+## PostListMarkup
+
+`final class Minn\Admin\PostListMarkup` · `public/minn/src/Minn/Admin/PostListMarkup.php`
+
+The markup a post list writes beside each post, as the reference writes
+it (probe placeholders-admin): the states after a title (an em dash,
+then each state in its span, a comma inside every span but the last),
+and the hidden fields quick edit reads, one div each, in its order.
+
+### static `states(array $states): string`
+
+The states after a post's title, or nothing when it has none.
+
+- `@param array<string|int, string> $states`
+
+### static `inline(int $id, array $post, string $more): string`
+
+The quick edit fields: the escaped title and slug, the author, the two
+discussion statuses, the status, the date in its six parts and the
+password, then what the caller adds (parent, template, order, terms,
+sticky, format) unbroken, and the closing tag.
+
+- `@param array{title: string, name: string, author: int, comments: string, pings: string, status: string, date: string, password: string} $post`
 
 
 ## PreferencesController

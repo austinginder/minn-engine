@@ -1178,3 +1178,50 @@ function get_template_hierarchy($slug, $is_custom = false, $template_prefix = ''
 {
     return TemplateHierarchy::for((string) $slug, (bool) $is_custom, (string) $template_prefix, array_values(get_post_types()), array_values(get_taxonomies()));
 }
+
+/**
+ * The social link block's services (captured as data/social-link-services.json):
+ * one service's field, one service, or every service when the one asked
+ * for is not there.
+ */
+function block_core_social_link_services($service = '', $field = '')
+{
+    static $services = null;
+    $services ??= (array) json_decode((string) file_get_contents(MINN_ENGINE_DIR . '/data/social-link-services.json'), true);
+    if ($service !== '' && $field !== '' && isset($services[$service][$field])) {
+        return $services[$service][$field];
+    }
+    return $service !== '' && isset($services[$service]) ? $services[$service] : $services;
+}
+
+/** A social link service's name, or the generic label. */
+function block_core_social_link_get_name($service)
+{
+    $services = block_core_social_link_services();
+    return isset($services[$service]['name']) ? $services[$service]['name'] : __('Share Icon');
+}
+
+/** The block inserter's own categories, in the reference's order. */
+function get_default_block_categories()
+{
+    return [
+        ['slug' => 'text', 'title' => _x('Text', 'block category'), 'icon' => null],
+        ['slug' => 'media', 'title' => _x('Media', 'block category'), 'icon' => null],
+        ['slug' => 'design', 'title' => _x('Design', 'block category'), 'icon' => null],
+        ['slug' => 'widgets', 'title' => _x('Widgets', 'block category'), 'icon' => null],
+        ['slug' => 'theme', 'title' => _x('Theme', 'block category'), 'icon' => null],
+        ['slug' => 'embed', 'title' => _x('Embeds', 'block category'), 'icon' => null],
+        ['slug' => 'reusable', 'title' => _x('Patterns', 'block category'), 'icon' => null],
+    ];
+}
+
+/** The categories the editor offers for a post or an editor context, through block_categories_all (and the older block_categories for a post). */
+function get_block_categories($post_or_block_editor_context)
+{
+    $context = $post_or_block_editor_context instanceof WP_Block_Editor_Context ? $post_or_block_editor_context : new WP_Block_Editor_Context(['post' => $post_or_block_editor_context]);
+    $categories = apply_filters('block_categories_all', get_default_block_categories(), $context);
+    if (!empty($context->post)) {
+        $categories = apply_filters_deprecated('block_categories', [$categories, $context->post], '5.8.0', 'block_categories_all');
+    }
+    return $categories;
+}

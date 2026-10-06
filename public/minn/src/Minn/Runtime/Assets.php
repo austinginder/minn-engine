@@ -18,6 +18,10 @@ final class Assets
     private array $queue = [];
     /** @var list<string> */
     private array $done = [];
+    /** @var list<string> handles asked for before they were registered, queued once they are */
+    private array $waiting = [];
+    /** @var array<string, array<string, list<string>>>|null the handles the reference registers itself, by kind, with their dependencies */
+    private static ?array $defaults = null;
 
     private ?\Closure $onChange = null;
 
@@ -53,9 +57,12 @@ final class Assets
             return false;
         }
         $this->items[$handle] = ['src' => $src, 'deps' => array_values(array_map('strval', $deps)), 'ver' => $ver, 'extra' => $extra, 'inline' => ['before' => [], 'after' => []], 'localized' => [], 'data' => [], 'args' => []];
+        if (in_array($handle, $this->waiting, true)) {
+            $this->waiting = array_values(array_diff($this->waiting, [$handle]));
+            $this->queue[] = $handle;
+        }
         $this->changed();
         return true;
-        $this->changed();
     }
 
     /**
@@ -94,26 +101,50 @@ final class Assets
         $this->changed();
     }
 
-    /** Queues an asset for printing. */
+    /**
+     * Queues an asset for printing (probe placeholders-admin). One that is
+     * neither registered nor among the reference's own handles waits, and
+     * joins the queue when it is registered; one of the reference's own the
+     * engine ships no file for is queued as the reference would queue it.
+     */
     public function enqueue(string $handle): void
     {
-        if (!in_array($handle, $this->queue, true)) {
+        if (!$this->registered($handle)) {
+            $this->waiting = array_values(array_unique([...$this->waiting, $handle]));
+        } elseif (!in_array($handle, $this->queue, true)) {
             $this->queue[] = $handle;
         }
         $this->changed();
     }
 
-    /** Removes an asset from the queue. */
+    /** Removes an asset from the queue, or from the handles waiting for registration. */
     public function dequeue(string $handle): void
     {
         $this->queue = array_values(array_diff($this->queue, [$handle]));
+        $this->waiting = array_values(array_diff($this->waiting, [$handle]));
         $this->changed();
     }
 
-    /** Whether a handle is registered. */
+    /** Whether a handle is registered, by the site or as one the reference registers itself (data/default-assets.json). */
     public function registered(string $handle): bool
     {
-        return isset($this->items[$handle]);
+        return isset($this->items[$handle]) || isset(self::defaults()[$this->kind][$handle]);
+    }
+
+    /** A handle's dependencies: as registered, or as the reference registers it. @return list<string> */
+    private function depsOf(string $handle): array
+    {
+        return isset($this->items[$handle]) ? (array) $this->items[$handle]['deps'] : (self::defaults()[$this->kind][$handle] ?? []);
+    }
+
+    /** @return array<string, array<string, list<string>>> */
+    private static function defaults(): array
+    {
+        if (self::$defaults === null) {
+            $data = (array) json_decode((string) file_get_contents(MINN_ENGINE_DIR . '/data/default-assets.json'), true);
+            self::$defaults = ['script' => (array) ($data['scripts'] ?? []), 'style' => (array) ($data['styles'] ?? [])];
+        }
+        return self::$defaults;
     }
 
     /**
@@ -134,7 +165,7 @@ final class Assets
                 return false;
             }
             $seen[$from] = true;
-            foreach ($this->items[$from]['deps'] ?? [] as $dep) {
+            foreach ($this->depsOf($from) as $dep) {
                 if ($dep === $handle || $reaches($dep)) {
                     return true;
                 }
@@ -217,7 +248,6 @@ final class Assets
         $this->items[$handle]['localized'][] = 'var ' . $name . ' = ' . json_encode($data, JSON_UNESCAPED_SLASHES) . ';';
         $this->changed();
         return true;
-        $this->changed();
     }
 
     /** Every queued handle not yet printed, dependencies first, filtered to the group (footer or not). */
@@ -249,13 +279,20 @@ final class Assets
     private function ordered(array $start): array
     {
         $order = [];
-        // A handle whose dependency is unregistered never prints, nor does anything that depends on it.
+        // A handle whose dependency is unregistered never prints, nor does anything that depends on it. One of the
+        // reference's own handles the engine ships no file for prints nothing itself but stands, its dependencies with it.
         $visit = function (string $handle) use (&$order, &$visit): bool {
             if (in_array($handle, $order, true) || in_array($handle, $this->done, true)) {
                 return true;
             }
             if (!isset($this->items[$handle])) {
-                return false;
+                if (!$this->registered($handle)) {
+                    return false;
+                }
+                foreach ($this->depsOf($handle) as $dep) {
+                    $visit($dep);
+                }
+                return true;
             }
             foreach ($this->items[$handle]['deps'] as $dep) {
                 if (!$visit($dep)) {

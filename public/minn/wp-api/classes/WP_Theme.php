@@ -165,14 +165,90 @@ class WP_Theme implements ArrayAccess
         return [];
     }
 
+    /**
+     * The templates a post can choose, by post type (probe placeholders-a):
+     * the theme's PHP files, one folder deep and in folder order, that name
+     * themselves with a Template Name header (for the types a Template Post
+     * Type header lists, pages by default); then, where the site's theme
+     * makes templates of blocks, the custom templates its theme.json names.
+     *
+     * @return array<string, array<string, string>>
+     */
     public function get_post_templates()
     {
-        return [];
+        $templates = [];
+        foreach ($this->php_files() as $relative => $path) {
+            $headers = get_file_data($path, ['Name' => 'Template Name', 'PostType' => 'Template Post Type']);
+            if ($headers['Name'] === '') {
+                continue;
+            }
+            $types = $headers['PostType'] === '' ? ['page'] : array_map('sanitize_key', array_map('trim', explode(',', $headers['PostType'])));
+            foreach ($types as $type) {
+                $templates[$type][$relative] = translate($headers['Name'], (string) $this->get('TextDomain'));
+            }
+        }
+        if (current_theme_supports('block-templates')) {
+            foreach (self::custom_block_templates() as $template) {
+                foreach ((array) ($template['postTypes'] ?? ['page']) as $type) {
+                    $templates[(string) $type][(string) $template['name']] = (string) ($template['title'] ?? $template['name']);
+                }
+            }
+        }
+        return $templates;
     }
 
+    /** One post type's templates, file => name, through theme_templates and theme_{$post_type}_templates. */
     public function get_page_templates($post = null, $post_type = 'page')
     {
-        return [];
+        if ($post) {
+            $post_type = get_post_type($post);
+        }
+        $templates = $this->get_post_templates()[$post_type] ?? [];
+        $templates = (array) apply_filters('theme_templates', $templates, $this, $post, $post_type);
+        return (array) apply_filters("theme_{$post_type}_templates", $templates, $this, $post, $post_type);
+    }
+
+    /** The theme's PHP files one folder deep, in folder order (a parent's after the theme's own), relative path => path. @return array<string, string> */
+    private function php_files(): array
+    {
+        $exclusions = (array) apply_filters('theme_scandir_exclusions', ['CVS', 'node_modules', 'vendor', 'bower_components']);
+        $files = [];
+        foreach (array_unique([$this->get_stylesheet_directory(), $this->get_template_directory()]) as $root) {
+            $files += self::scan($root, '', 1, $exclusions);
+        }
+        return $files;
+    }
+
+    /** @param list<string> $exclusions @return array<string, string> */
+    private static function scan(string $dir, string $prefix, int $depth, array $exclusions): array
+    {
+        $found = [];
+        foreach (is_dir($dir) ? (scandir($dir) ?: []) : [] as $entry) {
+            if ($entry[0] === '.' || in_array($entry, $exclusions, true)) {
+                continue;
+            }
+            if (is_dir("{$dir}/{$entry}")) {
+                $found += $depth > 0 ? self::scan("{$dir}/{$entry}", "{$prefix}{$entry}/", $depth - 1, $exclusions) : [];
+            } elseif (str_ends_with($entry, '.php')) {
+                $found["{$prefix}{$entry}"] = "{$dir}/{$entry}";
+            }
+        }
+        return $found;
+    }
+
+    /** The custom templates the site's theme.json names (a child's replacing its parent's by name). @return list<array<string, mixed>> */
+    private static function custom_block_templates(): array
+    {
+        $byName = [];
+        foreach (array_unique([get_template_directory(), get_stylesheet_directory()]) as $dir) {
+            $json = is_file("{$dir}/theme.json") ? (array) json_decode((string) file_get_contents("{$dir}/theme.json"), true) : [];
+            foreach ((array) ($json['customTemplates'] ?? []) as $template) {
+                if (is_array($template) && isset($template['name'])) {
+                    $byName[(string) $template['name']] = $template;
+                }
+            }
+        }
+        return array_values($byName);
     }
 
     public function load_textdomain()

@@ -1374,19 +1374,6 @@ class WP_Automatic_Updater
     }
 }
 
-#[AllowDynamicProperties]
-class WP_Block_Editor_Context
-{
-    public $name = 'core/edit-post';
-    public $post = NULL;
-
-    public function __construct($settings = [])
-    {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_Block_Editor_Context::__construct');
-        return null;
-    }
-}
-
 class WP_Comments_List_Table extends WP_List_Table
 {
     public $checkbox = true;

@@ -830,3 +830,162 @@ function _wp_oembed_get_object()
     }
     return $wp_oembed;
 }
+
+/** The site's theme's templates for a post type, name => file (WP_Theme::get_page_templates turned round). */
+function get_page_templates($post = null, $post_type = 'page')
+{
+    return array_flip(wp_get_theme()->get_page_templates($post, $post_type));
+}
+
+/** A post's title for a list, escaped, or "(no title)". */
+function _draft_or_post_title($post = 0)
+{
+    $title = get_the_title($post);
+    return esc_html($title === '' ? __('(no title)') : $title);
+}
+
+/**
+ * The states a post list shows beside a title (probe placeholders-admin),
+ * through display_post_states: password, private, draft, pending, sticky,
+ * scheduled, then the pages the site gives a role; a state the list is
+ * already filtered to is left out.
+ */
+function get_post_states($post)
+{
+    $listing = (string) ($_REQUEST['post_status'] ?? '');
+    $status = (string) $post->post_status;
+    $pageRole = static fn (string $option): bool => (int) get_option($option) === (int) $post->ID;
+    $front = get_option('show_on_front') === 'page';
+    $states = array_filter([
+        'protected' => $post->post_password !== '' ? _x('Password protected', 'post status') : null,
+        'private' => $status === 'private' && $listing !== 'private' ? __('Private') : null,
+        'draft' => $status === 'draft' && $listing !== 'draft' ? __('Draft') : null,
+        'pending' => $status === 'pending' && $listing !== 'pending' ? _x('Pending', 'post status') : null,
+        'sticky' => is_sticky($post->ID) ? _x('Sticky', 'post status') : null,
+        'scheduled' => $status === 'future' ? _x('Scheduled', 'post status') : null,
+        'page_on_front' => $front && $pageRole('page_on_front') ? _x('Front Page', 'page label') : null,
+        'page_for_posts' => $front && $pageRole('page_for_posts') ? _x('Posts Page', 'page label') : null,
+        'page_for_privacy_policy' => $pageRole('wp_page_for_privacy_policy') ? _x('Privacy Policy Page', 'page label') : null,
+    ], static fn ($state) => $state !== null);
+    return apply_filters('display_post_states', $states, $post);
+}
+
+/** A post's states as a list writes them after its title (Admin\PostListMarkup); echoed and returned. */
+function _post_states($post, $display = true)
+{
+    $markup = Minn\Admin\PostListMarkup::states((array) get_post_states($post));
+    if ($display) {
+        echo $markup;
+    }
+    return $markup;
+}
+
+/** The search box's current query, escaped for its value attribute. */
+function _admin_search_query()
+{
+    echo isset($_REQUEST['s']) ? esc_attr(wp_unslash($_REQUEST['s'])) : '';
+}
+
+/**
+ * The meta boxes a screen hides (probe placeholders-admin): the user's
+ * choice, or the defaults (a post, page or attachment editor hides eight,
+ * another type's editor the slug box) through default_hidden_meta_boxes;
+ * then hidden_meta_boxes.
+ */
+function get_hidden_meta_boxes($screen)
+{
+    $screen = is_string($screen) ? convert_to_screen($screen) : $screen;
+    $hidden = get_user_option("metaboxhidden_{$screen->id}");
+    $defaults = !is_array($hidden);
+    if ($defaults) {
+        $hidden = $screen->base !== 'post' ? [] : (in_array($screen->post_type, ['post', 'page', 'attachment'], true) ? ['slugdiv', 'trackbacksdiv', 'postcustom', 'postexcerpt', 'commentstatusdiv', 'commentsdiv', 'authordiv', 'revisionsdiv'] : ['slugdiv']);
+        $hidden = apply_filters('default_hidden_meta_boxes', $hidden, $screen);
+    }
+    return apply_filters('hidden_meta_boxes', $hidden, $screen, $defaults);
+}
+
+/** A meta box's classes: "closed" when the user closed it (not while it is being edited), through postbox_classes_{screen}_{box}. */
+function postbox_classes($box_id, $screen_id)
+{
+    $closed = isset($_GET['edit']) && $_GET['edit'] === $box_id ? false : get_user_option('closedpostboxes_' . $screen_id);
+    $classes = is_array($closed) && in_array($box_id, $closed, true) ? ['closed'] : [''];
+    return implode(' ', (array) apply_filters("postbox_classes_{$screen_id}_{$box_id}", $classes));
+}
+
+/** Registers an importer for Tools > Import; an error handed as the callback comes back. */
+function register_importer($id, $name, $description, $callback)
+{
+    if (is_wp_error($callback)) {
+        return $callback;
+    }
+    $GLOBALS['wp_importers'][$id] = [$name, $description, $callback];
+}
+
+/** The registered importers, sorted by name. */
+function get_importers()
+{
+    if (is_array($GLOBALS['wp_importers'] ?? null)) {
+        uasort($GLOBALS['wp_importers'], static fn (array $a, array $b): int => strnatcasecmp((string) $a[0], (string) $b[0]));
+    }
+    return $GLOBALS['wp_importers'] ?? null;
+}
+
+/** A plugin's suggested privacy policy text, taken only in the admin from admin_init on. */
+function wp_add_privacy_policy_content($plugin_name, $policy_text)
+{
+    if (!is_admin() || (!doing_action('admin_init') && !did_action('admin_init'))) {
+        _doing_it_wrong(__FUNCTION__, sprintf(__('The suggested privacy policy content should be added only in wp-admin by using the %s (or later) action.'), '<code>admin_init</code>'), '4.9.7');
+        return;
+    }
+    WP_Privacy_Policy_Content::add($plugin_name, $policy_text);
+}
+
+/** A list screen's columns through manage_{screen}_columns, asked once per screen. */
+function get_column_headers($screen)
+{
+    static $headers = [];
+    $screen = is_string($screen) ? convert_to_screen($screen) : $screen;
+    return $headers[$screen->id] ??= (array) apply_filters("manage_{$screen->id}_columns", []);
+}
+
+/** The hidden fields quick edit reads for a post the user may edit (Admin\PostListMarkup). */
+function get_inline_data($post)
+{
+    $type = get_post_type_object($post->post_type);
+    if ($type === null || !current_user_can('edit_post', $post->ID)) {
+        return;
+    }
+    $fields = ['title' => esc_textarea(trim((string) $post->post_title)), 'name' => esc_textarea((string) apply_filters('editable_slug', $post->post_name, $post)), 'author' => (int) $post->post_author, 'comments' => esc_html($post->comment_status), 'pings' => esc_html($post->ping_status), 'status' => esc_html($post->post_status), 'date' => (string) $post->post_date, 'password' => esc_html($post->post_password)];
+    echo Minn\Admin\PostListMarkup::inline((int) $post->ID, $fields, _minn_inline_extras($post, $type));
+}
+
+/** @internal quick edit's further fields: parent, template, order, the type's terms, sticky, format, then add_inline_data */
+function _minn_inline_extras(WP_Post $post, WP_Post_Type $type): string
+{
+    $out = $type->hierarchical ? '<div class="post_parent">' . $post->post_parent . '</div>' : '';
+    $template = (string) get_post_meta($post->ID, '_wp_page_template', true);
+    $out .= '<div class="page_template">' . ($template !== '' ? esc_html($template) : 'default') . '</div>';
+    $out .= post_type_supports($post->post_type, 'page-attributes') ? '<div class="menu_order">' . $post->menu_order . '</div>' : '';
+    foreach (get_object_taxonomies($post->post_type, 'objects') as $taxonomy) {
+        if (!$taxonomy->show_in_quick_edit) {
+            continue;
+        }
+        $terms = get_object_term_cache($post->ID, $taxonomy->name) ?: (array) wp_get_object_terms($post->ID, $taxonomy->name);
+        $out .= $taxonomy->hierarchical
+            ? '<div class="post_category" id="' . $taxonomy->name . '_' . $post->ID . '">' . implode(',', wp_list_pluck($terms, 'term_id')) . '</div>'
+            : '<div class="tags_input" id="' . $taxonomy->name . '_' . $post->ID . '">' . esc_textarea(implode(', ', wp_list_pluck($terms, 'name'))) . '</div>';
+    }
+    $out .= $type->hierarchical ? '' : '<div class="sticky">' . (is_sticky($post->ID) ? 'sticky' : '') . '</div>';
+    $out .= post_type_supports($post->post_type, 'post-formats') ? '<div class="post_format">' . esc_html((string) get_post_format($post->ID)) . '</div>' : '';
+    ob_start();
+    do_action('add_inline_data', $post, $type);
+    return $out . ob_get_clean();
+}
+
+/** The comment screen's keyboard shortcuts, for a user who turned them on. */
+function enqueue_comment_hotkeys_js()
+{
+    if (get_user_option('comment_shortcuts') === 'true') {
+        wp_enqueue_script('jquery-table-hotkeys');
+    }
+}

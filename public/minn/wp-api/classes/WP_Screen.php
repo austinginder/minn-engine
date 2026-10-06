@@ -28,15 +28,21 @@ final class WP_Screen
         if (isset(self::$registry[$id])) {
             return self::$registry[$id];
         }
+        // A post type's editor, its list, or a taxonomy's list (probe placeholders-admin); any other name is its own base.
         $screen = new self();
         $screen->id = $id;
         $screen->base = $id;
-        if (in_array($id, ['post', 'page'], true)) {
+        $named = str_starts_with($id, 'edit-') ? substr($id, 5) : null;
+        if (post_type_exists($id)) {
             $screen->base = 'post';
             $screen->post_type = $id;
-        } elseif (str_starts_with($id, 'edit-')) {
+        } elseif ($named !== null && post_type_exists($named)) {
             $screen->base = 'edit';
-            $screen->post_type = substr($id, 5);
+            $screen->post_type = $named;
+        } elseif ($named !== null && taxonomy_exists($named)) {
+            $screen->base = 'edit-tags';
+            $screen->post_type = 'post';
+            $screen->taxonomy = $named;
         }
         self::$registry[$id] = $screen;
         return $screen;

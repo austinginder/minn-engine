@@ -21,6 +21,7 @@ URL resolution, permalinks, feeds, sitemaps and the public page
 | [`ListSpacing`](#listspacing) | final readonly class | 30 | How a page list is spaced: the reference's "preserve" keeps newlines and |
 | [`ListingLinks`](#listinglinks) | final class | 53 | The prev/next links a paged listing prints: which page sits either side of |
 | [`Maintenance`](#maintenance) | final class | 28 | Maintenance mode, as hosting tools and updaters switch it on: a |
+| [`PageLinks`](#pagelinks) | final class | 40 | The links between the pages of a post split with <!--nextpage-->, as |
 | [`PageList`](#pagelist) | final readonly class | 96 | The page hierarchy as wp_list_pages and wp_dropdown_pages draw it: nested |
 | [`Pagination`](#pagination) | final class | 62 | Numbered page links in the reference's shape: previous, the end and |
 | [`Permalinks`](#permalinks) | final readonly class | 253 | Builds public URLs from the site's permalink structure. With an empty |
@@ -526,6 +527,27 @@ old. While it holds, every request gets the site's own maintenance.php
 ### static `answer(string $abspath, string $contentDir, int $now): ?Minn\Http\Response`
 
 The answer while maintenance holds, or null when the site is open.
+
+
+## PageLinks
+
+`final class Minn\Front\PageLinks` · `public/minn/src/Minn/Front/PageLinks.php`
+
+The links between the pages of a post split with <!--nextpage-->, as
+wp_link_pages writes them (probe placeholders-a). By number: the before
+markup, each page (the current one a span, unless the whole post is not
+being shown and this is its first page) after a space for the first and
+the separator for the rest, the after markup. By next and previous, only
+where the whole post is shown: the previous page's link, the separator,
+the next page's. Nothing for a post in one page.
+
+### static `render(array $args, int $page, int $pages, int $more, Closure $open, Closure $filter): string`
+
+The links for the page being shown of a split post.
+
+- `@param array<string, mixed> $args wp_link_pages's arguments with their defaults`
+- `@param Closure(int): string $open the opening anchor of page $i`
+- `@param Closure(string, int): string $filter a link through wp_link_pages_link`
 
 
 ## PageList

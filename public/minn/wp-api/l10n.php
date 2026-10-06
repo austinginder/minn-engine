@@ -19,9 +19,17 @@ function get_locale()
     return apply_filters('locale', $locale === '' ? 'en_US' : $locale);
 }
 
+/** A user's locale (the current user's for 0), or the site's when the user has none or does not exist. */
 function get_user_locale($user = 0)
 {
-    return get_locale();
+    $object = match (true) {
+        $user instanceof WP_User => $user,
+        (int) $user === 0 && !is_object($user) => wp_get_current_user(),
+        is_numeric($user) => get_userdata((int) $user),
+        default => false,
+    };
+    $locale = $object instanceof WP_User ? (string) get_user_meta($object->ID, 'locale', true) : '';
+    return $locale !== '' ? $locale : get_locale();
 }
 
 function determine_locale()
@@ -286,7 +294,6 @@ function _minn_reload_textdomains(string $locale): void
             $domains->markKnown($domain);
         }
     }
-    do_action('change_locale', $locale);
 }
 
 function load_default_textdomain($locale = null)
@@ -374,39 +381,37 @@ function get_available_languages($dir = null)
 
 function is_locale_switched()
 {
-    return Runtime::locales()->switched();
+    return _minn_locale_switcher()->is_switched();
 }
 
 function switch_to_locale($locale)
 {
-    $locale = (string) $locale;
-    if ($locale === determine_locale() || ($locale !== 'en_US' && !in_array($locale, get_available_languages(), true))) {
-        return false;
-    }
-    Runtime::locales()->push($locale);
-    _minn_reload_textdomains($locale);
-    return true;
+    return _minn_locale_switcher()->switch_to_locale($locale);
+}
+
+function switch_to_user_locale($user_id)
+{
+    return _minn_locale_switcher()->switch_to_user_locale($user_id);
 }
 
 function restore_previous_locale()
 {
-    if (!Runtime::locales()->switched()) {
-        return false;
-    }
-    $locale = Runtime::locales()->pop() ?? determine_locale();
-    _minn_reload_textdomains($locale);
-    return $locale;
+    return _minn_locale_switcher()->restore_previous_locale();
 }
 
 function restore_current_locale()
 {
-    if (!Runtime::locales()->switched()) {
-        return false;
+    return _minn_locale_switcher()->restore_current_locale();
+}
+
+/** @internal the request's locale switcher, the global plugins call, made when nothing made it yet */
+function _minn_locale_switcher(): WP_Locale_Switcher
+{
+    if (!($GLOBALS['wp_locale_switcher'] ?? null) instanceof WP_Locale_Switcher) {
+        $GLOBALS['wp_locale_switcher'] = new WP_Locale_Switcher();
+        $GLOBALS['wp_locale_switcher']->init();
     }
-    Runtime::locales()->clear();
-    $locale = determine_locale();
-    _minn_reload_textdomains($locale);
-    return $locale;
+    return $GLOBALS['wp_locale_switcher'];
 }
 
 function number_format_i18n($number, $decimals = 0)

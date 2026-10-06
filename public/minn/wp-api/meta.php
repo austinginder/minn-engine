@@ -364,3 +364,11 @@ function is_protected_meta($meta_key, $meta_type = '')
     $key = (string) preg_replace('/[\x00-\x1F\x7F]/', '', (string) $meta_key);
     return apply_filters('is_protected_meta', $key !== '' && $key[0] === '_', $meta_key, $meta_type);
 }
+
+/** The meta table of an object type the database has one for, or false. */
+function _get_meta_table($type)
+{
+    global $wpdb;
+    $table = (string) $type . 'meta';
+    return $type !== '' && isset($wpdb->$table) && is_string($wpdb->$table) ? $wpdb->$table : false;
+}

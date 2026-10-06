@@ -844,6 +844,31 @@ function get_post_thumbnail_id($post = null)
     return $id === '' ? 0 : (int) $id;
 }
 
+/** The links between a split post's pages (Front\PageLinks), through wp_link_pages_args, wp_link_pages_link and wp_link_pages; echoed and returned. */
+function wp_link_pages($args = '')
+{
+    $defaults = ['before' => '<p class="post-nav-links">' . __('Pages:'), 'after' => '</p>', 'link_before' => '', 'link_after' => '', 'aria_current' => 'page', 'next_or_number' => 'number', 'separator' => ' ', 'nextpagelink' => __('Next page'), 'previouspagelink' => __('Previous page'), 'pagelink' => '%', 'echo' => 1];
+    $parsed = apply_filters('wp_link_pages_args', wp_parse_args($args, $defaults));
+    $output = Minn\Front\PageLinks::render($parsed, (int) ($GLOBALS['page'] ?? 1), (int) ($GLOBALS['numpages'] ?? 1), (int) ($GLOBALS['more'] ?? 0), _wp_link_page(...), static fn (string $link, int $i): string => (string) apply_filters('wp_link_pages_link', $link, $i));
+    $html = apply_filters('wp_link_pages', $output, $args);
+    if (!empty($parsed['echo'])) {
+        echo $html;
+    }
+    return $html;
+}
+
+/** The opening anchor of a split post's page $i: the post's address for the first, /2/ after it with pretty permalinks, ?page=2 without them or for a post not yet published. */
+function _wp_link_page($i)
+{
+    $post = get_post();
+    $url = get_permalink();
+    if ((int) $i > 1) {
+        $plain = (string) get_option('permalink_structure') === '' || in_array($post?->post_status, ['draft', 'pending'], true);
+        $url = $plain ? add_query_arg('page', (int) $i, $url) : trailingslashit($url) . user_trailingslashit((string) (int) $i, 'single_paged');
+    }
+    return '<a href="' . esc_url($url) . '" class="post-page-numbers">';
+}
+
 function has_post_thumbnail($post = null)
 {
     return (bool) get_post_thumbnail_id($post);
@@ -2143,4 +2168,15 @@ function wp_filter_wp_template_unique_post_slug($override_slug, $slug, $post_id,
 function _wp_customize_changeset_filter_insert_post_data($post_data, $supplied_post_data)
 {
     return $post_data;
+}
+
+/** The cache key for a type's post counts: a user who may not read its private posts counts only what they can read, so gets their own. */
+function _count_posts_cache_key($type = 'post', $perm = '')
+{
+    $key = 'posts-' . $type;
+    $object = get_post_type_object((string) $type);
+    if ($perm === 'readable' && is_user_logged_in() && $object !== null && !current_user_can($object->cap->read_private_posts)) {
+        $key .= '_' . $perm . '_' . get_current_user_id();
+    }
+    return $key;
 }

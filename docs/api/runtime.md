@@ -7,7 +7,7 @@ the WordPress runtime plugins load against
 | [`Abilities`](#abilities) | final class | 151 | The abilities registry behind the wp_*_ability facade: categories and |
 | [`AjaxController`](#ajaxcontroller) | final readonly class | 72 | admin-ajax.php, the endpoint plugins post their front-end work to: a form |
 | [`AllowedOptions`](#allowedoptions) | final class | 26 | The settings-page allowlist plugins extend: option group => the option |
-| [`Assets`](#assets) | final class | 328 | The registry behind wp_register_/wp_enqueue_ for scripts and styles: |
+| [`Assets`](#assets) | final class | 365 | The registry behind wp_register_/wp_enqueue_ for scripts and styles: |
 | [`Avatar`](#avatar) | final class | 62 | Avatars the way get_avatar_data and get_avatar decide them: the argument |
 | [`BlockFilters`](#blockfilters) | final class | 82 | The block-level filters plugin code hooks (pre_render_block, |
 | [`BlockHooks`](#blockhooks) | final class | 69 | The Block Hooks API on the engine's own front end: a plugin asks for its |
@@ -47,19 +47,19 @@ the WordPress runtime plugins load against
 | [`Plugins`](#plugins) | final class | 229 | Loads the site's plugins into the runtime the way the reference does: |
 | [`PostData`](#postdata) | final class | 65 | The loop's view of a post, as the reference's generate_postdata and |
 | [`PostEvents`](#postevents) | final readonly class | 145 | What the reference's REST controllers tell plugins about a post they |
-| [`PostInsert`](#postinsert) | final readonly class | 168 | The decisions behind wp_insert_post: which columns a postarr fills, when |
+| [`PostInsert`](#postinsert) | final readonly class | 170 | The decisions behind wp_insert_post: which columns a postarr fills, when |
 | [`PostLinks`](#postlinks) | final class | 150 | Post addresses as the reference's link functions build them (probe |
 | [`PostLookup`](#postlookup) | final readonly class | 85 | The post reads plugin code asks for by shape: a page by title, revisions, counts. |
 | [`PostQuery`](#postquery) | final class | 383 | The query WP_Query runs: its variables become one SELECT over the posts |
 | [`PostRevisions`](#postrevisions) | final class | 63 | A post's revisions as the reference's wp_save_post_revision keeps them |
-| [`PostSave`](#postsave) | final class | 208 | A REST save's columns through the filters the reference's save runs |
+| [`PostSave`](#postsave) | final class | 210 | A REST save's columns through the filters the reference's save runs |
 | [`QueriedObject`](#queriedobject) | final readonly class | 70 | Which object a query is "about", read from its flags and variables: a term |
 | [`QueryFlags`](#queryflags) | final readonly class | 101 | The conditional flags a set of query variables implies (is_single, is_archive, |
 | [`Recovery`](#recovery) | final readonly class | 214 | Recovery from a fatal in someone else's code. When a plugin or theme |
 | [`Refusal`](#refusal) | final readonly class | 6 | A refused operation, the way plugin code expects to read it: a code, a message, optional data. The facade turns it into WP_Error. |
 | [`RegisteredSettings`](#registeredsettings) | final class | 104 | Settings as register_setting keeps them (probe rest-settings): the |
 | [`Registry`](#registry) | final class | 387 | Post types, taxonomies, and statuses as plugin code registers and reads |
-| [`Runtime`](#runtime) | final class | 357 | The WordPress runtime the engine offers plugin code: the procedural |
+| [`Runtime`](#runtime) | final class | 358 | The WordPress runtime the engine offers plugin code: the procedural |
 | [`ScriptModules`](#scriptmodules) | final class | 308 | The script modules registry: registrations with typed dependencies, the |
 | [`ScriptPack`](#scriptpack) | final class | 146 | The site-supplied script pack: the `wp-*` JavaScript packages the engine |
 | [`Shortcodes`](#shortcodes) | final class | 143 | The shortcode registry plugin code fills with add_shortcode, and the |
@@ -242,15 +242,18 @@ Forgets an asset.
 
 ### `enqueue(string $handle): void`
 
-Queues an asset for printing.
+Queues an asset for printing (probe placeholders-admin). One that is
+neither registered nor among the reference's own handles waits, and
+joins the queue when it is registered; one of the reference's own the
+engine ships no file for is queued as the reference would queue it.
 
 ### `dequeue(string $handle): void`
 
-Removes an asset from the queue.
+Removes an asset from the queue, or from the handles waiting for registration.
 
 ### `registered(string $handle): bool`
 
-Whether a handle is registered.
+Whether a handle is registered, by the site or as one the reference registers itself (data/default-assets.json).
 
 ### `enqueued(string $handle): bool`
 
@@ -332,7 +335,7 @@ The handles queued.
 
 Whether these are scripts or styles.
 
-Internals: `changed()` (private, line 41), `ordered()` (private, line 249)
+Internals: `changed()` (private, line 45), `depsOf()` (private, line 135), `defaults()` (private, line 141), `ordered()` (private, line 279)
 
 
 ## Avatar
@@ -2072,7 +2075,7 @@ nothing should change.
 - `@param list<string> $taxonomies the type's taxonomies`
 - `@return list<int>|null`
 
-Internals: `type()` (private, line 179)
+Internals: `type()` (private, line 181)
 
 
 ## PostLinks
@@ -2309,7 +2312,7 @@ back.
 - `@param array<string, mixed> $unsanitized`
 - `@return array<string, mixed>`
 
-Internals: `prepared()` (private, line 185), `changed()` (private, line 220)
+Internals: `prepared()` (private, line 187), `changed()` (private, line 222)
 
 
 ## QueriedObject
@@ -2782,7 +2785,7 @@ calls it straight away.
 
 Fresh per-request state, for suites.
 
-Internals: `loadObjectCacheDropin()` (private, line 339)
+Internals: `loadObjectCacheDropin()` (private, line 340)
 
 
 ## ScriptModules

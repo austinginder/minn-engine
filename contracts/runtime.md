@@ -4219,3 +4219,86 @@ nothing.
 
 The `allow` suite compares OPTIONS on every read route, for each caller.
 Eight of those cases share a divergence with the matching GET (B1o).
+
+## Placeholders plugins call, made real (2026-10-06)
+
+The coverage report's most-used gaps were placeholders. Two probes,
+`placeholders-a` and `placeholders-admin`, capture what the reference does,
+and the engine now does it.
+- **wp_debug_backtrace_summary** (`Support\Backtrace`). Frames are named
+  `Class->method`, `Class::method`, the function's name, a hook's function
+  with the hook (`do_action('init')`), or an included file by its path with
+  the content folder, then the install's path, taken off. Outermost first as
+  a string, innermost first as a list.
+- **wp_link_pages and _wp_link_page** (`Front\PageLinks`), by number or by
+  next and previous. The next and previous links show only where the whole
+  post is shown (`$more`). A page's address is `/2/` after the post's,
+  `?page=2` without pretty permalinks or for a draft. The filters
+  `wp_link_pages_args`, `wp_link_pages_link` and `wp_link_pages` run (the
+  last with the arguments as given). The output is echoed and returned.
+- **Locale switching** (`WP_Locale_Switcher`, the `$wp_locale_switcher`
+  global).
+  - Switching to the locale already in force, or one not installed, is
+    refused. Switches nest.
+  - A switch fires `change_locale` then `switch_locale` with the user whose
+    locale it is. A restore fires `change_locale` then
+    `restore_previous_locale`.
+  - `restore_current_locale` restores from the site's own locale.
+  - `get_user_locale` reads the user's own locale (it returned the site's).
+  - The probe's capture needs a `de_DE.mo` installed before the reference
+    loads (the engine's replay makes its own).
+- **Comments to spam, trash and back.** `wp_spam_comment` and
+  `wp_trash_comment` keep the status aside (`_wp_trash_meta_status`, with
+  the time) between `spam_comment`/`spammed_comment` or
+  `trash_comment`/`trashed_comment`. `wp_unspam_comment` and
+  `wp_untrash_comment` restore it between their own two actions. Before,
+  spam kept nothing aside and no action fired.
+- **Small helpers.**
+  - `_count_posts_cache_key` gets a per-user suffix for a user who may not
+    read private posts.
+  - `_get_meta_table`.
+  - The social link services (`data/social-link-services.json`, 49 as
+    captured).
+  - `get_default_block_categories`, and `get_block_categories` with
+    `block_categories_all` and a real `WP_Block_Editor_Context`.
+  - The PHP 8.4 array functions on older PHP.
+- **Page templates.**
+  - `WP_Theme::get_post_templates` lists a theme's PHP files one folder deep
+    with a Template Name header, for its Template Post Type types (pages by
+    default).
+  - Where the site's theme makes templates of blocks, the custom templates
+    its theme.json names are listed too.
+  - `get_page_templates` runs through `theme_templates` and
+    `theme_{type}_templates`.
+- **Admin helpers.**
+  - Lists: `_draft_or_post_title`, `get_post_states` and `_post_states`,
+    `_admin_search_query`.
+  - Screens and meta boxes: `get_hidden_meta_boxes` (eight defaults for
+    posts, pages and attachments, the slug box for another type),
+    `postbox_classes`, `get_column_headers`.
+  - Importers: `register_importer`, `get_importers` (sorted by name).
+  - `wp_add_privacy_policy_content`: only from admin_init in the admin;
+    otherwise it is doing it wrong.
+  - `get_inline_data`, and `enqueue_comment_hotkeys_js`.
+- **Fixes the probes found along the way.**
+  - **Admin screens.** `WP_Screen` names a registered post type's editor,
+    its list, and a taxonomy's list (`edit-tags`). Before, it knew only post
+    and page.
+  - **Private posts.** A private post keeps no password.
+  - **Database table names.** `$wpdb` names the network tables only on a
+    multisite install, and `tables('all')` lists the global tables first.
+  - **Early enqueues.** A script or style enqueued before it is registered
+    waits, and joins the queue when it is registered. Before, an
+    unregistered handle counted as enqueued.
+- **Not done.** The style engine (`wp_style_engine_get_styles` and the
+  stylesheet by context) is still a placeholder and needs its own unit.
+
+The handles the reference registers itself, 234 scripts and 305 styles
+(`data/default-assets.json`), count as registered. Enqueuing one queues it,
+and its default dependencies count when asking whether something is
+enqueued, even where the engine ships no file for it. Only a handle that is
+neither registered nor one of these waits for its registration.
+- **Printing.** One of these handles prints nothing itself, but it stands as
+  a dependency. So a plugin's script that depends on it prints, as it does on
+  the reference. Before, such a script never printed. (Where the engine
+  ships no copy of that library, the script prints without it.)

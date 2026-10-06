@@ -314,43 +314,63 @@ function wp_delete_comment($comment_id, $force_delete = false)
 
 function wp_trash_comment($comment_id)
 {
-    if (!EMPTY_TRASH_DAYS) {
-        return wp_delete_comment($comment_id, true);
-    }
-    $comment = get_comment($comment_id);
-    if ($comment === null) {
-        return false;
-    }
-    do_action('trash_comment', $comment->comment_ID, $comment);
-    if (wp_set_comment_status($comment->comment_ID, 'trash')) {
-        delete_comment_meta($comment->comment_ID, '_wp_trash_meta_status');
-        delete_comment_meta($comment->comment_ID, '_wp_trash_meta_time');
-        add_comment_meta($comment->comment_ID, '_wp_trash_meta_status', $comment->comment_approved);
-        add_comment_meta($comment->comment_ID, '_wp_trash_meta_time', time());
-        do_action('trashed_comment', $comment->comment_ID, $comment);
-        return true;
-    }
-    return false;
+    return EMPTY_TRASH_DAYS ? _minn_comment_set_aside($comment_id, 'trash', 'trash_comment', 'trashed_comment') : wp_delete_comment($comment_id, true);
 }
 
 function wp_untrash_comment($comment_id)
 {
-    $comment = get_comment($comment_id);
-    if ($comment === null) {
-        return false;
-    }
-    $status = (string) (get_comment_meta($comment->comment_ID, '_wp_trash_meta_status', true) ?: '0');
-    if (wp_set_comment_status($comment->comment_ID, $status)) {
-        delete_comment_meta($comment->comment_ID, '_wp_trash_meta_status');
-        delete_comment_meta($comment->comment_ID, '_wp_trash_meta_time');
-        return true;
-    }
-    return false;
+    return _minn_comment_restore($comment_id, 'untrash_comment', 'untrashed_comment');
 }
 
 function wp_spam_comment($comment_id)
 {
-    return wp_set_comment_status($comment_id, 'spam');
+    return _minn_comment_set_aside($comment_id, 'spam', 'spam_comment', 'spammed_comment');
+}
+
+function wp_unspam_comment($comment_id)
+{
+    return _minn_comment_restore($comment_id, 'unspam_comment', 'unspammed_comment');
+}
+
+/**
+ * @internal a comment moved to the trash or spam as the reference moves it
+ * (probe placeholders-a): the first action, the status change, the status
+ * it had kept aside with the time, the second action
+ */
+function _minn_comment_set_aside($comment_id, string $status, string $before, string $after): bool
+{
+    $comment = get_comment($comment_id);
+    if ($comment === null) {
+        return false;
+    }
+    do_action($before, $comment->comment_ID, $comment);
+    if (!wp_set_comment_status($comment->comment_ID, $status)) {
+        return false;
+    }
+    delete_comment_meta($comment->comment_ID, '_wp_trash_meta_status');
+    delete_comment_meta($comment->comment_ID, '_wp_trash_meta_time');
+    add_comment_meta($comment->comment_ID, '_wp_trash_meta_status', $comment->comment_approved);
+    add_comment_meta($comment->comment_ID, '_wp_trash_meta_time', time());
+    do_action($after, $comment->comment_ID, $comment);
+    return true;
+}
+
+/** @internal a comment back from the trash or spam to the status kept aside (held when none was), between the two actions */
+function _minn_comment_restore($comment_id, string $before, string $after): bool
+{
+    $comment = get_comment($comment_id);
+    if ($comment === null) {
+        return false;
+    }
+    do_action($before, $comment->comment_ID, $comment);
+    $status = (string) (get_comment_meta($comment->comment_ID, '_wp_trash_meta_status', true) ?: '0');
+    if (!wp_set_comment_status($comment->comment_ID, $status)) {
+        return false;
+    }
+    delete_comment_meta($comment->comment_ID, '_wp_trash_meta_status');
+    delete_comment_meta($comment->comment_ID, '_wp_trash_meta_time');
+    do_action($after, $comment->comment_ID, $comment);
+    return true;
 }
 
 function wp_count_terms($args = [], $deprecated = '')

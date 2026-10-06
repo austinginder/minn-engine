@@ -30,7 +30,8 @@ class wpdb
     public $tables = ['posts', 'comments', 'links', 'options', 'postmeta', 'terms', 'term_taxonomy', 'term_relationships', 'termmeta', 'commentmeta'];
     public $old_tables = ['categories', 'post2cat', 'link2cat'];
     public $global_tables = ['users', 'usermeta'];
-    public $ms_global_tables = ['blogs', 'blogmeta', 'signups', 'site', 'sitemeta', 'sitecategories', 'registration_log'];
+    public $ms_global_tables = ['blogs', 'blogmeta', 'signups', 'site', 'sitemeta', 'registration_log'];
+    public $old_ms_global_tables = ['sitecategories'];
     public $comments;
     public $commentmeta;
     public $links;
@@ -79,8 +80,9 @@ class wpdb
         $old = $this->prefix;
         $this->prefix = $prefix;
         $this->base_prefix = $prefix;
+        // The network's tables are named only on a multisite install; on one site they stay empty (probe placeholders-a).
         if ($set_table_names) {
-            foreach (array_merge($this->tables, $this->global_tables, $this->ms_global_tables) as $table) {
+            foreach (array_merge($this->tables, $this->global_tables, is_multisite() ? $this->ms_global_tables : []) as $table) {
                 $this->{$table} = $prefix . $table;
             }
         }
@@ -91,10 +93,10 @@ class wpdb
     {
         $tables = match ($scope) {
             'blog' => $this->tables,
-            'global' => array_merge($this->global_tables, $this->ms_global_tables),
+            'global' => array_merge($this->global_tables, is_multisite() ? $this->ms_global_tables : []),
             'ms_global' => $this->ms_global_tables,
-            'old' => $this->old_tables,
-            default => array_merge($this->tables, $this->global_tables),
+            'old' => is_multisite() ? array_merge($this->old_tables, $this->old_ms_global_tables) : $this->old_tables,
+            default => array_merge($this->global_tables, is_multisite() ? $this->ms_global_tables : [], $this->tables),
         };
         if (!$prefix) {
             return $tables;

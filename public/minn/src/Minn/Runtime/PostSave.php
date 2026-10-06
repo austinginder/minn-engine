@@ -69,6 +69,8 @@ final class PostSave
             // An update keeps the guid it had, in its display form (probe insert-defaults).
             $row = array_replace($row, ['guid' => (string) \get_post_field('guid', $id)]);
         }
+        // A private post keeps no password (probe placeholders-admin).
+        $row = $value('post_status') === 'private' ? array_replace($row, ['post_password' => '']) : $row;
         $parent = self::parent($sanitized, $id);
         $slug = $value('post_name');
         if (!self::keepsSlug($value('post_status'), $type)) {

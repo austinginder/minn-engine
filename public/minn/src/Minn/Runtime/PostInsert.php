@@ -116,6 +116,8 @@ final readonly class PostInsert
             $status = 'future';
         }
         $columns['post_status'] = $status;
+        // A private post keeps no password (probe placeholders-admin).
+        $columns = $status === 'private' ? array_replace($columns, ['post_password' => '']) : $columns;
         $columns['post_date'] = $date;
         $columns['post_date_gmt'] = $dateGmt;
         $columns['post_modified'] = $now;

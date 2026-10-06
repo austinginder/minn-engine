@@ -5,6 +5,7 @@ escaping, serialized readers, small helpers
 | Class | Kind | Lines | Summary |
 |---|---|---|---|
 | [`Accents`](#accents) | final class | 35 | Accented and special characters to their plain spelling, from the |
+| [`Backtrace`](#backtrace) | final class | 32 | A call stack named as wp_debug_backtrace_summary names it (probe |
 | [`DirectoryListing`](#directorylisting) | final class | 34 | Walks a directory the way the filesystem API lists it: named entries, dot entries skipped, hidden ones optional, recursion optional. |
 | [`Email`](#email) | final class | 69 | The address rules the reference applies: a local part from a fixed |
 | [`Entities`](#entities) | final class | 77 | HTML special-character encoding with the reference's quote styles and its |
@@ -48,6 +49,27 @@ Used by: `Minn\Content\Slug`
 The text with its accented characters spelled plainly, as the locale spells them.
 
 Internals: `data()` (private, line 43)
+
+
+## Backtrace
+
+`final class Minn\Support\Backtrace` · `public/minn/src/Minn/Support/Backtrace.php`
+
+A call stack named as wp_debug_backtrace_summary names it (probe
+placeholders-a): Class->method, Class::method and function names; a
+hook's function with the hook named; an included file by its path with
+the given prefixes taken off, in order. Innermost first.
+
+- const `HOOKS` = `array (   0 => 'do_action',   1 => 'apply_filters',   2 => 'do_action_ref_array',   3 => 'apply_filters_ref_array', )`
+- const `INCLUDES` = `array (   0 => 'include',   1 => 'include_once',   2 => 'require',   3 => 'require_once', )`
+
+### static `summary(array $frames, ?string $ignoreClass, int $skip, array $truncate): array`
+
+The frames' names, after the first $skip.
+
+- `@param list<array<string, mixed>> $frames debug_backtrace()'s frames, innermost first`
+- `@param list<string> $truncate path prefixes taken off an included file`
+- `@return list<string>`
 
 
 ## DirectoryListing

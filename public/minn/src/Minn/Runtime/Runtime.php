@@ -142,6 +142,7 @@ final class Runtime
         // (WooCommerce's block settings want weekday_abbrev), so it is
         // bound with the runtime, not built on first use.
         $GLOBALS['wp_locale'] = new \WP_Locale();
+        \_minn_locale_switcher();
         register_shutdown_function(static function (): void {
             self::hooks()->action('shutdown', []);
         });
