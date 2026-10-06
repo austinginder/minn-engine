@@ -115,13 +115,14 @@ final class Registry
         $publiclyQueryable = (bool) ($args['publicly_queryable'] ?? $public);
         $showUi = (bool) ($args['show_ui'] ?? $public);
         $showInMenu = $args['show_in_menu'] ?? $showUi;
+        // A rewrite settles into its full form, public or not; feeds only where there is an archive (probe registry-rewrites).
         $rewrite = $args['rewrite'] ?? true;
-        if ($rewrite !== false && ($public || $publiclyQueryable)) {
+        if ($rewrite !== false && self::settlesRewrites()) {
             $rewrite = is_array($rewrite) ? $rewrite : [];
             $rewrite += ['slug' => $name, 'with_front' => true, 'pages' => true, 'feeds' => (bool) $hasArchive, 'ep_mask' => 1];
-            $rewrite['feeds'] = $rewrite['feeds'] ?? (bool) $hasArchive;
-        } else {
-            $rewrite = false;
+            if (!$hasArchive) {
+                $rewrite['feeds'] = false;
+            }
         }
         $type = [
             'name' => $name,
@@ -143,7 +144,7 @@ final class Registry
             'map_meta_cap' => (bool) ($args['map_meta_cap'] ?? true),
             'taxonomies' => array_values(array_map('strval', (array) ($args['taxonomies'] ?? []))),
             'has_archive' => $hasArchive,
-            'query_var' => $args['query_var'] ?? ($publiclyQueryable ? $name : false),
+            'query_var' => $args['query_var'] ?? true,
             'can_export' => (bool) ($args['can_export'] ?? true),
             'delete_with_user' => $args['delete_with_user'] ?? null,
             'template' => (array) ($args['template'] ?? []),
@@ -284,14 +285,12 @@ final class Registry
         $public = (bool) ($args['public'] ?? true);
         $publiclyQueryable = (bool) ($args['publicly_queryable'] ?? $public);
         $showUi = (bool) ($args['show_ui'] ?? $public);
+        // Settled whether queryable or not, the given keys merged over the defaults; a rewrite of true leaves an
+        // empty "0" entry behind, as the reference's merge does (probe registry-rewrites).
         $rewrite = $args['rewrite'] ?? true;
-        if ($rewrite !== false && $publiclyQueryable) {
-            $rewrite = is_array($rewrite) ? $rewrite : [];
-            $rewrite += ['with_front' => true, 'hierarchical' => false, 'ep_mask' => 0];
-            $rewrite['slug'] = $rewrite['slug'] ?? $name;
-            $rewrite = ['with_front' => $rewrite['with_front'], 'hierarchical' => $rewrite['hierarchical'], 'ep_mask' => $rewrite['ep_mask'], 'slug' => $rewrite['slug']];
-        } else {
-            $rewrite = false;
+        if ($rewrite !== false && self::settlesRewrites()) {
+            $rewrite = array_merge(['with_front' => true, 'hierarchical' => false, 'ep_mask' => 0], is_array($rewrite) ? $rewrite : ['']);
+            $rewrite['slug'] ??= $name;
         }
         $caps = ['manage_terms' => 'manage_categories', 'edit_terms' => 'manage_categories', 'delete_terms' => 'manage_categories', 'assign_terms' => 'edit_posts'];
         foreach ((array) ($args['capabilities'] ?? []) as $key => $value) {
@@ -314,7 +313,7 @@ final class Registry
             'object_type' => array_values(array_map('strval', $objectTypes)),
             'cap' => $caps,
             'rewrite' => $rewrite,
-            'query_var' => $args['query_var'] ?? ($publiclyQueryable ? $name : false),
+            'query_var' => $publiclyQueryable ? ($args['query_var'] ?? true) : false,
             'show_in_rest' => (bool) ($args['show_in_rest'] ?? false),
             'rest_base' => $args['rest_base'] ?? false,
             'rest_namespace' => $args['rest_namespace'] ?? 'wp/v2',
@@ -329,6 +328,12 @@ final class Registry
         }
         $this->taxonomies[$name] = $taxonomy;
         return $taxonomy;
+    }
+
+    /** Whether a registered rewrite settles into its full form: with pretty permalinks or in the admin; otherwise it stays as given. */
+    public static function settlesRewrites(): bool
+    {
+        return !Runtime::booted() || !\function_exists('get_option') || \is_admin() || (string) \get_option('permalink_structure') !== '';
     }
 
     /** Forgets a non-builtin taxonomy. */

@@ -76,9 +76,15 @@ final class RuntimeRoutes
      */
     private static function allow(\WP_REST_Response $result, string $route, \WP_REST_Request $wpRequest): void
     {
-        if (isset($result->get_headers()['Allow'])) {
-            return;
+        $allowed = self::allowedMethods($route, $wpRequest);
+        if (!isset($result->get_headers()['Allow']) && $allowed !== []) {
+            $result->header('Allow', implode(', ', $allowed));
         }
+    }
+
+    /** The methods of a plugin's route whose handler lets this request through (a handler with no permission callback does). @return list<string> */
+    public static function allowedMethods(string $route, \WP_REST_Request $wpRequest): array
+    {
         $allowed = [];
         foreach ((array) (\rest_get_server()->get_routes()[$route] ?? []) as $handler) {
             $permitted = empty($handler['permission_callback']) || call_user_func($handler['permission_callback'], $wpRequest) === true;
@@ -86,10 +92,7 @@ final class RuntimeRoutes
                 $allowed[strtoupper((string) $method)] = $permitted;
             }
         }
-        $allowed = array_keys(array_filter($allowed));
-        if ($allowed !== []) {
-            $result->header('Allow', implode(', ', $allowed));
-        }
+        return array_keys(array_filter($allowed));
     }
 
     /** The engine's index plus the namespaces and routes the runtime holds. */

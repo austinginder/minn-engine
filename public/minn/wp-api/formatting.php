@@ -490,10 +490,11 @@ function add_query_arg(...$args)
         $uri = count($args) < 3 || $args[2] === false ? $current : (string) $args[2];
         $new = [$args[0] => $args[1] ?? null];
     }
-    return Url::withQuery($uri, $new, static fn (array $q): array => urlencode_deep($q), static fn (array $q): string => _minn_build_query($q));
+    // An empty value leaves its key bare (probe query-args): ?c= reads back as ?c, null leaves the key out.
+    return Url::withQuery($uri, $new, static fn (array $q): array => urlencode_deep($q), static fn (array $q): string => (string) preg_replace('#=(&|$)#', '$1', _minn_build_query($q)));
 }
 
-/** @internal keys are encoded, values are left as given (the reference shows raw values) */
+/** @internal keys and values are left as given (probe query-args) */
 function _minn_build_query(array $data, string $prefix = ''): string
 {
     return Url::buildQuery($data, $prefix);

@@ -43,6 +43,16 @@ final class RestError extends RuntimeException
         return new self('rest_missing_callback_param', 'Missing parameter(s): ' . implode(', ', $params), 400, ['params' => $params]);
     }
 
+    /**
+     * The reference's 400 for one parameter its schema refuses: the message
+     * under params, and under details with the refusal's code and data, as
+     * WP_REST_Request::has_valid_params reports it.
+     */
+    public static function invalidParam(string $param, string $message, string $code = 'rest_not_in_enum', mixed $data = null): self
+    {
+        return new self('rest_invalid_param', "Invalid parameter(s): {$param}", 400, ['params' => [$param => $message], 'details' => [$param => ['code' => $code, 'message' => $message, 'data' => $data]]]);
+    }
+
     /** A statusless core error as REST serves it: HTTP 500 with data null. */
     public static function bare(string $code, string $message): self
     {

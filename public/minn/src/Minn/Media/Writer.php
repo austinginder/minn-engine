@@ -8,7 +8,6 @@ use Minn\Content\PostRecord;
 use Minn\Content\Posts;
 use Minn\Content\PostWriter;
 use Minn\Content\Site;
-use Minn\Content\Slug;
 use Minn\Support\Kses;
 
 /**
@@ -89,7 +88,7 @@ final readonly class Writer
             'comment_status' => $this->site->defaultDiscussion('attachment', 'comment'),
             'ping_status' => 'closed',
             'post_password' => '',
-            'post_name' => Slug::sanitize($title),
+            'post_name' => $this->posts->uniqueSlug($title, 0, 'attachment', $parent),
             'to_ping' => '',
             'pinged' => '',
             'post_modified' => $now,

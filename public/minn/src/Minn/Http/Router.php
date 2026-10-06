@@ -125,6 +125,24 @@ final class Router
         }
     }
 
+    /**
+     * The routes a request's method and path match, policies unjudged, in
+     * the order dispatch tries them, with their captures: what a batch
+     * reads to tell a route that does not take part from no route at all.
+     *
+     * @return list<array{0: Route, 1: array<string, string>}>
+     */
+    public function matching(Request $request): array
+    {
+        $out = [];
+        foreach ($this->routes as ['route' => $route]) {
+            if ($request->method->matches($route->method) && preg_match($route->regex(), $request->path, $captures)) {
+                $out[] = [$route, array_filter($captures, is_string(...), ARRAY_FILTER_USE_KEY)];
+            }
+        }
+        return $out;
+    }
+
     /** Null when nothing matched, so the caller can fall through. */
     public function dispatch(Request $request): ?Response
     {

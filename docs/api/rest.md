@@ -6,9 +6,10 @@ the wp/v2 surface: shapes and controllers
 |---|---|---|---|
 | [`AbilitiesController`](#abilitiescontroller) | final readonly class | 142 | wp-abilities/v1: what this site can be asked to do, and the doing of it. |
 | [`AdditionalFields`](#additionalfields) | final class | 46 | Which object type a wp/v2 route serves, so fields registered for that type can ride on the engine's own responses. |
-| [`Api`](#api) | final readonly class | 199 | The REST API: wires the controllers for one request and dispatches a |
+| [`Api`](#api) | final readonly class | 208 | The REST API: wires the controllers for one request and dispatches a |
 | [`ApplicationPasswordsController`](#applicationpasswordscontroller) | final readonly class | 170 | wp/v2/users/{id}/application-passwords: list, create, rename, delete, |
 | [`ArgCheck`](#argcheck) | final readonly class | 83 | Judges a route's declared arguments against the request before the |
+| [`BatchController`](#batchcontroller) | final readonly class | 159 | batch/v1 as the reference answers it (probe rest-batch): up to 25 |
 | [`BatchRequest`](#batchrequest) | final class | 32 | The requests a batch payload names, normalised into descriptors the |
 | [`BlockRendererController`](#blockrenderercontroller) | final readonly class | 89 | wp/v2/block-renderer as the reference answers it (probe |
 | [`BlockTypesController`](#blocktypescontroller) | final readonly class | 117 | wp/v2/block-types as the reference answers it (probe rest-block-types): |
@@ -41,7 +42,7 @@ the wp/v2 surface: shapes and controllers
 | [`PolicyGate`](#policygate) | final readonly class | 91 | Judges a route's policy against the caller, with the reference's |
 | [`PostObject`](#postobject) | final readonly class | 494 | Builds the wp/v2 post and page objects in the reference's shape: the |
 | [`PostsController`](#postscontroller) | final readonly class | 182 | wp/v2 posts and pages, read side. |
-| [`PostsWriteController`](#postswritecontroller) | final readonly class | 426 | wp/v2 posts and pages, write side: create, update, trash, and force |
+| [`PostsWriteController`](#postswritecontroller) | final readonly class | 431 | wp/v2 posts and pages, write side: create, update, trash, and force |
 | [`RenderedFields`](#renderedfields) | final class | 49 | A post's rendered title, content and excerpt as a REST response carries |
 | [`Reply`](#reply) | final class | 47 | JSON responses in the reference's shape: its header set, its json_encode |
 | [`RestUrl`](#resturl) | final readonly class | 38 | REST URLs in the form the reference emits for the site's permalink mode: |
@@ -52,7 +53,7 @@ the wp/v2 surface: shapes and controllers
 | [`RouteTable`](#routetable) | final class | 38 | The registered endpoints in dispatch shape: one handler list per route, methods as a set, non-numeric keys lifted into the route's options. |
 | [`RuntimeEnvelope`](#runtimeenvelope) | final readonly class | 123 | The REST server's filters around one of Minn's own routes, as the |
 | [`RuntimePrepare`](#runtimeprepare) | final class | 54 | An item a REST response carries, through the filter the reference runs |
-| [`RuntimeRoutes`](#runtimeroutes) | final class | 362 | Routes plugin code registered with register_rest_route(), answered |
+| [`RuntimeRoutes`](#runtimeroutes) | final class | 365 | Routes plugin code registered with register_rest_route(), answered |
 | [`Schema`](#schema) | final readonly class | 473 | JSON-schema handling the way the REST API's argument validation does it: |
 | [`SchemaValues`](#schemavalues) | final class | 206 | The value side of JSON Schema, as the reference applies it: what counts |
 | [`SearchController`](#searchcontroller) | final readonly class | 121 | wp/v2 search over published content: id, title, url, type, and the |
@@ -219,7 +220,7 @@ runtime's server calls for a core route, so a route the engine
 declines cannot bounce between the two. $as is the caller's own
 request object, which the route's parameters are set on.
 
-Internals: `controllers()` (private, line 72), `engineResponse()` (private, line 219), `withAllow()` (private, line 229)
+Internals: `controllers()` (private, line 72), `engineResponse()` (private, line 228), `withAllow()` (private, line 238)
 
 
 ## ApplicationPasswordsController
@@ -306,7 +307,7 @@ route's args, the JSON body against its body set, and a JSON body that
 does not parse is refused on every route first. An argument its handler
 judges (Args::HANDLER_VALIDATES) is left to the handler.
 
-Used by: `Minn\Rest\Api`
+Used by: `Minn\Rest\Api`, `Minn\Rest\BatchController`
 
 ```php
 __construct(Minn\Rest\Schema $schema)
@@ -322,6 +323,41 @@ The check as the router takes it.
 Throws the refusal the declared arguments earn, or returns.
 
 Internals: `json()` (private, line 59), `missing()` (private, line 74), `round()` (private, line 88)
+
+
+## BatchController
+
+`final readonly class Minn\Rest\BatchController` · `public/minn/src/Minn/Rest/BatchController.php`
+
+batch/v1 as the reference answers it (probe rest-batch): up to 25
+writes (POST, PUT, PATCH, DELETE) in one request, each answered in turn
+as {body, status, headers}, the whole as 207. Only routes that take part
+in batches may be asked: posts, pages and the other post types shown in
+REST (not media, templates, global styles or fonts), the taxonomies,
+users, widgets, and a plugin's routes that opt in with allow_batch. Any
+other route answers rest_batch_not_allowed with its Allow header, a path
+with no route rest_no_route. With require-all-validate, every request's
+arguments are judged first and one failure answers the whole batch with
+the failures alone (null for the rest), nothing written.
+
+- const `BODY` = `array (   'validation' =>    array (     'type' => 'string',     'enum' =>      array (       0 => 'require-all-validate',       1 => 'normal',     ),     'default' => 'normal',     'required' => false,   ),   'requests' =>    array (     'required' => true,     'type' => 'array',     'maxItems' => 25,     'items' =>      array (       'type' => 'object',       'properties' =>        array (         'method' =>          array (           'type' => 'string',           'enum' =>            array (             0 => 'POST',             1 => 'PUT',             2 => 'PATCH',             3 => 'DELETE',           ),           'default' => 'POST',         ),         'path' =>          array (           'type' => 'string',           'required' => true,         ),         'body' =>          array (           'type' => 'object',           'properties' =>            array (           ),           'additionalProperties' => true,         ),         'headers' =>          array (           'type' => 'object',           'properties' =>            array (           ),           'additionalProperties' =>            array (             'type' =>              array (               0 => 'string',               1 => 'array',             ),             'items' =>              array (               'type' => 'string',             ),           ),         ),       ),     ),   ), )`
+- const `NOT_BATCHED` = `array (   0 => 'attachment',   1 => 'wp_template',   2 => 'wp_template_part',   3 => 'wp_global_styles',   4 => 'wp_font_family',   5 => 'wp_font_face', )` — Post types served by controllers that do not take part in batches.
+
+Used by: `Minn\Rest\Api`
+
+```php
+__construct(Minn\Http\Router $router, Closure $dispatch, Minn\Rest\ArgCheck $args, Minn\Rest\Types $types)
+```
+- `@param Closure(Request): Response $dispatch answers one request as the REST API would on its own`
+
+
+### `batch(Minn\Http\Request $request): Minn\Http\Response`
+
+Route: `POST /batch/v1 (public)`
+
+The requests answered in turn.
+
+Internals: `refusal()` (private, line 86), `invalid()` (private, line 104), `claims()` (private, line 131), `batchablePath()` (private, line 141), `subRequest()` (private, line 159), `error()` (private, line 177), `envelope()` (private, line 183)
 
 
 ## BatchRequest
@@ -1724,7 +1760,7 @@ Trashes a post of any type, or deletes it with force.
 
 A field that may arrive as a scalar or as {raw: ...}.
 
-Internals: `events()` (private, line 122), `newColumns()` (private, line 133), `writeNewPost()` (private, line 167), `trash()` (private, line 273), `rememberOld()` (private, line 292), `floatingDate()` (private, line 317), `scheduledIfFuture()` (private, line 327), `fieldColumns()` (private, line 346), `statusColumns()` (private, line 391), `checkStickyPasswordConflict()` (private, line 421), `validStatus()` (private, line 433), `clean()` (private, line 442)
+Internals: `events()` (private, line 128), `newColumns()` (private, line 139), `writeNewPost()` (private, line 173), `trash()` (private, line 279), `rememberOld()` (private, line 298), `floatingDate()` (private, line 323), `scheduledIfFuture()` (private, line 333), `fieldColumns()` (private, line 352), `statusColumns()` (private, line 397), `checkStickyPasswordConflict()` (private, line 427), `validStatus()` (private, line 439), `clean()` (private, line 448)
 
 
 ## RenderedFields
@@ -1765,7 +1801,7 @@ on lists.
 
 - const `HEADERS` = `array (   'Content-Type' => 'application/json; charset=UTF-8',   'X-Content-Type-Options' => 'nosniff',   'Access-Control-Expose-Headers' => 'X-WP-Total, X-WP-TotalPages, Link',   'Access-Control-Allow-Headers' => 'Authorization, X-WP-Nonce, Content-Disposition, Content-MD5, Content-Type', )`
 
-Used by: `Minn\Admin\BundleController`, `Minn\Admin\EditorController`, `Minn\Admin\LanguageController`, `Minn\Admin\OverviewController`, `Minn\Admin\PackagesController`, `Minn\Admin\PreferencesController`, `Minn\Admin\RenderController`, `Minn\Admin\SessionsController`, `Minn\Admin\SiteController`, `Minn\Admin\StructureController`, `Minn\Admin\SystemController`, `Minn\Admin\ThemesController`, `Minn\Admin\UpdatesController`, `Minn\Admin\V1Controller`, `Minn\Rest\AbilitiesController`, `Minn\Rest\Api`, `Minn\Rest\ApplicationPasswordsController`, `Minn\Rest\BlockRendererController`, `Minn\Rest\BlockTypesController`, `Minn\Rest\BlocksController`, `Minn\Rest\CommentsController`, `Minn\Rest\GlobalStylesController`, `Minn\Rest\IndexController`, `Minn\Rest\InstalledThemesController`, `Minn\Rest\MediaController`, `Minn\Rest\MenusController`, `Minn\Rest\OEmbedController`, `Minn\Rest\PluginsController`, `Minn\Rest\PostsController`, `Minn\Rest\PostsWriteController`, `Minn\Rest\RevisionsController`, `Minn\Rest\RuntimeRoutes`, `Minn\Rest\SearchController`, `Minn\Rest\SettingsController`, `Minn\Rest\SidebarsController`, `Minn\Rest\StatusesController`, `Minn\Rest\TaxonomiesController`, `Minn\Rest\TemplatesController`, `Minn\Rest\TermsController`, `Minn\Rest\TypesController`, `Minn\Rest\UsersController`, `Minn\Rest\WidgetsController`
+Used by: `Minn\Admin\BundleController`, `Minn\Admin\EditorController`, `Minn\Admin\LanguageController`, `Minn\Admin\OverviewController`, `Minn\Admin\PackagesController`, `Minn\Admin\PreferencesController`, `Minn\Admin\RenderController`, `Minn\Admin\SessionsController`, `Minn\Admin\SiteController`, `Minn\Admin\StructureController`, `Minn\Admin\SystemController`, `Minn\Admin\ThemesController`, `Minn\Admin\UpdatesController`, `Minn\Admin\V1Controller`, `Minn\Rest\AbilitiesController`, `Minn\Rest\Api`, `Minn\Rest\ApplicationPasswordsController`, `Minn\Rest\BatchController`, `Minn\Rest\BlockRendererController`, `Minn\Rest\BlockTypesController`, `Minn\Rest\BlocksController`, `Minn\Rest\CommentsController`, `Minn\Rest\GlobalStylesController`, `Minn\Rest\IndexController`, `Minn\Rest\InstalledThemesController`, `Minn\Rest\MediaController`, `Minn\Rest\MenusController`, `Minn\Rest\OEmbedController`, `Minn\Rest\PluginsController`, `Minn\Rest\PostsController`, `Minn\Rest\PostsWriteController`, `Minn\Rest\RevisionsController`, `Minn\Rest\RuntimeRoutes`, `Minn\Rest\SearchController`, `Minn\Rest\SettingsController`, `Minn\Rest\SidebarsController`, `Minn\Rest\StatusesController`, `Minn\Rest\TaxonomiesController`, `Minn\Rest\TemplatesController`, `Minn\Rest\TermsController`, `Minn\Rest\TypesController`, `Minn\Rest\UsersController`, `Minn\Rest\WidgetsController`
 
 ### static `answer(Minn\Http\Request $request, mixed $data, int $status = 200): Minn\Http\Response`
 
@@ -2014,7 +2050,7 @@ and the runtime's namespaces folded into the index.
 - const `DISPATCH_DONE` = `array (   'rest_filter_response_fields' => 10, )` — rest_post_dispatch's defaults the engine does itself: every answer is cut to its _fields before it is served.
 - const `SERVE_DONE` = `array (   '_oembed_rest_pre_serve_request' => 10, )` — rest_pre_serve_request's defaults the engine does itself: oEmbed's XML (see oembedXml()).
 
-Used by: `Minn\Rest\Api`, `Minn\Rest\MediaController`, `Minn\Rest\OEmbedController`, `Minn\Rest\RuntimeEnvelope`, `Minn\Rest\RuntimePrepare`, `Minn\Runtime\CommentEvents`, `Minn\Runtime\PostEvents`, `Minn\Runtime\PostSave`, `Minn\Runtime\TermEvents`, `Minn\Runtime\UserEvents`
+Used by: `Minn\Rest\Api`, `Minn\Rest\BatchController`, `Minn\Rest\MediaController`, `Minn\Rest\OEmbedController`, `Minn\Rest\RuntimeEnvelope`, `Minn\Rest\RuntimePrepare`, `Minn\Runtime\CommentEvents`, `Minn\Runtime\PostEvents`, `Minn\Runtime\PostSave`, `Minn\Runtime\TermEvents`, `Minn\Runtime\UserEvents`
 
 
 ### static `gate(Minn\Http\Request $request): ?Minn\Http\Response`
@@ -2028,6 +2064,12 @@ the engine's router proceed.
 ### static `dispatch(Minn\Http\Request $request): ?Minn\Http\Response`
 
 Null when the runtime has no route for the request either.
+
+### static `allowedMethods(string $route, WP_REST_Request $wpRequest): array`
+
+The methods of a plugin's route whose handler lets this request through (a handler with no permission callback does). @return list<string>
+
+- `@return list<string>`
 
 ### static `mergeIndex(Minn\Http\Response $response): Minn\Http\Response`
 
@@ -2080,7 +2122,7 @@ nothing hooked, the answer goes out as it is.
 
 A callback's return as a response object, an error converted.
 
-Internals: `allow()` (private, line 77), `oembedXml()` (private, line 276), `look()` (private, line 290), `remember()` (private, line 295), `decode()` (private, line 302), `expand()` (private, line 322), `newWpRequest()` (private, line 348), `toResponse()` (private, line 371)
+Internals: `allow()` (private, line 77), `oembedXml()` (private, line 279), `look()` (private, line 293), `remember()` (private, line 298), `decode()` (private, line 305), `expand()` (private, line 325), `newWpRequest()` (private, line 351), `toResponse()` (private, line 374)
 
 
 ## Schema
@@ -2925,7 +2967,7 @@ Internals: `requireParent()` (private, line 207)
 The engine's registry of built-in post types, seeded from the observed
 contract (src/data/types.json) with _links attached at runtime.
 
-Used by: `Minn\Admin\AdminTypes`, `Minn\Admin\StructureController`, `Minn\Engine`, `Minn\Rest\Api`, `Minn\Rest\DeclaredPostsController`, `Minn\Rest\Embed`, `Minn\Rest\IndexController`, `Minn\Rest\PolicyGate`, `Minn\Rest\RuntimeEnvelope`, `Minn\Rest\SearchController`, `Minn\Rest\Services`, `Minn\Rest\TypesController`
+Used by: `Minn\Admin\AdminTypes`, `Minn\Admin\StructureController`, `Minn\Engine`, `Minn\Rest\Api`, `Minn\Rest\BatchController`, `Minn\Rest\DeclaredPostsController`, `Minn\Rest\Embed`, `Minn\Rest\IndexController`, `Minn\Rest\PolicyGate`, `Minn\Rest\RuntimeEnvelope`, `Minn\Rest\SearchController`, `Minn\Rest\Services`, `Minn\Rest\TypesController`
 
 ```php
 __construct(Minn\Rest\RestUrl $url, array $declared = array ( ))

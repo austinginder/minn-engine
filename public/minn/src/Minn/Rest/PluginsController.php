@@ -66,7 +66,7 @@ final readonly class PluginsController
         }
         $status = (string) ($body['status'] ?? 'inactive');
         if (!in_array($status, ['active', 'inactive'], true)) {
-            throw new RestError('rest_invalid_param', 'Invalid parameter(s): status', 400, ['params' => ['status' => 'status is not one of inactive, active.']]);
+            throw RestError::invalidParam('status', 'status is not one of inactive, active.');
         }
         if ($status === 'active' && !$this->caller->can('activate_plugins')) {
             throw new RestError('rest_cannot_activate_plugin', 'Sorry, you are not allowed to activate plugins.', 403);
@@ -104,7 +104,7 @@ final readonly class PluginsController
         $item = $this->find($plugin);
         $status = (string) ($request->json()['status'] ?? $request->form['status'] ?? '');
         if (!in_array($status, ['active', 'inactive'], true)) {
-            throw new RestError('rest_invalid_param', 'Invalid parameter(s): status', 400, ['params' => ['status' => 'status is not one of inactive, active.']]);
+            throw RestError::invalidParam('status', 'status is not one of inactive, active.');
         }
         if ($status !== $item['status']) {
             $state = new PluginState($this->site, $this->inventory, $this->extensions);

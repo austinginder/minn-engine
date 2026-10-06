@@ -538,5 +538,5 @@ Sets an attachment's alt text.
 
 Removes an attachment: its files, every generated size, its meta, and its row.
 
-Internals: `imageMetadata()` (private, line 184)
+Internals: `imageMetadata()` (private, line 183)
 

@@ -18,6 +18,9 @@ final readonly class PostWriter
     public const FLOATING = ['draft', 'pending', 'auto-draft'];
     public const ZERO_DATE = '0000-00-00 00:00:00';
 
+    /** The posts table's short text columns, cut to fit as the reference's database layer cuts them. */
+    private const LENGTHS = ['post_status' => 20, 'comment_status' => 20, 'ping_status' => 20, 'post_password' => 255, 'post_name' => 200, 'guid' => 255, 'post_type' => 20, 'post_mime_type' => 100];
+
     public function __construct(
         private Db $db,
         private Posts $posts,
@@ -32,6 +35,7 @@ final readonly class PostWriter
      */
     public function insert(array $columns): int
     {
+        $columns = self::fit($columns);
         $names = implode(', ', array_keys($columns));
         $this->db->execute("INSERT INTO {$this->db->table('posts')} ({$names}) VALUES (?)", [array_values($columns)]);
         return $this->db->insertId();
@@ -47,6 +51,7 @@ final readonly class PostWriter
         if ($columns === []) {
             return;
         }
+        $columns = self::fit($columns);
         $sets = implode(', ', array_map(static fn (string $column) => "{$column} = ?", array_keys($columns)));
         $this->db->execute("UPDATE {$this->db->table('posts')} SET {$sets} WHERE ID = ?", [...array_values($columns), $id]);
     }
@@ -150,20 +155,27 @@ final readonly class PostWriter
         $this->db->execute("DELETE FROM {$this->db->table('postmeta')} WHERE post_id = ? AND meta_key = ?", [$id, $key]);
     }
 
-    /** A slug unique within the posts table: base, -2, -3 on collision. */
-    public function uniqueSlug(string $desired, int $excludeId): string
+    /** A free slug for the desired text, sanitized first, in the type's scope (see PostSlugs). */
+    public function uniqueSlug(string $desired, int $excludeId, string $type = 'post', int $parent = 0): string
     {
-        $base = Slug::sanitize($desired);
-        if ($base === '') {
-            return '';
+        return $this->slugs()->unique(Slug::sanitize($desired), $excludeId, $type, $parent);
+    }
+
+    /** The rules a live post's slug is settled by. */
+    public function slugs(): PostSlugs
+    {
+        return new PostSlugs($this->db, $this->site);
+    }
+
+    /** @param array<string, mixed> $columns @return array<string, mixed> */
+    private static function fit(array $columns): array
+    {
+        foreach (array_intersect_key(self::LENGTHS, $columns) as $column => $length) {
+            if (is_string($columns[$column]) && mb_strlen($columns[$column]) > $length) {
+                $columns[$column] = mb_substr($columns[$column], 0, $length);
+            }
         }
-        $slug = $base;
-        $n = 1;
-        while ($this->db->value("SELECT ID FROM {$this->db->table('posts')} WHERE post_name = ? AND ID <> ? LIMIT 1", [$slug, $excludeId]) !== null) {
-            $n++;
-            $slug = "{$base}-{$n}";
-        }
-        return $slug;
+        return $columns;
     }
 
     /** Replaces a post's links in one taxonomy and refreshes that taxonomy's counts. */

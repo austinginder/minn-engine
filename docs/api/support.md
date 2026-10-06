@@ -25,7 +25,7 @@ escaping, serialized readers, small helpers
 | [`SearchReplace`](#searchreplace) | final class | 38 | String replace that walks serialized-PHP arrays of scalars without |
 | [`Serialized`](#serialized) | final class | 311 | Tolerant readers for the serialized-PHP blobs WordPress stores. Nothing |
 | [`Time`](#time) | final class | 21 | Human-scale spans: a number of seconds as the largest whole unit it fills, rounded, never below one. |
-| [`Url`](#url) | final class | 203 | URL shaping the escaping and query helpers share: the character cleanup |
+| [`Url`](#url) | final class | 202 | URL shaping the escaping and query helpers share: the character cleanup |
 | [`Utf8`](#utf8) | final class | 8 | Whether bytes are well-formed UTF-8 as the reference judges them: overlong |
 | [`WebServer`](#webserver) | final class | 8 | What the SERVER_SOFTWARE string says about the web server in front of the site. |
 
@@ -709,7 +709,8 @@ Square brackets after the authority are percent-encoded; the authority itself is
 ### static `withQuery(string $uri, array $new, Closure $encode, Closure $build): string`
 
 The URI with query arguments merged in (false removes one), the
-fragment kept, a bare query string treated as such.
+fragment kept, a bare query string treated as such; a URI that is
+only a query (or nothing) keeps its leading question mark.
 
 - `@param array<string, mixed> $new`
 - `@param Closure(array): array $encode encodes the existing arguments the way the reference does`
@@ -728,7 +729,7 @@ site's own always). Returns the URL, or null when refused.
 
 ### static `buildQuery(array $data, string $prefix = ''): string`
 
-A query string in the reference's spelling: nested keys as `a%5Bb%5D`, null as a bare key, booleans as 0/1.
+A query string in the reference's spelling (probe query-args): keys and values as given, nested keys as `a%5Bb%5D`, null left out, booleans as 0/1.
 
 ### static `parse(string $url, int $component = -1): array|string|int|false|null`
 
@@ -745,7 +746,7 @@ credentials, and a host the caller allows (local paths always pass).
 
 - `@param Closure(string): list<string> $allowedHosts the hosts allowed for the target's host`
 
-Internals: `isPrivate()` (private, line 130)
+Internals: `isPrivate()` (private, line 131)
 
 
 ## Utf8

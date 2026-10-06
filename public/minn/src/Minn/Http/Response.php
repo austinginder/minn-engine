@@ -50,10 +50,10 @@ final readonly class Response
         return new self($status, ['Location' => $location], '');
     }
 
-    /** The same response with one header set. */
+    /** The same response with one header set, after those already set (one already there keeps its place). */
     public function withHeader(string $name, string $value): self
     {
-        return new self($this->status, [$name => $value] + $this->headers, $this->body, $this->cookies, $this->afterSend);
+        return new self($this->status, array_replace($this->headers, [$name => $value]), $this->body, $this->cookies, $this->afterSend);
     }
 
     /** The same response without one header. */

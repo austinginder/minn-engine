@@ -24,8 +24,9 @@ the repositories and records: posts, users, terms, comments, and the render pipe
 | [`PostClasses`](#postclasses) | final class | 55 | The class list a post carries on its article element, in the reference's |
 | [`PostFilter`](#postfilter) | final readonly class | 55 | What a listing is narrowed to. Every field is optional and the object is |
 | [`PostRecord`](#postrecord) | final readonly class | 156 | One row of the posts table, read by name. The columns keep their |
+| [`PostSlugs`](#postslugs) | final readonly class | 75 | Which slug a live post may take beside the others, as the reference |
 | [`PostStatus`](#poststatus) | enum | 42 | The statuses a post row can hold; the value is the column's own spelling. |
-| [`PostWriter`](#postwriter) | final readonly class | 464 | Every write to the posts table and its satellites: rows, meta, term |
+| [`PostWriter`](#postwriter) | final readonly class | 476 | Every write to the posts table and its satellites: rows, meta, term |
 | [`Posts`](#posts) | final readonly class | 502 | Reads over the posts table. A single post comes back as a PostRecord and |
 | [`Reader`](#reader) | final class | 72 | Who is reading this request: their user id, whether they may read |
 | [`Revisions`](#revisions) | final readonly class | 86 | Revision rows: the plain snapshots and the per-author autosave slots. |
@@ -1033,6 +1034,42 @@ Records are read-only; writes go through the repository.
 Records are read-only; writes go through the repository.
 
 
+## PostSlugs
+
+`final readonly class Minn\Content\PostSlugs` · `public/minn/src/Minn/Content/PostSlugs.php`
+
+Which slug a live post may take beside the others, as the reference
+settles it (probe insert-defaults). A flat type's slugs are its own: a
+post, a page and a plugin's type may share one. A hierarchical type's
+are its own and its attachments' under the same parent. An attachment's
+are every post's. Never free: the feed names and embed; for a
+hierarchical type, a number or a page number (2, page2); for posts, a
+number a date archive would answer to: any number when the permalink
+structure begins with the post name, a month (below 13) when the post
+name follows the year, a day (below 32) when it follows the month. A post
+keeps a number it already has. A taken slug gets the first free -2, -3
+form, cut (and stripped of a trailing hyphen) to fit the column's 200
+characters. The slug is taken as given, not sanitized.
+
+- const `LENGTH` = `200`
+- const `FEEDS` = `array (   0 => 'feed',   1 => 'rdf',   2 => 'rss',   3 => 'rss2',   4 => 'atom', )`
+
+Used by: `Minn\Content\PostWriter`, `Minn\Runtime\PostSave`
+
+```php
+__construct(Minn\Db $db, Minn\Content\Site $site)
+```
+
+
+### `unique(string $slug, int $excludeId, string $type, int $parent, ?Closure $bad = NULL): string`
+
+The slug, or its first free numbered form.
+
+- `@param Closure(string): bool|null $bad a plugin's say over the slug asked for (the bad-slug filters), asked last`
+
+Internals: `taken()` (private, line 53), `reserved()` (private, line 66), `hierarchical()` (private, line 95)
+
+
 ## PostStatus
 
 `enum Minn\Content\PostStatus` · `public/minn/src/Minn/Content/PostStatus.php`
@@ -1072,6 +1109,7 @@ and format side effects, and revision snapshots.
 
 - const `FLOATING` = `array (   0 => 'draft',   1 => 'pending',   2 => 'auto-draft', )` — The statuses whose post may have a floating date (no GMT date yet).
 - const `ZERO_DATE` = `'0000-00-00 00:00:00'`
+- const `LENGTHS` = `array (   'post_status' => 20,   'comment_status' => 20,   'ping_status' => 20,   'post_password' => 255,   'post_name' => 200,   'guid' => 255,   'post_type' => 20,   'post_mime_type' => 100, )` — The posts table's short text columns, cut to fit as the reference's database layer cuts them.
 
 Used by: `Minn\Admin\EditorController`, `Minn\Content\Menus`, `Minn\Content\Revisions`, `Minn\Cron\Cron`, `Minn\Media\Writer`, `Minn\Rest\PostsWriteController`, `Minn\Rest\Services`, `Minn\Runtime\PostEvents`, `Minn\Runtime\PostInsert`, `Minn\Runtime\TermWriter`, `Minn\Theme\TemplateWriter`, `Minn\Theme\UserStyles`
 
@@ -1135,9 +1173,13 @@ had) is meta the caller adds, and the revision comes from the save.
 
 Removes every meta row with this key from a post.
 
-### `uniqueSlug(string $desired, int $excludeId): string`
+### `uniqueSlug(string $desired, int $excludeId, string $type = 'post', int $parent = 0): string`
 
-A slug unique within the posts table: base, -2, -3 on collision.
+A free slug for the desired text, sanitized first, in the type's scope (see PostSlugs).
+
+### `slugs(): Minn\Content\PostSlugs`
+
+The rules a live post's slug is settled by.
 
 ### `setTerms(int $id, string $taxonomy, array $termIds): void`
 
@@ -1228,7 +1270,7 @@ The database door this writer writes through, for a caller wrapping several of i
 
 Hard-deletes a post with its revisions and its meta.
 
-Internals: `saveSticky()` (private, line 253), `revisionsToKeep()` (private, line 355), `pruneRevisions()` (private, line 362)
+Internals: `fit()` (private, line 171), `saveSticky()` (private, line 265), `revisionsToKeep()` (private, line 367), `pruneRevisions()` (private, line 374)
 
 
 ## Posts
@@ -1499,7 +1541,7 @@ Internals: `named()` (private, line 35)
 
 Site-wide options and the site's clock.
 
-Used by: `Minn\Admin\ActivityChart`, `Minn\Admin\App`, `Minn\Admin\BootPayload`, `Minn\Admin\Dashboard`, `Minn\Admin\LanguageController`, `Minn\Admin\Notifications`, `Minn\Admin\OverviewController`, `Minn\Admin\PackagesController`, `Minn\Admin\RenderController`, `Minn\Admin\SiteController`, `Minn\Admin\ThemesController`, `Minn\Admin\Translations`, `Minn\Admin\UploadsSize`, `Minn\Blocks\Dynamic\Dates`, `Minn\Blocks\Dynamic\LatestComments`, `Minn\Blocks\Dynamic\LatestPosts`, `Minn\Blocks\Dynamic\Theme\Comments`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Blocks\Dynamic\Theme\Structure`, `Minn\Blocks\Renderer`, `Minn\Cli\MinnCommand`, `Minn\Cli\Runtime`, `Minn\Content\Inventory`, `Minn\Content\Menus`, `Minn\Content\PluginState`, `Minn\Content\PostWriter`, `Minn\Content\Revisions`, `Minn\Content\SiteIcon`, `Minn\Context`, `Minn\Cron\Cron`, `Minn\Engine`, `Minn\Extension\Loader`, `Minn\Extension\Seams`, `Minn\Front\AdminBar`, `Minn\Front\CommentPostController`, `Minn\Front\FeedController`, `Minn\Front\Feeds`, `Minn\Front\ProbeController`, `Minn\Front\Sitemaps`, `Minn\Login\LoginController`, `Minn\Mail\MailSettings`, `Minn\Mail\Mailer`, `Minn\Media\Images`, `Minn\Media\Uploads`, `Minn\Media\Writer`, `Minn\Ops\CoreStatus`, `Minn\Ops\Diagnostics`, `Minn\Ops\InstalledSoftware`, `Minn\Ops\Packages`, `Minn\Ops\Updates`, `Minn\Rest\ApplicationPasswordsController`, `Minn\Rest\CommentsController`, `Minn\Rest\IndexController`, `Minn\Rest\PluginsController`, `Minn\Rest\PostsWriteController`, `Minn\Rest\Services`, `Minn\Rest\Settings`, `Minn\Rest\TermsController`, `Minn\Rest\UsersController`, `Minn\Runtime\Plugins`, `Minn\Runtime\Recovery`, `Minn\Runtime\Runtime`, `Minn\Theme\ClassicRenderer`, `Minn\Theme\ClassicTheme`, `Minn\Theme\HeadLinks`, `Minn\Theme\MainQueryBridge`, `Minn\Theme\PageRenderer`, `Minn\Theme\TemplateIndex`, `Minn\Theme\TemplateWriter`, `Minn\Theme\Theme`, `Minn\Theme\ThemeStyles`, `Minn\Theme\UserStyles`
+Used by: `Minn\Admin\ActivityChart`, `Minn\Admin\App`, `Minn\Admin\BootPayload`, `Minn\Admin\Dashboard`, `Minn\Admin\LanguageController`, `Minn\Admin\Notifications`, `Minn\Admin\OverviewController`, `Minn\Admin\PackagesController`, `Minn\Admin\RenderController`, `Minn\Admin\SiteController`, `Minn\Admin\ThemesController`, `Minn\Admin\Translations`, `Minn\Admin\UploadsSize`, `Minn\Blocks\Dynamic\Dates`, `Minn\Blocks\Dynamic\LatestComments`, `Minn\Blocks\Dynamic\LatestPosts`, `Minn\Blocks\Dynamic\Theme\Comments`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Blocks\Dynamic\Theme\Structure`, `Minn\Blocks\Renderer`, `Minn\Cli\MinnCommand`, `Minn\Cli\Runtime`, `Minn\Content\Inventory`, `Minn\Content\Menus`, `Minn\Content\PluginState`, `Minn\Content\PostSlugs`, `Minn\Content\PostWriter`, `Minn\Content\Revisions`, `Minn\Content\SiteIcon`, `Minn\Context`, `Minn\Cron\Cron`, `Minn\Engine`, `Minn\Extension\Loader`, `Minn\Extension\Seams`, `Minn\Front\AdminBar`, `Minn\Front\CommentPostController`, `Minn\Front\FeedController`, `Minn\Front\Feeds`, `Minn\Front\ProbeController`, `Minn\Front\Sitemaps`, `Minn\Login\LoginController`, `Minn\Mail\MailSettings`, `Minn\Mail\Mailer`, `Minn\Media\Images`, `Minn\Media\Uploads`, `Minn\Media\Writer`, `Minn\Ops\CoreStatus`, `Minn\Ops\Diagnostics`, `Minn\Ops\InstalledSoftware`, `Minn\Ops\Packages`, `Minn\Ops\Updates`, `Minn\Rest\ApplicationPasswordsController`, `Minn\Rest\CommentsController`, `Minn\Rest\IndexController`, `Minn\Rest\PluginsController`, `Minn\Rest\PostsWriteController`, `Minn\Rest\Services`, `Minn\Rest\Settings`, `Minn\Rest\TermsController`, `Minn\Rest\UsersController`, `Minn\Runtime\Plugins`, `Minn\Runtime\Recovery`, `Minn\Runtime\Runtime`, `Minn\Theme\ClassicRenderer`, `Minn\Theme\ClassicTheme`, `Minn\Theme\HeadLinks`, `Minn\Theme\MainQueryBridge`, `Minn\Theme\PageRenderer`, `Minn\Theme\TemplateIndex`, `Minn\Theme\TemplateWriter`, `Minn\Theme\Theme`, `Minn\Theme\ThemeStyles`, `Minn\Theme\UserStyles`
 
 ```php
 __construct(Minn\Db $db)
@@ -1579,7 +1621,7 @@ The icon's URL, empty when the site has none.
 - const `SAVE_DASHES` = `array (   0 => '%c2%a0',   1 => '%e2%80%93',   2 => '%e2%80%94',   3 => '&nbsp;',   4 => '&#160;',   5 => '&ndash;',   6 => '&#8211;',   7 => '&mdash;',   8 => '&#8212;',   9 => '/', )`
 - const `SAVE_DROPPED` = `array (   0 => '%c2%ad',   1 => '%c2%a1',   2 => '%c2%bf',   3 => '%c2%ab',   4 => '%c2%bb',   5 => '%e2%80%b9',   6 => '%e2%80%ba',   7 => '%e2%80%98',   8 => '%e2%80%99',   9 => '%e2%80%9c',   10 => '%e2%80%9d',   11 => '%e2%80%9a',   12 => '%e2%80%9b',   13 => '%e2%80%9e',   14 => '%e2%80%9f',   15 => '%e2%80%a2',   16 => '%c2%a9',   17 => '%c2%ae',   18 => '%c2%b0',   19 => '%e2%80%a6',   20 => '%e2%84%a2',   21 => '%c2%b4',   22 => '%cb%8a',   23 => '%cc%81',   24 => '%cd%81',   25 => '%cc%80',   26 => '%cc%84',   27 => '%cc%8c',   28 => '%e2%82%ac',   29 => '%c2%a3',   30 => '%e2%80%80',   31 => '%e2%80%81',   32 => '%e2%80%82',   33 => '%e2%80%83',   34 => '%e2%80%84',   35 => '%e2%80%85',   36 => '%e2%80%86',   37 => '%e2%80%87',   38 => '%e2%80%88',   39 => '%e2%80%89',   40 => '%e2%80%8a',   41 => '%e2%80%8b',   42 => '%e2%80%8c',   43 => '%e2%80%8d',   44 => '%e2%80%8e',   45 => '%e2%80%8f',   46 => '%e2%80%aa',   47 => '%e2%80%ab',   48 => '%e2%80%ac',   49 => '%e2%80%ad',   50 => '%e2%80%ae',   51 => '%e2%80%af',   52 => '%e2%81%9f',   53 => '%e3%80%80',   54 => '%ef%bb%bf', )`
 
-Used by: `Minn\Content\PostWriter`, `Minn\Content\Terms`, `Minn\Content\Users`, `Minn\Media\Writer`, `Minn\Rest\MediaObject`, `Minn\Rest\PostObject`
+Used by: `Minn\Content\PostWriter`, `Minn\Content\Terms`, `Minn\Content\Users`, `Minn\Rest\MediaObject`, `Minn\Rest\PostObject`, `Minn\Rest\PostsWriteController`
 
 ### static `sanitize(string $text, string $locale = ''): string`
 

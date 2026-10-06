@@ -47,7 +47,8 @@ final class Url
 
     /**
      * The URI with query arguments merged in (false removes one), the
-     * fragment kept, a bare query string treated as such.
+     * fragment kept, a bare query string treated as such; a URI that is
+     * only a query (or nothing) keeps its leading question mark.
      *
      * @param array<string, mixed> $new
      * @param Closure(array): array $encode encodes the existing arguments the way the reference does
@@ -81,7 +82,7 @@ final class Url
             $current[$k] = $v;
         }
         $current = array_filter($current, static fn ($v) => $v !== false);
-        return $protocol . trim($base . $build($current), '?') . $frag;
+        return $protocol . rtrim($base . $build($current), '?') . $frag;
     }
 
     /**
@@ -132,17 +133,15 @@ final class Url
         return $p[0] === 127 || $p[0] === 10 || $p[0] === 0 || ($p[0] === 172 && $p[1] >= 16 && $p[1] <= 31) || ($p[0] === 192 && $p[1] === 168) || ($p[0] === 169 && $p[1] === 254);
     }
 
-    /** A query string in the reference's spelling: nested keys as `a%5Bb%5D`, null as a bare key, booleans as 0/1. */
+    /** A query string in the reference's spelling (probe query-args): keys and values as given, nested keys as `a%5Bb%5D`, null left out, booleans as 0/1. */
     public static function buildQuery(array $data, string $prefix = ''): string
     {
         $pairs = [];
         foreach ($data as $key => $value) {
-            $name = $prefix === '' ? urlencode((string) $key) : $prefix . '%5B' . urlencode((string) $key) . '%5D';
+            $name = $prefix === '' ? (string) $key : $prefix . '%5B' . $key . '%5D';
             if (is_array($value) || is_object($value)) {
                 $pairs[] = self::buildQuery((array) $value, $name);
-            } elseif ($value === null) {
-                $pairs[] = $name;
-            } else {
+            } elseif ($value !== null) {
                 $pairs[] = $name . '=' . (is_bool($value) ? (int) $value : (string) $value);
             }
         }

@@ -376,7 +376,7 @@ final readonly class Menus
         $site = $this->site();
         $now = $site->localNow();
         $gmt = gmdate('Y-m-d H:i:s');
-        $slug = $writer->uniqueSlug($fields['title'] !== '' ? $fields['title'] : 'menu-item', 0);
+        $slug = $writer->uniqueSlug($fields['title'] !== '' ? $fields['title'] : 'menu-item', 0, 'nav_menu_item');
         $id = $writer->insert([
             'post_author' => $fields['authorId'],
             'post_date' => $now,

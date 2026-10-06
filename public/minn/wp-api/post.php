@@ -1,6 +1,7 @@
 <?php
 /** Posts: reads, the lists, the writers, post types, statuses. Behaviour from contracts/fixtures/api/content.json. */
 
+use Minn\Runtime\Registry;
 use Minn\Runtime\PostSave;
 use Minn\Content\Excerpt;
 use Minn\Content\Posts;
@@ -34,7 +35,7 @@ function _minn_post_insert(): PostInsert
     return new PostInsert(
         _minn_post_writer(),
         get_current_user_id(),
-        static fn (string $option): mixed => get_option($option),
+        static fn (string $type, string $kind): string => get_default_comment_status($type, $kind),
         static fn (string $type, string $feature): bool => post_type_supports($type, $feature),
         static fn (string $type): bool => current_user_can(get_post_type_object($type)->cap->publish_posts ?? 'publish_posts'),
         static fn (string $date): string => (string) get_gmt_from_date($date),
@@ -127,13 +128,14 @@ function get_post_status($post = null)
     return apply_filters('get_post_status', $status, $post);
 }
 
+/** One column of a post through sanitize_post_field in the context asked for (probe post-field). */
 function get_post_field($field, $post = null, $context = 'display')
 {
     $post = get_post($post);
     if ($post === null || !isset($post->{$field})) {
         return '';
     }
-    return $post->{$field};
+    return sanitize_post_field((string) $field, $post->{$field}, $post->ID, (string) $context);
 }
 
 function get_post_mime_type($post = null)
@@ -578,15 +580,11 @@ function the_permalink($post = 0)
     echo esc_url(apply_filters('the_permalink', get_permalink($post), $post));
 }
 
-/** A plugin type's address under its rewrite slug (Runtime\PostLinks), through post_type_link. */
+/** A plugin type's address by its pattern or query var (Runtime\PostLinks), through post_type_link. */
 function get_post_permalink($post = 0, $leavename = false, $sample = false)
 {
     $post = $post instanceof WP_Post ? $post : get_post($post);
-    if ($post === null) {
-        return false;
-    }
-    $slug = Runtime::current()->get('permalinks')?->typeSlug($post->post_type) ?? $post->post_type;
-    return PostLinks::custom($post, _minn_link_flags($leavename, $sample), (string) $slug);
+    return $post === null ? false : PostLinks::custom($post, _minn_link_flags($leavename, $sample));
 }
 
 /** A page's address: the front page is home; else its own, through page_link. */
@@ -1013,13 +1011,11 @@ function wp_insert_post($postarr, $wp_error = false, $fire_after_hooks = true)
     }
     $postId = (int) ($existing?->ID ?? 0);
     $columns['post_parent'] = (string) PostSave::parent($sanitized, $postId);
-    $columns = $insert->resolve($columns, $before);
-    if (!in_array($columns['post_status'], ['draft', 'pending', 'auto-draft'], true)) {
-        $columns['post_name'] = PostSave::slugFilters((string) $columns['post_name'], $postId, (string) $columns['post_status'], $type, (int) $columns['post_parent'], static fn (string $desired, int $exclude): string => _minn_post_writer()->uniqueSlug($desired, $exclude));
-    }
+    $columns = PostSave::guidAndSlug($insert->resolve($columns, $before), $postId, $type, _minn_post_writer()->slugs());
     $columns = array_replace($columns, PostSave::data($columns, $sanitized, $given, $postId));
     _minn_post_before_save($columns, $postId);
-    $id = $insert->persist($columns, $existing?->ID, static fn (int $id): string => home_url('/?p=' . $id));
+    // A new post without a guid takes its address as it stands (probe insert-defaults): pretty when live, ?p= or ?page_id= when not.
+    $id = $insert->persist($columns, $existing?->ID, static fn (int $id): string => (string) get_permalink($id));
     wp_cache_delete($id, 'posts');
     _minn_post_inputs($id, (array) wp_unslash($given), $type, $columns['post_status'], $update);
     _minn_post_writer()->recountTaxonomiesOf($id);
@@ -1350,7 +1346,7 @@ function wp_untrash_post($post_id = 0)
     $desired = (string) get_post_meta($post->ID, '_wp_desired_post_slug', true);
     $columns = ['post_status' => $new];
     if ($desired !== '' && str_ends_with((string) $post->post_name, '__trashed')) {
-        $columns['post_name'] = _minn_post_writer()->uniqueSlug($desired, $post->ID);
+        $columns['post_name'] = _minn_post_writer()->uniqueSlug($desired, $post->ID, $post->post_type, (int) $post->post_parent);
     }
     delete_post_meta($post->ID, '_wp_desired_post_slug');
     _minn_post_before_save($columns + $post->to_array(), $post->ID);
@@ -1513,6 +1509,10 @@ function register_post_type($post_type, $args = [])
     }
     $args = apply_filters('register_post_type_args', (array) $args, $post_type);
     $row = Runtime::registry()->registerPostType($post_type, $args);
+    if (is_array($row['rewrite']) && Registry::settlesRewrites()) {
+        // Its address pattern, under the front of the structure at the time unless it opts out (probe registry-rewrites).
+        add_permastruct($post_type, "{$row['rewrite']['slug']}/%{$post_type}%", ['with_front' => $row['rewrite']['with_front'], 'ep_mask' => $row['rewrite']['ep_mask'], 'feed' => $row['rewrite']['feeds']]);
+    }
     $object = new WP_Post_Type($post_type, $row);
     do_action('registered_post_type', $post_type, $object);
     do_action("registered_post_type_{$post_type}", $post_type, $object);
@@ -1529,6 +1529,7 @@ function unregister_post_type($post_type)
         return new WP_Error('invalid_post_type', 'Unregistering a built-in post type is not allowed');
     }
     Runtime::registry()->unregisterPostType((string) $post_type);
+    remove_permastruct((string) $post_type);
     do_action('unregistered_post_type', $post_type);
     return true;
 }
@@ -2006,11 +2007,10 @@ function get_page_children($page_id, $pages)
 /** A slug no other post holds, through the reference's slug filters; drafts, pending posts and revisions keep theirs. */
 function wp_unique_post_slug($slug, $post_id, $post_status, $post_type, $post_parent)
 {
-    if (in_array($post_status, ['draft', 'pending', 'auto-draft'], true) || ($post_status === 'inherit' && $post_type === 'revision') || $post_type === 'user_request') {
+    if (PostSave::keepsSlug((string) $post_status, (string) $post_type)) {
         return $slug;
     }
-    $writer = _minn_post_writer();
-    return PostSave::slugFilters($writer->uniqueSlug((string) $slug, (int) $post_id), (int) $post_id, (string) $post_status, (string) $post_type, (int) $post_parent, static fn (string $desired, int $exclude): string => $writer->uniqueSlug($desired, $exclude), (string) $slug);
+    return PostSave::slugFilters((string) $slug, (int) $post_id, (string) $post_status, (string) $post_type, (int) $post_parent, _minn_post_writer()->slugs());
 }
 
 function the_author_posts_link($deprecated = '')

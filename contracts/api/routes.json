@@ -1,7 +1,7 @@
 {
     "engine": "0.0.1",
-    "routes": 264,
-    "withPolicy": 258,
+    "routes": 265,
+    "withPolicy": 259,
     "entries": [
         {
             "method": "GET",
@@ -2417,6 +2417,72 @@
             },
             "args": [],
             "body": [],
+            "index": true
+        },
+        {
+            "method": "POST",
+            "pattern": "/batch/v1",
+            "name": "Minn\\Rest\\BatchController::batch",
+            "handler": "Minn\\Rest\\BatchController::batch",
+            "summary": "The requests answered in turn.",
+            "policy": {
+                "access": "Public",
+                "describe": "public"
+            },
+            "args": [],
+            "body": {
+                "validation": {
+                    "type": "string",
+                    "enum": [
+                        "require-all-validate",
+                        "normal"
+                    ],
+                    "default": "normal",
+                    "required": false
+                },
+                "requests": {
+                    "required": true,
+                    "type": "array",
+                    "maxItems": 25,
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "method": {
+                                "type": "string",
+                                "enum": [
+                                    "POST",
+                                    "PUT",
+                                    "PATCH",
+                                    "DELETE"
+                                ],
+                                "default": "POST"
+                            },
+                            "path": {
+                                "type": "string",
+                                "required": true
+                            },
+                            "body": {
+                                "type": "object",
+                                "properties": [],
+                                "additionalProperties": true
+                            },
+                            "headers": {
+                                "type": "object",
+                                "properties": [],
+                                "additionalProperties": {
+                                    "type": [
+                                        "string",
+                                        "array"
+                                    ],
+                                    "items": {
+                                        "type": "string"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
             "index": true
         },
         {

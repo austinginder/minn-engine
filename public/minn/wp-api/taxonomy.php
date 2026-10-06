@@ -1,5 +1,6 @@
 <?php
 
+use Minn\Runtime\Registry;
 use Minn\Runtime\Deferrals;
 use Minn\Content\TermLinks;
 /** Terms and taxonomies. Behaviour from contracts/fixtures/api/content.json. */
@@ -101,6 +102,9 @@ function register_taxonomy($taxonomy, $object_type, $args = [])
     }
     $args = apply_filters('register_taxonomy_args', (array) $args, $taxonomy, (array) $object_type);
     $row = Runtime::registry()->registerTaxonomy($taxonomy, array_values(array_map('strval', (array) $object_type)), $args);
+    if (is_array($row['rewrite']) && Registry::settlesRewrites()) {
+        add_permastruct($taxonomy, "{$row['rewrite']['slug']}/%{$taxonomy}%", ['with_front' => $row['rewrite']['with_front'], 'ep_mask' => $row['rewrite']['ep_mask']]);
+    }
     $object = new WP_Taxonomy($taxonomy, [], $row);
     do_action('registered_taxonomy', $taxonomy, $object_type, get_object_vars($object));
     do_action("registered_taxonomy_{$taxonomy}", $taxonomy, $object_type, get_object_vars($object));
@@ -116,6 +120,7 @@ function unregister_taxonomy($taxonomy)
         return new WP_Error('invalid_taxonomy', 'Unregistering a built-in taxonomy is not allowed.');
     }
     Runtime::registry()->unregisterTaxonomy((string) $taxonomy);
+    remove_permastruct((string) $taxonomy);
     do_action('unregistered_taxonomy', $taxonomy);
     return true;
 }

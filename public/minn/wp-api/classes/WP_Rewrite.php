@@ -38,6 +38,13 @@ class WP_Rewrite
     public function __construct()
     {
         $this->init();
+        // The built-in taxonomies' patterns are set once, under the front of the structure then; a structure set
+        // later leaves them, and a plugin's, as they were (probe registry-rewrites).
+        $this->extra_permastructs = [
+            'category' => ['with_front' => true, 'ep_mask' => EP_CATEGORIES, 'paged' => true, 'feed' => true, 'forcomments' => false, 'walk_dirs' => true, 'endpoints' => true, 'struct' => $this->front . 'category/%category%'],
+            'post_tag' => ['with_front' => true, 'ep_mask' => EP_TAGS, 'paged' => true, 'feed' => true, 'forcomments' => false, 'walk_dirs' => true, 'endpoints' => true, 'struct' => $this->front . 'tag/%post_tag%'],
+            'post_format' => ['with_front' => true, 'ep_mask' => EP_NONE, 'paged' => true, 'feed' => true, 'forcomments' => false, 'walk_dirs' => true, 'endpoints' => true, 'struct' => $this->front . 'type/%post_format%'],
+        ];
     }
 
     public function init()
@@ -62,11 +69,6 @@ class WP_Rewrite
         }
         unset($this->author_structure, $this->date_structure, $this->page_structure, $this->search_structure, $this->feed_structure, $this->comment_feed_structure);
         $this->use_trailing_slashes = str_ends_with($this->permalink_structure, '/');
-        $this->extra_permastructs = [
-            'category' => ['with_front' => true, 'ep_mask' => EP_CATEGORIES, 'paged' => true, 'feed' => true, 'forcomments' => false, 'walk_dirs' => true, 'endpoints' => true, 'struct' => $this->front . 'category/%category%'],
-            'post_tag' => ['with_front' => true, 'ep_mask' => EP_TAGS, 'paged' => true, 'feed' => true, 'forcomments' => false, 'walk_dirs' => true, 'endpoints' => true, 'struct' => $this->front . 'tag/%post_tag%'],
-            'post_format' => ['with_front' => true, 'ep_mask' => EP_NONE, 'paged' => true, 'feed' => true, 'forcomments' => false, 'walk_dirs' => true, 'endpoints' => true, 'struct' => $this->front . 'type/%post_format%'],
-        ];
     }
 
     public function using_permalinks()

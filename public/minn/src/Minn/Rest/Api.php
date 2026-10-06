@@ -92,6 +92,15 @@ final readonly class Api
             new OEmbedController($caller),
             new SidebarsController($s->url(), $caller),
             new WidgetsController(new WidgetObject($s->url()), $caller),
+            new BatchController($router, static function (Request $sub) use ($s): Response {
+                // Each request of a batch is answered as it would be on its own, as the same caller.
+                $api = self::forRequest($s->db(), $sub);
+                $session = $s->caller()->session();
+                if ($session !== null) {
+                    $api->actingAs($session->id(), $session->token);
+                }
+                return $api->handle($sub->path);
+            }, new ArgCheck($s->schema()), $s->types()),
             new TaxonomiesController($s->taxonomies(), $caller),
             new SearchController($s->db(), $s->types(), $s->permalinks(), $s->url(), $caller),
             new PluginsController($s->site(), $s->inventory(), $s->loader(), $s->url(), $caller, $s->packages(), $s->contentDir()),

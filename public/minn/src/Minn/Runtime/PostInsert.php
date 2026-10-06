@@ -18,13 +18,13 @@ final readonly class PostInsert
     private const COLUMNS = ['post_author', 'post_date', 'post_date_gmt', 'post_content', 'post_title', 'post_excerpt', 'post_status', 'comment_status', 'ping_status', 'post_password', 'post_name', 'to_ping', 'pinged', 'post_modified', 'post_modified_gmt', 'post_content_filtered', 'post_parent', 'guid', 'menu_order', 'post_type', 'post_mime_type'];
 
     /**
-     * @param Closure(string): mixed $option an option read
+     * @param Closure(string, string): string $discussion a new post's comment or ping status by type, as get_default_comment_status has it
      * @param Closure(string, string): bool $supports whether a post type supports a feature
      * @param Closure(string): bool $canPublish whether the current user may publish the type
      * @param Closure(string): string $gmtFromDate the site-local date as GMT
      * @param Closure(bool): string $now the current local (or GMT) MySQL time
      */
-    public function __construct(private PostWriter $writer, private int $userId, private Closure $option, private Closure $supports, private Closure $canPublish, private Closure $gmtFromDate, private Closure $now)
+    public function __construct(private PostWriter $writer, private int $userId, private Closure $discussion, private Closure $supports, private Closure $canPublish, private Closure $gmtFromDate, private Closure $now)
     {
     }
 
@@ -44,8 +44,6 @@ final readonly class PostInsert
                 'post_title' => '',
                 'post_excerpt' => '',
                 'post_status' => 'draft',
-                'comment_status' => (string) (($this->option)('default_comment_status') ?: 'open'),
-                'ping_status' => (string) (($this->option)('default_ping_status') ?: 'open'),
                 'post_password' => '',
                 'post_name' => '',
                 'to_ping' => '',
@@ -58,10 +56,11 @@ final readonly class PostInsert
                 'post_mime_type' => '',
             ];
         }
-        // An empty comment or ping status means the default: the site's for a new post, closed for an update.
-        foreach (['comment_status' => 'default_comment_status', 'ping_status' => 'default_ping_status'] as $column => $option) {
-            if (($columns[$column] ?? null) === '') {
-                $columns[$column] = $existing === null ? (string) (($this->option)($option) ?: 'open') : 'closed';
+        // A missing or empty comment or ping status means the default (probe insert-defaults): the type's for a
+        // new post (a page, or a type without comments or trackbacks, starts closed), closed for an update.
+        foreach (['comment_status' => 'comment', 'ping_status' => 'pingback'] as $column => $kind) {
+            if (($columns[$column] ?? '') === '' && ($existing === null || isset($columns[$column]))) {
+                $columns[$column] = $existing === null ? ($this->discussion)($this->type($columns, null), $kind) : 'closed';
             }
         }
         return $columns;
@@ -80,7 +79,8 @@ final readonly class PostInsert
     /**
      * The columns as they will be written: the status a request lands in
      * (attachments inherit, unprivileged publishes pend, a future date
-     * schedules), the dates, the slug, and the integer columns.
+     * schedules), the dates, the slug (sanitized; not yet free), and the
+     * integer columns.
      *
      * @param array<string, mixed>|null $existing
      * @return array<string, string>
@@ -127,8 +127,10 @@ final readonly class PostInsert
         } elseif ($slug !== '' && (!$update || $slug !== (string) $existing['post_name'])) {
             $slug = (string) \sanitize_title($slug);
         }
-        if ($slug !== '') {
-            $slug = $this->writer->uniqueSlug($slug, $update ? (int) $existing['ID'] : 0);
+        // A pending post from someone who may not publish it keeps no slug (probe insert-defaults); a live
+        // post's is made free in its scope by the slug filters that follow.
+        if ($status === 'pending' && !($this->canPublish)($type)) {
+            $slug = '';
         }
         $columns['post_name'] = $slug;
         $columns['post_parent'] = (string) (int) ($columns['post_parent'] ?? $existing['post_parent'] ?? 0);

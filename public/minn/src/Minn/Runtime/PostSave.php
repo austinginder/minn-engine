@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Minn\Runtime;
 
-use Closure;
 use Minn\Content\PostRecord;
+use Minn\Content\PostSlugs;
 use Minn\Http\Request;
 use Minn\Rest\RuntimeRoutes;
 use Minn\RestError;
@@ -46,10 +46,10 @@ final class PostSave
      *
      * @param array<string, mixed> $columns what the engine settled: a new post's whole row, or an update's changes
      * @param array<string, mixed> $body the request's fields
-     * @param Closure(string $desired, int $excludeId): string $unique the engine's unique slug for a desired one
+     * @param PostSlugs $slugs the rules a live post's slug is settled by
      * @return array<string, mixed>
      */
-    public static function filter(array $columns, ?PostRecord $before, array $body, Request $request, string $type, Closure $unique): array
+    public static function filter(array $columns, ?PostRecord $before, array $body, Request $request, string $type, PostSlugs $slugs): array
     {
         if (!Runtime::booted()) {
             return $columns;
@@ -65,12 +65,16 @@ final class PostSave
         }
         $value = static fn (string $column): string => (string) \wp_unslash($sanitized[$column] ?? '');
         $row = array_intersect_key((array) \wp_unslash($sanitized), array_flip(self::DATA));
+        if ($before !== null) {
+            // An update keeps the guid it had, in its display form (probe insert-defaults).
+            $row = array_replace($row, ['guid' => (string) \get_post_field('guid', $id)]);
+        }
         $parent = self::parent($sanitized, $id);
         $slug = $value('post_name');
-        if (!in_array($value('post_status'), self::UNSLUGGED, true)) {
+        if (!self::keepsSlug($value('post_status'), $type)) {
             // A slug the request did not give is made from the title the filters left.
-            $slug = $slug === '' || (!isset($body['slug']) && $id === 0) ? $unique($value('post_title'), $id) : $slug;
-            $slug = self::slugFilters($slug, $id, $value('post_status'), $type, $parent, $unique);
+            $slug = $slug === '' || (!isset($body['slug']) && $id === 0) ? (string) \sanitize_title($value('post_title')) : $slug;
+            $slug = self::slugFilters($slug, $id, $value('post_status'), $type, $parent, $slugs);
         }
         $data = self::data(['post_name' => $slug, 'post_parent' => $parent] + $row, $sanitized, \wp_slash($before === null ? $given : $postarr), $id);
         return self::changed($columns, $data, $before);
@@ -108,27 +112,47 @@ final class PostSave
 
     /**
      * A live post's slug through the reference's three filters:
-     * pre_wp_unique_post_slug may settle it, a slug the bad-slug filter
-     * names takes the next free number, and wp_unique_post_slug has the
-     * last word.
-     *
-     * @param Closure(string, int): string $unique
+     * pre_wp_unique_post_slug may settle it; otherwise it is made free in
+     * its type's scope, the bad-slug filter judging the slug asked for when
+     * nothing else has taken it; and wp_unique_post_slug has the last word.
      */
-    public static function slugFilters(string $slug, int $id, string $status, string $type, int $parent, Closure $unique, string $asked = ''): string
+    public static function slugFilters(string $slug, int $id, string $status, string $type, int $parent, PostSlugs $slugs): string
     {
-        $original = $asked !== '' ? $asked : $slug;
-        $override = \apply_filters('pre_wp_unique_post_slug', null, $original, $id, $status, $type, $parent);
+        $override = \apply_filters('pre_wp_unique_post_slug', null, $slug, $id, $status, $type, $parent);
         if ($override !== null) {
             return (string) $override;
         }
-        $hierarchical = \is_post_type_hierarchical($type);
-        $bad = static fn (string $candidate): bool => (bool) ($hierarchical
-            ? \apply_filters('wp_unique_post_slug_is_bad_hierarchical_slug', false, $candidate, $type, $parent)
-            : \apply_filters('wp_unique_post_slug_is_bad_flat_slug', false, $candidate, $type));
-        for ($n = 2; $bad($slug) && $n < 100; $n++) {
-            $slug = $unique("{$original}-{$n}", $id);
+        $bad = static fn (string $candidate): bool => (bool) match (true) {
+            $type === 'attachment' => \apply_filters('wp_unique_post_slug_is_bad_attachment_slug', false, $candidate),
+            \is_post_type_hierarchical($type) => \apply_filters('wp_unique_post_slug_is_bad_hierarchical_slug', false, $candidate, $type, $parent),
+            default => \apply_filters('wp_unique_post_slug_is_bad_flat_slug', false, $candidate, $type),
+        };
+        return (string) \apply_filters('wp_unique_post_slug', $slugs->unique($slug, $id, $type, $parent, $bad), $id, $status, $type, $parent, $slug);
+    }
+
+    /**
+     * The row's guid and slug as wp_insert_post settles them (probe
+     * insert-defaults): an update keeps the guid it had, in its display
+     * form, ignoring a new one asked for; a live post's slug goes through
+     * the slug filters.
+     *
+     * @param array<string, string> $columns
+     * @return array<string, string>
+     */
+    public static function guidAndSlug(array $columns, int $postId, string $type, PostSlugs $slugs): array
+    {
+        ['post_status' => $status, 'post_name' => $name, 'post_parent' => $parent] = $columns;
+        $settled = $postId > 0 ? ['guid' => (string) \get_post_field('guid', $postId)] : [];
+        if (!self::keepsSlug((string) $status, $type)) {
+            $settled += ['post_name' => self::slugFilters((string) $name, $postId, (string) $status, $type, (int) $parent, $slugs)];
         }
-        return (string) \apply_filters('wp_unique_post_slug', $slug, $id, $status, $type, $parent, $original);
+        return array_replace($columns, $settled);
+    }
+
+    /** Whether a save leaves the slug as it is: a draft, a pending post, an auto-draft, a revision, a personal data request. */
+    public static function keepsSlug(string $status, string $type): bool
+    {
+        return in_array($status, self::UNSLUGGED, true) || ($status === 'inherit' && $type === 'revision') || $type === 'user_request';
     }
 
     /**

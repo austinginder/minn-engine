@@ -42,7 +42,7 @@ final readonly class SearchController
     {
         $type = $request->query('type') ?? 'post';
         if ($type !== 'post') {
-            throw new RestError('rest_invalid_param', 'Invalid parameter(s): type', 400, ['params' => ['type' => 'type is not one of post.']]);
+            throw RestError::invalidParam('type', 'type is not one of post.');
         }
         $perPage = max(1, min(self::MAX_PER_PAGE, (int) ($request->query('per_page') ?: 10)));
         $page = max(1, (int) ($request->query('page') ?: 1));
@@ -105,7 +105,7 @@ final readonly class SearchController
         $wanted = array_values(array_filter(array_map('trim', explode(',', $subtype))));
         $unknown = array_diff($wanted, $all);
         if ($unknown !== []) {
-            throw new RestError('rest_invalid_param', 'Invalid parameter(s): subtype', 400, ['params' => ['subtype' => 'subtype is not one of ' . implode(', ', $all) . ', any.']]);
+            throw RestError::invalidParam('subtype', 'subtype is not one of ' . implode(', ', $all) . ', any.');
         }
         return $wanted;
     }

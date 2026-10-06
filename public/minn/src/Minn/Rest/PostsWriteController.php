@@ -15,6 +15,7 @@ use Minn\Content\PostStatus;
 use Minn\Content\Posts;
 use Minn\Content\PostWriter;
 use Minn\Content\Site;
+use Minn\Content\Slug;
 use Minn\Http\Method;
 use Minn\Http\Request;
 use Minn\Http\Response;
@@ -75,7 +76,12 @@ final readonly class PostsWriteController
         $nowGmt = gmdate('Y-m-d H:i:s');
         $local = $this->site->localNow();
         $title = self::field($body['title'] ?? '');
-        $slug = isset($body['slug']) ? $this->writer->uniqueSlug((string) $body['slug'], 0) : '';
+        // A draft or pending post keeps the slug it asks for as it is; a pending one from someone who may not publish keeps none.
+        $slug = match (true) {
+            !isset($body['slug']) || ($status === 'pending' && !$this->caller->can(TypeCapabilities::publish($type))) => '',
+            PostSave::keepsSlug($status, $type) => Slug::sanitize((string) $body['slug']),
+            default => $this->writer->uniqueSlug((string) $body['slug'], 0, $type, (int) ($body['parent'] ?? 0)),
+        };
 
         $date = $local;
         $dateGmt = ($status === 'publish' || $status === 'private') ? $nowGmt : '0000-00-00 00:00:00';
@@ -93,11 +99,11 @@ final readonly class PostsWriteController
         // A post that goes live without a slug gets one from its title;
         // drafts and pending posts keep an empty post_name until published.
         if ($slug === '' && in_array($status, self::LIVE, true) && $title !== '') {
-            $slug = $this->writer->uniqueSlug($title, 0);
+            $slug = $this->writer->uniqueSlug($title, 0, $type, (int) ($body['parent'] ?? 0));
         }
 
         $columns = $this->newColumns($body, $type, $author, $status, $slug, $date, $dateGmt, $modified, $modifiedGmt, $title);
-        $columns = PostSave::filter($columns, null, $body, $request, $type, $this->writer->uniqueSlug(...));
+        $columns = PostSave::filter($columns, null, $body, $request, $type, $this->writer->slugs());
         $events = $this->events();
         $events->beforeSave($columns, null);
         // The row, its default category and its guid are the post the save
@@ -198,7 +204,7 @@ final readonly class PostsWriteController
         $columns = [...$this->floatingDate($body, $post), ...$this->fieldColumns($body, $post, $type), ...$this->statusColumns($body, $post, $type)];
         $columns['post_modified'] = $this->site->localNow();
         $columns['post_modified_gmt'] = gmdate('Y-m-d H:i:s');
-        $columns = PostSave::filter($columns, $post, $body, $request, $type, $this->writer->uniqueSlug(...));
+        $columns = PostSave::filter($columns, $post, $body, $request, $type, $this->writer->slugs());
         $events = $this->events();
         $events->beforeSave($columns, $post);
         $this->writer->update($postId, $columns);
@@ -376,7 +382,7 @@ final readonly class PostsWriteController
             }
         }
         if (array_key_exists('slug', $body)) {
-            $columns['post_name'] = $this->writer->uniqueSlug((string) $body['slug'], $post->id);
+            $columns['post_name'] = $this->writer->uniqueSlug((string) $body['slug'], $post->id, $type, (int) ($body['parent'] ?? $post->parentId));
         }
         return $columns;
     }
@@ -402,12 +408,12 @@ final readonly class PostsWriteController
         // Back from the trash into the open, a post takes the slug it had.
         $desired = $post->isTrashed() && $live && !array_key_exists('slug', $body) ? (string) ($this->posts->meta($post->id, '_wp_desired_post_slug') ?? '') : '';
         if ($desired !== '' && str_ends_with($post->slug, '__trashed')) {
-            $columns += ['post_name' => $this->writer->uniqueSlug($desired, $post->id)];
+            $columns += ['post_name' => $this->writer->uniqueSlug($desired, $post->id, $type, $post->parentId)];
         }
         if ($live && $post->slug === '' && !array_key_exists('slug', $body)) {
             $title = array_key_exists('title', $body) ? self::field($body['title']) : $post->title;
             if ($title !== '') {
-                $columns['post_name'] = $this->writer->uniqueSlug($title, $post->id);
+                $columns['post_name'] = $this->writer->uniqueSlug($title, $post->id, $type, $post->parentId);
             }
         }
         if ($status === 'publish' && !in_array($post->status, ['publish', 'private', 'future'], true)) {
@@ -433,7 +439,7 @@ final readonly class PostsWriteController
     private static function validStatus(string $status): string
     {
         if (!in_array($status, ['publish', 'future', 'draft', 'pending', 'private'], true)) {
-            throw new RestError('rest_invalid_param', 'Invalid parameter(s): status', 400, ['params' => ['status' => 'status is not one of publish, future, draft, pending, and private.']]);
+            throw RestError::invalidParam('status', 'status is not one of publish, future, draft, pending, and private.');
         }
         return $status;
     }

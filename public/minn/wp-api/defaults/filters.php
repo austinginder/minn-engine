@@ -166,6 +166,8 @@ add_filter('pre_post_status', 'sanitize_key');
 add_filter('pre_post_guid', 'wp_strip_all_tags');
 add_filter('pre_post_guid', 'sanitize_url');
 add_filter('pre_post_guid', 'wp_filter_kses');
+add_filter('post_guid', 'esc_url');
+add_filter('the_guid', 'esc_url');
 add_filter('pre_post_mime_type', 'sanitize_mime_type');
 add_filter('wp_insert_post_data', '_wp_customize_changeset_filter_insert_post_data', 10, 2);
 add_filter('wp_insert_post_parent', 'wp_check_post_hierarchy_for_loops', 10, 2);

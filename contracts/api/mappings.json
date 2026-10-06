@@ -4,10 +4,10 @@
     "summary": {
         "minn": 632,
         "composes": 874,
-        "leaf": 635,
-        "noop": 1817,
+        "leaf": 636,
+        "noop": 1816,
         "functions": 3888,
-        "minnMethods": 649,
+        "minnMethods": 653,
         "leafLinesOver15": 13
     },
     "functions": {
@@ -9255,8 +9255,8 @@
         },
         "WP_Rewrite::__construct": {
             "file": "classes/WP_Rewrite.php",
-            "lines": 1,
-            "kind": "noop",
+            "lines": 8,
+            "kind": "leaf",
             "minn": [],
             "composes": []
         },
@@ -9415,7 +9415,7 @@
         },
         "WP_Rewrite::init": {
             "file": "classes/WP_Rewrite.php",
-            "lines": 25,
+            "lines": 20,
             "kind": "composes",
             "minn": [],
             "composes": [
@@ -15560,8 +15560,8 @@
                 "current_time",
                 "current_user_can",
                 "get_current_user_id",
+                "get_default_comment_status",
                 "get_gmt_from_date",
-                "get_option",
                 "get_post_type_object",
                 "post_type_supports"
             ]
@@ -17183,7 +17183,7 @@
         },
         "add_query_arg": {
             "file": "formatting.php",
-            "lines": 9,
+            "lines": 10,
             "kind": "minn",
             "minn": [
                 "Minn\\Runtime\\Runtime::current",
@@ -21292,7 +21292,8 @@
             "kind": "composes",
             "minn": [],
             "composes": [
-                "get_post"
+                "get_post",
+                "sanitize_post_field"
             ]
         },
         "get_post_format": {
@@ -21394,12 +21395,10 @@
         },
         "get_post_permalink": {
             "file": "post.php",
-            "lines": 6,
+            "lines": 2,
             "kind": "minn",
             "minn": [
-                "Minn\\Runtime\\PostLinks::custom",
-                "Minn\\Runtime\\Runtime::current",
-                "Minn\\Runtime\\Runtime::get"
+                "Minn\\Runtime\\PostLinks::custom"
             ],
             "composes": [
                 "_minn_link_flags",
@@ -25440,13 +25439,15 @@
         },
         "register_post_type": {
             "file": "post.php",
-            "lines": 11,
+            "lines": 15,
             "kind": "minn",
             "minn": [
+                "Minn\\Runtime\\Registry::settlesRewrites",
                 "Minn\\Runtime\\Runtime::registry"
             ],
             "composes": [
                 "_doing_it_wrong",
+                "add_permastruct",
                 "apply_filters",
                 "do_action",
                 "sanitize_key"
@@ -25506,13 +25507,15 @@
         },
         "register_taxonomy": {
             "file": "taxonomy.php",
-            "lines": 11,
+            "lines": 14,
             "kind": "minn",
             "minn": [
+                "Minn\\Runtime\\Registry::settlesRewrites",
                 "Minn\\Runtime\\Runtime::registry"
             ],
             "composes": [
                 "_doing_it_wrong",
+                "add_permastruct",
                 "apply_filters",
                 "do_action"
             ]
@@ -27915,7 +27918,7 @@
         },
         "unregister_post_type": {
             "file": "post.php",
-            "lines": 10,
+            "lines": 11,
             "kind": "minn",
             "minn": [
                 "Minn\\Runtime\\Runtime::registry"
@@ -27923,7 +27926,8 @@
             "composes": [
                 "do_action",
                 "get_post_type_object",
-                "post_type_exists"
+                "post_type_exists",
+                "remove_permastruct"
             ]
         },
         "unregister_setting": {
@@ -27944,13 +27948,14 @@
         },
         "unregister_taxonomy": {
             "file": "taxonomy.php",
-            "lines": 9,
+            "lines": 10,
             "kind": "minn",
             "minn": [
                 "Minn\\Runtime\\Runtime::registry"
             ],
             "composes": [
                 "do_action",
+                "remove_permastruct",
                 "taxonomy_exists"
             ]
         },
@@ -31327,19 +31332,19 @@
         },
         "wp_insert_post": {
             "file": "post.php",
-            "lines": 37,
+            "lines": 35,
             "kind": "minn",
             "minn": [
                 "Minn\\Content\\PostWriter::recountTaxonomiesOf",
-                "Minn\\Content\\PostWriter::uniqueSlug",
+                "Minn\\Content\\PostWriter::slugs",
                 "Minn\\Runtime\\PostInsert::columns",
                 "Minn\\Runtime\\PostInsert::persist",
                 "Minn\\Runtime\\PostInsert::resolve",
                 "Minn\\Runtime\\PostSave::data",
+                "Minn\\Runtime\\PostSave::guidAndSlug",
                 "Minn\\Runtime\\PostSave::parent",
                 "Minn\\Runtime\\PostSave::refusesEmpty",
-                "Minn\\Runtime\\PostSave::sanitized",
-                "Minn\\Runtime\\PostSave::slugFilters"
+                "Minn\\Runtime\\PostSave::sanitized"
             ],
             "composes": [
                 "_minn_attachment_saved",
@@ -31348,8 +31353,8 @@
                 "_minn_post_insert",
                 "_minn_post_saved",
                 "_minn_post_writer",
+                "get_permalink",
                 "get_post",
-                "home_url",
                 "wp_after_insert_post",
                 "wp_cache_delete",
                 "wp_unslash"
@@ -34148,10 +34153,11 @@
         },
         "wp_unique_post_slug": {
             "file": "post.php",
-            "lines": 5,
+            "lines": 4,
             "kind": "minn",
             "minn": [
-                "Minn\\Content\\PostWriter::uniqueSlug",
+                "Minn\\Content\\PostWriter::slugs",
+                "Minn\\Runtime\\PostSave::keepsSlug",
                 "Minn\\Runtime\\PostSave::slugFilters"
             ],
             "composes": [

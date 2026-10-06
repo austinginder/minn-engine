@@ -6,12 +6,14 @@ namespace Minn\Runtime;
 
 /**
  * Post addresses as the reference's link functions build them (probe
- * permalinks): a post through pre_post_link (the structure) and post_link,
- * plain (?p=) while it is a draft, pending or scheduled unless it is a
- * sample; a page from get_page_uri through _get_page_link and page_link,
- * ?page_id= while unpublished; an attachment under its parent's address,
- * or its own; a plugin's type under its rewrite slug through
- * post_type_link. "Leaving the name" keeps the slug as its placeholder
+ * permalinks): a post through pre_post_link (the structure) and post_link;
+ * a page from get_page_uri through _get_page_link and page_link; an
+ * attachment under its parent's address, or its own; a plugin's type by
+ * its address pattern (the permastruct its rewrite registered) through
+ * post_type_link, by its query var without one. Plain (?p=, ?page_id=,
+ * ?post_type=) unless its status is public, or private and readable by
+ * whoever asks, or it is a sample: a draft, a scheduled or trashed post, a
+ * revision, a private one a visitor asks for. "Leaving the name" keeps the slug as its placeholder
  * (%postname%, %pagename%, %{type}%) for an editor to fill in, and
  * get_sample_permalink shows a draft as it would be published.
  */
@@ -30,8 +32,7 @@ final class PostLinks
     {
         $leavename = (bool) ($flags & self::LEAVE_NAME);
         $structure = (string) \apply_filters('pre_post_link', (string) \get_option('permalink_structure'), $post, $leavename);
-        $sample = ($post->filter ?? '') === 'sample';
-        if ($structure !== '' && (!in_array($post->post_status, self::UNPUBLISHED, true) || $sample)) {
+        if ($structure !== '' && !self::plain($post, $flags)) {
             $link = \user_trailingslashit(\home_url(strtr($structure, self::tokens($post, $flags))), 'single');
         } else {
             $link = \home_url('?p=' . $post->ID);
@@ -76,8 +77,7 @@ final class PostLinks
     {
         $leavename = (bool) ($flags & self::LEAVE_NAME);
         $pretty = (string) \get_option('permalink_structure') !== '';
-        $unpublished = in_array($post->post_status, self::UNPUBLISHED, true) && !($flags & self::SAMPLE);
-        if (!$pretty || $unpublished) {
+        if (!$pretty || self::plain($post, $flags)) {
             $link = \home_url('?page_id=' . $post->ID);
         } else {
             $link = \home_url(\user_trailingslashit($leavename ? '%pagename%' : (string) \get_page_uri($post), 'page'));
@@ -105,22 +105,37 @@ final class PostLinks
         return (string) \apply_filters('attachment_link', $link !== '' ? $link : \home_url('/?attachment_id=' . $post->ID), $post->ID);
     }
 
-    /** A plugin type's address under its rewrite slug, or the type and id plainly. */
-    public static function custom(\WP_Post $post, int $flags, string $typeSlug): string
+    /** A plugin type's address by its pattern, by its query var, or by the type and id plainly. */
+    public static function custom(\WP_Post $post, int $flags): string
     {
         $leavename = (bool) ($flags & self::LEAVE_NAME);
         $sample = (bool) ($flags & self::SAMPLE);
         $type = \get_post_type_object($post->post_type);
-        $plain = in_array($post->post_status, self::UNPUBLISHED, true);
-        $rewrite = $type !== null && $type->rewrite !== false && (string) \get_option('permalink_structure') !== '';
-        if ($rewrite && (!$plain || $sample)) {
-            $slug = $type->hierarchical ? (string) \get_page_uri($post) : (string) $post->post_name;
-            $link = "/{$typeSlug}/%{$post->post_type}%";
-            $link = \home_url(\user_trailingslashit($leavename ? $link : str_replace("%{$post->post_type}%", $slug, $link)));
+        $struct = (string) \_minn_rewrite()->get_extra_permastruct($post->post_type);
+        $plain = self::plain($post, $flags);
+        $slug = $type?->hierarchical ? (string) \get_page_uri($post) : (string) $post->post_name;
+        if ($struct !== '' && !$plain) {
+            $link = \home_url(\user_trailingslashit($leavename ? $struct : str_replace("%{$post->post_type}%", $slug, $struct)));
+        } elseif (!empty($type?->query_var) && !$plain) {
+            $link = \home_url(\add_query_arg((string) $type->query_var, $slug, ''));
         } else {
             $link = \home_url(\add_query_arg(['post_type' => $post->post_type, 'p' => $post->ID], ''));
         }
         return (string) \apply_filters('post_type_link', $link, $post, $leavename, $sample);
+    }
+
+    /**
+     * Whether a post's address is the plain one: its status neither public
+     * nor private and readable, unless it is a sample of a status that is
+     * not internal (a trashed post and a revision stay plain as samples).
+     */
+    private static function plain(\WP_Post $post, int $flags): bool
+    {
+        $status = \get_post_status_object((string) $post->post_status);
+        if ((($flags & self::SAMPLE) || ($post->filter ?? '') === 'sample') && !($status->internal ?? false)) {
+            return false;
+        }
+        return !($status->public ?? false) && !(($status->private ?? false) && \current_user_can('read_post', $post->ID));
     }
 
     /**

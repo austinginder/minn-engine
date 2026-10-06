@@ -57,7 +57,7 @@ final readonly class UserStyles
             'post_content' => '{"version": 3, "isGlobalStylesUserThemeJSON": true }',
             'post_title' => 'Custom Styles', 'post_excerpt' => '', 'post_status' => 'publish',
             'comment_status' => 'closed', 'ping_status' => 'closed', 'post_password' => '',
-            'post_name' => $this->writer->uniqueSlug('wp-global-styles-' . $stylesheet, 0),
+            'post_name' => $this->writer->uniqueSlug('wp-global-styles-' . $stylesheet, 0, 'wp_global_styles'),
             'to_ping' => '', 'pinged' => '', 'post_modified' => $now, 'post_modified_gmt' => $nowGmt,
             'post_content_filtered' => '', 'post_parent' => 0, 'guid' => '', 'menu_order' => 0,
             'post_type' => 'wp_global_styles', 'post_mime_type' => '', 'comment_count' => 0,

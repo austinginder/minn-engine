@@ -4096,3 +4096,99 @@ A plugin's route now answers with the `Allow` header, as the reference's
 `rest_send_allow_header` sets it: every method of the route whose handler's
 permission callback lets the request through. Engine routes always had it;
 plugin routes had none.
+
+## Batch requests (2026-10-06)
+
+`batch/v1` (`Rest\BatchController`, probe `rest-batch`, compared over HTTP as
+well) carries up to 25 writes in one request, each answered in turn as
+`{body, status, headers}`, the whole as 207. Each request is answered as it
+would be on its own, as the same caller.
+- **Which routes take part.** Posts, pages and the other post types shown in
+  REST (not media, templates, global styles or fonts), the taxonomies,
+  users, widgets, and a plugin's routes that opt in with `allow_batch`.
+- **Refusals.** Any other route answers `rest_batch_not_allowed` with its
+  `Allow` header; a path with no route answers `rest_no_route`.
+- **require-all-validate.** Judges every request's declared arguments first,
+  and one failure answers the whole batch with the failures alone (null for
+  the rest), nothing written. Engine routes that check arguments in their
+  handler (post writes) are not caught by this check; their requests still
+  fail on their own when dispatched.
+
+Hand-written `rest_invalid_param` errors for an enum (post status, plugin
+status, search type and subtype) now carry `details`, as
+`WP_REST_Request::has_valid_params` reports them (`RestError::invalidParam`).
+
+## What a save fills in, slugs beside each other, and addresses by status (2026-10-06)
+
+The round trips found rows the engine wrote differently from WordPress. The
+probes `insert-defaults`, `permalinks`, `registry-rewrites` and
+`query-args` capture the rules, and the engine now follows them.
+- **Comment and ping status.** A new post that names neither takes its
+  type's default (`get_default_comment_status`), not the site's. A page
+  starts closed. So does a type without comments (or trackbacks, for
+  pings): a revision, an attachment's ping status, a plugin's type without
+  that support.
+- **Which slugs may stand together** (`Content\PostSlugs`).
+  - A flat type's slugs are its own. A post, a page and a plugin's type may
+    share one.
+  - A hierarchical type's slugs are its own and its attachments', under the
+    same parent.
+  - An attachment's slugs are every post's.
+  - Never free: the feed names and `embed`. For a hierarchical type, also a
+    number or a page number (`2`, `page2`).
+  - For posts, a number a date archive would answer to is never free. That
+    is any number when the structure begins with `%postname%`, below 13
+    after `%year%`, and below 32 after `%monthnum%`. A post keeps a number
+    it already has.
+  - A taken slug gets the first free `-2` form, cut and stripped of a
+    trailing hyphen to fit 200 characters.
+  - Drafts, pending posts, auto-drafts, revisions and personal data
+    requests keep their slug as it is. A pending post from someone who may
+    not publish it keeps none.
+  - `wp_unique_post_slug` takes the slug as given, without sanitizing it.
+  - Before this, slugs were unique across the whole table.
+- **Column lengths.** The posts table's short text columns are cut to fit,
+  as the reference's database layer cuts them. Before, a 200-character slug
+  with a suffix failed the insert.
+- **guid.** A new post without one takes its address as it stands at
+  insert. That is pretty when live, and `?p=`, `?page_id=` or
+  `?post_type=…&p=` when not.
+  - An update keeps the guid the post had, in its display form (through
+    `post_guid`, whose default is `esc_url`, so `&` reads `&#038;`). A new
+    guid asked for in an update is ignored.
+  - The engine was missing the `post_guid` and `the_guid` defaults
+    (`esc_url`).
+- **get_post_field** runs the column through `sanitize_post_field` in the
+  context asked for (probe `post-field`), `display` by default. It used to
+  return the raw value whatever the context.
+- **Plain addresses by status.** A post's address is plain unless its
+  status is public, or private and readable by whoever asks.
+  - So a private post is plain to a visitor, and so are a trashed post, a
+    revision, and a plugin's protected or bare status.
+  - A sample (the editor's preview address) is pretty unless its status is
+    internal; a trashed post and a revision stay plain.
+- **A plugin type's address** follows the address pattern its rewrite
+  registered (`get_extra_permastruct`), with the front of the structure
+  unless it opts out. A type without a pattern but with a query var
+  answers `?{query_var}={slug}`, otherwise `?post_type=…&p=`.
+- **Registered rewrites.**
+  - A post type's or taxonomy's rewrite settles into its full form whether
+    or not it is public or queryable, but only with pretty permalinks or in
+    the admin; otherwise it stays as given.
+  - A post type's feeds follow `has_archive`.
+  - A taxonomy's rewrite is merged over its defaults. Given as `true`, it
+    keeps the reference's empty `"0"` entry.
+  - A post type's query var is its name unless turned off. A taxonomy's is
+    off unless it is queryable.
+  - Each registers its pattern on registration and drops it on
+    unregistration.
+  - The built-in patterns are set once, so a structure set later leaves
+    them, and a plugin's, as they were.
+- **add_query_arg.**
+  - A URI that is only a query, or nothing, keeps its question mark.
+  - An empty value leaves its key bare (`?c`), and null leaves it out.
+  - Keys are written as given, in `build_query` too.
+
+A response's headers now keep the order they were set in
+(`Response::withHeader` appends), as the reference's do. That order shows
+in a batch's envelopes: `Location`, then `Allow`.
