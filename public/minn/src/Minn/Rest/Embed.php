@@ -9,6 +9,7 @@ use Minn\Http\Request;
 use Minn\Http\Response;
 use Minn\Http\Router;
 use Minn\RestError;
+use Minn\Runtime\Runtime;
 
 /**
  * The _embed decoration and the embed context. Every embeddable link in an
@@ -133,7 +134,8 @@ final class Embed
         unset($query['_embed'], $query['_fields']);
         $inner = new Request(Method::Get, $path, $query, $request->headers, $request->cookies, '', $request->secure, $request->host, [], [], $request->remoteAddress, $request->server);
         try {
-            $response = $this->router->dispatch($inner);
+            // Plugins preparing the linked object see its own request, in embed context.
+            $response = Runtime::booted() ? RuntimePrepare::during(RuntimeRoutes::wpRequest($inner), fn () => $this->router->dispatch($inner)) : $this->router->dispatch($inner);
         } catch (RestError) {
             $response = null;
         }
@@ -196,8 +198,28 @@ final class Embed
         return false;
     }
 
+    /** An item cut to the embed shape of its object type (a post type, a taxonomy, attachment, user or comment); any other kept whole. @param array<string, mixed> $item @return array<string, mixed> */
+    public static function shape(string $type, array $item): array
+    {
+        $kind = match (true) {
+            $type === 'attachment' => 'media',
+            $type === 'user', $type === 'comment' => $type,
+            \taxonomy_exists($type) => 'term',
+            \post_type_exists($type) => 'post',
+            default => null,
+        };
+        return $kind === null ? $item : array_intersect_key($item, array_flip(self::KEYS[$kind]));
+    }
+
+    /** The embed shape, with the fields plugin code registered for the item's type to show in embed. */
     private static function context(string $kind, array $object): array
     {
-        return array_intersect_key($object, array_flip(self::KEYS[$kind]));
+        $type = match ($kind) {
+            'post' => (string) ($object['type'] ?? ''),
+            'term' => (string) ($object['taxonomy'] ?? ''),
+            'media' => 'attachment',
+            default => $kind,
+        };
+        return array_intersect_key($object, array_flip([...self::KEYS[$kind], ...RegisteredFields::shownIn($type, 'embed')]));
     }
 }

@@ -29285,7 +29285,7 @@
                     "static": false,
                     "visibility": "public",
                     "signature": "latestRevisionId(int $postId): int",
-                    "doc": "The latest plain (non-autosave) revision id, or 0.",
+                    "doc": "The latest revision id, an autosave counting as one, newest by date then id (probe rest-latest-revision), or 0.",
                     "shapes": [],
                     "params": [
                         {
@@ -30263,7 +30263,7 @@
             "namespace": "Minn\\Content",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Content/Revisions.php",
-            "lines": 86,
+            "lines": 95,
             "doc": "Revision rows: the plain snapshots and the per-author autosave slots.",
             "implements": [],
             "extends": null,
@@ -30365,6 +30365,26 @@
                 },
                 {
                     "routes": [],
+                    "name": "allOf",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "allOf(int $parentId): array",
+                    "doc": "Every revision of a post, its autosaves among them, newest first by date then id, as rows: what the revisions route lists (probe rest-latest-revision).",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "parentId",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 30,
+                    "end": 36
+                },
+                {
+                    "routes": [],
                     "name": "autosavesOf",
                     "static": false,
                     "visibility": "public",
@@ -30380,8 +30400,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 30,
-                    "end": 33
+                    "line": 39,
+                    "end": 42
                 },
                 {
                     "routes": [],
@@ -30428,8 +30448,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 46,
-                    "end": 94
+                    "line": 55,
+                    "end": 103
                 },
                 {
                     "routes": [],
@@ -30455,8 +30475,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 35,
-                    "end": 43
+                    "line": 44,
+                    "end": 52
                 }
             ]
         },
@@ -75369,6 +75389,7 @@
                 "Minn\\Rest\\PolicyGate",
                 "Minn\\Rest\\PostsController",
                 "Minn\\Rest\\PostsWriteController",
+                "Minn\\Rest\\RegisteredFields",
                 "Minn\\Rest\\Reply",
                 "Minn\\Rest\\RevisionsController",
                 "Minn\\Rest\\RuntimeEnvelope",
@@ -75902,107 +75923,6 @@
                     ],
                     "line": 156,
                     "end": 170
-                }
-            ]
-        },
-        {
-            "name": "Minn\\Rest\\AdditionalFields",
-            "short": "AdditionalFields",
-            "namespace": "Minn\\Rest",
-            "kind": "final class",
-            "file": "public/minn/src/Minn/Rest/AdditionalFields.php",
-            "lines": 46,
-            "doc": "Which object type a wp/v2 route serves, so fields registered for that type can ride on the engine's own responses.",
-            "implements": [],
-            "extends": null,
-            "uses": [
-                "Minn\\Runtime\\Registry"
-            ],
-            "usedBy": [],
-            "constructor": null,
-            "cases": [],
-            "constants": [],
-            "properties": [],
-            "methods": [
-                {
-                    "routes": [],
-                    "name": "typeForRoute",
-                    "static": true,
-                    "visibility": "public",
-                    "signature": "typeForRoute(string $route, Minn\\Runtime\\Registry $registry): ?array",
-                    "doc": "The object type a wp/v2 route serves, or null.",
-                    "shapes": [
-                        "@return array{0: string, 1: bool}|null the object type and whether the route is a single item"
-                    ],
-                    "params": [
-                        {
-                            "name": "route",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "registry",
-                            "type": "Minn\\Runtime\\Registry",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 17,
-                    "end": 32
-                },
-                {
-                    "routes": [],
-                    "name": "apply",
-                    "static": true,
-                    "visibility": "public",
-                    "signature": "apply(array $fields, string $type, bool $single, mixed $data, callable $call): mixed",
-                    "doc": "The registered fields' values added to a response, item by item.",
-                    "shapes": [
-                        "@param array<string, array<string, mixed>> $fields the type's registered fields",
-                        "@param callable(callable, array, string, string): mixed $call runs one get_callback"
-                    ],
-                    "params": [
-                        {
-                            "name": "fields",
-                            "type": "array",
-                            "shape": "array<string, array<string, mixed>>",
-                            "default": null,
-                            "doc": "the type's registered fields"
-                        },
-                        {
-                            "name": "type",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "single",
-                            "type": "bool",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "data",
-                            "type": "mixed",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "call",
-                            "type": "callable",
-                            "shape": "callable(callable, array, string, string): mixed",
-                            "default": null,
-                            "doc": "runs one get_callback"
-                        }
-                    ],
-                    "line": 40,
-                    "end": 54
                 }
             ]
         },
@@ -79874,7 +79794,7 @@
             "namespace": "Minn\\Rest",
             "kind": "final class",
             "file": "public/minn/src/Minn/Rest/Embed.php",
-            "lines": 180,
+            "lines": 201,
             "doc": "The _embed decoration and the embed context. Every embeddable link in an\nobject's _links is answered in-process as the same caller with\ncontext=embed and placed under _embedded[rel]; a rel whose every embed\ncame back empty or as an error is left out, while an empty list beside a\nfull one stays (wp:term keeps its empty tags list next to the categories).\nLists have _fields applied per item before the links are read, so a\n_fields value without _links embeds nothing there; a single object embeds\nfirst and is filtered afterwards. The embed context is the view object\ncut to the reference's key set for that kind of item.",
             "implements": [],
             "extends": null,
@@ -79886,11 +79806,16 @@
                 "Minn\\RestError",
                 "Minn\\Rest\\Context",
                 "Minn\\Rest\\Fields",
+                "Minn\\Rest\\RegisteredFields",
+                "Minn\\Rest\\RuntimePrepare",
+                "Minn\\Rest\\RuntimeRoutes",
                 "Minn\\Rest\\Taxonomies",
-                "Minn\\Rest\\Types"
+                "Minn\\Rest\\Types",
+                "Minn\\Runtime\\Runtime"
             ],
             "usedBy": [
-                "Minn\\Rest\\Api"
+                "Minn\\Rest\\Api",
+                "Minn\\Rest\\RegisteredFields"
             ],
             "constructor": {
                 "signature": "__construct(Minn\\Http\\Router $router, Minn\\Rest\\Types $types, Minn\\Rest\\Taxonomies $taxonomies)",
@@ -79920,8 +79845,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 37,
-                "end": 42
+                "line": 38,
+                "end": 43
             },
             "cases": [],
             "constants": [
@@ -79990,8 +79915,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 45,
-                    "end": 60
+                    "line": 46,
+                    "end": 61
                 },
                 {
                     "routes": [],
@@ -80017,8 +79942,37 @@
                             "doc": ""
                         }
                     ],
-                    "line": 63,
-                    "end": 91
+                    "line": 64,
+                    "end": 92
+                },
+                {
+                    "routes": [],
+                    "name": "shape",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "shape(string $type, array $item): array",
+                    "doc": "An item cut to the embed shape of its object type (a post type, a taxonomy, attachment, user or comment); any other kept whole. @param array<string, mixed> $item @return array<string, mixed>",
+                    "shapes": [
+                        "@param array<string, mixed> $item @return array<string, mixed>"
+                    ],
+                    "params": [
+                        {
+                            "name": "type",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "item",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": "@return array<string, mixed>"
+                        }
+                    ],
+                    "line": 202,
+                    "end": 212
                 },
                 {
                     "routes": [],
@@ -80060,8 +80014,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 94,
-                    "end": 123
+                    "line": 95,
+                    "end": 124
                 },
                 {
                     "routes": [],
@@ -80087,8 +80041,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 126,
-                    "end": 152
+                    "line": 127,
+                    "end": 154
                 },
                 {
                     "routes": [],
@@ -80109,8 +80063,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 155,
-                    "end": 170
+                    "line": 157,
+                    "end": 172
                 },
                 {
                     "routes": [],
@@ -80129,8 +80083,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 173,
-                    "end": 187
+                    "line": 175,
+                    "end": 189
                 },
                 {
                     "routes": [],
@@ -80149,8 +80103,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 189,
-                    "end": 197
+                    "line": 191,
+                    "end": 199
                 },
                 {
                     "routes": [],
@@ -80158,7 +80112,7 @@
                     "static": true,
                     "visibility": "private",
                     "signature": "context(string $kind, array $object): array",
-                    "doc": "",
+                    "doc": "The embed shape, with the fields plugin code registered for the item's type to show in embed.",
                     "shapes": [],
                     "params": [
                         {
@@ -80176,8 +80130,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 199,
-                    "end": 202
+                    "line": 215,
+                    "end": 224
                 }
             ]
         },
@@ -86885,6 +86839,254 @@
             ]
         },
         {
+            "name": "Minn\\Rest\\RegisteredFields",
+            "short": "RegisteredFields",
+            "namespace": "Minn\\Rest",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Rest/RegisteredFields.php",
+            "lines": 105,
+            "doc": "The fields plugin code adds to an object type with register_rest_field,\nas the reference serves them (probe rest-fields). A get callback's value\nfollows the item's own fields, before its links. It is handed the item\nso far (without links, cut to the fields asked for, id kept), the\nfield's name, the request and the object type. A field is left out when\n_fields does not name it or its schema's context does not include the\nrequest's. A write runs the update callbacks for the fields its body\nnames, with the saved object, before rest_after_insert; an error one\nreturns is the write's answer.",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\RestError",
+                "Minn\\Rest\\Embed"
+            ],
+            "usedBy": [
+                "Minn\\Rest\\Embed",
+                "Minn\\Rest\\RuntimePrepare",
+                "Minn\\Runtime\\CommentEvents",
+                "Minn\\Runtime\\PostEvents",
+                "Minn\\Runtime\\TermEvents",
+                "Minn\\Runtime\\UserEvents"
+            ],
+            "constructor": null,
+            "cases": [],
+            "constants": [],
+            "properties": [],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "add",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "add(array $item, string $type, WP_REST_Request $request): array",
+                    "doc": "The item with the type's registered fields added, answering the request. @param array<string, mixed> $item @return array<string, mixed>",
+                    "shapes": [
+                        "@param array<string, mixed> $item @return array<string, mixed>"
+                    ],
+                    "params": [
+                        {
+                            "name": "item",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": "@return array<string, mixed>"
+                        },
+                        {
+                            "name": "type",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "request",
+                            "type": "WP_REST_Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 23,
+                    "end": 47
+                },
+                {
+                    "routes": [],
+                    "name": "update",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "update(object $object, string $type, WP_REST_Request $request): void",
+                    "doc": "Runs the update callbacks for the fields the request's body names; an error one returns is thrown as the write's answer.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "object",
+                            "type": "object",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "type",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "request",
+                            "type": "WP_REST_Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 50,
+                    "end": 61
+                },
+                {
+                    "routes": [],
+                    "name": "context",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "context(WP_REST_Request $request, string $type): string",
+                    "doc": "The context the item is answered in, set on the request as the\nreference's controllers set it: a write and a delete answer in edit\n(a term's delete in view); a read in the one asked for, or view.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "request",
+                            "type": "WP_REST_Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "type",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 68,
+                    "end": 84
+                },
+                {
+                    "routes": [],
+                    "name": "shownIn",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "shownIn(string $type, string $context): array",
+                    "doc": "The names of the fields registered for the type that show in the context. @return list<string>",
+                    "shapes": [
+                        "@return list<string>"
+                    ],
+                    "params": [
+                        {
+                            "name": "type",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "context",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 87,
+                    "end": 90
+                },
+                {
+                    "routes": [],
+                    "name": "of",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "of(string $type): array",
+                    "doc": "",
+                    "shapes": [
+                        "@return array<string, array<string, mixed>>"
+                    ],
+                    "params": [
+                        {
+                            "name": "type",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 93,
+                    "end": 97
+                },
+                {
+                    "routes": [],
+                    "name": "wanted",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "wanted(WP_REST_Request $request): ?array",
+                    "doc": "The fields _fields names, or null when it names none. @return list<string>|null",
+                    "shapes": [
+                        "@return list<string>|null"
+                    ],
+                    "params": [
+                        {
+                            "name": "request",
+                            "type": "WP_REST_Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 100,
+                    "end": 107
+                },
+                {
+                    "routes": [],
+                    "name": "inContext",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "inContext(array $options, string $context): bool",
+                    "doc": "A field without a schema, or one whose schema names no context, shows in every context. @param array<string, mixed> $options",
+                    "shapes": [
+                        "@param array<string, mixed> $options"
+                    ],
+                    "params": [
+                        {
+                            "name": "options",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "context",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 110,
+                    "end": 114
+                },
+                {
+                    "routes": [],
+                    "name": "refusal",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "refusal(WP_Error $error): Minn\\RestError",
+                    "doc": "",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "error",
+                            "type": "WP_Error",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 116,
+                    "end": 123
+                }
+            ]
+        },
+        {
             "name": "Minn\\Rest\\RegisteredPostFields",
             "short": "RegisteredPostFields",
             "namespace": "Minn\\Rest",
@@ -88812,11 +89014,12 @@
             "namespace": "Minn\\Rest",
             "kind": "final class",
             "file": "public/minn/src/Minn/Rest/RuntimePrepare.php",
-            "lines": 54,
-            "doc": "An item a REST response carries, through the filter the reference runs\nas it prepares one (rest_prepare_{type}, rest_prepare_attachment,\nrest_prepare_user, rest_prepare_comment, rest_prepare_{taxonomy}): the\nitem as a response object, its links on the response rather than in its\ndata, handed with the object it describes and the request; what the\nfilter leaves is the item. With nothing hooked, or a response handed back\nuntouched, the item is Minn's own, byte for byte.",
+            "lines": 70,
+            "doc": "An item a REST response carries, through the filter the reference runs\nas it prepares one (rest_prepare_{type}, rest_prepare_attachment,\nrest_prepare_user, rest_prepare_comment, rest_prepare_{taxonomy}): the\nitem as a response object, its links on the response rather than in its\ndata, handed with the object it describes and the request; what the\nfilter leaves is the item. With nothing hooked, or a response handed back\nuntouched, the item is Minn's own, byte for byte. Fields plugin code\nregisters for the type are added first, as the reference adds them\nbefore the filter runs.",
             "implements": [],
             "extends": null,
             "uses": [
+                "Minn\\Rest\\RegisteredFields",
                 "Minn\\Rest\\RuntimeRoutes",
                 "Minn\\Runtime\\Runtime"
             ],
@@ -88824,6 +89027,7 @@
                 "Minn\\Rest\\Api",
                 "Minn\\Rest\\BlockTypesController",
                 "Minn\\Rest\\CommentObject",
+                "Minn\\Rest\\Embed",
                 "Minn\\Rest\\InstalledThemesController",
                 "Minn\\Rest\\MediaObject",
                 "Minn\\Rest\\MenusController",
@@ -88856,8 +89060,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 21,
-                    "end": 24
+                    "line": 23,
+                    "end": 26
                 },
                 {
                     "routes": [],
@@ -88885,8 +89089,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 34,
-                    "end": 43
+                    "line": 36,
+                    "end": 45
                 },
                 {
                     "routes": [],
@@ -88923,8 +89127,28 @@
                             "doc": "the object the item describes, fetched only when a plugin listens"
                         }
                     ],
-                    "line": 52,
-                    "end": 70
+                    "line": 54,
+                    "end": 76
+                },
+                {
+                    "routes": [],
+                    "name": "objectType",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "objectType(string $filter): string",
+                    "doc": "The object type register_rest_field names for the items a prepare filter sees: the post type, taxonomy, or kind of item.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "filter",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 79,
+                    "end": 88
                 }
             ]
         },
@@ -88948,6 +89172,7 @@
             "usedBy": [
                 "Minn\\Rest\\Api",
                 "Minn\\Rest\\BatchController",
+                "Minn\\Rest\\Embed",
                 "Minn\\Rest\\MediaController",
                 "Minn\\Rest\\OEmbedController",
                 "Minn\\Rest\\RuntimeEnvelope",
@@ -97955,7 +98180,7 @@
             "namespace": "Minn\\Runtime",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Runtime/CommentEvents.php",
-            "lines": 250,
+            "lines": 252,
             "doc": "What the reference's REST comments controller tells plugins, for the\nengine's own: with plugins loaded every change goes through the\nruntime's comment functions (wp_insert_comment, wp_update_comment,\nwp_set_comment_status, wp_trash_comment, wp_delete_comment), which fire\nthe reference's actions in its order, and the REST actions follow.\nWithout a booted runtime the rows are written as before and nothing is\ntold.",
             "implements": [],
             "extends": null,
@@ -97964,6 +98189,7 @@
                 "Minn\\Content\\Comments",
                 "Minn\\Http\\Request",
                 "Minn\\RestError",
+                "Minn\\Rest\\RegisteredFields",
                 "Minn\\Rest\\RuntimeRoutes",
                 "Minn\\Runtime\\Runtime"
             ],
@@ -97984,8 +98210,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 24,
-                "end": 26
+                "line": 25,
+                "end": 27
             },
             "cases": [],
             "constants": [],
@@ -98010,8 +98236,8 @@
                     "doc": "Whether plugins are loaded to be told anything.",
                     "shapes": [],
                     "params": [],
-                    "line": 29,
-                    "end": 32
+                    "line": 30,
+                    "end": 33
                 },
                 {
                     "routes": [],
@@ -98044,8 +98270,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 35,
-                    "end": 40
+                    "line": 36,
+                    "end": 41
                 },
                 {
                     "routes": [],
@@ -98073,8 +98299,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 53,
-                    "end": 79
+                    "line": 54,
+                    "end": 80
                 },
                 {
                     "routes": [],
@@ -98116,8 +98342,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 89,
-                    "end": 106
+                    "line": 90,
+                    "end": 107
                 },
                 {
                     "routes": [],
@@ -98143,8 +98369,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 114,
-                    "end": 128
+                    "line": 115,
+                    "end": 129
                 },
                 {
                     "routes": [],
@@ -98165,8 +98391,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 183,
-                    "end": 194
+                    "line": 184,
+                    "end": 195
                 },
                 {
                     "routes": [],
@@ -98201,8 +98427,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 203,
-                    "end": 227
+                    "line": 204,
+                    "end": 228
                 },
                 {
                     "routes": [],
@@ -98221,8 +98447,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 230,
-                    "end": 240
+                    "line": 231,
+                    "end": 241
                 },
                 {
                     "routes": [],
@@ -98241,8 +98467,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 243,
-                    "end": 251
+                    "line": 244,
+                    "end": 252
                 },
                 {
                     "routes": [],
@@ -98275,8 +98501,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 254,
-                    "end": 262
+                    "line": 255,
+                    "end": 265
                 },
                 {
                     "routes": [],
@@ -98311,8 +98537,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 265,
-                    "end": 270
+                    "line": 268,
+                    "end": 273
                 },
                 {
                     "routes": [],
@@ -98341,8 +98567,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 136,
-                    "end": 143
+                    "line": 137,
+                    "end": 144
                 },
                 {
                     "routes": [],
@@ -98363,8 +98589,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 151,
-                    "end": 158
+                    "line": 152,
+                    "end": 159
                 },
                 {
                     "routes": [],
@@ -98392,8 +98618,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 161,
-                    "end": 164
+                    "line": 162,
+                    "end": 165
                 },
                 {
                     "routes": [],
@@ -98414,8 +98640,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 167,
-                    "end": 173
+                    "line": 168,
+                    "end": 174
                 },
                 {
                     "routes": [],
@@ -98434,8 +98660,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 176,
-                    "end": 180
+                    "line": 177,
+                    "end": 181
                 }
             ]
         },
@@ -105158,7 +105384,7 @@
             "namespace": "Minn\\Runtime",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Runtime/PostEvents.php",
-            "lines": 184,
+            "lines": 190,
             "doc": "What the reference's REST controllers tell plugins about a post they\nwrite, for the engine's own controllers: the same actions in the same\norder with the same arguments, fired through the facade's lifecycle\nfunctions so the facade's own writes say the same (contracts/runtime.md\n\"Writes tell plugins\"). Without a booted runtime every method does\nnothing, so a write with no plugins loaded is exactly what it was.",
             "implements": [],
             "extends": null,
@@ -105168,6 +105394,7 @@
                 "Minn\\Http\\Request",
                 "Minn\\Media\\Uploads",
                 "Minn\\Media\\Writer",
+                "Minn\\Rest\\RegisteredFields",
                 "Minn\\Rest\\RegisteredType",
                 "Minn\\Rest\\RuntimeRoutes",
                 "Minn\\Runtime\\Runtime"
@@ -105674,7 +105901,7 @@
                         }
                     ],
                     "line": 191,
-                    "end": 200
+                    "end": 206
                 },
                 {
                     "routes": [],
@@ -105693,8 +105920,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 203,
-                    "end": 206
+                    "line": 209,
+                    "end": 212
                 }
             ]
         },
@@ -108427,7 +108654,6 @@
             ],
             "usedBy": [
                 "Minn\\Front\\Permalinks",
-                "Minn\\Rest\\AdditionalFields",
                 "Minn\\Rest\\StatusesController",
                 "Minn\\Runtime\\PostQuery",
                 "Minn\\Runtime\\QueriedObject",
@@ -109024,6 +109250,7 @@
                 "Minn\\Rest\\BlockTypesController",
                 "Minn\\Rest\\Caller",
                 "Minn\\Rest\\CommentObject",
+                "Minn\\Rest\\Embed",
                 "Minn\\Rest\\InstalledThemesController",
                 "Minn\\Rest\\MediaController",
                 "Minn\\Rest\\MediaObject",
@@ -112211,13 +112438,14 @@
             "namespace": "Minn\\Runtime",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Runtime/TermEvents.php",
-            "lines": 111,
+            "lines": 113,
             "doc": "What the reference's REST terms controller tells plugins, for the\nengine's own: with plugins loaded a term is saved as that controller\nsaves one (rest_pre_insert_{taxonomy}, then the runtime's wp_insert_term\nor wp_update_term, and wp_delete_term), and the REST actions follow.\nWithout a booted runtime each write is the engine's own.",
             "implements": [],
             "extends": null,
             "uses": [
                 "Minn\\Http\\Request",
                 "Minn\\RestError",
+                "Minn\\Rest\\RegisteredFields",
                 "Minn\\Rest\\RuntimeRoutes",
                 "Minn\\Runtime\\Runtime"
             ],
@@ -112238,8 +112466,8 @@
                     "doc": "Whether plugins are loaded to be told anything.",
                     "shapes": [],
                     "params": [],
-                    "line": 22,
-                    "end": 25
+                    "line": 23,
+                    "end": 26
                 },
                 {
                     "routes": [],
@@ -112274,8 +112502,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 35,
-                    "end": 43
+                    "line": 36,
+                    "end": 44
                 },
                 {
                     "routes": [],
@@ -112317,8 +112545,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 52,
-                    "end": 62
+                    "line": 53,
+                    "end": 63
                 },
                 {
                     "routes": [],
@@ -112368,8 +112596,8 @@
                             "doc": "the engine's own delete"
                         }
                     ],
-                    "line": 108,
-                    "end": 117
+                    "line": 109,
+                    "end": 118
                 },
                 {
                     "routes": [],
@@ -112409,8 +112637,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 120,
-                    "end": 128
+                    "line": 121,
+                    "end": 131
                 },
                 {
                     "routes": [],
@@ -112446,8 +112674,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 72,
-                    "end": 89
+                    "line": 73,
+                    "end": 90
                 },
                 {
                     "routes": [],
@@ -112466,8 +112694,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 92,
-                    "end": 100
+                    "line": 93,
+                    "end": 101
                 }
             ]
         },
@@ -114337,13 +114565,14 @@
             "namespace": "Minn\\Runtime",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Runtime/UserEvents.php",
-            "lines": 96,
+            "lines": 100,
             "doc": "What the reference's REST users controller tells plugins, for the\nengine's own: with plugins loaded an account is written through the\nruntime's wp_insert_user, wp_update_user and wp_delete_user\n(wp_set_password, each profile meta, the role, clean_user_cache,\nuser_register and the count, profile_update, delete_user and\ndeleted_user), and the REST actions follow. Without a booted runtime each\nwrite is the engine's own, given as a closure.",
             "implements": [],
             "extends": null,
             "uses": [
                 "Minn\\Http\\Request",
                 "Minn\\RestError",
+                "Minn\\Rest\\RegisteredFields",
                 "Minn\\Rest\\RuntimeRoutes",
                 "Minn\\Runtime\\Runtime"
             ],
@@ -114364,8 +114593,8 @@
                     "doc": "Whether plugins are loaded to be told anything.",
                     "shapes": [],
                     "params": [],
-                    "line": 24,
-                    "end": 27
+                    "line": 25,
+                    "end": 28
                 },
                 {
                     "routes": [],
@@ -114408,8 +114637,8 @@
                             "doc": "the engine's own write"
                         }
                     ],
-                    "line": 37,
-                    "end": 54
+                    "line": 38,
+                    "end": 57
                 },
                 {
                     "routes": [],
@@ -114459,8 +114688,8 @@
                             "doc": "the engine's own write"
                         }
                     ],
-                    "line": 63,
-                    "end": 79
+                    "line": 66,
+                    "end": 84
                 },
                 {
                     "routes": [],
@@ -114510,8 +114739,8 @@
                             "doc": "the engine's own delete"
                         }
                     ],
-                    "line": 88,
-                    "end": 97
+                    "line": 93,
+                    "end": 102
                 },
                 {
                     "routes": [],
@@ -114540,8 +114769,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 107,
-                    "end": 115
+                    "line": 112,
+                    "end": 120
                 }
             ]
         },

@@ -13,7 +13,9 @@ use Minn\Runtime\Runtime;
  * item as a response object, its links on the response rather than in its
  * data, handed with the object it describes and the request; what the
  * filter leaves is the item. With nothing hooked, or a response handed back
- * untouched, the item is Minn's own, byte for byte.
+ * untouched, the item is Minn's own, byte for byte. Fields plugin code
+ * registers for the type are added first, as the reference adds them
+ * before the filter runs.
  */
 final class RuntimePrepare
 {
@@ -51,13 +53,17 @@ final class RuntimePrepare
      */
     public static function item(string $filter, array $item, \Closure $described): array
     {
-        if (!Runtime::booted() || !\has_filter($filter)) {
+        if (!Runtime::booted()) {
+            return $item;
+        }
+        $request = Runtime::current()->get('rest_prepare_request');
+        $request = $request instanceof \WP_REST_Request ? $request : new \WP_REST_Request('GET', '/');
+        $item = RegisteredFields::add($item, self::objectType($filter), $request);
+        if (!\has_filter($filter)) {
             return $item;
         }
         $response = RuntimeRoutes::itemResponse($item);
         $before = [$response->get_data(), $response->get_links()];
-        $request = Runtime::current()->get('rest_prepare_request');
-        $request = $request instanceof \WP_REST_Request ? $request : new \WP_REST_Request('GET', '/');
         $filtered = \rest_ensure_response(\apply_filters($filter, $response, $described(), $request));
         if ($filtered instanceof \WP_Error) {
             return $item;
@@ -67,5 +73,17 @@ final class RuntimePrepare
         }
         $data = \rest_get_server()->response_to_data($filtered, false);
         return is_array($data) ? $data : $item;
+    }
+
+    /** The object type register_rest_field names for the items a prepare filter sees: the post type, taxonomy, or kind of item. */
+    private static function objectType(string $filter): string
+    {
+        $type = substr($filter, strlen('rest_prepare_'));
+        return match ($type) {
+            'block_type' => 'block-type',
+            'widget_type' => 'widget-type',
+            'menu_location' => 'menu-location',
+            default => $type,
+        };
     }
 }

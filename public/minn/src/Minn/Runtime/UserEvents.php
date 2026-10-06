@@ -4,9 +4,10 @@ declare(strict_types=1);
 
 namespace Minn\Runtime;
 
-use Minn\RestError;
 use Closure;
 use Minn\Http\Request;
+use Minn\RestError;
+use Minn\Rest\RegisteredFields;
 use Minn\Rest\RuntimeRoutes;
 
 /**
@@ -49,6 +50,8 @@ final readonly class UserEvents
         }
         \do_action('rest_insert_user', \get_userdata($id), $wpRequest, true);
         (new \WP_User($id))->add_role($role);
+        RegisteredFields::update(\get_userdata($id), 'user', $wpRequest);
+        RegisteredFields::context($wpRequest, 'user');
         \do_action('rest_after_insert_user', \get_userdata($id), $wpRequest, true);
         return $id;
     }
@@ -75,6 +78,8 @@ final readonly class UserEvents
             (new \WP_User($id))->set_role($role);
         }
         \do_action('rest_insert_user', \get_userdata($id), $wpRequest, false);
+        RegisteredFields::update(\get_userdata($id), 'user', $wpRequest);
+        RegisteredFields::context($wpRequest, 'user');
         \do_action('rest_after_insert_user', \get_userdata($id), $wpRequest, false);
     }
 

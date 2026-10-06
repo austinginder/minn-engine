@@ -273,14 +273,14 @@ final readonly class Posts
         );
     }
 
-    /** The latest plain (non-autosave) revision id, or 0. */
+    /** The latest revision id, an autosave counting as one, newest by date then id (probe rest-latest-revision), or 0. */
     public function latestRevisionId(int $postId): int
     {
         return (int) ($this->db->value(
             "SELECT ID FROM {$this->db->table('posts')}
-             WHERE post_type = 'revision' AND post_parent = ? AND post_name NOT LIKE ?
-             ORDER BY ID DESC LIMIT 1",
-            [$postId, $postId . '-autosave%'],
+             WHERE post_type = 'revision' AND post_parent = ?
+             ORDER BY post_date DESC, ID DESC LIMIT 1",
+            [$postId],
         ) ?? 0);
     }
 

@@ -26,6 +26,15 @@ final readonly class Revisions
         return $this->named($parentId, 'NOT LIKE');
     }
 
+    /** Every revision of a post, its autosaves among them, newest first by date then id, as rows: what the revisions route lists (probe rest-latest-revision). */
+    public function allOf(int $parentId): array
+    {
+        return $this->db->rows(
+            "SELECT * FROM {$this->db->table('posts')} WHERE post_parent = ? AND post_type = 'revision' ORDER BY post_date DESC, ID DESC",
+            [$parentId],
+        );
+    }
+
     /** The autosaves of a post, newest first, as rows. */
     public function autosavesOf(int $parentId): array
     {

@@ -29,7 +29,7 @@ the repositories and records: posts, users, terms, comments, and the render pipe
 | [`PostWriter`](#postwriter) | final readonly class | 477 | Every write to the posts table and its satellites: rows, meta, term |
 | [`Posts`](#posts) | final readonly class | 502 | Reads over the posts table. A single post comes back as a PostRecord and |
 | [`Reader`](#reader) | final class | 72 | Who is reading this request: their user id, whether they may read |
-| [`Revisions`](#revisions) | final readonly class | 86 | Revision rows: the plain snapshots and the per-author autosave slots. |
+| [`Revisions`](#revisions) | final readonly class | 95 | Revision rows: the plain snapshots and the per-author autosave slots. |
 | [`Site`](#site) | final readonly class | 73 | Site-wide options and the site's clock. |
 | [`SiteIcon`](#siteicon) | final readonly class | 50 | The site icon: the attachment the site_icon option names, as the file |
 | [`Slug`](#slug) | final class | 81 |  |
@@ -1369,7 +1369,7 @@ How many revisions the post has.
 
 ### `latestRevisionId(int $postId): int`
 
-The latest plain (non-autosave) revision id, or 0.
+The latest revision id, an autosave counting as one, newest by date then id (probe rest-latest-revision), or 0.
 
 ### `hasNewerAutosave(int $postId, string $modifiedGmt): bool`
 
@@ -1525,6 +1525,10 @@ The revisions, or the autosaves, of a post, newest first, as rows.
 
 - `@return list<array> newest first`
 
+### `allOf(int $parentId): array`
+
+Every revision of a post, its autosaves among them, newest first by date then id, as rows: what the revisions route lists (probe rest-latest-revision).
+
 ### `autosavesOf(int $parentId): array`
 
 The autosaves of a post, newest first, as rows.
@@ -1533,7 +1537,7 @@ The autosaves of a post, newest first, as rows.
 
 One autosave slot per author: updated in place when it exists.
 
-Internals: `named()` (private, line 35)
+Internals: `named()` (private, line 44)
 
 
 ## Site

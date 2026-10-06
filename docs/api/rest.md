@@ -5,7 +5,6 @@ the wp/v2 surface: shapes and controllers
 | Class | Kind | Lines | Summary |
 |---|---|---|---|
 | [`AbilitiesController`](#abilitiescontroller) | final readonly class | 142 | wp-abilities/v1: what this site can be asked to do, and the doing of it. |
-| [`AdditionalFields`](#additionalfields) | final class | 46 | Which object type a wp/v2 route serves, so fields registered for that type can ride on the engine's own responses. |
 | [`Api`](#api) | final readonly class | 229 | The REST API: wires the controllers for one request and dispatches a |
 | [`ApplicationPasswordsController`](#applicationpasswordscontroller) | final readonly class | 170 | wp/v2/users/{id}/application-passwords: list, create, rename, delete, |
 | [`ArgCheck`](#argcheck) | final readonly class | 83 | Judges a route's declared arguments against the request before the |
@@ -21,7 +20,7 @@ the wp/v2 surface: shapes and controllers
 | [`Context`](#context) | enum | 18 | The view a REST caller asked for. View is the public shape, edit adds the |
 | [`DeclaredPostsController`](#declaredpostscontroller) | final readonly class | 56 | wp/v2/{rest_base} for extra post types declared by an active extension. |
 | [`DeclaredTermsController`](#declaredtermscontroller) | final readonly class | 43 | wp/v2/{rest_base} for the taxonomies plugin code registers to show in |
-| [`Embed`](#embed) | final class | 180 | The _embed decoration and the embed context. Every embeddable link in an |
+| [`Embed`](#embed) | final class | 201 | The _embed decoration and the embed context. Every embeddable link in an |
 | [`EngineRoutes`](#engineroutes) | final class | 66 | The engine's own REST routes in the reference's regex form, for the |
 | [`Fields`](#fields) | final readonly class | 92 | The _fields response filter. Dot paths descend ("title.rendered"); the |
 | [`GlobalStylesController`](#globalstylescontroller) | final readonly class | 138 | wp/v2/global-styles: the site editor's saved styles (one post per |
@@ -44,6 +43,7 @@ the wp/v2 surface: shapes and controllers
 | [`PostObject`](#postobject) | final readonly class | 515 | Builds the wp/v2 post and page objects in the reference's shape: the |
 | [`PostsController`](#postscontroller) | final readonly class | 183 | wp/v2 posts and pages, read side. |
 | [`PostsWriteController`](#postswritecontroller) | final readonly class | 449 | wp/v2 posts and pages, write side: create, update, trash, and force |
+| [`RegisteredFields`](#registeredfields) | final class | 105 | The fields plugin code adds to an object type with register_rest_field, |
 | [`RegisteredPostFields`](#registeredpostfields) | final readonly class | 89 | The REST object of a post whose type plugin code registered (probe rest-plugin-types), built by what the type supports. |
 | [`RegisteredType`](#registeredtype) | final readonly class | 76 | A post type plugin code registered, as its REST object follows it |
 | [`RenderedFields`](#renderedfields) | final class | 49 | A post's rendered title, content and excerpt as a REST response carries |
@@ -56,7 +56,7 @@ the wp/v2 surface: shapes and controllers
 | [`RouteMatch`](#routematch) | final class | 68 | Finds the registered handler for a method and path among the runtime's route table. |
 | [`RouteTable`](#routetable) | final class | 38 | The registered endpoints in dispatch shape: one handler list per route, methods as a set, non-numeric keys lifted into the route's options. |
 | [`RuntimeEnvelope`](#runtimeenvelope) | final readonly class | 123 | The REST server's filters around one of Minn's own routes, as the |
-| [`RuntimePrepare`](#runtimeprepare) | final class | 54 | An item a REST response carries, through the filter the reference runs |
+| [`RuntimePrepare`](#runtimeprepare) | final class | 70 | An item a REST response carries, through the filter the reference runs |
 | [`RuntimeRoutes`](#runtimeroutes) | final class | 370 | Routes plugin code registered with register_rest_route(), answered |
 | [`Schema`](#schema) | final readonly class | 473 | JSON-schema handling the way the REST API's argument validation does it: |
 | [`SchemaValues`](#schemavalues) | final class | 206 | The value side of JSON Schema, as the reference applies it: what counts |
@@ -139,26 +139,6 @@ Route: `GET /wp-abilities/v1/categories/{slug:[a-z0-9]+(?:-[a-z0-9]+)*} (signed 
 One category by slug.
 
 Internals: `boot()` (private, line 108), `find()` (private, line 116), `object()` (private, line 131), `category()` (private, line 156)
-
-
-## AdditionalFields
-
-`final class Minn\Rest\AdditionalFields` · `public/minn/src/Minn/Rest/AdditionalFields.php`
-
-Which object type a wp/v2 route serves, so fields registered for that type can ride on the engine's own responses.
-
-### static `typeForRoute(string $route, Minn\Runtime\Registry $registry): ?array`
-
-The object type a wp/v2 route serves, or null.
-
-- `@return array{0: string, 1: bool}|null the object type and whether the route is a single item`
-
-### static `apply(array $fields, string $type, bool $single, mixed $data, callable $call): mixed`
-
-The registered fields' values added to a response, item by item.
-
-- `@param array<string, array<string, mixed>> $fields the type's registered fields`
-- `@param callable(callable, array, string, string): mixed $call runs one get_callback`
 
 
 ## Api
@@ -825,7 +805,7 @@ cut to the reference's key set for that kind of item.
 
 - const `KEYS` = `array (   'post' =>    array (     0 => 'id',     1 => 'date',     2 => 'slug',     3 => 'type',     4 => 'link',     5 => 'title',     6 => 'excerpt',     7 => 'author',     8 => 'featured_media',     9 => '_links',   ),   'media' =>    array (     0 => 'id',     1 => 'date',     2 => 'slug',     3 => 'type',     4 => 'link',     5 => 'title',     6 => 'author',     7 => 'featured_media',     8 => 'caption',     9 => 'alt_text',     10 => 'media_type',     11 => 'mime_type',     12 => 'media_details',     13 => 'source_url',     14 => '_links',   ),   'user' =>    array (     0 => 'id',     1 => 'name',     2 => 'url',     3 => 'description',     4 => 'link',     5 => 'slug',     6 => 'avatar_urls',     7 => '_links',   ),   'term' =>    array (     0 => 'id',     1 => 'link',     2 => 'name',     3 => 'slug',     4 => 'taxonomy',     5 => '_links',   ),   'comment' =>    array (     0 => 'id',     1 => 'parent',     2 => 'author',     3 => 'author_name',     4 => 'author_url',     5 => 'date',     6 => 'content',     7 => 'link',     8 => 'type',     9 => 'author_avatar_urls',     10 => '_links',   ), )`
 
-Used by: `Minn\Rest\Api`
+Used by: `Minn\Rest\Api`, `Minn\Rest\RegisteredFields`
 
 ```php
 __construct(Minn\Http\Router $router, Minn\Rest\Types $types, Minn\Rest\Taxonomies $taxonomies)
@@ -842,7 +822,13 @@ Null when _embed is absent; [] for every rel; otherwise the rels asked for. @ret
 
 Decorates a finished response: the embed context, then _embedded, then the deferred _fields.
 
-Internals: `decorateItem()` (private, line 94), `answer()` (private, line 126), `target()` (private, line 155), `kind()` (private, line 173), `taxonomyBase()` (private, line 189), `context()` (private, line 199)
+### static `shape(string $type, array $item): array`
+
+An item cut to the embed shape of its object type (a post type, a taxonomy, attachment, user or comment); any other kept whole. @param array<string, mixed> $item @return array<string, mixed>
+
+- `@param array<string, mixed> $item @return array<string, mixed>`
+
+Internals: `decorateItem()` (private, line 95), `answer()` (private, line 127), `target()` (private, line 157), `kind()` (private, line 175), `taxonomyBase()` (private, line 191), `context()` (private, line 215)
 
 
 ## EngineRoutes
@@ -1818,6 +1804,47 @@ A field that may arrive as a scalar or as {raw: ...}.
 Internals: `hasParent()` (private, line 129), `hasOrder()` (private, line 135), `events()` (private, line 141), `newColumns()` (private, line 152), `writeNewPost()` (private, line 186), `trash()` (private, line 299), `rememberOld()` (private, line 318), `floatingDate()` (private, line 343), `scheduledIfFuture()` (private, line 353), `fieldColumns()` (private, line 372), `statusColumns()` (private, line 415), `checkStickyPasswordConflict()` (private, line 445), `validStatus()` (private, line 457), `clean()` (private, line 466)
 
 
+## RegisteredFields
+
+`final class Minn\Rest\RegisteredFields` · `public/minn/src/Minn/Rest/RegisteredFields.php`
+
+The fields plugin code adds to an object type with register_rest_field,
+as the reference serves them (probe rest-fields). A get callback's value
+follows the item's own fields, before its links. It is handed the item
+so far (without links, cut to the fields asked for, id kept), the
+field's name, the request and the object type. A field is left out when
+_fields does not name it or its schema's context does not include the
+request's. A write runs the update callbacks for the fields its body
+names, with the saved object, before rest_after_insert; an error one
+returns is the write's answer.
+
+Used by: `Minn\Rest\Embed`, `Minn\Rest\RuntimePrepare`, `Minn\Runtime\CommentEvents`, `Minn\Runtime\PostEvents`, `Minn\Runtime\TermEvents`, `Minn\Runtime\UserEvents`
+
+### static `add(array $item, string $type, WP_REST_Request $request): array`
+
+The item with the type's registered fields added, answering the request. @param array<string, mixed> $item @return array<string, mixed>
+
+- `@param array<string, mixed> $item @return array<string, mixed>`
+
+### static `update(object $object, string $type, WP_REST_Request $request): void`
+
+Runs the update callbacks for the fields the request's body names; an error one returns is thrown as the write's answer.
+
+### static `context(WP_REST_Request $request, string $type): string`
+
+The context the item is answered in, set on the request as the
+reference's controllers set it: a write and a delete answer in edit
+(a term's delete in view); a read in the one asked for, or view.
+
+### static `shownIn(string $type, string $context): array`
+
+The names of the fields registered for the type that show in the context. @return list<string>
+
+- `@return list<string>`
+
+Internals: `of()` (private, line 93), `wanted()` (private, line 100), `inContext()` (private, line 110), `refusal()` (private, line 116)
+
+
 ## RegisteredPostFields
 
 `final readonly class Minn\Rest\RegisteredPostFields` · `public/minn/src/Minn/Rest/RegisteredPostFields.php`
@@ -2175,9 +2202,11 @@ rest_prepare_user, rest_prepare_comment, rest_prepare_{taxonomy}): the
 item as a response object, its links on the response rather than in its
 data, handed with the object it describes and the request; what the
 filter leaves is the item. With nothing hooked, or a response handed back
-untouched, the item is Minn's own, byte for byte.
+untouched, the item is Minn's own, byte for byte. Fields plugin code
+registers for the type are added first, as the reference adds them
+before the filter runs.
 
-Used by: `Minn\Rest\Api`, `Minn\Rest\BlockTypesController`, `Minn\Rest\CommentObject`, `Minn\Rest\InstalledThemesController`, `Minn\Rest\MediaObject`, `Minn\Rest\MenusController`, `Minn\Rest\PostObject`, `Minn\Rest\SidebarsController`, `Minn\Rest\StatusesController`, `Minn\Rest\TermObject`, `Minn\Rest\UserObject`, `Minn\Rest\WidgetObject`
+Used by: `Minn\Rest\Api`, `Minn\Rest\BlockTypesController`, `Minn\Rest\CommentObject`, `Minn\Rest\Embed`, `Minn\Rest\InstalledThemesController`, `Minn\Rest\MediaObject`, `Minn\Rest\MenusController`, `Minn\Rest\PostObject`, `Minn\Rest\SidebarsController`, `Minn\Rest\StatusesController`, `Minn\Rest\TermObject`, `Minn\Rest\UserObject`, `Minn\Rest\WidgetObject`
 
 ### static `answering(WP_REST_Request $request): void`
 
@@ -2198,6 +2227,8 @@ One item through a rest_prepare filter.
 - `@param \Closure(): mixed $described the object the item describes, fetched only when a plugin listens`
 - `@return array<string, mixed>`
 
+Internals: `objectType()` (private, line 79)
+
 
 ## RuntimeRoutes
 
@@ -2212,7 +2243,7 @@ and the runtime's namespaces folded into the index.
 - const `DISPATCH_DONE` = `array (   'rest_filter_response_fields' => 10, )` — rest_post_dispatch's defaults the engine does itself: every answer is cut to its _fields before it is served.
 - const `SERVE_DONE` = `array (   '_oembed_rest_pre_serve_request' => 10, )` — rest_pre_serve_request's defaults the engine does itself: oEmbed's XML (see oembedXml()).
 
-Used by: `Minn\Rest\Api`, `Minn\Rest\BatchController`, `Minn\Rest\MediaController`, `Minn\Rest\OEmbedController`, `Minn\Rest\RuntimeEnvelope`, `Minn\Rest\RuntimePrepare`, `Minn\Runtime\CommentEvents`, `Minn\Runtime\PostEvents`, `Minn\Runtime\PostSave`, `Minn\Runtime\TermEvents`, `Minn\Runtime\UserEvents`
+Used by: `Minn\Rest\Api`, `Minn\Rest\BatchController`, `Minn\Rest\Embed`, `Minn\Rest\MediaController`, `Minn\Rest\OEmbedController`, `Minn\Rest\RuntimeEnvelope`, `Minn\Rest\RuntimePrepare`, `Minn\Runtime\CommentEvents`, `Minn\Runtime\PostEvents`, `Minn\Runtime\PostSave`, `Minn\Runtime\TermEvents`, `Minn\Runtime\UserEvents`
 
 
 ### static `gate(Minn\Http\Request $request): ?Minn\Http\Response`

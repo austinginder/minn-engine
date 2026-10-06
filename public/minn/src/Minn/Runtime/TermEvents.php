@@ -6,8 +6,9 @@ namespace Minn\Runtime;
 
 use Closure;
 use Minn\Http\Request;
-use Minn\Rest\RuntimeRoutes;
 use Minn\RestError;
+use Minn\Rest\RegisteredFields;
+use Minn\Rest\RuntimeRoutes;
 
 /**
  * What the reference's REST terms controller tells plugins, for the
@@ -124,6 +125,8 @@ final readonly class TermEvents
         }
         $wpRequest = RuntimeRoutes::wpRequest($request);
         \do_action("rest_insert_{$taxonomy}", \get_term($termId, $taxonomy), $wpRequest, $verb === 'create');
+        RegisteredFields::update(\get_term($termId, $taxonomy), $taxonomy, $wpRequest);
+        RegisteredFields::context($wpRequest, $taxonomy);
         \do_action("rest_after_insert_{$taxonomy}", \get_term($termId, $taxonomy), $wpRequest, $verb === 'create');
     }
 }

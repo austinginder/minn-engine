@@ -7,8 +7,9 @@ namespace Minn\Runtime;
 use Minn\Content\CommentRecord;
 use Minn\Content\Comments;
 use Minn\Http\Request;
-use Minn\Rest\RuntimeRoutes;
 use Minn\RestError;
+use Minn\Rest\RegisteredFields;
+use Minn\Rest\RuntimeRoutes;
 
 /**
  * What the reference's REST comments controller tells plugins, for the
@@ -258,6 +259,8 @@ final readonly class CommentEvents
         }
         $wpRequest = RuntimeRoutes::wpRequest($request);
         \do_action('rest_insert_comment', \get_comment($id), $wpRequest, $before === null);
+        RegisteredFields::update(\get_comment($id), 'comment', $wpRequest);
+        RegisteredFields::context($wpRequest, 'comment');
         \do_action('rest_after_insert_comment', \get_comment($id), $wpRequest, $before === null);
     }
 

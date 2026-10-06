@@ -36,7 +36,7 @@ final readonly class RevisionsController
     public function revisions(Request $request, string $base, string $parent): Response
     {
         $this->requireParent((int) $parent, $base);
-        $rows = $this->revisions->revisionsOf((int) $parent);
+        $rows = $this->revisions->allOf((int) $parent);
         return Reply::list(array_map(fn (array $r) => $this->object($r), $rows), count($rows), 1, Fields::fromQuery($request->query));
     }
 
@@ -45,7 +45,7 @@ final readonly class RevisionsController
     public function revision(Request $request, string $base, string $parent, string $id): Response
     {
         $this->requireParent((int) $parent, $base);
-        foreach ($this->revisions->revisionsOf((int) $parent) as $row) {
+        foreach ($this->revisions->allOf((int) $parent) as $row) {
             if ((int) $row['ID'] === (int) $id) {
                 $context = Context::of($request)->isEdit() ? Context::Edit : Context::View;
                 return Reply::item($this->object($row, $context), Fields::fromQuery($request->query));

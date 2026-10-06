@@ -399,6 +399,19 @@ function _minn_excerpt_blocks(array $blocks, array $allowed, array $wrappers, ar
     return implode('', $output);
 }
 
+/**
+ * Registers the footnotes meta for every type shown in REST that supports
+ * the editor, custom fields and revisions (probe meta-registry).
+ */
+function register_block_core_footnotes_post_meta()
+{
+    foreach (get_post_types(['show_in_rest' => true]) as $type) {
+        if (post_type_supports($type, 'editor') && post_type_supports($type, 'custom-fields') && post_type_supports($type, 'revisions')) {
+            register_post_meta($type, 'footnotes', ['show_in_rest' => true, 'single' => true, 'type' => 'string', 'revisions_enabled' => true, 'auth_callback' => '__return_true']);
+        }
+    }
+}
+
 function excerpt_remove_footnotes($content)
 {
     return preg_replace('_<sup data-fn="[^"]+" class="fn"><a href="[^"]+" id="[^"]+">\d+</a></sup>_', '', (string) $content);

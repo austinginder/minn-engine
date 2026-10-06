@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace Minn\Runtime;
 
-use Minn\Rest\RegisteredType;
-
 use Minn\Content\PostRecord;
 use Minn\Content\PostWriter;
+use Minn\Http\Request;
 use Minn\Media\Uploads;
 use Minn\Media\Writer;
-use Minn\Http\Request;
+use Minn\Rest\RegisteredFields;
+use Minn\Rest\RegisteredType;
 use Minn\Rest\RuntimeRoutes;
 
 /**
@@ -194,9 +194,15 @@ final readonly class PostEvents
             return;
         }
         $post = \get_post($id);
-        if ($post !== null) {
-            \do_action($prefix . $post->post_type, $post, RuntimeRoutes::wpRequest($request), $before === null);
+        if ($post === null) {
+            return;
         }
+        $wpRequest = RuntimeRoutes::wpRequest($request);
+        if ($prefix === 'rest_after_insert_') {
+            RegisteredFields::update($post, $post->post_type, $wpRequest);
+            RegisteredFields::context($wpRequest, $post->post_type);
+        }
+        \do_action($prefix . $post->post_type, $post, $wpRequest, $before === null);
     }
 
     /** A record as the runtime's post object, for a state the database no longer holds. */

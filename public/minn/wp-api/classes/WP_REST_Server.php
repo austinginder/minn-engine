@@ -3,7 +3,6 @@
 use Minn\Rest\RuntimePrepare;
 use Minn\Http\Method;
 use Minn\Http\Request;
-use Minn\Rest\AdditionalFields;
 use Minn\Rest\Api;
 use Minn\Rest\BatchRequest;
 use Minn\Rest\Links;
@@ -304,22 +303,10 @@ class WP_REST_Server
         if ($response->status === 404 && is_array($data) && ($data['code'] ?? '') === 'rest_no_route') {
             return null;
         }
-        $data = self::attach_additional_fields($route, $data);
         // The route's own headers (Allow, X-WP-Total, Location...), not the transport's, which serving adds.
         $out = new WP_REST_Response($data, $response->status, array_diff_key($response->headers, Minn\Rest\Reply::HEADERS, ['Vary' => true, 'X-Robots-Tag' => true]));
         $out->set_matched_route($route);
         return $out;
-    }
-
-    /** register_rest_field() additions for the object type behind a core route. */
-    public static function attach_additional_fields(string $route, mixed $data): mixed
-    {
-        $fields = $GLOBALS['wp_rest_additional_fields'] ?? [];
-        $target = $fields === [] || !is_array($data) ? null : AdditionalFields::typeForRoute($route, Runtime::registry());
-        if ($target === null || empty($fields[$target[0]])) {
-            return $data;
-        }
-        return AdditionalFields::apply($fields[$target[0]], $target[0], $target[1], $data, static fn ($callback, array $item, string $name, string $type) => call_user_func($callback, $item, $name, null, $type));
     }
 
     public function response_to_data($response, $embed)

@@ -4416,3 +4416,35 @@ default controllers' shape (probe `rest-plugin-types`):
     in-process request are read as the text a query string carries.
 - **Not done.** A type registered under its own namespace (`zz/v1`) is
   not served there yet.
+
+Fields plugin code adds with register_rest_field are served as the
+reference serves them, over HTTP as well as in process (probe
+`rest-fields`). Before, they rode only on in-process answers, after
+`_links`, and were never written.
+- **Where they sit.** After the item's own fields, before its links.
+- **What a get callback is handed.** The item so far, without links and
+  cut to the fields asked for (id kept; in embed context, the embed
+  shape); the field's name; the request, carrying its context; and the
+  object type.
+- **When a field is left out.** When `_fields` does not name it, or its
+  schema's context does not include the request's.
+- **The context.** A read answers in the one asked for, or view. A write
+  or delete answers in edit, except a term's delete, in view.
+- **Writes.** A write runs the update callbacks for the fields its body
+  names, with the saved object, before `rest_after_insert_*`. An error one
+  returns is the write's answer. This covers posts, media, terms, users
+  and comments.
+- **Embedded items** are prepared answering their own request, in embed
+  context.
+
+A post's latest revision counts its autosave (probe
+`rest-latest-revision`). `predecessor-version` names the newest revision by
+date, then id, autosave or not, and the revisions route lists autosaves too.
+The engine had left autosaves out and ordered by id.
+
+The footnotes meta is registered as the reference registers it (probe
+`meta-registry`, its footnotes rows). `register_block_core_footnotes_post_meta`
+runs at load and again on init at 20, so a plugin's type gets it too. It
+covers every type shown in REST that supports the editor, custom fields and
+revisions, with `__return_true` for its auth. Templates, template parts,
+navigation and global styles no longer get it.

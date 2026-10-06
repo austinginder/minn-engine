@@ -113,15 +113,12 @@ add_filter('wp_robots', 'wp_robots_max_image_preview_large');
 // The term description and link description are always filtered (a comment author's name below, in its chain).
 add_filter('pre_term_description', 'wp_filter_kses');
 add_filter('pre_link_description', 'wp_filter_kses');
-// The footnotes meta the editor writes is registered for every post type that supports the editor.
-// (The built-in types are known at load; a plugin's type registered at init does not get it, unlike the reference.)
+// The footnotes meta the editor writes: for the built-in types now, and on
+// init for the types plugins register by then (probe meta-registry).
 if (Minn\Runtime\Runtime::booted()) {
-    foreach (get_post_types(['show_in_rest' => true]) as $type) {
-        if (post_type_supports($type, 'editor')) {
-            register_post_meta($type, 'footnotes', ['type' => 'string', 'single' => true, 'show_in_rest' => true, 'revisions_enabled' => true]);
-        }
-    }
+    register_block_core_footnotes_post_meta();
 }
+add_action('init', 'register_block_core_footnotes_post_meta', 20);
 
 // The kses tables as the globals plugin code reads directly.
 if (Minn\Runtime\Runtime::booted()) {
