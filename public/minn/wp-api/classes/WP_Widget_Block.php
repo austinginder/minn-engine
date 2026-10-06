@@ -1,5 +1,6 @@
 <?php
 
+use Minn\Widgets\WidgetForms;
 use Minn\Runtime\BlockWidget;
 
 /**
@@ -35,9 +36,10 @@ class WP_Widget_Block extends WP_Widget
         echo $args['after_widget'] ?? '';
     }
 
+    /** The settings form (Widgets\WidgetForms::block). */
     public function form($instance)
     {
-        return 'noform';
+        echo WidgetForms::block($this, (array) $instance);
     }
 
     public function update($new_instance, $old_instance)

@@ -1,4 +1,6 @@
 <?php
+
+use Minn\Widgets\WidgetForms;
 /** The pages widget: the site's page tree as a list, sorted as asked, with exclusions. */
 class WP_Widget_Pages extends WP_Widget
 {
@@ -33,5 +35,11 @@ class WP_Widget_Pages extends WP_Widget
         $instance['sortby'] = in_array($new_instance['sortby'] ?? '', ['post_title', 'menu_order', 'ID'], true) ? $new_instance['sortby'] : 'menu_order';
         $instance['exclude'] = sanitize_text_field((string) ($new_instance['exclude'] ?? ''));
         return $instance;
+    }
+
+    /** The settings form (Widgets\WidgetForms::pages). */
+    public function form($instance)
+    {
+        echo WidgetForms::pages($this, (array) $instance);
     }
 }

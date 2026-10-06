@@ -25,7 +25,8 @@ The engine's own classes under `public/minn/src/Minn/`, one page per namespace, 
 | [`Minn\Media`](media.md) | 12 | uploads, image sizes and attachment metadata |
 | [`Minn\Ops`](ops.md) | 6 |  |
 | [`Minn\Query`](query.md) | 4 | shared SQL fragments |
-| [`Minn\Rest`](rest.md) | 67 | the wp/v2 surface: shapes and controllers |
-| [`Minn\Runtime`](runtime.md) | 76 | the WordPress runtime plugins load against |
+| [`Minn\Rest`](rest.md) | 70 | the wp/v2 surface: shapes and controllers |
+| [`Minn\Runtime`](runtime.md) | 77 | the WordPress runtime plugins load against |
 | [`Minn\Support`](support.md) | 24 | escaping, serialized readers, small helpers |
 | [`Minn\Theme`](theme.md) | 25 | the block-theme reader, templates, global styles and the page renderer |
+| [`Minn\Widgets`](widgets.md) | 1 |  |

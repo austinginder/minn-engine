@@ -1,4 +1,6 @@
 <?php
+
+use Minn\Widgets\WidgetForms;
 /** The recent comments widget: the newest approved comments on published posts, and the head style it prints when active. */
 class WP_Widget_Recent_Comments extends WP_Widget
 {
@@ -50,5 +52,11 @@ class WP_Widget_Recent_Comments extends WP_Widget
 
     public function flush_widget_cache()
     {
+    }
+
+    /** The settings form (Widgets\WidgetForms::recentComments). */
+    public function form($instance)
+    {
+        echo WidgetForms::recentComments($this, (array) $instance);
     }
 }

@@ -1,4 +1,6 @@
 <?php
+
+use Minn\Widgets\WidgetForms;
 /**
  * The text widget: arbitrary text, run through the content pipeline for a
  * visual instance and through wpautop alone for a legacy one that asked
@@ -69,5 +71,11 @@ class WP_Widget_Text extends WP_Widget
             $instance['visual'] = !empty($new_instance['visual']);
         }
         return $instance;
+    }
+
+    /** The settings form (Widgets\WidgetForms::text). */
+    public function form($instance)
+    {
+        echo WidgetForms::text($this, (array) $instance);
     }
 }

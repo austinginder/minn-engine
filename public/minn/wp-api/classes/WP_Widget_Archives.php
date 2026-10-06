@@ -1,4 +1,6 @@
 <?php
+
+use Minn\Widgets\WidgetForms;
 /** The archives widget: the months with posts as a list, or a dropdown that navigates on change. */
 class WP_Widget_Archives extends WP_Widget
 {
@@ -49,5 +51,11 @@ class WP_Widget_Archives extends WP_Widget
         $instance['count'] = !empty($new_instance['count']) ? 1 : 0;
         $instance['dropdown'] = !empty($new_instance['dropdown']) ? 1 : 0;
         return $instance;
+    }
+
+    /** The settings form (Widgets\WidgetForms::archives). */
+    public function form($instance)
+    {
+        echo WidgetForms::archives($this, (array) $instance);
     }
 }

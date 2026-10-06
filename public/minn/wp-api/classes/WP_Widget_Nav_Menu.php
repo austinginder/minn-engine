@@ -1,4 +1,6 @@
 <?php
+
+use Minn\Widgets\WidgetForms;
 /**
  * The navigation menu widget: one of the site's menus, drawn by wp_nav_menu.
  * The file is named after the parent so it loads once WP_Widget exists.
@@ -35,5 +37,11 @@ class WP_Nav_Menu_Widget extends WP_Widget
             $instance['nav_menu'] = (int) $new_instance['nav_menu'];
         }
         return $instance;
+    }
+
+    /** The settings form (Widgets\WidgetForms::navMenu). */
+    public function form($instance)
+    {
+        echo WidgetForms::navMenu($this, (array) $instance);
     }
 }

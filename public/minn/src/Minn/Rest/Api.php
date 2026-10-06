@@ -90,6 +90,8 @@ final readonly class Api
             new BlockTypesController($s->url(), $caller),
             new BlockRendererController($s->schema(), $caller),
             new OEmbedController($caller),
+            new SidebarsController($s->url(), $caller),
+            new WidgetsController(new WidgetObject($s->url()), $caller),
             new TaxonomiesController($s->taxonomies(), $caller),
             new SearchController($s->db(), $s->types(), $s->permalinks(), $s->url(), $caller),
             new PluginsController($s->site(), $s->inventory(), $s->loader(), $s->url(), $caller, $s->packages(), $s->contentDir()),

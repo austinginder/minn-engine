@@ -1,4 +1,6 @@
 <?php
+
+use Minn\Widgets\WidgetForms;
 /** The tag cloud widget: a taxonomy's terms sized by use, titled after the taxonomy. */
 class WP_Widget_Tag_Cloud extends WP_Widget
 {
@@ -40,5 +42,11 @@ class WP_Widget_Tag_Cloud extends WP_Widget
     public function _get_current_taxonomy($instance)
     {
         return !empty($instance['taxonomy']) && taxonomy_exists($instance['taxonomy']) ? $instance['taxonomy'] : 'post_tag';
+    }
+
+    /** The settings form (Widgets\WidgetForms::tagCloud). */
+    public function form($instance)
+    {
+        echo WidgetForms::tagCloud($this, (array) $instance);
     }
 }

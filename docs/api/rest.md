@@ -6,7 +6,7 @@ the wp/v2 surface: shapes and controllers
 |---|---|---|---|
 | [`AbilitiesController`](#abilitiescontroller) | final readonly class | 142 | wp-abilities/v1: what this site can be asked to do, and the doing of it. |
 | [`AdditionalFields`](#additionalfields) | final class | 46 | Which object type a wp/v2 route serves, so fields registered for that type can ride on the engine's own responses. |
-| [`Api`](#api) | final readonly class | 197 | The REST API: wires the controllers for one request and dispatches a |
+| [`Api`](#api) | final readonly class | 199 | The REST API: wires the controllers for one request and dispatches a |
 | [`ApplicationPasswordsController`](#applicationpasswordscontroller) | final readonly class | 170 | wp/v2/users/{id}/application-passwords: list, create, rename, delete, |
 | [`ArgCheck`](#argcheck) | final readonly class | 83 | Judges a route's declared arguments against the request before the |
 | [`BatchRequest`](#batchrequest) | final class | 32 | The requests a batch payload names, normalised into descriptors the |
@@ -52,13 +52,14 @@ the wp/v2 surface: shapes and controllers
 | [`RouteTable`](#routetable) | final class | 38 | The registered endpoints in dispatch shape: one handler list per route, methods as a set, non-numeric keys lifted into the route's options. |
 | [`RuntimeEnvelope`](#runtimeenvelope) | final readonly class | 123 | The REST server's filters around one of Minn's own routes, as the |
 | [`RuntimePrepare`](#runtimeprepare) | final class | 54 | An item a REST response carries, through the filter the reference runs |
-| [`RuntimeRoutes`](#runtimeroutes) | final class | 337 | Routes plugin code registered with register_rest_route(), answered |
+| [`RuntimeRoutes`](#runtimeroutes) | final class | 362 | Routes plugin code registered with register_rest_route(), answered |
 | [`Schema`](#schema) | final readonly class | 473 | JSON-schema handling the way the REST API's argument validation does it: |
 | [`SchemaValues`](#schemavalues) | final class | 206 | The value side of JSON Schema, as the reference applies it: what counts |
 | [`SearchController`](#searchcontroller) | final readonly class | 121 | wp/v2 search over published content: id, title, url, type, and the |
 | [`Services`](#services) | final class | 387 | The objects one REST request shares, each made once, on first use, from |
 | [`Settings`](#settings) | final readonly class | 113 | The registered settings the Settings views read and write, mapped to |
 | [`SettingsController`](#settingscontroller) | final readonly class | 32 | wp/v2/settings: read and write, both behind manage_options; with plugins loaded, every registered setting (LiveSettings). |
+| [`SidebarsController`](#sidebarscontroller) | final readonly class | 192 | wp/v2/sidebars and wp/v2/widget-types as the reference answers them |
 | [`StatusesController`](#statusescontroller) | final readonly class | 97 | wp/v2/statuses as the reference answers it (probe rest-statuses): every |
 | [`Subjects`](#subjects) | final readonly class | 41 | Whether the record a route capture names exists, for the policy gate to |
 | [`Taxonomies`](#taxonomies) | final class | 48 | The taxonomy registry the wp/v2 surface describes: the core set seeded |
@@ -71,6 +72,8 @@ the wp/v2 surface: shapes and controllers
 | [`TypesController`](#typescontroller) | final readonly class | 24 | wp/v2 types. |
 | [`UserObject`](#userobject) | final readonly class | 106 | The wp/v2 user objects: the public view shape and the edit-context shape. |
 | [`UsersController`](#userscontroller) | final readonly class | 327 | wp/v2 users: me, list, single, and the create/update/delete-with-reassign the Users view drives. |
+| [`WidgetObject`](#widgetobject) | final readonly class | 55 | A widget as wp/v2/widgets shows it (probe rest-widgets): its id and base, |
+| [`WidgetsController`](#widgetscontroller) | final readonly class | 169 | wp/v2/widgets as the reference answers it (probe rest-widgets), for |
 
 ## AbilitiesController
 
@@ -216,7 +219,7 @@ runtime's server calls for a core route, so a route the engine
 declines cannot bounce between the two. $as is the caller's own
 request object, which the route's parameters are set on.
 
-Internals: `controllers()` (private, line 72), `engineResponse()` (private, line 217), `withAllow()` (private, line 227)
+Internals: `controllers()` (private, line 72), `engineResponse()` (private, line 219), `withAllow()` (private, line 229)
 
 
 ## ApplicationPasswordsController
@@ -478,7 +481,7 @@ Trashes or deletes a block.
 Who is making this REST call. Resolved once from the cookie and nonce;
 an anonymous or failed caller has id 0 and every capability check fails.
 
-Used by: `Minn\Admin\BundleController`, `Minn\Admin\EditorController`, `Minn\Admin\LanguageController`, `Minn\Admin\OverviewController`, `Minn\Admin\PackagesController`, `Minn\Admin\PreferencesController`, `Minn\Admin\RenderController`, `Minn\Admin\SessionsController`, `Minn\Admin\SiteController`, `Minn\Admin\StructureController`, `Minn\Admin\SystemController`, `Minn\Admin\ThemesController`, `Minn\Admin\UpdatesController`, `Minn\Admin\V1Controller`, `Minn\Rest\AbilitiesController`, `Minn\Rest\Api`, `Minn\Rest\ApplicationPasswordsController`, `Minn\Rest\BlockRendererController`, `Minn\Rest\BlockTypesController`, `Minn\Rest\BlocksController`, `Minn\Rest\CommentObject`, `Minn\Rest\CommentsController`, `Minn\Rest\GlobalStylesController`, `Minn\Rest\GlobalStylesObject`, `Minn\Rest\InstalledThemesController`, `Minn\Rest\MediaController`, `Minn\Rest\MediaObject`, `Minn\Rest\MenuItemObject`, `Minn\Rest\MenuObject`, `Minn\Rest\MenusController`, `Minn\Rest\OEmbedController`, `Minn\Rest\PluginsController`, `Minn\Rest\PolicyGate`, `Minn\Rest\PostObject`, `Minn\Rest\PostsController`, `Minn\Rest\PostsWriteController`, `Minn\Rest\RevisionsController`, `Minn\Rest\SearchController`, `Minn\Rest\Services`, `Minn\Rest\SettingsController`, `Minn\Rest\StatusesController`, `Minn\Rest\TaxonomiesController`, `Minn\Rest\TemplateObject`, `Minn\Rest\TemplatesController`, `Minn\Rest\TermObject`, `Minn\Rest\TermsController`, `Minn\Rest\UserObject`, `Minn\Rest\UsersController`
+Used by: `Minn\Admin\BundleController`, `Minn\Admin\EditorController`, `Minn\Admin\LanguageController`, `Minn\Admin\OverviewController`, `Minn\Admin\PackagesController`, `Minn\Admin\PreferencesController`, `Minn\Admin\RenderController`, `Minn\Admin\SessionsController`, `Minn\Admin\SiteController`, `Minn\Admin\StructureController`, `Minn\Admin\SystemController`, `Minn\Admin\ThemesController`, `Minn\Admin\UpdatesController`, `Minn\Admin\V1Controller`, `Minn\Rest\AbilitiesController`, `Minn\Rest\Api`, `Minn\Rest\ApplicationPasswordsController`, `Minn\Rest\BlockRendererController`, `Minn\Rest\BlockTypesController`, `Minn\Rest\BlocksController`, `Minn\Rest\CommentObject`, `Minn\Rest\CommentsController`, `Minn\Rest\GlobalStylesController`, `Minn\Rest\GlobalStylesObject`, `Minn\Rest\InstalledThemesController`, `Minn\Rest\MediaController`, `Minn\Rest\MediaObject`, `Minn\Rest\MenuItemObject`, `Minn\Rest\MenuObject`, `Minn\Rest\MenusController`, `Minn\Rest\OEmbedController`, `Minn\Rest\PluginsController`, `Minn\Rest\PolicyGate`, `Minn\Rest\PostObject`, `Minn\Rest\PostsController`, `Minn\Rest\PostsWriteController`, `Minn\Rest\RevisionsController`, `Minn\Rest\SearchController`, `Minn\Rest\Services`, `Minn\Rest\SettingsController`, `Minn\Rest\SidebarsController`, `Minn\Rest\StatusesController`, `Minn\Rest\TaxonomiesController`, `Minn\Rest\TemplateObject`, `Minn\Rest\TemplatesController`, `Minn\Rest\TermObject`, `Minn\Rest\TermsController`, `Minn\Rest\UserObject`, `Minn\Rest\UsersController`, `Minn\Rest\WidgetsController`
 
 ```php
 __construct(Minn\Http\Request $request, Minn\Auth\Authenticator $authenticator, Minn\Auth\Capabilities $capabilities)
@@ -651,7 +654,7 @@ a linked resource carries when it rides inside another response.
 
 Cases: `View` = `'view'`, `Edit` = `'edit'`, `Embed` = `'embed'`
 
-Used by: `Minn\Rest\BlocksController`, `Minn\Rest\CommentObject`, `Minn\Rest\CommentsController`, `Minn\Rest\Embed`, `Minn\Rest\GlobalStylesController`, `Minn\Rest\GlobalStylesObject`, `Minn\Rest\MediaController`, `Minn\Rest\MediaObject`, `Minn\Rest\MenuItemObject`, `Minn\Rest\MenusController`, `Minn\Rest\PolicyGate`, `Minn\Rest\PostsController`, `Minn\Rest\RevisionsController`, `Minn\Rest\TemplateObject`, `Minn\Rest\TemplatesController`, `Minn\Rest\TermsController`, `Minn\Rest\UsersController`
+Used by: `Minn\Rest\BlocksController`, `Minn\Rest\CommentObject`, `Minn\Rest\CommentsController`, `Minn\Rest\Embed`, `Minn\Rest\GlobalStylesController`, `Minn\Rest\GlobalStylesObject`, `Minn\Rest\MediaController`, `Minn\Rest\MediaObject`, `Minn\Rest\MenuItemObject`, `Minn\Rest\MenusController`, `Minn\Rest\PolicyGate`, `Minn\Rest\PostsController`, `Minn\Rest\RevisionsController`, `Minn\Rest\TemplateObject`, `Minn\Rest\TemplatesController`, `Minn\Rest\TermsController`, `Minn\Rest\UsersController`, `Minn\Rest\WidgetObject`, `Minn\Rest\WidgetsController`
 
 ### static `of(Minn\Http\Request $request): self`
 
@@ -794,7 +797,7 @@ the whole payload otherwise, which is why _fields on the associative
 types response strips every key and yields [] over HTTP, a reference
 quirk the engine reproduces by construction.
 
-Used by: `Minn\Admin\SessionsController`, `Minn\Rest\ApplicationPasswordsController`, `Minn\Rest\BlockTypesController`, `Minn\Rest\BlocksController`, `Minn\Rest\CommentsController`, `Minn\Rest\Embed`, `Minn\Rest\GlobalStylesController`, `Minn\Rest\IndexController`, `Minn\Rest\InstalledThemesController`, `Minn\Rest\MediaController`, `Minn\Rest\MenusController`, `Minn\Rest\PluginsController`, `Minn\Rest\PostsController`, `Minn\Rest\PostsWriteController`, `Minn\Rest\Reply`, `Minn\Rest\RevisionsController`, `Minn\Rest\SearchController`, `Minn\Rest\SettingsController`, `Minn\Rest\StatusesController`, `Minn\Rest\TaxonomiesController`, `Minn\Rest\TemplatesController`, `Minn\Rest\TermsController`, `Minn\Rest\TypesController`, `Minn\Rest\UsersController`
+Used by: `Minn\Admin\SessionsController`, `Minn\Rest\ApplicationPasswordsController`, `Minn\Rest\BlockTypesController`, `Minn\Rest\BlocksController`, `Minn\Rest\CommentsController`, `Minn\Rest\Embed`, `Minn\Rest\GlobalStylesController`, `Minn\Rest\IndexController`, `Minn\Rest\InstalledThemesController`, `Minn\Rest\MediaController`, `Minn\Rest\MenusController`, `Minn\Rest\PluginsController`, `Minn\Rest\PostsController`, `Minn\Rest\PostsWriteController`, `Minn\Rest\Reply`, `Minn\Rest\RevisionsController`, `Minn\Rest\SearchController`, `Minn\Rest\SettingsController`, `Minn\Rest\SidebarsController`, `Minn\Rest\StatusesController`, `Minn\Rest\TaxonomiesController`, `Minn\Rest\TemplatesController`, `Minn\Rest\TermsController`, `Minn\Rest\TypesController`, `Minn\Rest\UsersController`, `Minn\Rest\WidgetsController`
 
 - readonly `array $paths`
 - readonly `bool $deferred`
@@ -1762,7 +1765,7 @@ on lists.
 
 - const `HEADERS` = `array (   'Content-Type' => 'application/json; charset=UTF-8',   'X-Content-Type-Options' => 'nosniff',   'Access-Control-Expose-Headers' => 'X-WP-Total, X-WP-TotalPages, Link',   'Access-Control-Allow-Headers' => 'Authorization, X-WP-Nonce, Content-Disposition, Content-MD5, Content-Type', )`
 
-Used by: `Minn\Admin\BundleController`, `Minn\Admin\EditorController`, `Minn\Admin\LanguageController`, `Minn\Admin\OverviewController`, `Minn\Admin\PackagesController`, `Minn\Admin\PreferencesController`, `Minn\Admin\RenderController`, `Minn\Admin\SessionsController`, `Minn\Admin\SiteController`, `Minn\Admin\StructureController`, `Minn\Admin\SystemController`, `Minn\Admin\ThemesController`, `Minn\Admin\UpdatesController`, `Minn\Admin\V1Controller`, `Minn\Rest\AbilitiesController`, `Minn\Rest\Api`, `Minn\Rest\ApplicationPasswordsController`, `Minn\Rest\BlockRendererController`, `Minn\Rest\BlockTypesController`, `Minn\Rest\BlocksController`, `Minn\Rest\CommentsController`, `Minn\Rest\GlobalStylesController`, `Minn\Rest\IndexController`, `Minn\Rest\InstalledThemesController`, `Minn\Rest\MediaController`, `Minn\Rest\MenusController`, `Minn\Rest\OEmbedController`, `Minn\Rest\PluginsController`, `Minn\Rest\PostsController`, `Minn\Rest\PostsWriteController`, `Minn\Rest\RevisionsController`, `Minn\Rest\RuntimeRoutes`, `Minn\Rest\SearchController`, `Minn\Rest\SettingsController`, `Minn\Rest\StatusesController`, `Minn\Rest\TaxonomiesController`, `Minn\Rest\TemplatesController`, `Minn\Rest\TermsController`, `Minn\Rest\TypesController`, `Minn\Rest\UsersController`
+Used by: `Minn\Admin\BundleController`, `Minn\Admin\EditorController`, `Minn\Admin\LanguageController`, `Minn\Admin\OverviewController`, `Minn\Admin\PackagesController`, `Minn\Admin\PreferencesController`, `Minn\Admin\RenderController`, `Minn\Admin\SessionsController`, `Minn\Admin\SiteController`, `Minn\Admin\StructureController`, `Minn\Admin\SystemController`, `Minn\Admin\ThemesController`, `Minn\Admin\UpdatesController`, `Minn\Admin\V1Controller`, `Minn\Rest\AbilitiesController`, `Minn\Rest\Api`, `Minn\Rest\ApplicationPasswordsController`, `Minn\Rest\BlockRendererController`, `Minn\Rest\BlockTypesController`, `Minn\Rest\BlocksController`, `Minn\Rest\CommentsController`, `Minn\Rest\GlobalStylesController`, `Minn\Rest\IndexController`, `Minn\Rest\InstalledThemesController`, `Minn\Rest\MediaController`, `Minn\Rest\MenusController`, `Minn\Rest\OEmbedController`, `Minn\Rest\PluginsController`, `Minn\Rest\PostsController`, `Minn\Rest\PostsWriteController`, `Minn\Rest\RevisionsController`, `Minn\Rest\RuntimeRoutes`, `Minn\Rest\SearchController`, `Minn\Rest\SettingsController`, `Minn\Rest\SidebarsController`, `Minn\Rest\StatusesController`, `Minn\Rest\TaxonomiesController`, `Minn\Rest\TemplatesController`, `Minn\Rest\TermsController`, `Minn\Rest\TypesController`, `Minn\Rest\UsersController`, `Minn\Rest\WidgetsController`
 
 ### static `answer(Minn\Http\Request $request, mixed $data, int $status = 200): Minn\Http\Response`
 
@@ -1792,7 +1795,7 @@ REST URLs in the form the reference emits for the site's permalink mode:
 {home}/index.php?rest_route=/wp/v2/... with the route value URL-encoded
 when query args ride along.
 
-Used by: `Minn\Engine`, `Minn\Rest\AbilitiesController`, `Minn\Rest\ApplicationPasswordsController`, `Minn\Rest\BlockTypesController`, `Minn\Rest\CommentObject`, `Minn\Rest\GlobalStylesObject`, `Minn\Rest\IndexController`, `Minn\Rest\InstalledThemesController`, `Minn\Rest\MediaObject`, `Minn\Rest\MenuItemObject`, `Minn\Rest\MenuObject`, `Minn\Rest\MenusController`, `Minn\Rest\PluginsController`, `Minn\Rest\PostObject`, `Minn\Rest\PostsWriteController`, `Minn\Rest\RevisionsController`, `Minn\Rest\SearchController`, `Minn\Rest\Services`, `Minn\Rest\StatusesController`, `Minn\Rest\Taxonomies`, `Minn\Rest\TemplateObject`, `Minn\Rest\TermObject`, `Minn\Rest\Types`, `Minn\Rest\UserObject`, `Minn\Rest\UsersController`
+Used by: `Minn\Engine`, `Minn\Rest\AbilitiesController`, `Minn\Rest\ApplicationPasswordsController`, `Minn\Rest\BlockTypesController`, `Minn\Rest\CommentObject`, `Minn\Rest\GlobalStylesObject`, `Minn\Rest\IndexController`, `Minn\Rest\InstalledThemesController`, `Minn\Rest\MediaObject`, `Minn\Rest\MenuItemObject`, `Minn\Rest\MenuObject`, `Minn\Rest\MenusController`, `Minn\Rest\PluginsController`, `Minn\Rest\PostObject`, `Minn\Rest\PostsWriteController`, `Minn\Rest\RevisionsController`, `Minn\Rest\SearchController`, `Minn\Rest\Services`, `Minn\Rest\SidebarsController`, `Minn\Rest\StatusesController`, `Minn\Rest\Taxonomies`, `Minn\Rest\TemplateObject`, `Minn\Rest\TermObject`, `Minn\Rest\Types`, `Minn\Rest\UserObject`, `Minn\Rest\UsersController`, `Minn\Rest\WidgetObject`
 
 ```php
 __construct(Minn\Front\Permalinks $permalinks)
@@ -1976,7 +1979,7 @@ data, handed with the object it describes and the request; what the
 filter leaves is the item. With nothing hooked, or a response handed back
 untouched, the item is Minn's own, byte for byte.
 
-Used by: `Minn\Rest\Api`, `Minn\Rest\BlockTypesController`, `Minn\Rest\CommentObject`, `Minn\Rest\InstalledThemesController`, `Minn\Rest\MediaObject`, `Minn\Rest\MenusController`, `Minn\Rest\PostObject`, `Minn\Rest\StatusesController`, `Minn\Rest\TermObject`, `Minn\Rest\UserObject`
+Used by: `Minn\Rest\Api`, `Minn\Rest\BlockTypesController`, `Minn\Rest\CommentObject`, `Minn\Rest\InstalledThemesController`, `Minn\Rest\MediaObject`, `Minn\Rest\MenusController`, `Minn\Rest\PostObject`, `Minn\Rest\SidebarsController`, `Minn\Rest\StatusesController`, `Minn\Rest\TermObject`, `Minn\Rest\UserObject`, `Minn\Rest\WidgetObject`
 
 ### static `answering(WP_REST_Request $request): void`
 
@@ -2077,7 +2080,7 @@ nothing hooked, the answer goes out as it is.
 
 A callback's return as a response object, an error converted.
 
-Internals: `oembedXml()` (private, line 251), `look()` (private, line 265), `remember()` (private, line 270), `decode()` (private, line 277), `expand()` (private, line 297), `newWpRequest()` (private, line 323), `toResponse()` (private, line 346)
+Internals: `allow()` (private, line 77), `oembedXml()` (private, line 276), `look()` (private, line 290), `remember()` (private, line 295), `decode()` (private, line 302), `expand()` (private, line 322), `newWpRequest()` (private, line 348), `toResponse()` (private, line 371)
 
 
 ## Schema
@@ -2507,6 +2510,79 @@ Route: `PUT /wp/v2/settings (signed in)`
 Route: `PATCH /wp/v2/settings (signed in)`
 
 The site settings: read, or write from the body.
+
+
+## SidebarsController
+
+`final readonly class Minn\Rest\SidebarsController` · `public/minn/src/Minn/Rest/SidebarsController.php`
+
+wp/v2/sidebars and wp/v2/widget-types as the reference answers them
+(probe rest-widgets), for anyone who can edit theme options. A sidebar
+is a registered one or the inactive widgets, with its wrapping markup,
+the registered widgets it holds, and its status: active when registered
+under a classic theme (a block theme renders none). Saving a sidebar's
+widgets takes them from any other sidebar and sends the ones it drops to
+the inactive widgets. The widget types are the registered widgets by id
+base, in id order.
+
+- const `BODY` = `array (   'widgets' =>    array (     'description' => 'Nested widgets.',     'type' => 'array',     'items' =>      array (       'type' =>        array (         0 => 'object',         1 => 'string',       ),     ),     'required' => false,   ), )`
+
+Used by: `Minn\Rest\Api`, `Minn\Rest\WidgetsController`
+
+```php
+__construct(Minn\Rest\RestUrl $url, Minn\Rest\Caller $caller)
+```
+
+
+### `sidebars(Minn\Http\Request $request): Minn\Http\Response`
+
+Route: `GET /wp/v2/sidebars (cap edit_theme_options)`
+
+Every sidebar: those the sidebars option lists, then any other registered one.
+
+### `sidebar(Minn\Http\Request $request, string $id): Minn\Http\Response`
+
+Route: `GET /wp/v2/sidebars/{id:[\w-]+} (cap edit_theme_options)`
+
+One sidebar.
+
+### `save(Minn\Http\Request $request, string $id): Minn\Http\Response`
+
+Route: `POST /wp/v2/sidebars/{id:[\w-]+} (cap edit_theme_options)`
+
+Route: `PUT /wp/v2/sidebars/{id:[\w-]+} (cap edit_theme_options)`
+
+Route: `PATCH /wp/v2/sidebars/{id:[\w-]+} (cap edit_theme_options)`
+
+Saves a sidebar's widgets, in the order given.
+
+### `types(Minn\Http\Request $request): Minn\Http\Response`
+
+Route: `GET /wp/v2/widget-types (cap edit_theme_options)`
+
+The registered widget types, by id base.
+
+### `widgetType(Minn\Http\Request $request, string $id): Minn\Http\Response`
+
+Route: `GET /wp/v2/widget-types/{id:[a-zA-Z0-9_-]+} (cap edit_theme_options)`
+
+One widget type.
+
+### `encode(Minn\Http\Request $request, string $id): Minn\Http\Response`
+
+Route: `POST /wp/v2/widget-types/{id:[a-zA-Z0-9_-]+}/encode (cap edit_theme_options)`
+
+A widget type's form and preview for settings that are not saved: the
+settings sent (encoded with their hash) updated from the form's
+fields, the form for them (number -1 unless one is sent), the widget
+as the_widget shows it, and the settings encoded again.
+
+### static `ready(): void`
+
+The widgets are registered on init; a runtime that stopped short of it
+registers them now. Without the runtime there are no widgets to serve.
+
+Internals: `item()` (private, line 160), `type()` (private, line 186), `widgetTypes()` (private, line 203), `requireSidebar()` (private, line 213)
 
 
 ## StatusesController
@@ -3006,4 +3082,97 @@ Route: `DELETE /wp/v2/users/{id:[\d]+} (cap delete_users; user {id} must exist)`
 reassign is REQUIRED (checked before the user lookup), and so is force.
 
 Internals: `hasPublishedContent()` (private, line 153), `validRole()` (private, line 162), `validEmail()` (private, line 170), `loginRefusal()` (private, line 344)
+
+
+## WidgetObject
+
+`final readonly class Minn\Rest\WidgetObject` · `public/minn/src/Minn/Rest/WidgetObject.php`
+
+A widget as wp/v2/widgets shows it (probe rest-widgets): its id and base,
+its sidebar, its markup as that sidebar wraps it (nothing among the
+inactive widgets) and, in the edit context, its settings form and its
+settings: serialized and base64 encoded, signed with wp_hash, and raw
+when the widget shows its instance in REST. Links to itself, its type
+and its sidebar; through rest_prepare_widget.
+
+Used by: `Minn\Rest\Api`, `Minn\Rest\WidgetsController`
+
+```php
+__construct(Minn\Rest\RestUrl $url)
+```
+
+
+### `view(string $widgetId, string $sidebarId, Minn\Rest\Context $context): array`
+
+A widget in a sidebar, its form and settings in the edit context. @return array<string, mixed>
+
+- `@return array<string, mixed>`
+
+### static `instance(WP_Widget $object, int $number): array`
+
+A widget's settings, encoded and signed, and raw when it shows them. @return array<string, mixed>
+
+- `@return array<string, mixed>`
+
+Internals: `form()` (private, line 63)
+
+
+## WidgetsController
+
+`final readonly class Minn\Rest\WidgetsController` · `public/minn/src/Minn/Rest/WidgetsController.php`
+
+wp/v2/widgets as the reference answers it (probe rest-widgets), for
+anyone who can edit theme options: the registered widgets of every
+sidebar (or one), a widget created under the next free number for its
+type, its settings saved through the widget's own update (raw when the
+widget shows its instance in REST, encoded with a matching hash, or from
+its form's fields) and registered at once, a widget moved between
+sidebars, and a widget deleted, or without force sent to the inactive
+widgets.
+
+- const `LIST` = `array (   'sidebar' =>    array (     'description' => 'The sidebar to return widgets for.',     'type' => 'string',     'required' => false,   ), )`
+- const `BODY` = `array (   'id_base' =>    array (     'description' => 'The type of the widget. Corresponds to ID in widget-types endpoint.',     'type' => 'string',     'required' => false,   ),   'sidebar' =>    array (     'description' => 'The sidebar the widget belongs to.',     'type' => 'string',     'required' => false,   ),   'instance' =>    array (     'description' => 'Instance settings of the widget, if supported.',     'type' => 'object',     'required' => false,   ),   'form_data' =>    array (     'description' => 'URL-encoded form data from the widget admin form. Used to update a widget that does not support instance. Write only.',     'type' => 'string',     'required' => false,   ), )`
+
+Used by: `Minn\Rest\Api`
+
+```php
+__construct(Minn\Rest\WidgetObject $object, Minn\Rest\Caller $caller)
+```
+
+
+### `list(Minn\Http\Request $request): Minn\Http\Response`
+
+Route: `GET /wp/v2/widgets (cap edit_theme_options)`
+
+The registered widgets, sidebar by sidebar.
+
+### `single(Minn\Http\Request $request, string $id): Minn\Http\Response`
+
+Route: `GET /wp/v2/widgets/{id:[\w\-]+} (cap edit_theme_options)`
+
+One widget.
+
+### `create(Minn\Http\Request $request): Minn\Http\Response`
+
+Route: `POST /wp/v2/widgets (cap edit_theme_options)`
+
+Creates a widget in a sidebar (the inactive widgets unless one is named).
+
+### `update(Minn\Http\Request $request, string $id): Minn\Http\Response`
+
+Route: `POST /wp/v2/widgets/{id:[\w\-]+} (cap edit_theme_options)`
+
+Route: `PUT /wp/v2/widgets/{id:[\w\-]+} (cap edit_theme_options)`
+
+Route: `PATCH /wp/v2/widgets/{id:[\w\-]+} (cap edit_theme_options)`
+
+Saves a widget's settings and moves it, as the body asks.
+
+### `delete(Minn\Http\Request $request, string $id): Minn\Http\Response`
+
+Route: `DELETE /wp/v2/widgets/{id:[\w\-]+} (cap edit_theme_options)`
+
+Deletes a widget with force; without, sends it to the inactive widgets.
+
+Internals: `saveInstance()` (private, line 147), `newInstance()` (private, line 164), `sidebarOf()` (private, line 188)
 

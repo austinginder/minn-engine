@@ -60,11 +60,36 @@ final class RuntimeRoutes
         }
         self::matched($request, (string) $matched[0], (array) $matched[1]);
         $result = self::ensure($server->dispatch($wpRequest));
+        self::allow($result, (string) $matched[0], $wpRequest);
         // A plugin's answer keeps only its _fields, as the engine's own do (serve() then skips the filter).
         if (\has_filter('rest_post_dispatch', 'rest_filter_response_fields') === self::DISPATCH_DONE['rest_filter_response_fields']) {
             $result = \rest_filter_response_fields($result, $server, $wpRequest);
         }
         return self::toResponse(self::ensure($result));
+    }
+
+    /**
+     * The Allow header a plugin's route answers with, as the reference's
+     * rest_send_allow_header sets it: every method of the route whose
+     * handler's permission callback lets this request through (a handler
+     * with none counts). Left alone when the handler set one itself.
+     */
+    private static function allow(\WP_REST_Response $result, string $route, \WP_REST_Request $wpRequest): void
+    {
+        if (isset($result->get_headers()['Allow'])) {
+            return;
+        }
+        $allowed = [];
+        foreach ((array) (\rest_get_server()->get_routes()[$route] ?? []) as $handler) {
+            $permitted = empty($handler['permission_callback']) || call_user_func($handler['permission_callback'], $wpRequest) === true;
+            foreach (array_keys((array) ($handler['methods'] ?? [])) as $method) {
+                $allowed[strtoupper((string) $method)] = $permitted;
+            }
+        }
+        $allowed = array_keys(array_filter($allowed));
+        if ($allowed !== []) {
+            $result->header('Allow', implode(', ', $allowed));
+        }
     }
 
     /** The engine's index plus the namespaces and routes the runtime holds. */

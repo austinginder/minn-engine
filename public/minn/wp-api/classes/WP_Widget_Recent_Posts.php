@@ -1,4 +1,6 @@
 <?php
+
+use Minn\Widgets\WidgetForms;
 /** The recent posts widget: the newest published posts, with their dates when asked. */
 class WP_Widget_Recent_Posts extends WP_Widget
 {
@@ -41,5 +43,11 @@ class WP_Widget_Recent_Posts extends WP_Widget
         $instance['number'] = (int) ($new_instance['number'] ?? 5);
         $instance['show_date'] = isset($new_instance['show_date']) ? (bool) $new_instance['show_date'] : false;
         return $instance;
+    }
+
+    /** The settings form (Widgets\WidgetForms::recentPosts). */
+    public function form($instance)
+    {
+        echo WidgetForms::recentPosts($this, (array) $instance);
     }
 }

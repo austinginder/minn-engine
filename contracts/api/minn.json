@@ -53925,12 +53925,14 @@
                 "Minn\\Rest\\RevisionsController",
                 "Minn\\Rest\\SearchController",
                 "Minn\\Rest\\SettingsController",
+                "Minn\\Rest\\SidebarsController",
                 "Minn\\Rest\\StatusesController",
                 "Minn\\Rest\\TaxonomiesController",
                 "Minn\\Rest\\TemplatesController",
                 "Minn\\Rest\\TermsController",
                 "Minn\\Rest\\TypesController",
                 "Minn\\Rest\\UsersController",
+                "Minn\\Rest\\WidgetsController",
                 "Minn\\Runtime\\AjaxController"
             ],
             "constructor": null,
@@ -53996,11 +53998,13 @@
                 "Minn\\Rest\\MediaController",
                 "Minn\\Rest\\PostsController",
                 "Minn\\Rest\\SearchController",
+                "Minn\\Rest\\SidebarsController",
                 "Minn\\Rest\\StatusesController",
                 "Minn\\Rest\\TaxonomiesController",
                 "Minn\\Rest\\TermsController",
                 "Minn\\Rest\\TypesController",
-                "Minn\\Rest\\UsersController"
+                "Minn\\Rest\\UsersController",
+                "Minn\\Rest\\WidgetsController"
             ],
             "constructor": null,
             "cases": [],
@@ -56365,12 +56369,14 @@
                 "Minn\\Rest\\RuntimeEnvelope",
                 "Minn\\Rest\\SearchController",
                 "Minn\\Rest\\SettingsController",
+                "Minn\\Rest\\SidebarsController",
                 "Minn\\Rest\\StatusesController",
                 "Minn\\Rest\\TaxonomiesController",
                 "Minn\\Rest\\TemplatesController",
                 "Minn\\Rest\\TermsController",
                 "Minn\\Rest\\TypesController",
                 "Minn\\Rest\\UsersController",
+                "Minn\\Rest\\WidgetsController",
                 "Minn\\Runtime\\AjaxController"
             ],
             "constructor": null,
@@ -56846,12 +56852,14 @@
                 "Minn\\Rest\\RevisionsController",
                 "Minn\\Rest\\SearchController",
                 "Minn\\Rest\\SettingsController",
+                "Minn\\Rest\\SidebarsController",
                 "Minn\\Rest\\StatusesController",
                 "Minn\\Rest\\TaxonomiesController",
                 "Minn\\Rest\\TemplatesController",
                 "Minn\\Rest\\TermsController",
                 "Minn\\Rest\\TypesController",
                 "Minn\\Rest\\UsersController",
+                "Minn\\Rest\\WidgetsController",
                 "Minn\\Runtime\\AjaxController"
             ],
             "constructor": {
@@ -57582,12 +57590,14 @@
                 "Minn\\Rest\\SearchController",
                 "Minn\\Rest\\Services",
                 "Minn\\Rest\\SettingsController",
+                "Minn\\Rest\\SidebarsController",
                 "Minn\\Rest\\StatusesController",
                 "Minn\\Rest\\TaxonomiesController",
                 "Minn\\Rest\\TemplatesController",
                 "Minn\\Rest\\TermsController",
                 "Minn\\Rest\\TypesController",
                 "Minn\\Rest\\UsersController",
+                "Minn\\Rest\\WidgetsController",
                 "Minn\\Runtime\\AjaxController",
                 "Minn\\Runtime\\CommentEvents",
                 "Minn\\Runtime\\PostEvents",
@@ -58170,12 +58180,14 @@
                 "Minn\\Rest\\RuntimeRoutes",
                 "Minn\\Rest\\SearchController",
                 "Minn\\Rest\\SettingsController",
+                "Minn\\Rest\\SidebarsController",
                 "Minn\\Rest\\StatusesController",
                 "Minn\\Rest\\TaxonomiesController",
                 "Minn\\Rest\\TemplatesController",
                 "Minn\\Rest\\TermsController",
                 "Minn\\Rest\\TypesController",
                 "Minn\\Rest\\UsersController",
+                "Minn\\Rest\\WidgetsController",
                 "Minn\\Runtime\\AjaxController"
             ],
             "constructor": {
@@ -58565,12 +58577,14 @@
                 "Minn\\Rest\\RevisionsController",
                 "Minn\\Rest\\SearchController",
                 "Minn\\Rest\\SettingsController",
+                "Minn\\Rest\\SidebarsController",
                 "Minn\\Rest\\StatusesController",
                 "Minn\\Rest\\TaxonomiesController",
                 "Minn\\Rest\\TemplatesController",
                 "Minn\\Rest\\TermsController",
                 "Minn\\Rest\\TypesController",
                 "Minn\\Rest\\UsersController",
+                "Minn\\Rest\\WidgetsController",
                 "Minn\\Runtime\\AjaxController"
             ],
             "constructor": {
@@ -74468,12 +74482,14 @@
                 "Minn\\Rest\\RuntimeRoutes",
                 "Minn\\Rest\\SearchController",
                 "Minn\\Rest\\SettingsController",
+                "Minn\\Rest\\SidebarsController",
                 "Minn\\Rest\\StatusesController",
                 "Minn\\Rest\\TaxonomiesController",
                 "Minn\\Rest\\TemplatesController",
                 "Minn\\Rest\\TermsController",
                 "Minn\\Rest\\TypesController",
                 "Minn\\Rest\\UsersController",
+                "Minn\\Rest\\WidgetsController",
                 "Minn\\Runtime\\CommentEvents",
                 "Minn\\Runtime\\PostSave",
                 "Minn\\Runtime\\TermEvents",
@@ -75062,7 +75078,7 @@
             "namespace": "Minn\\Rest",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Rest/Api.php",
-            "lines": 197,
+            "lines": 199,
             "doc": "The REST API: wires the controllers for one request and dispatches a\nroute. Errors thrown anywhere underneath become the reference's error\npayload under the reference's headers.",
             "implements": [],
             "extends": null,
@@ -75125,6 +75141,7 @@
                 "Minn\\Rest\\Services",
                 "Minn\\Rest\\Settings",
                 "Minn\\Rest\\SettingsController",
+                "Minn\\Rest\\SidebarsController",
                 "Minn\\Rest\\StatusesController",
                 "Minn\\Rest\\TaxonomiesController",
                 "Minn\\Rest\\TemplateObject",
@@ -75135,6 +75152,8 @@
                 "Minn\\Rest\\TypesController",
                 "Minn\\Rest\\UserObject",
                 "Minn\\Rest\\UsersController",
+                "Minn\\Rest\\WidgetObject",
+                "Minn\\Rest\\WidgetsController",
                 "Minn\\Runtime\\Runtime"
             ],
             "usedBy": [
@@ -75269,8 +75288,8 @@
                     "doc": "Who is making this request.",
                     "shapes": [],
                     "params": [],
-                    "line": 122,
-                    "end": 125
+                    "line": 124,
+                    "end": 127
                 },
                 {
                     "routes": [],
@@ -75281,8 +75300,8 @@
                     "doc": "The wp/v2 post shape.",
                     "shapes": [],
                     "params": [],
-                    "line": 128,
-                    "end": 131
+                    "line": 130,
+                    "end": 133
                 },
                 {
                     "routes": [],
@@ -75293,8 +75312,8 @@
                     "doc": "The wp/v2 term shape.",
                     "shapes": [],
                     "params": [],
-                    "line": 134,
-                    "end": 137
+                    "line": 136,
+                    "end": 139
                 },
                 {
                     "routes": [],
@@ -75305,8 +75324,8 @@
                     "doc": "The wp/v2 user shape.",
                     "shapes": [],
                     "params": [],
-                    "line": 140,
-                    "end": 143
+                    "line": 142,
+                    "end": 145
                 },
                 {
                     "routes": [],
@@ -75317,8 +75336,8 @@
                     "doc": "The post types the surface knows.",
                     "shapes": [],
                     "params": [],
-                    "line": 146,
-                    "end": 149
+                    "line": 148,
+                    "end": 151
                 },
                 {
                     "routes": [],
@@ -75344,8 +75363,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 156,
-                    "end": 163
+                    "line": 158,
+                    "end": 165
                 },
                 {
                     "routes": [],
@@ -75364,8 +75383,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 166,
-                    "end": 195
+                    "line": 168,
+                    "end": 197
                 },
                 {
                     "routes": [],
@@ -75391,8 +75410,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 204,
-                    "end": 215
+                    "line": 206,
+                    "end": 217
                 },
                 {
                     "routes": [],
@@ -75421,7 +75440,7 @@
                         }
                     ],
                     "line": 72,
-                    "end": 119
+                    "end": 121
                 },
                 {
                     "routes": [],
@@ -75440,8 +75459,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 217,
-                    "end": 221
+                    "line": 219,
+                    "end": 223
                 },
                 {
                     "routes": [],
@@ -75467,8 +75486,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 227,
-                    "end": 231
+                    "line": 229,
+                    "end": 233
                 }
             ]
         },
@@ -76983,6 +77002,7 @@
                 "Minn\\Rest\\SearchController",
                 "Minn\\Rest\\Services",
                 "Minn\\Rest\\SettingsController",
+                "Minn\\Rest\\SidebarsController",
                 "Minn\\Rest\\StatusesController",
                 "Minn\\Rest\\TaxonomiesController",
                 "Minn\\Rest\\TemplateObject",
@@ -76990,7 +77010,8 @@
                 "Minn\\Rest\\TermObject",
                 "Minn\\Rest\\TermsController",
                 "Minn\\Rest\\UserObject",
-                "Minn\\Rest\\UsersController"
+                "Minn\\Rest\\UsersController",
+                "Minn\\Rest\\WidgetsController"
             ],
             "constructor": {
                 "signature": "__construct(Minn\\Http\\Request $request, Minn\\Auth\\Authenticator $authenticator, Minn\\Auth\\Capabilities $capabilities)",
@@ -78008,7 +78029,9 @@
                 "Minn\\Rest\\TemplateObject",
                 "Minn\\Rest\\TemplatesController",
                 "Minn\\Rest\\TermsController",
-                "Minn\\Rest\\UsersController"
+                "Minn\\Rest\\UsersController",
+                "Minn\\Rest\\WidgetObject",
+                "Minn\\Rest\\WidgetsController"
             ],
             "constructor": null,
             "cases": [
@@ -78771,12 +78794,14 @@
                 "Minn\\Rest\\RevisionsController",
                 "Minn\\Rest\\SearchController",
                 "Minn\\Rest\\SettingsController",
+                "Minn\\Rest\\SidebarsController",
                 "Minn\\Rest\\StatusesController",
                 "Minn\\Rest\\TaxonomiesController",
                 "Minn\\Rest\\TemplatesController",
                 "Minn\\Rest\\TermsController",
                 "Minn\\Rest\\TypesController",
-                "Minn\\Rest\\UsersController"
+                "Minn\\Rest\\UsersController",
+                "Minn\\Rest\\WidgetsController"
             ],
             "constructor": {
                 "signature": "__construct(array $paths, bool $deferred = false)",
@@ -85487,12 +85512,14 @@
                 "Minn\\Rest\\RuntimeRoutes",
                 "Minn\\Rest\\SearchController",
                 "Minn\\Rest\\SettingsController",
+                "Minn\\Rest\\SidebarsController",
                 "Minn\\Rest\\StatusesController",
                 "Minn\\Rest\\TaxonomiesController",
                 "Minn\\Rest\\TemplatesController",
                 "Minn\\Rest\\TermsController",
                 "Minn\\Rest\\TypesController",
-                "Minn\\Rest\\UsersController"
+                "Minn\\Rest\\UsersController",
+                "Minn\\Rest\\WidgetsController"
             ],
             "constructor": null,
             "cases": [],
@@ -85671,13 +85698,15 @@
                 "Minn\\Rest\\RevisionsController",
                 "Minn\\Rest\\SearchController",
                 "Minn\\Rest\\Services",
+                "Minn\\Rest\\SidebarsController",
                 "Minn\\Rest\\StatusesController",
                 "Minn\\Rest\\Taxonomies",
                 "Minn\\Rest\\TemplateObject",
                 "Minn\\Rest\\TermObject",
                 "Minn\\Rest\\Types",
                 "Minn\\Rest\\UserObject",
-                "Minn\\Rest\\UsersController"
+                "Minn\\Rest\\UsersController",
+                "Minn\\Rest\\WidgetObject"
             ],
             "constructor": {
                 "signature": "__construct(Minn\\Front\\Permalinks $permalinks)",
@@ -86757,9 +86786,11 @@
                 "Minn\\Rest\\MediaObject",
                 "Minn\\Rest\\MenusController",
                 "Minn\\Rest\\PostObject",
+                "Minn\\Rest\\SidebarsController",
                 "Minn\\Rest\\StatusesController",
                 "Minn\\Rest\\TermObject",
-                "Minn\\Rest\\UserObject"
+                "Minn\\Rest\\UserObject",
+                "Minn\\Rest\\WidgetObject"
             ],
             "constructor": null,
             "cases": [],
@@ -86861,7 +86892,7 @@
             "namespace": "Minn\\Rest",
             "kind": "final class",
             "file": "public/minn/src/Minn/Rest/RuntimeRoutes.php",
-            "lines": 337,
+            "lines": 362,
             "doc": "Routes plugin code registered with register_rest_route(), answered\nthrough the runtime's server after the engine's own routes have had\ntheir turn; the runtime's say before the engine answers at all (an\nauthentication refusal, a pre-dispatch answer, a removed endpoint);\nand the runtime's namespaces folded into the index.",
             "implements": [],
             "extends": null,
@@ -86968,7 +86999,7 @@
                         }
                     ],
                     "line": 53,
-                    "end": 68
+                    "end": 69
                 },
                 {
                     "routes": [],
@@ -86987,8 +87018,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 71,
-                    "end": 98
+                    "line": 96,
+                    "end": 123
                 },
                 {
                     "routes": [],
@@ -87014,8 +87045,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 110,
-                    "end": 114
+                    "line": 135,
+                    "end": 139
                 },
                 {
                     "routes": [],
@@ -87034,8 +87065,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 117,
-                    "end": 121
+                    "line": 142,
+                    "end": 146
                 },
                 {
                     "routes": [],
@@ -87070,8 +87101,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 128,
-                    "end": 132
+                    "line": 153,
+                    "end": 157
                 },
                 {
                     "routes": [],
@@ -87090,8 +87121,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 135,
-                    "end": 141
+                    "line": 160,
+                    "end": 166
                 },
                 {
                     "routes": [],
@@ -87110,8 +87141,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 148,
-                    "end": 164
+                    "line": 173,
+                    "end": 189
                 },
                 {
                     "routes": [],
@@ -87132,8 +87163,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 172,
-                    "end": 179
+                    "line": 197,
+                    "end": 204
                 },
                 {
                     "routes": [],
@@ -87152,8 +87183,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 182,
-                    "end": 192
+                    "line": 207,
+                    "end": 217
                 },
                 {
                     "routes": [],
@@ -87179,8 +87210,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 201,
-                    "end": 244
+                    "line": 226,
+                    "end": 269
                 },
                 {
                     "routes": [],
@@ -87199,8 +87230,42 @@
                             "doc": ""
                         }
                     ],
-                    "line": 339,
-                    "end": 343
+                    "line": 364,
+                    "end": 368
+                },
+                {
+                    "routes": [],
+                    "name": "allow",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "allow(WP_REST_Response $result, string $route, WP_REST_Request $wpRequest): void",
+                    "doc": "The Allow header a plugin's route answers with, as the reference's\nrest_send_allow_header sets it: every method of the route whose\nhandler's permission callback lets this request through (a handler\nwith none counts). Left alone when the handler set one itself.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "result",
+                            "type": "WP_REST_Response",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "route",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "wpRequest",
+                            "type": "WP_REST_Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 77,
+                    "end": 93
                 },
                 {
                     "routes": [],
@@ -87226,8 +87291,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 251,
-                    "end": 262
+                    "line": 276,
+                    "end": 287
                 },
                 {
                     "routes": [],
@@ -87248,8 +87313,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 265,
-                    "end": 268
+                    "line": 290,
+                    "end": 293
                 },
                 {
                     "routes": [],
@@ -87282,8 +87347,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 270,
-                    "end": 274
+                    "line": 295,
+                    "end": 299
                 },
                 {
                     "routes": [],
@@ -87302,8 +87367,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 277,
-                    "end": 287
+                    "line": 302,
+                    "end": 312
                 },
                 {
                     "routes": [],
@@ -87325,8 +87390,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 297,
-                    "end": 321
+                    "line": 322,
+                    "end": 346
                 },
                 {
                     "routes": [],
@@ -87345,8 +87410,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 323,
-                    "end": 336
+                    "line": 348,
+                    "end": 361
                 },
                 {
                     "routes": [],
@@ -87365,8 +87430,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 346,
-                    "end": 354
+                    "line": 371,
+                    "end": 379
                 }
             ]
         },
@@ -89629,6 +89694,345 @@
                     ],
                     "line": 31,
                     "end": 47
+                }
+            ]
+        },
+        {
+            "name": "Minn\\Rest\\SidebarsController",
+            "short": "SidebarsController",
+            "namespace": "Minn\\Rest",
+            "kind": "final readonly class",
+            "file": "public/minn/src/Minn/Rest/SidebarsController.php",
+            "lines": 192,
+            "doc": "wp/v2/sidebars and wp/v2/widget-types as the reference answers them\n(probe rest-widgets), for anyone who can edit theme options. A sidebar\nis a registered one or the inactive widgets, with its wrapping markup,\nthe registered widgets it holds, and its status: active when registered\nunder a classic theme (a block theme renders none). Saving a sidebar's\nwidgets takes them from any other sidebar and sends the ones it drops to\nthe inactive widgets. The widget types are the registered widgets by id\nbase, in id order.",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\Http\\Access",
+                "Minn\\Http\\Args",
+                "Minn\\Http\\Method",
+                "Minn\\Http\\Policy",
+                "Minn\\Http\\Request",
+                "Minn\\Http\\Response",
+                "Minn\\Http\\Route",
+                "Minn\\RestError",
+                "Minn\\Rest\\Caller",
+                "Minn\\Rest\\Fields",
+                "Minn\\Rest\\Reply",
+                "Minn\\Rest\\RestUrl",
+                "Minn\\Rest\\RuntimePrepare",
+                "Minn\\Runtime\\Runtime",
+                "Minn\\Runtime\\WidgetAreas"
+            ],
+            "usedBy": [
+                "Minn\\Rest\\Api",
+                "Minn\\Rest\\WidgetsController"
+            ],
+            "constructor": {
+                "signature": "__construct(Minn\\Rest\\RestUrl $url, Minn\\Rest\\Caller $caller)",
+                "doc": "",
+                "shapes": [],
+                "params": [
+                    {
+                        "name": "url",
+                        "type": "Minn\\Rest\\RestUrl",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    },
+                    {
+                        "name": "caller",
+                        "type": "Minn\\Rest\\Caller",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    }
+                ],
+                "visibility": "public",
+                "line": 32,
+                "end": 34
+            },
+            "cases": [],
+            "constants": [
+                {
+                    "name": "BODY",
+                    "value": "array (   'widgets' =>    array (     'description' => 'Nested widgets.',     'type' => 'array',     'items' =>      array (       'type' =>        array (         0 => 'object',         1 => 'string',       ),     ),     'required' => false,   ), )",
+                    "doc": "",
+                    "visibility": "private"
+                }
+            ],
+            "properties": [
+                {
+                    "name": "url",
+                    "type": "Minn\\Rest\\RestUrl",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
+                },
+                {
+                    "name": "caller",
+                    "type": "Minn\\Rest\\Caller",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
+                }
+            ],
+            "methods": [
+                {
+                    "routes": [
+                        "GET /wp/v2/sidebars (cap edit_theme_options)"
+                    ],
+                    "name": "sidebars",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "sidebars(Minn\\Http\\Request $request): Minn\\Http\\Response",
+                    "doc": "Every sidebar: those the sidebars option lists, then any other registered one.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "request",
+                            "type": "Minn\\Http\\Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 38,
+                    "end": 48
+                },
+                {
+                    "routes": [
+                        "GET /wp/v2/sidebars/{id:[\\w-]+} (cap edit_theme_options)"
+                    ],
+                    "name": "sidebar",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "sidebar(Minn\\Http\\Request $request, string $id): Minn\\Http\\Response",
+                    "doc": "One sidebar.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "request",
+                            "type": "Minn\\Http\\Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "id",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 52,
+                    "end": 57
+                },
+                {
+                    "routes": [
+                        "POST /wp/v2/sidebars/{id:[\\w-]+} (cap edit_theme_options)",
+                        "PUT /wp/v2/sidebars/{id:[\\w-]+} (cap edit_theme_options)",
+                        "PATCH /wp/v2/sidebars/{id:[\\w-]+} (cap edit_theme_options)"
+                    ],
+                    "name": "save",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "save(Minn\\Http\\Request $request, string $id): Minn\\Http\\Response",
+                    "doc": "Saves a sidebar's widgets, in the order given.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "request",
+                            "type": "Minn\\Http\\Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "id",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 63,
+                    "end": 80
+                },
+                {
+                    "routes": [
+                        "GET /wp/v2/widget-types (cap edit_theme_options)"
+                    ],
+                    "name": "types",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "types(Minn\\Http\\Request $request): Minn\\Http\\Response",
+                    "doc": "The registered widget types, by id base.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "request",
+                            "type": "Minn\\Http\\Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 84,
+                    "end": 91
+                },
+                {
+                    "routes": [
+                        "GET /wp/v2/widget-types/{id:[a-zA-Z0-9_-]+} (cap edit_theme_options)"
+                    ],
+                    "name": "widgetType",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "widgetType(Minn\\Http\\Request $request, string $id): Minn\\Http\\Response",
+                    "doc": "One widget type.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "request",
+                            "type": "Minn\\Http\\Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "id",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 95,
+                    "end": 103
+                },
+                {
+                    "routes": [
+                        "POST /wp/v2/widget-types/{id:[a-zA-Z0-9_-]+}/encode (cap edit_theme_options)"
+                    ],
+                    "name": "encode",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "encode(Minn\\Http\\Request $request, string $id): Minn\\Http\\Response",
+                    "doc": "A widget type's form and preview for settings that are not saved: the\nsettings sent (encoded with their hash) updated from the form's\nfields, the form for them (number -1 unless one is sent), the widget\nas the_widget shows it, and the settings encoded again.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "request",
+                            "type": "Minn\\Http\\Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "id",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 112,
+                    "end": 143
+                },
+                {
+                    "routes": [],
+                    "name": "ready",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "ready(): void",
+                    "doc": "The widgets are registered on init; a runtime that stopped short of it\nregisters them now. Without the runtime there are no widgets to serve.",
+                    "shapes": [],
+                    "params": [],
+                    "line": 149,
+                    "end": 157
+                },
+                {
+                    "routes": [],
+                    "name": "item",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "item(string $id): array",
+                    "doc": "",
+                    "shapes": [
+                        "@return array<string, mixed>"
+                    ],
+                    "params": [
+                        {
+                            "name": "id",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 160,
+                    "end": 183
+                },
+                {
+                    "routes": [],
+                    "name": "type",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "type(WP_Widget $widget): array",
+                    "doc": "",
+                    "shapes": [
+                        "@return array<string, mixed>"
+                    ],
+                    "params": [
+                        {
+                            "name": "widget",
+                            "type": "WP_Widget",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 186,
+                    "end": 200
+                },
+                {
+                    "routes": [],
+                    "name": "widgetTypes",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "widgetTypes(): array",
+                    "doc": "",
+                    "shapes": [
+                        "@return array<string, \\WP_Widget> by id base, in id order"
+                    ],
+                    "params": [],
+                    "line": 203,
+                    "end": 211
+                },
+                {
+                    "routes": [],
+                    "name": "requireSidebar",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "requireSidebar(string $id): void",
+                    "doc": "",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "id",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 213,
+                    "end": 218
                 }
             ]
         },
@@ -92663,6 +93067,469 @@
                     ],
                     "line": 344,
                     "end": 352
+                }
+            ]
+        },
+        {
+            "name": "Minn\\Rest\\WidgetObject",
+            "short": "WidgetObject",
+            "namespace": "Minn\\Rest",
+            "kind": "final readonly class",
+            "file": "public/minn/src/Minn/Rest/WidgetObject.php",
+            "lines": 55,
+            "doc": "A widget as wp/v2/widgets shows it (probe rest-widgets): its id and base,\nits sidebar, its markup as that sidebar wraps it (nothing among the\ninactive widgets) and, in the edit context, its settings form and its\nsettings: serialized and base64 encoded, signed with wp_hash, and raw\nwhen the widget shows its instance in REST. Links to itself, its type\nand its sidebar; through rest_prepare_widget.",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\Rest\\Context",
+                "Minn\\Rest\\RestUrl",
+                "Minn\\Rest\\RuntimePrepare",
+                "Minn\\Runtime\\WidgetAreas"
+            ],
+            "usedBy": [
+                "Minn\\Rest\\Api",
+                "Minn\\Rest\\WidgetsController"
+            ],
+            "constructor": {
+                "signature": "__construct(Minn\\Rest\\RestUrl $url)",
+                "doc": "",
+                "shapes": [],
+                "params": [
+                    {
+                        "name": "url",
+                        "type": "Minn\\Rest\\RestUrl",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    }
+                ],
+                "visibility": "public",
+                "line": 19,
+                "end": 21
+            },
+            "cases": [],
+            "constants": [],
+            "properties": [
+                {
+                    "name": "url",
+                    "type": "Minn\\Rest\\RestUrl",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
+                }
+            ],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "view",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "view(string $widgetId, string $sidebarId, Minn\\Rest\\Context $context): array",
+                    "doc": "A widget in a sidebar, its form and settings in the edit context. @return array<string, mixed>",
+                    "shapes": [
+                        "@return array<string, mixed>"
+                    ],
+                    "params": [
+                        {
+                            "name": "widgetId",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "sidebarId",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "context",
+                            "type": "Minn\\Rest\\Context",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 24,
+                    "end": 48
+                },
+                {
+                    "routes": [],
+                    "name": "instance",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "instance(WP_Widget $object, int $number): array",
+                    "doc": "A widget's settings, encoded and signed, and raw when it shows them. @return array<string, mixed>",
+                    "shapes": [
+                        "@return array<string, mixed>"
+                    ],
+                    "params": [
+                        {
+                            "name": "object",
+                            "type": "WP_Widget",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "number",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 51,
+                    "end": 61
+                },
+                {
+                    "routes": [],
+                    "name": "form",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "form(WP_Widget $object, int $number): string",
+                    "doc": "",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "object",
+                            "type": "WP_Widget",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "number",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 63,
+                    "end": 70
+                }
+            ]
+        },
+        {
+            "name": "Minn\\Rest\\WidgetsController",
+            "short": "WidgetsController",
+            "namespace": "Minn\\Rest",
+            "kind": "final readonly class",
+            "file": "public/minn/src/Minn/Rest/WidgetsController.php",
+            "lines": 169,
+            "doc": "wp/v2/widgets as the reference answers it (probe rest-widgets), for\nanyone who can edit theme options: the registered widgets of every\nsidebar (or one), a widget created under the next free number for its\ntype, its settings saved through the widget's own update (raw when the\nwidget shows its instance in REST, encoded with a matching hash, or from\nits form's fields) and registered at once, a widget moved between\nsidebars, and a widget deleted, or without force sent to the inactive\nwidgets.",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\Http\\Access",
+                "Minn\\Http\\Args",
+                "Minn\\Http\\Method",
+                "Minn\\Http\\Policy",
+                "Minn\\Http\\Request",
+                "Minn\\Http\\Response",
+                "Minn\\Http\\Route",
+                "Minn\\RestError",
+                "Minn\\Rest\\Caller",
+                "Minn\\Rest\\Context",
+                "Minn\\Rest\\Fields",
+                "Minn\\Rest\\Reply",
+                "Minn\\Rest\\SidebarsController",
+                "Minn\\Rest\\WidgetObject",
+                "Minn\\Runtime\\Runtime",
+                "Minn\\Runtime\\WidgetAreas"
+            ],
+            "usedBy": [
+                "Minn\\Rest\\Api"
+            ],
+            "constructor": {
+                "signature": "__construct(Minn\\Rest\\WidgetObject $object, Minn\\Rest\\Caller $caller)",
+                "doc": "",
+                "shapes": [],
+                "params": [
+                    {
+                        "name": "object",
+                        "type": "Minn\\Rest\\WidgetObject",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    },
+                    {
+                        "name": "caller",
+                        "type": "Minn\\Rest\\Caller",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    }
+                ],
+                "visibility": "public",
+                "line": 39,
+                "end": 41
+            },
+            "cases": [],
+            "constants": [
+                {
+                    "name": "LIST",
+                    "value": "array (   'sidebar' =>    array (     'description' => 'The sidebar to return widgets for.',     'type' => 'string',     'required' => false,   ), )",
+                    "doc": "",
+                    "visibility": "private"
+                },
+                {
+                    "name": "BODY",
+                    "value": "array (   'id_base' =>    array (     'description' => 'The type of the widget. Corresponds to ID in widget-types endpoint.',     'type' => 'string',     'required' => false,   ),   'sidebar' =>    array (     'description' => 'The sidebar the widget belongs to.',     'type' => 'string',     'required' => false,   ),   'instance' =>    array (     'description' => 'Instance settings of the widget, if supported.',     'type' => 'object',     'required' => false,   ),   'form_data' =>    array (     'description' => 'URL-encoded form data from the widget admin form. Used to update a widget that does not support instance. Write only.',     'type' => 'string',     'required' => false,   ), )",
+                    "doc": "",
+                    "visibility": "private"
+                }
+            ],
+            "properties": [
+                {
+                    "name": "object",
+                    "type": "Minn\\Rest\\WidgetObject",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
+                },
+                {
+                    "name": "caller",
+                    "type": "Minn\\Rest\\Caller",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
+                }
+            ],
+            "methods": [
+                {
+                    "routes": [
+                        "GET /wp/v2/widgets (cap edit_theme_options)"
+                    ],
+                    "name": "list",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "list(Minn\\Http\\Request $request): Minn\\Http\\Response",
+                    "doc": "The registered widgets, sidebar by sidebar.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "request",
+                            "type": "Minn\\Http\\Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 45,
+                    "end": 63
+                },
+                {
+                    "routes": [
+                        "GET /wp/v2/widgets/{id:[\\w\\-]+} (cap edit_theme_options)"
+                    ],
+                    "name": "single",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "single(Minn\\Http\\Request $request, string $id): Minn\\Http\\Response",
+                    "doc": "One widget.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "request",
+                            "type": "Minn\\Http\\Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "id",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 67,
+                    "end": 71
+                },
+                {
+                    "routes": [
+                        "POST /wp/v2/widgets (cap edit_theme_options)"
+                    ],
+                    "name": "create",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "create(Minn\\Http\\Request $request): Minn\\Http\\Response",
+                    "doc": "Creates a widget in a sidebar (the inactive widgets unless one is named).",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "request",
+                            "type": "Minn\\Http\\Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 75,
+                    "end": 90
+                },
+                {
+                    "routes": [
+                        "POST /wp/v2/widgets/{id:[\\w\\-]+} (cap edit_theme_options)",
+                        "PUT /wp/v2/widgets/{id:[\\w\\-]+} (cap edit_theme_options)",
+                        "PATCH /wp/v2/widgets/{id:[\\w\\-]+} (cap edit_theme_options)"
+                    ],
+                    "name": "update",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "update(Minn\\Http\\Request $request, string $id): Minn\\Http\\Response",
+                    "doc": "Saves a widget's settings and moves it, as the body asks.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "request",
+                            "type": "Minn\\Http\\Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "id",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 96,
+                    "end": 112
+                },
+                {
+                    "routes": [
+                        "DELETE /wp/v2/widgets/{id:[\\w\\-]+} (cap edit_theme_options)"
+                    ],
+                    "name": "delete",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "delete(Minn\\Http\\Request $request, string $id): Minn\\Http\\Response",
+                    "doc": "Deletes a widget with force; without, sends it to the inactive widgets.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "request",
+                            "type": "Minn\\Http\\Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "id",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 116,
+                    "end": 138
+                },
+                {
+                    "routes": [],
+                    "name": "saveInstance",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "saveInstance(WP_Widget $object, int $number, array $body): string",
+                    "doc": "Saves a widget's settings through its own update and registers it:\nraw settings (when it shows them), encoded ones with their hash, or\nits form's fields. The widget's id.",
+                    "shapes": [
+                        "@param array<string, mixed> $body"
+                    ],
+                    "params": [
+                        {
+                            "name": "object",
+                            "type": "WP_Widget",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "number",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "body",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 147,
+                    "end": 161
+                },
+                {
+                    "routes": [],
+                    "name": "newInstance",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "newInstance(WP_Widget $object, int $number, array $body): array",
+                    "doc": "",
+                    "shapes": [
+                        "@param array<string, mixed> $body @return array<string, mixed>"
+                    ],
+                    "params": [
+                        {
+                            "name": "object",
+                            "type": "WP_Widget",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "number",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "body",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": "@return array<string, mixed>"
+                        }
+                    ],
+                    "line": 164,
+                    "end": 185
+                },
+                {
+                    "routes": [],
+                    "name": "sidebarOf",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "sidebarOf(string $id): string",
+                    "doc": "The sidebar holding a widget; a widget no sidebar holds is no widget.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "id",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 188,
+                    "end": 195
                 }
             ]
         },
@@ -105709,9 +106576,11 @@
                 "Minn\\Rest\\RuntimeRoutes",
                 "Minn\\Rest\\Services",
                 "Minn\\Rest\\SettingsController",
+                "Minn\\Rest\\SidebarsController",
                 "Minn\\Rest\\StatusesController",
                 "Minn\\Rest\\TemplatesController",
                 "Minn\\Rest\\UsersController",
+                "Minn\\Rest\\WidgetsController",
                 "Minn\\Runtime\\Abilities",
                 "Minn\\Runtime\\AjaxController",
                 "Minn\\Runtime\\BlockFilters",
@@ -111675,6 +112544,188 @@
                     ],
                     "line": 79,
                     "end": 86
+                }
+            ]
+        },
+        {
+            "name": "Minn\\Runtime\\WidgetAreas",
+            "short": "WidgetAreas",
+            "namespace": "Minn\\Runtime",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Runtime/WidgetAreas.php",
+            "lines": 84,
+            "doc": "The widgets helper functions as the reference answers them (probe\nwidget-helpers): a widget id split into its base and number, a sidebar\nby id (the inactive widgets are a sidebar too, with a name and nothing\nelse), finding and moving a widget between sidebars, one widget rendered\nin its sidebar as dynamic_sidebar renders each (an unregistered widget\nrenders nothing), and the sidebars with every registered one present.",
+            "implements": [],
+            "extends": null,
+            "uses": [],
+            "usedBy": [
+                "Minn\\Rest\\SidebarsController",
+                "Minn\\Rest\\WidgetObject",
+                "Minn\\Rest\\WidgetsController"
+            ],
+            "constructor": null,
+            "cases": [],
+            "constants": [
+                {
+                    "name": "INACTIVE",
+                    "value": "'wp_inactive_widgets'",
+                    "doc": "",
+                    "visibility": "public"
+                }
+            ],
+            "properties": [],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "parse",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "parse(string $id): array",
+                    "doc": "wp_parse_widget_id: ['id_base' => ..., 'number' => n], or the id alone as its base. @return array{id_base: string, number?: int}",
+                    "shapes": [
+                        "@return array{id_base: string, number?: int}"
+                    ],
+                    "params": [
+                        {
+                            "name": "id",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 20,
+                    "end": 23
+                },
+                {
+                    "routes": [],
+                    "name": "sidebar",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "sidebar(string $id): ?array",
+                    "doc": "wp_get_sidebar: a registered sidebar, the inactive widgets, or null. @return array<string, mixed>|null",
+                    "shapes": [
+                        "@return array<string, mixed>|null"
+                    ],
+                    "params": [
+                        {
+                            "name": "id",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 26,
+                    "end": 32
+                },
+                {
+                    "routes": [],
+                    "name": "find",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "find(string $widgetId): ?string",
+                    "doc": "wp_find_widgets_sidebar: the sidebar holding a widget, or null.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "widgetId",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 35,
+                    "end": 43
+                },
+                {
+                    "routes": [],
+                    "name": "assign",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "assign(string $widgetId, string $sidebarId): void",
+                    "doc": "wp_assign_widget_to_sidebar: out of every sidebar, then onto the end of one ('' leaves it in none).",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "widgetId",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "sidebarId",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 46,
+                    "end": 56
+                },
+                {
+                    "routes": [],
+                    "name": "render",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "render(string $widgetId, string $sidebarId): string",
+                    "doc": "wp_render_widget: a registered widget as its sidebar wraps it, through dynamic_sidebar_params; '' otherwise.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "widgetId",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "sidebarId",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 59,
+                    "end": 74
+                },
+                {
+                    "routes": [],
+                    "name": "control",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "control(string $widgetId): ?string",
+                    "doc": "wp_render_widget_control: a registered widget's settings form, or null.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "widgetId",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 77,
+                    "end": 86
+                },
+                {
+                    "routes": [],
+                    "name": "retrieve",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "retrieve(): array",
+                    "doc": "retrieve_widgets: the sidebars, every registered one present (empty when it holds none). @return array<string, list<string>>",
+                    "shapes": [
+                        "@return array<string, list<string>>"
+                    ],
+                    "params": [],
+                    "line": 89,
+                    "end": 97
                 }
             ]
         },
@@ -121390,6 +122441,467 @@
                     ],
                     "line": 105,
                     "end": 124
+                }
+            ]
+        },
+        {
+            "name": "Minn\\Widgets\\WidgetForms",
+            "short": "WidgetForms",
+            "namespace": "Minn\\Widgets",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Widgets/WidgetForms.php",
+            "lines": 171,
+            "doc": "The core widgets' settings forms, the markup a widget's form() prints and\nwp/v2/widgets returns as rendered_form, character for character as the\nreference prints it (probe rest-widgets): field ids and names from the\nwidget's number, values escaped, defaults filled in. The whitespace is\nthe reference's own and is part of the answer.",
+            "implements": [],
+            "extends": null,
+            "uses": [],
+            "usedBy": [],
+            "constructor": null,
+            "cases": [],
+            "constants": [],
+            "properties": [],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "title",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "title(WP_Widget $widget, array $instance): string",
+                    "doc": "The title field most widgets open with.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "widget",
+                            "type": "WP_Widget",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "instance",
+                            "type": "array",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 17,
+                    "end": 25
+                },
+                {
+                    "routes": [],
+                    "name": "titleOnly",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "titleOnly(WP_Widget $widget, array $instance): string",
+                    "doc": "search, meta, calendar: the title alone.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "widget",
+                            "type": "WP_Widget",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "instance",
+                            "type": "array",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 28,
+                    "end": 31
+                },
+                {
+                    "routes": [],
+                    "name": "pages",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "pages(WP_Widget $widget, array $instance): string",
+                    "doc": "The pages widget: title, sort order, pages to leave out.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "widget",
+                            "type": "WP_Widget",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "instance",
+                            "type": "array",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 34,
+                    "end": 44
+                },
+                {
+                    "routes": [],
+                    "name": "archives",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "archives(WP_Widget $widget, array $instance): string",
+                    "doc": "The archives widget: title, dropdown and counts boxes.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "widget",
+                            "type": "WP_Widget",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "instance",
+                            "type": "array",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 47,
+                    "end": 51
+                },
+                {
+                    "routes": [],
+                    "name": "categories",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "categories(WP_Widget $widget, array $instance): string",
+                    "doc": "The categories widget: title, dropdown, counts and hierarchy boxes.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "widget",
+                            "type": "WP_Widget",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "instance",
+                            "type": "array",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 54,
+                    "end": 59
+                },
+                {
+                    "routes": [],
+                    "name": "recentPosts",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "recentPosts(WP_Widget $widget, array $instance): string",
+                    "doc": "The recent posts widget: title, how many, whether to show dates.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "widget",
+                            "type": "WP_Widget",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "instance",
+                            "type": "array",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 62,
+                    "end": 67
+                },
+                {
+                    "routes": [],
+                    "name": "recentComments",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "recentComments(WP_Widget $widget, array $instance): string",
+                    "doc": "The recent comments widget: title and how many.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "widget",
+                            "type": "WP_Widget",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "instance",
+                            "type": "array",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 70,
+                    "end": 73
+                },
+                {
+                    "routes": [],
+                    "name": "customHtml",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "customHtml(WP_Widget $widget, array $instance): string",
+                    "doc": "The custom HTML widget: hidden title and content fields its editor syncs.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "widget",
+                            "type": "WP_Widget",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "instance",
+                            "type": "array",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 76,
+                    "end": 80
+                },
+                {
+                    "routes": [],
+                    "name": "block",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "block(WP_Widget $widget, array $instance): string",
+                    "doc": "The block widget: its block markup in a textarea.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "widget",
+                            "type": "WP_Widget",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "instance",
+                            "type": "array",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 83,
+                    "end": 86
+                },
+                {
+                    "routes": [],
+                    "name": "text",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "text(WP_Widget $widget, array $instance): string",
+                    "doc": "The text widget in its visual mode: hidden fields the editor syncs.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "widget",
+                            "type": "WP_Widget",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "instance",
+                            "type": "array",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 89,
+                    "end": 96
+                },
+                {
+                    "routes": [],
+                    "name": "tagCloud",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "tagCloud(WP_Widget $widget, array $instance): string",
+                    "doc": "The tag cloud: its title, the taxonomies that show a cloud (tags unless one is chosen), and the counts box.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "widget",
+                            "type": "WP_Widget",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "instance",
+                            "type": "array",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 99,
+                    "end": 110
+                },
+                {
+                    "routes": [],
+                    "name": "navMenu",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "navMenu(WP_Widget $widget, array $instance): string",
+                    "doc": "The navigation menu widget: a note when there are no menus, else the title and the menu to show.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "widget",
+                            "type": "WP_Widget",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "instance",
+                            "type": "array",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 113,
+                    "end": 126
+                },
+                {
+                    "routes": [],
+                    "name": "rss",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "rss(array $args, array $inputs): string",
+                    "doc": "wp_widget_rss_form: the feed's address, title, item count (1 to 20,\n10 by default) and the three display boxes, each shown unless the\ncaller hides it, and ticked when the settings say so (or, saying\nnothing, when it is shown).",
+                    "shapes": [
+                        "@param array<string, mixed> $args",
+                        "@param array<string, bool> $inputs"
+                    ],
+                    "params": [
+                        {
+                            "name": "args",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "inputs",
+                            "type": "array",
+                            "shape": "array<string, bool>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 137,
+                    "end": 168
+                },
+                {
+                    "routes": [],
+                    "name": "number",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "number(WP_Widget $widget, int $number, string $label): string",
+                    "doc": "",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "widget",
+                            "type": "WP_Widget",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "number",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "label",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 170,
+                    "end": 173
+                },
+                {
+                    "routes": [],
+                    "name": "id",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "id(WP_Widget $widget, string $field): string",
+                    "doc": "",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "widget",
+                            "type": "WP_Widget",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "field",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 175,
+                    "end": 178
+                },
+                {
+                    "routes": [],
+                    "name": "name",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "name(WP_Widget $widget, string $field): string",
+                    "doc": "",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "widget",
+                            "type": "WP_Widget",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "field",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 180,
+                    "end": 183
                 }
             ]
         }

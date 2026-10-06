@@ -697,12 +697,6 @@ function wp_maybe_auto_update()
     return null;
 }
 
-function wp_parse_widget_id($id)
-{
-    \Minn\Runtime\PlaceholderTrace::hit('wp_parse_widget_id');
-    return null;
-}
-
 function wp_paused_plugins()
 {
     \Minn\Runtime\PlaceholderTrace::hit('wp_paused_plugins');

@@ -1,4 +1,6 @@
 <?php
+
+use Minn\Widgets\WidgetForms;
 /** The categories widget: the category list, with counts and hierarchy, or a dropdown that submits on change. */
 class WP_Widget_Categories extends WP_Widget
 {
@@ -39,5 +41,11 @@ class WP_Widget_Categories extends WP_Widget
         $instance['hierarchical'] = !empty($new_instance['hierarchical']) ? 1 : 0;
         $instance['dropdown'] = !empty($new_instance['dropdown']) ? 1 : 0;
         return $instance;
+    }
+
+    /** The settings form (Widgets\WidgetForms::categories). */
+    public function form($instance)
+    {
+        echo WidgetForms::categories($this, (array) $instance);
     }
 }

@@ -1,4 +1,6 @@
 <?php
+
+use Minn\Widgets\WidgetForms;
 /** The meta widget: register and sign-in links, the two feeds, and the powered-by line. */
 class WP_Widget_Meta extends WP_Widget
 {
@@ -28,5 +30,11 @@ class WP_Widget_Meta extends WP_Widget
         $instance = $old_instance;
         $instance['title'] = sanitize_text_field((string) ($new_instance['title'] ?? ''));
         return $instance;
+    }
+
+    /** The settings form (Widgets\WidgetForms::titleOnly). */
+    public function form($instance)
+    {
+        echo WidgetForms::titleOnly($this, (array) $instance);
     }
 }

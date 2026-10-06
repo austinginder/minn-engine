@@ -1,5 +1,7 @@
 <?php
 
+use Minn\Widgets\WidgetForms;
+
 /**
  * The custom HTML widget of the reference's classic widget set. It exists so
  * a plugin that references it (Polylang copies its instance when it
@@ -33,9 +35,10 @@ class WP_Widget_Custom_HTML extends WP_Widget
         echo $args['after_widget'] ?? '';
     }
 
+    /** The settings form (Widgets\WidgetForms::customHtml). */
     public function form($instance)
     {
-        return 'noform';
+        echo WidgetForms::customHtml($this, (array) $instance);
     }
 
     public function update($new_instance, $old_instance)

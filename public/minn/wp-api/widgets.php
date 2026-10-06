@@ -1,7 +1,9 @@
 <?php
 /** Widgets and sidebars: registration is recorded; a block theme renders none. */
 
+use Minn\Widgets\WidgetForms;
 use Minn\Runtime\Runtime;
+use Minn\Runtime\WidgetAreas;
 
 function _minn_widget_factory(): WP_Widget_Factory
 {
@@ -315,13 +317,56 @@ function wp_widget_rss_process($widget_rss, $check_feed = true)
     return compact('title', 'url', 'link', 'items', 'error', 'show_summary', 'show_author', 'show_date');
 }
 
+/** The RSS widget's settings form (Widgets\WidgetForms::rss), each input shown unless $inputs hides it. */
 function wp_widget_rss_form($args, $inputs = null)
 {
-    // The settings form belongs to wp-admin, which the engine does not serve.
+    echo WidgetForms::rss((array) $args, (array) $inputs);
 }
 
 /** @internal the script a dropdown widget prints: navigate or submit on change, unless Escape closed the list */
 function _minn_dropdown_script(string $dropdownId, string $onChange): string
 {
     return "( ( dropdownId ) => {\n\tconst dropdown = document.getElementById( dropdownId );\n\tfunction onSelectChange() {\n\t\tsetTimeout( () => {\n\t\t\tif ( 'escape' === dropdown.dataset.lastkey ) {\n\t\t\t\treturn;\n\t\t\t}\n\t\t\t" . $onChange . "\n\t\t}, 250 );\n\t}\n\tfunction onKeyUp( event ) {\n\t\tif ( 'Escape' === event.key ) {\n\t\t\tdropdown.dataset.lastkey = 'escape';\n\t\t} else {\n\t\t\tdelete dropdown.dataset.lastkey;\n\t\t}\n\t}\n\tfunction onClick() {\n\t\tdelete dropdown.dataset.lastkey;\n\t}\n\tdropdown.addEventListener( 'keyup', onKeyUp );\n\tdropdown.addEventListener( 'click', onClick );\n\tdropdown.addEventListener( 'change', onSelectChange );\n})( " . wp_json_encode($dropdownId) . " );\n";
+}
+
+/** A widget id as its base and number (Runtime\WidgetAreas). */
+function wp_parse_widget_id($id)
+{
+    return WidgetAreas::parse((string) $id);
+}
+
+/** A registered sidebar, the inactive widgets, or null. */
+function wp_get_sidebar($id)
+{
+    return WidgetAreas::sidebar((string) $id);
+}
+
+/** The sidebar holding a widget, or null. */
+function wp_find_widgets_sidebar($widget_id)
+{
+    return WidgetAreas::find((string) $widget_id);
+}
+
+/** Moves a widget onto the end of a sidebar ('' takes it out of all). */
+function wp_assign_widget_to_sidebar($widget_id, $sidebar_id)
+{
+    WidgetAreas::assign((string) $widget_id, (string) $sidebar_id);
+}
+
+/** One registered widget rendered as its sidebar wraps it; '' when it cannot be. */
+function wp_render_widget($widget_id, $sidebar_id)
+{
+    return WidgetAreas::render((string) $widget_id, (string) $sidebar_id);
+}
+
+/** A registered widget's settings form, or null. */
+function wp_render_widget_control($id)
+{
+    return WidgetAreas::control((string) $id);
+}
+
+/** The sidebars, every registered one present. */
+function retrieve_widgets($theme_changed = false)
+{
+    return WidgetAreas::retrieve();
 }

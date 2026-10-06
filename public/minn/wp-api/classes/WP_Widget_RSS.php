@@ -54,8 +54,11 @@ class WP_Widget_RSS extends WP_Widget
         return wp_widget_rss_process($new_instance, $testurl);
     }
 
+    /** The settings form: the feed's fields with this widget's number, the defaults for a new one. */
     public function form($instance)
     {
+        $instance = $instance === [] || $instance === null ? ['title' => '', 'url' => '', 'items' => 10, 'error' => false, 'show_summary' => 0, 'show_author' => 0, 'show_date' => 0] : (array) $instance;
+        $instance['number'] = $this->number;
         wp_widget_rss_form($instance);
     }
 }

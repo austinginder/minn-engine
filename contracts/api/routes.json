@@ -1,7 +1,7 @@
 {
     "engine": "0.0.1",
-    "routes": 249,
-    "withPolicy": 243,
+    "routes": 264,
+    "withPolicy": 258,
     "entries": [
         {
             "method": "GET",
@@ -6014,6 +6014,274 @@
         },
         {
             "method": "GET",
+            "pattern": "/wp/v2/sidebars",
+            "name": "Minn\\Rest\\SidebarsController::sidebars",
+            "handler": "Minn\\Rest\\SidebarsController::sidebars",
+            "summary": "Every sidebar: those the sidebars option lists, then any other registered one.",
+            "policy": {
+                "access": "Cap",
+                "describe": "cap edit_theme_options",
+                "cap": "edit_theme_options",
+                "signIn": {
+                    "code": "rest_cannot_manage_widgets",
+                    "message": "Sorry, you are not allowed to manage widgets on this site."
+                },
+                "refuse": {
+                    "code": "rest_cannot_manage_widgets",
+                    "message": "Sorry, you are not allowed to manage widgets on this site."
+                }
+            },
+            "args": {
+                "context": {
+                    "description": "Scope under which the request is made; determines fields present in response.",
+                    "type": "string",
+                    "enum": [
+                        "view",
+                        "embed",
+                        "edit"
+                    ],
+                    "default": "view",
+                    "required": false
+                }
+            },
+            "body": [],
+            "index": true
+        },
+        {
+            "method": "GET",
+            "pattern": "/wp/v2/sidebars/{id:[\\w-]+}",
+            "name": "Minn\\Rest\\SidebarsController::sidebar",
+            "handler": "Minn\\Rest\\SidebarsController::sidebar",
+            "summary": "One sidebar.",
+            "policy": {
+                "access": "Cap",
+                "describe": "cap edit_theme_options",
+                "cap": "edit_theme_options",
+                "signIn": {
+                    "code": "rest_cannot_manage_widgets",
+                    "message": "Sorry, you are not allowed to manage widgets on this site."
+                },
+                "refuse": {
+                    "code": "rest_cannot_manage_widgets",
+                    "message": "Sorry, you are not allowed to manage widgets on this site."
+                }
+            },
+            "args": {
+                "context": {
+                    "description": "Scope under which the request is made; determines fields present in response.",
+                    "type": "string",
+                    "enum": [
+                        "view",
+                        "embed",
+                        "edit"
+                    ],
+                    "default": "view",
+                    "required": false
+                }
+            },
+            "body": [],
+            "index": true
+        },
+        {
+            "method": "POST",
+            "pattern": "/wp/v2/sidebars/{id:[\\w-]+}",
+            "name": "Minn\\Rest\\SidebarsController::save",
+            "handler": "Minn\\Rest\\SidebarsController::save",
+            "summary": "Saves a sidebar's widgets, in the order given.",
+            "policy": {
+                "access": "Cap",
+                "describe": "cap edit_theme_options",
+                "cap": "edit_theme_options",
+                "signIn": {
+                    "code": "rest_cannot_manage_widgets",
+                    "message": "Sorry, you are not allowed to manage widgets on this site."
+                },
+                "refuse": {
+                    "code": "rest_cannot_manage_widgets",
+                    "message": "Sorry, you are not allowed to manage widgets on this site."
+                }
+            },
+            "args": [],
+            "body": {
+                "widgets": {
+                    "description": "Nested widgets.",
+                    "type": "array",
+                    "items": {
+                        "type": [
+                            "object",
+                            "string"
+                        ]
+                    },
+                    "required": false
+                }
+            },
+            "index": true
+        },
+        {
+            "method": "PUT",
+            "pattern": "/wp/v2/sidebars/{id:[\\w-]+}",
+            "name": "Minn\\Rest\\SidebarsController::save",
+            "handler": "Minn\\Rest\\SidebarsController::save",
+            "summary": "Saves a sidebar's widgets, in the order given.",
+            "policy": {
+                "access": "Cap",
+                "describe": "cap edit_theme_options",
+                "cap": "edit_theme_options",
+                "signIn": {
+                    "code": "rest_cannot_manage_widgets",
+                    "message": "Sorry, you are not allowed to manage widgets on this site."
+                },
+                "refuse": {
+                    "code": "rest_cannot_manage_widgets",
+                    "message": "Sorry, you are not allowed to manage widgets on this site."
+                }
+            },
+            "args": [],
+            "body": {
+                "widgets": {
+                    "description": "Nested widgets.",
+                    "type": "array",
+                    "items": {
+                        "type": [
+                            "object",
+                            "string"
+                        ]
+                    },
+                    "required": false
+                }
+            },
+            "index": true
+        },
+        {
+            "method": "PATCH",
+            "pattern": "/wp/v2/sidebars/{id:[\\w-]+}",
+            "name": "Minn\\Rest\\SidebarsController::save",
+            "handler": "Minn\\Rest\\SidebarsController::save",
+            "summary": "Saves a sidebar's widgets, in the order given.",
+            "policy": {
+                "access": "Cap",
+                "describe": "cap edit_theme_options",
+                "cap": "edit_theme_options",
+                "signIn": {
+                    "code": "rest_cannot_manage_widgets",
+                    "message": "Sorry, you are not allowed to manage widgets on this site."
+                },
+                "refuse": {
+                    "code": "rest_cannot_manage_widgets",
+                    "message": "Sorry, you are not allowed to manage widgets on this site."
+                }
+            },
+            "args": [],
+            "body": {
+                "widgets": {
+                    "description": "Nested widgets.",
+                    "type": "array",
+                    "items": {
+                        "type": [
+                            "object",
+                            "string"
+                        ]
+                    },
+                    "required": false
+                }
+            },
+            "index": true
+        },
+        {
+            "method": "GET",
+            "pattern": "/wp/v2/widget-types",
+            "name": "Minn\\Rest\\SidebarsController::types",
+            "handler": "Minn\\Rest\\SidebarsController::types",
+            "summary": "The registered widget types, by id base.",
+            "policy": {
+                "access": "Cap",
+                "describe": "cap edit_theme_options",
+                "cap": "edit_theme_options",
+                "signIn": {
+                    "code": "rest_cannot_manage_widgets",
+                    "message": "Sorry, you are not allowed to manage widgets on this site."
+                },
+                "refuse": {
+                    "code": "rest_cannot_manage_widgets",
+                    "message": "Sorry, you are not allowed to manage widgets on this site."
+                }
+            },
+            "args": {
+                "context": {
+                    "description": "Scope under which the request is made; determines fields present in response.",
+                    "type": "string",
+                    "enum": [
+                        "view",
+                        "embed",
+                        "edit"
+                    ],
+                    "default": "view",
+                    "required": false
+                }
+            },
+            "body": [],
+            "index": true
+        },
+        {
+            "method": "GET",
+            "pattern": "/wp/v2/widget-types/{id:[a-zA-Z0-9_-]+}",
+            "name": "Minn\\Rest\\SidebarsController::widgetType",
+            "handler": "Minn\\Rest\\SidebarsController::widgetType",
+            "summary": "One widget type.",
+            "policy": {
+                "access": "Cap",
+                "describe": "cap edit_theme_options",
+                "cap": "edit_theme_options",
+                "signIn": {
+                    "code": "rest_cannot_manage_widgets",
+                    "message": "Sorry, you are not allowed to manage widgets on this site."
+                },
+                "refuse": {
+                    "code": "rest_cannot_manage_widgets",
+                    "message": "Sorry, you are not allowed to manage widgets on this site."
+                }
+            },
+            "args": {
+                "context": {
+                    "description": "Scope under which the request is made; determines fields present in response.",
+                    "type": "string",
+                    "enum": [
+                        "view",
+                        "embed",
+                        "edit"
+                    ],
+                    "default": "view",
+                    "required": false
+                }
+            },
+            "body": [],
+            "index": true
+        },
+        {
+            "method": "POST",
+            "pattern": "/wp/v2/widget-types/{id:[a-zA-Z0-9_-]+}/encode",
+            "name": "Minn\\Rest\\SidebarsController::encode",
+            "handler": "Minn\\Rest\\SidebarsController::encode",
+            "summary": "A widget type's form and preview for settings that are not saved: the settings sent (encoded with their hash) updated from the form's fields, the form for them (number -1 unless one is sent), the widget as the_widget shows it, and the settings encoded again.",
+            "policy": {
+                "access": "Cap",
+                "describe": "cap edit_theme_options",
+                "cap": "edit_theme_options",
+                "signIn": {
+                    "code": "rest_cannot_manage_widgets",
+                    "message": "Sorry, you are not allowed to manage widgets on this site."
+                },
+                "refuse": {
+                    "code": "rest_cannot_manage_widgets",
+                    "message": "Sorry, you are not allowed to manage widgets on this site."
+                }
+            },
+            "args": [],
+            "body": [],
+            "index": true
+        },
+        {
+            "method": "GET",
             "pattern": "/wp/v2/statuses",
             "name": "Minn\\Rest\\StatusesController::list",
             "handler": "Minn\\Rest\\StatusesController::list",
@@ -7718,6 +7986,286 @@
                     "type": "integer",
                     "description": "Reassign the deleted user's posts and links to this user ID.",
                     "required": true
+                }
+            },
+            "body": [],
+            "index": true
+        },
+        {
+            "method": "GET",
+            "pattern": "/wp/v2/widgets",
+            "name": "Minn\\Rest\\WidgetsController::list",
+            "handler": "Minn\\Rest\\WidgetsController::list",
+            "summary": "The registered widgets, sidebar by sidebar.",
+            "policy": {
+                "access": "Cap",
+                "describe": "cap edit_theme_options",
+                "cap": "edit_theme_options",
+                "signIn": {
+                    "code": "rest_cannot_manage_widgets",
+                    "message": "Sorry, you are not allowed to manage widgets on this site."
+                },
+                "refuse": {
+                    "code": "rest_cannot_manage_widgets",
+                    "message": "Sorry, you are not allowed to manage widgets on this site."
+                }
+            },
+            "args": {
+                "context": {
+                    "description": "Scope under which the request is made; determines fields present in response.",
+                    "type": "string",
+                    "enum": [
+                        "view",
+                        "embed",
+                        "edit"
+                    ],
+                    "default": "view",
+                    "required": false
+                },
+                "sidebar": {
+                    "description": "The sidebar to return widgets for.",
+                    "type": "string",
+                    "required": false
+                }
+            },
+            "body": [],
+            "index": true
+        },
+        {
+            "method": "GET",
+            "pattern": "/wp/v2/widgets/{id:[\\w\\-]+}",
+            "name": "Minn\\Rest\\WidgetsController::single",
+            "handler": "Minn\\Rest\\WidgetsController::single",
+            "summary": "One widget.",
+            "policy": {
+                "access": "Cap",
+                "describe": "cap edit_theme_options",
+                "cap": "edit_theme_options",
+                "signIn": {
+                    "code": "rest_cannot_manage_widgets",
+                    "message": "Sorry, you are not allowed to manage widgets on this site."
+                },
+                "refuse": {
+                    "code": "rest_cannot_manage_widgets",
+                    "message": "Sorry, you are not allowed to manage widgets on this site."
+                }
+            },
+            "args": {
+                "context": {
+                    "description": "Scope under which the request is made; determines fields present in response.",
+                    "type": "string",
+                    "enum": [
+                        "view",
+                        "embed",
+                        "edit"
+                    ],
+                    "default": "view",
+                    "required": false
+                }
+            },
+            "body": [],
+            "index": true
+        },
+        {
+            "method": "POST",
+            "pattern": "/wp/v2/widgets",
+            "name": "Minn\\Rest\\WidgetsController::create",
+            "handler": "Minn\\Rest\\WidgetsController::create",
+            "summary": "Creates a widget in a sidebar (the inactive widgets unless one is named).",
+            "policy": {
+                "access": "Cap",
+                "describe": "cap edit_theme_options",
+                "cap": "edit_theme_options",
+                "signIn": {
+                    "code": "rest_cannot_manage_widgets",
+                    "message": "Sorry, you are not allowed to manage widgets on this site."
+                },
+                "refuse": {
+                    "code": "rest_cannot_manage_widgets",
+                    "message": "Sorry, you are not allowed to manage widgets on this site."
+                }
+            },
+            "args": [],
+            "body": {
+                "id_base": {
+                    "description": "The type of the widget. Corresponds to ID in widget-types endpoint.",
+                    "type": "string",
+                    "required": false
+                },
+                "sidebar": {
+                    "description": "The sidebar the widget belongs to.",
+                    "type": "string",
+                    "required": false
+                },
+                "instance": {
+                    "description": "Instance settings of the widget, if supported.",
+                    "type": "object",
+                    "required": false
+                },
+                "form_data": {
+                    "description": "URL-encoded form data from the widget admin form. Used to update a widget that does not support instance. Write only.",
+                    "type": "string",
+                    "required": false
+                }
+            },
+            "index": true
+        },
+        {
+            "method": "POST",
+            "pattern": "/wp/v2/widgets/{id:[\\w\\-]+}",
+            "name": "Minn\\Rest\\WidgetsController::update",
+            "handler": "Minn\\Rest\\WidgetsController::update",
+            "summary": "Saves a widget's settings and moves it, as the body asks.",
+            "policy": {
+                "access": "Cap",
+                "describe": "cap edit_theme_options",
+                "cap": "edit_theme_options",
+                "signIn": {
+                    "code": "rest_cannot_manage_widgets",
+                    "message": "Sorry, you are not allowed to manage widgets on this site."
+                },
+                "refuse": {
+                    "code": "rest_cannot_manage_widgets",
+                    "message": "Sorry, you are not allowed to manage widgets on this site."
+                }
+            },
+            "args": [],
+            "body": {
+                "id_base": {
+                    "description": "The type of the widget. Corresponds to ID in widget-types endpoint.",
+                    "type": "string",
+                    "required": false
+                },
+                "sidebar": {
+                    "description": "The sidebar the widget belongs to.",
+                    "type": "string",
+                    "required": false
+                },
+                "instance": {
+                    "description": "Instance settings of the widget, if supported.",
+                    "type": "object",
+                    "required": false
+                },
+                "form_data": {
+                    "description": "URL-encoded form data from the widget admin form. Used to update a widget that does not support instance. Write only.",
+                    "type": "string",
+                    "required": false
+                }
+            },
+            "index": true
+        },
+        {
+            "method": "PUT",
+            "pattern": "/wp/v2/widgets/{id:[\\w\\-]+}",
+            "name": "Minn\\Rest\\WidgetsController::update",
+            "handler": "Minn\\Rest\\WidgetsController::update",
+            "summary": "Saves a widget's settings and moves it, as the body asks.",
+            "policy": {
+                "access": "Cap",
+                "describe": "cap edit_theme_options",
+                "cap": "edit_theme_options",
+                "signIn": {
+                    "code": "rest_cannot_manage_widgets",
+                    "message": "Sorry, you are not allowed to manage widgets on this site."
+                },
+                "refuse": {
+                    "code": "rest_cannot_manage_widgets",
+                    "message": "Sorry, you are not allowed to manage widgets on this site."
+                }
+            },
+            "args": [],
+            "body": {
+                "id_base": {
+                    "description": "The type of the widget. Corresponds to ID in widget-types endpoint.",
+                    "type": "string",
+                    "required": false
+                },
+                "sidebar": {
+                    "description": "The sidebar the widget belongs to.",
+                    "type": "string",
+                    "required": false
+                },
+                "instance": {
+                    "description": "Instance settings of the widget, if supported.",
+                    "type": "object",
+                    "required": false
+                },
+                "form_data": {
+                    "description": "URL-encoded form data from the widget admin form. Used to update a widget that does not support instance. Write only.",
+                    "type": "string",
+                    "required": false
+                }
+            },
+            "index": true
+        },
+        {
+            "method": "PATCH",
+            "pattern": "/wp/v2/widgets/{id:[\\w\\-]+}",
+            "name": "Minn\\Rest\\WidgetsController::update",
+            "handler": "Minn\\Rest\\WidgetsController::update",
+            "summary": "Saves a widget's settings and moves it, as the body asks.",
+            "policy": {
+                "access": "Cap",
+                "describe": "cap edit_theme_options",
+                "cap": "edit_theme_options",
+                "signIn": {
+                    "code": "rest_cannot_manage_widgets",
+                    "message": "Sorry, you are not allowed to manage widgets on this site."
+                },
+                "refuse": {
+                    "code": "rest_cannot_manage_widgets",
+                    "message": "Sorry, you are not allowed to manage widgets on this site."
+                }
+            },
+            "args": [],
+            "body": {
+                "id_base": {
+                    "description": "The type of the widget. Corresponds to ID in widget-types endpoint.",
+                    "type": "string",
+                    "required": false
+                },
+                "sidebar": {
+                    "description": "The sidebar the widget belongs to.",
+                    "type": "string",
+                    "required": false
+                },
+                "instance": {
+                    "description": "Instance settings of the widget, if supported.",
+                    "type": "object",
+                    "required": false
+                },
+                "form_data": {
+                    "description": "URL-encoded form data from the widget admin form. Used to update a widget that does not support instance. Write only.",
+                    "type": "string",
+                    "required": false
+                }
+            },
+            "index": true
+        },
+        {
+            "method": "DELETE",
+            "pattern": "/wp/v2/widgets/{id:[\\w\\-]+}",
+            "name": "Minn\\Rest\\WidgetsController::delete",
+            "handler": "Minn\\Rest\\WidgetsController::delete",
+            "summary": "Deletes a widget with force; without, sends it to the inactive widgets.",
+            "policy": {
+                "access": "Cap",
+                "describe": "cap edit_theme_options",
+                "cap": "edit_theme_options",
+                "signIn": {
+                    "code": "rest_cannot_manage_widgets",
+                    "message": "Sorry, you are not allowed to manage widgets on this site."
+                },
+                "refuse": {
+                    "code": "rest_cannot_manage_widgets",
+                    "message": "Sorry, you are not allowed to manage widgets on this site."
+                }
+            },
+            "args": {
+                "force": {
+                    "description": "Whether to force removal of the widget, or move it to the inactive sidebar.",
+                    "type": "boolean",
+                    "required": false
                 }
             },
             "body": [],

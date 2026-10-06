@@ -94,8 +94,21 @@ abstract class WP_Widget_Media extends WP_Widget
 
     abstract public function render_media($instance);
 
+    /** The settings form: one hidden field per instance property, the media editor's to fill (lists joined by commas). */
     public function form($instance)
     {
+        $schema = $this->get_instance_schema();
+        $instance = wp_parse_args((array) $instance, array_map(static fn ($property) => $property['default'] ?? '', $schema));
+        foreach (array_keys($schema) as $name) {
+            $value = $instance[$name] ?? '';
+            printf(
+                "\t\t\t<input\n\t\t\t\ttype=\"hidden\"\n\t\t\t\tdata-property=\"%s\"\n\t\t\t\tclass=\"media-widget-instance-property\"\n\t\t\t\tname=\"%s\"\n\t\t\t\tid=\"%s\"\n\t\t\t\tvalue=\"%s\"\n\t\t\t/>\n\t\t\t",
+                esc_attr($name),
+                esc_attr($this->get_field_name($name)),
+                esc_attr($this->get_field_id($name)),
+                esc_attr(is_array($value) ? implode(',', $value) : (string) $value),
+            );
+        }
     }
 
     public function display_media_state($states, $post = null)

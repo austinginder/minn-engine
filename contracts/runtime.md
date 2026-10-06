@@ -4057,3 +4057,42 @@ The engine already printed oEmbed discovery links pointing at
 theme or plugin registers (it always answered empty before) with the menu
 assigned to each, and `menu-locations/{location}` answers one. Both require
 `edit_theme_options` as on the reference: editors had been let through.
+
+## Widgets over REST (2026-10-06)
+
+minn-admin's widgets screen calls `wp/v2/sidebars`, `wp/v2/widgets` and
+`wp/v2/widget-types`, which the engine did not serve. Now (probes
+`widget-helpers` and `rest-widgets`, minn-admin's own requests compared
+over HTTP):
+- **Settings forms.** Every core widget's settings form is printed as the
+  reference prints it (`Widgets\WidgetForms`; the media widgets' hidden
+  instance fields come from their schema), empty and filled. The forms
+  were missing before, so `rendered_form` would have been empty.
+- **Helper functions.** The widgets helpers now exist (`Runtime\WidgetAreas`):
+  `wp_parse_widget_id`, `wp_get_sidebar`, `wp_find_widgets_sidebar`,
+  `wp_assign_widget_to_sidebar`, `wp_render_widget`,
+  `wp_render_widget_control` and `retrieve_widgets`.
+- **sidebars.** A sidebar is a registered one or the inactive widgets. Its
+  status is active only when it is registered under a classic theme; under
+  a block theme every sidebar is inactive, as on the reference. Saving a
+  sidebar's widgets takes them from any other sidebar and sends the ones it
+  drops to the inactive widgets.
+- **widget-types.** The registered widgets by id base, in id order. Encode
+  returns the form, the preview as `the_widget` shows it, and the settings
+  re-encoded.
+- **widgets.** The registered widgets, sidebar by sidebar. A new widget
+  takes its type's next number. Settings are saved through the widget's own
+  `update` (raw, encoded with a matching hash, or from its form's fields)
+  and the widget is registered at once. Deleting with force removes it,
+  answering with the deleted widget's links; without force it goes to the
+  inactive widgets.
+- **Runtime.** A runtime that stopped before `init` registers the widgets
+  when one of these routes is asked.
+
+Not served yet: `widget-types/{id}/render`, which answers with a whole
+preview page.
+
+A plugin's route now answers with the `Allow` header, as the reference's
+`rest_send_allow_header` sets it: every method of the route whose handler's
+permission callback lets the request through. Engine routes always had it;
+plugin routes had none.
