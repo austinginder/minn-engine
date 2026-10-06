@@ -13,6 +13,7 @@ use Minn\Db;
 use Minn\Ops\Packages;
 use Minn\Ops\Updates;
 use Minn\Runtime\CronTable;
+use Minn\Runtime\Runtime;
 use Throwable;
 
 /**
@@ -124,7 +125,13 @@ final readonly class Cron
         ) !== null;
     }
 
-    /** A scheduled post goes live as the reference publishes it: status only, dates and modified untouched, term counts refreshed. */
+    /**
+     * A scheduled post goes live as the reference publishes it: status only,
+     * dates and modified untouched, term counts refreshed. With plugins
+     * loaded it goes through check_and_publish_future_post, the reference's
+     * own publish_future_post work, so they hear publish_post and the
+     * transition; a plugin that throws on one post holds back no other.
+     */
     private function publishDue(): int
     {
         $rows = $this->db->rows(
@@ -132,8 +139,17 @@ final readonly class Cron
             [gmdate('Y-m-d H:i:s')],
         );
         foreach ($rows as $row) {
-            $this->db->execute("UPDATE {$this->db->table('posts')} SET post_status = 'publish' WHERE ID = ? AND post_status = 'future'", [(int) $row['ID']]);
-            $this->writer->recountTaxonomiesOf((int) $row['ID']);
+            $id = (int) $row['ID'];
+            if (Runtime::booted() && function_exists('check_and_publish_future_post')) {
+                try {
+                    \check_and_publish_future_post($id);
+                } catch (Throwable $failure) {
+                    error_log("minn cron: publishing scheduled post {$id} stopped in a plugin: " . $failure->getMessage());
+                }
+                continue;
+            }
+            $this->db->execute("UPDATE {$this->db->table('posts')} SET post_status = 'publish' WHERE ID = ? AND post_status = 'future'", [$id]);
+            $this->writer->recountTaxonomiesOf($id);
         }
         return count($rows);
     }

@@ -33,7 +33,7 @@ final readonly class Images
             '1536x1536' => [1536, 1536, false],
             '2048x2048' => [2048, 2048, false],
         ];
-        foreach (Runtime::booted() ? (array) Runtime::current()->get('image_sizes', []) : [] as $name => $size) {
+        foreach (Runtime::booted() ? (array) ($GLOBALS['_wp_additional_image_sizes'] ?? []) : [] as $name => $size) {
             $ladder[(string) $name] = [(int) $size['width'], (int) $size['height'], (bool) $size['crop']];
         }
         return $ladder;

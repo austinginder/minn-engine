@@ -161,19 +161,11 @@ function count_users($strategy = 'time', $site_id = null)
 
 function get_users($args = [])
 {
+    // The reference's own: a user query, totals left uncounted. search,
+    // include, exclude and the rest narrow it; the list never widens to every account.
     $args = wp_parse_args($args);
-    $out = [];
-    foreach ((new Users(Runtime::current()->db))->ids(isset($args['number']) ? (int) $args['number'] : 0) as $id) {
-        $user = get_userdata($id);
-        if (!$user) {
-            continue;
-        }
-        if (!empty($args['role']) && !in_array($args['role'], $user->roles, true)) {
-            continue;
-        }
-        $out[] = ($args['fields'] ?? 'all') === 'ID' ? $user->ID : $user;
-    }
-    return $out;
+    $args['count_total'] = false;
+    return (array) (new WP_User_Query($args))->get_results();
 }
 
 /** A username survives strict sanitising unchanged and is not empty. */
@@ -389,4 +381,34 @@ function default_password_nag_edit_user($user_ID, $old_data)
     if ($user && $old_data instanceof WP_User && $user->user_pass !== $old_data->user_pass && get_user_meta($user_ID, 'default_password_nag', true)) {
         delete_user_meta($user_ID, 'default_password_nag');
     }
+}
+
+/**
+ * The signed-in user's screen settings: the wp-settings-{id} cookie when the
+ * browser sent one (only letters, digits, = & _ - kept), else the stored
+ * user-settings option. The first read is kept for the request in
+ * $_updated_user_settings, as the reference keeps it. Signed out: [].
+ */
+function get_all_user_settings()
+{
+    $user = get_current_user_id();
+    if ($user === 0) {
+        return [];
+    }
+    if (isset($GLOBALS['_updated_user_settings']) && is_array($GLOBALS['_updated_user_settings'])) {
+        return $GLOBALS['_updated_user_settings'];
+    }
+    $settings = [];
+    $cookie = $_COOKIE["wp-settings-{$user}"] ?? null;
+    $stored = $cookie === null ? get_user_option('user-settings', $user) : (string) preg_replace('/[^A-Za-z0-9=&_-]/', '', (string) $cookie);
+    if (is_string($stored) && strpos($stored, '=') > 0) {
+        parse_str($stored, $settings);
+    }
+    $GLOBALS['_updated_user_settings'] = $settings;
+    return $settings;
+}
+
+function get_user_setting($name, $default_value = false)
+{
+    return get_all_user_settings()[$name] ?? $default_value;
 }

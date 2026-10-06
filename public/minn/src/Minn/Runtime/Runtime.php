@@ -201,6 +201,29 @@ final class Runtime
         return $out;
     }
 
+    /**
+     * The the_content defaults the engine's own rendering has already done:
+     * blocks, texturize, paragraphs, shortcodes, block hooks, and the image
+     * attributes. What it has not (smilies, the capital P, insecure home
+     * addresses) runs with the plugins' own callbacks.
+     */
+    private const CONTENT_DONE = [
+        'apply_block_hooks_to_content_from_post_object' => 8,
+        'do_blocks' => 9,
+        'wptexturize' => 10,
+        'wpautop' => 10,
+        'shortcode_unautop' => 10,
+        'prepend_attachment' => 10,
+        'do_shortcode' => 11,
+        'wp_filter_content_tags' => 12,
+    ];
+
+    /** Content the engine rendered itself, through the_content for everything else hooked there. */
+    public static function contentFilter(string $content): string
+    {
+        return (string) self::hooks()->filterWithout('the_content', [$content], self::CONTENT_DONE);
+    }
+
     /** The object cache. */
     public static function cache(): ObjectCache
     {

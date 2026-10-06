@@ -44,7 +44,7 @@
                 {
                     "classname": "widget_calendar",
                     "customize_selective_refresh": true,
-                    "description": "A calendar of your site\u2019s posts.",
+                    "description": "A calendar of your site’s posts.",
                     "show_instance_in_rest": true
                 },
                 {
@@ -389,7 +389,7 @@
     ],
     [
         "nav menu",
-        "<w class=\"widget_nav_menu\"><t>Menu</t><div class=\"menu-zz-minn-menu-container\"><ul id=\"menu-zz-minn-menu\" class=\"menu\"><li id=\"menu-item-8386\" class=\"menu-item menu-item-type-post_type menu-item-object-page menu-item-8386\"><a href=\"https://minn.localhost/sample-page/\">Sample Page</a></li>\n<li id=\"menu-item-8387\" class=\"menu-item menu-item-type-taxonomy menu-item-object-category menu-item-8387\"><a href=\"https://minn.localhost/category/uncategorized/\">Uncategorized</a></li>\n</ul></div></w>"
+        "<w class=\"widget_nav_menu\"><t>Menu</t><div class=\"menu-zz-minn-menu-container\"><ul id=\"menu-zz-minn-menu\" class=\"menu\"><li id=\"menu-item-1651\" class=\"menu-item menu-item-type-post_type menu-item-object-page menu-item-1651\"><a href=\"https://minn.localhost/sample-page/\">Sample Page</a></li>\n<li id=\"menu-item-1653\" class=\"menu-item menu-item-type-taxonomy menu-item-object-category menu-item-1653\"><a href=\"https://minn.localhost/category/uncategorized/\">Uncategorized</a></li>\n</ul></div></w>"
     ],
     [
         "nav menu missing",

@@ -53,6 +53,6 @@ final class ClassicContent
             $content = $seams->filterContent($content, $post);
         }
         $content = Runtime::shortcodes()->apply($content);
-        return (string) Runtime::hooks()->filter('the_content', [$content]);
+        return Runtime::contentFilter($content);
     }
 }

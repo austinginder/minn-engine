@@ -5,6 +5,7 @@ sending mail and the notices the engine sends
 | Class | Kind | Lines | Summary |
 |---|---|---|---|
 | [`AddressRules`](#addressrules) | final class | 111 | Email addresses: the checks a mailer can apply (PHP's filter, the |
+| [`ChangeNotices`](#changenotices) | final class | 30 | The notices the reference mails a user when their password or email |
 | [`Composer`](#composer) | final class | 253 | A message as the reference's mailer writes it: the header block (Date, |
 | [`DataLines`](#datalines) | final class | 28 | A message cut into the lines SMTP DATA sends. Any line break (CRLF, CR |
 | [`DebugOutput`](#debugoutput) | final class | 38 | Where a mailer's debug text goes, as its Debugoutput setting names it: |
@@ -62,6 +63,34 @@ The address with its domain in ASCII (IDNA), the domain read from $charset first
 The text as an RFC 822 quoted string when it holds a character that needs one.
 
 Internals: `rfc5322()` (private, line 81), `splitList()` (private, line 104)
+
+
+## ChangeNotices
+
+`final class Minn\Mail\ChangeNotices` · `public/minn/src/Minn/Mail/ChangeNotices.php`
+
+The notices the reference mails a user when their password or email
+address changes, as templates: plugins filter them (password_change_email,
+email_change_email) with the placeholders still in them and the site name
+still a %s in the subject, and fill() finishes them after.
+
+### static `password(): array`
+
+The password notice: subject and message, placeholders unfilled. @return array{subject: string, message: string}
+
+- `@return array{subject: string, message: string}`
+
+### static `email(): array`
+
+The email-address notice, sent to the address being left: subject and message, placeholders unfilled. @return array{subject: string, message: string}
+
+- `@return array{subject: string, message: string}`
+
+### static `fill(string $text, array $values): string`
+
+A template's placeholders filled with their values. @param array<string, string> $values placeholder name (USERNAME, ...) => value
+
+- `@param array<string, string> $values placeholder name (USERNAME, ...) => value`
 
 
 ## Composer

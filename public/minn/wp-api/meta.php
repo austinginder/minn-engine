@@ -348,3 +348,10 @@ function delete_metadata_by_mid($meta_type, $meta_id)
     _minn_meta_action('deleted', (string) $meta_type, $args, [(int) $meta_id]);
     return true;
 }
+
+/** A key is protected when its first printable character is an underscore; is_protected_meta may say otherwise. */
+function is_protected_meta($meta_key, $meta_type = '')
+{
+    $key = (string) preg_replace('/[\x00-\x1F\x7F]/', '', (string) $meta_key);
+    return apply_filters('is_protected_meta', $key !== '' && $key[0] === '_', $meta_key, $meta_type);
+}

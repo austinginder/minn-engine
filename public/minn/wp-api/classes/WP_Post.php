@@ -76,9 +76,16 @@ final class WP_Post
         return get_post_meta($this->ID, $key, true);
     }
 
+    /** The same object for its own context; raw is a fresh copy from storage (this one for a post never stored); any other context sanitizes this one. */
     public function filter($filter)
     {
-        return $this;
+        if ($this->filter === $filter) {
+            return $this;
+        }
+        if ($filter === 'raw') {
+            return self::get_instance($this->ID) ?: $this;
+        }
+        return sanitize_post($this, $filter);
     }
 
     public function to_array()

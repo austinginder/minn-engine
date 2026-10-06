@@ -337,7 +337,23 @@ function do_blocks($content)
     foreach ($blocks as $block) {
         $output .= render_block($block);
     }
+    // Blocks bring their own paragraphs: wpautop sits out the rest of this
+    // the_content run and comes back after it, at the end of its priority.
+    $priority = has_filter('the_content', 'wpautop');
+    if ($priority !== false && doing_filter('the_content') && has_blocks($content)) {
+        remove_filter('the_content', 'wpautop', $priority);
+        add_filter('the_content', '_restore_wpautop_hook', $priority + 1);
+    }
     return $output;
+}
+
+/** Puts wpautop back on the_content after do_blocks took it off for one run. */
+function _restore_wpautop_hook($content)
+{
+    $current = has_filter('the_content', '_restore_wpautop_hook');
+    add_filter('the_content', 'wpautop', $current - 1);
+    remove_filter('the_content', '_restore_wpautop_hook', $current);
+    return $content;
 }
 
 function excerpt_remove_blocks($content)
@@ -1097,4 +1113,11 @@ function block_core_calendar_update_has_published_post_on_delete($post_id)
         return;
     }
     block_core_calendar_update_has_published_posts();
+}
+
+/** The block hooks applied to a post's content, the post as the anchor's context. */
+function apply_block_hooks_to_content_from_post_object($content, $post = null, $callback = 'insert_hooked_blocks', &$ignored_hooked_blocks_at_root = null)
+{
+    $post = get_post($post);
+    return $post === null ? $content : apply_block_hooks_to_content((string) $content, $post, $callback);
 }

@@ -13,7 +13,10 @@
  * reason; the list may only shrink. A listed step that now agrees fails
  * with "agrees now: drop it", as the allow suite does.
  *
- *   php tests/hook-trace.test.php [--show=<step>]
+ *   php tests/hook-trace.test.php [--show=<step>] [--filters]
+ *
+ * --filters also records the filters each request applies and prints, per
+ * step, those only one stack applied (MINN_TRACE_DUMP=<file> keeps them).
  */
 
 declare(strict_types=1);
@@ -43,10 +46,12 @@ $REF = minn_test_reference_url();
 $SITE = minn_test_site_root();
 $WP = '/opt/homebrew/bin/wp --path=' . escapeshellarg($SITE . '/wp-reference');
 $show = null;
+$filters = false;
 foreach (array_slice($argv, 1) as $arg) {
     if (str_starts_with($arg, '--show=')) {
         $show = substr($arg, 7);
     }
+    $filters = $filters || $arg === '--filters';
 }
 
 [$ph] = minn_test_fetch($REF . '/?rest_route=/', 3);
@@ -95,14 +100,14 @@ if (!is_array($mint) || empty($mint['cookie'])) {
 $cookie = 'Cookie: wordpress_logged_in_' . md5($ENGINE) . '=' . rawurlencode($mint['cookie']) . '; wordpress_logged_in_' . md5($REF) . '=' . rawurlencode($mint['cookie']);
 
 /** One traced REST call; returns [status, decoded body, the actions it fired]. */
-$call = static function (string $base, string $content, string $run, string $method, string $route, $body = null, array $headers = []) use ($cookie, $mint): array {
+$call = static function (string $base, string $content, string $run, string $method, string $route, $body = null, array $headers = []) use ($cookie, $mint, $filters): array {
     touch("{$content}/minn-trace/{$run}.open");
     $query = '';
     if (str_contains($route, '?')) {
         [$route, $query] = explode('?', $route, 2);
         $query = '&' . $query;
     }
-    $sent = [$cookie, 'X-WP-Nonce: ' . $mint['nonce'], 'X-Minn-Trace: ' . $run, ...$headers];
+    $sent = [$cookie, 'X-WP-Nonce: ' . $mint['nonce'], 'X-Minn-Trace: ' . $run, ...($filters ? ['X-Minn-Trace-Filters: 1'] : []), ...$headers];
     if (is_array($body)) {
         $sent[] = 'Content-Type: application/json';
         $body = json_encode($body);
@@ -115,8 +120,9 @@ $call = static function (string $base, string $content, string $run, string $met
     $raw = curl_exec($ch);
     $status = curl_getinfo($ch, CURLINFO_RESPONSE_CODE);
     $lines = @file("{$content}/minn-trace/{$run}.ndjson", FILE_IGNORE_NEW_LINES) ?: [];
+    $applied = json_decode((string) @file_get_contents("{$content}/minn-trace/{$run}.filters.json"), true);
     @unlink("{$content}/minn-trace/{$run}.open");
-    return [$status, json_decode((string) $raw, true), $lines];
+    return [$status, json_decode((string) $raw, true), $lines, is_array($applied) ? $applied : []];
 };
 
 /** The part of a trace that describes the write: from the REST server's start, bookkeeping dropped, repeats kept. */
@@ -152,8 +158,8 @@ $steps = [];
 foreach ($stacks as $stack => [$base, $content]) {
     $ids = [];
     $run = static function (string $name, string $method, string $route, $body = null, array $headers = []) use ($stack, $base, $content, $call, $window, &$steps): array {
-        [$status, $data, $lines] = $call($base, $content, "{$stack}-{$name}", $method, $route, $body, $headers);
-        $steps[$name][$stack] = ['status' => $status, 'trace' => $window($lines)];
+        [$status, $data, $lines, $applied] = $call($base, $content, "{$stack}-{$name}", $method, $route, $body, $headers);
+        $steps[$name][$stack] = ['status' => $status, 'trace' => $window($lines), 'filters' => $applied];
         return is_array($data) ? $data : [];
     };
     $ids['post'] = (int) ($run('post-create-draft', 'POST', '/wp/v2/posts', ['title' => 'Trace post', 'content' => 'Body', 'status' => 'draft'])['id'] ?? 0);
@@ -176,6 +182,17 @@ foreach ($stacks as $stack => [$base, $content]) {
     $run('comment-unapprove', 'POST', "/wp/v2/comments/{$ids['comment']}", ['status' => 'hold']);
     $run('comment-delete', 'DELETE', "/wp/v2/comments/{$ids['comment']}?force=true");
     $run('settings', 'POST', '/wp/v2/settings', ['description' => "Traced on the {$stack}"]);
+}
+
+if ($filters) {
+    // MINN_TRACE_DUMP=<file> keeps each step's filters, in the order each was first applied, for reading side by side.
+    if (getenv('MINN_TRACE_DUMP')) {
+        file_put_contents((string) getenv('MINN_TRACE_DUMP'), json_encode(array_map(static fn ($pair) => ['reference' => $pair['reference']['filters'], 'engine' => $pair['engine']['filters']], $steps), JSON_PRETTY_PRINT));
+    }
+    foreach ($steps as $name => $pair) {
+        $only = static fn (array $a, array $b): string => implode(' ', array_diff($a, $b));
+        echo "--- {$name} filters\n  reference only: " . $only($pair['reference']['filters'], $pair['engine']['filters']) . "\n  engine only: " . $only($pair['engine']['filters'], $pair['reference']['filters']) . "\n";
+    }
 }
 
 $listed = DIVERGENT;

@@ -458,3 +458,39 @@ function redirect_canonical($requested_url = null, $do_redirect = true)
     }
     return null;
 }
+
+/** On a month archive, prefix, month name, prefix, year (from m or year and monthnum); false elsewhere. */
+function single_month_title($prefix = '', $display = true)
+{
+    $m = (string) get_query_var('m');
+    [$year, $month] = $m !== '' ? [(int) substr($m, 0, 4), (int) substr($m, 4, 2)] : [(int) get_query_var('year'), (int) get_query_var('monthnum')];
+    if ($year === 0 || $month === 0) {
+        return false;
+    }
+    $title = $prefix . $GLOBALS['wp_locale']->get_month($month) . $prefix . $year;
+    if ($display) {
+        echo $title;
+        return null;
+    }
+    return $title;
+}
+
+/** On a post type archive, the type's plural name (post_type_archive_title) after a prefix; null elsewhere. */
+function post_type_archive_title($prefix = '', $display = true)
+{
+    if (!is_post_type_archive()) {
+        return null;
+    }
+    $type = get_query_var('post_type');
+    $type = is_array($type) ? (string) reset($type) : (string) $type;
+    $object = get_post_type_object($type);
+    if ($object === null) {
+        return null;
+    }
+    $title = $prefix . apply_filters('post_type_archive_title', $object->labels->name, $type);
+    if ($display) {
+        echo $title;
+        return null;
+    }
+    return $title;
+}

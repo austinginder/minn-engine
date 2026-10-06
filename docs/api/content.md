@@ -12,6 +12,7 @@ the repositories and records: posts, users, terms, comments, and the render pipe
 | [`CommentRecord`](#commentrecord) | final readonly class | 114 | One row of the comments table, read by name: $comment->author, ->content, |
 | [`Comments`](#comments) | final readonly class | 309 | Reads and writes over the comments table. |
 | [`ContentScan`](#contentscan) | final class | 196 | What a site's stored content asks of the engine: shortcodes, block |
+| [`Emoji`](#emoji) | final class | 68 | Emoji as the reference's mail and feeds carry them, from the list the |
 | [`Excerpt`](#excerpt) | final class | 101 | The reference's generated excerpt, as captured from probe posts: |
 | [`Inventory`](#inventory) | final readonly class | 253 | Plugins, themes, must-use plugins, and drop-ins as they sit on disk. |
 | [`MenuItem`](#menuitem) | final readonly class | 22 | One classic nav_menu_item, fields resolved from the post, its |
@@ -31,9 +32,11 @@ the repositories and records: posts, users, terms, comments, and the render pipe
 | [`Site`](#site) | final readonly class | 73 | Site-wide options and the site's clock. |
 | [`SiteIcon`](#siteicon) | final readonly class | 50 | The site icon: the attachment the site_icon option names, as the file |
 | [`Slug`](#slug) | final class | 56 |  |
+| [`TagBalancer`](#tagbalancer) | final class | 82 | Closes what markup leaves open and drops what it closes without opening, |
 | [`TermLinks`](#termlinks) | final class | 39 | A post's terms rendered as links, in the two shapes the reference |
 | [`TermRecord`](#termrecord) | final readonly class | 88 | One term with its taxonomy row, read by name: $term->name, ->slug, |
 | [`Terms`](#terms) | final readonly class | 178 |  |
+| [`TextFilters`](#textfilters) | final class | 80 | The small text filters the reference runs over content, titles and |
 | [`Texturize`](#texturize) | final class | 51 | The texturize subset the reference applies to rendered text: straight |
 | [`UserRecord`](#userrecord) | final readonly class | 96 | One row of the users table, read by name. Columns keep their WordPress |
 | [`Users`](#users) | final readonly class | 267 |  |
@@ -442,6 +445,31 @@ Names sorted and comma-separated, cut with a count past the cap.
 - `@param list<string> $names`
 
 Internals: `walk()` (private, line 200)
+
+
+## Emoji
+
+`final class Minn\Content\Emoji` · `public/minn/src/Minn/Content/Emoji.php`
+
+Emoji as the reference's mail and feeds carry them, from the list the
+reference ships (data/emoji.json, read from it): encode() turns each emoji
+character into its entity; staticize() turns each listed sequence in the
+text (outside tags, and outside code and pre) into a CDN image, longest
+sequence first. Text that already holds an entity is not encoded first;
+once anything matched, the variation selectors left over are dropped.
+
+- const `IGNORED` = `array (   0 => 'code',   1 => 'pre', )`
+
+
+### static `encode(string $text): string`
+
+Each emoji character in the text as its hexadecimal entity.
+
+### static `staticize(string $text, string $baseUrl, string $extension): string`
+
+The text with its emoji as images under $baseUrl (each file named for its code points, $extension after).
+
+Internals: `replaceInText()` (private, line 58), `list()` (private, line 78)
 
 
 ## Excerpt
@@ -1557,6 +1585,33 @@ leaving a dash hanging off the end.
 The reference's dash form of a title: tags and marks stripped, spaces to dashes, and the save-time rules when saving.
 
 
+## TagBalancer
+
+`final class Minn\Content\TagBalancer` · `public/minn/src/Minn/Content/TagBalancer.php`
+
+Closes what markup leaves open and drops what it closes without opening,
+as the reference's force_balance_tags does, from its observed rules
+(contracts/runtime.md "The content filters"): tag names are lowercased; a
+void element is written self-closed (bare as <br />, with attributes as
+<img src="x"/>, one already self-closed as given); reopening the
+innermost open element closes it first unless it is one of the ten that
+may contain themselves; a closer shuts every element opened inside its
+own; a closer with nothing to close goes; what is still open at the end
+closes in reverse. Script and style text is left as it is, and a "<" not
+followed by a name is text.
+
+- const `VOID` = `array (   0 => 'area',   1 => 'base',   2 => 'basefont',   3 => 'br',   4 => 'col',   5 => 'command',   6 => 'embed',   7 => 'frame',   8 => 'hr',   9 => 'img',   10 => 'input',   11 => 'isindex',   12 => 'link',   13 => 'meta',   14 => 'param',   15 => 'source',   16 => 'track',   17 => 'wbr', )`
+- const `NESTABLE` = `array (   0 => 'article',   1 => 'aside',   2 => 'blockquote',   3 => 'details',   4 => 'div',   5 => 'figure',   6 => 'object',   7 => 'q',   8 => 'section',   9 => 'span', )`
+- const `RAW` = `array (   0 => 'script',   1 => 'style', )`
+- const `TAG` = `'/<(\\/?)([a-zA-Z][\\w:-]*)(\\s[^>]*|\\/)?>/'`
+
+### static `balance(string $text): string`
+
+The markup with every element closed in order and every stray closer gone.
+
+Internals: `close()` (private, line 65), `voidAttributes()` (private, line 82), `rawText()` (private, line 92)
+
+
 ## TermLinks
 
 `final class Minn\Content\TermLinks` · `public/minn/src/Minn/Content/TermLinks.php`
@@ -1698,6 +1753,46 @@ Reparents children to the grandparent, detaches relationships, drops the rows.
 "parent/child" for hierarchical taxonomies, the bare slug otherwise.
 
 Internals: `record()` (private, line 17), `refreshHierarchy()` (private, line 151), `keepsHierarchy()` (private, line 167)
+
+
+## TextFilters
+
+`final class Minn\Content\TextFilters` · `public/minn/src/Minn/Content/TextFilters.php`
+
+The small text filters the reference runs over content, titles and
+comments, each from its observed rules (contracts/runtime.md "The content
+filters"): smilies, the capital P, insecure home addresses, and the
+feed's embed clean-up.
+
+- const `IMAGE` = `'/\\.(png|gif|jpe?g|svg|webp)$/i'`
+- const `IGNORED` = `array (   0 => 'code',   1 => 'pre',   2 => 'script',   3 => 'style',   4 => 'textarea', )`
+
+### static `smilies(string $text, array $table, Closure $image): string`
+
+Smilies become their emoji, or an image for the few that have one: a
+code only counts as a whole word between spaces, and nothing inside a
+code, pre, script, style or textarea element, or inside a tag, changes.
+
+- `@param array<string, string> $table code => emoji, or an image file name`
+- `@param Closure(string $file, string $code): string $image the <img> for an image smiley`
+
+### static `capitalP(string $text): string`
+
+"Wordpress" spelled right after a space, a parenthesis, a tag, or an opening curly quote; elsewhere it stays.
+
+### static `capitalPEverywhere(string $text): string`
+
+"Wordpress" spelled right everywhere, as a title is.
+
+### static `secureHome(string $content, string $insecure, string $secure): string`
+
+The site's own http address made https, escaped forms included.
+
+### static `feedEmbeds(string $content): string`
+
+A feed carries an embedded post's iframe without the style that hides it until its script runs.
+
+Internals: `ignoring()` (private, line 44), `words()` (private, line 53)
 
 
 ## Texturize

@@ -304,11 +304,32 @@ function wp_update_user($userdata)
     if ($id <= 0 || !get_userdata($id)) {
         return new WP_Error('invalid_user_id', 'Invalid user ID.');
     }
+    $before = get_userdata($id)->to_array();
     $result = wp_insert_user($userdata);
     if (!is_wp_error($result)) {
+        _minn_user_change_notices($before, $userdata);
         do_action('wp_update_user', $id, $userdata, $userdata);
     }
     return $result;
+}
+
+/** @internal The notices the reference mails a user whose password or email address just changed, to the address they had. */
+function _minn_user_change_notices(array $user, array $userdata): void
+{
+    $site = wp_specialchars_decode((string) get_option('blogname'), ENT_QUOTES);
+    $values = ['USERNAME' => (string) $user['user_login'], 'ADMIN_EMAIL' => (string) get_option('admin_email'), 'EMAIL' => (string) $user['user_email'], 'SITENAME' => $site, 'SITEURL' => home_url()];
+    $sends = [];
+    if (!empty($userdata['user_pass']) && apply_filters('send_password_change_email', true, $user, $userdata)) {
+        $sends['password_change_email'] = Minn\Mail\ChangeNotices::password();
+    }
+    if (isset($userdata['user_email']) && (string) $userdata['user_email'] !== (string) $user['user_email'] && apply_filters('send_email_change_email', true, $user, $userdata)) {
+        $sends['email_change_email'] = Minn\Mail\ChangeNotices::email();
+        $values['NEW_EMAIL'] = (string) $userdata['user_email'];
+    }
+    foreach ($sends as $filter => $template) {
+        $mail = apply_filters($filter, ['to' => $user['user_email']] + $template + ['headers' => ''], $user, $userdata);
+        wp_mail($mail['to'], sprintf($mail['subject'], $site), Minn\Mail\ChangeNotices::fill((string) $mail['message'], $values), $mail['headers']);
+    }
 }
 
 function wp_create_user($username, $password, $email = '')

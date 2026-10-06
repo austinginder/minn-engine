@@ -60,18 +60,20 @@ function get_post($post = null, $output = OBJECT, $filter = 'raw')
     } elseif (is_array($post) && isset($post['ID'])) {
         $object = new WP_Post((object) $post);
     } else {
+        // Each caller gets its own copy: what one plugin changes on its post, the next get_post() does not see.
         $cached = wp_cache_get((int) $post, 'posts', false, $found);
         if ($found && $cached instanceof WP_Post) {
-            $object = $cached;
+            $object = clone $cached;
         } else {
             $row = (int) $post > 0 ? _minn_posts()->find((int) $post) : null;
             if ($row === null) {
                 return null;
             }
             $object = new WP_Post((object) $row->row());
-            wp_cache_set((int) $post, $object, 'posts');
+            wp_cache_set((int) $post, clone $object, 'posts');
         }
     }
+    $object = $object->filter($filter === null || $filter === '' ? 'raw' : (string) $filter);
     if ($output === ARRAY_A) {
         return $object->to_array();
     }
@@ -1613,28 +1615,83 @@ function the_ID()
     echo (int) get_the_ID();
 }
 
+/**
+ * Every field of a post, object or array, through sanitize_post_field for
+ * the context, then marked with it; a post already in that context is
+ * returned as it is.
+ */
+function sanitize_post($post, $context = 'display')
+{
+    if (is_object($post)) {
+        if (isset($post->filter) && $post->filter === $context) {
+            return $post;
+        }
+        $id = (int) ($post->ID ?? 0);
+        foreach (array_keys(get_object_vars($post)) as $field) {
+            if ($field !== 'filter') {
+                $post->{$field} = sanitize_post_field($field, $post->{$field}, $id, $context);
+            }
+        }
+        $post->filter = $context;
+        return $post;
+    }
+    if (!is_array($post)) {
+        return $post;
+    }
+    if (($post['filter'] ?? null) === $context) {
+        return $post;
+    }
+    $id = (int) ($post['ID'] ?? 0);
+    foreach ($post as $field => $value) {
+        $post[$field] = $field === 'filter' ? $value : sanitize_post_field($field, $value, $id, $context);
+    }
+    $post['filter'] = $context;
+    return $post;
+}
+
 /** A post column as the reference hands it out: raw, escaped for edit forms, cast for the integer columns. */
 function sanitize_post_field($field, $value, $post_id, $context = 'display')
 {
     $field = (string) $field;
     if (in_array($field, ['ID', 'post_parent', 'menu_order'], true)) {
-        $value = (int) $value;
+        // The integer columns stay integers in every context, escaped or not.
+        return (int) _minn_sanitize_post_value($field, (int) $value, $post_id, (string) $context);
     }
-    if ($context === 'raw' || $context === 'db') {
-        return $context === 'db' ? apply_filters("pre_{$field}", apply_filters("pre_post_{$field}", $value)) : $value;
+    return _minn_sanitize_post_value($field, $value, $post_id, (string) $context);
+}
+
+/**
+ * @internal one post column through the context's hooks and escaping, as
+ * probed: a post_* column runs edit_post_X then X_edit_pre, pre_post_X then
+ * X_save_pre, and X for display; any other runs edit_post_Y, pre_post_Y then
+ * Y_pre, post_Y. The edit context escapes the four text columns for a
+ * textarea (the content stays as it is for the rich editor) and the rest for
+ * an attribute.
+ */
+function _minn_sanitize_post_value(string $field, $value, $post_id, string $context)
+{
+    $bare = str_starts_with($field, 'post_') ? substr($field, 5) : null;
+    if ($context === 'raw') {
+        return $value;
+    }
+    if ($context === 'db') {
+        return $bare === null ? apply_filters("{$field}_pre", apply_filters("pre_post_{$field}", $value)) : apply_filters("{$bare}_save_pre", apply_filters("pre_{$field}", $value));
     }
     if ($context === 'edit') {
-        $value = apply_filters("edit_{$field}", apply_filters("edit_post_{$field}", $value, $post_id), $post_id);
-        return is_string($value) ? esc_html(format_to_edit($value)) : $value;
+        $value = $bare === null ? apply_filters("edit_post_{$field}", $value, $post_id) : apply_filters("{$bare}_edit_pre", apply_filters("edit_{$field}", $value, $post_id), $post_id);
+        if (!is_scalar($value)) {
+            return $value;
+        }
+        if ($field === 'post_content') {
+            return format_to_edit((string) $value, user_can_richedit());
+        }
+        return in_array($field, ['post_title', 'post_excerpt', 'post_password'], true) ? format_to_edit((string) $value) : esc_attr((string) $value);
     }
-    $value = apply_filters("{$field}", apply_filters("post_{$field}", $value, $post_id, $context), $post_id, $context);
+    $value = apply_filters($bare === null ? "post_{$field}" : $field, $value, $post_id, $context);
     if ($context === 'attribute') {
         return esc_attr((string) $value);
     }
-    if ($context === 'js') {
-        return esc_js((string) $value);
-    }
-    return $value;
+    return $context === 'js' ? esc_js((string) $value) : $value;
 }
 
 /** The article's class list; see Minn\Content\PostClasses for the order. */
@@ -1717,6 +1774,11 @@ function is_page_template($template = '')
 }
 
 /** The engine reads rows on demand; the reference's cache primers have nothing to fill here. */
+function _prime_post_caches($ids, $update_term_cache = true, $update_meta_cache = true)
+{
+    return null;
+}
+
 function update_post_caches(&$posts, $post_type = 'post', $update_term_cache = true, $update_meta_cache = true)
 {
     return null;

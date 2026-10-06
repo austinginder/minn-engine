@@ -1,0 +1,230 @@
+[
+    [
+        "convert_smilies #0",
+        "Hello 🙂 world"
+    ],
+    [
+        "convert_smilies #1",
+        "one 🙂 two 😉 three 😛 four 😎 five"
+    ],
+    [
+        "convert_smilies #2",
+        "😀 🙁 😮 <img src=\"{home}/wp-includes/images/smilies/mrgreen.png\" alt=\":mrgreen:\" class=\"wp-smiley\" style=\"height: 1em; max-height: 1em;\" /> ❓"
+    ],
+    [
+        "convert_smilies #3",
+        "tight:)no"
+    ],
+    [
+        "convert_smilies #4",
+        "🙂"
+    ],
+    [
+        "convert_smilies #5",
+        "<code>:)</code> and 🙂"
+    ],
+    [
+        "convert_smilies #6",
+        "<pre>:-)</pre>"
+    ],
+    [
+        "convert_smilies #7",
+        "<a title=\":)\">🙂</a>"
+    ],
+    [
+        "convert_smilies #8",
+        "line one 🙂\n🙁 line two"
+    ],
+    [
+        "convert_smilies #9",
+        "no smilies here"
+    ],
+    [
+        "convert_smilies with use_smilies off",
+        "Hello :) world"
+    ],
+    [
+        "capital_P_dangit #0",
+        "I love WordPress"
+    ],
+    [
+        "capital_P_dangit #1",
+        "(WordPress)"
+    ],
+    [
+        "capital_P_dangit #2",
+        "&#8216;WordPress&#8217;"
+    ],
+    [
+        "capital_P_dangit #3",
+        "Wordpress first"
+    ],
+    [
+        "capital_P_dangit #4",
+        ">WordPress<"
+    ],
+    [
+        "capital_P_dangit #5",
+        "wordpress lower"
+    ],
+    [
+        "capital_P_dangit #6",
+        "WordPress right"
+    ],
+    [
+        "capital_P_dangit #7",
+        "<a href=\"http://wordpress.org/\">WordPress.org</a>"
+    ],
+    [
+        "capital_P_dangit #8",
+        "MyWordpress"
+    ],
+    [
+        "capital_P_dangit #9",
+        "&#8220;WordPress&#8221;"
+    ],
+    [
+        "capital_P_dangit #10",
+        "about WordPress."
+    ],
+    [
+        "force_balance_tags #0",
+        "<p>open</p>"
+    ],
+    [
+        "force_balance_tags #1",
+        "<div><span>x</span></div>"
+    ],
+    [
+        "force_balance_tags #2",
+        "stray"
+    ],
+    [
+        "force_balance_tags #3",
+        "<b><i>x</i></b>"
+    ],
+    [
+        "force_balance_tags #4",
+        "<br /><img src=\"x\"/>"
+    ],
+    [
+        "force_balance_tags #5",
+        "<p>a</p><p>b</p>"
+    ],
+    [
+        "force_balance_tags #6",
+        "<ul><li>a</li><li>b</li></ul>"
+    ],
+    [
+        "force_balance_tags #7",
+        "plain"
+    ],
+    [
+        "force_balance_tags #8",
+        "<!-- c --><p>x</p>"
+    ],
+    [
+        "force_balance_tags #9",
+        "<blockquote><p>q</p></blockquote>"
+    ],
+    [
+        "wp_staticize_emoji #0",
+        "Hi <img src=\"https://s.w.org/images/core/emoji/17.0.2/72x72/1f600.png\" alt=\"😀\" class=\"wp-smiley\" style=\"height: 1em; max-height: 1em;\" />"
+    ],
+    [
+        "wp_staticize_emoji #1",
+        "thumbs <img src=\"https://s.w.org/images/core/emoji/17.0.2/72x72/1f44d-1f3fd.png\" alt=\"👍🏽\" class=\"wp-smiley\" style=\"height: 1em; max-height: 1em;\" /> up"
+    ],
+    [
+        "wp_staticize_emoji #2",
+        "no emoji"
+    ],
+    [
+        "wp_staticize_emoji #3",
+        "<img src=\"https://s.w.org/images/core/emoji/17.0.2/72x72/1f600.png\" alt=\"😀\" class=\"wp-smiley\" style=\"height: 1em; max-height: 1em;\" /> entity"
+    ],
+    [
+        "wp_staticize_emoji #4",
+        "flag <img src=\"https://s.w.org/images/core/emoji/17.0.2/72x72/1f1fa-1f1f8.png\" alt=\"🇺🇸\" class=\"wp-smiley\" style=\"height: 1em; max-height: 1em;\" />"
+    ],
+    [
+        "wp_replace_insecure_home_url without migration",
+        "<a href=\"{home-http}/x\">x</a> <img src=\"{home-http}/i.png\"> http://elsewhere.example/y"
+    ],
+    [
+        "wp_replace_insecure_home_url with migration",
+        "<a href=\"{home}/x\">x</a> <img src=\"{home}/i.png\"> http://elsewhere.example/y"
+    ],
+    [
+        "probe image",
+        true
+    ],
+    [
+        "wp_filter_content_tags plain img",
+        "<img loading=\"lazy\" decoding=\"async\" width=\"1200\" height=\"800\" src=\"{home}/wp-content/uploads/2026/08/minn-battery.png\" alt=\"\" class=\"wp-image-607\" srcset=\"{home}/wp-content/uploads/2026/08/minn-battery.png 1200w, {home}/wp-content/uploads/2026/08/minn-battery-300x200.png 300w, {home}/wp-content/uploads/2026/08/minn-battery-1024x683.png 1024w, {home}/wp-content/uploads/2026/08/minn-battery-768x512.png 768w\" sizes=\"auto, (max-width: 1200px) 100vw, 1200px\" />"
+    ],
+    [
+        "wp_filter_content_tags img with size class",
+        "<img loading=\"lazy\" decoding=\"async\" width=\"1200\" height=\"800\" src=\"{home}/wp-content/uploads/2026/08/minn-battery.png\" alt=\"a\" class=\"alignnone size-full wp-image-607\" srcset=\"{home}/wp-content/uploads/2026/08/minn-battery.png 1200w, {home}/wp-content/uploads/2026/08/minn-battery-300x200.png 300w, {home}/wp-content/uploads/2026/08/minn-battery-1024x683.png 1024w, {home}/wp-content/uploads/2026/08/minn-battery-768x512.png 768w\" sizes=\"auto, (max-width: 1200px) 100vw, 1200px\" />"
+    ],
+    [
+        "wp_filter_content_tags img without id",
+        "<img decoding=\"async\" src=\"https://elsewhere.example/a.png\" alt=\"\" />"
+    ],
+    [
+        "wp_filter_content_tags img with loading",
+        "<img fetchpriority=\"high\" decoding=\"async\" width=\"1200\" height=\"800\" loading=\"eager\" src=\"{home}/wp-content/uploads/2026/08/minn-battery.png\" class=\"wp-image-607\" srcset=\"{home}/wp-content/uploads/2026/08/minn-battery.png 1200w, {home}/wp-content/uploads/2026/08/minn-battery-300x200.png 300w, {home}/wp-content/uploads/2026/08/minn-battery-1024x683.png 1024w, {home}/wp-content/uploads/2026/08/minn-battery-768x512.png 768w\" sizes=\"(max-width: 1200px) 100vw, 1200px\" />"
+    ],
+    [
+        "wp_filter_content_tags iframe",
+        "<iframe loading=\"lazy\" src=\"https://elsewhere.example/embed\" width=\"560\" height=\"315\"></iframe>"
+    ],
+    [
+        "wp_filter_content_tags two images",
+        "<p><img loading=\"lazy\" decoding=\"async\" width=\"1200\" height=\"800\" src=\"{home}/wp-content/uploads/2026/08/minn-battery.png\" class=\"wp-image-607\" srcset=\"{home}/wp-content/uploads/2026/08/minn-battery.png 1200w, {home}/wp-content/uploads/2026/08/minn-battery-300x200.png 300w, {home}/wp-content/uploads/2026/08/minn-battery-1024x683.png 1024w, {home}/wp-content/uploads/2026/08/minn-battery-768x512.png 768w\" sizes=\"auto, (max-width: 1200px) 100vw, 1200px\" /></p><p><img loading=\"lazy\" decoding=\"async\" width=\"1200\" height=\"800\" src=\"{home}/wp-content/uploads/2026/08/minn-battery.png\" class=\"wp-image-607\" srcset=\"{home}/wp-content/uploads/2026/08/minn-battery.png 1200w, {home}/wp-content/uploads/2026/08/minn-battery-300x200.png 300w, {home}/wp-content/uploads/2026/08/minn-battery-1024x683.png 1024w, {home}/wp-content/uploads/2026/08/minn-battery-768x512.png 768w\" sizes=\"auto, (max-width: 1200px) 100vw, 1200px\" /></p>"
+    ],
+    [
+        "_oembed_filter_feed_content",
+        "<blockquote class=\"wp-embedded-content\" data-secret=\"abc\"><a href=\"https://elsewhere.example/p/\">P</a></blockquote><iframe class=\"wp-embedded-content\" sandbox=\"allow-scripts\" security=\"restricted\"  title=\"P\" src=\"https://elsewhere.example/p/embed/#?secret=abc\" data-secret=\"abc\" width=\"600\" height=\"338\" frameborder=\"0\" marginwidth=\"0\" marginheight=\"0\" scrolling=\"no\"></iframe>"
+    ],
+    [
+        "apply_block_hooks_to_content_from_post_object",
+        "<!-- wp:paragraph --><p>x</p><!-- /wp:paragraph -->"
+    ],
+    [
+        "the_content classic",
+        "<p>Hello 🙂 from WordPress.</p>\n<p>A second &#8220;paragraph&#8221; &#8212; here.</p>\n"
+    ],
+    [
+        "the_content blocks",
+        "<p class=\"wp-block-paragraph\">Hello 🙂 from WordPress.</p>\n\n<h2 class=\"wp-block-heading\">A &#8220;heading&#8221;</h2>"
+    ],
+    [
+        "the_content image block",
+        "<figure class=\"wp-block-image size-large\"><img loading=\"lazy\" decoding=\"async\" width=\"1200\" height=\"800\" src=\"{home}/wp-content/uploads/2026/08/minn-battery.png\" alt=\"\" class=\"wp-image-607\" srcset=\"{home}/wp-content/uploads/2026/08/minn-battery.png 1200w, {home}/wp-content/uploads/2026/08/minn-battery-300x200.png 300w, {home}/wp-content/uploads/2026/08/minn-battery-1024x683.png 1024w, {home}/wp-content/uploads/2026/08/minn-battery-768x512.png 768w\" sizes=\"auto, (max-width: 1200px) 100vw, 1200px\" /></figure>"
+    ],
+    [
+        "the_content classic image",
+        "<p>Look:</p>\n<p><img loading=\"lazy\" decoding=\"async\" width=\"1200\" height=\"800\" src=\"{home}/wp-content/uploads/2026/08/minn-battery.png\" alt=\"\" class=\"alignnone wp-image-607\" srcset=\"{home}/wp-content/uploads/2026/08/minn-battery.png 1200w, {home}/wp-content/uploads/2026/08/minn-battery-300x200.png 300w, {home}/wp-content/uploads/2026/08/minn-battery-1024x683.png 1024w, {home}/wp-content/uploads/2026/08/minn-battery-768x512.png 768w\" sizes=\"auto, (max-width: 1200px) 100vw, 1200px\" /></p>\n"
+    ],
+    [
+        "the_content shortcode",
+        "<p>Before</p>\n<p><figure style=\"width: 300px\" class=\"wp-caption alignnone\"><img loading=\"lazy\" decoding=\"async\" src=\"{home}/wp-content/uploads/2026/08/minn-battery.png\" width=\"300\" height=\"200\" /><figcaption class=\"wp-caption-text\">A caption</figcaption></figure></p>\n<p>After</p>\n"
+    ],
+    [
+        "the_title",
+        "WordPress isn&#8217;t &#8220;here&#8221; &#8212; now"
+    ],
+    [
+        "comment_text",
+        "<p>Hi 🙂 see <a href=\"http://elsewhere.example/page\" rel=\"nofollow ugc\">http://elsewhere.example/page</a> and WordPress.</p>\n<p>Second <b>bold</b></p>\n"
+    ],
+    [
+        "the_excerpt",
+        "<p>An excerpt 🙂 about Wordpress.</p>\n"
+    ],
+    [
+        "term_description",
+        "<p>A term &#8220;description&#8221;.</p>\n<p>Two.</p>\n"
+    ]
+]

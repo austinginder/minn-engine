@@ -47,6 +47,50 @@ final readonly class ImageTags
         return $this->rewrite($html, false, false);
     }
 
+    /**
+     * Every <img> and <iframe> of a content fragment as the reference's
+     * wp_filter_content_tags leaves it: an attachment's image is enriched as
+     * above (a loading it already has is kept, and an eager large one is
+     * fetched first); any other image is decoded asynchronously and, when its
+     * size is known, loaded lazily or by the page's budget; an iframe with a
+     * size is loaded lazily.
+     */
+    public function content(string $html): string
+    {
+        return (string) preg_replace_callback('/<(img|iframe)\s[^>]*>/i', function (array $m): string {
+            if (strtolower($m[1]) === 'iframe') {
+                return self::lazyFrame($m[0]);
+            }
+            if (preg_match('/\sclass="[^"]*\bwp-image-(\d+)\b/', $m[0], $id) === 1) {
+                $enriched = $this->enrichTag($m[0], (int) $id[1], false, true);
+                if ($enriched !== $m[0]) {
+                    return $enriched;
+                }
+            }
+            return $this->plainImage($m[0]);
+        }, $html);
+    }
+
+    /** An image that is not an attachment's: decoding always, loading when its size is known and it has none. */
+    private function plainImage(string $tag): string
+    {
+        $width = preg_match('/\swidth="?(\d+)/', $tag, $w) === 1 ? (int) $w[1] : 0;
+        $height = preg_match('/\sheight="?(\d+)/', $tag, $h) === 1 ? (int) $h[1] : 0;
+        if ($width > 0 && $height > 0 && !str_contains($tag, ' loading=')) {
+            return (string) preg_replace('/^<img\s/i', '<img ' . $this->loadingPrefix($width, $height)[0] . ' ', $tag, 1);
+        }
+        return str_contains($tag, ' decoding=') ? $tag : (string) preg_replace('/^<img\s/i', '<img decoding="async" ', $tag, 1);
+    }
+
+    /** An iframe with a width and a height, and no loading of its own, loads lazily. */
+    private static function lazyFrame(string $tag): string
+    {
+        if (str_contains($tag, ' loading=') || preg_match('/\swidth=/', $tag) !== 1 || preg_match('/\sheight=/', $tag) !== 1) {
+            return $tag;
+        }
+        return (string) preg_replace('/^<iframe\s/i', '<iframe loading="lazy" ', $tag, 1);
+    }
+
     private function rewrite(string $html, bool $withDataId, bool $autoSizes): string
     {
         return preg_replace_callback(
@@ -77,6 +121,15 @@ final readonly class ImageTags
         }
         $large = $width * $height >= self::minimumPriorityPixels();
         return $large && RenderState::current()->claimPriority() ? ['fetchpriority="high" decoding="async"', false] : ['decoding="async"', false];
+    }
+
+    /** An image that names its own loading keeps it: an eager one large enough is fetched first, every one is decoded asynchronously. @return array{0: string, 1: bool} */
+    private function givenLoading(string $loading, int $width, int $height): array
+    {
+        if ($loading === 'eager' && $width * $height >= self::minimumPriorityPixels() && RenderState::current()->claimPriority()) {
+            return ['fetchpriority="high" decoding="async"', false];
+        }
+        return ['decoding="async"', false];
     }
 
     /** The area an image must cover before it is worth fetching first. */
@@ -131,7 +184,7 @@ final readonly class ImageTags
             $candidates[$meta['width']] = $fullUrl;
         }
         [$width, $height] = $shown;
-        [$loading, $auto] = $this->loadingPrefix($width, $height);
+        [$loading, $auto] = preg_match('/\sloading="(\w+)"/', $tag, $given) === 1 ? $this->givenLoading($given[1], $width, $height) : $this->loadingPrefix($width, $height);
         $prefix = $loading . ' width="' . $width . '" height="' . $height . '"' . ($withDataId ? ' data-id="' . $attachmentId . '"' : '');
         $tag = preg_replace('/^<img\s/', '<img ' . $prefix . ' ', $tag, 1);
         $srcset = self::srcsetAttributes($candidates, $width, $auto && $autoSizes, $attachmentId, $meta, $src, $height);

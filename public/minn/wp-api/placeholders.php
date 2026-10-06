@@ -43,12 +43,6 @@ function _post_states($post, $display = true)
     return null;
 }
 
-function _prime_post_caches($ids, $update_term_cache = true, $update_meta_cache = true)
-{
-    \Minn\Runtime\PlaceholderTrace::hit('_prime_post_caches');
-    return null;
-}
-
 function _unzip_file_pclzip($file, $to, $needed_dirs = [])
 {
     \Minn\Runtime\PlaceholderTrace::hit('_unzip_file_pclzip');
@@ -361,12 +355,6 @@ function get_theme_update_available($theme)
     return null;
 }
 
-function get_user_setting($name, $default_value = false)
-{
-    \Minn\Runtime\PlaceholderTrace::hit('get_user_setting');
-    return null;
-}
-
 function get_user_to_edit($user_id)
 {
     \Minn\Runtime\PlaceholderTrace::hit('get_user_to_edit');
@@ -388,12 +376,6 @@ function has_meta($post_id)
 function is_login()
 {
     \Minn\Runtime\PlaceholderTrace::hit('is_login');
-    return null;
-}
-
-function is_protected_meta($meta_key, $meta_type = '')
-{
-    \Minn\Runtime\PlaceholderTrace::hit('is_protected_meta');
     return null;
 }
 
@@ -433,12 +415,6 @@ function post_tags_meta_box($post, $box)
     return null;
 }
 
-function post_type_archive_title($prefix = '', $display = true)
-{
-    \Minn\Runtime\PlaceholderTrace::hit('post_type_archive_title');
-    return null;
-}
-
 function postbox_classes($box_id, $screen_id)
 {
     \Minn\Runtime\PlaceholderTrace::hit('postbox_classes');
@@ -463,18 +439,6 @@ function retrieve_password($user_login = '')
     return null;
 }
 
-function sanitize_post($post, $context = 'display')
-{
-    \Minn\Runtime\PlaceholderTrace::hit('sanitize_post');
-    return null;
-}
-
-function sanitize_sql_orderby($orderby)
-{
-    \Minn\Runtime\PlaceholderTrace::hit('sanitize_sql_orderby');
-    return null;
-}
-
 function screen_icon()
 {
     \Minn\Runtime\PlaceholderTrace::hit('screen_icon');
@@ -490,18 +454,6 @@ function set_user_setting($name, $value)
 function show_message($message)
 {
     \Minn\Runtime\PlaceholderTrace::hit('show_message');
-    return null;
-}
-
-function single_month_title($prefix = '', $display = true)
-{
-    \Minn\Runtime\PlaceholderTrace::hit('single_month_title');
-    return null;
-}
-
-function single_tag_title($prefix = '', $display = true)
-{
-    \Minn\Runtime\PlaceholderTrace::hit('single_tag_title');
     return null;
 }
 
@@ -691,12 +643,6 @@ function wp_enqueue_global_styles_css_custom_properties()
     return null;
 }
 
-function wp_get_additional_image_sizes()
-{
-    \Minn\Runtime\PlaceholderTrace::hit('wp_get_additional_image_sizes');
-    return null;
-}
-
 function wp_get_available_translations()
 {
     \Minn\Runtime\PlaceholderTrace::hit('wp_get_available_translations');
@@ -706,12 +652,6 @@ function wp_get_available_translations()
 function wp_get_post_autosave($post_id, $user_id = 0)
 {
     \Minn\Runtime\PlaceholderTrace::hit('wp_get_post_autosave');
-    return null;
-}
-
-function wp_get_split_term($old_term_id, $taxonomy)
-{
-    \Minn\Runtime\PlaceholderTrace::hit('wp_get_split_term');
     return null;
 }
 
@@ -838,12 +778,6 @@ function wp_print_request_filesystem_credentials_modal()
 function wp_read_video_metadata($file)
 {
     \Minn\Runtime\PlaceholderTrace::hit('wp_read_video_metadata');
-    return null;
-}
-
-function wp_removable_query_args()
-{
-    \Minn\Runtime\PlaceholderTrace::hit('wp_removable_query_args');
     return null;
 }
 

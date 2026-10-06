@@ -258,7 +258,7 @@ final readonly class Feeds
         }
         if (Runtime::booted()) {
             $content = Runtime::shortcodes()->apply($content);
-            $content = (string) Runtime::hooks()->filter('the_content', [$content]);
+            $content = Runtime::contentFilter($content);
         }
         return $content;
     }

@@ -1,0 +1,724 @@
+[
+    [
+        "sanitize_sql_orderby #0",
+        "post_date DESC"
+    ],
+    [
+        "sanitize_sql_orderby #1",
+        "post_title ASC, ID DESC"
+    ],
+    [
+        "sanitize_sql_orderby #2",
+        "RAND()"
+    ],
+    [
+        "sanitize_sql_orderby #3",
+        false
+    ],
+    [
+        "sanitize_sql_orderby #4",
+        false
+    ],
+    [
+        "sanitize_sql_orderby #5",
+        false
+    ],
+    [
+        "sanitize_sql_orderby #6",
+        false
+    ],
+    [
+        "sanitize_sql_orderby #7",
+        "ID"
+    ],
+    [
+        "sanitize_sql_orderby #8",
+        false
+    ],
+    [
+        "sanitize_sql_orderby #9",
+        false
+    ],
+    [
+        "sanitize_sql_orderby #10",
+        false
+    ],
+    [
+        "sanitize_sql_orderby #11",
+        false
+    ],
+    [
+        "sanitize_sql_orderby #12",
+        "`post_date` ASC"
+    ],
+    [
+        "sanitize_sql_orderby #13",
+        "ID desc"
+    ],
+    [
+        "sanitize_sql_orderby #14",
+        false
+    ],
+    [
+        "sanitize_sql_orderby #15",
+        "rand()"
+    ],
+    [
+        "sanitize_sql_orderby #16",
+        "post_date  DESC"
+    ],
+    [
+        "sanitize_sql_orderby #17",
+        " post_date"
+    ],
+    [
+        "sanitize_sql_orderby #18",
+        false
+    ],
+    [
+        "sanitize_sql_orderby #19",
+        "menu_order ASC, post_title"
+    ],
+    [
+        "sanitize_sql_orderby #20",
+        false
+    ],
+    [
+        "sanitize_sql_orderby #21",
+        false
+    ],
+    [
+        "sanitize_sql_orderby #22",
+        false
+    ],
+    [
+        "is_protected_meta #0",
+        true
+    ],
+    [
+        "is_protected_meta #1",
+        false
+    ],
+    [
+        "is_protected_meta #2",
+        false
+    ],
+    [
+        "is_protected_meta #3",
+        true
+    ],
+    [
+        "is_protected_meta #4",
+        false
+    ],
+    [
+        "is_protected_meta #5",
+        true
+    ],
+    [
+        "is_protected_meta #6",
+        true
+    ],
+    [
+        "is_protected_meta filtered",
+        [
+            [
+                "user"
+            ],
+            true
+        ]
+    ],
+    [
+        "wp_removable_query_args",
+        [
+            "activate",
+            "activated",
+            "admin_email_remind_later",
+            "approved",
+            "core-major-auto-updates-saved",
+            "deactivate",
+            "delete_count",
+            "deleted",
+            "disabled",
+            "doing_wp_cron",
+            "enabled",
+            "error",
+            "hotkeys_highlight_first",
+            "hotkeys_highlight_last",
+            "ids",
+            "locked",
+            "message",
+            "same",
+            "saved",
+            "settings-updated",
+            "skipped",
+            "spammed",
+            "trashed",
+            "unspammed",
+            "untrashed",
+            "update",
+            "updated",
+            "wp-post-new-reload"
+        ]
+    ],
+    [
+        "wp_removable_query_args filtered",
+        [
+            "activate",
+            "zz-mine"
+        ]
+    ],
+    [
+        "wp_get_additional_image_sizes",
+        {
+            "width": 321,
+            "height": 123,
+            "crop": true
+        }
+    ],
+    [
+        "_wp_additional_image_sizes global",
+        {
+            "width": 321,
+            "height": 123,
+            "crop": true
+        }
+    ],
+    [
+        "wp_get_additional_image_sizes removed",
+        false
+    ],
+    [
+        "wp_get_split_term none",
+        false
+    ],
+    [
+        "wp_get_split_term recorded",
+        [
+            9,
+            false,
+            9
+        ]
+    ],
+    [
+        "get_user_setting none",
+        "tinymce"
+    ],
+    [
+        "get_user_setting stored",
+        [
+            false,
+            false,
+            "dflt"
+        ]
+    ],
+    [
+        "get_all_user_settings",
+        []
+    ],
+    [
+        "get_all_user_settings fresh",
+        {
+            "editor": "html",
+            "mfold": "o"
+        }
+    ],
+    [
+        "get_user_setting fresh",
+        [
+            "html",
+            "o",
+            "dflt"
+        ]
+    ],
+    [
+        "get_all_user_settings cookie",
+        {
+            "editor": "tinymce",
+            "xy": "1",
+            "z": "2"
+        }
+    ],
+    [
+        "get_all_user_settings cookie without pairs",
+        []
+    ],
+    [
+        "get_all_user_settings signed out",
+        [
+            [],
+            "d"
+        ]
+    ],
+    [
+        "sanitize_post raw",
+        [
+            "WP_Post",
+            "raw",
+            "Hello world!",
+            1,
+            "integer"
+        ]
+    ],
+    [
+        "sanitize_post edit",
+        [
+            "WP_Post",
+            "edit",
+            "Hello world!",
+            1,
+            "integer"
+        ]
+    ],
+    [
+        "sanitize_post db",
+        [
+            "WP_Post",
+            "db",
+            "Hello world!",
+            1,
+            "integer"
+        ]
+    ],
+    [
+        "sanitize_post display",
+        [
+            "WP_Post",
+            "display",
+            "Hello world!",
+            1,
+            "integer"
+        ]
+    ],
+    [
+        "sanitize_post attribute",
+        [
+            "WP_Post",
+            "attribute",
+            "Hello world!",
+            1,
+            "integer"
+        ]
+    ],
+    [
+        "sanitize_post js",
+        [
+            "WP_Post",
+            "js",
+            "Hello world!",
+            1,
+            "integer"
+        ]
+    ],
+    [
+        "sanitize_post array",
+        [
+            "edit",
+            "integer",
+            "Hello world!"
+        ]
+    ],
+    [
+        "sanitize_post_field title display",
+        "A \"quote\" & <b>tag</b>"
+    ],
+    [
+        "sanitize_post_field title edit",
+        "A &quot;quote&quot; &amp; &lt;b&gt;tag&lt;/b&gt;"
+    ],
+    [
+        "sanitize_post_field title attribute",
+        "A &quot;quote&quot; &amp; &lt;b&gt;tag&lt;/b&gt;"
+    ],
+    [
+        "sanitize_post_field ID raw",
+        12
+    ],
+    [
+        "sanitize_post_field title js",
+        "A &quot;quote&quot; &amp; &lt;b&gt;tag&lt;/b&gt;\\'s"
+    ],
+    [
+        "sanitize_post_field content edit",
+        "&lt;p&gt;a &amp; &quot;b&quot;&lt;/p&gt;"
+    ],
+    [
+        "sanitize_post_field excerpt edit",
+        "&lt;p&gt;a &amp; &quot;b&quot;&lt;/p&gt;"
+    ],
+    [
+        "sanitize_post_field status attribute",
+        "publish&quot;"
+    ],
+    [
+        "sanitize_post_field menu_order edit",
+        3
+    ],
+    [
+        "sanitize_post_field hooks post_title raw",
+        []
+    ],
+    [
+        "sanitize_post_field hooks post_title edit",
+        [
+            "edit_post_title",
+            "title_edit_pre"
+        ]
+    ],
+    [
+        "sanitize_post_field hooks post_title db",
+        [
+            "pre_post_title",
+            "title_save_pre"
+        ]
+    ],
+    [
+        "sanitize_post_field hooks post_title display",
+        [
+            "post_title"
+        ]
+    ],
+    [
+        "sanitize_post_field hooks post_title attribute",
+        [
+            "post_title"
+        ]
+    ],
+    [
+        "sanitize_post_field hooks post_title js",
+        [
+            "post_title"
+        ]
+    ],
+    [
+        "sanitize_post_field hooks post_content raw",
+        []
+    ],
+    [
+        "sanitize_post_field hooks post_content edit",
+        [
+            "edit_post_content",
+            "content_edit_pre",
+            "user_can_richedit"
+        ]
+    ],
+    [
+        "sanitize_post_field hooks post_content db",
+        [
+            "pre_post_content",
+            "content_save_pre"
+        ]
+    ],
+    [
+        "sanitize_post_field hooks post_content display",
+        [
+            "post_content"
+        ]
+    ],
+    [
+        "sanitize_post_field hooks post_content attribute",
+        [
+            "post_content"
+        ]
+    ],
+    [
+        "sanitize_post_field hooks post_content js",
+        [
+            "post_content"
+        ]
+    ],
+    [
+        "sanitize_post_field hooks comment_status raw",
+        []
+    ],
+    [
+        "sanitize_post_field hooks comment_status edit",
+        [
+            "edit_post_comment_status"
+        ]
+    ],
+    [
+        "sanitize_post_field hooks comment_status db",
+        [
+            "pre_post_comment_status",
+            "comment_status_pre"
+        ]
+    ],
+    [
+        "sanitize_post_field hooks comment_status display",
+        [
+            "post_comment_status"
+        ]
+    ],
+    [
+        "sanitize_post_field hooks comment_status attribute",
+        [
+            "post_comment_status"
+        ]
+    ],
+    [
+        "sanitize_post_field hooks comment_status js",
+        [
+            "post_comment_status"
+        ]
+    ],
+    [
+        "sanitize_post_field hooks ID raw",
+        []
+    ],
+    [
+        "sanitize_post_field hooks ID edit",
+        [
+            "edit_post_ID"
+        ]
+    ],
+    [
+        "sanitize_post_field hooks ID db",
+        [
+            "pre_post_ID",
+            "ID_pre"
+        ]
+    ],
+    [
+        "sanitize_post_field hooks ID display",
+        [
+            "post_ID"
+        ]
+    ],
+    [
+        "sanitize_post_field hooks ID attribute",
+        [
+            "post_ID"
+        ]
+    ],
+    [
+        "sanitize_post_field hooks ID js",
+        [
+            "post_ID"
+        ]
+    ],
+    [
+        "sanitize_post_field post_excerpt edit",
+        "a &quot;b&quot; &lt;c&gt; &amp; d"
+    ],
+    [
+        "sanitize_post_field post_password edit",
+        "a &quot;b&quot; &lt;c&gt; &amp; d"
+    ],
+    [
+        "sanitize_post_field comment_status edit",
+        "a &quot;b&quot; &lt;c&gt; &amp; d"
+    ],
+    [
+        "sanitize_post_field guid edit",
+        "a &quot;b&quot; &lt;c&gt; &amp; d"
+    ],
+    [
+        "sanitize_post_field post_name edit",
+        "a &quot;b&quot; &lt;c&gt; &amp; d"
+    ],
+    [
+        "sanitize_post_field post_mime_type edit",
+        "a &quot;b&quot; &lt;c&gt; &amp; d"
+    ],
+    [
+        "sanitize_post_field post_title edit with an entity",
+        "a &amp;amp; b"
+    ],
+    [
+        "sanitize_post_field post_content edit with an entity",
+        "a &amp;amp; b"
+    ],
+    [
+        "sanitize_post_field post_excerpt edit with an entity",
+        "a &amp;amp; b"
+    ],
+    [
+        "sanitize_post_field post_password edit with an entity",
+        "a &amp;amp; b"
+    ],
+    [
+        "sanitize_post_field comment_status edit with an entity",
+        "a &amp; b"
+    ],
+    [
+        "sanitize_post_field post_name edit with an entity",
+        "a &amp; b"
+    ],
+    [
+        "sanitize_post_field content edit with the rich editor",
+        "<p>a & \"b\"</p>"
+    ],
+    [
+        "get_post fresh object",
+        [
+            "Hello world!",
+            false
+        ]
+    ],
+    [
+        "get_post edit filter",
+        [
+            "edit",
+            "raw",
+            "display",
+            "raw"
+        ]
+    ],
+    [
+        "single_tag_title on a tag archive",
+        [
+            "engine",
+            "Tag: engine"
+        ]
+    ],
+    [
+        "single_tag_title printed",
+        ">engine"
+    ],
+    [
+        "single_month_title on a month archive",
+        [
+            "August2026",
+            " - August - 2026"
+        ]
+    ],
+    [
+        "archive titles off an archive",
+        [
+            null,
+            false,
+            null
+        ]
+    ],
+    [
+        "term titles off an archive",
+        [
+            null,
+            null
+        ]
+    ],
+    [
+        "single_month_title by m",
+        [
+            "August2026",
+            " August 2026"
+        ]
+    ],
+    [
+        "single_month_title printed",
+        [
+            "|August|2026",
+            null
+        ]
+    ],
+    [
+        "single_month_title on a year archive",
+        false
+    ],
+    [
+        "post_type_archive_title on an archive",
+        [
+            true,
+            "Probes",
+            "All Probes"
+        ]
+    ],
+    [
+        "post_type_archive_title printed",
+        [
+            ">Probes (zzprobe)",
+            null
+        ]
+    ],
+    [
+        "post_type_archive_title over two types",
+        [
+            false,
+            null
+        ]
+    ],
+    [
+        "get_users search with a trailing star",
+        [
+            "editor"
+        ]
+    ],
+    [
+        "get_users search with a leading star",
+        [
+            "scribe"
+        ]
+    ],
+    [
+        "get_users search exact",
+        [
+            "admin"
+        ]
+    ],
+    [
+        "get_users search for nobody",
+        []
+    ],
+    [
+        "get_users search in the login column",
+        [
+            "scribe"
+        ]
+    ],
+    [
+        "get_users search by email",
+        [
+            "admin",
+            "editor",
+            "scribe"
+        ]
+    ],
+    [
+        "get_users role",
+        [
+            "editor"
+        ]
+    ],
+    [
+        "get_users include",
+        [
+            "admin",
+            "scribe"
+        ]
+    ],
+    [
+        "get_users exclude",
+        [
+            "editor",
+            "scribe"
+        ]
+    ],
+    [
+        "get_users number",
+        [
+            "admin",
+            "editor"
+        ]
+    ],
+    [
+        "get_users fields ID",
+        [
+            "1",
+            "2",
+            "3"
+        ]
+    ],
+    [
+        "get_users orderby ID desc",
+        [
+            "scribe",
+            "editor",
+            "admin"
+        ]
+    ],
+    [
+        "_prime_post_caches",
+        null
+    ]
+]

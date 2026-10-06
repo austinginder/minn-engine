@@ -419,8 +419,10 @@ function wpautop($text, $br = true)
 function make_clickable($text)
 {
     $text = (string) $text;
-    $text = preg_replace_callback('#(?<![\w"\'>=])((?:https?|ftp)://[^\s<"\']+?)(?=[.,;:!?)]*(?:\s|$|<))#i', static fn (array $m) => '<a href="' . esc_url($m[1]) . '" rel="nofollow">' . $m[1] . '</a>', $text);
-    $text = preg_replace_callback('#(?<![\w"\'>=/])(www\.[^\s<"\']+?)(?=[.,;:!?)]*(?:\s|$|<))#i', static fn (array $m) => '<a href="' . esc_url('http://' . $m[1]) . '" rel="nofollow">' . $m[1] . '</a>', $text);
+    // Links in comment text are user-generated content as well as unfollowed.
+    $rel = doing_filter('comment_text') ? 'nofollow ugc' : 'nofollow';
+    $text = preg_replace_callback('#(?<![\w"\'>=])((?:https?|ftp)://[^\s<"\']+?)(?=[.,;:!?)]*(?:\s|$|<))#i', static fn (array $m) => '<a href="' . esc_url($m[1]) . '" rel="' . $rel . '">' . $m[1] . '</a>', $text);
+    $text = preg_replace_callback('#(?<![\w"\'>=/])(www\.[^\s<"\']+?)(?=[.,;:!?)]*(?:\s|$|<))#i', static fn (array $m) => '<a href="' . esc_url('http://' . $m[1]) . '" rel="' . $rel . '">' . $m[1] . '</a>', $text);
     $text = preg_replace_callback('#(?<![\w"\'>=:/])([a-z0-9._+-]+@[a-z0-9.-]+\.[a-z]{2,})#i', static fn (array $m) => '<a href="mailto:' . $m[1] . '">' . $m[1] . '</a>', $text);
     return $text;
 }
@@ -653,12 +655,27 @@ function convert_chars($content, $deprecated = '')
 
 function convert_smilies($text)
 {
-    return $text;
+    if (!get_option('use_smilies') || (string) $text === '') {
+        return $text;
+    }
+    return Minn\Content\TextFilters::smilies((string) $text, _minn_smilies(), static function (string $file, string $code): string {
+        $src = apply_filters('smilies_src', includes_url("images/smilies/{$file}"), $file, site_url());
+        return sprintf('<img src="%s" alt="%s" class="wp-smiley" style="height: 1em; max-height: 1em;" />', esc_url($src), esc_attr($code));
+    });
+}
+
+/** @internal The smilies table, from the reference's own (data/smilies.json), through the smilies filter. */
+function _minn_smilies(): array
+{
+    static $table = null;
+    $table ??= json_decode((string) file_get_contents(MINN_ENGINE_DIR . '/data/smilies.json'), true) ?: [];
+    return (array) apply_filters('smilies', $table);
 }
 
 function capital_P_dangit($text)
 {
-    return $text;
+    // A title is set right everywhere; elsewhere only where the word plainly starts.
+    return current_filter() === 'the_title' ? Minn\Content\TextFilters::capitalPEverywhere((string) $text) : Minn\Content\TextFilters::capitalP((string) $text);
 }
 
 function wp_kses_stripslashes($content)
@@ -668,7 +685,7 @@ function wp_kses_stripslashes($content)
 
 function force_balance_tags($text)
 {
-    return $text;
+    return Minn\Content\TagBalancer::balance((string) $text);
 }
 
 function balanceTags($text, $force = false)
@@ -706,12 +723,43 @@ function seems_utf8($str)
 
 function wp_encode_emoji($content)
 {
-    return $content;
+    return Minn\Content\Emoji::encode((string) $content);
 }
 
 function wp_staticize_emoji($text)
 {
-    return $text;
+    return Minn\Content\Emoji::staticize((string) $text, (string) apply_filters('emoji_url', 'https://s.w.org/images/core/emoji/17.0.2/72x72/'), (string) apply_filters('emoji_ext', '.png'));
+}
+
+/** The reference's emoji list: every sequence as entities, longest first, or the single code points they are made of. */
+function _wp_emoji_list($type = 'entities')
+{
+    static $list = null;
+    $list ??= json_decode((string) file_get_contents(MINN_ENGINE_DIR . '/data/emoji.json'), true) ?: ['entities' => [], 'partials' => []];
+    return $list[$type === 'partials' ? 'partials' : 'entities'];
+}
+
+/** Whether content should have the site's http address made https: a site moved to https asked for it. */
+function wp_should_replace_insecure_home_url()
+{
+    $should = wp_is_using_https() && get_option('https_migration_required') && wp_parse_url(home_url(), PHP_URL_HOST) === wp_parse_url(site_url(), PHP_URL_HOST);
+    return (bool) apply_filters('wp_should_replace_insecure_home_url', $should);
+}
+
+/** The site's own http address made https in content, once the site moved to https. */
+function wp_replace_insecure_home_url($content)
+{
+    if (!wp_should_replace_insecure_home_url()) {
+        return $content;
+    }
+    $https = home_url('', 'https');
+    return Minn\Content\TextFilters::secureHome((string) $content, str_replace('https://', 'http://', $https), $https);
+}
+
+/** A feed carries an embedded post's iframe without the style that hides it until its script runs. */
+function _oembed_filter_feed_content($content)
+{
+    return Minn\Content\TextFilters::feedEmbeds((string) $content);
 }
 
 function wp_targeted_link_rel($text)
@@ -914,4 +962,15 @@ function sanitize_user($username, $strict = false)
     }
     $username = trim(preg_replace('|\s+|', ' ', $username));
     return apply_filters('sanitize_user', $username, $raw, $strict);
+}
+
+/** An ORDER BY that is only column names, each with an optional ASC or DESC, or RAND(); anything else is false. */
+function sanitize_sql_orderby($orderby)
+{
+    $orderby = (string) $orderby;
+    $column = '\s*(`\w+`|\w+)(\s+(ASC|DESC))?\s*';
+    if (preg_match("/^{$column}(,{$column})*$/i", $orderby) === 1 || preg_match('/^\s*RAND\(\s*\)\s*$/i', $orderby) === 1) {
+        return $orderby;
+    }
+    return false;
 }

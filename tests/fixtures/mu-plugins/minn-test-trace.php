@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name: Minn test trace
- * Description: Fixture for the hook-trace suite, loaded by the engine and the reference alike. A request that carries X-Minn-Trace naming a run the suite opened (wp-content/minn-trace/<run>.open exists) has every action it fires appended, in order, with a summary of its arguments, to wp-content/minn-trace/<run>.ndjson.
+ * Description: Fixture for the hook-trace suite, loaded by the engine and the reference alike. A request that carries X-Minn-Trace naming a run the suite opened (wp-content/minn-trace/<run>.open exists) has every action it fires appended, in order, with a summary of its arguments, to wp-content/minn-trace/<run>.ndjson; with X-Minn-Trace-Filters too, the distinct filters it applies go to <run>.filters.json.
  * License: MIT
  */
 
@@ -54,10 +54,24 @@ function minn_test_trace_describe($value): string
     return $value === null ? 'null' : gettype($value);
 }
 
-add_action('all', static function (string $hook) use ($minnTraceDir, $minnTraceRun): void {
-    // Only actions: an action is counted before 'all' runs, a filter is not.
+// With X-Minn-Trace-Filters as well, the distinct filters applied from the REST server's start to shutdown, written once at the end.
+$minnTraceFilters = isset($_SERVER['HTTP_X_MINN_TRACE_FILTERS']) ? ['open' => false, 'seen' => []] : null;
+if ($minnTraceFilters !== null) {
+    register_shutdown_function(static function () use (&$minnTraceFilters, $minnTraceDir, $minnTraceRun): void {
+        file_put_contents("{$minnTraceDir}/{$minnTraceRun}.filters.json", json_encode(array_keys($minnTraceFilters['seen'])));
+    });
+}
+
+add_action('all', static function (string $hook) use ($minnTraceDir, $minnTraceRun, &$minnTraceFilters): void {
+    // An action is counted before 'all' runs, a filter is not.
     if (did_action($hook) === 0) {
+        if ($minnTraceFilters !== null && $minnTraceFilters['open']) {
+            $minnTraceFilters['seen'][$hook] = true;
+        }
         return;
+    }
+    if ($minnTraceFilters !== null && ($hook === 'rest_api_init' || $hook === 'shutdown')) {
+        $minnTraceFilters['open'] = $hook === 'rest_api_init';
     }
     $args = array_map('minn_test_trace_describe', array_slice(func_get_args(), 1));
     file_put_contents("{$minnTraceDir}/{$minnTraceRun}.ndjson", json_encode([$hook, $args], JSON_UNESCAPED_SLASHES) . "\n", FILE_APPEND);

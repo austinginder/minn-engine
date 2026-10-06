@@ -14324,7 +14324,7 @@
             "namespace": "Minn\\Blocks",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Blocks/ImageTags.php",
-            "lines": 186,
+            "lines": 239,
             "doc": "The attributes the reference adds to an <img> that carries a\nwp-image-{id} class: loading, decoding, width and height (prepended, in\nthat order), and srcset plus sizes (appended). The srcset lists the\ndisplayed size first, then every same-ratio size in stored order, then\nthe original.",
             "implements": [],
             "extends": null,
@@ -14466,6 +14466,26 @@
                 },
                 {
                     "routes": [],
+                    "name": "content",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "content(string $html): string",
+                    "doc": "Every <img> and <iframe> of a content fragment as the reference's\nwp_filter_content_tags leaves it: an attachment's image is enriched as\nabove (a loading it already has is kept, and an eager large one is\nfetched first); any other image is decoded asynchronously and, when its\nsize is known, loaded lazily or by the page's budget; an iframe with a\nsize is loaded lazily.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "html",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 58,
+                    "end": 72
+                },
+                {
+                    "routes": [],
                     "name": "featured",
                     "static": false,
                     "visibility": "public",
@@ -14495,8 +14515,48 @@
                             "doc": ""
                         }
                     ],
-                    "line": 181,
-                    "end": 206
+                    "line": 234,
+                    "end": 259
+                },
+                {
+                    "routes": [],
+                    "name": "plainImage",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "plainImage(string $tag): string",
+                    "doc": "An image that is not an attachment's: decoding always, loading when its size is known and it has none.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "tag",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 75,
+                    "end": 83
+                },
+                {
+                    "routes": [],
+                    "name": "lazyFrame",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "lazyFrame(string $tag): string",
+                    "doc": "An iframe with a width and a height, and no loading of its own, loads lazily.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "tag",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 86,
+                    "end": 92
                 },
                 {
                     "routes": [],
@@ -14529,8 +14589,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 50,
-                    "end": 57
+                    "line": 94,
+                    "end": 101
                 },
                 {
                     "routes": [],
@@ -14556,8 +14616,44 @@
                             "doc": ""
                         }
                     ],
-                    "line": 65,
-                    "end": 80
+                    "line": 109,
+                    "end": 124
+                },
+                {
+                    "routes": [],
+                    "name": "givenLoading",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "givenLoading(string $loading, int $width, int $height): array",
+                    "doc": "An image that names its own loading keeps it: an eager one large enough is fetched first, every one is decoded asynchronously. @return array{0: string, 1: bool}",
+                    "shapes": [
+                        "@return array{0: string, 1: bool}"
+                    ],
+                    "params": [
+                        {
+                            "name": "loading",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "width",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "height",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 127,
+                    "end": 133
                 },
                 {
                     "routes": [],
@@ -14568,8 +14664,8 @@
                     "doc": "The area an image must cover before it is worth fetching first.",
                     "shapes": [],
                     "params": [],
-                    "line": 83,
-                    "end": 87
+                    "line": 136,
+                    "end": 140
                 },
                 {
                     "routes": [],
@@ -14609,8 +14705,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 89,
-                    "end": 139
+                    "line": 142,
+                    "end": 192
                 },
                 {
                     "routes": [],
@@ -14671,8 +14767,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 147,
-                    "end": 174
+                    "line": 200,
+                    "end": 227
                 }
             ]
         },
@@ -23185,6 +23281,139 @@
             ]
         },
         {
+            "name": "Minn\\Content\\Emoji",
+            "short": "Emoji",
+            "namespace": "Minn\\Content",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Content/Emoji.php",
+            "lines": 68,
+            "doc": "Emoji as the reference's mail and feeds carry them, from the list the\nreference ships (data/emoji.json, read from it): encode() turns each emoji\ncharacter into its entity; staticize() turns each listed sequence in the\ntext (outside tags, and outside code and pre) into a CDN image, longest\nsequence first. Text that already holds an entity is not encoded first;\nonce anything matched, the variation selectors left over are dropped.",
+            "implements": [],
+            "extends": null,
+            "uses": [],
+            "usedBy": [],
+            "constructor": null,
+            "cases": [],
+            "constants": [
+                {
+                    "name": "IGNORED",
+                    "value": "array (   0 => 'code',   1 => 'pre', )",
+                    "doc": "",
+                    "visibility": "private"
+                }
+            ],
+            "properties": [
+                {
+                    "name": "list",
+                    "type": "?array",
+                    "readonly": false,
+                    "static": true,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": false
+                }
+            ],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "encode",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "encode(string $text): string",
+                    "doc": "Each emoji character in the text as its hexadecimal entity.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "text",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 23,
+                    "end": 33
+                },
+                {
+                    "routes": [],
+                    "name": "staticize",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "staticize(string $text, string $baseUrl, string $extension): string",
+                    "doc": "The text with its emoji as images under $baseUrl (each file named for its code points, $extension after).",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "text",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "baseUrl",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "extension",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 36,
+                    "end": 55
+                },
+                {
+                    "routes": [],
+                    "name": "replaceInText",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "replaceInText(string $text, array $images): string",
+                    "doc": "The replacements made in text runs only, never inside a tag or a code or pre element. @param array<string, string> $images",
+                    "shapes": [
+                        "@param array<string, string> $images"
+                    ],
+                    "params": [
+                        {
+                            "name": "text",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "images",
+                            "type": "array",
+                            "shape": "array<string, string>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 58,
+                    "end": 75
+                },
+                {
+                    "routes": [],
+                    "name": "list",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "list(): array",
+                    "doc": "",
+                    "shapes": [
+                        "@return array{entities: list<string>, partials: list<string>}"
+                    ],
+                    "params": [],
+                    "line": 78,
+                    "end": 81
+                }
+            ]
+        },
+        {
             "name": "Minn\\Content\\Excerpt",
             "short": "Excerpt",
             "namespace": "Minn\\Content",
@@ -29461,6 +29690,155 @@
             ]
         },
         {
+            "name": "Minn\\Content\\TagBalancer",
+            "short": "TagBalancer",
+            "namespace": "Minn\\Content",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Content/TagBalancer.php",
+            "lines": 82,
+            "doc": "Closes what markup leaves open and drops what it closes without opening,\nas the reference's force_balance_tags does, from its observed rules\n(contracts/runtime.md \"The content filters\"): tag names are lowercased; a\nvoid element is written self-closed (bare as <br />, with attributes as\n<img src=\"x\"/>, one already self-closed as given); reopening the\ninnermost open element closes it first unless it is one of the ten that\nmay contain themselves; a closer shuts every element opened inside its\nown; a closer with nothing to close goes; what is still open at the end\ncloses in reverse. Script and style text is left as it is, and a \"<\" not\nfollowed by a name is text.",
+            "implements": [],
+            "extends": null,
+            "uses": [],
+            "usedBy": [],
+            "constructor": null,
+            "cases": [],
+            "constants": [
+                {
+                    "name": "VOID",
+                    "value": "array (   0 => 'area',   1 => 'base',   2 => 'basefont',   3 => 'br',   4 => 'col',   5 => 'command',   6 => 'embed',   7 => 'frame',   8 => 'hr',   9 => 'img',   10 => 'input',   11 => 'isindex',   12 => 'link',   13 => 'meta',   14 => 'param',   15 => 'source',   16 => 'track',   17 => 'wbr', )",
+                    "doc": "",
+                    "visibility": "private"
+                },
+                {
+                    "name": "NESTABLE",
+                    "value": "array (   0 => 'article',   1 => 'aside',   2 => 'blockquote',   3 => 'details',   4 => 'div',   5 => 'figure',   6 => 'object',   7 => 'q',   8 => 'section',   9 => 'span', )",
+                    "doc": "",
+                    "visibility": "private"
+                },
+                {
+                    "name": "RAW",
+                    "value": "array (   0 => 'script',   1 => 'style', )",
+                    "doc": "",
+                    "visibility": "private"
+                },
+                {
+                    "name": "TAG",
+                    "value": "'/<(\\\\/?)([a-zA-Z][\\\\w:-]*)(\\\\s[^>]*|\\\\/)?>/'",
+                    "doc": "",
+                    "visibility": "private"
+                }
+            ],
+            "properties": [],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "balance",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "balance(string $text): string",
+                    "doc": "The markup with every element closed in order and every stray closer gone.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "text",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 27,
+                    "end": 62
+                },
+                {
+                    "routes": [],
+                    "name": "close",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "close(array $stack, string $name): string",
+                    "doc": "A closer: every element opened inside the named one closes with it; with nothing to close it is dropped. @param list<string> $stack",
+                    "shapes": [
+                        "@param list<string> $stack"
+                    ],
+                    "params": [
+                        {
+                            "name": "stack",
+                            "type": "array",
+                            "shape": "list<string>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "name",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 65,
+                    "end": 79
+                },
+                {
+                    "routes": [],
+                    "name": "voidAttributes",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "voidAttributes(string $attributes): string",
+                    "doc": "A void element's attributes, written self-closed.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "attributes",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 82,
+                    "end": 89
+                },
+                {
+                    "routes": [],
+                    "name": "rawText",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "rawText(string $text, int $offset, string $name): array",
+                    "doc": "Script or style text up to the element's own closer, which stays for the main loop. @return array{0: string, 1: int}",
+                    "shapes": [
+                        "@return array{0: string, 1: int}"
+                    ],
+                    "params": [
+                        {
+                            "name": "text",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "offset",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "name",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 92,
+                    "end": 99
+                }
+            ]
+        },
+        {
             "name": "Minn\\Content\\TermLinks",
             "short": "TermLinks",
             "namespace": "Minn\\Content",
@@ -30382,6 +30760,232 @@
                     ],
                     "line": 167,
                     "end": 170
+                }
+            ]
+        },
+        {
+            "name": "Minn\\Content\\TextFilters",
+            "short": "TextFilters",
+            "namespace": "Minn\\Content",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Content/TextFilters.php",
+            "lines": 80,
+            "doc": "The small text filters the reference runs over content, titles and\ncomments, each from its observed rules (contracts/runtime.md \"The content\nfilters\"): smilies, the capital P, insecure home addresses, and the\nfeed's embed clean-up.",
+            "implements": [],
+            "extends": null,
+            "uses": [],
+            "usedBy": [],
+            "constructor": null,
+            "cases": [],
+            "constants": [
+                {
+                    "name": "IMAGE",
+                    "value": "'/\\\\.(png|gif|jpe?g|svg|webp)$/i'",
+                    "doc": "",
+                    "visibility": "private"
+                },
+                {
+                    "name": "IGNORED",
+                    "value": "array (   0 => 'code',   1 => 'pre',   2 => 'script',   3 => 'style',   4 => 'textarea', )",
+                    "doc": "",
+                    "visibility": "private"
+                }
+            ],
+            "properties": [],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "smilies",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "smilies(string $text, array $table, Closure $image): string",
+                    "doc": "Smilies become their emoji, or an image for the few that have one: a\ncode only counts as a whole word between spaces, and nothing inside a\ncode, pre, script, style or textarea element, or inside a tag, changes.",
+                    "shapes": [
+                        "@param array<string, string> $table code => emoji, or an image file name",
+                        "@param Closure(string $file, string $code): string $image the <img> for an image smiley"
+                    ],
+                    "params": [
+                        {
+                            "name": "text",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "table",
+                            "type": "array",
+                            "shape": "array<string, string>",
+                            "default": null,
+                            "doc": "code => emoji, or an image file name"
+                        },
+                        {
+                            "name": "image",
+                            "type": "Closure",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 28,
+                    "end": 41
+                },
+                {
+                    "routes": [],
+                    "name": "capitalP",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "capitalP(string $text): string",
+                    "doc": "\"Wordpress\" spelled right after a space, a parenthesis, a tag, or an opening curly quote; elsewhere it stays.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "text",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 67,
+                    "end": 70
+                },
+                {
+                    "routes": [],
+                    "name": "capitalPEverywhere",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "capitalPEverywhere(string $text): string",
+                    "doc": "\"Wordpress\" spelled right everywhere, as a title is.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "text",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 73,
+                    "end": 76
+                },
+                {
+                    "routes": [],
+                    "name": "secureHome",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "secureHome(string $content, string $insecure, string $secure): string",
+                    "doc": "The site's own http address made https, escaped forms included.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "content",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "insecure",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "secure",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 79,
+                    "end": 83
+                },
+                {
+                    "routes": [],
+                    "name": "feedEmbeds",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "feedEmbeds(string $content): string",
+                    "doc": "A feed carries an embedded post's iframe without the style that hides it until its script runs.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "content",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 86,
+                    "end": 93
+                },
+                {
+                    "routes": [],
+                    "name": "ignoring",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "ignoring(string $tag, ?string $current): ?string",
+                    "doc": "The element whose text is left alone after a tag: one of the ignored elements opening, or the one still open.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "tag",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "current",
+                            "type": "?string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 44,
+                    "end": 50
+                },
+                {
+                    "routes": [],
+                    "name": "words",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "words(string $text, array $table, Closure $image): string",
+                    "doc": "One text run, word by word. @param array<string, string> $table",
+                    "shapes": [
+                        "@param array<string, string> $table"
+                    ],
+                    "params": [
+                        {
+                            "name": "text",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "table",
+                            "type": "array",
+                            "shape": "array<string, string>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "image",
+                            "type": "Closure",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 53,
+                    "end": 64
                 }
             ]
         },
@@ -31748,7 +32352,7 @@
             "namespace": "Minn\\Cron",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Cron/Cron.php",
-            "lines": 157,
+            "lines": 172,
             "doc": "The engine's scheduled work: scheduled posts go live when their time\ncomes, the cron option's due events fire, expired throttle rows and\ntransients are swept, and the daily auto-update check runs. Triggered\nby wp-cron.php, `wp minn cron`, `minn cron`, or a front request that\nfinds something due (after its response is sent). One run at a time,\nthrough a short-lived lock option.\n\nFiring the cron option's due hooks needs the booted runtime and the\nfacade, so it arrives as a closure the caller supplies (from the front\npipeline, or the CLI once it has booted the runtime); with none, only\nthe engine's own scheduled posts and sweeps run.",
             "implements": [],
             "extends": null,
@@ -31760,7 +32364,8 @@
                 "Minn\\Db",
                 "Minn\\Ops\\Packages",
                 "Minn\\Ops\\Updates",
-                "Minn\\Runtime\\CronTable"
+                "Minn\\Runtime\\CronTable",
+                "Minn\\Runtime\\Runtime"
             ],
             "usedBy": [
                 "Minn\\Cli\\MinnCommand",
@@ -31812,8 +32417,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 37,
-                "end": 39
+                "line": 38,
+                "end": 40
             },
             "cases": [],
             "constants": [
@@ -31932,8 +32537,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 47,
-                    "end": 51
+                    "line": 48,
+                    "end": 52
                 },
                 {
                     "routes": [],
@@ -31946,8 +32551,8 @@
                         "@return list<string>"
                     ],
                     "params": [],
-                    "line": 54,
-                    "end": 76
+                    "line": 55,
+                    "end": 77
                 },
                 {
                     "routes": [],
@@ -31958,8 +32563,8 @@
                     "doc": "True when a scheduled post's time has come or the cron option holds a due event.",
                     "shapes": [],
                     "params": [],
-                    "line": 79,
-                    "end": 82
+                    "line": 80,
+                    "end": 83
                 },
                 {
                     "routes": [],
@@ -31970,8 +32575,8 @@
                     "doc": "Fires the due events through the runtime. A callback that throws\nends the events step, as a fatal ends the reference's cron request;\nthe event was already rescheduled or removed, so it does not repeat\non the next trigger, and the sweeps still run.",
                     "shapes": [],
                     "params": [],
-                    "line": 90,
-                    "end": 99
+                    "line": 91,
+                    "end": 100
                 },
                 {
                     "routes": [],
@@ -31984,8 +32589,8 @@
                         "@return list<string>"
                     ],
                     "params": [],
-                    "line": 108,
-                    "end": 117
+                    "line": 109,
+                    "end": 118
                 },
                 {
                     "routes": [],
@@ -31996,8 +32601,8 @@
                     "doc": "",
                     "shapes": [],
                     "params": [],
-                    "line": 119,
-                    "end": 125
+                    "line": 120,
+                    "end": 126
                 },
                 {
                     "routes": [],
@@ -32005,11 +32610,11 @@
                     "static": false,
                     "visibility": "private",
                     "signature": "publishDue(): int",
-                    "doc": "A scheduled post goes live as the reference publishes it: status only, dates and modified untouched, term counts refreshed.",
+                    "doc": "A scheduled post goes live as the reference publishes it: status only,\ndates and modified untouched, term counts refreshed. With plugins\nloaded it goes through check_and_publish_future_post, the reference's\nown publish_future_post work, so they hear publish_post and the\ntransition; a plugin that throws on one post holds back no other.",
                     "shapes": [],
                     "params": [],
-                    "line": 128,
-                    "end": 139
+                    "line": 135,
+                    "end": 155
                 },
                 {
                     "routes": [],
@@ -32020,8 +32625,8 @@
                     "doc": "",
                     "shapes": [],
                     "params": [],
-                    "line": 141,
-                    "end": 153
+                    "line": 157,
+                    "end": 169
                 },
                 {
                     "routes": [],
@@ -32032,8 +32637,8 @@
                     "doc": "",
                     "shapes": [],
                     "params": [],
-                    "line": 155,
-                    "end": 167
+                    "line": 171,
+                    "end": 183
                 },
                 {
                     "routes": [],
@@ -32044,8 +32649,8 @@
                     "doc": "",
                     "shapes": [],
                     "params": [],
-                    "line": 169,
-                    "end": 181
+                    "line": 185,
+                    "end": 197
                 },
                 {
                     "routes": [],
@@ -32056,8 +32661,8 @@
                     "doc": "",
                     "shapes": [],
                     "params": [],
-                    "line": 183,
-                    "end": 186
+                    "line": 199,
+                    "end": 202
                 }
             ]
         },
@@ -60591,6 +61196,82 @@
                     ],
                     "line": 104,
                     "end": 122
+                }
+            ]
+        },
+        {
+            "name": "Minn\\Mail\\ChangeNotices",
+            "short": "ChangeNotices",
+            "namespace": "Minn\\Mail",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Mail/ChangeNotices.php",
+            "lines": 30,
+            "doc": "The notices the reference mails a user when their password or email\naddress changes, as templates: plugins filter them (password_change_email,\nemail_change_email) with the placeholders still in them and the site name\nstill a %s in the subject, and fill() finishes them after.",
+            "implements": [],
+            "extends": null,
+            "uses": [],
+            "usedBy": [],
+            "constructor": null,
+            "cases": [],
+            "constants": [],
+            "properties": [],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "password",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "password(): array",
+                    "doc": "The password notice: subject and message, placeholders unfilled. @return array{subject: string, message: string}",
+                    "shapes": [
+                        "@return array{subject: string, message: string}"
+                    ],
+                    "params": [],
+                    "line": 16,
+                    "end": 22
+                },
+                {
+                    "routes": [],
+                    "name": "email",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "email(): array",
+                    "doc": "The email-address notice, sent to the address being left: subject and message, placeholders unfilled. @return array{subject: string, message: string}",
+                    "shapes": [
+                        "@return array{subject: string, message: string}"
+                    ],
+                    "params": [],
+                    "line": 25,
+                    "end": 31
+                },
+                {
+                    "routes": [],
+                    "name": "fill",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "fill(string $text, array $values): string",
+                    "doc": "A template's placeholders filled with their values. @param array<string, string> $values placeholder name (USERNAME, ...) => value",
+                    "shapes": [
+                        "@param array<string, string> $values placeholder name (USERNAME, ...) => value"
+                    ],
+                    "params": [
+                        {
+                            "name": "text",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "values",
+                            "type": "array",
+                            "shape": "array<string, string>",
+                            "default": null,
+                            "doc": "placeholder name (USERNAME, ...) => value"
+                        }
+                    ],
+                    "line": 34,
+                    "end": 41
                 }
             ]
         },
@@ -90588,7 +91269,7 @@
             "namespace": "Minn\\Runtime",
             "kind": "final class",
             "file": "public/minn/src/Minn/Runtime/Hooks.php",
-            "lines": 264,
+            "lines": 282,
             "doc": "The hook registry plugin code registers into and the engine fires.\nSemantics come from contracts/fixtures/api/hooks.json: callbacks run\nby ascending priority then insertion order; a callback added at a\nhigher priority during a run takes part in that run, one added at the\ncurrent or a lower priority waits for the next; a callback removed\nbefore its turn is skipped; the \"all\" hook sees every firing with the\nhook name first and every argument regardless of its accepted count.",
             "implements": [],
             "extends": null,
@@ -90904,6 +91585,43 @@
                 },
                 {
                     "routes": [],
+                    "name": "filterWithout",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "filterWithout(string $hook, array $args, array $done): mixed",
+                    "doc": "Runs a filter without the callbacks a caller has already done the work\nof, named function => priority: the engine renders post content through\nits own pipeline, then runs the_content for everything else hooked\nthere. A callback a plugin removed is simply not there to skip.",
+                    "shapes": [
+                        "@param list<mixed> $args the value first",
+                        "@param array<string, int> $done"
+                    ],
+                    "params": [
+                        {
+                            "name": "hook",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "args",
+                            "type": "array",
+                            "shape": "list<mixed>",
+                            "default": null,
+                            "doc": "the value first"
+                        },
+                        {
+                            "name": "done",
+                            "type": "array",
+                            "shape": "array<string, int>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 151,
+                    "end": 155
+                },
+                {
+                    "routes": [],
                     "name": "action",
                     "static": false,
                     "visibility": "public",
@@ -90928,8 +91646,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 149,
-                    "end": 152
+                    "line": 164,
+                    "end": 167
                 },
                 {
                     "routes": [],
@@ -90957,8 +91675,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 160,
-                    "end": 164
+                    "line": 175,
+                    "end": 179
                 },
                 {
                     "routes": [],
@@ -90977,8 +91695,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 167,
-                    "end": 170
+                    "line": 182,
+                    "end": 185
                 },
                 {
                     "routes": [],
@@ -90997,8 +91715,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 173,
-                    "end": 176
+                    "line": 188,
+                    "end": 191
                 },
                 {
                     "routes": [],
@@ -91009,8 +91727,8 @@
                     "doc": "The hook running now, or false.",
                     "shapes": [],
                     "params": [],
-                    "line": 179,
-                    "end": 182
+                    "line": 194,
+                    "end": 197
                 },
                 {
                     "routes": [],
@@ -91029,8 +91747,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 185,
-                    "end": 188
+                    "line": 200,
+                    "end": 203
                 },
                 {
                     "routes": [],
@@ -91043,18 +91761,18 @@
                         "@return array<string, array<int, list<callable>>> a read-only view for diagnostics"
                     ],
                     "params": [],
-                    "line": 195,
-                    "end": 205
+                    "line": 210,
+                    "end": 220
                 },
                 {
                     "routes": [],
                     "name": "run",
                     "static": false,
                     "visibility": "private",
-                    "signature": "run(string $hook, array $args, bool $isFilter): mixed",
+                    "signature": "run(string $hook, array $args, bool $isFilter, array $skip = array ( )): mixed",
                     "doc": "",
                     "shapes": [
-                        "@param list<mixed> $args"
+                        "@param list<mixed> $args @param array<string, int> $skip function name => priority, passed over"
                     ],
                     "params": [
                         {
@@ -91069,7 +91787,7 @@
                             "type": "array",
                             "shape": "list<mixed>",
                             "default": null,
-                            "doc": ""
+                            "doc": "@param array<string, int> $skip function name => priority, passed over"
                         },
                         {
                             "name": "isFilter",
@@ -91077,10 +91795,17 @@
                             "shape": "",
                             "default": null,
                             "doc": ""
+                        },
+                        {
+                            "name": "skip",
+                            "type": "array",
+                            "shape": "",
+                            "default": "array ( )",
+                            "doc": ""
                         }
                     ],
-                    "line": 208,
-                    "end": 242
+                    "line": 223,
+                    "end": 260
                 },
                 {
                     "routes": [],
@@ -91106,8 +91831,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 244,
-                    "end": 253
+                    "line": 262,
+                    "end": 271
                 },
                 {
                     "routes": [],
@@ -91135,8 +91860,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 256,
-                    "end": 267
+                    "line": 274,
+                    "end": 285
                 },
                 {
                     "routes": [],
@@ -91155,8 +91880,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 270,
-                    "end": 280
+                    "line": 288,
+                    "end": 298
                 }
             ]
         },
@@ -97752,7 +98477,7 @@
             "namespace": "Minn\\Runtime",
             "kind": "final class",
             "file": "public/minn/src/Minn/Runtime/Runtime.php",
-            "lines": 334,
+            "lines": 357,
             "doc": "The WordPress runtime the engine offers plugin code: the procedural\nfacade under minn/wp-api/ plus the services it delegates to. One per\nrequest; the facade reaches it through these statics.",
             "implements": [],
             "extends": null,
@@ -97792,6 +98517,7 @@
                 "Minn\\Content\\Reader",
                 "Minn\\Content\\Site",
                 "Minn\\Content\\Terms",
+                "Minn\\Cron\\Cron",
                 "Minn\\Db",
                 "Minn\\Engine",
                 "Minn\\Extension\\Extensions",
@@ -97857,7 +98583,14 @@
                 "end": 81
             },
             "cases": [],
-            "constants": [],
+            "constants": [
+                {
+                    "name": "CONTENT_DONE",
+                    "value": "array (   'apply_block_hooks_to_content_from_post_object' => 8,   'do_blocks' => 9,   'wptexturize' => 10,   'wpautop' => 10,   'shortcode_unautop' => 10,   'prepend_attachment' => 10,   'do_shortcode' => 11,   'wp_filter_content_tags' => 12, )",
+                    "doc": "The the_content defaults the engine's own rendering has already done:\nblocks, texturize, paragraphs, shortcodes, block hooks, and the image\nattributes. What it has not (smilies, the capital P, insecure home\naddresses) runs with the plugins' own callbacks.",
+                    "visibility": "private"
+                }
+            ],
             "properties": [
                 {
                     "name": "hooks",
@@ -98268,6 +99001,26 @@
                 },
                 {
                     "routes": [],
+                    "name": "contentFilter",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "contentFilter(string $content): string",
+                    "doc": "Content the engine rendered itself, through the_content for everything else hooked there.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "content",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 222,
+                    "end": 225
+                },
+                {
+                    "routes": [],
                     "name": "cache",
                     "static": true,
                     "visibility": "public",
@@ -98275,8 +99028,8 @@
                     "doc": "The object cache.",
                     "shapes": [],
                     "params": [],
-                    "line": 205,
-                    "end": 208
+                    "line": 228,
+                    "end": 231
                 },
                 {
                     "routes": [],
@@ -98287,8 +99040,8 @@
                     "doc": "The text domains loaded for this request.",
                     "shapes": [],
                     "params": [],
-                    "line": 211,
-                    "end": 214
+                    "line": 234,
+                    "end": 237
                 },
                 {
                     "routes": [],
@@ -98299,8 +99052,8 @@
                     "doc": "The locales this request switched into.",
                     "shapes": [],
                     "params": [],
-                    "line": 217,
-                    "end": 220
+                    "line": 240,
+                    "end": 243
                 },
                 {
                     "routes": [],
@@ -98311,8 +99064,8 @@
                     "doc": "The shortcode registry.",
                     "shapes": [],
                     "params": [],
-                    "line": 223,
-                    "end": 226
+                    "line": 246,
+                    "end": 249
                 },
                 {
                     "routes": [],
@@ -98323,8 +99076,8 @@
                     "doc": "The script modules registry.",
                     "shapes": [],
                     "params": [],
-                    "line": 229,
-                    "end": 235
+                    "line": 252,
+                    "end": 258
                 },
                 {
                     "routes": [],
@@ -98335,8 +99088,8 @@
                     "doc": "The interactivity API.",
                     "shapes": [],
                     "params": [],
-                    "line": 238,
-                    "end": 241
+                    "line": 261,
+                    "end": 264
                 },
                 {
                     "routes": [],
@@ -98347,8 +99100,8 @@
                     "doc": "The registered block templates.",
                     "shapes": [],
                     "params": [],
-                    "line": 244,
-                    "end": 247
+                    "line": 267,
+                    "end": 270
                 },
                 {
                     "routes": [],
@@ -98359,8 +99112,8 @@
                     "doc": "The post types, taxonomies, and statuses.",
                     "shapes": [],
                     "params": [],
-                    "line": 250,
-                    "end": 253
+                    "line": 273,
+                    "end": 276
                 },
                 {
                     "routes": [],
@@ -98371,8 +99124,8 @@
                     "doc": "A fresh post query over the runtime's registry.",
                     "shapes": [],
                     "params": [],
-                    "line": 256,
-                    "end": 259
+                    "line": 279,
+                    "end": 282
                 },
                 {
                     "routes": [],
@@ -98398,8 +99151,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 262,
-                    "end": 265
+                    "line": 285,
+                    "end": 288
                 },
                 {
                     "routes": [],
@@ -98425,8 +99178,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 268,
-                    "end": 271
+                    "line": 291,
+                    "end": 294
                 },
                 {
                     "routes": [],
@@ -98437,8 +99190,8 @@
                     "doc": "Whether the request is over HTTPS.",
                     "shapes": [],
                     "params": [],
-                    "line": 274,
-                    "end": 277
+                    "line": 297,
+                    "end": 300
                 },
                 {
                     "routes": [],
@@ -98449,8 +99202,8 @@
                     "doc": "wp-content under the site root.",
                     "shapes": [],
                     "params": [],
-                    "line": 280,
-                    "end": 283
+                    "line": 303,
+                    "end": 306
                 },
                 {
                     "routes": [],
@@ -98469,8 +99222,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 286,
-                    "end": 309
+                    "line": 309,
+                    "end": 332
                 },
                 {
                     "routes": [],
@@ -98481,8 +99234,8 @@
                     "doc": "The pluggable functions, once the plugins have had their chance to\ndefine their own: each is defined only where no plugin did. The plugin\nloader calls this before plugins_loaded; a boot that loads no plugins\ncalls it straight away.",
                     "shapes": [],
                     "params": [],
-                    "line": 335,
-                    "end": 338
+                    "line": 358,
+                    "end": 361
                 },
                 {
                     "routes": [],
@@ -98493,8 +99246,8 @@
                     "doc": "Fresh per-request state, for suites.",
                     "shapes": [],
                     "params": [],
-                    "line": 341,
-                    "end": 356
+                    "line": 364,
+                    "end": 379
                 },
                 {
                     "routes": [],
@@ -98513,8 +99266,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 316,
-                    "end": 327
+                    "line": 339,
+                    "end": 350
                 }
             ]
         },

@@ -11,7 +11,7 @@ The engine's own classes under `public/minn/src/Minn/`, one page per namespace, 
 | [`Minn\Blocks\Dynamic`](blocks-dynamic.md) | 9 | dynamic core blocks that render from data |
 | [`Minn\Blocks\Dynamic\Theme`](blocks-dynamic-theme.md) | 5 | the template blocks a block theme composes with |
 | [`Minn\Cli`](cli.md) | 16 | the wp verbs the engine answers itself |
-| [`Minn\Content`](content.md) | 33 | the repositories and records: posts, users, terms, comments, and the render pipeline |
+| [`Minn\Content`](content.md) | 36 | the repositories and records: posts, users, terms, comments, and the render pipeline |
 | [`Minn\Cron`](cron.md) | 1 | scheduled publishing |
 | [`Minn\Extension`](extension.md) | 8 | the extension contract and its seams |
 | [`Minn\Feed`](feed.md) | 8 |  |
@@ -21,7 +21,7 @@ The engine's own classes under `public/minn/src/Minn/`, one page per namespace, 
 | [`Minn\Http`](http.md) | 29 | request, response, routing, and the outgoing client |
 | [`Minn\I18n`](i18n.md) | 9 |  |
 | [`Minn\Login`](login.md) | 4 | /wp-login.php and the sign-in surface |
-| [`Minn\Mail`](mail.md) | 23 | sending mail and the notices the engine sends |
+| [`Minn\Mail`](mail.md) | 24 | sending mail and the notices the engine sends |
 | [`Minn\Media`](media.md) | 10 | uploads, image sizes and attachment metadata |
 | [`Minn\Ops`](ops.md) | 6 |  |
 | [`Minn\Query`](query.md) | 4 | shared SQL fragments |

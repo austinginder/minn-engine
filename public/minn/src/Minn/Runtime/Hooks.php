@@ -140,6 +140,21 @@ final class Hooks
     }
 
     /**
+     * Runs a filter without the callbacks a caller has already done the work
+     * of, named function => priority: the engine renders post content through
+     * its own pipeline, then runs the_content for everything else hooked
+     * there. A callback a plugin removed is simply not there to skip.
+     *
+     * @param list<mixed> $args the value first
+     * @param array<string, int> $done
+     */
+    public function filterWithout(string $hook, array $args, array $done): mixed
+    {
+        $this->filtersDone[$hook] = ($this->filtersDone[$hook] ?? 0) + 1;
+        return $this->run($hook, $args, true, $done);
+    }
+
+    /**
      * Runs an action. With no arguments its callbacks still get one, an
      * empty string, as do_action() gives them in the reference (a callback
      * that requires a parameter is not short of one).
@@ -204,8 +219,8 @@ final class Hooks
         return $out;
     }
 
-    /** @param list<mixed> $args */
-    private function run(string $hook, array $args, bool $isFilter): mixed
+    /** @param list<mixed> $args @param array<string, int> $skip function name => priority, passed over */
+    private function run(string $hook, array $args, bool $isFilter, array $skip = []): mixed
     {
         $value = $isFilter ? ($args[0] ?? null) : null;
         if ($hook !== 'all' && isset($this->hooks['all'])) {
@@ -225,6 +240,9 @@ final class Hooks
                     continue;
                 }
                 $callback = $entry['function'];
+                if ($skip !== [] && is_string($callback) && ($skip[$callback] ?? null) === $priority) {
+                    continue;
+                }
                 $accepted = (int) ($entry['accepted_args'] ?? 1);
                 if ($isFilter) {
                     $args[0] = $value;

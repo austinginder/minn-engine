@@ -1,0 +1,70 @@
+[
+    [
+        "wp_update_user with a new password",
+        [
+            [
+                "zz-notice@minn-engine.localhost",
+                "[Minn] Password Changed",
+                "Hi zz-notice,\n\nThis notice confirms that your password was changed on Minn.\n\nIf you did not change your password, please contact the Site Administrator at\nadmin@minn-engine.localhost\n\nThis email has been sent to zz-notice@minn-engine.localhost\n\nRegards,\nAll at Minn\n{home}",
+                ""
+            ]
+        ]
+    ],
+    [
+        "wp_update_user with a new email",
+        [
+            [
+                "zz-notice@minn-engine.localhost",
+                "[Minn] Email Changed",
+                "Hi zz-notice,\n\nThis notice confirms that your email address on Minn was changed to zz-notice2@minn-engine.localhost.\n\nIf you did not change your email, please contact the Site Administrator at\nadmin@minn-engine.localhost\n\nThis email has been sent to zz-notice@minn-engine.localhost\n\nRegards,\nAll at Minn\n{home}",
+                ""
+            ]
+        ]
+    ],
+    [
+        "wp_update_user with both",
+        [
+            [
+                "zz-notice2@minn-engine.localhost",
+                "[Minn] Password Changed",
+                "Hi zz-notice,\n\nThis notice confirms that your password was changed on Minn.\n\nIf you did not change your password, please contact the Site Administrator at\nadmin@minn-engine.localhost\n\nThis email has been sent to zz-notice2@minn-engine.localhost\n\nRegards,\nAll at Minn\n{home}",
+                ""
+            ],
+            [
+                "zz-notice2@minn-engine.localhost",
+                "[Minn] Email Changed",
+                "Hi zz-notice,\n\nThis notice confirms that your email address on Minn was changed to zz-notice3@minn-engine.localhost.\n\nIf you did not change your email, please contact the Site Administrator at\nadmin@minn-engine.localhost\n\nThis email has been sent to zz-notice2@minn-engine.localhost\n\nRegards,\nAll at Minn\n{home}",
+                ""
+            ]
+        ]
+    ],
+    [
+        "wp_update_user with neither",
+        []
+    ],
+    [
+        "what the filters see",
+        [
+            [
+                "[%s] Password Changed",
+                "Hi ###USERNAME###,\n\nThis notice confirms that your password was changed on ###SITENAME###.\n\nIf you did not change your password, please contact the Site Administrator at\n###ADMIN_EMAIL###\n\nThis email has been sent to ###EMAIL###\n\nRegards,\nAll at ###SITENAME###\n###SITEURL###"
+            ],
+            [
+                "[%s] Email Changed",
+                "Hi ###USERNAME###,\n\nThis notice confirms that your email address on ###SITENAME### was changed to ###NEW_EMAIL###.\n\nIf you did not change your email, please contact the Site Administrator at\n###ADMIN_EMAIL###\n\nThis email has been sent to ###EMAIL###\n\nRegards,\nAll at ###SITENAME###\n###SITEURL###"
+            ],
+            [
+                "[%s] Password Changed",
+                "Hi ###USERNAME###,\n\nThis notice confirms that your password was changed on ###SITENAME###.\n\nIf you did not change your password, please contact the Site Administrator at\n###ADMIN_EMAIL###\n\nThis email has been sent to ###EMAIL###\n\nRegards,\nAll at ###SITENAME###\n###SITEURL###"
+            ],
+            [
+                "[%s] Email Changed",
+                "Hi ###USERNAME###,\n\nThis notice confirms that your email address on ###SITENAME### was changed to ###NEW_EMAIL###.\n\nIf you did not change your email, please contact the Site Administrator at\n###ADMIN_EMAIL###\n\nThis email has been sent to ###EMAIL###\n\nRegards,\nAll at ###SITENAME###\n###SITEURL###"
+            ]
+        ]
+    ],
+    [
+        "send_password_change_email false",
+        []
+    ]
+]

@@ -20,17 +20,25 @@ function _minn_image_sizes(): array
         '1536x1536' => ['width' => 1536, 'height' => 1536, 'crop' => false],
         '2048x2048' => ['width' => 2048, 'height' => 2048, 'crop' => false],
     ];
-    foreach ((array) Runtime::current()->get('image_sizes', []) as $name => $size) {
+    foreach (wp_get_additional_image_sizes() as $name => $size) {
         $sizes[$name] = $size;
     }
     return $sizes;
 }
 
+/** The sizes plugins and themes added, kept where they read them: $_wp_additional_image_sizes. */
+function wp_get_additional_image_sizes()
+{
+    if (!isset($GLOBALS['_wp_additional_image_sizes']) || !is_array($GLOBALS['_wp_additional_image_sizes'])) {
+        $GLOBALS['_wp_additional_image_sizes'] = [];
+    }
+    return $GLOBALS['_wp_additional_image_sizes'];
+}
+
 function add_image_size($name, $width = 0, $height = 0, $crop = false)
 {
-    $sizes = Runtime::current()->get('image_sizes', []);
-    $sizes[(string) $name] = ['width' => absint($width), 'height' => absint($height), 'crop' => $crop];
-    Runtime::current()->set('image_sizes', $sizes);
+    wp_get_additional_image_sizes();
+    $GLOBALS['_wp_additional_image_sizes'][(string) $name] = ['width' => absint($width), 'height' => absint($height), 'crop' => $crop];
 }
 
 function has_image_size($name)
@@ -40,12 +48,10 @@ function has_image_size($name)
 
 function remove_image_size($name)
 {
-    $sizes = Runtime::current()->get('image_sizes', []);
-    if (!isset($sizes[$name])) {
+    if (!isset(wp_get_additional_image_sizes()[$name])) {
         return false;
     }
-    unset($sizes[$name]);
-    Runtime::current()->set('image_sizes', $sizes);
+    unset($GLOBALS['_wp_additional_image_sizes'][$name]);
     return true;
 }
 
@@ -1384,4 +1390,10 @@ function img_caption_shortcode($attr, $content = '')
         return '<figure ' . $id . $describedBy . $style . 'class="' . esc_attr($class) . '">' . do_shortcode($content) . '<figcaption ' . $captionIdAttr . 'class="wp-caption-text">' . $atts['caption'] . '</figcaption></figure>';
     }
     return '<div ' . $id . $style . 'class="' . esc_attr($class) . '">' . do_shortcode($content) . '<p ' . $captionIdAttr . 'class="wp-caption-text">' . $atts['caption'] . '</p></div>';
+}
+
+/** Every image and iframe of content as the reference fits them out: sizes, srcset, decoding, and loading by the page's budget. */
+function wp_filter_content_tags($content, $context = null)
+{
+    return Minn\Content\Blocks::renderer()->images()->content((string) $content);
 }

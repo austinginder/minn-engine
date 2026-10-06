@@ -3201,3 +3201,85 @@ behind it, so a newsletter renders raw block markup (round trip on
 shop-dogfood); `wp_new_comment` and `wp_check_comment_flood` are still
 missing (placeholder / absent).
 
+## The content filters (2026-10-06)
+
+A plugin that renders text itself runs the reference's filters:
+`apply_filters('the_content', $raw)` for a newsletter, a builder's text
+widget, a REST field. On Minn those filters had almost nothing behind them
+(the_content held only the embed callbacks), so a newsletter mailed raw
+block markup, and four of the functions they call (`convert_smilies`,
+`capital_P_dangit`, `force_balance_tags`, `wp_staticize_emoji`) returned
+their input unchanged. Probe `content-filters` (57 rows, api suite) pins
+each function and the chains.
+
+**Registered as the reference registers them**, names and priorities, so
+a plugin's `remove_filter('the_content', 'wpautop')` finds what it removes:
+the_content (block hooks, both embed callbacks at 8; `do_blocks` 9;
+`wptexturize`, `wpautop`, `shortcode_unautop`, `prepend_attachment`,
+`wp_replace_insecure_home_url` 10; `capital_P_dangit`, `do_shortcode` 11;
+`wp_filter_content_tags` 12; `convert_smilies` 20), the_title (+
+`capital_P_dangit` 11), the_excerpt (+ `shortcode_unautop`,
+`wp_replace_insecure_home_url`, `wp_filter_content_tags` 12),
+comment_text (+ `capital_P_dangit` 31), term_description,
+the_post_thumbnail_caption, the_content_feed (`wp_staticize_emoji`,
+`_oembed_filter_feed_content`), the_excerpt_rss, widget_text_content and
+widget_block_content (the embed callbacks as array callables, not
+closures, so they can be removed).
+
+**The engine's own rendering** (block and classic themes, feeds) still
+renders through its own pipeline, then runs the_content through
+`Runtime::contentFilter()`, which skips the defaults that pipeline has
+already done (`Hooks::filterWithout`: block hooks, `do_blocks`, texturize,
+paragraphs, shortcodes, `prepend_attachment`, image tags) and runs the
+rest with the plugins' callbacks. So smilies, the capital P and insecure
+home addresses now apply to Minn's own pages too, as they always did on
+the reference. Not reproduced there: do_blocks moving `wpautop` (below)
+when the engine renders block content itself.
+
+**What the oracle showed** (each by probing, no source):
+
+- `convert_smilies` (only with `use_smilies`): the table is the
+  reference's own (`data/smilies.json`, read from it), through the
+  `smilies` filter. A code counts only as a whole whitespace-separated
+  word in a text run; nothing in a tag, and nothing inside lowercase
+  `code`, `pre`, `script`, `style` or `textarea` (an uppercase `<CODE>`
+  is not skipped). Emoji codes become the character; `:mrgreen:` becomes
+  `<img src="{includes}/images/smilies/mrgreen.png" alt=":mrgreen:"
+  class="wp-smiley" style="height: 1em; max-height: 1em;" />` through
+  `smilies_src`.
+- `capital_P_dangit`: "Wordpress" after a space, `(`, `>`, `&#8216;` or
+  `&#8220;` only (not at the start, not after a newline, a tab, a plain
+  quote or `&#8217;`); in the_title every occurrence.
+- `force_balance_tags` (`Content\TagBalancer`): names lowercased; void
+  elements self-closed (`<br />` bare, `<img src="x"/>` with attributes,
+  as given when already closed); reopening the innermost open element
+  closes it first except for article, aside, blockquote, details, div,
+  figure, object, q, section and span; a closer shuts what was opened
+  inside it, a stray one goes; the rest close in reverse at the end;
+  script and style text untouched; a comment's insides are markup like
+  any other.
+- `wp_encode_emoji` and `wp_staticize_emoji` (`Content\Emoji`, list
+  `data/emoji.json` read from `_wp_emoji_list`): text holding any `&#x`
+  is not encoded; the longest listed sequence wins; images go only into
+  text runs outside code and pre; once anything matched, leftover
+  `&#xfe0f;` selectors are dropped, while a sequence that lists its
+  selector keeps it in file name and alt. CDN
+  `https://s.w.org/images/core/emoji/17.0.2/72x72/` (`emoji_url`), `.png`
+  (`emoji_ext`).
+- `wp_replace_insecure_home_url` acts only when
+  `wp_should_replace_insecure_home_url()` (https in use, the
+  `https_migration_required` option, home and site on one host).
+- `wp_filter_content_tags` (`Blocks\ImageTags::content`): an attachment's
+  image as the block renderer fits it, a loading it already names kept
+  (an eager large one also `fetchpriority="high"`); any other image
+  `decoding="async"`, plus loading when its width and height are known;
+  an iframe with both `loading="lazy"`. Running it twice changes nothing.
+- `do_blocks` over block content inside the_content takes `wpautop` off
+  for the rest of that run and adds `_restore_wpautop_hook` one priority
+  later, which puts `wpautop` back at the END of its priority: after a
+  block post has been rendered, later classic content in the same request
+  is autop'd after `shortcode_unautop` (a caption shortcode stays inside
+  its paragraph). The probe pins that order.
+- `make_clickable` links get `rel="nofollow ugc"` while comment_text runs,
+  `nofollow` elsewhere.
+

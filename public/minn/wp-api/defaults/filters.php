@@ -35,19 +35,30 @@ add_filter('user_url', 'esc_url');
 add_filter('the_title', 'wptexturize');
 add_filter('the_title', 'convert_chars');
 add_filter('the_title', 'trim');
+add_filter('the_title', 'capital_P_dangit', 11);
 add_filter('the_excerpt', 'wptexturize');
 add_filter('the_excerpt', 'convert_smilies');
 add_filter('the_excerpt', 'convert_chars');
 add_filter('the_excerpt', 'wpautop');
+add_filter('the_excerpt', 'shortcode_unautop');
+add_filter('the_excerpt', 'wp_replace_insecure_home_url');
+add_filter('the_excerpt', 'wp_filter_content_tags', 12);
+add_filter('term_description', 'wptexturize');
+add_filter('term_description', 'convert_chars');
+add_filter('term_description', 'wpautop');
+add_filter('term_description', 'shortcode_unautop');
+add_filter('the_post_thumbnail_caption', 'wptexturize');
+add_filter('the_post_thumbnail_caption', 'convert_smilies');
+add_filter('the_post_thumbnail_caption', 'convert_chars');
+add_filter('the_content_feed', 'wp_staticize_emoji');
+add_filter('the_content_feed', '_oembed_filter_feed_content');
+add_filter('the_excerpt_rss', 'ent2ncr', 8);
+add_filter('the_excerpt_rss', 'convert_chars');
 add_action('wp_head', 'wp_enqueue_scripts', 1);
 add_action('wp_enqueue_scripts', 'wp_common_block_scripts_and_styles', 10);
-// A block widget's content runs the block and shortcode pipelines. The
-// reference adds wp_filter_content_tags here to fit out images; the engine
-// renders them through Blocks\ImageTags on the way out instead, so adding
-// it would fit the same images twice.
+// A block widget's content runs the block and shortcode pipelines; fitting an
+// image out twice changes nothing (wp_filter_content_tags leaves a fitted one be).
 add_filter('widget_block_content', 'do_blocks', 9);
-// The text widget's content pipeline. wp_filter_content_tags stays out for the
-// reason given above; wp_replace_insecure_home_url the engine does not have.
 add_filter('widget_text', 'balanceTags');
 // The shortcodes the reference registers itself.
 add_shortcode('wp_caption', 'img_caption_shortcode');
@@ -55,15 +66,21 @@ add_shortcode('caption', 'img_caption_shortcode');
 add_shortcode('gallery', 'gallery_shortcode');
 add_shortcode('audio', 'wp_audio_shortcode');
 add_shortcode('video', 'wp_video_shortcode');
-add_filter('widget_text_content', static fn ($content) => $GLOBALS['wp_embed']->run_shortcode($content), 8);
-add_filter('widget_text_content', static fn ($content) => $GLOBALS['wp_embed']->autoembed($content), 8);
+$GLOBALS['wp_embed'] ??= new WP_Embed();
+add_filter('widget_text_content', [$GLOBALS['wp_embed'], 'run_shortcode'], 8);
+add_filter('widget_text_content', [$GLOBALS['wp_embed'], 'autoembed'], 8);
 add_filter('widget_text_content', 'wptexturize');
 add_filter('widget_text_content', 'wpautop');
 add_filter('widget_text_content', 'shortcode_unautop');
+add_filter('widget_text_content', 'wp_replace_insecure_home_url');
 add_filter('widget_text_content', 'capital_P_dangit', 11);
 add_filter('widget_text_content', 'do_shortcode', 11);
+add_filter('widget_text_content', 'wp_filter_content_tags', 12);
 add_filter('widget_text_content', 'convert_smilies', 20);
+add_filter('widget_block_content', [$GLOBALS['wp_embed'], 'run_shortcode'], 8);
+add_filter('widget_block_content', [$GLOBALS['wp_embed'], 'autoembed'], 8);
 add_filter('widget_block_content', 'do_shortcode', 11);
+add_filter('widget_block_content', 'wp_filter_content_tags', 12);
 // A classic theme gets the reference's wp_head defaults, registered before its own hooks.
 add_action('setup_theme', '_minn_classic_head_defaults', 1);
 add_action('wp_head', 'wp_maybe_inline_styles', 1);
@@ -122,11 +139,26 @@ add_filter('comment_text', 'make_clickable', 9);
 add_filter('comment_text', 'force_balance_tags', 25);
 add_filter('comment_text', 'convert_smilies', 20);
 add_filter('comment_text', 'wpautop', 30);
+add_filter('comment_text', 'capital_P_dangit', 31);
 
-// Embeds run before the paragraphs do, as the reference orders them.
+// the_content, as the reference fills it: block hooks and embeds first, then
+// the blocks, the typography, the paragraphs, the shortcodes, the images,
+// the smilies. The engine's own rendering runs only what it has not already
+// done (Runtime::contentFilter); a plugin running the filter gets them all.
 $GLOBALS['wp_embed'] ??= new WP_Embed();
+add_filter('the_content', 'apply_block_hooks_to_content_from_post_object', 8);
 add_filter('the_content', [$GLOBALS['wp_embed'], 'run_shortcode'], 8);
 add_filter('the_content', [$GLOBALS['wp_embed'], 'autoembed'], 8);
+add_filter('the_content', 'do_blocks', 9);
+add_filter('the_content', 'wptexturize');
+add_filter('the_content', 'wpautop');
+add_filter('the_content', 'shortcode_unautop');
+add_filter('the_content', 'prepend_attachment');
+add_filter('the_content', 'wp_replace_insecure_home_url');
+add_filter('the_content', 'capital_P_dangit', 11);
+add_filter('the_content', 'do_shortcode', 11);
+add_filter('the_content', 'wp_filter_content_tags', 12);
+add_filter('the_content', 'convert_smilies', 20);
 
 // Comments close on old posts when Discussion says so; the connectors registry fills at init 15.
 add_filter('comments_open', '_close_comments_for_old_post', 10, 2);

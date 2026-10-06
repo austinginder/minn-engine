@@ -904,3 +904,10 @@ function is_wp_error($thing)
     }
     return $is;
 }
+
+/** The notice arguments an admin screen strips from its address once shown, through removable_query_args. */
+function wp_removable_query_args()
+{
+    $args = ['activate', 'activated', 'admin_email_remind_later', 'approved', 'core-major-auto-updates-saved', 'deactivate', 'delete_count', 'deleted', 'disabled', 'doing_wp_cron', 'enabled', 'error', 'hotkeys_highlight_first', 'hotkeys_highlight_last', 'ids', 'locked', 'message', 'same', 'saved', 'settings-updated', 'skipped', 'spammed', 'trashed', 'unspammed', 'untrashed', 'update', 'updated', 'wp-post-new-reload'];
+    return apply_filters('removable_query_args', $args);
+}

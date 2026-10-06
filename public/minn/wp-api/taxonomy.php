@@ -836,25 +836,26 @@ function get_the_category_by_ID($cat_id)
     return $term instanceof WP_Term ? (string) $term->name : '';
 }
 
-/** The queried category's name, with a prefix, printed or returned; nothing off a category archive. */
+/** The queried category's name, with a prefix, printed or returned; null off a category archive. */
 function single_cat_title($prefix = '', $display = true)
 {
     return single_term_title($prefix, $display);
 }
 
+/** The queried term's name after a prefix, printed or returned; null off a term archive. */
 function single_term_title($prefix = '', $display = true)
 {
     $term = get_queried_object();
     if (!$term instanceof WP_Term || !(is_category() || is_tag() || is_tax())) {
-        return '';
-    }
-    $filter = match ($term->taxonomy) { 'category' => 'single_cat_title', 'post_tag' => 'single_tag_title', default => 'single_term_title' };
-    $name = apply_filters($filter, $term->name);
-    if ($display) {
-        echo $prefix . $name;
         return null;
     }
-    return $name;
+    $filter = match ($term->taxonomy) { 'category' => 'single_cat_title', 'post_tag' => 'single_tag_title', default => 'single_term_title' };
+    $title = $prefix . apply_filters($filter, $term->name);
+    if ($display) {
+        echo $title;
+        return null;
+    }
+    return $title;
 }
 
 /** The nested category list; markup from Minn\Front\TermLists. */
@@ -1335,4 +1336,16 @@ function _minn_term_children_move(WP_Term $term, string $taxonomy): void
     do_action('edit_term_taxonomies', $tt_ids);
     clean_term_cache(array_map(static fn ($child) => (int) $child->term_id, $children), $taxonomy);
     do_action('edited_term_taxonomies', $tt_ids);
+}
+
+/** The term a shared term was split into, from the _split_terms record a pre-4.2 site may carry; false when none. */
+function wp_get_split_term($old_term_id, $taxonomy)
+{
+    $splits = get_option('_split_terms', []);
+    return is_array($splits) ? ($splits[(int) $old_term_id][(string) $taxonomy] ?? false) : false;
+}
+
+function single_tag_title($prefix = '', $display = true)
+{
+    return single_term_title($prefix, $display);
 }
