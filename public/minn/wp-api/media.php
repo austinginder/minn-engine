@@ -4,6 +4,7 @@
 use Minn\Blocks\RenderState;
 use Minn\Media\Kind;
 use Minn\Media\Metadata;
+use Minn\Media\PhotoMeta;
 use Minn\Media\Sizing;
 use Minn\Media\Uploads;
 use Minn\Runtime\PostLookup;
@@ -627,21 +628,35 @@ function file_is_displayable_image($path)
     return in_array($info[2], [IMAGETYPE_GIF, IMAGETYPE_JPEG, IMAGETYPE_PNG, IMAGETYPE_BMP, IMAGETYPE_ICO, IMAGETYPE_WEBP], true);
 }
 
+/**
+ * An editor for the image: the type it will write, from
+ * image_editor_output_format, then the first editor wp_image_editors names
+ * that can read and write those types (Minn has GD), loaded.
+ */
 function wp_get_image_editor($path, $args = [])
 {
     $args['path'] = $path;
     if (!isset($args['mime_type'])) {
-        $args['mime_type'] = wp_get_image_mime($path) ?: (wp_check_filetype($path)['type'] ?: '');
+        $args['mime_type'] = wp_check_filetype($path)['type'] ?: (wp_get_image_mime($path) ?: '');
     }
-    if (!WP_Image_Editor_GD::test($args)) {
+    $output = wp_get_image_editor_output_format($path, $args['mime_type']);
+    if (isset($output[$args['mime_type']])) {
+        $args['output_mime_type'] = $output[$args['mime_type']];
+    }
+    $implementation = _wp_image_editor_choose($args);
+    if (!$implementation) {
         return new WP_Error('image_no_editor', 'No editor could be selected.');
     }
-    $editor = new WP_Image_Editor_GD($path);
+    $editor = new $implementation($path);
     $loaded = $editor->load();
-    if (is_wp_error($loaded)) {
-        return $loaded;
-    }
-    return $editor;
+    return is_wp_error($loaded) ? $loaded : $editor;
+}
+
+/** The types images are written in instead of their own: HEIC and HEIF as JPEG, and whatever image_editor_output_format adds. */
+function wp_get_image_editor_output_format($filename, $mime_type)
+{
+    $default = ['image/heic' => 'image/jpeg', 'image/heif' => 'image/jpeg', 'image/heic-sequence' => 'image/jpeg', 'image/heif-sequence' => 'image/jpeg'];
+    return apply_filters('image_editor_output_format', $default, $filename, $mime_type);
 }
 
 function wp_image_editor_supports($args = [])
@@ -670,6 +685,15 @@ function image_make_intermediate_size($file, $width, $height, $crop = false)
     return $saved;
 }
 
+/**
+ * An upload's metadata and sizes in the reference's order (probe
+ * image-pipeline): its own description (wp_read_image_metadata); an image
+ * past big_image_size_threshold scaled down to it and saved "-scaled", one
+ * taken turned saved upright "-rotated", one a plugin wants in another type
+ * converted (each becomes the attached file, the upload kept as
+ * original_image); the metadata stored; then each size, cut from the
+ * upload, stored as it lands.
+ */
 function wp_create_image_subsizes($file, $attachment_id)
 {
     $attachment_id = (int) $attachment_id;
@@ -677,61 +701,117 @@ function wp_create_image_subsizes($file, $attachment_id)
     if (empty($imagesize)) {
         return [];
     }
-    $image_meta = [
-        'width' => $imagesize[0],
-        'height' => $imagesize[1],
-        'file' => _wp_relative_upload_path($file),
-        'filesize' => (int) filesize($file),
-        'sizes' => [],
-    ];
-    $image_meta['image_meta'] = wp_read_image_metadata($file);
-    wp_update_attachment_metadata($attachment_id, $image_meta);
-    $new_sizes = wp_get_registered_image_subsizes();
-    $new_sizes = apply_filters('intermediate_image_sizes_advanced', $new_sizes, $image_meta, $attachment_id);
-    // The reference makes medium and large first, then the rest in registration order.
-    $ordered = [];
-    foreach (['medium', 'large'] as $first) {
-        if (isset($new_sizes[$first])) {
-            $ordered[$first] = $new_sizes[$first];
-        }
+    $image_meta = ['width' => (int) $imagesize[0], 'height' => (int) $imagesize[1], 'file' => _wp_relative_upload_path($file), 'filesize' => (int) wp_filesize($file), 'sizes' => []];
+    $exif_meta = wp_read_image_metadata($file);
+    if ($exif_meta) {
+        $image_meta['image_meta'] = $exif_meta;
     }
-    return _wp_make_subsizes($ordered + $new_sizes, $file, $image_meta, $attachment_id);
+    $threshold = (int) apply_filters('big_image_size_threshold', 2560, $imagesize, $file, $attachment_id);
+    if ($threshold && ($image_meta['width'] > $threshold || $image_meta['height'] > $threshold)) {
+        $image_meta = _minn_image_scaled($file, $image_meta, $threshold, is_array($exif_meta), $attachment_id);
+    } else {
+        $image_meta = _minn_image_upright($file, $image_meta, (string) ($imagesize['mime'] ?? ''), $attachment_id);
+    }
+    wp_update_attachment_metadata($attachment_id, $image_meta);
+    $new_sizes = apply_filters('intermediate_image_sizes_advanced', wp_get_registered_image_subsizes(), $image_meta, $attachment_id);
+    return _wp_make_subsizes($new_sizes, $file, $image_meta, $attachment_id);
 }
 
-function _wp_make_subsizes($new_sizes, $file, $image_meta, $attachment_id)
+/** @internal a big upload scaled to the threshold (turned upright too), saved "-scaled" as the attached file */
+function _minn_image_scaled(string $file, array $image_meta, int $threshold, bool $hasExif, int $attachment_id): array
 {
-    if (empty($image_meta) || !is_array($image_meta)) {
-        return [];
+    $editor = wp_get_image_editor($file);
+    if (is_wp_error($editor)) {
+        return $image_meta;
+    }
+    $resized = $editor->resize($threshold, $threshold);
+    $rotated = null;
+    if (!is_wp_error($resized) && $hasExif) {
+        $resized = $rotated = $editor->maybe_exif_rotate();
+    }
+    if (is_wp_error($resized)) {
+        return $image_meta;
+    }
+    $saved = $editor->save($editor->generate_filename('scaled'));
+    if (is_wp_error($saved)) {
+        return $image_meta;
+    }
+    $image_meta = _wp_image_meta_replace_original($saved, $file, $image_meta, $attachment_id);
+    if ($rotated === true && !empty($image_meta['image_meta']['orientation'])) {
+        $image_meta['image_meta']['orientation'] = 1;
+    }
+    return $image_meta;
+}
+
+/** @internal an upload taken turned saved upright ("-rotated"), or one a plugin wants in another type converted */
+function _minn_image_upright(string $file, array $image_meta, string $mime, int $attachment_id): array
+{
+    $output = wp_get_image_editor_output_format($file, $mime);
+    $convert = isset($output[$mime]) && $output[$mime] !== $mime;
+    if (!$convert && (int) ($image_meta['image_meta']['orientation'] ?? 1) <= 1) {
+        return $image_meta;
     }
     $editor = wp_get_image_editor($file);
     if (is_wp_error($editor)) {
         return $image_meta;
     }
+    $rotated = $editor->maybe_exif_rotate();
+    if ($rotated !== true && !$convert) {
+        return $image_meta;
+    }
+    $saved = $editor->save($rotated === true ? $editor->generate_filename('rotated') : $file);
+    if (is_wp_error($saved)) {
+        return $image_meta;
+    }
+    $image_meta = _wp_image_meta_replace_original($saved, $file, $image_meta, $attachment_id);
+    if ($rotated === true && !empty($image_meta['image_meta']['orientation'])) {
+        $image_meta['image_meta']['orientation'] = 1;
+    }
+    return $image_meta;
+}
+
+/** The saved image as the attached file and the metadata's own, the upload kept by name as original_image. */
+function _wp_image_meta_replace_original($saved_data, $original_file, $image_meta, $attachment_id)
+{
+    $new_file = (string) $saved_data['path'];
+    update_attached_file((int) $attachment_id, $new_file);
+    $image_meta['width'] = (int) $saved_data['width'];
+    $image_meta['height'] = (int) $saved_data['height'];
+    $image_meta['file'] = _wp_relative_upload_path($new_file);
+    $image_meta['filesize'] = (int) ($saved_data['filesize'] ?? wp_filesize($new_file));
+    $image_meta['original_image'] = wp_basename((string) $original_file);
+    return $image_meta;
+}
+
+/**
+ * The sizes the metadata lacks, cut from the upload (turned upright first
+ * when it carries EXIF), medium and large first, the metadata stored after
+ * each.
+ */
+function _wp_make_subsizes($new_sizes, $file, $image_meta, $attachment_id)
+{
+    if (empty($image_meta) || !is_array($image_meta)) {
+        return [];
+    }
+    $new_sizes = array_diff_key((array) $new_sizes, (array) ($image_meta['sizes'] ?? []));
+    $image_meta['sizes'] = (array) ($image_meta['sizes'] ?? []);
+    if ($new_sizes === []) {
+        return $image_meta;
+    }
+    $new_sizes = array_intersect_key($new_sizes, ['medium' => 1, 'large' => 1]) + $new_sizes;
+    $editor = wp_get_image_editor($file);
+    if (is_wp_error($editor)) {
+        return $image_meta;
+    }
+    if (!empty($image_meta['image_meta'])) {
+        $editor->maybe_exif_rotate();
+    }
     foreach ($new_sizes as $new_size_name => $new_size_data) {
-        if (isset($image_meta['sizes'][$new_size_name])) {
-            continue;
+        $new_size_meta = $editor->make_subsize($new_size_data);
+        if (!is_wp_error($new_size_meta)) {
+            $image_meta['sizes'][$new_size_name] = $new_size_meta;
+            wp_update_attachment_metadata((int) $attachment_id, $image_meta);
         }
-        if (!empty($new_size_data['crop'])) {
-            $new_size_meta = $editor->resize($new_size_data['width'], $new_size_data['height'], true);
-        } else {
-            $new_size_meta = $editor->resize($new_size_data['width'], $new_size_data['height'], false);
-        }
-        if (is_wp_error($new_size_meta)) {
-            continue;
-        }
-        $size = $editor->get_size();
-        if ((int) $size['width'] === (int) $image_meta['width'] && (int) $size['height'] === (int) $image_meta['height']) {
-            $editor = wp_get_image_editor($file);
-            continue;
-        }
-        $saved = $editor->save();
-        $editor = wp_get_image_editor($file);
-        if (is_wp_error($saved)) {
-            continue;
-        }
-        unset($saved['path']);
-        $image_meta['sizes'][$new_size_name] = $saved;
-        wp_update_attachment_metadata($attachment_id, $image_meta);
     }
     return $image_meta;
 }
@@ -750,9 +830,22 @@ function wp_generate_attachment_metadata($attachment_id, $file)
     return apply_filters('wp_generate_attachment_metadata', $metadata, $attachment_id, 'create');
 }
 
+/**
+ * A photo's own description from its IPTC and EXIF (Media\PhotoMeta), through
+ * wp_read_image_metadata_types and wp_read_image_metadata; false when there
+ * is no such file.
+ */
 function wp_read_image_metadata($file)
 {
-    return Metadata::blankImageMeta();
+    if (!file_exists((string) $file)) {
+        return false;
+    }
+    $types = (array) apply_filters('wp_read_image_metadata_types', PhotoMeta::EXIF_TYPES);
+    $read = PhotoMeta::read((string) $file, $types, static fn (string $text): string => (string) wp_kses_post($text));
+    if ($read === null) {
+        return false;
+    }
+    return apply_filters('wp_read_image_metadata', $read['meta'], $file, $read['type'], $read['iptc'], $read['exif']);
 }
 
 function wp_getimagesize($filename, &$image_info = null)

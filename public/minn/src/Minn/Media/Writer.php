@@ -9,6 +9,7 @@ use Minn\Content\Posts;
 use Minn\Content\PostWriter;
 use Minn\Content\Site;
 use Minn\Content\Slug;
+use Minn\Support\Kses;
 
 /**
  * The writes the media library makes. An Upload becomes an attachment: the
@@ -60,7 +61,11 @@ final readonly class Writer
     {
         $row = $this->prepareRow($relative, $mime, $parent, $authorId);
         $sized = str_starts_with($mime, 'image/') && $mime !== 'image/svg+xml' && in_array($mime, Uploads::MIMES, true);
-        return new PreparedUpload($row->columns, $relative, $sized ? $this->imageMetadata($relative, $mime) : null);
+        if (!$sized) {
+            return new PreparedUpload($row->columns, $relative, null);
+        }
+        $metadata = $this->imageMetadata($relative, $mime);
+        return new PreparedUpload($row->columns, (string) $metadata['file'], $metadata);
     }
 
     /**
@@ -162,12 +167,29 @@ final readonly class Writer
         $this->posts->destroy($attachment->id);
     }
 
-    /** @return array<string, mixed> */
+    /**
+     * An image's metadata as the reference makes it without plugins: its
+     * own description (Media\PhotoMeta), a stand-in when it is big or taken
+     * turned (which becomes the attached file, the upload kept as
+     * original_image), and the sizes cut from the upload.
+     *
+     * @return array<string, mixed>
+     */
     private function imageMetadata(string $relative, string $mime): array
     {
         $path = $this->uploads->pathFor($relative);
         [$width, $height] = getimagesize($path) ?: [0, 0];
-        $meta = ['width' => (int) $width, 'height' => (int) $height, 'file' => $relative, 'filesize' => (int) filesize($path)];
-        return $meta + ['sizes' => $this->images->makeSubsizes($path, $mime, $meta), 'image_meta' => Metadata::blankImageMeta()];
+        $photo = PhotoMeta::read($path, PhotoMeta::EXIF_TYPES, static fn (string $text): string => Kses::post($text))['meta'] ?? Metadata::blankImageMeta();
+        $meta = ['width' => (int) $width, 'height' => (int) $height, 'file' => $relative, 'filesize' => (int) filesize($path), 'sizes' => [], 'image_meta' => $photo];
+        $orientation = (int) $photo['orientation'];
+        $standIn = $this->images->standIn($path, $mime, $orientation);
+        if ($standIn !== null) {
+            $meta = ['width' => $standIn['width'], 'height' => $standIn['height'], 'file' => (string) $this->uploads->relativeOf($standIn['path']), 'filesize' => $standIn['filesize']] + $meta + ['original_image' => basename($path)];
+            if ($standIn['rotated']) {
+                $meta['image_meta']['orientation'] = 1;
+            }
+        }
+        $meta['sizes'] = $this->images->makeSubsizes($path, $mime, $meta, $orientation);
+        return $meta;
     }
 }

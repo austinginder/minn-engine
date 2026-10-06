@@ -68,18 +68,77 @@ final readonly class Images
         return Sizing::constrain($width, $height, $maxWidth, $maxHeight);
     }
 
+    /** Past this width or height an upload is scaled down to it, as the reference's big_image_size_threshold default. */
+    public const BIG = 2560;
+
     /**
-     * Generates the sub-sizes for one image; returns the sizes metadata map.
+     * The upload's stand-in, as the reference saves one (probe
+     * image-pipeline): one past BIG scaled to fit it and saved "-scaled",
+     * one a JPEG's EXIF says was taken turned saved upright "-rotated"
+     * (both when both). Null when the upload is kept as it is.
+     *
+     * @return array{path: string, width: int, height: int, filesize: int, rotated: bool}|null
+     */
+    public function standIn(string $path, string $mime, int $orientation): ?array
+    {
+        $canvas = in_array($mime, self::SIZED, true) ? Canvas::open($path) : null;
+        if ($canvas === null) {
+            return null;
+        }
+        $big = $canvas->width > self::BIG || $canvas->height > self::BIG;
+        if ($big) {
+            [$width, $height] = self::constrain($canvas->width, $canvas->height, self::BIG, self::BIG);
+            $canvas = $canvas->resample([0, 0, 0, 0, $width, $height, $canvas->width, $canvas->height]);
+        }
+        $rotated = $mime === 'image/jpeg' && $orientation > 1;
+        if (!$big && !$rotated) {
+            return null;
+        }
+        $canvas = $rotated ? self::upright($canvas, $orientation) : $canvas;
+        $out = preg_replace('/\.([^.\/]+)$/', $big ? '-scaled.$1' : '-rotated.$1', $path);
+        $canvas->write((string) $out, $mime, self::quality($mime));
+        return ['path' => (string) $out, 'width' => $canvas->width, 'height' => $canvas->height, 'filesize' => (int) filesize((string) $out), 'rotated' => $rotated];
+    }
+
+    /** The image turned as its EXIF orientation says: a rotation counter-clockwise, then a mirror left to right. */
+    private static function upright(Canvas $canvas, int $orientation): Canvas
+    {
+        [$angle, $mirror] = match ($orientation) {
+            2 => [0, true],
+            3 => [180, false],
+            4 => [180, true],
+            5 => [270, true],
+            6 => [270, false],
+            7 => [90, true],
+            8 => [90, false],
+            default => [0, false],
+        };
+        $turned = $angle ? ($canvas->rotate($angle) ?? $canvas) : $canvas;
+        return $mirror ? $turned->flipHorizontal() : $turned;
+    }
+
+    /** The quality a size is written at: 86 for WebP, 82 otherwise, the reference's defaults. */
+    private static function quality(string $mime): int
+    {
+        return $mime === 'image/webp' ? 86 : 82;
+    }
+
+    private const SIZED = ['image/png', 'image/jpeg', 'image/gif', 'image/webp'];
+
+    /**
+     * Generates the sub-sizes for one image, cut from the upload turned
+     * upright when a JPEG's EXIF says so; returns the sizes metadata map.
      * The image's metadata so far rides along for the size filter.
      *
      * @param array<string, mixed> $imageMeta
      */
-    public function makeSubsizes(string $path, string $mime, array $imageMeta = []): array
+    public function makeSubsizes(string $path, string $mime, array $imageMeta = [], int $orientation = 1): array
     {
-        $source = in_array($mime, ['image/png', 'image/jpeg', 'image/gif', 'image/webp'], true) ? Canvas::open($path) : null;
+        $source = in_array($mime, self::SIZED, true) ? Canvas::open($path) : null;
         if ($source === null) {
             return [];
         }
+        $source = $mime === 'image/jpeg' && $orientation > 1 ? self::upright($source, $orientation) : $source;
         $width = $source->width;
         $height = $source->height;
         $dir = dirname($path);
@@ -106,7 +165,7 @@ final readonly class Images
             $target = $source->resample($box);
             $file = "{$stem}-{$target->width}x{$target->height}.{$ext}";
             $out = "{$dir}/{$file}";
-            $target->write($out, $mime, 82);
+            $target->write($out, $mime, self::quality($mime));
             $sizes[$name] = ['file' => $file, 'width' => $target->width, 'height' => $target->height, 'mime-type' => $mime, 'filesize' => (int) filesize($out)];
         }
         return $sizes;

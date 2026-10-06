@@ -136,6 +136,13 @@ final readonly class Canvas
         return $this->encode($mime, $path, $quality);
     }
 
+    /** The same bitmap written progressively (an interlaced JPEG) or not. */
+    public function interlaced(bool $on): self
+    {
+        imageinterlace($this->image, $on);
+        return $this;
+    }
+
     /** Writes the image to the output in a format, at a quality. */
     public function stream(string $mime, int $quality): bool
     {
@@ -148,6 +155,7 @@ final readonly class Canvas
             'image/png' => imagepng($this->image, $path),
             'image/gif' => imagegif($this->image, $path),
             'image/webp' => imagewebp($this->image, $path, $quality),
+            'image/avif' => function_exists('imageavif') && imageavif($this->image, $path, $quality),
             default => imagejpeg($this->image, $path, $quality),
         };
     }

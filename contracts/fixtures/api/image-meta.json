@@ -1,0 +1,531 @@
+[
+    [
+        "both, iptc wins",
+        {
+            "aperture": "2.8",
+            "credit": "Iptc credit",
+            "camera": "Model Z",
+            "caption": "Iptc caption",
+            "created_timestamp": "1646388672",
+            "copyright": "Iptc copyright",
+            "focal_length": "50",
+            "iso": "400",
+            "shutter_speed": "0.004",
+            "title": "Iptc Title",
+            "orientation": "3",
+            "keywords": [
+                "one",
+                "two"
+            ],
+            "alt": ""
+        }
+    ],
+    [
+        "exif alone",
+        {
+            "aperture": "2.8",
+            "credit": "Probe Artist",
+            "camera": "Model Z",
+            "caption": "A short description",
+            "created_timestamp": "1672628645",
+            "copyright": "Exif Copyright",
+            "focal_length": "50",
+            "iso": "400",
+            "shutter_speed": "0.004",
+            "title": "A short description",
+            "orientation": "3",
+            "keywords": [],
+            "alt": ""
+        }
+    ],
+    [
+        "exif with a long description",
+        {
+            "aperture": "0",
+            "credit": "",
+            "camera": "",
+            "caption": "A long description that goes on A long description that goes on A long description that goes on A long description that goes on",
+            "created_timestamp": "0",
+            "copyright": "",
+            "focal_length": "0",
+            "iso": "0",
+            "shutter_speed": "0",
+            "title": "",
+            "orientation": "0",
+            "keywords": [],
+            "alt": ""
+        }
+    ],
+    [
+        "exif with a description and a user comment",
+        {
+            "aperture": "0",
+            "credit": "",
+            "camera": "",
+            "caption": "A user comment",
+            "created_timestamp": "0",
+            "copyright": "",
+            "focal_length": "0",
+            "iso": "0",
+            "shutter_speed": "0",
+            "title": "Short one",
+            "orientation": "0",
+            "keywords": [],
+            "alt": ""
+        }
+    ],
+    [
+        "exif digitized date only",
+        {
+            "aperture": "0",
+            "credit": "",
+            "camera": "",
+            "caption": "",
+            "created_timestamp": "1636722855",
+            "copyright": "",
+            "focal_length": "0",
+            "iso": "0",
+            "shutter_speed": "0",
+            "title": "",
+            "orientation": "0",
+            "keywords": [],
+            "alt": ""
+        }
+    ],
+    [
+        "iptc byline, no credit",
+        {
+            "aperture": "0",
+            "credit": "Only byline",
+            "camera": "",
+            "caption": "",
+            "created_timestamp": "0",
+            "copyright": "",
+            "focal_length": "0",
+            "iso": "0",
+            "shutter_speed": "0",
+            "title": "",
+            "orientation": "0",
+            "keywords": [],
+            "alt": ""
+        }
+    ],
+    [
+        "iptc date without time",
+        {
+            "aperture": "0",
+            "credit": "",
+            "camera": "",
+            "caption": "",
+            "created_timestamp": "0",
+            "copyright": "",
+            "focal_length": "0",
+            "iso": "0",
+            "shutter_speed": "0",
+            "title": "",
+            "orientation": "0",
+            "keywords": [],
+            "alt": ""
+        }
+    ],
+    [
+        "fractions",
+        {
+            "aperture": "0",
+            "credit": "",
+            "camera": "",
+            "caption": "",
+            "created_timestamp": "0",
+            "copyright": "",
+            "focal_length": "3.5",
+            "iso": "0",
+            "shutter_speed": "0.5",
+            "title": "",
+            "orientation": "0",
+            "keywords": [],
+            "alt": ""
+        }
+    ],
+    [
+        "a long exposure",
+        {
+            "aperture": "0",
+            "credit": "",
+            "camera": "",
+            "caption": "",
+            "created_timestamp": "0",
+            "copyright": "",
+            "focal_length": "0",
+            "iso": "0",
+            "shutter_speed": "2.5",
+            "title": "",
+            "orientation": "0",
+            "keywords": [],
+            "alt": ""
+        }
+    ],
+    [
+        "orientation alone",
+        {
+            "aperture": "0",
+            "credit": "",
+            "camera": "",
+            "caption": "",
+            "created_timestamp": "0",
+            "copyright": "",
+            "focal_length": "0",
+            "iso": "0",
+            "shutter_speed": "0",
+            "title": "",
+            "orientation": "8",
+            "keywords": [],
+            "alt": ""
+        }
+    ],
+    [
+        "latin-1 iptc",
+        {
+            "aperture": "0",
+            "credit": "",
+            "camera": "",
+            "caption": "Café crème",
+            "created_timestamp": "0",
+            "copyright": "",
+            "focal_length": "0",
+            "iso": "0",
+            "shutter_speed": "0",
+            "title": "Café crème",
+            "orientation": "0",
+            "keywords": [],
+            "alt": ""
+        }
+    ],
+    [
+        "utf-8 iptc with its marker",
+        {
+            "aperture": "0",
+            "credit": "",
+            "camera": "",
+            "caption": "Café crème",
+            "created_timestamp": "0",
+            "copyright": "",
+            "focal_length": "0",
+            "iso": "0",
+            "shutter_speed": "0",
+            "title": "Café crème",
+            "orientation": "0",
+            "keywords": [],
+            "alt": ""
+        }
+    ],
+    [
+        "utf-8 iptc without a marker",
+        {
+            "aperture": "0",
+            "credit": "",
+            "camera": "",
+            "caption": "Café crème",
+            "created_timestamp": "0",
+            "copyright": "",
+            "focal_length": "0",
+            "iso": "0",
+            "shutter_speed": "0",
+            "title": "Café crème",
+            "orientation": "0",
+            "keywords": [],
+            "alt": ""
+        }
+    ],
+    [
+        "markup in a caption",
+        {
+            "aperture": "0",
+            "credit": "",
+            "camera": "",
+            "caption": "Hello <b>world</b> &amp; co",
+            "created_timestamp": "0",
+            "copyright": "",
+            "focal_length": "0",
+            "iso": "0",
+            "shutter_speed": "0",
+            "title": "Hello <b>world</b> &amp; co",
+            "orientation": "0",
+            "keywords": [],
+            "alt": ""
+        }
+    ],
+    [
+        "a 79-letter caption",
+        {
+            "aperture": "0",
+            "credit": "",
+            "camera": "",
+            "caption": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+            "created_timestamp": "0",
+            "copyright": "",
+            "focal_length": "0",
+            "iso": "0",
+            "shutter_speed": "0",
+            "title": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+            "orientation": "0",
+            "keywords": [],
+            "alt": ""
+        }
+    ],
+    [
+        "an 80-letter caption",
+        {
+            "aperture": "0",
+            "credit": "",
+            "camera": "",
+            "caption": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+            "created_timestamp": "0",
+            "copyright": "",
+            "focal_length": "0",
+            "iso": "0",
+            "shutter_speed": "0",
+            "title": "",
+            "orientation": "0",
+            "keywords": [],
+            "alt": ""
+        }
+    ],
+    [
+        "a long description, a short comment",
+        {
+            "aperture": "0",
+            "credit": "",
+            "camera": "",
+            "caption": "Long words Long words Long words Long words Long words Long words Long words Long words Long words Short comment",
+            "created_timestamp": "0",
+            "copyright": "",
+            "focal_length": "0",
+            "iso": "0",
+            "shutter_speed": "0",
+            "title": "",
+            "orientation": "0",
+            "keywords": [],
+            "alt": ""
+        }
+    ],
+    [
+        "thirds",
+        {
+            "aperture": "2.33",
+            "credit": "",
+            "camera": "",
+            "caption": "",
+            "created_timestamp": "0",
+            "copyright": "",
+            "focal_length": "33.333333333333",
+            "iso": "0",
+            "shutter_speed": "0.33333333333333",
+            "title": "",
+            "orientation": "0",
+            "keywords": [],
+            "alt": ""
+        }
+    ],
+    [
+        "a thirtieth",
+        {
+            "aperture": "0",
+            "credit": "",
+            "camera": "",
+            "caption": "",
+            "created_timestamp": "0",
+            "copyright": "",
+            "focal_length": "0",
+            "iso": "0",
+            "shutter_speed": "0.033333333333333",
+            "title": "",
+            "orientation": "0",
+            "keywords": [],
+            "alt": ""
+        }
+    ],
+    [
+        "two iso speeds",
+        {
+            "aperture": "0",
+            "credit": "",
+            "camera": "",
+            "caption": "",
+            "created_timestamp": "0",
+            "copyright": "",
+            "focal_length": "0",
+            "iso": "200",
+            "shutter_speed": "0",
+            "title": "",
+            "orientation": "0",
+            "keywords": [],
+            "alt": ""
+        }
+    ],
+    [
+        "an iptc time with an offset",
+        {
+            "aperture": "0",
+            "credit": "",
+            "camera": "",
+            "caption": "",
+            "created_timestamp": "1646381472",
+            "copyright": "",
+            "focal_length": "0",
+            "iso": "0",
+            "shutter_speed": "0",
+            "title": "",
+            "orientation": "0",
+            "keywords": [],
+            "alt": ""
+        }
+    ],
+    [
+        "a script in a caption",
+        {
+            "aperture": "0",
+            "credit": "",
+            "camera": "",
+            "caption": "Hi alert(1) there",
+            "created_timestamp": "0",
+            "copyright": "",
+            "focal_length": "0",
+            "iso": "0",
+            "shutter_speed": "0",
+            "title": "Hi alert(1) there",
+            "orientation": "0",
+            "keywords": [],
+            "alt": ""
+        }
+    ],
+    [
+        "a camera make alone",
+        {
+            "aperture": "0",
+            "credit": "",
+            "camera": "",
+            "caption": "",
+            "created_timestamp": "0",
+            "copyright": "",
+            "focal_length": "0",
+            "iso": "0",
+            "shutter_speed": "0",
+            "title": "",
+            "orientation": "0",
+            "keywords": [],
+            "alt": ""
+        }
+    ],
+    [
+        "a long description and a comment, run on",
+        {
+            "aperture": "0",
+            "credit": "",
+            "camera": "",
+            "caption": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd Tail",
+            "created_timestamp": "0",
+            "copyright": "",
+            "focal_length": "0",
+            "iso": "0",
+            "shutter_speed": "0",
+            "title": "",
+            "orientation": "0",
+            "keywords": [],
+            "alt": ""
+        }
+    ],
+    [
+        "an iptc title, a short description and a comment",
+        {
+            "aperture": "0",
+            "credit": "",
+            "camera": "",
+            "caption": "Short d Tail",
+            "created_timestamp": "0",
+            "copyright": "",
+            "focal_length": "0",
+            "iso": "0",
+            "shutter_speed": "0",
+            "title": "T",
+            "orientation": "0",
+            "keywords": [],
+            "alt": ""
+        }
+    ],
+    [
+        "a comment alone",
+        {
+            "aperture": "0",
+            "credit": "",
+            "camera": "",
+            "caption": "Tail",
+            "created_timestamp": "0",
+            "copyright": "",
+            "focal_length": "0",
+            "iso": "0",
+            "shutter_speed": "0",
+            "title": "Tail",
+            "orientation": "0",
+            "keywords": [],
+            "alt": ""
+        }
+    ],
+    [
+        "an iptc caption and an exif description",
+        {
+            "aperture": "0",
+            "credit": "",
+            "camera": "",
+            "caption": "Cap",
+            "created_timestamp": "0",
+            "copyright": "",
+            "focal_length": "0",
+            "iso": "0",
+            "shutter_speed": "0",
+            "title": "Cap",
+            "orientation": "0",
+            "keywords": [],
+            "alt": ""
+        }
+    ],
+    [
+        "an iptc headline and object name",
+        {
+            "aperture": "0",
+            "credit": "",
+            "camera": "",
+            "caption": "",
+            "created_timestamp": "0",
+            "copyright": "",
+            "focal_length": "0",
+            "iso": "0",
+            "shutter_speed": "0",
+            "title": "Headline",
+            "orientation": "0",
+            "keywords": [],
+            "alt": ""
+        }
+    ],
+    [
+        "neither",
+        {
+            "aperture": "0",
+            "credit": "",
+            "camera": "",
+            "caption": "",
+            "created_timestamp": "0",
+            "copyright": "",
+            "focal_length": "0",
+            "iso": "0",
+            "shutter_speed": "0",
+            "title": "",
+            "orientation": "0",
+            "keywords": [],
+            "alt": ""
+        }
+    ],
+    [
+        "a missing file",
+        false
+    ]
+]
