@@ -157,3 +157,42 @@ if (in_array('map-meta', $minnEnvelopeModes, true)) {
         return $cap === 'delete_post' && (int) ($args[0] ?? 0) === $guarded && $guarded > 0 ? ['do_not_allow'] : $caps;
     }, 10, 4);
 }
+
+// A save a plugin changes on the way in.
+if (in_array('save-data', $minnEnvelopeModes, true)) {
+    add_filter('wp_insert_post_data', static function (array $data): array {
+        $data['post_excerpt'] = 'set by wp_insert_post_data';
+        return $data;
+    });
+}
+if (in_array('save-title', $minnEnvelopeModes, true)) {
+    add_filter('title_save_pre', static fn ($title) => $title . ' (saved)');
+}
+if (in_array('save-slug', $minnEnvelopeModes, true)) {
+    add_filter('wp_unique_post_slug', static fn ($slug) => $slug . '-zz');
+}
+if (in_array('save-empty', $minnEnvelopeModes, true)) {
+    add_filter('wp_insert_post_empty_content', '__return_true');
+}
+if (in_array('pre-insert', $minnEnvelopeModes, true)) {
+    add_filter('rest_pre_insert_post', static function ($prepared) {
+        $prepared->post_title = 'zz envelope save set by rest_pre_insert_post';
+        return $prepared;
+    });
+}
+if (in_array('pre-insert-error', $minnEnvelopeModes, true)) {
+    add_filter('rest_pre_insert_post', static fn () => new WP_Error('minn_pre_insert', 'Refused before the insert.', ['status' => 422]));
+}
+
+// A response a plugin adds to as each item is prepared.
+if (in_array('prepare', $minnEnvelopeModes, true)) {
+    foreach (['rest_prepare_post', 'rest_prepare_page', 'rest_prepare_attachment', 'rest_prepare_user', 'rest_prepare_comment', 'rest_prepare_category'] as $minnPrepare) {
+        add_filter($minnPrepare, static function ($response, $object, $request) use ($minnPrepare) {
+            $data = $response->get_data();
+            $data['minn_prepared'] = [$minnPrepare, is_object($object) ? get_class($object) : gettype($object), $request instanceof WP_REST_Request ? $request->get_route() : gettype($request), array_keys($response->get_links()) !== []];
+            $response->set_data($data);
+            $response->add_link('https://api.w.org/minn-prepared', home_url('/prepared/'));
+            return $response;
+        }, 10, 3);
+    }
+}

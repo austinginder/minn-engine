@@ -164,6 +164,9 @@ final readonly class Api
         try {
             // Plugin code gets the reference's say before the engine's routes: an
             // authentication refusal, a pre-dispatch answer, or a removed endpoint.
+            if (Runtime::booted()) {
+                RuntimePrepare::answering(RuntimeRoutes::wpRequest($request));
+            }
             $response = Runtime::booted() ? RuntimeRoutes::gate($request) : null;
             if ($response === null) {
                 try {

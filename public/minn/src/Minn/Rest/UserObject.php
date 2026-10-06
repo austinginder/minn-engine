@@ -21,6 +21,19 @@ final readonly class UserObject
     ) {
     }
 
+
+    /** A user as the view context shows one, through rest_prepare_user when a plugin hooks it. */
+    public function view(UserRecord $u): array
+    {
+        return RuntimePrepare::item('rest_prepare_user', $this->viewFields($u), static fn () => \get_userdata($u->id));
+    }
+
+    /** A user as the edit context shows one, through rest_prepare_user when a plugin hooks it. */
+    public function edit(UserRecord $u): array
+    {
+        return RuntimePrepare::item('rest_prepare_user', $this->editFields($u), static fn () => \get_userdata($u->id));
+    }
+
     /** Gravatar URLs in the sizes the reference emits (sha256 of the email). */
     public static function avatarUrls(string $email): array
     {
@@ -33,7 +46,7 @@ final readonly class UserObject
     }
 
     /** The wp/v2 user shape in the view context. */
-    public function view(UserRecord $u): array
+    private function viewFields(UserRecord $u): array
     {
         $id = $u->id;
         $isSelf = $this->caller->id() === $id;
@@ -62,10 +75,10 @@ final readonly class UserObject
      * capabilities map is the union of role primitives plus each role name
      * as a pseudo-capability, exactly as the reference emits.
      */
-    public function edit(UserRecord $u): array
+    private function editFields(UserRecord $u): array
     {
         $id = $u->id;
-        $view = $this->view($u);
+        $view = $this->viewFields($u);
         $view['_links']['self'][0]['targetHints']['allow'] = ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'];
         $capabilities = $this->caller->capabilities();
         $roles = $capabilities->rolesOf($id);

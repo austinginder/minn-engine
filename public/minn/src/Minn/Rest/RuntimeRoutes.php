@@ -144,6 +144,21 @@ final class RuntimeRoutes
         return $wpResponse;
     }
 
+    /**
+     * One item a response carries, as a response object: its data without
+     * _links, the links on the response.
+     *
+     * @param array<string, mixed> $item
+     */
+    public static function itemResponse(array $item): \WP_REST_Response
+    {
+        $links = isset($item['_links']) && is_array($item['_links']) ? self::expand($item['_links']) : [];
+        unset($item['_links']);
+        $response = new \WP_REST_Response($item, 200);
+        $response->add_links($links);
+        return $response;
+    }
+
     /** Whatever the filters left, as the engine sends it; what they handed back untouched is the engine's own answer, byte for byte. */
     public static function fromWp(mixed $result): Response
     {

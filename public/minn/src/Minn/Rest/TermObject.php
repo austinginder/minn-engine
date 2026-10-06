@@ -25,6 +25,14 @@ final readonly class TermObject
     ) {
     }
 
+
+    /** A term as its REST base shows it, through rest_prepare_{taxonomy} when a plugin hooks it. */
+    public function view(TermRecord $term, string $restBase): array
+    {
+        $taxonomy = (string) (self::config($restBase)['taxonomy'] ?? $restBase);
+        return RuntimePrepare::item('rest_prepare_' . $taxonomy, $this->viewFields($term, $restBase), static fn () => \get_term($term->id, $taxonomy));
+    }
+
     /** The REST URL builder. */
     public function url(): RestUrl
     {
@@ -42,7 +50,7 @@ final readonly class TermObject
     }
 
     /** The wp/v2 term shape. */
-    public function view(TermRecord $term, string $restBase): array
+    private function viewFields(TermRecord $term, string $restBase): array
     {
         $config = self::config($restBase);
         $id = (int) $term['term_id'];

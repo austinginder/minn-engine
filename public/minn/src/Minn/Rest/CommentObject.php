@@ -22,6 +22,13 @@ final readonly class CommentObject
     ) {
     }
 
+
+    /** A comment in the context asked for, through rest_prepare_comment when a plugin hooks it. */
+    public function build(CommentRecord $c, Context $context): array
+    {
+        return RuntimePrepare::item('rest_prepare_comment', $this->buildFields($c, $context), static fn () => \get_comment($c->id));
+    }
+
     /** The REST URL builder. */
     public function url(): RestUrl
     {
@@ -29,7 +36,7 @@ final readonly class CommentObject
     }
 
     /** The wp/v2 comment shape, with the edit-context fields when asked. */
-    public function build(CommentRecord $c, Context $context): array
+    private function buildFields(CommentRecord $c, Context $context): array
     {
         $edit = $context->isEdit();
         $id = $c->id;

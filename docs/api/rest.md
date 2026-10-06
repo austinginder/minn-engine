@@ -6,14 +6,14 @@ the wp/v2 surface: shapes and controllers
 |---|---|---|---|
 | [`AbilitiesController`](#abilitiescontroller) | final readonly class | 142 | wp-abilities/v1: what this site can be asked to do, and the doing of it. |
 | [`AdditionalFields`](#additionalfields) | final class | 46 | Which object type a wp/v2 route serves, so fields registered for that type can ride on the engine's own responses. |
-| [`Api`](#api) | final readonly class | 184 | The REST API: wires the controllers for one request and dispatches a |
+| [`Api`](#api) | final readonly class | 187 | The REST API: wires the controllers for one request and dispatches a |
 | [`ApplicationPasswordsController`](#applicationpasswordscontroller) | final readonly class | 170 | wp/v2/users/{id}/application-passwords: list, create, rename, delete, |
 | [`ArgCheck`](#argcheck) | final readonly class | 83 | Judges a route's declared arguments against the request before the |
 | [`BatchRequest`](#batchrequest) | final class | 32 | The requests a batch payload names, normalised into descriptors the |
 | [`BlocksController`](#blockscontroller) | final readonly class | 69 | wp/v2/blocks: synced patterns and reusable blocks, stored as wp_block |
 | [`Caller`](#caller) | final class | 103 | Who is making this REST call. Resolved once from the cookie and nonce; |
 | [`Catalogue`](#catalogue) | final class | 70 | The route table read from the classes alone: every #[Route] under |
-| [`CommentObject`](#commentobject) | final readonly class | 75 | The wp/v2 comment object; edit context adds the moderation-desk fields. |
+| [`CommentObject`](#commentobject) | final readonly class | 82 | The wp/v2 comment object; edit context adds the moderation-desk fields. |
 | [`CommentsController`](#commentscontroller) | final readonly class | 284 | wp/v2/comments: the status tabs with pagination headers, single, |
 | [`Context`](#context) | enum | 18 | The view a REST caller asked for. View is the public shape, edit adds the |
 | [`DeclaredPostsController`](#declaredpostscontroller) | final readonly class | 56 | wp/v2/{rest_base} for extra post types declared by an active extension. |
@@ -26,7 +26,7 @@ the wp/v2 surface: shapes and controllers
 | [`Links`](#links) | final class | 52 | Response link relations compacted through CURIEs: a rel that matches a CURIE's template becomes `name:suffix`, and the used CURIEs ride along. |
 | [`ListQuery`](#listquery) | final readonly class | 170 | The collection parameters a wp/v2 list accepts, read once from the |
 | [`MediaController`](#mediacontroller) | final readonly class | 220 | wp/v2/media: list, single, upload on both transports (multipart field |
-| [`MediaObject`](#mediaobject) | final readonly class | 158 | The wp/v2 media object, view and edit context. |
+| [`MediaObject`](#mediaobject) | final readonly class | 165 | The wp/v2 media object, view and edit context. |
 | [`MenuItemObject`](#menuitemobject) | final readonly class | 74 | The wp/v2/menu-items resource. |
 | [`MenuObject`](#menuobject) | final readonly class | 37 | The wp/v2/menus resource: a nav_menu term plus locations and auto_add. |
 | [`MenusController`](#menuscontroller) | final readonly class | 282 | wp/v2/menus, menu-items, and menu-locations. Viewing needs edit_posts; |
@@ -34,7 +34,7 @@ the wp/v2 surface: shapes and controllers
 | [`ParamCheck`](#paramcheck) | final class | 75 | The required / validate / sanitize pass over a request's declared arguments. |
 | [`PluginsController`](#pluginscontroller) | final readonly class | 236 | wp/v2 plugins: what sits in wp-content/plugins, in the reference's |
 | [`PolicyGate`](#policygate) | final readonly class | 91 | Judges a route's policy against the caller, with the reference's |
-| [`PostObject`](#postobject) | final readonly class | 482 | Builds the wp/v2 post and page objects in the reference's shape: the |
+| [`PostObject`](#postobject) | final readonly class | 495 | Builds the wp/v2 post and page objects in the reference's shape: the |
 | [`PostsController`](#postscontroller) | final readonly class | 182 | wp/v2 posts and pages, read side. |
 | [`PostsWriteController`](#postswritecontroller) | final readonly class | 426 | wp/v2 posts and pages, write side: create, update, trash, and force |
 | [`Reply`](#reply) | final class | 47 | JSON responses in the reference's shape: its header set, its json_encode |
@@ -45,7 +45,8 @@ the wp/v2 surface: shapes and controllers
 | [`RouteMatch`](#routematch) | final class | 68 | Finds the registered handler for a method and path among the runtime's route table. |
 | [`RouteTable`](#routetable) | final class | 38 | The registered endpoints in dispatch shape: one handler list per route, methods as a set, non-numeric keys lifted into the route's options. |
 | [`RuntimeEnvelope`](#runtimeenvelope) | final readonly class | 123 | The REST server's filters around one of Minn's own routes, as the |
-| [`RuntimeRoutes`](#runtimeroutes) | final class | 282 | Routes plugin code registered with register_rest_route(), answered |
+| [`RuntimePrepare`](#runtimeprepare) | final class | 35 | An item a REST response carries, through the filter the reference runs |
+| [`RuntimeRoutes`](#runtimeroutes) | final class | 297 | Routes plugin code registered with register_rest_route(), answered |
 | [`Schema`](#schema) | final readonly class | 473 | JSON-schema handling the way the REST API's argument validation does it: |
 | [`SchemaValues`](#schemavalues) | final class | 206 | The value side of JSON Schema, as the reference applies it: what counts |
 | [`SearchController`](#searchcontroller) | final readonly class | 121 | wp/v2 search over published content: id, title, url, type, and the |
@@ -57,11 +58,11 @@ the wp/v2 surface: shapes and controllers
 | [`TaxonomiesController`](#taxonomiescontroller) | final readonly class | 48 | wp/v2 taxonomies: the registry, whole or per type, in view or edit context. |
 | [`TemplateObject`](#templateobject) | final readonly class | 98 | The wp/v2/templates and wp/v2/template-parts resource. |
 | [`TemplatesController`](#templatescontroller) | final readonly class | 205 | wp/v2/templates and wp/v2/template-parts: the block theme's templates as |
-| [`TermObject`](#termobject) | final readonly class | 76 | The wp/v2 category and tag objects. |
+| [`TermObject`](#termobject) | final readonly class | 84 | The wp/v2 category and tag objects. |
 | [`TermsController`](#termscontroller) | final readonly class | 197 | wp/v2 categories, tags, and pattern categories: list, single, and the create/update/delete the taxonomy admin drives. |
 | [`Types`](#types) | final class | 97 | The engine's registry of built-in post types, seeded from the observed |
 | [`TypesController`](#typescontroller) | final readonly class | 24 | wp/v2 types. |
-| [`UserObject`](#userobject) | final readonly class | 97 | The wp/v2 user objects: the public view shape and the edit-context shape. |
+| [`UserObject`](#userobject) | final readonly class | 110 | The wp/v2 user objects: the public view shape and the edit-context shape. |
 | [`UsersController`](#userscontroller) | final readonly class | 307 | wp/v2 users: me, list, single, and the create/update/delete-with-reassign the Users view drives. |
 
 ## AbilitiesController
@@ -207,7 +208,7 @@ takes it; the runtime's table is never consulted. This is what the
 runtime's server calls for a core route, so a route the engine
 declines cannot bounce between the two.
 
-Internals: `controllers()` (private, line 72), `engineResponse()` (private, line 204), `withAllow()` (private, line 214)
+Internals: `controllers()` (private, line 72), `engineResponse()` (private, line 207), `withAllow()` (private, line 217)
 
 
 ## ApplicationPasswordsController
@@ -487,13 +488,15 @@ __construct(Minn\Content\Comments $comments, Minn\Content\Posts $posts, Minn\Fro
 ```
 
 
+### `build(Minn\Content\CommentRecord $c, Minn\Rest\Context $context): array`
+
+A comment in the context asked for, through rest_prepare_comment when a plugin hooks it.
+
 ### `url(): Minn\Rest\RestUrl`
 
 The REST URL builder.
 
-### `build(Minn\Content\CommentRecord $c, Minn\Rest\Context $context): array`
-
-The wp/v2 comment shape, with the edit-context fields when asked.
+Internals: `buildFields()` (private, line 39)
 
 
 ## CommentsController
@@ -1033,15 +1036,15 @@ __construct(Minn\Content\Posts $posts, Minn\Media\Uploads $uploads, Minn\Front\P
 ```
 
 
+### `build(Minn\Content\PostRecord $p, Minn\Rest\Context $context): array`
+
+An attachment in the context asked for, through rest_prepare_attachment when a plugin hooks it.
+
 ### `url(): Minn\Rest\RestUrl`
 
 The REST URL builder.
 
-### `build(Minn\Content\PostRecord $p, Minn\Rest\Context $context): array`
-
-The wp/v2 media shape, with the edit-context fields when asked.
-
-Internals: `details()` (private, line 118), `descriptionHtml()` (private, line 152)
+Internals: `buildFields()` (private, line 43), `details()` (private, line 125), `descriptionHtml()` (private, line 159)
 
 
 ## MenuItemObject
@@ -1362,6 +1365,14 @@ __construct(Minn\Db $db, Minn\Content\Posts $posts, Minn\Content\Users $users, M
 ```
 
 
+### `view(Minn\Content\PostRecord $p): array`
+
+The view-context object, through rest_prepare_{type} when a plugin hooks it.
+
+### `edit(Minn\Content\PostRecord $p, int $userId): array`
+
+The edit-context object, through rest_prepare_{type} when a plugin hooks it.
+
 ### `permalink(Minn\Content\PostRecord $p): string`
 
 A post's permalink as of now: pretty once live with a slug, ?p= (or ?page_id=) before.
@@ -1370,19 +1381,9 @@ A post's permalink as of now: pretty once live with a slug, ?p= (or ?page_id=) b
 
 The rest_base of a type.
 
-### `view(Minn\Content\PostRecord $p): array`
-
-The view-context object: the shared fields, then the type's own, then class_list and _links.
-
 ### `links(Minn\Content\PostRecord $p): array`
 
 The _links of a post in the view context.
-
-### `edit(Minn\Content\PostRecord $p, int $userId): array`
-
-The edit-context object for a given caller: raw+rendered dual fields,
-password, permalink_template, generated_slug, block_version, Minn
-Admin's registered list fields, and the cap-gated action links.
 
 ### `permalinkTemplate(Minn\Content\PostRecord $p): string`
 
@@ -1406,7 +1407,7 @@ The view links plus the caller's verbs and cap-gated wp:action-* entries.
 
 A MySQL datetime in the reference's ISO form.
 
-Internals: `navigationView()` (private, line 66), `blockView()` (private, line 96), `viewTerms()` (private, line 161), `typeFields()` (private, line 177), `classList()` (private, line 207), `format()` (private, line 229), `termLinks()` (private, line 273), `allow()` (private, line 473), `gmt()` (private, line 492)
+Internals: `navigationView()` (private, line 79), `blockView()` (private, line 109), `viewFields()` (private, line 135), `viewTerms()` (private, line 174), `typeFields()` (private, line 190), `classList()` (private, line 220), `format()` (private, line 242), `termLinks()` (private, line 286), `editFields()` (private, line 305), `allow()` (private, line 486), `gmt()` (private, line 505)
 
 
 ## PostsController
@@ -1721,6 +1722,33 @@ The route's answer with the server's filters around it, or as the route gives it
 Internals: `plain()` (private, line 75), `run()` (private, line 87), `routeName()` (private, line 97), `handler()` (private, line 115), `defaults()` (private, line 130), `typed()` (private, line 148)
 
 
+## RuntimePrepare
+
+`final class Minn\Rest\RuntimePrepare` · `public/minn/src/Minn/Rest/RuntimePrepare.php`
+
+An item a REST response carries, through the filter the reference runs
+as it prepares one (rest_prepare_{type}, rest_prepare_attachment,
+rest_prepare_user, rest_prepare_comment, rest_prepare_{taxonomy}): the
+item as a response object, its links on the response rather than in its
+data, handed with the object it describes and the request; what the
+filter leaves is the item. With nothing hooked, or a response handed back
+untouched, the item is Minn's own, byte for byte.
+
+Used by: `Minn\Rest\Api`, `Minn\Rest\CommentObject`, `Minn\Rest\MediaObject`, `Minn\Rest\PostObject`, `Minn\Rest\TermObject`, `Minn\Rest\UserObject`
+
+### static `answering(WP_REST_Request $request): void`
+
+Remembers the request a REST call is answering, for the filters its items pass through (on the request's own runtime).
+
+### static `item(string $filter, array $item, Closure $described): array`
+
+One item through a rest_prepare filter.
+
+- `@param array<string, mixed> $item`
+- `@param \Closure(): mixed $described the object the item describes, fetched only when a plugin listens`
+- `@return array<string, mixed>`
+
+
 ## RuntimeRoutes
 
 `final class Minn\Rest\RuntimeRoutes` · `public/minn/src/Minn/Rest/RuntimeRoutes.php`
@@ -1731,7 +1759,7 @@ their turn; the runtime's say before the engine answers at all (an
 authentication refusal, a pre-dispatch answer, a removed endpoint);
 and the runtime's namespaces folded into the index.
 
-Used by: `Minn\Rest\Api`, `Minn\Rest\RuntimeEnvelope`, `Minn\Runtime\CommentEvents`, `Minn\Runtime\PostEvents`, `Minn\Runtime\PostSave`, `Minn\Runtime\TermEvents`, `Minn\Runtime\UserEvents`
+Used by: `Minn\Rest\Api`, `Minn\Rest\RuntimeEnvelope`, `Minn\Rest\RuntimePrepare`, `Minn\Runtime\CommentEvents`, `Minn\Runtime\PostEvents`, `Minn\Runtime\PostSave`, `Minn\Runtime\TermEvents`, `Minn\Runtime\UserEvents`
 
 
 ### static `gate(Minn\Http\Request $request): ?Minn\Http\Response`
@@ -1770,6 +1798,13 @@ An engine answer as plugins handle one: its data decoded (an empty
 object stays one), its links on the response rather than in the data,
 its status and headers.
 
+### static `itemResponse(array $item): WP_REST_Response`
+
+One item a response carries, as a response object: its data without
+_links, the links on the response.
+
+- `@param array<string, mixed> $item`
+
 ### static `fromWp(mixed $result): Minn\Http\Response`
 
 Whatever the filters left, as the engine sends it; what they handed back untouched is the engine's own answer, byte for byte.
@@ -1786,7 +1821,7 @@ nothing hooked, the answer goes out as it is.
 
 A callback's return as a response object, an error converted.
 
-Internals: `look()` (private, line 209), `remember()` (private, line 214), `decode()` (private, line 221), `expand()` (private, line 241), `newWpRequest()` (private, line 267), `toResponse()` (private, line 290)
+Internals: `look()` (private, line 224), `remember()` (private, line 229), `decode()` (private, line 236), `expand()` (private, line 256), `newWpRequest()` (private, line 282), `toResponse()` (private, line 305)
 
 
 ## Schema
@@ -2433,6 +2468,10 @@ __construct(Minn\Db $db, Minn\Front\Permalinks $permalinks, Minn\Rest\RestUrl $u
 ```
 
 
+### `view(Minn\Content\TermRecord $term, string $restBase): array`
+
+A term as its REST base shows it, through rest_prepare_{taxonomy} when a plugin hooks it.
+
 ### `url(): Minn\Rest\RestUrl`
 
 The REST URL builder.
@@ -2443,11 +2482,7 @@ The taxonomy behind a rest_base.
 
 - `@return array{taxonomy: string, has_parent: bool, post_arg: string, post_base: string}`
 
-### `view(Minn\Content\TermRecord $term, string $restBase): array`
-
-The wp/v2 term shape.
-
-Internals: `allowedVerbs()` (private, line 78)
+Internals: `viewFields()` (private, line 53), `allowedVerbs()` (private, line 86)
 
 
 ## TermsController
@@ -2585,19 +2620,19 @@ __construct(Minn\Db $db, Minn\Content\Users $users, Minn\Front\Permalinks $perma
 ```
 
 
+### `view(Minn\Content\UserRecord $u): array`
+
+A user as the view context shows one, through rest_prepare_user when a plugin hooks it.
+
+### `edit(Minn\Content\UserRecord $u): array`
+
+A user as the edit context shows one, through rest_prepare_user when a plugin hooks it.
+
 ### static `avatarUrls(string $email): array`
 
 Gravatar URLs in the sizes the reference emits (sha256 of the email).
 
-### `view(Minn\Content\UserRecord $u): array`
-
-The wp/v2 user shape in the view context.
-
-### `edit(Minn\Content\UserRecord $u): array`
-
-The private fields a caller who can edit the user sees. The
-capabilities map is the union of role primitives plus each role name
-as a pseudo-capability, exactly as the reference emits.
+Internals: `viewFields()` (private, line 49), `editFields()` (private, line 78)
 
 
 ## UsersController

@@ -65,7 +65,7 @@ foreach ($links as $link) {
 $sweep = static function () use ($WP): void {
     $posts = json_decode((string) shell_exec("{$WP} post list --post_type=post --post_status=any --fields=ID,post_title --format=json 2>/dev/null"), true);
     foreach (is_array($posts) ? $posts : [] as $post) {
-        if (($post['post_title'] ?? '') === 'zz envelope create') {
+        if (($post['post_title'] ?? '') === 'zz envelope create' || str_starts_with((string) ($post['post_title'] ?? ''), 'zz envelope save')) {
             shell_exec("{$WP} post delete " . (int) $post['ID'] . ' --force >/dev/null 2>&1');
         }
     }
@@ -134,6 +134,8 @@ $project = static function (string $how, $body) {
         'trail' => is_array($body) ? ($body['minn_trail'] ?? 'no trail') : $body,
         'code' => is_array($body) ? [$body['code'] ?? null, $body['data']['status'] ?? null] : $body,
         'id' => is_array($body) ? [$body['id'] ?? null, $body['code'] ?? null] : $body,
+        'prepared' => is_array($body) ? (array_is_list($body) ? array_map(static fn ($item) => [$item['minn_prepared'] ?? null, isset($item['_links']['wp:minn-prepared'])], $body) : [$body['minn_prepared'] ?? null, isset($body['_links']['wp:minn-prepared']), $body['_links']['curies'] ?? null]) : $body,
+        'save' => is_array($body) ? [$body['title']['raw'] ?? null, $body['slug'] ?? null, $body['excerpt']['raw'] ?? null, $body['status'] ?? null, $body['code'] ?? null, $body['data']['status'] ?? null] : $body,
         default => $body,
     };
 };
@@ -164,10 +166,30 @@ $requests = [
     'a plugin rewrites what is echoed, plugin route' => ['GET', '/minn-test/v1/echo', 'echo', false, null, 'body'],
     'a capability taken away by user_has_cap' => ['POST', '/wp/v2/posts', 'deny-cap', true, ['title' => 'zz envelope create', 'slug' => 'zz-envelope-create', 'status' => 'draft'], 'code'],
     'a deletion refused by map_meta_cap' => ['DELETE', "/wp/v2/posts/{$guarded}", 'map-meta', true, null, 'code'],
+    // What a plugin changes in a save on the way in.
+    'a save with nothing in it' => ['POST', '/wp/v2/posts', '', true, ['status' => 'draft'], 'save'],
+    'wp_insert_post_data sets the excerpt' => ['POST', '/wp/v2/posts', 'save-data', true, ['title' => 'zz envelope save data', 'status' => 'publish'], 'save'],
+    'title_save_pre changes the title, and the slug made from it' => ['POST', '/wp/v2/posts', 'save-title', true, ['title' => 'zz envelope save title', 'status' => 'publish'], 'save'],
+    'wp_unique_post_slug changes the slug' => ['POST', '/wp/v2/posts', 'save-slug', true, ['title' => 'zz envelope save slug', 'status' => 'publish'], 'save'],
+    'wp_insert_post_empty_content refuses' => ['POST', '/wp/v2/posts', 'save-empty', true, ['title' => 'zz envelope save empty'], 'save'],
+    'rest_pre_insert_post changes the prepared post' => ['POST', '/wp/v2/posts', 'pre-insert', true, ['title' => 'zz envelope save prepared', 'status' => 'draft'], 'save'],
+    'rest_pre_insert_post refuses' => ['POST', '/wp/v2/posts', 'pre-insert-error', true, ['title' => 'zz envelope save refused'], 'save'],
+    // What a plugin adds to each item as it is prepared.
+    'rest_prepare_post on an item' => ['GET', '/wp/v2/posts/1', 'prepare', true, null, 'prepared'],
+    'rest_prepare_post on a list' => ['GET', '/wp/v2/posts?per_page=2', 'prepare', true, null, 'prepared'],
+    'rest_prepare_post on a write' => ['POST', "/wp/v2/posts/{$guarded}", 'prepare', true, ['excerpt' => 'Prepared'], 'prepared'],
+    'rest_prepare_page' => ['GET', '/wp/v2/pages?per_page=1', 'prepare', true, null, 'prepared'],
+    'rest_prepare_user' => ['GET', '/wp/v2/users/1', 'prepare', true, null, 'prepared'],
+    'rest_prepare_comment' => ['GET', '/wp/v2/comments?per_page=1', 'prepare', true, null, 'prepared'],
+    'rest_prepare_category' => ['GET', '/wp/v2/categories/1', 'prepare', true, null, 'prepared'],
+    'rest_prepare_attachment' => ['GET', '/wp/v2/media?per_page=1', 'prepare', true, null, 'prepared'],
+    'an edit through wp_insert_post_data' => ['POST', "/wp/v2/posts/{$guarded}", 'save-data', true, ['title' => 'zz envelope guarded'], 'save'],
 ];
 
 foreach ($requests as $label => [$method, $route, $modes, $admin, $body, $how]) {
     $reference = $ask($REF, $method, $route, $modes, $admin, $body);
+    // The stacks share a database: the reference's new post would hold the slug the engine's wants.
+    $sweep();
     $engine = $ask($ENGINE, $method, $route, $modes, $admin, $body);
     $r = [$reference['status'], $reference['headers'], $project($how, $reference['body'])];
     $e = [$engine['status'], $engine['headers'], $project($how, $engine['body'])];

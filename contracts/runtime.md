@@ -3472,3 +3472,14 @@ which takes a block's `style.css` out), `title_save_pre` `trim`,
 `pre_post_mime_type` `sanitize_mime_type`, and the template and changeset
 callbacks, which hand Minn's values back (it keeps template slugs itself and
 has no changesets).
+
+Each item a response carries passes the filter the reference runs as it
+prepares one: `rest_prepare_{post type}` for posts, pages and declared
+types, `rest_prepare_attachment`, `rest_prepare_user`,
+`rest_prepare_comment` and `rest_prepare_{taxonomy}`, in the view and edit
+contexts, on reads, lists and writes alike (`Rest\RuntimePrepare`). The
+filter is handed the item as a response object with its links on it, the
+`WP_Post`, `WP_User`, `WP_Comment` or `WP_Term` it describes, and the
+request; a link it adds is compacted with its CURIE as the reference's are.
+With nothing hooked, or the response handed back untouched, the item is
+Minn's own, byte for byte. Suite `rest-envelope` (42) checks each.

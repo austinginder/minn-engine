@@ -73788,7 +73788,7 @@
             "namespace": "Minn\\Rest",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Rest/Api.php",
-            "lines": 184,
+            "lines": 187,
             "doc": "The REST API: wires the controllers for one request and dispatches a\nroute. Errors thrown anywhere underneath become the reference's error\npayload under the reference's headers.",
             "implements": [],
             "extends": null,
@@ -73840,6 +73840,7 @@
                 "Minn\\Rest\\Reply",
                 "Minn\\Rest\\RevisionsController",
                 "Minn\\Rest\\RuntimeEnvelope",
+                "Minn\\Rest\\RuntimePrepare",
                 "Minn\\Rest\\RuntimeRoutes",
                 "Minn\\Rest\\SearchController",
                 "Minn\\Rest\\Services",
@@ -74084,7 +74085,7 @@
                         }
                     ],
                     "line": 161,
-                    "end": 187
+                    "end": 190
                 },
                 {
                     "routes": [],
@@ -74103,8 +74104,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 195,
-                    "end": 202
+                    "line": 198,
+                    "end": 205
                 },
                 {
                     "routes": [],
@@ -74152,8 +74153,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 204,
-                    "end": 208
+                    "line": 207,
+                    "end": 211
                 },
                 {
                     "routes": [],
@@ -74179,8 +74180,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 214,
-                    "end": 218
+                    "line": 217,
+                    "end": 221
                 }
             ]
         },
@@ -75624,7 +75625,7 @@
             "namespace": "Minn\\Rest",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Rest/CommentObject.php",
-            "lines": 75,
+            "lines": 82,
             "doc": "The wp/v2 comment object; edit context adds the moderation-desk fields.",
             "implements": [],
             "extends": null,
@@ -75638,6 +75639,7 @@
                 "Minn\\Rest\\Context",
                 "Minn\\Rest\\PostObject",
                 "Minn\\Rest\\RestUrl",
+                "Minn\\Rest\\RuntimePrepare",
                 "Minn\\Rest\\UserObject"
             ],
             "usedBy": [
@@ -75741,6 +75743,33 @@
             "methods": [
                 {
                     "routes": [],
+                    "name": "build",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "build(Minn\\Content\\CommentRecord $c, Minn\\Rest\\Context $context): array",
+                    "doc": "A comment in the context asked for, through rest_prepare_comment when a plugin hooks it.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "c",
+                            "type": "Minn\\Content\\CommentRecord",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "context",
+                            "type": "Minn\\Rest\\Context",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 27,
+                    "end": 30
+                },
+                {
+                    "routes": [],
                     "name": "url",
                     "static": false,
                     "visibility": "public",
@@ -75748,15 +75777,15 @@
                     "doc": "The REST URL builder.",
                     "shapes": [],
                     "params": [],
-                    "line": 26,
-                    "end": 29
+                    "line": 33,
+                    "end": 36
                 },
                 {
                     "routes": [],
-                    "name": "build",
+                    "name": "buildFields",
                     "static": false,
-                    "visibility": "public",
-                    "signature": "build(Minn\\Content\\CommentRecord $c, Minn\\Rest\\Context $context): array",
+                    "visibility": "private",
+                    "signature": "buildFields(Minn\\Content\\CommentRecord $c, Minn\\Rest\\Context $context): array",
                     "doc": "The wp/v2 comment shape, with the edit-context fields when asked.",
                     "shapes": [],
                     "params": [
@@ -75775,8 +75804,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 32,
-                    "end": 87
+                    "line": 39,
+                    "end": 94
                 }
             ]
         },
@@ -78899,7 +78928,7 @@
             "namespace": "Minn\\Rest",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Rest/MediaObject.php",
-            "lines": 158,
+            "lines": 165,
             "doc": "The wp/v2 media object, view and edit context.",
             "implements": [],
             "extends": null,
@@ -78916,6 +78945,7 @@
                 "Minn\\Rest\\Context",
                 "Minn\\Rest\\PostObject",
                 "Minn\\Rest\\RestUrl",
+                "Minn\\Rest\\RuntimePrepare",
                 "Minn\\Support\\Html"
             ],
             "usedBy": [
@@ -79019,6 +79049,33 @@
             "methods": [
                 {
                     "routes": [],
+                    "name": "build",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "build(Minn\\Content\\PostRecord $p, Minn\\Rest\\Context $context): array",
+                    "doc": "An attachment in the context asked for, through rest_prepare_attachment when a plugin hooks it.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "p",
+                            "type": "Minn\\Content\\PostRecord",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "context",
+                            "type": "Minn\\Rest\\Context",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 31,
+                    "end": 34
+                },
+                {
+                    "routes": [],
                     "name": "url",
                     "static": false,
                     "visibility": "public",
@@ -79026,15 +79083,15 @@
                     "doc": "The REST URL builder.",
                     "shapes": [],
                     "params": [],
-                    "line": 30,
-                    "end": 33
+                    "line": 37,
+                    "end": 40
                 },
                 {
                     "routes": [],
-                    "name": "build",
+                    "name": "buildFields",
                     "static": false,
-                    "visibility": "public",
-                    "signature": "build(Minn\\Content\\PostRecord $p, Minn\\Rest\\Context $context): array",
+                    "visibility": "private",
+                    "signature": "buildFields(Minn\\Content\\PostRecord $p, Minn\\Rest\\Context $context): array",
                     "doc": "The wp/v2 media shape, with the edit-context fields when asked.",
                     "shapes": [],
                     "params": [
@@ -79053,8 +79110,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 36,
-                    "end": 115
+                    "line": 43,
+                    "end": 122
                 },
                 {
                     "routes": [],
@@ -79080,8 +79137,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 118,
-                    "end": 149
+                    "line": 125,
+                    "end": 156
                 },
                 {
                     "routes": [],
@@ -79114,8 +79171,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 152,
-                    "end": 174
+                    "line": 159,
+                    "end": 181
                 }
             ]
         },
@@ -80939,7 +80996,7 @@
             "namespace": "Minn\\Rest",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Rest/PostObject.php",
-            "lines": 482,
+            "lines": 495,
             "doc": "Builds the wp/v2 post and page objects in the reference's shape: the\nview context, the edit context (raw+rendered dual fields, editor-only\nfields, and cap-gated wp:action-* links), and their _links blocks.",
             "implements": [],
             "extends": null,
@@ -80957,6 +81014,7 @@
                 "Minn\\Front\\Permalinks",
                 "Minn\\Rest\\Caller",
                 "Minn\\Rest\\RestUrl",
+                "Minn\\Rest\\RuntimePrepare",
                 "Minn\\Support\\Serialized"
             ],
             "usedBy": [
@@ -81096,6 +81154,53 @@
             "methods": [
                 {
                     "routes": [],
+                    "name": "view",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "view(Minn\\Content\\PostRecord $p): array",
+                    "doc": "The view-context object, through rest_prepare_{type} when a plugin hooks it.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "p",
+                            "type": "Minn\\Content\\PostRecord",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 44,
+                    "end": 47
+                },
+                {
+                    "routes": [],
+                    "name": "edit",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "edit(Minn\\Content\\PostRecord $p, int $userId): array",
+                    "doc": "The edit-context object, through rest_prepare_{type} when a plugin hooks it.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "p",
+                            "type": "Minn\\Content\\PostRecord",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "userId",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 50,
+                    "end": 53
+                },
+                {
+                    "routes": [],
                     "name": "permalink",
                     "static": false,
                     "visibility": "public",
@@ -81111,8 +81216,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 43,
-                    "end": 46
+                    "line": 56,
+                    "end": 59
                 },
                 {
                     "routes": [],
@@ -81131,28 +81236,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 49,
-                    "end": 58
-                },
-                {
-                    "routes": [],
-                    "name": "view",
-                    "static": false,
-                    "visibility": "public",
-                    "signature": "view(Minn\\Content\\PostRecord $p): array",
-                    "doc": "The view-context object: the shared fields, then the type's own, then class_list and _links.",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "p",
-                            "type": "Minn\\Content\\PostRecord",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 122,
-                    "end": 153
+                    "line": 62,
+                    "end": 71
                 },
                 {
                     "routes": [],
@@ -81171,35 +81256,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 235,
-                    "end": 270
-                },
-                {
-                    "routes": [],
-                    "name": "edit",
-                    "static": false,
-                    "visibility": "public",
-                    "signature": "edit(Minn\\Content\\PostRecord $p, int $userId): array",
-                    "doc": "The edit-context object for a given caller: raw+rendered dual fields,\npassword, permalink_template, generated_slug, block_version, Minn\nAdmin's registered list fields, and the cap-gated action links.",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "p",
-                            "type": "Minn\\Content\\PostRecord",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "userId",
-                            "type": "int",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 292,
-                    "end": 345
+                    "line": 248,
+                    "end": 283
                 },
                 {
                     "routes": [],
@@ -81218,8 +81276,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 352,
-                    "end": 367
+                    "line": 365,
+                    "end": 380
                 },
                 {
                     "routes": [],
@@ -81245,8 +81303,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 370,
-                    "end": 380
+                    "line": 383,
+                    "end": 393
                 },
                 {
                     "routes": [],
@@ -81272,8 +81330,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 383,
-                    "end": 399
+                    "line": 396,
+                    "end": 412
                 },
                 {
                     "routes": [],
@@ -81299,8 +81357,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 402,
-                    "end": 464
+                    "line": 415,
+                    "end": 477
                 },
                 {
                     "routes": [],
@@ -81319,8 +81377,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 502,
-                    "end": 505
+                    "line": 515,
+                    "end": 518
                 },
                 {
                     "routes": [],
@@ -81339,8 +81397,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 66,
-                    "end": 88
+                    "line": 79,
+                    "end": 101
                 },
                 {
                     "routes": [],
@@ -81359,8 +81417,28 @@
                             "doc": ""
                         }
                     ],
-                    "line": 96,
-                    "end": 119
+                    "line": 109,
+                    "end": 132
+                },
+                {
+                    "routes": [],
+                    "name": "viewFields",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "viewFields(Minn\\Content\\PostRecord $p): array",
+                    "doc": "The view-context object: the shared fields, then the type's own, then class_list and _links.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "p",
+                            "type": "Minn\\Content\\PostRecord",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 135,
+                    "end": 166
                 },
                 {
                     "routes": [],
@@ -81381,8 +81459,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 161,
-                    "end": 168
+                    "line": 174,
+                    "end": 181
                 },
                 {
                     "routes": [],
@@ -81411,8 +81489,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 177,
-                    "end": 198
+                    "line": 190,
+                    "end": 211
                 },
                 {
                     "routes": [],
@@ -81448,8 +81526,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 207,
-                    "end": 226
+                    "line": 220,
+                    "end": 239
                 },
                 {
                     "routes": [],
@@ -81470,8 +81548,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 229,
-                    "end": 232
+                    "line": 242,
+                    "end": 245
                 },
                 {
                     "routes": [],
@@ -81497,8 +81575,35 @@
                             "doc": ""
                         }
                     ],
-                    "line": 273,
-                    "end": 285
+                    "line": 286,
+                    "end": 298
+                },
+                {
+                    "routes": [],
+                    "name": "editFields",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "editFields(Minn\\Content\\PostRecord $p, int $userId): array",
+                    "doc": "The edit-context object for a given caller: raw+rendered dual fields,\npassword, permalink_template, generated_slug, block_version, Minn\nAdmin's registered list fields, and the cap-gated action links.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "p",
+                            "type": "Minn\\Content\\PostRecord",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "userId",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 305,
+                    "end": 358
                 },
                 {
                     "routes": [],
@@ -81526,8 +81631,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 473,
-                    "end": 485
+                    "line": 486,
+                    "end": 498
                 },
                 {
                     "routes": [],
@@ -81553,8 +81658,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 492,
-                    "end": 499
+                    "line": 505,
+                    "end": 512
                 }
             ]
         },
@@ -83959,12 +84064,99 @@
             ]
         },
         {
+            "name": "Minn\\Rest\\RuntimePrepare",
+            "short": "RuntimePrepare",
+            "namespace": "Minn\\Rest",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Rest/RuntimePrepare.php",
+            "lines": 35,
+            "doc": "An item a REST response carries, through the filter the reference runs\nas it prepares one (rest_prepare_{type}, rest_prepare_attachment,\nrest_prepare_user, rest_prepare_comment, rest_prepare_{taxonomy}): the\nitem as a response object, its links on the response rather than in its\ndata, handed with the object it describes and the request; what the\nfilter leaves is the item. With nothing hooked, or a response handed back\nuntouched, the item is Minn's own, byte for byte.",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\Rest\\RuntimeRoutes",
+                "Minn\\Runtime\\Runtime"
+            ],
+            "usedBy": [
+                "Minn\\Rest\\Api",
+                "Minn\\Rest\\CommentObject",
+                "Minn\\Rest\\MediaObject",
+                "Minn\\Rest\\PostObject",
+                "Minn\\Rest\\TermObject",
+                "Minn\\Rest\\UserObject"
+            ],
+            "constructor": null,
+            "cases": [],
+            "constants": [],
+            "properties": [],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "answering",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "answering(WP_REST_Request $request): void",
+                    "doc": "Remembers the request a REST call is answering, for the filters its items pass through (on the request's own runtime).",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "request",
+                            "type": "WP_REST_Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 21,
+                    "end": 24
+                },
+                {
+                    "routes": [],
+                    "name": "item",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "item(string $filter, array $item, Closure $described): array",
+                    "doc": "One item through a rest_prepare filter.",
+                    "shapes": [
+                        "@param array<string, mixed> $item",
+                        "@param \\Closure(): mixed $described the object the item describes, fetched only when a plugin listens",
+                        "@return array<string, mixed>"
+                    ],
+                    "params": [
+                        {
+                            "name": "filter",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "item",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "described",
+                            "type": "Closure",
+                            "shape": "\\Closure(): mixed",
+                            "default": null,
+                            "doc": "the object the item describes, fetched only when a plugin listens"
+                        }
+                    ],
+                    "line": 33,
+                    "end": 51
+                }
+            ]
+        },
+        {
             "name": "Minn\\Rest\\RuntimeRoutes",
             "short": "RuntimeRoutes",
             "namespace": "Minn\\Rest",
             "kind": "final class",
             "file": "public/minn/src/Minn/Rest/RuntimeRoutes.php",
-            "lines": 282,
+            "lines": 297,
             "doc": "Routes plugin code registered with register_rest_route(), answered\nthrough the runtime's server after the engine's own routes have had\ntheir turn; the runtime's say before the engine answers at all (an\nauthentication refusal, a pre-dispatch answer, a removed endpoint);\nand the runtime's namespaces folded into the index.",
             "implements": [],
             "extends": null,
@@ -83977,6 +84169,7 @@
             "usedBy": [
                 "Minn\\Rest\\Api",
                 "Minn\\Rest\\RuntimeEnvelope",
+                "Minn\\Rest\\RuntimePrepare",
                 "Minn\\Runtime\\CommentEvents",
                 "Minn\\Runtime\\PostEvents",
                 "Minn\\Runtime\\PostSave",
@@ -84174,6 +84367,28 @@
                 },
                 {
                     "routes": [],
+                    "name": "itemResponse",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "itemResponse(array $item): WP_REST_Response",
+                    "doc": "One item a response carries, as a response object: its data without\n_links, the links on the response.",
+                    "shapes": [
+                        "@param array<string, mixed> $item"
+                    ],
+                    "params": [
+                        {
+                            "name": "item",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 153,
+                    "end": 160
+                },
+                {
+                    "routes": [],
                     "name": "fromWp",
                     "static": true,
                     "visibility": "public",
@@ -84189,8 +84404,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 148,
-                    "end": 158
+                    "line": 163,
+                    "end": 173
                 },
                 {
                     "routes": [],
@@ -84216,8 +84431,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 167,
-                    "end": 206
+                    "line": 182,
+                    "end": 221
                 },
                 {
                     "routes": [],
@@ -84236,8 +84451,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 283,
-                    "end": 287
+                    "line": 298,
+                    "end": 302
                 },
                 {
                     "routes": [],
@@ -84258,8 +84473,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 209,
-                    "end": 212
+                    "line": 224,
+                    "end": 227
                 },
                 {
                     "routes": [],
@@ -84292,8 +84507,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 214,
-                    "end": 218
+                    "line": 229,
+                    "end": 233
                 },
                 {
                     "routes": [],
@@ -84312,8 +84527,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 221,
-                    "end": 231
+                    "line": 236,
+                    "end": 246
                 },
                 {
                     "routes": [],
@@ -84335,8 +84550,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 241,
-                    "end": 265
+                    "line": 256,
+                    "end": 280
                 },
                 {
                     "routes": [],
@@ -84355,8 +84570,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 267,
-                    "end": 280
+                    "line": 282,
+                    "end": 295
                 },
                 {
                     "routes": [],
@@ -84375,8 +84590,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 290,
-                    "end": 298
+                    "line": 305,
+                    "end": 313
                 }
             ]
         },
@@ -87818,7 +88033,7 @@
             "namespace": "Minn\\Rest",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Rest/TermObject.php",
-            "lines": 76,
+            "lines": 84,
             "doc": "The wp/v2 category and tag objects.",
             "implements": [],
             "extends": null,
@@ -87827,7 +88042,8 @@
                 "Minn\\Db",
                 "Minn\\Front\\Permalinks",
                 "Minn\\Rest\\Caller",
-                "Minn\\Rest\\RestUrl"
+                "Minn\\Rest\\RestUrl",
+                "Minn\\Rest\\RuntimePrepare"
             ],
             "usedBy": [
                 "Minn\\Rest\\Api",
@@ -87922,6 +88138,33 @@
             "methods": [
                 {
                     "routes": [],
+                    "name": "view",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "view(Minn\\Content\\TermRecord $term, string $restBase): array",
+                    "doc": "A term as its REST base shows it, through rest_prepare_{taxonomy} when a plugin hooks it.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "term",
+                            "type": "Minn\\Content\\TermRecord",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "restBase",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 30,
+                    "end": 34
+                },
+                {
+                    "routes": [],
                     "name": "url",
                     "static": false,
                     "visibility": "public",
@@ -87929,8 +88172,8 @@
                     "doc": "The REST URL builder.",
                     "shapes": [],
                     "params": [],
-                    "line": 29,
-                    "end": 32
+                    "line": 37,
+                    "end": 40
                 },
                 {
                     "routes": [],
@@ -87951,15 +88194,15 @@
                             "doc": ""
                         }
                     ],
-                    "line": 39,
-                    "end": 42
+                    "line": 47,
+                    "end": 50
                 },
                 {
                     "routes": [],
-                    "name": "view",
+                    "name": "viewFields",
                     "static": false,
-                    "visibility": "public",
-                    "signature": "view(Minn\\Content\\TermRecord $term, string $restBase): array",
+                    "visibility": "private",
+                    "signature": "viewFields(Minn\\Content\\TermRecord $term, string $restBase): array",
                     "doc": "The wp/v2 term shape.",
                     "shapes": [],
                     "params": [
@@ -87978,8 +88221,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 45,
-                    "end": 75
+                    "line": 53,
+                    "end": 83
                 },
                 {
                     "routes": [],
@@ -88005,8 +88248,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 78,
-                    "end": 86
+                    "line": 86,
+                    "end": 94
                 }
             ]
         },
@@ -88629,7 +88872,7 @@
             "namespace": "Minn\\Rest",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Rest/UserObject.php",
-            "lines": 97,
+            "lines": 110,
             "doc": "The wp/v2 user objects: the public view shape and the edit-context shape.",
             "implements": [],
             "extends": null,
@@ -88640,7 +88883,8 @@
                 "Minn\\Front\\Permalinks",
                 "Minn\\Rest\\Caller",
                 "Minn\\Rest\\PostObject",
-                "Minn\\Rest\\RestUrl"
+                "Minn\\Rest\\RestUrl",
+                "Minn\\Rest\\RuntimePrepare"
             ],
             "usedBy": [
                 "Minn\\Blocks\\Dynamic\\LatestComments",
@@ -88746,6 +88990,46 @@
             "methods": [
                 {
                     "routes": [],
+                    "name": "view",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "view(Minn\\Content\\UserRecord $u): array",
+                    "doc": "A user as the view context shows one, through rest_prepare_user when a plugin hooks it.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "u",
+                            "type": "Minn\\Content\\UserRecord",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 26,
+                    "end": 29
+                },
+                {
+                    "routes": [],
+                    "name": "edit",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "edit(Minn\\Content\\UserRecord $u): array",
+                    "doc": "A user as the edit context shows one, through rest_prepare_user when a plugin hooks it.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "u",
+                            "type": "Minn\\Content\\UserRecord",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 32,
+                    "end": 35
+                },
+                {
+                    "routes": [],
                     "name": "avatarUrls",
                     "static": true,
                     "visibility": "public",
@@ -88761,15 +89045,15 @@
                             "doc": ""
                         }
                     ],
-                    "line": 25,
-                    "end": 33
+                    "line": 38,
+                    "end": 46
                 },
                 {
                     "routes": [],
-                    "name": "view",
+                    "name": "viewFields",
                     "static": false,
-                    "visibility": "public",
-                    "signature": "view(Minn\\Content\\UserRecord $u): array",
+                    "visibility": "private",
+                    "signature": "viewFields(Minn\\Content\\UserRecord $u): array",
                     "doc": "The wp/v2 user shape in the view context.",
                     "shapes": [],
                     "params": [
@@ -88781,15 +89065,15 @@
                             "doc": ""
                         }
                     ],
-                    "line": 36,
-                    "end": 58
+                    "line": 49,
+                    "end": 71
                 },
                 {
                     "routes": [],
-                    "name": "edit",
+                    "name": "editFields",
                     "static": false,
-                    "visibility": "public",
-                    "signature": "edit(Minn\\Content\\UserRecord $u): array",
+                    "visibility": "private",
+                    "signature": "editFields(Minn\\Content\\UserRecord $u): array",
                     "doc": "The private fields a caller who can edit the user sees. The\ncapabilities map is the union of role primitives plus each role name\nas a pseudo-capability, exactly as the reference emits.",
                     "shapes": [],
                     "params": [
@@ -88801,8 +89085,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 65,
-                    "end": 108
+                    "line": 78,
+                    "end": 121
                 }
             ]
         },
@@ -100620,6 +100904,7 @@
                 "Minn\\Rest\\Api",
                 "Minn\\Rest\\Caller",
                 "Minn\\Rest\\RuntimeEnvelope",
+                "Minn\\Rest\\RuntimePrepare",
                 "Minn\\Rest\\Services",
                 "Minn\\Rest\\SettingsController",
                 "Minn\\Runtime\\Abilities",

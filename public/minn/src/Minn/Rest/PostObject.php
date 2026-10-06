@@ -39,6 +39,19 @@ final readonly class PostObject
     ) {
     }
 
+
+    /** The view-context object, through rest_prepare_{type} when a plugin hooks it. */
+    public function view(PostRecord $p): array
+    {
+        return RuntimePrepare::item('rest_prepare_' . $p->type, $this->viewFields($p), static fn () => \get_post($p->id));
+    }
+
+    /** The edit-context object, through rest_prepare_{type} when a plugin hooks it. */
+    public function edit(PostRecord $p, int $userId): array
+    {
+        return RuntimePrepare::item('rest_prepare_' . $p->type, $this->editFields($p, $userId), static fn () => \get_post($p->id));
+    }
+
     /** A post's permalink as of now: pretty once live with a slug, ?p= (or ?page_id=) before. */
     public function permalink(PostRecord $p): string
     {
@@ -119,7 +132,7 @@ final readonly class PostObject
     }
 
     /** The view-context object: the shared fields, then the type's own, then class_list and _links. */
-    public function view(PostRecord $p): array
+    private function viewFields(PostRecord $p): array
     {
         if ($p->type === self::NAVIGATION) {
             return $this->navigationView($p);
@@ -289,10 +302,10 @@ final readonly class PostObject
      * password, permalink_template, generated_slug, block_version, Minn
      * Admin's registered list fields, and the cap-gated action links.
      */
-    public function edit(PostRecord $p, int $userId): array
+    private function editFields(PostRecord $p, int $userId): array
     {
         $id = $p->id;
-        $view = $this->view($p);
+        $view = $this->viewFields($p);
         $protected = $p->isProtected();
 
         $view['guid'] = ['rendered' => $p->guid, 'raw' => $p->guid];
