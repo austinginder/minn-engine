@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Minn\Rest;
 
+use Minn\Runtime\Runtime;
 use Minn\Content\PostRecord;
 use Minn\Auth\TypeCapabilities;
 use Minn\Content\PostStatus;
@@ -334,8 +335,8 @@ final readonly class PostObject
                 $ordered['password'] = $p->password;
             }
             if ($key === 'class_list') {
-                $ordered['permalink_template'] = $this->permalinkTemplate($p);
-                $ordered['generated_slug'] = Slug::sanitize($p->title);
+                // With plugins loaded both come from get_sample_permalink, as the reference's controller has them.
+                [$ordered['permalink_template'], $ordered['generated_slug']] = Runtime::booted() ? \get_sample_permalink($p->id, $p->title, '') : [$this->permalinkTemplate($p), Slug::sanitize($p->title)];
             }
             $ordered[$key] = $value;
         }

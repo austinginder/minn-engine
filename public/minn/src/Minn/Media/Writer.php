@@ -105,6 +105,12 @@ final readonly class Writer
         return new PreparedUpload($columns, $relative, null);
     }
 
+    /** A stored file's address. */
+    public function urlOf(string $relative): string
+    {
+        return $this->uploads->urlFor($relative);
+    }
+
     /** A stored file's path on disk. */
     public function pathOf(string $relative): string
     {

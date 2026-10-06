@@ -14,7 +14,7 @@ uploads, image sizes and attachment metadata
 | [`Sizing`](#sizing) | final class | 207 | The image size arithmetic the media functions share: the crop or scale a |
 | [`Upload`](#upload) | final readonly class | 76 | One file arriving for the library, on either transport: a multipart |
 | [`Uploads`](#uploads) | final readonly class | 179 | The uploads directory: paths, URLs, the allowed types, and landing a file. |
-| [`Writer`](#writer) | final readonly class | 175 | The writes the media library makes. An Upload becomes an attachment: the |
+| [`Writer`](#writer) | final readonly class | 181 | The writes the media library makes. An Upload becomes an attachment: the |
 
 ## Canvas
 
@@ -472,6 +472,10 @@ The attachment's row alone, its sizes left to be cut once it exists:
 with plugins loaded, the runtime's wp_generate_attachment_metadata
 cuts them after the insert, as the reference does.
 
+### `urlOf(string $relative): string`
+
+A stored file's address.
+
 ### `pathOf(string $relative): string`
 
 A stored file's path on disk.
@@ -512,5 +516,5 @@ Sets an attachment's alt text.
 
 Removes an attachment: its files, every generated size, its meta, and its row.
 
-Internals: `imageMetadata()` (private, line 178)
+Internals: `imageMetadata()` (private, line 184)
 

@@ -8,6 +8,7 @@ use Minn\Content\PostWriter;
 use Minn\Content\Slug;
 use Minn\Content\PostClasses;
 use Minn\Runtime\PostData;
+use Minn\Runtime\PostLinks;
 use Minn\Runtime\PostRevisions;
 use Minn\Runtime\Runtime;
 use Minn\Runtime\Pages;
@@ -445,7 +446,7 @@ function get_page_by_title($page_title, $output = OBJECT, $post_type = 'page')
 
 function get_page_uri($page = 0)
 {
-    $page = get_post($page);
+    $page = $page instanceof WP_Post ? $page : get_post($page);
     if ($page === null) {
         return false;
     }
@@ -545,24 +546,26 @@ function get_delete_post_link($post = 0, $deprecated = '', $force_delete = false
     return apply_filters('get_delete_post_link', wp_nonce_url($link, "$action-post_{$post->ID}"), $post->ID, $force_delete);
 }
 
+/** A post's address, by its kind (Runtime\PostLinks); a post object handed in is used as it is. */
 function get_permalink($post = 0, $leavename = false)
 {
-    $post = get_post($post);
+    $post = $post instanceof WP_Post ? $post : get_post($post);
     if ($post === null) {
         return false;
     }
-    $permalinks = Runtime::current()->get('permalinks');
-    $link = $permalinks === null ? home_url('/?p=' . $post->ID) : ($post->post_type === 'attachment' ? $permalinks->forAttachment(Minn\Content\PostRecord::fromRow($post->to_array())) : $permalinks->forPost(Minn\Content\PostRecord::fromRow($post->to_array())));
-    if ($post->post_type === 'page') {
-        return apply_filters('page_link', $link, $post->ID, $post->post_status !== 'publish' || $leavename);
-    }
-    if ($post->post_type === 'attachment') {
-        return apply_filters('attachment_link', $link, $post->ID);
-    }
-    if ($post->post_type !== 'post') {
-        return apply_filters('post_type_link', $link, $post, $leavename, $post->post_status !== 'publish');
-    }
-    return apply_filters('post_link', $link, $post, $leavename);
+    $sample = ($post->filter ?? '') === 'sample';
+    return match (true) {
+        $post->post_type === 'page' => get_page_link($post, $leavename, $sample),
+        $post->post_type === 'attachment' => get_attachment_link($post, $leavename),
+        in_array($post->post_type, get_post_types(['_builtin' => false]), true) => get_post_permalink($post, $leavename, $sample),
+        default => PostLinks::post($post, $leavename ? PostLinks::LEAVE_NAME : 0),
+    };
+}
+
+/** @internal the link flags of a leavename and sample pair */
+function _minn_link_flags($leavename, $sample): int
+{
+    return ($leavename ? PostLinks::LEAVE_NAME : 0) | ($sample ? PostLinks::SAMPLE : 0);
 }
 
 function get_the_permalink($post = 0, $leavename = false)
@@ -575,14 +578,21 @@ function the_permalink($post = 0)
     echo esc_url(apply_filters('the_permalink', get_permalink($post), $post));
 }
 
+/** A plugin type's address under its rewrite slug (Runtime\PostLinks), through post_type_link. */
 function get_post_permalink($post = 0, $leavename = false, $sample = false)
 {
-    return get_permalink($post, $leavename);
+    $post = $post instanceof WP_Post ? $post : get_post($post);
+    if ($post === null) {
+        return false;
+    }
+    $slug = Runtime::current()->get('permalinks')?->typeSlug($post->post_type) ?? $post->post_type;
+    return PostLinks::custom($post, _minn_link_flags($leavename, $sample), (string) $slug);
 }
 
+/** A page's address: the front page is home; else its own, through page_link. */
 function get_page_link($post = 0, $leavename = false, $sample = false)
 {
-    $post = get_post($post);
+    $post = $post instanceof WP_Post ? $post : get_post($post);
     if ($post === null) {
         return false;
     }
@@ -591,26 +601,26 @@ function get_page_link($post = 0, $leavename = false, $sample = false)
     return apply_filters('page_link', $link, $post->ID, $sample);
 }
 
+/** A page's own address, through _get_page_link (Runtime\PostLinks). */
 function _get_page_link($post = 0, $leavename = false, $sample = false)
 {
-    $post = get_post($post);
-    $permalinks = Runtime::current()->get('permalinks');
-    if ($post === null || $permalinks === null) {
-        return apply_filters('_get_page_link', home_url('/?page_id=' . ($post->ID ?? '')), $post->ID ?? 0);
-    }
-    $record = Minn\Content\PostRecord::fromRow($post->to_array());
-    $unpublished = $post->post_status !== 'publish' && !$sample;
-    $link = match (true) {
-        !$permalinks->isPretty() || $unpublished => $permalinks->pagePath($record),
-        (bool) $leavename => $permalinks->pageToken(),
-        default => $permalinks->pageAsPublished($record),
-    };
-    return apply_filters('_get_page_link', $link, $post->ID);
+    $post = $post instanceof WP_Post ? $post : get_post($post);
+    // No such page: the plain address with no id, as the reference answers it.
+    return $post === null ? apply_filters('_get_page_link', home_url('/?page_id='), null) : PostLinks::page($post, _minn_link_flags($leavename, $sample));
 }
 
+/** An attachment's address, through attachment_link (Runtime\PostLinks). */
 function get_attachment_link($post = null, $leavename = false)
 {
-    return get_permalink($post, $leavename);
+    $post = $post instanceof WP_Post ? $post : get_post($post);
+    return $post === null ? false : PostLinks::attachment($post, _minn_link_flags($leavename, false));
+}
+
+/** The address an editor shows with the slug to edit, through get_sample_permalink (Runtime\PostLinks). */
+function get_sample_permalink($post, $title = null, $name = null)
+{
+    $post = get_post($post);
+    return $post === null ? ['', ''] : PostLinks::sample($post, $title === null ? null : (string) $title, $name === null ? null : (string) $name);
 }
 
 function get_post_type_archive_link($post_type)
@@ -1013,10 +1023,37 @@ function wp_insert_post($postarr, $wp_error = false, $fire_after_hooks = true)
     wp_cache_delete($id, 'posts');
     _minn_post_inputs($id, (array) wp_unslash($given), $type, $columns['post_status'], $update);
     _minn_post_writer()->recountTaxonomiesOf($id);
+    if ($type === 'attachment') {
+        return _minn_attachment_saved($id, $given, $existing, (bool) $fire_after_hooks);
+    }
     $post = _minn_post_saved($id, $update, $existing);
     if ($fire_after_hooks) {
         // The revision is saved from wp_after_insert_post (priority 9), as on the reference.
         wp_after_insert_post($post, $update, $existing);
+    }
+    return $id;
+}
+
+/**
+ * @internal An attachment's save ends as the reference's does (probe
+ * rest-media-save): its file recorded, then add_attachment, or
+ * edit_attachment and attachment_updated; no save_post actions; the after
+ * hooks when asked.
+ */
+function _minn_attachment_saved(int $id, array $postarr, ?WP_Post $post_before, bool $fire_after_hooks): int
+{
+    if (!empty($postarr['file'])) {
+        update_attached_file($id, (string) $postarr['file']);
+    }
+    clean_post_cache($post_before ?? $id);
+    if ($post_before !== null) {
+        do_action('edit_attachment', $id);
+        do_action('attachment_updated', $id, get_post($id), $post_before);
+    } else {
+        do_action('add_attachment', $id);
+    }
+    if ($fire_after_hooks) {
+        wp_after_insert_post(get_post($id), $post_before !== null, $post_before);
     }
     return $id;
 }
@@ -1158,6 +1195,13 @@ function wp_update_post($postarr = [], $wp_error = false, $fire_after_hooks = tr
     $existing = $post->to_array();
     // The stored post under the given fields, its categories among them, as the reference merges it.
     $merged = array_merge($existing, wp_unslash($postarr));
+    if (isset($postarr['post_date']) && !isset($postarr['post_date_gmt'])) {
+        $merged['post_date_gmt'] = '';
+    }
+    // An attachment is saved through wp_insert_attachment, the stored fields (its tags among them) carried whole.
+    if ($merged['post_type'] === 'attachment') {
+        return wp_insert_attachment(wp_slash($merged), false, 0, $wp_error, $fire_after_hooks);
+    }
     if (isset($merged['tags_input'])) {
         // Given explicitly by the caller only.
     } else {
@@ -1165,12 +1209,6 @@ function wp_update_post($postarr = [], $wp_error = false, $fire_after_hooks = tr
     }
     if (!isset($postarr['tags_input'])) {
         unset($merged['tags_input']);
-    }
-    if (isset($postarr['post_date']) && !isset($postarr['post_date_gmt'])) {
-        $merged['post_date_gmt'] = '';
-    }
-    if ($merged['post_type'] === 'attachment' && isset($postarr['post_status']) && $postarr['post_status'] !== 'trash') {
-        $merged['post_status'] = 'inherit';
     }
     return wp_insert_post(wp_slash($merged), $wp_error, $fire_after_hooks);
 }
@@ -1965,11 +2003,14 @@ function get_page_children($page_id, $pages)
 }
 
 /** A slug unique within the posts table, the writer's own -2 counting. */
+/** A slug no other post holds, through the reference's slug filters; drafts, pending posts and revisions keep theirs. */
 function wp_unique_post_slug($slug, $post_id, $post_status, $post_type, $post_parent)
 {
-    $writer = new \Minn\Content\PostWriter(Runtime::current()->db, _minn_posts(), new \Minn\Content\Site(Runtime::current()->db));
-    $unique = $writer->uniqueSlug((string) $slug, (int) $post_id);
-    return apply_filters('wp_unique_post_slug', $unique, $post_id, $post_status, $post_type, $post_parent, $slug);
+    if (in_array($post_status, ['draft', 'pending', 'auto-draft'], true) || ($post_status === 'inherit' && $post_type === 'revision') || $post_type === 'user_request') {
+        return $slug;
+    }
+    $writer = _minn_post_writer();
+    return PostSave::slugFilters($writer->uniqueSlug((string) $slug, (int) $post_id), (int) $post_id, (string) $post_status, (string) $post_type, (int) $post_parent, static fn (string $desired, int $exclude): string => $writer->uniqueSlug($desired, $exclude), (string) $slug);
 }
 
 function the_author_posts_link($deprecated = '')

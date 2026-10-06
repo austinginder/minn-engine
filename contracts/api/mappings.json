@@ -2,12 +2,12 @@
     "generated": "2026-10-06",
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line)",
     "summary": {
-        "minn": 626,
-        "composes": 863,
+        "minn": 629,
+        "composes": 864,
         "leaf": 634,
-        "noop": 1790,
-        "functions": 3843,
-        "minnMethods": 598,
+        "noop": 1789,
+        "functions": 3846,
+        "minnMethods": 599,
         "leafLinesOver15": 13
     },
     "functions": {
@@ -14396,18 +14396,13 @@
         },
         "_get_page_link": {
             "file": "post.php",
-            "lines": 13,
+            "lines": 3,
             "kind": "minn",
             "minn": [
-                "Minn\\Content\\PostRecord::fromRow",
-                "Minn\\Runtime\\Runtime::current",
-                "Minn\\Runtime\\Runtime::get",
-                "Minn\\Runtime\\Runtime::isPretty",
-                "Minn\\Runtime\\Runtime::pageAsPublished",
-                "Minn\\Runtime\\Runtime::pagePath",
-                "Minn\\Runtime\\Runtime::pageToken"
+                "Minn\\Runtime\\PostLinks::page"
             ],
             "composes": [
+                "_minn_link_flags",
                 "apply_filters",
                 "get_post",
                 "home_url"
@@ -14624,6 +14619,19 @@
                 "mysql2date",
                 "wp_basename",
                 "wp_mime_type_icon"
+            ]
+        },
+        "_minn_attachment_saved": {
+            "file": "post.php",
+            "lines": 14,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "clean_post_cache",
+                "do_action",
+                "get_post",
+                "update_attached_file",
+                "wp_after_insert_post"
             ]
         },
         "_minn_av_flags": {
@@ -15178,6 +15186,13 @@
                 "Minn\\Runtime\\Runtime::current",
                 "Minn\\Runtime\\Runtime::engineDir"
             ],
+            "composes": []
+        },
+        "_minn_link_flags": {
+            "file": "post.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
             "composes": []
         },
         "_minn_list_comments_args": {
@@ -19330,11 +19345,14 @@
         },
         "get_attachment_link": {
             "file": "post.php",
-            "lines": 1,
-            "kind": "noop",
-            "minn": [],
+            "lines": 2,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Runtime\\PostLinks::attachment"
+            ],
             "composes": [
-                "get_permalink"
+                "_minn_link_flags",
+                "get_post"
             ]
         },
         "get_attachment_taxonomies": {
@@ -20856,19 +20874,17 @@
         },
         "get_permalink": {
             "file": "post.php",
-            "lines": 16,
+            "lines": 11,
             "kind": "minn",
             "minn": [
-                "Minn\\Content\\PostRecord::fromRow",
-                "Minn\\Runtime\\Runtime::current",
-                "Minn\\Runtime\\Runtime::forAttachment",
-                "Minn\\Runtime\\Runtime::forPost",
-                "Minn\\Runtime\\Runtime::get"
+                "Minn\\Runtime\\PostLinks::post"
             ],
             "composes": [
-                "apply_filters",
+                "get_attachment_link",
+                "get_page_link",
                 "get_post",
-                "home_url"
+                "get_post_permalink",
+                "get_post_types"
             ]
         },
         "get_plugin_data": {
@@ -21110,11 +21126,16 @@
         },
         "get_post_permalink": {
             "file": "post.php",
-            "lines": 1,
-            "kind": "noop",
-            "minn": [],
+            "lines": 6,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Runtime\\PostLinks::custom",
+                "Minn\\Runtime\\Runtime::current",
+                "Minn\\Runtime\\Runtime::get"
+            ],
             "composes": [
-                "get_permalink"
+                "_minn_link_flags",
+                "get_post"
             ]
         },
         "get_post_stati": {
@@ -21460,6 +21481,17 @@
                 "Minn\\Runtime\\Runtime::current"
             ],
             "composes": []
+        },
+        "get_sample_permalink": {
+            "file": "post.php",
+            "lines": 2,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Runtime\\PostLinks::sample"
+            ],
+            "composes": [
+                "get_post"
+            ]
         },
         "get_search_form": {
             "file": "template.php",
@@ -30889,11 +30921,10 @@
         },
         "wp_insert_attachment": {
             "file": "media.php",
-            "lines": 14,
+            "lines": 8,
             "kind": "composes",
             "minn": [],
             "composes": [
-                "update_attached_file",
                 "wp_insert_post",
                 "wp_parse_args"
             ]
@@ -30919,7 +30950,7 @@
         },
         "wp_insert_post": {
             "file": "post.php",
-            "lines": 34,
+            "lines": 37,
             "kind": "minn",
             "minn": [
                 "Minn\\Content\\PostWriter::recountTaxonomiesOf",
@@ -30934,6 +30965,7 @@
                 "Minn\\Runtime\\PostSave::slugFilters"
             ],
             "composes": [
+                "_minn_attachment_saved",
                 "_minn_post_before_save",
                 "_minn_post_inputs",
                 "_minn_post_insert",
@@ -33688,18 +33720,14 @@
         },
         "wp_unique_post_slug": {
             "file": "post.php",
-            "lines": 3,
+            "lines": 5,
             "kind": "minn",
             "minn": [
-                "Minn\\Content\\PostWriter::__construct",
                 "Minn\\Content\\PostWriter::uniqueSlug",
-                "Minn\\Content\\Site::__construct",
-                "Minn\\Runtime\\Runtime::current",
-                "Minn\\Runtime\\Runtime::db"
+                "Minn\\Runtime\\PostSave::slugFilters"
             ],
             "composes": [
-                "_minn_posts",
-                "apply_filters"
+                "_minn_post_writer"
             ]
         },
         "wp_unique_prefixed_id": {
@@ -33933,11 +33961,12 @@
         },
         "wp_update_post": {
             "file": "post.php",
-            "lines": 23,
+            "lines": 24,
             "kind": "composes",
             "minn": [],
             "composes": [
                 "get_post",
+                "wp_insert_attachment",
                 "wp_insert_post",
                 "wp_slash",
                 "wp_unslash"

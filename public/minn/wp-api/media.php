@@ -862,14 +862,8 @@ function wp_insert_attachment($args, $file = false, $parent_post_id = 0, $wp_err
         $data['post_parent'] = (int) $parent_post_id;
     }
     $data['post_type'] = 'attachment';
-    if (empty($data['post_status']) || $data['post_status'] !== 'trash') {
-        $data['post_status'] = 'inherit';
-    }
-    $id = wp_insert_post($data, $wp_error, $fire_after_hooks);
-    if (is_int($id) && $id > 0 && $file) {
-        update_attached_file($id, $file);
-    }
-    return $id;
+    // The file is recorded inside the save, before add_attachment, as on the reference.
+    return wp_insert_post($data, $wp_error, $fire_after_hooks);
 }
 
 function wp_delete_attachment($post_id, $force_delete = false)

@@ -142,7 +142,7 @@ final readonly class MediaController
         $refused = static fn (string $message = 'Sorry, you are not allowed to upload this file type.'): RestError => new RestError($upload->movedFrom === null ? 'rest_upload_sideload_error' : 'rest_upload_unknown_error', $message, 500);
         if (Runtime::booted()) {
             [$relative, $type] = $this->storeWithPlugins($upload, $request, $refused);
-            return $this->inserted($this->library->prepareRow($relative, $type, $upload->parent, $userId), $request);
+            return $this->insertedWithPlugins($relative, $type, $upload, $request);
         }
         if ($upload->mime() === null) {
             throw $refused();
@@ -189,6 +189,95 @@ final readonly class MediaController
             throw $refused((string) ($result['error'] ?? 'Sorry, you are not allowed to upload this file type.'));
         }
         return [$relative, (string) ($result['type'] ?? '')];
+    }
+
+    /**
+     * With plugins loaded, the attachment saved as the reference's controller
+     * saves it (probe rest-media-save): the photo's own title and caption
+     * (wp_read_image_metadata) unless the request names them, the prepared
+     * attachment through rest_pre_insert_attachment, the file's name as the
+     * title when none is left, then wp_insert_attachment, the REST actions
+     * (the alt text between them), wp_after_insert_post, and the sizes.
+     */
+    private function insertedWithPlugins(string $relative, string $type, Upload $upload, Request $request): Response
+    {
+        $params = self::params($request);
+        $file = $this->library->pathOf($relative);
+        $attachment = new \stdClass();
+        if (isset($params['title'])) {
+            $attachment->post_title = PostsWriteController::field($params['title']);
+        }
+        $meta = \wp_read_image_metadata($file);
+        if (is_array($meta) && !isset($params['title']) && trim((string) $meta['title']) !== '' && !is_numeric(\sanitize_title((string) $meta['title']))) {
+            $attachment->post_title = (string) $meta['title'];
+        }
+        if (is_array($meta) && !isset($params['caption']) && trim((string) $meta['caption']) !== '') {
+            $attachment->post_excerpt = (string) $meta['caption'];
+        }
+        $attachment->post_type = 'attachment';
+        $attachment->page_template = null;
+        $args = $this->preparedAttachment($attachment, $params, $request) + ['post_mime_type' => $type, 'guid' => $this->library->urlOf($relative), 'post_parent' => $upload->parent];
+        // No title left after the filter: the file's name, without its extension.
+        $args = array_filter($args, static fn ($value, $key) => $key !== 'post_title' || trim((string) $value) !== '', ARRAY_FILTER_USE_BOTH) + ['post_title' => (string) preg_replace('/\.[^.]+$/', '', basename($relative))];
+        $id = \wp_insert_attachment(\wp_slash($args), $file, 0, true, false);
+        if ($id instanceof \WP_Error) {
+            throw new RestError($id->get_error_code(), $id->get_error_message(), 500);
+        }
+        (new PostEvents())->restInserted((int) $id, $request, null);
+        $this->finishedWithPlugins((int) $id, $params, $request, null);
+        (new PostEvents())->attachmentGenerated((int) $id, $file, $type);
+        return Reply::item($this->object->build($this->posts->find((int) $id), Context::Edit), Fields::fromQuery($request->query), 201)
+            ->withHeader('Location', $this->object->url()->to('/wp/v2/media/' . $id));
+    }
+
+    /**
+     * rest_pre_insert_attachment over the prepared attachment, then the
+     * caption and description the request sends.
+     *
+     * @param array<string, mixed> $params
+     * @return array<string, mixed>
+     */
+    private function preparedAttachment(\stdClass $attachment, array $params, Request $request): array
+    {
+        $attachment = \apply_filters('rest_pre_insert_attachment', $attachment, RuntimeRoutes::wpRequest($request));
+        if ($attachment instanceof \WP_Error) {
+            $data = $attachment->get_error_data();
+            throw new RestError($attachment->get_error_code(), $attachment->get_error_message(), is_array($data) ? (int) ($data['status'] ?? 500) : 500);
+        }
+        $args = (array) $attachment;
+        foreach (['caption' => 'post_excerpt', 'description' => 'post_content'] as $field => $column) {
+            if (isset($params[$field])) {
+                $args[$column] = PostsWriteController::field($params[$field]);
+            }
+        }
+        return $args;
+    }
+
+    /**
+     * After rest_insert_attachment: the alt text, rest_after_insert_attachment
+     * and wp_after_insert_post, in the reference's order.
+     *
+     * @param array<string, mixed> $params
+     */
+    private function finishedWithPlugins(int $id, array $params, Request $request, ?PostRecord $before): void
+    {
+        $events = new PostEvents();
+        if (isset($params['alt_text'])) {
+            \update_post_meta($id, '_wp_attachment_image_alt', \wp_slash(\sanitize_text_field((string) $params['alt_text'])));
+        }
+        $events->restAfterInsert($id, $request, $before);
+        $events->afterInsert($id, $before);
+    }
+
+    /**
+     * The fields a media request sends, wherever it sends them: the query, a
+     * form, or a JSON body.
+     *
+     * @return array<string, mixed>
+     */
+    private static function params(Request $request): array
+    {
+        return $request->query + $request->form + (str_starts_with(trim($request->body), '{') ? $request->json() : []);
     }
 
     /** The attachment's row written and the reference's actions told, for a file already stored. */
@@ -246,17 +335,24 @@ final readonly class MediaController
             $this->library->edit($attachmentId, $columns);
             return Reply::answer($request, $this->object->build($this->posts->find($attachmentId), Context::Edit));
         }
-        // With plugins loaded, the reference's update: the row (always stamped), the
-        // attachment actions, then the alt text between the two REST actions.
-        $events->beforeSave($columns, $before);
-        $this->library->stamp($attachmentId, $columns);
-        $events->attachmentEdited($attachmentId, $before);
-        $events->restInserted($attachmentId, $request, $before);
-        if (isset($body['alt_text'])) {
-            $events->altText($this->library, $attachmentId, (string) $body['alt_text']);
+        // With plugins loaded, the reference's update: rest_pre_insert_attachment over the
+        // prepared attachment, wp_update_post, then the REST actions with the alt text between.
+        $attachment = new \stdClass();
+        $attachment->ID = $attachmentId;
+        if (isset($body['title'])) {
+            $attachment->post_title = PostsWriteController::field($body['title']);
         }
-        $events->restAfterInsert($attachmentId, $request, $before);
-        $events->afterInsert($attachmentId, $before);
+        $attachment->post_type = 'attachment';
+        $attachment->page_template = null;
+        $args = $this->preparedAttachment($attachment, $body, $request) + array_intersect_key($columns, ['post_parent' => true]);
+        $saved = \wp_update_post(\wp_slash($args), true, false);
+        if ($saved instanceof \WP_Error) {
+            throw new RestError($saved->get_error_code(), $saved->get_error_message(), 500);
+        }
+        // The reference's posts controller prepares a response here, before the alt text, and sets it aside.
+        (new PostEvents())->restInserted($attachmentId, $request, $before);
+        $this->object->build($this->posts->find($attachmentId), Context::Edit);
+        $this->finishedWithPlugins($attachmentId, $body, $request, $before);
         return Reply::answer($request, $this->object->build($this->posts->find($attachmentId), Context::Edit));
     }
 

@@ -114,13 +114,13 @@ final class PostSave
      *
      * @param Closure(string, int): string $unique
      */
-    public static function slugFilters(string $slug, int $id, string $status, string $type, int $parent, Closure $unique): string
+    public static function slugFilters(string $slug, int $id, string $status, string $type, int $parent, Closure $unique, string $asked = ''): string
     {
-        $override = \apply_filters('pre_wp_unique_post_slug', null, $slug, $id, $status, $type, $parent);
+        $original = $asked !== '' ? $asked : $slug;
+        $override = \apply_filters('pre_wp_unique_post_slug', null, $original, $id, $status, $type, $parent);
         if ($override !== null) {
             return (string) $override;
         }
-        $original = $slug;
         $hierarchical = \is_post_type_hierarchical($type);
         $bad = static fn (string $candidate): bool => (bool) ($hierarchical
             ? \apply_filters('wp_unique_post_slug_is_bad_hierarchical_slug', false, $candidate, $type, $parent)
@@ -132,8 +132,9 @@ final class PostSave
     }
 
     /**
-     * The row through wp_insert_post_data, handed slashed as the reference
-     * hands it and unslashed back.
+     * The row through wp_insert_post_data (wp_insert_attachment_data for an
+     * attachment), handed slashed as the reference hands it and unslashed
+     * back.
      *
      * @param array<string, mixed> $row the row, unslashed
      * @param array<string, mixed> $sanitized
@@ -144,7 +145,8 @@ final class PostSave
     public static function data(array $row, array $sanitized, array $unsanitized, int $postId): array
     {
         $data = array_replace(array_fill_keys(self::DATA, ''), array_intersect_key($row, array_flip(self::DATA)));
-        return (array) \wp_unslash(\apply_filters('wp_insert_post_data', \wp_slash($data), $sanitized, $unsanitized, $postId > 0));
+        $filter = ($row['post_type'] ?? '') === 'attachment' ? 'wp_insert_attachment_data' : 'wp_insert_post_data';
+        return (array) \wp_unslash(\apply_filters($filter, \wp_slash($data), $sanitized, $unsanitized, $postId > 0));
     }
 
     /**

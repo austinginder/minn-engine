@@ -1,0 +1,132 @@
+[
+    [
+        "an upload",
+        {
+            "status": "201",
+            "answer": {
+                "title": "A <b>title</b>",
+                "caption": "A caption",
+                "description": "",
+                "alt_text": "",
+                "slug": "a-title",
+                "mime_type": "image/jpeg"
+            },
+            "steps": [
+                "wp_read_image_metadata [\"array[alt,aperture,camera,caption,copyright,created_timestamp,credit,focal_length,iso,keywords,orientation,shutter_speed,title]\",\"{uploads}/{yyyy}/{mm}/zz-rest-media.jpg\",2,\"array[]\",\"array[COMMENT,COMPUTED,FileDateTime,FileName,FileSize,FileType,MimeType,SectionsFound]\"]",
+                "rest_pre_insert_attachment [\"object:stdClass\",\"object:WP_REST_Request\"]",
+                "pre_post_content [\"\"]",
+                "content_save_pre [\"\"]",
+                "pre_post_title [\"A <b>title</b>\"]",
+                "title_save_pre [\"A <b>title</b>\"]",
+                "pre_post_excerpt [\"A caption\"]",
+                "excerpt_save_pre [\"A caption\"]",
+                "pre_post_guid [\"{uploads}/{yyyy}/{mm}/zz-rest-media.jpg\"]",
+                "pre_post_mime_type [\"image/jpeg\"]",
+                "wp_unique_post_slug [\"a-title\",0,\"inherit\",\"attachment\",0,\"a-title\"]",
+                "wp_insert_attachment_data [\"array[comment_status,guid,menu_order,ping_status,pinged,post_author,post_content,post_content_filtered,post_date,post_date_gmt,post_excerpt,post_mime_type,post_modified,post_modified_gmt,post_name,post_parent,post_password,post_status,post_title,post_type,to_ping]\",\"array[ID,comment_status,context,file,filter,guid,import_id,menu_order,page_template,ping_status,pinged,post_author,post_content,post_content_filtered,post_date,post_date_gmt,post_excerpt,post_mime_type,post_parent,post_password,post_status,post_title,post_type,to_ping]\",\"array[file,guid,page_template,post_excerpt,post_mime_type,post_parent,post_title,post_type]\",false]",
+                "update_attached_file [\"{uploads}/{yyyy}/{mm}/zz-rest-media.jpg\",{media0}]",
+                "update_post_metadata [{media0},\"_wp_attached_file\"]",
+                "add_post_metadata [{media0},\"_wp_attached_file\"]",
+                "add_attachment [{media0}]",
+                "rest_insert_attachment [\"object:WP_Post\",\"object:WP_REST_Request\",true]",
+                "rest_after_insert_attachment [\"object:WP_Post\",\"object:WP_REST_Request\",true]",
+                "wp_after_insert_post [{media0},\"object:WP_Post\",false,null]",
+                "wp_read_image_metadata [\"array[alt,aperture,camera,caption,copyright,created_timestamp,credit,focal_length,iso,keywords,orientation,shutter_speed,title]\",\"{uploads}/{yyyy}/{mm}/zz-rest-media.jpg\",2,\"array[]\",\"array[COMMENT,COMPUTED,FileDateTime,FileName,FileSize,FileType,MimeType,SectionsFound]\"]",
+                "wp_update_attachment_metadata [\"array[file,filesize,height,image_meta,sizes,width]\",{media0}]",
+                "update_post_metadata [{media0},\"_wp_attachment_metadata\"]",
+                "add_post_metadata [{media0},\"_wp_attachment_metadata\"]",
+                "wp_update_attachment_metadata [\"array[file,filesize,height,image_meta,sizes,width]\",{media0}]",
+                "update_post_metadata [{media0},\"_wp_attachment_metadata\"]",
+                "wp_update_attachment_metadata [\"array[file,filesize,height,image_meta,sizes,width]\",{media0}]",
+                "update_post_metadata [{media0},\"_wp_attachment_metadata\"]",
+                "wp_generate_attachment_metadata [\"array[file,filesize,height,image_meta,sizes,width]\",{media0},\"create\"]",
+                "wp_update_attachment_metadata [\"array[file,filesize,height,image_meta,sizes,width]\",{media0}]",
+                "update_post_metadata [{media0},\"_wp_attachment_metadata\"]",
+                "wp_unique_post_slug [\"a-title\",{media0},\"inherit\",\"attachment\",0,\"a-title\"]"
+            ]
+        }
+    ],
+    [
+        "a plugin changes it",
+        {
+            "status": "201",
+            "answer": {
+                "title": "(changed)",
+                "caption": "",
+                "description": "",
+                "alt_text": "",
+                "slug": "changed",
+                "mime_type": "image/jpeg"
+            },
+            "steps": [
+                "wp_read_image_metadata [\"array[alt,aperture,camera,caption,copyright,created_timestamp,credit,focal_length,iso,keywords,orientation,shutter_speed,title]\",\"{uploads}/{yyyy}/{mm}/zz-rest-media-two.jpg\",2,\"array[]\",\"array[COMMENT,COMPUTED,FileDateTime,FileName,FileSize,FileType,MimeType,SectionsFound]\"]",
+                "rest_pre_insert_attachment [\"object:stdClass\",\"object:WP_REST_Request\"]",
+                "pre_post_content [\"\"]",
+                "content_save_pre [\"\"]",
+                "pre_post_title [\" (changed)\"]",
+                "title_save_pre [\" (changed)\"]",
+                "pre_post_excerpt [\"\"]",
+                "excerpt_save_pre [\"\"]",
+                "pre_post_guid [\"{uploads}/{yyyy}/{mm}/zz-rest-media-two.jpg\"]",
+                "pre_post_mime_type [\"image/jpeg\"]",
+                "wp_unique_post_slug [\"changed\",0,\"inherit\",\"attachment\",0,\"changed\"]",
+                "wp_insert_attachment_data [\"array[comment_status,guid,menu_order,ping_status,pinged,post_author,post_content,post_content_filtered,post_date,post_date_gmt,post_excerpt,post_mime_type,post_modified,post_modified_gmt,post_name,post_parent,post_password,post_status,post_title,post_type,to_ping]\",\"array[ID,comment_status,context,file,filter,guid,import_id,menu_order,page_template,ping_status,pinged,post_author,post_content,post_content_filtered,post_date,post_date_gmt,post_excerpt,post_mime_type,post_parent,post_password,post_status,post_title,post_type,to_ping]\",\"array[file,guid,page_template,post_mime_type,post_parent,post_title,post_type]\",false]",
+                "update_attached_file [\"{uploads}/{yyyy}/{mm}/zz-rest-media-two.jpg\",{media1}]",
+                "update_post_metadata [{media1},\"_wp_attached_file\"]",
+                "add_post_metadata [{media1},\"_wp_attached_file\"]",
+                "add_attachment [{media1}]",
+                "rest_insert_attachment [\"object:WP_Post\",\"object:WP_REST_Request\",true]",
+                "rest_after_insert_attachment [\"object:WP_Post\",\"object:WP_REST_Request\",true]",
+                "wp_after_insert_post [{media1},\"object:WP_Post\",false,null]",
+                "wp_read_image_metadata [\"array[alt,aperture,camera,caption,copyright,created_timestamp,credit,focal_length,iso,keywords,orientation,shutter_speed,title]\",\"{uploads}/{yyyy}/{mm}/zz-rest-media-two.jpg\",2,\"array[]\",\"array[COMMENT,COMPUTED,FileDateTime,FileName,FileSize,FileType,MimeType,SectionsFound]\"]",
+                "wp_update_attachment_metadata [\"array[file,filesize,height,image_meta,sizes,width]\",{media1}]",
+                "update_post_metadata [{media1},\"_wp_attachment_metadata\"]",
+                "add_post_metadata [{media1},\"_wp_attachment_metadata\"]",
+                "wp_update_attachment_metadata [\"array[file,filesize,height,image_meta,sizes,width]\",{media1}]",
+                "update_post_metadata [{media1},\"_wp_attachment_metadata\"]",
+                "wp_update_attachment_metadata [\"array[file,filesize,height,image_meta,sizes,width]\",{media1}]",
+                "update_post_metadata [{media1},\"_wp_attachment_metadata\"]",
+                "wp_generate_attachment_metadata [\"array[file,filesize,height,image_meta,sizes,width]\",{media1},\"create\"]",
+                "wp_update_attachment_metadata [\"array[file,filesize,height,image_meta,sizes,width]\",{media1}]",
+                "update_post_metadata [{media1},\"_wp_attachment_metadata\"]",
+                "wp_unique_post_slug [\"changed\",{media1},\"inherit\",\"attachment\",0,\"changed\"]"
+            ]
+        }
+    ],
+    [
+        "an edit",
+        {
+            "status": "200",
+            "answer": {
+                "title": "New title",
+                "caption": "New caption",
+                "description": "New <em>description</em>",
+                "alt_text": "Alt words",
+                "slug": "a-title",
+                "mime_type": "image/jpeg"
+            },
+            "steps": [
+                "rest_pre_insert_attachment [\"object:stdClass\",\"object:WP_REST_Request\"]",
+                "pre_post_content [\"New <em>description</em>\"]",
+                "content_save_pre [\"New <em>description</em>\"]",
+                "pre_post_title [\"New title\"]",
+                "title_save_pre [\"New title\"]",
+                "pre_post_excerpt [\"New caption\"]",
+                "excerpt_save_pre [\"New caption\"]",
+                "pre_post_guid [\"{uploads}/{yyyy}/{mm}/zz-rest-media.jpg\"]",
+                "pre_post_mime_type [\"image/jpeg\"]",
+                "wp_unique_post_slug [\"a-title\",{media0},\"inherit\",\"attachment\",0,\"a-title\"]",
+                "wp_insert_attachment_data [\"array[comment_status,guid,menu_order,ping_status,pinged,post_author,post_content,post_content_filtered,post_date,post_date_gmt,post_excerpt,post_mime_type,post_modified,post_modified_gmt,post_name,post_parent,post_password,post_status,post_title,post_type,to_ping]\",\"array[ID,ancestors,comment_count,comment_status,context,file,filter,guid,import_id,menu_order,page_template,ping_status,pinged,post_author,post_category,post_content,post_content_filtered,post_date,post_date_gmt,post_excerpt,post_mime_type,post_modified,post_modified_gmt,post_name,post_parent,post_password,post_status,post_title,post_type,tags_input,to_ping]\",\"array[ID,ancestors,comment_count,comment_status,file,filter,guid,menu_order,page_template,ping_status,pinged,post_author,post_category,post_content,post_content_filtered,post_date,post_date_gmt,post_excerpt,post_mime_type,post_modified,post_modified_gmt,post_name,post_parent,post_password,post_status,post_title,post_type,tags_input,to_ping]\",true]",
+                "edit_attachment [{media0}]",
+                "attachment_updated [{media0},\"object:WP_Post\",\"object:WP_Post\"]",
+                "rest_insert_attachment [\"object:WP_Post\",\"object:WP_REST_Request\",false]",
+                "wp_unique_post_slug [\"new-title\",{media0},\"inherit\",\"attachment\",0,\"new-title\"]",
+                "update_post_metadata [{media0},\"_wp_attachment_image_alt\"]",
+                "add_post_metadata [{media0},\"_wp_attachment_image_alt\"]",
+                "rest_after_insert_attachment [\"object:WP_Post\",\"object:WP_REST_Request\",false]",
+                "wp_after_insert_post [{media0},\"object:WP_Post\",true,\"object:WP_Post\"]",
+                "wp_unique_post_slug [\"new-title\",{media0},\"inherit\",\"attachment\",0,\"new-title\"]"
+            ]
+        }
+    ]
+]

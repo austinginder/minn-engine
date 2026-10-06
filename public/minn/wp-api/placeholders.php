@@ -307,12 +307,6 @@ function get_privacy_policy_url()
     return null;
 }
 
-function get_sample_permalink($post, $title = NULL, $name = NULL)
-{
-    \Minn\Runtime\PlaceholderTrace::hit('get_sample_permalink');
-    return null;
-}
-
 function get_sample_permalink_html($post, $new_title = NULL, $new_slug = NULL)
 {
     \Minn\Runtime\PlaceholderTrace::hit('get_sample_permalink_html');

@@ -25,8 +25,8 @@ the wp/v2 surface: shapes and controllers
 | [`IndexController`](#indexcontroller) | final readonly class | 96 | The API index at /wp-json/: the site facts monitors read (name, url, |
 | [`Links`](#links) | final class | 52 | Response link relations compacted through CURIEs: a rel that matches a CURIE's template becomes `name:suffix`, and the used CURIEs ride along. |
 | [`ListQuery`](#listquery) | final readonly class | 170 | The collection parameters a wp/v2 list accepts, read once from the |
-| [`MediaController`](#mediacontroller) | final readonly class | 261 | wp/v2/media: list, single, upload on both transports (multipart field |
-| [`MediaObject`](#mediaobject) | final readonly class | 165 | The wp/v2 media object, view and edit context. |
+| [`MediaController`](#mediacontroller) | final readonly class | 357 | wp/v2/media: list, single, upload on both transports (multipart field |
+| [`MediaObject`](#mediaobject) | final readonly class | 164 | The wp/v2 media object, view and edit context. |
 | [`MenuItemObject`](#menuitemobject) | final readonly class | 74 | The wp/v2/menu-items resource. |
 | [`MenuObject`](#menuobject) | final readonly class | 37 | The wp/v2/menus resource: a nav_menu term plus locations and auto_add. |
 | [`MenusController`](#menuscontroller) | final readonly class | 282 | wp/v2/menus, menu-items, and menu-locations. Viewing needs edit_posts; |
@@ -1021,7 +1021,7 @@ Route: `DELETE /wp/v2/media/{id:[\d]+} (cap delete_post on {id}; attachment {id}
 
 Attachments cannot be trashed; force removes the row, its meta, and its files.
 
-Internals: `libraryClauses()` (private, line 76), `restDate()` (private, line 100), `storeWithPlugins()` (private, line 175), `inserted()` (private, line 195), `attachment()` (private, line 282)
+Internals: `libraryClauses()` (private, line 76), `restDate()` (private, line 100), `storeWithPlugins()` (private, line 175), `insertedWithPlugins()` (private, line 202), `preparedAttachment()` (private, line 240), `finishedWithPlugins()` (private, line 262), `params()` (private, line 278), `inserted()` (private, line 284), `attachment()` (private, line 378)
 
 
 ## MediaObject
@@ -1045,7 +1045,7 @@ An attachment in the context asked for, through rest_prepare_attachment when a p
 
 The REST URL builder.
 
-Internals: `buildFields()` (private, line 43), `details()` (private, line 125), `descriptionHtml()` (private, line 159)
+Internals: `buildFields()` (private, line 44), `details()` (private, line 125), `descriptionHtml()` (private, line 159)
 
 
 ## MenuItemObject
@@ -1408,7 +1408,7 @@ The view links plus the caller's verbs and cap-gated wp:action-* entries.
 
 A MySQL datetime in the reference's ISO form.
 
-Internals: `navigationView()` (private, line 76), `blockView()` (private, line 106), `viewFields()` (private, line 132), `viewTerms()` (private, line 171), `typeFields()` (private, line 187), `classList()` (private, line 217), `format()` (private, line 239), `termLinks()` (private, line 283), `editFields()` (private, line 302), `allow()` (private, line 483), `gmt()` (private, line 502)
+Internals: `navigationView()` (private, line 77), `blockView()` (private, line 107), `viewFields()` (private, line 133), `viewTerms()` (private, line 172), `typeFields()` (private, line 188), `classList()` (private, line 218), `format()` (private, line 240), `termLinks()` (private, line 284), `editFields()` (private, line 303), `allow()` (private, line 484), `gmt()` (private, line 503)
 
 
 ## PostsController
@@ -1788,7 +1788,7 @@ their turn; the runtime's say before the engine answers at all (an
 authentication refusal, a pre-dispatch answer, a removed endpoint);
 and the runtime's namespaces folded into the index.
 
-Used by: `Minn\Rest\Api`, `Minn\Rest\RuntimeEnvelope`, `Minn\Rest\RuntimePrepare`, `Minn\Runtime\CommentEvents`, `Minn\Runtime\PostEvents`, `Minn\Runtime\PostSave`, `Minn\Runtime\TermEvents`, `Minn\Runtime\UserEvents`
+Used by: `Minn\Rest\Api`, `Minn\Rest\MediaController`, `Minn\Rest\RuntimeEnvelope`, `Minn\Rest\RuntimePrepare`, `Minn\Runtime\CommentEvents`, `Minn\Runtime\PostEvents`, `Minn\Runtime\PostSave`, `Minn\Runtime\TermEvents`, `Minn\Runtime\UserEvents`
 
 
 ### static `gate(Minn\Http\Request $request): ?Minn\Http\Response`

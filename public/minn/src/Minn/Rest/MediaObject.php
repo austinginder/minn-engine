@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Minn\Rest;
 
+use Minn\Runtime\Runtime;
 use Minn\Content\PostRecord;
 use Minn\Content\Blocks;
 use Minn\Content\Posts;
@@ -72,8 +73,7 @@ final readonly class MediaObject
             'meta' => [],
         ];
         if ($edit) {
-            $object['permalink_template'] = $this->url->home('/?attachment_id=' . $id);
-            $object['generated_slug'] = Slug::sanitize($p->title);
+            [$object['permalink_template'], $object['generated_slug']] = Runtime::booted() ? \get_sample_permalink($id, $p->title, '') : [$this->url->home('/?attachment_id=' . $id), Slug::sanitize($p->title)];
         }
         $object['class_list'] = ['post-' . $id, 'attachment', 'type-attachment', 'status-' . $p->status, 'hentry'];
         $object['minn_attached_to'] = null;

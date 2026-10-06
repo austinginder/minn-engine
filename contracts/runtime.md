@@ -3771,3 +3771,37 @@ comment and the change, `edit_comment` with the columns), then the status as
 the controller changes it (approve and hold through `wp_set_comment_status`
 with that word). `pre_wp_update_comment_count_now` may supply a post's count.
 A REST comment's rendered content passes `comment_text`.
+
+## REST media and permalinks plugins can change (2026-10-06)
+
+With plugins loaded, a REST upload is saved as the reference's controller
+saves it (probe `rest-media-save`): the photo's own title and caption
+(`wp_read_image_metadata`) unless the request names them,
+`rest_pre_insert_attachment` over the prepared attachment (title, type and
+template only; caption, description, type and address are added after),
+the file's name as the title when none is left, then `wp_insert_attachment`
+through the runtime's `wp_insert_post` (the post save filters and
+`wp_insert_attachment_data`; the file recorded inside the save; then
+`add_attachment`, or `edit_attachment` and `attachment_updated`, and no
+`save_post` actions), the REST actions with the alt text between, then
+`wp_after_insert_post` and the sizes. An edit runs the same filter, then
+`wp_update_post`, which saves an attachment through `wp_insert_attachment`
+with its stored fields, and prepares its response twice as the reference
+does.
+
+Addresses follow the reference's link functions (`Runtime\PostLinks`, probe
+`permalinks`, 31 rows): a post through `pre_post_link` and `post_link` (plain
+while a draft, pending or scheduled), a page from `get_page_uri` through
+`_get_page_link` and `page_link`, an attachment under its parent's address or
+its own, a plugin's type through `post_type_link`; `$leavename` keeps the
+slug as `%postname%`, `%pagename%` or `%{type}%`. `get_sample_permalink`
+shows a draft as published, its name made unique (`wp_unique_post_slug`, now
+with `pre_wp_unique_post_slug` and the bad-slug filters, and leaving drafts'
+slugs alone), a page's parents written in through `editable_slug`; a REST
+response's `permalink_template` and `generated_slug` come from it.
+
+`tests/tools/coverage.php` measures coverage from the code: the reference's
+functions implemented, constant, placeholder or missing (split by
+`wp-includes` and `wp-admin`), the same for what a site's plugins call (from
+`minn_runtime_symbols`), how many of those a probe verifies, and the
+fixed-name hooks Minn fires.

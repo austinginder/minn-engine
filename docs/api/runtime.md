@@ -46,10 +46,11 @@ the WordPress runtime plugins load against
 | [`PostData`](#postdata) | final class | 65 | The loop's view of a post, as the reference's generate_postdata and |
 | [`PostEvents`](#postevents) | final readonly class | 145 | What the reference's REST controllers tell plugins about a post they |
 | [`PostInsert`](#postinsert) | final readonly class | 166 | The decisions behind wp_insert_post: which columns a postarr fills, when |
+| [`PostLinks`](#postlinks) | final class | 137 | Post addresses as the reference's link functions build them (probe |
 | [`PostLookup`](#postlookup) | final readonly class | 85 | The post reads plugin code asks for by shape: a page by title, revisions, counts. |
 | [`PostQuery`](#postquery) | final class | 383 | The query WP_Query runs: its variables become one SELECT over the posts |
 | [`PostRevisions`](#postrevisions) | final class | 63 | A post's revisions as the reference's wp_save_post_revision keeps them |
-| [`PostSave`](#postsave) | final class | 182 | A REST save's columns through the filters the reference's save runs |
+| [`PostSave`](#postsave) | final class | 184 | A REST save's columns through the filters the reference's save runs |
 | [`QueriedObject`](#queriedobject) | final readonly class | 70 | Which object a query is "about", read from its flags and variables: a term |
 | [`QueryFlags`](#queryflags) | final readonly class | 101 | The conditional flags a set of query variables implies (is_single, is_archive, |
 | [`Recovery`](#recovery) | final readonly class | 214 | Recovery from a fatal in someone else's code. When a plugin or theme |
@@ -1976,6 +1977,51 @@ nothing should change.
 Internals: `type()` (private, line 177)
 
 
+## PostLinks
+
+`final class Minn\Runtime\PostLinks` · `public/minn/src/Minn/Runtime/PostLinks.php`
+
+Post addresses as the reference's link functions build them (probe
+permalinks): a post through pre_post_link (the structure) and post_link,
+plain (?p=) while it is a draft, pending or scheduled unless it is a
+sample; a page from get_page_uri through _get_page_link and page_link,
+?page_id= while unpublished; an attachment under its parent's address,
+or its own; a plugin's type under its rewrite slug through
+post_type_link. "Leaving the name" keeps the slug as its placeholder
+(%postname%, %pagename%, %{type}%) for an editor to fill in, and
+get_sample_permalink shows a draft as it would be published.
+
+- const `LEAVE_NAME` = `1` — The slug kept as its placeholder.
+- const `SAMPLE` = `2` — The address an editor previews: a draft as if published.
+- const `UNPUBLISHED` = `array (   0 => 'draft',   1 => 'pending',   2 => 'auto-draft',   3 => 'future', )`
+
+### static `post(WP_Post $post, int $flags): string`
+
+A post's address (not a page, attachment or plugin type).
+
+### static `page(WP_Post $post, int $flags): string`
+
+A page's own address, before page_link: ?page_id= while unpublished, its tag when the name is left, else its path.
+
+### static `attachment(WP_Post $post, int $flags): string`
+
+An attachment's address: under a parent it belongs to, else its own slug, else ?attachment_id=.
+
+### static `custom(WP_Post $post, int $flags, string $typeSlug): string`
+
+A plugin type's address under its rewrite slug, or the type and id plainly.
+
+### static `sample(WP_Post $post, ?string $title, ?string $name): array`
+
+The address an editor shows with the slug to edit: the post as if
+published, its name made unique, the address with the name left,
+a page's parents written in.
+
+- `@return array{0: string, 1: string}`
+
+Internals: `tokens()` (private, line 43), `category()` (private, line 61)
+
+
 ## PostLookup
 
 `final readonly class Minn\Runtime\PostLookup` · `public/minn/src/Minn/Runtime/PostLookup.php`
@@ -2132,7 +2178,7 @@ The parent through wp_insert_post_parent (whose default refuses a loop). @param 
 
 - `@param array<string, mixed> $sanitized`
 
-### static `slugFilters(string $slug, int $id, string $status, string $type, int $parent, Closure $unique): string`
+### static `slugFilters(string $slug, int $id, string $status, string $type, int $parent, Closure $unique, string $asked = ''): string`
 
 A live post's slug through the reference's three filters:
 pre_wp_unique_post_slug may settle it, a slug the bad-slug filter
@@ -2143,15 +2189,16 @@ last word.
 
 ### static `data(array $row, array $sanitized, array $unsanitized, int $postId): array`
 
-The row through wp_insert_post_data, handed slashed as the reference
-hands it and unslashed back.
+The row through wp_insert_post_data (wp_insert_attachment_data for an
+attachment), handed slashed as the reference hands it and unslashed
+back.
 
 - `@param array<string, mixed> $row the row, unslashed`
 - `@param array<string, mixed> $sanitized`
 - `@param array<string, mixed> $unsanitized`
 - `@return array<string, mixed>`
 
-Internals: `prepared()` (private, line 159), `changed()` (private, line 194)
+Internals: `prepared()` (private, line 161), `changed()` (private, line 196)
 
 
 ## QueriedObject
@@ -2430,7 +2477,7 @@ blocks, texturize, paragraphs, shortcodes, block hooks, and the image
 attributes. What it has not (smilies, the capital P, insecure home
 addresses) runs with the plugins' own callbacks.
 
-Used by: `Minn\Admin\BootPayload`, `Minn\Auth\Authenticator`, `Minn\Blocks\Dynamic\Theme\Comments`, `Minn\Blocks\Dynamic\Theme\Navigation`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Blocks\ImageTags`, `Minn\Blocks\RenderState`, `Minn\Cli\Runtime`, `Minn\Content\Blocks`, `Minn\Content\Reader`, `Minn\Content\Site`, `Minn\Content\Terms`, `Minn\Cron\Cron`, `Minn\Db`, `Minn\Engine`, `Minn\Extension\Extensions`, `Minn\Front\CommentPostController`, `Minn\Front\Feeds`, `Minn\Front\Permalinks`, `Minn\Front\PluginRules`, `Minn\Front\Resolver`, `Minn\Login\LoginHooks`, `Minn\Mail\Mailer`, `Minn\Media\Images`, `Minn\Rest\AbilitiesController`, `Minn\Rest\Api`, `Minn\Rest\Caller`, `Minn\Rest\CommentObject`, `Minn\Rest\MediaController`, `Minn\Rest\RenderedFields`, `Minn\Rest\RuntimeEnvelope`, `Minn\Rest\RuntimePrepare`, `Minn\Rest\Services`, `Minn\Rest\SettingsController`, `Minn\Rest\UsersController`, `Minn\Runtime\Abilities`, `Minn\Runtime\AjaxController`, `Minn\Runtime\BlockFilters`, `Minn\Runtime\BlockHooks`, `Minn\Runtime\CommentEvents`, `Minn\Runtime\Constants`, `Minn\Runtime\FileUpload`, `Minn\Runtime\Interactivity`, `Minn\Runtime\NavMenu`, `Minn\Runtime\PackageDownload`, `Minn\Runtime\Patterns`, `Minn\Runtime\PlaceholderTrace`, `Minn\Runtime\PluginUpdates`, `Minn\Runtime\Plugins`, `Minn\Runtime\PostEvents`, `Minn\Runtime\PostQuery`, `Minn\Runtime\PostSave`, `Minn\Runtime\ScriptModules`, `Minn\Runtime\TermEvents`, `Minn\Runtime\TermSave`, `Minn\Runtime\TermWriter`, `Minn\Runtime\UserEvents`, `Minn\Theme\ArchiveTitle`, `Minn\Theme\ClassicContent`, `Minn\Theme\ClassicRenderer`, `Minn\Theme\MainQueryBridge`, `Minn\Theme\PageRenderer`, `Minn\Theme\Templates`
+Used by: `Minn\Admin\BootPayload`, `Minn\Auth\Authenticator`, `Minn\Blocks\Dynamic\Theme\Comments`, `Minn\Blocks\Dynamic\Theme\Navigation`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Blocks\ImageTags`, `Minn\Blocks\RenderState`, `Minn\Cli\Runtime`, `Minn\Content\Blocks`, `Minn\Content\Reader`, `Minn\Content\Site`, `Minn\Content\Terms`, `Minn\Cron\Cron`, `Minn\Db`, `Minn\Engine`, `Minn\Extension\Extensions`, `Minn\Front\CommentPostController`, `Minn\Front\Feeds`, `Minn\Front\Permalinks`, `Minn\Front\PluginRules`, `Minn\Front\Resolver`, `Minn\Login\LoginHooks`, `Minn\Mail\Mailer`, `Minn\Media\Images`, `Minn\Rest\AbilitiesController`, `Minn\Rest\Api`, `Minn\Rest\Caller`, `Minn\Rest\CommentObject`, `Minn\Rest\MediaController`, `Minn\Rest\MediaObject`, `Minn\Rest\PostObject`, `Minn\Rest\RenderedFields`, `Minn\Rest\RuntimeEnvelope`, `Minn\Rest\RuntimePrepare`, `Minn\Rest\Services`, `Minn\Rest\SettingsController`, `Minn\Rest\UsersController`, `Minn\Runtime\Abilities`, `Minn\Runtime\AjaxController`, `Minn\Runtime\BlockFilters`, `Minn\Runtime\BlockHooks`, `Minn\Runtime\CommentEvents`, `Minn\Runtime\Constants`, `Minn\Runtime\FileUpload`, `Minn\Runtime\Interactivity`, `Minn\Runtime\NavMenu`, `Minn\Runtime\PackageDownload`, `Minn\Runtime\Patterns`, `Minn\Runtime\PlaceholderTrace`, `Minn\Runtime\PluginUpdates`, `Minn\Runtime\Plugins`, `Minn\Runtime\PostEvents`, `Minn\Runtime\PostQuery`, `Minn\Runtime\PostSave`, `Minn\Runtime\ScriptModules`, `Minn\Runtime\TermEvents`, `Minn\Runtime\TermSave`, `Minn\Runtime\TermWriter`, `Minn\Runtime\UserEvents`, `Minn\Theme\ArchiveTitle`, `Minn\Theme\ClassicContent`, `Minn\Theme\ClassicRenderer`, `Minn\Theme\MainQueryBridge`, `Minn\Theme\PageRenderer`, `Minn\Theme\Templates`
 
 ```php
 __construct(Minn\Context $context, bool $isAdmin = false)

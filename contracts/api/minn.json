@@ -69868,7 +69868,7 @@
             "namespace": "Minn\\Media",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Media/Writer.php",
-            "lines": 175,
+            "lines": 181,
             "doc": "The writes the media library makes. An Upload becomes an attachment: the\nfile lands in the dated uploads directory under a unique name, the row is\ninserted with the stored name as its title and slug, and an image gets\nits sub-sizes and the serialized metadata blob. Edits stamp the row\nmodified; removal takes the files with the row.",
             "implements": [],
             "extends": null,
@@ -70124,6 +70124,26 @@
                 },
                 {
                     "routes": [],
+                    "name": "urlOf",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "urlOf(string $relative): string",
+                    "doc": "A stored file's address.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "relative",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 109,
+                    "end": 112
+                },
+                {
+                    "routes": [],
                     "name": "pathOf",
                     "static": false,
                     "visibility": "public",
@@ -70139,8 +70159,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 109,
-                    "end": 112
+                    "line": 115,
+                    "end": 118
                 },
                 {
                     "routes": [],
@@ -70159,8 +70179,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 115,
-                    "end": 118
+                    "line": 121,
+                    "end": 124
                 },
                 {
                     "routes": [],
@@ -70179,8 +70199,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 121,
-                    "end": 124
+                    "line": 127,
+                    "end": 130
                 },
                 {
                     "routes": [],
@@ -70206,8 +70226,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 127,
-                    "end": 130
+                    "line": 133,
+                    "end": 136
                 },
                 {
                     "routes": [],
@@ -70235,8 +70255,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 133,
-                    "end": 136
+                    "line": 139,
+                    "end": 142
                 },
                 {
                     "routes": [],
@@ -70262,8 +70282,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 139,
-                    "end": 144
+                    "line": 145,
+                    "end": 150
                 },
                 {
                     "routes": [],
@@ -70291,8 +70311,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 147,
-                    "end": 152
+                    "line": 153,
+                    "end": 158
                 },
                 {
                     "routes": [],
@@ -70318,8 +70338,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 155,
-                    "end": 158
+                    "line": 161,
+                    "end": 164
                 },
                 {
                     "routes": [],
@@ -70338,8 +70358,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 161,
-                    "end": 168
+                    "line": 167,
+                    "end": 174
                 },
                 {
                     "routes": [],
@@ -70367,8 +70387,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 178,
-                    "end": 194
+                    "line": 184,
+                    "end": 200
                 }
             ]
         },
@@ -79438,7 +79458,7 @@
             "namespace": "Minn\\Rest",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Rest/MediaController.php",
-            "lines": 261,
+            "lines": 357,
             "doc": "wp/v2/media: list, single, upload on both transports (multipart field\n\"file\", or a raw body with Content-Disposition), field edits, and force\ndelete with the files.",
             "implements": [],
             "extends": null,
@@ -79465,6 +79485,7 @@
                 "Minn\\Rest\\MediaObject",
                 "Minn\\Rest\\PostsWriteController",
                 "Minn\\Rest\\Reply",
+                "Minn\\Rest\\RuntimeRoutes",
                 "Minn\\Runtime\\PostEvents",
                 "Minn\\Runtime\\Runtime",
                 "Minn\\Support\\Kses"
@@ -79668,8 +79689,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 219,
-                    "end": 261
+                    "line": 308,
+                    "end": 357
                 },
                 {
                     "routes": [
@@ -79697,8 +79718,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 265,
-                    "end": 280
+                    "line": 361,
+                    "end": 376
                 },
                 {
                     "routes": [],
@@ -79788,6 +79809,149 @@
                 },
                 {
                     "routes": [],
+                    "name": "insertedWithPlugins",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "insertedWithPlugins(string $relative, string $type, Minn\\Media\\Upload $upload, Minn\\Http\\Request $request): Minn\\Http\\Response",
+                    "doc": "With plugins loaded, the attachment saved as the reference's controller\nsaves it (probe rest-media-save): the photo's own title and caption\n(wp_read_image_metadata) unless the request names them, the prepared\nattachment through rest_pre_insert_attachment, the file's name as the\ntitle when none is left, then wp_insert_attachment, the REST actions\n(the alt text between them), wp_after_insert_post, and the sizes.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "relative",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "type",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "upload",
+                            "type": "Minn\\Media\\Upload",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "request",
+                            "type": "Minn\\Http\\Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 202,
+                    "end": 231
+                },
+                {
+                    "routes": [],
+                    "name": "preparedAttachment",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "preparedAttachment(stdClass $attachment, array $params, Minn\\Http\\Request $request): array",
+                    "doc": "rest_pre_insert_attachment over the prepared attachment, then the\ncaption and description the request sends.",
+                    "shapes": [
+                        "@param array<string, mixed> $params",
+                        "@return array<string, mixed>"
+                    ],
+                    "params": [
+                        {
+                            "name": "attachment",
+                            "type": "stdClass",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "params",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "request",
+                            "type": "Minn\\Http\\Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 240,
+                    "end": 254
+                },
+                {
+                    "routes": [],
+                    "name": "finishedWithPlugins",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "finishedWithPlugins(int $id, array $params, Minn\\Http\\Request $request, ?Minn\\Content\\PostRecord $before): void",
+                    "doc": "After rest_insert_attachment: the alt text, rest_after_insert_attachment\nand wp_after_insert_post, in the reference's order.",
+                    "shapes": [
+                        "@param array<string, mixed> $params"
+                    ],
+                    "params": [
+                        {
+                            "name": "id",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "params",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "request",
+                            "type": "Minn\\Http\\Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "before",
+                            "type": "?Minn\\Content\\PostRecord",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 262,
+                    "end": 270
+                },
+                {
+                    "routes": [],
+                    "name": "params",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "params(Minn\\Http\\Request $request): array",
+                    "doc": "The fields a media request sends, wherever it sends them: the query, a\nform, or a JSON body.",
+                    "shapes": [
+                        "@return array<string, mixed>"
+                    ],
+                    "params": [
+                        {
+                            "name": "request",
+                            "type": "Minn\\Http\\Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 278,
+                    "end": 281
+                },
+                {
+                    "routes": [],
                     "name": "inserted",
                     "static": false,
                     "visibility": "private",
@@ -79810,8 +79974,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 195,
-                    "end": 213
+                    "line": 284,
+                    "end": 302
                 },
                 {
                     "routes": [],
@@ -79830,8 +79994,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 282,
-                    "end": 289
+                    "line": 378,
+                    "end": 385
                 }
             ]
         },
@@ -79841,7 +80005,7 @@
             "namespace": "Minn\\Rest",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Rest/MediaObject.php",
-            "lines": 165,
+            "lines": 164,
             "doc": "The wp/v2 media object, view and edit context.",
             "implements": [],
             "extends": null,
@@ -79859,6 +80023,7 @@
                 "Minn\\Rest\\PostObject",
                 "Minn\\Rest\\RestUrl",
                 "Minn\\Rest\\RuntimePrepare",
+                "Minn\\Runtime\\Runtime",
                 "Minn\\Support\\Html"
             ],
             "usedBy": [
@@ -79907,8 +80072,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 20,
-                "end": 27
+                "line": 21,
+                "end": 28
             },
             "cases": [],
             "constants": [],
@@ -79984,8 +80149,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 31,
-                    "end": 34
+                    "line": 32,
+                    "end": 35
                 },
                 {
                     "routes": [],
@@ -79996,8 +80161,8 @@
                     "doc": "The REST URL builder.",
                     "shapes": [],
                     "params": [],
-                    "line": 37,
-                    "end": 40
+                    "line": 38,
+                    "end": 41
                 },
                 {
                     "routes": [],
@@ -80023,7 +80188,7 @@
                             "doc": ""
                         }
                     ],
-                    "line": 43,
+                    "line": 44,
                     "end": 122
                 },
                 {
@@ -81926,6 +82091,7 @@
                 "Minn\\Rest\\RenderedFields",
                 "Minn\\Rest\\RestUrl",
                 "Minn\\Rest\\RuntimePrepare",
+                "Minn\\Runtime\\Runtime",
                 "Minn\\Support\\Serialized"
             ],
             "usedBy": [
@@ -81988,8 +82154,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 29,
-                "end": 37
+                "line": 30,
+                "end": 38
             },
             "cases": [],
             "constants": [
@@ -82080,8 +82246,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 41,
-                    "end": 44
+                    "line": 42,
+                    "end": 45
                 },
                 {
                     "routes": [],
@@ -82107,8 +82273,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 47,
-                    "end": 50
+                    "line": 48,
+                    "end": 51
                 },
                 {
                     "routes": [],
@@ -82127,8 +82293,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 53,
-                    "end": 56
+                    "line": 54,
+                    "end": 57
                 },
                 {
                     "routes": [],
@@ -82147,8 +82313,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 59,
-                    "end": 68
+                    "line": 60,
+                    "end": 69
                 },
                 {
                     "routes": [],
@@ -82167,8 +82333,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 245,
-                    "end": 280
+                    "line": 246,
+                    "end": 281
                 },
                 {
                     "routes": [],
@@ -82187,8 +82353,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 362,
-                    "end": 377
+                    "line": 363,
+                    "end": 378
                 },
                 {
                     "routes": [],
@@ -82214,8 +82380,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 380,
-                    "end": 390
+                    "line": 381,
+                    "end": 391
                 },
                 {
                     "routes": [],
@@ -82241,8 +82407,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 393,
-                    "end": 409
+                    "line": 394,
+                    "end": 410
                 },
                 {
                     "routes": [],
@@ -82268,8 +82434,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 412,
-                    "end": 474
+                    "line": 413,
+                    "end": 475
                 },
                 {
                     "routes": [],
@@ -82288,8 +82454,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 512,
-                    "end": 515
+                    "line": 513,
+                    "end": 516
                 },
                 {
                     "routes": [],
@@ -82308,8 +82474,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 76,
-                    "end": 98
+                    "line": 77,
+                    "end": 99
                 },
                 {
                     "routes": [],
@@ -82328,8 +82494,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 106,
-                    "end": 129
+                    "line": 107,
+                    "end": 130
                 },
                 {
                     "routes": [],
@@ -82348,8 +82514,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 132,
-                    "end": 163
+                    "line": 133,
+                    "end": 164
                 },
                 {
                     "routes": [],
@@ -82370,8 +82536,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 171,
-                    "end": 178
+                    "line": 172,
+                    "end": 179
                 },
                 {
                     "routes": [],
@@ -82400,8 +82566,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 187,
-                    "end": 208
+                    "line": 188,
+                    "end": 209
                 },
                 {
                     "routes": [],
@@ -82437,8 +82603,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 217,
-                    "end": 236
+                    "line": 218,
+                    "end": 237
                 },
                 {
                     "routes": [],
@@ -82459,8 +82625,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 239,
-                    "end": 242
+                    "line": 240,
+                    "end": 243
                 },
                 {
                     "routes": [],
@@ -82486,8 +82652,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 283,
-                    "end": 295
+                    "line": 284,
+                    "end": 296
                 },
                 {
                     "routes": [],
@@ -82513,8 +82679,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 302,
-                    "end": 355
+                    "line": 303,
+                    "end": 356
                 },
                 {
                     "routes": [],
@@ -82542,8 +82708,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 483,
-                    "end": 495
+                    "line": 484,
+                    "end": 496
                 },
                 {
                     "routes": [],
@@ -82569,8 +82735,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 502,
-                    "end": 509
+                    "line": 503,
+                    "end": 510
                 }
             ]
         },
@@ -85195,6 +85361,7 @@
             ],
             "usedBy": [
                 "Minn\\Rest\\Api",
+                "Minn\\Rest\\MediaController",
                 "Minn\\Rest\\RuntimeEnvelope",
                 "Minn\\Rest\\RuntimePrepare",
                 "Minn\\Runtime\\CommentEvents",
@@ -100231,6 +100398,242 @@
             ]
         },
         {
+            "name": "Minn\\Runtime\\PostLinks",
+            "short": "PostLinks",
+            "namespace": "Minn\\Runtime",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Runtime/PostLinks.php",
+            "lines": 137,
+            "doc": "Post addresses as the reference's link functions build them (probe\npermalinks): a post through pre_post_link (the structure) and post_link,\nplain (?p=) while it is a draft, pending or scheduled unless it is a\nsample; a page from get_page_uri through _get_page_link and page_link,\n?page_id= while unpublished; an attachment under its parent's address,\nor its own; a plugin's type under its rewrite slug through\npost_type_link. \"Leaving the name\" keeps the slug as its placeholder\n(%postname%, %pagename%, %{type}%) for an editor to fill in, and\nget_sample_permalink shows a draft as it would be published.",
+            "implements": [],
+            "extends": null,
+            "uses": [],
+            "usedBy": [],
+            "constructor": null,
+            "cases": [],
+            "constants": [
+                {
+                    "name": "LEAVE_NAME",
+                    "value": "1",
+                    "doc": "The slug kept as its placeholder.",
+                    "visibility": "public"
+                },
+                {
+                    "name": "SAMPLE",
+                    "value": "2",
+                    "doc": "The address an editor previews: a draft as if published.",
+                    "visibility": "public"
+                },
+                {
+                    "name": "UNPUBLISHED",
+                    "value": "array (   0 => 'draft',   1 => 'pending',   2 => 'auto-draft',   3 => 'future', )",
+                    "doc": "",
+                    "visibility": "private"
+                }
+            ],
+            "properties": [],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "post",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "post(WP_Post $post, int $flags): string",
+                    "doc": "A post's address (not a page, attachment or plugin type).",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "post",
+                            "type": "WP_Post",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "flags",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 29,
+                    "end": 40
+                },
+                {
+                    "routes": [],
+                    "name": "page",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "page(WP_Post $post, int $flags): string",
+                    "doc": "A page's own address, before page_link: ?page_id= while unpublished, its tag when the name is left, else its path.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "post",
+                            "type": "WP_Post",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "flags",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 75,
+                    "end": 86
+                },
+                {
+                    "routes": [],
+                    "name": "attachment",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "attachment(WP_Post $post, int $flags): string",
+                    "doc": "An attachment's address: under a parent it belongs to, else its own slug, else ?attachment_id=.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "post",
+                            "type": "WP_Post",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "flags",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 89,
+                    "end": 106
+                },
+                {
+                    "routes": [],
+                    "name": "custom",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "custom(WP_Post $post, int $flags, string $typeSlug): string",
+                    "doc": "A plugin type's address under its rewrite slug, or the type and id plainly.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "post",
+                            "type": "WP_Post",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "flags",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "typeSlug",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 109,
+                    "end": 124
+                },
+                {
+                    "routes": [],
+                    "name": "sample",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "sample(WP_Post $post, ?string $title, ?string $name): array",
+                    "doc": "The address an editor shows with the slug to edit: the post as if\npublished, its name made unique, the address with the name left,\na page's parents written in.",
+                    "shapes": [
+                        "@return array{0: string, 1: string}"
+                    ],
+                    "params": [
+                        {
+                            "name": "post",
+                            "type": "WP_Post",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "title",
+                            "type": "?string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "name",
+                            "type": "?string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 133,
+                    "end": 153
+                },
+                {
+                    "routes": [],
+                    "name": "tokens",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "tokens(WP_Post $post, int $flags): array",
+                    "doc": "What each structure tag of a post stands for; the name stays a tag when it is left.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "post",
+                            "type": "WP_Post",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "flags",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 43,
+                    "end": 58
+                },
+                {
+                    "routes": [],
+                    "name": "category",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "category(WP_Post $post): string",
+                    "doc": "The %category% part: the post's first category by id (post_link_category may choose another), under its parents.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "post",
+                            "type": "WP_Post",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 61,
+                    "end": 72
+                }
+            ]
+        },
+        {
             "name": "Minn\\Runtime\\PostLookup",
             "short": "PostLookup",
             "namespace": "Minn\\Runtime",
@@ -100893,7 +101296,7 @@
             "namespace": "Minn\\Runtime",
             "kind": "final class",
             "file": "public/minn/src/Minn/Runtime/PostSave.php",
-            "lines": 182,
+            "lines": 184,
             "doc": "A REST save's columns through the filters the reference's save runs\nbefore it writes, in its order (probe post-insert-filters,\ncontracts/runtime.md \"Saves plugins can change\"): rest_pre_insert_{type}\nover the prepared post; every column through its db context\n(pre_post_* and *_save_pre, where kses and the custom-CSS strip sit) on\nslashed text; wp_insert_post_empty_content, which refuses a post with no\ncontent, title or excerpt; wp_insert_post_parent; for a post that is live,\nthe slug, made again from the filtered title when the request gave none,\nthrough pre_wp_unique_post_slug, the bad-slug check and\nwp_unique_post_slug; and wp_insert_post_data over the row. What a filter\nchanges is written. Without plugins loaded the columns are as given.",
             "implements": [],
             "extends": null,
@@ -101095,7 +101498,7 @@
                     "name": "slugFilters",
                     "static": true,
                     "visibility": "public",
-                    "signature": "slugFilters(string $slug, int $id, string $status, string $type, int $parent, Closure $unique): string",
+                    "signature": "slugFilters(string $slug, int $id, string $status, string $type, int $parent, Closure $unique, string $asked = ''): string",
                     "doc": "A live post's slug through the reference's three filters:\npre_wp_unique_post_slug may settle it, a slug the bad-slug filter\nnames takes the next free number, and wp_unique_post_slug has the\nlast word.",
                     "shapes": [
                         "@param Closure(string, int): string $unique"
@@ -101142,6 +101545,13 @@
                             "shape": "Closure(string, int): string",
                             "default": null,
                             "doc": ""
+                        },
+                        {
+                            "name": "asked",
+                            "type": "string",
+                            "shape": "",
+                            "default": "''",
+                            "doc": ""
                         }
                     ],
                     "line": 117,
@@ -101153,7 +101563,7 @@
                     "static": true,
                     "visibility": "public",
                     "signature": "data(array $row, array $sanitized, array $unsanitized, int $postId): array",
-                    "doc": "The row through wp_insert_post_data, handed slashed as the reference\nhands it and unslashed back.",
+                    "doc": "The row through wp_insert_post_data (wp_insert_attachment_data for an\nattachment), handed slashed as the reference hands it and unslashed\nback.",
                     "shapes": [
                         "@param array<string, mixed> $row the row, unslashed",
                         "@param array<string, mixed> $sanitized",
@@ -101190,8 +101600,8 @@
                             "doc": "the post an update saves, 0 for a new one"
                         }
                     ],
-                    "line": 144,
-                    "end": 148
+                    "line": 145,
+                    "end": 150
                 },
                 {
                     "routes": [],
@@ -101242,8 +101652,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 159,
-                    "end": 184
+                    "line": 161,
+                    "end": 186
                 },
                 {
                     "routes": [],
@@ -101280,8 +101690,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 194,
-                    "end": 206
+                    "line": 196,
+                    "end": 208
                 }
             ]
         },
@@ -102687,6 +103097,8 @@
                 "Minn\\Rest\\Caller",
                 "Minn\\Rest\\CommentObject",
                 "Minn\\Rest\\MediaController",
+                "Minn\\Rest\\MediaObject",
+                "Minn\\Rest\\PostObject",
                 "Minn\\Rest\\RenderedFields",
                 "Minn\\Rest\\RuntimeEnvelope",
                 "Minn\\Rest\\RuntimePrepare",
