@@ -64,6 +64,24 @@ final class Caller
         return $this->capabilities->can($this->id(), $capability, $postId);
     }
 
+    /**
+     * Whether the caller can edit posts of some type shown in REST: what
+     * the reference asks before showing statuses, block types and the
+     * active theme. A plugin's types count once plugins are loaded.
+     */
+    public function editsAnyRestType(): bool
+    {
+        $caps = Runtime::booted()
+            ? array_unique(array_map(static fn ($type) => (string) $type->cap->edit_posts, \get_post_types(['show_in_rest' => true], 'objects')))
+            : ['edit_posts', 'edit_pages', 'edit_theme_options'];
+        foreach ($caps as $cap) {
+            if ($this->can($cap)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     /** The capability engine. */
     public function capabilities(): Capabilities
     {

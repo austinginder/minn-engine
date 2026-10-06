@@ -11,6 +11,7 @@ use Minn\Http\Response;
 use Minn\Http\Policy;
 use Minn\Http\Route;
 use Minn\RestError;
+use Minn\Runtime\Runtime;
 use Minn\Theme\TemplateIndex;
 use Minn\Theme\TemplateRecord;
 use Minn\Theme\TemplateWriter;
@@ -24,6 +25,12 @@ use Minn\Theme\TemplateWriter;
  */
 final readonly class TemplatesController
 {
+    private const LOOKUP = [
+        'slug' => ['description' => 'The slug of the template to get the fallback for', 'type' => 'string', 'required' => true],
+        'is_custom' => ['description' => 'Indicates if a template is custom or part of the template hierarchy', 'type' => 'boolean', 'required' => false],
+        'template_prefix' => ['description' => 'The template prefix for the created template. This is used to extract the main template type, e.g. in `taxonomy-books` extracts the `taxonomy`', 'type' => 'string', 'required' => false],
+    ];
+
     private const READ_CAP = 'edit_posts';
     private const WRITE_CAP = 'edit_theme_options';
     private const REFUSAL = 'Sorry, you are not allowed to access the templates on this site.';
@@ -48,6 +55,20 @@ final readonly class TemplatesController
     public function parts(Request $request): Response
     {
         return $this->listing($request, TemplateIndex::PART);
+    }
+
+    /** The template a slug would use: the first in its hierarchy the theme or the site has. */
+    #[Route(Method::Get, '/wp/v2/templates/lookup', policy: new Policy(Access::Cap, self::READ_CAP, signIn: 'rest_cannot_manage_templates', signInMessage: self::REFUSAL, refuse: 'rest_cannot_manage_templates', message: self::REFUSAL), args: [self::LOOKUP])]
+    public function lookupTemplate(Request $request): Response
+    {
+        return $this->lookup($request, TemplateIndex::TEMPLATE);
+    }
+
+    /** The same lookup under the parts route: it searches templates, not parts, as the reference's does. */
+    #[Route(Method::Get, '/wp/v2/template-parts/lookup', policy: new Policy(Access::Cap, self::READ_CAP, signIn: 'rest_cannot_manage_templates', signInMessage: self::REFUSAL, refuse: 'rest_cannot_manage_templates', message: self::REFUSAL), args: [self::LOOKUP])]
+    public function lookupPart(Request $request): Response
+    {
+        return $this->lookup($request, TemplateIndex::PART);
     }
 
     /** One template. */
@@ -112,6 +133,30 @@ final readonly class TemplatesController
         // The reference paginates neither list, so neither carries the
         // X-WP-Total pair its paginated collections do.
         return Reply::item($rows, null);
+    }
+
+    /**
+     * The first template in the slug's hierarchy that exists, shown as the
+     * route's own type shows an item (the parts route searches templates
+     * too, as the reference's does); the plugins' templates count once
+     * plugins are loaded.
+     */
+    private function lookup(Request $request, string $as): Response
+    {
+        if (!Runtime::booted()) {
+            throw RestError::noRoute();
+        }
+        $hierarchy = \get_template_hierarchy((string) $request->query['slug'], \rest_sanitize_boolean($request->query['is_custom'] ?? false), (string) ($request->query['template_prefix'] ?? ''));
+        $found = [];
+        foreach (\get_block_templates(['slug__in' => $hierarchy], TemplateIndex::TEMPLATE) as $template) {
+            $found[$template->slug] ??= $template->id;
+        }
+        foreach ($hierarchy as $slug) {
+            if (isset($found[$slug])) {
+                return Reply::item($this->object->view($this->record(TemplateIndex::TEMPLATE, $found[$slug]), Context::of($request), $as), Fields::fromQuery($request->query));
+            }
+        }
+        throw new RestError('rest_template_not_found', 'No templates exist with that id.', 404);
     }
 
     private function single(Request $request, string $type, string $id): Response

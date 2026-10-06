@@ -180,32 +180,31 @@ final readonly class PostObject
 
     /**
      * Pages carry parent and menu_order first; posts carry their term ids,
-     * and only the post type has sticky and format.
+     * and only the post type has sticky and format, among the shared fields.
      *
      * @param array<string, list<array{0: int, 1: string}>> $terms
      * @return array<string, mixed>
      */
     private function typeFields(PostRecord $p, array $terms): array
     {
+        // A post's sticky and format sit among the shared fields, in the reference's order.
+        $post = $p->type === 'post';
         $shared = [
             'comment_status' => $p->commentStatus,
             'ping_status' => $p->pingStatus,
+            ...($post ? ['sticky' => in_array($p->id, Serialized::intList($this->db->option('sticky_posts')), true)] : []),
             'template' => '',
+            ...($post ? ['format' => self::format($terms['post_format'])] : []),
             'meta' => ['footnotes' => $this->posts->meta($p->id, 'footnotes') ?? ''],
         ];
         if ($p->type === 'page') {
             return ['parent' => $p->parentId, 'menu_order' => $p->menuOrder, ...$shared];
         }
-        $fields = [
+        return [
             ...$shared,
             'categories' => array_map(static fn (array $t) => $t[0], $terms['category']),
             'tags' => array_map(static fn (array $t) => $t[0], $terms['post_tag']),
         ];
-        if ($p->type === 'post') {
-            $fields['sticky'] = in_array($p->id, Serialized::intList($this->db->option('sticky_posts')), true);
-            $fields['format'] = self::format($terms['post_format']);
-        }
-        return $fields;
     }
 
     /**
@@ -455,12 +454,12 @@ final readonly class PostObject
             }
             $actions['wp:action-assign-tags'] = true;
         }
-        // Emitted in the reference's alphabetical-by-suffix order.
+        // Emitted in the order the reference adds them (over HTTP and in process alike): publishing, unfiltered
+        // HTML, sticky, the author, then create and assign for each taxonomy of the type.
         $order = [
-            'wp:action-assign-author', 'wp:action-assign-categories', 'wp:action-assign-tags',
-            'wp:action-create-categories', 'wp:action-create-tags', 'wp:action-publish',
-            'wp:action-sticky', 'wp:action-unfiltered-html',
+            'wp:action-publish', 'wp:action-unfiltered-html', 'wp:action-sticky', 'wp:action-assign-author',
             'wp:action-create-wp_pattern_category', 'wp:action-assign-wp_pattern_category',
+            'wp:action-create-categories', 'wp:action-assign-categories', 'wp:action-create-tags', 'wp:action-assign-tags',
         ];
         $curies = $links['curies'];
         unset($links['curies']);

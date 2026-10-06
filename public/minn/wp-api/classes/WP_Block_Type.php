@@ -186,6 +186,11 @@ final class WP_Block_Type_Registry
                 // The engine renders its own dynamic core blocks; the callback is the bridge to that renderer.
                 $type->render_callback = static fn ($attributes, $content, $block) => _minn_render_core_block($block);
             }
+            if ($name === 'core/template-part') {
+                // Its variations are the active theme's areas and parts, built when first asked for.
+                $type->variations = null;
+                $type->variation_callback = 'build_template_part_block_variations';
+            }
             $this->registered_block_types[$name] = $type;
         }
     }

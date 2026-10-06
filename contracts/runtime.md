@@ -3954,3 +3954,78 @@ The api probe runtime now runs the theme's setup as a request's boot does:
 `setup_theme`, the theme's `functions.php`, `after_setup_theme`, then
 `wp_loaded`. It still skips `init`, whose work the probes compare
 separately.
+
+## Block types and the block renderer over REST (2026-10-06)
+
+`wp/v2/block-types` (`Rest\BlockTypesController`, probe `rest-block-types`,
+compared over HTTP as well) lists every registered block type, core's and a
+plugin's, in registration order, or one namespace's share.
+- **Who may read it.** Anyone who can edit a type shown in REST
+  (`Caller::editsAnyRestType`, now shared with statuses and themes).
+- **What each item carries.** Its registration; its styles (its own, then
+  those registered for it, repeats kept); its variations as built when
+  asked; and a link to the renderer when it is dynamic.
+- **Template-part variations.** These are now built from the active theme
+  (`build_template_part_block_variations`, `Blocks\TemplatePartVariations`),
+  one per area that has parts and then one per part, replacing a captured
+  snapshot of one theme's parts. Building them reads the theme's data, and
+  reading the theme's data now registers the theme's block style partials
+  (`styles/**/*.json` that name `blockTypes`) as block styles, once a
+  request, as the reference does. So, as on the reference, only blocks listed
+  after the template part carry those styles in the list.
+- **Theme style variations.** `WP_Theme_JSON_Resolver::get_style_variations`
+  exists for both the 'theme' and 'block' scopes.
+
+`wp/v2/block-renderer` (`Rest\BlockRendererController`, probe
+`rest-block-renderer`), the route the editor's ServerSideRender uses:
+- **Rendering.** A dynamic block is rendered from the attributes sent (query
+  or body), checked as a closed object against the block's attributes and
+  filled with their defaults.
+- **A named post.** It becomes the global post, and supplies the block's
+  `postId` and `postType` context. The previous global post is put back
+  afterwards.
+- **Context.** Only the edit context is accepted, and sending none counts as
+  the view context, which is refused, as on the reference.
+- **Order of checks.** Arguments are judged before the caller.
+
+The archives block now shows post counts (`showPostCounts`). Its other
+options (dropdown, type, wrapper attributes) are still not rendered.
+
+Not matched: for an unknown block type the reference omits the `Allow`
+header, because its permission check is what fails.
+
+## Template lookups, and order fixes the HTTP comparisons found (2026-10-06)
+
+`get_template_hierarchy` (`Theme\TemplateHierarchy`, probe
+`rest-templates-lookup`, 56 slugs) builds the fallback chain for a slug: the
+slug, then its family's chain down to index.
+- A single entry's slug reaches `single-{type}` and `single` only when the
+  type is registered; otherwise it goes straight to `singular`.
+- A taxonomy's slug reaches `taxonomy-{tax}` and `taxonomy` only when the
+  taxonomy is registered.
+- Pages, categories, tags and authors step through their bare name when
+  the slug has a suffix.
+- A prefix names the next step outright, and a custom template follows a
+  page's chain.
+
+`wp/v2/templates/lookup` answers with the first template in that chain that
+exists. `wp/v2/template-parts/lookup` searches templates too, as the
+reference's does, and shows what it finds as a part would be shown
+(`TemplateObject::view` takes the route's type).
+
+Comparing over HTTP found three differences that had been there all along;
+PHP's `==` on arrays ignores key order, so the fixtures never caught them.
+They are now fixed:
+- A post's `sticky` and `format` sit among the shared fields
+  (`ping_status`, `sticky`, `template`, `format`, `meta`).
+- The edit context's action links follow the reference's insertion order
+  (publish, unfiltered-html, sticky, assign-author, then create and assign
+  for each taxonomy), not alphabetical order.
+- The `Allow` header no longer includes the `{id}` routes on a path that a
+  route without captures names exactly (`/templates/lookup`).
+
+Creating a pattern (`POST wp/v2/blocks`) now states its policy
+(`publish_posts`, a pattern's `create_posts`), so the list's `Allow` header
+offers POST as the reference's does. The layout container hash
+(`wp-container-core-*-is-layout-{hash}`) remains engine-defined
+(contracts/blocks.md).

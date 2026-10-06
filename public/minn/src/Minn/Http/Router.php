@@ -79,7 +79,8 @@ final class Router
 
     /**
      * The methods the caller may use on this path, for the Allow header:
-     * every route matching the path, its policy judged for the caller
+     * every route matching the path (a route with no captures that names
+     * the path exactly claims it alone), its policy judged for the caller
      * without dispatching. A route that states no policy counts for GET
      * only, until it states one. Empty when nothing matched or nothing
      * is allowed, and the header is then left out, as the reference does.
@@ -89,9 +90,17 @@ final class Router
     public function allowed(Request $request): array
     {
         $allowed = [];
+        // A route spelled without captures claims its own path: /templates/lookup is not also a template id.
+        $literal = null;
+        foreach ($this->routes as ['route' => $route]) {
+            if (!str_contains($route->pattern, '{') && $route->pattern === $request->path) {
+                $literal = $route->pattern;
+                break;
+            }
+        }
         foreach ($this->routes as ['route' => $route]) {
             $method = $route->method;
-            if ($method === Method::Any || $method === Method::Head || !preg_match($route->regex(), $request->path, $captures)) {
+            if ($method === Method::Any || $method === Method::Head || !preg_match($route->regex(), $request->path, $captures) || ($literal !== null && $route->pattern !== $literal)) {
                 continue;
             }
             $captures = array_filter($captures, is_string(...), ARRAY_FILTER_USE_KEY);

@@ -1,5 +1,6 @@
 <?php
 
+use Minn\Runtime\Runtime;
 use Minn\Theme\StyleSettings;
 use Minn\Theme\UserStyles;
 
@@ -74,10 +75,45 @@ final class WP_Theme_JSON_Resolver
         return new WP_Theme_JSON(['version' => 3, 'settings' => $settings, 'styles' => $styles]);
     }
 
-    /** The active theme over the defaults, the site editor's styles aside. */
+    /**
+     * The active theme over the defaults, the site editor's styles aside.
+     * Reading it registers the theme's block style partials as block
+     * styles, once a request, as the reference's read does.
+     */
     public static function get_theme_data(): WP_Theme_JSON
     {
+        if (!Runtime::current()->get('block_style_partials_registered', false)) {
+            Runtime::current()->set('block_style_partials_registered', true);
+            foreach (self::get_style_variations('block') as $variation) {
+                foreach ((array) ($variation['blockTypes'] ?? []) as $block) {
+                    register_block_style((string) $block, ['name' => (string) ($variation['slug'] ?? ''), 'label' => (string) ($variation['title'] ?? '')]);
+                }
+            }
+        }
         return self::get_merged_data('theme');
+    }
+
+    /**
+     * The theme's style variations, in path order (a child theme's folder
+     * before its parent's): for 'block', the partials under styles/ that
+     * name the blocks they style; otherwise the rest (whole-site styles,
+     * colour and typography sets).
+     */
+    public static function get_style_variations($scope = 'theme')
+    {
+        $out = [];
+        foreach (array_unique([get_stylesheet_directory(), get_template_directory()]) as $dir) {
+            $files = is_dir("{$dir}/styles") ? iterator_to_array(new RecursiveIteratorIterator(new RecursiveDirectoryIterator("{$dir}/styles", FilesystemIterator::SKIP_DOTS))) : [];
+            ksort($files);
+            foreach (array_keys($files) as $file) {
+                $data = str_ends_with($file, '.json') ? json_decode((string) file_get_contents($file), true) : null;
+                if (is_array($data) && ($scope === 'block') === isset($data['blockTypes'])) {
+                    unset($data['$schema']);
+                    $out[] = $data;
+                }
+            }
+        }
+        return $out;
     }
 
     /** The engine's defaults alone. */

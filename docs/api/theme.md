@@ -19,6 +19,7 @@ the block-theme reader, templates, global styles and the page renderer
 | [`PatternText`](#patterntext) | final class | 198 | Block-theme patterns are PHP files whose only code is a handful of |
 | [`StylePresets`](#stylepresets) | final class | 174 | The preset side of theme.json: the colour, gradient, font-size, |
 | [`StyleSettings`](#stylesettings) | final class | 82 | The settings and styles nodes as wp/v2/global-styles reports them: |
+| [`TemplateHierarchy`](#templatehierarchy) | final class | 75 | The templates a block theme falls back through for a template slug, as |
 | [`TemplateIndex`](#templateindex) | final class | 250 | Every block template and template part the site offers, in the order the |
 | [`TemplatePartTheme`](#templateparttheme) | final readonly class | 45 | A template-part block inside a template says which theme's part it means. |
 | [`TemplatePatterns`](#templatepatterns) | final readonly class | 88 | A template can name a pattern instead of carrying its blocks, and the |
@@ -557,6 +558,30 @@ expanded.
 Every var:preset|kind|slug token replaced by the custom property it names.
 
 Internals: `presetsUnder()` (private, line 69), `withAppearanceTools()` (private, line 81)
+
+
+## TemplateHierarchy
+
+`final class Minn\Theme\TemplateHierarchy` · `public/minn/src/Minn/Theme/TemplateHierarchy.php`
+
+The templates a block theme falls back through for a template slug, as
+get_template_hierarchy builds them (probe rest-templates-lookup): the
+slug itself, then its family's chain to index. A single entry's slug
+reaches single-{type} and single only when the type is registered (and
+goes straight to singular when not); a taxonomy's reaches taxonomy-{tax}
+and taxonomy only when the taxonomy is; pages, categories, tags and
+authors step through their bare name when the slug has more to it. A
+prefix names the next step outright. A custom template is a page's.
+
+### static `for(string $slug, bool $custom, string $prefix, array $types, array $taxonomies): array`
+
+A slug's fallback chain, most specific first, ending at index.
+
+- `@param list<string> $types the registered post types`
+- `@param list<string> $taxonomies the registered taxonomies`
+- `@return list<string>`
+
+Internals: `chain()` (private, line 45), `single()` (private, line 64), `taxonomy()` (private, line 74), `registered()` (private, line 81)
 
 
 ## TemplateIndex

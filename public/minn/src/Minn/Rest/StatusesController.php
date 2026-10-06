@@ -43,7 +43,7 @@ final readonly class StatusesController
     public function list(Request $request): Response
     {
         $context = self::context($request);
-        if ($context === 'edit' && !$this->editsAnyType()) {
+        if ($context === 'edit' && !$this->caller->editsAnyRestType()) {
             throw $this->caller->refuse('rest_cannot_view', 'Sorry, you are not allowed to manage post statuses.');
         }
         $out = [];
@@ -107,21 +107,7 @@ final readonly class StatusesController
      */
     private function readable(string $name, array $status): bool
     {
-        return $status['public'] || ((!$status['internal'] || $name === 'trash') && $this->editsAnyType());
-    }
-
-    /** Whether the caller can edit posts of some type shown in REST. */
-    private function editsAnyType(): bool
-    {
-        $caps = Runtime::booted()
-            ? array_unique(array_map(static fn ($type) => (string) $type->cap->edit_posts, \get_post_types(['show_in_rest' => true], 'objects')))
-            : ['edit_posts', 'edit_pages', 'edit_theme_options'];
-        foreach ($caps as $cap) {
-            if ($this->caller->can($cap)) {
-                return true;
-            }
-        }
-        return false;
+        return $status['public'] || ((!$status['internal'] || $name === 'trash') && $this->caller->editsAnyRestType());
     }
 
     /** Every registered status: a plugin's too once plugins are loaded. @return array<string, array<string, mixed>> */

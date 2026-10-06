@@ -138,15 +138,7 @@ final readonly class InstalledThemesController
     /** May read the active theme: anyone who lists themes, or edits a type shown in REST. */
     private function viewsActive(): bool
     {
-        if ($this->viewsThemes()) {
-            return true;
-        }
-        foreach (array_unique(array_map(static fn ($type) => (string) $type->cap->edit_posts, \get_post_types(['show_in_rest' => true], 'objects'))) as $cap) {
-            if ($this->caller->can($cap)) {
-                return true;
-            }
-        }
-        return false;
+        return $this->viewsThemes() || $this->caller->editsAnyRestType();
     }
 
     private static function status(string $stylesheet): string

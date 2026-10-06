@@ -2,12 +2,12 @@
     "generated": "2026-10-06",
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line)",
     "summary": {
-        "minn": 630,
-        "composes": 868,
+        "minn": 632,
+        "composes": 869,
         "leaf": 635,
         "noop": 1796,
-        "functions": 3859,
-        "minnMethods": 623,
+        "functions": 3862,
+        "minnMethods": 625,
         "leafLinesOver15": 13
     },
     "functions": {
@@ -4648,7 +4648,7 @@
         },
         "WP_Block_Type_Registry::seed": {
             "file": "classes/WP_Block_Type.php",
-            "lines": 18,
+            "lines": 23,
             "kind": "minn",
             "minn": [
                 "Minn\\Runtime\\Runtime::current",
@@ -12110,12 +12110,28 @@
                 "_minn_theme_styles"
             ]
         },
+        "WP_Theme_JSON_Resolver::get_style_variations": {
+            "file": "classes/WP_Theme_JSON_Resolver.php",
+            "lines": 13,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "get_stylesheet_directory",
+                "get_template_directory"
+            ]
+        },
         "WP_Theme_JSON_Resolver::get_theme_data": {
             "file": "classes/WP_Theme_JSON_Resolver.php",
-            "lines": 1,
-            "kind": "noop",
-            "minn": [],
-            "composes": []
+            "lines": 9,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Runtime\\Runtime::current",
+                "Minn\\Runtime\\Runtime::get",
+                "Minn\\Runtime\\Runtime::set"
+            ],
+            "composes": [
+                "register_block_style"
+            ]
         },
         "WP_Theme_JSON_Resolver::get_user_data": {
             "file": "classes/WP_Theme_JSON_Resolver.php",
@@ -17542,6 +17558,18 @@
                 "post_type_exists"
             ]
         },
+        "build_template_part_block_variations": {
+            "file": "blocks.php",
+            "lines": 2,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Blocks\\TemplatePartVariations::build"
+            ],
+            "composes": [
+                "get_allowed_block_template_part_areas",
+                "get_block_templates"
+            ]
+        },
         "cache_javascript_headers": {
             "file": "functions.php",
             "lines": 0,
@@ -21943,6 +21971,18 @@
                 "apply_filters",
                 "get_template",
                 "get_theme_root_uri"
+            ]
+        },
+        "get_template_hierarchy": {
+            "file": "blocks.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Theme\\TemplateHierarchy::for"
+            ],
+            "composes": [
+                "get_post_types",
+                "get_taxonomies"
             ]
         },
         "get_template_part": {

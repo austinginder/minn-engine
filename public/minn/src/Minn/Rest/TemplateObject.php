@@ -26,8 +26,10 @@ final readonly class TemplateObject
     }
 
     /** The wp/v2 template shape. */
-    public function view(TemplateRecord $record, Context $context): array
+    public function view(TemplateRecord $record, Context $context, ?string $as = null): array
     {
+        // The route's own type shapes the item: the parts lookup shows the template it found as a part would be shown.
+        $as ??= $record->type;
         $edit = $context->isEdit();
         $id = $record->id();
         $markup = $this->index->markup($record->content);
@@ -52,11 +54,11 @@ final readonly class TemplateObject
             'wp_id' => $record->wpId,
             'has_theme_file' => $record->hasThemeFile,
         ];
-        if (!$record->isPart()) {
+        if ($as === TemplateIndex::TEMPLATE) {
             $out['is_custom'] = TemplateIndex::isCustom($record->slug);
         }
         $out['author'] = $record->author;
-        if ($record->isPart()) {
+        if ($as === TemplateIndex::PART && $record->isPart()) {
             $out['area'] = (string) $record->area;
         }
         $out['modified'] = $record->modified;
@@ -72,7 +74,7 @@ final readonly class TemplateObject
             $out['minn_modified'] = false;
             $out['minn_lock'] = null;
         }
-        $out['_links'] = $this->links($record);
+        $out['_links'] = $this->links($record, $as);
         return $out;
     }
 
@@ -81,15 +83,15 @@ final readonly class TemplateObject
      * them; a reader who may list templates but not change them sees a
      * self link that allows GET and nothing else.
      */
-    private function links(TemplateRecord $record): array
+    private function links(TemplateRecord $record, string $as): array
     {
-        $base = $this->base($record->type);
+        $base = $this->base($as);
         $self = $this->url->to("/wp/v2/{$base}/{$record->id()}");
         $canWrite = $this->caller->can('edit_theme_options');
         $links = [
             'self' => [['href' => $self, 'targetHints' => ['allow' => $canWrite ? ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'] : ['GET']]]],
             'collection' => [['href' => $this->url->to("/wp/v2/{$base}")]],
-            'about' => [['href' => $this->url->to("/wp/v2/types/{$record->type}")]],
+            'about' => [['href' => $this->url->to("/wp/v2/types/{$as}")]],
         ];
         if (!$canWrite) {
             return $links;

@@ -19,6 +19,7 @@ the block parser and renderer
 | [`Serializer`](#serializer) | final class | 46 | Parsed blocks back to markup. A core block is written by its short name; |
 | [`Styles`](#styles) | final class | 155 | The inline style and class names a block's "style" and preset |
 | [`Supports`](#supports) | final class | 72 | The wrapper attributes a block's supports declaration earns from its |
+| [`TemplatePartVariations`](#templatepartvariations) | final class | 28 | The template part block's variations as the reference builds them (probe |
 | [`Wrapper`](#wrapper) | final class | 60 | The opening tag of a dynamic block's wrapper, in the reference's class |
 
 ## Attributes
@@ -622,6 +623,26 @@ The classes and inline styles a block's supports amount to.
 - `@return array<string, string> class, style, id, only those that apply`
 
 Internals: `color()` (private, line 59)
+
+
+## TemplatePartVariations
+
+`final class Minn\Blocks\TemplatePartVariations` · `public/minn/src/Minn/Blocks/TemplatePartVariations.php`
+
+The template part block's variations as the reference builds them (probe
+rest-block-types): one per area some part belongs to, the general area
+aside, carrying the area's label, description and icon; then one per
+template part, in the order the parts are listed, offered in the
+inserter with the part's slug, theme and area as its attributes and its
+example.
+
+### static `build(array $areas, array $parts): array`
+
+The variations: the areas' first, then the parts'.
+
+- `@param list<array<string, mixed>> $areas get_allowed_block_template_part_areas()`
+- `@param list<object> $parts get_block_templates() for template parts`
+- `@return list<array<string, mixed>>`
 
 
 ## Wrapper

@@ -7,7 +7,7 @@ The engine's own classes under `public/minn/src/Minn/`, one page per namespace, 
 | [`Minn`](minn.md) | 6 | the front door, the autoloader, the one database door, the REST error |
 | [`Minn\Admin`](admin.md) | 28 | the minn-admin/v1 namespace and serving the Minn Admin app |
 | [`Minn\Auth`](auth.md) | 19 | passwords, sessions, cookies, nonces, roles and capabilities |
-| [`Minn\Blocks`](blocks.md) | 16 | the block parser and renderer |
+| [`Minn\Blocks`](blocks.md) | 17 | the block parser and renderer |
 | [`Minn\Blocks\Dynamic`](blocks-dynamic.md) | 9 | dynamic core blocks that render from data |
 | [`Minn\Blocks\Dynamic\Theme`](blocks-dynamic-theme.md) | 5 | the template blocks a block theme composes with |
 | [`Minn\Cli`](cli.md) | 16 | the wp verbs the engine answers itself |
@@ -25,7 +25,7 @@ The engine's own classes under `public/minn/src/Minn/`, one page per namespace, 
 | [`Minn\Media`](media.md) | 12 | uploads, image sizes and attachment metadata |
 | [`Minn\Ops`](ops.md) | 6 |  |
 | [`Minn\Query`](query.md) | 4 | shared SQL fragments |
-| [`Minn\Rest`](rest.md) | 64 | the wp/v2 surface: shapes and controllers |
+| [`Minn\Rest`](rest.md) | 66 | the wp/v2 surface: shapes and controllers |
 | [`Minn\Runtime`](runtime.md) | 76 | the WordPress runtime plugins load against |
 | [`Minn\Support`](support.md) | 24 | escaping, serialized readers, small helpers |
-| [`Minn\Theme`](theme.md) | 24 | the block-theme reader, templates, global styles and the page renderer |
+| [`Minn\Theme`](theme.md) | 25 | the block-theme reader, templates, global styles and the page renderer |

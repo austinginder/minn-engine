@@ -1,6 +1,8 @@
 <?php
 /** The block API: parsing, serializing, registration, rendering through plugin callbacks. Behaviour from contracts/fixtures/api/blocks.json. */
 
+use Minn\Blocks\TemplatePartVariations;
+use Minn\Theme\TemplateHierarchy;
 use Minn\Blocks\Block as MinnBlock;
 use Minn\Blocks\Parser;
 use Minn\Blocks\QueryVars;
@@ -1157,4 +1159,22 @@ function get_default_block_template_types()
 function get_allowed_block_template_part_areas()
 {
     return apply_filters('default_wp_template_part_areas', json_decode((string) file_get_contents(MINN_ENGINE_DIR . '/data/template-part-areas.json'), true));
+}
+
+/**
+ * The template part block's variations: one per area that has parts (the
+ * general area aside), then one per template part the theme offers, as the
+ * reference builds them. Building them reads the theme's data, which
+ * registers its block style partials, as the reference's build does.
+ */
+function build_template_part_block_variations()
+{
+    WP_Theme_JSON_Resolver::get_theme_data();
+    return TemplatePartVariations::build(get_allowed_block_template_part_areas(), get_block_templates([], 'wp_template_part'));
+}
+
+/** The templates a slug falls back through (Theme\TemplateHierarchy), against the registered types and taxonomies. */
+function get_template_hierarchy($slug, $is_custom = false, $template_prefix = '')
+{
+    return TemplateHierarchy::for((string) $slug, (bool) $is_custom, (string) $template_prefix, array_values(get_post_types()), array_values(get_taxonomies()));
 }

@@ -4,7 +4,7 @@ dynamic core blocks that render from data
 
 | Class | Kind | Lines | Summary |
 |---|---|---|---|
-| [`Archives`](#archives) | final readonly class | 28 | core/archives: the months that have published posts, newest first. |
+| [`Archives`](#archives) | final readonly class | 29 | core/archives: the months that have published posts, newest first, with their counts when asked (showPostCounts). |
 | [`Categories`](#categories) | final readonly class | 27 | core/categories: the non-empty categories as a list, by name. |
 | [`Dates`](#dates) | final class | 19 | Site-local dates the way the dynamic blocks print them. |
 | [`LatestComments`](#latestcomments) | final readonly class | 68 | core/latest-comments: the newest approved comments with avatar, meta, and a 20-word excerpt. |
@@ -18,7 +18,7 @@ dynamic core blocks that render from data
 
 `final readonly class Minn\Blocks\Dynamic\Archives` · `public/minn/src/Minn/Blocks/Dynamic/Archives.php`
 
-core/archives: the months that have published posts, newest first.
+core/archives: the months that have published posts, newest first, with their counts when asked (showPostCounts).
 
 Used by: `Minn\Blocks\Renderer`
 

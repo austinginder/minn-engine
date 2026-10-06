@@ -67,8 +67,8 @@ final readonly class BlocksController
         return $this->reads->serveSingle($request, self::TYPE, $id);
     }
 
-    /** Creates a block. */
-    #[Route(Method::Post, '/wp/v2/blocks')]
+    /** Creates a block: a pattern's create_posts is publish_posts. */
+    #[Route(Method::Post, '/wp/v2/blocks', policy: new Policy(Access::Cap, 'publish_posts', signIn: 'rest_cannot_create', signInMessage: 'Sorry, you are not allowed to create posts as this user.', refuse: 'rest_cannot_create', message: 'Sorry, you are not allowed to create posts as this user.'))]
     public function create(Request $request): Response
     {
         return $this->writes->serveCreate($request, self::TYPE, self::BASE);
