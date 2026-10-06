@@ -485,6 +485,10 @@ function rt_text( string $value, array $labels, array $window ): string {
 		$value
 	);
 	$value = (string) preg_replace( array( '/\b127\.0\.0\.1\b/', '/(?<![\w:])::1(?![\w:])/' ), '{loopback}', $value );
+	// The parked WordPress serves from wp-reference/, Minn from public/: one webroot, two directories. A serialized
+	// path's length prefix follows the directory name, so it is masked with it.
+	$value = (string) preg_replace( '#\.localhost/(?:wp-reference|public)/#', '.localhost/{webroot}/', $value );
+	$value = (string) preg_replace( '/s:\d+:"([^"]*\{webroot\}[^"]*)"/', 's:{len}:"$1"', $value );
 	$value = (string) preg_replace_callback( '/\b\d{4}-\d\d-\d\d[ T]\d\d:\d\d:\d\d\b/', static fn ( $m ) => rt_in_window( $m[0], $window ) ? '{now}' : $m[0], $value );
 	$value = (string) preg_replace_callback( '/\b1[6-9]\d{8}(?:\.\d+)?\b/', static fn ( $m ) => rt_stamp( (float) $m[0], $window ) ?? $m[0], $value );
 	$value = (string) preg_replace_callback( '/(wp-image-|"id":|[?&]p=|[?&]page_id=|attachment_id=|"ref":)(\d+)/', static fn ( $m ) => $m[1] . rt_id( $labels, 'posts', $m[2] ), $value );
@@ -690,7 +694,7 @@ function rt_remove_added( string $dir, array $before, array $after ): void {
 
 /**
  * The guard every round-trip copy runs under, on both stacks: no outbound
- * HTTP but to this machine, no cron on page loads, every message any
+ * HTTP but to this machine (and none to the site itself), no cron on page loads, every message any
  * mailer sends goes to the local mail catcher (Mailpit on 127.0.0.1:1025)
  * whatever SMTP server or API the site is set up with, and the services
  * a plugin calls with its own HTTP client (past pre_http_request) are
@@ -710,6 +714,13 @@ add_filter(
 	'pre_http_request',
 	static function ( $pre, $args, $url ) {
 		$host = strtolower( (string) parse_url( (string) $url, PHP_URL_HOST ) );
+		// The site calling itself (Action Scheduler's async runner, a plugin's
+		// background job): the parked WordPress serves from 127.0.0.1 under the
+		// site's name, so its loopbacks would reach Minn through the web server,
+		// and php -S cannot answer its own. Neither stack gets them.
+		if ( strtolower( (string) parse_url( home_url(), PHP_URL_HOST ) ) === $host ) {
+			return new WP_Error( 'http_request_failed', 'Offline copy: requests to the site itself are switched off.' );
+		}
 		if ( 'localhost' === $host || '127.0.0.1' === $host || str_ends_with( $host, '.localhost' ) ) {
 			return $pre;
 		}
