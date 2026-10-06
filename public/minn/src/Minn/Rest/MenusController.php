@@ -14,6 +14,7 @@ use Minn\Http\Response;
 use Minn\Http\Policy;
 use Minn\Http\Route;
 use Minn\RestError;
+use Minn\Runtime\Runtime;
 use Minn\Runtime\Refusal;
 use Minn\Support\Kses;
 
@@ -258,13 +259,43 @@ final readonly class MenusController
         return Reply::item(['deleted' => true, 'previous' => $previous], Fields::fromQuery($request->query));
     }
 
-    /** The theme's menu locations. */
-    #[Route(Method::Get, '/wp/v2/menu-locations', policy: new Policy(Access::Cap, 'edit_posts', signIn: 'rest_cannot_view', signInMessage: 'Sorry, you are not allowed to view menu locations.', refuse: 'rest_cannot_view', message: 'Sorry, you are not allowed to view menu locations.'))]
+    /** The menu locations the theme and plugins register (none for a block theme without plugins), keyed by name; edit_theme_options to view. */
+    #[Route(Method::Get, '/wp/v2/menu-locations', policy: new Policy(Access::Cap, 'edit_theme_options', signIn: 'rest_cannot_view', signInMessage: 'Sorry, you are not allowed to view menu locations.', refuse: 'rest_cannot_view', message: 'Sorry, you are not allowed to view menu locations.'))]
     public function locations(Request $request): Response
     {
-        // Block themes register no classic locations; the reference returns []
-        // with no pagination headers.
-        return Reply::item([], Fields::fromQuery($request->query));
+        $out = [];
+        foreach (Runtime::booted() ? \get_registered_nav_menus() : [] as $name => $description) {
+            $out[$name] = $this->locationItem((string) $name, (string) $description);
+        }
+        // Keyed by name, so _fields over the whole of it keeps nothing, as on the reference.
+        return Reply::item($out, Fields::fromQuery($request->query));
+    }
+
+    /** One menu location. */
+    #[Route(Method::Get, '/wp/v2/menu-locations/{location:[\w-]+}', policy: new Policy(Access::Cap, 'edit_theme_options', signIn: 'rest_cannot_view', signInMessage: 'Sorry, you are not allowed to view menu locations.', refuse: 'rest_cannot_view', message: 'Sorry, you are not allowed to view menu locations.'))]
+    public function oneLocation(Request $request, string $location): Response
+    {
+        $registered = Runtime::booted() ? \get_registered_nav_menus() : [];
+        if (!array_key_exists($location, $registered)) {
+            throw new RestError('rest_menu_location_invalid', 'Invalid menu location.', 404);
+        }
+        return Reply::item($this->locationItem($location, (string) $registered[$location]), Fields::fromQuery($request->query));
+    }
+
+    /** A location, the menu assigned to it (0 for none), and links to it and its menu. @return array<string, mixed> */
+    private function locationItem(string $name, string $description): array
+    {
+        $menu = (int) (\get_nav_menu_locations()[$name] ?? 0);
+        $links = [
+            'self' => [['href' => $this->url->to('/wp/v2/menu-locations/' . $name), 'targetHints' => ['allow' => ['GET']]]],
+            'collection' => [['href' => $this->url->to('/wp/v2/menu-locations')]],
+        ];
+        if ($menu > 0) {
+            $links['wp:menu'] = [['embeddable' => true, 'href' => $this->url->to('/wp/v2/menus/' . $menu)]];
+            $links['curies'] = RestUrl::curies();
+        }
+        $item = ['name' => $name, 'description' => $description, 'menu' => $menu, '_links' => $links];
+        return RuntimePrepare::item('rest_prepare_menu_location', $item, static fn () => (object) ['name' => $name, 'description' => $description]);
     }
 
     /** @param array<string, mixed> $body */

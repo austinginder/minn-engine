@@ -1,6 +1,7 @@
 <?php
 /** Rewrite registrations, post formats, user writes, and the small leftovers plugins reach for. Behaviour from contracts/fixtures/api/blocks.json. */
 
+use Minn\Front\PostEmbed;
 use Minn\Content\Users;
 use Minn\Runtime\Runtime;
 use Minn\Runtime\Refusal;
@@ -831,4 +832,67 @@ function saveDomDocument($doc, $filename)
 function wp_cache_set_users_last_changed()
 {
     wp_cache_set_last_changed('users');
+}
+
+/** The site's oEmbed endpoint for a post, JSON unless asked for XML, through oembed_endpoint_url. */
+function get_oembed_endpoint_url($permalink = '', $format = 'json')
+{
+    $url = rest_url('oembed/1.0/embed');
+    if ($permalink !== '') {
+        $url = add_query_arg(['url' => urlencode((string) $permalink), 'format' => $format !== 'json' ? $format : false], $url);
+    }
+    return apply_filters('oembed_endpoint_url', $url, $permalink, $format);
+}
+
+/** A post's oEmbed data (Front\PostEmbed), or false when it cannot be embedded. */
+function get_oembed_response_data($post, $width)
+{
+    return PostEmbed::data($post, (int) $width);
+}
+
+/** The rich part of a post's oEmbed data: its size, markup and thumbnail. */
+function get_oembed_response_data_rich($data, $post, $width, $height)
+{
+    return PostEmbed::rich((array) $data, get_post($post), (int) $width, (int) $height);
+}
+
+/** A post's embed markup: blockquote, sandboxed iframe, sizing script. */
+function get_post_embed_html($width, $height, $post = null)
+{
+    return PostEmbed::html((int) $width, (int) $height, $post);
+}
+
+function get_post_embed_url($post = null)
+{
+    return PostEmbed::url($post);
+}
+
+/** oEmbed data for one of the site's own addresses, or false. */
+function get_oembed_response_data_for_url($url, $args)
+{
+    $post_id = (int) apply_filters('oembed_request_post_id', url_to_postid((string) $url), $url);
+    return $post_id > 0 ? get_oembed_response_data($post_id, (int) ($args['width'] ?? 600)) : false;
+}
+
+/** The data as an oEmbed XML document. */
+function _oembed_create_xml($data, $node = null)
+{
+    return is_array($data) || is_object($data) ? PostEmbed::xml((array) $data) : false;
+}
+
+/** A rich or video provider's iframe given the title its data names, when it has none (oembed_dataparse). */
+function wp_filter_oembed_iframe_title_attribute($result, $data, $url)
+{
+    $title = is_object($data) ? (string) ($data->title ?? '') : '';
+    $framed = is_object($data) && in_array($data->type ?? '', ['rich', 'video'], true);
+    if (!is_string($result) || !$framed || $title === '' || !str_contains($result, '<iframe') || preg_match('/<iframe[^>]*\stitle=/i', $result)) {
+        return $result;
+    }
+    return (string) preg_replace('/<iframe\b/i', '<iframe title="' . esc_attr($title) . '"', $result, 1);
+}
+
+/** The engine serves format=xml itself on the way out (Rest\RuntimeRoutes::serve); the hook is the reference's name for it. */
+function _oembed_rest_pre_serve_request($served, $result, $request, $server)
+{
+    return $served;
 }

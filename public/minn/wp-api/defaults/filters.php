@@ -228,6 +228,9 @@ add_action('init', '_wp_connectors_pass_default_keys_to_ai_client', 20);
 add_action('rest_api_init', 'rest_api_default_filters', 10, 1);
 // Core's settings are registered as the server starts, after a plugin's on init (probe rest-settings).
 add_action('rest_api_init', 'register_initial_settings', 10);
+// oEmbed, as the reference registers it: a post's data made rich, a provider's iframe titled.
+add_filter('oembed_response_data', 'get_oembed_response_data_rich', 10, 4);
+add_filter('oembed_dataparse', 'wp_filter_oembed_iframe_title_attribute', 5, 3);
 // Revisions and the old-address records hang off the update hooks, as on the reference: a plugin that
 // unhooks wp_save_post_revision from post_updated turns revisions off.
 add_action('post_updated', 'wp_save_post_revision', 10, 1);

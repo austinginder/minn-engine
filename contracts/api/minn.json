@@ -41782,6 +41782,202 @@
             ]
         },
         {
+            "name": "Minn\\Front\\PostEmbed",
+            "short": "PostEmbed",
+            "namespace": "Minn\\Front",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Front/PostEmbed.php",
+            "lines": 104,
+            "doc": "A post as other sites embed it, the oEmbed provider side, as the\nreference answers (probe oembed): the data (version, the site as\nprovider, the author or else the site, the title) through\noembed_response_data, whose default makes it \"rich\" with the embed\nmarkup: a blockquote linking the post, a sandboxed iframe of its /embed/\npage carrying a fresh secret, and the inline script that sizes it. Only\na publicly viewable post is embeddable; the width is held between 200\nand 600 (oembed_min_max_width) and the height is a 16:9 share of it, at\nleast 200.",
+            "implements": [],
+            "extends": null,
+            "uses": [],
+            "usedBy": [],
+            "constructor": null,
+            "cases": [],
+            "constants": [],
+            "properties": [],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "data",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "data(mixed $post, int $width): array|false",
+                    "doc": "get_oembed_response_data: the data, or false when the post cannot be embedded. @return array<string, mixed>|false",
+                    "shapes": [
+                        "@return array<string, mixed>|false"
+                    ],
+                    "params": [
+                        {
+                            "name": "post",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "width",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 21,
+                    "end": 45
+                },
+                {
+                    "routes": [],
+                    "name": "rich",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "rich(array $data, WP_Post $post, int $width, int $height): array",
+                    "doc": "get_oembed_response_data_rich: the size, the markup, and a thumbnail when the post has one. @param array<string, mixed> $data @return array<string, mixed>",
+                    "shapes": [
+                        "@param array<string, mixed> $data @return array<string, mixed>"
+                    ],
+                    "params": [
+                        {
+                            "name": "data",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": "@return array<string, mixed>"
+                        },
+                        {
+                            "name": "post",
+                            "type": "WP_Post",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "width",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "height",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 48,
+                    "end": 62
+                },
+                {
+                    "routes": [],
+                    "name": "html",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "html(int $width, int $height, mixed $post): string|false",
+                    "doc": "get_post_embed_html: the blockquote, the iframe and its script, through embed_html; false for no post.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "width",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "height",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "post",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 65,
+                    "end": 85
+                },
+                {
+                    "routes": [],
+                    "name": "url",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "url(mixed $post): string|false",
+                    "doc": "get_post_embed_url: the post's /embed/ address (?embed=true without pretty links), through post_embed_url.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "post",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 88,
+                    "end": 99
+                },
+                {
+                    "routes": [],
+                    "name": "xml",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "xml(array $data): string",
+                    "doc": "_oembed_create_xml: the data as an oembed document, nested arrays as nested elements. @param array<string, mixed> $data",
+                    "shapes": [
+                        "@param array<string, mixed> $data"
+                    ],
+                    "params": [
+                        {
+                            "name": "data",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 102,
+                    "end": 107
+                },
+                {
+                    "routes": [],
+                    "name": "append",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "append(SimpleXMLElement $node, array $data): void",
+                    "doc": "",
+                    "shapes": [
+                        "@param array<string, mixed> $data"
+                    ],
+                    "params": [
+                        {
+                            "name": "node",
+                            "type": "SimpleXMLElement",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "data",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 110,
+                    "end": 120
+                }
+            ]
+        },
+        {
             "name": "Minn\\Front\\PostNavigation",
             "short": "PostNavigation",
             "namespace": "Minn\\Front",
@@ -53721,6 +53917,7 @@
                 "Minn\\Rest\\MediaController",
                 "Minn\\Rest\\MenusController",
                 "Minn\\Rest\\NavigationController",
+                "Minn\\Rest\\OEmbedController",
                 "Minn\\Rest\\PluginsController",
                 "Minn\\Rest\\PolicyGate",
                 "Minn\\Rest\\PostsController",
@@ -56160,6 +56357,7 @@
                 "Minn\\Rest\\MediaController",
                 "Minn\\Rest\\MenusController",
                 "Minn\\Rest\\NavigationController",
+                "Minn\\Rest\\OEmbedController",
                 "Minn\\Rest\\PluginsController",
                 "Minn\\Rest\\PostsController",
                 "Minn\\Rest\\PostsWriteController",
@@ -56640,6 +56838,7 @@
                 "Minn\\Rest\\MediaController",
                 "Minn\\Rest\\MenusController",
                 "Minn\\Rest\\NavigationController",
+                "Minn\\Rest\\OEmbedController",
                 "Minn\\Rest\\PluginsController",
                 "Minn\\Rest\\PolicyGate",
                 "Minn\\Rest\\PostsController",
@@ -57371,6 +57570,7 @@
                 "Minn\\Rest\\MediaController",
                 "Minn\\Rest\\MenusController",
                 "Minn\\Rest\\NavigationController",
+                "Minn\\Rest\\OEmbedController",
                 "Minn\\Rest\\PluginsController",
                 "Minn\\Rest\\PolicyGate",
                 "Minn\\Rest\\PostsController",
@@ -57960,6 +58160,7 @@
                 "Minn\\Rest\\MediaController",
                 "Minn\\Rest\\MenusController",
                 "Minn\\Rest\\NavigationController",
+                "Minn\\Rest\\OEmbedController",
                 "Minn\\Rest\\PluginsController",
                 "Minn\\Rest\\PostsController",
                 "Minn\\Rest\\PostsWriteController",
@@ -58357,6 +58558,7 @@
                 "Minn\\Rest\\MediaController",
                 "Minn\\Rest\\MenusController",
                 "Minn\\Rest\\NavigationController",
+                "Minn\\Rest\\OEmbedController",
                 "Minn\\Rest\\PluginsController",
                 "Minn\\Rest\\PostsController",
                 "Minn\\Rest\\PostsWriteController",
@@ -74255,6 +74457,7 @@
                 "Minn\\Rest\\LiveSettings",
                 "Minn\\Rest\\MediaController",
                 "Minn\\Rest\\MenusController",
+                "Minn\\Rest\\OEmbedController",
                 "Minn\\Rest\\PluginsController",
                 "Minn\\Rest\\PolicyGate",
                 "Minn\\Rest\\PostsController",
@@ -74859,7 +75062,7 @@
             "namespace": "Minn\\Rest",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Rest/Api.php",
-            "lines": 196,
+            "lines": 197,
             "doc": "The REST API: wires the controllers for one request and dispatches a\nroute. Errors thrown anywhere underneath become the reference's error\npayload under the reference's headers.",
             "implements": [],
             "extends": null,
@@ -74907,6 +75110,7 @@
                 "Minn\\Rest\\MenuObject",
                 "Minn\\Rest\\MenusController",
                 "Minn\\Rest\\NavigationController",
+                "Minn\\Rest\\OEmbedController",
                 "Minn\\Rest\\PluginsController",
                 "Minn\\Rest\\PolicyGate",
                 "Minn\\Rest\\PostObject",
@@ -75065,8 +75269,8 @@
                     "doc": "Who is making this request.",
                     "shapes": [],
                     "params": [],
-                    "line": 121,
-                    "end": 124
+                    "line": 122,
+                    "end": 125
                 },
                 {
                     "routes": [],
@@ -75077,8 +75281,8 @@
                     "doc": "The wp/v2 post shape.",
                     "shapes": [],
                     "params": [],
-                    "line": 127,
-                    "end": 130
+                    "line": 128,
+                    "end": 131
                 },
                 {
                     "routes": [],
@@ -75089,8 +75293,8 @@
                     "doc": "The wp/v2 term shape.",
                     "shapes": [],
                     "params": [],
-                    "line": 133,
-                    "end": 136
+                    "line": 134,
+                    "end": 137
                 },
                 {
                     "routes": [],
@@ -75101,8 +75305,8 @@
                     "doc": "The wp/v2 user shape.",
                     "shapes": [],
                     "params": [],
-                    "line": 139,
-                    "end": 142
+                    "line": 140,
+                    "end": 143
                 },
                 {
                     "routes": [],
@@ -75113,8 +75317,8 @@
                     "doc": "The post types the surface knows.",
                     "shapes": [],
                     "params": [],
-                    "line": 145,
-                    "end": 148
+                    "line": 146,
+                    "end": 149
                 },
                 {
                     "routes": [],
@@ -75140,8 +75344,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 155,
-                    "end": 162
+                    "line": 156,
+                    "end": 163
                 },
                 {
                     "routes": [],
@@ -75160,8 +75364,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 165,
-                    "end": 194
+                    "line": 166,
+                    "end": 195
                 },
                 {
                     "routes": [],
@@ -75187,8 +75391,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 203,
-                    "end": 214
+                    "line": 204,
+                    "end": 215
                 },
                 {
                     "routes": [],
@@ -75217,7 +75421,7 @@
                         }
                     ],
                     "line": 72,
-                    "end": 118
+                    "end": 119
                 },
                 {
                     "routes": [],
@@ -75236,8 +75440,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 216,
-                    "end": 220
+                    "line": 217,
+                    "end": 221
                 },
                 {
                     "routes": [],
@@ -75263,8 +75467,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 226,
-                    "end": 230
+                    "line": 227,
+                    "end": 231
                 }
             ]
         },
@@ -76769,6 +76973,7 @@
                 "Minn\\Rest\\MenuItemObject",
                 "Minn\\Rest\\MenuObject",
                 "Minn\\Rest\\MenusController",
+                "Minn\\Rest\\OEmbedController",
                 "Minn\\Rest\\PluginsController",
                 "Minn\\Rest\\PolicyGate",
                 "Minn\\Rest\\PostObject",
@@ -79529,13 +79734,13 @@
                 },
                 {
                     "routes": [
-                        "GET /{namespace:[a-z0-9-]+/v\\d+} (public)"
+                        "GET /{namespace:[a-z0-9-]+/(?:v\\d+|\\d+\\.\\d+)} (public)"
                     ],
                     "name": "namespaceIndex",
                     "static": false,
                     "visibility": "public",
                     "signature": "namespaceIndex(Minn\\Http\\Request $request, string $namespace): Minn\\Http\\Response",
-                    "doc": "One namespace's index, as the reference answers /wp-json/wp/v2: the\nnamespace, its routes (the namespace root among them), and the link\nup to the root index. A namespace the engine does not serve is left\nto the runtime, whose plugins may own it.",
+                    "doc": "One namespace's index, as the reference answers /wp-json/wp/v2 (or oembed/1.0): the\nnamespace, its routes (the namespace root among them), and the link\nup to the root index. A namespace the engine does not serve is left\nto the runtime, whose plugins may own it.",
                     "shapes": [],
                     "params": [
                         {
@@ -79680,7 +79885,7 @@
                 },
                 {
                     "routes": [
-                        "GET /wp/v2/themes/{stylesheet:[^/:<>*?\"|]+(?:/[^/:<>*?\"|]+)?} (public)"
+                        "GET /wp/v2/themes/{stylesheet:[^\\/:<>\\*\\?\"\\|]+(?:\\/[^\\/:<>\\*\\?\"\\|]+)?} (public)"
                     ],
                     "name": "single",
                     "static": false,
@@ -81548,7 +81753,7 @@
             "namespace": "Minn\\Rest",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Rest/MenusController.php",
-            "lines": 282,
+            "lines": 312,
             "doc": "wp/v2/menus, menu-items, and menu-locations. Viewing needs edit_posts;\nwrites need edit_theme_options. Anonymous callers get 401.",
             "implements": [],
             "extends": null,
@@ -81570,7 +81775,9 @@
                 "Minn\\Rest\\MenuObject",
                 "Minn\\Rest\\Reply",
                 "Minn\\Rest\\RestUrl",
+                "Minn\\Rest\\RuntimePrepare",
                 "Minn\\Runtime\\Refusal",
+                "Minn\\Runtime\\Runtime",
                 "Minn\\Support\\Kses"
             ],
             "usedBy": [
@@ -81618,8 +81825,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 26,
-                "end": 33
+                "line": 27,
+                "end": 34
             },
             "cases": [],
             "constants": [],
@@ -81690,8 +81897,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 37,
-                    "end": 60
+                    "line": 38,
+                    "end": 61
                 },
                 {
                     "routes": [
@@ -81719,8 +81926,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 64,
-                    "end": 71
+                    "line": 65,
+                    "end": 72
                 },
                 {
                     "routes": [
@@ -81741,8 +81948,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 75,
-                    "end": 87
+                    "line": 76,
+                    "end": 88
                 },
                 {
                     "routes": [
@@ -81772,8 +81979,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 93,
-                    "end": 110
+                    "line": 94,
+                    "end": 111
                 },
                 {
                     "routes": [
@@ -81801,8 +82008,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 114,
-                    "end": 127
+                    "line": 115,
+                    "end": 128
                 },
                 {
                     "routes": [
@@ -81823,8 +82030,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 131,
-                    "end": 147
+                    "line": 132,
+                    "end": 148
                 },
                 {
                     "routes": [
@@ -81852,8 +82059,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 151,
-                    "end": 160
+                    "line": 152,
+                    "end": 161
                 },
                 {
                     "routes": [
@@ -81874,8 +82081,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 164,
-                    "end": 190
+                    "line": 165,
+                    "end": 191
                 },
                 {
                     "routes": [
@@ -81905,8 +82112,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 196,
-                    "end": 242
+                    "line": 197,
+                    "end": 243
                 },
                 {
                     "routes": [
@@ -81934,18 +82141,18 @@
                             "doc": ""
                         }
                     ],
-                    "line": 246,
-                    "end": 259
+                    "line": 247,
+                    "end": 260
                 },
                 {
                     "routes": [
-                        "GET /wp/v2/menu-locations (cap edit_posts)"
+                        "GET /wp/v2/menu-locations (cap edit_theme_options)"
                     ],
                     "name": "locations",
                     "static": false,
                     "visibility": "public",
                     "signature": "locations(Minn\\Http\\Request $request): Minn\\Http\\Response",
-                    "doc": "The theme's menu locations.",
+                    "doc": "The menu locations the theme and plugins register (none for a block theme without plugins), keyed by name; edit_theme_options to view.",
                     "shapes": [],
                     "params": [
                         {
@@ -81956,8 +82163,66 @@
                             "doc": ""
                         }
                     ],
-                    "line": 263,
-                    "end": 268
+                    "line": 264,
+                    "end": 272
+                },
+                {
+                    "routes": [
+                        "GET /wp/v2/menu-locations/{location:[\\w-]+} (cap edit_theme_options)"
+                    ],
+                    "name": "oneLocation",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "oneLocation(Minn\\Http\\Request $request, string $location): Minn\\Http\\Response",
+                    "doc": "One menu location.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "request",
+                            "type": "Minn\\Http\\Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "location",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 276,
+                    "end": 283
+                },
+                {
+                    "routes": [],
+                    "name": "locationItem",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "locationItem(string $name, string $description): array",
+                    "doc": "A location, the menu assigned to it (0 for none), and links to it and its menu. @return array<string, mixed>",
+                    "shapes": [
+                        "@return array<string, mixed>"
+                    ],
+                    "params": [
+                        {
+                            "name": "name",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "description",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 286,
+                    "end": 299
                 },
                 {
                     "routes": [],
@@ -81978,8 +82243,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 271,
-                    "end": 278
+                    "line": 302,
+                    "end": 309
                 },
                 {
                     "routes": [],
@@ -82000,8 +82265,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 281,
-                    "end": 288
+                    "line": 312,
+                    "end": 319
                 },
                 {
                     "routes": [],
@@ -82020,8 +82285,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 291,
-                    "end": 299
+                    "line": 322,
+                    "end": 330
                 },
                 {
                     "routes": [],
@@ -82040,8 +82305,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 301,
-                    "end": 304
+                    "line": 332,
+                    "end": 335
                 }
             ]
         },
@@ -82261,6 +82526,134 @@
                     ],
                     "line": 64,
                     "end": 67
+                }
+            ]
+        },
+        {
+            "name": "Minn\\Rest\\OEmbedController",
+            "short": "OEmbedController",
+            "namespace": "Minn\\Rest",
+            "kind": "final readonly class",
+            "file": "public/minn/src/Minn/Rest/OEmbedController.php",
+            "lines": 72,
+            "doc": "oembed/1.0 as the reference answers it (probe oembed). embed is the\nprovider side: one of the site's own addresses as embed data (the post\nthrough url_to_postid and oembed_request_post_id), \"Not Found\" for\nanything else; format=xml is served as XML on the way out\n(RuntimeRoutes::serve). proxy is the editor's consumer side, for anyone\nwho can edit posts: the site's own addresses answered locally, anything\nelse fetched through WP_oEmbed with the editor's size, its markup\nthrough oembed_result, and kept in a transient for a day\n(rest_oembed_ttl) under the request's arguments.",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\Http\\Access",
+                "Minn\\Http\\Method",
+                "Minn\\Http\\Policy",
+                "Minn\\Http\\Request",
+                "Minn\\Http\\Response",
+                "Minn\\Http\\Route",
+                "Minn\\RestError",
+                "Minn\\Rest\\Caller",
+                "Minn\\Rest\\Reply",
+                "Minn\\Rest\\RuntimeRoutes",
+                "Minn\\Runtime\\Runtime"
+            ],
+            "usedBy": [
+                "Minn\\Rest\\Api"
+            ],
+            "constructor": {
+                "signature": "__construct(Minn\\Rest\\Caller $caller)",
+                "doc": "",
+                "shapes": [],
+                "params": [
+                    {
+                        "name": "caller",
+                        "type": "Minn\\Rest\\Caller",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    }
+                ],
+                "visibility": "public",
+                "line": 43,
+                "end": 45
+            },
+            "cases": [],
+            "constants": [
+                {
+                    "name": "EMBED",
+                    "value": "array (   'url' =>    array (     'description' => 'The URL of the resource for which to fetch oEmbed data.',     'type' => 'string',     'format' => 'uri',     'required' => true,   ),   'format' =>    array (     'default' => 'json',     'required' => false,   ),   'maxwidth' =>    array (     'default' => 600,     'required' => false,   ), )",
+                    "doc": "",
+                    "visibility": "private"
+                },
+                {
+                    "name": "PROXY",
+                    "value": "array (   'url' =>    array (     'description' => 'The URL of the resource for which to fetch oEmbed data.',     'type' => 'string',     'format' => 'uri',     'required' => true,   ),   'format' =>    array (     'description' => 'The oEmbed format to use.',     'type' => 'string',     'default' => 'json',     'enum' =>      array (       0 => 'json',       1 => 'xml',     ),     'required' => false,   ),   'maxwidth' =>    array (     'description' => 'The maximum width of the embed frame in pixels.',     'type' => 'integer',     'default' => 600,     'required' => false,   ),   'maxheight' =>    array (     'description' => 'The maximum height of the embed frame in pixels.',     'type' => 'integer',     'required' => false,   ),   'discover' =>    array (     'description' => 'Whether to perform an oEmbed discovery request for unsanctioned providers.',     'type' => 'boolean',     'default' => true,     'required' => false,   ), )",
+                    "doc": "",
+                    "visibility": "private"
+                }
+            ],
+            "properties": [
+                {
+                    "name": "caller",
+                    "type": "Minn\\Rest\\Caller",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
+                }
+            ],
+            "methods": [
+                {
+                    "routes": [
+                        "GET /oembed/1.0/embed (public)"
+                    ],
+                    "name": "embed",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "embed(Minn\\Http\\Request $request): Minn\\Http\\Response",
+                    "doc": "One of the site's own posts as embed data.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "request",
+                            "type": "Minn\\Http\\Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 49,
+                    "end": 59
+                },
+                {
+                    "routes": [
+                        "GET /oembed/1.0/proxy (public)"
+                    ],
+                    "name": "proxy",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "proxy(Minn\\Http\\Request $request): Minn\\Http\\Response",
+                    "doc": "Another site's embed, fetched for the editor.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "request",
+                            "type": "Minn\\Http\\Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 63,
+                    "end": 89
+                },
+                {
+                    "routes": [],
+                    "name": "requireRuntime",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "requireRuntime(): void",
+                    "doc": "Embed data comes from the runtime's own functions.",
+                    "shapes": [],
+                    "params": [],
+                    "line": 92,
+                    "end": 97
                 }
             ]
         },
@@ -85086,6 +85479,7 @@
                 "Minn\\Rest\\InstalledThemesController",
                 "Minn\\Rest\\MediaController",
                 "Minn\\Rest\\MenusController",
+                "Minn\\Rest\\OEmbedController",
                 "Minn\\Rest\\PluginsController",
                 "Minn\\Rest\\PostsController",
                 "Minn\\Rest\\PostsWriteController",
@@ -86361,6 +86755,7 @@
                 "Minn\\Rest\\CommentObject",
                 "Minn\\Rest\\InstalledThemesController",
                 "Minn\\Rest\\MediaObject",
+                "Minn\\Rest\\MenusController",
                 "Minn\\Rest\\PostObject",
                 "Minn\\Rest\\StatusesController",
                 "Minn\\Rest\\TermObject",
@@ -86466,7 +86861,7 @@
             "namespace": "Minn\\Rest",
             "kind": "final class",
             "file": "public/minn/src/Minn/Rest/RuntimeRoutes.php",
-            "lines": 312,
+            "lines": 337,
             "doc": "Routes plugin code registered with register_rest_route(), answered\nthrough the runtime's server after the engine's own routes have had\ntheir turn; the runtime's say before the engine answers at all (an\nauthentication refusal, a pre-dispatch answer, a removed endpoint);\nand the runtime's namespaces folded into the index.",
             "implements": [],
             "extends": null,
@@ -86480,6 +86875,7 @@
             "usedBy": [
                 "Minn\\Rest\\Api",
                 "Minn\\Rest\\MediaController",
+                "Minn\\Rest\\OEmbedController",
                 "Minn\\Rest\\RuntimeEnvelope",
                 "Minn\\Rest\\RuntimePrepare",
                 "Minn\\Runtime\\CommentEvents",
@@ -86495,6 +86891,12 @@
                     "name": "DISPATCH_DONE",
                     "value": "array (   'rest_filter_response_fields' => 10, )",
                     "doc": "rest_post_dispatch's defaults the engine does itself: every answer is cut to its _fields before it is served.",
+                    "visibility": "private"
+                },
+                {
+                    "name": "SERVE_DONE",
+                    "value": "array (   '_oembed_rest_pre_serve_request' => 10, )",
+                    "doc": "rest_pre_serve_request's defaults the engine does itself: oEmbed's XML (see oembedXml()).",
                     "visibility": "private"
                 }
             ],
@@ -86545,8 +86947,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 31,
-                    "end": 47
+                    "line": 34,
+                    "end": 50
                 },
                 {
                     "routes": [],
@@ -86565,8 +86967,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 50,
-                    "end": 65
+                    "line": 53,
+                    "end": 68
                 },
                 {
                     "routes": [],
@@ -86585,8 +86987,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 68,
-                    "end": 95
+                    "line": 71,
+                    "end": 98
                 },
                 {
                     "routes": [],
@@ -86612,8 +87014,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 107,
-                    "end": 111
+                    "line": 110,
+                    "end": 114
                 },
                 {
                     "routes": [],
@@ -86632,8 +87034,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 114,
-                    "end": 118
+                    "line": 117,
+                    "end": 121
                 },
                 {
                     "routes": [],
@@ -86668,8 +87070,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 125,
-                    "end": 129
+                    "line": 128,
+                    "end": 132
                 },
                 {
                     "routes": [],
@@ -86688,8 +87090,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 132,
-                    "end": 138
+                    "line": 135,
+                    "end": 141
                 },
                 {
                     "routes": [],
@@ -86708,8 +87110,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 145,
-                    "end": 161
+                    "line": 148,
+                    "end": 164
                 },
                 {
                     "routes": [],
@@ -86730,8 +87132,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 169,
-                    "end": 176
+                    "line": 172,
+                    "end": 179
                 },
                 {
                     "routes": [],
@@ -86750,8 +87152,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 179,
-                    "end": 189
+                    "line": 182,
+                    "end": 192
                 },
                 {
                     "routes": [],
@@ -86777,8 +87179,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 198,
-                    "end": 237
+                    "line": 201,
+                    "end": 244
                 },
                 {
                     "routes": [],
@@ -86797,8 +87199,35 @@
                             "doc": ""
                         }
                     ],
-                    "line": 314,
-                    "end": 318
+                    "line": 339,
+                    "end": 343
+                },
+                {
+                    "routes": [],
+                    "name": "oembedXml",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "oembedXml(Minn\\Http\\Request $request, Minn\\Http\\Response $response): ?Minn\\Http\\Response",
+                    "doc": "An oEmbed answer asked for as XML (format=xml), as the reference's\n_oembed_rest_pre_serve_request serves it over HTTP: the data as an\noembed document, text/xml. Null for anything else.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "request",
+                            "type": "Minn\\Http\\Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "response",
+                            "type": "Minn\\Http\\Response",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 251,
+                    "end": 262
                 },
                 {
                     "routes": [],
@@ -86819,8 +87248,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 240,
-                    "end": 243
+                    "line": 265,
+                    "end": 268
                 },
                 {
                     "routes": [],
@@ -86853,8 +87282,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 245,
-                    "end": 249
+                    "line": 270,
+                    "end": 274
                 },
                 {
                     "routes": [],
@@ -86873,8 +87302,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 252,
-                    "end": 262
+                    "line": 277,
+                    "end": 287
                 },
                 {
                     "routes": [],
@@ -86896,8 +87325,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 272,
-                    "end": 296
+                    "line": 297,
+                    "end": 321
                 },
                 {
                     "routes": [],
@@ -86916,8 +87345,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 298,
-                    "end": 311
+                    "line": 323,
+                    "end": 336
                 },
                 {
                     "routes": [],
@@ -86936,8 +87365,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 321,
-                    "end": 329
+                    "line": 346,
+                    "end": 354
                 }
             ]
         },
@@ -105271,6 +105700,8 @@
                 "Minn\\Rest\\InstalledThemesController",
                 "Minn\\Rest\\MediaController",
                 "Minn\\Rest\\MediaObject",
+                "Minn\\Rest\\MenusController",
+                "Minn\\Rest\\OEmbedController",
                 "Minn\\Rest\\PostObject",
                 "Minn\\Rest\\RenderedFields",
                 "Minn\\Rest\\RuntimeEnvelope",

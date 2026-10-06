@@ -21,6 +21,9 @@ final class RuntimeRoutes
     /** rest_post_dispatch's defaults the engine does itself: every answer is cut to its _fields before it is served. */
     private const DISPATCH_DONE = ['rest_filter_response_fields' => 10];
 
+    /** rest_pre_serve_request's defaults the engine does itself: oEmbed's XML (see oembedXml()). */
+    private const SERVE_DONE = ['_oembed_rest_pre_serve_request' => 10];
+
     /**
      * What plugin code decides before any route runs, engine routes
      * included, in the reference's order: rest_authentication_errors may
@@ -197,7 +200,11 @@ final class RuntimeRoutes
      */
     public static function serve(Request $request, Response $response): Response
     {
-        if (!Runtime::hooks()->hasBeyond('rest_post_dispatch', self::DISPATCH_DONE) && !\has_filter('rest_pre_serve_request') && !\has_filter('rest_pre_echo_response')) {
+        $xml = self::oembedXml($request, $response);
+        if ($xml !== null) {
+            return $xml;
+        }
+        if (!Runtime::hooks()->hasBeyond('rest_post_dispatch', self::DISPATCH_DONE) && !Runtime::hooks()->hasBeyond('rest_pre_serve_request', self::SERVE_DONE) && !\has_filter('rest_pre_echo_response')) {
             return $response;
         }
         $data = self::decode($response->body);
@@ -223,7 +230,7 @@ final class RuntimeRoutes
             $headers[$name] = (string) $value;
         }
         ob_start();
-        $served = \apply_filters('rest_pre_serve_request', false, $result, $wpRequest, $server);
+        $served = Runtime::hooks()->filterWithout('rest_pre_serve_request', [false, $result, $wpRequest, $server], self::SERVE_DONE);
         $printed = (string) ob_get_clean();
         if ($served) {
             return new Response($result->get_status(), $headers, $printed, $response->cookies, $response->afterSend);
@@ -234,6 +241,24 @@ final class RuntimeRoutes
         }
         $out = \apply_filters('rest_pre_echo_response', $out, $server, $wpRequest);
         return new Response($result->get_status(), $headers, (string) json_encode($out), $response->cookies, $response->afterSend);
+    }
+
+    /**
+     * An oEmbed answer asked for as XML (format=xml), as the reference's
+     * _oembed_rest_pre_serve_request serves it over HTTP: the data as an
+     * oembed document, text/xml. Null for anything else.
+     */
+    private static function oembedXml(Request $request, Response $response): ?Response
+    {
+        if (($request->query['format'] ?? '') !== 'xml' || $response->status !== 200 || !in_array($request->path, ['/oembed/1.0/embed', '/oembed/1.0/proxy'], true)) {
+            return null;
+        }
+        $data = json_decode($response->body, true);
+        if (!is_array($data)) {
+            return null;
+        }
+        $headers = ['Content-Type' => 'text/xml; charset=' . \get_option('blog_charset')] + $response->headers;
+        return new Response(200, $headers, (string) \_oembed_create_xml($data), $response->cookies, $response->afterSend);
     }
 
     /** What a response looks like to the code that may change it. @return array<int, mixed> */

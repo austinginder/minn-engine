@@ -39,6 +39,7 @@ function rest_api_register_rewrites()
 function rest_api_default_filters()
 {
     add_filter('rest_post_dispatch', 'rest_filter_response_fields', 10, 3);
+    add_filter('rest_pre_serve_request', '_oembed_rest_pre_serve_request', 10, 4);
     add_filter('rest_pre_dispatch', 'rest_handle_options_request', 10, 3);
 }
 

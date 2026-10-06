@@ -55,7 +55,7 @@ final readonly class InstalledThemesController
     }
 
     /** One theme by its stylesheet. */
-    #[Route(Method::Get, '/wp/v2/themes/{stylesheet:[^/:<>*?"|]+(?:/[^/:<>*?"|]+)?}', policy: new Policy(Access::Public), args: [Args::CONTEXT])]
+    #[Route(Method::Get, '/wp/v2/themes/{stylesheet:[^\/:<>\*\?"\|]+(?:\/[^\/:<>\*\?"\|]+)?}', policy: new Policy(Access::Public), args: [Args::CONTEXT])]
     public function single(Request $request, string $stylesheet): Response
     {
         self::requireRuntime();

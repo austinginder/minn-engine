@@ -4029,3 +4029,31 @@ Creating a pattern (`POST wp/v2/blocks`) now states its policy
 offers POST as the reference's does. The layout container hash
 (`wp-container-core-*-is-layout-{hash}`) remains engine-defined
 (contracts/blocks.md).
+
+## oEmbed (2026-10-06)
+
+The engine already printed oEmbed discovery links pointing at
+`oembed/1.0/embed`, a route it did not serve. Now (`Rest\OEmbedController`,
+`Front\PostEmbed`, probe `oembed`, compared over HTTP as well):
+- **embed.** Answers one of the site's own addresses with its embed data:
+  version, the site as provider, the author (or else the site), the title,
+  and through the default `oembed_response_data` filter the rich markup.
+  That markup is a blockquote, a sandboxed iframe of the post's `/embed/`
+  page with a fresh secret, and the sizing script (`assets/wp-embed.min.js`,
+  captured). The width is held between 200 and 600 and the height is a 16:9
+  share of it, at least 200. Anything else is "Not Found". `format=xml` is
+  served as XML on the way out (`RuntimeRoutes::serve`, the reference's
+  `_oembed_rest_pre_serve_request`, skipped as a hook the engine does itself).
+- **proxy.** Serves the editor, for anyone who can edit posts. The site's own
+  addresses are answered locally; anything else is fetched through
+  `WP_oEmbed` at the editor's size and kept in a transient for a day under
+  the request's arguments. A video or rich provider's iframe gets the title
+  its data names (`wp_filter_oembed_iframe_title_attribute` on
+  `oembed_dataparse`).
+- **Namespace index.** The index route takes dotted namespaces
+  (`oembed/1.0`).
+
+`wp/v2/menu-locations` (probe `rest-menu-locations`) lists the locations a
+theme or plugin registers (it always answered empty before) with the menu
+assigned to each, and `menu-locations/{location}` answers one. Both require
+`edit_theme_options` as on the reference: editors had been let through.

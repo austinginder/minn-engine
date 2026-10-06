@@ -3,11 +3,11 @@
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line)",
     "summary": {
         "minn": 632,
-        "composes": 869,
+        "composes": 872,
         "leaf": 635,
-        "noop": 1796,
-        "functions": 3862,
-        "minnMethods": 625,
+        "noop": 1802,
+        "functions": 3871,
+        "minnMethods": 630,
         "leafLinesOver15": 13
     },
     "functions": {
@@ -16237,6 +16237,15 @@
             "minn": [],
             "composes": []
         },
+        "_oembed_create_xml": {
+            "file": "misc.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Front\\PostEmbed::xml"
+            ],
+            "composes": []
+        },
         "_oembed_filter_feed_content": {
             "file": "formatting.php",
             "lines": 1,
@@ -16244,6 +16253,13 @@
             "minn": [
                 "Minn\\Content\\TextFilters::feedEmbeds"
             ],
+            "composes": []
+        },
+        "_oembed_rest_pre_serve_request": {
+            "file": "misc.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
             "composes": []
         },
         "_prime_post_caches": {
@@ -20777,6 +20793,48 @@
                 "wp_parse_args"
             ]
         },
+        "get_oembed_endpoint_url": {
+            "file": "misc.php",
+            "lines": 5,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "add_query_arg",
+                "apply_filters",
+                "rest_url"
+            ]
+        },
+        "get_oembed_response_data": {
+            "file": "misc.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Front\\PostEmbed::data"
+            ],
+            "composes": []
+        },
+        "get_oembed_response_data_for_url": {
+            "file": "misc.php",
+            "lines": 2,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "apply_filters",
+                "get_oembed_response_data",
+                "url_to_postid"
+            ]
+        },
+        "get_oembed_response_data_rich": {
+            "file": "misc.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Front\\PostEmbed::rich"
+            ],
+            "composes": [
+                "get_post"
+            ]
+        },
         "get_option": {
             "file": "option.php",
             "lines": 14,
@@ -21112,6 +21170,24 @@
                 "get_post",
                 "wp_timezone"
             ]
+        },
+        "get_post_embed_html": {
+            "file": "misc.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Front\\PostEmbed::html"
+            ],
+            "composes": []
+        },
+        "get_post_embed_url": {
+            "file": "misc.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Front\\PostEmbed::url"
+            ],
+            "composes": []
         },
         "get_post_field": {
             "file": "post.php",
@@ -25709,7 +25785,7 @@
         },
         "rest_api_default_filters": {
             "file": "rest-api.php",
-            "lines": 2,
+            "lines": 3,
             "kind": "composes",
             "minn": [],
             "composes": [
@@ -29851,6 +29927,15 @@
             "minn": [],
             "composes": [
                 "wp_list_pluck"
+            ]
+        },
+        "wp_filter_oembed_iframe_title_attribute": {
+            "file": "misc.php",
+            "lines": 6,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "esc_attr"
             ]
         },
         "wp_filter_post_kses": {

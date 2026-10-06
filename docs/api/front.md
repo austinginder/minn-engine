@@ -25,6 +25,7 @@ URL resolution, permalinks, feeds, sitemaps and the public page
 | [`Pagination`](#pagination) | final class | 62 | Numbered page links in the reference's shape: previous, the end and |
 | [`Permalinks`](#permalinks) | final readonly class | 253 | Builds public URLs from the site's permalink structure. With an empty |
 | [`PluginRules`](#pluginrules) | final class | 71 | Rewrite rules a plugin registered through add_rewrite_rule(): the |
+| [`PostEmbed`](#postembed) | final class | 104 | A post as other sites embed it, the oEmbed provider side, as the |
 | [`PostNavigation`](#postnavigation) | final class | 36 | The links to the posts either side of this one, and the nav block that |
 | [`ProbeController`](#probecontroller) | final readonly class | 57 | The surface monitors, crawlers, and hosting checks hit that is not a |
 | [`Redirects`](#redirects) | enum | 17 | Whether a resolution may answer with a canonical redirect. A GET or HEAD |
@@ -708,6 +709,49 @@ A plugin's rewrite rule that matches the path, or null.
 The query vars the matched rule stashed.
 
 - `@return array<string, string> the vars the matched rule stashed for this request`
+
+
+## PostEmbed
+
+`final class Minn\Front\PostEmbed` · `public/minn/src/Minn/Front/PostEmbed.php`
+
+A post as other sites embed it, the oEmbed provider side, as the
+reference answers (probe oembed): the data (version, the site as
+provider, the author or else the site, the title) through
+oembed_response_data, whose default makes it "rich" with the embed
+markup: a blockquote linking the post, a sandboxed iframe of its /embed/
+page carrying a fresh secret, and the inline script that sizes it. Only
+a publicly viewable post is embeddable; the width is held between 200
+and 600 (oembed_min_max_width) and the height is a 16:9 share of it, at
+least 200.
+
+### static `data(mixed $post, int $width): array|false`
+
+get_oembed_response_data: the data, or false when the post cannot be embedded. @return array<string, mixed>|false
+
+- `@return array<string, mixed>|false`
+
+### static `rich(array $data, WP_Post $post, int $width, int $height): array`
+
+get_oembed_response_data_rich: the size, the markup, and a thumbnail when the post has one. @param array<string, mixed> $data @return array<string, mixed>
+
+- `@param array<string, mixed> $data @return array<string, mixed>`
+
+### static `html(int $width, int $height, mixed $post): string|false`
+
+get_post_embed_html: the blockquote, the iframe and its script, through embed_html; false for no post.
+
+### static `url(mixed $post): string|false`
+
+get_post_embed_url: the post's /embed/ address (?embed=true without pretty links), through post_embed_url.
+
+### static `xml(array $data): string`
+
+_oembed_create_xml: the data as an oembed document, nested arrays as nested elements. @param array<string, mixed> $data
+
+- `@param array<string, mixed> $data`
+
+Internals: `append()` (private, line 110)
 
 
 ## PostNavigation

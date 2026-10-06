@@ -59,12 +59,12 @@ final readonly class IndexController
     }
 
     /**
-     * One namespace's index, as the reference answers /wp-json/wp/v2: the
+     * One namespace's index, as the reference answers /wp-json/wp/v2 (or oembed/1.0): the
      * namespace, its routes (the namespace root among them), and the link
      * up to the root index. A namespace the engine does not serve is left
      * to the runtime, whose plugins may own it.
      */
-    #[Route(Method::Get, '/{namespace:[a-z0-9-]+/v\d+}', policy: new Policy(Access::Public), index: false)]
+    #[Route(Method::Get, '/{namespace:[a-z0-9-]+/(?:v\d+|\d+\.\d+)}', policy: new Policy(Access::Public), index: false)]
     public function namespaceIndex(Request $request, string $namespace): Response
     {
         ['namespaces' => $namespaces, 'routes' => $routes] = $this->catalogue();
@@ -103,7 +103,7 @@ final readonly class IndexController
                 if ($route === '/') {
                     continue;
                 }
-                $namespace = preg_match('#^/([^/]+/v\d+)#', $route, $m) ? $m[1] : '';
+                $namespace = preg_match('#^/([^/]+/(?:v\d+|\d+\.\d+))#', $route, $m) ? $m[1] : '';
                 if ($namespace !== '' && !in_array($namespace, $namespaces, true)) {
                     $namespaces[] = $namespace;
                     $routes['/' . $namespace] = ['namespace' => $namespace, 'methods' => ['GET'], 'endpoints' => [['methods' => ['GET'], 'args' => ['namespace' => ['default' => $namespace, 'required' => false], 'context' => ['default' => 'view', 'required' => false]]]], '_links' => ['self' => [['href' => $this->url->to('/' . $namespace)]]]];

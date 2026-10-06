@@ -89,6 +89,7 @@ final readonly class Api
             new InstalledThemesController($s->url(), $caller),
             new BlockTypesController($s->url(), $caller),
             new BlockRendererController($s->schema(), $caller),
+            new OEmbedController($caller),
             new TaxonomiesController($s->taxonomies(), $caller),
             new SearchController($s->db(), $s->types(), $s->permalinks(), $s->url(), $caller),
             new PluginsController($s->site(), $s->inventory(), $s->loader(), $s->url(), $caller, $s->packages(), $s->contentDir()),
@@ -183,7 +184,7 @@ final readonly class Api
             if ($response === null && Runtime::booted()) {
                 $response = RuntimeRoutes::dispatch($request);
             }
-            if ($response !== null && Runtime::booted() && ($request->path === '/' || preg_match('#^/[a-z0-9-]+/v\d+$#', $request->path) === 1)) {
+            if ($response !== null && Runtime::booted() && ($request->path === '/' || preg_match('#^/[a-z0-9-]+/(?:v\d+|\d+\.\d+)$#', $request->path) === 1)) {
                 $response = RuntimeRoutes::mergeIndex($response);
             }
             $response ??= Reply::error(RestError::noRoute());
