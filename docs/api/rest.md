@@ -6,7 +6,7 @@ the wp/v2 surface: shapes and controllers
 |---|---|---|---|
 | [`AbilitiesController`](#abilitiescontroller) | final readonly class | 142 | wp-abilities/v1: what this site can be asked to do, and the doing of it. |
 | [`AdditionalFields`](#additionalfields) | final class | 46 | Which object type a wp/v2 route serves, so fields registered for that type can ride on the engine's own responses. |
-| [`Api`](#api) | final readonly class | 187 | The REST API: wires the controllers for one request and dispatches a |
+| [`Api`](#api) | final readonly class | 193 | The REST API: wires the controllers for one request and dispatches a |
 | [`ApplicationPasswordsController`](#applicationpasswordscontroller) | final readonly class | 170 | wp/v2/users/{id}/application-passwords: list, create, rename, delete, |
 | [`ArgCheck`](#argcheck) | final readonly class | 83 | Judges a route's declared arguments against the request before the |
 | [`BatchRequest`](#batchrequest) | final class | 32 | The requests a batch payload names, normalised into descriptors the |
@@ -47,14 +47,15 @@ the wp/v2 surface: shapes and controllers
 | [`RouteMatch`](#routematch) | final class | 68 | Finds the registered handler for a method and path among the runtime's route table. |
 | [`RouteTable`](#routetable) | final class | 38 | The registered endpoints in dispatch shape: one handler list per route, methods as a set, non-numeric keys lifted into the route's options. |
 | [`RuntimeEnvelope`](#runtimeenvelope) | final readonly class | 123 | The REST server's filters around one of Minn's own routes, as the |
-| [`RuntimePrepare`](#runtimeprepare) | final class | 35 | An item a REST response carries, through the filter the reference runs |
-| [`RuntimeRoutes`](#runtimeroutes) | final class | 305 | Routes plugin code registered with register_rest_route(), answered |
+| [`RuntimePrepare`](#runtimeprepare) | final class | 54 | An item a REST response carries, through the filter the reference runs |
+| [`RuntimeRoutes`](#runtimeroutes) | final class | 312 | Routes plugin code registered with register_rest_route(), answered |
 | [`Schema`](#schema) | final readonly class | 473 | JSON-schema handling the way the REST API's argument validation does it: |
 | [`SchemaValues`](#schemavalues) | final class | 206 | The value side of JSON Schema, as the reference applies it: what counts |
 | [`SearchController`](#searchcontroller) | final readonly class | 121 | wp/v2 search over published content: id, title, url, type, and the |
 | [`Services`](#services) | final class | 387 | The objects one REST request shares, each made once, on first use, from |
 | [`Settings`](#settings) | final readonly class | 113 | The registered settings the Settings views read and write, mapped to |
 | [`SettingsController`](#settingscontroller) | final readonly class | 32 | wp/v2/settings: read and write, both behind manage_options; with plugins loaded, every registered setting (LiveSettings). |
+| [`StatusesController`](#statusescontroller) | final readonly class | 111 | wp/v2/statuses as the reference answers it (probe rest-statuses): every |
 | [`Subjects`](#subjects) | final readonly class | 41 | Whether the record a route capture names exists, for the policy gate to |
 | [`Taxonomies`](#taxonomies) | final class | 48 | The taxonomy registry the wp/v2 surface describes: the core set seeded |
 | [`TaxonomiesController`](#taxonomiescontroller) | final readonly class | 48 | wp/v2 taxonomies: the registry, whole or per type, in view or edit context. |
@@ -203,14 +204,15 @@ leaves the caller as the request itself resolves it.
 
 Resolves a REST route (from the path or from ?rest_route=) to a response.
 
-### `handleEngineOnly(string $route): ?Minn\Http\Response`
+### `handleEngineOnly(string $route, ?WP_REST_Request $as = NULL): ?Minn\Http\Response`
 
 The engine's own answer to a route, or null when no engine route
 takes it; the runtime's table is never consulted. This is what the
 runtime's server calls for a core route, so a route the engine
-declines cannot bounce between the two.
+declines cannot bounce between the two. $as is the caller's own
+request object, which the route's parameters are set on.
 
-Internals: `controllers()` (private, line 72), `engineResponse()` (private, line 207), `withAllow()` (private, line 217)
+Internals: `controllers()` (private, line 72), `engineResponse()` (private, line 213), `withAllow()` (private, line 223)
 
 
 ## ApplicationPasswordsController
@@ -395,7 +397,7 @@ Trashes or deletes a block.
 Who is making this REST call. Resolved once from the cookie and nonce;
 an anonymous or failed caller has id 0 and every capability check fails.
 
-Used by: `Minn\Admin\BundleController`, `Minn\Admin\EditorController`, `Minn\Admin\LanguageController`, `Minn\Admin\OverviewController`, `Minn\Admin\PackagesController`, `Minn\Admin\PreferencesController`, `Minn\Admin\RenderController`, `Minn\Admin\SessionsController`, `Minn\Admin\SiteController`, `Minn\Admin\StructureController`, `Minn\Admin\SystemController`, `Minn\Admin\ThemesController`, `Minn\Admin\UpdatesController`, `Minn\Admin\V1Controller`, `Minn\Rest\AbilitiesController`, `Minn\Rest\Api`, `Minn\Rest\ApplicationPasswordsController`, `Minn\Rest\BlocksController`, `Minn\Rest\CommentObject`, `Minn\Rest\CommentsController`, `Minn\Rest\GlobalStylesController`, `Minn\Rest\GlobalStylesObject`, `Minn\Rest\MediaController`, `Minn\Rest\MediaObject`, `Minn\Rest\MenuItemObject`, `Minn\Rest\MenuObject`, `Minn\Rest\MenusController`, `Minn\Rest\PluginsController`, `Minn\Rest\PolicyGate`, `Minn\Rest\PostObject`, `Minn\Rest\PostsController`, `Minn\Rest\PostsWriteController`, `Minn\Rest\RevisionsController`, `Minn\Rest\SearchController`, `Minn\Rest\Services`, `Minn\Rest\SettingsController`, `Minn\Rest\TaxonomiesController`, `Minn\Rest\TemplateObject`, `Minn\Rest\TemplatesController`, `Minn\Rest\TermObject`, `Minn\Rest\TermsController`, `Minn\Rest\UserObject`, `Minn\Rest\UsersController`
+Used by: `Minn\Admin\BundleController`, `Minn\Admin\EditorController`, `Minn\Admin\LanguageController`, `Minn\Admin\OverviewController`, `Minn\Admin\PackagesController`, `Minn\Admin\PreferencesController`, `Minn\Admin\RenderController`, `Minn\Admin\SessionsController`, `Minn\Admin\SiteController`, `Minn\Admin\StructureController`, `Minn\Admin\SystemController`, `Minn\Admin\ThemesController`, `Minn\Admin\UpdatesController`, `Minn\Admin\V1Controller`, `Minn\Rest\AbilitiesController`, `Minn\Rest\Api`, `Minn\Rest\ApplicationPasswordsController`, `Minn\Rest\BlocksController`, `Minn\Rest\CommentObject`, `Minn\Rest\CommentsController`, `Minn\Rest\GlobalStylesController`, `Minn\Rest\GlobalStylesObject`, `Minn\Rest\MediaController`, `Minn\Rest\MediaObject`, `Minn\Rest\MenuItemObject`, `Minn\Rest\MenuObject`, `Minn\Rest\MenusController`, `Minn\Rest\PluginsController`, `Minn\Rest\PolicyGate`, `Minn\Rest\PostObject`, `Minn\Rest\PostsController`, `Minn\Rest\PostsWriteController`, `Minn\Rest\RevisionsController`, `Minn\Rest\SearchController`, `Minn\Rest\Services`, `Minn\Rest\SettingsController`, `Minn\Rest\StatusesController`, `Minn\Rest\TaxonomiesController`, `Minn\Rest\TemplateObject`, `Minn\Rest\TemplatesController`, `Minn\Rest\TermObject`, `Minn\Rest\TermsController`, `Minn\Rest\UserObject`, `Minn\Rest\UsersController`
 
 ```php
 __construct(Minn\Http\Request $request, Minn\Auth\Authenticator $authenticator, Minn\Auth\Capabilities $capabilities)
@@ -705,7 +707,7 @@ the whole payload otherwise, which is why _fields on the associative
 types response strips every key and yields [] over HTTP, a reference
 quirk the engine reproduces by construction.
 
-Used by: `Minn\Admin\SessionsController`, `Minn\Rest\ApplicationPasswordsController`, `Minn\Rest\BlocksController`, `Minn\Rest\CommentsController`, `Minn\Rest\Embed`, `Minn\Rest\GlobalStylesController`, `Minn\Rest\IndexController`, `Minn\Rest\MediaController`, `Minn\Rest\MenusController`, `Minn\Rest\PluginsController`, `Minn\Rest\PostsController`, `Minn\Rest\PostsWriteController`, `Minn\Rest\Reply`, `Minn\Rest\RevisionsController`, `Minn\Rest\SearchController`, `Minn\Rest\SettingsController`, `Minn\Rest\TaxonomiesController`, `Minn\Rest\TemplatesController`, `Minn\Rest\TermsController`, `Minn\Rest\TypesController`, `Minn\Rest\UsersController`
+Used by: `Minn\Admin\SessionsController`, `Minn\Rest\ApplicationPasswordsController`, `Minn\Rest\BlocksController`, `Minn\Rest\CommentsController`, `Minn\Rest\Embed`, `Minn\Rest\GlobalStylesController`, `Minn\Rest\IndexController`, `Minn\Rest\MediaController`, `Minn\Rest\MenusController`, `Minn\Rest\PluginsController`, `Minn\Rest\PostsController`, `Minn\Rest\PostsWriteController`, `Minn\Rest\Reply`, `Minn\Rest\RevisionsController`, `Minn\Rest\SearchController`, `Minn\Rest\SettingsController`, `Minn\Rest\StatusesController`, `Minn\Rest\TaxonomiesController`, `Minn\Rest\TemplatesController`, `Minn\Rest\TermsController`, `Minn\Rest\TypesController`, `Minn\Rest\UsersController`
 
 - readonly `array $paths`
 - readonly `bool $deferred`
@@ -1590,7 +1592,7 @@ on lists.
 
 - const `HEADERS` = `array (   'Content-Type' => 'application/json; charset=UTF-8',   'X-Content-Type-Options' => 'nosniff',   'Access-Control-Expose-Headers' => 'X-WP-Total, X-WP-TotalPages, Link',   'Access-Control-Allow-Headers' => 'Authorization, X-WP-Nonce, Content-Disposition, Content-MD5, Content-Type', )`
 
-Used by: `Minn\Admin\BundleController`, `Minn\Admin\EditorController`, `Minn\Admin\LanguageController`, `Minn\Admin\OverviewController`, `Minn\Admin\PackagesController`, `Minn\Admin\PreferencesController`, `Minn\Admin\RenderController`, `Minn\Admin\SessionsController`, `Minn\Admin\SiteController`, `Minn\Admin\StructureController`, `Minn\Admin\SystemController`, `Minn\Admin\ThemesController`, `Minn\Admin\UpdatesController`, `Minn\Admin\V1Controller`, `Minn\Rest\AbilitiesController`, `Minn\Rest\Api`, `Minn\Rest\ApplicationPasswordsController`, `Minn\Rest\BlocksController`, `Minn\Rest\CommentsController`, `Minn\Rest\GlobalStylesController`, `Minn\Rest\IndexController`, `Minn\Rest\MediaController`, `Minn\Rest\MenusController`, `Minn\Rest\PluginsController`, `Minn\Rest\PostsController`, `Minn\Rest\PostsWriteController`, `Minn\Rest\RevisionsController`, `Minn\Rest\RuntimeRoutes`, `Minn\Rest\SearchController`, `Minn\Rest\SettingsController`, `Minn\Rest\TaxonomiesController`, `Minn\Rest\TemplatesController`, `Minn\Rest\TermsController`, `Minn\Rest\TypesController`, `Minn\Rest\UsersController`
+Used by: `Minn\Admin\BundleController`, `Minn\Admin\EditorController`, `Minn\Admin\LanguageController`, `Minn\Admin\OverviewController`, `Minn\Admin\PackagesController`, `Minn\Admin\PreferencesController`, `Minn\Admin\RenderController`, `Minn\Admin\SessionsController`, `Minn\Admin\SiteController`, `Minn\Admin\StructureController`, `Minn\Admin\SystemController`, `Minn\Admin\ThemesController`, `Minn\Admin\UpdatesController`, `Minn\Admin\V1Controller`, `Minn\Rest\AbilitiesController`, `Minn\Rest\Api`, `Minn\Rest\ApplicationPasswordsController`, `Minn\Rest\BlocksController`, `Minn\Rest\CommentsController`, `Minn\Rest\GlobalStylesController`, `Minn\Rest\IndexController`, `Minn\Rest\MediaController`, `Minn\Rest\MenusController`, `Minn\Rest\PluginsController`, `Minn\Rest\PostsController`, `Minn\Rest\PostsWriteController`, `Minn\Rest\RevisionsController`, `Minn\Rest\RuntimeRoutes`, `Minn\Rest\SearchController`, `Minn\Rest\SettingsController`, `Minn\Rest\StatusesController`, `Minn\Rest\TaxonomiesController`, `Minn\Rest\TemplatesController`, `Minn\Rest\TermsController`, `Minn\Rest\TypesController`, `Minn\Rest\UsersController`
 
 ### static `answer(Minn\Http\Request $request, mixed $data, int $status = 200): Minn\Http\Response`
 
@@ -1620,7 +1622,7 @@ REST URLs in the form the reference emits for the site's permalink mode:
 {home}/index.php?rest_route=/wp/v2/... with the route value URL-encoded
 when query args ride along.
 
-Used by: `Minn\Engine`, `Minn\Rest\AbilitiesController`, `Minn\Rest\ApplicationPasswordsController`, `Minn\Rest\CommentObject`, `Minn\Rest\GlobalStylesObject`, `Minn\Rest\IndexController`, `Minn\Rest\MediaObject`, `Minn\Rest\MenuItemObject`, `Minn\Rest\MenuObject`, `Minn\Rest\MenusController`, `Minn\Rest\PluginsController`, `Minn\Rest\PostObject`, `Minn\Rest\PostsWriteController`, `Minn\Rest\RevisionsController`, `Minn\Rest\SearchController`, `Minn\Rest\Services`, `Minn\Rest\Taxonomies`, `Minn\Rest\TemplateObject`, `Minn\Rest\TermObject`, `Minn\Rest\Types`, `Minn\Rest\UserObject`, `Minn\Rest\UsersController`
+Used by: `Minn\Engine`, `Minn\Rest\AbilitiesController`, `Minn\Rest\ApplicationPasswordsController`, `Minn\Rest\CommentObject`, `Minn\Rest\GlobalStylesObject`, `Minn\Rest\IndexController`, `Minn\Rest\MediaObject`, `Minn\Rest\MenuItemObject`, `Minn\Rest\MenuObject`, `Minn\Rest\MenusController`, `Minn\Rest\PluginsController`, `Minn\Rest\PostObject`, `Minn\Rest\PostsWriteController`, `Minn\Rest\RevisionsController`, `Minn\Rest\SearchController`, `Minn\Rest\Services`, `Minn\Rest\StatusesController`, `Minn\Rest\Taxonomies`, `Minn\Rest\TemplateObject`, `Minn\Rest\TermObject`, `Minn\Rest\Types`, `Minn\Rest\UserObject`, `Minn\Rest\UsersController`
 
 ```php
 __construct(Minn\Front\Permalinks $permalinks)
@@ -1804,11 +1806,18 @@ data, handed with the object it describes and the request; what the
 filter leaves is the item. With nothing hooked, or a response handed back
 untouched, the item is Minn's own, byte for byte.
 
-Used by: `Minn\Rest\Api`, `Minn\Rest\CommentObject`, `Minn\Rest\MediaObject`, `Minn\Rest\PostObject`, `Minn\Rest\TermObject`, `Minn\Rest\UserObject`
+Used by: `Minn\Rest\Api`, `Minn\Rest\CommentObject`, `Minn\Rest\MediaObject`, `Minn\Rest\PostObject`, `Minn\Rest\StatusesController`, `Minn\Rest\TermObject`, `Minn\Rest\UserObject`
 
 ### static `answering(WP_REST_Request $request): void`
 
 Remembers the request a REST call is answering, for the filters its items pass through (on the request's own runtime).
+
+### static `during(WP_REST_Request $request, Closure $run): mixed`
+
+Runs an in-process REST call answering its own request (the filters
+hand plugins that one), then puts back the request it interrupted.
+
+- `@param \Closure(): T $run`
 
 ### static `item(string $filter, array $item, Closure $described): array`
 
@@ -1849,6 +1858,10 @@ Null when the runtime has no route for the request either.
 ### static `mergeIndex(Minn\Http\Response $response): Minn\Http\Response`
 
 The engine's index plus the namespaces and routes the runtime holds.
+
+### static `adopt(Minn\Http\Request $request, WP_REST_Request $wpRequest): void`
+
+An in-process call's own request object stands for the engine's request: the server sets its route's parameters on it, as the reference's dispatch does.
 
 ### static `wpRequest(Minn\Http\Request $request): WP_REST_Request`
 
@@ -1893,7 +1906,7 @@ nothing hooked, the answer goes out as it is.
 
 A callback's return as a response object, an error converted.
 
-Internals: `look()` (private, line 233), `remember()` (private, line 238), `decode()` (private, line 245), `expand()` (private, line 265), `newWpRequest()` (private, line 291), `toResponse()` (private, line 314)
+Internals: `look()` (private, line 240), `remember()` (private, line 245), `decode()` (private, line 252), `expand()` (private, line 272), `newWpRequest()` (private, line 298), `toResponse()` (private, line 321)
 
 
 ## Schema
@@ -2323,6 +2336,43 @@ Route: `PUT /wp/v2/settings (signed in)`
 Route: `PATCH /wp/v2/settings (signed in)`
 
 The site settings: read, or write from the body.
+
+
+## StatusesController
+
+`final readonly class Minn\Rest\StatusesController` · `public/minn/src/Minn/Rest/StatusesController.php`
+
+wp/v2/statuses as the reference answers it (probe rest-statuses): every
+post status that is not internal, a plugin's beside core's, by name,
+and trash last. A visitor sees the public ones; someone who can edit a
+type shown in REST sees them all, and only they may ask for the edit
+context of the list.
+Each status links to its posts and goes through rest_prepare_status.
+Like wp/v2/types, the list is keyed by name, so _fields over the whole
+of it keeps nothing.
+
+- const `FIELDS` = `array (   'embed' =>    array (     0 => 'name',     1 => 'slug',   ),   'view' =>    array (     0 => 'name',     1 => 'public',     2 => 'queryable',     3 => 'slug',     4 => 'date_floating',   ),   'edit' =>    array (     0 => 'name',     1 => 'private',     2 => 'protected',     3 => 'public',     4 => 'queryable',     5 => 'show_in_list',     6 => 'slug',     7 => 'date_floating',   ), )` — The fields each context shows, in the reference's order.
+
+Used by: `Minn\Rest\Api`
+
+```php
+__construct(Minn\Rest\RestUrl $url, Minn\Rest\Caller $caller)
+```
+
+
+### `list(Minn\Http\Request $request): Minn\Http\Response`
+
+Route: `GET /wp/v2/statuses (public)`
+
+The statuses the caller may see.
+
+### `single(Minn\Http\Request $request, string $status): Minn\Http\Response`
+
+Route: `GET /wp/v2/statuses/{status:[\w-]+} (public)`
+
+One status.
+
+Internals: `item()` (private, line 84), `readable()` (private, line 108), `editsAnyType()` (private, line 114), `statuses()` (private, line 128), `context()` (private, line 133)
 
 
 ## Subjects

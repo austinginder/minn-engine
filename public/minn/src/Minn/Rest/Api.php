@@ -85,6 +85,7 @@ final readonly class Api
             new UsersController($s->db(), $s->users(), $s->site(), $s->userObject(), $s->url(), $caller, $s->capabilities()->roles()),
             new ApplicationPasswordsController($s->users(), $s->site(), $s->applicationPasswords(), $s->url(), $caller, $s->schema()),
             new TypesController($s->types()),
+            new StatusesController($s->url(), $caller),
             new TaxonomiesController($s->taxonomies(), $caller),
             new SearchController($s->db(), $s->types(), $s->permalinks(), $s->url(), $caller),
             new PluginsController($s->site(), $s->inventory(), $s->loader(), $s->url(), $caller, $s->packages(), $s->contentDir()),
@@ -193,12 +194,17 @@ final readonly class Api
      * The engine's own answer to a route, or null when no engine route
      * takes it; the runtime's table is never consulted. This is what the
      * runtime's server calls for a core route, so a route the engine
-     * declines cannot bounce between the two.
+     * declines cannot bounce between the two. $as is the caller's own
+     * request object, which the route's parameters are set on.
      */
-    public function handleEngineOnly(string $route): ?Response
+    public function handleEngineOnly(string $route, ?\WP_REST_Request $as = null): ?Response
     {
+        $request = $this->request->withPath('/' . trim($route, '/'));
+        if ($as !== null) {
+            RuntimeRoutes::adopt($request, $as);
+        }
         try {
-            return $this->engineResponse($this->request->withPath('/' . trim($route, '/')));
+            return $this->engineResponse($request);
         } catch (RestError $error) {
             return Reply::error($error);
         }

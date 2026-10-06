@@ -24,6 +24,25 @@ final class RuntimePrepare
     }
 
     /**
+     * Runs an in-process REST call answering its own request (the filters
+     * hand plugins that one), then puts back the request it interrupted.
+     *
+     * @template T
+     * @param \Closure(): T $run
+     * @return T
+     */
+    public static function during(\WP_REST_Request $request, \Closure $run): mixed
+    {
+        $outer = Runtime::current()->get('rest_prepare_request');
+        self::answering($request);
+        try {
+            return $run();
+        } finally {
+            Runtime::current()->set('rest_prepare_request', $outer);
+        }
+    }
+
+    /**
      * One item through a rest_prepare filter.
      *
      * @param array<string, mixed> $item

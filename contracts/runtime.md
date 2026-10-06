@@ -3887,3 +3887,24 @@ Helpers that once returned a constant now do what the reference does (probe
   `_fields`, as the engine's own routes always have; the engine skips the
   filter where it has already done the work (`Hooks::hasBeyond`,
   `filterWithout`).
+
+## Missing core routes: statuses (2026-10-06)
+
+Comparing the engine's REST index with the reference's showed 70 core routes
+the engine did not serve. The first is `wp/v2/statuses`
+(`Rest\StatusesController`, probe `rest-statuses`):
+- Every status that is not internal is listed, a plugin's beside core's, and
+  trash comes last.
+- A visitor sees the public ones. Someone who can edit a type shown in REST
+  sees them all, and only they may ask for the list in the edit context.
+- Each status links to its posts and goes through `rest_prepare_status`.
+- Like `wp/v2/types`, `_fields` over the keyed list keeps nothing over HTTP.
+
+A registered status's `date_floating` now defaults to false, as on the
+reference.
+
+An in-process call (`rest_do_request` reaching an engine route) now passes
+its own `WP_REST_Request` through: the server sets the route's URL
+parameters, defaults and attributes on that object, as the reference's
+dispatch does, and the `rest_prepare_*` filters are handed that request.
+Before, plugins got an empty request with no context.

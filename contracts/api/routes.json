@@ -1,7 +1,7 @@
 {
     "engine": "0.0.1",
-    "routes": 235,
-    "withPolicy": 228,
+    "routes": 237,
+    "withPolicy": 230,
     "entries": [
         {
             "method": "GET",
@@ -5658,6 +5658,58 @@
                     "required": false
                 }
             },
+            "index": true
+        },
+        {
+            "method": "GET",
+            "pattern": "/wp/v2/statuses",
+            "name": "Minn\\Rest\\StatusesController::list",
+            "handler": "Minn\\Rest\\StatusesController::list",
+            "summary": "The statuses the caller may see.",
+            "policy": {
+                "access": "Public",
+                "describe": "public"
+            },
+            "args": {
+                "context": {
+                    "description": "Scope under which the request is made; determines fields present in response.",
+                    "type": "string",
+                    "enum": [
+                        "view",
+                        "embed",
+                        "edit"
+                    ],
+                    "default": "view",
+                    "required": false
+                }
+            },
+            "body": [],
+            "index": true
+        },
+        {
+            "method": "GET",
+            "pattern": "/wp/v2/statuses/{status:[\\w-]+}",
+            "name": "Minn\\Rest\\StatusesController::single",
+            "handler": "Minn\\Rest\\StatusesController::single",
+            "summary": "One status.",
+            "policy": {
+                "access": "Public",
+                "describe": "public"
+            },
+            "args": {
+                "context": {
+                    "description": "Scope under which the request is made; determines fields present in response.",
+                    "type": "string",
+                    "enum": [
+                        "view",
+                        "embed",
+                        "edit"
+                    ],
+                    "default": "view",
+                    "required": false
+                }
+            },
+            "body": [],
             "index": true
         },
         {

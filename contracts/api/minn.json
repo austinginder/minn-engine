@@ -53675,6 +53675,7 @@
                 "Minn\\Rest\\RevisionsController",
                 "Minn\\Rest\\SearchController",
                 "Minn\\Rest\\SettingsController",
+                "Minn\\Rest\\StatusesController",
                 "Minn\\Rest\\TaxonomiesController",
                 "Minn\\Rest\\TemplatesController",
                 "Minn\\Rest\\TermsController",
@@ -53742,6 +53743,7 @@
                 "Minn\\Rest\\MediaController",
                 "Minn\\Rest\\PostsController",
                 "Minn\\Rest\\SearchController",
+                "Minn\\Rest\\StatusesController",
                 "Minn\\Rest\\TaxonomiesController",
                 "Minn\\Rest\\TermsController",
                 "Minn\\Rest\\TypesController",
@@ -56106,6 +56108,7 @@
                 "Minn\\Rest\\RuntimeEnvelope",
                 "Minn\\Rest\\SearchController",
                 "Minn\\Rest\\SettingsController",
+                "Minn\\Rest\\StatusesController",
                 "Minn\\Rest\\TaxonomiesController",
                 "Minn\\Rest\\TemplatesController",
                 "Minn\\Rest\\TermsController",
@@ -56582,6 +56585,7 @@
                 "Minn\\Rest\\RevisionsController",
                 "Minn\\Rest\\SearchController",
                 "Minn\\Rest\\SettingsController",
+                "Minn\\Rest\\StatusesController",
                 "Minn\\Rest\\TaxonomiesController",
                 "Minn\\Rest\\TemplatesController",
                 "Minn\\Rest\\TermsController",
@@ -57313,6 +57317,7 @@
                 "Minn\\Rest\\SearchController",
                 "Minn\\Rest\\Services",
                 "Minn\\Rest\\SettingsController",
+                "Minn\\Rest\\StatusesController",
                 "Minn\\Rest\\TaxonomiesController",
                 "Minn\\Rest\\TemplatesController",
                 "Minn\\Rest\\TermsController",
@@ -57896,6 +57901,7 @@
                 "Minn\\Rest\\RuntimeRoutes",
                 "Minn\\Rest\\SearchController",
                 "Minn\\Rest\\SettingsController",
+                "Minn\\Rest\\StatusesController",
                 "Minn\\Rest\\TaxonomiesController",
                 "Minn\\Rest\\TemplatesController",
                 "Minn\\Rest\\TermsController",
@@ -58286,6 +58292,7 @@
                 "Minn\\Rest\\RevisionsController",
                 "Minn\\Rest\\SearchController",
                 "Minn\\Rest\\SettingsController",
+                "Minn\\Rest\\StatusesController",
                 "Minn\\Rest\\TaxonomiesController",
                 "Minn\\Rest\\TemplatesController",
                 "Minn\\Rest\\TermsController",
@@ -74184,6 +74191,7 @@
                 "Minn\\Rest\\RuntimeRoutes",
                 "Minn\\Rest\\SearchController",
                 "Minn\\Rest\\SettingsController",
+                "Minn\\Rest\\StatusesController",
                 "Minn\\Rest\\TaxonomiesController",
                 "Minn\\Rest\\TemplatesController",
                 "Minn\\Rest\\TermsController",
@@ -74777,7 +74785,7 @@
             "namespace": "Minn\\Rest",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Rest/Api.php",
-            "lines": 187,
+            "lines": 193,
             "doc": "The REST API: wires the controllers for one request and dispatches a\nroute. Errors thrown anywhere underneath become the reference's error\npayload under the reference's headers.",
             "implements": [],
             "extends": null,
@@ -74836,6 +74844,7 @@
                 "Minn\\Rest\\Services",
                 "Minn\\Rest\\Settings",
                 "Minn\\Rest\\SettingsController",
+                "Minn\\Rest\\StatusesController",
                 "Minn\\Rest\\TaxonomiesController",
                 "Minn\\Rest\\TemplateObject",
                 "Minn\\Rest\\TemplatesController",
@@ -74979,8 +74988,8 @@
                     "doc": "Who is making this request.",
                     "shapes": [],
                     "params": [],
-                    "line": 117,
-                    "end": 120
+                    "line": 118,
+                    "end": 121
                 },
                 {
                     "routes": [],
@@ -74991,8 +75000,8 @@
                     "doc": "The wp/v2 post shape.",
                     "shapes": [],
                     "params": [],
-                    "line": 123,
-                    "end": 126
+                    "line": 124,
+                    "end": 127
                 },
                 {
                     "routes": [],
@@ -75003,8 +75012,8 @@
                     "doc": "The wp/v2 term shape.",
                     "shapes": [],
                     "params": [],
-                    "line": 129,
-                    "end": 132
+                    "line": 130,
+                    "end": 133
                 },
                 {
                     "routes": [],
@@ -75015,8 +75024,8 @@
                     "doc": "The wp/v2 user shape.",
                     "shapes": [],
                     "params": [],
-                    "line": 135,
-                    "end": 138
+                    "line": 136,
+                    "end": 139
                 },
                 {
                     "routes": [],
@@ -75027,8 +75036,8 @@
                     "doc": "The post types the surface knows.",
                     "shapes": [],
                     "params": [],
-                    "line": 141,
-                    "end": 144
+                    "line": 142,
+                    "end": 145
                 },
                 {
                     "routes": [],
@@ -75054,8 +75063,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 151,
-                    "end": 158
+                    "line": 152,
+                    "end": 159
                 },
                 {
                     "routes": [],
@@ -75074,16 +75083,16 @@
                             "doc": ""
                         }
                     ],
-                    "line": 161,
-                    "end": 190
+                    "line": 162,
+                    "end": 191
                 },
                 {
                     "routes": [],
                     "name": "handleEngineOnly",
                     "static": false,
                     "visibility": "public",
-                    "signature": "handleEngineOnly(string $route): ?Minn\\Http\\Response",
-                    "doc": "The engine's own answer to a route, or null when no engine route\ntakes it; the runtime's table is never consulted. This is what the\nruntime's server calls for a core route, so a route the engine\ndeclines cannot bounce between the two.",
+                    "signature": "handleEngineOnly(string $route, ?WP_REST_Request $as = NULL): ?Minn\\Http\\Response",
+                    "doc": "The engine's own answer to a route, or null when no engine route\ntakes it; the runtime's table is never consulted. This is what the\nruntime's server calls for a core route, so a route the engine\ndeclines cannot bounce between the two. $as is the caller's own\nrequest object, which the route's parameters are set on.",
                     "shapes": [],
                     "params": [
                         {
@@ -75092,10 +75101,17 @@
                             "shape": "",
                             "default": null,
                             "doc": ""
+                        },
+                        {
+                            "name": "as",
+                            "type": "?WP_REST_Request",
+                            "shape": "",
+                            "default": "NULL",
+                            "doc": ""
                         }
                     ],
-                    "line": 198,
-                    "end": 205
+                    "line": 200,
+                    "end": 211
                 },
                 {
                     "routes": [],
@@ -75124,7 +75140,7 @@
                         }
                     ],
                     "line": 72,
-                    "end": 114
+                    "end": 115
                 },
                 {
                     "routes": [],
@@ -75143,8 +75159,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 207,
-                    "end": 211
+                    "line": 213,
+                    "end": 217
                 },
                 {
                     "routes": [],
@@ -75170,8 +75186,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 217,
-                    "end": 221
+                    "line": 223,
+                    "end": 227
                 }
             ]
         },
@@ -76235,6 +76251,7 @@
                 "Minn\\Rest\\SearchController",
                 "Minn\\Rest\\Services",
                 "Minn\\Rest\\SettingsController",
+                "Minn\\Rest\\StatusesController",
                 "Minn\\Rest\\TaxonomiesController",
                 "Minn\\Rest\\TemplateObject",
                 "Minn\\Rest\\TemplatesController",
@@ -78008,6 +78025,7 @@
                 "Minn\\Rest\\RevisionsController",
                 "Minn\\Rest\\SearchController",
                 "Minn\\Rest\\SettingsController",
+                "Minn\\Rest\\StatusesController",
                 "Minn\\Rest\\TaxonomiesController",
                 "Minn\\Rest\\TemplatesController",
                 "Minn\\Rest\\TermsController",
@@ -84294,6 +84312,7 @@
                 "Minn\\Rest\\RuntimeRoutes",
                 "Minn\\Rest\\SearchController",
                 "Minn\\Rest\\SettingsController",
+                "Minn\\Rest\\StatusesController",
                 "Minn\\Rest\\TaxonomiesController",
                 "Minn\\Rest\\TemplatesController",
                 "Minn\\Rest\\TermsController",
@@ -84475,6 +84494,7 @@
                 "Minn\\Rest\\RevisionsController",
                 "Minn\\Rest\\SearchController",
                 "Minn\\Rest\\Services",
+                "Minn\\Rest\\StatusesController",
                 "Minn\\Rest\\Taxonomies",
                 "Minn\\Rest\\TemplateObject",
                 "Minn\\Rest\\TermObject",
@@ -85544,7 +85564,7 @@
             "namespace": "Minn\\Rest",
             "kind": "final class",
             "file": "public/minn/src/Minn/Rest/RuntimePrepare.php",
-            "lines": 35,
+            "lines": 54,
             "doc": "An item a REST response carries, through the filter the reference runs\nas it prepares one (rest_prepare_{type}, rest_prepare_attachment,\nrest_prepare_user, rest_prepare_comment, rest_prepare_{taxonomy}): the\nitem as a response object, its links on the response rather than in its\ndata, handed with the object it describes and the request; what the\nfilter leaves is the item. With nothing hooked, or a response handed back\nuntouched, the item is Minn's own, byte for byte.",
             "implements": [],
             "extends": null,
@@ -85557,6 +85577,7 @@
                 "Minn\\Rest\\CommentObject",
                 "Minn\\Rest\\MediaObject",
                 "Minn\\Rest\\PostObject",
+                "Minn\\Rest\\StatusesController",
                 "Minn\\Rest\\TermObject",
                 "Minn\\Rest\\UserObject"
             ],
@@ -85584,6 +85605,35 @@
                     ],
                     "line": 21,
                     "end": 24
+                },
+                {
+                    "routes": [],
+                    "name": "during",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "during(WP_REST_Request $request, Closure $run): mixed",
+                    "doc": "Runs an in-process REST call answering its own request (the filters\nhand plugins that one), then puts back the request it interrupted.",
+                    "shapes": [
+                        "@param \\Closure(): T $run"
+                    ],
+                    "params": [
+                        {
+                            "name": "request",
+                            "type": "WP_REST_Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "run",
+                            "type": "Closure",
+                            "shape": "\\Closure(): T",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 34,
+                    "end": 43
                 },
                 {
                     "routes": [],
@@ -85620,8 +85670,8 @@
                             "doc": "the object the item describes, fetched only when a plugin listens"
                         }
                     ],
-                    "line": 33,
-                    "end": 51
+                    "line": 52,
+                    "end": 70
                 }
             ]
         },
@@ -85631,7 +85681,7 @@
             "namespace": "Minn\\Rest",
             "kind": "final class",
             "file": "public/minn/src/Minn/Rest/RuntimeRoutes.php",
-            "lines": 305,
+            "lines": 312,
             "doc": "Routes plugin code registered with register_rest_route(), answered\nthrough the runtime's server after the engine's own routes have had\ntheir turn; the runtime's say before the engine answers at all (an\nauthentication refusal, a pre-dispatch answer, a removed endpoint);\nand the runtime's namespaces folded into the index.",
             "implements": [],
             "extends": null,
@@ -85755,6 +85805,33 @@
                 },
                 {
                     "routes": [],
+                    "name": "adopt",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "adopt(Minn\\Http\\Request $request, WP_REST_Request $wpRequest): void",
+                    "doc": "An in-process call's own request object stands for the engine's request: the server sets its route's parameters on it, as the reference's dispatch does.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "request",
+                            "type": "Minn\\Http\\Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "wpRequest",
+                            "type": "WP_REST_Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 107,
+                    "end": 111
+                },
+                {
+                    "routes": [],
                     "name": "wpRequest",
                     "static": true,
                     "visibility": "public",
@@ -85770,8 +85847,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 107,
-                    "end": 111
+                    "line": 114,
+                    "end": 118
                 },
                 {
                     "routes": [],
@@ -85806,8 +85883,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 118,
-                    "end": 122
+                    "line": 125,
+                    "end": 129
                 },
                 {
                     "routes": [],
@@ -85826,8 +85903,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 125,
-                    "end": 131
+                    "line": 132,
+                    "end": 138
                 },
                 {
                     "routes": [],
@@ -85846,8 +85923,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 138,
-                    "end": 154
+                    "line": 145,
+                    "end": 161
                 },
                 {
                     "routes": [],
@@ -85868,8 +85945,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 162,
-                    "end": 169
+                    "line": 169,
+                    "end": 176
                 },
                 {
                     "routes": [],
@@ -85888,8 +85965,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 172,
-                    "end": 182
+                    "line": 179,
+                    "end": 189
                 },
                 {
                     "routes": [],
@@ -85915,8 +85992,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 191,
-                    "end": 230
+                    "line": 198,
+                    "end": 237
                 },
                 {
                     "routes": [],
@@ -85935,8 +86012,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 307,
-                    "end": 311
+                    "line": 314,
+                    "end": 318
                 },
                 {
                     "routes": [],
@@ -85957,8 +86034,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 233,
-                    "end": 236
+                    "line": 240,
+                    "end": 243
                 },
                 {
                     "routes": [],
@@ -85991,8 +86068,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 238,
-                    "end": 242
+                    "line": 245,
+                    "end": 249
                 },
                 {
                     "routes": [],
@@ -86011,8 +86088,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 245,
-                    "end": 255
+                    "line": 252,
+                    "end": 262
                 },
                 {
                     "routes": [],
@@ -86034,8 +86111,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 265,
-                    "end": 289
+                    "line": 272,
+                    "end": 296
                 },
                 {
                     "routes": [],
@@ -86054,8 +86131,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 291,
-                    "end": 304
+                    "line": 298,
+                    "end": 311
                 },
                 {
                     "routes": [],
@@ -86074,8 +86151,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 314,
-                    "end": 322
+                    "line": 321,
+                    "end": 329
                 }
             ]
         },
@@ -88337,6 +88414,256 @@
                     ],
                     "line": 31,
                     "end": 47
+                }
+            ]
+        },
+        {
+            "name": "Minn\\Rest\\StatusesController",
+            "short": "StatusesController",
+            "namespace": "Minn\\Rest",
+            "kind": "final readonly class",
+            "file": "public/minn/src/Minn/Rest/StatusesController.php",
+            "lines": 111,
+            "doc": "wp/v2/statuses as the reference answers it (probe rest-statuses): every\npost status that is not internal, a plugin's beside core's, by name,\nand trash last. A visitor sees the public ones; someone who can edit a\ntype shown in REST sees them all, and only they may ask for the edit\ncontext of the list.\nEach status links to its posts and goes through rest_prepare_status.\nLike wp/v2/types, the list is keyed by name, so _fields over the whole\nof it keeps nothing.",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\Http\\Access",
+                "Minn\\Http\\Args",
+                "Minn\\Http\\Method",
+                "Minn\\Http\\Policy",
+                "Minn\\Http\\Request",
+                "Minn\\Http\\Response",
+                "Minn\\Http\\Route",
+                "Minn\\RestError",
+                "Minn\\Rest\\Caller",
+                "Minn\\Rest\\Fields",
+                "Minn\\Rest\\Reply",
+                "Minn\\Rest\\RestUrl",
+                "Minn\\Rest\\RuntimePrepare",
+                "Minn\\Runtime\\Registry",
+                "Minn\\Runtime\\Runtime"
+            ],
+            "usedBy": [
+                "Minn\\Rest\\Api"
+            ],
+            "constructor": {
+                "signature": "__construct(Minn\\Rest\\RestUrl $url, Minn\\Rest\\Caller $caller)",
+                "doc": "",
+                "shapes": [],
+                "params": [
+                    {
+                        "name": "url",
+                        "type": "Minn\\Rest\\RestUrl",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    },
+                    {
+                        "name": "caller",
+                        "type": "Minn\\Rest\\Caller",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    }
+                ],
+                "visibility": "public",
+                "line": 37,
+                "end": 39
+            },
+            "cases": [],
+            "constants": [
+                {
+                    "name": "FIELDS",
+                    "value": "array (   'embed' =>    array (     0 => 'name',     1 => 'slug',   ),   'view' =>    array (     0 => 'name',     1 => 'public',     2 => 'queryable',     3 => 'slug',     4 => 'date_floating',   ),   'edit' =>    array (     0 => 'name',     1 => 'private',     2 => 'protected',     3 => 'public',     4 => 'queryable',     5 => 'show_in_list',     6 => 'slug',     7 => 'date_floating',   ), )",
+                    "doc": "The fields each context shows, in the reference's order.",
+                    "visibility": "private"
+                }
+            ],
+            "properties": [
+                {
+                    "name": "url",
+                    "type": "Minn\\Rest\\RestUrl",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
+                },
+                {
+                    "name": "caller",
+                    "type": "Minn\\Rest\\Caller",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
+                }
+            ],
+            "methods": [
+                {
+                    "routes": [
+                        "GET /wp/v2/statuses (public)"
+                    ],
+                    "name": "list",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "list(Minn\\Http\\Request $request): Minn\\Http\\Response",
+                    "doc": "The statuses the caller may see.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "request",
+                            "type": "Minn\\Http\\Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 43,
+                    "end": 59
+                },
+                {
+                    "routes": [
+                        "GET /wp/v2/statuses/{status:[\\w-]+} (public)"
+                    ],
+                    "name": "single",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "single(Minn\\Http\\Request $request, string $status): Minn\\Http\\Response",
+                    "doc": "One status.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "request",
+                            "type": "Minn\\Http\\Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "status",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 63,
+                    "end": 75
+                },
+                {
+                    "routes": [],
+                    "name": "item",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "item(string $name, array $status, array $fields): array",
+                    "doc": "A status as the reference shows it, its link to its posts after its fields.",
+                    "shapes": [
+                        "@param array<string, mixed> $status",
+                        "@param list<string> $fields",
+                        "@return array<string, mixed>"
+                    ],
+                    "params": [
+                        {
+                            "name": "name",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "status",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "fields",
+                            "type": "array",
+                            "shape": "list<string>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 84,
+                    "end": 99
+                },
+                {
+                    "routes": [],
+                    "name": "readable",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "readable(string $name, array $status): bool",
+                    "doc": "Whether the caller may see a status: a public one, or (for someone\nwho edits a type shown in REST) any but an internal one; trash counts\nas not internal.",
+                    "shapes": [
+                        "@param array<string, mixed> $status"
+                    ],
+                    "params": [
+                        {
+                            "name": "name",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "status",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 108,
+                    "end": 111
+                },
+                {
+                    "routes": [],
+                    "name": "editsAnyType",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "editsAnyType(): bool",
+                    "doc": "Whether the caller can edit posts of some type shown in REST.",
+                    "shapes": [],
+                    "params": [],
+                    "line": 114,
+                    "end": 125
+                },
+                {
+                    "routes": [],
+                    "name": "statuses",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "statuses(): array",
+                    "doc": "Every registered status: a plugin's too once plugins are loaded. @return array<string, array<string, mixed>>",
+                    "shapes": [
+                        "@return array<string, array<string, mixed>>"
+                    ],
+                    "params": [],
+                    "line": 128,
+                    "end": 131
+                },
+                {
+                    "routes": [],
+                    "name": "context",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "context(Minn\\Http\\Request $request): string",
+                    "doc": "",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "request",
+                            "type": "Minn\\Http\\Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 133,
+                    "end": 137
                 }
             ]
         },
@@ -103479,6 +103806,7 @@
             "usedBy": [
                 "Minn\\Front\\Permalinks",
                 "Minn\\Rest\\AdditionalFields",
+                "Minn\\Rest\\StatusesController",
                 "Minn\\Runtime\\PostQuery",
                 "Minn\\Runtime\\QueriedObject",
                 "Minn\\Runtime\\QueryFlags",
@@ -104067,6 +104395,7 @@
                 "Minn\\Rest\\RuntimeRoutes",
                 "Minn\\Rest\\Services",
                 "Minn\\Rest\\SettingsController",
+                "Minn\\Rest\\StatusesController",
                 "Minn\\Rest\\UsersController",
                 "Minn\\Runtime\\Abilities",
                 "Minn\\Runtime\\AjaxController",

@@ -7,7 +7,7 @@
         "leaf": 635,
         "noop": 1784,
         "functions": 3848,
-        "minnMethods": 614,
+        "minnMethods": 615,
         "leafLinesOver15": 13
     },
     "functions": {
@@ -8974,6 +8974,7 @@
                 "Minn\\Rest\\Api::actingAs",
                 "Minn\\Rest\\Api::forRequest",
                 "Minn\\Rest\\Api::handleEngineOnly",
+                "Minn\\Rest\\RuntimePrepare::during",
                 "Minn\\Runtime\\Runtime::current",
                 "Minn\\Runtime\\Runtime::isSecure"
             ],

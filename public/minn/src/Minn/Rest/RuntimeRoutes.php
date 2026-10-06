@@ -103,6 +103,13 @@ final class RuntimeRoutes
     /** @var \WeakMap<object, array{0: mixed, 1: Response|RestError}>|null what each object handed to plugins was made from, and how it looked */
     private static ?\WeakMap $origins = null;
 
+    /** An in-process call's own request object stands for the engine's request: the server sets its route's parameters on it, as the reference's dispatch does. */
+    public static function adopt(Request $request, \WP_REST_Request $wpRequest): void
+    {
+        self::$requests ??= new \WeakMap();
+        self::$requests[$request] = $wpRequest;
+    }
+
     /** The request as the runtime's server reads it, and as a REST filter or action hands it to plugins: the same object each time. */
     public static function wpRequest(Request $request): \WP_REST_Request
     {

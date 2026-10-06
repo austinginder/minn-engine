@@ -1,5 +1,6 @@
 <?php
 
+use Minn\Rest\RuntimePrepare;
 use Minn\Http\Method;
 use Minn\Http\Request;
 use Minn\Rest\AdditionalFields;
@@ -279,7 +280,7 @@ class WP_REST_Server
         if ($userId > 0) {
             $api->actingAs($userId, $userId === ($runtime->reader?->userId ?? 0) ? (string) $runtime->reader->sessionToken : '');
         }
-        $response = $api->handleEngineOnly($route);
+        $response = RuntimePrepare::during($request, static fn () => $api->handleEngineOnly($route, $request));
         if ($response === null) {
             return null;
         }

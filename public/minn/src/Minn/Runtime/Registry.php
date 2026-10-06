@@ -385,7 +385,7 @@ final class Registry
             'publicly_queryable' => (bool) ($args['publicly_queryable'] ?? $public),
             'show_in_admin_status_list' => (bool) ($args['show_in_admin_status_list'] ?? !$internal),
             'show_in_admin_all_list' => (bool) ($args['show_in_admin_all_list'] ?? !$internal),
-            'date_floating' => $args['date_floating'] ?? null,
+            'date_floating' => (bool) ($args['date_floating'] ?? false),
             'name' => $name,
         ];
         $this->statuses[$name] = $status;
