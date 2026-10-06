@@ -58,6 +58,18 @@ final readonly class Writer
      */
     public function prepareStored(string $relative, string $mime, int $parent, int $authorId): PreparedUpload
     {
+        $row = $this->prepareRow($relative, $mime, $parent, $authorId);
+        $sized = str_starts_with($mime, 'image/') && $mime !== 'image/svg+xml' && in_array($mime, Uploads::MIMES, true);
+        return new PreparedUpload($row->columns, $relative, $sized ? $this->imageMetadata($relative, $mime) : null);
+    }
+
+    /**
+     * The attachment's row alone, its sizes left to be cut once it exists:
+     * with plugins loaded, the runtime's wp_generate_attachment_metadata
+     * cuts them after the insert, as the reference does.
+     */
+    public function prepareRow(string $relative, string $mime, int $parent, int $authorId): PreparedUpload
+    {
         $title = (string) preg_replace('/\.[^.]+$/', '', basename($relative));
         $now = $this->site->localNow();
         $nowGmt = gmdate('Y-m-d H:i:s');
@@ -85,8 +97,13 @@ final readonly class Writer
             'post_mime_type' => $mime,
             'comment_count' => 0,
         ];
-        $sized = str_starts_with($mime, 'image/') && $mime !== 'image/svg+xml' && in_array($mime, Uploads::MIMES, true);
-        return new PreparedUpload($columns, $relative, $sized ? $this->imageMetadata($relative, $mime) : null);
+        return new PreparedUpload($columns, $relative, null);
+    }
+
+    /** A stored file's path on disk. */
+    public function pathOf(string $relative): string
+    {
+        return $this->uploads->pathFor($relative);
     }
 
     /** A stored file's path relative to the uploads folder, or null for one outside it. */

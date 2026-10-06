@@ -142,7 +142,7 @@ final readonly class MediaController
         $refused = static fn (string $message = 'Sorry, you are not allowed to upload this file type.'): RestError => new RestError($upload->movedFrom === null ? 'rest_upload_sideload_error' : 'rest_upload_unknown_error', $message, 500);
         if (Runtime::booted()) {
             [$relative, $type] = $this->storeWithPlugins($upload, $request, $refused);
-            return $this->inserted($this->library->prepareStored($relative, $type, $upload->parent, $userId), $request);
+            return $this->inserted($this->library->prepareRow($relative, $type, $upload->parent, $userId), $request);
         }
         if ($upload->mime() === null) {
             throw $refused();
@@ -202,9 +202,11 @@ final readonly class MediaController
         $events->restInserted($id, $request, null);
         $events->restAfterInsert($id, $request, null);
         $events->afterInsert($id, null);
-        // The reference cuts the sizes after the insert and stores the metadata last; the engine cut them first.
-        if ($prepared->metadata !== null) {
-            $events->attachmentMetadata($this->library, $id, $prepared->metadata);
+        // The reference cuts the sizes after the insert, storing the metadata as it goes; without plugins the engine cut them first.
+        if ($events->live()) {
+            $events->attachmentGenerated($id, $this->library->pathOf($prepared->relative), (string) $prepared->columns['post_mime_type']);
+        } elseif ($prepared->metadata !== null) {
+            $this->library->setMetadata($id, $prepared->metadata);
         }
         return Reply::item($this->object->build($this->posts->find($id), Context::Edit), Fields::fromQuery($request->query), 201)
             ->withHeader('Location', $this->object->url()->to('/wp/v2/media/' . $id));

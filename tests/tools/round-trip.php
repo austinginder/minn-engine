@@ -485,6 +485,10 @@ function rt_text( string $value, array $labels, array $window ): string {
 		$value
 	);
 	$value = (string) preg_replace( array( '/\b127\.0\.0\.1\b/', '/(?<![\w:])::1(?![\w:])/' ), '{loopback}', $value );
+	// Values each stack draws at random: a uniqid lock (Action Scheduler), a shop's order key and its tracking id.
+	$value = (string) preg_replace( array( '/\b[0-9a-f]{14}\.\d{8}\b/', '/\bwc_order_[A-Za-z0-9]{13}\b/', '/\bwoo:[A-Za-z0-9+\/]{24}/' ), array( '{uniqid}', 'wc_order_{key}', 'woo:{token}' ), $value );
+	// A time written out for people ("October 6, 2026 @ 10:40 AM", a WooCommerce order's title) inside the run.
+	$value = (string) preg_replace_callback( '/\b([A-Z][a-z]+ \d{1,2}, \d{4}) @ (\d{1,2}:\d\d [AP]M)\b/', static fn ( $m ) => rt_in_window( date( 'Y-m-d H:i:s', (int) strtotime( "{$m[1]} {$m[2]}" ) ), $window ) ? '{now}' : $m[0], $value );
 	// The parked WordPress serves from wp-reference/, Minn from public/: one webroot, two directories. A serialized
 	// path's length prefix follows the directory name, so it is masked with it.
 	$value = (string) preg_replace( '#\.localhost/(?:wp-reference|public)/#', '.localhost/{webroot}/', $value );
@@ -497,7 +501,7 @@ function rt_text( string $value, array $labels, array $window ): string {
 
 /** A Unix time inside the run, or a common span after it (sessions, nonces, schedules): {now}, {now+14d}. */
 function rt_stamp( float $at, array $window ): ?string {
-	foreach ( array( '' => 0, '+1h' => 3600, '+12h' => 43200, '+1d' => 86400, '+2d' => 172800, '+7d' => 604800, '+14d' => 1209600, '+30d' => 2592000, '+1y' => 31536000 ) as $label => $span ) {
+	foreach ( array( '' => 0, '+15m' => 900, '+1h' => 3600, '+12h' => 43200, '+1d' => 86400, '+2d' => 172800, '+7d' => 604800, '+14d' => 1209600, '+30d' => 2592000, '+1y' => 31536000 ) as $label => $span ) {
 		if ( $at - $span >= $window[0] && $at - $span <= $window[1] ) {
 			return '{now' . $label . '}';
 		}

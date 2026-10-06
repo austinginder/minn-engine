@@ -6,6 +6,7 @@ namespace Minn\Runtime;
 
 use Minn\Content\PostRecord;
 use Minn\Content\PostWriter;
+use Minn\Media\Uploads;
 use Minn\Media\Writer;
 use Minn\Http\Request;
 use Minn\Rest\RuntimeRoutes;
@@ -96,20 +97,19 @@ final readonly class PostEvents
     }
 
     /**
-     * A new attachment's metadata: with plugins loaded it passes through
-     * wp_generate_attachment_metadata (where an image optimiser works) and
-     * is stored by wp_update_attachment_metadata; without, as built.
-     *
-     * @param array<string, mixed> $metadata
+     * A new attachment's metadata made by the runtime, as the reference's
+     * REST upload makes it: wp_generate_attachment_metadata over the stored
+     * file (the sizes cut with the attachment's id, the metadata stored as
+     * each one lands, so an optimiser hooked there finds it), then
+     * wp_update_attachment_metadata. Only for the images the engine sizes,
+     * as without plugins.
      */
-    public function attachmentMetadata(Writer $library, int $id, array $metadata): void
+    public function attachmentGenerated(int $id, string $file, string $mime): void
     {
-        if (!$this->live()) {
-            $library->setMetadata($id, $metadata);
+        if (!str_starts_with($mime, 'image/') || $mime === 'image/svg+xml' || !in_array($mime, Uploads::MIMES, true)) {
             return;
         }
-        $metadata = \apply_filters('wp_generate_attachment_metadata', $metadata, $id, 'create');
-        \wp_update_attachment_metadata($id, $metadata);
+        \wp_update_attachment_metadata($id, \wp_generate_attachment_metadata($id, $file));
     }
 
     /** An attachment's alt text: through update_post_meta with plugins loaded, written directly without. */

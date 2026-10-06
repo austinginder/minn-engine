@@ -36,7 +36,7 @@ final class Constants
             'WP_DEVELOPMENT_MODE' => '',
             'WP_DEFAULT_THEME' => 'twentytwentyfive',
             'WP_MEMORY_LIMIT' => '40M',
-            'WP_MAX_MEMORY_LIMIT' => '256M',
+            'WP_MAX_MEMORY_LIMIT' => self::maxMemoryLimit(),
             'COOKIEHASH' => md5($siteUrl),
             'COOKIEPATH' => rtrim((string) (parse_url((string) ($runtime->site->option('home') ?? ''), PHP_URL_PATH) ?: ''), '/') . '/',
             'SITECOOKIEPATH' => rtrim((string) (parse_url($siteUrl, PHP_URL_PATH) ?: ''), '/') . '/',
@@ -73,5 +73,22 @@ final class Constants
             $GLOBALS['_wp_using_ext_object_cache'] = null;
         }
         $GLOBALS['table_prefix'] = $runtime->db->prefix();
+    }
+
+    /**
+     * 256M, unless PHP starts with no limit or a higher one, which is then
+     * kept as written (probe: the reference started at 128M, 300M, 1G, -1).
+     */
+    private static function maxMemoryLimit(): string
+    {
+        $start = (string) ini_get('memory_limit');
+        $number = (int) $start;
+        $bytes = match (strtolower(substr(trim($start), -1))) {
+            'g' => $number << 30,
+            'm' => $number << 20,
+            'k' => $number << 10,
+            default => $number,
+        };
+        return $start === '-1' || $bytes > 268435456 ? $start : '256M';
     }
 }
