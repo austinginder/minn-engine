@@ -1004,7 +1004,8 @@ function comments_template($file = '/comments.php', $separate_comments = false)
     if (post_password_required()) {
         return;
     }
-    $rows = get_comments(['post_id' => (int) $post->ID, 'orderby' => 'comment_date_gmt', 'order' => 'ASC', 'status' => 'approve', 'include_unapproved' => is_user_logged_in() ? [get_current_user_id()] : [], 'no_found_rows' => false]);
+    $email = is_user_logged_in() ? '' : ((string) wp_get_current_commenter()['comment_author_email'] ?: wp_get_unapproved_comment_author_email());
+    $rows = get_comments(['post_id' => (int) $post->ID, 'orderby' => 'comment_date_gmt', 'order' => 'ASC', 'status' => 'approve', 'include_unapproved' => is_user_logged_in() ? [get_current_user_id()] : ($email === '' ? [] : [$email]), 'no_found_rows' => false]);
     $wp_query->comments = apply_filters('comments_array', $rows, (int) $post->ID);
     $wp_query->comment_count = count($wp_query->comments);
     $wp_query->max_num_comment_pages = get_comment_pages_count($wp_query->comments);
@@ -1386,4 +1387,15 @@ function _clear_modified_cache_on_transition_comment_status($new_status, $old_st
             wp_cache_delete("lastcommentmodified:{$timezone}", 'timeinfo');
         }
     }
+}
+
+/** The author email of the held comment ?unapproved= names, when ?moderation-hash= (wp_hash of its GMT date) proves the link came from posting it in the last ten minutes; "" otherwise. */
+function wp_get_unapproved_comment_author_email()
+{
+    $query = Runtime::current()->request?->query ?? [];
+    $comment = isset($query['unapproved'], $query['moderation-hash']) ? get_comment((int) $query['unapproved']) : null;
+    if (!$comment instanceof WP_Comment || (string) $comment->comment_approved !== '0' || (int) strtotime($comment->comment_date_gmt . ' UTC') + 600 <= time()) {
+        return '';
+    }
+    return hash_equals(wp_hash($comment->comment_date_gmt), (string) $query['moderation-hash']) ? (string) $comment->comment_author_email : '';
 }

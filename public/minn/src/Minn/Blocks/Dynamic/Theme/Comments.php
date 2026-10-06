@@ -18,6 +18,9 @@ use Minn\Front\Permalinks;
 use Minn\Support\Html;
 use Minn\Support\Kses;
 use Minn\Content\PasswordGate;
+use Minn\Content\Reader;
+use Minn\Auth\Salts;
+use Minn\Runtime\Runtime;
 
 /** comments, comments-title, comment-template, the comment-* blocks, and the comment form. */
 final readonly class Comments
@@ -85,7 +88,7 @@ final readonly class Comments
         if ($post === null) {
             return '';
         }
-        $all = $this->approved($post->id);
+        $all = $this->visible($post->id);
         if ($all === []) {
             return '';
         }
@@ -110,10 +113,11 @@ final readonly class Comments
                 $inner .= $chunk ?? $renderer->renderBlock($block->innerBlocks[$index++]);
             }
             $context->withComment(null);
-            $parity = $position % 2 === 1 ? 'even' : 'odd';
-            $classes = ['comment', $parity];
+            // The reference counts from zero: the first is even, and an odd one is "alt" as well.
+            $odd = $position % 2 === 0;
+            $classes = ['comment', ...($odd ? ['odd', 'alt'] : ['even'])];
             if ($depth === 1) {
-                $classes[] = 'thread-' . $parity;
+                array_push($classes, ...($odd ? ['thread-odd', 'thread-alt'] : ['thread-even']));
             }
             $classes[] = 'depth-' . $depth;
             $children = $this->list($all, $comment->id, $depth + 1, $block, $renderer);
@@ -166,7 +170,9 @@ final readonly class Comments
         if ($comment === null) {
             return '';
         }
-        return '<div class="wp-block-comment-content">' . Blocks::paragraphs($comment->content) . '</div>';
+        // A held comment, shown only to its author, says so first.
+        $held = $comment->approved === '0' ? '<p><em class="comment-awaiting-moderation">Your comment is awaiting moderation.</em></p>' : '';
+        return '<div class="wp-block-comment-content">' . $held . Blocks::paragraphs($comment->content) . '</div>';
     }
 
     private function replyLink(Block $block, Renderer $renderer): string
@@ -202,6 +208,45 @@ final readonly class Comments
             . '<p class="form-submit wp-block-button"><input name="submit" type="submit" id="submit" class="wp-block-button__link wp-element-button" value="Post Comment" /> <input type=\'hidden\' name=\'comment_post_ID\' value=\'' . $post->id . '\' id=\'comment_post_ID\' />' . "\n"
             . '<input type=\'hidden\' name=\'comment_parent\' id=\'comment_parent\' value=\'0\' />' . "\n"
             . '</p></form>' . "\t" . '</div><!-- #respond -->';
+    }
+
+    /**
+     * The approved plain comments and the reader's own held ones, oldest
+     * first: held comments by the signed-in account, by the email the
+     * commenter cookie remembers, or by the email of the held comment a
+     * link names with its moderation hash (wp_hash of its GMT date).
+     *
+     * @return list<CommentRecord>
+     */
+    private function visible(int $postId): array
+    {
+        $reader = Reader::current();
+        $request = Runtime::booted() ? Runtime::current()->request : null;
+        $emails = array_filter([$reader->userId > 0 ? '' : (string) ($request?->cookies['comment_author_email_' . md5((string) $this->site->option('siteurl'))] ?? ''), $this->linkedEmail($request?->query ?? [])]);
+        $own = $reader->userId > 0 ? ['user_id = ?'] : [];
+        foreach ($emails as $ignored) {
+            $own[] = 'comment_author_email = ?';
+        }
+        $held = $own === [] ? '' : " OR (comment_approved = '0' AND (" . implode(' OR ', $own) . '))';
+        return CommentRecord::fromRows($this->db->rows(
+            "SELECT * FROM {$this->db->table('comments')} WHERE comment_post_ID = ? AND comment_type IN ('', 'comment') AND (comment_approved = '1'{$held})
+             ORDER BY comment_date_gmt ASC, comment_ID ASC",
+            [$postId, ...($reader->userId > 0 ? [$reader->userId] : []), ...array_values($emails)],
+        ));
+    }
+
+    /** The author email of the held comment ?unapproved= names, when ?moderation-hash= proves the link came from posting it in the last ten minutes. @param array<string, mixed> $query */
+    private function linkedEmail(array $query): string
+    {
+        $id = (int) ($query['unapproved'] ?? 0);
+        $hash = (string) ($query['moderation-hash'] ?? '');
+        if ($id <= 0 || $hash === '') {
+            return '';
+        }
+        $row = $this->db->row("SELECT * FROM {$this->db->table('comments')} WHERE comment_ID = ? AND comment_approved = '0'", [$id]);
+        $held = $row === null ? null : CommentRecord::fromRow($row);
+        $fresh = $held !== null && (int) strtotime($held->dateGmt . ' UTC') + 600 > time();
+        return $fresh && hash_equals(Salts::hash($held->dateGmt, 'auth'), $hash) ? $held->authorEmail : '';
     }
 
     /** @return list<CommentRecord> approved plain comments, oldest first */

@@ -9874,6 +9874,7 @@
                 "Minn\\Auth\\Cookie",
                 "Minn\\Auth\\Nonce",
                 "Minn\\Auth\\PasswordReset",
+                "Minn\\Blocks\\Dynamic\\Theme\\Comments",
                 "Minn\\Engine",
                 "Minn\\Front\\CommentPostController"
             ],
@@ -12351,11 +12352,12 @@
             "namespace": "Minn\\Blocks\\Dynamic\\Theme",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Blocks/Dynamic/Theme/Comments.php",
-            "lines": 194,
+            "lines": 236,
             "doc": "comments, comments-title, comment-template, the comment-* blocks, and the comment form.",
             "implements": [],
             "extends": null,
             "uses": [
+                "Minn\\Auth\\Salts",
                 "Minn\\Blocks\\Block",
                 "Minn\\Blocks\\Dynamic\\Dates",
                 "Minn\\Blocks\\Renderer",
@@ -12364,10 +12366,12 @@
                 "Minn\\Content\\CommentRecord",
                 "Minn\\Content\\Comments",
                 "Minn\\Content\\PasswordGate",
+                "Minn\\Content\\Reader",
                 "Minn\\Content\\Site",
                 "Minn\\Content\\Texturize",
                 "Minn\\Db",
                 "Minn\\Front\\Permalinks",
+                "Minn\\Runtime\\Runtime",
                 "Minn\\Support\\Html",
                 "Minn\\Support\\Kses"
             ],
@@ -12409,8 +12413,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 25,
-                "end": 31
+                "line": 28,
+                "end": 34
             },
             "cases": [],
             "constants": [],
@@ -12470,8 +12474,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 34,
-                    "end": 47
+                    "line": 37,
+                    "end": 50
                 },
                 {
                     "routes": [],
@@ -12497,8 +12501,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 50,
-                    "end": 62
+                    "line": 53,
+                    "end": 65
                 },
                 {
                     "routes": [],
@@ -12524,8 +12528,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 64,
-                    "end": 79
+                    "line": 67,
+                    "end": 82
                 },
                 {
                     "routes": [],
@@ -12551,8 +12555,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 81,
-                    "end": 93
+                    "line": 84,
+                    "end": 96
                 },
                 {
                     "routes": [],
@@ -12601,8 +12605,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 96,
-                    "end": 123
+                    "line": 99,
+                    "end": 127
                 },
                 {
                     "routes": [],
@@ -12628,8 +12632,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 125,
-                    "end": 135
+                    "line": 129,
+                    "end": 139
                 },
                 {
                     "routes": [],
@@ -12655,8 +12659,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 137,
-                    "end": 147
+                    "line": 141,
+                    "end": 151
                 },
                 {
                     "routes": [],
@@ -12682,8 +12686,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 149,
-                    "end": 161
+                    "line": 153,
+                    "end": 165
                 },
                 {
                     "routes": [],
@@ -12709,8 +12713,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 163,
-                    "end": 170
+                    "line": 167,
+                    "end": 176
                 },
                 {
                     "routes": [],
@@ -12736,8 +12740,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 172,
-                    "end": 183
+                    "line": 178,
+                    "end": 189
                 },
                 {
                     "routes": [],
@@ -12763,8 +12767,52 @@
                             "doc": ""
                         }
                     ],
-                    "line": 185,
-                    "end": 205
+                    "line": 191,
+                    "end": 211
+                },
+                {
+                    "routes": [],
+                    "name": "visible",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "visible(int $postId): array",
+                    "doc": "The approved plain comments and the reader's own held ones, oldest\nfirst: held comments by the signed-in account, by the email the\ncommenter cookie remembers, or by the email of the held comment a\nlink names with its moderation hash (wp_hash of its GMT date).",
+                    "shapes": [
+                        "@return list<CommentRecord>"
+                    ],
+                    "params": [
+                        {
+                            "name": "postId",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 221,
+                    "end": 236
+                },
+                {
+                    "routes": [],
+                    "name": "linkedEmail",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "linkedEmail(array $query): string",
+                    "doc": "The author email of the held comment ?unapproved= names, when ?moderation-hash= proves the link came from posting it in the last ten minutes. @param array<string, mixed> $query",
+                    "shapes": [
+                        "@param array<string, mixed> $query"
+                    ],
+                    "params": [
+                        {
+                            "name": "query",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 239,
+                    "end": 250
                 },
                 {
                     "routes": [],
@@ -12785,8 +12833,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 208,
-                    "end": 215
+                    "line": 253,
+                    "end": 260
                 }
             ]
         },
@@ -28977,6 +29025,7 @@
                 "Minn\\Runtime\\Runtime"
             ],
             "usedBy": [
+                "Minn\\Blocks\\Dynamic\\Theme\\Comments",
                 "Minn\\Blocks\\Dynamic\\Theme\\PostBlocks",
                 "Minn\\Cli\\Runtime",
                 "Minn\\Content\\PasswordGate",
@@ -100114,6 +100163,7 @@
             "usedBy": [
                 "Minn\\Admin\\BootPayload",
                 "Minn\\Auth\\Authenticator",
+                "Minn\\Blocks\\Dynamic\\Theme\\Comments",
                 "Minn\\Blocks\\Dynamic\\Theme\\Navigation",
                 "Minn\\Blocks\\Dynamic\\Theme\\PostBlocks",
                 "Minn\\Blocks\\Dynamic\\Theme\\QueryBlocks",

@@ -898,9 +898,9 @@ function build_comment_query_vars_from_block($block)
     if (is_user_logged_in()) {
         $vars['include_unapproved'] = [get_current_user_id()];
     } else {
-        $commenter = wp_get_current_commenter();
-        if (!empty($commenter['comment_author_email'])) {
-            $vars['include_unapproved'] = [$commenter['comment_author_email']];
+        $email = (string) wp_get_current_commenter()['comment_author_email'] ?: wp_get_unapproved_comment_author_email();
+        if ($email !== '') {
+            $vars['include_unapproved'] = [$email];
         }
     }
     if (!empty($block->context['postId'])) {

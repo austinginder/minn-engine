@@ -172,5 +172,43 @@ foreach ($cases as $label => [$form, $options]) {
     }
 }
 
+// A held comment is shown to its author: remembered by the cookie, or by the link the redirect carried.
+$seesHeld = static function (string $base, array $form, bool $remembered) use ($post): array {
+    $jar = tempnam(sys_get_temp_dir(), 'minn-form-jar');
+    $ch = curl_init($base . '/wp-comments-post.php');
+    curl_setopt_array($ch, [CURLOPT_RETURNTRANSFER => true, CURLOPT_HEADER => true, CURLOPT_POST => true, CURLOPT_POSTFIELDS => http_build_query($form), CURLOPT_COOKIEJAR => $jar, CURLOPT_SSL_VERIFYPEER => false, CURLOPT_SSL_VERIFYHOST => 0, CURLOPT_TIMEOUT => 60]);
+    $raw = (string) curl_exec($ch);
+    unset($ch); // curl writes the cookie jar when the handle goes
+    preg_match('/^location:\s*(\S+)/im', $raw, $m);
+    $page = curl_init($remembered ? $base . '/hello-world/' : (string) ($m[1] ?? ''));
+    curl_setopt_array($page, [CURLOPT_RETURNTRANSFER => true, CURLOPT_COOKIEFILE => $remembered ? $jar : '', CURLOPT_SSL_VERIFYPEER => false, CURLOPT_SSL_VERIFYHOST => 0, CURLOPT_TIMEOUT => 60]);
+    $html = (string) curl_exec($page);
+    @unlink($jar);
+    $at = strpos($html, (string) $form['comment']);
+    $item = $at === false ? '' : substr($html, (int) strrpos(substr($html, 0, $at), '<li'), 400);
+    preg_match('/<li id="comment-\d+" class="([^"]*)"/', $item, $class);
+    return ['shown' => $at !== false, 'class' => $class[1] ?? '', 'waiting' => str_contains($item . substr($html, (int) $at - 300, 300), 'comment-awaiting-moderation')];
+};
+foreach (['remembered by the cookie' => true, 'by the link with its hash' => false] as $how => $remembered) {
+    $answers = [];
+    foreach (['reference' => $REF, 'engine' => $ENGINE] as $stack => $base) {
+        $answers[$stack] = $seesHeld($base, ['comment_post_ID' => 1, 'author' => 'Held Reader', 'email' => 'held-' . $stack . DOMAIN, 'comment' => "zz held for its author, {$how}", ...($remembered ? ['wp-comment-cookies-consent' => 'yes'] : [])], $remembered);
+        $sweep();
+    }
+    $check("a held comment is shown to its author, {$how}", $answers['reference'] === $answers['engine'] && $answers['reference']['shown'] && $answers['reference']['waiting'], 'reference ' . json_encode($answers['reference']) . "\n       engine    " . json_encode($answers['engine']));
+}
+
+// The link with its hash shows the held comment for ten minutes after posting, no longer.
+$aged = gmdate('Y-m-d H:i:s', time() - 11 * 60);
+$agedId = (int) trim((string) shell_exec("{$WP} comment create --comment_post_ID=1 --comment_author='Aged' --comment_author_email=aged" . DOMAIN . " --comment_content='zz aged link' --comment_approved=0 --comment_date_gmt=" . escapeshellarg($aged) . ' --comment_date=' . escapeshellarg($aged) . ' --porcelain 2>/dev/null'));
+$agedHash = trim((string) shell_exec("{$WP} eval " . escapeshellarg("echo wp_hash('{$aged}');") . ' 2>/dev/null'));
+$agedSeen = [];
+foreach (['reference' => $REF, 'engine' => $ENGINE] as $stack => $base) {
+    [, $html] = minn_test_fetch($base . "/hello-world/?unapproved={$agedId}&moderation-hash={$agedHash}");
+    $agedSeen[$stack] = str_contains((string) $html, 'zz aged link');
+}
+$sweep();
+$check('a held comment\'s link stops showing it after ten minutes', $agedId > 0 && $agedSeen === ['reference' => false, 'engine' => false], json_encode($agedSeen));
+
 echo "\n{$pass} passed, {$fail} failed\n";
 exit($fail === 0 ? 0 : 1);

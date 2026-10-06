@@ -3410,3 +3410,14 @@ array they came in (`phpmailer_init`'s mailer, for one).
 
 Without plugins loaded, the engine's own path answers as before; it still
 differs where the reference does not apply (its refusal page is Minn's).
+
+A held comment is shown to its author, as the reference shows it: to the
+signed-in account that wrote it, to the email the commenter cookie
+remembers, or to whoever follows the redirect's `?unapproved=` link with a
+`moderation-hash` that is `wp_hash` of its GMT date, for ten minutes after
+it was posted (`wp_get_unapproved_comment_author_email`). It renders with
+`<p><em class="comment-awaiting-moderation">Your comment is awaiting
+moderation.</em></p>` ahead of its text. Every second comment carries
+`odd alt` and `thread-odd thread-alt`, as the reference counts from zero
+(Minn had left out `alt`). Suite `comment-form` checks both ways in and the
+expiry (94).
