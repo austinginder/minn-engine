@@ -105,6 +105,7 @@ if (Minn\Runtime\Runtime::booted()) {
 // The authenticate chain and the comment field filters.
 add_filter('authenticate', 'wp_authenticate_username_password', 20, 3);
 add_filter('authenticate', 'wp_authenticate_email_password', 20, 3);
+add_filter('authenticate', 'wp_authenticate_spam_check', 99);
 add_filter('pre_comment_author_name', 'sanitize_text_field');
 add_filter('pre_comment_author_name', '_wp_specialchars', 30);
 add_filter('pre_comment_author_email', 'trim');
@@ -144,3 +145,9 @@ add_action('post_updated', 'wp_save_post_revision', 10, 1);
 add_action('post_updated', 'wp_check_for_changed_slugs', 12, 3);
 add_action('post_updated', 'wp_check_for_changed_dates', 12, 3);
 add_action('wp_after_insert_post', 'wp_save_post_revision_on_insert', 9, 3);
+// What the reference says on an admin request (admin-ajax.php is the only
+// one the engine answers), and the heartbeat's sign-in report.
+add_action('admin_init', 'wp_admin_headers');
+add_action('admin_init', 'send_frame_options_header', 10, 0);
+add_filter('heartbeat_send', 'wp_auth_check');
+add_filter('heartbeat_nopriv_send', 'wp_auth_check');

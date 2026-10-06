@@ -8,7 +8,7 @@ the minn-admin/v1 namespace and serving the Minn Admin app
 | [`ActivityFeed`](#activityfeed) | final readonly class | 212 | What happened lately, as the overview and the bell tell it: the caller's |
 | [`AdminTypes`](#admintypes) | final class | 85 | Admin-facing type facts (viewable, labels, supports, the edit gate) live |
 | [`App`](#app) | final readonly class | 98 | The Minn Admin app on disk: the symlinked dev copy the engine serves the |
-| [`AppController`](#appcontroller) | final readonly class | 131 | Serves Minn Admin from the engine: the path-routed shell (every |
+| [`AppController`](#appcontroller) | final readonly class | 118 | Serves Minn Admin from the engine: the path-routed shell (every |
 | [`Appearance`](#appearance) | final readonly class | 79 | A person's Minn Admin appearance: the colour scheme and its custom |
 | [`BootPayload`](#bootpayload) | final readonly class | 234 | The window.MINN boot payload, assembled from the engine: the keys app.js |
 | [`BundleController`](#bundlecontroller) | final readonly class | 36 | What the app bundle carries: the changelog, the user guide, and the |
@@ -211,8 +211,9 @@ null for anything missing or outside it.
 `final readonly class Minn\Admin\AppController` · `public/minn/src/Minn/Admin/AppController.php`
 
 Serves Minn Admin from the engine: the path-routed shell (every
-sub-path renders the same page), the app's assets, and the one
-admin-ajax action app.js uses to refresh its nonce.
+sub-path renders the same page) and the app's assets. The nonce refresh
+app.js asks admin-ajax.php for is the reference's own rest-nonce action
+(Runtime\AjaxController).
 
 Used by: `Minn\Engine`
 
@@ -235,13 +236,7 @@ Route: `GET /minn/admin/assets/{path*} (public)`
 
 One file of the app bundle, with its content type and caching headers.
 
-### `ajax(Minn\Http\Request $request): Minn\Http\Response`
-
-Route: `* /wp-admin/admin-ajax.php (public)`
-
-The one admin-ajax action the app needs: a fresh REST nonce.
-
-Internals: `offPage()` (private, line 63), `render()` (private, line 109)
+Internals: `offPage()` (private, line 63), `render()` (private, line 96)
 
 
 ## Appearance

@@ -23,7 +23,8 @@ function is_user_admin()
 
 function is_blog_admin()
 {
-    return Runtime::current()->isAdmin;
+    // The reference answers from the admin screen being drawn; Minn draws none, and admin-ajax.php has none either.
+    return false;
 }
 
 function is_multisite()
@@ -235,4 +236,29 @@ function _minn_start_object_cache(): void
     wp_cache_add_non_persistent_groups(['counts', 'plugins', 'theme_json']);
     // The reference declares theme lookups request-only as soon as it builds a theme, which every boot does.
     wp_cache_add_non_persistent_groups('themes');
+}
+
+/**
+ * @internal The script the reference's web server would have run for a
+ * request, where plugins look for it: $pagenow, and for admin-ajax.php the
+ * server's script variables, which the engine's own index.php would
+ * otherwise fill (WooCommerce exempts the endpoint from its admin guard by
+ * SCRIPT_FILENAME). wp-login.php and wp-cron.php are left unnamed for now:
+ * hide-login plugins and the CaptainCore helper take over a sign-in when
+ * $pagenow says wp-login.php, which wants its own round trip first. A
+ * plugin that sets $pagenow first keeps its value.
+ */
+function _minn_script_globals(string $path): void
+{
+    if ($path === '/wp-login.php' || $path === '/wp-cron.php') {
+        return;
+    }
+    if ($path !== '/wp-admin/admin-ajax.php') {
+        $GLOBALS['pagenow'] ??= 'index.php';
+        return;
+    }
+    $GLOBALS['pagenow'] ??= 'admin-ajax.php';
+    $_SERVER['SCRIPT_FILENAME'] = ABSPATH . 'wp-admin/admin-ajax.php';
+    $_SERVER['SCRIPT_NAME'] = '/wp-admin/admin-ajax.php';
+    $_SERVER['PHP_SELF'] = '/wp-admin/admin-ajax.php';
 }

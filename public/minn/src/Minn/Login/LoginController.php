@@ -7,6 +7,7 @@ namespace Minn\Login;
 use Minn\Auth\Authenticator;
 use Minn\Auth\SignIn;
 use Minn\Content\Site;
+use Minn\Content\UserRecord;
 use Minn\Content\Users;
 use Minn\Front\Permalinks;
 use Minn\Http\Method;
@@ -255,14 +256,12 @@ final readonly class LoginController
         }
         $login = (string) ($request->form['log'] ?? '');
         $password = (string) ($request->form['pwd'] ?? '');
-        $user = $this->authenticator->login($login, $password);
-        $hooks = new LoginHooks($this->users, $this->site);
-        if ($user === null) {
+        $hooks = new LoginHooks($this->users);
+        $user = $hooks->available() ? $hooks->authenticate($login, $password) : $this->authenticator->login($login, $password);
+        if (!$user instanceof UserRecord) {
             $this->signIn->recordFailure($request->remoteAddress);
-            if ($login !== '' && $password !== '') {
-                $hooks->attempted($login, null);
-            }
-            return Response::html($this->render($request, 'Error: The username or password you entered is incorrect.'));
+            $refusal = is_array($user) ? $hooks->refusal(...$user) : null;
+            return Response::html($this->render($request, $refusal ?? 'Error: The username or password you entered is incorrect.'));
         }
         // Remember me extends the session from two days to fourteen and keeps
         // the cookie past the browser session; the failure counter is left to
@@ -271,7 +270,7 @@ final readonly class LoginController
         $redirect = $this->safeRedirect((string) ($request->form['redirect_to'] ?? ''));
         $response = Response::redirect($redirect, 302);
         $response = $remember ? $this->signIn->remember($response, $user, $request) : $this->signIn->establish($response, $user, $request);
-        $hooks->attempted($login, $user);
+        $hooks->signedIn($user);
         return $response;
     }
 
@@ -315,7 +314,7 @@ final readonly class LoginController
             );
         }
         $response = $this->signIn->end($signedOut, $session);
-        (new LoginHooks($this->users, $this->site))->signedOut($session->id());
+        (new LoginHooks($this->users))->signedOut($session->id());
         return $response;
     }
 

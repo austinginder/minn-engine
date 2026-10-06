@@ -46,20 +46,6 @@
             "index": true
         },
         {
-            "method": "*",
-            "pattern": "/wp-admin/admin-ajax.php",
-            "name": "Minn\\Admin\\AppController::ajax",
-            "handler": "Minn\\Admin\\AppController::ajax",
-            "summary": "The one admin-ajax action the app needs: a fresh REST nonce.",
-            "policy": {
-                "access": "Public",
-                "describe": "public"
-            },
-            "args": [],
-            "body": [],
-            "index": true
-        },
-        {
             "method": "GET",
             "pattern": "/minn-admin/v1/translations",
             "name": "Minn\\Admin\\BundleController::translations",
@@ -7228,6 +7214,20 @@
                     "required": true
                 }
             },
+            "body": [],
+            "index": true
+        },
+        {
+            "method": "*",
+            "pattern": "/wp-admin/admin-ajax.php",
+            "name": "Minn\\Runtime\\AjaxController::dispatch",
+            "handler": "Minn\\Runtime\\AjaxController::dispatch",
+            "summary": "Runs the handlers registered for the action the request names.",
+            "policy": {
+                "access": "Public",
+                "describe": "public"
+            },
+            "args": [],
             "body": [],
             "index": true
         }

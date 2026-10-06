@@ -914,218 +914,6 @@ class WP_Application_Passwords
     }
 }
 
-class WP_Automatic_Updater
-{
-    protected $update_results = [];
-
-    public function is_disabled()
-    {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_Automatic_Updater::is_disabled');
-        return null;
-    }
-
-    public function is_allowed_dir($dir)
-    {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_Automatic_Updater::is_allowed_dir');
-        return null;
-    }
-
-    public function is_vcs_checkout($context)
-    {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_Automatic_Updater::is_vcs_checkout');
-        return null;
-    }
-
-    public function should_update($type, $item, $context)
-    {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_Automatic_Updater::should_update');
-        return null;
-    }
-
-    protected function send_core_update_notification_email($item)
-    {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_Automatic_Updater::send_core_update_notification_email');
-        return null;
-    }
-
-    public function update($type, $item)
-    {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_Automatic_Updater::update');
-        return null;
-    }
-
-    public function run()
-    {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_Automatic_Updater::run');
-        return null;
-    }
-
-    protected function after_core_update($update_result)
-    {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_Automatic_Updater::after_core_update');
-        return null;
-    }
-
-    protected function send_email($type, $core_update, $result = NULL)
-    {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_Automatic_Updater::send_email');
-        return null;
-    }
-
-    protected function after_plugin_theme_update($update_results)
-    {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_Automatic_Updater::after_plugin_theme_update');
-        return null;
-    }
-
-    protected function send_plugin_theme_email($type, $successful_updates, $failed_updates)
-    {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_Automatic_Updater::send_plugin_theme_email');
-        return null;
-    }
-
-    protected function send_debug_email()
-    {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_Automatic_Updater::send_debug_email');
-        return null;
-    }
-
-    protected function has_fatal_error()
-    {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_Automatic_Updater::has_fatal_error');
-        return null;
-    }
-}
-
-#[AllowDynamicProperties]
-class WP_Block_Editor_Context
-{
-    public $name = 'core/edit-post';
-    public $post = NULL;
-
-    public function __construct($settings = [])
-    {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_Block_Editor_Context::__construct');
-        return null;
-    }
-}
-
-class WP_Font_Face_Resolver
-{
-
-    public static function get_fonts_from_theme_json()
-    {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_Font_Face_Resolver::get_fonts_from_theme_json');
-        return null;
-    }
-
-    public static function get_fonts_from_style_variations()
-    {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_Font_Face_Resolver::get_fonts_from_style_variations');
-        return null;
-    }
-
-    private static function parse_settings($settings)
-    {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_Font_Face_Resolver::parse_settings');
-        return null;
-    }
-
-    private static function maybe_parse_name_from_comma_separated_list($font_family)
-    {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_Font_Face_Resolver::maybe_parse_name_from_comma_separated_list');
-        return null;
-    }
-
-    private static function convert_font_face_properties($font_face_definition, $font_family_property)
-    {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_Font_Face_Resolver::convert_font_face_properties');
-        return null;
-    }
-
-    private static function to_theme_file_uri($src)
-    {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_Font_Face_Resolver::to_theme_file_uri');
-        return null;
-    }
-
-    private static function to_kebab_case($data)
-    {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_Font_Face_Resolver::to_kebab_case');
-        return null;
-    }
-}
-
-class WP_Importer
-{
-
-    public function get_imported_posts($importer_name, $blog_id)
-    {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_Importer::get_imported_posts');
-        return null;
-    }
-
-    public function count_imported_posts($importer_name, $blog_id)
-    {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_Importer::count_imported_posts');
-        return null;
-    }
-
-    public function get_imported_comments($blog_id)
-    {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_Importer::get_imported_comments');
-        return null;
-    }
-
-    public function set_blog($blog_id)
-    {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_Importer::set_blog');
-        return null;
-    }
-
-    public function set_user($user_id)
-    {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_Importer::set_user');
-        return null;
-    }
-
-    public function cmpr_strlen($a, $b)
-    {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_Importer::cmpr_strlen');
-        return null;
-    }
-
-    public function get_page($url, $username = '', $password = '', $head = false)
-    {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_Importer::get_page');
-        return null;
-    }
-
-    public function bump_request_timeout($val)
-    {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_Importer::bump_request_timeout');
-        return null;
-    }
-
-    public function is_user_over_quota()
-    {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_Importer::is_user_over_quota');
-        return null;
-    }
-
-    public function min_whitespace($text)
-    {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_Importer::min_whitespace');
-        return null;
-    }
-
-    public function stop_the_insanity()
-    {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_Importer::stop_the_insanity');
-        return null;
-    }
-}
-
 #[AllowDynamicProperties]
 class WP_List_Table
 {
@@ -1429,6 +1217,716 @@ class WP_List_Table
     }
 }
 
+class WP_Application_Passwords_List_Table extends WP_List_Table
+{
+
+    public function get_columns()
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Application_Passwords_List_Table::get_columns');
+        return null;
+    }
+
+    public function prepare_items()
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Application_Passwords_List_Table::prepare_items');
+        return null;
+    }
+
+    public function column_name($item)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Application_Passwords_List_Table::column_name');
+        return null;
+    }
+
+    public function column_created($item)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Application_Passwords_List_Table::column_created');
+        return null;
+    }
+
+    public function column_last_used($item)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Application_Passwords_List_Table::column_last_used');
+        return null;
+    }
+
+    public function column_last_ip($item)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Application_Passwords_List_Table::column_last_ip');
+        return null;
+    }
+
+    public function column_revoke($item)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Application_Passwords_List_Table::column_revoke');
+        return null;
+    }
+
+    protected function column_default($item, $column_name)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Application_Passwords_List_Table::column_default');
+        return null;
+    }
+
+    protected function display_tablenav($which)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Application_Passwords_List_Table::display_tablenav');
+    }
+
+    public function single_row($item)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Application_Passwords_List_Table::single_row');
+        return null;
+    }
+
+    protected function get_default_primary_column_name()
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Application_Passwords_List_Table::get_default_primary_column_name');
+        return null;
+    }
+
+    public function print_js_template_row()
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Application_Passwords_List_Table::print_js_template_row');
+    }
+}
+
+class WP_Automatic_Updater
+{
+    protected $update_results = [];
+
+    public function is_disabled()
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Automatic_Updater::is_disabled');
+        return null;
+    }
+
+    public function is_allowed_dir($dir)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Automatic_Updater::is_allowed_dir');
+        return null;
+    }
+
+    public function is_vcs_checkout($context)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Automatic_Updater::is_vcs_checkout');
+        return null;
+    }
+
+    public function should_update($type, $item, $context)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Automatic_Updater::should_update');
+        return null;
+    }
+
+    protected function send_core_update_notification_email($item)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Automatic_Updater::send_core_update_notification_email');
+        return null;
+    }
+
+    public function update($type, $item)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Automatic_Updater::update');
+        return null;
+    }
+
+    public function run()
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Automatic_Updater::run');
+        return null;
+    }
+
+    protected function after_core_update($update_result)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Automatic_Updater::after_core_update');
+        return null;
+    }
+
+    protected function send_email($type, $core_update, $result = NULL)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Automatic_Updater::send_email');
+        return null;
+    }
+
+    protected function after_plugin_theme_update($update_results)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Automatic_Updater::after_plugin_theme_update');
+        return null;
+    }
+
+    protected function send_plugin_theme_email($type, $successful_updates, $failed_updates)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Automatic_Updater::send_plugin_theme_email');
+        return null;
+    }
+
+    protected function send_debug_email()
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Automatic_Updater::send_debug_email');
+        return null;
+    }
+
+    protected function has_fatal_error()
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Automatic_Updater::has_fatal_error');
+        return null;
+    }
+}
+
+#[AllowDynamicProperties]
+class WP_Block_Editor_Context
+{
+    public $name = 'core/edit-post';
+    public $post = NULL;
+
+    public function __construct($settings = [])
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Block_Editor_Context::__construct');
+        return null;
+    }
+}
+
+class WP_Comments_List_Table extends WP_List_Table
+{
+    public $checkbox = true;
+    public $pending_count = [];
+    public $extra_items = NULL;
+    private $user_can = NULL;
+
+    public function __construct($args = [])
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Comments_List_Table::__construct');
+        return null;
+    }
+
+    public function floated_admin_avatar($name, $comment_id)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Comments_List_Table::floated_admin_avatar');
+        return null;
+    }
+
+    public function ajax_user_can()
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Comments_List_Table::ajax_user_can');
+        return null;
+    }
+
+    public function prepare_items()
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Comments_List_Table::prepare_items');
+        return null;
+    }
+
+    public function get_per_page($comment_status = 'all')
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Comments_List_Table::get_per_page');
+        return null;
+    }
+
+    public function no_items()
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Comments_List_Table::no_items');
+        return null;
+    }
+
+    protected function get_views()
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Comments_List_Table::get_views');
+        return null;
+    }
+
+    protected function get_bulk_actions()
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Comments_List_Table::get_bulk_actions');
+        return null;
+    }
+
+    protected function extra_tablenav($which)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Comments_List_Table::extra_tablenav');
+        return null;
+    }
+
+    public function current_action()
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Comments_List_Table::current_action');
+        return null;
+    }
+
+    public function get_columns()
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Comments_List_Table::get_columns');
+        return null;
+    }
+
+    protected function comment_type_dropdown($comment_type)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Comments_List_Table::comment_type_dropdown');
+        return null;
+    }
+
+    protected function get_sortable_columns()
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Comments_List_Table::get_sortable_columns');
+        return null;
+    }
+
+    protected function get_default_primary_column_name()
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Comments_List_Table::get_default_primary_column_name');
+        return null;
+    }
+
+    public function display()
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Comments_List_Table::display');
+    }
+
+    public function single_row($item)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Comments_List_Table::single_row');
+        return null;
+    }
+
+    protected function handle_row_actions($item, $column_name, $primary)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Comments_List_Table::handle_row_actions');
+        return null;
+    }
+
+    public function column_cb($item)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Comments_List_Table::column_cb');
+        return null;
+    }
+
+    public function column_comment($comment)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Comments_List_Table::column_comment');
+        return null;
+    }
+
+    public function column_author($comment)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Comments_List_Table::column_author');
+        return null;
+    }
+
+    public function column_date($comment)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Comments_List_Table::column_date');
+        return null;
+    }
+
+    public function column_response($comment)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Comments_List_Table::column_response');
+        return null;
+    }
+
+    public function column_default($item, $column_name)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Comments_List_Table::column_default');
+        return null;
+    }
+}
+
+class WP_Font_Face_Resolver
+{
+
+    public static function get_fonts_from_theme_json()
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Font_Face_Resolver::get_fonts_from_theme_json');
+        return null;
+    }
+
+    public static function get_fonts_from_style_variations()
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Font_Face_Resolver::get_fonts_from_style_variations');
+        return null;
+    }
+
+    private static function parse_settings($settings)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Font_Face_Resolver::parse_settings');
+        return null;
+    }
+
+    private static function maybe_parse_name_from_comma_separated_list($font_family)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Font_Face_Resolver::maybe_parse_name_from_comma_separated_list');
+        return null;
+    }
+
+    private static function convert_font_face_properties($font_face_definition, $font_family_property)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Font_Face_Resolver::convert_font_face_properties');
+        return null;
+    }
+
+    private static function to_theme_file_uri($src)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Font_Face_Resolver::to_theme_file_uri');
+        return null;
+    }
+
+    private static function to_kebab_case($data)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Font_Face_Resolver::to_kebab_case');
+        return null;
+    }
+}
+
+class WP_Importer
+{
+
+    public function get_imported_posts($importer_name, $blog_id)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Importer::get_imported_posts');
+        return null;
+    }
+
+    public function count_imported_posts($importer_name, $blog_id)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Importer::count_imported_posts');
+        return null;
+    }
+
+    public function get_imported_comments($blog_id)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Importer::get_imported_comments');
+        return null;
+    }
+
+    public function set_blog($blog_id)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Importer::set_blog');
+        return null;
+    }
+
+    public function set_user($user_id)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Importer::set_user');
+        return null;
+    }
+
+    public function cmpr_strlen($a, $b)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Importer::cmpr_strlen');
+        return null;
+    }
+
+    public function get_page($url, $username = '', $password = '', $head = false)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Importer::get_page');
+        return null;
+    }
+
+    public function bump_request_timeout($val)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Importer::bump_request_timeout');
+        return null;
+    }
+
+    public function is_user_over_quota()
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Importer::is_user_over_quota');
+        return null;
+    }
+
+    public function min_whitespace($text)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Importer::min_whitespace');
+        return null;
+    }
+
+    public function stop_the_insanity()
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Importer::stop_the_insanity');
+        return null;
+    }
+}
+
+class WP_Links_List_Table extends WP_List_Table
+{
+
+    public function __construct($args = [])
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Links_List_Table::__construct');
+        return null;
+    }
+
+    public function ajax_user_can()
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Links_List_Table::ajax_user_can');
+        return null;
+    }
+
+    public function prepare_items()
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Links_List_Table::prepare_items');
+        return null;
+    }
+
+    public function no_items()
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Links_List_Table::no_items');
+        return null;
+    }
+
+    protected function get_bulk_actions()
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Links_List_Table::get_bulk_actions');
+        return null;
+    }
+
+    protected function extra_tablenav($which)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Links_List_Table::extra_tablenav');
+        return null;
+    }
+
+    public function get_columns()
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Links_List_Table::get_columns');
+        return null;
+    }
+
+    protected function get_sortable_columns()
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Links_List_Table::get_sortable_columns');
+        return null;
+    }
+
+    protected function get_default_primary_column_name()
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Links_List_Table::get_default_primary_column_name');
+        return null;
+    }
+
+    public function column_cb($item)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Links_List_Table::column_cb');
+        return null;
+    }
+
+    public function column_name($link)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Links_List_Table::column_name');
+        return null;
+    }
+
+    public function column_url($link)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Links_List_Table::column_url');
+        return null;
+    }
+
+    public function column_categories($link)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Links_List_Table::column_categories');
+        return null;
+    }
+
+    public function column_rel($link)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Links_List_Table::column_rel');
+        return null;
+    }
+
+    public function column_visible($link)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Links_List_Table::column_visible');
+        return null;
+    }
+
+    public function column_rating($link)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Links_List_Table::column_rating');
+        return null;
+    }
+
+    public function column_default($item, $column_name)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Links_List_Table::column_default');
+        return null;
+    }
+
+    public function display_rows()
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Links_List_Table::display_rows');
+    }
+
+    protected function handle_row_actions($item, $column_name, $primary)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Links_List_Table::handle_row_actions');
+        return null;
+    }
+
+    protected function get_primary_column_aria_label($link)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Links_List_Table::get_primary_column_aria_label');
+        return null;
+    }
+}
+
+class WP_Media_List_Table extends WP_List_Table
+{
+    protected $comment_pending_count = [];
+    private $detached = NULL;
+    private $is_trash = NULL;
+
+    public function __construct($args = [])
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Media_List_Table::__construct');
+        return null;
+    }
+
+    public function ajax_user_can()
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Media_List_Table::ajax_user_can');
+        return null;
+    }
+
+    public function prepare_items()
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Media_List_Table::prepare_items');
+        return null;
+    }
+
+    protected function get_views()
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Media_List_Table::get_views');
+        return null;
+    }
+
+    protected function get_bulk_actions()
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Media_List_Table::get_bulk_actions');
+        return null;
+    }
+
+    protected function extra_tablenav($which)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Media_List_Table::extra_tablenav');
+        return null;
+    }
+
+    public function current_action()
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Media_List_Table::current_action');
+        return null;
+    }
+
+    public function has_items()
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Media_List_Table::has_items');
+        return null;
+    }
+
+    public function no_items()
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Media_List_Table::no_items');
+        return null;
+    }
+
+    public function views()
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Media_List_Table::views');
+        return null;
+    }
+
+    public function get_columns()
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Media_List_Table::get_columns');
+        return null;
+    }
+
+    protected function get_sortable_columns()
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Media_List_Table::get_sortable_columns');
+        return null;
+    }
+
+    public function column_cb($item)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Media_List_Table::column_cb');
+        return null;
+    }
+
+    public function column_title($post)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Media_List_Table::column_title');
+        return null;
+    }
+
+    public function column_author($post)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Media_List_Table::column_author');
+        return null;
+    }
+
+    public function column_desc($post)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Media_List_Table::column_desc');
+        return null;
+    }
+
+    public function column_date($post)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Media_List_Table::column_date');
+        return null;
+    }
+
+    public function column_parent($post)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Media_List_Table::column_parent');
+        return null;
+    }
+
+    public function column_comments($post)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Media_List_Table::column_comments');
+        return null;
+    }
+
+    public function column_default($item, $column_name)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Media_List_Table::column_default');
+        return null;
+    }
+
+    public function display_rows()
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Media_List_Table::display_rows');
+    }
+
+    protected function get_default_primary_column_name()
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Media_List_Table::get_default_primary_column_name');
+        return null;
+    }
+
+    private function _get_row_actions($post, $att_title)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Media_List_Table::_get_row_actions');
+        return null;
+    }
+
+    protected function handle_row_actions($item, $column_name, $primary)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Media_List_Table::handle_row_actions');
+        return null;
+    }
+
+    protected function get_primary_column_aria_label($post)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Media_List_Table::get_primary_column_aria_label');
+        return null;
+    }
+}
+
 class WP_Plugin_Install_List_Table extends WP_List_Table
 {
     public $order = 'ASC';
@@ -1520,6 +2018,544 @@ class WP_Plugin_Install_List_Table extends WP_List_Table
     protected function get_more_details_link($name, $slug)
     {
         \Minn\Runtime\PlaceholderTrace::hit('WP_Plugin_Install_List_Table::get_more_details_link');
+        return null;
+    }
+}
+
+class WP_Plugins_List_Table extends WP_List_Table
+{
+    protected $show_autoupdates = true;
+
+    public function __construct($args = [])
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Plugins_List_Table::__construct');
+        return null;
+    }
+
+    protected function get_table_classes()
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Plugins_List_Table::get_table_classes');
+        return null;
+    }
+
+    public function ajax_user_can()
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Plugins_List_Table::ajax_user_can');
+        return null;
+    }
+
+    public function prepare_items()
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Plugins_List_Table::prepare_items');
+        return null;
+    }
+
+    public function _search_callback($plugin)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Plugins_List_Table::_search_callback');
+        return null;
+    }
+
+    public function _order_callback($plugin_a, $plugin_b)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Plugins_List_Table::_order_callback');
+        return null;
+    }
+
+    public function no_items()
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Plugins_List_Table::no_items');
+        return null;
+    }
+
+    public function search_box($text, $input_id)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Plugins_List_Table::search_box');
+        return null;
+    }
+
+    public function get_columns()
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Plugins_List_Table::get_columns');
+        return null;
+    }
+
+    protected function get_sortable_columns()
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Plugins_List_Table::get_sortable_columns');
+        return null;
+    }
+
+    protected function get_views()
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Plugins_List_Table::get_views');
+        return null;
+    }
+
+    protected function get_bulk_actions()
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Plugins_List_Table::get_bulk_actions');
+        return null;
+    }
+
+    public function bulk_actions($which = '')
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Plugins_List_Table::bulk_actions');
+        return null;
+    }
+
+    protected function extra_tablenav($which)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Plugins_List_Table::extra_tablenav');
+        return null;
+    }
+
+    public function current_action()
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Plugins_List_Table::current_action');
+        return null;
+    }
+
+    public function display_rows()
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Plugins_List_Table::display_rows');
+    }
+
+    public function single_row($item)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Plugins_List_Table::single_row');
+        return null;
+    }
+
+    protected function get_primary_column_name()
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Plugins_List_Table::get_primary_column_name');
+        return null;
+    }
+
+    protected function add_dependents_to_dependency_plugin_row($dependency)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Plugins_List_Table::add_dependents_to_dependency_plugin_row');
+        return null;
+    }
+
+    protected function add_dependencies_to_dependent_plugin_row($dependent)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Plugins_List_Table::add_dependencies_to_dependent_plugin_row');
+        return null;
+    }
+
+    protected function get_dependency_view_details_link($name, $slug)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Plugins_List_Table::get_dependency_view_details_link');
+        return null;
+    }
+
+    protected function get_view_details_link($name, $slug)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Plugins_List_Table::get_view_details_link');
+        return null;
+    }
+}
+
+class WP_Post_Comments_List_Table extends WP_Comments_List_Table
+{
+
+    protected function get_column_info()
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Post_Comments_List_Table::get_column_info');
+        return null;
+    }
+
+    protected function get_table_classes()
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Post_Comments_List_Table::get_table_classes');
+        return null;
+    }
+
+    public function display($output_empty = false)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Post_Comments_List_Table::display');
+    }
+
+    public function get_per_page($comment_status = false)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Post_Comments_List_Table::get_per_page');
+        return null;
+    }
+}
+
+class WP_Posts_List_Table extends WP_List_Table
+{
+    protected $hierarchical_display = NULL;
+    protected $comment_pending_count = NULL;
+    private $user_posts_count = NULL;
+    private $sticky_posts_count = 0;
+    private $is_trash = NULL;
+    protected $current_level = 0;
+
+    public function __construct($args = [])
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Posts_List_Table::__construct');
+        return null;
+    }
+
+    public function set_hierarchical_display($display)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Posts_List_Table::set_hierarchical_display');
+        return null;
+    }
+
+    public function ajax_user_can()
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Posts_List_Table::ajax_user_can');
+        return null;
+    }
+
+    public function prepare_items()
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Posts_List_Table::prepare_items');
+        return null;
+    }
+
+    public function has_items()
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Posts_List_Table::has_items');
+        return null;
+    }
+
+    public function no_items()
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Posts_List_Table::no_items');
+        return null;
+    }
+
+    protected function is_base_request()
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Posts_List_Table::is_base_request');
+        return null;
+    }
+
+    protected function get_edit_link($args, $link_text, $css_class = '')
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Posts_List_Table::get_edit_link');
+        return null;
+    }
+
+    protected function get_views()
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Posts_List_Table::get_views');
+        return null;
+    }
+
+    protected function get_bulk_actions()
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Posts_List_Table::get_bulk_actions');
+        return null;
+    }
+
+    protected function categories_dropdown($post_type)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Posts_List_Table::categories_dropdown');
+        return null;
+    }
+
+    protected function formats_dropdown($post_type)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Posts_List_Table::formats_dropdown');
+        return null;
+    }
+
+    protected function extra_tablenav($which)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Posts_List_Table::extra_tablenav');
+        return null;
+    }
+
+    public function current_action()
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Posts_List_Table::current_action');
+        return null;
+    }
+
+    protected function get_table_classes()
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Posts_List_Table::get_table_classes');
+        return null;
+    }
+
+    public function get_columns()
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Posts_List_Table::get_columns');
+        return null;
+    }
+
+    protected function get_sortable_columns()
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Posts_List_Table::get_sortable_columns');
+        return null;
+    }
+
+    public function display_rows($posts = [], $level = 0)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Posts_List_Table::display_rows');
+    }
+
+    private function _display_rows($posts, $level = 0)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Posts_List_Table::_display_rows');
+        return null;
+    }
+
+    private function _display_rows_hierarchical($pages, $pagenum = 1, $per_page = 20)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Posts_List_Table::_display_rows_hierarchical');
+        return null;
+    }
+
+    private function _page_rows(&$children_pages, &$count, $parent_page, $level, $pagenum, $per_page, &$to_display)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Posts_List_Table::_page_rows');
+        return null;
+    }
+
+    protected function get_no_title_excerpt($post)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Posts_List_Table::get_no_title_excerpt');
+        return null;
+    }
+
+    public function column_cb($item)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Posts_List_Table::column_cb');
+        return null;
+    }
+
+    protected function _column_title($post, $classes, $data, $primary)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Posts_List_Table::_column_title');
+        return null;
+    }
+
+    protected function get_primary_column_aria_label($item)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Posts_List_Table::get_primary_column_aria_label');
+        return null;
+    }
+
+    public function column_title($post)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Posts_List_Table::column_title');
+        return null;
+    }
+
+    public function column_date($post)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Posts_List_Table::column_date');
+        return null;
+    }
+
+    public function column_comments($post)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Posts_List_Table::column_comments');
+        return null;
+    }
+
+    public function column_author($post)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Posts_List_Table::column_author');
+        return null;
+    }
+
+    public function column_default($item, $column_name)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Posts_List_Table::column_default');
+        return null;
+    }
+
+    public function single_row($post, $level = 0)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Posts_List_Table::single_row');
+        return null;
+    }
+
+    protected function get_default_primary_column_name()
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Posts_List_Table::get_default_primary_column_name');
+        return null;
+    }
+
+    protected function handle_row_actions($item, $column_name, $primary)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Posts_List_Table::handle_row_actions');
+        return null;
+    }
+
+    public function inline_edit()
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Posts_List_Table::inline_edit');
+        return null;
+    }
+}
+
+abstract class WP_Privacy_Requests_Table extends WP_List_Table
+{
+    protected $request_type = 'INVALID';
+    protected $post_type = 'INVALID';
+
+    public function get_columns()
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Privacy_Requests_Table::get_columns');
+        return null;
+    }
+
+    protected function get_admin_url()
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Privacy_Requests_Table::get_admin_url');
+        return null;
+    }
+
+    protected function get_sortable_columns()
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Privacy_Requests_Table::get_sortable_columns');
+        return null;
+    }
+
+    protected function get_default_primary_column_name()
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Privacy_Requests_Table::get_default_primary_column_name');
+        return null;
+    }
+
+    protected function get_request_counts()
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Privacy_Requests_Table::get_request_counts');
+        return null;
+    }
+
+    protected function get_views()
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Privacy_Requests_Table::get_views');
+        return null;
+    }
+
+    protected function get_bulk_actions()
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Privacy_Requests_Table::get_bulk_actions');
+        return null;
+    }
+
+    public function process_bulk_action()
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Privacy_Requests_Table::process_bulk_action');
+        return null;
+    }
+
+    public function prepare_items()
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Privacy_Requests_Table::prepare_items');
+        return null;
+    }
+
+    public function column_cb($item)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Privacy_Requests_Table::column_cb');
+        return null;
+    }
+
+    public function column_status($item)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Privacy_Requests_Table::column_status');
+        return null;
+    }
+
+    protected function get_timestamp_as_date($timestamp)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Privacy_Requests_Table::get_timestamp_as_date');
+        return null;
+    }
+
+    public function column_default($item, $column_name)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Privacy_Requests_Table::column_default');
+        return null;
+    }
+
+    public function column_created_timestamp($item)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Privacy_Requests_Table::column_created_timestamp');
+        return null;
+    }
+
+    public function column_email($item)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Privacy_Requests_Table::column_email');
+        return null;
+    }
+
+    public function column_next_steps($item)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Privacy_Requests_Table::column_next_steps');
+        return null;
+    }
+
+    public function single_row($item)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Privacy_Requests_Table::single_row');
+        return null;
+    }
+
+    public function embed_scripts()
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Privacy_Requests_Table::embed_scripts');
+        return null;
+    }
+}
+
+class WP_Privacy_Data_Export_Requests_List_Table extends WP_Privacy_Requests_Table
+{
+    protected $request_type = 'export_personal_data';
+    protected $post_type = 'user_request';
+
+    public function column_email($item)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Privacy_Data_Export_Requests_List_Table::column_email');
+        return null;
+    }
+
+    public function column_next_steps($item)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Privacy_Data_Export_Requests_List_Table::column_next_steps');
+        return null;
+    }
+
+    protected function get_primary_column_aria_label($item)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Privacy_Data_Export_Requests_List_Table::get_primary_column_aria_label');
+        return null;
+    }
+}
+
+class WP_Privacy_Data_Removal_Requests_List_Table extends WP_Privacy_Requests_Table
+{
+    protected $request_type = 'remove_personal_data';
+    protected $post_type = 'user_request';
+
+    public function column_email($item)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Privacy_Data_Removal_Requests_List_Table::column_email');
+        return null;
+    }
+
+    public function column_next_steps($item)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Privacy_Data_Removal_Requests_List_Table::column_next_steps');
+        return null;
+    }
+
+    protected function get_primary_column_aria_label($item)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Privacy_Data_Removal_Requests_List_Table::get_primary_column_aria_label');
         return null;
     }
 }
@@ -2939,6 +3975,75 @@ class WP_Style_Engine
     }
 }
 
+class WP_Themes_List_Table extends WP_List_Table
+{
+    protected $search_terms = [];
+    public $features = [];
+
+    public function __construct($args = [])
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Themes_List_Table::__construct');
+        return null;
+    }
+
+    public function ajax_user_can()
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Themes_List_Table::ajax_user_can');
+        return null;
+    }
+
+    public function prepare_items()
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Themes_List_Table::prepare_items');
+        return null;
+    }
+
+    public function no_items()
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Themes_List_Table::no_items');
+        return null;
+    }
+
+    public function tablenav($which = 'top')
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Themes_List_Table::tablenav');
+        return null;
+    }
+
+    public function display()
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Themes_List_Table::display');
+    }
+
+    public function get_columns()
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Themes_List_Table::get_columns');
+        return null;
+    }
+
+    public function display_rows_or_placeholder()
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Themes_List_Table::display_rows_or_placeholder');
+    }
+
+    public function display_rows()
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Themes_List_Table::display_rows');
+    }
+
+    public function search_theme($theme)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Themes_List_Table::search_theme');
+        return null;
+    }
+
+    public function _js_vars($extra_args = [])
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Themes_List_Table::_js_vars');
+        return null;
+    }
+}
+
 class WP_Upgrader
 {
     public $strings = [];
@@ -3147,6 +4252,95 @@ class WP_Upgrader_Skin
     public function hide_process_failed($wp_error)
     {
         \Minn\Runtime\PlaceholderTrace::hit('WP_Upgrader_Skin::hide_process_failed');
+        return null;
+    }
+}
+
+class WP_Users_List_Table extends WP_List_Table
+{
+    public $site_id = NULL;
+    public $is_site_users = NULL;
+
+    public function __construct($args = [])
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Users_List_Table::__construct');
+        return null;
+    }
+
+    public function ajax_user_can()
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Users_List_Table::ajax_user_can');
+        return null;
+    }
+
+    public function prepare_items()
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Users_List_Table::prepare_items');
+        return null;
+    }
+
+    public function no_items()
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Users_List_Table::no_items');
+        return null;
+    }
+
+    protected function get_views()
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Users_List_Table::get_views');
+        return null;
+    }
+
+    protected function get_bulk_actions()
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Users_List_Table::get_bulk_actions');
+        return null;
+    }
+
+    protected function extra_tablenav($which)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Users_List_Table::extra_tablenav');
+        return null;
+    }
+
+    public function current_action()
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Users_List_Table::current_action');
+        return null;
+    }
+
+    public function get_columns()
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Users_List_Table::get_columns');
+        return null;
+    }
+
+    protected function get_sortable_columns()
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Users_List_Table::get_sortable_columns');
+        return null;
+    }
+
+    public function display_rows()
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Users_List_Table::display_rows');
+    }
+
+    public function single_row($user_object, $style = '', $role = '', $numposts = 0)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Users_List_Table::single_row');
+        return null;
+    }
+
+    protected function get_default_primary_column_name()
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Users_List_Table::get_default_primary_column_name');
+        return null;
+    }
+
+    protected function get_role_list($user_object)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Users_List_Table::get_role_list');
         return null;
     }
 }

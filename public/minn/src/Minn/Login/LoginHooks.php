@@ -4,39 +4,76 @@ declare(strict_types=1);
 
 namespace Minn\Login;
 
-use Minn\Content\Site;
 use Minn\Content\UserRecord;
 use Minn\Content\Users;
 use Minn\Runtime\Runtime;
-use Minn\Support\Html;
 
 /**
- * What the reference tells plugins about a sign-in, when plugins are loaded:
- * wp_login with the user after a good one, wp_login_failed with the reason
- * after a bad one (security and logging plugins read it), wp_logout with the
- * user id after a sign-out. A form with an empty field is turned away before
- * any of it, as there. The authenticate filter, through which a plugin may
- * refuse a sign-in, is not run yet (contracts/runtime.md).
+ * The sign-in as plugins see it, when they are loaded. The credentials go
+ * through the reference's authenticate chain, so a plugin may refuse a
+ * sign-in (a breached password, a second factor, a locked account) or
+ * accept one the password alone would not; wp_login_failed is the chain's
+ * own report. wp_login follows a good sign-in and wp_logout a sign-out.
+ * The engine's default refusals stay one vague sentence; a plugin's is
+ * shown in its own words, through login_errors.
  */
 final readonly class LoginHooks
 {
+    /** The chain's own refusals, which the sign-in page words as one. */
+    private const DEFAULT_REFUSALS = ['empty_username', 'empty_password', 'invalid_username', 'invalid_email', 'incorrect_password', 'authentication_failed'];
+
     public function __construct(
         private Users $users,
-        private Site $site,
     ) {
     }
 
-    /** After a sign-in attempt with both fields filled: the user signed in, or null. */
-    public function attempted(string $login, ?UserRecord $user): void
+    /** Whether the chain can be asked: only with plugins loaded. */
+    public function available(): bool
     {
-        if (!Runtime::booted()) {
-            return;
+        return Runtime::booted();
+    }
+
+    /**
+     * The credentials through wp_authenticate and the authenticate filters,
+     * as the reference's sign-in runs them: the user, or the refusal as
+     * [code, message].
+     *
+     * @return UserRecord|array{0: string, 1: string}
+     */
+    public function authenticate(string $login, string $password): UserRecord|array
+    {
+        \do_action_ref_array('wp_authenticate', [&$login, &$password]);
+        $result = \wp_authenticate($login, $password);
+        if ($result instanceof \WP_User) {
+            return $this->users->find((int) $result->ID) ?? ['authentication_failed', ''];
         }
-        if ($user !== null) {
+        return $result instanceof \WP_Error
+            ? [(string) $result->get_error_code(), (string) $result->get_error_message()]
+            : ['authentication_failed', ''];
+    }
+
+    /** The sentence the sign-in page shows for a refusal, as plain text; null for the engine's own wording. */
+    public function refusal(string $code, string $message): ?string
+    {
+        if (in_array($code, self::DEFAULT_REFUSALS, true) || trim($message) === '') {
+            return null;
+        }
+        $shown = (string) \apply_filters('login_errors', $message);
+        return trim(html_entity_decode(strip_tags($shown), ENT_QUOTES | ENT_HTML5, 'UTF-8')) ?: null;
+    }
+
+    /**
+     * After a good sign-in. The chain read the user through the runtime,
+     * which cached their meta before the new session was written, so the
+     * cache is let go first: a plugin reading session_tokens on wp_login
+     * (CleanTalk keeps the first session's address) must see the new one.
+     */
+    public function signedIn(UserRecord $user): void
+    {
+        if (Runtime::booted()) {
+            \wp_cache_delete($user->id, 'user_meta');
             \do_action('wp_login', $user->login, new \WP_User($user->id));
-            return;
         }
-        \do_action('wp_login_failed', $login, $this->reason($login));
     }
 
     /** After a sign-out ended the session. */
@@ -45,22 +82,5 @@ final readonly class LoginHooks
         if (Runtime::booted()) {
             \do_action('wp_logout', $userId);
         }
-    }
-
-    /** The reference's refusal: nobody by that name or address, or the wrong password for someone. */
-    private function reason(string $login): \WP_Error
-    {
-        $name = '<strong>' . Html::esc($login) . '</strong>';
-        $lost = ' <a href="' . Html::attr(rtrim((string) ($this->site->option('siteurl') ?? ''), '/') . '/wp-login.php?action=lostpassword') . '">Lost your password?</a>';
-        if ($this->users->findByLogin($login) !== null) {
-            return new \WP_Error('incorrect_password', '<strong>Error:</strong> The password you entered for the username ' . $name . ' is incorrect.' . $lost);
-        }
-        if (!str_contains($login, '@')) {
-            return new \WP_Error('invalid_username', '<strong>Error:</strong> The username ' . $name . ' is not registered on this site. If you are unsure of your username, try your email address instead.');
-        }
-        if ($this->users->findByEmail($login) !== null) {
-            return new \WP_Error('incorrect_password', '<strong>Error:</strong> The password you entered for the email address ' . $name . ' is incorrect.' . $lost);
-        }
-        return new \WP_Error('invalid_email', 'Unknown email address. Check again or try your username.');
     }
 }

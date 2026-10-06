@@ -5,6 +5,7 @@ the WordPress runtime plugins load against
 | Class | Kind | Lines | Summary |
 |---|---|---|---|
 | [`Abilities`](#abilities) | final class | 151 | The abilities registry behind the wp_*_ability facade: categories and |
+| [`AjaxController`](#ajaxcontroller) | final readonly class | 72 | admin-ajax.php, the endpoint plugins post their front-end work to: a form |
 | [`AllowedOptions`](#allowedoptions) | final class | 26 | The settings-page allowlist plugins extend: option group => the option |
 | [`Assets`](#assets) | final class | 328 | The registry behind wp_register_/wp_enqueue_ for scripts and styles: |
 | [`Avatar`](#avatar) | final class | 62 | Avatars the way get_avatar_data and get_avatar decide them: the argument |
@@ -16,7 +17,7 @@ the WordPress runtime plugins load against
 | [`CommentCloser`](#commentcloser) | final readonly class | 22 | The Discussion setting that closes comments on old posts. Observed on the |
 | [`CommentQuery`](#commentquery) | final readonly class | 117 | Comment reads in the get_comments() shape: arguments to rows or a count, and the approval breakdown wp_count_comments reports. |
 | [`Connectors`](#connectors) | final class | 212 | The connectors registry: the external services a site talks to (AI |
-| [`Constants`](#constants) | final class | 67 | The constants plugin code expects: the fixed set from data/constants.json |
+| [`Constants`](#constants) | final class | 66 | The constants plugin code expects: the fixed set from data/constants.json |
 | [`CronTable`](#crontable) | final class | 131 | The cron option's shape, operated on as data: timestamp => hook => key => |
 | [`DbDelta`](#dbdelta) | final readonly class | 125 | dbDelta as the reference does it: a CREATE TABLE statement creates the |
 | [`EarlyFilters`](#earlyfilters) | final class | 20 | Filters that run before the runtime exists, over the hooks added that |
@@ -46,7 +47,7 @@ the WordPress runtime plugins load against
 | [`Recovery`](#recovery) | final readonly class | 214 | Recovery from a fatal in someone else's code. When a plugin or theme |
 | [`Refusal`](#refusal) | final readonly class | 6 | A refused operation, the way plugin code expects to read it: a code, a message, optional data. The facade turns it into WP_Error. |
 | [`Registry`](#registry) | final class | 382 | Post types, taxonomies, and statuses as plugin code registers and reads |
-| [`Runtime`](#runtime) | final class | 331 | The WordPress runtime the engine offers plugin code: the procedural |
+| [`Runtime`](#runtime) | final class | 334 | The WordPress runtime the engine offers plugin code: the procedural |
 | [`ScriptModules`](#scriptmodules) | final class | 308 | The script modules registry: registrations with typed dependencies, the |
 | [`ScriptPack`](#scriptpack) | final class | 146 | The site-supplied script pack: the `wp-*` JavaScript packages the engine |
 | [`Shortcodes`](#shortcodes) | final class | 143 | The shortcode registry plugin code fills with add_shortcode, and the |
@@ -131,6 +132,39 @@ Whether an ability is marked read-only, which decides the method its run endpoin
 Every category.
 
 Internals: `state()` (private, line 18), `save()` (private, line 24), `forget()` (private, line 77)
+
+
+## AjaxController
+
+`final readonly class Minn\Runtime\AjaxController` · `public/minn/src/Minn/Runtime/AjaxController.php`
+
+admin-ajax.php, the endpoint plugins post their front-end work to: a form
+submitted without a reload, a spam check, a background job. The action a
+request names runs the handlers registered as wp_ajax_{action} for a
+signed-in visitor and wp_ajax_nopriv_{action} for anyone else, answered as
+the reference answers them (contracts/runtime.md "admin-ajax.php").
+
+It is an admin request: is_admin() is true while the plugins load and
+admin_init fires before the handler. A handler usually ends the request
+itself (wp_send_json, wp_die, exit), so the endpoint's headers go out
+before it runs; one that returns is followed by the reference's "0".
+
+- const `PATH` = `'/wp-admin/admin-ajax.php'`
+- const `CORE` = `array (   'wp_ajax_nopriv_' =>    array (     'heartbeat' => 'wp_ajax_nopriv_heartbeat',   ),   'wp_ajax_' =>    array (     'rest-nonce' => 'wp_ajax_rest_nonce',   ), )` — The core actions the endpoint answers itself, under the prefix for who is asking: the action => the handler.
+
+Used by: `Minn\Engine`, `Minn\Runtime\Constants`
+
+### static `claims(Minn\Http\Request $request): bool`
+
+Whether a request is for the endpoint, which the runtime boots as an admin request.
+
+### `dispatch(Minn\Http\Request $request): Minn\Http\Response`
+
+Route: `* /wp-admin/admin-ajax.php (public)`
+
+Runs the handlers registered for the action the request names.
+
+Internals: `action()` (private, line 74), `allowedOrigin()` (private, line 81), `registerCore()` (private, line 91)
 
 
 ## AllowedOptions
@@ -1168,7 +1202,7 @@ them; the engine writes them through this class directly.
 - const `GUARDED_PREFIX` = `'minn_login_throttle_'`
 - const `AUTOLOAD_VALUES` = `array (   0 => 'yes',   1 => 'on',   2 => 'auto-on',   3 => 'auto', )` — The autoload column values that load an option with every request, in the reference's order.
 
-Used by: `Minn\Cli\OptionCommand`, `Minn\Runtime\Runtime`, `Minn\Runtime\Symbols`
+Used by: `Minn\Cli\OptionCommand`, `Minn\Runtime\AjaxController`, `Minn\Runtime\Runtime`, `Minn\Runtime\Symbols`
 
 ```php
 __construct(Minn\Db $db)
@@ -1942,7 +1976,7 @@ The WordPress runtime the engine offers plugin code: the procedural
 facade under minn/wp-api/ plus the services it delegates to. One per
 request; the facade reaches it through these statics.
 
-Used by: `Minn\Admin\BootPayload`, `Minn\Auth\Authenticator`, `Minn\Blocks\Dynamic\Theme\Navigation`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Blocks\ImageTags`, `Minn\Blocks\RenderState`, `Minn\Cli\Runtime`, `Minn\Content\Blocks`, `Minn\Content\Reader`, `Minn\Content\Site`, `Minn\Content\Terms`, `Minn\Db`, `Minn\Engine`, `Minn\Extension\Extensions`, `Minn\Front\Feeds`, `Minn\Front\Permalinks`, `Minn\Front\PluginRules`, `Minn\Front\Resolver`, `Minn\Login\LoginHooks`, `Minn\Mail\Mailer`, `Minn\Media\Images`, `Minn\Rest\AbilitiesController`, `Minn\Rest\Api`, `Minn\Rest\Services`, `Minn\Runtime\Abilities`, `Minn\Runtime\BlockFilters`, `Minn\Runtime\BlockHooks`, `Minn\Runtime\Constants`, `Minn\Runtime\Interactivity`, `Minn\Runtime\NavMenu`, `Minn\Runtime\PackageDownload`, `Minn\Runtime\Patterns`, `Minn\Runtime\PlaceholderTrace`, `Minn\Runtime\PluginUpdates`, `Minn\Runtime\Plugins`, `Minn\Runtime\PostQuery`, `Minn\Runtime\ScriptModules`, `Minn\Runtime\TermWriter`, `Minn\Theme\ArchiveTitle`, `Minn\Theme\ClassicContent`, `Minn\Theme\ClassicRenderer`, `Minn\Theme\MainQueryBridge`, `Minn\Theme\PageRenderer`, `Minn\Theme\Templates`
+Used by: `Minn\Admin\BootPayload`, `Minn\Auth\Authenticator`, `Minn\Blocks\Dynamic\Theme\Navigation`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Blocks\ImageTags`, `Minn\Blocks\RenderState`, `Minn\Cli\Runtime`, `Minn\Content\Blocks`, `Minn\Content\Reader`, `Minn\Content\Site`, `Minn\Content\Terms`, `Minn\Db`, `Minn\Engine`, `Minn\Extension\Extensions`, `Minn\Front\Feeds`, `Minn\Front\Permalinks`, `Minn\Front\PluginRules`, `Minn\Front\Resolver`, `Minn\Login\LoginHooks`, `Minn\Mail\Mailer`, `Minn\Media\Images`, `Minn\Rest\AbilitiesController`, `Minn\Rest\Api`, `Minn\Rest\Services`, `Minn\Runtime\Abilities`, `Minn\Runtime\AjaxController`, `Minn\Runtime\BlockFilters`, `Minn\Runtime\BlockHooks`, `Minn\Runtime\Constants`, `Minn\Runtime\Interactivity`, `Minn\Runtime\NavMenu`, `Minn\Runtime\PackageDownload`, `Minn\Runtime\Patterns`, `Minn\Runtime\PlaceholderTrace`, `Minn\Runtime\PluginUpdates`, `Minn\Runtime\Plugins`, `Minn\Runtime\PostQuery`, `Minn\Runtime\ScriptModules`, `Minn\Runtime\TermWriter`, `Minn\Theme\ArchiveTitle`, `Minn\Theme\ClassicContent`, `Minn\Theme\ClassicRenderer`, `Minn\Theme\MainQueryBridge`, `Minn\Theme\PageRenderer`, `Minn\Theme\Templates`
 
 ```php
 __construct(Minn\Context $context, bool $isAdmin = false)
@@ -2087,7 +2121,7 @@ calls it straight away.
 
 Fresh per-request state, for suites.
 
-Internals: `loadObjectCacheDropin()` (private, line 313)
+Internals: `loadObjectCacheDropin()` (private, line 316)
 
 
 ## ScriptModules

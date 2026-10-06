@@ -7,7 +7,6 @@ namespace Minn\Admin;
 use Minn\Auth\Authenticated;
 use Minn\Auth\Authenticator;
 use Minn\Auth\Capabilities;
-use Minn\Auth\Nonce;
 use Minn\Front\Permalinks;
 use Minn\Http\Method;
 use Minn\Http\Request;
@@ -19,8 +18,9 @@ use Minn\Support\Html;
 
 /**
  * Serves Minn Admin from the engine: the path-routed shell (every
- * sub-path renders the same page), the app's assets, and the one
- * admin-ajax action app.js uses to refresh its nonce.
+ * sub-path renders the same page) and the app's assets. The nonce refresh
+ * app.js asks admin-ajax.php for is the reference's own rest-nonce action
+ * (Runtime\AjaxController).
  */
 final readonly class AppController
 {
@@ -87,19 +87,6 @@ final readonly class AppController
         }
         [$file, $type] = $asset;
         return new Response(200, ['Content-Type' => $type, 'Cache-Control' => 'public, max-age=300'], (string) file_get_contents($file));
-    }
-
-    /** The one admin-ajax action the app needs: a fresh REST nonce. */
-    #[Route(Method::Any, '/wp-admin/admin-ajax.php', policy: new Policy(Access::Public))]
-    public function ajax(Request $request): Response
-    {
-        $action = $request->form['action'] ?? $request->query('action') ?? '';
-        if ($action !== 'rest-nonce') {
-            return new Response(400, [], '-1');
-        }
-        $session = $this->authenticator->session($request->cookies);
-        $body = $session instanceof Authenticated ? Nonce::create($session->id(), $session->token) : '0';
-        return Response::html($body);
     }
 
     /**

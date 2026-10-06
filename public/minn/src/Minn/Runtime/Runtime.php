@@ -130,6 +130,9 @@ final class Runtime
         self::loadFacade($runtime->engineDir);
         _minn_bind_hook_globals();
         Constants::define($runtime);
+        if ($runtime->request !== null) {
+            \_minn_script_globals($runtime->request->path);
+        }
         _minn_main_query();
         _minn_rewrite();
         \_minn_require_wp_db($runtime->contentDir());

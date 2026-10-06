@@ -203,7 +203,7 @@ final readonly class Engine
         $theme = Theme::active($site, $permalinks, $context->themesDir());
         // The WordPress runtime: the site's plugins load as code, then the
         // lifecycle actions fire, before the engine's own extensions register.
-        $runtime = Runtime::boot(new Runtime($context));
+        $runtime = Runtime::boot(new Runtime($context, isAdmin: \Minn\Runtime\AjaxController::claims($request)));
         $runtime->set('block_theme', $theme !== null);
         $runtime->set('theme', $theme);
         $runtime->set('permalinks', $permalinks);
@@ -281,6 +281,7 @@ final readonly class Engine
             // The sign-in page sits under /minn-admin/, so it registers ahead of the shell's catch-all.
             new LoginController($site, $permalinks, $authenticator, new \Minn\Auth\SignIn($sessions, new AuthCookies($db, $cookie), new LoginThrottle($db)), $users, new PasswordReset($users), Mailer::forSite($site)),
             new AppController($app, new BootPayload($site, $permalinks, $capabilities, $app, $this->version, $appearance, new HiddenIntegrations($users, $capabilities), new SiteIcon($site, $posts, $permalinks), $theme !== null, new Translations($users, $site, $app, ABSPATH . 'wp-content')), $authenticator, $capabilities, $permalinks, $this->version, $adminOff),
+            new \Minn\Runtime\AjaxController(),
             new ProbeController($site, $permalinks, new SiteIcon($site, $posts, $permalinks), $cron),
             new \Minn\Front\SitemapController(new Sitemaps($db, $site, $permalinks), $notFound),
             $feedController,

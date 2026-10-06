@@ -861,8 +861,8 @@
             "namespace": "Minn\\Admin",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Admin/AppController.php",
-            "lines": 131,
-            "doc": "Serves Minn Admin from the engine: the path-routed shell (every\nsub-path renders the same page), the app's assets, and the one\nadmin-ajax action app.js uses to refresh its nonce.",
+            "lines": 118,
+            "doc": "Serves Minn Admin from the engine: the path-routed shell (every\nsub-path renders the same page) and the app's assets. The nonce refresh\napp.js asks admin-ajax.php for is the reference's own rest-nonce action\n(Runtime\\AjaxController).",
             "implements": [],
             "extends": null,
             "uses": [
@@ -871,7 +871,6 @@
                 "Minn\\Auth\\Authenticated",
                 "Minn\\Auth\\Authenticator",
                 "Minn\\Auth\\Capabilities",
-                "Minn\\Auth\\Nonce",
                 "Minn\\Front\\Permalinks",
                 "Minn\\Http\\Access",
                 "Minn\\Http\\Method",
@@ -1064,28 +1063,6 @@
                     "end": 90
                 },
                 {
-                    "routes": [
-                        "* /wp-admin/admin-ajax.php (public)"
-                    ],
-                    "name": "ajax",
-                    "static": false,
-                    "visibility": "public",
-                    "signature": "ajax(Minn\\Http\\Request $request): Minn\\Http\\Response",
-                    "doc": "The one admin-ajax action the app needs: a fresh REST nonce.",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "request",
-                            "type": "Minn\\Http\\Request",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 94,
-                    "end": 103
-                },
-                {
                     "routes": [],
                     "name": "offPage",
                     "static": false,
@@ -1114,8 +1091,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 109,
-                    "end": 154
+                    "line": 96,
+                    "end": 141
                 }
             ]
         },
@@ -8819,7 +8796,6 @@
                 "Minn\\Auth\\Salts"
             ],
             "usedBy": [
-                "Minn\\Admin\\AppController",
                 "Minn\\Admin\\BootPayload",
                 "Minn\\Auth\\Authenticator",
                 "Minn\\Front\\AdminBar",
@@ -28798,7 +28774,6 @@
                 "Minn\\Front\\ProbeController",
                 "Minn\\Front\\Sitemaps",
                 "Minn\\Login\\LoginController",
-                "Minn\\Login\\LoginHooks",
                 "Minn\\Mail\\MailSettings",
                 "Minn\\Mail\\Mailer",
                 "Minn\\Media\\Images",
@@ -30297,6 +30272,7 @@
                 "Minn\\Front\\Resolution",
                 "Minn\\Front\\Resolver",
                 "Minn\\Front\\Sitemaps",
+                "Minn\\Login\\LoginController",
                 "Minn\\Login\\LoginHooks",
                 "Minn\\Rest\\ApplicationPasswordsController",
                 "Minn\\Rest\\UserObject",
@@ -32281,7 +32257,7 @@
             "namespace": "Minn",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Engine.php",
-            "lines": 228,
+            "lines": 229,
             "doc": "The engine's front door. An unmodified wp-config.php ends by requiring\nwp-settings.php, which is the engine's own boot file; it hands off here.\nREST is dispatched first (from the path or from ?rest_route=), then the\nadmin, the login endpoint, and finally the public site.",
             "implements": [],
             "extends": null,
@@ -32342,6 +32318,7 @@
                 "Minn\\Rest\\Api",
                 "Minn\\Rest\\RestUrl",
                 "Minn\\Rest\\Types",
+                "Minn\\Runtime\\AjaxController",
                 "Minn\\Runtime\\Plugins",
                 "Minn\\Runtime\\Recovery",
                 "Minn\\Runtime\\Runtime",
@@ -32620,7 +32597,7 @@
                         }
                     ],
                     "line": 227,
-                    "end": 292
+                    "end": 293
                 }
             ]
         },
@@ -51991,7 +51968,8 @@
                 "Minn\\Rest\\TemplatesController",
                 "Minn\\Rest\\TermsController",
                 "Minn\\Rest\\TypesController",
-                "Minn\\Rest\\UsersController"
+                "Minn\\Rest\\UsersController",
+                "Minn\\Runtime\\AjaxController"
             ],
             "constructor": null,
             "cases": [
@@ -54224,7 +54202,8 @@
                 "Minn\\Rest\\TemplatesController",
                 "Minn\\Rest\\TermsController",
                 "Minn\\Rest\\TypesController",
-                "Minn\\Rest\\UsersController"
+                "Minn\\Rest\\UsersController",
+                "Minn\\Runtime\\AjaxController"
             ],
             "constructor": null,
             "cases": [
@@ -54699,7 +54678,8 @@
                 "Minn\\Rest\\TemplatesController",
                 "Minn\\Rest\\TermsController",
                 "Minn\\Rest\\TypesController",
-                "Minn\\Rest\\UsersController"
+                "Minn\\Rest\\UsersController",
+                "Minn\\Runtime\\AjaxController"
             ],
             "constructor": {
                 "signature": "__construct(Minn\\Http\\Access $access = Minn\\Http\\Access::Public, ?string $cap = NULL, array $caps = array ( ), ?string $param = NULL, string $signIn = 'rest_not_logged_in', string $signInMessage = 'You are not currently logged in.', string $refuse = 'rest_forbidden', string $message = 'Sorry, you are not allowed to do that.', ?Minn\\Http\\Policy $edit = NULL, ?Minn\\Http\\Subject $subject = NULL, ?string $missing = NULL, ?string $missingMessage = NULL)",
@@ -55412,6 +55392,7 @@
                 "Minn\\Rest\\TermsController",
                 "Minn\\Rest\\TypesController",
                 "Minn\\Rest\\UsersController",
+                "Minn\\Runtime\\AjaxController",
                 "Minn\\Runtime\\Runtime"
             ],
             "constructor": {
@@ -55925,7 +55906,7 @@
             "namespace": "Minn\\Http",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Http/Response.php",
-            "lines": 101,
+            "lines": 111,
             "doc": "What a handler returns. Nothing is written to the client until the\nkernel calls send(), so a response can be inspected, wrapped, or\nreplaced on the way out. Work that belongs after the client has its\nanswer (a cron run a page found due) rides along as afterSend closures.",
             "implements": [],
             "extends": null,
@@ -55986,7 +55967,8 @@
                 "Minn\\Rest\\TemplatesController",
                 "Minn\\Rest\\TermsController",
                 "Minn\\Rest\\TypesController",
-                "Minn\\Rest\\UsersController"
+                "Minn\\Rest\\UsersController",
+                "Minn\\Runtime\\AjaxController"
             ],
             "constructor": {
                 "signature": "__construct(int $status = 200, array $headers = array ( ), string $body = '', array $cookies = array ( ), array $afterSend = array ( ))",
@@ -56287,6 +56269,18 @@
                 },
                 {
                     "routes": [],
+                    "name": "sendHead",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "sendHead(): void",
+                    "doc": "Writes the status, the headers, and the cookies now, and nothing else:\nfor an answer that code outside the engine may finish on its own (an\najax handler that ends the request), which must find them already said.",
+                    "shapes": [],
+                    "params": [],
+                    "line": 92,
+                    "end": 101
+                },
+                {
+                    "routes": [],
                     "name": "send",
                     "static": false,
                     "visibility": "public",
@@ -56294,8 +56288,8 @@
                     "doc": "Writes the status, the headers, the cookies, and the body, ends the\nrequest for the client, then runs the after-send work in the same\nprocess (the server that can close the connection first does).",
                     "shapes": [],
                     "params": [],
-                    "line": 92,
-                    "end": 114
+                    "line": 108,
+                    "end": 124
                 }
             ]
         },
@@ -56362,7 +56356,8 @@
                 "Minn\\Rest\\TemplatesController",
                 "Minn\\Rest\\TermsController",
                 "Minn\\Rest\\TypesController",
-                "Minn\\Rest\\UsersController"
+                "Minn\\Rest\\UsersController",
+                "Minn\\Runtime\\AjaxController"
             ],
             "constructor": {
                 "signature": "__construct(Minn\\Http\\Method $method, string $pattern, ?Minn\\Http\\Policy $policy = NULL, array $args = array ( ), bool $index = true, array $body = array ( ), ?string $name = NULL)",
@@ -59118,7 +59113,7 @@
             "namespace": "Minn\\Login",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Login/LoginController.php",
-            "lines": 339,
+            "lines": 337,
             "doc": "Signing in. The page people see is /minn-admin/login: the form, the\nlost-password and reset flows, and logout all live there and link there.\n/wp-login.php stays as the address tooling knows (one-time login links,\nuptime probes, scripted sign-ins) and answers in place with the same\nshapes; a bare GET of it sends a browser to the clean page. Sessions\nand cookies validate on the engine AND on WordPress either way.",
             "implements": [],
             "extends": null,
@@ -59131,6 +59126,7 @@
                 "Minn\\Auth\\PortableHash",
                 "Minn\\Auth\\SignIn",
                 "Minn\\Content\\Site",
+                "Minn\\Content\\UserRecord",
                 "Minn\\Content\\Users",
                 "Minn\\Front\\Permalinks",
                 "Minn\\Http\\Access",
@@ -59203,8 +59199,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 40,
-                "end": 49
+                "line": 41,
+                "end": 50
             },
             "cases": [],
             "constants": [
@@ -59314,8 +59310,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 58,
-                    "end": 96
+                    "line": 59,
+                    "end": 97
                 },
                 {
                     "routes": [
@@ -59338,8 +59334,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 243,
-                    "end": 276
+                    "line": 244,
+                    "end": 275
                 },
                 {
                     "routes": [],
@@ -59358,8 +59354,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 99,
-                    "end": 134
+                    "line": 100,
+                    "end": 135
                 },
                 {
                     "routes": [],
@@ -59378,8 +59374,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 141,
-                    "end": 155
+                    "line": 142,
+                    "end": 156
                 },
                 {
                     "routes": [],
@@ -59400,8 +59396,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 158,
-                    "end": 171
+                    "line": 159,
+                    "end": 172
                 },
                 {
                     "routes": [],
@@ -59420,8 +59416,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 173,
-                    "end": 198
+                    "line": 174,
+                    "end": 199
                 },
                 {
                     "routes": [],
@@ -59440,8 +59436,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 206,
-                    "end": 237
+                    "line": 207,
+                    "end": 238
                 },
                 {
                     "routes": [],
@@ -59460,8 +59456,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 282,
-                    "end": 294
+                    "line": 281,
+                    "end": 293
                 },
                 {
                     "routes": [],
@@ -59480,8 +59476,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 301,
-                    "end": 320
+                    "line": 300,
+                    "end": 319
                 },
                 {
                     "routes": [],
@@ -59500,8 +59496,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 327,
-                    "end": 335
+                    "line": 326,
+                    "end": 334
                 },
                 {
                     "routes": [],
@@ -59534,8 +59530,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 338,
-                    "end": 345
+                    "line": 337,
+                    "end": 344
                 },
                 {
                     "routes": [],
@@ -59554,8 +59550,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 348,
-                    "end": 351
+                    "line": 347,
+                    "end": 350
                 },
                 {
                     "routes": [],
@@ -59581,8 +59577,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 354,
-                    "end": 359
+                    "line": 353,
+                    "end": 358
                 },
                 {
                     "routes": [],
@@ -59615,8 +59611,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 361,
-                    "end": 371
+                    "line": 360,
+                    "end": 370
                 }
             ]
         },
@@ -59932,22 +59928,20 @@
             "namespace": "Minn\\Login",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Login/LoginHooks.php",
-            "lines": 46,
-            "doc": "What the reference tells plugins about a sign-in, when plugins are loaded:\nwp_login with the user after a good one, wp_login_failed with the reason\nafter a bad one (security and logging plugins read it), wp_logout with the\nuser id after a sign-out. A form with an empty field is turned away before\nany of it, as there. The authenticate filter, through which a plugin may\nrefuse a sign-in, is not run yet (contracts/runtime.md).",
+            "lines": 67,
+            "doc": "The sign-in as plugins see it, when they are loaded. The credentials go\nthrough the reference's authenticate chain, so a plugin may refuse a\nsign-in (a breached password, a second factor, a locked account) or\naccept one the password alone would not; wp_login_failed is the chain's\nown report. wp_login follows a good sign-in and wp_logout a sign-out.\nThe engine's default refusals stay one vague sentence; a plugin's is\nshown in its own words, through login_errors.",
             "implements": [],
             "extends": null,
             "uses": [
-                "Minn\\Content\\Site",
                 "Minn\\Content\\UserRecord",
                 "Minn\\Content\\Users",
-                "Minn\\Runtime\\Runtime",
-                "Minn\\Support\\Html"
+                "Minn\\Runtime\\Runtime"
             ],
             "usedBy": [
                 "Minn\\Login\\LoginController"
             ],
             "constructor": {
-                "signature": "__construct(Minn\\Content\\Users $users, Minn\\Content\\Site $site)",
+                "signature": "__construct(Minn\\Content\\Users $users)",
                 "doc": "",
                 "shapes": [],
                 "params": [
@@ -59957,34 +59951,25 @@
                         "shape": "",
                         "default": null,
                         "doc": ""
-                    },
-                    {
-                        "name": "site",
-                        "type": "Minn\\Content\\Site",
-                        "shape": "",
-                        "default": null,
-                        "doc": ""
                     }
                 ],
                 "visibility": "public",
-                "line": 23,
-                "end": 27
+                "line": 25,
+                "end": 28
             },
             "cases": [],
-            "constants": [],
+            "constants": [
+                {
+                    "name": "DEFAULT_REFUSALS",
+                    "value": "array (   0 => 'empty_username',   1 => 'empty_password',   2 => 'invalid_username',   3 => 'invalid_email',   4 => 'incorrect_password',   5 => 'authentication_failed', )",
+                    "doc": "The chain's own refusals, which the sign-in page words as one.",
+                    "visibility": "private"
+                }
+            ],
             "properties": [
                 {
                     "name": "users",
                     "type": "Minn\\Content\\Users",
-                    "readonly": true,
-                    "static": false,
-                    "doc": "",
-                    "visibility": "private",
-                    "promoted": true
-                },
-                {
-                    "name": "site",
-                    "type": "Minn\\Content\\Site",
                     "readonly": true,
                     "static": false,
                     "doc": "",
@@ -59995,12 +59980,26 @@
             "methods": [
                 {
                     "routes": [],
-                    "name": "attempted",
+                    "name": "available",
                     "static": false,
                     "visibility": "public",
-                    "signature": "attempted(string $login, ?Minn\\Content\\UserRecord $user): void",
-                    "doc": "After a sign-in attempt with both fields filled: the user signed in, or null.",
+                    "signature": "available(): bool",
+                    "doc": "Whether the chain can be asked: only with plugins loaded.",
                     "shapes": [],
+                    "params": [],
+                    "line": 31,
+                    "end": 34
+                },
+                {
+                    "routes": [],
+                    "name": "authenticate",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "authenticate(string $login, string $password): Minn\\Content\\UserRecord|array",
+                    "doc": "The credentials through wp_authenticate and the authenticate filters,\nas the reference's sign-in runs them: the user, or the refusal as\n[code, message].",
+                    "shapes": [
+                        "@return UserRecord|array{0: string, 1: string}"
+                    ],
                     "params": [
                         {
                             "name": "login",
@@ -60010,15 +60009,62 @@
                             "doc": ""
                         },
                         {
-                            "name": "user",
-                            "type": "?Minn\\Content\\UserRecord",
+                            "name": "password",
+                            "type": "string",
                             "shape": "",
                             "default": null,
                             "doc": ""
                         }
                     ],
-                    "line": 30,
-                    "end": 40
+                    "line": 43,
+                    "end": 53
+                },
+                {
+                    "routes": [],
+                    "name": "refusal",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "refusal(string $code, string $message): ?string",
+                    "doc": "The sentence the sign-in page shows for a refusal, as plain text; null for the engine's own wording.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "code",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "message",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 56,
+                    "end": 63
+                },
+                {
+                    "routes": [],
+                    "name": "signedIn",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "signedIn(Minn\\Content\\UserRecord $user): void",
+                    "doc": "After a good sign-in. The chain read the user through the runtime,\nwhich cached their meta before the new session was written, so the\ncache is let go first: a plugin reading session_tokens on wp_login\n(CleanTalk keeps the first session's address) must see the new one.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "user",
+                            "type": "Minn\\Content\\UserRecord",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 71,
+                    "end": 77
                 },
                 {
                     "routes": [],
@@ -60037,28 +60083,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 43,
-                    "end": 48
-                },
-                {
-                    "routes": [],
-                    "name": "reason",
-                    "static": false,
-                    "visibility": "private",
-                    "signature": "reason(string $login): WP_Error",
-                    "doc": "The reference's refusal: nobody by that name or address, or the wrong password for someone.",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "login",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 51,
-                    "end": 65
+                    "line": 80,
+                    "end": 85
                 }
             ]
         },
@@ -86770,6 +86796,144 @@
             ]
         },
         {
+            "name": "Minn\\Runtime\\AjaxController",
+            "short": "AjaxController",
+            "namespace": "Minn\\Runtime",
+            "kind": "final readonly class",
+            "file": "public/minn/src/Minn/Runtime/AjaxController.php",
+            "lines": 72,
+            "doc": "admin-ajax.php, the endpoint plugins post their front-end work to: a form\nsubmitted without a reload, a spam check, a background job. The action a\nrequest names runs the handlers registered as wp_ajax_{action} for a\nsigned-in visitor and wp_ajax_nopriv_{action} for anyone else, answered as\nthe reference answers them (contracts/runtime.md \"admin-ajax.php\").\n\nIt is an admin request: is_admin() is true while the plugins load and\nadmin_init fires before the handler. A handler usually ends the request\nitself (wp_send_json, wp_die, exit), so the endpoint's headers go out\nbefore it runs; one that returns is followed by the reference's \"0\".",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\Http\\Access",
+                "Minn\\Http\\Method",
+                "Minn\\Http\\Policy",
+                "Minn\\Http\\Request",
+                "Minn\\Http\\Response",
+                "Minn\\Http\\Route",
+                "Minn\\Runtime\\Options",
+                "Minn\\Runtime\\Runtime"
+            ],
+            "usedBy": [
+                "Minn\\Engine",
+                "Minn\\Runtime\\Constants"
+            ],
+            "constructor": null,
+            "cases": [],
+            "constants": [
+                {
+                    "name": "PATH",
+                    "value": "'/wp-admin/admin-ajax.php'",
+                    "doc": "",
+                    "visibility": "public"
+                },
+                {
+                    "name": "CORE",
+                    "value": "array (   'wp_ajax_nopriv_' =>    array (     'heartbeat' => 'wp_ajax_nopriv_heartbeat',   ),   'wp_ajax_' =>    array (     'rest-nonce' => 'wp_ajax_rest_nonce',   ), )",
+                    "doc": "The core actions the endpoint answers itself, under the prefix for who is asking: the action => the handler.",
+                    "visibility": "private"
+                }
+            ],
+            "properties": [],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "claims",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "claims(Minn\\Http\\Request $request): bool",
+                    "doc": "Whether a request is for the endpoint, which the runtime boots as an admin request.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "request",
+                            "type": "Minn\\Http\\Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 37,
+                    "end": 40
+                },
+                {
+                    "routes": [
+                        "* /wp-admin/admin-ajax.php (public)"
+                    ],
+                    "name": "dispatch",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "dispatch(Minn\\Http\\Request $request): Minn\\Http\\Response",
+                    "doc": "Runs the handlers registered for the action the request names.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "request",
+                            "type": "Minn\\Http\\Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 44,
+                    "end": 71
+                },
+                {
+                    "routes": [],
+                    "name": "action",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "action(Minn\\Http\\Request $request): ?string",
+                    "doc": "The action the request names, the posted field over the query's, or null when there is none to run.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "request",
+                            "type": "Minn\\Http\\Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 74,
+                    "end": 78
+                },
+                {
+                    "routes": [],
+                    "name": "allowedOrigin",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "allowedOrigin(): array",
+                    "doc": "The two cross-origin headers, for an Origin that is this site's own address; empty for any other.",
+                    "shapes": [],
+                    "params": [],
+                    "line": 81,
+                    "end": 88
+                },
+                {
+                    "routes": [],
+                    "name": "registerCore",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "registerCore(string $prefix): void",
+                    "doc": "The reference registers its own actions after admin_init, only those for who is asking, ahead of a plugin's.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "prefix",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 91,
+                    "end": 96
+                }
+            ]
+        },
+        {
             "name": "Minn\\Runtime\\AllowedOptions",
             "short": "AllowedOptions",
             "namespace": "Minn\\Runtime",
@@ -88910,11 +89074,12 @@
             "namespace": "Minn\\Runtime",
             "kind": "final class",
             "file": "public/minn/src/Minn/Runtime/Constants.php",
-            "lines": 67,
+            "lines": 66,
             "doc": "The constants plugin code expects: the fixed set from data/constants.json\n(captured from the reference) and the per-site ones computed here. Nothing\nalready defined is touched, so wp-config.php keeps the last word.",
             "implements": [],
             "extends": null,
             "uses": [
+                "Minn\\Runtime\\AjaxController",
                 "Minn\\Runtime\\Runtime"
             ],
             "usedBy": [
@@ -88943,7 +89108,7 @@
                         }
                     ],
                     "line": 15,
-                    "end": 77
+                    "end": 76
                 }
             ]
         },
@@ -92095,6 +92260,7 @@
             ],
             "usedBy": [
                 "Minn\\Cli\\OptionCommand",
+                "Minn\\Runtime\\AjaxController",
                 "Minn\\Runtime\\Runtime",
                 "Minn\\Runtime\\Symbols"
             ],
@@ -96117,7 +96283,7 @@
             "namespace": "Minn\\Runtime",
             "kind": "final class",
             "file": "public/minn/src/Minn/Runtime/Runtime.php",
-            "lines": 331,
+            "lines": 334,
             "doc": "The WordPress runtime the engine offers plugin code: the procedural\nfacade under minn/wp-api/ plus the services it delegates to. One per\nrequest; the facade reaches it through these statics.",
             "implements": [],
             "extends": null,
@@ -96171,6 +96337,7 @@
                 "Minn\\Rest\\Api",
                 "Minn\\Rest\\Services",
                 "Minn\\Runtime\\Abilities",
+                "Minn\\Runtime\\AjaxController",
                 "Minn\\Runtime\\BlockFilters",
                 "Minn\\Runtime\\BlockHooks",
                 "Minn\\Runtime\\Constants",
@@ -96548,7 +96715,7 @@
                         }
                     ],
                     "line": 125,
-                    "end": 146
+                    "end": 149
                 },
                 {
                     "routes": [],
@@ -96559,8 +96726,8 @@
                     "doc": "The booted runtime; throws when there is none.",
                     "shapes": [],
                     "params": [],
-                    "line": 149,
-                    "end": 155
+                    "line": 152,
+                    "end": 158
                 },
                 {
                     "routes": [],
@@ -96571,8 +96738,8 @@
                     "doc": "Whether the runtime is up.",
                     "shapes": [],
                     "params": [],
-                    "line": 158,
-                    "end": 161
+                    "line": 161,
+                    "end": 164
                 },
                 {
                     "routes": [],
@@ -96583,8 +96750,8 @@
                     "doc": "The hook registry.",
                     "shapes": [],
                     "params": [],
-                    "line": 164,
-                    "end": 167
+                    "line": 167,
+                    "end": 170
                 },
                 {
                     "routes": [],
@@ -96595,8 +96762,8 @@
                     "doc": "The options store.",
                     "shapes": [],
                     "params": [],
-                    "line": 170,
-                    "end": 173
+                    "line": 173,
+                    "end": 176
                 },
                 {
                     "routes": [],
@@ -96622,8 +96789,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 184,
-                    "end": 199
+                    "line": 187,
+                    "end": 202
                 },
                 {
                     "routes": [],
@@ -96634,8 +96801,8 @@
                     "doc": "The object cache.",
                     "shapes": [],
                     "params": [],
-                    "line": 202,
-                    "end": 205
+                    "line": 205,
+                    "end": 208
                 },
                 {
                     "routes": [],
@@ -96646,8 +96813,8 @@
                     "doc": "The text domains loaded for this request.",
                     "shapes": [],
                     "params": [],
-                    "line": 208,
-                    "end": 211
+                    "line": 211,
+                    "end": 214
                 },
                 {
                     "routes": [],
@@ -96658,8 +96825,8 @@
                     "doc": "The locales this request switched into.",
                     "shapes": [],
                     "params": [],
-                    "line": 214,
-                    "end": 217
+                    "line": 217,
+                    "end": 220
                 },
                 {
                     "routes": [],
@@ -96670,8 +96837,8 @@
                     "doc": "The shortcode registry.",
                     "shapes": [],
                     "params": [],
-                    "line": 220,
-                    "end": 223
+                    "line": 223,
+                    "end": 226
                 },
                 {
                     "routes": [],
@@ -96682,8 +96849,8 @@
                     "doc": "The script modules registry.",
                     "shapes": [],
                     "params": [],
-                    "line": 226,
-                    "end": 232
+                    "line": 229,
+                    "end": 235
                 },
                 {
                     "routes": [],
@@ -96694,8 +96861,8 @@
                     "doc": "The interactivity API.",
                     "shapes": [],
                     "params": [],
-                    "line": 235,
-                    "end": 238
+                    "line": 238,
+                    "end": 241
                 },
                 {
                     "routes": [],
@@ -96706,8 +96873,8 @@
                     "doc": "The registered block templates.",
                     "shapes": [],
                     "params": [],
-                    "line": 241,
-                    "end": 244
+                    "line": 244,
+                    "end": 247
                 },
                 {
                     "routes": [],
@@ -96718,8 +96885,8 @@
                     "doc": "The post types, taxonomies, and statuses.",
                     "shapes": [],
                     "params": [],
-                    "line": 247,
-                    "end": 250
+                    "line": 250,
+                    "end": 253
                 },
                 {
                     "routes": [],
@@ -96730,8 +96897,8 @@
                     "doc": "A fresh post query over the runtime's registry.",
                     "shapes": [],
                     "params": [],
-                    "line": 253,
-                    "end": 256
+                    "line": 256,
+                    "end": 259
                 },
                 {
                     "routes": [],
@@ -96757,8 +96924,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 259,
-                    "end": 262
+                    "line": 262,
+                    "end": 265
                 },
                 {
                     "routes": [],
@@ -96784,8 +96951,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 265,
-                    "end": 268
+                    "line": 268,
+                    "end": 271
                 },
                 {
                     "routes": [],
@@ -96796,8 +96963,8 @@
                     "doc": "Whether the request is over HTTPS.",
                     "shapes": [],
                     "params": [],
-                    "line": 271,
-                    "end": 274
+                    "line": 274,
+                    "end": 277
                 },
                 {
                     "routes": [],
@@ -96808,8 +96975,8 @@
                     "doc": "wp-content under the site root.",
                     "shapes": [],
                     "params": [],
-                    "line": 277,
-                    "end": 280
+                    "line": 280,
+                    "end": 283
                 },
                 {
                     "routes": [],
@@ -96828,8 +96995,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 283,
-                    "end": 306
+                    "line": 286,
+                    "end": 309
                 },
                 {
                     "routes": [],
@@ -96840,8 +97007,8 @@
                     "doc": "The pluggable functions, once the plugins have had their chance to\ndefine their own: each is defined only where no plugin did. The plugin\nloader calls this before plugins_loaded; a boot that loads no plugins\ncalls it straight away.",
                     "shapes": [],
                     "params": [],
-                    "line": 332,
-                    "end": 335
+                    "line": 335,
+                    "end": 338
                 },
                 {
                     "routes": [],
@@ -96852,8 +97019,8 @@
                     "doc": "Fresh per-request state, for suites.",
                     "shapes": [],
                     "params": [],
-                    "line": 338,
-                    "end": 353
+                    "line": 341,
+                    "end": 356
                 },
                 {
                     "routes": [],
@@ -96872,8 +97039,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 313,
-                    "end": 324
+                    "line": 316,
+                    "end": 327
                 }
             ]
         },
@@ -101326,7 +101493,6 @@
                 "Minn\\Http\\Failure",
                 "Minn\\Login\\LoginController",
                 "Minn\\Login\\LoginForm",
-                "Minn\\Login\\LoginHooks",
                 "Minn\\Rest\\MediaObject",
                 "Minn\\Rest\\PluginsController",
                 "Minn\\Runtime\\PageMenu",

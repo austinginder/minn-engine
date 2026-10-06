@@ -2876,24 +2876,16 @@ loaded, it found these, each now matched to the oracle:
 - **`wp_blacklist_check`** (deprecated in 5.5) is the one symbol that kept
   CleanTalk from loading: `_deprecated_function(…, '5.5.0',
   'wp_check_comment_disallowed_list()')`, then that check's answer.
-- **A sign-in tells plugins.** `Login\LoginHooks` fires `wp_login($login,
-  WP_User)` after a good sign-in, `wp_login_failed($login, WP_Error)` after
-  a bad one with both fields filled (`incorrect_password` worded for the
-  username or the email address, `invalid_username`, `invalid_email`, the
-  reference's messages), and `wp_logout($id)` after a sign-out. CleanTalk
-  records the sign-in address in `_cleantalk_ip_keeper_data` on
-  `wp_login`. Not run yet: the `authenticate` and `wp_authenticate_user`
-  filters (a plugin cannot refuse or add a factor to an engine sign-in),
-  `wp_authenticate`, and the cookie actions (`set_auth_cookie`,
-  `set_logged_in_cookie`, `attach_session_information`).
+- **A sign-in tells plugins.** See "admin-ajax.php and the sign-in
+  chain" below: the engine's sign-in runs the `authenticate` chain, and
+  `wp_login` / `wp_logout` follow as before. CleanTalk records the
+  sign-in address in `_cleantalk_ip_keeper_data` on `wp_login`. Still not
+  fired: the cookie actions (`set_auth_cookie`, `set_logged_in_cookie`,
+  `attach_session_information`).
 - **`/wp-admin/admin-ajax.php` declares `DOING_AJAX`** before anything
   loads, as the reference's own file does; CleanTalk counted the Minn Admin
-  nonce refresh as a page view without it. `is_admin()` and `WP_ADMIN` stay
-  false there, where the reference makes them true: the endpoint answers
-  only `rest-nonce`, and a true `is_admin()` loads a plugin's admin code,
-  which reaches for the admin host Minn does not keep (Modula fataled on
-  `WP_Posts_List_Table` in the dogfood run). A plugin's `wp_ajax_*` actions
-  are not dispatched.
+  nonce refresh as a page view without it. The endpoint itself is now the
+  reference's (below).
 - **Uploads are cut into every size the site has.** `Media\Images::ladder()`
   is the four sizes from the options, `1536x1536` and `2048x2048` (every
   site has them; the round trip's 1600-wide photo was missing its 1536),
@@ -2941,4 +2933,110 @@ loaded, it found these, each now matched to the oracle:
   pings); then the `get_default_comment_status` filter.
 - **An object that holds itself** is encoded by PHP's own serializer
   (back-references and all) instead of recursing until the worker dies.
+
+## admin-ajax.php and the sign-in chain (2026-10-05)
+
+Two things nearly every site in the Anchor fleet leans on, found open by
+the round trip: plugins answer their own front-end requests on
+`admin-ajax.php` (Gravity Forms submits forms and runs its background
+feeds there, CleanTalk checks for spam, WooCommerce refreshes the cart,
+Elementor Pro sends its forms), and plugins may refuse a sign-in
+(Passwords Evolved on 808 fleet sites, Wordfence, Jetpack). Captured from
+the reference with the fixture plugin `tests/fixtures/runtime/minn-test-ajax`
+and the hook trace; suite `ajax` (69 checks, both stacks).
+
+**The endpoint** (`Runtime\AjaxController`, route `Method::Any`):
+
+- It is an admin request. The runtime boots with `isAdmin`, so `is_admin()`
+  and `WP_ADMIN` are true while plugins load (a plugin may register its
+  handlers only then), `is_blog_admin()` and `is_network_admin()` are
+  false (no admin screen), `$pagenow` is `admin-ajax.php`, and
+  `$_SERVER['SCRIPT_FILENAME' | 'SCRIPT_NAME' | 'PHP_SELF']` name
+  `wp-admin/admin-ajax.php` (WooCommerce exempts the endpoint from its
+  admin guard by `SCRIPT_FILENAME`; without it every signed-out request
+  was sent to `/my-account/`). `$pagenow` is `index.php` on every other
+  path except `/wp-login.php` and `/wp-cron.php`, where it stays unset
+  (`_minn_script_globals`): with `wp-login.php` there, the CaptainCore
+  helper takes a one-time link itself (to `/wp-admin/`, refusing with a
+  500 page) and hide-login plugins start guarding the path, which wants a
+  round trip on a hide-login site before it changes. A plugin that sets
+  `$pagenow` first keeps it.
+- Hooks fired: `plugins_loaded`, `init`, `wp_loaded`, `admin_init`, the
+  handler. Never `parse_request`, `wp`, `template_redirect`,
+  `send_headers`, `admin_menu`, `current_screen`.
+- `OPTIONS` is answered first: 200 and empty with the two cross-origin
+  headers when `Origin` is the site's own, 403 and empty otherwise.
+- The action is `$_REQUEST['action']` (the posted field wins over the
+  query's). Missing, empty, or an array: 400 `0`, with `Content-Type:
+  text/html; charset=UTF-8`, `X-Robots-Tag: noindex` and the no-cache
+  headers, before `admin_init`.
+- Then the response's headers go out (`Response::sendHead()`), because a
+  handler usually ends the request itself, then `admin_init` fires (its
+  defaults send `Referrer-Policy` through `admin_referrer_policy` and
+  `X-Frame-Options: SAMEORIGIN`), then the reference's own actions are
+  registered at priority 1, only those for who is asking:
+  `wp_ajax_nopriv_heartbeat` signed out, `wp_ajax_rest-nonce` signed in.
+  A plugin cannot see them at `admin_init`.
+- `wp_ajax_{action}` for a signed-in visitor, `wp_ajax_nopriv_{action}`
+  otherwise (a signed-in visitor never reaches a nopriv handler). No
+  handler: 400 `0`. A handler that returns is followed by `0` and a 200,
+  whatever status it set; `wp_send_json*` keeps the status it was given
+  (`wp_die(..., ['response' => null])`); `wp_die()` in a handler answers
+  200 unless given a status, prints the message bare (a `WP_Error`'s
+  message, an int as its digits), and nothing more; `check_ajax_referer`
+  looks in the named field, then `_ajax_nonce`, then `_wpnonce`, and
+  refuses 403 `-1`.
+- Cross-origin headers (`Access-Control-Allow-Origin: <origin>` and
+  `Access-Control-Allow-Credentials: true`) only for an `Origin` that is
+  exactly the http or https form of the home or site host: a trailing
+  slash, a port, or upper-case scheme is refused.
+- The signed-out heartbeat: `data` (cast to an array) goes through
+  `heartbeat_nopriv_received` only when it is not empty, then
+  `heartbeat_nopriv_send` (where `wp_auth_check` adds `wp-auth-check`),
+  `heartbeat_nopriv_tick`, and `server_time` last, as JSON. `screen_id`
+  is `sanitize_key`'d, `front` when absent.
+- The engine's own hardening sends `X-Content-Type-Options: nosniff` on
+  every response; the reference starts sending it after the action check.
+  Kept on purpose.
+- Not done: the signed-in heartbeat (post locks, nonce refresh: wp-admin
+  plumbing), the reference's other core actions (all wp-admin screens,
+  Mute), `admin-post.php`, and a plugin replacing `wp_die_ajax_handler`
+  for the closing `0` (the engine writes it itself).
+- With `is_admin()` true, every plugin's admin code loads on this
+  endpoint. Modula extends `WP_Posts_List_Table` behind a `class_exists`
+  guard and a `require` of a file the site skeleton leaves empty (the
+  gate's known blind spot), so the core list tables are now Mute
+  placeholders (`WP_Posts_List_Table`, the comments, users, media,
+  plugins, themes, links, application-password and privacy-request
+  tables).
+- On shop-dogfood the engine's answers to `gform_get_config`,
+  `woocommerce_get_refreshed_fragments` and an unknown action are byte
+  for byte the oracle's.
+
+**The sign-in chain** (`Login\LoginHooks`): with plugins loaded, the
+engine's sign-in runs `wp_authenticate` (the action, with the login and
+password by reference) and then `wp_authenticate()`, as the reference's
+sign-in does. What the reference's `wp_authenticate()` does, and the
+facade now does:
+
+- The username goes through `sanitize_user`, the password is trimmed.
+- The chain: `wp_authenticate_username_password` and
+  `wp_authenticate_email_password` at 20 (each runs
+  `wp_authenticate_user`), `wp_authenticate_spam_check` at 99 (single
+  site: passes the user through). The reference also has
+  `wp_authenticate_application_password` at 20; it acts only on API
+  requests, which the engine authenticates itself.
+- A chain that returns `null` or `false` is `authentication_failed`
+  (`<strong>Error:</strong> Invalid username, email address or incorrect
+  password.`).
+- `wp_login_failed($sanitized_login, WP_Error)` fires for every refusal
+  whose FIRST code is not `empty_username` or `empty_password`.
+- The unknown-email message has no `Error:` prefix in the reference.
+
+On the page: a plugin's refusal is shown in its own words (through
+`login_errors`, tags stripped, since the engine's form prints text). The
+chain's own refusals (`empty_*`, `invalid_username`, `invalid_email`,
+`incorrect_password`, `authentication_failed`) stay the engine's one
+sentence, which does not say whether the username exists. A plugin that
+returns a `WP_User` signs that user in, as on the reference.
 

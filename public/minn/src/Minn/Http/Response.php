@@ -85,11 +85,11 @@ final readonly class Response
     }
 
     /**
-     * Writes the status, the headers, the cookies, and the body, ends the
-     * request for the client, then runs the after-send work in the same
-     * process (the server that can close the connection first does).
+     * Writes the status, the headers, and the cookies now, and nothing else:
+     * for an answer that code outside the engine may finish on its own (an
+     * ajax handler that ends the request), which must find them already said.
      */
-    public function send(): void
+    public function sendHead(): void
     {
         http_response_code($this->status);
         foreach ($this->headers as $name => $value) {
@@ -98,6 +98,16 @@ final readonly class Response
         foreach ($this->cookies as [$name, $value, $options]) {
             setcookie($name, $value, $options);
         }
+    }
+
+    /**
+     * Writes the status, the headers, the cookies, and the body, ends the
+     * request for the client, then runs the after-send work in the same
+     * process (the server that can close the connection first does).
+     */
+    public function send(): void
+    {
+        $this->sendHead();
         echo $this->body;
         if ($this->afterSend === []) {
             return;

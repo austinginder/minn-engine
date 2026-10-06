@@ -252,9 +252,14 @@ if (!function_exists('wp_authenticate')) :
 function wp_authenticate($username, $password)
 {
     $username = sanitize_user((string) $username);
-    $user = apply_filters('authenticate', null, $username, (string) $password);
-    if ($user === null) {
-        $user = new WP_Error('authentication_failed', 'Invalid username, email address or password.');
+    $password = trim((string) $password);
+    $user = apply_filters('authenticate', null, $username, $password);
+    if ($user === null || $user === false) {
+        $user = new WP_Error('authentication_failed', '<strong>Error:</strong> Invalid username, email address or incorrect password.');
+    }
+    // An empty field is the form's mistake, not a failed attempt; only the first code decides.
+    if (is_wp_error($user) && !in_array($user->get_error_code(), ['empty_username', 'empty_password'], true)) {
+        do_action('wp_login_failed', $username, $user);
     }
     return $user;
 }

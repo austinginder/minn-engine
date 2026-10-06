@@ -505,12 +505,6 @@ function screen_icon()
     return null;
 }
 
-function send_nosniff_header()
-{
-    \Minn\Runtime\PlaceholderTrace::hit('send_nosniff_header');
-    return null;
-}
-
 function set_user_setting($name, $value)
 {
     \Minn\Runtime\PlaceholderTrace::hit('set_user_setting');

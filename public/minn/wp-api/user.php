@@ -301,7 +301,7 @@ function wp_authenticate_email_password($user, $email, $password)
     }
     $found = get_user_by('email', $email);
     if (!$found) {
-        return new WP_Error('invalid_email', '<strong>Error:</strong> Unknown email address. Check again or try your username.');
+        return new WP_Error('invalid_email', 'Unknown email address. Check again or try your username.');
     }
     $found = apply_filters('wp_authenticate_user', $found, $password);
     if (is_wp_error($found)) {
@@ -311,6 +311,12 @@ function wp_authenticate_email_password($user, $email, $password)
         return new WP_Error('incorrect_password', '<strong>Error:</strong> The password you entered for the email address <strong>' . esc_html($email) . '</strong> is incorrect.');
     }
     return $found;
+}
+
+/** The multisite step of the chain; on a single site nobody is marked as spam, so the user passes through. */
+function wp_authenticate_spam_check($user)
+{
+    return $user;
 }
 
 function add_role($role, $display_name, $capabilities = [])

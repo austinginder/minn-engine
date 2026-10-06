@@ -535,6 +535,7 @@ function wp_auth_check_html()
 
 function wp_auth_check($response)
 {
+    $response['wp-auth-check'] = is_user_logged_in();
     return $response;
 }
 
@@ -670,6 +671,18 @@ function wp_validate_boolean($value)
 function send_frame_options_header()
 {
     header('X-Frame-Options: SAMEORIGIN');
+}
+
+function send_nosniff_header()
+{
+    header('X-Content-Type-Options: nosniff');
+}
+
+/** The headers every admin response carries: the referrer policy, which a plugin may change. */
+function wp_admin_headers()
+{
+    $policy = apply_filters('admin_referrer_policy', 'strict-origin-when-cross-origin');
+    header(sprintf('Referrer-Policy: %s', $policy));
 }
 
 function wp_nonce_field($action = -1, $name = '_wpnonce', $referer = true, $display = true)
@@ -843,9 +856,11 @@ function _default_wp_die_handler($message, $title = '', $args = [])
 
 function _ajax_wp_die_handler($message, $title = '', $args = [])
 {
+    // An ajax answer is a 200 unless the caller names a status; null (wp_send_json's) keeps the one already set.
+    $status = is_array($args) && array_key_exists('response', $args) ? $args['response'] : 200;
     [$message, $title, $args] = _wp_die_process_input($message, $title, $args);
-    if (!headers_sent() && $args['response'] !== 0) {
-        http_response_code((int) $args['response']);
+    if (!headers_sent() && $status !== null) {
+        http_response_code((int) $status);
     }
     if (is_scalar($message)) {
         echo (string) $message;

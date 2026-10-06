@@ -4,9 +4,9 @@
 
 | Class | Kind | Lines | Summary |
 |---|---|---|---|
-| [`LoginController`](#logincontroller) | final readonly class | 339 | Signing in. The page people see is /minn-admin/login: the form, the |
+| [`LoginController`](#logincontroller) | final readonly class | 337 | Signing in. The page people see is /minn-admin/login: the form, the |
 | [`LoginForm`](#loginform) | final class | 137 | The sign-in page markup. |
-| [`LoginHooks`](#loginhooks) | final readonly class | 46 | What the reference tells plugins about a sign-in, when plugins are loaded: |
+| [`LoginHooks`](#loginhooks) | final readonly class | 67 | The sign-in as plugins see it, when they are loaded. The credentials go |
 | [`ServeLogin`](#servelogin) | final class | 3 | Thrown by the wp-login.php shape file when plugin code require's it |
 
 ## LoginController
@@ -51,7 +51,7 @@ Route: `POST /wp-login.php (public)`
 
 Handles the posted form for each of those pages.
 
-Internals: `lostPassword()` (private, line 99), `openResetLink()` (private, line 141), `resetSession()` (private, line 158), `savePassword()` (private, line 173), `tokenLogin()` (private, line 206), `safeRedirect()` (private, line 282), `logout()` (private, line 301), `action()` (private, line 327), `actionUrl()` (private, line 338), `base()` (private, line 348), `tooManyAttempts()` (private, line 354), `render()` (private, line 361)
+Internals: `lostPassword()` (private, line 100), `openResetLink()` (private, line 142), `resetSession()` (private, line 159), `savePassword()` (private, line 174), `tokenLogin()` (private, line 207), `safeRedirect()` (private, line 281), `logout()` (private, line 300), `action()` (private, line 326), `actionUrl()` (private, line 337), `base()` (private, line 347), `tooManyAttempts()` (private, line 353), `render()` (private, line 360)
 
 
 ## LoginForm
@@ -95,29 +95,49 @@ Internals: `page()` (private, line 110)
 
 `final readonly class Minn\Login\LoginHooks` · `public/minn/src/Minn/Login/LoginHooks.php`
 
-What the reference tells plugins about a sign-in, when plugins are loaded:
-wp_login with the user after a good one, wp_login_failed with the reason
-after a bad one (security and logging plugins read it), wp_logout with the
-user id after a sign-out. A form with an empty field is turned away before
-any of it, as there. The authenticate filter, through which a plugin may
-refuse a sign-in, is not run yet (contracts/runtime.md).
+The sign-in as plugins see it, when they are loaded. The credentials go
+through the reference's authenticate chain, so a plugin may refuse a
+sign-in (a breached password, a second factor, a locked account) or
+accept one the password alone would not; wp_login_failed is the chain's
+own report. wp_login follows a good sign-in and wp_logout a sign-out.
+The engine's default refusals stay one vague sentence; a plugin's is
+shown in its own words, through login_errors.
+
+- const `DEFAULT_REFUSALS` = `array (   0 => 'empty_username',   1 => 'empty_password',   2 => 'invalid_username',   3 => 'invalid_email',   4 => 'incorrect_password',   5 => 'authentication_failed', )` — The chain's own refusals, which the sign-in page words as one.
 
 Used by: `Minn\Login\LoginController`
 
 ```php
-__construct(Minn\Content\Users $users, Minn\Content\Site $site)
+__construct(Minn\Content\Users $users)
 ```
 
 
-### `attempted(string $login, ?Minn\Content\UserRecord $user): void`
+### `available(): bool`
 
-After a sign-in attempt with both fields filled: the user signed in, or null.
+Whether the chain can be asked: only with plugins loaded.
+
+### `authenticate(string $login, string $password): Minn\Content\UserRecord|array`
+
+The credentials through wp_authenticate and the authenticate filters,
+as the reference's sign-in runs them: the user, or the refusal as
+[code, message].
+
+- `@return UserRecord|array{0: string, 1: string}`
+
+### `refusal(string $code, string $message): ?string`
+
+The sentence the sign-in page shows for a refusal, as plain text; null for the engine's own wording.
+
+### `signedIn(Minn\Content\UserRecord $user): void`
+
+After a good sign-in. The chain read the user through the runtime,
+which cached their meta before the new session was written, so the
+cache is let go first: a plugin reading session_tokens on wp_login
+(CleanTalk keeps the first session's address) must see the new one.
 
 ### `signedOut(int $userId): void`
 
 After a sign-out ended the session.
-
-Internals: `reason()` (private, line 51)
 
 
 ## ServeLogin
