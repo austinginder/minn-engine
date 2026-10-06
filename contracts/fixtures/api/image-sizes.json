@@ -1,0 +1,112 @@
+[
+    [
+        "the global",
+        {
+            "1536x1536": {
+                "width": 1536,
+                "height": 1536,
+                "crop": false
+            },
+            "2048x2048": {
+                "width": 2048,
+                "height": 2048,
+                "crop": false
+            }
+        }
+    ],
+    [
+        "wp_get_additional_image_sizes",
+        {
+            "1536x1536": {
+                "width": 1536,
+                "height": 1536,
+                "crop": false
+            },
+            "2048x2048": {
+                "width": 2048,
+                "height": 2048,
+                "crop": false
+            }
+        }
+    ],
+    [
+        "get_intermediate_image_sizes",
+        [
+            "thumbnail",
+            "medium",
+            "medium_large",
+            "large",
+            "1536x1536",
+            "2048x2048"
+        ]
+    ],
+    [
+        "a plugin adds one",
+        [
+            "1536x1536",
+            "2048x2048",
+            "zz-probe"
+        ]
+    ],
+    [
+        "as registered",
+        [
+            {
+                "width": 640,
+                "height": 480,
+                "crop": [
+                    "center",
+                    "top"
+                ]
+            },
+            {
+                "width": 10,
+                "height": 10,
+                "crop": true
+            },
+            {
+                "width": 10,
+                "height": 10,
+                "crop": true
+            }
+        ]
+    ],
+    [
+        "as added",
+        [
+            {
+                "width": 10,
+                "height": 10,
+                "crop": 1
+            },
+            {
+                "width": 10,
+                "height": 10,
+                "crop": "yes"
+            }
+        ]
+    ],
+    [
+        "remove a big one",
+        true
+    ],
+    [
+        "then",
+        [
+            "thumbnail",
+            "medium",
+            "medium_large",
+            "large",
+            "1536x1536",
+            "zz-probe"
+        ]
+    ],
+    [
+        "has_image_size",
+        [
+            true,
+            false,
+            false
+        ]
+    ]
+]

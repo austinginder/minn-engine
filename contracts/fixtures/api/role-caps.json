@@ -1,0 +1,143 @@
+[
+    [
+        "admin: roles",
+        [
+            "administrator"
+        ]
+    ],
+    [
+        "admin: tail",
+        {
+            "edit_theme_options": true,
+            "delete_themes": true,
+            "export": true,
+            "administrator": true
+        }
+    ],
+    [
+        "admin: count",
+        62
+    ],
+    [
+        "admin: has each stored cap",
+        [
+            true
+        ]
+    ],
+    [
+        "editor plus custom, minus edit_posts: roles",
+        [
+            "editor"
+        ]
+    ],
+    [
+        "editor plus custom, minus edit_posts: tail",
+        {
+            "edit_private_pages": true,
+            "read_private_pages": true,
+            "editor": true,
+            "zz_custom": true
+        }
+    ],
+    [
+        "editor plus custom, minus edit_posts: count",
+        36
+    ],
+    [
+        "editor plus custom, minus edit_posts: has each stored cap",
+        [
+            true,
+            true,
+            false
+        ]
+    ],
+    [
+        "role granted false: roles",
+        [
+            "editor",
+            "author"
+        ]
+    ],
+    [
+        "role granted false: tail",
+        {
+            "edit_private_pages": true,
+            "read_private_pages": true,
+            "editor": false,
+            "author": true
+        }
+    ],
+    [
+        "role granted false: count",
+        36
+    ],
+    [
+        "role granted false: has each stored cap",
+        [
+            false,
+            true
+        ]
+    ],
+    [
+        "two roles: roles",
+        [
+            "author",
+            "contributor"
+        ]
+    ],
+    [
+        "two roles: tail",
+        {
+            "delete_published_posts": true,
+            "author": true,
+            "contributor": true,
+            "zz_off": false
+        }
+    ],
+    [
+        "two roles: count",
+        13
+    ],
+    [
+        "two roles: has each stored cap",
+        [
+            true,
+            true,
+            false
+        ]
+    ],
+    [
+        "unknown role-like key: roles",
+        [
+            "subscriber"
+        ]
+    ],
+    [
+        "unknown role-like key: tail",
+        {
+            "read": true,
+            "level_0": true,
+            "zz_no_such_role": true,
+            "subscriber": 1
+        }
+    ],
+    [
+        "unknown role-like key: count",
+        4
+    ],
+    [
+        "unknown role-like key: has each stored cap",
+        [
+            true,
+            true
+        ]
+    ],
+    [
+        "current_user_can administrator",
+        true
+    ],
+    [
+        "user_can 1 editor",
+        false
+    ]
+]

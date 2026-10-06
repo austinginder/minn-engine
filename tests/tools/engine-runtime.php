@@ -28,6 +28,8 @@ $runtime = new Minn\Runtime\Runtime($context);
 Minn\Runtime\Runtime::boot($runtime);
 // No plugins load here, so the pluggable functions are defined at once.
 Minn\Runtime\Runtime::loadPluggables();
+// The reference a probe is compared with has loaded its plugins; what the defaults hang on that (the two big image sizes) runs here too.
+do_action('plugins_loaded');
 $runtime->set('permalinks', Minn\Front\Permalinks::fromDb($db));
 $theme = Minn\Theme\Theme::active($site, Minn\Front\Permalinks::fromDb($db), ABSPATH . 'wp-content/themes');
 $runtime->set('block_theme', $theme !== null);

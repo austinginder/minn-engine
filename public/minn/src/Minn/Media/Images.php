@@ -16,9 +16,9 @@ final readonly class Images
 
     /**
      * The sizes an upload is cut into, in the order the reference writes
-     * them to the metadata: the four from the site's options, the two big
-     * ones every site has, then any a theme or plugin registered with
-     * add_image_size this request.
+     * them to the metadata: the four from the site's options, then the ones
+     * registered with add_image_size this request, the two big ones every
+     * site has first (without plugins, just those two).
      *
      * @return array<string, array{0: int, 1: int, 2: bool}> name => [max width, max height, crop]
      */
@@ -30,10 +30,9 @@ final readonly class Images
             'large' => [$option('large_size_w', 1024), $option('large_size_h', 1024), false],
             'thumbnail' => [$option('thumbnail_size_w', 150), $option('thumbnail_size_h', 150), ($this->site->option('thumbnail_crop') ?? '1') === '1'],
             'medium_large' => [$option('medium_large_size_w', 768), $option('medium_large_size_h', 0), false],
-            '1536x1536' => [1536, 1536, false],
-            '2048x2048' => [2048, 2048, false],
         ];
-        foreach (Runtime::booted() ? (array) ($GLOBALS['_wp_additional_image_sizes'] ?? []) : [] as $name => $size) {
+        $added = ['1536x1536' => ['width' => 1536, 'height' => 1536, 'crop' => false], '2048x2048' => ['width' => 2048, 'height' => 2048, 'crop' => false]];
+        foreach (Runtime::booted() && \did_action('plugins_loaded') ? (array) ($GLOBALS['_wp_additional_image_sizes'] ?? []) : $added as $name => $size) {
             $ladder[(string) $name] = [(int) $size['width'], (int) $size['height'], (bool) $size['crop']];
         }
         return $ladder;

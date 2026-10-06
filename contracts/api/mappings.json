@@ -3,10 +3,10 @@
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line)",
     "summary": {
         "minn": 570,
-        "composes": 840,
+        "composes": 841,
         "leaf": 635,
         "noop": 1790,
-        "functions": 3765,
+        "functions": 3766,
         "minnMethods": 592,
         "leafLinesOver15": 13
     },
@@ -12076,7 +12076,7 @@
         },
         "WP_User::get_role_caps": {
             "file": "classes/WP_User.php",
-            "lines": 19,
+            "lines": 18,
             "kind": "minn",
             "minn": [
                 "Minn\\Runtime\\Runtime::capabilities->roles",
@@ -14528,7 +14528,7 @@
         },
         "_minn_image_sizes": {
             "file": "media.php",
-            "lines": 12,
+            "lines": 10,
             "kind": "composes",
             "minn": [],
             "composes": [
@@ -15711,6 +15711,15 @@
                 "is_wp_error",
                 "wp_get_object_terms",
                 "wp_update_term_count"
+            ]
+        },
+        "_wp_add_additional_image_sizes": {
+            "file": "media.php",
+            "lines": 2,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "add_image_size"
             ]
         },
         "_wp_admin_html_begin": {
@@ -22057,7 +22066,7 @@
             "kind": "noop",
             "minn": [],
             "composes": [
-                "_minn_image_sizes"
+                "wp_get_additional_image_sizes"
             ]
         },
         "has_nav_menu": {

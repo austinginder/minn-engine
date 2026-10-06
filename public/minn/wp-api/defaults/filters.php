@@ -161,6 +161,8 @@ add_filter('pre_wp_unique_post_slug', 'wp_filter_wp_template_unique_post_slug', 
 add_filter('user_has_cap', 'wp_maybe_grant_install_languages_cap', 1);
 add_filter('user_has_cap', 'wp_maybe_grant_resume_extensions_caps', 1);
 add_filter('user_has_cap', 'wp_maybe_grant_site_health_caps', 1, 4);
+// The two big image sizes, registered before any plugin's.
+add_action('plugins_loaded', '_wp_add_additional_image_sizes', 0);
 // What a user may post unfiltered is settled once WordPress is up and again whenever the user changes.
 add_action('init', 'kses_init');
 add_action('set_current_user', 'kses_init');

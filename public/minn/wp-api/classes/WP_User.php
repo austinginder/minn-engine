@@ -150,20 +150,19 @@ class WP_User
         $roles = Runtime::current()->capabilities->roles()->all();
         $this->roles = [];
         $this->allcaps = [];
+        // A stored role counts whatever it is set to; the user's own caps, role names included, go over the roles' (probe: allcaps on the reference).
         foreach ($this->caps as $cap => $granted) {
-            if ($granted && isset($roles[$cap])) {
+            if (isset($roles[$cap])) {
                 $this->roles[] = (string) $cap;
             }
         }
         foreach ($this->roles as $role) {
             foreach ($roles[$role]['capabilities'] as $cap => $granted) {
-                $this->allcaps[$cap] = (bool) $granted;
+                $this->allcaps[$cap] = $granted;
             }
         }
         foreach ($this->caps as $cap => $granted) {
-            if (!isset($roles[$cap])) {
-                $this->allcaps[$cap] = (bool) $granted;
-            }
+            $this->allcaps[$cap] = $granted;
         }
         return $this->allcaps;
     }

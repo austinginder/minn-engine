@@ -6,7 +6,7 @@ uploads, image sizes and attachment metadata
 |---|---|---|---|
 | [`Canvas`](#canvas) | final readonly class | 141 | One GD bitmap and the operations the media layer needs on it. Every |
 | [`Gallery`](#gallery) | final class | 54 | The classic `[gallery]` shortcode's markup. Every gallery on a page is |
-| [`Images`](#images) | final readonly class | 105 | GD sub-size generation for the sizes the site has. |
+| [`Images`](#images) | final readonly class | 104 | GD sub-size generation for the sizes the site has. |
 | [`Kind`](#kind) | final class | 75 | Whether an attachment is an image, audio, video, or a given extension, judged by its MIME type first and its file extension second. |
 | [`Metadata`](#metadata) | final class | 111 | The _wp_attachment_metadata blob: parsed by scanning for the shapes it |
 | [`PreparedUpload`](#preparedupload) | final readonly class | 13 | An upload made ready for its attachment: the file stored, its sizes cut, |
@@ -111,9 +111,9 @@ __construct(Minn\Content\Site $site)
 ### `ladder(): array`
 
 The sizes an upload is cut into, in the order the reference writes
-them to the metadata: the four from the site's options, the two big
-ones every site has, then any a theme or plugin registered with
-add_image_size this request.
+them to the metadata: the four from the site's options, then the ones
+registered with add_image_size this request, the two big ones every
+site has first (without plugins, just those two).
 
 - `@return array<string, array{0: int, 1: int, 2: bool}> name => [max width, max height, crop]`
 
@@ -128,7 +128,7 @@ The image's metadata so far rides along for the size filter.
 
 - `@param array<string, mixed> $imageMeta`
 
-Internals: `filtered()` (private, line 51)
+Internals: `filtered()` (private, line 50)
 
 
 ## Kind

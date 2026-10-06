@@ -7,10 +7,11 @@ namespace Minn\Auth;
 use Minn\Content\PostRecord;
 use Minn\Content\Users;
 use Minn\Db;
+use Minn\Support\Serialized;
 
 /**
  * The capability engine: a user's roles from {prefix}capabilities usermeta,
- * the primitives those roles grant, and the meta-capability mapping for
+ * what those roles and the user's own capabilities grant, and the meta-capability mapping for
  * edit_post, delete_post, and read_post.
  */
 final readonly class Capabilities
@@ -35,38 +36,53 @@ final readonly class Capabilities
     }
 
     /**
-     * The role slugs a user holds.
+     * The capabilities stored on the user, as stored: role names and the
+     * capabilities granted (or taken away) one by one.
+     *
+     * @return array<string, mixed>
+     */
+    public function capsOf(int $userId): array
+    {
+        $blob = $this->users->meta($userId, $this->db->prefix() . 'capabilities');
+        $caps = is_string($blob) && $blob !== '' ? Serialized::decode($blob) : [];
+        return is_array($caps) ? $caps : [];
+    }
+
+    /**
+     * The role slugs a user holds: each stored capability that names a
+     * registered role, whatever it is set to (probe: the reference counts
+     * 'editor' => false as a role). One a plugin granted but never
+     * registered does not count.
      *
      * @return list<string> role slugs
      */
     public function rolesOf(int $userId): array
     {
-        $blob = $this->users->meta($userId, $this->db->prefix() . 'capabilities');
-        if ($blob === null || $blob === '') {
-            return [];
-        }
-        // A role a plugin granted but never registered does not count, as on the reference.
         $registered = $this->roles->all();
-        return preg_match_all('/s:\d+:"([^"]+)";b:1;/', $blob, $m)
-            ? array_values(array_filter($m[1], static fn (string $role) => isset($registered[$role])))
-            : [];
+        return array_values(array_filter(array_map('strval', array_keys($this->capsOf($userId))), static fn (string $role) => isset($registered[$role])));
     }
 
     /**
-     * Every primitive capability a user holds through their roles.
+     * Everything a user holds, as the reference's allcaps: each role's
+     * capabilities in turn, then the user's own over them, role names
+     * included, so a capability taken away one by one stays away and
+     * current_user_can('administrator') is true for an administrator.
+     * Values are as stored.
      *
-     * @return array<string, true> the union of primitives the user's roles grant
+     * @return array<string, mixed>
      */
-    public function primitivesOf(int $userId): array
+    public function allcapsOf(int $userId): array
     {
         $all = $this->roles->all();
+        $caps = $this->capsOf($userId);
         $held = [];
         foreach ($this->rolesOf($userId) as $role) {
             foreach ($all[$role]['capabilities'] ?? [] as $cap => $granted) {
-                if ($granted) {
-                    $held[$cap] = true;
-                }
+                $held[$cap] = $granted;
             }
+        }
+        foreach ($caps as $cap => $granted) {
+            $held[$cap] = $granted;
         }
         return $held;
     }
@@ -78,7 +94,7 @@ final readonly class Capabilities
             return false;
         }
         $required = $this->map($capability, $userId, $postId);
-        $held = $this->primitivesOf($userId);
+        $held = $this->allcapsOf($userId);
         foreach ($required as $primitive) {
             if ($primitive === 'do_not_allow' || empty($held[$primitive])) {
                 return false;

@@ -72,8 +72,8 @@ final readonly class UserObject
 
     /**
      * The private fields a caller who can edit the user sees. The
-     * capabilities map is the union of role primitives plus each role name
-     * as a pseudo-capability, exactly as the reference emits.
+     * capabilities map is everything the user holds (allcaps), the extra
+     * ones what is stored on the user, exactly as the reference emits.
      */
     private function editFields(UserRecord $u): array
     {
@@ -82,10 +82,6 @@ final readonly class UserObject
         $view['_links']['self'][0]['targetHints']['allow'] = ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'];
         $capabilities = $this->caller->capabilities();
         $roles = $capabilities->rolesOf($id);
-        $all = $capabilities->primitivesOf($id);
-        foreach ($roles as $role) {
-            $all[$role] = true;
-        }
         $locale = $this->users->meta($id, 'locale');
         // Everyone who reaches an edit-context object may write it; DELETE needs delete_users.
         if (!$this->caller->can('delete_users')) {
@@ -106,8 +102,8 @@ final readonly class UserObject
             'slug' => $u->nicename,
             'roles' => array_values($roles),
             'registered_date' => PostObject::date($u->registered) . '+00:00',
-            'capabilities' => (object) $all,
-            'extra_capabilities' => (object) array_fill_keys($roles, true),
+            'capabilities' => (object) $capabilities->allcapsOf($id),
+            'extra_capabilities' => (object) $capabilities->capsOf($id),
             'avatar_urls' => $view['avatar_urls'],
             'meta' => [
                 'persisted_preferences' => [],

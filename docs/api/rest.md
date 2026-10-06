@@ -62,7 +62,7 @@ the wp/v2 surface: shapes and controllers
 | [`TermsController`](#termscontroller) | final readonly class | 197 | wp/v2 categories, tags, and pattern categories: list, single, and the create/update/delete the taxonomy admin drives. |
 | [`Types`](#types) | final class | 97 | The engine's registry of built-in post types, seeded from the observed |
 | [`TypesController`](#typescontroller) | final readonly class | 24 | wp/v2 types. |
-| [`UserObject`](#userobject) | final readonly class | 110 | The wp/v2 user objects: the public view shape and the edit-context shape. |
+| [`UserObject`](#userobject) | final readonly class | 106 | The wp/v2 user objects: the public view shape and the edit-context shape. |
 | [`UsersController`](#userscontroller) | final readonly class | 327 | wp/v2 users: me, list, single, and the create/update/delete-with-reassign the Users view drives. |
 
 ## AbilitiesController

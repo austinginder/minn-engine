@@ -8093,8 +8093,8 @@
             "namespace": "Minn\\Auth",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Auth/Capabilities.php",
-            "lines": 215,
-            "doc": "The capability engine: a user's roles from {prefix}capabilities usermeta,\nthe primitives those roles grant, and the meta-capability mapping for\nedit_post, delete_post, and read_post.",
+            "lines": 230,
+            "doc": "The capability engine: a user's roles from {prefix}capabilities usermeta,\nwhat those roles and the user's own capabilities grant, and the meta-capability mapping for\nedit_post, delete_post, and read_post.",
             "implements": [],
             "extends": null,
             "uses": [
@@ -8102,7 +8102,8 @@
                 "Minn\\Auth\\TypeCapabilities",
                 "Minn\\Content\\PostRecord",
                 "Minn\\Content\\Users",
-                "Minn\\Db"
+                "Minn\\Db",
+                "Minn\\Support\\Serialized"
             ],
             "usedBy": [
                 "Minn\\Admin\\ActivityFeed",
@@ -8152,8 +8153,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 18,
-                "end": 23
+                "line": 19,
+                "end": 24
             },
             "cases": [],
             "constants": [],
@@ -8204,8 +8205,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 26,
-                    "end": 29
+                    "line": 27,
+                    "end": 30
                 },
                 {
                     "routes": [],
@@ -8216,8 +8217,30 @@
                     "doc": "The role definitions.",
                     "shapes": [],
                     "params": [],
-                    "line": 32,
-                    "end": 35
+                    "line": 33,
+                    "end": 36
+                },
+                {
+                    "routes": [],
+                    "name": "capsOf",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "capsOf(int $userId): array",
+                    "doc": "The capabilities stored on the user, as stored: role names and the\ncapabilities granted (or taken away) one by one.",
+                    "shapes": [
+                        "@return array<string, mixed>"
+                    ],
+                    "params": [
+                        {
+                            "name": "userId",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 44,
+                    "end": 49
                 },
                 {
                     "routes": [],
@@ -8225,7 +8248,7 @@
                     "static": false,
                     "visibility": "public",
                     "signature": "rolesOf(int $userId): array",
-                    "doc": "The role slugs a user holds.",
+                    "doc": "The role slugs a user holds: each stored capability that names a\nregistered role, whatever it is set to (probe: the reference counts\n'editor' => false as a role). One a plugin granted but never\nregistered does not count.",
                     "shapes": [
                         "@return list<string> role slugs"
                     ],
@@ -8238,18 +8261,18 @@
                             "doc": ""
                         }
                     ],
-                    "line": 42,
-                    "end": 53
+                    "line": 59,
+                    "end": 63
                 },
                 {
                     "routes": [],
-                    "name": "primitivesOf",
+                    "name": "allcapsOf",
                     "static": false,
                     "visibility": "public",
-                    "signature": "primitivesOf(int $userId): array",
-                    "doc": "Every primitive capability a user holds through their roles.",
+                    "signature": "allcapsOf(int $userId): array",
+                    "doc": "Everything a user holds, as the reference's allcaps: each role's\ncapabilities in turn, then the user's own over them, role names\nincluded, so a capability taken away one by one stays away and\ncurrent_user_can('administrator') is true for an administrator.\nValues are as stored.",
                     "shapes": [
-                        "@return array<string, true> the union of primitives the user's roles grant"
+                        "@return array<string, mixed>"
                     ],
                     "params": [
                         {
@@ -8260,8 +8283,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 60,
-                    "end": 72
+                    "line": 74,
+                    "end": 88
                 },
                 {
                     "routes": [],
@@ -8294,8 +8317,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 75,
-                    "end": 89
+                    "line": 91,
+                    "end": 105
                 },
                 {
                     "routes": [],
@@ -8330,8 +8353,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 96,
-                    "end": 112
+                    "line": 112,
+                    "end": 128
                 },
                 {
                     "routes": [],
@@ -8366,8 +8389,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 123,
-                    "end": 148
+                    "line": 139,
+                    "end": 164
                 },
                 {
                     "routes": [],
@@ -8395,8 +8418,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 151,
-                    "end": 159
+                    "line": 167,
+                    "end": 175
                 },
                 {
                     "routes": [],
@@ -8431,8 +8454,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 174,
-                    "end": 211
+                    "line": 190,
+                    "end": 227
                 },
                 {
                     "routes": [],
@@ -8461,8 +8484,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 217,
-                    "end": 220
+                    "line": 233,
+                    "end": 236
                 },
                 {
                     "routes": [],
@@ -8481,8 +8504,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 222,
-                    "end": 229
+                    "line": 238,
+                    "end": 245
                 }
             ]
         },
@@ -67940,7 +67963,7 @@
             "namespace": "Minn\\Media",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Media/Images.php",
-            "lines": 105,
+            "lines": 104,
             "doc": "GD sub-size generation for the sizes the site has.",
             "implements": [],
             "extends": null,
@@ -67991,13 +68014,13 @@
                     "static": false,
                     "visibility": "public",
                     "signature": "ladder(): array",
-                    "doc": "The sizes an upload is cut into, in the order the reference writes\nthem to the metadata: the four from the site's options, the two big\nones every site has, then any a theme or plugin registered with\nadd_image_size this request.",
+                    "doc": "The sizes an upload is cut into, in the order the reference writes\nthem to the metadata: the four from the site's options, then the ones\nregistered with add_image_size this request, the two big ones every\nsite has first (without plugins, just those two).",
                     "shapes": [
                         "@return array<string, array{0: int, 1: int, 2: bool}> name => [max width, max height, crop]"
                     ],
                     "params": [],
                     "line": 25,
-                    "end": 40
+                    "end": 39
                 },
                 {
                     "routes": [],
@@ -68037,8 +68060,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 67,
-                    "end": 70
+                    "line": 66,
+                    "end": 69
                 },
                 {
                     "routes": [],
@@ -68073,8 +68096,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 78,
-                    "end": 114
+                    "line": 77,
+                    "end": 113
                 },
                 {
                     "routes": [],
@@ -68103,8 +68126,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 51,
-                    "end": 64
+                    "line": 50,
+                    "end": 63
                 }
             ]
         },
@@ -89088,7 +89111,7 @@
             "namespace": "Minn\\Rest",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Rest/UserObject.php",
-            "lines": 110,
+            "lines": 106,
             "doc": "The wp/v2 user objects: the public view shape and the edit-context shape.",
             "implements": [],
             "extends": null,
@@ -89290,7 +89313,7 @@
                     "static": false,
                     "visibility": "private",
                     "signature": "editFields(Minn\\Content\\UserRecord $u): array",
-                    "doc": "The private fields a caller who can edit the user sees. The\ncapabilities map is the union of role primitives plus each role name\nas a pseudo-capability, exactly as the reference emits.",
+                    "doc": "The private fields a caller who can edit the user sees. The\ncapabilities map is everything the user holds (allcaps), the extra\nones what is stored on the user, exactly as the reference emits.",
                     "shapes": [],
                     "params": [
                         {
@@ -89302,7 +89325,7 @@
                         }
                     ],
                     "line": 78,
-                    "end": 121
+                    "end": 117
                 }
             ]
         },
@@ -109343,6 +109366,7 @@
                 "Minn\\Admin\\SiteController",
                 "Minn\\Admin\\UploadsSize",
                 "Minn\\Auth\\ApplicationPasswords",
+                "Minn\\Auth\\Capabilities",
                 "Minn\\Blocks\\Dynamic\\Theme\\QueryBlocks",
                 "Minn\\Cli\\OptionCommand",
                 "Minn\\Cli\\Preflight",

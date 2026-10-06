@@ -9,7 +9,7 @@ use Minn\Media\Uploads;
 use Minn\Runtime\PostLookup;
 use Minn\Runtime\Runtime;
 
-/** @internal the registered sizes: the four from the options plus the two big ones, plus add_image_size */
+/** @internal the registered sizes: the four from the options, then add_image_size's (the two big ones first) */
 function _minn_image_sizes(): array
 {
     $sizes = [
@@ -17,8 +17,6 @@ function _minn_image_sizes(): array
         'medium' => ['width' => (int) get_option('medium_size_w'), 'height' => (int) get_option('medium_size_h'), 'crop' => false],
         'medium_large' => ['width' => (int) get_option('medium_large_size_w'), 'height' => (int) get_option('medium_large_size_h'), 'crop' => false],
         'large' => ['width' => (int) get_option('large_size_w'), 'height' => (int) get_option('large_size_h'), 'crop' => false],
-        '1536x1536' => ['width' => 1536, 'height' => 1536, 'crop' => false],
-        '2048x2048' => ['width' => 2048, 'height' => 2048, 'crop' => false],
     ];
     foreach (wp_get_additional_image_sizes() as $name => $size) {
         $sizes[$name] = $size;
@@ -35,15 +33,27 @@ function wp_get_additional_image_sizes()
     return $GLOBALS['_wp_additional_image_sizes'];
 }
 
+/**
+ * The two big sizes every site has, registered as a plugin would register
+ * them, at plugins_loaded, so plugins that read $_wp_additional_image_sizes
+ * (Smush keeps a hash of it) and remove_image_size see them.
+ */
+function _wp_add_additional_image_sizes()
+{
+    add_image_size('1536x1536', 1536, 1536);
+    add_image_size('2048x2048', 2048, 2048);
+}
+
 function add_image_size($name, $width = 0, $height = 0, $crop = false)
 {
     wp_get_additional_image_sizes();
     $GLOBALS['_wp_additional_image_sizes'][(string) $name] = ['width' => absint($width), 'height' => absint($height), 'crop' => $crop];
 }
 
+/** Whether a size was added with add_image_size (the four from the options are not). */
 function has_image_size($name)
 {
-    return isset(_minn_image_sizes()[$name]);
+    return isset(wp_get_additional_image_sizes()[$name]);
 }
 
 function remove_image_size($name)
@@ -69,7 +79,7 @@ function wp_get_registered_image_subsizes()
 {
     $out = [];
     foreach (_minn_image_sizes() as $name => $size) {
-        $out[$name] = ['width' => (int) $size['width'], 'height' => (int) $size['height'], 'crop' => (bool) $size['crop']];
+        $out[$name] = ['width' => (int) $size['width'], 'height' => (int) $size['height'], 'crop' => is_array($size['crop']) ? $size['crop'] : (bool) $size['crop']];
     }
     return apply_filters('wp_get_registered_image_subsizes', $out);
 }

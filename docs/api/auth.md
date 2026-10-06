@@ -9,7 +9,7 @@ passwords, sessions, cookies, nonces, roles and capabilities
 | [`AuthFailure`](#authfailure) | final readonly class | 18 | Why a request is not authenticated, as the reference's error code: a |
 | [`Authenticated`](#authenticated) | final readonly class | 16 | A validated session: the user row and the raw session token behind it. |
 | [`Authenticator`](#authenticator) | final readonly class | 124 | Resolves the current user two ways. A page load carries the cookie alone; |
-| [`Capabilities`](#capabilities) | final readonly class | 215 | The capability engine: a user's roles from {prefix}capabilities usermeta, |
+| [`Capabilities`](#capabilities) | final readonly class | 230 | The capability engine: a user's roles from {prefix}capabilities usermeta, |
 | [`Cookie`](#cookie) | final readonly class | 75 | The logged_in auth cookie: username\|expiration\|token\|hmac, with |
 | [`FastHash`](#fasthash) | final class | 23 | The reference's hash for high-entropy secrets ("$generic$", WordPress 6.8 |
 | [`LoginThrottle`](#loginthrottle) | final readonly class | 78 | Failed sign-ins per address, so a password guesser meets a wall: twenty |
@@ -236,7 +236,7 @@ Username and password to a user row; no session is created here.
 `final readonly class Minn\Auth\Capabilities` · `public/minn/src/Minn/Auth/Capabilities.php`
 
 The capability engine: a user's roles from {prefix}capabilities usermeta,
-the primitives those roles grant, and the meta-capability mapping for
+what those roles and the user's own capabilities grant, and the meta-capability mapping for
 edit_post, delete_post, and read_post.
 
 Used by: `Minn\Admin\ActivityFeed`, `Minn\Admin\AdminTypes`, `Minn\Admin\AppController`, `Minn\Admin\BootPayload`, `Minn\Admin\Dashboard`, `Minn\Admin\HiddenIntegrations`, `Minn\Admin\LanguageController`, `Minn\Admin\Notifications`, `Minn\Admin\UploadsSize`, `Minn\Cli\Runtime`, `Minn\Content\Reader`, `Minn\Context`, `Minn\Engine`, `Minn\Front\AdminBar`, `Minn\Front\CommentPostController`, `Minn\Rest\Caller`, `Minn\Rest\Services`, `Minn\Runtime\Runtime`
@@ -254,17 +254,31 @@ The capability engine over the shared database door.
 
 The role definitions.
 
+### `capsOf(int $userId): array`
+
+The capabilities stored on the user, as stored: role names and the
+capabilities granted (or taken away) one by one.
+
+- `@return array<string, mixed>`
+
 ### `rolesOf(int $userId): array`
 
-The role slugs a user holds.
+The role slugs a user holds: each stored capability that names a
+registered role, whatever it is set to (probe: the reference counts
+'editor' => false as a role). One a plugin granted but never
+registered does not count.
 
 - `@return list<string> role slugs`
 
-### `primitivesOf(int $userId): array`
+### `allcapsOf(int $userId): array`
 
-Every primitive capability a user holds through their roles.
+Everything a user holds, as the reference's allcaps: each role's
+capabilities in turn, then the user's own over them, role names
+included, so a capability taken away one by one stays away and
+current_user_can('administrator') is true for an administrator.
+Values are as stored.
 
-- `@return array<string, true> the union of primitives the user's roles grant`
+- `@return array<string, mixed>`
 
 ### `can(int $userId, string $capability, ?int $postId = NULL): bool`
 
@@ -276,7 +290,7 @@ The primitives a capability requires, all of which must be held.
 
 - `@return list<string>`
 
-Internals: `mapMore()` (private, line 123), `mapCommentCapability()` (private, line 151), `mapPostCapability()` (private, line 174), `fold()` (private, line 217), `trashedFrom()` (private, line 222)
+Internals: `mapMore()` (private, line 139), `mapCommentCapability()` (private, line 167), `mapPostCapability()` (private, line 190), `fold()` (private, line 233), `trashedFrom()` (private, line 238)
 
 
 ## Cookie
