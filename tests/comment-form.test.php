@@ -198,6 +198,31 @@ foreach (['remembered by the cookie' => true, 'by the link with its hash' => fal
     $check("a held comment is shown to its author, {$how}", $answers['reference'] === $answers['engine'] && $answers['reference']['shown'] && $answers['reference']['waiting'], 'reference ' . json_encode($answers['reference']) . "\n       engine    " . json_encode($answers['engine']));
 }
 
+// The form itself, for a reader, a remembered commenter and a signed-in administrator: comment_form's, hooks and all.
+$mint = json_decode((string) shell_exec("{$WP} eval-file " . escapeshellarg(__DIR__ . '/tools/mint-session.php') . ' 1 2>/dev/null'), true);
+$respond = static function (string $base, string $cookie): string {
+    $ch = curl_init($base . '/hello-world/');
+    curl_setopt_array($ch, [CURLOPT_RETURNTRANSFER => true, CURLOPT_SSL_VERIFYPEER => false, CURLOPT_SSL_VERIFYHOST => 0, CURLOPT_TIMEOUT => 60, CURLOPT_HTTPHEADER => $cookie === '' ? [] : ['Cookie: ' . $cookie]]);
+    $html = (string) curl_exec($ch);
+    $at = strpos($html, '<div id="respond"');
+    $form = $at === false ? '(no form)' : substr($html, $at, (int) strpos($html, '<!-- #respond -->', $at) - $at);
+    $form = str_replace([$base, rawurlencode($base)], '{home}', $form);
+    return (string) preg_replace(['/_wpnonce=[0-9a-f]+/', '/value="[0-9a-f]{10}"/'], ['_wpnonce={nonce}', 'value="{nonce}"'], $form);
+};
+foreach (['a signed-out reader' => 'none', 'a remembered commenter' => 'commenter', 'a signed-in administrator' => 'admin'] as $reader => $kind) {
+    $forms = [];
+    foreach (['reference' => $REF, 'engine' => $ENGINE] as $stack => $base) {
+        $hash = md5($base); // COOKIEHASH: the address each stack answers at
+        $cookie = match ($kind) {
+            'commenter' => "comment_author_{$hash}=Remy+Reader; comment_author_email_{$hash}=remy%40example.com; comment_author_url_{$hash}=https%3A%2F%2Fremy.example",
+            'admin' => 'wordpress_logged_in_' . md5($base) . '=' . rawurlencode((string) ($mint['cookie'] ?? '')),
+            default => '',
+        };
+        $forms[$stack] = $respond($base, $cookie);
+    }
+    $check("the comment form for {$reader} is the reference's", $forms['reference'] === $forms['engine'] && str_contains($forms['engine'], '<form'), 'reference ' . substr($forms['reference'], 0, 400) . "\n       engine    " . substr($forms['engine'], 0, 400));
+}
+
 // The link with its hash shows the held comment for ten minutes after posting, no longer.
 $aged = gmdate('Y-m-d H:i:s', time() - 11 * 60);
 $agedId = (int) trim((string) shell_exec("{$WP} comment create --comment_post_ID=1 --comment_author='Aged' --comment_author_email=aged" . DOMAIN . " --comment_content='zz aged link' --comment_approved=0 --comment_date_gmt=" . escapeshellarg($aged) . ' --comment_date=' . escapeshellarg($aged) . ' --porcelain 2>/dev/null'));

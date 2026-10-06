@@ -142,6 +142,7 @@ add_filter('comment_flood_filter', 'wp_throttle_comment_flood', 10, 3);
 add_action('comment_post', 'wp_new_comment_notify_moderator');
 add_action('comment_post', 'wp_new_comment_notify_postauthor');
 add_action('set_comment_cookies', 'wp_set_comment_cookies', 10, 3);
+add_action('comment_form', 'wp_comment_form_unfiltered_html_nonce');
 // What a user may post unfiltered is settled once WordPress is up and again whenever the user changes.
 add_action('init', 'kses_init');
 add_action('set_current_user', 'kses_init');

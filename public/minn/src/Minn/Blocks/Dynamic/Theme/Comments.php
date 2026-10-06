@@ -194,6 +194,9 @@ final readonly class Comments
         if ($post === null || $post->commentStatus !== 'open' || PasswordGate::is($post)) {
             return '';
         }
+        if (Runtime::booted()) {
+            return $this->formWithPlugins($post->id, $block);
+        }
         $path = (string) parse_url($this->permalinks->forPost($post), PHP_URL_PATH);
         $action = $this->permalinks->url('/wp-comments-post.php');
         return "\t" . '<div id="respond" class="comment-respond wp-block-post-comments-form">' . "\n\t\t"
@@ -208,6 +211,29 @@ final readonly class Comments
             . '<p class="form-submit wp-block-button"><input name="submit" type="submit" id="submit" class="wp-block-button__link wp-element-button" value="Post Comment" /> <input type=\'hidden\' name=\'comment_post_ID\' value=\'' . $post->id . '\' id=\'comment_post_ID\' />' . "\n"
             . '<input type=\'hidden\' name=\'comment_parent\' id=\'comment_parent\' value=\'0\' />' . "\n"
             . '</p></form>' . "\t" . '</div><!-- #respond -->';
+    }
+
+    /**
+     * With plugins loaded, the form is comment_form()'s, as the reference's
+     * block renders it: the block theme's button in its defaults, the
+     * block's classes on the respond wrapper, and every comment_form hook a
+     * plugin uses to add its fields (a spam plugin's hidden check, a
+     * consent box) fired on the way.
+     */
+    private function formWithPlugins(int $postId, Block $block): string
+    {
+        $defaults = static function (array $fields): array {
+            $fields['submit_button'] = '<input name="%1$s" type="submit" id="%2$s" class="wp-block-button__link wp-element-button" value="%4$s" />';
+            $fields['submit_field'] = '<p class="form-submit wp-block-button">%1$s %2$s</p>';
+            return $fields;
+        };
+        \add_filter('comment_form_defaults', $defaults);
+        ob_start();
+        \comment_form([], $postId);
+        $form = (string) ob_get_clean();
+        \remove_filter('comment_form_defaults', $defaults);
+        $classes = implode(' ', ['comment-respond', 'wp-block-post-comments-form', ...Styles::classes($block->attrs)]);
+        return str_replace('class="comment-respond"', 'class="' . Html::attr($classes) . '"', $form);
     }
 
     /**

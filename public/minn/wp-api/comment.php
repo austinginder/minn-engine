@@ -1044,7 +1044,7 @@ function _minn_comment_form_fields(): array
         'email' => '<p class="comment-form-email"><label for="email">Email' . $required . '</label> <input id="email" name="email" type="email" value="' . esc_attr($commenter['comment_author_email']) . '" size="30" maxlength="100" aria-describedby="email-notes" autocomplete="email"' . $attr . ' /></p>',
         'url' => '<p class="comment-form-url"><label for="url">Website</label> <input id="url" name="url" type="url" value="' . esc_attr($commenter['comment_author_url']) . '" size="30" maxlength="200" autocomplete="url" /></p>',
     ];
-    if (get_option('show_comments_cookies_opt_in')) {
+    if (get_option('show_comments_cookies_opt_in') && has_action('set_comment_cookies', 'wp_set_comment_cookies')) {
         $fields['cookies'] = _minn_comment_cookies_field();
     }
     return $fields;
@@ -1053,7 +1053,7 @@ function _minn_comment_form_fields(): array
 /** @internal the cookies consent field, checked for a remembered commenter */
 function _minn_comment_cookies_field(): string
 {
-    $consent = empty(wp_get_current_commenter()['comment_author_email']) ? '' : ' checked="checked"';
+    $consent = empty(wp_get_current_commenter()['comment_author_email']) ? '' : ' checked';
     return '<p class="comment-form-cookies-consent"><input id="wp-comment-cookies-consent" name="wp-comment-cookies-consent" type="checkbox" value="yes"' . $consent . ' /> <label for="wp-comment-cookies-consent">Save my name, email, and website in this browser for the next time I comment.</label></p>';
 }
 
@@ -1068,7 +1068,8 @@ function _minn_comment_form_args($args, WP_Post $post): array
         'fields' => apply_filters('comment_form_default_fields', _minn_comment_form_fields()),
         'comment_field' => '<p class="comment-form-comment"><label for="comment">Comment <span class="required">*</span></label> <textarea id="comment" name="comment" cols="45" rows="8" maxlength="65525" required></textarea></p>',
         'must_log_in' => '<p class="must-log-in">You must be <a href="' . esc_url(wp_login_url(get_permalink($post->ID))) . '">logged in</a> to post a comment.</p>',
-        'logged_in_as' => '<p class="logged-in-as"><a href="' . esc_url(get_edit_user_link()) . '" aria-label="Logged in as ' . esc_attr($user->display_name) . '. Edit your profile.">Logged in as ' . esc_html($user->display_name) . '.</a> <a href="' . esc_url(wp_logout_url(get_permalink($post->ID))) . '">Log out?</a></p>',
+        // As the reference writes it: the name, the profile and log-out links, and the required-fields note.
+        'logged_in_as' => '<p class="logged-in-as">Logged in as ' . esc_html($user->display_name) . '. <a href="' . get_edit_profile_url() . '">Edit your profile</a>. <a href="' . wp_logout_url(apply_filters('the_permalink', get_permalink($post->ID), $post->ID)) . '">Log out?</a> ' . ($req ? '<span class="required-field-message">Required fields are marked <span class="required">*</span></span>' : '') . '</p>',
         'comment_notes_before' => '<p class="comment-notes"><span id="email-notes">Your email address will not be published.</span> ' . ($req ? '<span class="required-field-message">Required fields are marked <span class="required">*</span></span>' : '') . '</p>',
         'comment_notes_after' => '',
         'action' => site_url('/wp-comments-post.php'),
@@ -1137,9 +1138,10 @@ function _minn_comment_form_body(array $args, WP_Post $post): void
     $fields = ['comment' => $args['comment_field']];
     if (!is_user_logged_in()) {
         $fields += (array) $args['fields'];
-    }
-    if (!isset($fields['cookies']) && get_option('show_comments_cookies_opt_in')) {
-        $fields['cookies'] = _minn_comment_cookies_field();
+        // A signed-out reader's fields always offer the consent box, a plugin's own fields included.
+        if (!isset($fields['cookies']) && get_option('show_comments_cookies_opt_in') && has_action('set_comment_cookies', 'wp_set_comment_cookies')) {
+            $fields['cookies'] = _minn_comment_cookies_field();
+        }
     }
     $fields = apply_filters('comment_form_fields', $fields);
     $names = array_keys($fields);
@@ -1398,4 +1400,20 @@ function wp_get_unapproved_comment_author_email()
         return '';
     }
     return hash_equals(wp_hash($comment->comment_date_gmt), (string) $query['moderation-hash']) ? (string) $comment->comment_author_email : '';
+}
+
+/**
+ * comment_form's default: for a user who may post unfiltered HTML, the
+ * nonce wp_handle_comment_submission checks before leaving their comment
+ * unfiltered, named so it is sent only from the page itself (an inline
+ * script renames it outside a frame).
+ */
+function wp_comment_form_unfiltered_html_nonce()
+{
+    $post = get_post();
+    if ($post === null || !current_user_can('unfiltered_html')) {
+        return;
+    }
+    wp_nonce_field('unfiltered-html-comment_' . $post->ID, '_wp_unfiltered_html_comment_disabled', false);
+    wp_print_inline_script_tag("(function(){if(window===window.parent){document.getElementById('_wp_unfiltered_html_comment_disabled').name='_wp_unfiltered_html_comment';}})();\n//# sourceURL=wp_comment_form_unfiltered_html_nonce");
 }

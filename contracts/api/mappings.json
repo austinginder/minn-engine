@@ -3,10 +3,10 @@
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line)",
     "summary": {
         "minn": 566,
-        "composes": 837,
+        "composes": 838,
         "leaf": 632,
         "noop": 1790,
-        "functions": 3755,
+        "functions": 3756,
         "minnMethods": 583,
         "leafLinesOver15": 13
     },
@@ -14321,7 +14321,7 @@
         },
         "_minn_comment_form_args": {
             "file": "comment.php",
-            "lines": 32,
+            "lines": 33,
             "kind": "minn",
             "minn": [
                 "Minn\\Runtime\\Runtime::current",
@@ -14330,10 +14330,9 @@
             "composes": [
                 "_minn_comment_form_fields",
                 "apply_filters",
-                "esc_attr",
                 "esc_html",
                 "esc_url",
-                "get_edit_user_link",
+                "get_edit_profile_url",
                 "get_option",
                 "get_permalink",
                 "site_url",
@@ -14345,17 +14344,15 @@
         },
         "_minn_comment_form_body": {
             "file": "comment.php",
-            "lines": 39,
+            "lines": 36,
             "kind": "composes",
             "minn": [],
             "composes": [
-                "_minn_comment_cookies_field",
                 "apply_filters",
                 "do_action",
                 "esc_attr",
                 "esc_url",
                 "get_comment_id_fields",
-                "get_option",
                 "is_user_logged_in",
                 "wp_get_current_commenter",
                 "wp_get_current_user"
@@ -28071,6 +28068,18 @@
             "kind": "noop",
             "minn": [],
             "composes": []
+        },
+        "wp_comment_form_unfiltered_html_nonce": {
+            "file": "comment.php",
+            "lines": 6,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "current_user_can",
+                "get_post",
+                "wp_nonce_field",
+                "wp_print_inline_script_tag"
+            ]
         },
         "wp_comment_reply": {
             "file": "comment.php",

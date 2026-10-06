@@ -3420,4 +3420,21 @@ it was posted (`wp_get_unapproved_comment_author_email`). It renders with
 moderation.</em></p>` ahead of its text. Every second comment carries
 `odd alt` and `thread-odd thread-alt`, as the reference counts from zero
 (Minn had left out `alt`). Suite `comment-form` checks both ways in and the
-expiry (94).
+expiry.
+
+The form itself, with plugins loaded, is `comment_form()`'s, as the
+reference's block renders it (the block theme's button in
+`comment_form_defaults`, the block's classes on the respond wrapper), so
+every hook a plugin adds its fields through runs: `comment_form_defaults`,
+`comment_form_default_fields`, `comment_form_fields`, the
+`comment_form_field_*` filters, `comment_form_top`,
+`comment_form_before_fields` and `_after_fields`, `comment_form_logged_in`,
+`comment_form_submit_field` and `comment_form`. A remembered commenter's
+name, email and site are filled in and the consent box is checked; a
+signed-out reader's fields always offer the consent box (a plugin's own
+fields included) while `wp_set_comment_cookies` is hooked; a signed-in
+user sees "Logged in as {name}. Edit your profile. Log out?" with the
+required-fields note and no fields; a user who may post unfiltered HTML
+gets `wp_comment_form_unfiltered_html_nonce` on `comment_form` (the nonce,
+renamed by an inline script only outside a frame). The suite compares the
+form for all three readers (97).

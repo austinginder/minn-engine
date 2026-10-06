@@ -12352,7 +12352,7 @@
             "namespace": "Minn\\Blocks\\Dynamic\\Theme",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Blocks/Dynamic/Theme/Comments.php",
-            "lines": 236,
+            "lines": 262,
             "doc": "comments, comments-title, comment-template, the comment-* blocks, and the comment form.",
             "implements": [],
             "extends": null,
@@ -12768,7 +12768,34 @@
                         }
                     ],
                     "line": 191,
-                    "end": 211
+                    "end": 214
+                },
+                {
+                    "routes": [],
+                    "name": "formWithPlugins",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "formWithPlugins(int $postId, Minn\\Blocks\\Block $block): string",
+                    "doc": "With plugins loaded, the form is comment_form()'s, as the reference's\nblock renders it: the block theme's button in its defaults, the\nblock's classes on the respond wrapper, and every comment_form hook a\nplugin uses to add its fields (a spam plugin's hidden check, a\nconsent box) fired on the way.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "postId",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "block",
+                            "type": "Minn\\Blocks\\Block",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 223,
+                    "end": 237
                 },
                 {
                     "routes": [],
@@ -12789,8 +12816,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 221,
-                    "end": 236
+                    "line": 247,
+                    "end": 262
                 },
                 {
                     "routes": [],
@@ -12811,8 +12838,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 239,
-                    "end": 250
+                    "line": 265,
+                    "end": 276
                 },
                 {
                     "routes": [],
@@ -12833,8 +12860,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 253,
-                    "end": 260
+                    "line": 279,
+                    "end": 286
                 }
             ]
         },
