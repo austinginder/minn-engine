@@ -25,7 +25,7 @@ the repositories and records: posts, users, terms, comments, and the render pipe
 | [`PostFilter`](#postfilter) | final readonly class | 55 | What a listing is narrowed to. Every field is optional and the object is |
 | [`PostRecord`](#postrecord) | final readonly class | 156 | One row of the posts table, read by name. The columns keep their |
 | [`PostStatus`](#poststatus) | enum | 42 | The statuses a post row can hold; the value is the column's own spelling. |
-| [`PostWriter`](#postwriter) | final readonly class | 435 | Every write to the posts table and its satellites: rows, meta, term |
+| [`PostWriter`](#postwriter) | final readonly class | 464 | Every write to the posts table and its satellites: rows, meta, term |
 | [`Posts`](#posts) | final readonly class | 502 | Reads over the posts table. A single post comes back as a PostRecord and |
 | [`Reader`](#reader) | final class | 72 | Who is reading this request: their user id, whether they may read |
 | [`Revisions`](#revisions) | final readonly class | 86 | Revision rows: the plain snapshots and the per-author autosave slots. |
@@ -1228,7 +1228,7 @@ The database door this writer writes through, for a caller wrapping several of i
 
 Hard-deletes a post with its revisions and its meta.
 
-Internals: `saveSticky()` (private, line 253)
+Internals: `saveSticky()` (private, line 253), `revisionsToKeep()` (private, line 355), `pruneRevisions()` (private, line 362)
 
 
 ## Posts

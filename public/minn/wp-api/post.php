@@ -8,6 +8,7 @@ use Minn\Content\PostWriter;
 use Minn\Content\Slug;
 use Minn\Content\PostClasses;
 use Minn\Runtime\PostData;
+use Minn\Runtime\PostRevisions;
 use Minn\Runtime\Runtime;
 use Minn\Runtime\Pages;
 use Minn\Runtime\PostInsert;
@@ -667,14 +668,18 @@ function wp_is_post_autosave($post)
     return (int) $post->post_parent;
 }
 
+/** A post's revisions, newest first unless asked otherwise; none while its revisions are switched off (unless check_enabled is false). */
 function wp_get_post_revisions($post = 0, $args = null)
 {
     $post = get_post($post);
-    if ($post === null) {
+    $args = wp_parse_args($args, ['order' => 'DESC', 'orderby' => 'date ID', 'check_enabled' => true]);
+    if ($post === null || ($args['check_enabled'] && !wp_revisions_enabled($post))) {
         return [];
     }
+    $rows = _minn_post_lookup()->revisionsOf($post->ID);
+    $rows = strtoupper((string) $args['order']) === 'ASC' ? array_reverse($rows) : $rows;
     $out = [];
-    foreach (_minn_post_lookup()->revisionsOf($post->ID) as $row) {
+    foreach ($rows as $row) {
         $out[(int) $row['ID']] = new WP_Post((object) $row);
     }
     return $out;
@@ -687,7 +692,96 @@ function wp_get_post_revisions_url($post = 0)
 
 function wp_revisions_enabled($post)
 {
-    return post_type_supports(get_post_type($post), 'revisions');
+    return wp_revisions_to_keep($post) !== 0;
+}
+
+/**
+ * The fields a revision keeps, through _wp_post_revision_fields (whose
+ * default adds footnotes); the filtered list is what the next call starts
+ * from, as on the reference.
+ */
+function _wp_post_revision_fields($post = [], $deprecated = false)
+{
+    $post = is_array($post) ? $post : (get_post($post)?->to_array() ?? []);
+    $runtime = Runtime::current();
+    $fields = (array) $runtime->get('revision_fields', ['post_title' => 'Title', 'post_content' => 'Content', 'post_excerpt' => 'Excerpt']);
+    $fields = (array) apply_filters('_wp_post_revision_fields', $fields, $post);
+    $runtime->set('revision_fields', $fields);
+    return array_diff_key($fields, array_flip(['ID', 'post_name', 'post_parent', 'post_date', 'post_date_gmt', 'post_status', 'post_type', 'comment_count', 'post_author']));
+}
+
+/** A revision's row: the post's revision fields, its parent, inherit, revision, its name, and the post's modified time as its date. */
+function _wp_post_revision_data($post = [], $autosave = false)
+{
+    $post = _minn_revision_source($post);
+    $data = array_intersect_key($post, _wp_post_revision_fields($post));
+    $id = (int) ($post['ID'] ?? 0);
+    return $data + ['post_parent' => $id, 'post_status' => 'inherit', 'post_type' => 'revision', 'post_name' => $autosave ? "{$id}-autosave-v1" : "{$id}-revision-v1", 'post_date' => $post['post_modified'] ?? '', 'post_date_gmt' => $post['post_modified_gmt'] ?? ''];
+}
+
+/** @internal a post as a revision's row is made from: its own fields, as an (array) cast gives them */
+function _minn_revision_source($post): array
+{
+    if (is_array($post)) {
+        return $post;
+    }
+    $post = is_object($post) ? $post : get_post($post);
+    return is_object($post) ? get_object_vars($post) : [];
+}
+
+/** A revision written through wp_insert_post, then _wp_put_post_revision. */
+function _wp_put_post_revision($post = null, $autosave = false)
+{
+    $post = get_post($post);
+    return $post === null ? null : PostRevisions::put($post);
+}
+
+/** The meta keys a type's revisions keep: those registered with revisions_enabled, through wp_post_revision_meta_keys. */
+function wp_post_revision_meta_keys($post_type)
+{
+    $keys = [];
+    foreach (get_registered_meta_keys('post', (string) $post_type) + get_registered_meta_keys('post') as $key => $args) {
+        if (!empty($args['revisions_enabled'])) {
+            $keys[] = (string) $key;
+        }
+    }
+    return apply_filters('wp_post_revision_meta_keys', array_values(array_unique($keys)), $post_type);
+}
+
+/** The default on wp_save_post_revision_post_has_changed: a revisioned meta value that differs is a change. */
+function wp_check_revisioned_meta_fields_have_changed($post_has_changed, $last_revision, $post)
+{
+    foreach (wp_post_revision_meta_keys($post->post_type) as $meta_key) {
+        if (get_post_meta($post->ID, $meta_key) !== get_post_meta($last_revision->ID, $meta_key)) {
+            return true;
+        }
+    }
+    return $post_has_changed;
+}
+
+/** The default on _wp_put_post_revision: the post's revisioned meta copied onto the revision. */
+function wp_save_revisioned_meta_fields($revision_id, $post_id)
+{
+    $post_type = get_post_type($post_id);
+    foreach ($post_type ? wp_post_revision_meta_keys($post_type) : [] as $meta_key) {
+        foreach (metadata_exists('post', (int) $post_id, $meta_key) ? get_post_meta((int) $post_id, $meta_key) : [] as $value) {
+            add_metadata('post', (int) $revision_id, $meta_key, wp_slash($value));
+        }
+    }
+}
+
+/** The default on _wp_post_revision_fields: footnotes are revisioned. */
+function wp_add_footnotes_to_revision($fields)
+{
+    $fields['footnotes'] = 'Footnotes';
+    return $fields;
+}
+
+/** Whitespace evened out for comparing: trimmed, line breaks as one newline, runs of spaces and tabs as one space. */
+function normalize_whitespace($str)
+{
+    $str = str_replace("\r", "\n", trim((string) $str));
+    return (string) preg_replace(['/\n+/', '/[ \t]+/'], ["\n", ' '], $str);
 }
 
 /**
@@ -1009,7 +1103,7 @@ function wp_after_insert_post($post, $update, $post_before)
 /** The revision of an update, saved after the update's terms and meta, unless the site unhooked revisions from post_updated. */
 function wp_save_post_revision_on_insert($post_id, $post, $update)
 {
-    if (!$update || !has_action('post_updated', 'wp_save_post_revision') || !in_array($post->post_type, ['post', 'page'], true) || !post_type_supports($post->post_type, 'revisions')) {
+    if (!$update || !has_action('post_updated', 'wp_save_post_revision')) {
         return;
     }
     wp_save_post_revision($post_id);
@@ -1042,24 +1136,16 @@ function wp_transition_post_status($new_status, $old_status, $post)
     do_action("{$new_status}_{$post->post_type}", $post->ID, $post, $old_status);
 }
 
+/**
+ * A revision of the post when one is called for (Runtime\PostRevisions).
+ * Hooked to post_updated it stands aside: the revision of an update is
+ * saved from wp_after_insert_post, once the terms and meta are in;
+ * unhooking it from post_updated is how a site turns revisions off.
+ */
 function wp_save_post_revision($post_id)
 {
-    // Hooked to post_updated, it stands aside: the revision of an update is
-    // saved from wp_after_insert_post, once the terms and meta are in.
-    // Unhooking it from post_updated is how a site turns revisions off.
     $post = doing_action('post_updated') ? null : get_post($post_id);
-    if ($post === null) {
-        return null;
-    }
-    $columns = _minn_post_writer()->revisionColumns($post->ID, get_current_user_id());
-    if ($columns === null) {
-        return null;
-    }
-    _minn_post_before_save($columns);
-    $revision = _minn_post_saved(_minn_post_writer()->insertRevision($columns), false, null);
-    wp_after_insert_post($revision, false, null);
-    do_action('_wp_put_post_revision', $revision->ID, $post->ID);
-    return $revision->ID;
+    return $post === null ? null : PostRevisions::save($post);
 }
 
 function wp_update_post($postarr = [], $wp_error = false, $fire_after_hooks = true)
@@ -1260,7 +1346,7 @@ function wp_delete_post($post_id = 0, $force_delete = false)
     delete_post_meta($post->ID, '_wp_trash_meta_time');
     wp_delete_object_term_relationships($post->ID, get_object_taxonomies($post->post_type));
     _minn_post_writer()->reparentChildren($post->ID, (int) $post->post_parent, $post->post_type === 'page' ? ['page', 'attachment'] : ['attachment']);
-    foreach (wp_get_post_revisions($post->ID) as $revision) {
+    foreach (wp_get_post_revisions($post->ID, ['check_enabled' => false]) as $revision) {
         wp_delete_post_revision($revision);
     }
     foreach (_minn_comments()->idsOf($post->ID) as $comment_id) {
@@ -1297,9 +1383,10 @@ function wp_delete_post_revision($revision)
     if ($revision === null || $revision->post_type !== 'revision') {
         return $revision;
     }
-    do_action('before_delete_post', $revision->ID, $revision);
-    $removed = _minn_post_remove($revision);
-    do_action('wp_delete_post_revision', $revision->ID, $revision);
+    $removed = wp_delete_post($revision->ID);
+    if ($removed) {
+        do_action('wp_delete_post_revision', $revision->ID, $revision);
+    }
     return $removed;
 }
 

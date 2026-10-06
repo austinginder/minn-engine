@@ -48,6 +48,7 @@ the WordPress runtime plugins load against
 | [`PostInsert`](#postinsert) | final readonly class | 166 | The decisions behind wp_insert_post: which columns a postarr fills, when |
 | [`PostLookup`](#postlookup) | final readonly class | 85 | The post reads plugin code asks for by shape: a page by title, revisions, counts. |
 | [`PostQuery`](#postquery) | final class | 383 | The query WP_Query runs: its variables become one SELECT over the posts |
+| [`PostRevisions`](#postrevisions) | final class | 63 | A post's revisions as the reference's wp_save_post_revision keeps them |
 | [`PostSave`](#postsave) | final class | 182 | A REST save's columns through the filters the reference's save runs |
 | [`QueriedObject`](#queriedobject) | final readonly class | 70 | Which object a query is "about", read from its flags and variables: a term |
 | [`QueryFlags`](#queryflags) | final readonly class | 101 | The conditional flags a set of query variables implies (is_single, is_archive, |
@@ -2020,6 +2021,31 @@ Runs a WP_Query-shaped args array and returns its rows and totals.
 - `@return array{rows: list<array>, found: int, sticky: list<array>}`
 
 Internals: `perPage()` (private, line 88), `types()` (private, line 100), `statuses()` (private, line 124), `singular()` (private, line 152), `authors()` (private, line 186), `parents()` (private, line 218), `ids()` (private, line 236), `search()` (private, line 269), `dates()` (private, line 284), `order()` (private, line 342)
+
+
+## PostRevisions
+
+`final class Minn\Runtime\PostRevisions` · `public/minn/src/Minn/Runtime/PostRevisions.php`
+
+A post's revisions as the reference's wp_save_post_revision keeps them
+(probe revisions): only for a type that supports revisions and while
+wp_revisions_to_keep allows any; compared with the latest revision
+(wp_save_post_revision_check_for_changes, the revision fields with their
+whitespace evened out, wp_save_post_revision_post_has_changed, whose
+default also compares the revisioned meta); saved through wp_insert_post
+and _wp_put_post_revision (whose default copies the revisioned meta);
+then the oldest dropped past the limit, after
+wp_save_post_revision_revisions_before_deletion.
+
+### static `save(WP_Post $post): ?int`
+
+The new revision's id, or null when none was called for.
+
+### static `put(WP_Post $post): ?int`
+
+The revision written through wp_insert_post, then _wp_put_post_revision; its id.
+
+Internals: `changed()` (private, line 42), `prune()` (private, line 67)
 
 
 ## PostSave

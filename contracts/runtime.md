@@ -3734,3 +3734,21 @@ Headings and lists saved without their class get `wp-block-heading` and
 
 `wp_revisions_to_keep` reads `WP_POST_REVISIONS`, answers 0 for a type
 without revision support, and runs its two filters.
+
+## Revisions (2026-10-06)
+
+Revisions were the engine's own: posts, pages and global styles only, never
+pruned, and no plugin was asked. `wp_save_post_revision` now runs as the
+reference's (`Runtime\PostRevisions`, probe `revisions`, 10 cases with every
+hook compared): any type that supports revisions, nothing while
+`wp_revisions_to_keep` answers 0; against the latest revision
+`wp_save_post_revision_check_for_changes`, the revision fields
+(`_wp_post_revision_fields`, footnotes added by default) compared with their
+whitespace evened out, and `wp_save_post_revision_post_has_changed`, whose
+default also compares the revisioned meta; the revision written through
+`wp_insert_post`, then `_wp_put_post_revision`, whose default copies the
+revisioned meta (`wp_post_revision_meta_keys`); then the oldest past the
+limit removed through `wp_delete_post_revision`, after
+`wp_save_post_revision_revisions_before_deletion`. `wp_get_post_revisions`
+answers nothing while revisions are off and takes `order`. Without plugins
+Minn's own revisions follow `WP_POST_REVISIONS`.

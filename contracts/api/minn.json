@@ -27081,7 +27081,7 @@
             "namespace": "Minn\\Content",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Content/PostWriter.php",
-            "lines": 435,
+            "lines": 464,
             "doc": "Every write to the posts table and its satellites: rows, meta, term\nlinks with the published counts the reference trusts on read, sticky\nand format side effects, and revision snapshots.",
             "implements": [],
             "extends": null,
@@ -27803,7 +27803,7 @@
                         }
                     ],
                     "line": 344,
-                    "end": 350
+                    "end": 352
                 },
                 {
                     "routes": [],
@@ -27831,8 +27831,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 359,
-                    "end": 401
+                    "line": 388,
+                    "end": 430
                 },
                 {
                     "routes": [],
@@ -27853,8 +27853,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 404,
-                    "end": 409
+                    "line": 433,
+                    "end": 438
                 },
                 {
                     "routes": [],
@@ -27889,8 +27889,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 413,
-                    "end": 418
+                    "line": 442,
+                    "end": 447
                 },
                 {
                     "routes": [],
@@ -27916,8 +27916,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 421,
-                    "end": 424
+                    "line": 450,
+                    "end": 453
                 },
                 {
                     "routes": [],
@@ -27928,8 +27928,8 @@
                     "doc": "The database door this writer writes through, for a caller wrapping several of its verbs in one transaction.",
                     "shapes": [],
                     "params": [],
-                    "line": 427,
-                    "end": 430
+                    "line": 456,
+                    "end": 459
                 },
                 {
                     "routes": [],
@@ -27948,8 +27948,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 433,
-                    "end": 448
+                    "line": 462,
+                    "end": 477
                 },
                 {
                     "routes": [],
@@ -27972,6 +27972,45 @@
                     ],
                     "line": 253,
                     "end": 260
+                },
+                {
+                    "routes": [],
+                    "name": "revisionsToKeep",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "revisionsToKeep(): int",
+                    "doc": "How many revisions a post keeps without plugins: WP_POST_REVISIONS, all (-1) when unset or true.",
+                    "shapes": [],
+                    "params": [],
+                    "line": 355,
+                    "end": 359
+                },
+                {
+                    "routes": [],
+                    "name": "pruneRevisions",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "pruneRevisions(int $id, int $keep): void",
+                    "doc": "The oldest revisions past the limit removed, with their meta; autosaves stay.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "id",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "keep",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 362,
+                    "end": 379
                 }
             ]
         },
@@ -100484,6 +100523,112 @@
                     ],
                     "line": 342,
                     "end": 396
+                }
+            ]
+        },
+        {
+            "name": "Minn\\Runtime\\PostRevisions",
+            "short": "PostRevisions",
+            "namespace": "Minn\\Runtime",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Runtime/PostRevisions.php",
+            "lines": 63,
+            "doc": "A post's revisions as the reference's wp_save_post_revision keeps them\n(probe revisions): only for a type that supports revisions and while\nwp_revisions_to_keep allows any; compared with the latest revision\n(wp_save_post_revision_check_for_changes, the revision fields with their\nwhitespace evened out, wp_save_post_revision_post_has_changed, whose\ndefault also compares the revisioned meta); saved through wp_insert_post\nand _wp_put_post_revision (whose default copies the revisioned meta);\nthen the oldest dropped past the limit, after\nwp_save_post_revision_revisions_before_deletion.",
+            "implements": [],
+            "extends": null,
+            "uses": [],
+            "usedBy": [],
+            "constructor": null,
+            "cases": [],
+            "constants": [],
+            "properties": [],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "save",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "save(WP_Post $post): ?int",
+                    "doc": "The new revision's id, or null when none was called for.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "post",
+                            "type": "WP_Post",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 21,
+                    "end": 39
+                },
+                {
+                    "routes": [],
+                    "name": "put",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "put(WP_Post $post): ?int",
+                    "doc": "The revision written through wp_insert_post, then _wp_put_post_revision; its id.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "post",
+                            "type": "WP_Post",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 55,
+                    "end": 64
+                },
+                {
+                    "routes": [],
+                    "name": "changed",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "changed(WP_Post $latest, WP_Post $post): bool",
+                    "doc": "Whether the post differs from its latest revision in the revision fields, or a plugin says so.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "latest",
+                            "type": "WP_Post",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "post",
+                            "type": "WP_Post",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 42,
+                    "end": 52
+                },
+                {
+                    "routes": [],
+                    "name": "prune",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "prune(WP_Post $post): void",
+                    "doc": "The oldest revisions past wp_revisions_to_keep removed (autosaves stay).",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "post",
+                            "type": "WP_Post",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 67,
+                    "end": 79
                 }
             ]
         },

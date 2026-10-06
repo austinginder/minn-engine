@@ -222,6 +222,10 @@ add_action('rest_api_init', 'rest_api_default_filters', 10, 1);
 // Revisions and the old-address records hang off the update hooks, as on the reference: a plugin that
 // unhooks wp_save_post_revision from post_updated turns revisions off.
 add_action('post_updated', 'wp_save_post_revision', 10, 1);
+// What a revision keeps beside its fields: footnotes, and the revisioned meta (probe revisions).
+add_filter('_wp_post_revision_fields', 'wp_add_footnotes_to_revision');
+add_filter('wp_save_post_revision_post_has_changed', 'wp_check_revisioned_meta_fields_have_changed', 10, 3);
+add_action('_wp_put_post_revision', 'wp_save_revisioned_meta_fields', 10, 2);
 add_action('post_updated', 'wp_check_for_changed_slugs', 12, 3);
 add_action('post_updated', 'wp_check_for_changed_dates', 12, 3);
 add_action('wp_after_insert_post', 'wp_save_post_revision_on_insert', 9, 3);

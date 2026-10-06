@@ -1,0 +1,187 @@
+[
+    [
+        "a new post has",
+        []
+    ],
+    [
+        "a first edit",
+        {
+            "steps": [
+                "wp_after_insert_post [{post0},\"post:post\",true,\"post:post\"]",
+                "wp_revisions_to_keep [-1,\"post:post\"]",
+                "wp_post_revisions_to_keep [-1,\"post:post\"]",
+                "wp_revisions_to_keep [-1,\"post:post\"]",
+                "wp_post_revisions_to_keep [-1,\"post:post\"]",
+                "_wp_post_revision_fields [\"array[post_title,post_content,post_excerpt]\",\"array[ID,post_author,post_date,post_date_gmt,post_content,post_title,post_excerpt,post_status,comment_status,ping_status,post_password,post_name,to_ping,pinged,post_modified,post_modified_gmt,post_content_filtered,post_parent,guid,menu_order,post_type,post_mime_type,comment_count,filter]\"]",
+                "save_post_revision [{revision},\"post:revision\",false]",
+                "wp_after_insert_post [{revision},\"post:revision\",false,null]",
+                "_wp_put_post_revision [{revision},{post0}]",
+                "wp_post_revision_meta_keys [\"list(1)\",\"post\"]",
+                "wp_revisions_to_keep [-1,\"post:post\"]",
+                "wp_post_revisions_to_keep [-1,\"post:post\"]"
+            ],
+            "revisions": [
+                "zz revision two"
+            ]
+        }
+    ],
+    [
+        "an edit that changes nothing",
+        {
+            "steps": [
+                "wp_after_insert_post [{post0},\"post:post\",true,\"post:post\"]",
+                "wp_revisions_to_keep [-1,\"post:post\"]",
+                "wp_post_revisions_to_keep [-1,\"post:post\"]",
+                "wp_revisions_to_keep [-1,\"post:post\"]",
+                "wp_post_revisions_to_keep [-1,\"post:post\"]",
+                "wp_save_post_revision_check_for_changes [true,\"post:revision\",\"post:post\"]",
+                "_wp_post_revision_fields [\"array[post_title,post_content,post_excerpt,footnotes]\",\"array[ID,post_author,post_date,post_date_gmt,post_content,post_title,post_excerpt,post_status,comment_status,ping_status,post_password,post_name,to_ping,pinged,post_modified,post_modified_gmt,post_content_filtered,post_parent,guid,menu_order,post_type,post_mime_type,comment_count,filter,ancestors,page_template,post_category,tags_input]\"]",
+                "wp_save_post_revision_post_has_changed [false,\"post:revision\",\"post:post\"]",
+                "wp_post_revision_meta_keys [\"list(1)\",\"post\"]"
+            ],
+            "revisions": [
+                "zz revision two"
+            ]
+        }
+    ],
+    [
+        "a third edit, two kept",
+        {
+            "steps": [
+                "wp_after_insert_post [{post0},\"post:post\",true,\"post:post\"]",
+                "wp_revisions_to_keep [-1,\"post:post\"]",
+                "wp_post_revisions_to_keep [2,\"post:post\"]",
+                "wp_revisions_to_keep [-1,\"post:post\"]",
+                "wp_post_revisions_to_keep [2,\"post:post\"]",
+                "wp_save_post_revision_check_for_changes [true,\"post:revision\",\"post:post\"]",
+                "_wp_post_revision_fields [\"array[post_title,post_content,post_excerpt,footnotes]\",\"array[ID,post_author,post_date,post_date_gmt,post_content,post_title,post_excerpt,post_status,comment_status,ping_status,post_password,post_name,to_ping,pinged,post_modified,post_modified_gmt,post_content_filtered,post_parent,guid,menu_order,post_type,post_mime_type,comment_count,filter,ancestors,page_template,post_category,tags_input]\"]",
+                "wp_save_post_revision_post_has_changed [true,\"post:revision\",\"post:post\"]",
+                "wp_post_revision_meta_keys [\"list(1)\",\"post\"]",
+                "_wp_post_revision_fields [\"array[post_title,post_content,post_excerpt,footnotes]\",\"array[ID,post_author,post_date,post_date_gmt,post_content,post_title,post_excerpt,post_status,comment_status,ping_status,post_password,post_name,to_ping,pinged,post_modified,post_modified_gmt,post_content_filtered,post_parent,guid,menu_order,post_type,post_mime_type,comment_count,filter]\"]",
+                "save_post_revision [{revision},\"post:revision\",false]",
+                "wp_after_insert_post [{revision},\"post:revision\",false,null]",
+                "_wp_put_post_revision [{revision},{post0}]",
+                "wp_post_revision_meta_keys [\"list(1)\",\"post\"]",
+                "wp_revisions_to_keep [-1,\"post:post\"]",
+                "wp_post_revisions_to_keep [2,\"post:post\"]",
+                "wp_revisions_to_keep [-1,\"post:post\"]",
+                "wp_post_revisions_to_keep [2,\"post:post\"]",
+                "wp_save_post_revision_revisions_before_deletion [\"list(2)\",{post0}]"
+            ],
+            "revisions": [
+                "zz revision two",
+                "zz revision three"
+            ]
+        }
+    ],
+    [
+        "a fourth edit, two kept",
+        {
+            "steps": [
+                "wp_after_insert_post [{post0},\"post:post\",true,\"post:post\"]",
+                "wp_revisions_to_keep [-1,\"post:post\"]",
+                "wp_post_revisions_to_keep [2,\"post:post\"]",
+                "wp_revisions_to_keep [-1,\"post:post\"]",
+                "wp_post_revisions_to_keep [2,\"post:post\"]",
+                "wp_save_post_revision_check_for_changes [true,\"post:revision\",\"post:post\"]",
+                "_wp_post_revision_fields [\"array[post_title,post_content,post_excerpt,footnotes]\",\"array[ID,post_author,post_date,post_date_gmt,post_content,post_title,post_excerpt,post_status,comment_status,ping_status,post_password,post_name,to_ping,pinged,post_modified,post_modified_gmt,post_content_filtered,post_parent,guid,menu_order,post_type,post_mime_type,comment_count,filter,ancestors,page_template,post_category,tags_input]\"]",
+                "wp_save_post_revision_post_has_changed [true,\"post:revision\",\"post:post\"]",
+                "wp_post_revision_meta_keys [\"list(1)\",\"post\"]",
+                "_wp_post_revision_fields [\"array[post_title,post_content,post_excerpt,footnotes]\",\"array[ID,post_author,post_date,post_date_gmt,post_content,post_title,post_excerpt,post_status,comment_status,ping_status,post_password,post_name,to_ping,pinged,post_modified,post_modified_gmt,post_content_filtered,post_parent,guid,menu_order,post_type,post_mime_type,comment_count,filter]\"]",
+                "save_post_revision [{revision},\"post:revision\",false]",
+                "wp_after_insert_post [{revision},\"post:revision\",false,null]",
+                "_wp_put_post_revision [{revision},{post0}]",
+                "wp_post_revision_meta_keys [\"list(1)\",\"post\"]",
+                "wp_revisions_to_keep [-1,\"post:post\"]",
+                "wp_post_revisions_to_keep [2,\"post:post\"]",
+                "wp_revisions_to_keep [-1,\"post:post\"]",
+                "wp_post_revisions_to_keep [2,\"post:post\"]",
+                "wp_save_post_revision_revisions_before_deletion [\"list(3)\",{post0}]",
+                "pre_delete_post [null,\"post:revision\",false]",
+                "wp_delete_post_revision [{revision},\"post:revision\"]"
+            ],
+            "revisions": [
+                "zz revision three",
+                "zz revision four"
+            ]
+        }
+    ],
+    [
+        "revisions switched off",
+        {
+            "steps": [
+                "wp_after_insert_post [{post0},\"post:post\",true,\"post:post\"]",
+                "wp_revisions_to_keep [-1,\"post:post\"]",
+                "wp_post_revisions_to_keep [0,\"post:post\"]"
+            ],
+            "revisions": []
+        }
+    ],
+    [
+        "a plugin says it changed",
+        {
+            "steps": [
+                "wp_after_insert_post [{post0},\"post:post\",true,\"post:post\"]",
+                "wp_revisions_to_keep [-1,\"post:post\"]",
+                "wp_post_revisions_to_keep [-1,\"post:post\"]",
+                "wp_revisions_to_keep [-1,\"post:post\"]",
+                "wp_post_revisions_to_keep [-1,\"post:post\"]",
+                "wp_save_post_revision_check_for_changes [true,\"post:revision\",\"post:post\"]",
+                "_wp_post_revision_fields [\"array[post_title,post_content,post_excerpt,footnotes]\",\"array[ID,post_author,post_date,post_date_gmt,post_content,post_title,post_excerpt,post_status,comment_status,ping_status,post_password,post_name,to_ping,pinged,post_modified,post_modified_gmt,post_content_filtered,post_parent,guid,menu_order,post_type,post_mime_type,comment_count,filter,ancestors,page_template,post_category,tags_input]\"]",
+                "wp_save_post_revision_post_has_changed [true,\"post:revision\",\"post:post\"]",
+                "wp_post_revision_meta_keys [\"list(1)\",\"post\"]",
+                "_wp_post_revision_fields [\"array[post_title,post_content,post_excerpt,footnotes]\",\"array[ID,post_author,post_date,post_date_gmt,post_content,post_title,post_excerpt,post_status,comment_status,ping_status,post_password,post_name,to_ping,pinged,post_modified,post_modified_gmt,post_content_filtered,post_parent,guid,menu_order,post_type,post_mime_type,comment_count,filter]\"]",
+                "save_post_revision [{revision},\"post:revision\",false]",
+                "wp_after_insert_post [{revision},\"post:revision\",false,null]",
+                "_wp_put_post_revision [{revision},{post0}]",
+                "wp_post_revision_meta_keys [\"list(1)\",\"post\"]",
+                "wp_revisions_to_keep [-1,\"post:post\"]",
+                "wp_post_revisions_to_keep [-1,\"post:post\"]"
+            ],
+            "revisions": [
+                "zz revision three",
+                "zz revision four",
+                "zz revision five"
+            ]
+        }
+    ],
+    [
+        "a type with revisions",
+        {
+            "steps": [
+                "wp_after_insert_post [{post1},\"post:zz_revised\",true,\"post:zz_revised\"]",
+                "wp_revisions_to_keep [-1,\"post:zz_revised\"]",
+                "wp_zz_revised_revisions_to_keep [-1,\"post:zz_revised\"]",
+                "wp_revisions_to_keep [-1,\"post:zz_revised\"]",
+                "wp_zz_revised_revisions_to_keep [-1,\"post:zz_revised\"]",
+                "_wp_post_revision_fields [\"array[post_title,post_content,post_excerpt,footnotes]\",\"array[ID,post_author,post_date,post_date_gmt,post_content,post_title,post_excerpt,post_status,comment_status,ping_status,post_password,post_name,to_ping,pinged,post_modified,post_modified_gmt,post_content_filtered,post_parent,guid,menu_order,post_type,post_mime_type,comment_count,filter]\"]",
+                "save_post_revision [{revision},\"post:revision\",false]",
+                "wp_after_insert_post [{revision},\"post:revision\",false,null]",
+                "_wp_put_post_revision [{revision},{post1}]",
+                "wp_post_revision_meta_keys [\"array[]\",\"zz_revised\"]",
+                "wp_revisions_to_keep [-1,\"post:zz_revised\"]",
+                "wp_zz_revised_revisions_to_keep [-1,\"post:zz_revised\"]"
+            ],
+            "revisions": [
+                "zz revised two"
+            ]
+        }
+    ],
+    [
+        "a type without",
+        {
+            "steps": [
+                "wp_after_insert_post [{post2},\"post:zz_unrevised\",true,\"post:zz_unrevised\"]"
+            ],
+            "revisions": []
+        }
+    ],
+    [
+        "wp_revisions_to_keep by type",
+        [
+            -1,
+            -1,
+            0
+        ]
+    ]
+]

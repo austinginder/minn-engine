@@ -2,11 +2,11 @@
     "generated": "2026-10-06",
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line)",
     "summary": {
-        "minn": 624,
-        "composes": 857,
-        "leaf": 633,
+        "minn": 626,
+        "composes": 862,
+        "leaf": 635,
         "noop": 1790,
-        "functions": 3834,
+        "functions": 3843,
         "minnMethods": 598,
         "leafLinesOver15": 13
     },
@@ -15619,6 +15619,15 @@
             "minn": [],
             "composes": []
         },
+        "_minn_revision_source": {
+            "file": "post.php",
+            "lines": 5,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "get_post"
+            ]
+        },
         "_minn_rewrite": {
             "file": "misc.php",
             "lines": 7,
@@ -16569,6 +16578,41 @@
             "kind": "leaf",
             "minn": [],
             "composes": []
+        },
+        "_wp_post_revision_data": {
+            "file": "post.php",
+            "lines": 4,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "_minn_revision_source",
+                "_wp_post_revision_fields"
+            ]
+        },
+        "_wp_post_revision_fields": {
+            "file": "post.php",
+            "lines": 6,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Runtime\\Runtime::current",
+                "Minn\\Runtime\\Runtime::get",
+                "Minn\\Runtime\\Runtime::set"
+            ],
+            "composes": [
+                "apply_filters",
+                "get_post"
+            ]
+        },
+        "_wp_put_post_revision": {
+            "file": "post.php",
+            "lines": 2,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Runtime\\PostRevisions::put"
+            ],
+            "composes": [
+                "get_post"
+            ]
         },
         "_wp_register_default_connector_settings": {
             "file": "connectors.php",
@@ -24426,6 +24470,13 @@
             "minn": [],
             "composes": []
         },
+        "normalize_whitespace": {
+            "file": "post.php",
+            "lines": 2,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
         "number_format_i18n": {
             "file": "l10n.php",
             "lines": 1,
@@ -28053,6 +28104,13 @@
                 "get_current_screen"
             ]
         },
+        "wp_add_footnotes_to_revision": {
+            "file": "post.php",
+            "lines": 2,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
         "wp_add_inline_script": {
             "file": "script-loader.php",
             "lines": 1,
@@ -28702,6 +28760,16 @@
                 "get_post_meta"
             ]
         },
+        "wp_check_revisioned_meta_fields_have_changed": {
+            "file": "post.php",
+            "lines": 6,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "get_post_meta",
+                "wp_post_revision_meta_keys"
+            ]
+        },
         "wp_check_term_hierarchy_for_loops": {
             "file": "taxonomy.php",
             "lines": 10,
@@ -29188,13 +29256,13 @@
         },
         "wp_delete_post_revision": {
             "file": "post.php",
-            "lines": 8,
+            "lines": 9,
             "kind": "composes",
             "minn": [],
             "composes": [
-                "_minn_post_remove",
                 "do_action",
-                "get_post"
+                "get_post",
+                "wp_delete_post"
             ]
         },
         "wp_delete_term": {
@@ -30360,14 +30428,16 @@
         },
         "wp_get_post_revisions": {
             "file": "post.php",
-            "lines": 9,
+            "lines": 12,
             "kind": "minn",
             "minn": [
                 "Minn\\Runtime\\PostLookup::revisionsOf"
             ],
             "composes": [
                 "_minn_post_lookup",
-                "get_post"
+                "get_post",
+                "wp_parse_args",
+                "wp_revisions_enabled"
             ]
         },
         "wp_get_post_revisions_url": {
@@ -32053,6 +32123,16 @@
             "minn": [],
             "composes": []
         },
+        "wp_post_revision_meta_keys": {
+            "file": "post.php",
+            "lines": 7,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "apply_filters",
+                "get_registered_meta_keys"
+            ]
+        },
         "wp_post_revision_title": {
             "file": "misc.php",
             "lines": 18,
@@ -32674,8 +32754,7 @@
             "kind": "noop",
             "minn": [],
             "composes": [
-                "get_post_type",
-                "post_type_supports"
+                "wp_revisions_to_keep"
             ]
         },
         "wp_revisions_to_keep": {
@@ -32836,21 +32915,14 @@
         },
         "wp_save_post_revision": {
             "file": "post.php",
-            "lines": 16,
+            "lines": 2,
             "kind": "minn",
             "minn": [
-                "Minn\\Content\\PostWriter::insertRevision",
-                "Minn\\Content\\PostWriter::revisionColumns"
+                "Minn\\Runtime\\PostRevisions::save"
             ],
             "composes": [
-                "_minn_post_before_save",
-                "_minn_post_saved",
-                "_minn_post_writer",
-                "do_action",
                 "doing_action",
-                "get_current_user_id",
-                "get_post",
-                "wp_after_insert_post"
+                "get_post"
             ]
         },
         "wp_save_post_revision_on_insert": {
@@ -32860,8 +32932,21 @@
             "minn": [],
             "composes": [
                 "has_action",
-                "post_type_supports",
                 "wp_save_post_revision"
+            ]
+        },
+        "wp_save_revisioned_meta_fields": {
+            "file": "post.php",
+            "lines": 6,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "add_metadata",
+                "get_post_meta",
+                "get_post_type",
+                "metadata_exists",
+                "wp_post_revision_meta_keys",
+                "wp_slash"
             ]
         },
         "wp_schedule_event": {

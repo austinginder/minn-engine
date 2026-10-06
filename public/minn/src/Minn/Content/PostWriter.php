@@ -343,9 +343,38 @@ final readonly class PostWriter
      */
     public function maybeSaveRevision(int $id, int $userId): void
     {
-        $columns = $this->revisionColumns($id, $userId);
+        $keep = self::revisionsToKeep();
+        $columns = $keep === 0 ? null : $this->revisionColumns($id, $userId);
         if ($columns !== null) {
             $this->insertRevision($columns);
+            $this->pruneRevisions($id, $keep);
+        }
+    }
+
+    /** How many revisions a post keeps without plugins: WP_POST_REVISIONS, all (-1) when unset or true. */
+    private static function revisionsToKeep(): int
+    {
+        $keep = defined('WP_POST_REVISIONS') ? WP_POST_REVISIONS : true;
+        return $keep === true ? -1 : (int) $keep;
+    }
+
+    /** The oldest revisions past the limit removed, with their meta; autosaves stay. */
+    private function pruneRevisions(int $id, int $keep): void
+    {
+        if ($keep < 0) {
+            return;
+        }
+        $ids = array_map('intval', array_column($this->db->rows(
+            "SELECT ID FROM {$this->db->table('posts')} WHERE post_parent = ? AND post_type = 'revision' AND post_status = 'inherit' ORDER BY post_date ASC, ID ASC",
+            [$id],
+        ), 'ID'));
+        $autosave = $id . '-autosave';
+        foreach (array_slice($ids, 0, max(0, count($ids) - $keep)) as $revisionId) {
+            $name = (string) $this->db->value("SELECT post_name FROM {$this->db->table('posts')} WHERE ID = ?", [$revisionId]);
+            if (!str_starts_with($name, $autosave)) {
+                $this->db->execute("DELETE FROM {$this->db->table('postmeta')} WHERE post_id = ?", [$revisionId]);
+                $this->db->execute("DELETE FROM {$this->db->table('posts')} WHERE ID = ?", [$revisionId]);
+            }
         }
     }
 
