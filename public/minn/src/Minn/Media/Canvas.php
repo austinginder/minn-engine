@@ -136,10 +136,17 @@ final readonly class Canvas
         return $this->encode($mime, $path, $quality);
     }
 
-    /** The same bitmap written progressively (an interlaced JPEG) or not. */
-    public function interlaced(bool $on): self
+    /** The bitmap written progressively from now on (an interlaced JPEG). */
+    public function progressive(): self
     {
-        imageinterlace($this->image, $on);
+        imageinterlace($this->image, true);
+        return $this;
+    }
+
+    /** The bitmap written line by line from now on, as it is by default. */
+    public function baseline(): self
+    {
+        imageinterlace($this->image, false);
         return $this;
     }
 

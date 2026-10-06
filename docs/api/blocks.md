@@ -14,7 +14,7 @@ the block parser and renderer
 | [`Parser`](#parser) | final class | 91 | Parses block markup into a tree. The grammar is the delimiter comment: |
 | [`QueryVars`](#queryvars) | final class | 80 | The query variables a Query Loop block's context asks for, the way the reference's query block builds them. |
 | [`RenderState`](#renderstate) | final class | 302 | Per-request rendering state, owned by the renderer. The reference numbers |
-| [`Renderer`](#renderer) | final class | 228 | Renders a block tree the way the reference renders post_content: |
+| [`Renderer`](#renderer) | final class | 231 | Renders a block tree the way the reference renders post_content: |
 | [`Selector`](#selector) | final class | 42 | The CSS selector a block type declares for its root or for one feature, from its `selectors` map or the older per-support keys. |
 | [`Serializer`](#serializer) | final class | 46 | Parsed blocks back to markup. A core block is written by its short name; |
 | [`Styles`](#styles) | final class | 155 | The inline style and class names a block's "style" and preset |
@@ -514,7 +514,7 @@ A tree of blocks as HTML.
 
 One block as HTML, with the filters around it.
 
-Internals: `renderNamed()` (private, line 198), `decorate()` (private, line 219), `gallery()` (private, line 247), `flexWithoutContainer()` (private, line 255)
+Internals: `renderNamed()` (private, line 198), `decorate()` (private, line 219), `gallery()` (private, line 250), `flexWithoutContainer()` (private, line 258)
 
 
 ## Selector

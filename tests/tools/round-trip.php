@@ -487,6 +487,8 @@ function rt_text( string $value, array $labels, array $window ): string {
 	$value = (string) preg_replace( array( '/\b127\.0\.0\.1\b/', '/(?<![\w:])::1(?![\w:])/' ), '{loopback}', $value );
 	// Values each stack draws at random: a uniqid lock (Action Scheduler), a shop's order key and its tracking id.
 	$value = (string) preg_replace( array( '/\b[0-9a-f]{14}\.\d{8}\b/', '/\bwc_order_[A-Za-z0-9]{13}\b/', '/\bwoo:[A-Za-z0-9+\/]{24}/' ), array( '{uniqid}', 'wc_order_{key}', 'woo:{token}' ), $value );
+	// The same time in a slug ("order-oct-06-2026-0324-pm", a WooCommerce order's address).
+	$value = (string) preg_replace_callback( '/\b([a-z]{3})-(\d\d)-(\d{4})-(\d\d)(\d\d)-([ap]m)\b/', static fn ( $m ) => false !== ( $at = strtotime( "{$m[1]} {$m[2]} {$m[3]} {$m[4]}:{$m[5]} {$m[6]}" ) ) && rt_in_window( date( 'Y-m-d H:i:s', $at ), $window ) ? '{now}' : $m[0], $value );
 	// A time written out for people ("October 6, 2026 @ 10:40 AM", a WooCommerce order's title) inside the run.
 	$value = (string) preg_replace_callback( '/\b([A-Z][a-z]+ \d{1,2}, \d{4}) @ (\d{1,2}:\d\d [AP]M)\b/', static fn ( $m ) => rt_in_window( date( 'Y-m-d H:i:s', (int) strtotime( "{$m[1]} {$m[2]}" ) ), $window ) ? '{now}' : $m[0], $value );
 	// The parked WordPress serves from wp-reference/, Minn from public/: one webroot, two directories. A serialized

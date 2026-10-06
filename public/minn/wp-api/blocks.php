@@ -356,20 +356,45 @@ function _restore_wpautop_hook($content)
     return $content;
 }
 
+/**
+ * The blocks an excerpt keeps (probe excerpt): text blocks, rendered; the
+ * wrapper blocks (columns, column, group, through
+ * excerpt_allowed_wrapper_blocks) give up their kept children without their
+ * own markup; a block with children is kept only when every child is a
+ * plain text block with none of its own. excerpt_allowed_blocks names the
+ * rest.
+ */
 function excerpt_remove_blocks($content)
 {
-    $allowed = apply_filters('excerpt_allowed_blocks', ['core/paragraph', 'core/heading', 'core/list', 'core/list-item', 'core/quote', 'core/pullquote', 'core/table', 'core/preformatted', 'core/verse', 'core/columns', 'core/column', 'core/group', 'core/block']);
-    $output = '';
-    foreach (parse_blocks((string) $content) as $block) {
-        if ($block['blockName'] === null) {
-            $output .= $block['innerHTML'];
+    if (!has_blocks($content)) {
+        return $content;
+    }
+    $base = [null, 'core/freeform', 'core/heading', 'core/html', 'core/list', 'core/media-text', 'core/paragraph', 'core/preformatted', 'core/pullquote', 'core/quote', 'core/table', 'core/verse'];
+    $wrappers = (array) apply_filters('excerpt_allowed_wrapper_blocks', ['core/columns', 'core/column', 'core/group']);
+    $allowed = (array) apply_filters('excerpt_allowed_blocks', array_merge($base, $wrappers));
+    return _minn_excerpt_blocks(parse_blocks((string) $content), $allowed, $wrappers, $base);
+}
+
+/** @internal the kept blocks of one level, rendered and run together (the whitespace between them is a block too) */
+function _minn_excerpt_blocks(array $blocks, array $allowed, array $wrappers, array $base): string
+{
+    $output = [];
+    foreach ($blocks as $block) {
+        if (!in_array($block['blockName'], $allowed, true)) {
             continue;
         }
-        if (in_array($block['blockName'], $allowed, true)) {
-            $output .= render_block($block);
+        if (!empty($block['innerBlocks']) && in_array($block['blockName'], $wrappers, true)) {
+            $output[] = _minn_excerpt_blocks($block['innerBlocks'], $allowed, $wrappers, $base);
+            continue;
         }
+        foreach ($block['innerBlocks'] ?? [] as $inner) {
+            if (!in_array($inner['blockName'], $base, true) || !empty($inner['innerBlocks'])) {
+                continue 2;
+            }
+        }
+        $output[] = render_block($block);
     }
-    return $output;
+    return implode('', $output);
 }
 
 function excerpt_remove_footnotes($content)

@@ -4,7 +4,7 @@ uploads, image sizes and attachment metadata
 
 | Class | Kind | Lines | Summary |
 |---|---|---|---|
-| [`Canvas`](#canvas) | final readonly class | 149 | One GD bitmap and the operations the media layer needs on it. Every |
+| [`Canvas`](#canvas) | final readonly class | 156 | One GD bitmap and the operations the media layer needs on it. Every |
 | [`Gallery`](#gallery) | final class | 54 | The classic `[gallery]` shortcode's markup. Every gallery on a page is |
 | [`Images`](#images) | final readonly class | 163 | GD sub-size generation for the sizes the site has. |
 | [`Kind`](#kind) | final class | 75 | Whether an attachment is an image, audio, video, or a given extension, judged by its MIME type first and its file extension second. |
@@ -66,15 +66,19 @@ An untouched copy of the canvas.
 
 Writes the bitmap in the given format; the directory is created when missing.
 
-### `interlaced(bool $on): self`
+### `progressive(): self`
 
-The same bitmap written progressively (an interlaced JPEG) or not.
+The bitmap written progressively from now on (an interlaced JPEG).
+
+### `baseline(): self`
+
+The bitmap written line by line from now on, as it is by default.
 
 ### `stream(string $mime, int $quality): bool`
 
 Writes the image to the output in a format, at a quality.
 
-Internals: `affordable()` (private, line 48), `memoryLimit()` (private, line 60), `flipped()` (private, line 122), `encode()` (private, line 152)
+Internals: `affordable()` (private, line 48), `memoryLimit()` (private, line 60), `flipped()` (private, line 122), `encode()` (private, line 159)
 
 
 ## Gallery

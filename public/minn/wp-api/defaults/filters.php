@@ -36,6 +36,8 @@ add_filter('the_title', 'wptexturize');
 add_filter('the_title', 'convert_chars');
 add_filter('the_title', 'trim');
 add_filter('the_title', 'capital_P_dangit', 11);
+add_filter('get_the_excerpt', 'wp_trim_excerpt', 10, 2);
+add_filter('excerpt_more', 'wp_embed_excerpt_more', 20);
 add_filter('the_excerpt', 'wptexturize');
 add_filter('the_excerpt', 'convert_smilies');
 add_filter('the_excerpt', 'convert_chars');

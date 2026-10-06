@@ -224,6 +224,9 @@ final class Renderer
         }
         $html = match ($block->name) {
             'core/paragraph' => Html::addClasses($html, ['wp-block-paragraph']),
+            // Saved without their class (older content), these get it as they render.
+            'core/heading' => Html::addClasses($html, ['wp-block-heading']),
+            'core/list' => Html::addClasses($html, ['wp-block-list']),
             'core/group' => Html::addClasses($html, Layout::classes('group', $block->attrs)),
             'core/columns' => Html::addClasses($html, Layout::classes('columns', $block->attrs, 'flex')),
             'core/column', 'core/quote', 'core/details' => Html::addClasses($html, ['is-layout-flow', "wp-block-{$slug}-is-layout-flow"]),

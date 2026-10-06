@@ -929,15 +929,38 @@ function wp_maybe_decline_date($date, $format = '')
     return apply_filters('wp_maybe_decline_date', (string) $date, (string) $format);
 }
 
+/**
+ * An excerpt made from the content when none was written (probe excerpt):
+ * the content as the loop gives it, without shortcodes, blocks an excerpt
+ * leaves out, or footnotes, through the_content (block rendering and image
+ * tags aside), cut to excerpt_length words with excerpt_more; then
+ * wp_trim_excerpt either way.
+ */
 function wp_trim_excerpt($text = '', $post = null)
 {
-    if ((string) $text !== '') {
-        return apply_filters('wp_trim_excerpt', (string) $text, (string) $text);
+    $raw = (string) $text;
+    $text = $raw;
+    if (trim($text) === '') {
+        $post = get_post($post);
+        $text = excerpt_remove_footnotes(excerpt_remove_blocks(strip_shortcodes(get_the_content('', false, $post))));
+        $images = remove_filter('the_content', 'wp_filter_content_tags', 12);
+        $blocks = remove_filter('the_content', 'do_blocks', 9);
+        $text = str_replace(']]>', ']]&gt;', (string) apply_filters('the_content', $text));
+        $blocks && add_filter('the_content', 'do_blocks', 9);
+        $images && add_filter('the_content', 'wp_filter_content_tags', 12);
+        $text = wp_trim_words($text, (int) apply_filters('excerpt_length', 55), apply_filters('excerpt_more', ' [&hellip;]'));
     }
-    $post = get_post($post);
-    // The trimmed excerpt is plain text: the rendered markup is stripped back.
-    $generated = $post ? trim(wp_strip_all_tags(Minn\Content\Excerpt::render(Minn\Content\PostRecord::fromRow($post->to_array())))) : '';
-    return apply_filters('wp_trim_excerpt', $generated, '');
+    return apply_filters('wp_trim_excerpt', $text, $raw);
+}
+
+/** The default on excerpt_more: inside an embed the more text becomes a link to the post; anywhere else it stays. */
+function wp_embed_excerpt_more($more_string)
+{
+    if (!is_embed()) {
+        return $more_string;
+    }
+    $link = sprintf('<a href="%1$s" class="wp-embed-more" target="_top">%2$s</a>', esc_url(get_permalink()), sprintf('Continue reading %s', '<span class="screen-reader-text">' . get_the_title() . '</span>'));
+    return ' &hellip; ' . $link;
 }
 
 function format_for_editor($text, $default_editor = null)

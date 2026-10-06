@@ -2,12 +2,12 @@
     "generated": "2026-10-06",
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line)",
     "summary": {
-        "minn": 623,
-        "composes": 853,
+        "minn": 624,
+        "composes": 857,
         "leaf": 633,
-        "noop": 1791,
-        "functions": 3830,
-        "minnMethods": 597,
+        "noop": 1790,
+        "functions": 3834,
+        "minnMethods": 598,
         "leafLinesOver15": 13
     },
     "functions": {
@@ -8252,17 +8252,16 @@
         },
         "WP_Query::setup_postdata": {
             "file": "classes/WP_Query.php",
-            "lines": 16,
+            "lines": 9,
             "kind": "minn",
             "minn": [
                 "Minn\\Runtime\\Runtime::current",
                 "Minn\\Runtime\\Runtime::set"
             ],
             "composes": [
+                "_minn_postdata_globals",
                 "do_action_ref_array",
-                "get_post",
-                "get_userdata",
-                "mysql2date"
+                "get_post"
             ]
         },
         "WP_Query::the_comment": {
@@ -14997,6 +14996,15 @@
                 "wp_register_style"
             ]
         },
+        "_minn_excerpt_blocks": {
+            "file": "blocks.php",
+            "lines": 17,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "render_block"
+            ]
+        },
         "_minn_gallery_attachments": {
             "file": "media.php",
             "lines": 10,
@@ -15459,6 +15467,15 @@
             "composes": [
                 "_minn_posts"
             ]
+        },
+        "_minn_postdata_globals": {
+            "file": "post.php",
+            "lines": 4,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Runtime\\PostData::generate"
+            ],
+            "composes": []
         },
         "_minn_posts": {
             "file": "post.php",
@@ -18741,13 +18758,14 @@
         },
         "excerpt_remove_blocks": {
             "file": "blocks.php",
-            "lines": 12,
+            "lines": 7,
             "kind": "composes",
             "minn": [],
             "composes": [
+                "_minn_excerpt_blocks",
                 "apply_filters",
-                "parse_blocks",
-                "render_block"
+                "has_blocks",
+                "parse_blocks"
             ]
         },
         "excerpt_remove_footnotes": {
@@ -18999,6 +19017,17 @@
                 "Minn\\Runtime\\BlockMetadata::assetHandle"
             ],
             "composes": []
+        },
+        "generate_postdata": {
+            "file": "post.php",
+            "lines": 2,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Runtime\\PostData::generate"
+            ],
+            "composes": [
+                "get_post"
+            ]
         },
         "get": {
             "file": "requests/Parts.php",
@@ -22021,9 +22050,12 @@
         },
         "get_the_content": {
             "file": "post.php",
-            "lines": 8,
-            "kind": "composes",
-            "minn": [],
+            "lines": 9,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Runtime\\PostData::content",
+                "Minn\\Runtime\\PostData::generate"
+            ],
             "composes": [
                 "get_post",
                 "get_the_password_form",
@@ -22057,17 +22089,14 @@
         },
         "get_the_excerpt": {
             "file": "post.php",
-            "lines": 14,
-            "kind": "minn",
-            "minn": [
-                "Minn\\Content\\Excerpt::render",
-                "Minn\\Content\\PostRecord::fromRow"
-            ],
+            "lines": 9,
+            "kind": "composes",
+            "minn": [],
             "composes": [
                 "apply_filters",
                 "get_post",
                 "post_password_required",
-                "wp_strip_all_tags"
+                "wp_trim_excerpt"
             ]
         },
         "get_the_generator": {
@@ -22117,15 +22146,18 @@
         },
         "get_the_password_form": {
             "file": "post.php",
-            "lines": 4,
+            "lines": 9,
             "kind": "composes",
             "minn": [],
             "composes": [
                 "apply_filters",
+                "esc_attr",
                 "esc_attr_x",
                 "esc_url",
+                "get_permalink",
                 "get_post",
-                "site_url"
+                "site_url",
+                "wp_is_block_theme"
             ]
         },
         "get_the_permalink": {
@@ -26561,13 +26593,14 @@
         },
         "setup_postdata": {
             "file": "post.php",
-            "lines": 11,
+            "lines": 12,
             "kind": "minn",
             "minn": [
                 "Minn\\Runtime\\Runtime::current",
                 "Minn\\Runtime\\Runtime::set"
             ],
             "composes": [
+                "_minn_postdata_globals",
                 "get_post"
             ]
         },
@@ -29349,6 +29382,18 @@
             "minn": [],
             "composes": [
                 "apply_filters"
+            ]
+        },
+        "wp_embed_excerpt_more": {
+            "file": "formatting.php",
+            "lines": 5,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "esc_url",
+                "get_permalink",
+                "get_the_title",
+                "is_embed"
             ]
         },
         "wp_embed_register_handler": {
@@ -32635,10 +32680,14 @@
         },
         "wp_revisions_to_keep": {
             "file": "post.php",
-            "lines": 1,
-            "kind": "noop",
+            "lines": 8,
+            "kind": "composes",
             "minn": [],
-            "composes": []
+            "composes": [
+                "apply_filters",
+                "get_post",
+                "post_type_supports"
+            ]
         },
         "wp_robots": {
             "file": "robots-template.php",
@@ -33506,16 +33555,19 @@
         },
         "wp_trim_excerpt": {
             "file": "formatting.php",
-            "lines": 7,
-            "kind": "minn",
-            "minn": [
-                "Minn\\Content\\Excerpt::render",
-                "Minn\\Content\\PostRecord::fromRow"
-            ],
+            "lines": 13,
+            "kind": "composes",
+            "minn": [],
             "composes": [
+                "add_filter",
                 "apply_filters",
+                "excerpt_remove_blocks",
+                "excerpt_remove_footnotes",
                 "get_post",
-                "wp_strip_all_tags"
+                "get_the_content",
+                "remove_filter",
+                "strip_shortcodes",
+                "wp_trim_words"
             ]
         },
         "wp_trim_words": {

@@ -85,6 +85,9 @@ $EXPLAINED = array(
 	'#^options cron$#'                         => array( '…and WordPress schedules do_pings to work through that list; nothing else in cron may differ', static fn ( ?string $w, ?string $m ): bool => rt_without( $w, '[do_pings]' ) === rt_without( $m, '[do_pings]' ) ),
 	'#/_wp_attachment_metadata$#'              => array( 'the parked WordPress cuts image sizes with Imagick and Minn with GD: the same files at the same dimensions, a different number of bytes; nothing else in the metadata may differ', static fn ( ?string $w, ?string $m ): bool => null !== $w && null !== $m && rt_without_bytes( $w ) === rt_without_bytes( $m ) ),
 	'#^options cleantalk_cron_pid$#'           => array( "CleanTalk's cron lock is a fresh random number each run", static fn ( ?string $w, ?string $m ): bool => null !== $w && null !== $m ),
+	'#^options cleantalk_data$#'               => array( "CleanTalk's JavaScript keys are fresh random numbers each run; nothing else in its data may differ", static fn ( ?string $w, ?string $m ): bool => rt_without( $w, '[js_keys]' ) === rt_without( $m, '[js_keys]' ) ),
+	'#^options wdp_un_general$#'               => array( 'the WPMU DEV dashboard records the PHP version the site runs on: the parked WordPress runs its own, Minn its own; nothing else in it may differ', static fn ( ?string $w, ?string $m ): bool => rt_without( $w, '[php_version]' ) === rt_without( $m, '[php_version]' ) ),
+	'#^(options (wp-smush-optimization-global-stats|wp_smush_global_stats_json)|postmeta [^ ]+/wp-smpro-smush-data)$#' => array( "Smush's savings follow the bytes of the sizes it optimises, which GD and Imagick write differently; both stacks optimised the same upload", static fn ( ?string $w, ?string $m ): bool => null !== $w && null !== $m ),
 );
 /** Pages a visitor gets differently on purpose. */
 $EXPLAINED_PAGES = array(

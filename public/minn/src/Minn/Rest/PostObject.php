@@ -6,12 +6,9 @@ namespace Minn\Rest;
 
 use Minn\Content\PostRecord;
 use Minn\Auth\TypeCapabilities;
-use Minn\Content\Blocks;
-use Minn\Content\Excerpt;
 use Minn\Content\PostStatus;
 use Minn\Content\Posts;
 use Minn\Content\Slug;
-use Minn\Content\Texturize;
 use Minn\Content\Users;
 use Minn\Db;
 use Minn\Front\Permalinks;
@@ -90,9 +87,9 @@ final readonly class PostObject
             'status' => $p->status,
             'type' => $p->type,
             'link' => $this->permalinks->forPost($p),
-            'title' => ['rendered' => Texturize::html($p->title)],
+            'title' => ['rendered' => RenderedFields::title($p)],
             'content' => [
-                'rendered' => $protected ? '' : Blocks::render($p->content),
+                'rendered' => $protected ? '' : RenderedFields::content($p),
                 'protected' => $protected,
             ],
             'template' => '',
@@ -122,7 +119,7 @@ final readonly class PostObject
             'link' => $this->permalinks->forPost($p),
             'title' => ['raw' => $p->title],
             'content' => ['raw' => $p->content, 'protected' => $protected],
-            'excerpt' => ['rendered' => $protected ? '' : Excerpt::render($p), 'protected' => $protected],
+            'excerpt' => ['rendered' => $protected ? '' : RenderedFields::excerpt($p), 'protected' => $protected],
             'template' => '',
             'meta' => ['footnotes' => $this->posts->meta($p->id, 'footnotes') ?? ''],
             'wp_pattern_category' => array_map(static fn (array $term) => $term[0], $this->posts->terms($p->id, 'wp_pattern_category')),
@@ -152,9 +149,9 @@ final readonly class PostObject
             'status' => $p->status,
             'type' => $p->type,
             'link' => $this->permalinks->forPost($p),
-            'title' => ['rendered' => Texturize::html($p->title)],
-            'content' => ['rendered' => $protected ? '' : Blocks::render($p->content), 'protected' => $protected],
-            'excerpt' => ['rendered' => $protected ? '' : Excerpt::render($p), 'protected' => $protected],
+            'title' => ['rendered' => RenderedFields::title($p)],
+            'content' => ['rendered' => $protected ? '' : RenderedFields::content($p), 'protected' => $protected],
+            'excerpt' => ['rendered' => $protected ? '' : RenderedFields::excerpt($p), 'protected' => $protected],
             'author' => $p->authorId,
             'featured_media' => (int) ($this->posts->meta($p->id, '_thumbnail_id') ?? 0),
         ];
@@ -313,10 +310,10 @@ final readonly class PostObject
             // A pattern's title stays raw-only; its content gains only the block version.
             $view['content'] = ['raw' => $p->content, 'protected' => $protected, 'block_version' => str_contains($p->content, '<!-- wp:') ? 1 : 0];
         } else {
-            $view['title'] = ['raw' => $p->title, 'rendered' => Texturize::html($p->title)];
+            $view['title'] = ['raw' => $p->title, 'rendered' => RenderedFields::title($p)];
             $view['content'] = [
                 'raw' => $p->content,
-                'rendered' => PostStatus::of($p) === PostStatus::Trash ? '' : Blocks::render($p->content),
+                'rendered' => PostStatus::of($p) === PostStatus::Trash ? '' : RenderedFields::content($p),
                 'protected' => $protected,
                 'block_version' => str_contains($p->content, '<!-- wp:') ? 1 : 0,
             ];
@@ -324,7 +321,7 @@ final readonly class PostObject
         if (isset($view['excerpt'])) {
             $view['excerpt'] = [
                 'raw' => $p->excerpt,
-                'rendered' => Excerpt::render($p),
+                'rendered' => RenderedFields::excerpt($p),
                 'protected' => $protected,
             ];
         }

@@ -37,6 +37,7 @@ the wp/v2 surface: shapes and controllers
 | [`PostObject`](#postobject) | final readonly class | 495 | Builds the wp/v2 post and page objects in the reference's shape: the |
 | [`PostsController`](#postscontroller) | final readonly class | 182 | wp/v2 posts and pages, read side. |
 | [`PostsWriteController`](#postswritecontroller) | final readonly class | 426 | wp/v2 posts and pages, write side: create, update, trash, and force |
+| [`RenderedFields`](#renderedfields) | final class | 49 | A post's rendered title, content and excerpt as a REST response carries |
 | [`Reply`](#reply) | final class | 47 | JSON responses in the reference's shape: its header set, its json_encode |
 | [`RestUrl`](#resturl) | final readonly class | 38 | REST URLs in the form the reference emits for the site's permalink mode: |
 | [`RevisionsController`](#revisionscontroller) | final readonly class | 142 | wp/v2 revisions and autosaves under posts, pages, and blocks. |
@@ -1407,7 +1408,7 @@ The view links plus the caller's verbs and cap-gated wp:action-* entries.
 
 A MySQL datetime in the reference's ISO form.
 
-Internals: `navigationView()` (private, line 79), `blockView()` (private, line 109), `viewFields()` (private, line 135), `viewTerms()` (private, line 174), `typeFields()` (private, line 190), `classList()` (private, line 220), `format()` (private, line 242), `termLinks()` (private, line 286), `editFields()` (private, line 305), `allow()` (private, line 486), `gmt()` (private, line 505)
+Internals: `navigationView()` (private, line 76), `blockView()` (private, line 106), `viewFields()` (private, line 132), `viewTerms()` (private, line 171), `typeFields()` (private, line 187), `classList()` (private, line 217), `format()` (private, line 239), `termLinks()` (private, line 283), `editFields()` (private, line 302), `allow()` (private, line 483), `gmt()` (private, line 502)
 
 
 ## PostsController
@@ -1508,6 +1509,34 @@ Trashes a post of any type, or deletes it with force.
 A field that may arrive as a scalar or as {raw: ...}.
 
 Internals: `events()` (private, line 122), `newColumns()` (private, line 133), `writeNewPost()` (private, line 167), `trash()` (private, line 273), `rememberOld()` (private, line 292), `floatingDate()` (private, line 317), `scheduledIfFuture()` (private, line 327), `fieldColumns()` (private, line 346), `statusColumns()` (private, line 391), `checkStickyPasswordConflict()` (private, line 421), `validStatus()` (private, line 433), `clean()` (private, line 442)
+
+
+## RenderedFields
+
+`final class Minn\Rest\RenderedFields` · `public/minn/src/Minn/Rest/RenderedFields.php`
+
+A post's rendered title, content and excerpt as a REST response carries
+them. Without plugins they are Minn's own render. With plugins loaded
+they pass the filters the reference's controller runs, with the post set
+up as it sets it up: the_title over the stored title, the engine's
+render of the content then the rest of the_content (shortcodes and every
+plugin's callback), and get_the_excerpt then the_excerpt.
+
+Used by: `Minn\Rest\PostObject`
+
+### static `title(Minn\Content\PostRecord $p): string`
+
+The rendered title.
+
+### static `content(Minn\Content\PostRecord $p): string`
+
+The rendered content.
+
+### static `excerpt(Minn\Content\PostRecord $p): string`
+
+The rendered excerpt.
+
+Internals: `withPost()` (private, line 52)
 
 
 ## Reply

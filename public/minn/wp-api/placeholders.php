@@ -169,12 +169,6 @@ function form_option($option)
     return null;
 }
 
-function generate_postdata($post)
-{
-    \Minn\Runtime\PlaceholderTrace::hit('generate_postdata');
-    return null;
-}
-
 function get_all_page_ids()
 {
     \Minn\Runtime\PlaceholderTrace::hit('get_all_page_ids');

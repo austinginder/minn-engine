@@ -1,0 +1,98 @@
+[
+    [
+        "excerpt_remove_blocks",
+        "<p class=\"wp-block-paragraph\">First <strong>para</strong>graph.</p>\n\n\n\n<p class=\"wp-block-paragraph\">In a group.</p><h2 class=\"wp-block-heading\">Nested heading</h2>\n\n<p class=\"wp-block-paragraph\">Left.</p>\n\n\n\n<blockquote class=\"wp-block-quote is-layout-flow wp-block-quote-is-layout-flow\"><p class=\"wp-block-paragraph\">Quoted.</p></blockquote>\n\n<div>Raw html</div>\n\n<div class=\"wp-block-media-text\"><figure class=\"wp-block-media-text__media\"></figure><div class=\"wp-block-media-text__content\"><p class=\"wp-block-paragraph\">Beside media.</p></div></div>\n\n<p>Classic text.</p>\n\n"
+    ],
+    [
+        "without group as a wrapper",
+        "<p class=\"wp-block-paragraph\">First <strong>para</strong>graph.</p>\n\n\n\n\n\n<p class=\"wp-block-paragraph\">Left.</p>\n\n\n\n<blockquote class=\"wp-block-quote is-layout-flow wp-block-quote-is-layout-flow\"><p class=\"wp-block-paragraph\">Quoted.</p></blockquote>\n\n<div>Raw html</div>\n\n<div class=\"wp-block-media-text\"><figure class=\"wp-block-media-text__media\"></figure><div class=\"wp-block-media-text__content\"><p class=\"wp-block-paragraph\">Beside media.</p></div></div>\n\n<p>Classic text.</p>\n\n"
+    ],
+    [
+        "with code and details allowed",
+        "<p class=\"wp-block-paragraph\">First <strong>para</strong>graph.</p>\n\n\n\n<p class=\"wp-block-paragraph\">In a group.</p><h2 class=\"wp-block-heading\">Nested heading</h2>\n\n<p class=\"wp-block-paragraph\">Left.</p><pre class=\"wp-block-code\"><code>code()</code></pre>\n\n\n\n<blockquote class=\"wp-block-quote is-layout-flow wp-block-quote-is-layout-flow\"><p class=\"wp-block-paragraph\">Quoted.</p></blockquote>\n\n<div>Raw html</div>\n\n<div class=\"wp-block-media-text\"><figure class=\"wp-block-media-text__media\"></figure><div class=\"wp-block-media-text__content\"><p class=\"wp-block-paragraph\">Beside media.</p></div></div>\n\n<p>Classic text.</p>\n\n<details class=\"wp-block-details is-layout-flow wp-block-details-is-layout-flow\"><summary>Sum</summary><p class=\"wp-block-paragraph\">Hidden.</p></details>"
+    ],
+    [
+        "zz excerpt blocks",
+        {
+            "get_the_excerpt": "First paragraph. In a group. Nested heading Left. Quoted. Raw html Beside media. Classic text.",
+            "the_excerpt": "<p>First paragraph. In a group. Nested heading Left. Quoted. Raw html Beside media. Classic text.</p>\n",
+            "hooks": [
+                "get_the_excerpt",
+                "content_pagination",
+                "excerpt_allowed_wrapper_blocks",
+                "excerpt_allowed_blocks",
+                "the_content",
+                "excerpt_length",
+                "excerpt_more",
+                "wp_trim_words",
+                "wp_trim_excerpt",
+                "the_excerpt"
+            ]
+        }
+    ],
+    [
+        "zz excerpt more",
+        {
+            "get_the_excerpt": "Before the more.",
+            "the_excerpt": "<p>Before the more.</p>\n",
+            "hooks": [
+                "get_the_excerpt",
+                "content_pagination",
+                "excerpt_allowed_wrapper_blocks",
+                "excerpt_allowed_blocks",
+                "the_content",
+                "excerpt_length",
+                "excerpt_more",
+                "wp_trim_words",
+                "wp_trim_excerpt",
+                "the_excerpt"
+            ]
+        }
+    ],
+    [
+        "zz excerpt written",
+        {
+            "get_the_excerpt": "A hand-written excerpt & \"quotes\".",
+            "the_excerpt": "<p>A hand-written excerpt &#038; &#8220;quotes&#8221;.</p>\n",
+            "hooks": [
+                "get_the_excerpt",
+                "wp_trim_excerpt",
+                "the_excerpt"
+            ]
+        }
+    ],
+    [
+        "zz excerpt shortened",
+        {
+            "get_the_excerpt": "word1 word2 word3 word4 word5 (more)",
+            "the_excerpt": "<p>word1 word2 word3 word4 word5 (more)</p>\n",
+            "hooks": [
+                "get_the_excerpt",
+                "content_pagination",
+                "the_content",
+                "excerpt_length",
+                "excerpt_more",
+                "wp_trim_words",
+                "wp_trim_excerpt",
+                "the_excerpt"
+            ]
+        }
+    ],
+    [
+        "zz excerpt shortcode",
+        {
+            "get_the_excerpt": "Text after.",
+            "the_excerpt": "<p>Text after.</p>\n",
+            "hooks": [
+                "get_the_excerpt",
+                "content_pagination",
+                "the_content",
+                "excerpt_length",
+                "excerpt_more",
+                "wp_trim_words",
+                "wp_trim_excerpt",
+                "the_excerpt"
+            ]
+        }
+    ]
+]

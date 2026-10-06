@@ -16205,7 +16205,7 @@
             "namespace": "Minn\\Blocks",
             "kind": "final class",
             "file": "public/minn/src/Minn/Blocks/Renderer.php",
-            "lines": 228,
+            "lines": 231,
             "doc": "Renders a block tree the way the reference renders post_content:\ndelimiters gone, each block's own HTML kept with inner blocks rendered\nin place, then the per-block render-time additions (layout classes, the\nparagraph class, image attributes, gallery ids, style-variation\ncounters), and finally texturize over the whole.",
             "implements": [],
             "extends": null,
@@ -16564,7 +16564,7 @@
                         }
                     ],
                     "line": 219,
-                    "end": 245
+                    "end": 248
                 },
                 {
                     "routes": [],
@@ -16575,8 +16575,8 @@
                     "doc": "",
                     "shapes": [],
                     "params": [],
-                    "line": 247,
-                    "end": 252
+                    "line": 250,
+                    "end": 255
                 },
                 {
                     "routes": [],
@@ -16602,8 +16602,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 255,
-                    "end": 261
+                    "line": 258,
+                    "end": 264
                 }
             ]
         },
@@ -21647,7 +21647,7 @@
                 "Minn\\Front\\Renderer",
                 "Minn\\Rest\\CommentObject",
                 "Minn\\Rest\\MediaObject",
-                "Minn\\Rest\\PostObject",
+                "Minn\\Rest\\RenderedFields",
                 "Minn\\Rest\\RevisionsController",
                 "Minn\\Theme\\ClassicContent",
                 "Minn\\Theme\\PageRenderer"
@@ -23876,7 +23876,7 @@
                 "Minn\\Blocks\\Dynamic\\Theme\\PostBlocks",
                 "Minn\\Front\\Feeds",
                 "Minn\\Front\\Renderer",
-                "Minn\\Rest\\PostObject"
+                "Minn\\Rest\\RenderedFields"
             ],
             "constructor": null,
             "cases": [],
@@ -26330,6 +26330,7 @@
                 "Minn\\Rest\\PostObject",
                 "Minn\\Rest\\PostsController",
                 "Minn\\Rest\\PostsWriteController",
+                "Minn\\Rest\\RenderedFields",
                 "Minn\\Rest\\RevisionsController",
                 "Minn\\Rest\\SearchController",
                 "Minn\\Runtime\\CommentCloser",
@@ -31695,7 +31696,7 @@
                 "Minn\\Rest\\GlobalStylesObject",
                 "Minn\\Rest\\MediaObject",
                 "Minn\\Rest\\PluginsController",
-                "Minn\\Rest\\PostObject",
+                "Minn\\Rest\\RenderedFields",
                 "Minn\\Rest\\RevisionsController",
                 "Minn\\Rest\\SearchController",
                 "Minn\\Theme\\ClassicContent",
@@ -67602,7 +67603,7 @@
             "namespace": "Minn\\Media",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Media/Canvas.php",
-            "lines": 149,
+            "lines": 156,
             "doc": "One GD bitmap and the operations the media layer needs on it. Every\noperation returns a new canvas; alpha is preserved throughout, which is\nwhat makes PNG and WebP sub-sizes match the reference's.",
             "implements": [],
             "extends": null,
@@ -67862,23 +67863,27 @@
                 },
                 {
                     "routes": [],
-                    "name": "interlaced",
+                    "name": "progressive",
                     "static": false,
                     "visibility": "public",
-                    "signature": "interlaced(bool $on): self",
-                    "doc": "The same bitmap written progressively (an interlaced JPEG) or not.",
+                    "signature": "progressive(): self",
+                    "doc": "The bitmap written progressively from now on (an interlaced JPEG).",
                     "shapes": [],
-                    "params": [
-                        {
-                            "name": "on",
-                            "type": "bool",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
+                    "params": [],
                     "line": 140,
                     "end": 144
+                },
+                {
+                    "routes": [],
+                    "name": "baseline",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "baseline(): self",
+                    "doc": "The bitmap written line by line from now on, as it is by default.",
+                    "shapes": [],
+                    "params": [],
+                    "line": 147,
+                    "end": 151
                 },
                 {
                     "routes": [],
@@ -67904,8 +67909,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 147,
-                    "end": 150
+                    "line": 154,
+                    "end": 157
                 },
                 {
                     "routes": [],
@@ -67997,8 +68002,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 152,
-                    "end": 161
+                    "line": 159,
+                    "end": 168
                 }
             ]
         },
@@ -81839,17 +81844,15 @@
             "extends": null,
             "uses": [
                 "Minn\\Auth\\TypeCapabilities",
-                "Minn\\Content\\Blocks",
-                "Minn\\Content\\Excerpt",
                 "Minn\\Content\\PostRecord",
                 "Minn\\Content\\PostStatus",
                 "Minn\\Content\\Posts",
                 "Minn\\Content\\Slug",
-                "Minn\\Content\\Texturize",
                 "Minn\\Content\\Users",
                 "Minn\\Db",
                 "Minn\\Front\\Permalinks",
                 "Minn\\Rest\\Caller",
+                "Minn\\Rest\\RenderedFields",
                 "Minn\\Rest\\RestUrl",
                 "Minn\\Rest\\RuntimePrepare",
                 "Minn\\Support\\Serialized"
@@ -81914,8 +81917,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 32,
-                "end": 40
+                "line": 29,
+                "end": 37
             },
             "cases": [],
             "constants": [
@@ -82006,8 +82009,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 44,
-                    "end": 47
+                    "line": 41,
+                    "end": 44
                 },
                 {
                     "routes": [],
@@ -82033,8 +82036,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 50,
-                    "end": 53
+                    "line": 47,
+                    "end": 50
                 },
                 {
                     "routes": [],
@@ -82053,8 +82056,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 56,
-                    "end": 59
+                    "line": 53,
+                    "end": 56
                 },
                 {
                     "routes": [],
@@ -82073,8 +82076,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 62,
-                    "end": 71
+                    "line": 59,
+                    "end": 68
                 },
                 {
                     "routes": [],
@@ -82093,8 +82096,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 248,
-                    "end": 283
+                    "line": 245,
+                    "end": 280
                 },
                 {
                     "routes": [],
@@ -82113,8 +82116,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 365,
-                    "end": 380
+                    "line": 362,
+                    "end": 377
                 },
                 {
                     "routes": [],
@@ -82140,8 +82143,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 383,
-                    "end": 393
+                    "line": 380,
+                    "end": 390
                 },
                 {
                     "routes": [],
@@ -82167,8 +82170,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 396,
-                    "end": 412
+                    "line": 393,
+                    "end": 409
                 },
                 {
                     "routes": [],
@@ -82194,8 +82197,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 415,
-                    "end": 477
+                    "line": 412,
+                    "end": 474
                 },
                 {
                     "routes": [],
@@ -82214,8 +82217,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 515,
-                    "end": 518
+                    "line": 512,
+                    "end": 515
                 },
                 {
                     "routes": [],
@@ -82234,8 +82237,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 79,
-                    "end": 101
+                    "line": 76,
+                    "end": 98
                 },
                 {
                     "routes": [],
@@ -82254,8 +82257,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 109,
-                    "end": 132
+                    "line": 106,
+                    "end": 129
                 },
                 {
                     "routes": [],
@@ -82274,8 +82277,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 135,
-                    "end": 166
+                    "line": 132,
+                    "end": 163
                 },
                 {
                     "routes": [],
@@ -82296,8 +82299,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 174,
-                    "end": 181
+                    "line": 171,
+                    "end": 178
                 },
                 {
                     "routes": [],
@@ -82326,8 +82329,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 190,
-                    "end": 211
+                    "line": 187,
+                    "end": 208
                 },
                 {
                     "routes": [],
@@ -82363,8 +82366,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 220,
-                    "end": 239
+                    "line": 217,
+                    "end": 236
                 },
                 {
                     "routes": [],
@@ -82385,8 +82388,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 242,
-                    "end": 245
+                    "line": 239,
+                    "end": 242
                 },
                 {
                     "routes": [],
@@ -82412,8 +82415,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 286,
-                    "end": 298
+                    "line": 283,
+                    "end": 295
                 },
                 {
                     "routes": [],
@@ -82439,8 +82442,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 305,
-                    "end": 358
+                    "line": 302,
+                    "end": 355
                 },
                 {
                     "routes": [],
@@ -82468,8 +82471,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 486,
-                    "end": 498
+                    "line": 483,
+                    "end": 495
                 },
                 {
                     "routes": [],
@@ -82495,8 +82498,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 505,
-                    "end": 512
+                    "line": 502,
+                    "end": 509
                 }
             ]
         },
@@ -83606,6 +83609,122 @@
                     ],
                     "line": 442,
                     "end": 445
+                }
+            ]
+        },
+        {
+            "name": "Minn\\Rest\\RenderedFields",
+            "short": "RenderedFields",
+            "namespace": "Minn\\Rest",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Rest/RenderedFields.php",
+            "lines": 49,
+            "doc": "A post's rendered title, content and excerpt as a REST response carries\nthem. Without plugins they are Minn's own render. With plugins loaded\nthey pass the filters the reference's controller runs, with the post set\nup as it sets it up: the_title over the stored title, the engine's\nrender of the content then the rest of the_content (shortcodes and every\nplugin's callback), and get_the_excerpt then the_excerpt.",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\Content\\Blocks",
+                "Minn\\Content\\Excerpt",
+                "Minn\\Content\\PostRecord",
+                "Minn\\Content\\Texturize",
+                "Minn\\Runtime\\Runtime"
+            ],
+            "usedBy": [
+                "Minn\\Rest\\PostObject"
+            ],
+            "constructor": null,
+            "cases": [],
+            "constants": [],
+            "properties": [],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "title",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "title(Minn\\Content\\PostRecord $p): string",
+                    "doc": "The rendered title.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "p",
+                            "type": "Minn\\Content\\PostRecord",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 25,
+                    "end": 28
+                },
+                {
+                    "routes": [],
+                    "name": "content",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "content(Minn\\Content\\PostRecord $p): string",
+                    "doc": "The rendered content.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "p",
+                            "type": "Minn\\Content\\PostRecord",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 31,
+                    "end": 35
+                },
+                {
+                    "routes": [],
+                    "name": "excerpt",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "excerpt(Minn\\Content\\PostRecord $p): string",
+                    "doc": "The rendered excerpt.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "p",
+                            "type": "Minn\\Content\\PostRecord",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 38,
+                    "end": 44
+                },
+                {
+                    "routes": [],
+                    "name": "withPost",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "withPost(Minn\\Content\\PostRecord $p, Closure $render): mixed",
+                    "doc": "Runs a render with the post as the global post and its postdata set\nup, then puts back whatever was there.",
+                    "shapes": [
+                        "@param Closure(\\WP_Post): mixed $render"
+                    ],
+                    "params": [
+                        {
+                            "name": "p",
+                            "type": "Minn\\Content\\PostRecord",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "render",
+                            "type": "Closure",
+                            "shape": "Closure(\\WP_Post): mixed",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 52,
+                    "end": 69
                 }
             ]
         },
@@ -98876,6 +98995,83 @@
             ]
         },
         {
+            "name": "Minn\\Runtime\\PostData",
+            "short": "PostData",
+            "namespace": "Minn\\Runtime",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Runtime/PostData.php",
+            "lines": 65,
+            "doc": "The loop's view of a post, as the reference's generate_postdata and\nget_the_content give it (probes the-content, excerpt): the content split\ninto pages at <!--nextpage--> (the line breaks beside the marker go with\nit) and handed to content_pagination, the page the query asks for, and\n\"more\" when the main query shows a single post, a page or a feed; then\nthe content of that page, cut at the more tag with a more link (or run\non past it when \"more\" is set), the teaser dropped when asked or marked\n<!--noteaser-->.",
+            "implements": [],
+            "extends": null,
+            "uses": [],
+            "usedBy": [],
+            "constructor": null,
+            "cases": [],
+            "constants": [],
+            "properties": [],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "generate",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "generate(WP_Post $post): array",
+                    "doc": "id, authordata, currentday, currentmonth, page, pages, multipage,\nmore, numpages.",
+                    "shapes": [
+                        "@return array<string, mixed>"
+                    ],
+                    "params": [
+                        {
+                            "name": "post",
+                            "type": "WP_Post",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 25,
+                    "end": 44
+                },
+                {
+                    "routes": [],
+                    "name": "content",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "content(?string $moreLinkText, WP_Post $post, array $elements): string",
+                    "doc": "The content get_the_content gives: the asked page, cut at the more tag\nunless \"more\" is set.",
+                    "shapes": [
+                        "@param array<string, mixed> $elements as generate() gives them, with strip_teaser when the teaser should go"
+                    ],
+                    "params": [
+                        {
+                            "name": "moreLinkText",
+                            "type": "?string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "post",
+                            "type": "WP_Post",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "elements",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": "as generate() gives them, with strip_teaser when the teaser should go"
+                        }
+                    ],
+                    "line": 52,
+                    "end": 80
+                }
+            ]
+        },
+        {
             "name": "Minn\\Runtime\\PostEvents",
             "short": "PostEvents",
             "namespace": "Minn\\Runtime",
@@ -102090,6 +102286,7 @@
                 "Minn\\Rest\\Api",
                 "Minn\\Rest\\Caller",
                 "Minn\\Rest\\MediaController",
+                "Minn\\Rest\\RenderedFields",
                 "Minn\\Rest\\RuntimeEnvelope",
                 "Minn\\Rest\\RuntimePrepare",
                 "Minn\\Rest\\Services",

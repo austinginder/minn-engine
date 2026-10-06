@@ -255,14 +255,7 @@ class WP_Query
         }
         $GLOBALS['post'] = $post;
         Runtime::current()->set('post', $post);
-        $GLOBALS['authordata'] = get_userdata((int) $post->post_author) ?: null;
-        $GLOBALS['currentday'] = mysql2date('d.m.y', $post->post_date, false);
-        $GLOBALS['currentmonth'] = mysql2date('m', $post->post_date, false);
-        $GLOBALS['page'] = $this->get('page') ?: 1;
-        $GLOBALS['more'] = 1;
-        $GLOBALS['numpages'] = 1;
-        $GLOBALS['multipage'] = 0;
-        $GLOBALS['pages'] = [$post->post_content];
+        _minn_postdata_globals($post);
         do_action_ref_array('the_post', [&$post, &$this]);
         return true;
     }

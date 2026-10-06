@@ -1,0 +1,105 @@
+[
+    [
+        "zz content plain",
+        {
+            "content": "<p>Plain.</p>",
+            "hooks": [
+                "post_password_required [false,\"WP_Post\"]"
+            ]
+        }
+    ],
+    [
+        "zz content more, teaser only",
+        {
+            "content": "<!-- wp:paragraph --><p>Teaser.</p><!-- /wp:paragraph -->\n\n <a href=\"{home}/zz-content-more-teaser-only/#more-{id}\" class=\"more-link\"><span aria-label=\"Continue reading zz content more, teaser only\">(more&hellip;)</span></a>",
+            "hooks": [
+                "post_password_required [false,\"WP_Post\"]",
+                "the_content_more_link [\" <a href=\\\"{home}/zz-content-more-teaser-only/#more-{id}\\\" class=\\\"more-link\\\"><span aria-label=\\\"Continue reading zz content more, teaser only\\\">(more&hellip;)</span></a>\",\"<span aria-label=\\\"Continue reading zz content more, teaser only\\\">(more&hellip;)</span>\"]"
+            ]
+        }
+    ],
+    [
+        "zz content more, all",
+        {
+            "content": "<!-- wp:paragraph --><p>Teaser.</p><!-- /wp:paragraph -->\n\n<span id=\"more-{id}\"></span>\n\n<!-- wp:paragraph --><p>The rest.</p><!-- /wp:paragraph -->",
+            "hooks": [
+                "post_password_required [false,\"WP_Post\"]"
+            ]
+        }
+    ],
+    [
+        "zz content more text",
+        {
+            "content": "<!-- wp:paragraph --><p>Teaser.</p><!-- /wp:paragraph -->\n\n <a href=\"{home}/zz-content-more-text/#more-{id}\" class=\"more-link\">Keep reading</a>",
+            "hooks": [
+                "post_password_required [false,\"WP_Post\"]",
+                "the_content_more_link [\" <a href=\\\"{home}/zz-content-more-text/#more-{id}\\\" class=\\\"more-link\\\">Keep reading</a>\",\"Keep reading\"]"
+            ]
+        }
+    ],
+    [
+        "zz content strip teaser",
+        {
+            "content": "<span id=\"more-{id}\"></span>\n\n<!-- wp:paragraph --><p>The rest.</p><!-- /wp:paragraph -->",
+            "hooks": [
+                "post_password_required [false,\"WP_Post\"]"
+            ]
+        }
+    ],
+    [
+        "zz content noteaser",
+        {
+            "content": "<span id=\"more-{id}\"></span><!--noteaser--><p>The rest.</p>",
+            "hooks": [
+                "post_password_required [false,\"WP_Post\"]"
+            ]
+        }
+    ],
+    [
+        "zz content custom more",
+        {
+            "content": "<p>Teaser.</p> <a href=\"{home}/zz-content-custom-more/#more-{id}\" class=\"more-link\">Go on</a>",
+            "hooks": [
+                "post_password_required [false,\"WP_Post\"]",
+                "the_content_more_link [\" <a href=\\\"{home}/zz-content-custom-more/#more-{id}\\\" class=\\\"more-link\\\">Go on</a>\",\"Go on\"]"
+            ]
+        }
+    ],
+    [
+        "zz content page one",
+        {
+            "content": "<p>Page one.</p>",
+            "hooks": [
+                "post_password_required [false,\"WP_Post\"]"
+            ]
+        }
+    ],
+    [
+        "zz content page two",
+        {
+            "content": "<p>Page two.</p>",
+            "hooks": [
+                "post_password_required [false,\"WP_Post\"]"
+            ]
+        }
+    ],
+    [
+        "zz content protected",
+        {
+            "content": "<form action=\"{home}/wp-login.php?action=postpass\" class=\"post-password-form\" method=\"post\"><input type=\"hidden\" name=\"redirect_to\" value=\"{home}/zz-content-protected/\" />\n\t<p>This content is password-protected. To view it, please enter the password below.</p>\n\t<p><label for=\"pwbox-{id}\">Password: <input name=\"post_password\" id=\"pwbox-{id}\" type=\"password\" spellcheck=\"false\" required size=\"20\" /></label> <span class=\"wp-block-button\"><input type=\"submit\" name=\"Submit\" class=\"wp-block-button__link wp-element-button\" value=\"Enter\" /></span></p></form>\n\t",
+            "hooks": [
+                "post_password_required [true,\"WP_Post\"]",
+                "the_password_form [\"<form action=\\\"{home}/wp-login.php?action=postpass\\\" class=\\\"post-password-form\\\" method=\\\"post\\\"><input type=\\\"hidden\\\" name=\\\"redirect_to\\\" value=\\\"{home}/zz-content-protected/\\\" />\\n\\t<p>This content is password-protected. To view it, please enter the password below.</p>\\n\\t<p><label for=\\\"pwbox-{id}\\\">Password: <input name=\\\"post_password\\\" id=\\\"pwbox-{id}\\\" type=\\\"password\\\" spellcheck=\\\"false\\\" required size=\\\"20\\\" /></label> <span class=\\\"wp-block-button\\\"><input type=\\\"submit\\\" name=\\\"Submit\\\" class=\\\"wp-block-button__link wp-element-button\\\" value=\\\"Enter\\\" /></span></p></form>\\n\\t\",\"WP_Post\",\"\"]"
+            ]
+        }
+    ],
+    [
+        "zz content re-paged",
+        {
+            "content": "<p>Page one.</p>",
+            "hooks": [
+                "post_password_required [false,\"WP_Post\"]"
+            ]
+        }
+    ]
+]

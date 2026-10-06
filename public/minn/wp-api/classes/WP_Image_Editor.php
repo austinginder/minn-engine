@@ -345,7 +345,7 @@ final class WP_Image_Editor_GD extends WP_Image_Editor
     {
         [$filename, $extension, $mime_type] = $this->get_output_format($destfilename, $mime_type);
         $filename = $filename ?? $this->generate_filename(null, null, $extension);
-        $this->canvas->interlaced((bool) apply_filters('image_save_progressive', false, $mime_type) && $mime_type === 'image/jpeg');
+        apply_filters('image_save_progressive', false, $mime_type) && $mime_type === 'image/jpeg' ? $this->canvas->progressive() : $this->canvas->baseline();
         if (!$this->canvas->write($filename, $mime_type, $this->get_quality())) {
             return new WP_Error('image_save_error', 'Image Editor Save Failed');
         }

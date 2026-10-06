@@ -7,6 +7,7 @@ use Minn\Content\Posts;
 use Minn\Content\PostWriter;
 use Minn\Content\Slug;
 use Minn\Content\PostClasses;
+use Minn\Runtime\PostData;
 use Minn\Runtime\Runtime;
 use Minn\Runtime\Pages;
 use Minn\Runtime\PostInsert;
@@ -185,16 +186,30 @@ function the_title_attribute($args = '')
     return $title;
 }
 
+/**
+ * The content as the loop shows it (Runtime\PostData): the current page, cut
+ * at the more tag with its link unless the whole post is shown; a post
+ * named outright has its postdata made afresh; a protected one gives the
+ * password form.
+ */
 function get_the_content($more_link_text = null, $strip_teaser = false, $post = null)
 {
-    $post = get_post($post);
-    if ($post === null) {
+    $_post = get_post($post);
+    if (!$_post instanceof WP_Post) {
         return '';
     }
-    if (post_password_required($post)) {
-        return get_the_password_form($post);
+    $elements = $post === null && isset($GLOBALS['pages']) ? ['page' => $GLOBALS['page'] ?? 1, 'more' => $GLOBALS['more'] ?? 0, 'pages' => (array) $GLOBALS['pages'], 'multipage' => $GLOBALS['multipage'] ?? 0] : PostData::generate($_post);
+    if (post_password_required($_post)) {
+        return get_the_password_form($_post);
     }
-    return $post->post_content;
+    return PostData::content($more_link_text, $_post, ['strip_teaser' => (bool) $strip_teaser] + $elements);
+}
+
+/** The loop's view of a post (Runtime\PostData): its pages, the page asked for, whether the whole post shows. */
+function generate_postdata($post)
+{
+    $post = get_post($post);
+    return $post instanceof WP_Post ? PostData::generate($post) : false;
 }
 
 function the_content($more_link_text = null, $strip_teaser = false)
@@ -219,13 +234,8 @@ function get_the_excerpt($post = null)
     if (post_password_required($post)) {
         return 'There is no excerpt because this is a protected post.';
     }
-    $excerpt = $post->post_excerpt;
-    if ($excerpt === '') {
-        // Texturized entities stay entities: the reference's generated excerpt
-        // keeps &#8217; from the content pipeline, and the theme prints it as-is.
-        $excerpt = trim(wp_strip_all_tags(Excerpt::render(Minn\Content\PostRecord::fromRow($post->to_array()))));
-    }
-    return apply_filters('get_the_excerpt', $excerpt, $post);
+    // The stored excerpt; wp_trim_excerpt (the default here) makes one from the content when there is none.
+    return apply_filters('get_the_excerpt', $post->post_excerpt, $post);
 }
 
 function the_excerpt()
@@ -250,12 +260,22 @@ function post_password_required($post = null)
     return apply_filters('post_password_required', $required, $post);
 }
 
+/**
+ * The form a protected post shows instead of its content (captured): it
+ * sends the visitor back to the post, and under a block theme its button
+ * wears the button block's classes.
+ */
 function get_the_password_form($post = 0)
 {
     $post = get_post($post);
     $label = 'pwbox-' . ($post === null ? mt_rand() : $post->ID);
-    $form = '<form action="' . esc_url(site_url('wp-login.php?action=postpass', 'login_post')) . '" class="post-password-form" method="post"><p>This content is password protected. To view it please enter your password below:</p><p><label for="' . $label . '">Password: <input name="post_password" id="' . $label . '" type="password" spellcheck="false" size="20" /></label> <input type="submit" name="Submit" value="' . esc_attr_x('Enter', 'post password form') . '" /></p></form>';
-    return apply_filters('the_password_form', $form, $post);
+    $button = '<input type="submit" name="Submit"' . (wp_is_block_theme() ? ' class="wp-block-button__link wp-element-button"' : '') . ' value="' . esc_attr_x('Enter', 'post password form') . '" />';
+    $button = wp_is_block_theme() ? '<span class="wp-block-button">' . $button . '</span>' : $button;
+    $form = '<form action="' . esc_url(site_url('wp-login.php?action=postpass', 'login_post')) . '" class="post-password-form" method="post">'
+        . '<input type="hidden" name="redirect_to" value="' . esc_attr($post === null ? '' : get_permalink($post)) . '" />' . "\n\t"
+        . '<p>This content is password-protected. To view it, please enter the password below.</p>' . "\n\t"
+        . '<p><label for="' . $label . '">Password: <input name="post_password" id="' . $label . '" type="password" spellcheck="false" required size="20" /></label> ' . $button . '</p></form>' . "\n\t";
+    return apply_filters('the_password_form', $form, $post, '');
 }
 
 function get_the_date($format = '', $post = null)
@@ -670,9 +690,21 @@ function wp_revisions_enabled($post)
     return post_type_supports(get_post_type($post), 'revisions');
 }
 
+/**
+ * How many revisions a post keeps (captured): WP_POST_REVISIONS (all, -1,
+ * when unset or true), none for a type without revision support, then
+ * wp_revisions_to_keep and wp_{type}_revisions_to_keep.
+ */
 function wp_revisions_to_keep($post)
 {
-    return defined('WP_POST_REVISIONS') && WP_POST_REVISIONS === false ? 0 : (defined('WP_POST_REVISIONS') && is_int(WP_POST_REVISIONS) ? WP_POST_REVISIONS : -1);
+    $post = get_post($post);
+    $num = defined('WP_POST_REVISIONS') ? WP_POST_REVISIONS : true;
+    $num = $num === true ? -1 : (int) $num;
+    if ($post === null || !post_type_supports($post->post_type, 'revisions')) {
+        $num = 0;
+    }
+    $num = apply_filters('wp_revisions_to_keep', $num, $post);
+    return (int) apply_filters("wp_{$post?->post_type}_revisions_to_keep", $num, $post);
 }
 
 function is_sticky($post_id = 0)
@@ -727,7 +759,17 @@ function setup_postdata($post)
     }
     $GLOBALS['post'] = $post;
     Runtime::current()->set('post', $post);
+    _minn_postdata_globals($post);
     return true;
+}
+
+/** @internal the globals the loop's template tags read, from generate_postdata */
+function _minn_postdata_globals(WP_Post $post): void
+{
+    $elements = PostData::generate($post);
+    foreach (['id', 'authordata', 'currentday', 'currentmonth', 'page', 'pages', 'multipage', 'more', 'numpages'] as $name) {
+        $GLOBALS[$name] = $elements[$name];
+    }
 }
 
 function wp_reset_postdata()

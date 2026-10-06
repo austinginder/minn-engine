@@ -3698,3 +3698,39 @@ loading, as on the reference: the memory limit PHP started with, the cron
 timeouts (looser under `DISABLE_WP_CRON`), its four hooks, and the weekly
 `wp_site_health_scheduled_check` scheduled a day out when missing. The tests
 stay placeholders. `WP_MAX_MEMORY_LIMIT` follows the starting limit too.
+
+## Rendering plugins can change (2026-10-06)
+
+A REST response's rendered title, content and excerpt were Minn's own render
+even with plugins loaded, so nothing hooked on `the_title`, `the_content` or
+`the_excerpt` reached them (a plugin's share buttons, a translation, a
+changed title). With plugins loaded they now pass those filters with the
+post set up as the reference sets it up (`Rest\RenderedFields`): the stored
+title through `the_title`, the engine's render of the content then the rest
+of `the_content`, and `get_the_excerpt` then `the_excerpt`.
+
+The loop's view of a post is the reference's (`Runtime\PostData`, probe
+`the-content`): `generate_postdata` splits the content into pages at
+`<!--nextpage-->` and hands them to `content_pagination`, takes the page from
+the query, and shows the whole post ("more") only when the main query is a
+single post, a page or a feed; `setup_postdata` sets the loop's globals from
+it. `get_the_content` gives that page, cut at the more tag with its link
+(`the_content_more_link`; the more block's markers removed; a custom
+`<!--more text-->`; `<!--noteaser-->`), or the password form, now the
+reference's (`redirect_to`, its wording, a block theme's button classes).
+
+An excerpt is made as the reference makes it (probe `excerpt`):
+`get_the_excerpt` hands the stored excerpt to its filters and the default
+`wp_trim_excerpt` makes one from the content when there is none: the loop's
+content, shortcodes stripped, `excerpt_remove_blocks` (wrappers unwrapped
+through `excerpt_allowed_wrapper_blocks`, a block kept only when its children
+are plain text blocks, `excerpt_allowed_blocks`), footnotes removed,
+`the_content` without block rendering or image tags, then `excerpt_length`,
+`excerpt_more` and `wp_trim_words`. A plugin shortening excerpts now
+shortens them. `wp_embed_excerpt_more` is the default on `excerpt_more`.
+
+Headings and lists saved without their class get `wp-block-heading` and
+`wp-block-list` as they render, as on the reference.
+
+`wp_revisions_to_keep` reads `WP_POST_REVISIONS`, answers 0 for a type
+without revision support, and runs its two filters.
