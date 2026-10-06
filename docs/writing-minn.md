@@ -121,7 +121,7 @@ final readonly class AcmeLatest
         }
         $post = $page->posts[0];
         return '<p class="wp-block-acme-latest"><a href="' . Html::attr($this->permalinks->forPost($post)) . '">'
-            . Html::esc($post['post_title']) . '</a></p>';
+            . Html::esc($post->title) . '</a></p>';
     }
 }
 ```
@@ -188,6 +188,45 @@ activate it through the `minn_active_extensions` option, fetch a page, assert
 the footer line is there, deactivate in a shutdown handler. If the extension
 replaces a real plugin, the dogfood suite is the judge: a page on the engine
 must match the same page on the reference with the plugin active.
+
+## Your first outgoing request
+
+Call `Minn\Http` where you are. It needs no `use` line, no client to build,
+and no options array:
+
+```php
+$status = Minn\Http::get('https://api.example.com/status')->json();
+
+Minn\Http::post($url, form: ['email' => $email]);
+Minn\Http::post($url, json: ['email' => $email], timeout: 10)->throw();
+Minn\Http::get($url, query: ['page' => 2], headers: ['Accept' => 'application/json']);
+```
+
+Every verb (`get`, `head`, `delete`, `post`, `put`, `patch`) returns an
+`Exchange`. Ask it what you need: `ok()` (a 2xx arrived), `failed()` (nothing
+arrived; `errno` and `error` say why), `json()`, `header('Content-Type')`,
+`cookie('session')`, `code`, `body`. Prefer exceptions? `->throw()` hands back
+an ok reply and throws a `RuntimeException` for anything else. Options are
+named arguments, so `timout: 10` fails at the line that has it.
+
+A request may not reach a private address (loopback, LAN, cloud metadata)
+unless you list the host: `private: ['127.0.0.1']`. The rule holds at every
+redirect and after DNS, so a URL a user typed is safe to fetch. `hosts:`
+narrows a request to the URL prefixes you name. When a redirect leaves the
+origin, `Authorization` and `Cookie` stay behind.
+
+Test without the network by faking it; plugins' `wp_remote_*()` calls are
+answered by the same fake:
+
+```php
+$fake = Minn\Http::fake(['api.example.com/*' => ['ok' => true]]);
+$result = my_status_check();
+$fake->sent('api.example.com/status');   // the requests that went there
+$fake->restore();
+```
+
+The rules are in `contracts/http.md`. `tests/unit/http.php` proves the
+surface against the fake and `tests/http.test.php` against a local server.
 
 ## The API, generated
 

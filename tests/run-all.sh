@@ -76,7 +76,7 @@ ROUNDTRIP_ROOT="${MINN_ROUNDTRIP_ROOT:-~/Cove/Sites/cove-minn.localhost}"
 [ -f "$ROUNDTRIP_ROOT/private/round-trip.json" ] && start_reference "$ROUNDTRIP_ROOT/wp-reference" 8129
 
 failed=0
-for suite in unit style hooks api runtime rest-gate abilities rest-posts auth application-passwords caps writes login-endpoint rest-parity allow embed minn-v1 comments media settings users terms write-fields editor templates navigation permalinks blocks theme classic styles probes dogfood cli layout hardening security install cron-mail cron reader extensions front-method recovery front-page menus declared-types global-styles reusable-blocks admin-surfaces updates site code-size l10n dropins feeds requests mail html-api round-trip; do
+for suite in unit http style hooks api runtime rest-gate abilities rest-posts auth application-passwords caps writes login-endpoint rest-parity allow embed minn-v1 comments media settings users terms write-fields editor templates navigation permalinks blocks theme classic styles probes dogfood cli layout hardening security install cron-mail cron reader extensions front-method recovery front-page menus declared-types global-styles reusable-blocks admin-surfaces updates site code-size l10n dropins feeds requests mail html-api round-trip; do
 	printf '\n=== %s ===\n' "$suite"
 	php "$suite.test.php" || failed=1
 done

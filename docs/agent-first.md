@@ -95,7 +95,7 @@ A loaded plugin reaches the world through seven doors. Through the facade, most 
 |---|---|---|---|
 | Options | `Runtime\Options` (four statements), plus the engine's own `Site::setOption`, which becomes the same door | yes | yes: a deny list per plugin for `active_plugins`, `siteurl`, `home`, `default_role`, `users_can_register`, `wp_user_roles`, `admin_email`, and the engine's own recovery and symbol-cache options |
 | Roles and capabilities | the capabilities meta write and the `wp_user_roles` option, gathered into `Auth\Grants` | yes | yes: "may not grant administrator or `manage_options`" is one rule in one place |
-| Outbound HTTP | `Http\Client::send` | yes | yes for `wp_remote_*`: host allowlist; `curl_init`, `fsockopen` and the facade's own mailer are flagged statically |
+| Outbound HTTP | `Minn\Http::send` (the verbs and `wp_remote_*` both arrive there) | yes | yes for `wp_remote_*`: host allowlist; `curl_init`, `fsockopen` and the facade's own mailer are flagged statically |
 | SQL | `Db::run` and `wpdb::query`, which today calls the driver directly with a public handle and joins `Db` as `Db::raw()` | yes, one frame | partially: table names parsed from the statement, writes outside declared tables refused; `new mysqli` cannot be mediated |
 | Filesystem | none | no | static only: write builtins outside uploads flagged; do not promise enforcement |
 | Code execution | the include sites, `eval` | symbol gate + recovery | static only: `eval`, variable includes and `activate_plugin` flagged |

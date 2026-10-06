@@ -491,7 +491,6 @@ namespace WpOrg\Requests {
 }
 
 namespace WpOrg\Requests\Transport {
-    use Minn\Http\Client;
     use Minn\Http\Outbound;
     use Minn\Http\RawResponse;
     use WpOrg\Requests\Capability;
@@ -540,7 +539,7 @@ namespace WpOrg\Requests\Transport {
         private function minn_send(string $url, array $headers, $data, array $options): string
         {
             $hooks = $options['hooks'] ?? new Hooks();
-            $exchange = Client::send($this->minn_outbound($url, $headers, $data, $options, $hooks));
+            $exchange = \Minn\Http::send($this->minn_outbound($url, $headers, $data, $options, $hooks));
             $hooks->dispatch('curl.after_send', []);
             if ($exchange->failed()) {
                 throw new Exception(sprintf('cURL error %d: %s', $exchange->errno, $exchange->error), 'curlerror', null);

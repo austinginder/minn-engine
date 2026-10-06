@@ -23093,8 +23093,8 @@
             "lines": 17,
             "kind": "minn",
             "minn": [
-                "Minn\\Http\\Client::failed",
-                "Minn\\Http\\Client::send",
+                "Minn\\Http::failed",
+                "Minn\\Http::send",
                 "Minn\\Http\\RawResponse::fromExchange"
             ],
             "composes": []

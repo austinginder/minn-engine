@@ -1,7 +1,6 @@
 <?php
 
 namespace {
-    use Minn\Http\Client;
     use Minn\Http\Exchange;
     use Minn\Http\Outbound;
 
@@ -177,7 +176,7 @@ namespace {
             if ($url instanceof WP_Error) {
                 return $url;
             }
-            $exchange = Client::send($this->outbound($url, $parsed_args));
+            $exchange = \Minn\Http::send($this->outbound($url, $parsed_args));
             if (!$parsed_args['blocking']) {
                 return ['headers' => [], 'body' => '', 'response' => ['code' => false, 'message' => false], 'cookies' => [], 'http_response' => null];
             }

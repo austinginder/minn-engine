@@ -113,6 +113,14 @@ falls.
 - **A boolean parameter is two methods.** Name the branch
   (`install()` / `replace()`), or pass the caller, so the call site says what
   it does.
+- **A front door needs no import.** The few classes a caller reaches for
+  from anywhere (`Minn\Db`, `Minn\Http`) sit at the root of the namespace
+  with plain static methods, so `Minn\Http::get($url)` works inline in any
+  file. Each is a written-out method (no `__callStatic`), and whatever it
+  hands back is used through its methods, never named by the caller.
+  Options are named arguments, so a misspelt one fails at the call. A
+  front door keeps one swappable seam (`Minn\Http::fake()`) so code that
+  calls it can be tested.
 - **Regenerate after every change**: `php tests/tools/api-docs.php` for
   `src/Minn/`, `php tests/tools/facade-map.php` for `wp-api/`. The style suite
   fails while either is stale.

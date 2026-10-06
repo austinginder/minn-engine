@@ -31,7 +31,7 @@ $forbidden = [
     'extract(' => '/\bextract\s*\(/',
     'eval(' => '/\beval\s*\(/',
     'superglobal' => '/\$_(GET|POST|COOKIE|SERVER|FILES|REQUEST|SESSION)\b/',
-    'header(' => '/(?<![\w>])header\s*\(/',
+    'header(' => '/(?<![\w>])(?<!function )header\s*\(/',
     'echo' => '/^\s*echo\b/m',
     'exit/die' => '/\b(exit|die)\s*[;(]/',
 ];

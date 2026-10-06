@@ -8,6 +8,7 @@ the front door, the autoloader, the one database door, the REST error
 | [`Context`](#context) | final readonly class | 41 | One request, as a value: the database door, who is asking, what they |
 | [`Db`](#db) | final class | 238 | The one door to the database. Every query is a prepared statement; the |
 | [`Engine`](#engine) | final readonly class | 228 | The engine's front door. An unmodified wp-config.php ends by requiring |
+| [`Http`](#http) | final class | 205 | Outgoing HTTP, called straight from anywhere with no import: |
 | [`RestError`](#resterror) | final class | 49 | A WordPress-shaped error, thrown from anywhere and rendered once by the |
 
 ## Autoloader
@@ -199,6 +200,97 @@ cannot be reached, salts that are not set, or a failure anywhere
 underneath, each answered in the language the request asked in.
 
 Internals: `restRoute()` (private, line 114), `bootRuntimeForRest()` (private, line 128), `handle()` (private, line 149), `frontPipeline()` (private, line 227)
+
+
+## Http
+
+`final class Minn\Http` · `public/minn/src/Minn/Http.php`
+
+Outgoing HTTP, called straight from anywhere with no import:
+
+$data = Minn\Http::get('https://api.example.com/status')->json();
+Minn\Http::post($url, json: ['email' => $email], timeout: 10)->throw();
+
+Every verb answers with an Exchange (->ok(), ->failed(), ->json(),
+->header(), ->cookie(), ->throw(), ->code, ->body) and takes the same
+named arguments, each optional:
+
+- `query`: array added to the URL's query string
+- `headers`: `name => value` (a list value repeats the header), or "Name: value" lines
+- `json`, `form`, `body` (post, put, patch): an array sent as JSON, an array
+form-encoded, or a string sent as it is; one of the three, and the first
+two set the Content-Type
+- `timeout`: seconds for the whole exchange, 5 by default
+- `redirects`: how many to follow, 5 by default; 0 hands back the 3xx
+- `hosts`: URL prefixes every hop must start with (`['https://api.wordpress.org/']`)
+- `private`: hosts allowed to reach a private address. Loopback, LAN,
+link-local and cloud-metadata addresses are refused otherwise, at every
+hop and after DNS, so a URL someone typed is safe to fetch
+- `maxBytes`: the largest body accepted; a longer one fails the exchange
+- `userAgent`: Minn/{version} by default
+
+A misspelt argument is an error at the line that has it. Credentials
+(Authorization, Cookie) are dropped when a redirect leaves the origin.
+
+- const `REDIRECTS` = `array (   0 => 301,   1 => 302,   2 => 303,   3 => 307,   4 => 308, )`
+- const `CREDENTIALS` = `array (   0 => 'authorization',   1 => 'cookie',   2 => 'proxy-authorization', )`
+
+Used by: `Minn\Http\Access`, `Minn\Http\Args`, `Minn\Http\CertificateName`, `Minn\Http\CookieText`, `Minn\Http\Destination`, `Minn\Http\Download`, `Minn\Http\Exchange`, `Minn\Http\Failure`, `Minn\Http\Fake`, `Minn\Http\Ipv6`, `Minn\Http\IriParts`, `Minn\Http\Kernel`, `Minn\Http\Location`, `Minn\Http\Method`, `Minn\Http\Outbound`, `Minn\Http\Policy`, `Minn\Http\Punycode`, `Minn\Http\RawResponse`, `Minn\Http\Request`, `Minn\Http\RequestFailed`, `Minn\Http\RequestsNames`, `Minn\Http\Response`, `Minn\Http\Route`, `Minn\Http\RouteMiss`, `Minn\Http\RouteRow`, `Minn\Http\Router`, `Minn\Http\Subject`, `Minn\Http\Transport`, `Minn\Http\TrustedProxies`, `Minn\Ops\Updates`
+
+
+### static `get(string $url, array $query = array ( ), array $headers = array ( ), float $timeout = 5.0, int $redirects = 5, array $hosts = array ( ), array $private = array ( ), ?int $maxBytes = NULL, ?string $userAgent = NULL): Minn\Http\Exchange`
+
+A GET.
+
+### static `head(string $url, array $query = array ( ), array $headers = array ( ), float $timeout = 5.0, int $redirects = 5, array $hosts = array ( ), array $private = array ( ), ?string $userAgent = NULL): Minn\Http\Exchange`
+
+A HEAD: the status and headers a GET would bring, without the body.
+
+### static `delete(string $url, array $query = array ( ), array $headers = array ( ), float $timeout = 5.0, int $redirects = 5, array $hosts = array ( ), array $private = array ( ), ?int $maxBytes = NULL, ?string $userAgent = NULL): Minn\Http\Exchange`
+
+A DELETE.
+
+### static `post(string $url, ?array $json = NULL, ?array $form = NULL, ?string $body = NULL, array $query = array ( ), array $headers = array ( ), float $timeout = 5.0, int $redirects = 5, array $hosts = array ( ), array $private = array ( ), ?int $maxBytes = NULL, ?string $userAgent = NULL): Minn\Http\Exchange`
+
+A POST with a json:, form: or body: payload.
+
+### static `put(string $url, ?array $json = NULL, ?array $form = NULL, ?string $body = NULL, array $query = array ( ), array $headers = array ( ), float $timeout = 5.0, int $redirects = 5, array $hosts = array ( ), array $private = array ( ), ?int $maxBytes = NULL, ?string $userAgent = NULL): Minn\Http\Exchange`
+
+A PUT with a json:, form: or body: payload.
+
+### static `patch(string $url, ?array $json = NULL, ?array $form = NULL, ?string $body = NULL, array $query = array ( ), array $headers = array ( ), float $timeout = 5.0, int $redirects = 5, array $hosts = array ( ), array $private = array ( ), ?int $maxBytes = NULL, ?string $userAgent = NULL): Minn\Http\Exchange`
+
+A PATCH with a json:, form: or body: payload.
+
+### static `send(Minn\Http\Outbound $request): Minn\Http\Exchange`
+
+Sends exactly what the Outbound says, with none of the verbs' rules
+about where a request may go: the door WordPress's own HTTP API comes
+through after applying its rules, and the one a fake answers at.
+
+### static `fake(array $answers = array ( )): Minn\Http\Fake`
+
+Answers requests from $answers instead of the network until
+restore(), for tests. Keys are URL patterns (* matches anything; the
+scheme and query may be left off); values are an array (sent as JSON),
+a string (the body), a status code, an Exchange from reply(), or a
+closure taking the Outbound and returning one of those. A request no
+pattern matches fails as if nothing were listening. The fake answers
+wp_remote_*() too, and refuses to start outside the command line.
+
+- `@param array<string, mixed> $answers`
+
+### static `restore(): void`
+
+Puts the network back after fake().
+
+### static `reply(array|string $body = '', int $status = 200, array $headers = array ( )): Minn\Http\Exchange`
+
+A response made by hand, for a fake to answer with. An array body is sent as JSON.
+
+- `@param array<string, string|list<string>> $headers name => value; Set-Cookie values become cookies`
+
+Internals: `follow()` (private, line 146), `deliver()` (private, line 165), `nextHop()` (private, line 175), `outbound()` (private, line 186), `payload()` (private, line 201), `lines()` (private, line 219), `withQuery()` (private, line 238)
 
 
 ## RestError

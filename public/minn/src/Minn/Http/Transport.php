@@ -5,37 +5,57 @@ declare(strict_types=1);
 namespace Minn\Http;
 
 /**
- * The engine's outgoing HTTP transport over curl. Redirects are followed by
- * curl, so the header lines of every hop arrive in order; only the last
- * response's block is kept, the way plugin code expects to read it.
+ * The engine's outgoing HTTP transport over curl: it sends exactly what an
+ * Outbound says and nothing else decides. Redirects are followed by curl, so
+ * the header lines of every hop arrive in order; only the last response's
+ * block is kept, the way plugin code expects to read it. Code calling out
+ * goes through Minn\Http, which owns the rules about where a request may go.
  */
-final class Client
+final class Transport
 {
-    /** The common cases, so a one-off request needs no Outbound at the call site. */
-    public static function get(string $url, array $headers = [], float $timeout = 5.0): Exchange
-    {
-        return self::send(Outbound::get($url, $headers, $timeout));
-    }
-
-    /** A POST with an optional body, sent at once. */
-    public static function post(string $url, ?string $body = null, array $headers = [], float $timeout = 5.0): Exchange
-    {
-        return self::send(Outbound::post($url, $body, $headers, $timeout));
-    }
-
-    /** A HEAD request, sent at once. */
-    public static function head(string $url, array $headers = [], float $timeout = 5.0): Exchange
-    {
-        return self::send(Outbound::head($url, $headers, $timeout));
-    }
-
     /** Performs one outgoing request over curl and returns the exchange, a transport error included. */
     public static function send(Outbound $request): Exchange
     {
         $handle = curl_init();
         $lines = [];
+        curl_setopt_array($handle, self::options($request, $lines));
+        if ($request->body !== null && $request->body !== '' && !in_array($request->method, ['GET', 'HEAD'], true)) {
+            curl_setopt($handle, CURLOPT_POSTFIELDS, $request->body);
+        }
+        if ($request->caInfo !== null && is_file($request->caInfo)) {
+            curl_setopt($handle, CURLOPT_CAINFO, $request->caInfo);
+        }
+        if ($request->maxBytes !== null) {
+            curl_setopt_array($handle, self::limit($request->maxBytes));
+        }
+        if ($request->prepare !== null) {
+            ($request->prepare)($handle);
+        }
+        $raw = curl_exec($handle);
+        $errno = curl_errno($handle);
+        $error = curl_error($handle);
+        $code = (int) curl_getinfo($handle, CURLINFO_RESPONSE_CODE);
+        $url = (string) curl_getinfo($handle, CURLINFO_EFFECTIVE_URL);
+        if ($request->maxBytes !== null && ($errno === CURLE_FILESIZE_EXCEEDED || curl_getinfo($handle, CURLINFO_SIZE_DOWNLOAD_T) > $request->maxBytes)) {
+            return Exchange::failure("The response is larger than the {$request->maxBytes} bytes allowed.", CURLE_FILESIZE_EXCEEDED, $request->url);
+        }
+        if ($errno !== 0 && $raw === false) {
+            return Exchange::failure($error !== '' ? $error : 'cURL error ' . $errno, $errno, $request->url);
+        }
+        [$headers, $cookies] = self::lastBlock($lines);
+        return new Exchange($code, $headers, $cookies, $request->method === 'HEAD' ? '' : (string) $raw, null, self::lastHead($lines), 0, $url);
+    }
+
+    /**
+     * The curl options every request carries, the header lines collected into $lines as they arrive.
+     *
+     * @param list<string> $lines
+     * @return array<int, mixed>
+     */
+    private static function options(Outbound $request, array &$lines): array
+    {
         $milliseconds = (int) ($request->timeout * 1000);
-        curl_setopt_array($handle, [
+        return [
             CURLOPT_URL => $request->url,
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_NOSIGNAL => true,
@@ -53,25 +73,22 @@ final class Client
                 $lines[] = $line;
                 return strlen($line);
             },
-        ]);
-        if ($request->body !== null && $request->body !== '' && !in_array($request->method, ['GET', 'HEAD'], true)) {
-            curl_setopt($handle, CURLOPT_POSTFIELDS, $request->body);
-        }
-        if ($request->caInfo !== null && is_file($request->caInfo)) {
-            curl_setopt($handle, CURLOPT_CAINFO, $request->caInfo);
-        }
-        if ($request->prepare !== null) {
-            ($request->prepare)($handle);
-        }
-        $raw = curl_exec($handle);
-        $errno = curl_errno($handle);
-        $error = curl_error($handle);
-        $code = (int) curl_getinfo($handle, CURLINFO_RESPONSE_CODE);
-        if ($errno !== 0 && $raw === false) {
-            return new Exchange(0, [], [], '', $error !== '' ? $error : 'cURL error ' . $errno, [], $errno);
-        }
-        [$headers, $cookies] = self::lastBlock($lines);
-        return new Exchange($code, $headers, $cookies, $request->method === 'HEAD' ? '' : (string) $raw, null, self::lastHead($lines));
+        ];
+    }
+
+    /**
+     * Stops a body that grows past $maxBytes: curl refuses up front when the
+     * length is announced, and the progress callback aborts when it is not.
+     *
+     * @return array<int, mixed>
+     */
+    private static function limit(int $maxBytes): array
+    {
+        return [
+            CURLOPT_MAXFILESIZE_LARGE => $maxBytes,
+            CURLOPT_NOPROGRESS => false,
+            CURLOPT_XFERINFOFUNCTION => static fn ($handle, int $expected, int $received): int => $received > $maxBytes ? 1 : 0,
+        ];
     }
 
     /**

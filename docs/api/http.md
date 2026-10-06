@@ -7,20 +7,23 @@ request, response, routing, and the outgoing client
 | [`Access`](#access) | enum | 15 | Who a route is for. The six answers every route gives, so the |
 | [`Args`](#args) | final class | 192 | The parameters a route accepts, as the reference describes them in the |
 | [`CertificateName`](#certificatename) | final class | 56 | Whether a TLS certificate names a host: a wildcard only as a whole first |
-| [`Client`](#client) | final class | 123 | The engine's outgoing HTTP transport over curl. Redirects are followed by |
 | [`CookieText`](#cookietext) | final class | 94 | Set-Cookie text and the matching rules a cookie jar applies: parsing a |
-| [`Download`](#download) | final class | 106 | A file the engine fetches for itself (a package, a language pack). Every |
-| [`Exchange`](#exchange) | final readonly class | 30 | What came back: the final response's status, headers (repeats as lists), Set-Cookie values, and body, or the transport error. |
+| [`Destination`](#destination) | final readonly class | 97 | Where Minn\Http lets a request go. Only http and https; when hosts are |
+| [`Download`](#download) | final class | 32 | A file the engine fetches for itself (a package, a language pack), over |
+| [`Exchange`](#exchange) | final readonly class | 75 | What came back: the final response's status, headers (repeats as lists), Set-Cookie values, and body, or the transport error. |
 | [`Failure`](#failure) | final class | 176 | What the public sees when the engine cannot answer: a plain page with no |
+| [`Fake`](#fake) | final class | 57 | Answers requests in place of the network while a test runs, and keeps |
 | [`Ipv6`](#ipv6) | final class | 62 | IPv6 addresses as text: written out in full (eight groups, or six and an |
 | [`IriParts`](#iriparts) | final readonly class | 138 | An IRI (a URL that may carry non-ASCII text) split into its parts and |
 | [`Kernel`](#kernel) | final readonly class | 36 | The edge. Turns a request into a response through the router and turns |
+| [`Location`](#location) | final class | 32 | Where a redirect leads: a Location header made absolute against the URL that sent it. |
 | [`Method`](#method) | enum | 33 |  |
-| [`Outbound`](#outbound) | final readonly class | 53 | One outgoing HTTP request, normalised: the client below needs nothing else. |
+| [`Outbound`](#outbound) | final readonly class | 46 | One outgoing HTTP request, normalised: the transport needs nothing else. |
 | [`Policy`](#policy) | final readonly class | 103 | What a route requires of its caller, as data on the route: the router |
 | [`Punycode`](#punycode) | final class | 103 | Internationalized host names in ASCII: each label that is not ASCII is |
 | [`RawResponse`](#rawresponse) | final class | 82 | An HTTP response as text, the way the Requests library hands it from |
 | [`Request`](#request) | final readonly class | 128 | An immutable picture of the incoming request. Built once from the PHP |
+| [`RequestFailed`](#requestfailed) | final class | 7 | Thrown by Exchange::throw() when no response arrived or it was not a 2xx; the exchange rides along. |
 | [`RequestsNames`](#requestsnames) | final class | 18 | The Requests library's PSR-0 class names (Requests_Exception_HTTP_404, |
 | [`Response`](#response) | final readonly class | 101 | What a handler returns. Nothing is written to the client until the |
 | [`Route`](#route) | final readonly class | 63 | Declares a handler method as a route. The policy lives here, as |
@@ -28,6 +31,7 @@ request, response, routing, and the outgoing client
 | [`RouteRow`](#routerow) | final readonly class | 61 | One line of the route table: what a route is, who it is for, and what it |
 | [`Router`](#router) | final class | 132 | Matches a request to a #[Route] on one of the registered handler |
 | [`Subject`](#subject) | enum | 46 | The record a route capture names, so a policy can have it looked up |
+| [`Transport`](#transport) | final class | 138 | The engine's outgoing HTTP transport over curl: it sends exactly what an |
 | [`TrustedProxies`](#trustedproxies) | final readonly class | 104 | Which addresses in front of the engine may speak for the client. |
 
 ## Access
@@ -115,33 +119,6 @@ Whether a parsed certificate (openssl_x509_parse) names the host.
 - `@param array<string, mixed> $certificate`
 
 
-## Client
-
-`final class Minn\Http\Client` · `public/minn/src/Minn/Http/Client.php`
-
-The engine's outgoing HTTP transport over curl. Redirects are followed by
-curl, so the header lines of every hop arrive in order; only the last
-response's block is kept, the way plugin code expects to read it.
-
-### static `get(string $url, array $headers = array ( ), float $timeout = 5.0): Minn\Http\Exchange`
-
-The common cases, so a one-off request needs no Outbound at the call site.
-
-### static `post(string $url, ?string $body = NULL, array $headers = array ( ), float $timeout = 5.0): Minn\Http\Exchange`
-
-A POST with an optional body, sent at once.
-
-### static `head(string $url, array $headers = array ( ), float $timeout = 5.0): Minn\Http\Exchange`
-
-A HEAD request, sent at once.
-
-### static `send(Minn\Http\Outbound $request): Minn\Http\Exchange`
-
-Performs one outgoing request over curl and returns the exchange, a transport error included.
-
-Internals: `lastHead()` (private, line 83), `lastBlock()` (private, line 101)
-
-
 ## CookieText
 
 `final class Minn\Http\CookieText` · `public/minn/src/Minn/Http/CookieText.php`
@@ -179,17 +156,54 @@ Whether a cookie with this path attribute (none means any) is sent for the reque
 The path a cookie without one gets: the request path up to its last slash, or "/".
 
 
+## Destination
+
+`final readonly class Minn\Http\Destination` · `public/minn/src/Minn/Http/Destination.php`
+
+Where Minn\Http lets a request go. Only http and https; when hosts are
+named, every hop must start with one of them; and an address outside the
+public internet (loopback, private and shared ranges, link-local, cloud
+metadata, reserved) is refused unless its host is listed in $private. A
+name is resolved here and curl is pinned to the addresses that were
+checked, so DNS cannot answer one way to the check and another to the
+connection.
+
+Used by: `Minn\Http`, `Minn\Http\Download`, `Minn\Http\Location`
+
+```php
+__construct(array $hosts = array ( ), array $private = array ( ), ?Closure $lookup = NULL)
+```
+- `@param list<string> $hosts URL prefixes every hop must start with; none means any public host`
+- `@param list<string> $private host names or addresses allowed to reach a private address`
+- `@param (Closure(string): list<string>)|null $lookup a host's addresses; DNS when null`
+
+
+### `refusal(string $url): ?string`
+
+Why $url may not be requested, or null when nothing about the URL itself refuses it (a name is judged again once resolved).
+
+### `pinned(Minn\Http\Outbound $request): Minn\Http\Outbound|Minn\Http\Exchange`
+
+The request with curl pinned to the addresses its host resolves to,
+or the failed exchange when the name does not resolve or resolves
+somewhere private it was not allowed.
+
+### static `host(string $url): string`
+
+A URL's host, lower-cased, without the brackets around an IPv6 address.
+
+Internals: `listed()` (private, line 83), `allowed()` (private, line 93), `dns()` (private, line 105)
+
+
 ## Download
 
 `final class Minn\Http\Download` · `public/minn/src/Minn/Http/Download.php`
 
-A file the engine fetches for itself (a package, a language pack). Every
-hop of a redirect chain is judged on its own: https only, and when host
-prefixes are given, one of them, so a redirect cannot lead a download
-off the host the caller trusted. The body is capped, and a body over the
-cap fails rather than being truncated.
-
-- const `MAX_HOPS` = `5`
+A file the engine fetches for itself (a package, a language pack), over
+Minn\Http with the rules a download needs: https at every hop, one of the
+caller's host prefixes when given, no private address, and a body over
+the cap fails rather than being truncated. The messages are written for
+the person who asked for the download.
 
 Used by: `Minn\Admin\Translations`, `Minn\Ops\Packages`
 
@@ -199,8 +213,6 @@ The body at $url, following at most five redirects.
 
 - `@param list<string> $hostPrefixes URL prefixes every hop must start with (none: any https host)`
 
-Internals: `allow()` (private, line 60), `status()` (private, line 77), `location()` (private, line 88), `resolve()` (private, line 100), `host()` (private, line 117)
-
 
 ## Exchange
 
@@ -208,12 +220,12 @@ Internals: `allow()` (private, line 60), `status()` (private, line 77), `locatio
 
 What came back: the final response's status, headers (repeats as lists), Set-Cookie values, and body, or the transport error.
 
-Used by: `Minn\Http\Client`, `Minn\Http\RawResponse`
+Used by: `Minn\Http`, `Minn\Http\Destination`, `Minn\Http\Fake`, `Minn\Http\RawResponse`, `Minn\Http\RequestFailed`, `Minn\Http\Transport`
 
 ```php
-__construct(int $code, array $headers, array $cookies, string $body, ?string $error = NULL, array $head = array ( ), int $errno = 0)
+__construct(int $code, array $headers, array $cookies, string $body, ?string $error = NULL, array $head = array ( ), int $errno = 0, string $url = '')
 ```
-- `@param array<string, string|list<string>> $headers`
+- `@param array<string, string|list<string>> $headers names lower-cased`
 - `@param list<string> $cookies raw Set-Cookie header values`
 - `@param list<string> $head the final response's status line and header lines as they came`
 
@@ -224,6 +236,11 @@ __construct(int $code, array $headers, array $cookies, string $body, ?string $er
 - readonly `?string $error`
 - readonly `array $head`
 - readonly `int $errno`
+- readonly `string $url`
+
+### static `failure(string $error, int $errno, string $url): self`
+
+An exchange in which no response arrived.
 
 ### `failed(): bool`
 
@@ -236,6 +253,20 @@ A response arrived and it was a 2xx.
 ### `json(): mixed`
 
 The body decoded as JSON, or null when it is not JSON.
+
+### `header(string $name): ?string`
+
+One header by any spelling of its name; a repeated header's values joined with ", ".
+
+### `cookie(string $name): ?string`
+
+One cookie's value from the Set-Cookie headers, percent-decoded; the last one set wins.
+
+### `throw(): self`
+
+This exchange when it is ok(), otherwise a RequestFailed exception
+(a RuntimeException) carrying it, for callers who would rather catch
+than check.
 
 
 ## Failure
@@ -305,6 +336,43 @@ errors. Only ever reached when WP_DEBUG_DISPLAY (or WP_DEBUG) is on:
 a site that has not asked never learns this much from a response.
 
 Internals: `discardOutput()` (private, line 82), `note()` (private, line 111), `record()` (private, line 125), `page()` (private, line 177)
+
+
+## Fake
+
+`final class Minn\Http\Fake` · `public/minn/src/Minn/Http/Fake.php`
+
+Answers requests in place of the network while a test runs, and keeps
+what was sent. Made by Minn\Http::fake(); every request through
+Minn\Http, wp_remote_*() and the Requests library reaches it.
+
+Used by: `Minn\Http`
+
+```php
+__construct(array $answers)
+```
+- `@param array<string, mixed> $answers URL pattern => answer, see Minn\Http::fake()`
+
+
+### `answer(Minn\Http\Outbound $request): Minn\Http\Exchange`
+
+The answer for one request, which is recorded as sent.
+
+### `sent(string $pattern = '*'): array`
+
+The requests sent so far, oldest first; with a pattern, only those whose URL matches it.
+
+- `@return list<Outbound>`
+
+### `restore(): void`
+
+Puts the network back.
+
+### static `matches(string $pattern, string $url): bool`
+
+Whether a URL matches a pattern in which * stands for anything; the scheme and the query string may be left off.
+
+Internals: `exchange()` (private, line 61)
 
 
 ## Ipv6
@@ -404,6 +472,23 @@ Routes the request; a thrown failure becomes its response, and null means no rou
 Internals: `harden()` (private, line 35)
 
 
+## Location
+
+`final class Minn\Http\Location` · `public/minn/src/Minn/Http/Location.php`
+
+Where a redirect leads: a Location header made absolute against the URL that sent it.
+
+Used by: `Minn\Http`
+
+### static `resolve(string $base, string $location): string`
+
+The absolute URL $location names, read against $base.
+
+### static `sameOrigin(string $one, string $two): bool`
+
+Whether two URLs share scheme, host, and port, so credentials may follow from one to the other.
+
+
 ## Method
 
 `enum Minn\Http\Method` · `public/minn/src/Minn/Http/Method.php`
@@ -430,12 +515,12 @@ run only for reads; every other method renders the URL as typed.
 
 `final readonly class Minn\Http\Outbound` · `public/minn/src/Minn/Http/Outbound.php`
 
-One outgoing HTTP request, normalised: the client below needs nothing else.
+One outgoing HTTP request, normalised: the transport needs nothing else.
 
-Used by: `Minn\Http\Client`
+Used by: `Minn\Http`, `Minn\Http\Destination`, `Minn\Http\Fake`, `Minn\Http\Transport`
 
 ```php
-__construct(string $method, string $url, array $headers = array ( ), ?string $body = NULL, float $timeout = 5.0, int $redirects = 5, bool $verifySsl = true, string $userAgent = '', ?string $caInfo = NULL, bool $blocking = true, ?Closure $prepare = NULL, ?float $connectTimeout = NULL)
+__construct(string $method, string $url, array $headers = array ( ), ?string $body = NULL, float $timeout = 5.0, int $redirects = 5, bool $verifySsl = true, string $userAgent = '', ?string $caInfo = NULL, bool $blocking = true, ?Closure $prepare = NULL, ?float $connectTimeout = NULL, ?int $maxBytes = NULL)
 ```
 - `@param list<string> $headers "Name: value" lines`
 - `@param (Closure(\CurlHandle): void)|null $prepare a last word on the curl handle before it is sent`
@@ -452,24 +537,17 @@ __construct(string $method, string $url, array $headers = array ( ), ?string $bo
 - readonly `bool $blocking`
 - readonly `?Closure $prepare`
 - readonly `?float $connectTimeout`
+- readonly `?int $maxBytes`
 
-### static `get(string $url, array $headers = array ( ), float $timeout = 5.0): self`
+### `to(string $url, string $method, ?string $body, array $headers): self`
 
-A GET.
-
-- `@param list<string> $headers "Name: value" lines`
-
-### static `post(string $url, ?string $body = NULL, array $headers = array ( ), float $timeout = 5.0): self`
-
-A POST with an optional body.
+The same request sent somewhere else, as the next hop of a redirect.
 
 - `@param list<string> $headers "Name: value" lines`
 
-### static `head(string $url, array $headers = array ( ), float $timeout = 5.0): self`
+### `preparing(Closure $prepare): self`
 
-A HEAD.
-
-- `@param list<string> $headers "Name: value" lines`
+The same request with a last word on the curl handle, run after any it already has.
 
 
 ## Policy
@@ -678,6 +756,21 @@ The path split into non-empty segments: "/a/b/" becomes ["a", "b"].
 ### `queryStringWithout(string ...$keys): string`
 
 The query string with the given keys removed, ready to append to a redirect.
+
+
+## RequestFailed
+
+`final class Minn\Http\RequestFailed` · `public/minn/src/Minn/Http/RequestFailed.php` · implements `Stringable`, `Throwable`
+
+Thrown by Exchange::throw() when no response arrived or it was not a 2xx; the exchange rides along.
+
+Used by: `Minn\Http\Exchange`
+
+```php
+__construct(Minn\Http\Exchange $reply, string $message)
+```
+
+- readonly `Minn\Http\Exchange $reply`
 
 
 ## RequestsNames
@@ -937,6 +1030,25 @@ The reference's error code for a record that does not exist.
 ### `missingMessage(): string`
 
 The reference's message for a record that does not exist.
+
+
+## Transport
+
+`final class Minn\Http\Transport` · `public/minn/src/Minn/Http/Transport.php`
+
+The engine's outgoing HTTP transport over curl: it sends exactly what an
+Outbound says and nothing else decides. Redirects are followed by curl, so
+the header lines of every hop arrive in order; only the last response's
+block is kept, the way plugin code expects to read it. Code calling out
+goes through Minn\Http, which owns the rules about where a request may go.
+
+Used by: `Minn\Http`
+
+### static `send(Minn\Http\Outbound $request): Minn\Http\Exchange`
+
+Performs one outgoing request over curl and returns the exchange, a transport error included.
+
+Internals: `options()` (private, line 55), `limit()` (private, line 85), `lastHead()` (private, line 100), `lastBlock()` (private, line 118)
 
 
 ## TrustedProxies

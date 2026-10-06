@@ -50994,6 +50994,946 @@
             "methods": []
         },
         {
+            "name": "Minn\\Http",
+            "short": "Http",
+            "namespace": "Minn",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Http.php",
+            "lines": 205,
+            "doc": "Outgoing HTTP, called straight from anywhere with no import:\n\n$data = Minn\\Http::get('https://api.example.com/status')->json();\nMinn\\Http::post($url, json: ['email' => $email], timeout: 10)->throw();\n\nEvery verb answers with an Exchange (->ok(), ->failed(), ->json(),\n->header(), ->cookie(), ->throw(), ->code, ->body) and takes the same\nnamed arguments, each optional:\n\n- `query`: array added to the URL's query string\n- `headers`: `name => value` (a list value repeats the header), or \"Name: value\" lines\n- `json`, `form`, `body` (post, put, patch): an array sent as JSON, an array\nform-encoded, or a string sent as it is; one of the three, and the first\ntwo set the Content-Type\n- `timeout`: seconds for the whole exchange, 5 by default\n- `redirects`: how many to follow, 5 by default; 0 hands back the 3xx\n- `hosts`: URL prefixes every hop must start with (`['https://api.wordpress.org/']`)\n- `private`: hosts allowed to reach a private address. Loopback, LAN,\nlink-local and cloud-metadata addresses are refused otherwise, at every\nhop and after DNS, so a URL someone typed is safe to fetch\n- `maxBytes`: the largest body accepted; a longer one fails the exchange\n- `userAgent`: Minn/{version} by default\n\nA misspelt argument is an error at the line that has it. Credentials\n(Authorization, Cookie) are dropped when a redirect leaves the origin.",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\Http\\Destination",
+                "Minn\\Http\\Exchange",
+                "Minn\\Http\\Fake",
+                "Minn\\Http\\Location",
+                "Minn\\Http\\Outbound",
+                "Minn\\Http\\Transport"
+            ],
+            "usedBy": [
+                "Minn\\Http\\Access",
+                "Minn\\Http\\Args",
+                "Minn\\Http\\CertificateName",
+                "Minn\\Http\\CookieText",
+                "Minn\\Http\\Destination",
+                "Minn\\Http\\Download",
+                "Minn\\Http\\Exchange",
+                "Minn\\Http\\Failure",
+                "Minn\\Http\\Fake",
+                "Minn\\Http\\Ipv6",
+                "Minn\\Http\\IriParts",
+                "Minn\\Http\\Kernel",
+                "Minn\\Http\\Location",
+                "Minn\\Http\\Method",
+                "Minn\\Http\\Outbound",
+                "Minn\\Http\\Policy",
+                "Minn\\Http\\Punycode",
+                "Minn\\Http\\RawResponse",
+                "Minn\\Http\\Request",
+                "Minn\\Http\\RequestFailed",
+                "Minn\\Http\\RequestsNames",
+                "Minn\\Http\\Response",
+                "Minn\\Http\\Route",
+                "Minn\\Http\\RouteMiss",
+                "Minn\\Http\\RouteRow",
+                "Minn\\Http\\Router",
+                "Minn\\Http\\Subject",
+                "Minn\\Http\\Transport",
+                "Minn\\Http\\TrustedProxies",
+                "Minn\\Ops\\Updates"
+            ],
+            "constructor": null,
+            "cases": [],
+            "constants": [
+                {
+                    "name": "REDIRECTS",
+                    "value": "array (   0 => 301,   1 => 302,   2 => 303,   3 => 307,   4 => 308, )",
+                    "doc": "",
+                    "visibility": "private"
+                },
+                {
+                    "name": "CREDENTIALS",
+                    "value": "array (   0 => 'authorization',   1 => 'cookie',   2 => 'proxy-authorization', )",
+                    "doc": "",
+                    "visibility": "private"
+                }
+            ],
+            "properties": [
+                {
+                    "name": "fake",
+                    "type": "?Minn\\Http\\Fake",
+                    "readonly": false,
+                    "static": true,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": false
+                }
+            ],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "get",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "get(string $url, array $query = array ( ), array $headers = array ( ), float $timeout = 5.0, int $redirects = 5, array $hosts = array ( ), array $private = array ( ), ?int $maxBytes = NULL, ?string $userAgent = NULL): Minn\\Http\\Exchange",
+                    "doc": "A GET.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "url",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "query",
+                            "type": "array",
+                            "shape": "",
+                            "default": "array ( )",
+                            "doc": ""
+                        },
+                        {
+                            "name": "headers",
+                            "type": "array",
+                            "shape": "",
+                            "default": "array ( )",
+                            "doc": ""
+                        },
+                        {
+                            "name": "timeout",
+                            "type": "float",
+                            "shape": "",
+                            "default": "5.0",
+                            "doc": ""
+                        },
+                        {
+                            "name": "redirects",
+                            "type": "int",
+                            "shape": "",
+                            "default": "5",
+                            "doc": ""
+                        },
+                        {
+                            "name": "hosts",
+                            "type": "array",
+                            "shape": "",
+                            "default": "array ( )",
+                            "doc": ""
+                        },
+                        {
+                            "name": "private",
+                            "type": "array",
+                            "shape": "",
+                            "default": "array ( )",
+                            "doc": ""
+                        },
+                        {
+                            "name": "maxBytes",
+                            "type": "?int",
+                            "shape": "",
+                            "default": "NULL",
+                            "doc": ""
+                        },
+                        {
+                            "name": "userAgent",
+                            "type": "?string",
+                            "shape": "",
+                            "default": "NULL",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 51,
+                    "end": 54
+                },
+                {
+                    "routes": [],
+                    "name": "head",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "head(string $url, array $query = array ( ), array $headers = array ( ), float $timeout = 5.0, int $redirects = 5, array $hosts = array ( ), array $private = array ( ), ?string $userAgent = NULL): Minn\\Http\\Exchange",
+                    "doc": "A HEAD: the status and headers a GET would bring, without the body.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "url",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "query",
+                            "type": "array",
+                            "shape": "",
+                            "default": "array ( )",
+                            "doc": ""
+                        },
+                        {
+                            "name": "headers",
+                            "type": "array",
+                            "shape": "",
+                            "default": "array ( )",
+                            "doc": ""
+                        },
+                        {
+                            "name": "timeout",
+                            "type": "float",
+                            "shape": "",
+                            "default": "5.0",
+                            "doc": ""
+                        },
+                        {
+                            "name": "redirects",
+                            "type": "int",
+                            "shape": "",
+                            "default": "5",
+                            "doc": ""
+                        },
+                        {
+                            "name": "hosts",
+                            "type": "array",
+                            "shape": "",
+                            "default": "array ( )",
+                            "doc": ""
+                        },
+                        {
+                            "name": "private",
+                            "type": "array",
+                            "shape": "",
+                            "default": "array ( )",
+                            "doc": ""
+                        },
+                        {
+                            "name": "userAgent",
+                            "type": "?string",
+                            "shape": "",
+                            "default": "NULL",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 57,
+                    "end": 60
+                },
+                {
+                    "routes": [],
+                    "name": "delete",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "delete(string $url, array $query = array ( ), array $headers = array ( ), float $timeout = 5.0, int $redirects = 5, array $hosts = array ( ), array $private = array ( ), ?int $maxBytes = NULL, ?string $userAgent = NULL): Minn\\Http\\Exchange",
+                    "doc": "A DELETE.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "url",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "query",
+                            "type": "array",
+                            "shape": "",
+                            "default": "array ( )",
+                            "doc": ""
+                        },
+                        {
+                            "name": "headers",
+                            "type": "array",
+                            "shape": "",
+                            "default": "array ( )",
+                            "doc": ""
+                        },
+                        {
+                            "name": "timeout",
+                            "type": "float",
+                            "shape": "",
+                            "default": "5.0",
+                            "doc": ""
+                        },
+                        {
+                            "name": "redirects",
+                            "type": "int",
+                            "shape": "",
+                            "default": "5",
+                            "doc": ""
+                        },
+                        {
+                            "name": "hosts",
+                            "type": "array",
+                            "shape": "",
+                            "default": "array ( )",
+                            "doc": ""
+                        },
+                        {
+                            "name": "private",
+                            "type": "array",
+                            "shape": "",
+                            "default": "array ( )",
+                            "doc": ""
+                        },
+                        {
+                            "name": "maxBytes",
+                            "type": "?int",
+                            "shape": "",
+                            "default": "NULL",
+                            "doc": ""
+                        },
+                        {
+                            "name": "userAgent",
+                            "type": "?string",
+                            "shape": "",
+                            "default": "NULL",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 63,
+                    "end": 66
+                },
+                {
+                    "routes": [],
+                    "name": "post",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "post(string $url, ?array $json = NULL, ?array $form = NULL, ?string $body = NULL, array $query = array ( ), array $headers = array ( ), float $timeout = 5.0, int $redirects = 5, array $hosts = array ( ), array $private = array ( ), ?int $maxBytes = NULL, ?string $userAgent = NULL): Minn\\Http\\Exchange",
+                    "doc": "A POST with a json:, form: or body: payload.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "url",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "json",
+                            "type": "?array",
+                            "shape": "",
+                            "default": "NULL",
+                            "doc": ""
+                        },
+                        {
+                            "name": "form",
+                            "type": "?array",
+                            "shape": "",
+                            "default": "NULL",
+                            "doc": ""
+                        },
+                        {
+                            "name": "body",
+                            "type": "?string",
+                            "shape": "",
+                            "default": "NULL",
+                            "doc": ""
+                        },
+                        {
+                            "name": "query",
+                            "type": "array",
+                            "shape": "",
+                            "default": "array ( )",
+                            "doc": ""
+                        },
+                        {
+                            "name": "headers",
+                            "type": "array",
+                            "shape": "",
+                            "default": "array ( )",
+                            "doc": ""
+                        },
+                        {
+                            "name": "timeout",
+                            "type": "float",
+                            "shape": "",
+                            "default": "5.0",
+                            "doc": ""
+                        },
+                        {
+                            "name": "redirects",
+                            "type": "int",
+                            "shape": "",
+                            "default": "5",
+                            "doc": ""
+                        },
+                        {
+                            "name": "hosts",
+                            "type": "array",
+                            "shape": "",
+                            "default": "array ( )",
+                            "doc": ""
+                        },
+                        {
+                            "name": "private",
+                            "type": "array",
+                            "shape": "",
+                            "default": "array ( )",
+                            "doc": ""
+                        },
+                        {
+                            "name": "maxBytes",
+                            "type": "?int",
+                            "shape": "",
+                            "default": "NULL",
+                            "doc": ""
+                        },
+                        {
+                            "name": "userAgent",
+                            "type": "?string",
+                            "shape": "",
+                            "default": "NULL",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 69,
+                    "end": 72
+                },
+                {
+                    "routes": [],
+                    "name": "put",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "put(string $url, ?array $json = NULL, ?array $form = NULL, ?string $body = NULL, array $query = array ( ), array $headers = array ( ), float $timeout = 5.0, int $redirects = 5, array $hosts = array ( ), array $private = array ( ), ?int $maxBytes = NULL, ?string $userAgent = NULL): Minn\\Http\\Exchange",
+                    "doc": "A PUT with a json:, form: or body: payload.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "url",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "json",
+                            "type": "?array",
+                            "shape": "",
+                            "default": "NULL",
+                            "doc": ""
+                        },
+                        {
+                            "name": "form",
+                            "type": "?array",
+                            "shape": "",
+                            "default": "NULL",
+                            "doc": ""
+                        },
+                        {
+                            "name": "body",
+                            "type": "?string",
+                            "shape": "",
+                            "default": "NULL",
+                            "doc": ""
+                        },
+                        {
+                            "name": "query",
+                            "type": "array",
+                            "shape": "",
+                            "default": "array ( )",
+                            "doc": ""
+                        },
+                        {
+                            "name": "headers",
+                            "type": "array",
+                            "shape": "",
+                            "default": "array ( )",
+                            "doc": ""
+                        },
+                        {
+                            "name": "timeout",
+                            "type": "float",
+                            "shape": "",
+                            "default": "5.0",
+                            "doc": ""
+                        },
+                        {
+                            "name": "redirects",
+                            "type": "int",
+                            "shape": "",
+                            "default": "5",
+                            "doc": ""
+                        },
+                        {
+                            "name": "hosts",
+                            "type": "array",
+                            "shape": "",
+                            "default": "array ( )",
+                            "doc": ""
+                        },
+                        {
+                            "name": "private",
+                            "type": "array",
+                            "shape": "",
+                            "default": "array ( )",
+                            "doc": ""
+                        },
+                        {
+                            "name": "maxBytes",
+                            "type": "?int",
+                            "shape": "",
+                            "default": "NULL",
+                            "doc": ""
+                        },
+                        {
+                            "name": "userAgent",
+                            "type": "?string",
+                            "shape": "",
+                            "default": "NULL",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 75,
+                    "end": 78
+                },
+                {
+                    "routes": [],
+                    "name": "patch",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "patch(string $url, ?array $json = NULL, ?array $form = NULL, ?string $body = NULL, array $query = array ( ), array $headers = array ( ), float $timeout = 5.0, int $redirects = 5, array $hosts = array ( ), array $private = array ( ), ?int $maxBytes = NULL, ?string $userAgent = NULL): Minn\\Http\\Exchange",
+                    "doc": "A PATCH with a json:, form: or body: payload.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "url",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "json",
+                            "type": "?array",
+                            "shape": "",
+                            "default": "NULL",
+                            "doc": ""
+                        },
+                        {
+                            "name": "form",
+                            "type": "?array",
+                            "shape": "",
+                            "default": "NULL",
+                            "doc": ""
+                        },
+                        {
+                            "name": "body",
+                            "type": "?string",
+                            "shape": "",
+                            "default": "NULL",
+                            "doc": ""
+                        },
+                        {
+                            "name": "query",
+                            "type": "array",
+                            "shape": "",
+                            "default": "array ( )",
+                            "doc": ""
+                        },
+                        {
+                            "name": "headers",
+                            "type": "array",
+                            "shape": "",
+                            "default": "array ( )",
+                            "doc": ""
+                        },
+                        {
+                            "name": "timeout",
+                            "type": "float",
+                            "shape": "",
+                            "default": "5.0",
+                            "doc": ""
+                        },
+                        {
+                            "name": "redirects",
+                            "type": "int",
+                            "shape": "",
+                            "default": "5",
+                            "doc": ""
+                        },
+                        {
+                            "name": "hosts",
+                            "type": "array",
+                            "shape": "",
+                            "default": "array ( )",
+                            "doc": ""
+                        },
+                        {
+                            "name": "private",
+                            "type": "array",
+                            "shape": "",
+                            "default": "array ( )",
+                            "doc": ""
+                        },
+                        {
+                            "name": "maxBytes",
+                            "type": "?int",
+                            "shape": "",
+                            "default": "NULL",
+                            "doc": ""
+                        },
+                        {
+                            "name": "userAgent",
+                            "type": "?string",
+                            "shape": "",
+                            "default": "NULL",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 81,
+                    "end": 84
+                },
+                {
+                    "routes": [],
+                    "name": "send",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "send(Minn\\Http\\Outbound $request): Minn\\Http\\Exchange",
+                    "doc": "Sends exactly what the Outbound says, with none of the verbs' rules\nabout where a request may go: the door WordPress's own HTTP API comes\nthrough after applying its rules, and the one a fake answers at.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "request",
+                            "type": "Minn\\Http\\Outbound",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 91,
+                    "end": 94
+                },
+                {
+                    "routes": [],
+                    "name": "fake",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "fake(array $answers = array ( )): Minn\\Http\\Fake",
+                    "doc": "Answers requests from $answers instead of the network until\nrestore(), for tests. Keys are URL patterns (* matches anything; the\nscheme and query may be left off); values are an array (sent as JSON),\na string (the body), a status code, an Exchange from reply(), or a\nclosure taking the Outbound and returning one of those. A request no\npattern matches fails as if nothing were listening. The fake answers\nwp_remote_*() too, and refuses to start outside the command line.",
+                    "shapes": [
+                        "@param array<string, mixed> $answers"
+                    ],
+                    "params": [
+                        {
+                            "name": "answers",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": "array ( )",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 107,
+                    "end": 113
+                },
+                {
+                    "routes": [],
+                    "name": "restore",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "restore(): void",
+                    "doc": "Puts the network back after fake().",
+                    "shapes": [],
+                    "params": [],
+                    "line": 116,
+                    "end": 119
+                },
+                {
+                    "routes": [],
+                    "name": "reply",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "reply(array|string $body = '', int $status = 200, array $headers = array ( )): Minn\\Http\\Exchange",
+                    "doc": "A response made by hand, for a fake to answer with. An array body is sent as JSON.",
+                    "shapes": [
+                        "@param array<string, string|list<string>> $headers name => value; Set-Cookie values become cookies"
+                    ],
+                    "params": [
+                        {
+                            "name": "body",
+                            "type": "array|string",
+                            "shape": "",
+                            "default": "''",
+                            "doc": ""
+                        },
+                        {
+                            "name": "status",
+                            "type": "int",
+                            "shape": "",
+                            "default": "200",
+                            "doc": ""
+                        },
+                        {
+                            "name": "headers",
+                            "type": "array",
+                            "shape": "array<string, string|list<string>>",
+                            "default": "array ( )",
+                            "doc": "name => value; Set-Cookie values become cookies"
+                        }
+                    ],
+                    "line": 126,
+                    "end": 143
+                },
+                {
+                    "routes": [],
+                    "name": "follow",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "follow(Minn\\Http\\Outbound $request, int $redirects, Minn\\Http\\Destination $where): Minn\\Http\\Exchange",
+                    "doc": "Sends each hop, judging every one against the destination rules, until a response is not a redirect.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "request",
+                            "type": "Minn\\Http\\Outbound",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "redirects",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "where",
+                            "type": "Minn\\Http\\Destination",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 146,
+                    "end": 163
+                },
+                {
+                    "routes": [],
+                    "name": "deliver",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "deliver(Minn\\Http\\Outbound $request, Minn\\Http\\Destination $where): Minn\\Http\\Exchange",
+                    "doc": "",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "request",
+                            "type": "Minn\\Http\\Outbound",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "where",
+                            "type": "Minn\\Http\\Destination",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 165,
+                    "end": 172
+                },
+                {
+                    "routes": [],
+                    "name": "nextHop",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "nextHop(Minn\\Http\\Outbound $request, int $status, string $url): Minn\\Http\\Outbound",
+                    "doc": "The request a redirect asks for: 303, and 301/302 after a POST, become a GET without the body, as browsers and curl do.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "request",
+                            "type": "Minn\\Http\\Outbound",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "status",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "url",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 175,
+                    "end": 183
+                },
+                {
+                    "routes": [],
+                    "name": "outbound",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "outbound(string $method, string $url, array $query, array $headers, array $payload, float $timeout, ?int $maxBytes, ?string $userAgent): Minn\\Http\\Outbound",
+                    "doc": "",
+                    "shapes": [
+                        "@param array{0: ?string, 1: ?string} $payload the body and the content type it implies"
+                    ],
+                    "params": [
+                        {
+                            "name": "method",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "url",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "query",
+                            "type": "array",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "headers",
+                            "type": "array",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "payload",
+                            "type": "array",
+                            "shape": "array{0: ?string, 1: ?string}",
+                            "default": null,
+                            "doc": "the body and the content type it implies"
+                        },
+                        {
+                            "name": "timeout",
+                            "type": "float",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "maxBytes",
+                            "type": "?int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "userAgent",
+                            "type": "?string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 186,
+                    "end": 198
+                },
+                {
+                    "routes": [],
+                    "name": "payload",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "payload(?array $json, ?array $form, ?string $body): array",
+                    "doc": "",
+                    "shapes": [
+                        "@return array{0: ?string, 1: ?string} the body and the content type it implies"
+                    ],
+                    "params": [
+                        {
+                            "name": "json",
+                            "type": "?array",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "form",
+                            "type": "?array",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "body",
+                            "type": "?string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 201,
+                    "end": 212
+                },
+                {
+                    "routes": [],
+                    "name": "lines",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "lines(array $headers, ?string $type): array",
+                    "doc": "Headers as the transport's \"Name: value\" lines, with the payload's Content-Type unless one was given.",
+                    "shapes": [
+                        "@return list<string>"
+                    ],
+                    "params": [
+                        {
+                            "name": "headers",
+                            "type": "array",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "type",
+                            "type": "?string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 219,
+                    "end": 236
+                },
+                {
+                    "routes": [],
+                    "name": "withQuery",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "withQuery(string $url, array $query): string",
+                    "doc": "",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "url",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "query",
+                            "type": "array",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 238,
+                    "end": 246
+                }
+            ]
+        },
+        {
             "name": "Minn\\Http\\Access",
             "short": "Access",
             "namespace": "Minn\\Http",
@@ -51003,7 +51943,9 @@
             "doc": "Who a route is for. The six answers every route gives, so the\nauthorization surface of the engine reads as a list of these.",
             "implements": [],
             "extends": null,
-            "uses": [],
+            "uses": [
+                "Minn\\Http"
+            ],
             "usedBy": [
                 "Minn\\Admin\\AppController",
                 "Minn\\Admin\\BundleController",
@@ -51098,7 +52040,9 @@
             "doc": "The parameters a route accepts, as the reference describes them in the\nREST index: name => {description, type, ...}. The descriptions, types,\nenums and bounds were captured from the reference, so a client that\nreads either index is told the same thing, and the router refuses a\nvalue the way the reference refuses it, before it judges the caller.\n\nA route declares only what it really reads. An argument published here\nthat the handler ignores would be worse than none at all, because a\nclient reading the index would build a request around it, so each set\nbelow names the code that consumes it. The sets keep the reference's\norder, because a refusal lists the invalid parameters in that order.\n`_fields` and `_embed` are read everywhere and declared nowhere, as the\nreference lists neither and validates neither.",
             "implements": [],
             "extends": null,
-            "uses": [],
+            "uses": [
+                "Minn\\Http"
+            ],
             "usedBy": [
                 "Minn\\Http\\Route",
                 "Minn\\Http\\RouteRow",
@@ -51245,7 +52189,9 @@
             "doc": "Whether a TLS certificate names a host: a wildcard only as a whole first\nlabel with at least two labels after it, matching exactly one label; an\nIP address never matches by name; the subjectAltName DNS entries win over\nthe common name when present.",
             "implements": [],
             "extends": null,
-            "uses": [],
+            "uses": [
+                "Minn\\Http"
+            ],
             "usedBy": [],
             "constructor": null,
             "cases": [],
@@ -51331,203 +52277,6 @@
             ]
         },
         {
-            "name": "Minn\\Http\\Client",
-            "short": "Client",
-            "namespace": "Minn\\Http",
-            "kind": "final class",
-            "file": "public/minn/src/Minn/Http/Client.php",
-            "lines": 123,
-            "doc": "The engine's outgoing HTTP transport over curl. Redirects are followed by\ncurl, so the header lines of every hop arrive in order; only the last\nresponse's block is kept, the way plugin code expects to read it.",
-            "implements": [],
-            "extends": null,
-            "uses": [
-                "Minn\\Http\\Exchange",
-                "Minn\\Http\\Outbound"
-            ],
-            "usedBy": [],
-            "constructor": null,
-            "cases": [],
-            "constants": [],
-            "properties": [],
-            "methods": [
-                {
-                    "routes": [],
-                    "name": "get",
-                    "static": true,
-                    "visibility": "public",
-                    "signature": "get(string $url, array $headers = array ( ), float $timeout = 5.0): Minn\\Http\\Exchange",
-                    "doc": "The common cases, so a one-off request needs no Outbound at the call site.",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "url",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "headers",
-                            "type": "array",
-                            "shape": "",
-                            "default": "array ( )",
-                            "doc": ""
-                        },
-                        {
-                            "name": "timeout",
-                            "type": "float",
-                            "shape": "",
-                            "default": "5.0",
-                            "doc": ""
-                        }
-                    ],
-                    "line": 15,
-                    "end": 18
-                },
-                {
-                    "routes": [],
-                    "name": "post",
-                    "static": true,
-                    "visibility": "public",
-                    "signature": "post(string $url, ?string $body = NULL, array $headers = array ( ), float $timeout = 5.0): Minn\\Http\\Exchange",
-                    "doc": "A POST with an optional body, sent at once.",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "url",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "body",
-                            "type": "?string",
-                            "shape": "",
-                            "default": "NULL",
-                            "doc": ""
-                        },
-                        {
-                            "name": "headers",
-                            "type": "array",
-                            "shape": "",
-                            "default": "array ( )",
-                            "doc": ""
-                        },
-                        {
-                            "name": "timeout",
-                            "type": "float",
-                            "shape": "",
-                            "default": "5.0",
-                            "doc": ""
-                        }
-                    ],
-                    "line": 21,
-                    "end": 24
-                },
-                {
-                    "routes": [],
-                    "name": "head",
-                    "static": true,
-                    "visibility": "public",
-                    "signature": "head(string $url, array $headers = array ( ), float $timeout = 5.0): Minn\\Http\\Exchange",
-                    "doc": "A HEAD request, sent at once.",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "url",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "headers",
-                            "type": "array",
-                            "shape": "",
-                            "default": "array ( )",
-                            "doc": ""
-                        },
-                        {
-                            "name": "timeout",
-                            "type": "float",
-                            "shape": "",
-                            "default": "5.0",
-                            "doc": ""
-                        }
-                    ],
-                    "line": 27,
-                    "end": 30
-                },
-                {
-                    "routes": [],
-                    "name": "send",
-                    "static": true,
-                    "visibility": "public",
-                    "signature": "send(Minn\\Http\\Outbound $request): Minn\\Http\\Exchange",
-                    "doc": "Performs one outgoing request over curl and returns the exchange, a transport error included.",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "request",
-                            "type": "Minn\\Http\\Outbound",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 33,
-                    "end": 75
-                },
-                {
-                    "routes": [],
-                    "name": "lastHead",
-                    "static": true,
-                    "visibility": "private",
-                    "signature": "lastHead(array $lines): array",
-                    "doc": "The last response's status line and header lines, line endings removed.",
-                    "shapes": [
-                        "@param list<string> $lines",
-                        "@return list<string>"
-                    ],
-                    "params": [
-                        {
-                            "name": "lines",
-                            "type": "array",
-                            "shape": "list<string>",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 83,
-                    "end": 95
-                },
-                {
-                    "routes": [],
-                    "name": "lastBlock",
-                    "static": true,
-                    "visibility": "private",
-                    "signature": "lastBlock(array $lines): array",
-                    "doc": "",
-                    "shapes": [
-                        "@param list<string> $lines",
-                        "@return array{0: array<string, string|list<string>>, 1: list<string>}"
-                    ],
-                    "params": [
-                        {
-                            "name": "lines",
-                            "type": "array",
-                            "shape": "list<string>",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 101,
-                    "end": 133
-                }
-            ]
-        },
-        {
             "name": "Minn\\Http\\CookieText",
             "short": "CookieText",
             "namespace": "Minn\\Http",
@@ -51537,7 +52286,9 @@
             "doc": "Set-Cookie text and the matching rules a cookie jar applies: parsing a\nheader into name, value and attributes; normalizing attributes (expires\nand max-age as timestamps, the domain without its leading dot); whether\na cookie belongs to a domain and a path (RFC 6265).",
             "implements": [],
             "extends": null,
-            "uses": [],
+            "uses": [
+                "Minn\\Http"
+            ],
             "usedBy": [],
             "constructor": null,
             "cases": [],
@@ -51711,30 +52462,244 @@
             ]
         },
         {
+            "name": "Minn\\Http\\Destination",
+            "short": "Destination",
+            "namespace": "Minn\\Http",
+            "kind": "final readonly class",
+            "file": "public/minn/src/Minn/Http/Destination.php",
+            "lines": 97,
+            "doc": "Where Minn\\Http lets a request go. Only http and https; when hosts are\nnamed, every hop must start with one of them; and an address outside the\npublic internet (loopback, private and shared ranges, link-local, cloud\nmetadata, reserved) is refused unless its host is listed in $private. A\nname is resolved here and curl is pinned to the addresses that were\nchecked, so DNS cannot answer one way to the check and another to the\nconnection.",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\Http",
+                "Minn\\Http\\Exchange",
+                "Minn\\Http\\Outbound"
+            ],
+            "usedBy": [
+                "Minn\\Http",
+                "Minn\\Http\\Download",
+                "Minn\\Http\\Location"
+            ],
+            "constructor": {
+                "signature": "__construct(array $hosts = array ( ), array $private = array ( ), ?Closure $lookup = NULL)",
+                "doc": "",
+                "shapes": [
+                    "@param list<string> $hosts URL prefixes every hop must start with; none means any public host",
+                    "@param list<string> $private host names or addresses allowed to reach a private address",
+                    "@param (Closure(string): list<string>)|null $lookup a host's addresses; DNS when null"
+                ],
+                "params": [
+                    {
+                        "name": "hosts",
+                        "type": "array",
+                        "shape": "list<string>",
+                        "default": "array ( )",
+                        "doc": "URL prefixes every hop must start with; none means any public host"
+                    },
+                    {
+                        "name": "private",
+                        "type": "array",
+                        "shape": "list<string>",
+                        "default": "array ( )",
+                        "doc": "host names or addresses allowed to reach a private address"
+                    },
+                    {
+                        "name": "lookup",
+                        "type": "?Closure",
+                        "shape": "(Closure(string): list<string>)|null",
+                        "default": "NULL",
+                        "doc": "a host's addresses; DNS when null"
+                    }
+                ],
+                "visibility": "public",
+                "line": 28,
+                "end": 31
+            },
+            "cases": [],
+            "constants": [],
+            "properties": [
+                {
+                    "name": "private",
+                    "type": "array",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": false
+                },
+                {
+                    "name": "hosts",
+                    "type": "array",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
+                },
+                {
+                    "name": "lookup",
+                    "type": "?Closure",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
+                }
+            ],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "refusal",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "refusal(string $url): ?string",
+                    "doc": "Why $url may not be requested, or null when nothing about the URL itself refuses it (a name is judged again once resolved).",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "url",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 34,
+                    "end": 48
+                },
+                {
+                    "routes": [],
+                    "name": "pinned",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "pinned(Minn\\Http\\Outbound $request): Minn\\Http\\Outbound|Minn\\Http\\Exchange",
+                    "doc": "The request with curl pinned to the addresses its host resolves to,\nor the failed exchange when the name does not resolve or resolves\nsomewhere private it was not allowed.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "request",
+                            "type": "Minn\\Http\\Outbound",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 55,
+                    "end": 75
+                },
+                {
+                    "routes": [],
+                    "name": "host",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "host(string $url): string",
+                    "doc": "A URL's host, lower-cased, without the brackets around an IPv6 address.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "url",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 78,
+                    "end": 81
+                },
+                {
+                    "routes": [],
+                    "name": "listed",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "listed(string $url): bool",
+                    "doc": "",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "url",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 83,
+                    "end": 91
+                },
+                {
+                    "routes": [],
+                    "name": "allowed",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "allowed(string $host, string $address): bool",
+                    "doc": "",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "host",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "address",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 93,
+                    "end": 98
+                },
+                {
+                    "routes": [],
+                    "name": "dns",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "dns(string $host): array",
+                    "doc": "A name's IPv4 addresses, or its IPv6 ones when it has none.",
+                    "shapes": [
+                        "@return list<string>"
+                    ],
+                    "params": [
+                        {
+                            "name": "host",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 105,
+                    "end": 113
+                }
+            ]
+        },
+        {
             "name": "Minn\\Http\\Download",
             "short": "Download",
             "namespace": "Minn\\Http",
             "kind": "final class",
             "file": "public/minn/src/Minn/Http/Download.php",
-            "lines": 106,
-            "doc": "A file the engine fetches for itself (a package, a language pack). Every\nhop of a redirect chain is judged on its own: https only, and when host\nprefixes are given, one of them, so a redirect cannot lead a download\noff the host the caller trusted. The body is capped, and a body over the\ncap fails rather than being truncated.",
+            "lines": 32,
+            "doc": "A file the engine fetches for itself (a package, a language pack), over\nMinn\\Http with the rules a download needs: https at every hop, one of the\ncaller's host prefixes when given, no private address, and a body over\nthe cap fails rather than being truncated. The messages are written for\nthe person who asked for the download.",
             "implements": [],
             "extends": null,
-            "uses": [],
+            "uses": [
+                "Minn\\Http",
+                "Minn\\Http\\Destination"
+            ],
             "usedBy": [
                 "Minn\\Admin\\Translations",
                 "Minn\\Ops\\Packages"
             ],
             "constructor": null,
             "cases": [],
-            "constants": [
-                {
-                    "name": "MAX_HOPS",
-                    "value": "5",
-                    "doc": "",
-                    "visibility": "private"
-                }
-            ],
+            "constants": [],
             "properties": [],
             "methods": [
                 {
@@ -51777,128 +52742,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 26,
-                    "end": 57
-                },
-                {
-                    "routes": [],
-                    "name": "allow",
-                    "static": true,
-                    "visibility": "private",
-                    "signature": "allow(string $url, array $hostPrefixes): void",
-                    "doc": "",
-                    "shapes": [
-                        "@param list<string> $hostPrefixes"
-                    ],
-                    "params": [
-                        {
-                            "name": "url",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "hostPrefixes",
-                            "type": "array",
-                            "shape": "list<string>",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 60,
-                    "end": 74
-                },
-                {
-                    "routes": [],
-                    "name": "status",
-                    "static": true,
-                    "visibility": "private",
-                    "signature": "status(array $headers): int",
-                    "doc": "",
-                    "shapes": [
-                        "@param list<string> $headers"
-                    ],
-                    "params": [
-                        {
-                            "name": "headers",
-                            "type": "array",
-                            "shape": "list<string>",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 77,
-                    "end": 85
-                },
-                {
-                    "routes": [],
-                    "name": "location",
-                    "static": true,
-                    "visibility": "private",
-                    "signature": "location(array $headers): ?string",
-                    "doc": "",
-                    "shapes": [
-                        "@param list<string> $headers"
-                    ],
-                    "params": [
-                        {
-                            "name": "headers",
-                            "type": "array",
-                            "shape": "list<string>",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 88,
-                    "end": 97
-                },
-                {
-                    "routes": [],
-                    "name": "resolve",
-                    "static": true,
-                    "visibility": "private",
-                    "signature": "resolve(string $base, string $location): string",
-                    "doc": "A Location header made absolute against the URL that sent it.",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "base",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "location",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 100,
-                    "end": 115
-                },
-                {
-                    "routes": [],
-                    "name": "host",
-                    "static": true,
-                    "visibility": "private",
-                    "signature": "host(string $url): string",
-                    "doc": "",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "url",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 117,
-                    "end": 120
+                    "line": 24,
+                    "end": 46
                 }
             ]
         },
@@ -51908,20 +52753,27 @@
             "namespace": "Minn\\Http",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Http/Exchange.php",
-            "lines": 30,
+            "lines": 75,
             "doc": "What came back: the final response's status, headers (repeats as lists), Set-Cookie values, and body, or the transport error.",
             "implements": [],
             "extends": null,
-            "uses": [],
+            "uses": [
+                "Minn\\Http",
+                "Minn\\Http\\RequestFailed"
+            ],
             "usedBy": [
-                "Minn\\Http\\Client",
-                "Minn\\Http\\RawResponse"
+                "Minn\\Http",
+                "Minn\\Http\\Destination",
+                "Minn\\Http\\Fake",
+                "Minn\\Http\\RawResponse",
+                "Minn\\Http\\RequestFailed",
+                "Minn\\Http\\Transport"
             ],
             "constructor": {
-                "signature": "__construct(int $code, array $headers, array $cookies, string $body, ?string $error = NULL, array $head = array ( ), int $errno = 0)",
+                "signature": "__construct(int $code, array $headers, array $cookies, string $body, ?string $error = NULL, array $head = array ( ), int $errno = 0, string $url = '')",
                 "doc": "",
                 "shapes": [
-                    "@param array<string, string|list<string>> $headers",
+                    "@param array<string, string|list<string>> $headers names lower-cased",
                     "@param list<string> $cookies raw Set-Cookie header values",
                     "@param list<string> $head the final response's status line and header lines as they came"
                 ],
@@ -51938,7 +52790,7 @@
                         "type": "array",
                         "shape": "array<string, string|list<string>>",
                         "default": null,
-                        "doc": ""
+                        "doc": "names lower-cased"
                     },
                     {
                         "name": "cookies",
@@ -51973,12 +52825,19 @@
                         "type": "int",
                         "shape": "",
                         "default": "0",
-                        "doc": ""
+                        "doc": "curl's error number when the transport failed; 0 when the request was refused before it was sent"
+                    },
+                    {
+                        "name": "url",
+                        "type": "string",
+                        "shape": "",
+                        "default": "''",
+                        "doc": "where the final response came from"
                     }
                 ],
                 "visibility": "public",
-                "line": 15,
-                "end": 17
+                "line": 17,
+                "end": 19
             },
             "cases": [],
             "constants": [],
@@ -52045,9 +52904,52 @@
                     "doc": "",
                     "visibility": "public",
                     "promoted": true
+                },
+                {
+                    "name": "url",
+                    "type": "string",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "public",
+                    "promoted": true
                 }
             ],
             "methods": [
+                {
+                    "routes": [],
+                    "name": "failure",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "failure(string $error, int $errno, string $url): self",
+                    "doc": "An exchange in which no response arrived.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "error",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "errno",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "url",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 22,
+                    "end": 25
+                },
                 {
                     "routes": [],
                     "name": "failed",
@@ -52057,8 +52959,8 @@
                     "doc": "Whether the transport failed before any status came back.",
                     "shapes": [],
                     "params": [],
-                    "line": 20,
-                    "end": 23
+                    "line": 28,
+                    "end": 31
                 },
                 {
                     "routes": [],
@@ -52069,8 +52971,8 @@
                     "doc": "A response arrived and it was a 2xx.",
                     "shapes": [],
                     "params": [],
-                    "line": 26,
-                    "end": 29
+                    "line": 34,
+                    "end": 37
                 },
                 {
                     "routes": [],
@@ -52081,8 +52983,60 @@
                     "doc": "The body decoded as JSON, or null when it is not JSON.",
                     "shapes": [],
                     "params": [],
-                    "line": 32,
-                    "end": 36
+                    "line": 40,
+                    "end": 44
+                },
+                {
+                    "routes": [],
+                    "name": "header",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "header(string $name): ?string",
+                    "doc": "One header by any spelling of its name; a repeated header's values joined with \", \".",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "name",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 47,
+                    "end": 51
+                },
+                {
+                    "routes": [],
+                    "name": "cookie",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "cookie(string $name): ?string",
+                    "doc": "One cookie's value from the Set-Cookie headers, percent-decoded; the last one set wins.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "name",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 54,
+                    "end": 65
+                },
+                {
+                    "routes": [],
+                    "name": "throw",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "throw(): self",
+                    "doc": "This exchange when it is ok(), otherwise a RequestFailed exception\n(a RuntimeException) carrying it, for callers who would rather catch\nthan check.",
+                    "shapes": [],
+                    "params": [],
+                    "line": 74,
+                    "end": 81
                 }
             ]
         },
@@ -52097,6 +53051,7 @@
             "implements": [],
             "extends": null,
             "uses": [
+                "Minn\\Http",
                 "Minn\\Http\\Response",
                 "Minn\\Support\\Html"
             ],
@@ -52418,6 +53373,176 @@
             ]
         },
         {
+            "name": "Minn\\Http\\Fake",
+            "short": "Fake",
+            "namespace": "Minn\\Http",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Http/Fake.php",
+            "lines": 57,
+            "doc": "Answers requests in place of the network while a test runs, and keeps\nwhat was sent. Made by Minn\\Http::fake(); every request through\nMinn\\Http, wp_remote_*() and the Requests library reaches it.",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\Http",
+                "Minn\\Http\\Exchange",
+                "Minn\\Http\\Outbound"
+            ],
+            "usedBy": [
+                "Minn\\Http"
+            ],
+            "constructor": {
+                "signature": "__construct(array $answers)",
+                "doc": "",
+                "shapes": [
+                    "@param array<string, mixed> $answers URL pattern => answer, see Minn\\Http::fake()"
+                ],
+                "params": [
+                    {
+                        "name": "answers",
+                        "type": "array",
+                        "shape": "array<string, mixed>",
+                        "default": null,
+                        "doc": "URL pattern => answer, see Minn\\Http::fake()"
+                    }
+                ],
+                "visibility": "public",
+                "line": 21,
+                "end": 23
+            },
+            "cases": [],
+            "constants": [],
+            "properties": [
+                {
+                    "name": "sent",
+                    "type": "array",
+                    "readonly": false,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": false
+                },
+                {
+                    "name": "answers",
+                    "type": "array",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
+                }
+            ],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "answer",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "answer(Minn\\Http\\Outbound $request): Minn\\Http\\Exchange",
+                    "doc": "The answer for one request, which is recorded as sent.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "request",
+                            "type": "Minn\\Http\\Outbound",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 26,
+                    "end": 35
+                },
+                {
+                    "routes": [],
+                    "name": "sent",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "sent(string $pattern = '*'): array",
+                    "doc": "The requests sent so far, oldest first; with a pattern, only those whose URL matches it.",
+                    "shapes": [
+                        "@return list<Outbound>"
+                    ],
+                    "params": [
+                        {
+                            "name": "pattern",
+                            "type": "string",
+                            "shape": "",
+                            "default": "'*'",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 42,
+                    "end": 45
+                },
+                {
+                    "routes": [],
+                    "name": "restore",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "restore(): void",
+                    "doc": "Puts the network back.",
+                    "shapes": [],
+                    "params": [],
+                    "line": 48,
+                    "end": 51
+                },
+                {
+                    "routes": [],
+                    "name": "matches",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "matches(string $pattern, string $url): bool",
+                    "doc": "Whether a URL matches a pattern in which * stands for anything; the scheme and the query string may be left off.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "pattern",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "url",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 54,
+                    "end": 59
+                },
+                {
+                    "routes": [],
+                    "name": "exchange",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "exchange(mixed $answer, string $url): Minn\\Http\\Exchange",
+                    "doc": "",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "answer",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "url",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 61,
+                    "end": 70
+                }
+            ]
+        },
+        {
             "name": "Minn\\Http\\Ipv6",
             "short": "Ipv6",
             "namespace": "Minn\\Http",
@@ -52427,7 +53552,9 @@
             "doc": "IPv6 addresses as text: written out in full (eight groups, or six and an\nIPv4 tail), compressed (\"::\" for the longest run of zero groups, the\nfirst when two tie), and checked. Zone suffixes (\"%eth0\") do not pass.",
             "implements": [],
             "extends": null,
-            "uses": [],
+            "uses": [
+                "Minn\\Http"
+            ],
             "usedBy": [],
             "constructor": null,
             "cases": [],
@@ -52506,7 +53633,9 @@
             "doc": "An IRI (a URL that may carry non-ASCII text) split into its parts and\nwritten back normalized: scheme and host in lower case, a scheme's\ndefault port dropped, dot segments removed, and every character a URL\nmay not hold percent-encoded. The IRI form keeps non-ASCII characters;\nthe URI form encodes them too.",
             "implements": [],
             "extends": null,
-            "uses": [],
+            "uses": [
+                "Minn\\Http"
+            ],
             "usedBy": [],
             "constructor": {
                 "signature": "__construct(?string $scheme, ?string $userinfo, ?string $host, ?int $port, string $path, ?string $query, ?string $fragment)",
@@ -52865,6 +53994,7 @@
             "implements": [],
             "extends": null,
             "uses": [
+                "Minn\\Http",
                 "Minn\\Http\\Request",
                 "Minn\\Http\\Response",
                 "Minn\\Http\\Router",
@@ -52954,6 +54084,84 @@
             ]
         },
         {
+            "name": "Minn\\Http\\Location",
+            "short": "Location",
+            "namespace": "Minn\\Http",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Http/Location.php",
+            "lines": 32,
+            "doc": "Where a redirect leads: a Location header made absolute against the URL that sent it.",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\Http",
+                "Minn\\Http\\Destination"
+            ],
+            "usedBy": [
+                "Minn\\Http"
+            ],
+            "constructor": null,
+            "cases": [],
+            "constants": [],
+            "properties": [],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "resolve",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "resolve(string $base, string $location): string",
+                    "doc": "The absolute URL $location names, read against $base.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "base",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "location",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 11,
+                    "end": 27
+                },
+                {
+                    "routes": [],
+                    "name": "sameOrigin",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "sameOrigin(string $one, string $two): bool",
+                    "doc": "Whether two URLs share scheme, host, and port, so credentials may follow from one to the other.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "one",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "two",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 30,
+                    "end": 38
+                }
+            ]
+        },
+        {
             "name": "Minn\\Http\\Method",
             "short": "Method",
             "namespace": "Minn\\Http",
@@ -52963,7 +54171,9 @@
             "doc": "",
             "implements": [],
             "extends": null,
-            "uses": [],
+            "uses": [
+                "Minn\\Http"
+            ],
             "usedBy": [
                 "Minn\\Admin\\AppController",
                 "Minn\\Admin\\BundleController",
@@ -53122,16 +54332,21 @@
             "namespace": "Minn\\Http",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Http/Outbound.php",
-            "lines": 53,
-            "doc": "One outgoing HTTP request, normalised: the client below needs nothing else.",
+            "lines": 46,
+            "doc": "One outgoing HTTP request, normalised: the transport needs nothing else.",
             "implements": [],
             "extends": null,
-            "uses": [],
+            "uses": [
+                "Minn\\Http"
+            ],
             "usedBy": [
-                "Minn\\Http\\Client"
+                "Minn\\Http",
+                "Minn\\Http\\Destination",
+                "Minn\\Http\\Fake",
+                "Minn\\Http\\Transport"
             ],
             "constructor": {
-                "signature": "__construct(string $method, string $url, array $headers = array ( ), ?string $body = NULL, float $timeout = 5.0, int $redirects = 5, bool $verifySsl = true, string $userAgent = '', ?string $caInfo = NULL, bool $blocking = true, ?Closure $prepare = NULL, ?float $connectTimeout = NULL)",
+                "signature": "__construct(string $method, string $url, array $headers = array ( ), ?string $body = NULL, float $timeout = 5.0, int $redirects = 5, bool $verifySsl = true, string $userAgent = '', ?string $caInfo = NULL, bool $blocking = true, ?Closure $prepare = NULL, ?float $connectTimeout = NULL, ?int $maxBytes = NULL)",
                 "doc": "",
                 "shapes": [
                     "@param list<string> $headers \"Name: value\" lines",
@@ -53221,11 +54436,18 @@
                         "shape": "float|null",
                         "default": "NULL",
                         "doc": "seconds to connect, when not the whole timeout"
+                    },
+                    {
+                        "name": "maxBytes",
+                        "type": "?int",
+                        "shape": "int|null",
+                        "default": "NULL",
+                        "doc": "the largest body accepted; a longer one fails the exchange"
                     }
                 ],
                 "visibility": "public",
-                "line": 17,
-                "end": 31
+                "line": 18,
+                "end": 33
             },
             "cases": [],
             "constants": [],
@@ -53337,16 +54559,25 @@
                     "doc": "",
                     "visibility": "public",
                     "promoted": true
+                },
+                {
+                    "name": "maxBytes",
+                    "type": "?int",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "public",
+                    "promoted": true
                 }
             ],
             "methods": [
                 {
                     "routes": [],
-                    "name": "get",
-                    "static": true,
+                    "name": "to",
+                    "static": false,
                     "visibility": "public",
-                    "signature": "get(string $url, array $headers = array ( ), float $timeout = 5.0): self",
-                    "doc": "A GET.",
+                    "signature": "to(string $url, string $method, ?string $body, array $headers): self",
+                    "doc": "The same request sent somewhere else, as the next hop of a redirect.",
                     "shapes": [
                         "@param list<string> $headers \"Name: value\" lines"
                     ],
@@ -53359,36 +54590,7 @@
                             "doc": ""
                         },
                         {
-                            "name": "headers",
-                            "type": "array",
-                            "shape": "list<string>",
-                            "default": "array ( )",
-                            "doc": "\"Name: value\" lines"
-                        },
-                        {
-                            "name": "timeout",
-                            "type": "float",
-                            "shape": "",
-                            "default": "5.0",
-                            "doc": ""
-                        }
-                    ],
-                    "line": 38,
-                    "end": 41
-                },
-                {
-                    "routes": [],
-                    "name": "post",
-                    "static": true,
-                    "visibility": "public",
-                    "signature": "post(string $url, ?string $body = NULL, array $headers = array ( ), float $timeout = 5.0): self",
-                    "doc": "A POST with an optional body.",
-                    "shapes": [
-                        "@param list<string> $headers \"Name: value\" lines"
-                    ],
-                    "params": [
-                        {
-                            "name": "url",
+                            "name": "method",
                             "type": "string",
                             "shape": "",
                             "default": null,
@@ -53398,42 +54600,6 @@
                             "name": "body",
                             "type": "?string",
                             "shape": "",
-                            "default": "NULL",
-                            "doc": ""
-                        },
-                        {
-                            "name": "headers",
-                            "type": "array",
-                            "shape": "list<string>",
-                            "default": "array ( )",
-                            "doc": "\"Name: value\" lines"
-                        },
-                        {
-                            "name": "timeout",
-                            "type": "float",
-                            "shape": "",
-                            "default": "5.0",
-                            "doc": ""
-                        }
-                    ],
-                    "line": 48,
-                    "end": 51
-                },
-                {
-                    "routes": [],
-                    "name": "head",
-                    "static": true,
-                    "visibility": "public",
-                    "signature": "head(string $url, array $headers = array ( ), float $timeout = 5.0): self",
-                    "doc": "A HEAD.",
-                    "shapes": [
-                        "@param list<string> $headers \"Name: value\" lines"
-                    ],
-                    "params": [
-                        {
-                            "name": "url",
-                            "type": "string",
-                            "shape": "",
                             "default": null,
                             "doc": ""
                         },
@@ -53441,19 +54607,32 @@
                             "name": "headers",
                             "type": "array",
                             "shape": "list<string>",
-                            "default": "array ( )",
+                            "default": null,
                             "doc": "\"Name: value\" lines"
-                        },
+                        }
+                    ],
+                    "line": 40,
+                    "end": 43
+                },
+                {
+                    "routes": [],
+                    "name": "preparing",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "preparing(Closure $prepare): self",
+                    "doc": "The same request with a last word on the curl handle, run after any it already has.",
+                    "shapes": [],
+                    "params": [
                         {
-                            "name": "timeout",
-                            "type": "float",
+                            "name": "prepare",
+                            "type": "Closure",
                             "shape": "",
-                            "default": "5.0",
+                            "default": null,
                             "doc": ""
                         }
                     ],
-                    "line": 58,
-                    "end": 61
+                    "line": 46,
+                    "end": 54
                 }
             ]
         },
@@ -53468,6 +54647,7 @@
             "implements": [],
             "extends": null,
             "uses": [
+                "Minn\\Http",
                 "Minn\\Http\\Access",
                 "Minn\\Http\\Subject"
             ],
@@ -53818,7 +54998,9 @@
             "doc": "Internationalized host names in ASCII: each label that is not ASCII is\nwritten as \"xn--\" plus its Punycode (RFC 3492) and must stay under 64\nbytes. Labels keep their case: there is no Nameprep step, as on the\nreference (\"Bücher\" becomes \"xn--Bcher-kva\").",
             "implements": [],
             "extends": null,
-            "uses": [],
+            "uses": [
+                "Minn\\Http"
+            ],
             "usedBy": [],
             "constructor": null,
             "cases": [],
@@ -54034,6 +55216,7 @@
             "implements": [],
             "extends": null,
             "uses": [
+                "Minn\\Http",
                 "Minn\\Http\\Exchange"
             ],
             "usedBy": [],
@@ -54159,6 +55342,7 @@
             "implements": [],
             "extends": null,
             "uses": [
+                "Minn\\Http",
                 "Minn\\Http\\Method",
                 "Minn\\Http\\TrustedProxies"
             ],
@@ -54629,6 +55813,65 @@
             ]
         },
         {
+            "name": "Minn\\Http\\RequestFailed",
+            "short": "RequestFailed",
+            "namespace": "Minn\\Http",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Http/RequestFailed.php",
+            "lines": 7,
+            "doc": "Thrown by Exchange::throw() when no response arrived or it was not a 2xx; the exchange rides along.",
+            "implements": [
+                "Stringable",
+                "Throwable"
+            ],
+            "extends": "RuntimeException",
+            "uses": [
+                "Minn\\Http",
+                "Minn\\Http\\Exchange"
+            ],
+            "usedBy": [
+                "Minn\\Http\\Exchange"
+            ],
+            "constructor": {
+                "signature": "__construct(Minn\\Http\\Exchange $reply, string $message)",
+                "doc": "",
+                "shapes": [],
+                "params": [
+                    {
+                        "name": "reply",
+                        "type": "Minn\\Http\\Exchange",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    },
+                    {
+                        "name": "message",
+                        "type": "string",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    }
+                ],
+                "visibility": "public",
+                "line": 12,
+                "end": 15
+            },
+            "cases": [],
+            "constants": [],
+            "properties": [
+                {
+                    "name": "reply",
+                    "type": "Minn\\Http\\Exchange",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "public",
+                    "promoted": true
+                }
+            ],
+            "methods": []
+        },
+        {
             "name": "Minn\\Http\\RequestsNames",
             "short": "RequestsNames",
             "namespace": "Minn\\Http",
@@ -54638,7 +55881,9 @@
             "doc": "The Requests library's PSR-0 class names (Requests_Exception_HTTP_404,\nRequests_IDNAEncoder, ...) mapped to the PSR-4 names they stand for.",
             "implements": [],
             "extends": null,
-            "uses": [],
+            "uses": [
+                "Minn\\Http"
+            ],
             "usedBy": [],
             "constructor": null,
             "cases": [],
@@ -54684,7 +55929,9 @@
             "doc": "What a handler returns. Nothing is written to the client until the\nkernel calls send(), so a response can be inspected, wrapped, or\nreplaced on the way out. Work that belongs after the client has its\nanswer (a cron run a page found due) rides along as afterSend closures.",
             "implements": [],
             "extends": null,
-            "uses": [],
+            "uses": [
+                "Minn\\Http"
+            ],
             "usedBy": [
                 "Minn\\Admin\\AppController",
                 "Minn\\Admin\\BundleController",
@@ -55063,6 +56310,7 @@
             "implements": [],
             "extends": null,
             "uses": [
+                "Minn\\Http",
                 "Minn\\Http\\Args",
                 "Minn\\Http\\Method",
                 "Minn\\Http\\Policy"
@@ -55301,7 +56549,9 @@
                 "Throwable"
             ],
             "extends": "RuntimeException",
-            "uses": [],
+            "uses": [
+                "Minn\\Http"
+            ],
             "usedBy": [
                 "Minn\\Http\\Router",
                 "Minn\\Rest\\DeclaredPostsController",
@@ -55325,6 +56575,7 @@
             "implements": [],
             "extends": null,
             "uses": [
+                "Minn\\Http",
                 "Minn\\Http\\Args",
                 "Minn\\Http\\Policy",
                 "Minn\\Http\\Route"
@@ -55569,6 +56820,7 @@
             "implements": [],
             "extends": null,
             "uses": [
+                "Minn\\Http",
                 "Minn\\Http\\Method",
                 "Minn\\Http\\Policy",
                 "Minn\\Http\\Request",
@@ -55783,7 +57035,9 @@
             "doc": "The record a route capture names, so a policy can have it looked up\nbefore the caller is judged: the reference answers \"no such post\" ahead\nof \"you may not\", and the 404 it sends is the record's own. A kind that\nreads its post type or taxonomy from the {base} capture says so.",
             "implements": [],
             "extends": null,
-            "uses": [],
+            "uses": [
+                "Minn\\Http"
+            ],
             "usedBy": [
                 "Minn\\Http\\Policy",
                 "Minn\\Rest\\ApplicationPasswordsController",
@@ -55893,6 +57147,149 @@
             ]
         },
         {
+            "name": "Minn\\Http\\Transport",
+            "short": "Transport",
+            "namespace": "Minn\\Http",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Http/Transport.php",
+            "lines": 138,
+            "doc": "The engine's outgoing HTTP transport over curl: it sends exactly what an\nOutbound says and nothing else decides. Redirects are followed by curl, so\nthe header lines of every hop arrive in order; only the last response's\nblock is kept, the way plugin code expects to read it. Code calling out\ngoes through Minn\\Http, which owns the rules about where a request may go.",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\Http",
+                "Minn\\Http\\Exchange",
+                "Minn\\Http\\Outbound"
+            ],
+            "usedBy": [
+                "Minn\\Http"
+            ],
+            "constructor": null,
+            "cases": [],
+            "constants": [],
+            "properties": [],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "send",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "send(Minn\\Http\\Outbound $request): Minn\\Http\\Exchange",
+                    "doc": "Performs one outgoing request over curl and returns the exchange, a transport error included.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "request",
+                            "type": "Minn\\Http\\Outbound",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 17,
+                    "end": 47
+                },
+                {
+                    "routes": [],
+                    "name": "options",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "options(Minn\\Http\\Outbound $request, array $lines): array",
+                    "doc": "The curl options every request carries, the header lines collected into $lines as they arrive.",
+                    "shapes": [
+                        "@param list<string> $lines",
+                        "@return array<int, mixed>"
+                    ],
+                    "params": [
+                        {
+                            "name": "request",
+                            "type": "Minn\\Http\\Outbound",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "lines",
+                            "type": "array",
+                            "shape": "list<string>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 55,
+                    "end": 77
+                },
+                {
+                    "routes": [],
+                    "name": "limit",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "limit(int $maxBytes): array",
+                    "doc": "Stops a body that grows past $maxBytes: curl refuses up front when the\nlength is announced, and the progress callback aborts when it is not.",
+                    "shapes": [
+                        "@return array<int, mixed>"
+                    ],
+                    "params": [
+                        {
+                            "name": "maxBytes",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 85,
+                    "end": 92
+                },
+                {
+                    "routes": [],
+                    "name": "lastHead",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "lastHead(array $lines): array",
+                    "doc": "The last response's status line and header lines, line endings removed.",
+                    "shapes": [
+                        "@param list<string> $lines",
+                        "@return list<string>"
+                    ],
+                    "params": [
+                        {
+                            "name": "lines",
+                            "type": "array",
+                            "shape": "list<string>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 100,
+                    "end": 112
+                },
+                {
+                    "routes": [],
+                    "name": "lastBlock",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "lastBlock(array $lines): array",
+                    "doc": "",
+                    "shapes": [
+                        "@param list<string> $lines",
+                        "@return array{0: array<string, string|list<string>>, 1: list<string>}"
+                    ],
+                    "params": [
+                        {
+                            "name": "lines",
+                            "type": "array",
+                            "shape": "list<string>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 118,
+                    "end": 150
+                }
+            ]
+        },
+        {
             "name": "Minn\\Http\\TrustedProxies",
             "short": "TrustedProxies",
             "namespace": "Minn\\Http",
@@ -55902,7 +57299,9 @@
             "doc": "Which addresses in front of the engine may speak for the client.\n\nBy default none do: a forwarded header is a request header, and a request\nheader is the client's word. Behind a proxy or CDN that terminates TLS,\n`REMOTE_ADDR` is then the proxy's, which makes every visitor look like one\naddress (the sign-in throttle would lock them all out together) and every\nrequest look insecure (the auth cookie would lose its Secure flag).\n\nA site says who to believe in `wp-config.php`:\n\ndefine('MINN_TRUSTED_PROXIES', '10.0.0.0/8, 2400:cb00::/32');\ndefine('MINN_TRUSTED_PROXIES', '*');   // any: only when nothing but the proxy can reach PHP\n\nThe client is then the right-most address in `X-Forwarded-For` that is not\nitself trusted, which is what a proxy chain appends, so a client that sends\nits own `X-Forwarded-For` cannot put an address the engine believes to the\nright of the proxy's.",
             "implements": [],
             "extends": null,
-            "uses": [],
+            "uses": [
+                "Minn\\Http"
+            ],
             "usedBy": [
                 "Minn\\Http\\Request"
             ],
@@ -67759,13 +69158,14 @@
             "namespace": "Minn\\Ops",
             "kind": "final class",
             "file": "public/minn/src/Minn/Ops/Updates.php",
-            "lines": 408,
+            "lines": 394,
             "doc": "Update offers from wordpress.org for the site's plugins and themes: the\ndirectory's update-check endpoints asked with the installed headers, the\nanswer kept in the minn_updates option (JSON) for twelve hours, and the\noffers applied by downloading the release archive through the one\npackage unpacker. A plugin or theme the directory does not know keeps\nits folder untouched and is never offered anything. The per-item\nauto-update lists are the site's own auto_update_plugins and\nauto_update_themes options, in the shape the app already reads.\n\nThe directory is not the only source. A plugin that hosts itself answers\nfor its own version through the update transient's filter, which is where\nWordPress reads it too, so Runtime\\PluginUpdates asks the runtime the same\nquestion and its answer is merged in. Applying such an offer goes through\nthe publisher: a package outside the directory is unpacked only when\n`upgrader_pre_download` hands back a copy it verified.",
             "implements": [],
             "extends": null,
             "uses": [
                 "Minn\\Content\\Inventory",
                 "Minn\\Content\\Site",
+                "Minn\\Http",
                 "Minn\\Ops\\Packages",
                 "Minn\\RestError",
                 "Minn\\Runtime\\PackageDownload",
@@ -68401,7 +69801,7 @@
                         }
                     ],
                     "line": 404,
-                    "end": 425
+                    "end": 411
                 },
                 {
                     "routes": [],
@@ -68420,8 +69820,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 428,
-                    "end": 434
+                    "line": 414,
+                    "end": 420
                 },
                 {
                     "routes": [],
@@ -68440,8 +69840,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 436,
-                    "end": 439
+                    "line": 422,
+                    "end": 425
                 }
             ]
         },

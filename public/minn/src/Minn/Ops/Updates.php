@@ -403,21 +403,7 @@ final class Updates
     /** @param array<string, string> $fields */
     private function post(string $url, array $fields): array
     {
-        $context = stream_context_create([
-            'http' => [
-                'method' => 'POST',
-                'header' => "Content-Type: application/x-www-form-urlencoded\r\nUser-Agent: WordPress/{$this->wpVersion}; {$this->home}",
-                'content' => http_build_query($fields),
-                'timeout' => 20,
-                'ignore_errors' => true,
-            ],
-            'ssl' => ['verify_peer' => true],
-        ]);
-        $body = @file_get_contents($url, false, $context);
-        if ($body === false) {
-            throw new RestError('check_failed', 'Could not check for updates.', 500);
-        }
-        $decoded = json_decode($body, true);
+        $decoded = \Minn\Http::post($url, form: $fields, timeout: 20, hosts: ['https://api.wordpress.org/'], userAgent: "WordPress/{$this->wpVersion}; {$this->home}")->json();
         if (!is_array($decoded)) {
             throw new RestError('check_failed', 'Could not check for updates.', 500);
         }

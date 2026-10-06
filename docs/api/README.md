@@ -4,7 +4,7 @@ The engine's own classes under `public/minn/src/Minn/`, one page per namespace, 
 
 | Namespace | Classes | What lives there |
 |---|---|---|
-| [`Minn`](minn.md) | 5 | the front door, the autoloader, the one database door, the REST error |
+| [`Minn`](minn.md) | 6 | the front door, the autoloader, the one database door, the REST error |
 | [`Minn\Admin`](admin.md) | 27 | the minn-admin/v1 namespace and serving the Minn Admin app |
 | [`Minn\Auth`](auth.md) | 19 | passwords, sessions, cookies, nonces, roles and capabilities |
 | [`Minn\Blocks`](blocks.md) | 16 | the block parser and renderer |
@@ -18,7 +18,7 @@ The engine's own classes under `public/minn/src/Minn/`, one page per namespace, 
 | [`Minn\Front`](front.md) | 31 | URL resolution, permalinks, feeds, sitemaps and the public page |
 | [`Minn\Html`](html.md) | 6 | the HTML tag processor |
 | [`Minn\Html\Tree`](html-tree.md) | 13 |  |
-| [`Minn\Http`](http.md) | 25 | request, response, routing, and the outgoing client |
+| [`Minn\Http`](http.md) | 29 | request, response, routing, and the outgoing client |
 | [`Minn\I18n`](i18n.md) | 9 |  |
 | [`Minn\Login`](login.md) | 4 | /wp-login.php and the sign-in surface |
 | [`Minn\Mail`](mail.md) | 23 | sending mail and the notices the engine sends |

@@ -9,7 +9,7 @@
 | [`InstalledSoftware`](#installedsoftware) | final readonly class | 59 | What is installed, as the System view lists it: every extension and |
 | [`Logs`](#logs) | final readonly class | 150 | The log files the System view can read and clear: the debug log the |
 | [`Packages`](#packages) | final readonly class | 489 | Putting themes and extensions on disk. Themes come from wordpress.org |
-| [`Updates`](#updates) | final class | 408 | Update offers from wordpress.org for the site's plugins and themes: the |
+| [`Updates`](#updates) | final class | 394 | Update offers from wordpress.org for the site's plugins and themes: the |
 
 ## CoreStatus
 
@@ -378,5 +378,5 @@ Stylesheet => style.css headers. @return array<string, array<string, string>>
 
 - `@return array<string, array<string, string>>`
 
-Internals: `supplied()` (private, line 132), `saveAuto()` (private, line 267), `install()` (private, line 351), `vouched()` (private, line 374), `consume()` (private, line 392), `post()` (private, line 404), `map()` (private, line 428), `safeUrl()` (private, line 436)
+Internals: `supplied()` (private, line 132), `saveAuto()` (private, line 267), `install()` (private, line 351), `vouched()` (private, line 374), `consume()` (private, line 392), `post()` (private, line 404), `map()` (private, line 414), `safeUrl()` (private, line 422)
 

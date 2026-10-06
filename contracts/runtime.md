@@ -1139,7 +1139,7 @@ moved this time:
 | Facade | Minn class | What it holds |
 |---|---|---|
 | `WP_Query` | `Runtime\QueryFlags`, `Runtime\QueriedObject` | the is_* flags a set of query variables implies; which object a query is about (term by id or slug, post type, posts page, post, author) |
-| `WP_Http` | `Http\Client`, `Http\Outbound`, `Http\Exchange` | the curl transport: request value in, status + last-hop headers + Set-Cookie values + body out |
+| `WP_Http` | `Minn\Http::send`, `Http\Transport`, `Http\Outbound`, `Http\Exchange` | the curl transport: request value in, status + last-hop headers + Set-Cookie values + body out; `Minn\Http::send` is the door, so a test's `Minn\Http::fake()` answers `wp_remote_*()` too |
 | `WP_REST_Server` | `Rest\RouteMatch`, `Rest\RouteIndex`, `Rest\AdditionalFields` | handler lookup by method and path with captured params and defaults; the index description of one route; which object type a wp/v2 route serves |
 | `WP_REST_Request` | `Rest\ParamCheck` | the required / validate / sanitize pass over declared arguments |
 | `WP_Block_Supports` | `Blocks\Supports` | wrapper class, style, and id from a block's supports and attributes |
@@ -1974,7 +1974,7 @@ Polylang at once. Probe-runtime note: `init` never fires under
 `run-api-probe.php`, so a row that needs the widget factory calls
 `wp_widgets_init()` itself when `widgets_init` has not run.
 
-**Small:** `curl_close()` is gone from `Http\Client` (deprecated in PHP 8.5,
+**Small:** `curl_close()` is gone from `Http\Transport` (deprecated in PHP 8.5,
 a no-op since 8.0).
 
 ## The default widgets (2026-09-07)

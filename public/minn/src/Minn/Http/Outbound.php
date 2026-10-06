@@ -6,13 +6,14 @@ namespace Minn\Http;
 
 use Closure;
 
-/** One outgoing HTTP request, normalised: the client below needs nothing else. */
+/** One outgoing HTTP request, normalised: the transport needs nothing else. */
 final readonly class Outbound
 {
     /**
      * @param list<string> $headers "Name: value" lines
      * @param (Closure(\CurlHandle): void)|null $prepare a last word on the curl handle before it is sent
      * @param float|null $connectTimeout seconds to connect, when not the whole timeout
+     * @param int|null $maxBytes the largest body accepted; a longer one fails the exchange
      */
     public function __construct(
         public string $method,
@@ -27,36 +28,28 @@ final readonly class Outbound
         public bool $blocking = true,
         public ?Closure $prepare = null,
         public ?float $connectTimeout = null,
+        public ?int $maxBytes = null,
     ) {
     }
 
     /**
-     * A GET.
+     * The same request sent somewhere else, as the next hop of a redirect.
      *
      * @param list<string> $headers "Name: value" lines
      */
-    public static function get(string $url, array $headers = [], float $timeout = 5.0): self
+    public function to(string $url, string $method, ?string $body, array $headers): self
     {
-        return new self('GET', $url, $headers, timeout: $timeout);
+        return new self($method, $url, $headers, $body,$this->timeout, $this->redirects, $this->verifySsl, $this->userAgent, $this->caInfo, $this->blocking, $this->prepare, $this->connectTimeout, $this->maxBytes);
     }
 
-    /**
-     * A POST with an optional body.
-     *
-     * @param list<string> $headers "Name: value" lines
-     */
-    public static function post(string $url, ?string $body = null, array $headers = [], float $timeout = 5.0): self
+    /** The same request with a last word on the curl handle, run after any it already has. */
+    public function preparing(Closure $prepare): self
     {
-        return new self('POST', $url, $headers, $body, $timeout);
-    }
-
-    /**
-     * A HEAD.
-     *
-     * @param list<string> $headers "Name: value" lines
-     */
-    public static function head(string $url, array $headers = [], float $timeout = 5.0): self
-    {
-        return new self('HEAD', $url, $headers, timeout: $timeout);
+        $first = $this->prepare;
+        $both = $first === null ? $prepare : static function (\CurlHandle $handle) use ($first, $prepare): void {
+            $first($handle);
+            $prepare($handle);
+        };
+        return new self($this->method, $this->url, $this->headers, $this->body, $this->timeout, $this->redirects, $this->verifySsl, $this->userAgent, $this->caInfo, $this->blocking, $both, $this->connectTimeout, $this->maxBytes);
     }
 }
