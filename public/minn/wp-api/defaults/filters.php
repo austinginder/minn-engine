@@ -113,11 +113,12 @@ add_filter('wp_robots', 'wp_robots_max_image_preview_large');
 // The term description and link description are always filtered (a comment author's name below, in its chain).
 add_filter('pre_term_description', 'wp_filter_kses');
 add_filter('pre_link_description', 'wp_filter_kses');
-// The footnotes meta the editor writes: for the built-in types now, and on
-// init for the types plugins register by then (probe meta-registry).
-if (Minn\Runtime\Runtime::booted()) {
-    register_block_core_footnotes_post_meta();
-}
+// The meta core registers on init (probe meta-registry): a pattern's sync
+// status, a note's status, the editor's preferences, and at 20 the
+// footnotes of every type that supports them by then.
+add_action('init', 'wp_create_initial_post_meta');
+add_action('init', 'wp_create_initial_comment_meta');
+add_action('init', 'wp_register_persisted_preferences_meta');
 add_action('init', 'register_block_core_footnotes_post_meta', 20);
 
 // The kses tables as the globals plugin code reads directly.

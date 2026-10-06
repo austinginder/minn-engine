@@ -15,7 +15,7 @@ the WordPress runtime plugins load against
 | [`BlockTemplates`](#blocktemplates) | final class | 66 | Block templates plugins register at runtime, by their namespaced name |
 | [`BlockWidget`](#blockwidget) | final class | 30 | A block widget's legacy class name. Every widget the block editor saves |
 | [`CommentCloser`](#commentcloser) | final readonly class | 22 | The Discussion setting that closes comments on old posts. Observed on the |
-| [`CommentEvents`](#commentevents) | final readonly class | 252 | What the reference's REST comments controller tells plugins, for the |
+| [`CommentEvents`](#commentevents) | final readonly class | 253 | What the reference's REST comments controller tells plugins, for the |
 | [`CommentForm`](#commentform) | final class | 107 | The comment form's submission with plugins loaded |
 | [`CommentQuery`](#commentquery) | final readonly class | 117 | Comment reads in the get_comments() shape: arguments to rows or a count, and the approval breakdown wp_count_comments reports. |
 | [`Connectors`](#connectors) | final class | 212 | The connectors registry: the external services a site talks to (AI |
@@ -31,6 +31,7 @@ the WordPress runtime plugins load against
 | [`MainQuery`](#mainquery) | final class | 34 | The query variables the reference's main query would carry for a URL the |
 | [`Meta`](#meta) | final readonly class | 209 | The four meta tables behind get_metadata and friends: reads by object, and the row-level writes the update and delete rules need. |
 | [`MetaClause`](#metaclause) | final class | 120 | The meta side of a post query: meta_key and its friends as one clause, |
+| [`MetaKeys`](#metakeys) | final class | 183 | The meta keys code registers, kept where the reference keeps them |
 | [`MetaTypes`](#metatypes) | final class | 21 | Meta types a plugin brought, by the table it named on $wpdb as |
 | [`NavMenu`](#navmenu) | final class | 303 | Nav-menu item decoration for wp_nav_menu(): the reference's class tokens |
 | [`OEmbed`](#oembed) | final class | 92 | oEmbed as data: provider matching against the wildcard table, response parsing, and the markup an oEmbed payload becomes. |
@@ -44,9 +45,9 @@ the WordPress runtime plugins load against
 | [`PlaceholderTrace`](#placeholdertrace) | final class | 27 | Records every call into a generated placeholder while a site opts in by |
 | [`Placeholders`](#placeholders) | final class | 49 | The printf placeholders plugin code hands wpdb::prepare, filled the way |
 | [`PluginUpdates`](#pluginupdates) | final class | 65 | The update offers the site's own plugins publish. A plugin that hosts |
-| [`Plugins`](#plugins) | final class | 229 | Loads the site's plugins into the runtime the way the reference does: |
+| [`Plugins`](#plugins) | final class | 236 | Loads the site's plugins into the runtime the way the reference does: |
 | [`PostData`](#postdata) | final class | 65 | The loop's view of a post, as the reference's generate_postdata and |
-| [`PostEvents`](#postevents) | final readonly class | 190 | What the reference's REST controllers tell plugins about a post they |
+| [`PostEvents`](#postevents) | final readonly class | 181 | What the reference's REST controllers tell plugins about a post they |
 | [`PostInsert`](#postinsert) | final readonly class | 170 | The decisions behind wp_insert_post: which columns a postarr fills, when |
 | [`PostLinks`](#postlinks) | final class | 151 | Post addresses as the reference's link functions build them (probe |
 | [`PostLookup`](#postlookup) | final readonly class | 85 | The post reads plugin code asks for by shape: a page by title, revisions, counts. |
@@ -59,7 +60,7 @@ the WordPress runtime plugins load against
 | [`Refusal`](#refusal) | final readonly class | 6 | A refused operation, the way plugin code expects to read it: a code, a message, optional data. The facade turns it into WP_Error. |
 | [`RegisteredSettings`](#registeredsettings) | final class | 104 | Settings as register_setting keeps them (probe rest-settings): the |
 | [`Registry`](#registry) | final class | 390 | Post types, taxonomies, and statuses as plugin code registers and reads |
-| [`Runtime`](#runtime) | final class | 360 | The WordPress runtime the engine offers plugin code: the procedural |
+| [`Runtime`](#runtime) | final class | 361 | The WordPress runtime the engine offers plugin code: the procedural |
 | [`ScriptModules`](#scriptmodules) | final class | 308 | The script modules registry: registrations with typed dependencies, the |
 | [`ScriptPack`](#scriptpack) | final class | 146 | The site-supplied script pack: the `wp-*` JavaScript packages the engine |
 | [`Shortcodes`](#shortcodes) | final class | 143 | The shortcode registry plugin code fills with add_shortcode, and the |
@@ -69,14 +70,14 @@ the WordPress runtime plugins load against
 | [`Symbols`](#symbols) | final class | 275 | A static read of what a plugin's PHP calls: global functions and classes |
 | [`TagEditor`](#tageditor) | final class | 149 | Edits one start tag's attributes in place the way the reference's tag |
 | [`TaxonomyClause`](#taxonomyclause) | final class | 178 | The taxonomy side of a post query: every query var the reference reads |
-| [`TermEvents`](#termevents) | final readonly class | 113 | What the reference's REST terms controller tells plugins, for the |
+| [`TermEvents`](#termevents) | final readonly class | 114 | What the reference's REST terms controller tells plugins, for the |
 | [`TermFields`](#termfields) | final class | 65 | A term's fields in a context, as the reference's sanitize_term_field |
 | [`TermQuery`](#termquery) | final readonly class | 440 | Term reads in the shapes plugin code asks for: get_terms() arguments to |
 | [`TermSave`](#termsave) | final class | 199 | wp_insert_term and wp_update_term in the reference's order (probe |
 | [`TermWriter`](#termwriter) | final readonly class | 119 | The decisions behind wp_delete_term and the object-term relationships: |
 | [`ThemeSupports`](#themesupports) | final class | 159 | What a theme supports, as add_theme_support keeps it (probe rest-themes): |
 | [`TreeWalk`](#treewalk) | final class | 74 | The Walker contract's traversal: elements keyed by the walker's |
-| [`UserEvents`](#userevents) | final readonly class | 100 | What the reference's REST users controller tells plugins, for the |
+| [`UserEvents`](#userevents) | final readonly class | 102 | What the reference's REST users controller tells plugins, for the |
 | [`UserInsert`](#userinsert) | final readonly class | 112 | The decisions behind wp_insert_user: what a new account needs, which email |
 | [`UserQuery`](#userquery) | final readonly class | 49 | The user listing behind WP_User_Query: role filtering through the |
 | [`UserSave`](#usersave) | final class | 70 | An account's fields through the filters the reference's wp_insert_user |
@@ -646,7 +647,7 @@ rest_delete_comment, after a trash or a delete, with the comment as it was and t
 
 - `@param array<string, mixed> $data`
 
-Internals: `preprocessed()` (private, line 137), `requireContent()` (private, line 152), `field()` (private, line 162), `requireLengths()` (private, line 168), `refusal()` (private, line 177)
+Internals: `preprocessed()` (private, line 138), `requireContent()` (private, line 153), `field()` (private, line 163), `requireLengths()` (private, line 169), `refusal()` (private, line 178)
 
 
 ## CommentForm
@@ -1360,6 +1361,70 @@ or null when the query has none.
 Internals: `metaClauses()` (private, line 45), `metaSql()` (private, line 79)
 
 
+## MetaKeys
+
+`final class Minn\Runtime\MetaKeys` · `public/minn/src/Minn/Runtime/MetaKeys.php`
+
+The meta keys code registers, kept where the reference keeps them
+($wp_meta_keys: object type => subtype => key => arguments), with what a
+registration wires up (probe meta-api). A key's sanitize and auth
+callbacks hang on their filters (with _for_{subtype} for a subtype's
+key); a key with no auth callback gets __return_true, or __return_false
+when protected. A default is served through filter_default_metadata. A
+registration is refused (with the reference's notice) for an array shown
+in REST without its items' schema, revisions where the type or subtype
+has none, and, once its callbacks are hooked, a default its schema does
+not accept. The old form (callbacks as plain arguments) hooks them and
+returns false.
+
+- const `DEFAULTS` = `array (   'object_subtype' => '',   'type' => 'string',   'label' => '',   'description' => '',   'default' => '',   'single' => false,   'sanitize_callback' => NULL,   'auth_callback' => NULL,   'show_in_rest' => false,   'revisions_enabled' => false, )`
+
+Used by: `Minn\Rest\RestMeta`
+
+### static `register(string $objectType, string $key, mixed $args, mixed $deprecated): bool`
+
+Registers a key; true when it joins the registry.
+
+### static `unregister(string $objectType, string $key, string $subtype): bool`
+
+Takes a key out of the registry, and its callbacks off their filters.
+
+### static `of(string $objectType, string $subtype = ''): array`
+
+The keys registered for an object type and subtype ('' for every subtype), in registration order. @return array<string, array<string, mixed>>
+
+- `@return array<string, array<string, mixed>>`
+
+### static `forObject(string $objectType, string $subtype): array`
+
+The keys that apply to one object: those for every subtype, then its subtype's. @return array<string, array<string, mixed>>
+
+- `@return array<string, array<string, mixed>>`
+
+### static `defaultValue(mixed $value, int $objectId, string $key, bool $single, string $objectType): mixed`
+
+The registered default for a key as filter_default_metadata answers:
+the one for every subtype, else the object's subtype's; the value
+handed in when neither registered one.
+
+### static `subtype(string $objectType, int $objectId): string`
+
+The object's subtype: a post's type, a term's taxonomy, comment or user while they exist; '' otherwise.
+
+### static `capabilities(string $capability, int $userId, array $args): ?array`
+
+A meta capability (edit, add or delete a post's, comment's, term's or
+user's meta) as the reference maps it: what editing the object needs,
+then the capability itself when the key is not allowed (protected, or
+refused by its auth filter); nothing for an object that does not
+exist. Null for any other capability.
+
+- `@param list<mixed> $args the object id, then the key`
+- `@return list<string>|null`
+
+Internals: `refusal()` (private, line 176), `defaultFits()` (private, line 194)
+
+
 ## MetaTypes
 
 `final class Minn\Runtime\MetaTypes` · `public/minn/src/Minn/Runtime/MetaTypes.php`
@@ -1903,7 +1968,7 @@ The plugins the symbol gate refused, with what they lacked.
 
 True when the named plugin file is running as code this request.
 
-Internals: `boot()` (private, line 67), `loadThemeFunctions()` (private, line 139), `rememberThemeDomain()` (private, line 162), `includeFile()` (private, line 196), `registerRealpath()` (private, line 227), `isolatedInclude()` (private, line 242)
+Internals: `boot()` (private, line 67), `loadThemeFunctions()` (private, line 146), `rememberThemeDomain()` (private, line 169), `includeFile()` (private, line 203), `registerRealpath()` (private, line 234), `isolatedInclude()` (private, line 249)
 
 
 ## PostData
@@ -1975,11 +2040,11 @@ taxonomies under their REST bases (probe rest-plugin-types).
 
 - `@param array<string, mixed> $body`
 
-### `applyRegisteredMeta(int $id, array $body, string $type): void`
+### `applyMeta(Minn\Content\PostWriter $writer, int $id, array $body, string $type): void`
 
-The meta a REST body names for a plugin's type, through update_post_meta
-(a list replaced value by value, null deleting): only the keys
-registered to show in REST for the type.
+The meta a REST body names: through the registered keys with plugins
+loaded (probe rest-meta; a plugin's type only when it supports custom
+fields), core's own written directly without.
 
 - `@param array<string, mixed> $body`
 
@@ -2026,7 +2091,7 @@ rest_delete_{type}, after a trash or a delete, with the post as it was answered 
 
 - `@param array<string, mixed> $data`
 
-Internals: `rest()` (private, line 191), `wpPost()` (private, line 209)
+Internals: `rest()` (private, line 179), `wpPost()` (private, line 201)
 
 
 ## PostInsert
@@ -2646,7 +2711,7 @@ blocks, texturize, paragraphs, shortcodes, block hooks, and the image
 attributes. What it has not (smilies, the capital P, insecure home
 addresses) runs with the plugins' own callbacks.
 
-Used by: `Minn\Admin\BootPayload`, `Minn\Auth\Authenticator`, `Minn\Blocks\Dynamic\Theme\Comments`, `Minn\Blocks\Dynamic\Theme\Navigation`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Blocks\ImageTags`, `Minn\Blocks\RenderState`, `Minn\Cli\Runtime`, `Minn\Content\Blocks`, `Minn\Content\PostSlugs`, `Minn\Content\Reader`, `Minn\Content\Site`, `Minn\Content\Terms`, `Minn\Cron\Cron`, `Minn\Db`, `Minn\Engine`, `Minn\Extension\Extensions`, `Minn\Front\CommentPostController`, `Minn\Front\Feeds`, `Minn\Front\Permalinks`, `Minn\Front\PluginRules`, `Minn\Front\Resolver`, `Minn\Login\LoginHooks`, `Minn\Mail\Mailer`, `Minn\Media\Icons`, `Minn\Media\Images`, `Minn\Rest\AbilitiesController`, `Minn\Rest\Api`, `Minn\Rest\BatchController`, `Minn\Rest\BlockRendererController`, `Minn\Rest\BlockTypesController`, `Minn\Rest\Caller`, `Minn\Rest\CommentObject`, `Minn\Rest\Embed`, `Minn\Rest\InstalledThemesController`, `Minn\Rest\MediaController`, `Minn\Rest\MediaObject`, `Minn\Rest\MenusController`, `Minn\Rest\OEmbedController`, `Minn\Rest\PostObject`, `Minn\Rest\RegisteredType`, `Minn\Rest\RenderedFields`, `Minn\Rest\RuntimeEnvelope`, `Minn\Rest\RuntimePrepare`, `Minn\Rest\RuntimeRoutes`, `Minn\Rest\Services`, `Minn\Rest\SettingsController`, `Minn\Rest\SidebarsController`, `Minn\Rest\StatusesController`, `Minn\Rest\TemplatesController`, `Minn\Rest\TermObject`, `Minn\Rest\Types`, `Minn\Rest\TypesController`, `Minn\Rest\UsersController`, `Minn\Rest\WidgetsController`, `Minn\Runtime\Abilities`, `Minn\Runtime\AjaxController`, `Minn\Runtime\BlockFilters`, `Minn\Runtime\BlockHooks`, `Minn\Runtime\CommentEvents`, `Minn\Runtime\Constants`, `Minn\Runtime\Deferrals`, `Minn\Runtime\FileUpload`, `Minn\Runtime\Interactivity`, `Minn\Runtime\NavMenu`, `Minn\Runtime\PackageDownload`, `Minn\Runtime\Patterns`, `Minn\Runtime\PlaceholderTrace`, `Minn\Runtime\PluginUpdates`, `Minn\Runtime\Plugins`, `Minn\Runtime\PostEvents`, `Minn\Runtime\PostQuery`, `Minn\Runtime\PostSave`, `Minn\Runtime\RegisteredSettings`, `Minn\Runtime\Registry`, `Minn\Runtime\ScriptModules`, `Minn\Runtime\TermEvents`, `Minn\Runtime\TermSave`, `Minn\Runtime\TermWriter`, `Minn\Runtime\ThemeSupports`, `Minn\Runtime\UserEvents`, `Minn\Theme\ArchiveTitle`, `Minn\Theme\ClassicContent`, `Minn\Theme\ClassicRenderer`, `Minn\Theme\MainQueryBridge`, `Minn\Theme\PageRenderer`, `Minn\Theme\Templates`
+Used by: `Minn\Admin\BootPayload`, `Minn\Auth\Authenticator`, `Minn\Blocks\Dynamic\Theme\Comments`, `Minn\Blocks\Dynamic\Theme\Navigation`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Blocks\ImageTags`, `Minn\Blocks\RenderState`, `Minn\Cli\Runtime`, `Minn\Content\Blocks`, `Minn\Content\PostSlugs`, `Minn\Content\Reader`, `Minn\Content\Site`, `Minn\Content\Terms`, `Minn\Cron\Cron`, `Minn\Db`, `Minn\Engine`, `Minn\Extension\Extensions`, `Minn\Front\CommentPostController`, `Minn\Front\Feeds`, `Minn\Front\Permalinks`, `Minn\Front\PluginRules`, `Minn\Front\Resolver`, `Minn\Login\LoginHooks`, `Minn\Mail\Mailer`, `Minn\Media\Icons`, `Minn\Media\Images`, `Minn\Rest\AbilitiesController`, `Minn\Rest\Api`, `Minn\Rest\BatchController`, `Minn\Rest\BlockRendererController`, `Minn\Rest\BlockTypesController`, `Minn\Rest\Caller`, `Minn\Rest\CommentObject`, `Minn\Rest\Embed`, `Minn\Rest\InstalledThemesController`, `Minn\Rest\MediaController`, `Minn\Rest\MediaObject`, `Minn\Rest\MenusController`, `Minn\Rest\OEmbedController`, `Minn\Rest\PostObject`, `Minn\Rest\RegisteredType`, `Minn\Rest\RenderedFields`, `Minn\Rest\RestMeta`, `Minn\Rest\RuntimeEnvelope`, `Minn\Rest\RuntimePrepare`, `Minn\Rest\RuntimeRoutes`, `Minn\Rest\Services`, `Minn\Rest\SettingsController`, `Minn\Rest\SidebarsController`, `Minn\Rest\StatusesController`, `Minn\Rest\TemplatesController`, `Minn\Rest\TermObject`, `Minn\Rest\Types`, `Minn\Rest\TypesController`, `Minn\Rest\UserObject`, `Minn\Rest\UsersController`, `Minn\Rest\WidgetsController`, `Minn\Runtime\Abilities`, `Minn\Runtime\AjaxController`, `Minn\Runtime\BlockFilters`, `Minn\Runtime\BlockHooks`, `Minn\Runtime\CommentEvents`, `Minn\Runtime\Constants`, `Minn\Runtime\Deferrals`, `Minn\Runtime\FileUpload`, `Minn\Runtime\Interactivity`, `Minn\Runtime\NavMenu`, `Minn\Runtime\PackageDownload`, `Minn\Runtime\Patterns`, `Minn\Runtime\PlaceholderTrace`, `Minn\Runtime\PluginUpdates`, `Minn\Runtime\Plugins`, `Minn\Runtime\PostEvents`, `Minn\Runtime\PostQuery`, `Minn\Runtime\PostSave`, `Minn\Runtime\RegisteredSettings`, `Minn\Runtime\Registry`, `Minn\Runtime\ScriptModules`, `Minn\Runtime\TermEvents`, `Minn\Runtime\TermSave`, `Minn\Runtime\TermWriter`, `Minn\Runtime\ThemeSupports`, `Minn\Runtime\UserEvents`, `Minn\Theme\ArchiveTitle`, `Minn\Theme\ClassicContent`, `Minn\Theme\ClassicRenderer`, `Minn\Theme\MainQueryBridge`, `Minn\Theme\PageRenderer`, `Minn\Theme\Templates`
 
 ```php
 __construct(Minn\Context $context, bool $isAdmin = false)
@@ -3305,7 +3370,7 @@ Deletes a term, then tells plugins over REST with the term as it was and the res
 
 rest_insert_{taxonomy}, then rest_after_insert_{taxonomy}, with the term as it stands and the request.
 
-Internals: `prepared()` (private, line 73), `refusal()` (private, line 93)
+Internals: `prepared()` (private, line 74), `refusal()` (private, line 94)
 
 
 ## TermFields
@@ -3687,7 +3752,7 @@ none), then rest_delete_user with the account as it was.
 - `@param array<string, mixed> $data the response`
 - `@param Closure(): void $quietly the engine's own delete`
 
-Internals: `prepared()` (private, line 112)
+Internals: `prepared()` (private, line 115)
 
 
 ## UserInsert

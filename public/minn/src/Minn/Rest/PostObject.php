@@ -68,6 +68,17 @@ final readonly class PostObject
     }
 
     /**
+     * The meta field: the keys registered to show in REST (probe rest-meta),
+     * or the footnotes alone without the runtime.
+     *
+     * @return array<string, mixed>
+     */
+    private function meta(PostRecord $p, string $context): array
+    {
+        return Runtime::booted() ? RestMeta::read('post', $p->id, $p->type, $context) : ['footnotes' => $this->posts->meta($p->id, 'footnotes') ?? ''];
+    }
+
+    /**
      * A navigation menu is a post with almost nothing on it: no author, no
      * excerpt, no featured image, no comments, no taxonomies, and so no
      * class list either. What it does carry is a template field and the
@@ -121,7 +132,8 @@ final readonly class PostObject
             'content' => ['raw' => $p->content, 'protected' => $protected],
             'excerpt' => ['rendered' => $protected ? '' : RenderedFields::excerpt($p), 'protected' => $protected],
             'template' => '',
-            'meta' => ['footnotes' => $this->posts->meta($p->id, 'footnotes') ?? ''],
+            // The sync status rides beside meta, not in it.
+            'meta' => array_diff_key($this->meta($p, 'view'), ['wp_pattern_sync_status' => true]),
             'wp_pattern_category' => array_map(static fn (array $term) => $term[0], $this->posts->terms($p->id, 'wp_pattern_category')),
             'wp_pattern_sync_status' => $this->posts->meta($p->id, 'wp_pattern_sync_status') ?? '',
             '_links' => $this->links($p),
@@ -198,7 +210,7 @@ final readonly class PostObject
             ...($post ? ['sticky' => in_array($p->id, Serialized::intList($this->db->option('sticky_posts')), true)] : []),
             'template' => '',
             ...($post ? ['format' => self::format($terms['post_format'])] : []),
-            'meta' => ['footnotes' => $this->posts->meta($p->id, 'footnotes') ?? ''],
+            'meta' => $this->meta($p, 'view'),
         ];
         if ($p->type === 'page') {
             return ['parent' => $p->parentId, 'menu_order' => $p->menuOrder, ...$shared];
@@ -309,6 +321,9 @@ final readonly class PostObject
         $protected = $p->isProtected();
 
         $view['guid'] = ['rendered' => $p->guid, 'raw' => $p->guid];
+        if (isset($view['meta'])) {
+            $view['meta'] = $p->type === self::BLOCK ? array_diff_key($this->meta($p, 'edit'), ['wp_pattern_sync_status' => true]) : $this->meta($p, 'edit');
+        }
         if ($p->type === self::BLOCK) {
             // A pattern's title stays raw-only; its content gains only the block version.
             $view['content'] = ['raw' => $p->content, 'protected' => $protected, 'block_version' => str_contains($p->content, '<!-- wp:') ? 1 : 0];

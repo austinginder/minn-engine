@@ -4448,3 +4448,56 @@ runs at load and again on init at 20, so a plugin's type gets it too. It
 covers every type shown in REST that supports the editor, custom fields and
 revisions, with `__return_true` for its auth. Templates, template parts,
 navigation and global styles no longer get it.
+
+The meta registry works as the reference's does (probe `meta-api`):
+- **Where it lives.** Keys are kept in `$wp_meta_keys`.
+- **Defaults.** A key's sanitize and auth callbacks hang on their filters,
+  with `_for_{subtype}` for a subtype's key. A key with no auth callback
+  gets `__return_true`, or `__return_false` when protected.
+- **Refusals.** A registration is refused, with the reference's notice, in
+  three cases. The first two are checked before anything is hooked: an
+  array shown in REST without its items' schema, and revisions where the
+  type or subtype has none. The third is checked after: a default its
+  schema does not accept. The old form (callbacks as plain arguments)
+  hooks them and returns false.
+- **Defaults on read.** A default is served through `filter_default_metadata`.
+  `get_metadata_default` wraps a non-single default in a list.
+- **New functions.** `register_term_meta`, `unregister_term_meta`,
+  `get_registered_metadata` and `get_object_subtype`.
+- **Sanitizing.** `sanitize_meta` prefers the subtype's filter, and writes
+  pass the object's subtype.
+- **Updates.** `update_metadata` adding a new key hands `add_metadata` the
+  value as it was given, so it is sanitized once, not twice.
+- **Capabilities.** Editing, adding or deleting a post's, comment's,
+  term's or user's meta needs what editing the object needs. When the key
+  is not allowed (protected, or refused by its auth filter), it needs the
+  meta capability itself, which no role has.
+
+Core's own meta is registered on init, as the reference registers it
+(probe `meta-registry`): a pattern's sync status, a note's status, and the
+editor's persisted preferences, with the footnotes at 20. The probe boot,
+which runs no init, registers it directly, with minn-admin's toolbar key.
+
+An object's meta over REST comes from the registered keys (probe
+`rest-meta`). Before, it was a fixed list: footnotes, the toolbar key, a
+note's status, or nothing.
+- **Which keys.** Each key answers under its REST name: those for every
+  subtype, then the object's subtype's. A key is left out of a context its
+  schema does not name.
+- **Reading a value.** A value is checked against its schema: null when it
+  does not fit, the type's empty value for '' or when nothing is stored.
+  Otherwise it is cast, or handed to the key's prepare callback.
+- **Writes.** They go key by key in registration order:
+  - null deletes;
+  - a value the schema refuses is a 400 naming `meta.{key}`;
+  - a key the user may not edit is a 403, after an unchanged value is left
+    alone;
+  - a list keeps the values already stored once.
+- **Errors.** They are gathered: the first answers, the rest ride beside it.
+- **Scope.** This covers posts, pages, plugin types (when they support
+  custom fields), media, terms, users and comments.
+- **A non-object.** A post write whose `meta` is not an object is refused
+  before anything is written.
+- **In process,** `_fields` narrows the item to whole top-level fields,
+  with id kept, as `rest_do_request` does on the reference. Over HTTP the
+  nested names still narrow the answer.

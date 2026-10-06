@@ -379,5 +379,6 @@ final class Runtime
         self::$textDomains = null;
         self::$locales = null;
         self::$options = self::$current === null ? null : new Options(self::$current->db);
+        unset($GLOBALS['wp_meta_keys']);
     }
 }

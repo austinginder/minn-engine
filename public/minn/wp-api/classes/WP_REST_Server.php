@@ -255,6 +255,18 @@ class WP_REST_Server
         return $response;
     }
 
+    /**
+     * _fields as an in-process call meets it (probe rest-meta): only the
+     * controller narrows the item, to whole top-level fields (a nested
+     * name brings its parent whole) with id kept; nothing narrows the
+     * answer afterwards, as serving a request over HTTP does.
+     */
+    private static function top_level_fields(mixed $fields): string
+    {
+        $top = array_map(static fn ($field) => explode('.', trim((string) $field))[0], wp_parse_list($fields));
+        return implode(',', array_unique([...$top, 'id']));
+    }
+
     /** Query values plugin code set as numbers or booleans, as text the way a query string carries them. */
     private static function query_text(array $query): array
     {
@@ -275,6 +287,9 @@ class WP_REST_Server
         $runtime = Runtime::current();
         $route = '/' . ltrim((string) $request->get_route(), '/');
         $query = self::query_text($request->get_query_params());
+        if (isset($query['_fields'])) {
+            $query['_fields'] = self::top_level_fields($query['_fields']);
+        }
         $headers = [];
         foreach ($request->get_headers() as $name => $values) {
             $headers[str_replace('_', '-', $name)] = implode(',', $values);

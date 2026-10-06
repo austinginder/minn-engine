@@ -9,6 +9,7 @@ use Minn\Http\Request;
 use Minn\RestError;
 use Minn\Rest\RegisteredFields;
 use Minn\Rest\RuntimeRoutes;
+use Minn\Rest\RestMeta;
 
 /**
  * What the reference's REST users controller tells plugins, for the
@@ -50,6 +51,7 @@ final readonly class UserEvents
         }
         \do_action('rest_insert_user', \get_userdata($id), $wpRequest, true);
         (new \WP_User($id))->add_role($role);
+        RestMeta::writeFrom($wpRequest, 'user', $id, 'user');
         RegisteredFields::update(\get_userdata($id), 'user', $wpRequest);
         RegisteredFields::context($wpRequest, 'user');
         \do_action('rest_after_insert_user', \get_userdata($id), $wpRequest, true);
@@ -78,6 +80,7 @@ final readonly class UserEvents
             (new \WP_User($id))->set_role($role);
         }
         \do_action('rest_insert_user', \get_userdata($id), $wpRequest, false);
+        RestMeta::writeFrom($wpRequest, 'user', $id, 'user');
         RegisteredFields::update(\get_userdata($id), 'user', $wpRequest);
         RegisteredFields::context($wpRequest, 'user');
         \do_action('rest_after_insert_user', \get_userdata($id), $wpRequest, false);

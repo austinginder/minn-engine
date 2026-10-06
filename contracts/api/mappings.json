@@ -2,12 +2,12 @@
     "generated": "2026-10-06",
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line)",
     "summary": {
-        "minn": 637,
-        "composes": 913,
+        "minn": 634,
+        "composes": 920,
         "leaf": 652,
-        "noop": 1832,
-        "functions": 3964,
-        "minnMethods": 658,
+        "noop": 1838,
+        "functions": 3974,
+        "minnMethods": 665,
         "leafLinesOver15": 12
     },
     "functions": {
@@ -9087,7 +9087,7 @@
         },
         "WP_REST_Server::engine_response": {
             "file": "classes/WP_REST_Server.php",
-            "lines": 35,
+            "lines": 38,
             "kind": "minn",
             "minn": [
                 "Minn\\Http\\Method::tryFrom",
@@ -9370,6 +9370,15 @@
             "minn": [],
             "composes": [
                 "status_header"
+            ]
+        },
+        "WP_REST_Server::top_level_fields": {
+            "file": "classes/WP_REST_Server.php",
+            "lines": 2,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "wp_parse_list"
             ]
         },
         "WP_Rewrite::__construct": {
@@ -16097,6 +16106,16 @@
                 "_minn_bridge_dynamic_block"
             ]
         },
+        "_minn_register_toolbar_meta": {
+            "file": "user.php",
+            "lines": 8,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "current_user_can",
+                "register_meta"
+            ]
+        },
         "_minn_registered_block_template": {
             "file": "blocks.php",
             "lines": 15,
@@ -16108,11 +16127,10 @@
         },
         "_minn_registered_meta": {
             "file": "meta.php",
-            "lines": 2,
-            "kind": "minn",
+            "lines": 1,
+            "kind": "noop",
             "minn": [
-                "Minn\\Runtime\\Runtime::current",
-                "Minn\\Runtime\\Runtime::get"
+                "Minn\\Runtime\\MetaKeys::of"
             ],
             "composes": []
         },
@@ -17504,6 +17522,7 @@
                 "_minn_meta_table",
                 "apply_filters",
                 "do_action",
+                "get_object_subtype",
                 "metadata_exists",
                 "sanitize_meta",
                 "wp_cache_delete",
@@ -19610,6 +19629,15 @@
                 "wp_kses"
             ]
         },
+        "filter_default_metadata": {
+            "file": "meta.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Runtime\\MetaKeys::defaultValue"
+            ],
+            "composes": []
+        },
         "filter_default_option": {
             "file": "option.php",
             "lines": 1,
@@ -21288,7 +21316,8 @@
             "kind": "composes",
             "minn": [],
             "composes": [
-                "apply_filters"
+                "apply_filters",
+                "wp_is_numeric_array"
             ]
         },
         "get_metadata_raw": {
@@ -21417,6 +21446,15 @@
             "lines": 1,
             "kind": "noop",
             "minn": [],
+            "composes": []
+        },
+        "get_object_subtype": {
+            "file": "meta.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Runtime\\MetaKeys::subtype"
+            ],
             "composes": []
         },
         "get_object_taxonomies": {
@@ -22296,13 +22334,26 @@
         },
         "get_registered_meta_keys": {
             "file": "meta.php",
-            "lines": 5,
-            "kind": "minn",
+            "lines": 1,
+            "kind": "noop",
             "minn": [
-                "Minn\\Runtime\\Runtime::current",
-                "Minn\\Runtime\\Runtime::get"
+                "Minn\\Runtime\\MetaKeys::of"
             ],
             "composes": []
+        },
+        "get_registered_metadata": {
+            "file": "meta.php",
+            "lines": 8,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Runtime\\MetaKeys::forObject",
+                "Minn\\Runtime\\MetaKeys::of"
+            ],
+            "composes": [
+                "get_metadata",
+                "get_object_subtype",
+                "registered_meta_key_exists"
+            ]
         },
         "get_registered_nav_menus": {
             "file": "theme.php",
@@ -25006,9 +25057,10 @@
         },
         "map_meta_cap": {
             "file": "user.php",
-            "lines": 2,
+            "lines": 4,
             "kind": "minn",
             "minn": [
+                "Minn\\Runtime\\MetaKeys::capabilities",
                 "Minn\\Runtime\\Runtime::capabilities->map",
                 "Minn\\Runtime\\Runtime::current"
             ],
@@ -26038,16 +26090,12 @@
         },
         "register_meta": {
             "file": "meta.php",
-            "lines": 15,
-            "kind": "minn",
+            "lines": 1,
+            "kind": "noop",
             "minn": [
-                "Minn\\Runtime\\Runtime::current",
-                "Minn\\Runtime\\Runtime::get",
-                "Minn\\Runtime\\Runtime::set"
+                "Minn\\Runtime\\MetaKeys::register"
             ],
-            "composes": [
-                "wp_parse_args"
-            ]
+            "composes": []
         },
         "register_nav_menu": {
             "file": "theme.php",
@@ -26185,6 +26233,15 @@
                 "taxonomy_exists"
             ]
         },
+        "register_term_meta": {
+            "file": "meta.php",
+            "lines": 2,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "register_meta"
+            ]
+        },
         "register_theme_directory": {
             "file": "theme.php",
             "lines": 13,
@@ -26228,8 +26285,7 @@
             "lines": 1,
             "kind": "noop",
             "minn": [
-                "Minn\\Runtime\\Runtime::current",
-                "Minn\\Runtime\\Runtime::get"
+                "Minn\\Runtime\\MetaKeys::of"
             ],
             "composes": []
         },
@@ -27191,11 +27247,12 @@
         },
         "sanitize_meta": {
             "file": "meta.php",
-            "lines": 1,
-            "kind": "noop",
+            "lines": 4,
+            "kind": "composes",
             "minn": [],
             "composes": [
-                "apply_filters"
+                "apply_filters",
+                "has_filter"
             ]
         },
         "sanitize_mime_type": {
@@ -28571,12 +28628,10 @@
         },
         "unregister_meta_key": {
             "file": "meta.php",
-            "lines": 7,
-            "kind": "minn",
+            "lines": 1,
+            "kind": "noop",
             "minn": [
-                "Minn\\Runtime\\Runtime::current",
-                "Minn\\Runtime\\Runtime::get",
-                "Minn\\Runtime\\Runtime::set"
+                "Minn\\Runtime\\MetaKeys::unregister"
             ],
             "composes": []
         },
@@ -28656,6 +28711,15 @@
                 "taxonomy_exists"
             ]
         },
+        "unregister_term_meta": {
+            "file": "meta.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "unregister_meta_key"
+            ]
+        },
         "unregister_widget": {
             "file": "widgets.php",
             "lines": 1,
@@ -28726,7 +28790,7 @@
         },
         "update_metadata": {
             "file": "meta.php",
-            "lines": 29,
+            "lines": 31,
             "kind": "minn",
             "minn": [
                 "Minn\\Runtime\\Meta::idsToUpdate",
@@ -28740,6 +28804,7 @@
                 "_minn_meta_table",
                 "add_metadata",
                 "apply_filters",
+                "get_object_subtype",
                 "sanitize_meta",
                 "wp_cache_delete",
                 "wp_unslash"
@@ -28759,6 +28824,7 @@
                 "_minn_meta_action",
                 "apply_filters",
                 "get_metadata_by_mid",
+                "get_object_subtype",
                 "sanitize_meta",
                 "wp_cache_delete",
                 "wp_unslash"
@@ -30066,6 +30132,26 @@
                 "wp_getimagesize",
                 "wp_read_image_metadata",
                 "wp_update_attachment_metadata"
+            ]
+        },
+        "wp_create_initial_comment_meta": {
+            "file": "comment.php",
+            "lines": 7,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "__",
+                "current_user_can",
+                "register_meta"
+            ]
+        },
+        "wp_create_initial_post_meta": {
+            "file": "post.php",
+            "lines": 7,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "register_meta"
             ]
         },
         "wp_create_nav_menu": {
@@ -33601,6 +33687,16 @@
             "kind": "noop",
             "minn": [],
             "composes": []
+        },
+        "wp_register_persisted_preferences_meta": {
+            "file": "user.php",
+            "lines": 14,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "__",
+                "register_meta"
+            ]
         },
         "wp_register_plugin_realpath": {
             "file": "plugin.php",

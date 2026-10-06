@@ -9,9 +9,8 @@ use Minn\Runtime\Runtime;
 /**
  * A post type plugin code registered, as its REST object follows it
  * (probe rest-plugin-types): what it supports, whether it is hierarchical,
- * the taxonomies it shows in REST under their REST bases, and the meta
- * registered for it to show in REST. Only once the runtime has loaded the
- * plugins that register it.
+ * and the taxonomies it shows in REST under their REST bases. Only once the
+ * runtime has loaded the plugins that register it.
  */
 final readonly class RegisteredType
 {
@@ -57,35 +56,5 @@ final readonly class RegisteredType
             }
         }
         return $out;
-    }
-
-    /**
-     * The meta registered for the type to show in REST, key => value: a
-     * single value cast to its type (its default when unset), or the list.
-     *
-     * @return array<string, mixed>
-     */
-    public function meta(int $postId): array
-    {
-        $out = [];
-        foreach (\get_registered_meta_keys('post', $this->name) + \get_registered_meta_keys('post') as $key => $args) {
-            if (empty($args['show_in_rest'])) {
-                continue;
-            }
-            $single = !empty($args['single']);
-            $value = \get_post_meta($postId, (string) $key, $single);
-            $out[(string) $key] = $single ? self::cast($value, (string) ($args['type'] ?? 'string')) : array_map(static fn ($v) => self::cast($v, (string) ($args['type'] ?? 'string')), (array) $value);
-        }
-        return $out;
-    }
-
-    private static function cast(mixed $value, string $type): mixed
-    {
-        return match ($type) {
-            'integer' => (int) $value,
-            'number' => (float) $value,
-            'boolean' => (bool) $value,
-            default => $value,
-        };
     }
 }

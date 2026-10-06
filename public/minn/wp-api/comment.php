@@ -15,6 +15,18 @@ function _minn_comments(): Comments
     return new Comments(Runtime::current()->db);
 }
 
+/** The comment meta core registers on init: a note's status, editable by whoever may edit the comment (probe meta-registry). */
+function wp_create_initial_comment_meta()
+{
+    register_meta('comment', '_wp_note_status', [
+        'type' => 'string',
+        'description' => __('Note resolution status'),
+        'single' => true,
+        'show_in_rest' => ['schema' => ['type' => 'string', 'enum' => ['resolved', 'reopen']]],
+        'auth_callback' => static fn ($allowed, $meta_key, $object_id) => current_user_can('edit_comment', $object_id),
+    ]);
+}
+
 function get_comment($comment = null, $output = OBJECT)
 {
     // Any empty id means the comment being read, not "no comment".

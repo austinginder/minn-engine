@@ -70,7 +70,7 @@ final readonly class MediaObject
             'comment_status' => $p->commentStatus,
             'ping_status' => $p->pingStatus,
             'template' => '',
-            'meta' => [],
+            'meta' => Runtime::booted() ? RestMeta::read('post', $id, 'attachment', $context->value) : [],
         ];
         if ($edit) {
             [$object['permalink_template'], $object['generated_slug']] = Runtime::booted() ? \get_sample_permalink($id, $p->title, '') : [$this->url->home('/?attachment_id=' . $id), Slug::sanitize($p->title)];

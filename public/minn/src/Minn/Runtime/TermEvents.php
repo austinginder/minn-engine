@@ -9,6 +9,7 @@ use Minn\Http\Request;
 use Minn\RestError;
 use Minn\Rest\RegisteredFields;
 use Minn\Rest\RuntimeRoutes;
+use Minn\Rest\RestMeta;
 
 /**
  * What the reference's REST terms controller tells plugins, for the
@@ -125,6 +126,7 @@ final readonly class TermEvents
         }
         $wpRequest = RuntimeRoutes::wpRequest($request);
         \do_action("rest_insert_{$taxonomy}", \get_term($termId, $taxonomy), $wpRequest, $verb === 'create');
+        RestMeta::writeFrom($wpRequest, 'term', $termId, $taxonomy);
         RegisteredFields::update(\get_term($termId, $taxonomy), $taxonomy, $wpRequest);
         RegisteredFields::context($wpRequest, $taxonomy);
         \do_action("rest_after_insert_{$taxonomy}", \get_term($termId, $taxonomy), $wpRequest, $verb === 'create');

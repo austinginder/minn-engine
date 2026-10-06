@@ -8,6 +8,7 @@ use Minn\Content\UserRecord;
 use Minn\Content\Users;
 use Minn\Db;
 use Minn\Front\Permalinks;
+use Minn\Runtime\Runtime;
 
 /** The wp/v2 user objects: the public view shape and the edit-context shape. */
 final readonly class UserObject
@@ -58,7 +59,7 @@ final readonly class UserObject
             'link' => $this->permalinks->forAuthor($u),
             'slug' => $u->nicename,
             'avatar_urls' => self::avatarUrls($u->email),
-            'meta' => ['show_admin_bar_front' => $this->users->meta($id, 'show_admin_bar_front') ?? 'true'],
+            'meta' => Runtime::booted() ? RestMeta::read('user', $id, 'user', 'view') : ['show_admin_bar_front' => $this->users->meta($id, 'show_admin_bar_front') ?? 'true'],
             '_links' => [
                 'self' => [[
                     'href' => $this->url->to('/wp/v2/users/' . $id),
@@ -105,7 +106,7 @@ final readonly class UserObject
             'capabilities' => (object) $capabilities->allcapsOf($id),
             'extra_capabilities' => (object) $capabilities->capsOf($id),
             'avatar_urls' => $view['avatar_urls'],
-            'meta' => [
+            'meta' => Runtime::booted() ? RestMeta::read('user', $id, 'user', 'edit') : [
                 'persisted_preferences' => [],
                 'show_admin_bar_front' => $this->users->meta($id, 'show_admin_bar_front') ?? 'true',
             ],

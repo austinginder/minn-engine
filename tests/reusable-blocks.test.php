@@ -202,7 +202,11 @@ check( null === minn_test_diff( rb_norm( $oracle ), rb_norm( $made ) ), 'engine:
 check( ( $made['wp_pattern_category'] ?? array() ) === array( $tid ), 'engine: the pattern category is stored', json_encode( $made['wp_pattern_category'] ?? null ) );
 check( 'unsynced' === ( $made['wp_pattern_sync_status'] ?? '' ), 'engine: the sync status is stored' );
 
-$updated = rb_fetch( $ENGINE, "/wp/v2/blocks/$eid", $admin, 'POST', json_encode( array( 'title' => 'Engine block 2', 'wp_pattern_category' => array(), 'meta' => array( 'wp_pattern_sync_status' => '' ) ) ) )[1];
+// The sync status is cleared with null; '' is outside its enum, which the reference refuses too.
+[ $st, $refused ] = rb_fetch( $ENGINE, "/wp/v2/blocks/$eid", $admin, 'POST', json_encode( array( 'meta' => array( 'wp_pattern_sync_status' => '' ) ) ) );
+[ $ref_st, $ref_refused ] = rb_fetch( $REF, "/wp/v2/blocks/$eid", $admin, 'POST', json_encode( array( 'meta' => array( 'wp_pattern_sync_status' => '' ) ) ) );
+check( 400 === $st && 'rest_not_in_enum' === ( $refused['code'] ?? '' ) && null === minn_test_diff( $ref_refused, $refused ), 'engine: an empty sync status is refused, as the reference refuses it', "status $st/$ref_st " . json_encode( array( $refused, $ref_refused ) ) );
+$updated = rb_fetch( $ENGINE, "/wp/v2/blocks/$eid", $admin, 'POST', json_encode( array( 'title' => 'Engine block 2', 'wp_pattern_category' => array(), 'meta' => array( 'wp_pattern_sync_status' => null ) ) ) )[1];
 $oracle  = rb_fetch( $REF, "/wp/v2/blocks/$eid?context=edit", $admin )[1];
 check( null === minn_test_diff( rb_norm( $oracle ), rb_norm( $updated ) ), 'engine: the update equals the WordPress edit read-back', (string) minn_test_diff( rb_norm( $oracle ), rb_norm( $updated ) ) );
 rb_parity( 'after the write: revisions', "/wp/v2/blocks/$eid/revisions", $admin );

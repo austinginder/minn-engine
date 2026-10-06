@@ -93,7 +93,7 @@ final readonly class TermObject
         if ($config['has_parent']) {
             $object['parent'] = (int) $term['parent'];
         }
-        $object['meta'] = [];
+        $object['meta'] = Runtime::booted() ? RestMeta::read('term', $id, (string) $config['taxonomy']) : [];
 
         $links = [
             'self' => [['href' => $this->url->to("/wp/v2/{$restBase}/{$id}"), 'targetHints' => ['allow' => $this->allowedVerbs($term, $config)]]],

@@ -11,6 +11,7 @@ use Minn\Media\Uploads;
 use Minn\Media\Writer;
 use Minn\Rest\RegisteredFields;
 use Minn\Rest\RegisteredType;
+use Minn\Rest\RestMeta;
 use Minn\Rest\RuntimeRoutes;
 
 /**
@@ -79,34 +80,21 @@ final readonly class PostEvents
     }
 
     /**
-     * The meta a REST body names for a plugin's type, through update_post_meta
-     * (a list replaced value by value, null deleting): only the keys
-     * registered to show in REST for the type.
+     * The meta a REST body names: through the registered keys with plugins
+     * loaded (probe rest-meta; a plugin's type only when it supports custom
+     * fields), core's own written directly without.
      *
      * @param array<string, mixed> $body
      */
-    public function applyRegisteredMeta(int $id, array $body, string $type): void
+    public function applyMeta(PostWriter $writer, int $id, array $body, string $type): void
     {
-        $registered = RegisteredType::of($type);
-        if ($registered === null || !is_array($body['meta'] ?? null)) {
+        if (!$this->live()) {
+            $writer->applyCoreMeta($id, $body, $type);
             return;
         }
-        $keys = \get_registered_meta_keys('post', $type) + \get_registered_meta_keys('post');
-        foreach ($body['meta'] as $key => $value) {
-            $args = $keys[$key] ?? null;
-            if ($args === null || empty($args['show_in_rest'])) {
-                continue;
-            }
-            if ($value === null) {
-                \delete_post_meta($id, (string) $key);
-            } elseif (!empty($args['single'])) {
-                \update_post_meta($id, (string) $key, $value);
-            } else {
-                \delete_post_meta($id, (string) $key);
-                foreach ((array) $value as $one) {
-                    \add_post_meta($id, (string) $key, $one);
-                }
-            }
+        $registered = RegisteredType::of($type);
+        if (is_array($body['meta'] ?? null) && ($registered === null || $registered->supports('custom-fields'))) {
+            RestMeta::write('post', $id, $type, $body['meta']);
         }
     }
 
@@ -199,6 +187,10 @@ final readonly class PostEvents
         }
         $wpRequest = RuntimeRoutes::wpRequest($request);
         if ($prefix === 'rest_after_insert_') {
+            // An attachment's meta is written here; a post's, with its terms (applyMeta).
+            if ($post->post_type === 'attachment') {
+                RestMeta::writeFrom($wpRequest, 'post', $id, 'attachment');
+            }
             RegisteredFields::update($post, $post->post_type, $wpRequest);
             RegisteredFields::context($wpRequest, $post->post_type);
         }

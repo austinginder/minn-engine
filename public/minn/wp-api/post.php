@@ -1767,6 +1767,18 @@ function use_block_editor_for_post_type($post_type)
     return (bool) apply_filters('use_block_editor_for_post_type', $use, $post_type);
 }
 
+/** The post meta core registers on init: a pattern's sync status (probe meta-registry). */
+function wp_create_initial_post_meta()
+{
+    register_meta('post', 'wp_pattern_sync_status', [
+        'sanitize_callback' => 'sanitize_text_field',
+        'single' => true,
+        'type' => 'string',
+        'show_in_rest' => ['schema' => ['type' => 'string', 'enum' => ['partial', 'unsynced']]],
+        'object_subtype' => 'wp_block',
+    ]);
+}
+
 function register_post_meta($post_type, $meta_key, array $args)
 {
     $args['object_subtype'] = $post_type;

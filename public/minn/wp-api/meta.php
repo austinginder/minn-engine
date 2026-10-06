@@ -4,6 +4,7 @@
 use Minn\Runtime\Options;
 use Minn\Runtime\Runtime;
 use Minn\Runtime\Meta;
+use Minn\Runtime\MetaKeys;
 
 /** @internal table, id column */
 function _minn_meta_table(string $type): ?array
@@ -59,8 +60,20 @@ function get_metadata_raw($meta_type, $object_id, $meta_key = '', $single = fals
 
 function get_metadata_default($meta_type, $object_id, $meta_key, $single = false)
 {
-    $value = $single ? '' : [];
-    return apply_filters("default_{$meta_type}_metadata", $value, $object_id, $meta_key, $single, $meta_type);
+    $value = apply_filters("default_{$meta_type}_metadata", $single ? '' : [], $object_id, $meta_key, $single, $meta_type);
+    return !$single && !wp_is_numeric_array($value) ? [$value] : $value;
+}
+
+/** A registered key's default, for default_{type}_metadata (probe meta-api). */
+function filter_default_metadata($value, $object_id, $meta_key, $single, $meta_type)
+{
+    return MetaKeys::defaultValue($value, (int) $object_id, (string) $meta_key, (bool) $single, (string) $meta_type);
+}
+
+/** An object's subtype: a post's type, a term's taxonomy, comment or user; '' for none. */
+function get_object_subtype($object_type, $object_id)
+{
+    return MetaKeys::subtype((string) $object_type, (int) $object_id);
 }
 
 function metadata_exists($meta_type, $object_id, $meta_key)
@@ -82,7 +95,7 @@ function add_metadata($meta_type, $object_id, $meta_key, $meta_value, $unique = 
     }
     $meta_key = wp_unslash($meta_key);
     $meta_value = wp_unslash($meta_value);
-    $meta_value = sanitize_meta($meta_key, $meta_value, $meta_type);
+    $meta_value = sanitize_meta($meta_key, $meta_value, $meta_type, get_object_subtype($meta_type, $object_id));
     $check = apply_filters("add_{$meta_type}_metadata", null, $object_id, $meta_key, $meta_value, $unique);
     if ($check !== null) {
         return $check;
@@ -104,15 +117,17 @@ function update_metadata($meta_type, $object_id, $meta_key, $meta_value, $prev_v
     if ($spec === null || $object_id <= 0 || (string) $meta_key === '') {
         return false;
     }
+    // A key not stored yet is added from the value as it was handed in (add_metadata sanitizes it).
+    [$raw_key, $passed] = [$meta_key, $meta_value];
     $meta_key = wp_unslash($meta_key);
-    $meta_value = sanitize_meta($meta_key, wp_unslash($meta_value), $meta_type);
+    $meta_value = sanitize_meta($meta_key, wp_unslash($meta_value), $meta_type, get_object_subtype($meta_type, $object_id));
     $check = apply_filters("update_{$meta_type}_metadata", null, $object_id, $meta_key, $meta_value, $prev_value);
     if ($check !== null) {
         return (bool) $check;
     }
     $rows = _minn_meta()->matching((string) $meta_type, $object_id, (string) $meta_key);
     if ($rows === []) {
-        return add_metadata($meta_type, $object_id, $meta_key, $meta_value);
+        return add_metadata($meta_type, $object_id, $raw_key, $passed);
     }
     $stored = Options::toStorage($meta_value);
     $ids = Meta::idsToUpdate($rows, $stored, $prev_value === '' ? null : Options::toStorage($prev_value));
@@ -159,58 +174,60 @@ function delete_metadata($meta_type, $object_id, $meta_key, $meta_value = '', $d
 
 function sanitize_meta($meta_key, $meta_value, $object_type, $object_subtype = '')
 {
+    if ((string) $object_subtype !== '' && has_filter("sanitize_{$object_type}_meta_{$meta_key}_for_{$object_subtype}")) {
+        return apply_filters("sanitize_{$object_type}_meta_{$meta_key}_for_{$object_subtype}", $meta_value, $meta_key, $object_type, $object_subtype);
+    }
     return apply_filters("sanitize_{$object_type}_meta_{$meta_key}", $meta_value, $meta_key, $object_type);
 }
 
 function register_meta($object_type, $meta_key, $args, $deprecated = null)
 {
-    $defaults = ['object_subtype' => '', 'type' => 'string', 'label' => '', 'description' => '', 'single' => false, 'sanitize_callback' => null, 'auth_callback' => null, 'show_in_rest' => false, 'revisions_enabled' => false];
-    $args = wp_parse_args((array) $args, $defaults);
-    $subtype = (string) $args['object_subtype'];
-    unset($args['object_subtype']);
-    if (!in_array($args['type'], ['string', 'boolean', 'integer', 'number', 'array', 'object'], true)) {
-        return false;
-    }
-    if ($args['show_in_rest'] && !$subtype && ($object_type === 'post' || $object_type === 'term' || $object_type === 'comment' || $object_type === 'user')) {
-        // A REST-visible key with no subtype is still fine on the reference.
-    }
-    $args['object_subtype'] = $subtype;
-    $registered = Runtime::current()->get('registered_meta', []);
-    $registered[$object_type][$subtype][$meta_key] = $args;
-    Runtime::current()->set('registered_meta', $registered);
-    return true;
+    return MetaKeys::register((string) $object_type, (string) $meta_key, $args, $deprecated);
 }
 
 function registered_meta_key_exists($object_type, $meta_key, $object_subtype = '')
 {
-    return isset(Runtime::current()->get('registered_meta', [])[$object_type][(string) $object_subtype][$meta_key]);
+    return isset(MetaKeys::of((string) $object_type, (string) $object_subtype)[$meta_key]);
 }
 
 function unregister_meta_key($object_type, $meta_key, $object_subtype = '')
 {
-    $registered = Runtime::current()->get('registered_meta', []);
-    if (!isset($registered[$object_type][(string) $object_subtype][$meta_key])) {
-        return false;
-    }
-    unset($registered[$object_type][(string) $object_subtype][$meta_key]);
-    Runtime::current()->set('registered_meta', $registered);
-    return true;
+    return MetaKeys::unregister((string) $object_type, (string) $meta_key, (string) $object_subtype);
 }
 
 function get_registered_meta_keys($object_type, $object_subtype = '')
 {
-    $keys = Runtime::current()->get('registered_meta', [])[$object_type][(string) $object_subtype] ?? [];
-    foreach ($keys as $key => $args) {
-        unset($keys[$key]['object_subtype']);
+    return MetaKeys::of((string) $object_type, (string) $object_subtype);
+}
+
+/** A registered key's value for an object (false when the key is not registered), or every registered key's stored values. */
+function get_registered_metadata($object_type, $object_id, $meta_key = '')
+{
+    $subtype = get_object_subtype($object_type, $object_id);
+    if (!empty($meta_key)) {
+        $subtype = $subtype !== '' && registered_meta_key_exists($object_type, $meta_key, $subtype) ? $subtype : '';
+        $args = MetaKeys::of((string) $object_type, $subtype)[$meta_key] ?? null;
+        return $args === null ? false : get_metadata($object_type, $object_id, $meta_key, !empty($args['single']));
     }
-    return $keys;
+    $data = get_metadata($object_type, $object_id);
+    return $data ? array_intersect_key((array) $data, MetaKeys::forObject((string) $object_type, $subtype)) : [];
+}
+
+function register_term_meta($taxonomy, $meta_key, array $args)
+{
+    $args['object_subtype'] = $taxonomy;
+    return register_meta('term', $meta_key, $args);
+}
+
+function unregister_term_meta($taxonomy, $meta_key)
+{
+    return unregister_meta_key('term', $meta_key, $taxonomy);
 }
 
 /** The registered entry for a key, subtype first then the plain one. */
 function _minn_registered_meta($object_type, $meta_key, $object_subtype = '')
 {
-    $all = Runtime::current()->get('registered_meta', []);
-    return $all[$object_type][(string) $object_subtype][$meta_key] ?? $all[$object_type][''][$meta_key] ?? null;
+    return MetaKeys::of((string) $object_type, (string) $object_subtype)[$meta_key] ?? MetaKeys::of((string) $object_type)[$meta_key] ?? null;
 }
 
 /** Objects' meta read into the cache at once (Runtime\Meta::prime), and answered by id; false for no type or no ids. */
@@ -328,7 +345,7 @@ function update_metadata_by_mid($meta_type, $meta_id, $meta_value, $meta_key = f
     [$column] = _minn_meta()->columns((string) $meta_type);
     $object_id = (int) $meta->{$column};
     $key = $meta_key === false ? $meta->meta_key : (string) $meta_key;
-    $value = sanitize_meta($key, wp_unslash($meta_value), $meta_type);
+    $value = sanitize_meta($key, wp_unslash($meta_value), $meta_type, get_object_subtype($meta_type, $object_id));
     $args = [(int) $meta_id, $object_id, $key, $value];
     _minn_meta_action('update', (string) $meta_type, $args, $args);
     _minn_meta()->rewrite((string) $meta_type, (int) $meta_id, $key, Options::toStorage($value));

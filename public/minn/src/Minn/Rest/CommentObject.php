@@ -68,7 +68,7 @@ final readonly class CommentObject
         $object['status'] = Comments::statusOf($c->approved);
         $object['type'] = $c->type === '' ? 'comment' : $c->type;
         $object['author_avatar_urls'] = UserObject::avatarUrls($c->authorEmail);
-        $object['meta'] = ['_wp_note_status' => $this->comments->meta($id, '_wp_note_status')];
+        $object['meta'] = Runtime::booted() ? RestMeta::read('comment', $id, 'comment', $context->value) : ['_wp_note_status' => $this->comments->meta($id, '_wp_note_status')];
 
         $links = [
             'self' => [[

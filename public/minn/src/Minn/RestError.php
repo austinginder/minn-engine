@@ -13,7 +13,7 @@ use RuntimeException;
 final class RestError extends RuntimeException
 {
     /**
-     * @param array<string, mixed> $extra keys added beside status inside data
+     * @param array<string, mixed> $extra keys added beside status inside data (the whole of data when it names status)
      * @param array<string, mixed> $topLevel keys added beside code/message/data
      */
     public function __construct(
@@ -65,7 +65,8 @@ final class RestError extends RuntimeException
         return [
             'code' => $this->errorCode,
             'message' => $this->getMessage(),
-            'data' => $this->bare ? null : ['status' => $this->status] + $this->extra,
+            // Data that carries its own status keeps its order (a plugin's WP_Error data, as it was given).
+            'data' => $this->bare ? null : (array_key_exists('status', $this->extra) ? $this->extra : ['status' => $this->status] + $this->extra),
         ] + $this->topLevel;
     }
 }

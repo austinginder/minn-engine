@@ -80,7 +80,9 @@ function author_can($post, $capability, ...$args)
 
 function map_meta_cap($cap, $user_id, ...$args)
 {
-    $caps = Runtime::current()->capabilities->map((string) $cap, (int) $user_id, isset($args[0]) && is_numeric($args[0]) ? (int) $args[0] : null);
+    // A meta capability asks the key's auth filters as well (probe meta-api).
+    $caps = Minn\Runtime\MetaKeys::capabilities((string) $cap, (int) $user_id, $args)
+        ?? Runtime::current()->capabilities->map((string) $cap, (int) $user_id, isset($args[0]) && is_numeric($args[0]) ? (int) $args[0] : null);
     return apply_filters('map_meta_cap', $caps, $cap, $user_id, $args);
 }
 
@@ -103,6 +105,42 @@ function get_editable_roles()
 function wp_get_user_contact_methods($user = null)
 {
     return apply_filters('user_contactmethods', [], $user);
+}
+
+/** The editor's per-user preferences, registered on init under the site's prefix (probe meta-registry). */
+function wp_register_persisted_preferences_meta()
+{
+    register_meta('user', $GLOBALS['wpdb']->get_blog_prefix() . 'persisted_preferences', [
+        'type' => 'object',
+        'single' => true,
+        'show_in_rest' => [
+            'name' => 'persisted_preferences',
+            'type' => 'object',
+            'schema' => [
+                'type' => 'object',
+                'context' => ['edit'],
+                'properties' => ['_modified' => ['description' => __('The date and time the preferences were updated.'), 'type' => 'string', 'format' => 'date-time', 'readonly' => false]],
+                'additionalProperties' => true,
+            ],
+        ],
+    ]);
+}
+
+/**
+ * The toolbar preference minn-admin registers on init (its
+ * register_toolbar_meta), for a boot that runs no init: 'false' or 'true',
+ * editable by whoever may edit the user.
+ */
+function _minn_register_toolbar_meta()
+{
+    register_meta('user', 'show_admin_bar_front', [
+        'type' => 'string',
+        'single' => true,
+        'default' => 'true',
+        'show_in_rest' => true,
+        'sanitize_callback' => static fn ($value) => $value === 'false' ? 'false' : 'true',
+        'auth_callback' => static fn ($allowed, $meta_key, $object_id) => current_user_can('edit_user', $object_id),
+    ]);
 }
 
 function get_user_meta($user_id, $key = '', $single = false)

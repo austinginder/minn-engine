@@ -40,14 +40,15 @@ the wp/v2 surface: shapes and controllers
 | [`ParamCheck`](#paramcheck) | final class | 75 | The required / validate / sanitize pass over a request's declared arguments. |
 | [`PluginsController`](#pluginscontroller) | final readonly class | 236 | wp/v2 plugins: what sits in wp-content/plugins, in the reference's |
 | [`PolicyGate`](#policygate) | final readonly class | 92 | Judges a route's policy against the caller, with the reference's |
-| [`PostObject`](#postobject) | final readonly class | 515 | Builds the wp/v2 post and page objects in the reference's shape: the |
+| [`PostObject`](#postobject) | final readonly class | 530 | Builds the wp/v2 post and page objects in the reference's shape: the |
 | [`PostsController`](#postscontroller) | final readonly class | 183 | wp/v2 posts and pages, read side. |
-| [`PostsWriteController`](#postswritecontroller) | final readonly class | 449 | wp/v2 posts and pages, write side: create, update, trash, and force |
+| [`PostsWriteController`](#postswritecontroller) | final readonly class | 459 | wp/v2 posts and pages, write side: create, update, trash, and force |
 | [`RegisteredFields`](#registeredfields) | final class | 105 | The fields plugin code adds to an object type with register_rest_field, |
 | [`RegisteredPostFields`](#registeredpostfields) | final readonly class | 89 | The REST object of a post whose type plugin code registered (probe rest-plugin-types), built by what the type supports. |
-| [`RegisteredType`](#registeredtype) | final readonly class | 76 | A post type plugin code registered, as its REST object follows it |
+| [`RegisteredType`](#registeredtype) | final readonly class | 46 | A post type plugin code registered, as its REST object follows it |
 | [`RenderedFields`](#renderedfields) | final class | 49 | A post's rendered title, content and excerpt as a REST response carries |
 | [`Reply`](#reply) | final class | 47 | JSON responses in the reference's shape: its header set, its json_encode |
+| [`RestMeta`](#restmeta) | final class | 238 | An object's meta field over REST, from the keys registered to show |
 | [`RestUrl`](#resturl) | final readonly class | 38 | REST URLs in the form the reference emits for the site's permalink mode: |
 | [`RevisionsController`](#revisionscontroller) | final readonly class | 142 | wp/v2 revisions and autosaves under posts, pages, and blocks. |
 | [`RouteArgs`](#routeargs) | final class | 36 | The argument groups a route registers with, filled the way register_rest_route fills them. |
@@ -1701,7 +1702,7 @@ The view links plus the caller's verbs and cap-gated wp:action-* entries.
 
 A MySQL datetime in the reference's ISO form.
 
-Internals: `navigationView()` (private, line 76), `blockView()` (private, line 106), `viewFields()` (private, line 132), `viewTerms()` (private, line 175), `typeFields()` (private, line 191), `classList()` (private, line 220), `format()` (private, line 242), `termLinks()` (private, line 286), `editFields()` (private, line 305), `allow()` (private, line 503), `gmt()` (private, line 522)
+Internals: `meta()` (private, line 76), `navigationView()` (private, line 87), `blockView()` (private, line 117), `viewFields()` (private, line 144), `viewTerms()` (private, line 187), `typeFields()` (private, line 203), `classList()` (private, line 232), `format()` (private, line 254), `termLinks()` (private, line 298), `editFields()` (private, line 317), `allow()` (private, line 518), `gmt()` (private, line 537)
 
 
 ## PostsController
@@ -1797,11 +1798,17 @@ Trashes or deletes a post or page.
 
 Trashes a post of any type, or deletes it with force.
 
+### static `checkMeta(array $body): void`
+
+A body's meta must be an object of keys (probe rest-meta). @param array<string, mixed> $body
+
+- `@param array<string, mixed> $body`
+
 ### static `field(mixed $value): string`
 
 A field that may arrive as a scalar or as {raw: ...}.
 
-Internals: `hasParent()` (private, line 129), `hasOrder()` (private, line 135), `events()` (private, line 141), `newColumns()` (private, line 152), `writeNewPost()` (private, line 186), `trash()` (private, line 299), `rememberOld()` (private, line 318), `floatingDate()` (private, line 343), `scheduledIfFuture()` (private, line 353), `fieldColumns()` (private, line 372), `statusColumns()` (private, line 415), `checkStickyPasswordConflict()` (private, line 445), `validStatus()` (private, line 457), `clean()` (private, line 466)
+Internals: `hasParent()` (private, line 130), `hasOrder()` (private, line 136), `events()` (private, line 142), `newColumns()` (private, line 153), `writeNewPost()` (private, line 187), `trash()` (private, line 301), `rememberOld()` (private, line 320), `floatingDate()` (private, line 345), `scheduledIfFuture()` (private, line 355), `fieldColumns()` (private, line 374), `statusColumns()` (private, line 417), `checkStickyPasswordConflict()` (private, line 447), `validStatus()` (private, line 467), `clean()` (private, line 476)
 
 
 ## RegisteredFields
@@ -1818,7 +1825,7 @@ request's. A write runs the update callbacks for the fields its body
 names, with the saved object, before rest_after_insert; an error one
 returns is the write's answer.
 
-Used by: `Minn\Rest\Embed`, `Minn\Rest\RuntimePrepare`, `Minn\Runtime\CommentEvents`, `Minn\Runtime\PostEvents`, `Minn\Runtime\TermEvents`, `Minn\Runtime\UserEvents`
+Used by: `Minn\Rest\Embed`, `Minn\Rest\RestMeta`, `Minn\Rest\RuntimePrepare`, `Minn\Runtime\CommentEvents`, `Minn\Runtime\PostEvents`, `Minn\Runtime\TermEvents`, `Minn\Runtime\UserEvents`
 
 ### static `add(array $item, string $type, WP_REST_Request $request): array`
 
@@ -1879,9 +1886,8 @@ Internals: `links()` (private, line 79)
 
 A post type plugin code registered, as its REST object follows it
 (probe rest-plugin-types): what it supports, whether it is hierarchical,
-the taxonomies it shows in REST under their REST bases, and the meta
-registered for it to show in REST. Only once the runtime has loaded the
-plugins that register it.
+and the taxonomies it shows in REST under their REST bases. Only once the
+runtime has loaded the plugins that register it.
 
 Used by: `Minn\Rest\PostObject`, `Minn\Rest\PostsController`, `Minn\Rest\PostsWriteController`, `Minn\Rest\RegisteredPostFields`, `Minn\Runtime\PostEvents`
 
@@ -1908,15 +1914,6 @@ The REST base the type's routes live under, with its namespace.
 The taxonomies the type shows in REST, REST base => taxonomy, in registration order. @return array<string, string>
 
 - `@return array<string, string>`
-
-### `meta(int $postId): array`
-
-The meta registered for the type to show in REST, key => value: a
-single value cast to its type (its default when unset), or the list.
-
-- `@return array<string, mixed>`
-
-Internals: `cast()` (private, line 82)
 
 
 ## RenderedFields
@@ -1976,6 +1973,53 @@ A list response with the total and page-count headers.
 ### static `error(Minn\RestError $error): Minn\Http\Response`
 
 A REST error as the reference's error body.
+
+
+## RestMeta
+
+`final class Minn\Rest\RestMeta` · `public/minn/src/Minn/Rest/RestMeta.php`
+
+An object's meta field over REST, from the keys registered to show
+there (probe rest-meta). Each key answers under its REST name (its own,
+or show_in_rest's name): those for every subtype, then the object's
+subtype's, left out of a context their schema does not name. A single
+key reads its first stored value (its default, or its type's empty value,
+when none), a multiple key each one; each value is checked against the
+key's schema (null when it does not fit, the empty value of a scalar
+type for '') and cast, or handed to the key's prepare callback. A write
+goes key by key in registration order: null (or an empty list) deletes,
+a value its schema refuses is a 400, and a key the user may not edit is
+a 403 (an unchanged single value is left alone first). The errors are
+gathered; the first is the answer, with the others beside it.
+
+- const `SCALARS` = `array (   0 => 'string',   1 => 'boolean',   2 => 'integer',   3 => 'number', )`
+
+Used by: `Minn\Rest\CommentObject`, `Minn\Rest\MediaObject`, `Minn\Rest\PostObject`, `Minn\Rest\RegisteredPostFields`, `Minn\Rest\TermObject`, `Minn\Rest\UserObject`, `Minn\Runtime\CommentEvents`, `Minn\Runtime\PostEvents`, `Minn\Runtime\TermEvents`, `Minn\Runtime\UserEvents`
+
+### static `read(string $objectType, int $objectId, string $subtype, ?string $context = NULL): array`
+
+The meta field of an object in a context (the one the request answers in, when none is named), keyed by REST name. @return array<string, mixed>
+
+- `@return array<string, mixed>`
+
+### static `writeFrom(WP_REST_Request $request, string $objectType, int $objectId, string $subtype): void`
+
+Applies the meta a write request names, when it names any.
+
+### static `write(string $objectType, int $objectId, string $subtype, array $meta): void`
+
+Applies a request's meta to an object; the gathered refusals are thrown.
+
+### static `fields(string $objectType, string $subtype): array`
+
+The keys registered to show in REST for an object type and subtype,
+each with its REST name, whether it is single, its schema (a multiple
+key's an array of its own) and its prepare callback; keys of a type
+REST does not know are left out.
+
+- `@return array<string, array{name: string, single: bool, schema: array<string, mixed>, prepare_callback: mixed}>`
+
+Internals: `prepare()` (private, line 115), `update()` (private, line 128), `replaceAll()` (private, line 159), `delete()` (private, line 184), `same()` (private, line 199), `refused()` (private, line 209), `failed()` (private, line 215), `nullStored()` (private, line 221), `gathered()` (private, line 228), `emptyValue()` (private, line 246), `request()` (private, line 257)
 
 
 ## RestUrl
@@ -3270,7 +3314,7 @@ A user as the edit context shows one, through rest_prepare_user when a plugin ho
 
 Gravatar URLs in the sizes the reference emits (sha256 of the email).
 
-Internals: `viewFields()` (private, line 49), `editFields()` (private, line 78)
+Internals: `viewFields()` (private, line 50), `editFields()` (private, line 79)
 
 
 ## UsersController

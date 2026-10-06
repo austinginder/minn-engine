@@ -26,7 +26,7 @@ the repositories and records: posts, users, terms, comments, and the render pipe
 | [`PostRecord`](#postrecord) | final readonly class | 156 | One row of the posts table, read by name. The columns keep their |
 | [`PostSlugs`](#postslugs) | final readonly class | 75 | Which slug a live post may take beside the others, as the reference |
 | [`PostStatus`](#poststatus) | enum | 42 | The statuses a post row can hold; the value is the column's own spelling. |
-| [`PostWriter`](#postwriter) | final readonly class | 477 | Every write to the posts table and its satellites: rows, meta, term |
+| [`PostWriter`](#postwriter) | final readonly class | 482 | Every write to the posts table and its satellites: rows, meta, term |
 | [`Posts`](#posts) | final readonly class | 502 | Reads over the posts table. A single post comes back as a PostRecord and |
 | [`Reader`](#reader) | final class | 72 | Who is reading this request: their user id, whether they may read |
 | [`Revisions`](#revisions) | final readonly class | 95 | Revision rows: the plain snapshots and the per-author autosave slots. |
@@ -1217,7 +1217,11 @@ Assigns (or clears) the post-format term, creating it on first use.
 
 ### `applyExtendedFields(int $id, array $body, string $type): void`
 
-The side effects shared by create and update: sticky, format, featured media, footnotes.
+The side effects shared by create and update: sticky, format, featured media.
+
+### `applyCoreMeta(int $id, array $body, string $type): void`
+
+The meta core registers, written directly when no plugins are loaded: footnotes, and a pattern's sync status.
 
 ### `applyTerms(int $id, array $body): void`
 
@@ -1271,7 +1275,7 @@ The database door this writer writes through, for a caller wrapping several of i
 
 Hard-deletes a post with its revisions and its meta.
 
-Internals: `fit()` (private, line 171), `saveSticky()` (private, line 265), `revisionsToKeep()` (private, line 368), `pruneRevisions()` (private, line 375)
+Internals: `fit()` (private, line 171), `saveSticky()` (private, line 265), `revisionsToKeep()` (private, line 373), `pruneRevisions()` (private, line 380)
 
 
 ## Posts

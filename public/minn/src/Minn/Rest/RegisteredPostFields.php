@@ -57,7 +57,7 @@ final readonly class RegisteredPostFields
             'ping_status' => $type->supports('comments') ? $p->pingStatus : null,
             'template' => (string) ($this->posts->meta($p->id, '_wp_page_template') ?? ''),
             'format' => $type->supports('post-formats') ? (\get_post_format($p->id) ?: 'standard') : null,
-            'meta' => $type->supports('custom-fields') ? $type->meta($p->id) : null,
+            'meta' => $type->supports('custom-fields') ? RestMeta::read('post', $p->id, $p->type, 'view') : null,
         ];
         $object = array_filter($object, static fn ($value) => $value !== null);
         foreach ($terms as [$restBase, $pairs]) {

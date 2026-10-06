@@ -117,7 +117,7 @@ final class RegisteredFields
     {
         $data = $error->get_error_data();
         if (is_array($data) && isset($data['status'])) {
-            return new RestError((string) $error->get_error_code(), $error->get_error_message(), (int) $data['status'], array_diff_key($data, ['status' => true]));
+            return new RestError((string) $error->get_error_code(), $error->get_error_message(), (int) $data['status'], $data);
         }
         return RestError::bare((string) $error->get_error_code(), $error->get_error_message());
     }

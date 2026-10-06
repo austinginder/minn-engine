@@ -296,7 +296,7 @@ final readonly class PostWriter
         $this->setTerms($id, 'post_format', [(int) $termId]);
     }
 
-    /** The side effects shared by create and update: sticky, format, featured media, footnotes. */
+    /** The side effects shared by create and update: sticky, format, featured media. */
     public function applyExtendedFields(int $id, array $body, string $type): void
     {
         if (isset($body['sticky']) && $type === 'post') {
@@ -313,6 +313,11 @@ final readonly class PostWriter
                 $this->deleteMeta($id, '_thumbnail_id');
             }
         }
+    }
+
+    /** The meta core registers, written directly when no plugins are loaded: footnotes, and a pattern's sync status. */
+    public function applyCoreMeta(int $id, array $body, string $type): void
+    {
         if (isset($body['meta']['footnotes'])) {
             $this->setMeta($id, 'footnotes', (string) $body['meta']['footnotes']);
         }

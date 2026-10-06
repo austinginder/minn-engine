@@ -60,6 +60,7 @@ final readonly class PostsWriteController
         }
 
         $body = $request->json();
+        self::checkMeta($body);
         $status = self::validStatus((string) ($body['status'] ?? 'draft'));
         $this->checkStickyPasswordConflict($body, null);
         $author = $userId;
@@ -117,7 +118,7 @@ final readonly class PostsWriteController
         $events->restInserted($id, $request, null);
         $this->writer->applyExtendedFields($id, $body, $type);
         $events->applyTerms($this->writer, $id, $body, $type);
-        $events->applyRegisteredMeta($id, $body, $type);
+        $events->applyMeta($this->writer, $id, $body, $type);
         $events->restAfterInsert($id, $request, null);
         $events->afterInsert($id, null);
 
@@ -218,6 +219,7 @@ final readonly class PostsWriteController
         }
 
         $body = $this->scheduledIfFuture($request->json(), $post);
+        self::checkMeta($body);
         $this->checkStickyPasswordConflict($body, $post);
         $columns = [...$this->floatingDate($body, $post), ...$this->fieldColumns($body, $post, $type), ...$this->statusColumns($body, $post, $type)];
         $columns['post_modified'] = $this->site->localNow();
@@ -238,7 +240,7 @@ final readonly class PostsWriteController
         $events->restInserted($postId, $request, $post);
         $events->applyTerms($this->writer, $postId, $body, $type);
         $this->writer->applyExtendedFields($postId, $body, $type);
-        $events->applyRegisteredMeta($postId, $body, $type);
+        $events->applyMeta($this->writer, $postId, $body, $type);
         $events->restAfterInsert($postId, $request, $post);
         $this->rememberOld($post, $this->posts->find($postId));
         if (!$events->live()) {
@@ -454,6 +456,14 @@ final readonly class PostsWriteController
     }
 
     /** Only the registered statuses can be stored. */
+    /** A body's meta must be an object of keys (probe rest-meta). @param array<string, mixed> $body */
+    public static function checkMeta(array $body): void
+    {
+        if (array_key_exists('meta', $body) && !is_array($body['meta'])) {
+            throw new RestError('rest_invalid_param', 'Invalid parameter(s): meta', 400, ['params' => ['meta' => 'Invalid parameter.'], 'details' => []]);
+        }
+    }
+
     private static function validStatus(string $status): string
     {
         if (!in_array($status, ['publish', 'future', 'draft', 'pending', 'private'], true)) {

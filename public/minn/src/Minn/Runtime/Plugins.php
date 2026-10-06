@@ -126,6 +126,13 @@ final class Plugins
         $hooks->action('setup_theme', []);
         self::loadThemeFunctions($runtime);
         $hooks->action('after_setup_theme', []);
+        // The meta init registers (core's, and minn-admin's toolbar key) is
+        // what the probes' REST answers read, so it is registered here.
+        \wp_create_initial_post_meta();
+        \wp_create_initial_comment_meta();
+        \wp_register_persisted_preferences_meta();
+        \_minn_register_toolbar_meta();
+        \register_block_core_footnotes_post_meta();
         $hooks->action('wp_loaded', []);
     }
 
