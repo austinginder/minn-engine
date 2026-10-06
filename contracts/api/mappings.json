@@ -2,12 +2,12 @@
     "generated": "2026-10-06",
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line)",
     "summary": {
-        "minn": 629,
+        "minn": 627,
         "composes": 864,
         "leaf": 634,
-        "noop": 1789,
-        "functions": 3846,
-        "minnMethods": 599,
+        "noop": 1793,
+        "functions": 3848,
+        "minnMethods": 605,
         "leafLinesOver15": 13
     },
     "functions": {
@@ -16935,7 +16935,7 @@
         },
         "add_option": {
             "file": "option.php",
-            "lines": 17,
+            "lines": 22,
             "kind": "minn",
             "minn": [
                 "Minn\\Runtime\\Options::guarded",
@@ -16943,7 +16943,9 @@
             ],
             "composes": [
                 "apply_filters",
-                "do_action"
+                "do_action",
+                "get_option",
+                "sanitize_option"
             ]
         },
         "add_option_whitelist": {
@@ -18940,6 +18942,15 @@
             "composes": [
                 "wp_kses"
             ]
+        },
+        "filter_default_option": {
+            "file": "option.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Runtime\\RegisteredSettings::defaultOf"
+            ],
+            "composes": []
         },
         "fix_protocol": {
             "file": "simplepie/Interfaces.php",
@@ -21447,8 +21458,7 @@
             "lines": 1,
             "kind": "noop",
             "minn": [
-                "Minn\\Runtime\\Runtime::current",
-                "Minn\\Runtime\\Runtime::get"
+                "Minn\\Runtime\\RegisteredSettings::all"
             ],
             "composes": []
         },
@@ -25082,6 +25092,15 @@
                 "plugin_basename"
             ]
         },
+        "register_initial_settings": {
+            "file": "option.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Runtime\\RegisteredSettings::registerCore"
+            ],
+            "composes": []
+        },
         "register_meta": {
             "file": "meta.php",
             "lines": 15,
@@ -25172,16 +25191,12 @@
         },
         "register_setting": {
             "file": "option.php",
-            "lines": 8,
-            "kind": "minn",
+            "lines": 1,
+            "kind": "noop",
             "minn": [
-                "Minn\\Runtime\\Runtime::current",
-                "Minn\\Runtime\\Runtime::get",
-                "Minn\\Runtime\\Runtime::set"
+                "Minn\\Runtime\\RegisteredSettings::register"
             ],
-            "composes": [
-                "add_filter"
-            ]
+            "composes": []
         },
         "register_sidebar": {
             "file": "widgets.php",
@@ -26219,10 +26234,10 @@
             "file": "option.php",
             "lines": 1,
             "kind": "noop",
-            "minn": [],
-            "composes": [
-                "apply_filters"
-            ]
+            "minn": [
+                "Minn\\Runtime\\OptionSanitizer::clean"
+            ],
+            "composes": []
         },
         "sanitize_post": {
             "file": "post.php",
@@ -27607,12 +27622,10 @@
         },
         "unregister_setting": {
             "file": "option.php",
-            "lines": 3,
-            "kind": "minn",
+            "lines": 1,
+            "kind": "noop",
             "minn": [
-                "Minn\\Runtime\\Runtime::current",
-                "Minn\\Runtime\\Runtime::get",
-                "Minn\\Runtime\\Runtime::set"
+                "Minn\\Runtime\\RegisteredSettings::unregister"
             ],
             "composes": []
         },
@@ -27773,7 +27786,7 @@
         },
         "update_option": {
             "file": "option.php",
-            "lines": 21,
+            "lines": 22,
             "kind": "minn",
             "minn": [
                 "Minn\\Runtime\\Options::guarded",
@@ -27784,7 +27797,8 @@
                 "apply_filters",
                 "do_action",
                 "get_option",
-                "maybe_serialize"
+                "maybe_serialize",
+                "sanitize_option"
             ]
         },
         "update_post_caches": {

@@ -25,6 +25,7 @@ the wp/v2 surface: shapes and controllers
 | [`IndexController`](#indexcontroller) | final readonly class | 96 | The API index at /wp-json/: the site facts monitors read (name, url, |
 | [`Links`](#links) | final class | 52 | Response link relations compacted through CURIEs: a rel that matches a CURIE's template becomes `name:suffix`, and the used CURIEs ride along. |
 | [`ListQuery`](#listquery) | final readonly class | 170 | The collection parameters a wp/v2 list accepts, read once from the |
+| [`LiveSettings`](#livesettings) | final readonly class | 77 | wp/v2/settings with plugins loaded, served from the registered settings |
 | [`MediaController`](#mediacontroller) | final readonly class | 357 | wp/v2/media: list, single, upload on both transports (multipart field |
 | [`MediaObject`](#mediaobject) | final readonly class | 164 | The wp/v2 media object, view and edit context. |
 | [`MenuItemObject`](#menuitemobject) | final readonly class | 74 | The wp/v2/menu-items resource. |
@@ -52,8 +53,8 @@ the wp/v2 surface: shapes and controllers
 | [`SchemaValues`](#schemavalues) | final class | 206 | The value side of JSON Schema, as the reference applies it: what counts |
 | [`SearchController`](#searchcontroller) | final readonly class | 121 | wp/v2 search over published content: id, title, url, type, and the |
 | [`Services`](#services) | final class | 387 | The objects one REST request shares, each made once, on first use, from |
-| [`Settings`](#settings) | final readonly class | 120 | The registered settings the Settings views read and write, mapped to |
-| [`SettingsController`](#settingscontroller) | final readonly class | 25 | wp/v2/settings: read and write, both behind manage_options. |
+| [`Settings`](#settings) | final readonly class | 113 | The registered settings the Settings views read and write, mapped to |
+| [`SettingsController`](#settingscontroller) | final readonly class | 32 | wp/v2/settings: read and write, both behind manage_options; with plugins loaded, every registered setting (LiveSettings). |
 | [`Subjects`](#subjects) | final readonly class | 41 | Whether the record a route capture names exists, for the policy gate to |
 | [`Taxonomies`](#taxonomies) | final class | 48 | The taxonomy registry the wp/v2 surface describes: the core set seeded |
 | [`TaxonomiesController`](#taxonomiescontroller) | final readonly class | 48 | wp/v2 taxonomies: the registry, whole or per type, in view or edit context. |
@@ -972,6 +973,46 @@ post=0 means "no post".
 Internals: `termFilters()` (private, line 76), `list()` (private, line 175), `words()` (private, line 181)
 
 
+## LiveSettings
+
+`final readonly class Minn\Rest\LiveSettings` · `public/minn/src/Minn/Rest/LiveSettings.php`
+
+wp/v2/settings with plugins loaded, served from the registered settings
+as the reference serves it (probe rest-settings): every setting shown in
+REST, core's and a plugin's alike, under its REST name. A read asks
+rest_pre_get_setting first, then get_option with the schema's default,
+and a value its schema refuses reads as null. A write takes the body's
+values its schema accepts (null always), offers each to
+rest_pre_update_setting, deletes the option for null (refused when what
+is stored does not fit the schema, since null could not restore it) and
+otherwise hands it to update_option.
+
+Used by: `Minn\Rest\Api`, `Minn\Rest\SettingsController`
+
+```php
+__construct(Minn\Rest\Schema $schema)
+```
+
+
+### `shown(): array`
+
+The settings shown in REST, by REST name, with the arguments the filters are handed.
+
+- `@return array<string, array{name: string, schema: array<string, mixed>, option_name: string}>`
+
+### `payload(): array`
+
+Every shown setting's value. @return array<string, mixed>
+
+- `@return array<string, mixed>`
+
+### `store(array $body): void`
+
+Writes the shown settings a body names, after refusing the values their schemas refuse.
+
+Internals: `refuseInvalid()` (private, line 81)
+
+
 ## MediaController
 
 `final readonly class Minn\Rest\MediaController` · `public/minn/src/Minn/Rest/MediaController.php`
@@ -1866,7 +1907,7 @@ tests the schema vocabulary needs. Behaviour pinned by contracts/fixtures/api/re
 - const `KEYWORDS` = `array (   0 => 'title',   1 => 'description',   2 => 'default',   3 => 'type',   4 => 'format',   5 => 'enum',   6 => 'items',   7 => 'properties',   8 => 'additionalProperties',   9 => 'patternProperties',   10 => 'minProperties',   11 => 'maxProperties',   12 => 'minimum',   13 => 'maximum',   14 => 'exclusiveMinimum',   15 => 'exclusiveMaximum',   16 => 'multipleOf',   17 => 'minLength',   18 => 'maxLength',   19 => 'pattern',   20 => 'minItems',   21 => 'maxItems',   22 => 'uniqueItems',   23 => 'anyOf',   24 => 'oneOf', )` — Every keyword a route schema may carry, in the reference's order; the endpoint subset drops the three descriptive ones.
 - const `ENDPOINT_KEYWORDS` = `array (   0 => 'type',   1 => 'format',   2 => 'enum',   3 => 'items',   4 => 'properties',   5 => 'additionalProperties',   6 => 'patternProperties',   7 => 'minProperties',   8 => 'maxProperties',   9 => 'minimum',   10 => 'maximum',   11 => 'exclusiveMinimum',   12 => 'exclusiveMaximum',   13 => 'multipleOf',   14 => 'minLength',   15 => 'maxLength',   16 => 'pattern',   17 => 'minItems',   18 => 'maxItems',   19 => 'uniqueItems',   20 => 'anyOf',   21 => 'oneOf', )` — An object schema that names its properties forbids the others unless it says otherwise, all the way down.
 
-Used by: `Minn\Rest\ApplicationPasswordsController`, `Minn\Rest\ArgCheck`, `Minn\Rest\SchemaValues`, `Minn\Rest\Services`
+Used by: `Minn\Rest\ApplicationPasswordsController`, `Minn\Rest\ArgCheck`, `Minn\Rest\LiveSettings`, `Minn\Rest\SchemaValues`, `Minn\Rest\Services`
 
 ```php
 __construct(Closure $email, Closure $number, Closure $format)
@@ -2248,27 +2289,24 @@ __construct(Minn\Content\Site $site)
 
 Every registered setting with its current value.
 
-### `store(array $body, ?Closure $write = NULL): void`
+### `store(array $body): void`
 
 Writes the registered keys in a body, already validated against
-SCHEMA; unregistered keys are ignored. $write, when given, takes each
-option and its value as the reference's controller hands it to
-update_option (an int, a boolean, a string), so plugins are told;
-without it the stored form is written directly.
-
-- `@param (Closure(string, mixed): void)|null $write`
+SCHEMA, in the stored form; unregistered keys are ignored. Without
+plugins loaded there is nobody to tell (LiveSettings writes through
+update_option when there is).
 
 
 ## SettingsController
 
 `final readonly class Minn\Rest\SettingsController` · `public/minn/src/Minn/Rest/SettingsController.php`
 
-wp/v2/settings: read and write, both behind manage_options.
+wp/v2/settings: read and write, both behind manage_options; with plugins loaded, every registered setting (LiveSettings).
 
 Used by: `Minn\Rest\Api`
 
 ```php
-__construct(Minn\Rest\Settings $settings, Minn\Rest\Caller $caller)
+__construct(Minn\Rest\Settings $settings, Minn\Rest\Caller $caller, Minn\Rest\LiveSettings $live)
 ```
 
 

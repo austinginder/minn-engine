@@ -34,7 +34,8 @@ the WordPress runtime plugins load against
 | [`NavMenu`](#navmenu) | final class | 303 | Nav-menu item decoration for wp_nav_menu(): the reference's class tokens |
 | [`OEmbed`](#oembed) | final class | 92 | oEmbed as data: provider matching against the wildcard table, response parsing, and the markup an oEmbed payload becomes. |
 | [`ObjectCache`](#objectcache) | final class | 52 | The per-request object cache behind wp_cache_*: groups of keys, nothing persistent. |
-| [`Options`](#options) | final class | 224 | Options as plugin code sees them: PHP values, decoded from the stored |
+| [`OptionSanitizer`](#optionsanitizer) | final class | 114 | A core option's value cleaned as the reference's sanitize_option cleans |
+| [`Options`](#options) | final class | 232 | Options as plugin code sees them: PHP values, decoded from the stored |
 | [`PackageDownload`](#packagedownload) | final class | 32 | The publisher's say over its own download. Before fetching an update |
 | [`PageMenu`](#pagemenu) | final class | 40 | The page-list menu a classic theme falls back to when no menu is |
 | [`Pages`](#pages) | final class | 113 | get_pages() as the reference shapes it: its arguments as a post query, and the tree order of the result. |
@@ -55,6 +56,7 @@ the WordPress runtime plugins load against
 | [`QueryFlags`](#queryflags) | final readonly class | 101 | The conditional flags a set of query variables implies (is_single, is_archive, |
 | [`Recovery`](#recovery) | final readonly class | 214 | Recovery from a fatal in someone else's code. When a plugin or theme |
 | [`Refusal`](#refusal) | final readonly class | 6 | A refused operation, the way plugin code expects to read it: a code, a message, optional data. The facade turns it into WP_Error. |
+| [`RegisteredSettings`](#registeredsettings) | final class | 104 | Settings as register_setting keeps them (probe rest-settings): the |
 | [`Registry`](#registry) | final class | 382 | Post types, taxonomies, and statuses as plugin code registers and reads |
 | [`Runtime`](#runtime) | final class | 357 | The WordPress runtime the engine offers plugin code: the procedural |
 | [`ScriptModules`](#scriptmodules) | final class | 308 | The script modules registry: registrations with typed dependencies, the |
@@ -1418,6 +1420,31 @@ Empties the cache.
 Empties one group.
 
 
+## OptionSanitizer
+
+`final class Minn\Runtime\OptionSanitizer` · `public/minn/src/Minn/Runtime/OptionSanitizer.php`
+
+A core option's value cleaned as the reference's sanitize_option cleans
+it (probe sanitize-option), before sanitize_option_{$option}: counts as
+whole numbers, the site's name and tagline escaped, formats and mail
+settings stripped of markup, addresses checked and kept as they were
+(with a settings error) when they are not addresses, word lists split
+and trimmed, the timezone and language checked against what exists. Any
+other option is left to its filter, where register_setting puts a
+plugin's sanitize_callback.
+
+- const `COUNTS` = `array (   0 => 'thumbnail_size_w',   1 => 'thumbnail_size_h',   2 => 'medium_size_w',   3 => 'medium_size_h',   4 => 'medium_large_size_w',   5 => 'medium_large_size_h',   6 => 'large_size_w',   7 => 'large_size_h',   8 => 'mailserver_port',   9 => 'comment_max_links',   10 => 'page_on_front',   11 => 'page_for_posts',   12 => 'rss_excerpt_length',   13 => 'default_category',   14 => 'default_email_category',   15 => 'default_link_category',   16 => 'close_comments_days_old',   17 => 'comments_per_page',   18 => 'thread_comments_depth',   19 => 'users_can_register',   20 => 'start_of_week',   21 => 'site_icon',   22 => 'fileupload_maxk', )`
+- const `STRIPPED` = `array (   0 => 'date_format',   1 => 'time_format',   2 => 'mailserver_url',   3 => 'mailserver_login',   4 => 'mailserver_pass',   5 => 'upload_path', )`
+- const `EMAIL` = `'The email address entered did not appear to be a valid email address. Please enter a valid email address.'`
+- const `ERRORS` = `array (   'siteurl' => 'The WordPress address you entered did not appear to be a valid URL. Please enter a valid URL.',   'home' => 'The Site address you entered did not appear to be a valid URL. Please enter a valid URL.',   'timezone_string' => 'The timezone you have entered is not valid. Please select a valid timezone.',   'permalink_structure' => 'A structure tag is required when using custom permalinks. <a href="https://wordpress.org/documentation/article/customize-permalinks/#choosing-your-permalink-structure">Learn more</a>', )`
+
+### static `clean(string $option, mixed $value): mixed`
+
+The value as sanitize_option leaves it, through sanitize_option_{$option}.
+
+Internals: `rule()` (private, line 49), `lists()` (private, line 69), `email()` (private, line 85), `perPage()` (private, line 92), `structure()` (private, line 100), `words()` (private, line 108), `domains()` (private, line 115), `languages()` (private, line 122)
+
+
 ## Options
 
 `final class Minn\Runtime\Options` · `public/minn/src/Minn/Runtime/Options.php`
@@ -1463,9 +1490,16 @@ An option's value, decoded, or null when unset.
 
 Whether an option exists.
 
+### `knownMissing(string $name): bool`
+
+Whether a read this request already found the option unset (the reference's notoptions).
+
 ### `add(string $name, mixed $value, string $autoload = 'auto'): bool`
 
-Adds an option only when it is unset.
+Writes a new option. add_option has already decided it is new (its
+value is still the default); a row that is there anyway is written
+over, as the reference's add does, and false comes back when it
+already held this value.
 
 ### `upsert(string $name, string $stored, string $autoload): bool`
 
@@ -1510,7 +1544,7 @@ What the reference stores: arrays and objects serialized, scalars as their strin
 
 A stored option value decoded the way the reference reads it.
 
-Internals: `remember()` (private, line 139), `holdsObject()` (private, line 152), `switchAutoload()` (private, line 170)
+Internals: `remember()` (private, line 147), `holdsObject()` (private, line 160), `switchAutoload()` (private, line 178)
 
 
 ## PackageDownload
@@ -2363,6 +2397,47 @@ __construct(string $code, string $message, mixed $data = NULL)
 - readonly `mixed $data`
 
 
+## RegisteredSettings
+
+`final class Minn\Runtime\RegisteredSettings` · `public/minn/src/Minn/Runtime/RegisteredSettings.php`
+
+Settings as register_setting keeps them (probe rest-settings): the
+arguments a plugin passes, filtered through register_setting_args and
+laid over the defaults (a string, in its group, unlabelled, undescribed,
+unsanitized, not shown in REST); the sanitize callback put on
+sanitize_option_{$name} with the value alone; a registered default
+answering get_option through filter_default_option; register_setting
+fired once kept. unregister_setting takes all of it back. Core's own
+settings (the site's title, tagline, addresses, formats, reading and
+discussion defaults) are registered as the REST server starts.
+
+- const `KEY` = `'registered_settings'`
+- const `ARRAY_ITEMS` = `'When registering an "array" setting to show in the REST API, you must specify the schema for each array item in "show_in_rest.schema.items".'`
+- const `CORE` = `array (   'blogname' =>    array (     0 => 'general',     1 => 'string',     2 => 'Title',     3 => 'Site title.',     4 =>      array (       'name' => 'title',     ),   ),   'blogdescription' =>    array (     0 => 'general',     1 => 'string',     2 => 'Tagline',     3 => 'Site tagline.',     4 =>      array (       'name' => 'description',     ),   ),   'siteurl' =>    array (     0 => 'general',     1 => 'string',     2 => '',     3 => 'Site URL.',     4 =>      array (       'name' => 'url',       'schema' =>        array (         'format' => 'uri',       ),     ),   ),   'admin_email' =>    array (     0 => 'general',     1 => 'string',     2 => '',     3 => 'This address is used for admin purposes, like new user notification.',     4 =>      array (       'name' => 'email',       'schema' =>        array (         'format' => 'email',       ),     ),   ),   'timezone_string' =>    array (     0 => 'general',     1 => 'string',     2 => '',     3 => 'A city in the same timezone as you.',     4 =>      array (       'name' => 'timezone',     ),   ),   'date_format' =>    array (     0 => 'general',     1 => 'string',     2 => '',     3 => 'A date format for all date strings.',     4 => true,   ),   'time_format' =>    array (     0 => 'general',     1 => 'string',     2 => '',     3 => 'A time format for all time strings.',     4 => true,   ),   'start_of_week' =>    array (     0 => 'general',     1 => 'integer',     2 => '',     3 => 'A day number of the week that the week should start on.',     4 => true,   ),   'WPLANG' =>    array (     0 => 'general',     1 => 'string',     2 => '',     3 => 'WordPress locale code.',     4 =>      array (       'name' => 'language',     ),     5 => 'en_US',   ),   'use_smilies' =>    array (     0 => 'writing',     1 => 'boolean',     2 => '',     3 => 'Convert emoticons like :-) and :-P to graphics on display.',     4 => true,     5 => true,   ),   'default_category' =>    array (     0 => 'writing',     1 => 'integer',     2 => '',     3 => 'Default post category.',     4 => true,   ),   'default_post_format' =>    array (     0 => 'writing',     1 => 'string',     2 => '',     3 => 'Default post format.',     4 => true,   ),   'posts_per_page' =>    array (     0 => 'reading',     1 => 'integer',     2 => 'Maximum posts per page',     3 => 'Blog pages show at most.',     4 => true,     5 => 10,   ),   'show_on_front' =>    array (     0 => 'reading',     1 => 'string',     2 => 'Show on front',     3 => 'What to show on the front page',     4 => true,   ),   'page_on_front' =>    array (     0 => 'reading',     1 => 'integer',     2 => 'Page on front',     3 => 'The ID of the page that should be displayed on the front page',     4 => true,   ),   'page_for_posts' =>    array (     0 => 'reading',     1 => 'integer',     2 => '',     3 => 'The ID of the page that should display the latest posts',     4 => true,   ),   'default_ping_status' =>    array (     0 => 'discussion',     1 => 'string',     2 => '',     3 => 'Allow link notifications from other blogs (pingbacks and trackbacks) on new articles.',     4 =>      array (       'schema' =>        array (         'enum' =>          array (           0 => 'open',           1 => 'closed',         ),       ),     ),   ),   'default_comment_status' =>    array (     0 => 'discussion',     1 => 'string',     2 => 'Allow comments on new posts',     3 => 'Allow people to submit comments on new posts.',     4 =>      array (       'schema' =>        array (         'enum' =>          array (           0 => 'open',           1 => 'closed',         ),       ),     ),   ),   'site_logo' =>    array (     0 => 'general',     1 => 'integer',     2 => 'Logo',     3 => 'Site logo.',     4 =>      array (       'name' => 'site_logo',     ),   ),   'site_icon' =>    array (     0 => 'general',     1 => 'integer',     2 => 'Icon',     3 => 'Site icon.',     4 => true,   ), )` — Core's settings: name => [group, type, label, description, show_in_rest, default when it has one].
+
+### static `all(): array`
+
+Every registered setting by option name, in registration order. @return array<string, array<string, mixed>>
+
+- `@return array<string, array<string, mixed>>`
+
+### static `register(string $group, string $name, mixed $args): void`
+
+register_setting: $args an array, or (as it once was) the sanitize callback alone.
+
+### static `unregister(string $group, string $name, mixed $deprecated = ''): void`
+
+unregister_setting: the setting, its sanitize callback and its default gone, unregister_setting fired.
+
+### static `defaultOf(mixed $default, string $option, bool $passed): mixed`
+
+filter_default_option: the registered default, unless the reader named its own.
+
+### static `registerCore(): void`
+
+register_initial_settings: core's settings, each through register_setting.
+
+
 ## Registry
 
 `final class Minn\Runtime\Registry` · `public/minn/src/Minn/Runtime/Registry.php`
@@ -2477,7 +2552,7 @@ blocks, texturize, paragraphs, shortcodes, block hooks, and the image
 attributes. What it has not (smilies, the capital P, insecure home
 addresses) runs with the plugins' own callbacks.
 
-Used by: `Minn\Admin\BootPayload`, `Minn\Auth\Authenticator`, `Minn\Blocks\Dynamic\Theme\Comments`, `Minn\Blocks\Dynamic\Theme\Navigation`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Blocks\ImageTags`, `Minn\Blocks\RenderState`, `Minn\Cli\Runtime`, `Minn\Content\Blocks`, `Minn\Content\Reader`, `Minn\Content\Site`, `Minn\Content\Terms`, `Minn\Cron\Cron`, `Minn\Db`, `Minn\Engine`, `Minn\Extension\Extensions`, `Minn\Front\CommentPostController`, `Minn\Front\Feeds`, `Minn\Front\Permalinks`, `Minn\Front\PluginRules`, `Minn\Front\Resolver`, `Minn\Login\LoginHooks`, `Minn\Mail\Mailer`, `Minn\Media\Images`, `Minn\Rest\AbilitiesController`, `Minn\Rest\Api`, `Minn\Rest\Caller`, `Minn\Rest\CommentObject`, `Minn\Rest\MediaController`, `Minn\Rest\MediaObject`, `Minn\Rest\PostObject`, `Minn\Rest\RenderedFields`, `Minn\Rest\RuntimeEnvelope`, `Minn\Rest\RuntimePrepare`, `Minn\Rest\Services`, `Minn\Rest\SettingsController`, `Minn\Rest\UsersController`, `Minn\Runtime\Abilities`, `Minn\Runtime\AjaxController`, `Minn\Runtime\BlockFilters`, `Minn\Runtime\BlockHooks`, `Minn\Runtime\CommentEvents`, `Minn\Runtime\Constants`, `Minn\Runtime\FileUpload`, `Minn\Runtime\Interactivity`, `Minn\Runtime\NavMenu`, `Minn\Runtime\PackageDownload`, `Minn\Runtime\Patterns`, `Minn\Runtime\PlaceholderTrace`, `Minn\Runtime\PluginUpdates`, `Minn\Runtime\Plugins`, `Minn\Runtime\PostEvents`, `Minn\Runtime\PostQuery`, `Minn\Runtime\PostSave`, `Minn\Runtime\ScriptModules`, `Minn\Runtime\TermEvents`, `Minn\Runtime\TermSave`, `Minn\Runtime\TermWriter`, `Minn\Runtime\UserEvents`, `Minn\Theme\ArchiveTitle`, `Minn\Theme\ClassicContent`, `Minn\Theme\ClassicRenderer`, `Minn\Theme\MainQueryBridge`, `Minn\Theme\PageRenderer`, `Minn\Theme\Templates`
+Used by: `Minn\Admin\BootPayload`, `Minn\Auth\Authenticator`, `Minn\Blocks\Dynamic\Theme\Comments`, `Minn\Blocks\Dynamic\Theme\Navigation`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Blocks\ImageTags`, `Minn\Blocks\RenderState`, `Minn\Cli\Runtime`, `Minn\Content\Blocks`, `Minn\Content\Reader`, `Minn\Content\Site`, `Minn\Content\Terms`, `Minn\Cron\Cron`, `Minn\Db`, `Minn\Engine`, `Minn\Extension\Extensions`, `Minn\Front\CommentPostController`, `Minn\Front\Feeds`, `Minn\Front\Permalinks`, `Minn\Front\PluginRules`, `Minn\Front\Resolver`, `Minn\Login\LoginHooks`, `Minn\Mail\Mailer`, `Minn\Media\Images`, `Minn\Rest\AbilitiesController`, `Minn\Rest\Api`, `Minn\Rest\Caller`, `Minn\Rest\CommentObject`, `Minn\Rest\MediaController`, `Minn\Rest\MediaObject`, `Minn\Rest\PostObject`, `Minn\Rest\RenderedFields`, `Minn\Rest\RuntimeEnvelope`, `Minn\Rest\RuntimePrepare`, `Minn\Rest\Services`, `Minn\Rest\SettingsController`, `Minn\Rest\UsersController`, `Minn\Runtime\Abilities`, `Minn\Runtime\AjaxController`, `Minn\Runtime\BlockFilters`, `Minn\Runtime\BlockHooks`, `Minn\Runtime\CommentEvents`, `Minn\Runtime\Constants`, `Minn\Runtime\FileUpload`, `Minn\Runtime\Interactivity`, `Minn\Runtime\NavMenu`, `Minn\Runtime\PackageDownload`, `Minn\Runtime\Patterns`, `Minn\Runtime\PlaceholderTrace`, `Minn\Runtime\PluginUpdates`, `Minn\Runtime\Plugins`, `Minn\Runtime\PostEvents`, `Minn\Runtime\PostQuery`, `Minn\Runtime\PostSave`, `Minn\Runtime\RegisteredSettings`, `Minn\Runtime\ScriptModules`, `Minn\Runtime\TermEvents`, `Minn\Runtime\TermSave`, `Minn\Runtime\TermWriter`, `Minn\Runtime\UserEvents`, `Minn\Theme\ArchiveTitle`, `Minn\Theme\ClassicContent`, `Minn\Theme\ClassicRenderer`, `Minn\Theme\MainQueryBridge`, `Minn\Theme\PageRenderer`, `Minn\Theme\Templates`
 
 ```php
 __construct(Minn\Context $context, bool $isAdmin = false)

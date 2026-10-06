@@ -13,12 +13,13 @@ use Minn\Http\Policy;
 use Minn\Http\Route;
 use Minn\RestError;
 
-/** wp/v2/settings: read and write, both behind manage_options. */
+/** wp/v2/settings: read and write, both behind manage_options; with plugins loaded, every registered setting (LiveSettings). */
 final readonly class SettingsController
 {
     public function __construct(
         private Settings $settings,
         private Caller $caller,
+        private LiveSettings $live,
     ) {
     }
 
@@ -32,9 +33,15 @@ final readonly class SettingsController
         if (!$this->caller->can('manage_options')) {
             throw new RestError('rest_forbidden', 'Sorry, you are not allowed to do that.', 403);
         }
+        // With plugins loaded the registered settings are served, a plugin's beside core's, through the options API.
+        if (Runtime::booted()) {
+            if ($request->method !== Method::Get) {
+                $this->live->store($request->json());
+            }
+            return Reply::item($this->live->payload(), Fields::fromQuery($request->query));
+        }
         if ($request->method !== Method::Get) {
-            // With plugins loaded each option goes through update_option, so they are told.
-            $this->settings->store($request->json(), Runtime::booted() ? static fn (string $option, mixed $value) => \update_option($option, $value) : null);
+            $this->settings->store($request->json());
         }
         return Reply::item($this->settings->payload(), Fields::fromQuery($request->query));
     }

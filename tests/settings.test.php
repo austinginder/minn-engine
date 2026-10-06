@@ -133,9 +133,10 @@ foreach ( array( 'editor' => $editor, 'anonymous' => null ) as $who => $mint ) {
 	'use_smilies'    => false,
 	'description'    => 'Set by the engine',
 ) ) );
-// Boolean false is stored as '' and then served as null — core's own
-// round-trip quirk, matched exactly.
-check( 200 === $st && 'Engine-titled site' === ( $b['title'] ?? '' ) && 7 === ( $b['posts_per_page'] ?? 0 ) && array_key_exists( 'use_smilies', $b ) && null === $b['use_smilies'], 'engine write returns the new payload' );
+// The write's own answer keeps false (the value as written this request,
+// as the reference answers it); boolean false is stored as '' and a later
+// read serves it as null, core's own round-trip quirk, matched exactly.
+check( 200 === $st && 'Engine-titled site' === ( $b['title'] ?? '' ) && 7 === ( $b['posts_per_page'] ?? 0 ) && array_key_exists( 'use_smilies', $b ) && false === $b['use_smilies'], 'engine write returns the new payload', json_encode( array( $st, $b['title'] ?? null, $b['posts_per_page'] ?? null, $b['use_smilies'] ?? 'absent' ) ) );
 [ , $b ] = st_fetch( $REF, $admin );
 check(
 	'Engine-titled site' === ( $b['title'] ?? '' ) && 7 === ( $b['posts_per_page'] ?? 0 )

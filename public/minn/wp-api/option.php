@@ -4,7 +4,9 @@
  * Storage shapes and return values follow contracts/fixtures/api/functions.json.
  */
 
+use Minn\Runtime\OptionSanitizer;
 use Minn\Runtime\Options;
+use Minn\Runtime\RegisteredSettings;
 use Minn\Runtime\Runtime;
 use Minn\Runtime\StoredObjects;
 use Minn\Support\Serialized;
@@ -61,7 +63,12 @@ function add_option($option, $value = '', $deprecated = '', $autoload = null)
     if ($option === '' || Options::guarded($option)) {
         return false;
     }
-    $value = apply_filters("pre_add_option_{$option}", $value, $option);
+    $value = sanitize_option($option, $value);
+    // An option is new while it reads as its default; a read that already
+    // found it unset needs no second look.
+    if (!Runtime::options()->knownMissing($option) && apply_filters("default_option_{$option}", false, $option, false) !== get_option($option)) {
+        return false;
+    }
     $flag = match (true) {
         $autoload === null, $autoload === 'auto' => 'auto',
         $autoload === 'yes', $autoload === 'on', $autoload === true => 'on',
@@ -87,6 +94,7 @@ function update_option($option, $value, $autoload = null)
     if ($option === '' || Options::guarded($option)) {
         return false;
     }
+    $value = sanitize_option($option, $value);
     $old = get_option($option);
     $value = apply_filters("pre_update_option_{$option}", $value, $old, $option);
     $value = apply_filters('pre_update_option', $value, $option, $old);
@@ -94,7 +102,7 @@ function update_option($option, $value, $autoload = null)
     if ($value === $old || maybe_serialize($value) === maybe_serialize($old)) {
         return false;
     }
-    if (Runtime::options()->get($option) === null) {
+    if (apply_filters("default_option_{$option}", false, $option, false) === $old) {
         return add_option($option, $value, '', $autoload);
     }
     do_action('update_option', $option, $old, $value);
@@ -461,33 +469,38 @@ function maybe_unserialize($data)
     return $decoded === Serialized::INVALID ? $data : $decoded;
 }
 
+/** Registers a setting (Runtime\RegisteredSettings): its arguments kept, its sanitize callback and default hooked. */
 function register_setting($option_group, $option_name, $args = [])
 {
-    $registered = Runtime::current()->get('registered_settings', []);
-    $args = is_array($args) ? $args : [];
-    $args['group'] = $option_group;
-    $registered[$option_name] = $args;
-    Runtime::current()->set('registered_settings', $registered);
-    if (isset($args['sanitize_callback']) && is_callable($args['sanitize_callback'])) {
-        add_filter("sanitize_option_{$option_name}", $args['sanitize_callback'], 10, 2);
-    }
+    RegisteredSettings::register((string) $option_group, (string) $option_name, $args);
 }
 
 function unregister_setting($option_group, $option_name, $deprecated = '')
 {
-    $registered = Runtime::current()->get('registered_settings', []);
-    unset($registered[$option_name]);
-    Runtime::current()->set('registered_settings', $registered);
+    RegisteredSettings::unregister((string) $option_group, (string) $option_name, $deprecated);
 }
 
 function get_registered_settings()
 {
-    return Runtime::current()->get('registered_settings', []);
+    return RegisteredSettings::all();
 }
 
+/** A registered setting's default, for get_option when the reader named none. */
+function filter_default_option($default_value, $option, $passed_default)
+{
+    return RegisteredSettings::defaultOf($default_value, (string) $option, (bool) $passed_default);
+}
+
+/** Core's settings, registered as the REST server starts. */
+function register_initial_settings()
+{
+    RegisteredSettings::registerCore();
+}
+
+/** A value cleaned by its option's own rule (Runtime\OptionSanitizer), then sanitize_option_{$option}. */
 function sanitize_option($option, $value)
 {
-    return apply_filters("sanitize_option_{$option}", $value, $option, $value);
+    return OptionSanitizer::clean((string) $option, $value);
 }
 
 /** Reads the options once so later gets are cache hits; the engine caches per name already. */

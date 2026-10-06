@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Minn\Rest;
 
-use Closure;
 use Minn\Content\Site;
 
 /**
@@ -102,14 +101,11 @@ final readonly class Settings
 
     /**
      * Writes the registered keys in a body, already validated against
-     * SCHEMA; unregistered keys are ignored. $write, when given, takes each
-     * option and its value as the reference's controller hands it to
-     * update_option (an int, a boolean, a string), so plugins are told;
-     * without it the stored form is written directly.
-     *
-     * @param (Closure(string, mixed): void)|null $write
+     * SCHEMA, in the stored form; unregistered keys are ignored. Without
+     * plugins loaded there is nobody to tell (LiveSettings writes through
+     * update_option when there is).
      */
-    public function store(array $body, ?Closure $write = null): void
+    public function store(array $body): void
     {
         foreach ($body as $key => $value) {
             if (!isset(self::REGISTRY[$key])) {
@@ -123,10 +119,6 @@ final readonly class Settings
                 'int_or_null' => $value === null ? '' : (int) $value,
                 default => (string) $value,
             };
-            if ($write !== null) {
-                $write($option, $typed);
-                continue;
-            }
             $this->site->setOption($option, is_bool($typed) ? ($typed ? '1' : '') : (string) $typed);
         }
     }

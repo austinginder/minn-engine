@@ -74019,6 +74019,7 @@
                 "Minn\\Rest\\CommentsController",
                 "Minn\\Rest\\Embed",
                 "Minn\\Rest\\GlobalStylesController",
+                "Minn\\Rest\\LiveSettings",
                 "Minn\\Rest\\MediaController",
                 "Minn\\Rest\\MenusController",
                 "Minn\\Rest\\PluginsController",
@@ -74663,6 +74664,7 @@
                 "Minn\\Rest\\GlobalStylesController",
                 "Minn\\Rest\\GlobalStylesObject",
                 "Minn\\Rest\\IndexController",
+                "Minn\\Rest\\LiveSettings",
                 "Minn\\Rest\\MediaController",
                 "Minn\\Rest\\MenuItemObject",
                 "Minn\\Rest\\MenuObject",
@@ -79449,6 +79451,134 @@
                     ],
                     "line": 181,
                     "end": 184
+                }
+            ]
+        },
+        {
+            "name": "Minn\\Rest\\LiveSettings",
+            "short": "LiveSettings",
+            "namespace": "Minn\\Rest",
+            "kind": "final readonly class",
+            "file": "public/minn/src/Minn/Rest/LiveSettings.php",
+            "lines": 77,
+            "doc": "wp/v2/settings with plugins loaded, served from the registered settings\nas the reference serves it (probe rest-settings): every setting shown in\nREST, core's and a plugin's alike, under its REST name. A read asks\nrest_pre_get_setting first, then get_option with the schema's default,\nand a value its schema refuses reads as null. A write takes the body's\nvalues its schema accepts (null always), offers each to\nrest_pre_update_setting, deletes the option for null (refused when what\nis stored does not fit the schema, since null could not restore it) and\notherwise hands it to update_option.",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\RestError",
+                "Minn\\Rest\\Schema"
+            ],
+            "usedBy": [
+                "Minn\\Rest\\Api",
+                "Minn\\Rest\\SettingsController"
+            ],
+            "constructor": {
+                "signature": "__construct(Minn\\Rest\\Schema $schema)",
+                "doc": "",
+                "shapes": [],
+                "params": [
+                    {
+                        "name": "schema",
+                        "type": "Minn\\Rest\\Schema",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    }
+                ],
+                "visibility": "public",
+                "line": 22,
+                "end": 24
+            },
+            "cases": [],
+            "constants": [],
+            "properties": [
+                {
+                    "name": "schema",
+                    "type": "Minn\\Rest\\Schema",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
+                }
+            ],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "shown",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "shown(): array",
+                    "doc": "The settings shown in REST, by REST name, with the arguments the filters are handed.",
+                    "shapes": [
+                        "@return array<string, array{name: string, schema: array<string, mixed>, option_name: string}>"
+                    ],
+                    "params": [],
+                    "line": 31,
+                    "end": 45
+                },
+                {
+                    "routes": [],
+                    "name": "payload",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "payload(): array",
+                    "doc": "Every shown setting's value. @return array<string, mixed>",
+                    "shapes": [
+                        "@return array<string, mixed>"
+                    ],
+                    "params": [],
+                    "line": 48,
+                    "end": 57
+                },
+                {
+                    "routes": [],
+                    "name": "store",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "store(array $body): void",
+                    "doc": "Writes the shown settings a body names, after refusing the values their schemas refuse.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "body",
+                            "type": "array",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 60,
+                    "end": 78
+                },
+                {
+                    "routes": [],
+                    "name": "refuseInvalid",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "refuseInvalid(array $shown, array $body): void",
+                    "doc": "",
+                    "shapes": [
+                        "@param array<string, array{schema: array<string, mixed>}> $shown"
+                    ],
+                    "params": [
+                        {
+                            "name": "shown",
+                            "type": "array",
+                            "shape": "array<string, array{schema: array<string, mixed>}>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "body",
+                            "type": "array",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 81,
+                    "end": 95
                 }
             ]
         },
@@ -85806,6 +85936,7 @@
             "usedBy": [
                 "Minn\\Rest\\ApplicationPasswordsController",
                 "Minn\\Rest\\ArgCheck",
+                "Minn\\Rest\\LiveSettings",
                 "Minn\\Rest\\SchemaValues",
                 "Minn\\Rest\\Services"
             ],
@@ -87841,7 +87972,7 @@
             "namespace": "Minn\\Rest",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Rest/Settings.php",
-            "lines": 120,
+            "lines": 113,
             "doc": "The registered settings the Settings views read and write, mapped to\nthe options WordPress stores. Registration order is the payload order.",
             "implements": [],
             "extends": null,
@@ -87867,8 +87998,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 78,
-                "end": 80
+                "line": 77,
+                "end": 79
             },
             "cases": [],
             "constants": [
@@ -87906,19 +88037,17 @@
                     "doc": "Every registered setting with its current value.",
                     "shapes": [],
                     "params": [],
-                    "line": 83,
-                    "end": 101
+                    "line": 82,
+                    "end": 100
                 },
                 {
                     "routes": [],
                     "name": "store",
                     "static": false,
                     "visibility": "public",
-                    "signature": "store(array $body, ?Closure $write = NULL): void",
-                    "doc": "Writes the registered keys in a body, already validated against\nSCHEMA; unregistered keys are ignored. $write, when given, takes each\noption and its value as the reference's controller hands it to\nupdate_option (an int, a boolean, a string), so plugins are told;\nwithout it the stored form is written directly.",
-                    "shapes": [
-                        "@param (Closure(string, mixed): void)|null $write"
-                    ],
+                    "signature": "store(array $body): void",
+                    "doc": "Writes the registered keys in a body, already validated against\nSCHEMA, in the stored form; unregistered keys are ignored. Without\nplugins loaded there is nobody to tell (LiveSettings writes through\nupdate_option when there is).",
+                    "shapes": [],
                     "params": [
                         {
                             "name": "body",
@@ -87926,17 +88055,10 @@
                             "shape": "",
                             "default": null,
                             "doc": ""
-                        },
-                        {
-                            "name": "write",
-                            "type": "?Closure",
-                            "shape": "(Closure(string, mixed): void)|null",
-                            "default": "NULL",
-                            "doc": ""
                         }
                     ],
-                    "line": 112,
-                    "end": 132
+                    "line": 108,
+                    "end": 124
                 }
             ]
         },
@@ -87946,8 +88068,8 @@
             "namespace": "Minn\\Rest",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Rest/SettingsController.php",
-            "lines": 25,
-            "doc": "wp/v2/settings: read and write, both behind manage_options.",
+            "lines": 32,
+            "doc": "wp/v2/settings: read and write, both behind manage_options; with plugins loaded, every registered setting (LiveSettings).",
             "implements": [],
             "extends": null,
             "uses": [
@@ -87960,6 +88082,7 @@
                 "Minn\\RestError",
                 "Minn\\Rest\\Caller",
                 "Minn\\Rest\\Fields",
+                "Minn\\Rest\\LiveSettings",
                 "Minn\\Rest\\Reply",
                 "Minn\\Rest\\Settings",
                 "Minn\\Runtime\\Runtime"
@@ -87968,7 +88091,7 @@
                 "Minn\\Rest\\Api"
             ],
             "constructor": {
-                "signature": "__construct(Minn\\Rest\\Settings $settings, Minn\\Rest\\Caller $caller)",
+                "signature": "__construct(Minn\\Rest\\Settings $settings, Minn\\Rest\\Caller $caller, Minn\\Rest\\LiveSettings $live)",
                 "doc": "",
                 "shapes": [],
                 "params": [
@@ -87985,11 +88108,18 @@
                         "shape": "",
                         "default": null,
                         "doc": ""
+                    },
+                    {
+                        "name": "live",
+                        "type": "Minn\\Rest\\LiveSettings",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
                     }
                 ],
                 "visibility": "public",
                 "line": 19,
-                "end": 23
+                "end": 24
             },
             "cases": [],
             "constants": [],
@@ -88006,6 +88136,15 @@
                 {
                     "name": "caller",
                     "type": "Minn\\Rest\\Caller",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
+                },
+                {
+                    "name": "live",
+                    "type": "Minn\\Rest\\LiveSettings",
                     "readonly": true,
                     "static": false,
                     "doc": "",
@@ -88036,8 +88175,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 30,
-                    "end": 40
+                    "line": 31,
+                    "end": 47
                 }
             ]
         },
@@ -97675,12 +97814,270 @@
             ]
         },
         {
+            "name": "Minn\\Runtime\\OptionSanitizer",
+            "short": "OptionSanitizer",
+            "namespace": "Minn\\Runtime",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Runtime/OptionSanitizer.php",
+            "lines": 114,
+            "doc": "A core option's value cleaned as the reference's sanitize_option cleans\nit (probe sanitize-option), before sanitize_option_{$option}: counts as\nwhole numbers, the site's name and tagline escaped, formats and mail\nsettings stripped of markup, addresses checked and kept as they were\n(with a settings error) when they are not addresses, word lists split\nand trimmed, the timezone and language checked against what exists. Any\nother option is left to its filter, where register_setting puts a\nplugin's sanitize_callback.",
+            "implements": [],
+            "extends": null,
+            "uses": [],
+            "usedBy": [],
+            "constructor": null,
+            "cases": [],
+            "constants": [
+                {
+                    "name": "COUNTS",
+                    "value": "array (   0 => 'thumbnail_size_w',   1 => 'thumbnail_size_h',   2 => 'medium_size_w',   3 => 'medium_size_h',   4 => 'medium_large_size_w',   5 => 'medium_large_size_h',   6 => 'large_size_w',   7 => 'large_size_h',   8 => 'mailserver_port',   9 => 'comment_max_links',   10 => 'page_on_front',   11 => 'page_for_posts',   12 => 'rss_excerpt_length',   13 => 'default_category',   14 => 'default_email_category',   15 => 'default_link_category',   16 => 'close_comments_days_old',   17 => 'comments_per_page',   18 => 'thread_comments_depth',   19 => 'users_can_register',   20 => 'start_of_week',   21 => 'site_icon',   22 => 'fileupload_maxk', )",
+                    "doc": "",
+                    "visibility": "private"
+                },
+                {
+                    "name": "STRIPPED",
+                    "value": "array (   0 => 'date_format',   1 => 'time_format',   2 => 'mailserver_url',   3 => 'mailserver_login',   4 => 'mailserver_pass',   5 => 'upload_path', )",
+                    "doc": "",
+                    "visibility": "private"
+                },
+                {
+                    "name": "EMAIL",
+                    "value": "'The email address entered did not appear to be a valid email address. Please enter a valid email address.'",
+                    "doc": "",
+                    "visibility": "private"
+                },
+                {
+                    "name": "ERRORS",
+                    "value": "array (   'siteurl' => 'The WordPress address you entered did not appear to be a valid URL. Please enter a valid URL.',   'home' => 'The Site address you entered did not appear to be a valid URL. Please enter a valid URL.',   'timezone_string' => 'The timezone you have entered is not valid. Please select a valid timezone.',   'permalink_structure' => 'A structure tag is required when using custom permalinks. <a href=\"https://wordpress.org/documentation/article/customize-permalinks/#choosing-your-permalink-structure\">Learn more</a>', )",
+                    "doc": "",
+                    "visibility": "private"
+                }
+            ],
+            "properties": [],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "clean",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "clean(string $option, mixed $value): mixed",
+                    "doc": "The value as sanitize_option leaves it, through sanitize_option_{$option}.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "option",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "value",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 33,
+                    "end": 42
+                },
+                {
+                    "routes": [],
+                    "name": "rule",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "rule(string $option, mixed $value): array",
+                    "doc": "The option's own rule: the cleaned value, and the error that refuses it (null when it stands).",
+                    "shapes": [
+                        "@return array{0: mixed, 1: string|null}"
+                    ],
+                    "params": [
+                        {
+                            "name": "option",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "value",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 49,
+                    "end": 66
+                },
+                {
+                    "routes": [],
+                    "name": "lists",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "lists(string $option, mixed $value): array",
+                    "doc": "",
+                    "shapes": [
+                        "@return array{0: mixed, 1: string|null}"
+                    ],
+                    "params": [
+                        {
+                            "name": "option",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "value",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 69,
+                    "end": 82
+                },
+                {
+                    "routes": [],
+                    "name": "email",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "email(string $value): array",
+                    "doc": "",
+                    "shapes": [
+                        "@return array{0: string, 1: string|null}"
+                    ],
+                    "params": [
+                        {
+                            "name": "value",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 85,
+                    "end": 89
+                },
+                {
+                    "routes": [],
+                    "name": "perPage",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "perPage(mixed $value): int",
+                    "doc": "A page size: a whole number, 1 when none, a negative one (but -1, all) made positive.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "value",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 92,
+                    "end": 97
+                },
+                {
+                    "routes": [],
+                    "name": "structure",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "structure(string $option, string $value): array",
+                    "doc": "",
+                    "shapes": [
+                        "@return array{0: string, 1: string|null}"
+                    ],
+                    "params": [
+                        {
+                            "name": "option",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "value",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 100,
+                    "end": 105
+                },
+                {
+                    "routes": [],
+                    "name": "words",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "words(array $words): array|string",
+                    "doc": "",
+                    "shapes": [
+                        "@param array<int|string, mixed> $words @return list<string>|string"
+                    ],
+                    "params": [
+                        {
+                            "name": "words",
+                            "type": "array",
+                            "shape": "array<int|string, mixed>",
+                            "default": null,
+                            "doc": "@return list<string>|string"
+                        }
+                    ],
+                    "line": 108,
+                    "end": 112
+                },
+                {
+                    "routes": [],
+                    "name": "domains",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "domains(array $domains): array|string",
+                    "doc": "",
+                    "shapes": [
+                        "@param array<int|string, mixed> $domains @return list<string>|string"
+                    ],
+                    "params": [
+                        {
+                            "name": "domains",
+                            "type": "array",
+                            "shape": "array<int|string, mixed>",
+                            "default": null,
+                            "doc": "@return list<string>|string"
+                        }
+                    ],
+                    "line": 115,
+                    "end": 119
+                },
+                {
+                    "routes": [],
+                    "name": "languages",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "languages(): array",
+                    "doc": "The languages the site may be set to: those installed, and the one wp-config names. @return list<string>",
+                    "shapes": [
+                        "@return list<string>"
+                    ],
+                    "params": [],
+                    "line": 122,
+                    "end": 129
+                }
+            ]
+        },
+        {
             "name": "Minn\\Runtime\\Options",
             "short": "Options",
             "namespace": "Minn\\Runtime",
             "kind": "final class",
             "file": "public/minn/src/Minn/Runtime/Options.php",
-            "lines": 224,
+            "lines": 232,
             "doc": "Options as plugin code sees them: PHP values, decoded from the stored\nblob by the engine's own reader, cached for the request so a value written\nand read again in one request keeps its PHP type (an int stays an int,\nfalse stays false) exactly as the reference shows. A value holding an\nobject is kept as its stored text and decoded afresh on every read, as\nthe reference does: a plugin that changes the object it was handed and\nsaves it must find the stored copy still different, or its change is\nnever written.",
             "implements": [],
             "extends": null,
@@ -97848,11 +98245,31 @@
                 },
                 {
                     "routes": [],
+                    "name": "knownMissing",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "knownMissing(string $name): bool",
+                    "doc": "Whether a read this request already found the option unset (the reference's notoptions).",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "name",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 93,
+                    "end": 96
+                },
+                {
+                    "routes": [],
                     "name": "add",
                     "static": false,
                     "visibility": "public",
                     "signature": "add(string $name, mixed $value, string $autoload = 'auto'): bool",
-                    "doc": "Adds an option only when it is unset.",
+                    "doc": "Writes a new option. add_option has already decided it is new (its\nvalue is still the default); a row that is there anyway is written\nover, as the reference's add does, and false comes back when it\nalready held this value.",
                     "shapes": [],
                     "params": [
                         {
@@ -97877,8 +98294,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 93,
-                    "end": 103
+                    "line": 104,
+                    "end": 111
                 },
                 {
                     "routes": [],
@@ -97911,8 +98328,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 112,
-                    "end": 120
+                    "line": 120,
+                    "end": 128
                 },
                 {
                     "routes": [],
@@ -97945,8 +98362,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 123,
-                    "end": 136
+                    "line": 131,
+                    "end": 144
                 },
                 {
                     "routes": [],
@@ -97965,8 +98382,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 158,
-                    "end": 161
+                    "line": 166,
+                    "end": 169
                 },
                 {
                     "routes": [],
@@ -97985,8 +98402,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 164,
-                    "end": 167
+                    "line": 172,
+                    "end": 175
                 },
                 {
                     "routes": [],
@@ -98005,8 +98422,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 181,
-                    "end": 191
+                    "line": 189,
+                    "end": 199
                 },
                 {
                     "routes": [],
@@ -98034,8 +98451,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 199,
-                    "end": 212
+                    "line": 207,
+                    "end": 220
                 },
                 {
                     "routes": [],
@@ -98054,8 +98471,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 215,
-                    "end": 218
+                    "line": 223,
+                    "end": 226
                 },
                 {
                     "routes": [],
@@ -98074,8 +98491,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 221,
-                    "end": 230
+                    "line": 229,
+                    "end": 238
                 },
                 {
                     "routes": [],
@@ -98094,8 +98511,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 233,
-                    "end": 242
+                    "line": 241,
+                    "end": 250
                 },
                 {
                     "routes": [],
@@ -98121,8 +98538,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 139,
-                    "end": 149
+                    "line": 147,
+                    "end": 157
                 },
                 {
                     "routes": [],
@@ -98141,8 +98558,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 152,
-                    "end": 155
+                    "line": 160,
+                    "end": 163
                 },
                 {
                     "routes": [],
@@ -98177,8 +98594,8 @@
                             "doc": "the stored values that already mean $wanted"
                         }
                     ],
-                    "line": 170,
-                    "end": 178
+                    "line": 178,
+                    "end": 186
                 }
             ]
         },
@@ -102505,6 +102922,174 @@
             "methods": []
         },
         {
+            "name": "Minn\\Runtime\\RegisteredSettings",
+            "short": "RegisteredSettings",
+            "namespace": "Minn\\Runtime",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Runtime/RegisteredSettings.php",
+            "lines": 104,
+            "doc": "Settings as register_setting keeps them (probe rest-settings): the\narguments a plugin passes, filtered through register_setting_args and\nlaid over the defaults (a string, in its group, unlabelled, undescribed,\nunsanitized, not shown in REST); the sanitize callback put on\nsanitize_option_{$name} with the value alone; a registered default\nanswering get_option through filter_default_option; register_setting\nfired once kept. unregister_setting takes all of it back. Core's own\nsettings (the site's title, tagline, addresses, formats, reading and\ndiscussion defaults) are registered as the REST server starts.",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\Runtime\\Runtime"
+            ],
+            "usedBy": [],
+            "constructor": null,
+            "cases": [],
+            "constants": [
+                {
+                    "name": "KEY",
+                    "value": "'registered_settings'",
+                    "doc": "",
+                    "visibility": "private"
+                },
+                {
+                    "name": "ARRAY_ITEMS",
+                    "value": "'When registering an \"array\" setting to show in the REST API, you must specify the schema for each array item in \"show_in_rest.schema.items\".'",
+                    "doc": "",
+                    "visibility": "private"
+                },
+                {
+                    "name": "CORE",
+                    "value": "array (   'blogname' =>    array (     0 => 'general',     1 => 'string',     2 => 'Title',     3 => 'Site title.',     4 =>      array (       'name' => 'title',     ),   ),   'blogdescription' =>    array (     0 => 'general',     1 => 'string',     2 => 'Tagline',     3 => 'Site tagline.',     4 =>      array (       'name' => 'description',     ),   ),   'siteurl' =>    array (     0 => 'general',     1 => 'string',     2 => '',     3 => 'Site URL.',     4 =>      array (       'name' => 'url',       'schema' =>        array (         'format' => 'uri',       ),     ),   ),   'admin_email' =>    array (     0 => 'general',     1 => 'string',     2 => '',     3 => 'This address is used for admin purposes, like new user notification.',     4 =>      array (       'name' => 'email',       'schema' =>        array (         'format' => 'email',       ),     ),   ),   'timezone_string' =>    array (     0 => 'general',     1 => 'string',     2 => '',     3 => 'A city in the same timezone as you.',     4 =>      array (       'name' => 'timezone',     ),   ),   'date_format' =>    array (     0 => 'general',     1 => 'string',     2 => '',     3 => 'A date format for all date strings.',     4 => true,   ),   'time_format' =>    array (     0 => 'general',     1 => 'string',     2 => '',     3 => 'A time format for all time strings.',     4 => true,   ),   'start_of_week' =>    array (     0 => 'general',     1 => 'integer',     2 => '',     3 => 'A day number of the week that the week should start on.',     4 => true,   ),   'WPLANG' =>    array (     0 => 'general',     1 => 'string',     2 => '',     3 => 'WordPress locale code.',     4 =>      array (       'name' => 'language',     ),     5 => 'en_US',   ),   'use_smilies' =>    array (     0 => 'writing',     1 => 'boolean',     2 => '',     3 => 'Convert emoticons like :-) and :-P to graphics on display.',     4 => true,     5 => true,   ),   'default_category' =>    array (     0 => 'writing',     1 => 'integer',     2 => '',     3 => 'Default post category.',     4 => true,   ),   'default_post_format' =>    array (     0 => 'writing',     1 => 'string',     2 => '',     3 => 'Default post format.',     4 => true,   ),   'posts_per_page' =>    array (     0 => 'reading',     1 => 'integer',     2 => 'Maximum posts per page',     3 => 'Blog pages show at most.',     4 => true,     5 => 10,   ),   'show_on_front' =>    array (     0 => 'reading',     1 => 'string',     2 => 'Show on front',     3 => 'What to show on the front page',     4 => true,   ),   'page_on_front' =>    array (     0 => 'reading',     1 => 'integer',     2 => 'Page on front',     3 => 'The ID of the page that should be displayed on the front page',     4 => true,   ),   'page_for_posts' =>    array (     0 => 'reading',     1 => 'integer',     2 => '',     3 => 'The ID of the page that should display the latest posts',     4 => true,   ),   'default_ping_status' =>    array (     0 => 'discussion',     1 => 'string',     2 => '',     3 => 'Allow link notifications from other blogs (pingbacks and trackbacks) on new articles.',     4 =>      array (       'schema' =>        array (         'enum' =>          array (           0 => 'open',           1 => 'closed',         ),       ),     ),   ),   'default_comment_status' =>    array (     0 => 'discussion',     1 => 'string',     2 => 'Allow comments on new posts',     3 => 'Allow people to submit comments on new posts.',     4 =>      array (       'schema' =>        array (         'enum' =>          array (           0 => 'open',           1 => 'closed',         ),       ),     ),   ),   'site_logo' =>    array (     0 => 'general',     1 => 'integer',     2 => 'Logo',     3 => 'Site logo.',     4 =>      array (       'name' => 'site_logo',     ),   ),   'site_icon' =>    array (     0 => 'general',     1 => 'integer',     2 => 'Icon',     3 => 'Site icon.',     4 => true,   ), )",
+                    "doc": "Core's settings: name => [group, type, label, description, show_in_rest, default when it has one].",
+                    "visibility": "private"
+                }
+            ],
+            "properties": [],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "all",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "all(): array",
+                    "doc": "Every registered setting by option name, in registration order. @return array<string, array<string, mixed>>",
+                    "shapes": [
+                        "@return array<string, array<string, mixed>>"
+                    ],
+                    "params": [],
+                    "line": 49,
+                    "end": 52
+                },
+                {
+                    "routes": [],
+                    "name": "register",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "register(string $group, string $name, mixed $args): void",
+                    "doc": "register_setting: $args an array, or (as it once was) the sanitize callback alone.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "group",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "name",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "args",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 55,
+                    "end": 75
+                },
+                {
+                    "routes": [],
+                    "name": "unregister",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "unregister(string $group, string $name, mixed $deprecated = ''): void",
+                    "doc": "unregister_setting: the setting, its sanitize callback and its default gone, unregister_setting fired.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "group",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "name",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "deprecated",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "''",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 78,
+                    "end": 97
+                },
+                {
+                    "routes": [],
+                    "name": "defaultOf",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "defaultOf(mixed $default, string $option, bool $passed): mixed",
+                    "doc": "filter_default_option: the registered default, unless the reader named its own.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "default",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "option",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "passed",
+                            "type": "bool",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 100,
+                    "end": 107
+                },
+                {
+                    "routes": [],
+                    "name": "registerCore",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "registerCore(): void",
+                    "doc": "register_initial_settings: core's settings, each through register_setting.",
+                    "shapes": [],
+                    "params": [],
+                    "line": 110,
+                    "end": 120
+                }
+            ]
+        },
+        {
             "name": "Minn\\Runtime\\Registry",
             "short": "Registry",
             "namespace": "Minn\\Runtime",
@@ -103122,6 +103707,7 @@
                 "Minn\\Runtime\\PostEvents",
                 "Minn\\Runtime\\PostQuery",
                 "Minn\\Runtime\\PostSave",
+                "Minn\\Runtime\\RegisteredSettings",
                 "Minn\\Runtime\\ScriptModules",
                 "Minn\\Runtime\\TermEvents",
                 "Minn\\Runtime\\TermSave",

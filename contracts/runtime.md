@@ -3805,3 +3805,47 @@ functions implemented, constant, placeholder or missing (split by
 `wp-includes` and `wp-admin`), the same for what a site's plugins call (from
 `minn_runtime_symbols`), how many of those a probe verifies, and the
 fixed-name hooks Minn fires.
+
+## Options and settings plugins can change (2026-10-06)
+
+`sanitize_option` cleans a core option by the reference's rules
+(`Runtime\OptionSanitizer`, probe `sanitize-option`, 18 values through 54
+options):
+- counts become whole numbers, and page sizes become 1 when empty;
+- the site's name and tagline are escaped;
+- formats and mail settings are stripped of markup;
+- an address that is not an address (admin email, site and home URL, a
+  timezone that does not exist, a custom structure with no tag) keeps the
+  old value and records a settings error in the reference's wording;
+- word and domain lists are split and trimmed.
+
+Every option then goes through `sanitize_option_{$option}`. `add_option` and
+`update_option` now call it first, before the old value is read, and an
+update that finds no option sanitizes again in the add it falls through to.
+An option counts as new while it reads as its default
+(`default_option_{$option}` compared with `get_option`), unless a read
+already found it unset. The engine's own `pre_add_option_*` filter, which the
+reference does not have, is gone.
+
+`register_setting` keeps a setting as the reference does
+(`Runtime\RegisteredSettings`, probe `rest-settings`):
+- the arguments go through `register_setting_args` and over the defaults;
+- the sanitize callback is hooked with the value alone;
+- a default answers `get_option` through `filter_default_option`;
+- an array shown in REST without an items schema gets a `_doing_it_wrong`
+  notice.
+
+`unregister_setting` undoes all of this. Core's settings are registered on
+`rest_api_init`.
+
+With plugins loaded, `wp/v2/settings` serves every registered setting shown
+in REST (`Rest\LiveSettings`), a plugin's beside core's:
+- **read:** `rest_pre_get_setting` first, then `get_option` with the
+  schema's default; a value its schema refuses reads as null.
+- **write:** the body's values are validated against each setting's schema
+  (null always passes), then each goes to `rest_pre_update_setting`, then to
+  `update_option`. Null deletes the option, unless what is stored does not
+  fit the schema, which is a 500 `rest_invalid_stored_value`.
+
+Without plugins the fixed table in `Rest\Settings` still answers. The route's
+OPTIONS schema is not served yet.

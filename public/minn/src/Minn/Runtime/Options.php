@@ -89,12 +89,20 @@ final class Options
         return $this->get($name) !== null || (!isset($this->missing[$name]) && array_key_exists($name, $this->cache));
     }
 
-    /** Adds an option only when it is unset. */
+    /** Whether a read this request already found the option unset (the reference's notoptions). */
+    public function knownMissing(string $name): bool
+    {
+        return isset($this->missing[$name]);
+    }
+
+    /**
+     * Writes a new option. add_option has already decided it is new (its
+     * value is still the default); a row that is there anyway is written
+     * over, as the reference's add does, and false comes back when it
+     * already held this value.
+     */
     public function add(string $name, mixed $value, string $autoload = 'auto'): bool
     {
-        if (array_key_exists($name, $this->cache) || isset($this->stored[$name]) || $this->db->option($name) !== null) {
-            return false;
-        }
         $value = $value ?? '';
         $written = $this->upsert($name, self::toStorage($value), $autoload);
         unset($this->missing[$name]);
