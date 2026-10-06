@@ -125,7 +125,7 @@ final readonly class Engine
      * resolved is the reader, plugins load, and rest_api_init fires so
      * their routes answer after the engine's own.
      */
-    private function bootRuntimeForRest(Context $context, Api $api): void
+    private function bootRuntimeForRest(Context $context, Api $api, string $route): void
     {
         $reader = Reader::forUser($api->caller()->id(), $context->capabilities, '', $api->caller()->session()?->token ?? '');
         $site = $context->site;
@@ -141,6 +141,13 @@ final readonly class Engine
         $runtime->set('theme', $theme);
         $runtime->set('engine_routes', static fn (): array => $api->routes());
         Plugins::load($runtime);
+        // As the reference's request parsing leaves things for rest_api_loaded:
+        // the route among the query vars, and REST_REQUEST (hook-trace).
+        \_minn_rewrite();
+        $GLOBALS['wp']->query_vars['rest_route'] = $route;
+        if (!defined('REST_REQUEST')) {
+            define('REST_REQUEST', true);
+        }
         // Creating the server fires rest_api_init once; the plugins' routes register there.
         \rest_get_server();
     }
@@ -178,7 +185,7 @@ final readonly class Engine
         $route = self::restRoute($request);
         if ($route !== null) {
             $api = Api::forRequest($db, $request);
-            $this->bootRuntimeForRest($context, $api);
+            $this->bootRuntimeForRest($context, $api, '/' . ltrim($route, '/'));
             return $api->handle($route);
         }
 

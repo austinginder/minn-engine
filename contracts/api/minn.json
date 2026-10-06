@@ -34743,7 +34743,7 @@
             "namespace": "Minn",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Engine.php",
-            "lines": 229,
+            "lines": 236,
             "doc": "The engine's front door. An unmodified wp-config.php ends by requiring\nwp-settings.php, which is the engine's own boot file; it hands off here.\nREST is dispatched first (from the path or from ?rest_route=), then the\nadmin, the login endpoint, and finally the public site.",
             "implements": [],
             "extends": null,
@@ -34932,7 +34932,7 @@
                     "name": "bootRuntimeForRest",
                     "static": false,
                     "visibility": "private",
-                    "signature": "bootRuntimeForRest(Minn\\Context $context, Minn\\Rest\\Api $api): void",
+                    "signature": "bootRuntimeForRest(Minn\\Context $context, Minn\\Rest\\Api $api, string $route): void",
                     "doc": "The WordPress runtime for a REST request: the caller the REST layer\nresolved is the reader, plugins load, and rest_api_init fires so\ntheir routes answer after the engine's own.",
                     "shapes": [],
                     "params": [
@@ -34949,10 +34949,17 @@
                             "shape": "",
                             "default": null,
                             "doc": ""
+                        },
+                        {
+                            "name": "route",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
                         }
                     ],
                     "line": 128,
-                    "end": 146
+                    "end": 153
                 },
                 {
                     "routes": [],
@@ -34978,8 +34985,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 149,
-                    "end": 224
+                    "line": 156,
+                    "end": 231
                 },
                 {
                     "routes": [],
@@ -35082,8 +35089,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 227,
-                    "end": 293
+                    "line": 234,
+                    "end": 300
                 }
             ]
         },

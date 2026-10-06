@@ -4501,3 +4501,10 @@ note's status, or nothing.
 - **In process,** `_fields` narrows the item to whole top-level fields,
   with id kept, as `rest_do_request` does on the reference. Over HTTP the
   nested names still narrow the answer.
+
+A REST request over HTTP now leaves what the reference's request parsing
+leaves before `rest_api_init` (suite `hook-trace`, its rest-request
+record). `$wp->query_vars['rest_route']` names the route, and
+`REST_REQUEST` is defined, so `wp_is_serving_rest_request()` is true.
+Plugins that read these (ACF registers its field by them) see a REST
+request. Before, they saw neither.

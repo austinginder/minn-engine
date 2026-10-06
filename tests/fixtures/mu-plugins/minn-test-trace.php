@@ -76,4 +76,11 @@ add_action('all', static function (string $hook) use ($minnTraceDir, $minnTraceR
     }
     $args = array_map('minn_test_trace_describe', array_slice(func_get_args(), 1));
     file_put_contents("{$minnTraceDir}/{$minnTraceRun}.ndjson", json_encode([$hook, $args], JSON_UNESCAPED_SLASHES) . "\n", FILE_APPEND);
+    if ($hook === 'rest_api_init') {
+        // What a plugin can tell about the request as the REST server starts.
+        // (Ids in the route differ between the stacks' own objects.)
+        $route = $GLOBALS['wp']->query_vars['rest_route'] ?? null;
+        $state = [defined('REST_REQUEST') && REST_REQUEST, is_string($route) ? preg_replace('/\d+/', '{id}', $route) : $route, function_exists('wp_is_serving_rest_request') && wp_is_serving_rest_request()];
+        file_put_contents("{$minnTraceDir}/{$minnTraceRun}.ndjson", json_encode(['minn-test:rest-request', $state], JSON_UNESCAPED_SLASHES) . "\n", FILE_APPEND);
+    }
 }, PHP_INT_MIN);
