@@ -214,3 +214,20 @@ if (in_array('refuse-upload', $minnEnvelopeModes, true)) {
         return $file;
     });
 }
+
+// An account a plugin changes or refuses on the way in.
+if (in_array('user-data', $minnEnvelopeModes, true)) {
+    add_filter('wp_pre_insert_user_data', static function (array $data): array {
+        $data['user_url'] = 'https://set-by-wp-pre-insert-user-data.example';
+        return $data;
+    });
+}
+if (in_array('user-illegal', $minnEnvelopeModes, true)) {
+    add_filter('illegal_user_logins', static fn (array $logins): array => [...$logins, 'zzenvelopeillegal']);
+}
+if (in_array('user-prepared', $minnEnvelopeModes, true)) {
+    add_filter('rest_pre_insert_user', static function ($prepared) {
+        $prepared->first_name = 'Prepared';
+        return $prepared;
+    });
+}

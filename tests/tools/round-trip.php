@@ -752,6 +752,18 @@ add_action(
 add_filter( 'pre_option_xero_oauth_options', '__return_empty_array' );
 add_filter( 'pre_option_wc_xero_send_invoices', static fn () => 'manual' );
 add_filter( 'pre_option_wc_xero_send_payments', static fn () => 'off' );
+// CleanTalk calls its API and downloads its firewall list with its own client; on Minn as on
+// WordPress the comment form now runs its checks. No key and no firewall: nothing leaves the copy.
+add_filter(
+	'option_cleantalk_settings',
+	static function ( $value ) {
+		if ( is_array( $value ) ) {
+			$value['apikey']       = '';
+			$value['sfw__enabled'] = 0;
+		}
+		return $value;
+	}
+);
 // Twilio texts from Gravity Forms feeds: no account to text from.
 add_filter( 'pre_option_gravityformsaddon_gravityformstwilio_settings', '__return_empty_array' );
 // Gravity SMTP sends through its own connectors; its test mode holds every message.

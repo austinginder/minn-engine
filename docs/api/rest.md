@@ -63,7 +63,7 @@ the wp/v2 surface: shapes and controllers
 | [`Types`](#types) | final class | 97 | The engine's registry of built-in post types, seeded from the observed |
 | [`TypesController`](#typescontroller) | final readonly class | 24 | wp/v2 types. |
 | [`UserObject`](#userobject) | final readonly class | 110 | The wp/v2 user objects: the public view shape and the edit-context shape. |
-| [`UsersController`](#userscontroller) | final readonly class | 307 | wp/v2 users: me, list, single, and the create/update/delete-with-reassign the Users view drives. |
+| [`UsersController`](#userscontroller) | final readonly class | 327 | wp/v2 users: me, list, single, and the create/update/delete-with-reassign the Users view drives. |
 
 ## AbilitiesController
 
@@ -2700,5 +2700,5 @@ Route: `DELETE /wp/v2/users/{id:[\d]+} (cap delete_users; user {id} must exist)`
 
 reassign is REQUIRED (checked before the user lookup), and so is force.
 
-Internals: `hasPublishedContent()` (private, line 152), `validRole()` (private, line 161), `validEmail()` (private, line 169)
+Internals: `hasPublishedContent()` (private, line 153), `validRole()` (private, line 162), `validEmail()` (private, line 170), `loginRefusal()` (private, line 344)
 

@@ -1,0 +1,117 @@
+[
+    [
+        "a new account",
+        {
+            "result": "id",
+            "filters": [
+                "sanitize_user('zzinsertprobe' | 'zzinsertprobe' | true)",
+                "pre_user_login('zzinsertprobe')",
+                "sanitize_user('zzinsertprobe' | 'zzinsertprobe' | false)",
+                "illegal_user_logins('array[]')",
+                "pre_user_nicename('zzinsertprobe')",
+                "pre_user_email('zzinsertprobe@example.com')",
+                "pre_user_url('elsewhere.example')",
+                "pre_user_nickname('zzinsertprobe')",
+                "pre_user_first_name('Zed')",
+                "pre_user_last_name('Probe')",
+                "pre_user_display_name('Zed <b>Probe</b>')",
+                "pre_user_description('')",
+                "wp_pre_insert_user_data('array[display_name,user_activation_key,user_email,user_login,user_nicename,user_pass,user_registered,user_url]' | false | NULL | 'array[display_name,first_name,last_name,role,user_email,user_login,user_pass,user_url]')",
+                "insert_user_meta('array[admin_color,comment_shortcuts,description,first_name,infinite_scrolling,last_name,locale,nickname,rich_editing,show_admin_bar_front,syntax_highlighting,use_ssl]' | 'object:WP_User' | false | 'array[display_name,first_name,last_name,role,user_email,user_login,user_pass,user_url]')",
+                "insert_custom_user_meta('array[]' | 'object:WP_User' | false | 'array[display_name,first_name,last_name,role,user_email,user_login,user_pass,user_url]')"
+            ]
+        }
+    ],
+    [
+        "an edit",
+        {
+            "result": "id",
+            "filters": [
+                "sanitize_user('zzinsertprobe' | 'zzinsertprobe' | true)",
+                "pre_user_login('zzinsertprobe')",
+                "illegal_user_logins('array[]')",
+                "sanitize_user('zzinsertprobe' | 'zzinsertprobe' | true)",
+                "pre_user_nicename('zzinsertprobe')",
+                "pre_user_email('zzinsertprobe@example.com')",
+                "pre_user_url('http://elsewhere.example')",
+                "pre_user_nickname('zzinsertprobe')",
+                "pre_user_first_name('Zedd')",
+                "pre_user_last_name('Probe')",
+                "pre_user_display_name('Zed Probe')",
+                "pre_user_description('About <script>x</script> me')",
+                "wp_pre_insert_user_data('array[display_name,user_activation_key,user_email,user_nicename,user_pass,user_registered,user_url]' | true | {id} | 'array[ID,admin_color,comment_shortcuts,description,display_name,first_name,infinite_scrolling,last_name,locale,nickname,rich_editing,show_admin_bar_front,syntax_highlighting,use_ssl,user_activation_key,user_email,user_login,user_nicename,user_pass,user_registered,user_status,user_url]')",
+                "insert_user_meta('array[admin_color,comment_shortcuts,description,first_name,infinite_scrolling,last_name,locale,nickname,rich_editing,show_admin_bar_front,syntax_highlighting,use_ssl]' | 'object:WP_User' | true | 'array[ID,admin_color,comment_shortcuts,description,display_name,first_name,infinite_scrolling,last_name,locale,nickname,rich_editing,show_admin_bar_front,syntax_highlighting,use_ssl,user_activation_key,user_email,user_login,user_nicename,user_pass,user_registered,user_status,user_url]')",
+                "insert_custom_user_meta('array[]' | 'object:WP_User' | true | 'array[ID,admin_color,comment_shortcuts,description,display_name,first_name,infinite_scrolling,last_name,locale,nickname,rich_editing,show_admin_bar_front,syntax_highlighting,use_ssl,user_activation_key,user_email,user_login,user_nicename,user_pass,user_registered,user_status,user_url]')"
+            ]
+        }
+    ],
+    [
+        "the edit stored",
+        [
+            "Zedd",
+            "About x me",
+            "Zed Probe",
+            "http://elsewhere.example",
+            "zzinsertprobe"
+        ]
+    ],
+    [
+        "an illegal login",
+        {
+            "result": [
+                "invalid_username",
+                "Sorry, that username is not allowed."
+            ],
+            "filters": [
+                "sanitize_user('zzinsertbad' | 'zzinsertbad' | true)",
+                "pre_user_login('zzinsertbad')",
+                "sanitize_user('zzinsertbad' | 'zzinsertbad' | false)",
+                "illegal_user_logins('array[]')"
+            ]
+        }
+    ],
+    [
+        "a login validate_username refuses",
+        {
+            "result": "id",
+            "filters": [
+                "sanitize_user('zzinsertbad' | 'zzinsertbad' | true)",
+                "pre_user_login('zzinsertbad')",
+                "sanitize_user('zzinsertbad' | 'zzinsertbad' | false)",
+                "illegal_user_logins('array[]')",
+                "pre_user_nicename('zzinsertbad')",
+                "pre_user_email('zzinsertbad@example.com')",
+                "pre_user_url('')",
+                "pre_user_nickname('zzinsertbad')",
+                "pre_user_first_name('')",
+                "pre_user_last_name('')",
+                "pre_user_display_name('zzinsertbad')",
+                "pre_user_description('')",
+                "wp_pre_insert_user_data('array[display_name,user_activation_key,user_email,user_login,user_nicename,user_pass,user_registered,user_url]' | false | NULL | 'array[user_email,user_login,user_pass]')",
+                "insert_user_meta('array[admin_color,comment_shortcuts,description,first_name,infinite_scrolling,last_name,locale,nickname,rich_editing,show_admin_bar_front,syntax_highlighting,use_ssl]' | 'object:WP_User' | false | 'array[user_email,user_login,user_pass]')",
+                "insert_custom_user_meta('array[]' | 'object:WP_User' | false | 'array[user_email,user_login,user_pass]')"
+            ]
+        }
+    ],
+    [
+        "a login that is no login",
+        {
+            "result": [
+                "empty_user_login",
+                "Cannot create a user with an empty login name."
+            ],
+            "filters": [
+                "sanitize_user('' | '   ' | true)",
+                "pre_user_login('')"
+            ]
+        }
+    ],
+    [
+        "a plugin changes the save",
+        [
+            "https://changed.example",
+            "changed nick",
+            "Changed (saved)"
+        ]
+    ]
+]

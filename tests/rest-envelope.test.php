@@ -70,6 +70,12 @@ $sweep = static function () use ($WP): void {
             shell_exec("{$WP} post delete " . (int) $post['ID'] . ' --force >/dev/null 2>&1');
         }
     }
+    $users = json_decode((string) shell_exec("{$WP} user list --fields=ID,user_login --format=json 2>/dev/null"), true);
+    foreach (is_array($users) ? $users : [] as $user) {
+        if (str_starts_with((string) ($user['user_login'] ?? ''), 'zzenvelope')) {
+            shell_exec("{$WP} user delete " . (int) $user['ID'] . ' --reassign=1 --yes >/dev/null 2>&1');
+        }
+    }
 };
 $guarded = (int) trim((string) shell_exec("{$WP} post create --post_title='zz envelope guarded' --post_name=zz-envelope-guarded --post_status=publish --porcelain 2>/dev/null"));
 shell_exec("{$WP} option update minn_test_envelope_guarded {$guarded} >/dev/null 2>&1");
@@ -142,6 +148,7 @@ $project = static function (string $how, $body) {
         'id' => is_array($body) ? [$body['id'] ?? null, $body['code'] ?? null] : $body,
         'prepared' => is_array($body) ? (array_is_list($body) ? array_map(static fn ($item) => [$item['minn_prepared'] ?? null, isset($item['_links']['wp:minn-prepared'])], $body) : [$body['minn_prepared'] ?? null, isset($body['_links']['wp:minn-prepared']), $body['_links']['curies'] ?? null]) : $body,
         'upload' => is_array($body) ? [$body['mime_type'] ?? null, isset($body['source_url']) ? basename((string) $body['source_url']) : null, $body['code'] ?? null, $body['message'] ?? null] : $body,
+        'user' => is_array($body) ? [$body['username'] ?? null, $body['url'] ?? null, $body['first_name'] ?? null, $body['name'] ?? null, $body['code'] ?? null, $body['data']['status'] ?? null] : $body,
         'save' => is_array($body) ? [$body['title']['raw'] ?? null, $body['slug'] ?? null, $body['excerpt']['raw'] ?? null, $body['status'] ?? null, $body['code'] ?? null, $body['data']['status'] ?? null] : $body,
         default => $body,
     };
@@ -195,6 +202,10 @@ $requests = [
     'an svg a plugin refuses for its script' => ['POST', '/wp/v2/media', 'svg', true, ['__raw' => '<svg xmlns="http://www.w3.org/2000/svg"><script>alert(1)</script></svg>', '__name' => 'zz-envelope-evil.svg', '__type' => 'image/svg+xml'], 'upload'],
     'an svg with no plugin to allow it' => ['POST', '/wp/v2/media', '', true, ['__raw' => '<svg xmlns="http://www.w3.org/2000/svg"></svg>', '__name' => 'zz-envelope-plain.svg', '__type' => 'image/svg+xml'], 'upload'],
     'every upload refused by a plugin' => ['POST', '/wp/v2/media', 'refuse-upload', true, ['__raw' => base64_decode('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg=='), '__name' => 'zz-envelope-closed.png', '__type' => 'image/png'], 'upload'],
+    // An account a plugin changes or refuses.
+    'wp_pre_insert_user_data changes the account' => ['POST', '/wp/v2/users', 'user-data', true, ['username' => 'zzenvelopeuser', 'email' => 'zzenvelopeuser@example.com', 'password' => 'Envelope-pass-1!', 'name' => 'Zed <b>Envelope</b>'], 'user'],
+    'illegal_user_logins refuses the account' => ['POST', '/wp/v2/users', 'user-illegal', true, ['username' => 'zzenvelopeillegal', 'email' => 'zzenvelopeillegal@example.com', 'password' => 'Envelope-pass-1!'], 'user'],
+    'rest_pre_insert_user changes the prepared account' => ['POST', '/wp/v2/users', 'user-prepared', true, ['username' => 'zzenvelopeprepared', 'email' => 'zzenvelopeprepared@example.com', 'password' => 'Envelope-pass-1!'], 'user'],
     'an edit through wp_insert_post_data' => ['POST', "/wp/v2/posts/{$guarded}", 'save-data', true, ['title' => 'zz envelope guarded'], 'save'],
 ];
 

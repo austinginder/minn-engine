@@ -67,9 +67,10 @@ the WordPress runtime plugins load against
 | [`TermQuery`](#termquery) | final readonly class | 393 | Term reads in the shapes plugin code asks for: get_terms() arguments to |
 | [`TermWriter`](#termwriter) | final readonly class | 192 | The decisions behind wp_insert_term, wp_update_term, wp_delete_term, and |
 | [`TreeWalk`](#treewalk) | final class | 74 | The Walker contract's traversal: elements keyed by the walker's |
-| [`UserEvents`](#userevents) | final readonly class | 72 | What the reference's REST users controller tells plugins, for the |
+| [`UserEvents`](#userevents) | final readonly class | 96 | What the reference's REST users controller tells plugins, for the |
 | [`UserInsert`](#userinsert) | final readonly class | 112 | The decisions behind wp_insert_user: what a new account needs, which email |
 | [`UserQuery`](#userquery) | final readonly class | 49 | The user listing behind WP_User_Query: role filtering through the |
+| [`UserSave`](#usersave) | final class | 70 | An account's fields through the filters the reference's wp_insert_user |
 
 ## Abilities
 
@@ -2214,7 +2215,7 @@ Internals: `pluginFile()` (private, line 90), `activePlugins()` (private, line 1
 
 A refused operation, the way plugin code expects to read it: a code, a message, optional data. The facade turns it into WP_Error.
 
-Used by: `Minn\Blocks\BlockName`, `Minn\Content\Menus`, `Minn\Ops\Updates`, `Minn\Rest\ArgCheck`, `Minn\Rest\MenusController`, `Minn\Rest\ParamCheck`, `Minn\Rest\RouteMatch`, `Minn\Rest\Schema`, `Minn\Runtime\Connectors`, `Minn\Runtime\PackageDownload`, `Minn\Runtime\Patterns`, `Minn\Runtime\TermWriter`, `Minn\Runtime\UserInsert`
+Used by: `Minn\Blocks\BlockName`, `Minn\Content\Menus`, `Minn\Ops\Updates`, `Minn\Rest\ArgCheck`, `Minn\Rest\MenusController`, `Minn\Rest\ParamCheck`, `Minn\Rest\RouteMatch`, `Minn\Rest\Schema`, `Minn\Runtime\Connectors`, `Minn\Runtime\PackageDownload`, `Minn\Runtime\Patterns`, `Minn\Runtime\TermWriter`, `Minn\Runtime\UserInsert`, `Minn\Runtime\UserSave`
 
 ```php
 __construct(string $code, string $message, mixed $data = NULL)
@@ -2339,7 +2340,7 @@ blocks, texturize, paragraphs, shortcodes, block hooks, and the image
 attributes. What it has not (smilies, the capital P, insecure home
 addresses) runs with the plugins' own callbacks.
 
-Used by: `Minn\Admin\BootPayload`, `Minn\Auth\Authenticator`, `Minn\Blocks\Dynamic\Theme\Comments`, `Minn\Blocks\Dynamic\Theme\Navigation`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Blocks\ImageTags`, `Minn\Blocks\RenderState`, `Minn\Cli\Runtime`, `Minn\Content\Blocks`, `Minn\Content\Reader`, `Minn\Content\Site`, `Minn\Content\Terms`, `Minn\Cron\Cron`, `Minn\Db`, `Minn\Engine`, `Minn\Extension\Extensions`, `Minn\Front\CommentPostController`, `Minn\Front\Feeds`, `Minn\Front\Permalinks`, `Minn\Front\PluginRules`, `Minn\Front\Resolver`, `Minn\Login\LoginHooks`, `Minn\Mail\Mailer`, `Minn\Media\Images`, `Minn\Rest\AbilitiesController`, `Minn\Rest\Api`, `Minn\Rest\Caller`, `Minn\Rest\MediaController`, `Minn\Rest\RuntimeEnvelope`, `Minn\Rest\RuntimePrepare`, `Minn\Rest\Services`, `Minn\Rest\SettingsController`, `Minn\Runtime\Abilities`, `Minn\Runtime\AjaxController`, `Minn\Runtime\BlockFilters`, `Minn\Runtime\BlockHooks`, `Minn\Runtime\CommentEvents`, `Minn\Runtime\Constants`, `Minn\Runtime\FileUpload`, `Minn\Runtime\Interactivity`, `Minn\Runtime\NavMenu`, `Minn\Runtime\PackageDownload`, `Minn\Runtime\Patterns`, `Minn\Runtime\PlaceholderTrace`, `Minn\Runtime\PluginUpdates`, `Minn\Runtime\Plugins`, `Minn\Runtime\PostEvents`, `Minn\Runtime\PostQuery`, `Minn\Runtime\PostSave`, `Minn\Runtime\ScriptModules`, `Minn\Runtime\TermEvents`, `Minn\Runtime\TermWriter`, `Minn\Runtime\UserEvents`, `Minn\Theme\ArchiveTitle`, `Minn\Theme\ClassicContent`, `Minn\Theme\ClassicRenderer`, `Minn\Theme\MainQueryBridge`, `Minn\Theme\PageRenderer`, `Minn\Theme\Templates`
+Used by: `Minn\Admin\BootPayload`, `Minn\Auth\Authenticator`, `Minn\Blocks\Dynamic\Theme\Comments`, `Minn\Blocks\Dynamic\Theme\Navigation`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Blocks\ImageTags`, `Minn\Blocks\RenderState`, `Minn\Cli\Runtime`, `Minn\Content\Blocks`, `Minn\Content\Reader`, `Minn\Content\Site`, `Minn\Content\Terms`, `Minn\Cron\Cron`, `Minn\Db`, `Minn\Engine`, `Minn\Extension\Extensions`, `Minn\Front\CommentPostController`, `Minn\Front\Feeds`, `Minn\Front\Permalinks`, `Minn\Front\PluginRules`, `Minn\Front\Resolver`, `Minn\Login\LoginHooks`, `Minn\Mail\Mailer`, `Minn\Media\Images`, `Minn\Rest\AbilitiesController`, `Minn\Rest\Api`, `Minn\Rest\Caller`, `Minn\Rest\MediaController`, `Minn\Rest\RuntimeEnvelope`, `Minn\Rest\RuntimePrepare`, `Minn\Rest\Services`, `Minn\Rest\SettingsController`, `Minn\Rest\UsersController`, `Minn\Runtime\Abilities`, `Minn\Runtime\AjaxController`, `Minn\Runtime\BlockFilters`, `Minn\Runtime\BlockHooks`, `Minn\Runtime\CommentEvents`, `Minn\Runtime\Constants`, `Minn\Runtime\FileUpload`, `Minn\Runtime\Interactivity`, `Minn\Runtime\NavMenu`, `Minn\Runtime\PackageDownload`, `Minn\Runtime\Patterns`, `Minn\Runtime\PlaceholderTrace`, `Minn\Runtime\PluginUpdates`, `Minn\Runtime\Plugins`, `Minn\Runtime\PostEvents`, `Minn\Runtime\PostQuery`, `Minn\Runtime\PostSave`, `Minn\Runtime\ScriptModules`, `Minn\Runtime\TermEvents`, `Minn\Runtime\TermWriter`, `Minn\Runtime\UserEvents`, `Minn\Theme\ArchiveTitle`, `Minn\Theme\ClassicContent`, `Minn\Theme\ClassicRenderer`, `Minn\Theme\MainQueryBridge`, `Minn\Theme\PageRenderer`, `Minn\Theme\Templates`
 
 ```php
 __construct(Minn\Context $context, bool $isAdmin = false)
@@ -3241,6 +3242,8 @@ none), then rest_delete_user with the account as it was.
 - `@param array<string, mixed> $data the response`
 - `@param Closure(): void $quietly the engine's own delete`
 
+Internals: `prepared()` (private, line 107)
+
 
 ## UserInsert
 
@@ -3311,4 +3314,47 @@ Runs a WP_User_Query-shaped args array and returns its rows and total.
 
 - `@param array<string, mixed> $args`
 - `@return array{rows: list<array>, total: int}`
+
+
+## UserSave
+
+`final class Minn\Runtime\UserSave` · `public/minn/src/Minn/Runtime/UserSave.php`
+
+An account's fields through the filters the reference's wp_insert_user
+runs, in its order (probe user-insert-filters, contracts/runtime.md
+"Accounts plugins can change"): the login (pre_user_login), refused when
+illegal_user_logins names it; the nicename, made from the login for a
+new account (pre_user_nicename); the email and the URL; the nickname
+(the login when none), first and last names; the display name, made as
+the reference makes it when none is given; the description. Each
+pre_user_* filter carries the reference's sanitisers. Then
+wp_pre_insert_user_data over the row and insert_user_meta over the meta.
+
+### static `fields(array $userdata, ?array $existing): Minn\Runtime\Refusal|array`
+
+The fields after their filters, or the refusal for an illegal login.
+
+- `@param array<string, mixed> $userdata`
+- `@param array<string, mixed>|null $existing the stored account on an update`
+- `@return array<string, mixed>|Refusal`
+
+### static `data(array $row, int $userId, array $userdata): array`
+
+wp_pre_insert_user_data over the row an insert or update writes: the
+row, whether it updates, the account's id (null for a new one), what
+the caller gave.
+
+- `@param array<string, mixed> $row`
+- `@param array<string, mixed> $userdata`
+- `@return array<string, mixed>`
+
+### static `meta(array $meta, int $userId, array $userdata): array`
+
+insert_user_meta over the profile meta, then insert_custom_user_meta
+over the meta_input the caller gave beyond it; the two merged. An
+update is one whose userdata names an ID.
+
+- `@param array<string, mixed> $meta`
+- `@param array<string, mixed> $userdata`
+- `@return array<string, mixed>`
 

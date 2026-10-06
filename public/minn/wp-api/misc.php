@@ -225,11 +225,24 @@ function wp_insert_user($userdata)
     if ($update && !$existing) {
         return new WP_Error('invalid_user_id', 'Invalid user ID.');
     }
+    // Each field through its pre_user_* filter first, the reference's order (probe user-insert-filters).
+    $fields = \Minn\Runtime\UserSave::fields($userdata, $existing ? $existing->to_array() : null);
+    if ($fields instanceof Refusal) {
+        return new WP_Error($fields->code, $fields->message, $fields->data);
+    }
+    // What the caller gave is what the filters are handed; the filtered fields are what is written.
+    $given = $userdata;
+    $userdata = array_replace($userdata, $fields);
+    if ($existing && (string) ($userdata['user_pass'] ?? '') === (string) $existing->user_pass) {
+        // The stored hash, carried by an update's merge, is no new password.
+        unset($userdata['user_pass']);
+    }
     $insert = new UserInsert(
-        static fn (string $login): string => (string) sanitize_user($login, true),
-        static fn (string $slug): string => (string) sanitize_title($slug),
+        static fn (string $login): string => $login,
+        static fn (string $slug): string => $slug,
         static fn (string $email): bool => (bool) is_email($email),
-        static fn (string $login): bool => (bool) username_exists($login),
+        // UserSave::fields has looked the login up already, where the reference does.
+        static fn (string $login): bool => false,
         static fn (string $email): int => (int) email_exists($email),
         static fn (string $role): bool => isset(Runtime::current()->capabilities->roles()->all()[$role]),
     );
@@ -238,9 +251,23 @@ function wp_insert_user($userdata)
         return new WP_Error($resolved->code, $resolved->message, $resolved->data);
     }
     if (!$update) {
-        return _minn_insert_account(UserInsert::account($userdata, $resolved, (string) get_option('default_role')), $userdata);
+        return _minn_insert_account(_minn_user_row_filtered(UserInsert::account($userdata, $resolved, (string) get_option('default_role')), $given), $given);
     }
-    return _minn_update_user_profile($existing, $userdata, $resolved);
+    return _minn_update_user_profile($existing, $userdata, $resolved, $given);
+}
+
+/** @internal a new account's row through wp_pre_insert_user_data, as the reference hands it (the password hashed), and back */
+function _minn_user_row_filtered(array $account, array $userdata): array
+{
+    $row = ['user_pass' => (string) wp_hash_password((string) $account['password']), 'user_nicename' => (string) $account['nicename'], 'user_email' => (string) $account['email'], 'user_url' => (string) $account['url'], 'user_registered' => (string) ($userdata['user_registered'] ?? gmdate('Y-m-d H:i:s')), 'user_activation_key' => '', 'display_name' => (string) $account['display_name'], 'user_login' => (string) $account['login']];
+    $data = \Minn\Runtime\UserSave::data($row, 0, $userdata);
+    $map = ['login' => 'user_login', 'nicename' => 'user_nicename', 'email' => 'user_email', 'url' => 'user_url', 'display_name' => 'display_name'];
+    foreach ($map as $field => $column) {
+        if (array_key_exists($column, $data)) {
+            $account[$field] = (string) $data[$column];
+        }
+    }
+    return $account;
 }
 
 /**
@@ -257,7 +284,7 @@ function _minn_insert_account(array $account, array $userdata): int
         $users->update($id, ['user_registered' => (string) $userdata['user_registered']]);
     }
     do_action('wp_set_password', (string) $account['password'], $id, new WP_User($id));
-    foreach (Users::profileMeta($account) as $key => $value) {
+    foreach (\Minn\Runtime\UserSave::meta(Users::profileMeta($account), $id, $userdata) as $key => $value) {
         add_user_meta($id, $key, $value);
     }
     $user = new WP_User($id);
@@ -268,10 +295,18 @@ function _minn_insert_account(array $account, array $userdata): int
 }
 
 /** @internal the update half of wp_insert_user: changed columns, the profile meta, the role */
-function _minn_update_user_profile(WP_User $existing, array $userdata, array $resolved): int
+function _minn_update_user_profile(WP_User $existing, array $userdata, array $resolved, array $given = []): int
 {
     $id = $existing->ID;
-    $columns = UserInsert::changes($userdata, $existing->to_array(), $resolved, static fn (string $url): string => Minn\Support\Kses::url($url), static fn (string $password): string => (string) wp_hash_password($password));
+    $stored = $existing->to_array();
+    $columns = UserInsert::changes($userdata, $stored, $resolved, static fn (string $url): string => Minn\Support\Kses::url($url), static fn (string $password): string => (string) wp_hash_password($password));
+    // The whole row through wp_pre_insert_user_data; what it changes is written too.
+    $row = array_intersect_key(array_replace($stored, $columns), array_flip(['user_pass', 'user_nicename', 'user_email', 'user_url', 'user_registered', 'user_activation_key', 'display_name']));
+    foreach (\Minn\Runtime\UserSave::data($row, $id, $given ?: $userdata) as $column => $value) {
+        if ($column !== 'user_login' && (string) $value !== (string) ($stored[$column] ?? '')) {
+            $columns[$column] = (string) $value;
+        }
+    }
     if ($columns !== []) {
         (new Users(Runtime::current()->db))->update($id, $columns);
     }
@@ -279,10 +314,9 @@ function _minn_update_user_profile(WP_User $existing, array $userdata, array $re
         do_action('wp_set_password', (string) $userdata['user_pass'], $id, $existing);
     }
     clean_user_cache($id);
-    foreach (UserInsert::META_KEYS as $key) {
-        if (array_key_exists($key, $userdata)) {
-            update_user_meta($id, $key, $userdata[$key]);
-        }
+    $meta = array_intersect_key($userdata, array_flip([...UserInsert::META_KEYS, 'infinite_scrolling']));
+    foreach (\Minn\Runtime\UserSave::meta($meta, $id, $given ?: $userdata) as $key => $value) {
+        update_user_meta($id, $key, $value);
     }
     if ($resolved['role'] !== null) {
         (new WP_User($id))->set_role($resolved['role']);
@@ -305,7 +339,16 @@ function wp_update_user($userdata)
         return new WP_Error('invalid_user_id', 'Invalid user ID.');
     }
     $before = get_userdata($id)->to_array();
-    $result = wp_insert_user($userdata);
+    // The stored account and its profile under the given fields, as the reference merges them; the stored
+    // password hash is no new password.
+    $merged = $before;
+    foreach ([...UserInsert::META_KEYS, 'infinite_scrolling'] as $key) {
+        if (metadata_exists('user', $id, $key)) {
+            $merged[$key] = get_user_meta($id, $key, true);
+        }
+    }
+    // What was read from the database is slashed to stand beside what the caller gave, slashed as callers give it.
+    $result = wp_insert_user(array_merge(wp_slash($merged), $userdata));
     if (!is_wp_error($result)) {
         _minn_user_change_notices($before, $userdata);
         do_action('wp_update_user', $id, $userdata, $userdata);

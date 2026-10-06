@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Minn\Runtime;
 
+use Minn\RestError;
 use Closure;
 use Minn\Http\Request;
 use Minn\Rest\RuntimeRoutes;
@@ -38,11 +39,14 @@ final readonly class UserEvents
         if (!$this->live()) {
             return $quietly();
         }
-        $id = \wp_insert_user(['role' => false] + $userdata);
+        $wpRequest = RuntimeRoutes::wpRequest($request);
+        $id = \wp_insert_user(['role' => false] + self::prepared($userdata, $wpRequest));
+        if ($id instanceof \WP_Error) {
+            throw new RestError($id->get_error_code(), $id->get_error_message(), 400);
+        }
         if (!is_int($id)) {
             return $quietly();
         }
-        $wpRequest = RuntimeRoutes::wpRequest($request);
         \do_action('rest_insert_user', \get_userdata($id), $wpRequest, true);
         (new \WP_User($id))->add_role($role);
         \do_action('rest_after_insert_user', \get_userdata($id), $wpRequest, true);
@@ -62,11 +66,14 @@ final readonly class UserEvents
             $quietly();
             return;
         }
-        \wp_update_user(['ID' => $id] + $userdata);
+        $wpRequest = RuntimeRoutes::wpRequest($request);
+        $result = \wp_update_user(self::prepared(['ID' => $id] + $userdata, $wpRequest));
+        if ($result instanceof \WP_Error) {
+            throw new RestError($result->get_error_code(), $result->get_error_message(), 400);
+        }
         if ($role !== null) {
             (new \WP_User($id))->set_role($role);
         }
-        $wpRequest = RuntimeRoutes::wpRequest($request);
         \do_action('rest_insert_user', \get_userdata($id), $wpRequest, false);
         \do_action('rest_after_insert_user', \get_userdata($id), $wpRequest, false);
     }
@@ -87,5 +94,23 @@ final readonly class UserEvents
         $user = \get_userdata($id);
         \wp_delete_user($id, $reassign);
         \do_action('rest_delete_user', $user, new \WP_REST_Response($data, 200), RuntimeRoutes::wpRequest($request));
+    }
+
+    /**
+     * rest_pre_insert_user over the prepared user (the request's fields), as
+     * the reference runs it before the save; what the filter changes is
+     * saved, an error refuses.
+     *
+     * @param array<string, mixed> $userdata
+     * @return array<string, mixed>
+     */
+    private static function prepared(array $userdata, \WP_REST_Request $request): array
+    {
+        $filtered = \apply_filters('rest_pre_insert_user', (object) $userdata, $request);
+        if ($filtered instanceof \WP_Error) {
+            $status = $filtered->get_error_data();
+            throw new RestError($filtered->get_error_code(), $filtered->get_error_message(), is_array($status) ? (int) ($status['status'] ?? 400) : 400);
+        }
+        return is_object($filtered) ? get_object_vars($filtered) : $userdata;
     }
 }

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Minn\Rest;
 
+use Minn\Runtime\Runtime;
 use Minn\Runtime\UserEvents;
 use Minn\Http\Policy;
 use Minn\Http\Args;
@@ -185,8 +186,13 @@ final readonly class UsersController
         if ($missing !== []) {
             throw RestError::missingParams($missing);
         }
-        // Duplicate identities surface as the reference's bare error: 500, data null.
+        // A login the site would not take is a parameter error, as the reference's username argument refuses it.
         $login = (string) $body['username'];
+        $invalid = self::loginRefusal($login);
+        if ($invalid !== null) {
+            throw new RestError('rest_invalid_param', 'Invalid parameter(s): username', 400, ['params' => ['username' => $invalid], 'details' => ['username' => ['code' => 'rest_user_invalid_username', 'message' => $invalid, 'data' => ['status' => 400]]]]);
+        }
+        // Duplicate identities surface as the reference's bare error: 500, data null.
         $email = (string) $body['email'];
         if ($this->users->findByLogin($login) !== null) {
             throw RestError::bare('existing_user_login', 'Sorry, that username already exists!');
@@ -328,5 +334,20 @@ final readonly class UsersController
             $this->users->delete($userId);
         });
         return Reply::item($data, Fields::fromQuery($request->query));
+    }
+
+    /**
+     * Why a new login is refused, in the reference's words, or null: it must
+     * come through strict sanitizing unchanged (validate_username, with
+     * plugins loaded), and no illegal_user_logins entry may name it.
+     */
+    private static function loginRefusal(string $login): ?string
+    {
+        $valid = Runtime::booted() ? \validate_username($login) : preg_match('/^[a-zA-Z0-9 _.\-@]+$/', $login) === 1 && trim($login) === $login;
+        if (!$valid) {
+            return 'This username is invalid because it uses illegal characters. Please enter a valid username.';
+        }
+        $illegal = Runtime::booted() ? array_map('strtolower', (array) \apply_filters('illegal_user_logins', [])) : [];
+        return in_array(strtolower($login), $illegal, true) ? 'Sorry, that username is not allowed.' : null;
     }
 }

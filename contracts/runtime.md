@@ -3554,3 +3554,31 @@ form field), so an SVG plugin's `upload_mimes` and prefilter, a security
 plugin's refusal, an optimizer's `wp_handle_upload` all work on uploads made
 in Minn Admin; a refusal answers the route's 500 with the plugin's words.
 Unbooted, the engine's own check answers, as strict (suite `rest-envelope`).
+
+## Accounts plugins can change (2026-10-06)
+
+`wp_insert_user` ran `sanitize_user` and nothing else: no `pre_user_*`
+sanitisers (a description kept its `<script>`, a display name its tags, a
+site address its missing scheme), no `illegal_user_logins` (a login the site
+forbids was created), no `wp_pre_insert_user_data`, `insert_user_meta` or
+`insert_custom_user_meta`. It now runs them in the reference's order (probe
+`user-insert-filters`, 7 rows, every filter and its arguments compared;
+`Runtime\UserSave`): the login, sanitized strictly then `pre_user_login`,
+looked up as `sanitize_user` leaves it, refused when
+`illegal_user_logins` names it; the nicename, made from the login for a new
+account; the email, then the URL; the nickname (the login when none), first
+and last names; the display name (an update's merged one, else first and
+last name, either, or the login); the description; then
+`wp_pre_insert_user_data` over the row (the password hashed), handed whether
+it updates, the account's id and what the caller gave, and after the row
+`insert_user_meta` and `insert_custom_user_meta`. `wp_update_user` merges the
+stored account and its profile under the given fields, as the reference
+does; the stored hash it carries is handed to the filters and is never taken
+for a new password.
+
+On REST, `rest_pre_insert_user` runs over the prepared account first, and a
+new login is a parameter error when it does not survive strict sanitizing
+or `illegal_user_logins` names it (`rest_invalid_param`, with
+`rest_user_invalid_username` in its details), as the reference's username
+argument refuses it. A refusal from the save is the route's 400; Minn no
+longer writes the account itself when the runtime's save refuses.

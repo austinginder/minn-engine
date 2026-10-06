@@ -52,7 +52,8 @@ class WP_User
         $users = new Minn\Content\Users(Runtime::current()->db);
         $row = match ($field) {
             'id', 'ID' => is_numeric($value) && (int) $value > 0 ? $users->find((int) $value) : null,
-            'login' => $users->findByLogin((string) $value),
+            // A login is looked up as sanitize_user leaves it, as the reference looks one up.
+            'login' => $users->findByLogin((string) sanitize_user((string) $value)),
             'email' => $users->findByEmail((string) $value),
             'slug' => $users->findBySlug((string) $value),
             default => null,

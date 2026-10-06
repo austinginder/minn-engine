@@ -73352,7 +73352,8 @@
                 "Minn\\Rest\\TermsController",
                 "Minn\\Rest\\TypesController",
                 "Minn\\Rest\\UsersController",
-                "Minn\\Runtime\\PostSave"
+                "Minn\\Runtime\\PostSave",
+                "Minn\\Runtime\\UserEvents"
             ],
             "constructor": {
                 "signature": "__construct(string $errorCode, string $message, int $status, array $extra = array ( ), array $topLevel = array ( ), bool $bare = false)",
@@ -89311,7 +89312,7 @@
             "namespace": "Minn\\Rest",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Rest/UsersController.php",
-            "lines": 307,
+            "lines": 327,
             "doc": "wp/v2 users: me, list, single, and the create/update/delete-with-reassign the Users view drives.",
             "implements": [],
             "extends": null,
@@ -89337,6 +89338,7 @@
                 "Minn\\Rest\\Reply",
                 "Minn\\Rest\\RestUrl",
                 "Minn\\Rest\\UserObject",
+                "Minn\\Runtime\\Runtime",
                 "Minn\\Runtime\\UserEvents",
                 "Minn\\Support\\Kses"
             ],
@@ -89399,8 +89401,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 36,
-                "end": 45
+                "line": 37,
+                "end": 46
             },
             "cases": [],
             "constants": [
@@ -89496,8 +89498,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 49,
-                    "end": 57
+                    "line": 50,
+                    "end": 58
                 },
                 {
                     "routes": [
@@ -89520,8 +89522,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 63,
-                    "end": 66
+                    "line": 64,
+                    "end": 67
                 },
                 {
                     "routes": [
@@ -89542,8 +89544,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 70,
-                    "end": 126
+                    "line": 71,
+                    "end": 127
                 },
                 {
                     "routes": [
@@ -89571,8 +89573,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 130,
-                    "end": 150
+                    "line": 131,
+                    "end": 151
                 },
                 {
                     "routes": [
@@ -89593,8 +89595,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 176,
-                    "end": 219
+                    "line": 177,
+                    "end": 225
                 },
                 {
                     "routes": [
@@ -89624,8 +89626,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 225,
-                    "end": 288
+                    "line": 231,
+                    "end": 294
                 },
                 {
                     "routes": [
@@ -89653,8 +89655,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 292,
-                    "end": 331
+                    "line": 298,
+                    "end": 337
                 },
                 {
                     "routes": [],
@@ -89673,8 +89675,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 152,
-                    "end": 158
+                    "line": 153,
+                    "end": 159
                 },
                 {
                     "routes": [],
@@ -89693,8 +89695,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 161,
-                    "end": 167
+                    "line": 162,
+                    "end": 168
                 },
                 {
                     "routes": [],
@@ -89713,8 +89715,28 @@
                             "doc": ""
                         }
                     ],
-                    "line": 169,
-                    "end": 172
+                    "line": 170,
+                    "end": 173
+                },
+                {
+                    "routes": [],
+                    "name": "loginRefusal",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "loginRefusal(string $login): ?string",
+                    "doc": "Why a new login is refused, in the reference's words, or null: it must\ncome through strict sanitizing unchanged (validate_username, with\nplugins loaded), and no illegal_user_logins entry may name it.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "login",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 344,
+                    "end": 352
                 }
             ]
         },
@@ -100752,7 +100774,8 @@
                 "Minn\\Runtime\\PackageDownload",
                 "Minn\\Runtime\\Patterns",
                 "Minn\\Runtime\\TermWriter",
-                "Minn\\Runtime\\UserInsert"
+                "Minn\\Runtime\\UserInsert",
+                "Minn\\Runtime\\UserSave"
             ],
             "constructor": {
                 "signature": "__construct(string $code, string $message, mixed $data = NULL)",
@@ -101414,6 +101437,7 @@
                 "Minn\\Rest\\RuntimePrepare",
                 "Minn\\Rest\\Services",
                 "Minn\\Rest\\SettingsController",
+                "Minn\\Rest\\UsersController",
                 "Minn\\Runtime\\Abilities",
                 "Minn\\Runtime\\AjaxController",
                 "Minn\\Runtime\\BlockFilters",
@@ -105938,12 +105962,13 @@
             "namespace": "Minn\\Runtime",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Runtime/UserEvents.php",
-            "lines": 72,
+            "lines": 96,
             "doc": "What the reference's REST users controller tells plugins, for the\nengine's own: with plugins loaded an account is written through the\nruntime's wp_insert_user, wp_update_user and wp_delete_user\n(wp_set_password, each profile meta, the role, clean_user_cache,\nuser_register and the count, profile_update, delete_user and\ndeleted_user), and the REST actions follow. Without a booted runtime each\nwrite is the engine's own, given as a closure.",
             "implements": [],
             "extends": null,
             "uses": [
                 "Minn\\Http\\Request",
+                "Minn\\RestError",
                 "Minn\\Rest\\RuntimeRoutes",
                 "Minn\\Runtime\\Runtime"
             ],
@@ -105964,8 +105989,8 @@
                     "doc": "Whether plugins are loaded to be told anything.",
                     "shapes": [],
                     "params": [],
-                    "line": 23,
-                    "end": 26
+                    "line": 24,
+                    "end": 27
                 },
                 {
                     "routes": [],
@@ -106008,8 +106033,8 @@
                             "doc": "the engine's own write"
                         }
                     ],
-                    "line": 36,
-                    "end": 50
+                    "line": 37,
+                    "end": 54
                 },
                 {
                     "routes": [],
@@ -106059,8 +106084,8 @@
                             "doc": "the engine's own write"
                         }
                     ],
-                    "line": 59,
-                    "end": 72
+                    "line": 63,
+                    "end": 79
                 },
                 {
                     "routes": [],
@@ -106110,8 +106135,38 @@
                             "doc": "the engine's own delete"
                         }
                     ],
-                    "line": 81,
-                    "end": 90
+                    "line": 88,
+                    "end": 97
+                },
+                {
+                    "routes": [],
+                    "name": "prepared",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "prepared(array $userdata, WP_REST_Request $request): array",
+                    "doc": "rest_pre_insert_user over the prepared user (the request's fields), as\nthe reference runs it before the save; what the filter changes is\nsaved, an error refuses.",
+                    "shapes": [
+                        "@param array<string, mixed> $userdata",
+                        "@return array<string, mixed>"
+                    ],
+                    "params": [
+                        {
+                            "name": "userdata",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "request",
+                            "type": "WP_REST_Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 107,
+                    "end": 115
                 }
             ]
         },
@@ -106451,6 +106506,134 @@
                     ],
                     "line": 29,
                     "end": 62
+                }
+            ]
+        },
+        {
+            "name": "Minn\\Runtime\\UserSave",
+            "short": "UserSave",
+            "namespace": "Minn\\Runtime",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Runtime/UserSave.php",
+            "lines": 70,
+            "doc": "An account's fields through the filters the reference's wp_insert_user\nruns, in its order (probe user-insert-filters, contracts/runtime.md\n\"Accounts plugins can change\"): the login (pre_user_login), refused when\nillegal_user_logins names it; the nicename, made from the login for a\nnew account (pre_user_nicename); the email and the URL; the nickname\n(the login when none), first and last names; the display name, made as\nthe reference makes it when none is given; the description. Each\npre_user_* filter carries the reference's sanitisers. Then\nwp_pre_insert_user_data over the row and insert_user_meta over the meta.",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\Runtime\\Refusal"
+            ],
+            "usedBy": [],
+            "constructor": null,
+            "cases": [],
+            "constants": [],
+            "properties": [],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "fields",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "fields(array $userdata, ?array $existing): Minn\\Runtime\\Refusal|array",
+                    "doc": "The fields after their filters, or the refusal for an illegal login.",
+                    "shapes": [
+                        "@param array<string, mixed> $userdata",
+                        "@param array<string, mixed>|null $existing the stored account on an update",
+                        "@return array<string, mixed>|Refusal"
+                    ],
+                    "params": [
+                        {
+                            "name": "userdata",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "existing",
+                            "type": "?array",
+                            "shape": "array<string, mixed>|null",
+                            "default": null,
+                            "doc": "the stored account on an update"
+                        }
+                    ],
+                    "line": 27,
+                    "end": 54
+                },
+                {
+                    "routes": [],
+                    "name": "data",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "data(array $row, int $userId, array $userdata): array",
+                    "doc": "wp_pre_insert_user_data over the row an insert or update writes: the\nrow, whether it updates, the account's id (null for a new one), what\nthe caller gave.",
+                    "shapes": [
+                        "@param array<string, mixed> $row",
+                        "@param array<string, mixed> $userdata",
+                        "@return array<string, mixed>"
+                    ],
+                    "params": [
+                        {
+                            "name": "row",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "userId",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "userdata",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 65,
+                    "end": 68
+                },
+                {
+                    "routes": [],
+                    "name": "meta",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "meta(array $meta, int $userId, array $userdata): array",
+                    "doc": "insert_user_meta over the profile meta, then insert_custom_user_meta\nover the meta_input the caller gave beyond it; the two merged. An\nupdate is one whose userdata names an ID.",
+                    "shapes": [
+                        "@param array<string, mixed> $meta",
+                        "@param array<string, mixed> $userdata",
+                        "@return array<string, mixed>"
+                    ],
+                    "params": [
+                        {
+                            "name": "meta",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "userId",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "userdata",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 79,
+                    "end": 86
                 }
             ]
         },
