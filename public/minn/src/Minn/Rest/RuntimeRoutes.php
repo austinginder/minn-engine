@@ -41,7 +41,12 @@ final class RuntimeRoutes
         $wpRequest = self::wpRequest($request);
         $early = \apply_filters('rest_pre_dispatch', null, $server, $wpRequest);
         if ($early !== null) {
-            return self::toResponse(self::ensure($early));
+            // An early answer that names its route (an OPTIONS description) gets that route's Allow header.
+            $early = self::ensure($early);
+            if ((string) $early->get_matched_route() !== '') {
+                self::allow($early, (string) $early->get_matched_route(), $wpRequest);
+            }
+            return self::toResponse($early);
         }
         if ($server->route_removed_by_filter($wpRequest)) {
             return Reply::error(\Minn\RestError::noRoute());

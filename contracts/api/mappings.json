@@ -26182,7 +26182,7 @@
         },
         "rest_handle_options_request": {
             "file": "rest-api.php",
-            "lines": 14,
+            "lines": 15,
             "kind": "minn",
             "minn": [
                 "Minn\\Rest\\RouteMatch::route"

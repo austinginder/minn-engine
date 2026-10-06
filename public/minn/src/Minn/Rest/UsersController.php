@@ -66,6 +66,13 @@ final readonly class UsersController
         return $this->update($request, (string) $this->caller->id());
     }
 
+    /** Deletes the signed-in user as users/{id} deletes any; signed out there is no such user (404). */
+    #[Route(Method::Delete, '/wp/v2/users/me', policy: new Policy(Access::Cap, 'delete_users', signIn: 'rest_user_invalid_id', signInMessage: 'Invalid user ID.', signInStatus: 404, refuse: 'rest_user_cannot_delete', message: 'Sorry, you are not allowed to delete this user.'), args: [Args::USER_DELETE])]
+    public function deleteMe(Request $request): Response
+    {
+        return $this->delete($request, (string) $this->caller->id());
+    }
+
     /** View context lists published authors; edit context lists everyone. */
     #[Route(Method::Get, '/wp/v2/users', policy: new Policy(Access::Public), args: [Args::CONTEXT, Args::USERS])]
     public function list(Request $request): Response
@@ -302,6 +309,11 @@ final readonly class UsersController
         if (!$request->has('reassign')) {
             throw RestError::missingParams(['reassign']);
         }
+        $reassign = (string) $request->query('reassign', '');
+        // Nothing, "false" or a number (the reference's own sanitizer, not the integer type): anything else is refused.
+        if ($reassign !== '' && $reassign !== 'false' && !is_numeric($reassign)) {
+            throw RestError::invalidParam('reassign', 'Invalid user parameter(s).', 'rest_invalid_param', ['status' => 400]);
+        }
         if ($user === null) {
             throw new RestError('rest_user_invalid_id', 'Invalid user ID.', 404);
         }
@@ -311,7 +323,6 @@ final readonly class UsersController
         if (!$request->flag('force')) {
             throw new RestError('rest_trash_not_supported', "Users do not support trashing. Set 'force=true' to delete.", 501);
         }
-        $reassign = (string) $request->query('reassign', '');
         $target = 0;
         if ($reassign !== '' && $reassign !== 'false') {
             $target = (int) $reassign;

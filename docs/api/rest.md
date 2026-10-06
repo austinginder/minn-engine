@@ -6,7 +6,7 @@ the wp/v2 surface: shapes and controllers
 |---|---|---|---|
 | [`AbilitiesController`](#abilitiescontroller) | final readonly class | 142 | wp-abilities/v1: what this site can be asked to do, and the doing of it. |
 | [`AdditionalFields`](#additionalfields) | final class | 46 | Which object type a wp/v2 route serves, so fields registered for that type can ride on the engine's own responses. |
-| [`Api`](#api) | final readonly class | 208 | The REST API: wires the controllers for one request and dispatches a |
+| [`Api`](#api) | final readonly class | 227 | The REST API: wires the controllers for one request and dispatches a |
 | [`ApplicationPasswordsController`](#applicationpasswordscontroller) | final readonly class | 170 | wp/v2/users/{id}/application-passwords: list, create, rename, delete, |
 | [`ArgCheck`](#argcheck) | final readonly class | 83 | Judges a route's declared arguments against the request before the |
 | [`BatchController`](#batchcontroller) | final readonly class | 159 | batch/v1 as the reference answers it (probe rest-batch): up to 25 |
@@ -25,7 +25,7 @@ the wp/v2 surface: shapes and controllers
 | [`Fields`](#fields) | final readonly class | 92 | The _fields response filter. Dot paths descend ("title.rendered"); the |
 | [`GlobalStylesController`](#globalstylescontroller) | final readonly class | 138 | wp/v2/global-styles: the site editor's saved styles (one post per |
 | [`GlobalStylesObject`](#globalstylesobject) | final readonly class | 87 | The wp/v2/global-styles item, theme, and revision shapes. |
-| [`IndexController`](#indexcontroller) | final readonly class | 96 | The API index at /wp-json/: the site facts monitors read (name, url, |
+| [`IndexController`](#indexcontroller) | final readonly class | 56 | The API index at /wp-json/: the site facts monitors read (name, url, |
 | [`InstalledThemesController`](#installedthemescontroller) | final readonly class | 128 | wp/v2/themes as the reference answers it (probe rest-themes): the |
 | [`Links`](#links) | final class | 52 | Response link relations compacted through CURIEs: a rel that matches a CURIE's template becomes `name:suffix`, and the used CURIEs ride along. |
 | [`ListQuery`](#listquery) | final readonly class | 170 | The collection parameters a wp/v2 list accepts, read once from the |
@@ -48,12 +48,13 @@ the wp/v2 surface: shapes and controllers
 | [`RestUrl`](#resturl) | final readonly class | 38 | REST URLs in the form the reference emits for the site's permalink mode: |
 | [`RevisionsController`](#revisionscontroller) | final readonly class | 142 | wp/v2 revisions and autosaves under posts, pages, and blocks. |
 | [`RouteArgs`](#routeargs) | final class | 36 | The argument groups a route registers with, filled the way register_rest_route fills them. |
+| [`RouteCatalogue`](#routecatalogue) | final readonly class | 59 | The routes the engine serves, described in the reference's shape for the |
 | [`RouteIndex`](#routeindex) | final class | 61 | The description of one route the REST index publishes: namespace, methods, endpoints with their argument schemas, self link. |
 | [`RouteMatch`](#routematch) | final class | 68 | Finds the registered handler for a method and path among the runtime's route table. |
 | [`RouteTable`](#routetable) | final class | 38 | The registered endpoints in dispatch shape: one handler list per route, methods as a set, non-numeric keys lifted into the route's options. |
 | [`RuntimeEnvelope`](#runtimeenvelope) | final readonly class | 123 | The REST server's filters around one of Minn's own routes, as the |
 | [`RuntimePrepare`](#runtimeprepare) | final class | 54 | An item a REST response carries, through the filter the reference runs |
-| [`RuntimeRoutes`](#runtimeroutes) | final class | 365 | Routes plugin code registered with register_rest_route(), answered |
+| [`RuntimeRoutes`](#runtimeroutes) | final class | 370 | Routes plugin code registered with register_rest_route(), answered |
 | [`Schema`](#schema) | final readonly class | 473 | JSON-schema handling the way the REST API's argument validation does it: |
 | [`SchemaValues`](#schemavalues) | final class | 206 | The value side of JSON Schema, as the reference applies it: what counts |
 | [`SearchController`](#searchcontroller) | final readonly class | 121 | wp/v2 search over published content: id, title, url, type, and the |
@@ -72,7 +73,7 @@ the wp/v2 surface: shapes and controllers
 | [`Types`](#types) | final class | 97 | The engine's registry of built-in post types, seeded from the observed |
 | [`TypesController`](#typescontroller) | final readonly class | 24 | wp/v2 types. |
 | [`UserObject`](#userobject) | final readonly class | 106 | The wp/v2 user objects: the public view shape and the edit-context shape. |
-| [`UsersController`](#userscontroller) | final readonly class | 327 | wp/v2 users: me, list, single, and the create/update/delete-with-reassign the Users view drives. |
+| [`UsersController`](#userscontroller) | final readonly class | 338 | wp/v2 users: me, list, single, and the create/update/delete-with-reassign the Users view drives. |
 | [`WidgetObject`](#widgetobject) | final readonly class | 55 | A widget as wp/v2/widgets shows it (probe rest-widgets): its id and base, |
 | [`WidgetsController`](#widgetscontroller) | final readonly class | 169 | wp/v2/widgets as the reference answers it (probe rest-widgets), for |
 
@@ -220,7 +221,7 @@ runtime's server calls for a core route, so a route the engine
 declines cannot bounce between the two. $as is the caller's own
 request object, which the route's parameters are set on.
 
-Internals: `controllers()` (private, line 72), `engineResponse()` (private, line 228), `withAllow()` (private, line 238)
+Internals: `controllers()` (private, line 73), `engineResponse()` (private, line 229), `options()` (private, line 245), `withAllow()` (private, line 258)
 
 
 ## ApplicationPasswordsController
@@ -799,7 +800,7 @@ index and for the runtime's server, whose route table plugin code reads
 to learn what the site answers (a missing /wp/v2/comments there reads as
 "comments are off").
 
-Used by: `Minn\Rest\Api`, `Minn\Rest\IndexController`, `Minn\Rest\RuntimeEnvelope`
+Used by: `Minn\Rest\Api`, `Minn\Rest\RouteCatalogue`, `Minn\Rest\RuntimeEnvelope`
 
 ### static `map(Minn\Http\Router $router, array $declaredBases = array ( )): array`
 
@@ -969,7 +970,7 @@ namespace at /wp-json/{namespace}, the same routes narrowed.
 Used by: `Minn\Rest\Api`
 
 ```php
-__construct(Minn\Content\Site $site, Minn\Front\Permalinks $permalinks, Minn\Rest\RestUrl $url, Minn\Http\Router $router, Minn\Rest\Types $types)
+__construct(Minn\Content\Site $site, Minn\Front\Permalinks $permalinks, Minn\Rest\RestUrl $url, Minn\Rest\RouteCatalogue $catalogue)
 ```
 
 
@@ -987,8 +988,6 @@ One namespace's index, as the reference answers /wp-json/wp/v2 (or oembed/1.0): 
 namespace, its routes (the namespace root among them), and the link
 up to the root index. A namespace the engine does not serve is left
 to the runtime, whose plugins may own it.
-
-Internals: `catalogue()` (private, line 90)
 
 
 ## InstalledThemesController
@@ -1831,7 +1830,7 @@ REST URLs in the form the reference emits for the site's permalink mode:
 {home}/index.php?rest_route=/wp/v2/... with the route value URL-encoded
 when query args ride along.
 
-Used by: `Minn\Engine`, `Minn\Rest\AbilitiesController`, `Minn\Rest\ApplicationPasswordsController`, `Minn\Rest\BlockTypesController`, `Minn\Rest\CommentObject`, `Minn\Rest\GlobalStylesObject`, `Minn\Rest\IndexController`, `Minn\Rest\InstalledThemesController`, `Minn\Rest\MediaObject`, `Minn\Rest\MenuItemObject`, `Minn\Rest\MenuObject`, `Minn\Rest\MenusController`, `Minn\Rest\PluginsController`, `Minn\Rest\PostObject`, `Minn\Rest\PostsWriteController`, `Minn\Rest\RevisionsController`, `Minn\Rest\SearchController`, `Minn\Rest\Services`, `Minn\Rest\SidebarsController`, `Minn\Rest\StatusesController`, `Minn\Rest\Taxonomies`, `Minn\Rest\TemplateObject`, `Minn\Rest\TermObject`, `Minn\Rest\Types`, `Minn\Rest\UserObject`, `Minn\Rest\UsersController`, `Minn\Rest\WidgetObject`
+Used by: `Minn\Engine`, `Minn\Rest\AbilitiesController`, `Minn\Rest\ApplicationPasswordsController`, `Minn\Rest\BlockTypesController`, `Minn\Rest\CommentObject`, `Minn\Rest\GlobalStylesObject`, `Minn\Rest\IndexController`, `Minn\Rest\InstalledThemesController`, `Minn\Rest\MediaObject`, `Minn\Rest\MenuItemObject`, `Minn\Rest\MenuObject`, `Minn\Rest\MenusController`, `Minn\Rest\PluginsController`, `Minn\Rest\PostObject`, `Minn\Rest\PostsWriteController`, `Minn\Rest\RevisionsController`, `Minn\Rest\RouteCatalogue`, `Minn\Rest\SearchController`, `Minn\Rest\Services`, `Minn\Rest\SidebarsController`, `Minn\Rest\StatusesController`, `Minn\Rest\Taxonomies`, `Minn\Rest\TemplateObject`, `Minn\Rest\TermObject`, `Minn\Rest\Types`, `Minn\Rest\UserObject`, `Minn\Rest\UsersController`, `Minn\Rest\WidgetObject`
 
 ```php
 __construct(Minn\Front\Permalinks $permalinks)
@@ -1909,6 +1908,39 @@ Route arguments with the shared args folded into each endpoint.
 
 - `@param array<string, mixed> $args a single handler (with 'callback') or a list of handler groups, plus optional shared 'args'`
 - `@return array{0: array<int|string, mixed>, 1: bool} the groups, and whether any lacks a permission_callback`
+
+
+## RouteCatalogue
+
+`final readonly class Minn\Rest\RouteCatalogue` · `public/minn/src/Minn/Rest/RouteCatalogue.php`
+
+The routes the engine serves, described in the reference's shape for the
+index and for an OPTIONS request: every route's namespace, its methods
+and the parameters it declares, gathered per concrete route from the
+attributes so a client learns what really works on it, with the
+namespaces they fall under. Routes are keyed as the reference spells them
+('/wp/v2/posts/(?P<id>[\d]+)').
+
+Used by: `Minn\Rest\Api`, `Minn\Rest\IndexController`
+
+```php
+__construct(Minn\Http\Router $router, Minn\Rest\Types $types, Minn\Rest\RestUrl $url)
+```
+
+
+### `all(): array`
+
+Every route the engine serves, the root and each namespace's index
+among them, and the namespaces.
+
+- `@return array{namespaces: list<string>, routes: array<string, array<string, mixed>>}`
+
+### `describing(string $path): ?array`
+
+The first route whose pattern takes the path, as the reference finds
+the route an OPTIONS request describes; null when none does.
+
+- `@return array<string, mixed>|null`
 
 
 ## RouteIndex
@@ -2122,7 +2154,7 @@ nothing hooked, the answer goes out as it is.
 
 A callback's return as a response object, an error converted.
 
-Internals: `allow()` (private, line 77), `oembedXml()` (private, line 279), `look()` (private, line 293), `remember()` (private, line 298), `decode()` (private, line 305), `expand()` (private, line 325), `newWpRequest()` (private, line 351), `toResponse()` (private, line 374)
+Internals: `allow()` (private, line 82), `oembedXml()` (private, line 284), `look()` (private, line 298), `remember()` (private, line 303), `decode()` (private, line 310), `expand()` (private, line 330), `newWpRequest()` (private, line 356), `toResponse()` (private, line 379)
 
 
 ## Schema
@@ -2967,7 +2999,7 @@ Internals: `requireParent()` (private, line 207)
 The engine's registry of built-in post types, seeded from the observed
 contract (src/data/types.json) with _links attached at runtime.
 
-Used by: `Minn\Admin\AdminTypes`, `Minn\Admin\StructureController`, `Minn\Engine`, `Minn\Rest\Api`, `Minn\Rest\BatchController`, `Minn\Rest\DeclaredPostsController`, `Minn\Rest\Embed`, `Minn\Rest\IndexController`, `Minn\Rest\PolicyGate`, `Minn\Rest\RuntimeEnvelope`, `Minn\Rest\SearchController`, `Minn\Rest\Services`, `Minn\Rest\TypesController`
+Used by: `Minn\Admin\AdminTypes`, `Minn\Admin\StructureController`, `Minn\Engine`, `Minn\Rest\Api`, `Minn\Rest\BatchController`, `Minn\Rest\DeclaredPostsController`, `Minn\Rest\Embed`, `Minn\Rest\PolicyGate`, `Minn\Rest\RouteCatalogue`, `Minn\Rest\RuntimeEnvelope`, `Minn\Rest\SearchController`, `Minn\Rest\Services`, `Minn\Rest\TypesController`
 
 ```php
 __construct(Minn\Rest\RestUrl $url, array $declared = array ( ))
@@ -3089,6 +3121,12 @@ Route: `PATCH /wp/v2/users/me (signed in)`
 
 Updates the signed-in user; signed out there is no such user (404), and the Allow header leaves the writes out.
 
+### `deleteMe(Minn\Http\Request $request): Minn\Http\Response`
+
+Route: `DELETE /wp/v2/users/me (cap delete_users)`
+
+Deletes the signed-in user as users/{id} deletes any; signed out there is no such user (404).
+
 ### `list(Minn\Http\Request $request): Minn\Http\Response`
 
 Route: `GET /wp/v2/users (public)`
@@ -3123,7 +3161,7 @@ Route: `DELETE /wp/v2/users/{id:[\d]+} (cap delete_users; user {id} must exist)`
 
 reassign is REQUIRED (checked before the user lookup), and so is force.
 
-Internals: `hasPublishedContent()` (private, line 153), `validRole()` (private, line 162), `validEmail()` (private, line 170), `loginRefusal()` (private, line 344)
+Internals: `hasPublishedContent()` (private, line 160), `validRole()` (private, line 169), `validEmail()` (private, line 177), `loginRefusal()` (private, line 355)
 
 
 ## WidgetObject

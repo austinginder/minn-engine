@@ -22,6 +22,7 @@ use Minn\Admin\SessionsController;
 use Minn\Ops\CoreStatus;
 use Minn\Admin\V1Controller;
 use Minn\Db;
+use Minn\Http\Method;
 use Minn\Http\Request;
 use Minn\Http\Response;
 use Minn\Http\Router;
@@ -75,7 +76,7 @@ final readonly class Api
         $postsController = new PostsController($s->db(), $s->posts(), $s->postObject(), $caller);
         $postsWrite = new PostsWriteController($s->posts(), $s->writer(), $s->site(), $s->postObject(), $s->url(), $caller);
         $controllers = [
-            new IndexController($s->site(), $s->permalinks(), $s->url(), $router, $s->types()),
+            new IndexController($s->site(), $s->permalinks(), $s->url(), new RouteCatalogue($router, $s->types(), $s->url())),
             new AbilitiesController($s->url(), $caller),
             new V1Controller($s->db(), $s->notifications(), new CoreStatus($s->site()), new AdminTypes($s->types(), $s->capabilities()), $caller),
             new OverviewController($s->db(), $s->site(), $s->dashboard(), $s->users(), $caller),
@@ -227,8 +228,27 @@ final readonly class Api
 
     private function engineResponse(Request $request): ?Response
     {
+        if ($request->method === Method::Options) {
+            return $this->options($request);
+        }
         $response = $this->router->dispatch($request);
         return $response === null ? null : $this->embed->decorate($request, $response);
+    }
+
+    /**
+     * An OPTIONS request as the reference answers it: the description of
+     * the first route whose pattern takes the path, whoever asks (the Allow
+     * header says what the caller may do); null when no engine route takes
+     * it, or when a plugin removed rest_handle_options_request (which is
+     * what answers OPTIONS on the reference).
+     */
+    private function options(Request $request): ?Response
+    {
+        if (Runtime::booted() && \has_filter('rest_pre_dispatch', 'rest_handle_options_request') === false) {
+            return null;
+        }
+        $entry = (new RouteCatalogue($this->router, $this->services->types(), $this->services->url()))->describing($request->path);
+        return $entry === null ? null : Reply::item($entry, null);
     }
 
     /**

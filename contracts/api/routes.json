@@ -1,7 +1,7 @@
 {
     "engine": "0.0.1",
-    "routes": 265,
-    "withPolicy": 259,
+    "routes": 266,
+    "withPolicy": 260,
     "entries": [
         {
             "method": "GET",
@@ -7497,6 +7497,41 @@
                     "required": false
                 }
             },
+            "index": true
+        },
+        {
+            "method": "DELETE",
+            "pattern": "/wp/v2/users/me",
+            "name": "Minn\\Rest\\UsersController::deleteMe",
+            "handler": "Minn\\Rest\\UsersController::deleteMe",
+            "summary": "Deletes the signed-in user as users/{id} deletes any; signed out there is no such user (404).",
+            "policy": {
+                "access": "Cap",
+                "describe": "cap delete_users",
+                "cap": "delete_users",
+                "signIn": {
+                    "code": "rest_user_invalid_id",
+                    "message": "Invalid user ID."
+                },
+                "refuse": {
+                    "code": "rest_user_cannot_delete",
+                    "message": "Sorry, you are not allowed to delete this user."
+                }
+            },
+            "args": {
+                "force": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Required to be true, as users do not support trashing.",
+                    "required": false
+                },
+                "reassign": {
+                    "type": "integer",
+                    "description": "Reassign the deleted user's posts and links to this user ID.",
+                    "required": true
+                }
+            },
+            "body": [],
             "index": true
         },
         {

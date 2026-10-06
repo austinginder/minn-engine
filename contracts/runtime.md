@@ -4192,3 +4192,30 @@ probes `insert-defaults`, `permalinks`, `registry-rewrites` and
 A response's headers now keep the order they were set in
 (`Response::withHeader` appends), as the reference's do. That order shows
 in a batch's envelopes: `Location`, then `Allow`.
+
+## OPTIONS requests (2026-10-06)
+
+An OPTIONS request to an engine route is now answered as the reference
+answers it: 200 with the route's description, whoever asks, and the
+caller's `Allow` header. Before, the engine answered 404. The block
+editor's `canUser` reads that header, so permission checks there read
+nothing.
+- **The description.** It comes from the engine's catalogue of its own
+  routes (`Rest\RouteCatalogue`, shared with the index): the first route
+  whose pattern takes the path. A path no route takes gets an empty
+  description.
+  - Not yet the reference's whole description: the endpoints are not split
+    per method group, the arguments are the engine's own, and there is no
+    `schema`. Those need the reference's route schemas captured.
+- **A plugin's route.** Its description (the runtime's
+  `rest_handle_options_request`) now carries the `Allow` header too. The
+  runtime no longer answers a path it does not know, so the engine's
+  routes, such as the namespace index, are described.
+- **DELETE `users/me`** is served, deleting the signed-in user as
+  `users/{id}` deletes any.
+- **`reassign`** is judged as the reference's own sanitizer judges it: empty,
+  `false` or a number pass, anything else is refused with "Invalid user
+  parameter(s).". The integer type is not checked.
+
+The `allow` suite compares OPTIONS on every read route, for each caller.
+Eight of those cases share a divergence with the matching GET (B1o).

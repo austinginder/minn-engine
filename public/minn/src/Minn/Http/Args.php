@@ -181,7 +181,7 @@ final class Args
     /** Read by Rest\UsersController::delete(): the reassignment a user delete requires, and the force it insists on. */
     public const USER_DELETE = [
         'force' => ['type' => 'boolean', 'default' => false, 'description' => 'Required to be true, as users do not support trashing.', 'required' => false],
-        'reassign' => ['type' => 'integer', 'description' => 'Reassign the deleted user\'s posts and links to this user ID.', 'required' => true],
+        'reassign' => ['type' => 'integer', 'description' => 'Reassign the deleted user\'s posts and links to this user ID.', 'required' => true, self::HANDLER_VALIDATES => true],
     ];
 
     /** Read by Rest\ApplicationPasswordsController::create(): the body of a new application password. */

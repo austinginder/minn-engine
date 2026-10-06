@@ -135,8 +135,8 @@ function _minn_rest_error_entries(WP_Error $error): array
  * An OPTIONS request to a route a plugin registered is answered with the
  * route's description in the help context (namespace, methods, endpoints with
  * their arguments, the schema, the self link), and one no route matches with
- * an empty description. The engine answers its own routes itself, so those
- * pass through.
+ * an empty description. The engine answers its own routes itself, the index
+ * and the namespace indexes among them, so those pass through.
  */
 function rest_handle_options_request($response, $handler, $request)
 {
@@ -144,7 +144,8 @@ function rest_handle_options_request($response, $handler, $request)
         return $response;
     }
     $found = Minn\Rest\RouteMatch::route($handler->get_namespaces(), static fn (string $namespace) => $handler->get_routes($namespace), (string) $request->get_route());
-    if ($found !== null && $handler->engine_route($found['route'])) {
+    $path = (string) $request->get_route();
+    if (($found !== null && $handler->engine_route($found['route'])) || ($found === null && ($path === '/' || in_array(trim($path, '/'), $handler->get_namespaces(), true)))) {
         return $response;
     }
     // A path no route matches is still answered, with nothing to describe.

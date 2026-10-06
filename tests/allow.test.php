@@ -6,7 +6,8 @@ declare(strict_types=1);
  * The Allow header, engine against the reference on the same database: the
  * methods the caller may use on the matched route, judged per caller
  * (anonymous, an author, an administrator), and no header when nothing is
- * allowed. Every case is compared live. The cases the engine still answers
+ * allowed, for the routes' reads, a few writes, and an OPTIONS request on
+ * each read route. Every case is compared live. The cases the engine still answers
  * differently are listed below with the change that settles each; the list
  * is a ratchet: a case that starts agreeing must leave it, and it never grows.
  */
@@ -84,14 +85,21 @@ if ($sessions['author'] === null || $sessions['admin'] === null) {
 //        no route policy states, so a signed-in caller is offered POST where the reference is not
 //   B7   Access::Floor admits every editor, so a manage_options handler's refusal is not the
 //        policy's, and the header carries the write methods the caller cannot really use
+//   B1o  an OPTIONS request's Allow header is judged as a GET's is, and so shares that GET's
+//        divergence; the reference's comments permission also refuses a visitor's OPTIONS
+//        request outright (no header), which is not yet understood
 $divergent = [
     'anonymous GET /wp/v2/posts/10' => 'B1',     'anonymous POST /wp/v2/comments' => 'B1',
-    'author GET /wp/v2/settings' => 'B7',     'admin GET /wp/v2/users/me' => 'B1',
+    'author GET /wp/v2/settings' => 'B7',
     'admin GET /wp/v2/categories/1' => 'B1',     'admin GET /wp/v2/templates' => 'B1',
     'admin GET /wp/v2/navigation' => 'B1',     'admin POST /wp/v2/categories' => 'B1s',     'author GET /wp/v2/comments' => 'B1b',
     'author POST /wp/v2/comments' => 'B1b',     'admin GET /wp/v2/comments' => 'B1b',     'admin POST /wp/v2/comments' => 'B1b',
+    'anonymous OPTIONS /wp/v2/posts/10' => 'B1o',     'anonymous OPTIONS /wp/v2/comments' => 'B1o',
+    'author OPTIONS /wp/v2/comments' => 'B1o',     'author OPTIONS /wp/v2/settings' => 'B1o',
+    'admin OPTIONS /wp/v2/categories/1' => 'B1o',     'admin OPTIONS /wp/v2/comments' => 'B1o',
+    'admin OPTIONS /wp/v2/templates' => 'B1o',     'admin OPTIONS /wp/v2/navigation' => 'B1o',
 ];
-$ceiling = 12;
+$ceiling = 19;
 
 $reads = ['/', '/wp/v2', '/wp/v2/posts', '/wp/v2/posts/1', '/wp/v2/posts/11', '/wp/v2/posts/10', '/wp/v2/posts/999999', '/wp/v2/pages', '/wp/v2/pages/2',
     '/wp/v2/users', '/wp/v2/users/me', '/wp/v2/users/1', '/wp/v2/users/2', '/wp/v2/categories', '/wp/v2/categories/1', '/wp/v2/tags', '/wp/v2/comments',
@@ -148,6 +156,12 @@ foreach ($sessions as $who => $session) {
         [$es, $ea] = $fetch($ENGINE, $path, $session);
         [$rs, $ra] = $fetch($REF, $path, $session);
         $compare($who, 'GET', $path, $ea, $es, $ra, $rs);
+    }
+    // An OPTIONS request describes the route whoever asks; its Allow header is the caller's.
+    foreach ($reads as $path) {
+        [$es, $ea] = $fetch($ENGINE, $path, $session, 'OPTIONS');
+        [$rs, $ra] = $fetch($REF, $path, $session, 'OPTIONS');
+        $compare($who, 'OPTIONS', $path, $ea, $es, $ra, $rs);
     }
     foreach ($writes as [$method, $path, $body]) {
         [$es, $ea, $eb] = $fetch($ENGINE, $path, $session, $method, $body);
