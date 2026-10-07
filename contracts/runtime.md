@@ -2365,6 +2365,22 @@ both stacks, and the engine adds only `Requests` and
   and `curl_multi` (`request_multiple` sends one after another; the answers
   come back in input order, the reference's in completion order).
 
+## unzip_file (2026-10-07)
+
+`unzip_file($file, $to)` (`Ops\Unzip`, probe unzip-file) refuses with
+`fs_unavailable` until `WP_Filesystem()` has set the filesystem up, then
+unpacks through it: the destination and its missing parents, every folder
+the archive names or implies, then the files, over whatever the
+destination already holds (other files are kept). Entries under
+`__MACOSX/` are left out (a `.DS_Store` is not), and so, silently, is an
+entry whose name climbs out (`../`), is absolute or names a drive.
+`pre_unzip_file` and `unzip_file` are handed the folders to make and the
+space needed, 2.1 times the unpacked size; less free disk than that is
+`disk_full_unzip_file`. An archive the reader cannot open is
+`incompatible_archive` with the PclZip text the reference falls back to
+(`PCLZIP_ERR_MISSING_FILE (-4) : Missing archive file '…'`,
+`PCLZIP_ERR_BAD_FORMAT (-10) : …`).
+
 ## The kses tag pass (2026-10-05)
 
 How `wp_kses` reads markup, captured input by input (224 `wp_kses_post`

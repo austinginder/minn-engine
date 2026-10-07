@@ -3328,7 +3328,7 @@ Internals: `pluginFile()` (private, line 90), `activePlugins()` (private, line 1
 
 A refused operation, the way plugin code expects to read it: a code, a message, optional data. The facade turns it into WP_Error.
 
-Used by: `Minn\Blocks\BlockName`, `Minn\Content\Menus`, `Minn\Ops\Updates`, `Minn\Rest\ArgCheck`, `Minn\Rest\BlockRendererController`, `Minn\Rest\MenusController`, `Minn\Rest\ParamCheck`, `Minn\Rest\RouteMatch`, `Minn\Rest\Schema`, `Minn\Runtime\Connectors`, `Minn\Runtime\PackageDownload`, `Minn\Runtime\Patterns`, `Minn\Runtime\UserInsert`, `Minn\Runtime\UserSave`
+Used by: `Minn\Blocks\BlockName`, `Minn\Content\Menus`, `Minn\Ops\Unzip`, `Minn\Ops\Updates`, `Minn\Rest\ArgCheck`, `Minn\Rest\BlockRendererController`, `Minn\Rest\MenusController`, `Minn\Rest\ParamCheck`, `Minn\Rest\RouteMatch`, `Minn\Rest\Schema`, `Minn\Runtime\Connectors`, `Minn\Runtime\PackageDownload`, `Minn\Runtime\Patterns`, `Minn\Runtime\UserInsert`, `Minn\Runtime\UserSave`
 
 ```php
 __construct(string $code, string $message, mixed $data = NULL)

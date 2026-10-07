@@ -307,12 +307,6 @@ function translate_settings_using_i18n_schema($i18n_schema, $settings, $textdoma
     return null;
 }
 
-function unzip_file($file, $to)
-{
-    \Minn\Runtime\PlaceholderTrace::hit('unzip_file');
-    return null;
-}
-
 function update_core($from, $to)
 {
     \Minn\Runtime\PlaceholderTrace::hit('update_core');

@@ -76479,6 +76479,215 @@
             ]
         },
         {
+            "name": "Minn\\Ops\\Unzip",
+            "short": "Unzip",
+            "namespace": "Minn\\Ops",
+            "kind": "final readonly class",
+            "file": "public/minn/src/Minn/Ops/Unzip.php",
+            "lines": 101,
+            "doc": "An archive unpacked as unzip_file() unpacks it (probe unzip-file): into\nthe destination through the filesystem the site set up, every folder\nmade first (the destination and its missing parents included), resource-fork entries\n(__MACOSX/) and entries whose names climb out or are absolute left out;\nrefused when the disk cannot take twice the unpacked size and a little\nmore. pre_unzip_file may answer first, and unzip_file is handed the\nresult, each with the folders to make and the space needed. An archive\nthe reader cannot open is refused in the words of the library the\nreference falls back to.",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\Runtime\\Refusal"
+            ],
+            "usedBy": [],
+            "constructor": {
+                "signature": "__construct(object $filesystem, Closure $filter, int $dirMode, int $fileMode)",
+                "doc": "",
+                "shapes": [
+                    "@param Closure(string, mixed...): mixed $filter applies a filter, as apply_filters does"
+                ],
+                "params": [
+                    {
+                        "name": "filesystem",
+                        "type": "object",
+                        "shape": "",
+                        "default": null,
+                        "doc": "the site's WP_Filesystem (mkdir, is_dir, put_contents)"
+                    },
+                    {
+                        "name": "filter",
+                        "type": "Closure",
+                        "shape": "Closure(string, mixed...): mixed",
+                        "default": null,
+                        "doc": "applies a filter, as apply_filters does"
+                    },
+                    {
+                        "name": "dirMode",
+                        "type": "int",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    },
+                    {
+                        "name": "fileMode",
+                        "type": "int",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    }
+                ],
+                "visibility": "public",
+                "line": 28,
+                "end": 30
+            },
+            "cases": [],
+            "constants": [],
+            "properties": [
+                {
+                    "name": "filesystem",
+                    "type": "object",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
+                },
+                {
+                    "name": "filter",
+                    "type": "Closure",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
+                },
+                {
+                    "name": "dirMode",
+                    "type": "int",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
+                },
+                {
+                    "name": "fileMode",
+                    "type": "int",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
+                }
+            ],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "into",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "into(string $file, string $to): mixed",
+                    "doc": "The archive's files under the destination: true, a refusal, or what pre_unzip_file answered instead.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "file",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "to",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 33,
+                    "end": 62
+                },
+                {
+                    "routes": [],
+                    "name": "read",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "read(ZipArchive $archive): array",
+                    "doc": "The entries to write, the folders they need (each archive folder and\nevery parent of a file), and their unpacked size.",
+                    "shapes": [
+                        "@return array{0: array<int, string>, 1: list<string>, 2: int} index => name, folders, bytes"
+                    ],
+                    "params": [
+                        {
+                            "name": "archive",
+                            "type": "ZipArchive",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 70,
+                    "end": 90
+                },
+                {
+                    "routes": [],
+                    "name": "safe",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "safe(string $name): bool",
+                    "doc": "Whether an entry's name stays inside the destination: no climbing segment, not absolute, no drive.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "name",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 93,
+                    "end": 96
+                },
+                {
+                    "routes": [],
+                    "name": "write",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "write(ZipArchive $archive, array $entries, string $to, array $needed): Minn\\Runtime\\Refusal|true",
+                    "doc": "",
+                    "shapes": [
+                        "@param array<int, string> $entries @param list<string> $needed"
+                    ],
+                    "params": [
+                        {
+                            "name": "archive",
+                            "type": "ZipArchive",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "entries",
+                            "type": "array",
+                            "shape": "array<int, string>",
+                            "default": null,
+                            "doc": "@param list<string> $needed"
+                        },
+                        {
+                            "name": "to",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "needed",
+                            "type": "array",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 99,
+                    "end": 121
+                }
+            ]
+        },
+        {
             "name": "Minn\\Ops\\Updates",
             "short": "Updates",
             "namespace": "Minn\\Ops",
@@ -117985,6 +118194,7 @@
             "usedBy": [
                 "Minn\\Blocks\\BlockName",
                 "Minn\\Content\\Menus",
+                "Minn\\Ops\\Unzip",
                 "Minn\\Ops\\Updates",
                 "Minn\\Rest\\ArgCheck",
                 "Minn\\Rest\\BlockRendererController",

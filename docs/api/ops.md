@@ -10,6 +10,7 @@
 | [`InstalledSoftware`](#installedsoftware) | final readonly class | 59 | What is installed, as the System view lists it: every extension and |
 | [`Logs`](#logs) | final readonly class | 150 | The log files the System view can read and clear: the debug log the |
 | [`Packages`](#packages) | final readonly class | 489 | Putting themes and extensions on disk. Themes come from wordpress.org |
+| [`Unzip`](#unzip) | final readonly class | 101 | An archive unpacked as unzip_file() unpacks it (probe unzip-file): into |
 | [`Updates`](#updates) | final class | 396 | Update offers from wordpress.org for the site's plugins and themes: the |
 
 ## AutoUpdates
@@ -292,6 +293,33 @@ A package over https, every redirect hop included, refusing anything
 else; when host prefixes are given, every hop must start with one.
 
 Internals: `pluginPackage()` (private, line 158), `plain()` (private, line 199), `themePackage()` (private, line 293), `place()` (private, line 342), `isFolderName()` (private, line 426), `contained()` (private, line 432), `isSymlinkEntry()` (private, line 443), `identify()` (private, line 458), `describe()` (private, line 472), `removeTree()` (private, line 507)
+
+
+## Unzip
+
+`final readonly class Minn\Ops\Unzip` · `public/minn/src/Minn/Ops/Unzip.php`
+
+An archive unpacked as unzip_file() unpacks it (probe unzip-file): into
+the destination through the filesystem the site set up, every folder
+made first (the destination and its missing parents included), resource-fork entries
+(__MACOSX/) and entries whose names climb out or are absolute left out;
+refused when the disk cannot take twice the unpacked size and a little
+more. pre_unzip_file may answer first, and unzip_file is handed the
+result, each with the folders to make and the space needed. An archive
+the reader cannot open is refused in the words of the library the
+reference falls back to.
+
+```php
+__construct(object $filesystem, Closure $filter, int $dirMode, int $fileMode)
+```
+- `@param Closure(string, mixed...): mixed $filter applies a filter, as apply_filters does`
+
+
+### `into(string $file, string $to): mixed`
+
+The archive's files under the destination: true, a refusal, or what pre_unzip_file answered instead.
+
+Internals: `read()` (private, line 70), `safe()` (private, line 93), `write()` (private, line 99)
 
 
 ## Updates
