@@ -130,6 +130,15 @@ if (Minn\Runtime\Runtime::booted()) {
 }
 
 // The authenticate chain and the comment field filters.
+// The sign-in page's head, footer and headers, as the reference registers them.
+add_action('login_head', 'wp_robots', 1);
+add_action('login_head', 'wp_resource_hints', 8);
+add_action('login_head', 'wp_print_head_scripts', 9);
+add_action('login_head', 'print_admin_styles', 9);
+add_action('login_head', 'wp_site_icon', 99);
+add_action('login_footer', 'wp_print_footer_scripts', 20);
+add_action('login_init', 'send_frame_options_header', 10, 0);
+add_action('login_init', 'wp_admin_headers');
 add_filter('determine_current_user', 'wp_validate_auth_cookie');
 add_filter('determine_current_user', 'wp_validate_logged_in_cookie', 20);
 add_filter('determine_current_user', 'wp_validate_application_password', 20);

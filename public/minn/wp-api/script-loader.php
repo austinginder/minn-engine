@@ -171,6 +171,12 @@ function _minn_source_url(string $id): string
 function wp_print_styles($handles = false)
 {
     do_action('wp_print_styles');
+    return _minn_print_styles($handles);
+}
+
+/** @internal the queued styles (or the handles given) printed as link and inline style tags; the handles printed */
+function _minn_print_styles($handles = false)
+{
     $assets = _minn_assets('style');
     wp_styles()->push();
     $list = $handles === false ? $assets->toPrint() : (array) $handles;

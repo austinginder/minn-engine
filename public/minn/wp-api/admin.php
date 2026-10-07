@@ -793,9 +793,12 @@ function wp_clean_themes_cache($clear_update_cache = true)
     }
 }
 
+/** Every queued style printed (the sign-in page's head prints them so), then print_admin_styles; the handles printed. */
 function print_admin_styles()
 {
-    return [];
+    $done = _minn_print_styles(false);
+    apply_filters('print_admin_styles', true);
+    return $done;
 }
 
 function upload_is_user_over_quota($display_message = true)

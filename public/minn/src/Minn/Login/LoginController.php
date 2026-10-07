@@ -61,6 +61,7 @@ final readonly class LoginController
         if ($request->path === '/wp-login.php' && $request->query === []) {
             return Response::redirect($this->permalinks->url(self::PATH), 302);
         }
+        (new LoginHooks($this->users))->enter($this->action($request) ?: 'login');
         if ($this->action($request) === 'logout') {
             return $this->logout($request);
         }
@@ -246,6 +247,8 @@ final readonly class LoginController
         if ($this->action($request) === 'logout') {
             return $this->form($request);
         }
+        $hooks = new LoginHooks($this->users);
+        $hooks->enter($this->action($request) ?: 'login');
         $reset = $this->lostPassword($request);
         if ($reset !== null) {
             return $reset;
@@ -256,7 +259,6 @@ final readonly class LoginController
         }
         $login = (string) ($request->form['log'] ?? '');
         $password = (string) ($request->form['pwd'] ?? '');
-        $hooks = new LoginHooks($this->users);
         $user = $hooks->available() ? $hooks->authenticate($login, $password) : $this->authenticator->login($login, $password);
         if (!$user instanceof UserRecord) {
             $this->signIn->recordFailure($request->remoteAddress);
@@ -267,7 +269,8 @@ final readonly class LoginController
         // the cookie past the browser session; the failure counter is left to
         // lapse, so a sign-in to one account cannot reset guesses at another.
         $remember = !empty($request->form['rememberme']);
-        $redirect = $this->safeRedirect((string) ($request->form['redirect_to'] ?? ''));
+        $requested = (string) ($request->form['redirect_to'] ?? '');
+        $redirect = $this->safeRedirect($hooks->landing($this->safeRedirect($requested), $requested, $user));
         $response = Response::redirect($redirect, 302);
         $response = $remember ? $this->signIn->remember($response, $user, $request) : $this->signIn->establish($response, $user, $request);
         $hooks->signedIn($user);
@@ -313,8 +316,12 @@ final readonly class LoginController
                 . '<p>Do you really want to <a href="' . Html::attr($link) . '">log out</a>?</p></body></html>',
             );
         }
-        $response = $this->signIn->end($signedOut, $session);
-        (new LoginHooks($this->users))->signedOut($session->id());
+        $hooks = new LoginHooks($this->users);
+        $requested = (string) ($request->query('redirect_to') ?? '');
+        $default = $requested !== '' ? $this->safeRedirect($requested) : $this->permalinks->url($this->base($request) . '?loggedout=true');
+        $to = $hooks->leaving($default, $requested, $session->id());
+        $response = $this->signIn->end(Response::redirect($to === $default ? $default : $this->safeRedirect($to), 302), $session);
+        $hooks->signedOut($session->id());
         return $response;
     }
 
@@ -359,13 +366,15 @@ final readonly class LoginController
 
     private function render(Request $request, string $error, string $message = ''): string
     {
+        $siteName = (string) ($this->site->option('blogname') ?? 'Site');
         return LoginForm::render(
-            (string) ($this->site->option('blogname') ?? 'Site'),
+            $siteName,
             $this->permalinks->url($this->base($request)),
             (string) ($request->query('redirect_to') ?? ''),
             $error,
             $message,
             $this->actionUrl($request, 'lostpassword'),
+            (new LoginHooks($this->users))->page($this->action($request) ?: 'login', 'Log In &lsaquo; ' . Html::esc($siteName), $siteName, $this->permalinks->url('/')),
         );
     }
 }

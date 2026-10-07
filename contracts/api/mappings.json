@@ -3,10 +3,10 @@
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line)",
     "summary": {
         "minn": 646,
-        "composes": 933,
+        "composes": 935,
         "leaf": 649,
-        "noop": 1864,
-        "functions": 4022,
+        "noop": 1863,
+        "functions": 4023,
         "minnMethods": 690,
         "leafLinesOver15": 12
     },
@@ -16410,6 +16410,21 @@
                 "wp_scripts"
             ]
         },
+        "_minn_print_styles": {
+            "file": "script-loader.php",
+            "lines": 22,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "_minn_asset_url",
+                "_minn_assets",
+                "_minn_inline_style_sources",
+                "apply_filters",
+                "esc_attr",
+                "esc_url",
+                "wp_styles"
+            ]
+        },
         "_minn_register_core_rss_block": {
             "file": "feed.php",
             "lines": 5,
@@ -26188,10 +26203,13 @@
         },
         "print_admin_styles": {
             "file": "admin.php",
-            "lines": 1,
-            "kind": "noop",
+            "lines": 3,
+            "kind": "composes",
             "minn": [],
-            "composes": []
+            "composes": [
+                "_minn_print_styles",
+                "apply_filters"
+            ]
         },
         "print_footer_scripts": {
             "file": "script-loader.php",
@@ -33940,18 +33958,12 @@
         },
         "wp_print_styles": {
             "file": "script-loader.php",
-            "lines": 23,
+            "lines": 2,
             "kind": "composes",
             "minn": [],
             "composes": [
-                "_minn_asset_url",
-                "_minn_assets",
-                "_minn_inline_style_sources",
-                "apply_filters",
-                "do_action",
-                "esc_attr",
-                "esc_url",
-                "wp_styles"
+                "_minn_print_styles",
+                "do_action"
             ]
         },
         "wp_privacy_anonymize_data": {

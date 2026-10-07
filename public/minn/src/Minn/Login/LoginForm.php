@@ -9,30 +9,43 @@ use Minn\Support\Html;
 /** The sign-in page markup. */
 final class LoginForm
 {
-    /** The sign-in page's HTML. */
-    public static function render(string $siteName, string $action, string $redirectTo, string $error, string $message = '', string $lostPasswordUrl = ''): string
+    /**
+     * The sign-in page's HTML. With plugins loaded, $parts carries what they
+     * put on the page (LoginHooks::page()): the title, head, body classes,
+     * the header's link and words, a message above the form, fields inside
+     * it, and the footer, each where the reference's page puts it.
+     *
+     * @param array{title?: string, head?: string, bodyClass?: string, headerUrl?: string, headerText?: string, message?: string, form?: string, footer?: string} $parts
+     */
+    public static function render(string $siteName, string $action, string $redirectTo, string $error, string $message = '', string $lostPasswordUrl = '', array $parts = []): string
     {
         $site = Html::esc($siteName);
         $redirect = Html::esc($redirectTo);
         $errorHtml = ($error === '' ? '' : '<div class="err">' . Html::esc($error) . '</div>')
             . ($message === '' ? '' : '<div class="msg">' . Html::esc($message) . '</div>');
         $redirectField = $redirect === '' ? '' : '<input type="hidden" name="redirect_to" value="' . $redirect . '">';
+        $header = isset($parts['headerUrl'])
+            ? '<h1><a href="' . Html::attr($parts['headerUrl']) . '">' . Html::esc($parts['headerText'] ?? $siteName) . '</a></h1>'
+            : '<h1>' . $site . '</h1>';
 
         return '<!doctype html><html lang="en"><head><meta charset="utf-8">'
             . '<meta name="viewport" content="width=device-width, initial-scale=1">'
-            . '<title>Log In &lsaquo; ' . $site . '</title>'
-            . '<style>' . self::CSS . '</style></head><body>'
+            . '<title>' . ($parts['title'] ?? 'Log In &lsaquo; ' . $site) . '</title>'
+            . '<style>' . self::CSS . '</style>' . ($parts['head'] ?? '') . '</head>'
+            . '<body' . (isset($parts['bodyClass']) ? ' class="' . Html::attr($parts['bodyClass']) . '"' : '') . '>'
+            . ($parts['message'] ?? '')
             . '<form method="post" action="' . Html::attr($action) . '">'
-            . '<h1>' . $site . '</h1>' . $errorHtml
+            . $header . $errorHtml
             . '<label for="log">Username or Email</label>'
             . '<input type="text" name="log" id="log" autocapitalize="none" autocomplete="username" autofocus>'
             . '<label for="pwd">Password</label>'
             . '<input type="password" name="pwd" id="pwd" autocomplete="current-password">'
+            . ($parts['form'] ?? '')
             . '<label class="switch"><input type="checkbox" name="rememberme" value="forever" role="switch"><span class="knob" aria-hidden="true"></span><span>Remember me</span></label>'
             . $redirectField
             . '<button type="submit" name="wp-submit">Log In</button>'
             . '<p class="hint"><a href="' . Html::attr($lostPasswordUrl !== '' ? $lostPasswordUrl : $action . '?action=lostpassword') . '">Lost your password?</a></p>'
-            . '</form></body></html>';
+            . '</form>' . ($parts['footer'] ?? '') . '</body></html>';
     }
 
     /**

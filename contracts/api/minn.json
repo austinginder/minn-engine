@@ -62584,7 +62584,7 @@
             "namespace": "Minn\\Login",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Login/LoginController.php",
-            "lines": 337,
+            "lines": 346,
             "doc": "Signing in. The page people see is /minn-admin/login: the form, the\nlost-password and reset flows, and logout all live there and link there.\n/wp-login.php stays as the address tooling knows (one-time login links,\nuptime probes, scripted sign-ins) and answers in place with the same\nshapes; a bare GET of it sends a browser to the clean page. Sessions\nand cookies validate on the engine AND on WordPress either way.",
             "implements": [],
             "extends": null,
@@ -62782,7 +62782,7 @@
                         }
                     ],
                     "line": 59,
-                    "end": 97
+                    "end": 98
                 },
                 {
                     "routes": [
@@ -62805,8 +62805,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 244,
-                    "end": 275
+                    "line": 245,
+                    "end": 278
                 },
                 {
                     "routes": [],
@@ -62825,8 +62825,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 100,
-                    "end": 135
+                    "line": 101,
+                    "end": 136
                 },
                 {
                     "routes": [],
@@ -62845,8 +62845,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 142,
-                    "end": 156
+                    "line": 143,
+                    "end": 157
                 },
                 {
                     "routes": [],
@@ -62867,8 +62867,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 159,
-                    "end": 172
+                    "line": 160,
+                    "end": 173
                 },
                 {
                     "routes": [],
@@ -62887,8 +62887,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 174,
-                    "end": 199
+                    "line": 175,
+                    "end": 200
                 },
                 {
                     "routes": [],
@@ -62907,8 +62907,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 207,
-                    "end": 238
+                    "line": 208,
+                    "end": 239
                 },
                 {
                     "routes": [],
@@ -62927,8 +62927,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 281,
-                    "end": 293
+                    "line": 284,
+                    "end": 296
                 },
                 {
                     "routes": [],
@@ -62947,8 +62947,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 300,
-                    "end": 319
+                    "line": 303,
+                    "end": 326
                 },
                 {
                     "routes": [],
@@ -62967,8 +62967,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 326,
-                    "end": 334
+                    "line": 333,
+                    "end": 341
                 },
                 {
                     "routes": [],
@@ -63001,8 +63001,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 337,
-                    "end": 344
+                    "line": 344,
+                    "end": 351
                 },
                 {
                     "routes": [],
@@ -63021,8 +63021,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 347,
-                    "end": 350
+                    "line": 354,
+                    "end": 357
                 },
                 {
                     "routes": [],
@@ -63048,8 +63048,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 353,
-                    "end": 358
+                    "line": 360,
+                    "end": 365
                 },
                 {
                     "routes": [],
@@ -63082,8 +63082,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 360,
-                    "end": 370
+                    "line": 367,
+                    "end": 379
                 }
             ]
         },
@@ -63093,11 +63093,12 @@
             "namespace": "Minn\\Login",
             "kind": "final class",
             "file": "public/minn/src/Minn/Login/LoginForm.php",
-            "lines": 137,
+            "lines": 150,
             "doc": "The sign-in page markup.",
             "implements": [],
             "extends": null,
             "uses": [
+                "Minn\\Login\\LoginHooks",
                 "Minn\\Support\\Html"
             ],
             "usedBy": [
@@ -63120,9 +63121,11 @@
                     "name": "render",
                     "static": true,
                     "visibility": "public",
-                    "signature": "render(string $siteName, string $action, string $redirectTo, string $error, string $message = '', string $lostPasswordUrl = ''): string",
-                    "doc": "The sign-in page's HTML.",
-                    "shapes": [],
+                    "signature": "render(string $siteName, string $action, string $redirectTo, string $error, string $message = '', string $lostPasswordUrl = '', array $parts = array ( )): string",
+                    "doc": "The sign-in page's HTML. With plugins loaded, $parts carries what they\nput on the page (LoginHooks::page()): the title, head, body classes,\nthe header's link and words, a message above the form, fields inside\nit, and the footer, each where the reference's page puts it.",
+                    "shapes": [
+                        "@param array{title?: string, head?: string, bodyClass?: string, headerUrl?: string, headerText?: string, message?: string, form?: string, footer?: string} $parts"
+                    ],
                     "params": [
                         {
                             "name": "siteName",
@@ -63165,10 +63168,17 @@
                             "shape": "",
                             "default": "''",
                             "doc": ""
+                        },
+                        {
+                            "name": "parts",
+                            "type": "array",
+                            "shape": "array{title?: string, head?: string, bodyClass?: string, headerUrl?: string, headerText?: string, message?: string, form?: string, footer?: string}",
+                            "default": "array ( )",
+                            "doc": ""
                         }
                     ],
-                    "line": 13,
-                    "end": 36
+                    "line": 20,
+                    "end": 49
                 },
                 {
                     "routes": [],
@@ -63210,8 +63220,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 45,
-                    "end": 71
+                    "line": 58,
+                    "end": 84
                 },
                 {
                     "routes": [],
@@ -63251,8 +63261,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 74,
-                    "end": 84
+                    "line": 87,
+                    "end": 97
                 },
                 {
                     "routes": [],
@@ -63299,8 +63309,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 87,
-                    "end": 100
+                    "line": 100,
+                    "end": 113
                 },
                 {
                     "routes": [],
@@ -63340,8 +63350,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 103,
-                    "end": 108
+                    "line": 116,
+                    "end": 121
                 },
                 {
                     "routes": [],
@@ -63388,8 +63398,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 110,
-                    "end": 120
+                    "line": 123,
+                    "end": 133
                 }
             ]
         },
@@ -63399,7 +63409,7 @@
             "namespace": "Minn\\Login",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Login/LoginHooks.php",
-            "lines": 67,
+            "lines": 121,
             "doc": "The sign-in as plugins see it, when they are loaded. The credentials go\nthrough the reference's authenticate chain, so a plugin may refuse a\nsign-in (a breached password, a second factor, a locked account) or\naccept one the password alone would not; wp_login_failed is the chain's\nown report. wp_login follows a good sign-in and wp_logout a sign-out.\nThe engine's default refusals stay one vague sentence; a plugin's is\nshown in its own words, through login_errors.",
             "implements": [],
             "extends": null,
@@ -63409,7 +63419,8 @@
                 "Minn\\Runtime\\Runtime"
             ],
             "usedBy": [
-                "Minn\\Login\\LoginController"
+                "Minn\\Login\\LoginController",
+                "Minn\\Login\\LoginForm"
             ],
             "constructor": {
                 "signature": "__construct(Minn\\Content\\Users $users)",
@@ -63539,6 +63550,137 @@
                 },
                 {
                     "routes": [],
+                    "name": "enter",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "enter(string $action): void",
+                    "doc": "A sign-in page request arriving, as wp-login.php announces it: login_init, then login_form_{action}.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "action",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 80,
+                    "end": 86
+                },
+                {
+                    "routes": [],
+                    "name": "page",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "page(string $action, string $title, string $siteName, string $homeUrl): array",
+                    "doc": "What plugins put on the sign-in page, where the reference's page puts\nit: the title (login_title), the head (login_enqueue_scripts, then\nlogin_head, which prints the styles and scripts), the body classes\n(login_body_class), the header's link and words (login_headerurl,\nlogin_headertext), the message above the form (login_message), the\nfields inside it (login_form), and the footer (login_footer).",
+                    "shapes": [
+                        "@return array{title: string, head: string, bodyClass: string, headerUrl: string, headerText: string, message: string, form: string, footer: string}|array{}"
+                    ],
+                    "params": [
+                        {
+                            "name": "action",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "title",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "siteName",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "homeUrl",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 98,
+                    "end": 119
+                },
+                {
+                    "routes": [],
+                    "name": "landing",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "landing(string $redirect, string $requested, Minn\\Content\\UserRecord $user): string",
+                    "doc": "Where a good sign-in lands, as login_redirect says (the requested address and the user beside it).",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "redirect",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "requested",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "user",
+                            "type": "Minn\\Content\\UserRecord",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 122,
+                    "end": 125
+                },
+                {
+                    "routes": [],
+                    "name": "leaving",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "leaving(string $redirect, string $requested, int $userId): string",
+                    "doc": "Where a sign-out lands, as logout_redirect says.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "redirect",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "requested",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "userId",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 128,
+                    "end": 131
+                },
+                {
+                    "routes": [],
                     "name": "signedOut",
                     "static": false,
                     "visibility": "public",
@@ -63554,8 +63696,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 80,
-                    "end": 85
+                    "line": 134,
+                    "end": 139
                 }
             ]
         },

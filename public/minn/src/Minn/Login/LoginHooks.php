@@ -76,6 +76,60 @@ final readonly class LoginHooks
         }
     }
 
+    /** A sign-in page request arriving, as wp-login.php announces it: login_init, then login_form_{action}. */
+    public function enter(string $action): void
+    {
+        if (Runtime::booted()) {
+            \do_action('login_init');
+            \do_action("login_form_{$action}");
+        }
+    }
+
+    /**
+     * What plugins put on the sign-in page, where the reference's page puts
+     * it: the title (login_title), the head (login_enqueue_scripts, then
+     * login_head, which prints the styles and scripts), the body classes
+     * (login_body_class), the header's link and words (login_headerurl,
+     * login_headertext), the message above the form (login_message), the
+     * fields inside it (login_form), and the footer (login_footer).
+     *
+     * @return array{title: string, head: string, bodyClass: string, headerUrl: string, headerText: string, message: string, form: string, footer: string}|array{}
+     */
+    public function page(string $action, string $title, string $siteName, string $homeUrl): array
+    {
+        if (!Runtime::booted()) {
+            return [];
+        }
+        $printed = static function (string $hook): string {
+            ob_start();
+            \do_action($hook);
+            return (string) ob_get_clean();
+        };
+        $head = $printed('login_enqueue_scripts') . $printed('login_head');
+        return [
+            'title' => (string) \apply_filters('login_title', $title, 'Log In'),
+            'head' => $head,
+            'bodyClass' => implode(' ', array_map('sanitize_html_class', (array) \apply_filters('login_body_class', ['login', 'no-js', 'login-action-' . $action], $action))),
+            'headerUrl' => (string) \apply_filters('login_headerurl', $homeUrl),
+            'headerText' => (string) \apply_filters('login_headertext', $siteName),
+            'message' => (string) \apply_filters('login_message', ''),
+            'form' => $printed('login_form'),
+            'footer' => $printed('login_footer'),
+        ];
+    }
+
+    /** Where a good sign-in lands, as login_redirect says (the requested address and the user beside it). */
+    public function landing(string $redirect, string $requested, UserRecord $user): string
+    {
+        return Runtime::booted() ? (string) \apply_filters('login_redirect', $redirect, $requested, new \WP_User($user->id)) : $redirect;
+    }
+
+    /** Where a sign-out lands, as logout_redirect says. */
+    public function leaving(string $redirect, string $requested, int $userId): string
+    {
+        return Runtime::booted() ? (string) \apply_filters('logout_redirect', $redirect, $requested, new \WP_User($userId)) : $redirect;
+    }
+
     /** After a sign-out ended the session. */
     public function signedOut(int $userId): void
     {

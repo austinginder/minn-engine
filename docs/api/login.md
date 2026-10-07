@@ -4,9 +4,9 @@
 
 | Class | Kind | Lines | Summary |
 |---|---|---|---|
-| [`LoginController`](#logincontroller) | final readonly class | 337 | Signing in. The page people see is /minn-admin/login: the form, the |
-| [`LoginForm`](#loginform) | final class | 137 | The sign-in page markup. |
-| [`LoginHooks`](#loginhooks) | final readonly class | 67 | The sign-in as plugins see it, when they are loaded. The credentials go |
+| [`LoginController`](#logincontroller) | final readonly class | 346 | Signing in. The page people see is /minn-admin/login: the form, the |
+| [`LoginForm`](#loginform) | final class | 150 | The sign-in page markup. |
+| [`LoginHooks`](#loginhooks) | final readonly class | 121 | The sign-in as plugins see it, when they are loaded. The credentials go |
 | [`ServeLogin`](#servelogin) | final class | 3 | Thrown by the wp-login.php shape file when plugin code require's it |
 
 ## LoginController
@@ -51,7 +51,7 @@ Route: `POST /wp-login.php (public)`
 
 Handles the posted form for each of those pages.
 
-Internals: `lostPassword()` (private, line 100), `openResetLink()` (private, line 142), `resetSession()` (private, line 159), `savePassword()` (private, line 174), `tokenLogin()` (private, line 207), `safeRedirect()` (private, line 281), `logout()` (private, line 300), `action()` (private, line 326), `actionUrl()` (private, line 337), `base()` (private, line 347), `tooManyAttempts()` (private, line 353), `render()` (private, line 360)
+Internals: `lostPassword()` (private, line 101), `openResetLink()` (private, line 143), `resetSession()` (private, line 160), `savePassword()` (private, line 175), `tokenLogin()` (private, line 208), `safeRedirect()` (private, line 284), `logout()` (private, line 303), `action()` (private, line 333), `actionUrl()` (private, line 344), `base()` (private, line 354), `tooManyAttempts()` (private, line 360), `render()` (private, line 367)
 
 
 ## LoginForm
@@ -64,9 +64,14 @@ The sign-in page markup.
 
 Used by: `Minn\Login\LoginController`
 
-### static `render(string $siteName, string $action, string $redirectTo, string $error, string $message = '', string $lostPasswordUrl = ''): string`
+### static `render(string $siteName, string $action, string $redirectTo, string $error, string $message = '', string $lostPasswordUrl = '', array $parts = array ( )): string`
 
-The sign-in page's HTML.
+The sign-in page's HTML. With plugins loaded, $parts carries what they
+put on the page (LoginHooks::page()): the title, head, body classes,
+the header's link and words, a message above the form, fields inside
+it, and the footer, each where the reference's page puts it.
+
+- `@param array{title?: string, head?: string, bodyClass?: string, headerUrl?: string, headerText?: string, message?: string, form?: string, footer?: string} $parts`
 
 ### static `embedded(array $args, string $top, string $middle, string $bottom): string`
 
@@ -88,7 +93,7 @@ The new-password form; the key rides in a hidden field as on the reference.
 
 A message with a link back to sign-in.
 
-Internals: `page()` (private, line 110)
+Internals: `page()` (private, line 123)
 
 
 ## LoginHooks
@@ -105,7 +110,7 @@ shown in its own words, through login_errors.
 
 - const `DEFAULT_REFUSALS` = `array (   0 => 'empty_username',   1 => 'empty_password',   2 => 'invalid_username',   3 => 'invalid_email',   4 => 'incorrect_password',   5 => 'authentication_failed', )` — The chain's own refusals, which the sign-in page words as one.
 
-Used by: `Minn\Login\LoginController`
+Used by: `Minn\Login\LoginController`, `Minn\Login\LoginForm`
 
 ```php
 __construct(Minn\Content\Users $users)
@@ -134,6 +139,29 @@ After a good sign-in. The chain read the user through the runtime,
 which cached their meta before the new session was written, so the
 cache is let go first: a plugin reading session_tokens on wp_login
 (CleanTalk keeps the first session's address) must see the new one.
+
+### `enter(string $action): void`
+
+A sign-in page request arriving, as wp-login.php announces it: login_init, then login_form_{action}.
+
+### `page(string $action, string $title, string $siteName, string $homeUrl): array`
+
+What plugins put on the sign-in page, where the reference's page puts
+it: the title (login_title), the head (login_enqueue_scripts, then
+login_head, which prints the styles and scripts), the body classes
+(login_body_class), the header's link and words (login_headerurl,
+login_headertext), the message above the form (login_message), the
+fields inside it (login_form), and the footer (login_footer).
+
+- `@return array{title: string, head: string, bodyClass: string, headerUrl: string, headerText: string, message: string, form: string, footer: string}|array{}`
+
+### `landing(string $redirect, string $requested, Minn\Content\UserRecord $user): string`
+
+Where a good sign-in lands, as login_redirect says (the requested address and the user beside it).
+
+### `leaving(string $redirect, string $requested, int $userId): string`
+
+Where a sign-out lands, as logout_redirect says.
 
 ### `signedOut(int $userId): void`
 
