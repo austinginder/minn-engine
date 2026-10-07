@@ -13724,7 +13724,7 @@
             "namespace": "Minn\\Blocks\\Dynamic\\Theme",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Blocks/Dynamic/Theme/PostBlocks.php",
-            "lines": 248,
+            "lines": 255,
             "doc": "The post-* blocks: they render the context's current post.",
             "implements": [],
             "extends": null,
@@ -13907,7 +13907,7 @@
                         }
                     ],
                     "line": 68,
-                    "end": 109
+                    "end": 110
                 },
                 {
                     "routes": [],
@@ -13933,8 +13933,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 111,
-                    "end": 123
+                    "line": 112,
+                    "end": 124
                 },
                 {
                     "routes": [],
@@ -13960,8 +13960,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 125,
-                    "end": 137
+                    "line": 126,
+                    "end": 138
                 },
                 {
                     "routes": [],
@@ -13987,8 +13987,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 139,
-                    "end": 149
+                    "line": 140,
+                    "end": 150
                 },
                 {
                     "routes": [],
@@ -14014,8 +14014,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 151,
-                    "end": 189
+                    "line": 152,
+                    "end": 190
                 },
                 {
                     "routes": [],
@@ -14041,8 +14041,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 191,
-                    "end": 213
+                    "line": 192,
+                    "end": 214
                 },
                 {
                     "routes": [],
@@ -14068,8 +14068,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 215,
-                    "end": 234
+                    "line": 216,
+                    "end": 241
                 },
                 {
                     "routes": [],
@@ -14095,8 +14095,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 236,
-                    "end": 239
+                    "line": 243,
+                    "end": 246
                 },
                 {
                     "routes": [],
@@ -14122,8 +14122,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 248,
-                    "end": 255
+                    "line": 255,
+                    "end": 262
                 },
                 {
                     "routes": [],
@@ -14142,8 +14142,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 257,
-                    "end": 260
+                    "line": 264,
+                    "end": 267
                 },
                 {
                     "routes": [],
@@ -14197,8 +14197,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 262,
-                    "end": 275
+                    "line": 269,
+                    "end": 282
                 }
             ]
         },
@@ -15007,7 +15007,7 @@
             "namespace": "Minn\\Blocks",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Blocks/ImageTags.php",
-            "lines": 254,
+            "lines": 263,
             "doc": "The attributes the reference adds to an <img> that carries a\nwp-image-{id} class: loading, decoding, width and height (prepended, in\nthat order), and srcset plus sizes (appended). The srcset lists the\ndisplayed size first, then every same-ratio size in stored order, then\nthe original.",
             "implements": [],
             "extends": null,
@@ -15172,15 +15172,15 @@
                         }
                     ],
                     "line": 58,
-                    "end": 69
+                    "end": 66
                 },
                 {
                     "routes": [],
-                    "name": "offered",
+                    "name": "finished",
                     "static": false,
                     "visibility": "public",
-                    "signature": "offered(string $html, string $context): string",
-                    "doc": "Content whose images are fitted out already, each image offered to\nwp_content_img_tag in a context, as wp_filter_content_tags offers them.",
+                    "signature": "finished(string $html, string $context): string",
+                    "doc": "Content the engine fitted out itself, with what the_content's other\ncallbacks added on the way (an attachment's own link, a plugin's\nimage): an image still without its loading attributes is fitted as\nthe rest were, then each is offered to wp_content_img_tag, as\nwp_filter_content_tags would.",
                     "shapes": [],
                     "params": [
                         {
@@ -15199,7 +15199,7 @@
                         }
                     ],
                     "line": 75,
-                    "end": 81
+                    "end": 82
                 },
                 {
                     "routes": [],
@@ -15232,8 +15232,28 @@
                             "doc": ""
                         }
                     ],
-                    "line": 249,
-                    "end": 274
+                    "line": 258,
+                    "end": 283
+                },
+                {
+                    "routes": [],
+                    "name": "fit",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "fit(string $tag): string",
+                    "doc": "One content image fitted out: an attachment's (by its wp-image class) in full, any other with its loading attributes.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "tag",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 85,
+                    "end": 90
                 },
                 {
                     "routes": [],
@@ -15252,8 +15272,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 84,
-                    "end": 87
+                    "line": 93,
+                    "end": 96
                 },
                 {
                     "routes": [],
@@ -15272,8 +15292,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 90,
-                    "end": 98
+                    "line": 99,
+                    "end": 107
                 },
                 {
                     "routes": [],
@@ -15292,8 +15312,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 101,
-                    "end": 107
+                    "line": 110,
+                    "end": 116
                 },
                 {
                     "routes": [],
@@ -15326,8 +15346,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 109,
-                    "end": 116
+                    "line": 118,
+                    "end": 125
                 },
                 {
                     "routes": [],
@@ -15353,8 +15373,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 124,
-                    "end": 139
+                    "line": 133,
+                    "end": 148
                 },
                 {
                     "routes": [],
@@ -15389,8 +15409,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 142,
-                    "end": 148
+                    "line": 151,
+                    "end": 157
                 },
                 {
                     "routes": [],
@@ -15401,8 +15421,8 @@
                     "doc": "The area an image must cover before it is worth fetching first.",
                     "shapes": [],
                     "params": [],
-                    "line": 151,
-                    "end": 155
+                    "line": 160,
+                    "end": 164
                 },
                 {
                     "routes": [],
@@ -15442,8 +15462,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 157,
-                    "end": 207
+                    "line": 166,
+                    "end": 216
                 },
                 {
                     "routes": [],
@@ -15504,8 +15524,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 215,
-                    "end": 242
+                    "line": 224,
+                    "end": 251
                 }
             ]
         },
@@ -15986,7 +16006,7 @@
             "namespace": "Minn\\Blocks",
             "kind": "final class",
             "file": "public/minn/src/Minn/Blocks/RenderState.php",
-            "lines": 321,
+            "lines": 346,
             "doc": "Per-request rendering state, owned by the renderer. The reference numbers\ngalleries, style variations, and search inputs from ONE counter that runs\nacross every block rendered in the request (a list response keeps\ncounting from post to post), so the counter lives here, not on any block.\nLeaf helpers with no renderer in hand reach it through current().",
             "implements": [],
             "extends": null,
@@ -16163,6 +16183,15 @@
                     "doc": "",
                     "visibility": "private",
                     "promoted": false
+                },
+                {
+                    "name": "contentImages",
+                    "type": "array",
+                    "readonly": false,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": false
                 }
             ],
             "methods": [
@@ -16175,8 +16204,8 @@
                     "doc": "The state of the request being rendered, which its runtime holds, so\na request cannot count on from the one before it. Rendering with no\nruntime (the command line, the unit suite) shares one off-request\nstate instead, since the counters have to survive between calls.",
                     "shapes": [],
                     "params": [],
-                    "line": 52,
-                    "end": 55
+                    "line": 55,
+                    "end": 58
                 },
                 {
                     "routes": [],
@@ -16187,8 +16216,8 @@
                     "doc": "Makes this the state current() answers with, for the renderer that brought its own.",
                     "shapes": [],
                     "params": [],
-                    "line": 58,
-                    "end": 65
+                    "line": 61,
+                    "end": 68
                 },
                 {
                     "routes": [],
@@ -16199,8 +16228,8 @@
                     "doc": "Whether the theme puts root padding in custom properties, which decides the constrained layout's classes.",
                     "shapes": [],
                     "params": [],
-                    "line": 68,
-                    "end": 71
+                    "line": 71,
+                    "end": 74
                 },
                 {
                     "routes": [],
@@ -16219,8 +16248,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 74,
-                    "end": 77
+                    "line": 77,
+                    "end": 80
                 },
                 {
                     "routes": [],
@@ -16231,8 +16260,8 @@
                     "doc": "The next per-request counter value.",
                     "shapes": [],
                     "params": [],
-                    "line": 80,
-                    "end": 83
+                    "line": 83,
+                    "end": 86
                 },
                 {
                     "routes": [],
@@ -16243,8 +16272,8 @@
                     "doc": "Content images seen so far in this page, for the loading rules.",
                     "shapes": [],
                     "params": [],
-                    "line": 86,
-                    "end": 89
+                    "line": 89,
+                    "end": 92
                 },
                 {
                     "routes": [],
@@ -16270,8 +16299,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 95,
-                    "end": 101
+                    "line": 98,
+                    "end": 104
                 },
                 {
                     "routes": [],
@@ -16292,8 +16321,55 @@
                             "doc": ""
                         }
                     ],
-                    "line": 112,
-                    "end": 120
+                    "line": 115,
+                    "end": 123
+                },
+                {
+                    "routes": [],
+                    "name": "filteringContent",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "filteringContent(string $content, Closure $filter): mixed",
+                    "doc": "$filter run while the_content filters content the engine rendered: the\nimages it already holds count as fitted out, so only what the filter's\nother callbacks add is fitted (fittedImage()).",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "content",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "filter",
+                            "type": "Closure",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 130,
+                    "end": 138
+                },
+                {
+                    "routes": [],
+                    "name": "fittedImage",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "fittedImage(string $tag): bool",
+                    "doc": "Whether an image tag is one the content being filtered held when the filter began.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "tag",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 141,
+                    "end": 145
                 },
                 {
                     "routes": [],
@@ -16304,8 +16380,8 @@
                     "doc": "True once, for the image that gets fetchpriority=\"high\".",
                     "shapes": [],
                     "params": [],
-                    "line": 123,
-                    "end": 129
+                    "line": 148,
+                    "end": 154
                 },
                 {
                     "routes": [],
@@ -16316,8 +16392,8 @@
                     "doc": "Whether no element has taken high fetch priority yet on this page.",
                     "shapes": [],
                     "params": [],
-                    "line": 132,
-                    "end": 135
+                    "line": 157,
+                    "end": 160
                 },
                 {
                     "routes": [],
@@ -16328,8 +16404,8 @@
                     "doc": "Takes high fetch priority off the table for the rest of the page; a plugin prioritising its own element does this.",
                     "shapes": [],
                     "params": [],
-                    "line": 138,
-                    "end": 141
+                    "line": 163,
+                    "end": 166
                 },
                 {
                     "routes": [],
@@ -16340,8 +16416,8 @@
                     "doc": "Puts high fetch priority back on offer, so the next large enough image takes it.",
                     "shapes": [],
                     "params": [],
-                    "line": 144,
-                    "end": 147
+                    "line": 169,
+                    "end": 172
                 },
                 {
                     "routes": [],
@@ -16367,8 +16443,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 150,
-                    "end": 153
+                    "line": 175,
+                    "end": 178
                 },
                 {
                     "routes": [],
@@ -16381,8 +16457,8 @@
                         "@return array<string, string>"
                     ],
                     "params": [],
-                    "line": 160,
-                    "end": 163
+                    "line": 185,
+                    "end": 188
                 },
                 {
                     "routes": [],
@@ -16401,8 +16477,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 166,
-                    "end": 169
+                    "line": 191,
+                    "end": 194
                 },
                 {
                     "routes": [],
@@ -16415,8 +16491,8 @@
                         "@return array<string, true>"
                     ],
                     "params": [],
-                    "line": 176,
-                    "end": 179
+                    "line": 201,
+                    "end": 204
                 },
                 {
                     "routes": [],
@@ -16449,8 +16525,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 182,
-                    "end": 185
+                    "line": 207,
+                    "end": 210
                 },
                 {
                     "routes": [],
@@ -16463,8 +16539,8 @@
                         "@return list<array{0: string, 1: string, 2: int}>"
                     ],
                     "params": [],
-                    "line": 192,
-                    "end": 195
+                    "line": 217,
+                    "end": 220
                 },
                 {
                     "routes": [],
@@ -16475,8 +16551,8 @@
                     "doc": "The next wp-elements-N class; the reference numbers these apart from the shared counter.",
                     "shapes": [],
                     "params": [],
-                    "line": 198,
-                    "end": 201
+                    "line": 223,
+                    "end": 226
                 },
                 {
                     "routes": [],
@@ -16495,8 +16571,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 204,
-                    "end": 208
+                    "line": 229,
+                    "end": 233
                 },
                 {
                     "routes": [],
@@ -16507,8 +16583,8 @@
                     "doc": "A page list renders plain on its own and takes the navigation block's\nitem classes, submenu toggles, and interactivity only while it sits\ninside one, so the navigation block marks the span it owns.",
                     "shapes": [],
                     "params": [],
-                    "line": 215,
-                    "end": 218
+                    "line": 240,
+                    "end": 243
                 },
                 {
                     "routes": [],
@@ -16519,8 +16595,8 @@
                     "doc": "Leaves a navigation block.",
                     "shapes": [],
                     "params": [],
-                    "line": 221,
-                    "end": 224
+                    "line": 246,
+                    "end": 249
                 },
                 {
                     "routes": [],
@@ -16531,8 +16607,8 @@
                     "doc": "Whether rendering is inside a navigation block.",
                     "shapes": [],
                     "params": [],
-                    "line": 227,
-                    "end": 230
+                    "line": 252,
+                    "end": 255
                 },
                 {
                     "routes": [],
@@ -16551,8 +16627,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 233,
-                    "end": 240
+                    "line": 258,
+                    "end": 265
                 },
                 {
                     "routes": [],
@@ -16571,8 +16647,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 243,
-                    "end": 246
+                    "line": 268,
+                    "end": 271
                 },
                 {
                     "routes": [],
@@ -16583,8 +16659,8 @@
                     "doc": "True while the block tree is shallower than the cap; deeper blocks render as nothing.",
                     "shapes": [],
                     "params": [],
-                    "line": 249,
-                    "end": 256
+                    "line": 274,
+                    "end": 281
                 },
                 {
                     "routes": [],
@@ -16595,8 +16671,8 @@
                     "doc": "Leaves one nesting level.",
                     "shapes": [],
                     "params": [],
-                    "line": 259,
-                    "end": 262
+                    "line": 284,
+                    "end": 287
                 },
                 {
                     "routes": [],
@@ -16607,8 +16683,8 @@
                     "doc": "How deep the block tree is right now; zero outside a page render.",
                     "shapes": [],
                     "params": [],
-                    "line": 265,
-                    "end": 268
+                    "line": 290,
+                    "end": 293
                 },
                 {
                     "routes": [],
@@ -16627,8 +16703,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 271,
-                    "end": 276
+                    "line": 296,
+                    "end": 301
                 },
                 {
                     "routes": [],
@@ -16639,8 +16715,8 @@
                     "doc": "The pending elements class, cleared.",
                     "shapes": [],
                     "params": [],
-                    "line": 279,
-                    "end": 284
+                    "line": 304,
+                    "end": 309
                 },
                 {
                     "routes": [],
@@ -16659,8 +16735,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 287,
-                    "end": 290
+                    "line": 312,
+                    "end": 315
                 },
                 {
                     "routes": [],
@@ -16673,8 +16749,8 @@
                         "@return list<string>"
                     ],
                     "params": [],
-                    "line": 297,
-                    "end": 300
+                    "line": 322,
+                    "end": 325
                 },
                 {
                     "routes": [],
@@ -16693,8 +16769,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 303,
-                    "end": 306
+                    "line": 328,
+                    "end": 331
                 },
                 {
                     "routes": [],
@@ -16707,8 +16783,8 @@
                         "@return list<int>"
                     ],
                     "params": [],
-                    "line": 313,
-                    "end": 316
+                    "line": 338,
+                    "end": 341
                 },
                 {
                     "routes": [],
@@ -16719,8 +16795,8 @@
                     "doc": "Clears every per-request counter.",
                     "shapes": [],
                     "params": [],
-                    "line": 319,
-                    "end": 335
+                    "line": 344,
+                    "end": 360
                 }
             ]
         },
@@ -26893,6 +26969,7 @@
                 "Minn\\Content\\Posts",
                 "Minn\\Engine",
                 "Minn\\Extension\\SeamRunner",
+                "Minn\\Front\\AttachmentAddresses",
                 "Minn\\Front\\Canonical",
                 "Minn\\Front\\CommentPostController",
                 "Minn\\Front\\Feeds",
@@ -26901,6 +26978,7 @@
                 "Minn\\Front\\Resolution",
                 "Minn\\Front\\Resolver",
                 "Minn\\Front\\SingleAddresses",
+                "Minn\\Front\\SingleQueries",
                 "Minn\\Front\\Sitemaps",
                 "Minn\\Media\\Writer",
                 "Minn\\Rest\\CommentsController",
@@ -28951,6 +29029,7 @@
                 "Minn\\Cron\\Cron",
                 "Minn\\Engine",
                 "Minn\\Front\\Archives",
+                "Minn\\Front\\AttachmentAddresses",
                 "Minn\\Front\\CommentPostController",
                 "Minn\\Front\\FeedController",
                 "Minn\\Front\\Feeds",
@@ -28958,6 +29037,7 @@
                 "Minn\\Front\\Renderer",
                 "Minn\\Front\\Resolver",
                 "Minn\\Front\\SingleAddresses",
+                "Minn\\Front\\SingleQueries",
                 "Minn\\Media\\Writer",
                 "Minn\\Rest\\BlocksController",
                 "Minn\\Rest\\CommentObject",
@@ -34370,6 +34450,7 @@
                 "Minn\\Cron\\Cron",
                 "Minn\\Engine",
                 "Minn\\Extension\\Seams",
+                "Minn\\Front\\AttachmentAddresses",
                 "Minn\\Front\\Canonical",
                 "Minn\\Front\\Feeds",
                 "Minn\\Front\\Permalinks",
@@ -38874,6 +38955,275 @@
             ]
         },
         {
+            "name": "Minn\\Front\\AttachmentAddresses",
+            "short": "AttachmentAddresses",
+            "namespace": "Minn\\Front",
+            "kind": "final readonly class",
+            "file": "public/minn/src/Minn/Front/AttachmentAddresses.php",
+            "lines": 88,
+            "doc": "The addresses an attachment's page answers to, as the reference's rules\nfind it: by id or slug in the query (?attachment_id=, ?attachment=); a\nloose attachment (no parent) by its slug at the top; any attachment by\nits slug under a post's or page's address, \"attachment/\" between or\nnot; and as a post (?p=, ?page_id=), which moves to its own page. With\nattachment pages off (wp_attachment_pages_enabled, the default) every\nother address answers as typed; with them on, one that is not its own\nmoves there. An attachment is readable as its parent is.",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\Content\\PostRecord",
+                "Minn\\Content\\Posts",
+                "Minn\\Db",
+                "Minn\\Front\\Kind",
+                "Minn\\Front\\Permalinks",
+                "Minn\\Front\\Redirects",
+                "Minn\\Front\\Resolution",
+                "Minn\\Http\\Request"
+            ],
+            "usedBy": [
+                "Minn\\Front\\Resolver",
+                "Minn\\Front\\SingleQueries"
+            ],
+            "constructor": {
+                "signature": "__construct(Minn\\Db $db, Minn\\Content\\Posts $posts, Minn\\Front\\Permalinks $permalinks, Closure $readable)",
+                "doc": "",
+                "shapes": [],
+                "params": [
+                    {
+                        "name": "db",
+                        "type": "Minn\\Db",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    },
+                    {
+                        "name": "posts",
+                        "type": "Minn\\Content\\Posts",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    },
+                    {
+                        "name": "permalinks",
+                        "type": "Minn\\Front\\Permalinks",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    },
+                    {
+                        "name": "readable",
+                        "type": "Closure",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    }
+                ],
+                "visibility": "public",
+                "line": 25,
+                "end": 32
+            },
+            "cases": [],
+            "constants": [],
+            "properties": [
+                {
+                    "name": "db",
+                    "type": "Minn\\Db",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
+                },
+                {
+                    "name": "posts",
+                    "type": "Minn\\Content\\Posts",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
+                },
+                {
+                    "name": "permalinks",
+                    "type": "Minn\\Front\\Permalinks",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
+                },
+                {
+                    "name": "readable",
+                    "type": "Closure",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
+                }
+            ],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "names",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "names(Minn\\Front\\Resolution $resolution): bool",
+                    "doc": "Whether a resolution is an attachment's page.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "resolution",
+                            "type": "Minn\\Front\\Resolution",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 35,
+                    "end": 38
+                },
+                {
+                    "routes": [],
+                    "name": "fromQuery",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "fromQuery(Minn\\Http\\Request $request, Minn\\Front\\Redirects $redirects): ?Minn\\Front\\Resolution",
+                    "doc": "?attachment_id= or ?attachment=: the attachment's page, or a 404; null when the request names neither.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "request",
+                            "type": "Minn\\Http\\Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "redirects",
+                            "type": "Minn\\Front\\Redirects",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 41,
+                    "end": 52
+                },
+                {
+                    "routes": [],
+                    "name": "asPost",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "asPost(Minn\\Content\\PostRecord $post, Minn\\Http\\Request $request, string $key, Minn\\Front\\Redirects $redirects): ?Minn\\Front\\Resolution",
+                    "doc": "An attachment asked for as a post (?p=, ?page_id=): it moves to its own page whatever the setting; null for any other post.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "post",
+                            "type": "Minn\\Content\\PostRecord",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "request",
+                            "type": "Minn\\Http\\Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "key",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "redirects",
+                            "type": "Minn\\Front\\Redirects",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 55,
+                    "end": 62
+                },
+                {
+                    "routes": [],
+                    "name": "at",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "at(array $segments): ?Minn\\Front\\Resolution",
+                    "doc": "The attachment a pretty address names: a loose one by its slug alone,\nany by its slug under a post's or page's address.",
+                    "shapes": [
+                        "@param list<string> $segments"
+                    ],
+                    "params": [
+                        {
+                            "name": "segments",
+                            "type": "array",
+                            "shape": "list<string>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 70,
+                    "end": 84
+                },
+                {
+                    "routes": [],
+                    "name": "answer",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "answer(Minn\\Front\\Resolution $resolution, Minn\\Http\\Request $request, Minn\\Front\\Redirects $redirects): Minn\\Front\\Resolution",
+                    "doc": "The page as typed, or (attachment pages on, the address not its own)\na move to its own: the other query arguments along, ?attachment=\namong them; an embed stays where it was asked for.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "resolution",
+                            "type": "Minn\\Front\\Resolution",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "request",
+                            "type": "Minn\\Http\\Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "redirects",
+                            "type": "Minn\\Front\\Redirects",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 91,
+                    "end": 99
+                },
+                {
+                    "routes": [],
+                    "name": "readable",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "readable(Minn\\Content\\PostRecord $attachment): bool",
+                    "doc": "An attachment is readable as its parent is; a loose one as it stands.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "attachment",
+                            "type": "Minn\\Content\\PostRecord",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 102,
+                    "end": 109
+                }
+            ]
+        },
+        {
             "name": "Minn\\Front\\Calendar",
             "short": "Calendar",
             "namespace": "Minn\\Front",
@@ -42069,6 +42419,7 @@
                 "Minn\\Blocks\\Dynamic\\Theme\\QueryBlocks",
                 "Minn\\Blocks\\Dynamic\\Theme\\Structure",
                 "Minn\\Front\\AdminBar",
+                "Minn\\Front\\AttachmentAddresses",
                 "Minn\\Front\\Canonical",
                 "Minn\\Front\\DocumentTitle",
                 "Minn\\Front\\FeedController",
@@ -43003,6 +43354,7 @@
                 "Minn\\Content\\SiteIcon",
                 "Minn\\Engine",
                 "Minn\\Front\\AdminBar",
+                "Minn\\Front\\AttachmentAddresses",
                 "Minn\\Front\\CommentPostController",
                 "Minn\\Front\\FeedController",
                 "Minn\\Front\\Feeds",
@@ -43010,6 +43362,7 @@
                 "Minn\\Front\\Renderer",
                 "Minn\\Front\\Resolver",
                 "Minn\\Front\\SingleAddresses",
+                "Minn\\Front\\SingleQueries",
                 "Minn\\Front\\Sitemaps",
                 "Minn\\Login\\LoginController",
                 "Minn\\Media\\Uploads",
@@ -44362,8 +44715,10 @@
                 "Minn\\Http\\Request"
             ],
             "usedBy": [
+                "Minn\\Front\\AttachmentAddresses",
                 "Minn\\Front\\Resolver",
-                "Minn\\Front\\SingleAddresses"
+                "Minn\\Front\\SingleAddresses",
+                "Minn\\Front\\SingleQueries"
             ],
             "constructor": null,
             "cases": [
@@ -44441,7 +44796,7 @@
             "namespace": "Minn\\Front",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Front/Renderer.php",
-            "lines": 156,
+            "lines": 168,
             "doc": "The interim public theme: one clean template until the block-theme\nreader lands. The body-class tokens are the contract (stylesheets and\ncrawlers key off them); the markup around them is engine-defined.",
             "implements": [],
             "extends": null,
@@ -44569,8 +44924,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 36,
-                    "end": 73
+                    "line": 48,
+                    "end": 85
                 },
                 {
                     "routes": [],
@@ -44589,8 +44944,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 76,
-                    "end": 79
+                    "line": 88,
+                    "end": 91
                 },
                 {
                     "routes": [],
@@ -44609,8 +44964,30 @@
                             "doc": ""
                         }
                     ],
-                    "line": 82,
-                    "end": 101
+                    "line": 94,
+                    "end": 113
+                },
+                {
+                    "routes": [],
+                    "name": "attachmentClasses",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "attachmentClasses(Minn\\Front\\Resolution $resolution): array",
+                    "doc": "An attachment's page: \"attachment\" first, then the single tokens, its\nid again as the attachment's, and its MIME subtype.",
+                    "shapes": [
+                        "@return list<string>"
+                    ],
+                    "params": [
+                        {
+                            "name": "resolution",
+                            "type": "Minn\\Front\\Resolution",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 37,
+                    "end": 41
                 },
                 {
                     "routes": [],
@@ -44629,8 +45006,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 103,
-                    "end": 118
+                    "line": 115,
+                    "end": 130
                 },
                 {
                     "routes": [],
@@ -44649,8 +45026,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 120,
-                    "end": 127
+                    "line": 132,
+                    "end": 139
                 },
                 {
                     "routes": [],
@@ -44671,8 +45048,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 130,
-                    "end": 157
+                    "line": 142,
+                    "end": 169
                 }
             ]
         },
@@ -44697,6 +45074,7 @@
                 "Minn\\Blocks\\Dynamic\\Theme\\PostBlocks",
                 "Minn\\Engine",
                 "Minn\\Front\\AdminBar",
+                "Minn\\Front\\AttachmentAddresses",
                 "Minn\\Front\\DocumentTitle",
                 "Minn\\Front\\FeedController",
                 "Minn\\Front\\FrontController",
@@ -44704,6 +45082,7 @@
                 "Minn\\Front\\Renderer",
                 "Minn\\Front\\Resolver",
                 "Minn\\Front\\SingleAddresses",
+                "Minn\\Front\\SingleQueries",
                 "Minn\\Front\\SitemapController",
                 "Minn\\Runtime\\MainQuery",
                 "Minn\\Theme\\ArchiveTitle",
@@ -45271,7 +45650,7 @@
             "namespace": "Minn\\Front",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Front/Resolver.php",
-            "lines": 555,
+            "lines": 515,
             "doc": "Turns a public URL into a Resolution, following the reference's observed\nrules:\n\n- Unpaged content and archives without a trailing slash redirect to the\nslashed form, as typed (case kept); paged views, search, and 404s do not.\n- Query-var forms (?p=, ?page_id=, ?cat=, ?tag=, ?author=, ?m=, ?name=,\n?pagename=) redirect to the pretty form when the target is public.\n- Archive-shaped paths (category, tag, author, search, a four-digit year)\nare strict: a mismatch is a 404 with no guessing.\n- Plain-segment paths try the page hierarchy, then the post structure,\nthen redirect to the closest published page or post whose name starts\nwith the last segment, pages before posts, newest first.\n- Empty term and date archives are 404; an author archive is 200 for any\nname, even one that belongs to nobody.\n- Non-public posts are 404 to anonymous readers and served to a reader\nwho can edit them.",
             "implements": [],
             "extends": null,
@@ -45285,12 +45664,14 @@
                 "Minn\\Content\\Terms",
                 "Minn\\Content\\UserRecord",
                 "Minn\\Db",
+                "Minn\\Front\\AttachmentAddresses",
                 "Minn\\Front\\Kind",
                 "Minn\\Front\\Permalinks",
                 "Minn\\Front\\PluginRules",
                 "Minn\\Front\\Redirects",
                 "Minn\\Front\\Resolution",
                 "Minn\\Front\\SingleAddresses",
+                "Minn\\Front\\SingleQueries",
                 "Minn\\Http\\Request",
                 "Minn\\Runtime\\Runtime"
             ],
@@ -45520,8 +45901,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 460,
-                    "end": 475
+                    "line": 423,
+                    "end": 438
                 },
                 {
                     "routes": [],
@@ -45570,7 +45951,7 @@
                         }
                     ],
                     "line": 143,
-                    "end": 209
+                    "end": 212
                 },
                 {
                     "routes": [],
@@ -45596,8 +45977,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 211,
-                    "end": 293
+                    "line": 214,
+                    "end": 256
                 },
                 {
                     "routes": [],
@@ -45637,8 +46018,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 295,
-                    "end": 310
+                    "line": 258,
+                    "end": 273
                 },
                 {
                     "routes": [],
@@ -45657,8 +46038,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 312,
-                    "end": 324
+                    "line": 275,
+                    "end": 287
                 },
                 {
                     "routes": [],
@@ -45686,8 +46067,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 334,
-                    "end": 366
+                    "line": 297,
+                    "end": 329
                 },
                 {
                     "routes": [],
@@ -45708,8 +46089,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 369,
-                    "end": 372
+                    "line": 332,
+                    "end": 335
                 },
                 {
                     "routes": [],
@@ -45752,8 +46133,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 378,
-                    "end": 389
+                    "line": 341,
+                    "end": 352
                 },
                 {
                     "routes": [],
@@ -45788,8 +46169,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 392,
-                    "end": 402
+                    "line": 355,
+                    "end": 365
                 },
                 {
                     "routes": [],
@@ -45822,8 +46203,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 405,
-                    "end": 412
+                    "line": 368,
+                    "end": 375
                 },
                 {
                     "routes": [],
@@ -45849,8 +46230,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 414,
-                    "end": 428
+                    "line": 377,
+                    "end": 391
                 },
                 {
                     "routes": [],
@@ -45878,8 +46259,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 431,
-                    "end": 453
+                    "line": 394,
+                    "end": 416
                 },
                 {
                     "routes": [],
@@ -45914,8 +46295,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 478,
-                    "end": 516
+                    "line": 441,
+                    "end": 479
                 },
                 {
                     "routes": [],
@@ -45950,8 +46331,20 @@
                             "doc": ""
                         }
                     ],
-                    "line": 519,
-                    "end": 554
+                    "line": 482,
+                    "end": 517
+                },
+                {
+                    "routes": [],
+                    "name": "attachments",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "attachments(): Minn\\Front\\AttachmentAddresses",
+                    "doc": "The addresses an attachment's page answers to.",
+                    "shapes": [],
+                    "params": [],
+                    "line": 520,
+                    "end": 523
                 },
                 {
                     "routes": [],
@@ -45962,42 +46355,8 @@
                     "doc": "The addresses a single answers to besides its own.",
                     "shapes": [],
                     "params": [],
-                    "line": 557,
-                    "end": 560
-                },
-                {
-                    "routes": [],
-                    "name": "singleOrRedirect",
-                    "static": false,
-                    "visibility": "private",
-                    "signature": "singleOrRedirect(Minn\\Content\\PostRecord $post, int $paged, Minn\\Front\\Redirects $redirects): Minn\\Front\\Resolution",
-                    "doc": "",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "post",
-                            "type": "Minn\\Content\\PostRecord",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "paged",
-                            "type": "int",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "redirects",
-                            "type": "Minn\\Front\\Redirects",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 562,
-                    "end": 569
+                    "line": 526,
+                    "end": 529
                 },
                 {
                     "routes": [],
@@ -46016,8 +46375,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 571,
-                    "end": 586
+                    "line": 531,
+                    "end": 546
                 },
                 {
                     "routes": [],
@@ -46036,8 +46395,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 588,
-                    "end": 591
+                    "line": 548,
+                    "end": 551
                 }
             ]
         },
@@ -46061,7 +46420,8 @@
                 "Minn\\Front\\Resolution"
             ],
             "usedBy": [
-                "Minn\\Front\\Resolver"
+                "Minn\\Front\\Resolver",
+                "Minn\\Front\\SingleQueries"
             ],
             "constructor": {
                 "signature": "__construct(Minn\\Db $db, Minn\\Content\\Posts $posts, Minn\\Front\\Permalinks $permalinks)",
@@ -46206,6 +46566,241 @@
                     ],
                     "line": 68,
                     "end": 75
+                }
+            ]
+        },
+        {
+            "name": "Minn\\Front\\SingleQueries",
+            "short": "SingleQueries",
+            "namespace": "Minn\\Front",
+            "kind": "final readonly class",
+            "file": "public/minn/src/Minn/Front/SingleQueries.php",
+            "lines": 77,
+            "doc": "The single a query string asks for, as the reference's request parse and\ncanonical redirect answer it: by id (?p=, ?page_id=; an attachment's goes\nto its own page), an attachment by id or slug (?attachment_id=,\n?attachment=), a post by slug (?name=), a page by path (?pagename=).\nWith canonical redirects on, an address that is not the single's own\nmoves there, the other query arguments along; without, each var is\nstrict about the type it finds.",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\Content\\PostRecord",
+                "Minn\\Content\\Posts",
+                "Minn\\Front\\AttachmentAddresses",
+                "Minn\\Front\\Permalinks",
+                "Minn\\Front\\Redirects",
+                "Minn\\Front\\Resolution",
+                "Minn\\Front\\SingleAddresses",
+                "Minn\\Http\\Request"
+            ],
+            "usedBy": [
+                "Minn\\Front\\Resolver"
+            ],
+            "constructor": {
+                "signature": "__construct(Minn\\Content\\Posts $posts, Minn\\Front\\Permalinks $permalinks, Minn\\Front\\AttachmentAddresses $attachments, Minn\\Front\\SingleAddresses $elsewhere, Closure $readable)",
+                "doc": "",
+                "shapes": [],
+                "params": [
+                    {
+                        "name": "posts",
+                        "type": "Minn\\Content\\Posts",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    },
+                    {
+                        "name": "permalinks",
+                        "type": "Minn\\Front\\Permalinks",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    },
+                    {
+                        "name": "attachments",
+                        "type": "Minn\\Front\\AttachmentAddresses",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    },
+                    {
+                        "name": "elsewhere",
+                        "type": "Minn\\Front\\SingleAddresses",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    },
+                    {
+                        "name": "readable",
+                        "type": "Closure",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    }
+                ],
+                "visibility": "public",
+                "line": 23,
+                "end": 31
+            },
+            "cases": [],
+            "constants": [],
+            "properties": [
+                {
+                    "name": "posts",
+                    "type": "Minn\\Content\\Posts",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
+                },
+                {
+                    "name": "permalinks",
+                    "type": "Minn\\Front\\Permalinks",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
+                },
+                {
+                    "name": "attachments",
+                    "type": "Minn\\Front\\AttachmentAddresses",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
+                },
+                {
+                    "name": "elsewhere",
+                    "type": "Minn\\Front\\SingleAddresses",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
+                },
+                {
+                    "name": "readable",
+                    "type": "Closure",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
+                }
+            ],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "find",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "find(Minn\\Http\\Request $request, Minn\\Front\\Redirects $redirects): ?Minn\\Front\\Resolution",
+                    "doc": "The resolution the query's single vars amount to; null when it has none of them.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "request",
+                            "type": "Minn\\Http\\Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "redirects",
+                            "type": "Minn\\Front\\Redirects",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 34,
+                    "end": 50
+                },
+                {
+                    "routes": [],
+                    "name": "byId",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "byId(Minn\\Http\\Request $request, string $key, Minn\\Front\\Redirects $redirects): Minn\\Front\\Resolution",
+                    "doc": "?p= or ?page_id=: the post or page (an attachment to its own page), moving to its pretty address.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "request",
+                            "type": "Minn\\Http\\Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "key",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "redirects",
+                            "type": "Minn\\Front\\Redirects",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 53,
+                    "end": 71
+                },
+                {
+                    "routes": [],
+                    "name": "byPath",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "byPath(string $path, Minn\\Front\\Redirects $redirects): Minn\\Front\\Resolution",
+                    "doc": "?pagename=: the page at that path (the front page moves to the root), else one by the last slug.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "path",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "redirects",
+                            "type": "Minn\\Front\\Redirects",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 74,
+                    "end": 87
+                },
+                {
+                    "routes": [],
+                    "name": "singleOrRedirect",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "singleOrRedirect(Minn\\Content\\PostRecord $post, Minn\\Front\\Redirects $redirects): Minn\\Front\\Resolution",
+                    "doc": "",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "post",
+                            "type": "Minn\\Content\\PostRecord",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "redirects",
+                            "type": "Minn\\Front\\Redirects",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 89,
+                    "end": 96
                 }
             ]
         },
@@ -60489,6 +61084,7 @@
                 "Minn\\Engine",
                 "Minn\\Extension\\Seams",
                 "Minn\\Front\\AssetsController",
+                "Minn\\Front\\AttachmentAddresses",
                 "Minn\\Front\\Canonical",
                 "Minn\\Front\\CommentPostController",
                 "Minn\\Front\\FeedController",
@@ -60496,6 +61092,7 @@
                 "Minn\\Front\\ProbeController",
                 "Minn\\Front\\Redirects",
                 "Minn\\Front\\Resolver",
+                "Minn\\Front\\SingleQueries",
                 "Minn\\Front\\SitemapController",
                 "Minn\\Http\\Envelope",
                 "Minn\\Http\\Kernel",
@@ -118204,8 +118801,8 @@
             "constants": [
                 {
                     "name": "CONTENT_DONE",
-                    "value": "array (   'apply_block_hooks_to_content_from_post_object' => 8,   'do_blocks' => 9,   'wptexturize' => 10,   'wpautop' => 10,   'shortcode_unautop' => 10,   'prepend_attachment' => 10,   'do_shortcode' => 11,   'wp_filter_content_tags' =>    array (     0 => 12,     1 => '_minn_content_img_tag',   ), )",
-                    "doc": "The the_content defaults the engine's own rendering has already done:\nblocks, texturize, paragraphs, shortcodes, block hooks, and the image\nattributes. What it has not (smilies, the capital P, insecure home\naddresses) runs with the plugins' own callbacks.",
+                    "value": "array (   'apply_block_hooks_to_content_from_post_object' => 8,   'do_blocks' => 9,   'wptexturize' => 10,   'wpautop' => 10,   'shortcode_unautop' => 10,   'do_shortcode' => 11,   'wp_filter_content_tags' =>    array (     0 => 12,     1 => '_minn_content_img_tag',   ), )",
+                    "doc": "The the_content defaults the engine's own rendering has already done:\nblocks, texturize, paragraphs, shortcodes, block hooks, and the image\nattributes. What it has not (an attachment's own link, smilies, the\ncapital P, insecure home addresses) runs with the plugins' own\ncallbacks.",
                     "visibility": "private"
                 }
             ],

@@ -6,7 +6,7 @@ the template blocks a block theme composes with
 |---|---|---|---|
 | [`Comments`](#comments) | final readonly class | 262 | comments, comments-title, comment-template, the comment-* blocks, and the comment form. |
 | [`Navigation`](#navigation) | final readonly class | 287 | navigation, navigation-link, page-list. A navigation block's items come |
-| [`PostBlocks`](#postblocks) | final readonly class | 248 | The post-* blocks: they render the context's current post. |
+| [`PostBlocks`](#postblocks) | final readonly class | 255 | The post-* blocks: they render the context's current post. |
 | [`QueryBlocks`](#queryblocks) | final class | 274 | query, post-template, query-title, query-no-results, query-pagination, term-description. |
 | [`Structure`](#structure) | final readonly class | 105 | template-part, pattern, site-title, site-tagline, site-logo. |
 
@@ -71,7 +71,7 @@ __construct(Minn\Content\Posts $posts, Minn\Content\Users $users, Minn\Content\S
 
 Registers this family's blocks with the renderer.
 
-Internals: `title()` (private, line 52), `content()` (private, line 68), `date()` (private, line 111), `authorName()` (private, line 125), `excerpt()` (private, line 139), `featuredImage()` (private, line 151), `terms()` (private, line 191), `navigationLink()` (private, line 215), `termRow()` (private, line 236), `previewSource()` (private, line 248), `target()` (private, line 257), `open()` (private, line 262)
+Internals: `title()` (private, line 52), `content()` (private, line 68), `date()` (private, line 112), `authorName()` (private, line 126), `excerpt()` (private, line 140), `featuredImage()` (private, line 152), `terms()` (private, line 192), `navigationLink()` (private, line 216), `termRow()` (private, line 243), `previewSource()` (private, line 255), `target()` (private, line 264), `open()` (private, line 269)
 
 
 ## QueryBlocks

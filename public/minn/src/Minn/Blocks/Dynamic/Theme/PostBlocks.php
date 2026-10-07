@@ -76,7 +76,8 @@ final readonly class PostBlocks
         if (PasswordGate::is($post)) {
             $raw = PasswordGate::form($post, $this->permalinks->url(''), $this->permalinks->forPost($post));
         }
-        if (trim($raw) === '') {
+        // An attachment's page shows the attachment even with nothing written (prepend_attachment, through the_content).
+        if (trim($raw) === '' && !($post->type === 'attachment' && Runtime::booted())) {
             return '';
         }
         $more = strpos($raw, '<!--more-->');
@@ -217,7 +218,12 @@ final readonly class PostBlocks
         $post = $renderer->context()->post();
         $next = $block->attr('type', 'next') !== 'previous';
         $direction = $next ? 'next' : 'previous';
-        $target = $post === null ? null : ($next ? $this->posts->next($post) : $this->posts->previous($post));
+        $target = match (true) {
+            $post === null => null,
+            // An attachment's page goes back to the post it belongs to (a loose one to itself), and nowhere forward, as on the reference.
+            $post->type === 'attachment' => $next ? null : ($post->parentId > 0 ? $this->posts->find($post->parentId) : $post),
+            default => $next ? $this->posts->next($post) : $this->posts->previous($post),
+        };
         $inner = '';
         if ($target !== null) {
             $arrow = (string) $block->attr('arrow', 'none');
@@ -226,7 +232,8 @@ final readonly class PostBlocks
             }
             $glyph = $arrow === 'chevron' ? ($next ? '›' : '‹') : ($next ? '→' : '←');
             $label = (bool) $block->attr('showTitle', false) ? Texturize::text($target->title) : ucfirst($direction);
-            $link = '<a href="' . Html::attr($this->permalinks->forPost($target)) . '" rel="' . ($next ? 'next' : 'prev') . '">' . $label . '</a>';
+            $href = $target->type === 'attachment' ? $this->permalinks->forAttachment($target) : $this->permalinks->forPost($target);
+            $link = '<a href="' . Html::attr($href) . '" rel="' . ($next ? 'next' : 'prev') . '">' . $label . '</a>';
             $span = $arrow === 'none' ? '' : '<span class="wp-block-post-navigation-link__arrow-' . $direction . ' is-arrow-' . $arrow . '" aria-hidden="true">' . $glyph . '</span>';
             $inner = $next ? $link . $span : $span . $link;
         }

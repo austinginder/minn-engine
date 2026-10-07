@@ -33202,13 +33202,14 @@
         },
         "wp_get_loading_optimization_attributes": {
             "file": "media.php",
-            "lines": 32,
+            "lines": 33,
             "kind": "minn",
             "minn": [
                 "Minn\\Blocks\\RenderState::current"
             ],
             "composes": [
                 "apply_filters",
+                "doing_filter",
                 "in_the_loop",
                 "is_main_query",
                 "wp_lazy_loading_enabled"

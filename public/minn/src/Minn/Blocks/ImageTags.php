@@ -61,23 +61,32 @@ final readonly class ImageTags
             if (strtolower($m[1]) === 'iframe') {
                 return self::lazyFrame($m[0]);
             }
-            $id = self::attachmentOf($m[0]);
-            $enriched = $id > 0 && preg_match('/\sclass="[^"]*\bwp-image-\d+\b/', $m[0]) === 1 ? $this->enrichTag($m[0], $id, false, true) : $m[0];
-            $fitted = $enriched !== $m[0] ? $enriched : $this->plainImage($m[0]);
-            return (string) \apply_filters('wp_content_img_tag', $fitted, $context, $id);
+            return (string) \apply_filters('wp_content_img_tag', $this->fit($m[0]), $context, self::attachmentOf($m[0]));
         }, $html);
     }
 
     /**
-     * Content whose images are fitted out already, each image offered to
-     * wp_content_img_tag in a context, as wp_filter_content_tags offers them.
+     * Content the engine fitted out itself, with what the_content's other
+     * callbacks added on the way (an attachment's own link, a plugin's
+     * image): an image still without its loading attributes is fitted as
+     * the rest were, then each is offered to wp_content_img_tag, as
+     * wp_filter_content_tags would.
      */
-    public function offered(string $html, string $context): string
+    public function finished(string $html, string $context): string
     {
-        if (!\has_filter('wp_content_img_tag')) {
-            return $html;
-        }
-        return (string) preg_replace_callback('/<img\s[^>]*>/i', static fn (array $m): string => (string) \apply_filters('wp_content_img_tag', $m[0], $context, self::attachmentOf($m[0])), $html);
+        return (string) preg_replace_callback('/<img\s[^>]*>/i', function (array $m) use ($context): string {
+            $done = RenderState::current()->fittedImage($m[0]) || str_contains($m[0], ' decoding=') || str_contains($m[0], ' loading=');
+            $tag = $done ? $m[0] : $this->fit($m[0]);
+            return \has_filter('wp_content_img_tag') ? (string) \apply_filters('wp_content_img_tag', $tag, $context, self::attachmentOf($tag)) : $tag;
+        }, $html);
+    }
+
+    /** One content image fitted out: an attachment's (by its wp-image class) in full, any other with its loading attributes. */
+    private function fit(string $tag): string
+    {
+        $id = self::attachmentOf($tag);
+        $enriched = $id > 0 && preg_match('/\sclass="[^"]*\bwp-image-\d+\b/', $tag) === 1 ? $this->enrichTag($tag, $id, false, true) : $tag;
+        return $enriched !== $tag ? $enriched : $this->plainImage($tag);
     }
 
     /** The attachment an image names in its wp-image-{id} class, or 0. */

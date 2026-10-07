@@ -43,6 +43,9 @@ final class RenderState
     /** @var list<string> element-style rules, in render order */
     private array $elementRules = [];
 
+    /** @var list<list<string>> the images of each content the_content is filtering, innermost last */
+    private array $contentImages = [];
+
     /**
      * The state of the request being rendered, which its runtime holds, so
      * a request cannot count on from the one before it. Rendering with no
@@ -117,6 +120,28 @@ final class RenderState
         } finally {
             [$this->images, $this->priorityClaimed] = [$images, $claimed];
         }
+    }
+
+    /**
+     * $filter run while the_content filters content the engine rendered: the
+     * images it already holds count as fitted out, so only what the filter's
+     * other callbacks add is fitted (fittedImage()).
+     */
+    public function filteringContent(string $content, \Closure $filter): mixed
+    {
+        $this->contentImages[] = preg_match_all('/<img\s[^>]*>/i', $content, $m) > 0 ? $m[0] : [];
+        try {
+            return $filter();
+        } finally {
+            array_pop($this->contentImages);
+        }
+    }
+
+    /** Whether an image tag is one the content being filtered held when the filter began. */
+    public function fittedImage(string $tag): bool
+    {
+        $images = end($this->contentImages);
+        return is_array($images) && in_array($tag, $images, true);
     }
 
     /** True once, for the image that gets fetchpriority="high". */

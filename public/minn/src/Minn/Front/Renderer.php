@@ -29,6 +29,18 @@ final readonly class Renderer
     }
 
     /**
+     * An attachment's page: "attachment" first, then the single tokens, its
+     * id again as the attachment's, and its MIME subtype.
+     *
+     * @return list<string>
+     */
+    private function attachmentClasses(Resolution $resolution): array
+    {
+        $mime = str_replace(['application/', 'image/', 'text/', 'audio/', 'video/', 'music/'], '', (string) ($resolution->record['post_mime_type'] ?? ''));
+        return ['attachment', 'single', 'single-attachment', 'postid-' . $resolution->id(), 'attachmentid-' . $resolution->id(), 'attachment-' . preg_replace('/[^A-Za-z0-9_-]/', '', $mime)];
+    }
+
+    /**
      * The body classes a resolution carries.
      *
      * @return list<string>
@@ -37,7 +49,7 @@ final readonly class Renderer
     {
         $classes = match ($resolution->kind) {
             Kind::Home => $resolution->postsPage ? ['blog'] : ['home', 'blog'],
-            Kind::Single => [
+            Kind::Single => ($resolution->record['post_type'] ?? 'post') === 'attachment' ? $this->attachmentClasses($resolution) : [
                 'single',
                 'single-' . (string) ($resolution->record['post_type'] ?? 'post'),
                 'postid-' . $resolution->id(),

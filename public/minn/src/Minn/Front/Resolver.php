@@ -199,6 +199,9 @@ final readonly class Resolver
             preg_match('/^\d{4}$/', $segments[0]) === 1 => $this->dateArchive($segments, $paged),
             default => $this->resolveContent($segments, $paged, $redirects),
         };
+        if (AttachmentAddresses::names($resolution)) {
+            return $this->attachments()->answer($resolution, $request, $redirects);
+        }
         // The reference adds the trailing slash only for unpaged content
         // and archives; paged views, search, and 404s answer as typed.
         $slashable = in_array($resolution->kind, [Kind::Single, Kind::Page, Kind::Category, Kind::Tag, Kind::Author, Kind::Date], true);
@@ -212,49 +215,9 @@ final readonly class Resolver
     {
         $canonical = $redirects->follows();
         $pretty = $this->permalinks->isPretty();
-        foreach (['p', 'page_id'] as $key) {
-            if (!$request->has($key)) {
-                continue;
-            }
-            $post = $this->posts->find((int) $request->query($key, '0'));
-            if ($post === null || !in_array($post->type, ['post', 'page'], true)) {
-                return Resolution::notFound();
-            }
-            if (!$this->readable($post)) {
-                return Resolution::notFound();
-            }
-            if (!$canonical) {
-                // Without the canonical pass each var is strict about type:
-                // ?p= finds only posts, ?page_id= only pages.
-                return $post->type === ($key === 'p' ? 'post' : 'page')
-                    ? Resolution::single($post)
-                    : Resolution::notFound();
-            }
-            $link = $this->permalinks->forPost($post);
-            if ($pretty && !str_contains($link, '?')) {
-                // The other arguments go along (?embed=true, a campaign's tags), as the reference's canonical redirect keeps them.
-                return Resolution::redirect($link . $request->queryStringWithout($key));
-            }
-            return Resolution::single($post);
-        }
-        if ($request->has('name')) {
-            $post = $this->posts->findByName((string) $request->query('name'), ['post']);
-            if ($post === null) {
-                return $this->elsewhere()->formerSlug((string) $request->query('name')) ?? Resolution::notFound();
-            }
-            return $this->singleOrRedirect($post, 1, $redirects);
-        }
-        if ($request->has('pagename')) {
-            $segments = array_values(array_filter(explode('/', (string) $request->query('pagename')), static fn (string $s) => $s !== ''));
-            $page = $this->posts->pageByPath($segments);
-            if ($page !== null) {
-                if ($page->id === $this->permalinks->frontPageId) {
-                    return $canonical ? Resolution::redirect($this->permalinks->url('/')) : Resolution::frontPage($page, 1);
-                }
-                return Resolution::single($page);
-            }
-            $bySlug = $segments === [] || !$canonical ? null : $this->posts->findByName(end($segments), ['page']);
-            return $bySlug === null ? Resolution::notFound() : Resolution::redirect($this->permalinks->forPost($bySlug));
+        $single = (new SingleQueries($this->posts, $this->permalinks, $this->attachments(), $this->elsewhere(), $this->readable(...)))->find($request, $redirects);
+        if ($single !== null) {
+            return $single;
         }
         if ($request->has('cat')) {
             $term = $this->terms->find('category', (int) $request->query('cat', '0'));
@@ -547,25 +510,22 @@ final readonly class Resolver
                 return Resolution::single($post, $paged);
             }
             if ($post === null && isset($m['postname'])) {
-                return $this->elsewhere()->formerSlug($m['postname'], $paged);
+                return $this->attachments()->at($segments) ?? $this->elsewhere()->formerSlug($m['postname'], $paged);
             }
         }
-        return null;
+        return $this->attachments()->at($segments);
+    }
+
+    /** The addresses an attachment's page answers to. */
+    private function attachments(): AttachmentAddresses
+    {
+        return new AttachmentAddresses($this->db, $this->posts, $this->permalinks, $this->readable(...));
     }
 
     /** The addresses a single answers to besides its own. */
     private function elsewhere(): SingleAddresses
     {
         return new SingleAddresses($this->db, $this->posts, $this->permalinks);
-    }
-
-    private function singleOrRedirect(PostRecord $post, int $paged, Redirects $redirects): Resolution
-    {
-        if (!$this->readable($post)) {
-            return Resolution::notFound();
-        }
-        $link = $this->permalinks->forPost($post);
-        return $redirects->follows() && $this->permalinks->isPretty() && !str_contains($link, '?') ? Resolution::redirect($link) : Resolution::single($post, $paged);
     }
 
     private function readable(PostRecord $post): bool

@@ -7,6 +7,7 @@ URL resolution, permalinks, feeds, sitemaps and the public page
 | [`AdminBar`](#adminbar) | final readonly class | 318 | The Minn bar on the public site: the same server-rendered chrome the |
 | [`Archives`](#archives) | final readonly class | 62 | The archive periods wp_get_archives lists: months, years, days and weeks |
 | [`AssetsController`](#assetscontroller) | final readonly class | 32 | The engine's own static assets, served under a reserved path. |
+| [`AttachmentAddresses`](#attachmentaddresses) | final readonly class | 88 | The addresses an attachment's page answers to, as the reference's rules |
 | [`Calendar`](#calendar) | final readonly class | 99 | One month as the calendar widget and block draw it: a table whose caption |
 | [`CalendarLabels`](#calendarlabels) | final readonly class | 44 | The words a calendar prints: weekday names Sunday first, the short form |
 | [`Canonical`](#canonical) | final class | 28 | Where a URL should redirect to, by the engine's own resolution: the |
@@ -35,10 +36,11 @@ URL resolution, permalinks, feeds, sitemaps and the public page
 | [`PrintedResponse`](#printedresponse) | final class | 39 | A response WordPress's handlers print themselves (a sitemap, robots.txt), |
 | [`ProbeController`](#probecontroller) | final readonly class | 66 | The surface monitors, crawlers, and hosting checks hit that is not a |
 | [`Redirects`](#redirects) | enum | 23 | Whether a resolution may answer with a canonical redirect. A GET or HEAD |
-| [`Renderer`](#renderer) | final readonly class | 156 | The interim public theme: one clean template until the block-theme |
+| [`Renderer`](#renderer) | final readonly class | 168 | The interim public theme: one clean template until the block-theme |
 | [`Resolution`](#resolution) | final readonly class | 108 | The outcome of resolving a public URL: which kind of thing it names, |
-| [`Resolver`](#resolver) | final readonly class | 555 | Turns a public URL into a Resolution, following the reference's observed |
+| [`Resolver`](#resolver) | final readonly class | 515 | Turns a public URL into a Resolution, following the reference's observed |
 | [`SingleAddresses`](#singleaddresses) | final readonly class | 61 | The addresses a single answers to besides its own, as the reference |
+| [`SingleQueries`](#singlequeries) | final readonly class | 77 | The single a query string asks for, as the reference's request parse and |
 | [`SitemapController`](#sitemapcontroller) | final readonly class | 79 | The sitemap index, its pages, and the two stylesheets. With plugins |
 | [`SitemapRequest`](#sitemaprequest) | final class | 70 | A sitemap request at template_redirect, as the reference's sitemaps |
 | [`SitemapXml`](#sitemapxml) | final class | 43 | The two sitemap documents, index and URL set, from entry maps; one builder for the engine's routes and the facade's renderer. |
@@ -141,6 +143,54 @@ One engine asset file.
 Route: `GET /wp-includes/js/jquery/{file:[a-z0-9.-]+\.js} (public)`
 
 The MIT libraries the engine ships, served at the paths the reference registers them under.
+
+
+## AttachmentAddresses
+
+`final readonly class Minn\Front\AttachmentAddresses` · `public/minn/src/Minn/Front/AttachmentAddresses.php`
+
+The addresses an attachment's page answers to, as the reference's rules
+find it: by id or slug in the query (?attachment_id=, ?attachment=); a
+loose attachment (no parent) by its slug at the top; any attachment by
+its slug under a post's or page's address, "attachment/" between or
+not; and as a post (?p=, ?page_id=), which moves to its own page. With
+attachment pages off (wp_attachment_pages_enabled, the default) every
+other address answers as typed; with them on, one that is not its own
+moves there. An attachment is readable as its parent is.
+
+Used by: `Minn\Front\Resolver`, `Minn\Front\SingleQueries`
+
+```php
+__construct(Minn\Db $db, Minn\Content\Posts $posts, Minn\Front\Permalinks $permalinks, Closure $readable)
+```
+
+
+### static `names(Minn\Front\Resolution $resolution): bool`
+
+Whether a resolution is an attachment's page.
+
+### `fromQuery(Minn\Http\Request $request, Minn\Front\Redirects $redirects): ?Minn\Front\Resolution`
+
+?attachment_id= or ?attachment=: the attachment's page, or a 404; null when the request names neither.
+
+### `asPost(Minn\Content\PostRecord $post, Minn\Http\Request $request, string $key, Minn\Front\Redirects $redirects): ?Minn\Front\Resolution`
+
+An attachment asked for as a post (?p=, ?page_id=): it moves to its own page whatever the setting; null for any other post.
+
+### `at(array $segments): ?Minn\Front\Resolution`
+
+The attachment a pretty address names: a loose one by its slug alone,
+any by its slug under a post's or page's address.
+
+- `@param list<string> $segments`
+
+### `answer(Minn\Front\Resolution $resolution, Minn\Http\Request $request, Minn\Front\Redirects $redirects): Minn\Front\Resolution`
+
+The page as typed, or (attachment pages on, the address not its own)
+a move to its own: the other query arguments along, ?attachment=
+among them; an embed stays where it was asked for.
+
+Internals: `readable()` (private, line 102)
 
 
 ## Calendar
@@ -594,7 +644,7 @@ What a public URL resolved to.
 
 Cases: `Home`, `Single`, `Page`, `Category`, `Tag`, `Author`, `Date`, `Search`, `Taxonomy`, `PostTypeArchive`, `NotFound`, `Redirect`
 
-Used by: `Minn\Blocks\Context`, `Minn\Blocks\Dynamic\Categories`, `Minn\Blocks\Dynamic\Theme\Navigation`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Blocks\Dynamic\Theme\Structure`, `Minn\Front\AdminBar`, `Minn\Front\Canonical`, `Minn\Front\DocumentTitle`, `Minn\Front\FeedController`, `Minn\Front\FrontController`, `Minn\Front\Renderer`, `Minn\Front\Resolution`, `Minn\Front\Resolver`, `Minn\Front\SingleAddresses`, `Minn\Runtime\MainQuery`, `Minn\Theme\ArchiveTitle`, `Minn\Theme\BodyClasses`, `Minn\Theme\ClassicRenderer`, `Minn\Theme\EmbedRenderer`, `Minn\Theme\HeadLinks`, `Minn\Theme\MainQueryBridge`, `Minn\Theme\PageRenderer`, `Minn\Theme\Templates`
+Used by: `Minn\Blocks\Context`, `Minn\Blocks\Dynamic\Categories`, `Minn\Blocks\Dynamic\Theme\Navigation`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Blocks\Dynamic\Theme\Structure`, `Minn\Front\AdminBar`, `Minn\Front\AttachmentAddresses`, `Minn\Front\Canonical`, `Minn\Front\DocumentTitle`, `Minn\Front\FeedController`, `Minn\Front\FrontController`, `Minn\Front\Renderer`, `Minn\Front\Resolution`, `Minn\Front\Resolver`, `Minn\Front\SingleAddresses`, `Minn\Runtime\MainQuery`, `Minn\Theme\ArchiveTitle`, `Minn\Theme\BodyClasses`, `Minn\Theme\ClassicRenderer`, `Minn\Theme\EmbedRenderer`, `Minn\Theme\HeadLinks`, `Minn\Theme\MainQueryBridge`, `Minn\Theme\PageRenderer`, `Minn\Theme\Templates`
 
 
 ## ListSpacing
@@ -766,7 +816,7 @@ other status keeps the query form, which is what the reference emits.
 
 - const `QUERY_ONLY` = `array (   0 => 'wp_pattern_category',   1 => 'wp_theme',   2 => 'wp_template_part_area', )` — Core taxonomies with no front-end archive: their terms link by query only.
 
-Used by: `Minn\Admin\AppController`, `Minn\Admin\BootPayload`, `Minn\Admin\RenderController`, `Minn\Admin\SiteController`, `Minn\Admin\ThemesController`, `Minn\Blocks\Dynamic\Archives`, `Minn\Blocks\Dynamic\Categories`, `Minn\Blocks\Dynamic\LatestComments`, `Minn\Blocks\Dynamic\LatestPosts`, `Minn\Blocks\Dynamic\Search`, `Minn\Blocks\Dynamic\TagCloud`, `Minn\Blocks\Dynamic\Theme\Comments`, `Minn\Blocks\Dynamic\Theme\Navigation`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Blocks\Dynamic\Theme\Structure`, `Minn\Blocks\Renderer`, `Minn\Cli\Runtime`, `Minn\Content\Menus`, `Minn\Content\SiteIcon`, `Minn\Engine`, `Minn\Front\AdminBar`, `Minn\Front\CommentPostController`, `Minn\Front\FeedController`, `Minn\Front\Feeds`, `Minn\Front\ProbeController`, `Minn\Front\Renderer`, `Minn\Front\Resolver`, `Minn\Front\SingleAddresses`, `Minn\Front\Sitemaps`, `Minn\Login\LoginController`, `Minn\Media\Uploads`, `Minn\Ops\Diagnostics`, `Minn\Rest\CommentObject`, `Minn\Rest\IndexController`, `Minn\Rest\MediaObject`, `Minn\Rest\PostObject`, `Minn\Rest\RegisteredPostFields`, `Minn\Rest\RestUrl`, `Minn\Rest\SearchController`, `Minn\Rest\Services`, `Minn\Rest\TermObject`, `Minn\Rest\UserObject`, `Minn\Theme\ClassicContent`, `Minn\Theme\ClassicRenderer`, `Minn\Theme\HeadLinks`, `Minn\Theme\PageRenderer`, `Minn\Theme\Theme`, `Minn\Theme\ThemeStyles`
+Used by: `Minn\Admin\AppController`, `Minn\Admin\BootPayload`, `Minn\Admin\RenderController`, `Minn\Admin\SiteController`, `Minn\Admin\ThemesController`, `Minn\Blocks\Dynamic\Archives`, `Minn\Blocks\Dynamic\Categories`, `Minn\Blocks\Dynamic\LatestComments`, `Minn\Blocks\Dynamic\LatestPosts`, `Minn\Blocks\Dynamic\Search`, `Minn\Blocks\Dynamic\TagCloud`, `Minn\Blocks\Dynamic\Theme\Comments`, `Minn\Blocks\Dynamic\Theme\Navigation`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Blocks\Dynamic\Theme\Structure`, `Minn\Blocks\Renderer`, `Minn\Cli\Runtime`, `Minn\Content\Menus`, `Minn\Content\SiteIcon`, `Minn\Engine`, `Minn\Front\AdminBar`, `Minn\Front\AttachmentAddresses`, `Minn\Front\CommentPostController`, `Minn\Front\FeedController`, `Minn\Front\Feeds`, `Minn\Front\ProbeController`, `Minn\Front\Renderer`, `Minn\Front\Resolver`, `Minn\Front\SingleAddresses`, `Minn\Front\SingleQueries`, `Minn\Front\Sitemaps`, `Minn\Login\LoginController`, `Minn\Media\Uploads`, `Minn\Ops\Diagnostics`, `Minn\Rest\CommentObject`, `Minn\Rest\IndexController`, `Minn\Rest\MediaObject`, `Minn\Rest\PostObject`, `Minn\Rest\RegisteredPostFields`, `Minn\Rest\RestUrl`, `Minn\Rest\SearchController`, `Minn\Rest\Services`, `Minn\Rest\TermObject`, `Minn\Rest\UserObject`, `Minn\Theme\ClassicContent`, `Minn\Theme\ClassicRenderer`, `Minn\Theme\HeadLinks`, `Minn\Theme\PageRenderer`, `Minn\Theme\Theme`, `Minn\Theme\ThemeStyles`
 
 ```php
 __construct(Minn\Content\Posts $posts, Minn\Content\Terms $terms, string $home, string $structure, int $frontPageId = 0, int $postsPageId = 0, ?Closure $registry = NULL)
@@ -1043,7 +1093,7 @@ typed, as the reference's redirect_canonical bails on a POST.
 
 Cases: `Follow`, `Hold`
 
-Used by: `Minn\Front\Resolver`, `Minn\Front\SingleAddresses`
+Used by: `Minn\Front\AttachmentAddresses`, `Minn\Front\Resolver`, `Minn\Front\SingleAddresses`, `Minn\Front\SingleQueries`
 
 ### static `forMethod(Minn\Http\Method $method): self`
 
@@ -1089,7 +1139,7 @@ The document title: the item's title with the site name, or the site name alone.
 
 The interim page for a resolution, without a theme.
 
-Internals: `pageClasses()` (private, line 103), `article()` (private, line 120), `archive()` (private, line 130)
+Internals: `attachmentClasses()` (private, line 37), `pageClasses()` (private, line 115), `article()` (private, line 132), `archive()` (private, line 142)
 
 
 ## Resolution
@@ -1100,7 +1150,7 @@ The outcome of resolving a public URL: which kind of thing it names,
 the record behind it, and the page number for paginated views. Redirects
 carry their target instead.
 
-Used by: `Minn\Blocks\Context`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Engine`, `Minn\Front\AdminBar`, `Minn\Front\DocumentTitle`, `Minn\Front\FeedController`, `Minn\Front\FrontController`, `Minn\Front\PrintedResponse`, `Minn\Front\Renderer`, `Minn\Front\Resolver`, `Minn\Front\SingleAddresses`, `Minn\Front\SitemapController`, `Minn\Runtime\MainQuery`, `Minn\Theme\ArchiveTitle`, `Minn\Theme\BodyClasses`, `Minn\Theme\ClassicRenderer`, `Minn\Theme\EmbedRenderer`, `Minn\Theme\HeadLinks`, `Minn\Theme\MainQueryBridge`, `Minn\Theme\PageRenderer`, `Minn\Theme\Templates`
+Used by: `Minn\Blocks\Context`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Engine`, `Minn\Front\AdminBar`, `Minn\Front\AttachmentAddresses`, `Minn\Front\DocumentTitle`, `Minn\Front\FeedController`, `Minn\Front\FrontController`, `Minn\Front\PrintedResponse`, `Minn\Front\Renderer`, `Minn\Front\Resolver`, `Minn\Front\SingleAddresses`, `Minn\Front\SingleQueries`, `Minn\Front\SitemapController`, `Minn\Runtime\MainQuery`, `Minn\Theme\ArchiveTitle`, `Minn\Theme\BodyClasses`, `Minn\Theme\ClassicRenderer`, `Minn\Theme\EmbedRenderer`, `Minn\Theme\HeadLinks`, `Minn\Theme\MainQueryBridge`, `Minn\Theme\PageRenderer`, `Minn\Theme\Templates`
 
 - readonly `Minn\Front\Kind $kind`
 - readonly `Minn\Content\PostRecord|Minn\Content\UserRecord|Minn\Content\TermRecord|array|null $record`
@@ -1224,7 +1274,7 @@ The site-local bounds of a date archive, or null when the date is invalid.
 
 - `@return array{0: string, 1: string}|null`
 
-Internals: `fromRuleVars()` (private, line 118), `resolvePath()` (private, line 143), `resolveQueryVars()` (private, line 211), `dateRedirect()` (private, line 295), `home()` (private, line 312), `pluginRoute()` (private, line 334), `segmentsOf()` (private, line 369), `taxonomyArchive()` (private, line 378), `termArchive()` (private, line 392), `termResolution()` (private, line 405), `authorArchive()` (private, line 414), `dateArchive()` (private, line 431), `resolveContent()` (private, line 478), `resolveSingle()` (private, line 519), `elsewhere()` (private, line 557), `singleOrRedirect()` (private, line 562), `readable()` (private, line 571), `pages()` (private, line 588)
+Internals: `fromRuleVars()` (private, line 118), `resolvePath()` (private, line 143), `resolveQueryVars()` (private, line 214), `dateRedirect()` (private, line 258), `home()` (private, line 275), `pluginRoute()` (private, line 297), `segmentsOf()` (private, line 332), `taxonomyArchive()` (private, line 341), `termArchive()` (private, line 355), `termResolution()` (private, line 368), `authorArchive()` (private, line 377), `dateArchive()` (private, line 394), `resolveContent()` (private, line 441), `resolveSingle()` (private, line 482), `attachments()` (private, line 520), `elsewhere()` (private, line 526), `readable()` (private, line 531), `pages()` (private, line 548)
 
 
 ## SingleAddresses
@@ -1235,7 +1285,7 @@ The addresses a single answers to besides its own, as the reference
 treats them: a slug the post used to have (alone, with a page number, or
 with an embed or trackback suffix), and its comment-page-N addresses.
 
-Used by: `Minn\Front\Resolver`
+Used by: `Minn\Front\Resolver`, `Minn\Front\SingleQueries`
 
 ```php
 __construct(Minn\Db $db, Minn\Content\Posts $posts, Minn\Front\Permalinks $permalinks)
@@ -1261,6 +1311,32 @@ list itself yet; contracts/front.)
 A former slug asked for with a suffix: embed follows the post to its
 new embed address, trackback goes to the post itself. The front
 page's redirect to the root keeps its own handling.
+
+
+## SingleQueries
+
+`final readonly class Minn\Front\SingleQueries` · `public/minn/src/Minn/Front/SingleQueries.php`
+
+The single a query string asks for, as the reference's request parse and
+canonical redirect answer it: by id (?p=, ?page_id=; an attachment's goes
+to its own page), an attachment by id or slug (?attachment_id=,
+?attachment=), a post by slug (?name=), a page by path (?pagename=).
+With canonical redirects on, an address that is not the single's own
+moves there, the other query arguments along; without, each var is
+strict about the type it finds.
+
+Used by: `Minn\Front\Resolver`
+
+```php
+__construct(Minn\Content\Posts $posts, Minn\Front\Permalinks $permalinks, Minn\Front\AttachmentAddresses $attachments, Minn\Front\SingleAddresses $elsewhere, Closure $readable)
+```
+
+
+### `find(Minn\Http\Request $request, Minn\Front\Redirects $redirects): ?Minn\Front\Resolution`
+
+The resolution the query's single vars amount to; null when it has none of them.
+
+Internals: `byId()` (private, line 53), `byPath()` (private, line 74), `singleOrRedirect()` (private, line 89)
 
 
 ## SitemapController

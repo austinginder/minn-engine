@@ -8,7 +8,8 @@
  * name, the template and image filters heard). Both stacks serve the same
  * addresses: posts and a page, one with a wide featured image and one
  * with a square one (and the wide one asked square by the plugin), a
- * protected post, an address that embeds nothing,
+ * protected post, an image attachment (as itself, and as the image a
+ * post features), an address that embeds nothing,
  * the ?embed= form and the addresses that move. Each is compared on
  * status, redirect and X-WP-embed, the whole page (hosts, the sharing
  * dialog's random ids and the embed secret masked; the reference's emoji
@@ -116,7 +117,7 @@ $firstDiff = static function (array $a, array $b): string {
 };
 
 $paths = [
-    'markers' => ['/hello-world/embed/', '/sample-page/embed/', '/zz-embed-wide/embed/', '/zz-embed-square/embed/', '/zz-embed-locked/embed/', '/nope/embed/', '/hello-world/?embed=true', '/hello-world/embed', '/?p=1&embed=true', '/?page_id=2&embed=true&zz=1'],
+    'markers' => ['/hello-world/embed/', '/sample-page/embed/', '/zz-embed-wide/embed/', '/zz-embed-square/embed/', '/zz-embed-locked/embed/', '/nope/embed/', '/hello-world/?embed=true', '/hello-world/embed', '/?p=1&embed=true', '/?page_id=2&embed=true&zz=1', '/battery-image/embed/', "/?attachment_id={$content['wide_image']}&embed=true"],
     'square' => ['/zz-embed-wide/embed/'],
 ];
 foreach ($paths as $mode => $list) {

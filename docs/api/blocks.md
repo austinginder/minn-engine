@@ -9,11 +9,11 @@ the block parser and renderer
 | [`BlockName`](#blockname) | final class | 17 | The block name rules: a string, lower-case, `namespace/name`. |
 | [`Context`](#context) | final class | 76 | What the template blocks render against: the resolution, the main |
 | [`Elements`](#elements) | final class | 79 | Per-block element styles (style.elements in a block's attributes, the |
-| [`ImageTags`](#imagetags) | final readonly class | 254 | The attributes the reference adds to an <img> that carries a |
+| [`ImageTags`](#imagetags) | final readonly class | 263 | The attributes the reference adds to an <img> that carries a |
 | [`Layout`](#layout) | final class | 124 | The layout-support classes the reference adds at render time. Every |
 | [`Parser`](#parser) | final class | 91 | Parses block markup into a tree. The grammar is the delimiter comment: |
 | [`QueryVars`](#queryvars) | final class | 122 | The query variables a Query Loop block's context asks for, the way the |
-| [`RenderState`](#renderstate) | final class | 321 | Per-request rendering state, owned by the renderer. The reference numbers |
+| [`RenderState`](#renderstate) | final class | 346 | Per-request rendering state, owned by the renderer. The reference numbers |
 | [`Renderer`](#renderer) | final class | 231 | Renders a block tree the way the reference renders post_content: |
 | [`Selector`](#selector) | final class | 42 | The CSS selector a block type declares for its root or for one feature, from its `selectors` map or the older per-support keys. |
 | [`Serializer`](#serializer) | final class | 46 | Parsed blocks back to markup. A core block is written by its short name; |
@@ -201,10 +201,13 @@ fetched first); any other image is decoded asynchronously and, when its
 size is known, loaded lazily or by the page's budget; an iframe with a
 size is loaded lazily.
 
-### `offered(string $html, string $context): string`
+### `finished(string $html, string $context): string`
 
-Content whose images are fitted out already, each image offered to
-wp_content_img_tag in a context, as wp_filter_content_tags offers them.
+Content the engine fitted out itself, with what the_content's other
+callbacks added on the way (an attachment's own link, a plugin's
+image): an image still without its loading attributes is fitted as
+the rest were, then each is offered to wp_content_img_tag, as
+wp_filter_content_tags would.
 
 ### `featured(int $attachmentId, string $alt, string $style): string`
 
@@ -212,7 +215,7 @@ A post's featured image at full size, in the reference's attribute
 order (dimensions, source, class, alt, style, then the loading
 attributes and the srcset). Empty when the attachment has no file.
 
-Internals: `attachmentOf()` (private, line 84), `plainImage()` (private, line 90), `lazyFrame()` (private, line 101), `rewrite()` (private, line 109), `loadingPrefix()` (private, line 124), `givenLoading()` (private, line 142), `minimumPriorityPixels()` (private, line 151), `enrichTag()` (private, line 157), `srcsetAttributes()` (private, line 215)
+Internals: `fit()` (private, line 85), `attachmentOf()` (private, line 93), `plainImage()` (private, line 99), `lazyFrame()` (private, line 110), `rewrite()` (private, line 118), `loadingPrefix()` (private, line 133), `givenLoading()` (private, line 151), `minimumPriorityPixels()` (private, line 160), `enrichTag()` (private, line 166), `srcsetAttributes()` (private, line 224)
 
 
 ## Layout
@@ -348,6 +351,16 @@ budget (an excerpt's): the reference fits no image while it makes one,
 so whatever was seen meanwhile is given back.
 
 - `@param \Closure(): T $render`
+
+### `filteringContent(string $content, Closure $filter): mixed`
+
+$filter run while the_content filters content the engine rendered: the
+images it already holds count as fitted out, so only what the filter's
+other callbacks add is fitted (fittedImage()).
+
+### `fittedImage(string $tag): bool`
+
+Whether an image tag is one the content being filtered held when the filter began.
 
 ### `claimPriority(): bool`
 

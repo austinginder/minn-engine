@@ -354,7 +354,8 @@ function image_hwstring($width, $height)
 function wp_get_loading_optimization_attributes($tag_name, $attr, $context)
 {
     $optimization = [];
-    if ($tag_name !== 'img' && $tag_name !== 'iframe') {
+    // An image made while the_content runs is fitted with the rest of the content, as the reference leaves it.
+    if ($tag_name !== 'img' && $tag_name !== 'iframe' || ($context !== 'the_content' && doing_filter('the_content'))) {
         return $optimization;
     }
     if ($tag_name === 'img') {
@@ -1482,10 +1483,10 @@ function wp_filter_content_tags($content, $context = null)
     return Minn\Content\Blocks::renderer()->images()->content((string) $content, $context ?? current_filter());
 }
 
-/** @internal content whose images the engine fitted out itself, each image then through wp_content_img_tag (in wp_filter_content_tags's place on the_content) */
+/** @internal content whose images the engine fitted out itself (and any the_content added since, fitted now), each image then through wp_content_img_tag (in wp_filter_content_tags's place on the_content) */
 function _minn_content_img_tag($content)
 {
-    return Minn\Content\Blocks::renderer()->images()->offered((string) $content, 'the_content');
+    return Minn\Content\Blocks::renderer()->images()->finished((string) $content, 'the_content');
 }
 
 function get_taxonomies_for_attachments($output = 'names')
