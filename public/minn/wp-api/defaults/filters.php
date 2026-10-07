@@ -293,3 +293,16 @@ add_action('plugins_loaded', [WP_Site_Health::class, 'get_instance'], 0);
 add_filter('request', '_post_format_request');
 add_action('template_redirect', 'rest_output_link_header', 11, 0);
 add_action('template_redirect', 'wp_shortlink_header', 11, 0);
+
+// The toolbar, set up and printed where the reference does it. On the
+// engine's own pages the Minn bar (or nothing) stands in its place, as the
+// Minn Admin plugin's bar does on WordPress: the engine says no to
+// WordPress's own at show_admin_bar 100, which a plugin may still overrule.
+add_action('template_redirect', '_wp_admin_bar_init', 0);
+add_action('admin_init', '_wp_admin_bar_init');
+add_action('wp_enqueue_scripts', 'wp_enqueue_admin_bar_bump_styles');
+add_action('wp_enqueue_scripts', 'wp_enqueue_admin_bar_header_styles');
+add_action('wp_body_open', 'wp_admin_bar_render', 0);
+add_action('wp_footer', 'wp_admin_bar_render', 1000);
+add_action('in_admin_header', 'wp_admin_bar_render', 0);
+add_filter('show_admin_bar', '_minn_front_toolbar', 100);

@@ -92,8 +92,18 @@ function add_theme_support($feature, ...$args)
     return ThemeSupports::add((string) $feature, $args) ? null : false;
 }
 
+/** @internal A feature taken back, whichever it is; false for one not supported. */
+function _remove_theme_support($feature)
+{
+    return ThemeSupports::remove((string) $feature);
+}
+
+/** A feature taken back; false for one not supported, and for the three the reference will not take back this way (editor styles, widgets, menus). */
 function remove_theme_support($feature)
 {
+    if (in_array($feature, ['editor-style', 'widgets', 'menus'], true)) {
+        return false;
+    }
     return ThemeSupports::remove((string) $feature);
 }
 
@@ -237,7 +247,7 @@ function remove_editor_styles()
     if (!current_theme_supports('editor-style')) {
         return false;
     }
-    remove_theme_support('editor-style');
+    _remove_theme_support('editor-style');
     if (is_admin()) {
         $GLOBALS['editor_styles'] = [];
     }

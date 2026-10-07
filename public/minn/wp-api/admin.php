@@ -778,6 +778,13 @@ function get_core_updates($options = [])
     return $result;
 }
 
+/** The updates waiting, counted for what the user may update, with the titles that describe them. */
+function wp_get_update_data()
+{
+    [$data, $titles] = Minn\Runtime\UpdateCounts::forCurrentUser();
+    return apply_filters('wp_get_update_data', $data, $titles);
+}
+
 function wp_clean_plugins_cache($clear_update_cache = true)
 {
     if ($clear_update_cache) {

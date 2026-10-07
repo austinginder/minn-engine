@@ -46064,6 +46064,724 @@
             ]
         },
         {
+            "name": "Minn\\Front\\ToolbarMarkup",
+            "short": "ToolbarMarkup",
+            "namespace": "Minn\\Front",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Front/ToolbarMarkup.php",
+            "lines": 57,
+            "doc": "WP_Admin_Bar's markup, piece by piece, as the reference prints it (probe\nadmin-bar): the wrapper (a skip link until the page has opened its body,\na class for phones), a group's list (named by the menu it opens from),\nand an item: a link or an empty div, its focus order, its attributes\nfrom meta, an arrow when it opens a menu below the top level, and any\nmarkup a plugin hangs after it.",
+            "implements": [],
+            "extends": null,
+            "uses": [],
+            "usedBy": [],
+            "constructor": null,
+            "cases": [],
+            "constants": [
+                {
+                    "name": "ATTRIBUTES",
+                    "value": "array (   0 => 'onclick',   1 => 'target',   2 => 'title',   3 => 'rel',   4 => 'lang',   5 => 'dir', )",
+                    "doc": "The meta keys an item carries onto its link or div, in the reference's order.",
+                    "visibility": "private"
+                }
+            ],
+            "properties": [],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "open",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "open(): string",
+                    "doc": "The bar's wrapper up to its first group.",
+                    "shapes": [],
+                    "params": [],
+                    "line": 21,
+                    "end": 29
+                },
+                {
+                    "routes": [],
+                    "name": "close",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "close(): string",
+                    "doc": "The bar's wrapper after its last group.",
+                    "shapes": [],
+                    "params": [],
+                    "line": 32,
+                    "end": 35
+                },
+                {
+                    "routes": [],
+                    "name": "groupOpen",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "groupOpen(object $node, mixed $menuTitle): string",
+                    "doc": "A group's opening list tag, labelled by the menu it opens from when that has a menu title.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "node",
+                            "type": "object",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "menuTitle",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 38,
+                    "end": 43
+                },
+                {
+                    "routes": [],
+                    "name": "itemOpen",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "itemOpen(object $node): string",
+                    "doc": "An item up to its submenu: the list item, then its link (or a div when it has none) with its title.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "node",
+                            "type": "object",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 46,
+                    "end": 64
+                },
+                {
+                    "routes": [],
+                    "name": "itemClose",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "itemClose(object $node): string",
+                    "doc": "An item after its submenu: any markup a plugin hangs on it, and the list item's end.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "node",
+                            "type": "object",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 67,
+                    "end": 70
+                }
+            ]
+        },
+        {
+            "name": "Minn\\Front\\ToolbarMenus",
+            "short": "ToolbarMenus",
+            "namespace": "Minn\\Front",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Front/ToolbarMenus.php",
+            "lines": 338,
+            "doc": "The nodes WordPress puts on the toolbar itself, as the reference adds\nthem on the front end for whoever is signed in (probe admin-bar): the\naccount menu, the WordPress menu, the site menu with its appearance\ngroup, the site editor and customizer links, updates, comments, new\ncontent, the edit link for what the page shows, the shortlink, the\nsecondary groups, and the search box. Each is one admin_bar_menu\ncallback, so plugins can unhook any of them by name.",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\Runtime\\Runtime"
+            ],
+            "usedBy": [],
+            "constructor": null,
+            "cases": [],
+            "constants": [
+                {
+                    "name": "MENUS",
+                    "value": "array (   0 =>    array (     0 => 'wp_admin_bar_my_account_menu',     1 => 0,   ),   1 =>    array (     0 => 'wp_admin_bar_my_account_item',     1 => 9991,   ),   2 =>    array (     0 => 'wp_admin_bar_recovery_mode_menu',     1 => 9992,   ),   3 =>    array (     0 => 'wp_admin_bar_search_menu',     1 => 9999,   ),   4 =>    array (     0 => 'wp_admin_bar_sidebar_toggle',     1 => 0,   ),   5 =>    array (     0 => 'wp_admin_bar_wp_menu',     1 => 10,   ),   6 =>    array (     0 => 'wp_admin_bar_my_sites_menu',     1 => 20,   ),   7 =>    array (     0 => 'wp_admin_bar_site_menu',     1 => 30,   ),   8 =>    array (     0 => 'wp_admin_bar_edit_site_menu',     1 => 40,   ),   9 =>    array (     0 => 'wp_admin_bar_customize_menu',     1 => 40,   ),   10 =>    array (     0 => 'wp_admin_bar_updates_menu',     1 => 50,   ),   11 =>    array (     0 => 'wp_admin_bar_command_palette_menu',     1 => 55,   ),   12 =>    array (     0 => 'wp_admin_bar_comments_menu',     1 => 60,   ),   13 =>    array (     0 => 'wp_admin_bar_new_content_menu',     1 => 70,   ),   14 =>    array (     0 => 'wp_admin_bar_edit_menu',     1 => 80,   ),   15 =>    array (     0 => 'wp_admin_bar_add_secondary_groups',     1 => 200,   ), )",
+                    "doc": "WordPress's menus as add_menus hooks them: the callback, its priority.",
+                    "visibility": "public"
+                },
+                {
+                    "name": "ICON",
+                    "value": "'<span class=\"ab-icon\" aria-hidden=\"true\"></span>'",
+                    "doc": "",
+                    "visibility": "private"
+                }
+            ],
+            "properties": [],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "myAccountItem",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "myAccountItem(WP_Admin_Bar $bar): void",
+                    "doc": "\"Howdy\" with the user's name and small avatar, at the right of the bar.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "bar",
+                            "type": "WP_Admin_Bar",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 49,
+                    "end": 65
+                },
+                {
+                    "routes": [],
+                    "name": "myAccountMenu",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "myAccountMenu(WP_Admin_Bar $bar): void",
+                    "doc": "The account menu: the user's card (larger avatar, name, login when it differs, the profile link) and Log Out.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "bar",
+                            "type": "WP_Admin_Bar",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 68,
+                    "end": 82
+                },
+                {
+                    "routes": [],
+                    "name": "sidebarToggle",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "sidebarToggle(WP_Admin_Bar $bar): void",
+                    "doc": "The menu button wp-admin's narrow screens show; the front end has none.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "bar",
+                            "type": "WP_Admin_Bar",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 85,
+                    "end": 90
+                },
+                {
+                    "routes": [],
+                    "name": "wpMenu",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "wpMenu(WP_Admin_Bar $bar): void",
+                    "doc": "The WordPress logo's menu: About and Get Involved for a reader, then the wordpress.org links beside them.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "bar",
+                            "type": "WP_Admin_Bar",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 93,
+                    "end": 117
+                },
+                {
+                    "routes": [],
+                    "name": "siteMenu",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "siteMenu(WP_Admin_Bar $bar): void",
+                    "doc": "The site's name (with its icon when it has one), then the dashboard, appearance and plugins below it.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "bar",
+                            "type": "WP_Admin_Bar",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 120,
+                    "end": 147
+                },
+                {
+                    "routes": [],
+                    "name": "appearanceMenu",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "appearanceMenu(WP_Admin_Bar $bar): void",
+                    "doc": "The appearance group under the site's name: themes, then what the theme supports for those who may edit it.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "bar",
+                            "type": "WP_Admin_Bar",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 150,
+                    "end": 171
+                },
+                {
+                    "routes": [],
+                    "name": "editSiteMenu",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "editSiteMenu(WP_Admin_Bar $bar): void",
+                    "doc": "Edit Site under a block theme, opening the template this page was built from when there is one.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "bar",
+                            "type": "WP_Admin_Bar",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 174,
+                    "end": 185
+                },
+                {
+                    "routes": [],
+                    "name": "customizeMenu",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "customizeMenu(WP_Admin_Bar $bar): void",
+                    "doc": "Customize, for a theme the customizer serves (a block theme only once something registers with it).",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "bar",
+                            "type": "WP_Admin_Bar",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 188,
+                    "end": 197
+                },
+                {
+                    "routes": [],
+                    "name": "updatesMenu",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "updatesMenu(WP_Admin_Bar $bar): void",
+                    "doc": "The count of updates waiting, when there are any.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "bar",
+                            "type": "WP_Admin_Bar",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 200,
+                    "end": 210
+                },
+                {
+                    "routes": [],
+                    "name": "commentsMenu",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "commentsMenu(WP_Admin_Bar $bar): void",
+                    "doc": "The comments awaiting moderation, for those who edit posts.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "bar",
+                            "type": "WP_Admin_Bar",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 213,
+                    "end": 223
+                },
+                {
+                    "routes": [],
+                    "name": "newContentMenu",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "newContentMenu(WP_Admin_Bar $bar): void",
+                    "doc": "New: a post, media, a link, a page, each other type shown on the bar, and a user, as far as the user may create them.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "bar",
+                            "type": "WP_Admin_Bar",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 226,
+                    "end": 241
+                },
+                {
+                    "routes": [],
+                    "name": "editMenu",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "editMenu(WP_Admin_Bar $bar): void",
+                    "doc": "Edit, for the post, term or user the page shows, when the user may edit it.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "bar",
+                            "type": "WP_Admin_Bar",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 273,
+                    "end": 288
+                },
+                {
+                    "routes": [],
+                    "name": "shortlinkMenu",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "shortlinkMenu(WP_Admin_Bar $bar): void",
+                    "doc": "The page's shortlink, with a box to copy it from.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "bar",
+                            "type": "WP_Admin_Bar",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 311,
+                    "end": 319
+                },
+                {
+                    "routes": [],
+                    "name": "secondaryGroups",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "secondaryGroups(WP_Admin_Bar $bar): void",
+                    "doc": "The groups for the bar's right side and the logo menu's outside links.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "bar",
+                            "type": "WP_Admin_Bar",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 322,
+                    "end": 326
+                },
+                {
+                    "routes": [],
+                    "name": "recoveryModeMenu",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "recoveryModeMenu(WP_Admin_Bar $bar): void",
+                    "doc": "The way out of recovery mode, while the site is in it.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "bar",
+                            "type": "WP_Admin_Bar",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 329,
+                    "end": 340
+                },
+                {
+                    "routes": [],
+                    "name": "searchMenu",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "searchMenu(WP_Admin_Bar $bar): void",
+                    "doc": "The search box, on the front end.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "bar",
+                            "type": "WP_Admin_Bar",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 343,
+                    "end": 354
+                },
+                {
+                    "routes": [],
+                    "name": "profileUrl",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "profileUrl(int $userId): string|false",
+                    "doc": "The profile link for the signed-in user, or false when they cannot read.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "userId",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 43,
+                    "end": 46
+                },
+                {
+                    "routes": [],
+                    "name": "creatable",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "creatable(): array",
+                    "doc": "",
+                    "shapes": [
+                        "@return array<string, array{0: string, 1: string}> the admin page => [the label, the node id], for what the user may create"
+                    ],
+                    "params": [],
+                    "line": 244,
+                    "end": 270
+                },
+                {
+                    "routes": [],
+                    "name": "editPost",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "editPost(object $post): array",
+                    "doc": "",
+                    "shapes": [
+                        "@return array{0: ?string, 1: ?string} the edit label and link for a post, or nulls"
+                    ],
+                    "params": [
+                        {
+                            "name": "post",
+                            "type": "object",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 291,
+                    "end": 298
+                },
+                {
+                    "routes": [],
+                    "name": "editTerm",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "editTerm(object $term): array",
+                    "doc": "",
+                    "shapes": [
+                        "@return array{0: ?string, 1: ?string} the edit label and link for a term, or nulls"
+                    ],
+                    "params": [
+                        {
+                            "name": "term",
+                            "type": "object",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 301,
+                    "end": 308
+                }
+            ]
+        },
+        {
+            "name": "Minn\\Front\\ToolbarTree",
+            "short": "ToolbarTree",
+            "namespace": "Minn\\Front",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Front/ToolbarTree.php",
+            "lines": 90,
+            "doc": "WP_Admin_Bar's nodes bound into the tree they print as, as the reference\nbinds them (probe admin-bar): each gains its children and its type; an\nitem's children go into its \"-default\" group, made when the first one\narrives; a group inside a group sits next to it in a \"-container\", put\nwhere the outer group was; a node whose parent is missing is left out.\nThe bar's own node accessors are used throughout, so a subclass that\noverrides them still sees every node it is asked for.",
+            "implements": [],
+            "extends": null,
+            "uses": [],
+            "usedBy": [],
+            "constructor": {
+                "signature": "__construct(Closure $get, Closure $set)",
+                "doc": "",
+                "shapes": [
+                    "@param \\Closure(string): ?object $get the bar's _get_node",
+                    "@param \\Closure(array<string, mixed>): void $set the bar's _set_node"
+                ],
+                "params": [
+                    {
+                        "name": "get",
+                        "type": "Closure",
+                        "shape": "\\Closure(string): ?object",
+                        "default": null,
+                        "doc": "the bar's _get_node"
+                    },
+                    {
+                        "name": "set",
+                        "type": "Closure",
+                        "shape": "\\Closure(array<string, mixed>): void",
+                        "default": null,
+                        "doc": "the bar's _set_node"
+                    }
+                ],
+                "visibility": "private",
+                "line": 22,
+                "end": 24
+            },
+            "cases": [],
+            "constants": [],
+            "properties": [
+                {
+                    "name": "get",
+                    "type": "Closure",
+                    "readonly": false,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
+                },
+                {
+                    "name": "set",
+                    "type": "Closure",
+                    "readonly": false,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
+                }
+            ],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "bind",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "bind(array $nodes, Closure $get, Closure $set): ?object",
+                    "doc": "The root of the bound tree, for nodes (the bar's, a root among them)\nreached through the bar's accessors.",
+                    "shapes": [
+                        "@param array<string, object> $nodes",
+                        "@param \\Closure(string): ?object $get",
+                        "@param \\Closure(array<string, mixed>): void $set"
+                    ],
+                    "params": [
+                        {
+                            "name": "nodes",
+                            "type": "array",
+                            "shape": "array<string, object>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "get",
+                            "type": "Closure",
+                            "shape": "\\Closure(string): ?object",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "set",
+                            "type": "Closure",
+                            "shape": "\\Closure(array<string, mixed>): void",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 34,
+                    "end": 47
+                },
+                {
+                    "routes": [],
+                    "name": "place",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "place(object $node): void",
+                    "doc": "A node into its parent's children, through a default group or a container when it needs one.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "node",
+                            "type": "object",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 50,
+                    "end": 67
+                },
+                {
+                    "routes": [],
+                    "name": "defaultGroup",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "defaultGroup(object $parent, string $groupClass): object",
+                    "doc": "The group an item's child items go into, made the first time.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "parent",
+                            "type": "object",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "groupClass",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 70,
+                    "end": 80
+                },
+                {
+                    "routes": [],
+                    "name": "container",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "container(object $group): object",
+                    "doc": "The container a group shares with the groups inside it, put where the group was.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "group",
+                            "type": "object",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 83,
+                    "end": 104
+                }
+            ]
+        },
+        {
             "name": "Minn\\Html\\Decoder",
             "short": "Decoder",
             "namespace": "Minn\\Html",
@@ -100250,7 +100968,7 @@
             "namespace": "Minn\\Runtime",
             "kind": "final class",
             "file": "public/minn/src/Minn/Runtime/Assets.php",
-            "lines": 365,
+            "lines": 384,
             "doc": "The registry behind wp_register_/wp_enqueue_ for scripts and styles:\nhandles, sources, dependencies, versions, inline additions, localized\ndata, and the head/footer split. Printing follows the reference's tag\nshapes as far as captured; see contracts/runtime.md.",
             "implements": [],
             "extends": null,
@@ -100602,8 +101320,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 190,
-                    "end": 200
+                    "line": 206,
+                    "end": 215
                 },
                 {
                     "routes": [],
@@ -100636,8 +101354,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 203,
-                    "end": 213
+                    "line": 218,
+                    "end": 231
                 },
                 {
                     "routes": [],
@@ -100670,8 +101388,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 216,
-                    "end": 227
+                    "line": 234,
+                    "end": 245
                 },
                 {
                     "routes": [],
@@ -100697,8 +101415,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 230,
-                    "end": 233
+                    "line": 248,
+                    "end": 252
                 },
                 {
                     "routes": [],
@@ -100731,8 +101449,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 236,
-                    "end": 251
+                    "line": 255,
+                    "end": 270
                 },
                 {
                     "routes": [],
@@ -100751,8 +101469,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 254,
-                    "end": 261
+                    "line": 273,
+                    "end": 280
                 },
                 {
                     "routes": [],
@@ -100774,8 +101492,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 270,
-                    "end": 273
+                    "line": 289,
+                    "end": 292
                 },
                 {
                     "routes": [],
@@ -100788,8 +101506,8 @@
                         "@return array<string, string> handle => path"
                     ],
                     "params": [],
-                    "line": 318,
-                    "end": 328
+                    "line": 337,
+                    "end": 347
                 },
                 {
                     "routes": [],
@@ -100808,8 +101526,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 331,
-                    "end": 337
+                    "line": 350,
+                    "end": 356
                 },
                 {
                     "routes": [],
@@ -100828,8 +101546,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 340,
-                    "end": 344
+                    "line": 359,
+                    "end": 363
                 },
                 {
                     "routes": [],
@@ -100848,8 +101566,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 347,
-                    "end": 350
+                    "line": 366,
+                    "end": 369
                 },
                 {
                     "routes": [],
@@ -100862,8 +101580,8 @@
                         "@return array<string, array<string, mixed>>"
                     ],
                     "params": [],
-                    "line": 357,
-                    "end": 360
+                    "line": 376,
+                    "end": 379
                 },
                 {
                     "routes": [],
@@ -100876,8 +101594,8 @@
                         "@return list<string>"
                     ],
                     "params": [],
-                    "line": 367,
-                    "end": 370
+                    "line": 386,
+                    "end": 389
                 },
                 {
                     "routes": [],
@@ -100888,8 +101606,8 @@
                     "doc": "Whether these are scripts or styles.",
                     "shapes": [],
                     "params": [],
-                    "line": 373,
-                    "end": 376
+                    "line": 392,
+                    "end": 395
                 },
                 {
                     "routes": [],
@@ -100941,6 +101659,26 @@
                 },
                 {
                     "routes": [],
+                    "name": "held",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "held(string $handle): bool",
+                    "doc": "Whether a handle is an item to attach to: one registered here, or a\nstylesheet the reference registers itself, held from then on with no\nfile (the engine ships none of those) so what a plugin attaches to it\nstill prints. A core script is not held: its inline code without the\nlibrary would only fail in the browser.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "handle",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 196,
+                    "end": 203
+                },
+                {
+                    "routes": [],
                     "name": "ordered",
                     "static": false,
                     "visibility": "private",
@@ -100959,8 +101697,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 279,
-                    "end": 309
+                    "line": 298,
+                    "end": 328
                 }
             ]
         },
@@ -115049,6 +115787,7 @@
                 "Minn\\Front\\Permalinks",
                 "Minn\\Front\\PluginRules",
                 "Minn\\Front\\Resolver",
+                "Minn\\Front\\ToolbarMenus",
                 "Minn\\Login\\LoginController",
                 "Minn\\Login\\LoginHooks",
                 "Minn\\Mail\\Mailer",
@@ -120828,6 +121567,39 @@
                     ],
                     "line": 66,
                     "end": 86
+                }
+            ]
+        },
+        {
+            "name": "Minn\\Runtime\\UpdateCounts",
+            "short": "UpdateCounts",
+            "namespace": "Minn\\Runtime",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Runtime/UpdateCounts.php",
+            "lines": 31,
+            "doc": "The updates waiting, as wp_get_update_data counts them for the user\n(probe admin-bar): plugins and themes from their update transients,\nWordPress itself unless it is current, translations; each only for a\nuser who may update it. WordPress counts its own update only where\nwp-admin's update functions are loaded; the engine always has them, so\nit counts it everywhere.",
+            "implements": [],
+            "extends": null,
+            "uses": [],
+            "usedBy": [],
+            "constructor": null,
+            "cases": [],
+            "constants": [],
+            "properties": [],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "forCurrentUser",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "forCurrentUser(): array",
+                    "doc": "The counts and their title (before the wp_get_update_data filter),\nand the titles one by one.",
+                    "shapes": [
+                        "@return array{0: array{counts: array<string, int>, title: string}, 1: array<string, string>}"
+                    ],
+                    "params": [],
+                    "line": 23,
+                    "end": 44
                 }
             ]
         },

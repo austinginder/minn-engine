@@ -186,30 +186,48 @@ final class Assets
         return in_array($handle, $this->done, true);
     }
 
+    /**
+     * Whether a handle is an item to attach to: one registered here, or a
+     * stylesheet the reference registers itself, held from then on with no
+     * file (the engine ships none of those) so what a plugin attaches to it
+     * still prints. A core script is not held: its inline code without the
+     * library would only fail in the browser.
+     */
+    private function held(string $handle): bool
+    {
+        if (isset($this->items[$handle])) {
+            return true;
+        }
+        $deps = self::defaults()['style'][$handle] ?? null;
+        return $this->kind === 'style' && $deps !== null && $this->register($handle, false, $deps, false, 'all');
+    }
+
     /** Attaches inline code to an asset. */
     public function addInline(string $handle, string $code, string $position): bool
     {
-        if (!isset($this->items[$handle])) {
+        if (!$this->held($handle)) {
             $this->changed();
             return false;
         }
         $this->items[$handle]['inline'][$position === 'before' ? 'before' : 'after'][] = $code;
         $this->changed();
         return true;
-        $this->changed();
     }
 
     /** Attaches a data key to an asset. */
     public function addData(string $handle, string $key, mixed $value): bool
     {
-        if (!isset($this->items[$handle])) {
+        if (!$this->held($handle)) {
             $this->changed();
             return false;
         }
         $this->items[$handle]['data'][$key] = $value;
+        // An asset's inline code is its before/after data, as the reference keeps it: setting either replaces the code.
+        if ($key === 'before' || $key === 'after') {
+            $this->items[$handle]['inline'][$key] = array_values(array_map('strval', array_filter((array) $value, 'is_scalar')));
+        }
         $this->changed();
         return true;
-        $this->changed();
     }
 
     /** Names the text domain and folder a script's translations come from, and makes the script depend on wp-i18n. */
@@ -229,7 +247,8 @@ final class Assets
     /** A data key of an asset, or false. */
     public function data(string $handle, string $key): mixed
     {
-        return $this->items[$handle]['data'][$key] ?? false;
+        $inline = ($key === 'before' || $key === 'after') ? ($this->items[$handle]['inline'][$key] ?? []) : [];
+        return $inline !== [] ? $inline : ($this->items[$handle]['data'][$key] ?? false);
     }
 
     /** Attaches a localized object to a script. */

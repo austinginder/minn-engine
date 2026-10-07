@@ -38,6 +38,9 @@ URL resolution, permalinks, feeds, sitemaps and the public page
 | [`SitemapXml`](#sitemapxml) | final class | 43 | The two sitemap documents, index and URL set, from entry maps; one builder for the engine's routes and the facade's renderer. |
 | [`Sitemaps`](#sitemaps) | final readonly class | 147 | The sitemap index and its providers (posts, pages, categories, tags, |
 | [`TermLists`](#termlists) | final class | 178 | The two term listings themes print: the nested category list and the |
+| [`ToolbarMarkup`](#toolbarmarkup) | final class | 57 | WP_Admin_Bar's markup, piece by piece, as the reference prints it (probe |
+| [`ToolbarMenus`](#toolbarmenus) | final class | 338 | The nodes WordPress puts on the toolbar itself, as the reference adds |
+| [`ToolbarTree`](#toolbartree) | final class | 90 | WP_Admin_Bar's nodes bound into the tree they print as, as the reference |
 
 ## AdminBar
 
@@ -1225,4 +1228,145 @@ caller asked for a hierarchy.
 - `@param list<array<string, mixed>> $terms`
 
 Internals: `options()` (private, line 127), `sorted()` (private, line 146), `orphans()` (private, line 159), `items()` (private, line 166)
+
+
+## ToolbarMarkup
+
+`final class Minn\Front\ToolbarMarkup` · `public/minn/src/Minn/Front/ToolbarMarkup.php`
+
+WP_Admin_Bar's markup, piece by piece, as the reference prints it (probe
+admin-bar): the wrapper (a skip link until the page has opened its body,
+a class for phones), a group's list (named by the menu it opens from),
+and an item: a link or an empty div, its focus order, its attributes
+from meta, an arrow when it opens a menu below the top level, and any
+markup a plugin hangs after it.
+
+- const `ATTRIBUTES` = `array (   0 => 'onclick',   1 => 'target',   2 => 'title',   3 => 'rel',   4 => 'lang',   5 => 'dir', )` — The meta keys an item carries onto its link or div, in the reference's order.
+
+### static `open(): string`
+
+The bar's wrapper up to its first group.
+
+### static `close(): string`
+
+The bar's wrapper after its last group.
+
+### static `groupOpen(object $node, mixed $menuTitle): string`
+
+A group's opening list tag, labelled by the menu it opens from when that has a menu title.
+
+### static `itemOpen(object $node): string`
+
+An item up to its submenu: the list item, then its link (or a div when it has none) with its title.
+
+### static `itemClose(object $node): string`
+
+An item after its submenu: any markup a plugin hangs on it, and the list item's end.
+
+
+## ToolbarMenus
+
+`final class Minn\Front\ToolbarMenus` · `public/minn/src/Minn/Front/ToolbarMenus.php`
+
+The nodes WordPress puts on the toolbar itself, as the reference adds
+them on the front end for whoever is signed in (probe admin-bar): the
+account menu, the WordPress menu, the site menu with its appearance
+group, the site editor and customizer links, updates, comments, new
+content, the edit link for what the page shows, the shortlink, the
+secondary groups, and the search box. Each is one admin_bar_menu
+callback, so plugins can unhook any of them by name.
+
+- const `MENUS` = `array (   0 =>    array (     0 => 'wp_admin_bar_my_account_menu',     1 => 0,   ),   1 =>    array (     0 => 'wp_admin_bar_my_account_item',     1 => 9991,   ),   2 =>    array (     0 => 'wp_admin_bar_recovery_mode_menu',     1 => 9992,   ),   3 =>    array (     0 => 'wp_admin_bar_search_menu',     1 => 9999,   ),   4 =>    array (     0 => 'wp_admin_bar_sidebar_toggle',     1 => 0,   ),   5 =>    array (     0 => 'wp_admin_bar_wp_menu',     1 => 10,   ),   6 =>    array (     0 => 'wp_admin_bar_my_sites_menu',     1 => 20,   ),   7 =>    array (     0 => 'wp_admin_bar_site_menu',     1 => 30,   ),   8 =>    array (     0 => 'wp_admin_bar_edit_site_menu',     1 => 40,   ),   9 =>    array (     0 => 'wp_admin_bar_customize_menu',     1 => 40,   ),   10 =>    array (     0 => 'wp_admin_bar_updates_menu',     1 => 50,   ),   11 =>    array (     0 => 'wp_admin_bar_command_palette_menu',     1 => 55,   ),   12 =>    array (     0 => 'wp_admin_bar_comments_menu',     1 => 60,   ),   13 =>    array (     0 => 'wp_admin_bar_new_content_menu',     1 => 70,   ),   14 =>    array (     0 => 'wp_admin_bar_edit_menu',     1 => 80,   ),   15 =>    array (     0 => 'wp_admin_bar_add_secondary_groups',     1 => 200,   ), )` — WordPress's menus as add_menus hooks them: the callback, its priority.
+- const `ICON` = `'<span class="ab-icon" aria-hidden="true"></span>'`
+
+### static `myAccountItem(WP_Admin_Bar $bar): void`
+
+"Howdy" with the user's name and small avatar, at the right of the bar.
+
+### static `myAccountMenu(WP_Admin_Bar $bar): void`
+
+The account menu: the user's card (larger avatar, name, login when it differs, the profile link) and Log Out.
+
+### static `sidebarToggle(WP_Admin_Bar $bar): void`
+
+The menu button wp-admin's narrow screens show; the front end has none.
+
+### static `wpMenu(WP_Admin_Bar $bar): void`
+
+The WordPress logo's menu: About and Get Involved for a reader, then the wordpress.org links beside them.
+
+### static `siteMenu(WP_Admin_Bar $bar): void`
+
+The site's name (with its icon when it has one), then the dashboard, appearance and plugins below it.
+
+### static `appearanceMenu(WP_Admin_Bar $bar): void`
+
+The appearance group under the site's name: themes, then what the theme supports for those who may edit it.
+
+### static `editSiteMenu(WP_Admin_Bar $bar): void`
+
+Edit Site under a block theme, opening the template this page was built from when there is one.
+
+### static `customizeMenu(WP_Admin_Bar $bar): void`
+
+Customize, for a theme the customizer serves (a block theme only once something registers with it).
+
+### static `updatesMenu(WP_Admin_Bar $bar): void`
+
+The count of updates waiting, when there are any.
+
+### static `commentsMenu(WP_Admin_Bar $bar): void`
+
+The comments awaiting moderation, for those who edit posts.
+
+### static `newContentMenu(WP_Admin_Bar $bar): void`
+
+New: a post, media, a link, a page, each other type shown on the bar, and a user, as far as the user may create them.
+
+### static `editMenu(WP_Admin_Bar $bar): void`
+
+Edit, for the post, term or user the page shows, when the user may edit it.
+
+### static `shortlinkMenu(WP_Admin_Bar $bar): void`
+
+The page's shortlink, with a box to copy it from.
+
+### static `secondaryGroups(WP_Admin_Bar $bar): void`
+
+The groups for the bar's right side and the logo menu's outside links.
+
+### static `recoveryModeMenu(WP_Admin_Bar $bar): void`
+
+The way out of recovery mode, while the site is in it.
+
+### static `searchMenu(WP_Admin_Bar $bar): void`
+
+The search box, on the front end.
+
+Internals: `profileUrl()` (private, line 43), `creatable()` (private, line 244), `editPost()` (private, line 291), `editTerm()` (private, line 301)
+
+
+## ToolbarTree
+
+`final class Minn\Front\ToolbarTree` · `public/minn/src/Minn/Front/ToolbarTree.php`
+
+WP_Admin_Bar's nodes bound into the tree they print as, as the reference
+binds them (probe admin-bar): each gains its children and its type; an
+item's children go into its "-default" group, made when the first one
+arrives; a group inside a group sits next to it in a "-container", put
+where the outer group was; a node whose parent is missing is left out.
+The bar's own node accessors are used throughout, so a subclass that
+overrides them still sees every node it is asked for.
+
+
+### static `bind(array $nodes, Closure $get, Closure $set): ?object`
+
+The root of the bound tree, for nodes (the bar's, a root among them)
+reached through the bar's accessors.
+
+- `@param array<string, object> $nodes`
+- `@param \Closure(string): ?object $get`
+- `@param \Closure(array<string, mixed>): void $set`
+
+Internals: `place()` (private, line 50), `defaultGroup()` (private, line 70), `container()` (private, line 83)
 

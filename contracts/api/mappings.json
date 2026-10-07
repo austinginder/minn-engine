@@ -2,12 +2,12 @@
     "generated": "2026-10-07",
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line)",
     "summary": {
-        "minn": 647,
-        "composes": 943,
-        "leaf": 649,
-        "noop": 1859,
-        "functions": 4028,
-        "minnMethods": 695,
+        "minn": 653,
+        "composes": 957,
+        "leaf": 655,
+        "noop": 1883,
+        "functions": 4078,
+        "minnMethods": 718,
         "leafLinesOver15": 12
     },
     "functions": {
@@ -4104,6 +4104,183 @@
             "file": "classes/WP_Ability_Category.php",
             "lines": 1,
             "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Admin_Bar::_bind": {
+            "file": "classes/WP_Admin_Bar.php",
+            "lines": 8,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Front\\ToolbarTree::bind"
+            ],
+            "composes": []
+        },
+        "WP_Admin_Bar::_get_node": {
+            "file": "classes/WP_Admin_Bar.php",
+            "lines": 4,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Admin_Bar::_get_nodes": {
+            "file": "classes/WP_Admin_Bar.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Admin_Bar::_render": {
+            "file": "classes/WP_Admin_Bar.php",
+            "lines": 5,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Front\\ToolbarMarkup::close",
+                "Minn\\Front\\ToolbarMarkup::open"
+            ],
+            "composes": []
+        },
+        "WP_Admin_Bar::_render_container": {
+            "file": "classes/WP_Admin_Bar.php",
+            "lines": 8,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "esc_attr"
+            ]
+        },
+        "WP_Admin_Bar::_render_group": {
+            "file": "classes/WP_Admin_Bar.php",
+            "lines": 12,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Front\\ToolbarMarkup::groupOpen"
+            ],
+            "composes": []
+        },
+        "WP_Admin_Bar::_render_item": {
+            "file": "classes/WP_Admin_Bar.php",
+            "lines": 12,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Front\\ToolbarMarkup::itemClose",
+                "Minn\\Front\\ToolbarMarkup::itemOpen"
+            ],
+            "composes": []
+        },
+        "WP_Admin_Bar::_set_node": {
+            "file": "classes/WP_Admin_Bar.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Admin_Bar::_unset_node": {
+            "file": "classes/WP_Admin_Bar.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Admin_Bar::add_group": {
+            "file": "classes/WP_Admin_Bar.php",
+            "lines": 2,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Admin_Bar::add_menu": {
+            "file": "classes/WP_Admin_Bar.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Admin_Bar::add_menus": {
+            "file": "classes/WP_Admin_Bar.php",
+            "lines": 4,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "add_action",
+                "do_action"
+            ]
+        },
+        "WP_Admin_Bar::add_node": {
+            "file": "classes/WP_Admin_Bar.php",
+            "lines": 24,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "__",
+                "_deprecated_argument",
+                "_doing_it_wrong",
+                "esc_attr",
+                "sanitize_title",
+                "wp_parse_args"
+            ]
+        },
+        "WP_Admin_Bar::get_node": {
+            "file": "classes/WP_Admin_Bar.php",
+            "lines": 2,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Admin_Bar::get_nodes": {
+            "file": "classes/WP_Admin_Bar.php",
+            "lines": 5,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Admin_Bar::initialize": {
+            "file": "classes/WP_Admin_Bar.php",
+            "lines": 15,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "add_action",
+                "current_theme_supports",
+                "do_action",
+                "get_blogs_of_user",
+                "get_current_blog_id",
+                "get_current_user_id",
+                "get_theme_support",
+                "home_url",
+                "is_user_logged_in",
+                "trailingslashit",
+                "wp_enqueue_script",
+                "wp_enqueue_style"
+            ]
+        },
+        "WP_Admin_Bar::recursive_render": {
+            "file": "classes/WP_Admin_Bar.php",
+            "lines": 2,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "_deprecated_function"
+            ]
+        },
+        "WP_Admin_Bar::remove_menu": {
+            "file": "classes/WP_Admin_Bar.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Admin_Bar::remove_node": {
+            "file": "classes/WP_Admin_Bar.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Admin_Bar::render": {
+            "file": "classes/WP_Admin_Bar.php",
+            "lines": 4,
+            "kind": "leaf",
             "minn": [],
             "composes": []
         },
@@ -14963,6 +15140,16 @@
             ],
             "composes": []
         },
+        "_admin_bar_bump_cb": {
+            "file": "admin-bar.php",
+            "lines": 3,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "_deprecated_function",
+                "current_theme_supports"
+            ]
+        },
         "_admin_search_query": {
             "file": "admin.php",
             "lines": 1,
@@ -15202,6 +15389,15 @@
                 "get_gmt_from_date",
                 "wp_clear_scheduled_hook",
                 "wp_schedule_single_event"
+            ]
+        },
+        "_get_admin_bar_pref": {
+            "file": "admin-bar.php",
+            "lines": 2,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "get_user_option"
             ]
         },
         "_get_component_from_parsed_url_array": {
@@ -15889,6 +16085,16 @@
             "composes": [
                 "render_block"
             ]
+        },
+        "_minn_front_toolbar": {
+            "file": "admin-bar.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Runtime\\Runtime::current",
+                "Minn\\Runtime\\Runtime::request"
+            ],
+            "composes": []
         },
         "_minn_gallery_attachments": {
             "file": "media.php",
@@ -17201,6 +17407,15 @@
             "minn": [],
             "composes": []
         },
+        "_remove_theme_support": {
+            "file": "theme.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Runtime\\ThemeSupports::remove"
+            ],
+            "composes": []
+        },
         "_reset_front_page_settings_for_post": {
             "file": "post.php",
             "lines": 11,
@@ -17319,6 +17534,16 @@
             "minn": [],
             "composes": [
                 "add_image_size"
+            ]
+        },
+        "_wp_admin_bar_init": {
+            "file": "admin-bar.php",
+            "lines": 12,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "apply_filters",
+                "is_admin_bar_showing"
             ]
         },
         "_wp_admin_html_begin": {
@@ -24504,14 +24729,17 @@
             "composes": []
         },
         "is_admin_bar_showing": {
-            "file": "query.php",
-            "lines": 1,
-            "kind": "noop",
+            "file": "admin-bar.php",
+            "lines": 12,
+            "kind": "composes",
             "minn": [],
             "composes": [
+                "_get_admin_bar_pref",
                 "apply_filters",
                 "is_admin",
-                "is_user_logged_in"
+                "is_embed",
+                "is_user_logged_in",
+                "wp_is_json_request"
             ]
         },
         "is_allowed_http_origin": {
@@ -26796,9 +27024,9 @@
             "kind": "composes",
             "minn": [],
             "composes": [
+                "_remove_theme_support",
                 "current_theme_supports",
-                "is_admin",
-                "remove_theme_support"
+                "is_admin"
             ]
         },
         "remove_filter": {
@@ -26925,8 +27153,8 @@
         },
         "remove_theme_support": {
             "file": "theme.php",
-            "lines": 1,
-            "kind": "noop",
+            "lines": 4,
+            "kind": "minn",
             "minn": [
                 "Minn\\Runtime\\ThemeSupports::remove"
             ],
@@ -28246,13 +28474,10 @@
             "composes": []
         },
         "show_admin_bar": {
-            "file": "query.php",
-            "lines": 1,
-            "kind": "noop",
-            "minn": [
-                "Minn\\Runtime\\Runtime::current",
-                "Minn\\Runtime\\Runtime::set"
-            ],
+            "file": "admin-bar.php",
+            "lines": 2,
+            "kind": "leaf",
+            "minn": [],
             "composes": []
         },
         "single_cat_title": {
@@ -29729,6 +29954,199 @@
                 "is_admin"
             ]
         },
+        "wp_admin_bar_add_secondary_groups": {
+            "file": "admin-bar.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Front\\ToolbarMenus::secondaryGroups"
+            ],
+            "composes": []
+        },
+        "wp_admin_bar_appearance_menu": {
+            "file": "admin-bar.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Front\\ToolbarMenus::appearanceMenu"
+            ],
+            "composes": []
+        },
+        "wp_admin_bar_command_palette_menu": {
+            "file": "admin-bar.php",
+            "lines": 0,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "wp_admin_bar_comments_menu": {
+            "file": "admin-bar.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Front\\ToolbarMenus::commentsMenu"
+            ],
+            "composes": []
+        },
+        "wp_admin_bar_customize_menu": {
+            "file": "admin-bar.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Front\\ToolbarMenus::customizeMenu"
+            ],
+            "composes": []
+        },
+        "wp_admin_bar_dashboard_view_site_menu": {
+            "file": "admin-bar.php",
+            "lines": 7,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "__",
+                "_deprecated_function",
+                "admin_url",
+                "get_current_user_id",
+                "home_url",
+                "is_admin"
+            ]
+        },
+        "wp_admin_bar_edit_menu": {
+            "file": "admin-bar.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Front\\ToolbarMenus::editMenu"
+            ],
+            "composes": []
+        },
+        "wp_admin_bar_edit_site_menu": {
+            "file": "admin-bar.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Front\\ToolbarMenus::editSiteMenu"
+            ],
+            "composes": []
+        },
+        "wp_admin_bar_header": {
+            "file": "admin-bar.php",
+            "lines": 3,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "_deprecated_function",
+                "current_theme_supports"
+            ]
+        },
+        "wp_admin_bar_my_account_item": {
+            "file": "admin-bar.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Front\\ToolbarMenus::myAccountItem"
+            ],
+            "composes": []
+        },
+        "wp_admin_bar_my_account_menu": {
+            "file": "admin-bar.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Front\\ToolbarMenus::myAccountMenu"
+            ],
+            "composes": []
+        },
+        "wp_admin_bar_my_sites_menu": {
+            "file": "admin-bar.php",
+            "lines": 0,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "wp_admin_bar_new_content_menu": {
+            "file": "admin-bar.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Front\\ToolbarMenus::newContentMenu"
+            ],
+            "composes": []
+        },
+        "wp_admin_bar_recovery_mode_menu": {
+            "file": "admin-bar.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Front\\ToolbarMenus::recoveryModeMenu"
+            ],
+            "composes": []
+        },
+        "wp_admin_bar_render": {
+            "file": "admin-bar.php",
+            "lines": 10,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "do_action",
+                "do_action_ref_array",
+                "is_admin_bar_showing"
+            ]
+        },
+        "wp_admin_bar_search_menu": {
+            "file": "admin-bar.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Front\\ToolbarMenus::searchMenu"
+            ],
+            "composes": []
+        },
+        "wp_admin_bar_shortlink_menu": {
+            "file": "admin-bar.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Front\\ToolbarMenus::shortlinkMenu"
+            ],
+            "composes": []
+        },
+        "wp_admin_bar_sidebar_toggle": {
+            "file": "admin-bar.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Front\\ToolbarMenus::sidebarToggle"
+            ],
+            "composes": []
+        },
+        "wp_admin_bar_site_menu": {
+            "file": "admin-bar.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Front\\ToolbarMenus::siteMenu"
+            ],
+            "composes": []
+        },
+        "wp_admin_bar_updates_menu": {
+            "file": "admin-bar.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Front\\ToolbarMenus::updatesMenu"
+            ],
+            "composes": []
+        },
+        "wp_admin_bar_wp_menu": {
+            "file": "admin-bar.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Front\\ToolbarMenus::wpMenu"
+            ],
+            "composes": []
+        },
         "wp_admin_headers": {
             "file": "functions.php",
             "lines": 2,
@@ -30669,6 +31087,16 @@
                 "_minn_run_cron"
             ]
         },
+        "wp_customize_support_script": {
+            "file": "admin-bar.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "replace",
+                "wp_print_inline_script_tag"
+            ]
+        },
         "wp_customize_url": {
             "file": "link-template.php",
             "lines": 5,
@@ -31151,6 +31579,31 @@
                 "Minn\\Content\\Emoji::encode"
             ],
             "composes": []
+        },
+        "wp_enqueue_admin_bar_bump_styles": {
+            "file": "admin-bar.php",
+            "lines": 7,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "current_theme_supports",
+                "get_theme_support",
+                "has_action",
+                "remove_action",
+                "wp_add_inline_style"
+            ]
+        },
+        "wp_enqueue_admin_bar_header_styles": {
+            "file": "admin-bar.php",
+            "lines": 6,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "has_action",
+                "is_admin",
+                "remove_action",
+                "wp_add_inline_style"
+            ]
         },
         "wp_enqueue_block_editor_script_modules": {
             "file": "script-loader.php",
@@ -32357,6 +32810,17 @@
             "composes": [
                 "get_comment",
                 "wp_hash"
+            ]
+        },
+        "wp_get_update_data": {
+            "file": "admin.php",
+            "lines": 2,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Runtime\\UpdateCounts::forCurrentUser"
+            ],
+            "composes": [
+                "apply_filters"
             ]
         },
         "wp_get_upload_dir": {

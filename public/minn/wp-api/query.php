@@ -224,16 +224,6 @@ function is_favicon()
     return _minn_main_query()->is_favicon();
 }
 
-function is_admin_bar_showing()
-{
-    return apply_filters('show_admin_bar', is_user_logged_in() && !is_admin());
-}
-
-function show_admin_bar($show)
-{
-    Runtime::current()->set('show_admin_bar', (bool) $show);
-}
-
 function wp_title($sep = '&raquo;', $display = true, $seplocation = '')
 {
     $title = apply_filters('wp_title', '', $sep, $seplocation);
