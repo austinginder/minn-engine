@@ -164,7 +164,7 @@ final class Router
                 // The policy or the handler declined the route (a {base} naming no declared type): the next one gets its turn.
                 continue;
             }
-            return $request->method === Method::Head ? $response->withoutBody() : $response;
+            return $response;
         }
         return null;
     }
@@ -196,7 +196,7 @@ final class Router
     private function answer(Route $route, Request $request, array $captures, Closure $invoke): Response
     {
         if ($this->check !== null) {
-            ($this->check)($route, $request);
+            ($this->check)($route, $request, $captures);
         }
         if ($route->policy !== null && !$route->policy->isPublic()) {
             ($this->gate)($route->policy, $request, $captures);
@@ -216,7 +216,7 @@ final class Router
         $invalid = null;
         try {
             if ($this->check !== null) {
-                ($this->check)($matched->route, $request);
+                ($this->check)($matched->route, $request, $matched->captures);
             }
         } catch (RestError $error) {
             $invalid = $error;

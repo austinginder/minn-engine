@@ -32,14 +32,14 @@ final readonly class ArgCheck
     /** The check as the router takes it. */
     public function closure(): Closure
     {
-        return fn (Route $route, Request $request): mixed => $this->check($route, $request);
+        return fn (Route $route, Request $request, array $captures = []): mixed => $this->check($route, $request, $captures);
     }
 
-    /** Throws the refusal the declared arguments earn, or returns. */
-    public function check(Route $route, Request $request): void
+    /** Throws the refusal the declared arguments earn, or returns. @param array<string, string> $captures what the path named, for a route whose parameters depend on it */
+    public function check(Route $route, Request $request, array $captures = []): void
     {
         $this->json($request);
-        $query = $route->arguments();
+        $query = $route->arguments($captures);
         $shared = array_intersect_key($query, array_flip(Args::SHARED));
         $own = array_diff_key($query, $shared);
         $body = $route->bodyArguments();

@@ -104,7 +104,9 @@ final readonly class Engine
             return Failure::internal();
         }
         try {
-            return $this->handle($db, $request);
+            $response = $this->handle($db, $request);
+            // A HEAD answer goes out without its body; inside the process (rest_do_request) the body stays, as on the reference.
+            return $request->method === Method::Head ? $response->withoutBody() : $response;
         } catch (\Throwable $e) {
             return self::restRoute($request) === null ? Failure::report($e) : Failure::reportJson($e);
         }

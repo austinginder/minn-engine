@@ -7,7 +7,7 @@ the front door, the autoloader, the one database door, the REST error
 | [`Autoloader`](#autoloader) | final class | 16 | PSR-4 for the Minn namespace: Minn\Http\Request lives at src/Minn/Http/Request.php. |
 | [`Context`](#context) | final readonly class | 41 | One request, as a value: the database door, who is asking, what they |
 | [`Db`](#db) | final class | 238 | The one door to the database. Every query is a prepared statement; the |
-| [`Engine`](#engine) | final readonly class | 236 | The engine's front door. An unmodified wp-config.php ends by requiring |
+| [`Engine`](#engine) | final readonly class | 238 | The engine's front door. An unmodified wp-config.php ends by requiring |
 | [`Http`](#http) | final class | 205 | Outgoing HTTP, called straight from anywhere with no import: |
 | [`RestError`](#resterror) | final class | 60 | A WordPress-shaped error, thrown from anywhere and rendered once by the |
 
@@ -199,7 +199,7 @@ The response for one request, whatever happens: a database that
 cannot be reached, salts that are not set, or a failure anywhere
 underneath, each answered in the language the request asked in.
 
-Internals: `restRoute()` (private, line 114), `bootRuntimeForRest()` (private, line 128), `handle()` (private, line 156), `frontPipeline()` (private, line 234)
+Internals: `restRoute()` (private, line 116), `bootRuntimeForRest()` (private, line 130), `handle()` (private, line 158), `frontPipeline()` (private, line 236)
 
 
 ## Http
@@ -235,7 +235,7 @@ A misspelt argument is an error at the line that has it. Credentials
 - const `REDIRECTS` = `array (   0 => 301,   1 => 302,   2 => 303,   3 => 307,   4 => 308, )`
 - const `CREDENTIALS` = `array (   0 => 'authorization',   1 => 'cookie',   2 => 'proxy-authorization', )`
 
-Used by: `Minn\Http\Access`, `Minn\Http\Args`, `Minn\Http\CertificateName`, `Minn\Http\CookieText`, `Minn\Http\Destination`, `Minn\Http\Download`, `Minn\Http\Envelope`, `Minn\Http\Exchange`, `Minn\Http\Failure`, `Minn\Http\Fake`, `Minn\Http\Ipv6`, `Minn\Http\IriParts`, `Minn\Http\Kernel`, `Minn\Http\Location`, `Minn\Http\Matched`, `Minn\Http\Method`, `Minn\Http\Outbound`, `Minn\Http\Policy`, `Minn\Http\Punycode`, `Minn\Http\RawResponse`, `Minn\Http\Request`, `Minn\Http\RequestFailed`, `Minn\Http\RequestsNames`, `Minn\Http\Response`, `Minn\Http\Route`, `Minn\Http\RouteMiss`, `Minn\Http\RouteRow`, `Minn\Http\Router`, `Minn\Http\Subject`, `Minn\Http\Transport`, `Minn\Http\TrustedProxies`, `Minn\Ops\Updates`
+Used by: `Minn\Http\Access`, `Minn\Http\Args`, `Minn\Http\CertificateName`, `Minn\Http\CookieText`, `Minn\Http\Destination`, `Minn\Http\Download`, `Minn\Http\Envelope`, `Minn\Http\Exchange`, `Minn\Http\Failure`, `Minn\Http\Fake`, `Minn\Http\Ipv6`, `Minn\Http\IriParts`, `Minn\Http\Kernel`, `Minn\Http\Location`, `Minn\Http\Matched`, `Minn\Http\Method`, `Minn\Http\Outbound`, `Minn\Http\Policy`, `Minn\Http\Punycode`, `Minn\Http\RawResponse`, `Minn\Http\Request`, `Minn\Http\RequestFailed`, `Minn\Http\RequestsNames`, `Minn\Http\Response`, `Minn\Http\Route`, `Minn\Http\RouteMiss`, `Minn\Http\RouteParams`, `Minn\Http\RouteRow`, `Minn\Http\Router`, `Minn\Http\Subject`, `Minn\Http\Transport`, `Minn\Http\TrustedProxies`, `Minn\Ops\Updates`
 
 
 ### static `get(string $url, array $query = array ( ), array $headers = array ( ), float $timeout = 5.0, int $redirects = 5, array $hosts = array ( ), array $private = array ( ), ?int $maxBytes = NULL, ?string $userAgent = NULL): Minn\Http\Exchange`

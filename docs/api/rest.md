@@ -40,8 +40,10 @@ the wp/v2 surface: shapes and controllers
 | [`ParamCheck`](#paramcheck) | final class | 75 | The required / validate / sanitize pass over a request's declared arguments. |
 | [`PluginsController`](#pluginscontroller) | final readonly class | 236 | wp/v2 plugins: what sits in wp-content/plugins, in the reference's |
 | [`PolicyGate`](#policygate) | final readonly class | 147 | Judges a route's policy against the caller, with the reference's |
+| [`PostCollectionParams`](#postcollectionparams) | final class | 167 | A post type's collection parameters as the reference builds them for its |
+| [`PostListArgs`](#postlistargs) | final class | 152 | The WP_Query arguments a post list request makes, as the reference makes |
 | [`PostObject`](#postobject) | final readonly class | 530 | Builds the wp/v2 post and page objects in the reference's shape: the |
-| [`PostsController`](#postscontroller) | final readonly class | 183 | wp/v2 posts and pages, read side. |
+| [`PostsController`](#postscontroller) | final readonly class | 186 | wp/v2 posts and pages, read side. |
 | [`PostsWriteController`](#postswritecontroller) | final readonly class | 459 | wp/v2 posts and pages, write side: create, update, trash, and force |
 | [`RegisteredFields`](#registeredfields) | final class | 105 | The fields plugin code adds to an object type with register_rest_field, |
 | [`RegisteredPostFields`](#registeredpostfields) | final readonly class | 89 | The REST object of a post whose type plugin code registered (probe rest-plugin-types), built by what the type supports. |
@@ -58,7 +60,7 @@ the wp/v2 surface: shapes and controllers
 | [`RouteTable`](#routetable) | final class | 38 | The registered endpoints in dispatch shape: one handler list per route, methods as a set, non-numeric keys lifted into the route's options. |
 | [`RuntimeEnvelope`](#runtimeenvelope) | final readonly class | 123 | The REST server's filters around one of Minn's own routes, as the |
 | [`RuntimePrepare`](#runtimeprepare) | final class | 70 | An item a REST response carries, through the filter the reference runs |
-| [`RuntimeRoutes`](#runtimeroutes) | final class | 370 | Routes plugin code registered with register_rest_route(), answered |
+| [`RuntimeRoutes`](#runtimeroutes) | final class | 387 | Routes plugin code registered with register_rest_route(), answered |
 | [`Schema`](#schema) | final readonly class | 473 | JSON-schema handling the way the REST API's argument validation does it: |
 | [`SchemaValues`](#schemavalues) | final class | 206 | The value side of JSON Schema, as the reference applies it: what counts |
 | [`SearchController`](#searchcontroller) | final readonly class | 121 | wp/v2 search over published content: id, title, url, type, and the |
@@ -304,9 +306,11 @@ __construct(Minn\Rest\Schema $schema)
 
 The check as the router takes it.
 
-### `check(Minn\Http\Route $route, Minn\Http\Request $request): void`
+### `check(Minn\Http\Route $route, Minn\Http\Request $request, array $captures = array ( )): void`
 
-Throws the refusal the declared arguments earn, or returns.
+Throws the refusal the declared arguments earn, or returns. @param array<string, string> $captures what the path named, for a route whose parameters depend on it
+
+- `@param array<string, string> $captures what the path named, for a route whose parameters depend on it`
 
 Internals: `json()` (private, line 59), `missing()` (private, line 74), `round()` (private, line 88)
 
@@ -1105,7 +1109,7 @@ clause, so posts, pages, and media build their lists the same way.
 
 - const `TERM_ARGS` = `array (   'categories' => 'category',   'tags' => 'post_tag',   'wp_pattern_category' => 'wp_pattern_category', )` — The list parameters that name terms, by the taxonomy they filter on.
 
-Used by: `Minn\Rest\CommentsController`, `Minn\Rest\MediaController`, `Minn\Rest\PostsController`
+Used by: `Minn\Rest\CommentsController`, `Minn\Rest\MediaController`
 
 ```php
 __construct(int $page = 1, int $perPage = 10, array $include = array ( ), array $exclude = array ( ), array $author = array ( ), array $authorExclude = array ( ), array $parent = array ( ), array $parentExclude = array ( ), array $slugs = array ( ), array $words = array ( ), ?int $menuOrder = NULL, string $orderBy = 'date', string $order = 'DESC', array $terms = array ( ), array $termsExclude = array ( ))
@@ -1643,6 +1647,78 @@ Throws the refusal the policy names, or returns.
 Internals: `subject()` (private, line 66), `type()` (private, line 86), `taxonomy()` (private, line 117), `capabilities()` (private, line 142), `own()` (private, line 156)
 
 
+## PostCollectionParams
+
+`final class Minn\Rest\PostCollectionParams` · `public/minn/src/Minn/Rest/PostCollectionParams.php` · implements `Minn\Http\RouteParams`
+
+A post type's collection parameters as the reference builds them for its
+list (probe rest-post-lists): the shared four, dates, authors when the
+type supports them, ids, menu order and its orderby for page attributes,
+parents for a hierarchical type, search columns and semantics, slugs,
+statuses (every registered one, and any), each REST taxonomy's term
+filter (a list, or a query with children for a hierarchical one and an
+operator for the include side) under a relation, stickies for posts, and
+formats for a type with post formats. Plugins change them through
+rest_{type}_collection_params, asked once a request.
+
+- const `FORMATS` = `array (   0 => 'standard',   1 => 'aside',   2 => 'chat',   3 => 'gallery',   4 => 'link',   5 => 'image',   6 => 'quote',   7 => 'status',   8 => 'video',   9 => 'audio', )`
+- const `STATUSES` = `array (   0 => 'publish',   1 => 'future',   2 => 'draft',   3 => 'pending',   4 => 'private',   5 => 'trash',   6 => 'auto-draft',   7 => 'inherit',   8 => 'request-pending',   9 => 'request-confirmed',   10 => 'request-failed',   11 => 'request-completed', )`
+- const `IDS` = `array (   'type' => 'array',   'items' =>    array (     'type' => 'integer',   ),   'default' =>    array (   ), )`
+
+Used by: `Minn\Rest\DeclaredPostsController`, `Minn\Rest\PostsController`
+
+### static `for(array $captures): array`
+
+The parameters of the list a {base} capture names; none for a base no REST post type has.
+
+### static `ofType(string $name): array`
+
+The parameters of a post type's list, by the type's name. @return array<string, array<string, mixed>>
+
+- `@return array<string, array<string, mixed>>`
+
+Internals: `forType()` (private, line 43), `type()` (private, line 73), `build()` (private, line 97), `statuses()` (private, line 150), `taxonomies()` (private, line 161), `termFilter()` (private, line 177)
+
+
+## PostListArgs
+
+`final class Minn\Rest\PostListArgs` · `public/minn/src/Minn/Rest/PostListArgs.php`
+
+The WP_Query arguments a post list request makes, as the reference makes
+them before rest_{type}_query (probe rest-post-lists): each registered
+parameter the request carries under its query name, the date bounds,
+per_page, stickies (only them, or none of them), an exact search, each
+taxonomy's include and exclude under the request's relation, formats
+(standard as no format at all), the type, and ids alone for a HEAD
+request. Then each through rest_query_var-{name}, the orderby names
+mapped to the query's, and stickies left where they fall unless asked.
+
+- const `MAPPINGS` = `array (   'author' => 'author__in',   'author_exclude' => 'author__not_in',   'exclude' => 'post__not_in',   'include' => 'post__in',   'ignore_sticky' => 'ignore_sticky_posts',   'menu_order' => 'menu_order',   'offset' => 'offset',   'order' => 'order',   'orderby' => 'orderby',   'page' => 'paged',   'parent' => 'post_parent__in',   'parent_exclude' => 'post_parent__not_in',   'search' => 's',   'search_columns' => 'search_columns',   'slug' => 'post_name__in',   'status' => 'post_status', )`
+- const `DATES` = `array (   0 =>    array (     0 => 'before',     1 => 'before',     2 => 'post_date',   ),   1 =>    array (     0 => 'modified_before',     1 => 'before',     2 => 'post_modified',   ),   2 =>    array (     0 => 'after',     1 => 'after',     2 => 'post_date',   ),   3 =>    array (     0 => 'modified_after',     1 => 'after',     2 => 'post_modified',   ), )`
+- const `ORDERBY` = `array (   'id' => 'ID',   'include' => 'post__in',   'slug' => 'post_name',   'include_slugs' => 'post_name__in', )`
+- const `IN` = `'post__in'`
+- const `NOT_IN` = `'post__not_in'`
+
+Used by: `Minn\Rest\PostsController`
+
+### static `of(WP_REST_Request $request, array $registered, string $type): array`
+
+The arguments before plugins see them.
+
+- `@param array<string, mixed> $registered the list's parameters`
+- `@return array<string, mixed>`
+
+### static `queryVars(array $args, WP_REST_Request $request): array`
+
+The query variables from the arguments plugins left: each through
+rest_query_var-{name}, and the list's orderby names as the query's.
+
+- `@param array<string, mixed> $args`
+- `@return array<string, mixed>`
+
+Internals: `sticky()` (private, line 91), `taxonomies()` (private, line 105), `termClause()` (private, line 126), `formats()` (private, line 150)
+
+
 ## PostObject
 
 `final readonly class Minn\Rest\PostObject` · `public/minn/src/Minn/Rest/PostObject.php`
@@ -1712,8 +1788,6 @@ Internals: `meta()` (private, line 76), `navigationView()` (private, line 87), `
 
 wp/v2 posts and pages, read side.
 
-- const `ORDER_BY` = `array (   'date' => 'post_date',   'modified' => 'post_modified',   'title' => 'post_title',   'slug' => 'post_name',   'id' => 'ID',   'author' => 'post_author',   'menu_order' => 'menu_order',   'include' => 'include', )`
-
 Used by: `Minn\Rest\Api`, `Minn\Rest\BlocksController`, `Minn\Rest\DeclaredPostsController`, `Minn\Rest\NavigationController`
 
 ```php
@@ -1731,7 +1805,13 @@ The posts or pages list.
 
 ### `serveList(Minn\Http\Request $request, string $type): Minn\Http\Response`
 
-The list for any post type, with the reference's status and visibility rules.
+The list for any post type as the reference serves it (probe
+rest-post-lists): the caller and the statuses judged, the request's
+parameters sanitized, the query arguments through rest_{type}_query
+and rest_query_var-*, a WP_Query (so pre_get_posts and every query
+filter run), then each post the caller may read (or edit, in the edit
+context) shaped. The totals are the query's, counted again without
+the page when a later page came back empty.
 
 ### `single(Minn\Http\Request $request, string $base, string $id): Minn\Http\Response`
 
@@ -1743,7 +1823,7 @@ One post or page.
 
 One post of any type, with the reference's read rules.
 
-Internals: `visibleStatuses()` (private, line 105), `visibility()` (private, line 142), `orderSql()` (private, line 156)
+Internals: `sanitized()` (private, line 86), `totals()` (private, line 104), `readable()` (private, line 123), `visibleStatuses()` (private, line 146)
 
 
 ## PostsWriteController
@@ -1890,7 +1970,7 @@ A post type plugin code registered, as its REST object follows it
 and the taxonomies it shows in REST under their REST bases. Only once the
 runtime has loaded the plugins that register it.
 
-Used by: `Minn\Rest\PostObject`, `Minn\Rest\PostsController`, `Minn\Rest\PostsWriteController`, `Minn\Rest\RegisteredPostFields`, `Minn\Runtime\PostEvents`
+Used by: `Minn\Rest\PostObject`, `Minn\Rest\PostsWriteController`, `Minn\Rest\RegisteredPostFields`, `Minn\Runtime\PostEvents`
 
 - readonly `string $name`
 
@@ -2243,7 +2323,7 @@ __construct(Minn\Rest\Types $types)
 
 The route's answer with the server's filters around it, or as the route gives it when no plugin can hear.
 
-Internals: `plain()` (private, line 75), `run()` (private, line 87), `routeName()` (private, line 97), `handler()` (private, line 115), `defaults()` (private, line 130), `typed()` (private, line 148)
+Internals: `plain()` (private, line 74), `run()` (private, line 86), `routeName()` (private, line 96), `handler()` (private, line 114), `defaults()` (private, line 129), `typed()` (private, line 147)
 
 
 ## RuntimePrepare
@@ -2297,7 +2377,7 @@ and the runtime's namespaces folded into the index.
 - const `DISPATCH_DONE` = `array (   'rest_filter_response_fields' => 10, )` — rest_post_dispatch's defaults the engine does itself: every answer is cut to its _fields before it is served.
 - const `SERVE_DONE` = `array (   '_oembed_rest_pre_serve_request' => 10, )` — rest_pre_serve_request's defaults the engine does itself: oEmbed's XML (see oembedXml()).
 
-Used by: `Minn\Rest\Api`, `Minn\Rest\BatchController`, `Minn\Rest\Embed`, `Minn\Rest\MediaController`, `Minn\Rest\OEmbedController`, `Minn\Rest\RuntimeEnvelope`, `Minn\Rest\RuntimePrepare`, `Minn\Runtime\CommentEvents`, `Minn\Runtime\PostEvents`, `Minn\Runtime\PostSave`, `Minn\Runtime\TermEvents`, `Minn\Runtime\UserEvents`
+Used by: `Minn\Rest\Api`, `Minn\Rest\BatchController`, `Minn\Rest\Embed`, `Minn\Rest\MediaController`, `Minn\Rest\OEmbedController`, `Minn\Rest\PostsController`, `Minn\Rest\RuntimeEnvelope`, `Minn\Rest\RuntimePrepare`, `Minn\Runtime\CommentEvents`, `Minn\Runtime\PostEvents`, `Minn\Runtime\PostSave`, `Minn\Runtime\TermEvents`, `Minn\Runtime\UserEvents`
 
 
 ### static `gate(Minn\Http\Request $request): ?Minn\Http\Response`
@@ -2346,6 +2426,14 @@ An engine answer as plugins handle one: its data decoded (an empty
 object stays one), its links on the response rather than in the data,
 its status and headers.
 
+### static `wpHeaders(array $headers): array`
+
+A route's own headers as the reference's response object holds them:
+a list's totals are numbers.
+
+- `@param array<string, string> $headers`
+- `@return array<string, string|int>`
+
 ### static `itemResponse(array $item): WP_REST_Response`
 
 One item a response carries, as a response object: its data without
@@ -2369,7 +2457,7 @@ nothing hooked, the answer goes out as it is.
 
 A callback's return as a response object, an error converted.
 
-Internals: `allow()` (private, line 82), `oembedXml()` (private, line 284), `look()` (private, line 298), `remember()` (private, line 303), `decode()` (private, line 310), `expand()` (private, line 330), `newWpRequest()` (private, line 356), `toResponse()` (private, line 379)
+Internals: `allow()` (private, line 82), `oembedXml()` (private, line 301), `look()` (private, line 315), `remember()` (private, line 320), `decode()` (private, line 327), `expand()` (private, line 347), `newWpRequest()` (private, line 373), `toResponse()` (private, line 396)
 
 
 ## Schema

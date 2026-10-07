@@ -28,7 +28,7 @@ final readonly class DeclaredPostsController
     }
 
     /** A declared type's list. */
-    #[Route(Method::Get, '/wp/v2/{base:[a-z0-9_-]+}', policy: new Policy(Access::Type, param: 'base'))]
+    #[Route(Method::Get, '/wp/v2/{base:[a-z0-9_-]+}', policy: new Policy(Access::Type, param: 'base'), params: PostCollectionParams::class)]
     public function list(Request $request, string $base): Response
     {
         return $this->reads->serveList($request, $this->slug($base));

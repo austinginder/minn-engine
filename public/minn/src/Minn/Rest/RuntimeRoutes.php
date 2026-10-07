@@ -190,10 +190,27 @@ final class RuntimeRoutes
         foreach (array_keys(Reply::HEADERS) as $name) {
             unset($headers[$name]);
         }
-        $wpResponse = new \WP_REST_Response($data, $response->status, $headers);
+        $wpResponse = new \WP_REST_Response($data, $response->status, self::wpHeaders($headers));
         $wpResponse->add_links($links);
         self::remember($wpResponse, $response, self::look($wpResponse));
         return $wpResponse;
+    }
+
+    /**
+     * A route's own headers as the reference's response object holds them:
+     * a list's totals are numbers.
+     *
+     * @param array<string, string> $headers
+     * @return array<string, string|int>
+     */
+    public static function wpHeaders(array $headers): array
+    {
+        foreach (['X-WP-Total', 'X-WP-TotalPages'] as $name) {
+            if (isset($headers[$name]) && ctype_digit((string) $headers[$name])) {
+                $headers[$name] = (int) $headers[$name];
+            }
+        }
+        return $headers;
     }
 
     /**

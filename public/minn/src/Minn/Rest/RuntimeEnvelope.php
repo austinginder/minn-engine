@@ -5,15 +5,14 @@ declare(strict_types=1);
 namespace Minn\Rest;
 
 use Closure;
+use Minn\Http\Args;
 use Minn\Http\Envelope;
 use Minn\Http\Matched;
 use Minn\Http\Method;
 use Minn\Http\Request;
 use Minn\Http\Response;
-use Minn\Http\RouteRow;
 use Minn\RestError;
 use Minn\Runtime\Runtime;
-use ReflectionMethod;
 
 /**
  * The REST server's filters around one of Minn's own routes, as the
@@ -114,7 +113,7 @@ final readonly class RuntimeEnvelope implements Envelope
      */
     private function handler(Matched $matched, ?RestError $refusal): array
     {
-        $args = RouteRow::of($matched->route, new ReflectionMethod($matched->handler, $matched->method))->toArray()['args'] ?: $matched->route->bodyArguments();
+        $args = array_map(static fn (array $arg): array => array_diff_key($arg, [Args::HANDLER_VALIDATES => true]), $matched->route->arguments($matched->captures)) ?: $matched->route->bodyArguments();
         return [
             'methods' => array_fill_keys($matched->methods, true),
             'accept_json' => false,

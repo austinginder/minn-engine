@@ -4938,6 +4938,18 @@
                     "type": "string",
                     "required": false
                 },
+                "after": {
+                    "description": "Limit response to posts published after a given ISO8601 compliant date.",
+                    "type": "string",
+                    "format": "date-time",
+                    "required": false
+                },
+                "modified_after": {
+                    "description": "Limit response to posts modified after a given ISO8601 compliant date.",
+                    "type": "string",
+                    "format": "date-time",
+                    "required": false
+                },
                 "author": {
                     "description": "Limit result set to posts assigned to specific authors.",
                     "type": "array",
@@ -4956,6 +4968,18 @@
                     "default": [],
                     "required": false
                 },
+                "before": {
+                    "description": "Limit response to posts published before a given ISO8601 compliant date.",
+                    "type": "string",
+                    "format": "date-time",
+                    "required": false
+                },
+                "modified_before": {
+                    "description": "Limit response to posts modified before a given ISO8601 compliant date.",
+                    "type": "string",
+                    "format": "date-time",
+                    "required": false
+                },
                 "exclude": {
                     "description": "Ensure result set excludes specific IDs.",
                     "type": "array",
@@ -4972,6 +4996,19 @@
                         "type": "integer"
                     },
                     "default": [],
+                    "required": false
+                },
+                "search_semantics": {
+                    "description": "How to interpret the search input.",
+                    "type": "string",
+                    "enum": [
+                        "exact"
+                    ],
+                    "required": false
+                },
+                "offset": {
+                    "description": "Offset the result set by a specific number of items.",
+                    "type": "integer",
                     "required": false
                 },
                 "order": {
@@ -5000,6 +5037,20 @@
                         "include_slugs",
                         "title"
                     ],
+                    "required": false
+                },
+                "search_columns": {
+                    "default": [],
+                    "description": "Array of column names to be searched.",
+                    "type": "array",
+                    "items": {
+                        "enum": [
+                            "post_title",
+                            "post_content",
+                            "post_excerpt"
+                        ],
+                        "type": "string"
+                    },
                     "required": false
                 },
                 "slug": {
@@ -5034,35 +5085,208 @@
                     },
                     "required": false
                 },
+                "tax_relation": {
+                    "description": "Limit result set based on relationship between multiple taxonomies.",
+                    "type": "string",
+                    "enum": [
+                        "AND",
+                        "OR"
+                    ],
+                    "required": false
+                },
                 "categories": {
                     "description": "Limit result set to items with specific terms assigned in the categories taxonomy.",
-                    "type": "array",
-                    "items": {
-                        "type": "integer"
-                    },
+                    "type": [
+                        "object",
+                        "array"
+                    ],
+                    "oneOf": [
+                        {
+                            "title": "Term ID List",
+                            "description": "Match terms with the listed IDs.",
+                            "type": "array",
+                            "items": {
+                                "type": "integer"
+                            }
+                        },
+                        {
+                            "title": "Term ID Taxonomy Query",
+                            "description": "Perform an advanced term query.",
+                            "type": "object",
+                            "properties": {
+                                "terms": {
+                                    "description": "Term IDs.",
+                                    "type": "array",
+                                    "items": {
+                                        "type": "integer"
+                                    },
+                                    "default": []
+                                },
+                                "include_children": {
+                                    "description": "Whether to include child terms in the terms limiting the result set.",
+                                    "type": "boolean",
+                                    "default": false
+                                },
+                                "operator": {
+                                    "description": "Whether items must be assigned all or any of the specified terms.",
+                                    "type": "string",
+                                    "enum": [
+                                        "AND",
+                                        "OR"
+                                    ],
+                                    "default": "OR"
+                                }
+                            },
+                            "additionalProperties": false
+                        }
+                    ],
                     "required": false
                 },
                 "categories_exclude": {
                     "description": "Limit result set to items except those with specific terms assigned in the categories taxonomy.",
-                    "type": "array",
-                    "items": {
-                        "type": "integer"
-                    },
+                    "type": [
+                        "object",
+                        "array"
+                    ],
+                    "oneOf": [
+                        {
+                            "title": "Term ID List",
+                            "description": "Match terms with the listed IDs.",
+                            "type": "array",
+                            "items": {
+                                "type": "integer"
+                            }
+                        },
+                        {
+                            "title": "Term ID Taxonomy Query",
+                            "description": "Perform an advanced term query.",
+                            "type": "object",
+                            "properties": {
+                                "terms": {
+                                    "description": "Term IDs.",
+                                    "type": "array",
+                                    "items": {
+                                        "type": "integer"
+                                    },
+                                    "default": []
+                                },
+                                "include_children": {
+                                    "description": "Whether to include child terms in the terms limiting the result set.",
+                                    "type": "boolean",
+                                    "default": false
+                                }
+                            },
+                            "additionalProperties": false
+                        }
+                    ],
                     "required": false
                 },
                 "tags": {
                     "description": "Limit result set to items with specific terms assigned in the tags taxonomy.",
-                    "type": "array",
-                    "items": {
-                        "type": "integer"
-                    },
+                    "type": [
+                        "object",
+                        "array"
+                    ],
+                    "oneOf": [
+                        {
+                            "title": "Term ID List",
+                            "description": "Match terms with the listed IDs.",
+                            "type": "array",
+                            "items": {
+                                "type": "integer"
+                            }
+                        },
+                        {
+                            "title": "Term ID Taxonomy Query",
+                            "description": "Perform an advanced term query.",
+                            "type": "object",
+                            "properties": {
+                                "terms": {
+                                    "description": "Term IDs.",
+                                    "type": "array",
+                                    "items": {
+                                        "type": "integer"
+                                    },
+                                    "default": []
+                                },
+                                "operator": {
+                                    "description": "Whether items must be assigned all or any of the specified terms.",
+                                    "type": "string",
+                                    "enum": [
+                                        "AND",
+                                        "OR"
+                                    ],
+                                    "default": "OR"
+                                }
+                            },
+                            "additionalProperties": false
+                        }
+                    ],
                     "required": false
                 },
                 "tags_exclude": {
                     "description": "Limit result set to items except those with specific terms assigned in the tags taxonomy.",
+                    "type": [
+                        "object",
+                        "array"
+                    ],
+                    "oneOf": [
+                        {
+                            "title": "Term ID List",
+                            "description": "Match terms with the listed IDs.",
+                            "type": "array",
+                            "items": {
+                                "type": "integer"
+                            }
+                        },
+                        {
+                            "title": "Term ID Taxonomy Query",
+                            "description": "Perform an advanced term query.",
+                            "type": "object",
+                            "properties": {
+                                "terms": {
+                                    "description": "Term IDs.",
+                                    "type": "array",
+                                    "items": {
+                                        "type": "integer"
+                                    },
+                                    "default": []
+                                }
+                            },
+                            "additionalProperties": false
+                        }
+                    ],
+                    "required": false
+                },
+                "sticky": {
+                    "description": "Limit result set to items that are sticky.",
+                    "type": "boolean",
+                    "required": false
+                },
+                "ignore_sticky": {
+                    "description": "Whether to ignore sticky posts or not.",
+                    "type": "boolean",
+                    "default": true,
+                    "required": false
+                },
+                "format": {
+                    "description": "Limit result set to items assigned one or more given formats.",
                     "type": "array",
+                    "uniqueItems": true,
                     "items": {
-                        "type": "integer"
+                        "enum": [
+                            "standard",
+                            "aside",
+                            "chat",
+                            "gallery",
+                            "link",
+                            "image",
+                            "quote",
+                            "status",
+                            "video",
+                            "audio"
+                        ],
+                        "type": "string"
                     },
                     "required": false
                 }
@@ -5112,6 +5336,18 @@
                     "type": "string",
                     "required": false
                 },
+                "after": {
+                    "description": "Limit response to posts published after a given ISO8601 compliant date.",
+                    "type": "string",
+                    "format": "date-time",
+                    "required": false
+                },
+                "modified_after": {
+                    "description": "Limit response to posts modified after a given ISO8601 compliant date.",
+                    "type": "string",
+                    "format": "date-time",
+                    "required": false
+                },
                 "author": {
                     "description": "Limit result set to posts assigned to specific authors.",
                     "type": "array",
@@ -5128,6 +5364,18 @@
                         "type": "integer"
                     },
                     "default": [],
+                    "required": false
+                },
+                "before": {
+                    "description": "Limit response to posts published before a given ISO8601 compliant date.",
+                    "type": "string",
+                    "format": "date-time",
+                    "required": false
+                },
+                "modified_before": {
+                    "description": "Limit response to posts modified before a given ISO8601 compliant date.",
+                    "type": "string",
+                    "format": "date-time",
                     "required": false
                 },
                 "exclude": {
@@ -5150,6 +5398,19 @@
                 },
                 "menu_order": {
                     "description": "Limit result set to posts with a specific menu_order value.",
+                    "type": "integer",
+                    "required": false
+                },
+                "search_semantics": {
+                    "description": "How to interpret the search input.",
+                    "type": "string",
+                    "enum": [
+                        "exact"
+                    ],
+                    "required": false
+                },
+                "offset": {
+                    "description": "Offset the result set by a specific number of items.",
                     "type": "integer",
                     "required": false
                 },
@@ -5198,6 +5459,20 @@
                         "type": "integer"
                     },
                     "default": [],
+                    "required": false
+                },
+                "search_columns": {
+                    "default": [],
+                    "description": "Array of column names to be searched.",
+                    "type": "array",
+                    "items": {
+                        "enum": [
+                            "post_title",
+                            "post_content",
+                            "post_excerpt"
+                        ],
+                        "type": "string"
+                    },
                     "required": false
                 },
                 "slug": {

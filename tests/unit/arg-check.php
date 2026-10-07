@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-use Minn\Http\Args;
 use Minn\Http\Method;
 use Minn\Http\Request;
 use Minn\Http\Route;
 use Minn\Rest\ArgCheck;
+use Minn\Rest\PostCollectionParams;
 use Minn\Rest\Schema;
 use Minn\RestError;
 
@@ -32,7 +32,7 @@ $refusal = static function (Route $route, Request $request) use ($check): ?array
         return $e->payload();
     }
 };
-$posts = new Route(Method::Get, '/wp/v2/posts', args: [Args::CONTEXT, Args::POSTS]);
+$posts = new Route(Method::Get, '/wp/v2/{base:posts}', params: PostCollectionParams::class);
 $settings = new Route(Method::Post, '/wp/v2/settings', body: [['posts_per_page' => ['type' => 'integer'], 'name' => ['type' => 'string', 'required' => true]]]);
 
 return [

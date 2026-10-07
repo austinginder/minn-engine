@@ -117,8 +117,9 @@ final readonly class PostInsert
         $columns = $status === 'private' ? array_replace($columns, ['post_password' => '']) : $columns;
         $columns['post_date'] = $date;
         $columns['post_date_gmt'] = $dateGmt;
-        $columns['post_modified'] = $now;
-        $columns['post_modified_gmt'] = ($this->now)(true);
+        // A new post was last modified when it is dated (a draft's floating GMT date and all); an update, now.
+        $columns['post_modified'] = $update ? $now : $date;
+        $columns['post_modified_gmt'] = $update ? ($this->now)(true) : $dateGmt;
         $title = (string) ($columns['post_title'] ?? $existing['post_title'] ?? '');
         $slug = (string) ($columns['post_name'] ?? $existing['post_name'] ?? '');
         if ($slug === '' && !in_array($status, ['draft', 'pending', 'auto-draft'], true)) {

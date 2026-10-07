@@ -26,6 +26,7 @@ final readonly class Route
      * @param bool $index whether the route is listed in the REST index (a route the index spells itself is not)
      * @param list<array<string, array<string, mixed>>> $body the parameter sets this route reads from the JSON body, from Args or the shape that owns them
      * @param string|null $name the route's name in the catalogue; the handler's Class::method when null
+     * @param class-string<RouteParams>|null $params the parameters' source when they depend on the captures; $args otherwise
      */
     public function __construct(
         public Method $method,
@@ -35,17 +36,25 @@ final readonly class Route
         public bool $index = true,
         public array $body = [],
         public ?string $name = null,
+        public ?string $params = null,
     ) {
     }
 
     /**
-     * The parameters this route accepts, as the REST index publishes them.
+     * The parameters this route accepts, as the REST index publishes them:
+     * from its params source for these captures (a capture the pattern fixes,
+     * such as {base:posts}, counts when none is given), or its fixed sets.
      *
+     * @param array<string, string> $captures
      * @return array<string, array<string, mixed>>
      */
-    public function arguments(): array
+    public function arguments(array $captures = []): array
     {
-        return Args::merge($this->args);
+        if ($this->params === null) {
+            return Args::merge($this->args);
+        }
+        $fixed = preg_match_all('/\{(\w+):(\w+)\}/', $this->pattern, $matches, PREG_SET_ORDER) > 0 ? array_column($matches, 2, 1) : [];
+        return ($this->params)::for($captures + $fixed);
     }
 
     /**

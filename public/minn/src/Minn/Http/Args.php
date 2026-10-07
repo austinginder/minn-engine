@@ -41,45 +41,6 @@ final class Args
         'force' => ['description' => 'Whether to bypass Trash and force deletion.', 'type' => 'boolean', 'default' => false, 'required' => false],
     ];
 
-    /** Read by Rest\ListQuery::fromRequest() and Rest\PostsController::serveList(): the post collection.
-     * The term filters take the id list only; the reference also takes a taxonomy query object,
-     * which the engine does not. */
-    public const POSTS = [
-        'page' => ['description' => 'Current page of the collection.', 'type' => 'integer', 'default' => 1, 'minimum' => 1, 'required' => false],
-        'per_page' => ['description' => 'Maximum number of items to be returned in result set.', 'type' => 'integer', 'default' => 10, 'minimum' => 1, 'maximum' => 100, 'required' => false],
-        'search' => ['description' => 'Limit results to those matching a string.', 'type' => 'string', 'required' => false],
-        'author' => ['description' => 'Limit result set to posts assigned to specific authors.', 'type' => 'array', 'items' => ['type' => 'integer'], 'default' => [], 'required' => false],
-        'author_exclude' => ['description' => 'Ensure result set excludes posts assigned to specific authors.', 'type' => 'array', 'items' => ['type' => 'integer'], 'default' => [], 'required' => false],
-        'exclude' => ['description' => 'Ensure result set excludes specific IDs.', 'type' => 'array', 'items' => ['type' => 'integer'], 'default' => [], 'required' => false],
-        'include' => ['description' => 'Limit result set to specific IDs.', 'type' => 'array', 'items' => ['type' => 'integer'], 'default' => [], 'required' => false],
-        'order' => ['description' => 'Order sort attribute ascending or descending.', 'type' => 'string', 'default' => 'desc', 'enum' => ['asc', 'desc'], 'required' => false],
-        'orderby' => ['description' => 'Sort collection by post attribute.', 'type' => 'string', 'default' => 'date', 'enum' => ['author', 'date', 'id', 'include', 'modified', 'parent', 'relevance', 'slug', 'include_slugs', 'title'], 'required' => false],
-        'slug' => ['description' => 'Limit result set to posts with one or more specific slugs.', 'type' => 'array', 'items' => ['type' => 'string'], 'required' => false],
-        'status' => ['default' => 'publish', 'description' => 'Limit result set to posts assigned one or more statuses.', 'type' => 'array', 'items' => ['enum' => ['publish', 'future', 'draft', 'pending', 'private', 'trash', 'auto-draft', 'inherit', 'request-pending', 'request-confirmed', 'request-failed', 'request-completed', 'any'], 'type' => 'string'], 'required' => false, self::HANDLER_VALIDATES => true],
-        'categories' => ['description' => 'Limit result set to items with specific terms assigned in the categories taxonomy.', 'type' => 'array', 'items' => ['type' => 'integer'], 'required' => false],
-        'categories_exclude' => ['description' => 'Limit result set to items except those with specific terms assigned in the categories taxonomy.', 'type' => 'array', 'items' => ['type' => 'integer'], 'required' => false],
-        'tags' => ['description' => 'Limit result set to items with specific terms assigned in the tags taxonomy.', 'type' => 'array', 'items' => ['type' => 'integer'], 'required' => false],
-        'tags_exclude' => ['description' => 'Limit result set to items except those with specific terms assigned in the tags taxonomy.', 'type' => 'array', 'items' => ['type' => 'integer'], 'required' => false],
-    ];
-
-    /** Read by Rest\ListQuery::fromRequest() and Rest\PostsController::serveList(): the page collection. */
-    public const PAGES = [
-        'page' => ['description' => 'Current page of the collection.', 'type' => 'integer', 'default' => 1, 'minimum' => 1, 'required' => false],
-        'per_page' => ['description' => 'Maximum number of items to be returned in result set.', 'type' => 'integer', 'default' => 10, 'minimum' => 1, 'maximum' => 100, 'required' => false],
-        'search' => ['description' => 'Limit results to those matching a string.', 'type' => 'string', 'required' => false],
-        'author' => ['description' => 'Limit result set to posts assigned to specific authors.', 'type' => 'array', 'items' => ['type' => 'integer'], 'default' => [], 'required' => false],
-        'author_exclude' => ['description' => 'Ensure result set excludes posts assigned to specific authors.', 'type' => 'array', 'items' => ['type' => 'integer'], 'default' => [], 'required' => false],
-        'exclude' => ['description' => 'Ensure result set excludes specific IDs.', 'type' => 'array', 'items' => ['type' => 'integer'], 'default' => [], 'required' => false],
-        'include' => ['description' => 'Limit result set to specific IDs.', 'type' => 'array', 'items' => ['type' => 'integer'], 'default' => [], 'required' => false],
-        'menu_order' => ['description' => 'Limit result set to posts with a specific menu_order value.', 'type' => 'integer', 'required' => false],
-        'order' => ['description' => 'Order sort attribute ascending or descending.', 'type' => 'string', 'default' => 'desc', 'enum' => ['asc', 'desc'], 'required' => false],
-        'orderby' => ['description' => 'Sort collection by post attribute.', 'type' => 'string', 'default' => 'date', 'enum' => ['author', 'date', 'id', 'include', 'modified', 'parent', 'relevance', 'slug', 'include_slugs', 'title', 'menu_order'], 'required' => false],
-        'parent' => ['description' => 'Limit result set to items with particular parent IDs.', 'type' => 'array', 'items' => ['type' => 'integer'], 'default' => [], 'required' => false],
-        'parent_exclude' => ['description' => 'Limit result set to all items except those of a particular parent ID.', 'type' => 'array', 'items' => ['type' => 'integer'], 'default' => [], 'required' => false],
-        'slug' => ['description' => 'Limit result set to posts with one or more specific slugs.', 'type' => 'array', 'items' => ['type' => 'string'], 'required' => false],
-        'status' => ['default' => 'publish', 'description' => 'Limit result set to posts assigned one or more statuses.', 'type' => 'array', 'items' => ['enum' => ['publish', 'future', 'draft', 'pending', 'private', 'trash', 'auto-draft', 'inherit', 'request-pending', 'request-confirmed', 'request-failed', 'request-completed', 'any'], 'type' => 'string'], 'required' => false, self::HANDLER_VALIDATES => true],
-    ];
-
     /** Read by Rest\ListQuery::fromRequest() and Rest\MediaController::libraryClauses(): the media library. */
     public const MEDIA = [
         'page' => ['description' => 'Current page of the collection.', 'type' => 'integer', 'default' => 1, 'minimum' => 1, 'required' => false],

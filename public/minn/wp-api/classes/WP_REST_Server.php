@@ -319,7 +319,7 @@ class WP_REST_Server
             return null;
         }
         // The route's own headers (Allow, X-WP-Total, Location...), not the transport's, which serving adds.
-        $out = new WP_REST_Response($data, $response->status, array_diff_key($response->headers, Minn\Rest\Reply::HEADERS, ['Vary' => true, 'X-Robots-Tag' => true]));
+        $out = new WP_REST_Response($data, $response->status, Minn\Rest\RuntimeRoutes::wpHeaders(array_diff_key($response->headers, Minn\Rest\Reply::HEADERS, ['Vary' => true, 'X-Robots-Tag' => true])));
         $out->set_matched_route($route);
         return $out;
     }

@@ -18,14 +18,14 @@ The engine's own classes under `public/minn/src/Minn/`, one page per namespace, 
 | [`Minn\Front`](front.md) | 34 | URL resolution, permalinks, feeds, sitemaps and the public page |
 | [`Minn\Html`](html.md) | 6 | the HTML tag processor |
 | [`Minn\Html\Tree`](html-tree.md) | 13 |  |
-| [`Minn\Http`](http.md) | 31 | request, response, routing, and the outgoing client |
+| [`Minn\Http`](http.md) | 32 | request, response, routing, and the outgoing client |
 | [`Minn\I18n`](i18n.md) | 9 |  |
 | [`Minn\Login`](login.md) | 4 | /wp-login.php and the sign-in surface |
 | [`Minn\Mail`](mail.md) | 24 | sending mail and the notices the engine sends |
 | [`Minn\Media`](media.md) | 12 | uploads, image sizes and attachment metadata |
 | [`Minn\Ops`](ops.md) | 6 |  |
 | [`Minn\Query`](query.md) | 7 | shared SQL fragments |
-| [`Minn\Rest`](rest.md) | 77 | the wp/v2 surface: shapes and controllers |
+| [`Minn\Rest`](rest.md) | 79 | the wp/v2 surface: shapes and controllers |
 | [`Minn\Runtime`](runtime.md) | 82 | the WordPress runtime plugins load against |
 | [`Minn\Support`](support.md) | 25 | escaping, serialized readers, small helpers |
 | [`Minn\Theme`](theme.md) | 25 | the block-theme reader, templates, global styles and the page renderer |

@@ -34,7 +34,7 @@ final readonly class RouteCatalogue
         $arguments = [];
         foreach ($this->router->table() as $row) {
             foreach (EngineRoutes::forms($row->pattern, $bases) as $form) {
-                $arguments[$form] = array_merge($arguments[$form] ?? [], $row->toArray()['args']);
+                $arguments[$form] = array_merge($arguments[$form] ?? [], $row->argsFor($form));
             }
         }
         foreach ($this->router->routes() as $pattern => $methods) {

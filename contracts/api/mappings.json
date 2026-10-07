@@ -7,7 +7,7 @@
         "leaf": 651,
         "noop": 1850,
         "functions": 3992,
-        "minnMethods": 678,
+        "minnMethods": 679,
         "leafLinesOver15": 12
     },
     "functions": {
@@ -9224,6 +9224,7 @@
                 "Minn\\Rest\\Api::forRequest",
                 "Minn\\Rest\\Api::handleEngineOnly",
                 "Minn\\Rest\\RuntimePrepare::during",
+                "Minn\\Rest\\RuntimeRoutes::wpHeaders",
                 "Minn\\Runtime\\Runtime::current",
                 "Minn\\Runtime\\Runtime::isSecure"
             ],

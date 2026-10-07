@@ -21,17 +21,6 @@ use Minn\RestError;
 /** wp/v2 posts and pages, read side. */
 final readonly class PostsController
 {
-    private const ORDER_BY = [
-        'date' => 'post_date',
-        'modified' => 'post_modified',
-        'title' => 'post_title',
-        'slug' => 'post_name',
-        'id' => 'ID',
-        'author' => 'post_author',
-        'menu_order' => 'menu_order',
-        'include' => 'include',
-    ];
-
     public function __construct(
         private Db $db,
         private Posts $posts,
@@ -41,68 +30,120 @@ final readonly class PostsController
     }
 
     /** The posts or pages list. */
-    #[Route(Method::Get, '/wp/v2/{base:posts}', policy: new Policy(Access::Public), args: [Args::CONTEXT, Args::POSTS])]
-    #[Route(Method::Get, '/wp/v2/{base:pages}', policy: new Policy(Access::Public), args: [Args::CONTEXT, Args::PAGES])]
+    #[Route(Method::Get, '/wp/v2/{base:posts}', policy: new Policy(Access::Public), params: PostCollectionParams::class)]
+    #[Route(Method::Get, '/wp/v2/{base:pages}', policy: new Policy(Access::Public), params: PostCollectionParams::class)]
     public function list(Request $request, string $base): Response
     {
         return $this->serveList($request, $base === 'pages' ? 'page' : 'post');
     }
 
-    /** The list for any post type, with the reference's status and visibility rules. */
+    /**
+     * The list for any post type as the reference serves it (probe
+     * rest-post-lists): the caller and the statuses judged, the request's
+     * parameters sanitized, the query arguments through rest_{type}_query
+     * and rest_query_var-*, a WP_Query (so pre_get_posts and every query
+     * filter run), then each post the caller may read (or edit, in the edit
+     * context) shaped. The totals are the query's, counted again without
+     * the page when a later page came back empty.
+     */
     public function serveList(Request $request, string $type): Response
     {
-        // A plugin's type filters on its own REST taxonomies, under their REST bases (probe rest-plugin-types).
-        $query = ListQuery::fromRequest($request, RegisteredType::of($type)?->taxonomies());
         $context = Context::of($request);
-        $statuses = $this->visibleStatuses($request, $type, $context);
-        $needsAuth = $context->isEdit() || $statuses !== ['publish'];
-        $userId = $needsAuth ? $this->caller->id() : 0;
-        $others = $this->caller->can(TypeCapabilities::editOthers($type));
-
-        [$where, $params] = $this->visibility($type, $statuses, $needsAuth, $others);
-        [$narrowing, $narrowingParams] = $query->clauses();
-        $where .= $narrowing;
-        $params = [...$params, ...$narrowingParams];
-        if ($query->menuOrder !== null) {
-            $where .= ' AND menu_order = ?';
-            $params[] = $query->menuOrder;
+        $this->visibleStatuses($request, $type, $context);
+        $registered = PostCollectionParams::ofType($type);
+        $wp = $this->sanitized($request, $registered);
+        if ($wp['orderby'] === 'relevance' && empty($wp['search'])) {
+            throw new RestError('rest_no_search_term_defined', 'You need to define a search term to order by relevance.', 400);
         }
-        foreach ([$query->terms, $query->termsExclude] as $exclude => $filters) {
-            foreach ($filters as $taxonomy => $ids) {
-                $where .= ' AND ID ' . ($exclude === 1 ? 'NOT IN' : 'IN') . " (SELECT tr.object_id FROM {$this->db->table('term_relationships')} tr
-                    JOIN {$this->db->table('term_taxonomy')} tt ON tt.term_taxonomy_id = tr.term_taxonomy_id WHERE tt.taxonomy = ? AND tt.term_id IN (?))";
-                $params = [...$params, $taxonomy, $ids];
+        if ($wp['orderby'] === 'include' && empty($wp['include'])) {
+            throw new RestError('rest_orderby_include_missing_include', 'You need to define an include parameter to order by include.', 400);
+        }
+        $args = (array) \apply_filters("rest_{$type}_query", PostListArgs::of($wp, $registered, $type), $wp);
+        $vars = PostListArgs::queryVars($args, $wp);
+        $query = new \WP_Query();
+        $posts = $query->query($vars);
+        [$total, $pages] = $this->totals($query, $vars);
+        if ($request->method === Method::Head) {
+            return Reply::list([], $total, $pages, null);
+        }
+        $objects = [];
+        foreach ((array) $posts as $post) {
+            if (!$post instanceof \WP_Post || !($context->isEdit() ? $this->caller->can('edit_post', $post->ID) : $this->readable($post))) {
+                continue;
             }
+            $record = PostRecord::fromRow(get_object_vars($post));
+            $objects[] = $context->isEdit() ? $this->object->edit($record, $this->caller->id()) : $this->object->view($record);
         }
+        return Reply::list($objects, $total, $pages, Fields::fromQuery($request->query));
+    }
 
-        $table = $this->db->table('posts');
-        $total = (int) $this->db->value("SELECT COUNT(*) FROM {$table} WHERE {$where}", $params);
-        if ($query->isPastTheEnd($total)) {
+    /**
+     * The request as the list's handler reads it: its parameters with their
+     * defaults, sanitized by their schemas, as plugins' filters see it too.
+     *
+     * @param array<string, array<string, mixed>> $registered
+     */
+    private function sanitized(Request $request, array $registered): \WP_REST_Request
+    {
+        $wp = RuntimeRoutes::wpRequest($request);
+        $args = array_map(static fn (array $arg): array => array_diff_key($arg, [Args::HANDLER_VALIDATES => true]) + ['validate_callback' => 'rest_validate_request_arg', 'sanitize_callback' => 'rest_sanitize_request_arg'], $registered);
+        $wp->set_attributes(['args' => $args] + (array) $wp->get_attributes());
+        $wp->set_default_params(array_map(static fn (array $arg) => $arg['default'], array_filter($args, static fn (array $arg) => array_key_exists('default', $arg))));
+        $wp->sanitize_params();
+        return $wp;
+    }
+
+    /**
+     * The total and the page count: the query's own, or, when a later page
+     * came back with nothing counted, a count without the page. A page past
+     * the last is refused.
+     *
+     * @param array<string, mixed> $vars
+     * @return array{0: int, 1: int}
+     */
+    private function totals(\WP_Query $query, array $vars): array
+    {
+        $page = (int) ($vars['paged'] ?? 0);
+        $total = (int) $query->found_posts;
+        if ($total < 1 && $page > 1) {
+            unset($vars['paged']);
+            $count = new \WP_Query();
+            $count->query($vars);
+            $total = (int) $count->found_posts;
+        }
+        $perPage = (int) $query->query_vars['posts_per_page'];
+        $pages = $perPage !== 0 ? (int) ceil($total / $perPage) : 0;
+        if ($page > $pages && $total > 0) {
             throw new RestError('rest_post_invalid_page_number', 'The page number requested is larger than the number of pages available.', 400);
         }
-        $rows = PostRecord::fromRows($this->db->rows(
-            "SELECT * FROM {$table} WHERE {$where} ORDER BY {$this->orderSql($query)} LIMIT ?, ?",
-            [...$params, $query->offset(), $query->perPage],
-        ));
-        if ($context->isEdit() && !$others) {
-            // Edit context drops the rows the caller cannot edit AFTER the page was cut: a
-            // page of five may come back with one item while the totals still count them all.
-            $rows = array_values(array_filter($rows, fn (PostRecord $post) => $this->caller->can('edit_post', $post->id)));
+        return [$total, $pages];
+    }
+
+    /** Whether the caller may read a post: published, readable to them, a public status, or an attachment of one they may. */
+    private function readable(\WP_Post $post): bool
+    {
+        if ($post->post_status === 'publish' || $this->caller->can('read_post', $post->ID)) {
+            return true;
         }
-        $objects = $context->isEdit()
-            ? array_map(fn (PostRecord $post) => $this->object->edit($post, $userId), $rows)
-            : array_map(fn (PostRecord $post) => $this->object->view($post), $rows);
-        return Reply::list($objects, $total, $query->totalPages($total), Fields::fromQuery($request->query));
+        $status = \get_post_status_object($post->post_status);
+        if ($status && $status->public) {
+            return true;
+        }
+        if ($post->post_status === 'inherit' && $post->post_parent > 0) {
+            $parent = \get_post($post->post_parent);
+            if ($parent instanceof \WP_Post) {
+                return $this->readable($parent);
+            }
+        }
+        return $post->post_status === 'inherit';
     }
 
     /**
      * The statuses this caller may list. Public callers see only 'publish';
      * any other status and the edit context need a caller who can edit this
      * type, and a status beyond publish is a parameter error without that cap.
-     *
-     * @return list<string>
      */
-    private function visibleStatuses(Request $request, string $type, Context $context): array
+    private function visibleStatuses(Request $request, string $type, Context $context): void
     {
         $publicOnly = ['publish'];
         $requested = $request->has('status')
@@ -115,58 +156,20 @@ final readonly class PostsController
             throw new RestError('rest_invalid_param', 'Invalid parameter(s): status', 400, ['params' => ['status' => 'Status is forbidden.'], 'details' => ['status' => $inner]]);
         }
         // The enum is judged after the capability, and the reference always names status[0].
-        $known = Args::POSTS['status']['items']['enum'];
+        $known = PostCollectionParams::ofType($type)['status']['items']['enum'] ?? [];
         if (array_diff($requested, $known) !== []) {
             $options = implode(', ', array_slice($known, 0, -1)) . ', and ' . end($known);
             $inner = ['code' => 'rest_not_in_enum', 'message' => "status[0] is not one of {$options}.", 'data' => null];
             throw new RestError('rest_invalid_param', 'Invalid parameter(s): status', 400, ['params' => ['status' => $inner['message']], 'details' => ['status' => $inner]]);
         }
         if (!$context->isEdit() && !$beyondPublic) {
-            return $publicOnly;
+            return;
         }
         $refusal = 'Sorry, you are not allowed to edit posts in this post type.';
         $this->caller->require('rest_forbidden_context', $refusal, 401);
         if (!$this->caller->can($editCap)) {
             throw new RestError('rest_forbidden_context', $refusal, 403);
         }
-        return $requested;
-    }
-
-    /**
-     * The clause that keeps the rows this caller may see: another author's
-     * unpublished posts need edit_others_*, their private ones read_private_*.
-     *
-     * @param list<string> $statuses
-     * @return array{string, list<mixed>}
-     */
-    private function visibility(string $type, array $statuses, bool $needsAuth, bool $others): array
-    {
-        $where = 'post_type = ? AND post_status IN (?)';
-        $params = [$type, $statuses];
-        if ($needsAuth && !$others) {
-            $where .= " AND (post_status = 'publish' OR post_author = ?)";
-            $params[] = $this->caller->id();
-        } elseif ($needsAuth && in_array('private', $statuses, true) && !$this->caller->can(TypeCapabilities::readPrivate($type))) {
-            $where .= " AND (post_status <> 'private' OR post_author = ?)";
-            $params[] = $this->caller->id();
-        }
-        return [$where, $params];
-    }
-
-    private function orderSql(ListQuery $query): string
-    {
-        $orderBy = self::ORDER_BY[$query->orderBy] ?? 'post_date';
-        if ($orderBy === 'include') {
-            // The include list is its own order; the order parameter does not reverse it.
-            return $query->include === [] ? "post_date {$query->order}" : 'FIELD(ID, ' . implode(',', $query->include) . ')';
-        }
-        if ($orderBy === 'post_date') {
-            // Same-date rows: the reference lists the newest id first on a plain
-            // list and the oldest first once search or include narrows the query.
-            $ties = $query->include !== [] || $query->isSearch() ? 'ASC' : 'DESC';
-            return "post_date {$query->order}, ID {$ties}";
-        }
-        return "{$orderBy} {$query->order}";
     }
 
     /** One post or page. */
