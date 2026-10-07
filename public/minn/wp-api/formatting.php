@@ -468,7 +468,7 @@ function force_ssl_admin($force = null)
 
 function add_query_arg(...$args)
 {
-    $current = $GLOBALS['minn_request_uri'] ?? (Runtime::current()->request?->path ?? '');
+    $current = _minn_request_uri();
     if (is_array($args[0])) {
         $uri = count($args) < 2 || $args[1] === false ? $current : (string) $args[1];
         $new = $args[0];
