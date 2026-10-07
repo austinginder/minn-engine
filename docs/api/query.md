@@ -252,7 +252,7 @@ one term, its title match.
 Literal quoting for the SQL fragments the query classes hand to plugins,
 which embed them verbatim in their own statements.
 
-Used by: `Minn\Query\DateSql`, `Minn\Query\MetaSql`, `Minn\Query\PostSearch`, `Minn\Query\TaxSql`, `Minn\Runtime\PostQueryStatus`, `Minn\Runtime\PostQueryWhere`
+Used by: `Minn\Query\DateSql`, `Minn\Query\MetaSql`, `Minn\Query\PostSearch`, `Minn\Query\TaxSql`, `Minn\Runtime\PostQueryStatus`, `Minn\Runtime\PostQueryWhere`, `Minn\Runtime\TermQueryRunner`
 
 ### static `quote(string $value): string`
 

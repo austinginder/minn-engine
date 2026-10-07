@@ -56,6 +56,8 @@ final class QueryBlocks
         $attrs = (array) $block->attr('query', []);
         if (!empty($attrs['inherit'])) {
             $this->queries[] = ['page' => new Page($context->posts, $context->total), 'inherit' => true];
+        } elseif (Runtime::booted()) {
+            $this->queries[] = ['page' => self::queried($block, $attrs), 'inherit' => false];
         } else {
             $perPage = max(1, min(100, (int) ($attrs['perPage'] ?? 10)));
             $sticky = ($attrs['sticky'] ?? '') === 'exclude' ? [] : Serialized::intList($this->site->option('sticky_posts'));
@@ -76,6 +78,26 @@ final class QueryBlocks
         }
         array_pop($this->queries);
         return Html::addClasses($out, Layout::classes('query', $block->attrs));
+    }
+
+    /**
+     * A query loop's posts as the reference finds them: the arguments
+     * build_query_vars_from_query_block makes of the block's query (through
+     * query_loop_block_query_vars) for the page its query-{id}-page asks
+     * for, run through WP_Query, so pre_get_posts and the posts_* filters
+     * shape it too.
+     *
+     * @param array<string, mixed> $attrs the block's query
+     */
+    private static function queried(Block $block, array $attrs): Page
+    {
+        $queryId = $block->attrs['queryId'] ?? null;
+        $key = $queryId === null ? 'query-page' : "query-{$queryId}-page";
+        $page = (int) (Runtime::current()->request?->query[$key] ?? 0) ?: 1;
+        $template = new \WP_Block(['blockName' => 'core/post-template', 'attrs' => [], 'innerBlocks' => [], 'innerHTML' => '', 'innerContent' => []], ['queryId' => $queryId, 'query' => $attrs]);
+        $query = new \WP_Query(\build_query_vars_from_query_block($template, $page));
+        $rows = array_map(static fn ($post) => array_diff_key(get_object_vars($post), ['filter' => true]), array_filter((array) $query->posts, static fn ($post) => $post instanceof \WP_Post));
+        return new Page(PostRecord::fromRows(array_values($rows)), (int) $query->found_posts);
     }
 
     private function current(): array

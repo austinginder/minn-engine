@@ -4,10 +4,10 @@
     "summary": {
         "minn": 640,
         "composes": 927,
-        "leaf": 649,
-        "noop": 1848,
-        "functions": 3994,
-        "minnMethods": 679,
+        "leaf": 650,
+        "noop": 1853,
+        "functions": 4000,
+        "minnMethods": 681,
         "leafLinesOver15": 12
     },
     "functions": {
@@ -11434,29 +11434,69 @@
             "minn": [],
             "composes": []
         },
+        "WP_Term_Query::format_terms": {
+            "file": "classes/WP_Term_Query.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Runtime\\TermQueryTree::format"
+            ],
+            "composes": []
+        },
+        "WP_Term_Query::get_search_sql": {
+            "file": "classes/WP_Term_Query.php",
+            "lines": 2,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
         "WP_Term_Query::get_terms": {
             "file": "classes/WP_Term_Query.php",
-            "lines": 13,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "apply_filters",
-                "is_wp_error"
-            ]
+            "lines": 2,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Runtime\\TermQueryRunner::__construct"
+            ],
+            "composes": []
+        },
+        "WP_Term_Query::parse_order": {
+            "file": "classes/WP_Term_Query.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Runtime\\TermOrder::direction"
+            ],
+            "composes": []
+        },
+        "WP_Term_Query::parse_orderby": {
+            "file": "classes/WP_Term_Query.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Runtime\\TermOrder::clause"
+            ],
+            "composes": []
         },
         "WP_Term_Query::parse_query": {
             "file": "classes/WP_Term_Query.php",
-            "lines": 7,
-            "kind": "minn",
-            "minn": [
-                "Minn\\Runtime\\TermQuery::coerce"
-            ],
+            "lines": 17,
+            "kind": "composes",
+            "minn": [],
             "composes": [
+                "absint",
                 "apply_filters",
                 "do_action_ref_array",
-                "wp_parse_args",
-                "wp_parse_id_list"
+                "wp_parse_args"
             ]
+        },
+        "WP_Term_Query::populate_terms": {
+            "file": "classes/WP_Term_Query.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Runtime\\TermQueryTree::populate"
+            ],
+            "composes": []
         },
         "WP_Term_Query::query": {
             "file": "classes/WP_Term_Query.php",
@@ -16549,15 +16589,6 @@
                 "get_terms"
             ]
         },
-        "_minn_term_fields": {
-            "file": "taxonomy.php",
-            "lines": 1,
-            "kind": "noop",
-            "minn": [
-                "Minn\\Runtime\\TermQuery::shape"
-            ],
-            "composes": []
-        },
         "_minn_term_lookup": {
             "file": "taxonomy.php",
             "lines": 7,
@@ -16915,6 +16946,15 @@
             "lines": 1,
             "kind": "noop",
             "minn": [],
+            "composes": []
+        },
+        "_pad_term_counts": {
+            "file": "taxonomy.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Runtime\\TermQueryTree::pad"
+            ],
             "composes": []
         },
         "_post_format_request": {
@@ -18316,7 +18356,7 @@
         },
         "build_query_vars_from_query_block": {
             "file": "blocks.php",
-            "lines": 4,
+            "lines": 5,
             "kind": "minn",
             "minn": [
                 "Minn\\Blocks\\QueryVars::fromContext"
@@ -18324,8 +18364,10 @@
             "composes": [
                 "apply_filters",
                 "get_option",
-                "is_taxonomy_viewable",
-                "post_type_exists"
+                "get_post_format_slugs",
+                "is_post_type_hierarchical",
+                "is_post_type_viewable",
+                "is_taxonomy_viewable"
             ]
         },
         "build_template_part_block_variations": {
@@ -23091,23 +23133,14 @@
         },
         "get_terms": {
             "file": "taxonomy.php",
-            "lines": 33,
-            "kind": "minn",
-            "minn": [
-                "Minn\\Runtime\\TermQuery::count",
-                "Minn\\Runtime\\TermQuery::hasChildren",
-                "Minn\\Runtime\\TermQuery::normalise",
-                "Minn\\Runtime\\TermQuery::rows",
-                "Minn\\Runtime\\TermQuery::shape"
-            ],
+            "lines": 25,
+            "kind": "composes",
+            "minn": [],
             "composes": [
-                "_minn_term_query",
                 "apply_filters",
-                "sanitize_term_field",
+                "shape",
                 "taxonomy_exists",
-                "wp_is_numeric_array",
-                "wp_parse_args",
-                "wp_unslash"
+                "wp_parse_args"
             ]
         },
         "get_the_ID": {
@@ -31726,13 +31759,14 @@
         },
         "wp_get_object_terms": {
             "file": "taxonomy.php",
-            "lines": 16,
-            "kind": "composes",
-            "minn": [],
+            "lines": 18,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Runtime\\ObjectTerms::byTaxonomyArgs"
+            ],
             "composes": [
                 "apply_filters",
                 "get_terms",
-                "is_wp_error",
                 "taxonomy_exists",
                 "wp_parse_args"
             ]
@@ -32879,6 +32913,13 @@
             "composes": [
                 "apply_filters"
             ]
+        },
+        "wp_lazyload_term_meta": {
+            "file": "taxonomy.php",
+            "lines": 0,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
         },
         "wp_link_pages": {
             "file": "post.php",

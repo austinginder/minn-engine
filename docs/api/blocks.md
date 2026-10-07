@@ -12,7 +12,7 @@ the block parser and renderer
 | [`ImageTags`](#imagetags) | final readonly class | 239 | The attributes the reference adds to an <img> that carries a |
 | [`Layout`](#layout) | final class | 124 | The layout-support classes the reference adds at render time. Every |
 | [`Parser`](#parser) | final class | 91 | Parses block markup into a tree. The grammar is the delimiter comment: |
-| [`QueryVars`](#queryvars) | final class | 80 | The query variables a Query Loop block's context asks for, the way the reference's query block builds them. |
+| [`QueryVars`](#queryvars) | final class | 122 | The query variables a Query Loop block's context asks for, the way the |
 | [`RenderState`](#renderstate) | final class | 302 | Per-request rendering state, owned by the renderer. The reference numbers |
 | [`Renderer`](#renderer) | final class | 231 | Renders a block tree the way the reference renders post_content: |
 | [`Selector`](#selector) | final class | 42 | The CSS selector a block type declares for its root or for one feature, from its `selectors` map or the older per-support keys. |
@@ -269,18 +269,24 @@ Whether serialized content carries a block by name; a bare name means core/, and
 
 `final class Minn\Blocks\QueryVars` · `public/minn/src/Minn/Blocks/QueryVars.php`
 
-The query variables a Query Loop block's context asks for, the way the reference's query block builds them.
+The query variables a Query Loop block's context asks for, the way the
+reference's build_query_vars_from_query_block builds them (probe
+query-loop): a viewable post type; stickies only, left out, or ignored;
+exclusions; a page size and offset for the page asked for; the old
+category and tag ids and each viewable taxonomy's terms, merged; formats
+(standard as no format) OR'd, beside the terms in a group of their own;
+order, orderby, authors (a list, a comma list, or one id), a search, and
+parents for a hierarchical type.
 
-### static `fromContext(?array $context, int $page, array $sticky, callable $postTypeExists, callable $taxonomyViewable): array`
+### static `fromContext(?array $context, int $page, array $sticky, array $site): array`
 
 The query vars a query block's context amounts to.
 
 - `@param array<string, mixed>|null $context the block's `query` context`
 - `@param list<int> $sticky the site's sticky post ids`
-- `@param callable(string): bool $postTypeExists`
-- `@param callable(string): bool $taxonomyViewable`
+- `@param array{viewableType: callable(string): bool, hierarchicalType: callable(string): bool, viewableTaxonomy: callable(string): bool, formats: list<string>} $site what the site says about types, taxonomies and formats`
 
-Internals: `taxQuery()` (private, line 62)
+Internals: `sticky()` (private, line 64), `idTerms()` (private, line 75), `taxonomyTerms()` (private, line 87), `formats()` (private, line 106), `author()` (private, line 129)
 
 
 ## RenderState

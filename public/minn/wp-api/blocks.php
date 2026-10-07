@@ -923,7 +923,8 @@ function build_query_vars_from_query_block($block, $page)
 {
     $context = $block->context['query'] ?? null;
     $sticky = array_map('intval', (array) get_option('sticky_posts', []));
-    $query = QueryVars::fromContext(is_array($context) ? $context : null, (int) $page, $sticky, static fn (string $type) => post_type_exists($type), static fn (string $taxonomy) => is_taxonomy_viewable($taxonomy));
+    $site = ['viewableType' => static fn (string $type) => is_post_type_viewable($type), 'hierarchicalType' => static fn (string $type) => is_post_type_hierarchical($type), 'viewableTaxonomy' => static fn (string $taxonomy) => is_taxonomy_viewable($taxonomy), 'formats' => array_values(get_post_format_slugs())];
+    $query = QueryVars::fromContext(is_array($context) ? $context : null, (int) $page, $sticky, $site);
     return is_array($context) ? apply_filters('query_loop_block_query_vars', $query, $block, $page) : $query;
 }
 

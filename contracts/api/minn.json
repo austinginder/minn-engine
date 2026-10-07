@@ -14159,7 +14159,7 @@
             "namespace": "Minn\\Blocks\\Dynamic\\Theme",
             "kind": "final class",
             "file": "public/minn/src/Minn/Blocks/Dynamic/Theme/QueryBlocks.php",
-            "lines": 252,
+            "lines": 274,
             "doc": "query, post-template, query-title, query-no-results, query-pagination, term-description.",
             "implements": [],
             "extends": null,
@@ -14305,7 +14305,36 @@
                         }
                     ],
                     "line": 53,
-                    "end": 79
+                    "end": 81
+                },
+                {
+                    "routes": [],
+                    "name": "queried",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "queried(Minn\\Blocks\\Block $block, array $attrs): Minn\\Content\\Page",
+                    "doc": "A query loop's posts as the reference finds them: the arguments\nbuild_query_vars_from_query_block makes of the block's query (through\nquery_loop_block_query_vars) for the page its query-{id}-page asks\nfor, run through WP_Query, so pre_get_posts and the posts_* filters\nshape it too.",
+                    "shapes": [
+                        "@param array<string, mixed> $attrs the block's query"
+                    ],
+                    "params": [
+                        {
+                            "name": "block",
+                            "type": "Minn\\Blocks\\Block",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "attrs",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": "the block's query"
+                        }
+                    ],
+                    "line": 92,
+                    "end": 101
                 },
                 {
                     "routes": [],
@@ -14316,8 +14345,8 @@
                     "doc": "",
                     "shapes": [],
                     "params": [],
-                    "line": 81,
-                    "end": 84
+                    "line": 103,
+                    "end": 106
                 },
                 {
                     "routes": [],
@@ -14343,8 +14372,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 86,
-                    "end": 117
+                    "line": 108,
+                    "end": 139
                 },
                 {
                     "routes": [],
@@ -14372,8 +14401,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 120,
-                    "end": 148
+                    "line": 142,
+                    "end": 170
                 },
                 {
                     "routes": [],
@@ -14399,8 +14428,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 150,
-                    "end": 168
+                    "line": 172,
+                    "end": 190
                 },
                 {
                     "routes": [],
@@ -14426,8 +14455,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 170,
-                    "end": 181
+                    "line": 192,
+                    "end": 203
                 },
                 {
                     "routes": [],
@@ -14453,8 +14482,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 184,
-                    "end": 227
+                    "line": 206,
+                    "end": 249
                 },
                 {
                     "routes": [],
@@ -14473,8 +14502,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 230,
-                    "end": 242
+                    "line": 252,
+                    "end": 264
                 },
                 {
                     "routes": [],
@@ -14509,8 +14538,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 245,
-                    "end": 254
+                    "line": 267,
+                    "end": 276
                 },
                 {
                     "routes": [],
@@ -14529,8 +14558,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 257,
-                    "end": 261
+                    "line": 279,
+                    "end": 283
                 },
                 {
                     "routes": [],
@@ -14556,8 +14585,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 263,
-                    "end": 276
+                    "line": 285,
+                    "end": 298
                 }
             ]
         },
@@ -15587,8 +15616,8 @@
             "namespace": "Minn\\Blocks",
             "kind": "final class",
             "file": "public/minn/src/Minn/Blocks/QueryVars.php",
-            "lines": 80,
-            "doc": "The query variables a Query Loop block's context asks for, the way the reference's query block builds them.",
+            "lines": 122,
+            "doc": "The query variables a Query Loop block's context asks for, the way the\nreference's build_query_vars_from_query_block builds them (probe\nquery-loop): a viewable post type; stickies only, left out, or ignored;\nexclusions; a page size and offset for the page asked for; the old\ncategory and tag ids and each viewable taxonomy's terms, merged; formats\n(standard as no format) OR'd, beside the terms in a group of their own;\norder, orderby, authors (a list, a comma list, or one id), a search, and\nparents for a hierarchical type.",
             "implements": [],
             "extends": null,
             "uses": [],
@@ -15603,13 +15632,12 @@
                     "name": "fromContext",
                     "static": true,
                     "visibility": "public",
-                    "signature": "fromContext(?array $context, int $page, array $sticky, callable $postTypeExists, callable $taxonomyViewable): array",
+                    "signature": "fromContext(?array $context, int $page, array $sticky, array $site): array",
                     "doc": "The query vars a query block's context amounts to.",
                     "shapes": [
                         "@param array<string, mixed>|null $context the block's `query` context",
                         "@param list<int> $sticky the site's sticky post ids",
-                        "@param callable(string): bool $postTypeExists",
-                        "@param callable(string): bool $taxonomyViewable"
+                        "@param array{viewableType: callable(string): bool, hierarchicalType: callable(string): bool, viewableTaxonomy: callable(string): bool, formats: list<string>} $site what the site says about types, taxonomies and formats"
                     ],
                     "params": [
                         {
@@ -15634,49 +15662,169 @@
                             "doc": "the site's sticky post ids"
                         },
                         {
-                            "name": "postTypeExists",
-                            "type": "callable",
-                            "shape": "callable(string): bool",
+                            "name": "site",
+                            "type": "array",
+                            "shape": "array{viewableType: callable(string): bool, hierarchicalType: callable(string): bool, viewableTaxonomy: callable(string): bool, formats: list<string>}",
+                            "default": null,
+                            "doc": "what the site says about types, taxonomies and formats"
+                        }
+                    ],
+                    "line": 26,
+                    "end": 61
+                },
+                {
+                    "routes": [],
+                    "name": "sticky",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "sticky(array $query, mixed $setting, array $sticky): array",
+                    "doc": "",
+                    "shapes": [
+                        "@param array<string, mixed> $query @param list<int> $sticky @return array<string, mixed>"
+                    ],
+                    "params": [
+                        {
+                            "name": "query",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": "@param list<int> $sticky @return array<string, mixed>"
+                        },
+                        {
+                            "name": "setting",
+                            "type": "mixed",
+                            "shape": "",
                             "default": null,
                             "doc": ""
                         },
                         {
-                            "name": "taxonomyViewable",
-                            "type": "callable",
-                            "shape": "callable(string): bool",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 18,
-                    "end": 59
-                },
-                {
-                    "routes": [],
-                    "name": "taxQuery",
-                    "static": true,
-                    "visibility": "private",
-                    "signature": "taxQuery(array $context, callable $taxonomyViewable): array",
-                    "doc": "Taxonomy terms and post formats each become one clause group; the two groups AND together.",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "context",
+                            "name": "sticky",
                             "type": "array",
                             "shape": "",
                             "default": null,
                             "doc": ""
+                        }
+                    ],
+                    "line": 64,
+                    "end": 72
+                },
+                {
+                    "routes": [],
+                    "name": "idTerms",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "idTerms(array $context): array",
+                    "doc": "The old categoryIds and tagIds settings as clauses. @param array<string, mixed> $context @return list<array<string, mixed>>",
+                    "shapes": [
+                        "@param array<string, mixed> $context @return list<array<string, mixed>>"
+                    ],
+                    "params": [
+                        {
+                            "name": "context",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": "@return list<array<string, mixed>>"
+                        }
+                    ],
+                    "line": 75,
+                    "end": 84
+                },
+                {
+                    "routes": [],
+                    "name": "taxonomyTerms",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "taxonomyTerms(array $context, callable $viewable): array",
+                    "doc": "Each viewable taxonomy's terms as a clause. @param array<string, mixed> $context @param callable(string): bool $viewable @return list<array<string, mixed>>",
+                    "shapes": [
+                        "@param array<string, mixed> $context @param callable(string): bool $viewable @return list<array<string, mixed>>"
+                    ],
+                    "params": [
+                        {
+                            "name": "context",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": "@param callable(string): bool $viewable @return list<array<string, mixed>>"
                         },
                         {
-                            "name": "taxonomyViewable",
+                            "name": "viewable",
                             "type": "callable",
                             "shape": "",
                             "default": null,
                             "doc": ""
                         }
                     ],
-                    "line": 62,
-                    "end": 86
+                    "line": 87,
+                    "end": 96
+                },
+                {
+                    "routes": [],
+                    "name": "formats",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "formats(array $query, mixed $formats, array $known): array",
+                    "doc": "The formats asked for (standard, or one the site knows) OR'd; beside\nother term clauses, AND'd with them as a group.",
+                    "shapes": [
+                        "@param array<string, mixed> $query",
+                        "@param list<string> $known",
+                        "@return array<string, mixed>"
+                    ],
+                    "params": [
+                        {
+                            "name": "query",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "formats",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "known",
+                            "type": "array",
+                            "shape": "list<string>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 106,
+                    "end": 126
+                },
+                {
+                    "routes": [],
+                    "name": "author",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "author(array $query, mixed $author): array",
+                    "doc": "Authors: a list or a comma list as author__in, one id as author. @param array<string, mixed> $query @return array<string, mixed>",
+                    "shapes": [
+                        "@param array<string, mixed> $query @return array<string, mixed>"
+                    ],
+                    "params": [
+                        {
+                            "name": "query",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": "@return array<string, mixed>"
+                        },
+                        {
+                            "name": "author",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 129,
+                    "end": 137
                 }
             ]
         },
@@ -75949,7 +76097,8 @@
                 "Minn\\Query\\PostSearch",
                 "Minn\\Query\\TaxSql",
                 "Minn\\Runtime\\PostQueryStatus",
-                "Minn\\Runtime\\PostQueryWhere"
+                "Minn\\Runtime\\PostQueryWhere",
+                "Minn\\Runtime\\TermQueryRunner"
             ],
             "constructor": null,
             "cases": [],
@@ -106159,6 +106308,64 @@
             ]
         },
         {
+            "name": "Minn\\Runtime\\ObjectTerms",
+            "short": "ObjectTerms",
+            "namespace": "Minn\\Runtime",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Runtime/ObjectTerms.php",
+            "lines": 30,
+            "doc": "wp_get_object_terms's handling of taxonomies registered with their own\nquery arguments, as the reference handles them: among several, each such\ntaxonomy is asked on its own with its arguments over the caller's; alone,\nits arguments join the caller's.",
+            "implements": [],
+            "extends": null,
+            "uses": [],
+            "usedBy": [],
+            "constructor": null,
+            "cases": [],
+            "constants": [],
+            "properties": [],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "byTaxonomyArgs",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "byTaxonomyArgs(array $objectIds, array $taxonomies, array $args): array",
+                    "doc": "The terms asked for apart, the taxonomies left (keys as they were), and the arguments for those.",
+                    "shapes": [
+                        "@param list<int> $objectIds",
+                        "@param array<int, string> $taxonomies",
+                        "@param array<string, mixed> $args",
+                        "@return array{0: list<mixed>, 1: array<int, string>, 2: array<string, mixed>}"
+                    ],
+                    "params": [
+                        {
+                            "name": "objectIds",
+                            "type": "array",
+                            "shape": "list<int>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "taxonomies",
+                            "type": "array",
+                            "shape": "array<int, string>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "args",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 23,
+                    "end": 41
+                }
+            ]
+        },
+        {
             "name": "Minn\\Runtime\\OptionSanitizer",
             "short": "OptionSanitizer",
             "namespace": "Minn\\Runtime",
@@ -113574,6 +113781,7 @@
                 "Minn\\Runtime\\Registry",
                 "Minn\\Runtime\\ScriptModules",
                 "Minn\\Runtime\\TermEvents",
+                "Minn\\Runtime\\TermQueryTree",
                 "Minn\\Runtime\\TermSave",
                 "Minn\\Runtime\\TermWriter",
                 "Minn\\Runtime\\ThemeSupports",
@@ -117012,12 +117220,120 @@
             ]
         },
         {
+            "name": "Minn\\Runtime\\TermOrder",
+            "short": "TermOrder",
+            "namespace": "Minn\\Runtime",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Runtime/TermOrder.php",
+            "lines": 61,
+            "doc": "A term query's ORDER BY as the reference writes it (probe\nwp-term-query-sql): term and taxonomy columns, the relationship's order,\nthe order include or slug lists give, none, or the name; then\nget_terms_orderby, and after it a meta key or meta_value[_num] when the\nquery has meta clauses.",
+            "implements": [],
+            "extends": null,
+            "uses": [],
+            "usedBy": [
+                "Minn\\Runtime\\TermQueryRunner"
+            ],
+            "constructor": null,
+            "cases": [],
+            "constants": [
+                {
+                    "name": "TERM_COLUMNS",
+                    "value": "array (   0 => 'term_id',   1 => 'name',   2 => 'slug',   3 => 'term_group', )",
+                    "doc": "",
+                    "visibility": "private"
+                },
+                {
+                    "name": "TAXONOMY_COLUMNS",
+                    "value": "array (   0 => 'count',   1 => 'parent',   2 => 'taxonomy',   3 => 'term_taxonomy_id',   4 => 'description', )",
+                    "doc": "",
+                    "visibility": "private"
+                }
+            ],
+            "properties": [],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "direction",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "direction(mixed $order): string",
+                    "doc": "ASC when asked for, DESC for anything else.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "order",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 20,
+                    "end": 26
+                },
+                {
+                    "routes": [],
+                    "name": "clause",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "clause(WP_Term_Query $query, string $raw): string",
+                    "doc": "The ORDER BY body for an orderby value, filtered as the reference filters it.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "query",
+                            "type": "WP_Term_Query",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "raw",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 29,
+                    "end": 51
+                },
+                {
+                    "routes": [],
+                    "name": "meta",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "meta(WP_Term_Query $query, string $orderby): string",
+                    "doc": "A meta key, meta_value[_num] or a named meta clause as SQL, or '' when the query has no such clause.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "query",
+                            "type": "WP_Term_Query",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "orderby",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 54,
+                    "end": 73
+                }
+            ]
+        },
+        {
             "name": "Minn\\Runtime\\TermQuery",
             "short": "TermQuery",
             "namespace": "Minn\\Runtime",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Runtime/TermQuery.php",
-            "lines": 440,
+            "lines": 370,
             "doc": "Term reads in the shapes plugin code asks for: get_terms() arguments to\nrows, the tree filters (child_of, exclude_tree), the fields shapes, and\nthe single-term lookups. Behaviour pinned by contracts/fixtures/api/content.json.",
             "implements": [],
             "extends": null,
@@ -117311,33 +117627,6 @@
                 },
                 {
                     "routes": [],
-                    "name": "count",
-                    "static": false,
-                    "visibility": "public",
-                    "signature": "count(array $args, ?array $taxonomies): int",
-                    "doc": "How many terms the arguments match.",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "args",
-                            "type": "array",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "taxonomies",
-                            "type": "?array",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 163,
-                    "end": 167
-                },
-                {
-                    "routes": [],
                     "name": "rows",
                     "static": false,
                     "visibility": "public",
@@ -117363,8 +117652,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 176,
-                    "end": 217
+                    "line": 169,
+                    "end": 210
                 },
                 {
                     "routes": [],
@@ -117385,8 +117674,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 335,
-                    "end": 346
+                    "line": 328,
+                    "end": 339
                 },
                 {
                     "routes": [],
@@ -117414,8 +117703,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 349,
-                    "end": 364
+                    "line": 342,
+                    "end": 357
                 },
                 {
                     "routes": [],
@@ -117450,66 +117739,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 367,
-                    "end": 375
-                },
-                {
-                    "routes": [],
-                    "name": "shape",
-                    "static": true,
-                    "visibility": "public",
-                    "signature": "shape(array $terms, string $fields): array",
-                    "doc": "The fields shapes get_terms() and wp_get_object_terms() share, over\nterm objects with the reference's public properties.",
-                    "shapes": [
-                        "@param list<object> $terms"
-                    ],
-                    "params": [
-                        {
-                            "name": "terms",
-                            "type": "array",
-                            "shape": "list<object>",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "fields",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 383,
-                    "end": 402
-                },
-                {
-                    "routes": [],
-                    "name": "coerce",
-                    "static": true,
-                    "visibility": "public",
-                    "signature": "coerce(array $query, Closure $idList): array",
-                    "doc": "The typed shape of term query variables: counts as absolute integers,\nlists as lists, flags as booleans, the ways plugin code spells them\ntolerated on the way in.",
-                    "shapes": [
-                        "@param Closure(mixed): list<int> $idList the caller's id-list parser"
-                    ],
-                    "params": [
-                        {
-                            "name": "query",
-                            "type": "array",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "idList",
-                            "type": "Closure",
-                            "shape": "Closure(mixed): list<int>",
-                            "default": null,
-                            "doc": "the caller's id-list parser"
-                        }
-                    ],
-                    "line": 426,
-                    "end": 453
+                    "line": 360,
+                    "end": 368
                 },
                 {
                     "routes": [],
@@ -117530,8 +117761,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 220,
-                    "end": 224
+                    "line": 213,
+                    "end": 217
                 },
                 {
                     "routes": [],
@@ -117559,8 +117790,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 227,
-                    "end": 243
+                    "line": 220,
+                    "end": 236
                 },
                 {
                     "routes": [],
@@ -117588,8 +117819,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 246,
-                    "end": 317
+                    "line": 239,
+                    "end": 310
                 },
                 {
                     "routes": [],
@@ -117610,8 +117841,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 320,
-                    "end": 327
+                    "line": 313,
+                    "end": 320
                 },
                 {
                     "routes": [],
@@ -117632,8 +117863,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 405,
-                    "end": 412
+                    "line": 371,
+                    "end": 378
                 },
                 {
                     "routes": [],
@@ -117652,8 +117883,586 @@
                             "doc": ""
                         }
                     ],
-                    "line": 414,
-                    "end": 417
+                    "line": 380,
+                    "end": 383
+                }
+            ]
+        },
+        {
+            "name": "Minn\\Runtime\\TermQueryRunner",
+            "short": "TermQueryRunner",
+            "namespace": "Minn\\Runtime",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Runtime/TermQueryRunner.php",
+            "lines": 255,
+            "doc": "WP_Term_Query::get_terms as the reference runs it (probe\nwp-term-query-sql): the variables parsed and handed to pre_get_terms,\nget_terms_args, the WHERE pieces (taxonomies, inclusions, exclusions with\nexcluded trees and childless terms through list_terms_exclusions, names,\nslugs, term taxonomy ids, likes, objects, parent, counts, search, meta),\nthe order through get_terms_orderby, the fields through get_terms_fields,\nall of it through terms_clauses, terms_pre_query, and the results shaped\nby TermQueryTree (children, padded counts, the empty hidden, the page).",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\Query\\Sql",
+                "Minn\\Runtime\\TermOrder",
+                "Minn\\Runtime\\TermQueryTree"
+            ],
+            "usedBy": [],
+            "constructor": null,
+            "cases": [],
+            "constants": [],
+            "properties": [
+                {
+                    "name": "query",
+                    "type": "WP_Term_Query",
+                    "readonly": false,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": false
+                },
+                {
+                    "name": "wpdb",
+                    "type": "object",
+                    "readonly": false,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": false
+                },
+                {
+                    "name": "where",
+                    "type": "array",
+                    "readonly": false,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": false
+                }
+            ],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "run",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "run(WP_Term_Query $query, object $wpdb): mixed",
+                    "doc": "Runs a term query object's variables: its terms in the shape the\nfields ask for, a count, or what a plugin answered first.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "query",
+                            "type": "WP_Term_Query",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "wpdb",
+                            "type": "object",
+                            "shape": "",
+                            "default": null,
+                            "doc": "the database object plugins see"
+                        }
+                    ],
+                    "line": 32,
+                    "end": 66
+                },
+                {
+                    "routes": [],
+                    "name": "lists",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "lists(array $args): array",
+                    "doc": "Names, slugs, term taxonomy ids and object ids as lists, as the\nreference holds them once plugins have had the arguments.",
+                    "shapes": [
+                        "@param array<string, mixed> $args",
+                        "@return array<string, mixed>"
+                    ],
+                    "params": [
+                        {
+                            "name": "args",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 75,
+                    "end": 84
+                },
+                {
+                    "routes": [],
+                    "name": "hierarchical",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "hierarchical(array $args): bool",
+                    "doc": "Whether the results have a tree to walk (a count never does). @param array<string, mixed> $args",
+                    "shapes": [
+                        "@param array<string, mixed> $args"
+                    ],
+                    "params": [
+                        {
+                            "name": "args",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 87,
+                    "end": 90
+                },
+                {
+                    "routes": [],
+                    "name": "settle",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "settle(array $args, array $taxonomies): array",
+                    "doc": "The variables pre_get_terms left, settled: a flat taxonomy needs no\ntree, a parent overrides child_of, `get=all` asks for every term;\nthen get_terms_args.",
+                    "shapes": [
+                        "@param array<string, mixed> $args",
+                        "@param list<string> $taxonomies",
+                        "@return array<string, mixed>"
+                    ],
+                    "params": [
+                        {
+                            "name": "args",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "taxonomies",
+                            "type": "array",
+                            "shape": "list<string>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 101,
+                    "end": 115
+                },
+                {
+                    "routes": [],
+                    "name": "inHierarchy",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "inHierarchy(int $parent, array $taxonomies): bool",
+                    "doc": "Whether a parent or child_of term has children in any of the taxonomies (when none, the query is not run). @param list<string> $taxonomies",
+                    "shapes": [
+                        "@param list<string> $taxonomies"
+                    ],
+                    "params": [
+                        {
+                            "name": "parent",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "taxonomies",
+                            "type": "array",
+                            "shape": "list<string>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 118,
+                    "end": 126
+                },
+                {
+                    "routes": [],
+                    "name": "order",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "order(array $args): array",
+                    "doc": "The ORDER BY clause and direction, term_order needing the relationships. @param array<string, mixed> $args @return array{0: string, 1: string}",
+                    "shapes": [
+                        "@param array<string, mixed> $args @return array{0: string, 1: string}"
+                    ],
+                    "params": [
+                        {
+                            "name": "args",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": "@return array{0: string, 1: string}"
+                        }
+                    ],
+                    "line": 129,
+                    "end": 137
+                },
+                {
+                    "routes": [],
+                    "name": "clauses",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "clauses(array $args, array $taxonomies): void",
+                    "doc": "The WHERE pieces, by name, in the reference's order. @param array<string, mixed> $args @param list<string> $taxonomies",
+                    "shapes": [
+                        "@param array<string, mixed> $args @param list<string> $taxonomies"
+                    ],
+                    "params": [
+                        {
+                            "name": "args",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": "@param list<string> $taxonomies"
+                        },
+                        {
+                            "name": "taxonomies",
+                            "type": "array",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 140,
+                    "end": 164
+                },
+                {
+                    "routes": [],
+                    "name": "exclusions",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "exclusions(array $args, array $taxonomies): string",
+                    "doc": "The excluded ids (an excluded term's whole tree, childless terms' parents), unless ids are included. @param array<string, mixed> $args @param list<string> $taxonomies",
+                    "shapes": [
+                        "@param array<string, mixed> $args @param list<string> $taxonomies"
+                    ],
+                    "params": [
+                        {
+                            "name": "args",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": "@param list<string> $taxonomies"
+                        },
+                        {
+                            "name": "taxonomies",
+                            "type": "array",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 167,
+                    "end": 185
+                },
+                {
+                    "routes": [],
+                    "name": "names",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "names(array $args, array $taxonomies): void",
+                    "doc": "Names (as saving stores them), slugs and term taxonomy ids. @param array<string, mixed> $args @param list<string> $taxonomies",
+                    "shapes": [
+                        "@param array<string, mixed> $args @param list<string> $taxonomies"
+                    ],
+                    "params": [
+                        {
+                            "name": "args",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": "@param list<string> $taxonomies"
+                        },
+                        {
+                            "name": "taxonomies",
+                            "type": "array",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 188,
+                    "end": 204
+                },
+                {
+                    "routes": [],
+                    "name": "likes",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "likes(array $args): void",
+                    "doc": "",
+                    "shapes": [
+                        "@param array<string, mixed> $args"
+                    ],
+                    "params": [
+                        {
+                            "name": "args",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 207,
+                    "end": 215
+                },
+                {
+                    "routes": [],
+                    "name": "select",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "select(array $args, array $taxonomies, string $orderby, string $order): void",
+                    "doc": "The rest of the WHERE (counts, search, meta), the fields, the joins,\nterms_clauses, and the request written from what it returned.",
+                    "shapes": [
+                        "@param array<string, mixed> $args",
+                        "@param list<string> $taxonomies"
+                    ],
+                    "params": [
+                        {
+                            "name": "args",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "taxonomies",
+                            "type": "array",
+                            "shape": "list<string>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "orderby",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "order",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 224,
+                    "end": 250
+                },
+                {
+                    "routes": [],
+                    "name": "limits",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "limits(array $args): string",
+                    "doc": "A LIMIT only when no tree has to be walked first (the tree's page is cut afterwards). @param array<string, mixed> $args",
+                    "shapes": [
+                        "@param array<string, mixed> $args"
+                    ],
+                    "params": [
+                        {
+                            "name": "args",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 253,
+                    "end": 260
+                },
+                {
+                    "routes": [],
+                    "name": "meta",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "meta(): array",
+                    "doc": "The meta query's join and WHERE piece, read again in case pre_get_terms changed its variables. @return array{0: string, 1: string}",
+                    "shapes": [
+                        "@return array{0: string, 1: string}"
+                    ],
+                    "params": [],
+                    "line": 263,
+                    "end": 272
+                }
+            ]
+        },
+        {
+            "name": "Minn\\Runtime\\TermQueryTree",
+            "short": "TermQueryTree",
+            "namespace": "Minn\\Runtime",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Runtime/TermQueryTree.php",
+            "lines": 146,
+            "doc": "What a term query does with its rows, as the reference does it (probe\nwp-term-query-sql): each row a term through get_term (with the object id\na relationship query carries); only child_of's descendants; counts padded\nwith the children's posts; an empty term kept only while one of its\nchildren has posts (the rest dropped where they stood, keys and all); a\ntree's page cut once the tree is walked; then the shape the fields ask\nfor.",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\Runtime\\Runtime"
+            ],
+            "usedBy": [
+                "Minn\\Runtime\\TermQueryRunner"
+            ],
+            "constructor": {
+                "signature": "__construct(array $taxonomies)",
+                "doc": "",
+                "shapes": [
+                    "@param list<string> $taxonomies"
+                ],
+                "params": [
+                    {
+                        "name": "taxonomies",
+                        "type": "array",
+                        "shape": "list<string>",
+                        "default": null,
+                        "doc": ""
+                    }
+                ],
+                "visibility": "public",
+                "line": 19,
+                "end": 21
+            },
+            "cases": [],
+            "constants": [],
+            "properties": [
+                {
+                    "name": "taxonomies",
+                    "type": "array",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
+                }
+            ],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "populate",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "populate(array $rows): array",
+                    "doc": "The terms the rows name, keyed as the rows were.",
+                    "shapes": [
+                        "@param array<array-key, object> $rows",
+                        "@return array<array-key, \\WP_Term>"
+                    ],
+                    "params": [
+                        {
+                            "name": "rows",
+                            "type": "array",
+                            "shape": "array<array-key, object>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 29,
+                    "end": 46
+                },
+                {
+                    "routes": [],
+                    "name": "settle",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "settle(array $terms, array $args): array",
+                    "doc": "The terms after the tree has had its say: descendants only, padded\ncounts, empty branches dropped, the page cut.",
+                    "shapes": [
+                        "@param array<array-key, \\WP_Term> $terms",
+                        "@param array<string, mixed> $args",
+                        "@return array<array-key, \\WP_Term>"
+                    ],
+                    "params": [
+                        {
+                            "name": "terms",
+                            "type": "array",
+                            "shape": "array<array-key, \\WP_Term>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "args",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 56,
+                    "end": 78
+                },
+                {
+                    "routes": [],
+                    "name": "pad",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "pad(array $terms, string $taxonomy): void",
+                    "doc": "Each term's count raised to the published posts in it or under it, as\n_pad_term_counts does for a hierarchical taxonomy.",
+                    "shapes": [
+                        "@param array<array-key, \\WP_Term> $terms"
+                    ],
+                    "params": [
+                        {
+                            "name": "terms",
+                            "type": "array",
+                            "shape": "array<array-key, \\WP_Term>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "taxonomy",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 86,
+                    "end": 120
+                },
+                {
+                    "routes": [],
+                    "name": "format",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "format(array $terms, string $fields): array",
+                    "doc": "The terms in the shape the fields ask for.",
+                    "shapes": [
+                        "@param array<array-key, \\WP_Term> $terms",
+                        "@return array<array-key, mixed>"
+                    ],
+                    "params": [
+                        {
+                            "name": "terms",
+                            "type": "array",
+                            "shape": "array<array-key, \\WP_Term>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "fields",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 143,
+                    "end": 160
+                },
+                {
+                    "routes": [],
+                    "name": "hasPosts",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "hasPosts(WP_Term $term): bool",
+                    "doc": "Whether a term, or one of its children, has posts.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "term",
+                            "type": "WP_Term",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 123,
+                    "end": 135
                 }
             ]
         },

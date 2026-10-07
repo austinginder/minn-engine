@@ -36,6 +36,7 @@ the WordPress runtime plugins load against
 | [`NavMenu`](#navmenu) | final class | 303 | Nav-menu item decoration for wp_nav_menu(): the reference's class tokens |
 | [`OEmbed`](#oembed) | final class | 92 | oEmbed as data: provider matching against the wildcard table, response parsing, and the markup an oEmbed payload becomes. |
 | [`ObjectCache`](#objectcache) | final class | 52 | The per-request object cache behind wp_cache_*: groups of keys, nothing persistent. |
+| [`ObjectTerms`](#objectterms) | final class | 30 | wp_get_object_terms's handling of taxonomies registered with their own |
 | [`OptionSanitizer`](#optionsanitizer) | final class | 114 | A core option's value cleaned as the reference's sanitize_option cleans |
 | [`Options`](#options) | final class | 232 | Options as plugin code sees them: PHP values, decoded from the stored |
 | [`PackageDownload`](#packagedownload) | final class | 32 | The publisher's say over its own download. Before fetching an update |
@@ -76,7 +77,10 @@ the WordPress runtime plugins load against
 | [`TagEditor`](#tageditor) | final class | 149 | Edits one start tag's attributes in place the way the reference's tag |
 | [`TermEvents`](#termevents) | final readonly class | 114 | What the reference's REST terms controller tells plugins, for the |
 | [`TermFields`](#termfields) | final class | 65 | A term's fields in a context, as the reference's sanitize_term_field |
-| [`TermQuery`](#termquery) | final readonly class | 440 | Term reads in the shapes plugin code asks for: get_terms() arguments to |
+| [`TermOrder`](#termorder) | final class | 61 | A term query's ORDER BY as the reference writes it (probe |
+| [`TermQuery`](#termquery) | final readonly class | 370 | Term reads in the shapes plugin code asks for: get_terms() arguments to |
+| [`TermQueryRunner`](#termqueryrunner) | final class | 255 | WP_Term_Query::get_terms as the reference runs it (probe |
+| [`TermQueryTree`](#termquerytree) | final class | 146 | What a term query does with its rows, as the reference does it (probe |
 | [`TermSave`](#termsave) | final class | 199 | wp_insert_term and wp_update_term in the reference's order (probe |
 | [`TermWriter`](#termwriter) | final readonly class | 119 | The decisions behind wp_delete_term and the object-term relationships: |
 | [`ThemeSupports`](#themesupports) | final class | 159 | What a theme supports, as add_theme_support keeps it (probe rest-themes): |
@@ -1569,6 +1573,25 @@ Empties the cache.
 Empties one group.
 
 
+## ObjectTerms
+
+`final class Minn\Runtime\ObjectTerms` · `public/minn/src/Minn/Runtime/ObjectTerms.php`
+
+wp_get_object_terms's handling of taxonomies registered with their own
+query arguments, as the reference handles them: among several, each such
+taxonomy is asked on its own with its arguments over the caller's; alone,
+its arguments join the caller's.
+
+### static `byTaxonomyArgs(array $objectIds, array $taxonomies, array $args): array`
+
+The terms asked for apart, the taxonomies left (keys as they were), and the arguments for those.
+
+- `@param list<int> $objectIds`
+- `@param array<int, string> $taxonomies`
+- `@param array<string, mixed> $args`
+- `@return array{0: list<mixed>, 1: array<int, string>, 2: array<string, mixed>}`
+
+
 ## OptionSanitizer
 
 `final class Minn\Runtime\OptionSanitizer` · `public/minn/src/Minn/Runtime/OptionSanitizer.php`
@@ -2963,7 +2986,7 @@ blocks, texturize, paragraphs, shortcodes, block hooks, and the image
 attributes. What it has not (smilies, the capital P, insecure home
 addresses) runs with the plugins' own callbacks.
 
-Used by: `Minn\Admin\BootPayload`, `Minn\Auth\Authenticator`, `Minn\Auth\Capabilities`, `Minn\Auth\RegisteredCaps`, `Minn\Blocks\Dynamic\Theme\Comments`, `Minn\Blocks\Dynamic\Theme\Navigation`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Blocks\ImageTags`, `Minn\Blocks\RenderState`, `Minn\Cli\Runtime`, `Minn\Content\Blocks`, `Minn\Content\PostSlugs`, `Minn\Content\Reader`, `Minn\Content\Site`, `Minn\Content\Terms`, `Minn\Cron\Cron`, `Minn\Db`, `Minn\Engine`, `Minn\Extension\Extensions`, `Minn\Front\CommentPostController`, `Minn\Front\Feeds`, `Minn\Front\FrontController`, `Minn\Front\Permalinks`, `Minn\Front\PluginRules`, `Minn\Front\Resolver`, `Minn\Login\LoginHooks`, `Minn\Mail\Mailer`, `Minn\Media\Icons`, `Minn\Media\Images`, `Minn\Rest\AbilitiesController`, `Minn\Rest\Api`, `Minn\Rest\BatchController`, `Minn\Rest\BlockRendererController`, `Minn\Rest\BlockTypesController`, `Minn\Rest\Caller`, `Minn\Rest\CommentObject`, `Minn\Rest\Embed`, `Minn\Rest\InstalledThemesController`, `Minn\Rest\MediaController`, `Minn\Rest\MediaObject`, `Minn\Rest\MenusController`, `Minn\Rest\OEmbedController`, `Minn\Rest\PostCollectionParams`, `Minn\Rest\PostObject`, `Minn\Rest\PostsController`, `Minn\Rest\RegisteredType`, `Minn\Rest\RenderedFields`, `Minn\Rest\RestMeta`, `Minn\Rest\RuntimeEnvelope`, `Minn\Rest\RuntimePrepare`, `Minn\Rest\RuntimeRoutes`, `Minn\Rest\Services`, `Minn\Rest\SettingsController`, `Minn\Rest\SidebarsController`, `Minn\Rest\StatusesController`, `Minn\Rest\TemplatesController`, `Minn\Rest\TermFilters`, `Minn\Rest\TermObject`, `Minn\Rest\Types`, `Minn\Rest\TypesController`, `Minn\Rest\UserObject`, `Minn\Rest\UsersController`, `Minn\Rest\WidgetsController`, `Minn\Runtime\Abilities`, `Minn\Runtime\AjaxController`, `Minn\Runtime\BlockFilters`, `Minn\Runtime\BlockHooks`, `Minn\Runtime\CommentEvents`, `Minn\Runtime\Constants`, `Minn\Runtime\Deferrals`, `Minn\Runtime\FileUpload`, `Minn\Runtime\Interactivity`, `Minn\Runtime\NavMenu`, `Minn\Runtime\PackageDownload`, `Minn\Runtime\Patterns`, `Minn\Runtime\PlaceholderTrace`, `Minn\Runtime\PluginUpdates`, `Minn\Runtime\Plugins`, `Minn\Runtime\PostEvents`, `Minn\Runtime\PostSave`, `Minn\Runtime\RegisteredSettings`, `Minn\Runtime\Registry`, `Minn\Runtime\ScriptModules`, `Minn\Runtime\TermEvents`, `Minn\Runtime\TermSave`, `Minn\Runtime\TermWriter`, `Minn\Runtime\ThemeSupports`, `Minn\Runtime\UserEvents`, `Minn\Theme\ArchiveTitle`, `Minn\Theme\ClassicContent`, `Minn\Theme\ClassicRenderer`, `Minn\Theme\MainQueryBridge`, `Minn\Theme\PageRenderer`, `Minn\Theme\Templates`
+Used by: `Minn\Admin\BootPayload`, `Minn\Auth\Authenticator`, `Minn\Auth\Capabilities`, `Minn\Auth\RegisteredCaps`, `Minn\Blocks\Dynamic\Theme\Comments`, `Minn\Blocks\Dynamic\Theme\Navigation`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Blocks\ImageTags`, `Minn\Blocks\RenderState`, `Minn\Cli\Runtime`, `Minn\Content\Blocks`, `Minn\Content\PostSlugs`, `Minn\Content\Reader`, `Minn\Content\Site`, `Minn\Content\Terms`, `Minn\Cron\Cron`, `Minn\Db`, `Minn\Engine`, `Minn\Extension\Extensions`, `Minn\Front\CommentPostController`, `Minn\Front\Feeds`, `Minn\Front\FrontController`, `Minn\Front\Permalinks`, `Minn\Front\PluginRules`, `Minn\Front\Resolver`, `Minn\Login\LoginHooks`, `Minn\Mail\Mailer`, `Minn\Media\Icons`, `Minn\Media\Images`, `Minn\Rest\AbilitiesController`, `Minn\Rest\Api`, `Minn\Rest\BatchController`, `Minn\Rest\BlockRendererController`, `Minn\Rest\BlockTypesController`, `Minn\Rest\Caller`, `Minn\Rest\CommentObject`, `Minn\Rest\Embed`, `Minn\Rest\InstalledThemesController`, `Minn\Rest\MediaController`, `Minn\Rest\MediaObject`, `Minn\Rest\MenusController`, `Minn\Rest\OEmbedController`, `Minn\Rest\PostCollectionParams`, `Minn\Rest\PostObject`, `Minn\Rest\PostsController`, `Minn\Rest\RegisteredType`, `Minn\Rest\RenderedFields`, `Minn\Rest\RestMeta`, `Minn\Rest\RuntimeEnvelope`, `Minn\Rest\RuntimePrepare`, `Minn\Rest\RuntimeRoutes`, `Minn\Rest\Services`, `Minn\Rest\SettingsController`, `Minn\Rest\SidebarsController`, `Minn\Rest\StatusesController`, `Minn\Rest\TemplatesController`, `Minn\Rest\TermFilters`, `Minn\Rest\TermObject`, `Minn\Rest\Types`, `Minn\Rest\TypesController`, `Minn\Rest\UserObject`, `Minn\Rest\UsersController`, `Minn\Rest\WidgetsController`, `Minn\Runtime\Abilities`, `Minn\Runtime\AjaxController`, `Minn\Runtime\BlockFilters`, `Minn\Runtime\BlockHooks`, `Minn\Runtime\CommentEvents`, `Minn\Runtime\Constants`, `Minn\Runtime\Deferrals`, `Minn\Runtime\FileUpload`, `Minn\Runtime\Interactivity`, `Minn\Runtime\NavMenu`, `Minn\Runtime\PackageDownload`, `Minn\Runtime\Patterns`, `Minn\Runtime\PlaceholderTrace`, `Minn\Runtime\PluginUpdates`, `Minn\Runtime\Plugins`, `Minn\Runtime\PostEvents`, `Minn\Runtime\PostSave`, `Minn\Runtime\RegisteredSettings`, `Minn\Runtime\Registry`, `Minn\Runtime\ScriptModules`, `Minn\Runtime\TermEvents`, `Minn\Runtime\TermQueryTree`, `Minn\Runtime\TermSave`, `Minn\Runtime\TermWriter`, `Minn\Runtime\ThemeSupports`, `Minn\Runtime\UserEvents`, `Minn\Theme\ArchiveTitle`, `Minn\Theme\ClassicContent`, `Minn\Theme\ClassicRenderer`, `Minn\Theme\MainQueryBridge`, `Minn\Theme\PageRenderer`, `Minn\Theme\Templates`
 
 ```php
 __construct(Minn\Context $context, bool $isAdmin = false)
@@ -3628,6 +3651,32 @@ its filter set to the context; the term's own id goes to the filters.
 Internals: `filtered()` (private, line 66), `saving()` (private, line 77)
 
 
+## TermOrder
+
+`final class Minn\Runtime\TermOrder` · `public/minn/src/Minn/Runtime/TermOrder.php`
+
+A term query's ORDER BY as the reference writes it (probe
+wp-term-query-sql): term and taxonomy columns, the relationship's order,
+the order include or slug lists give, none, or the name; then
+get_terms_orderby, and after it a meta key or meta_value[_num] when the
+query has meta clauses.
+
+- const `TERM_COLUMNS` = `array (   0 => 'term_id',   1 => 'name',   2 => 'slug',   3 => 'term_group', )`
+- const `TAXONOMY_COLUMNS` = `array (   0 => 'count',   1 => 'parent',   2 => 'taxonomy',   3 => 'term_taxonomy_id',   4 => 'description', )`
+
+Used by: `Minn\Runtime\TermQueryRunner`
+
+### static `direction(mixed $order): string`
+
+ASC when asked for, DESC for anything else.
+
+### static `clause(WP_Term_Query $query, string $raw): string`
+
+The ORDER BY body for an orderby value, filtered as the reference filters it.
+
+Internals: `meta()` (private, line 54)
+
+
 ## TermQuery
 
 `final readonly class Minn\Runtime\TermQuery` · `public/minn/src/Minn/Runtime/TermQuery.php`
@@ -3690,10 +3739,6 @@ Whether a term other than the one named holds the slug, in any taxonomy.
 
 get_terms() arguments normalised: the "get all" shortcut, integer lists, sanitised slugs.
 
-### `count(array $args, ?array $taxonomies): int`
-
-How many terms the arguments match.
-
 ### `rows(array $args, ?array $taxonomies): array`
 
 The term rows the arguments match, ordered and paged, with the tree
@@ -3721,22 +3766,82 @@ The object ids attached to any of the terms in any of the taxonomies. @param lis
 
 - `@param list<int> $termIds @param list<string> $taxonomies @return list<int>`
 
-### static `shape(array $terms, string $fields): array`
+Internals: `idList()` (private, line 213), `descendants()` (private, line 220), `where()` (private, line 239), `metaClauses()` (private, line 313), `ids()` (private, line 371), `like()` (private, line 380)
 
-The fields shapes get_terms() and wp_get_object_terms() share, over
-term objects with the reference's public properties.
 
-- `@param list<object> $terms`
+## TermQueryRunner
 
-### static `coerce(array $query, Closure $idList): array`
+`final class Minn\Runtime\TermQueryRunner` · `public/minn/src/Minn/Runtime/TermQueryRunner.php`
 
-The typed shape of term query variables: counts as absolute integers,
-lists as lists, flags as booleans, the ways plugin code spells them
-tolerated on the way in.
+WP_Term_Query::get_terms as the reference runs it (probe
+wp-term-query-sql): the variables parsed and handed to pre_get_terms,
+get_terms_args, the WHERE pieces (taxonomies, inclusions, exclusions with
+excluded trees and childless terms through list_terms_exclusions, names,
+slugs, term taxonomy ids, likes, objects, parent, counts, search, meta),
+the order through get_terms_orderby, the fields through get_terms_fields,
+all of it through terms_clauses, terms_pre_query, and the results shaped
+by TermQueryTree (children, padded counts, the empty hidden, the page).
 
-- `@param Closure(mixed): list<int> $idList the caller's id-list parser`
 
-Internals: `idList()` (private, line 220), `descendants()` (private, line 227), `where()` (private, line 246), `metaClauses()` (private, line 320), `ids()` (private, line 405), `like()` (private, line 414)
+### `run(WP_Term_Query $query, object $wpdb): mixed`
+
+Runs a term query object's variables: its terms in the shape the
+fields ask for, a count, or what a plugin answered first.
+
+Internals: `lists()` (private, line 75), `hierarchical()` (private, line 87), `settle()` (private, line 101), `inHierarchy()` (private, line 118), `order()` (private, line 129), `clauses()` (private, line 140), `exclusions()` (private, line 167), `names()` (private, line 188), `likes()` (private, line 207), `select()` (private, line 224), `limits()` (private, line 253), `meta()` (private, line 263)
+
+
+## TermQueryTree
+
+`final class Minn\Runtime\TermQueryTree` · `public/minn/src/Minn/Runtime/TermQueryTree.php`
+
+What a term query does with its rows, as the reference does it (probe
+wp-term-query-sql): each row a term through get_term (with the object id
+a relationship query carries); only child_of's descendants; counts padded
+with the children's posts; an empty term kept only while one of its
+children has posts (the rest dropped where they stood, keys and all); a
+tree's page cut once the tree is walked; then the shape the fields ask
+for.
+
+Used by: `Minn\Runtime\TermQueryRunner`
+
+```php
+__construct(array $taxonomies)
+```
+- `@param list<string> $taxonomies`
+
+
+### static `populate(array $rows): array`
+
+The terms the rows name, keyed as the rows were.
+
+- `@param array<array-key, object> $rows`
+- `@return array<array-key, \WP_Term>`
+
+### `settle(array $terms, array $args): array`
+
+The terms after the tree has had its say: descendants only, padded
+counts, empty branches dropped, the page cut.
+
+- `@param array<array-key, \WP_Term> $terms`
+- `@param array<string, mixed> $args`
+- `@return array<array-key, \WP_Term>`
+
+### static `pad(array $terms, string $taxonomy): void`
+
+Each term's count raised to the published posts in it or under it, as
+_pad_term_counts does for a hierarchical taxonomy.
+
+- `@param array<array-key, \WP_Term> $terms`
+
+### static `format(array $terms, string $fields): array`
+
+The terms in the shape the fields ask for.
+
+- `@param array<array-key, \WP_Term> $terms`
+- `@return array<array-key, mixed>`
+
+Internals: `hasPosts()` (private, line 123)
 
 
 ## TermSave
