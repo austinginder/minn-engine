@@ -87835,7 +87835,7 @@
             "namespace": "Minn\\Rest",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Rest/PluginsController.php",
-            "lines": 236,
+            "lines": 244,
             "doc": "wp/v2 plugins: what sits in wp-content/plugins, in the reference's\nshape. Minn extensions (a minn.json manifest) are listed alongside the\nWordPress plugins the folder still holds; the engine runs the former\nand only records the latter's stored state. Activation writes the same\noptions the reference and the extension loader read; files are never\ninstalled or deleted from here.",
             "implements": [],
             "extends": null,
@@ -87858,6 +87858,7 @@
                 "Minn\\Rest\\Fields",
                 "Minn\\Rest\\Reply",
                 "Minn\\Rest\\RestUrl",
+                "Minn\\Runtime\\Runtime",
                 "Minn\\Support\\FileHeaders",
                 "Minn\\Support\\Html",
                 "Minn\\Support\\Serialized"
@@ -87921,8 +87922,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 35,
-                "end": 44
+                "line": 36,
+                "end": 45
             },
             "cases": [],
             "constants": [],
@@ -88011,8 +88012,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 48,
-                    "end": 53
+                    "line": 49,
+                    "end": 54
                 },
                 {
                     "routes": [
@@ -88033,8 +88034,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 57,
-                    "end": 89
+                    "line": 58,
+                    "end": 90
                 },
                 {
                     "routes": [
@@ -88062,8 +88063,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 93,
-                    "end": 96
+                    "line": 94,
+                    "end": 97
                 },
                 {
                     "routes": [
@@ -88093,8 +88094,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 102,
-                    "end": 115
+                    "line": 103,
+                    "end": 116
                 },
                 {
                     "routes": [
@@ -88122,8 +88123,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 119,
-                    "end": 135
+                    "line": 120,
+                    "end": 144
                 },
                 {
                     "routes": [],
@@ -88136,8 +88137,8 @@
                         "@return list<array>"
                     ],
                     "params": [],
-                    "line": 138,
-                    "end": 151
+                    "line": 147,
+                    "end": 160
                 },
                 {
                     "routes": [],
@@ -88156,8 +88157,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 153,
-                    "end": 161
+                    "line": 162,
+                    "end": 170
                 },
                 {
                     "routes": [],
@@ -88176,8 +88177,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 163,
-                    "end": 171
+                    "line": 172,
+                    "end": 180
                 },
                 {
                     "routes": [],
@@ -88203,8 +88204,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 173,
-                    "end": 194
+                    "line": 182,
+                    "end": 203
                 },
                 {
                     "routes": [],
@@ -88237,8 +88238,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 196,
-                    "end": 225
+                    "line": 205,
+                    "end": 234
                 },
                 {
                     "routes": [],
@@ -88264,8 +88265,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 228,
-                    "end": 231
+                    "line": 237,
+                    "end": 240
                 },
                 {
                     "routes": [],
@@ -88284,8 +88285,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 234,
-                    "end": 250
+                    "line": 243,
+                    "end": 259
                 },
                 {
                     "routes": [],
@@ -88304,8 +88305,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 253,
-                    "end": 256
+                    "line": 262,
+                    "end": 265
                 },
                 {
                     "routes": [],
@@ -88324,8 +88325,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 258,
-                    "end": 261
+                    "line": 267,
+                    "end": 270
                 },
                 {
                     "routes": [],
@@ -88344,8 +88345,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 263,
-                    "end": 266
+                    "line": 272,
+                    "end": 275
                 }
             ]
         },
@@ -112044,6 +112045,198 @@
             ]
         },
         {
+            "name": "Minn\\Runtime\\PluginRemoval",
+            "short": "PluginRemoval",
+            "namespace": "Minn\\Runtime",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Runtime/PluginRemoval.php",
+            "lines": 127,
+            "doc": "Deleting plugins as the reference's delete_plugins does it: each in turn\nis uninstalled first when it can be (its uninstall.php, or the callback\nit registered), then delete_plugin, its folder (or file) removed,\ndeleted_plugin, and its installed translations removed with it; the\nupdates offered for the deleted ones are forgotten. A plugin already\ngone counts as deleted. Only what lies inside the plugins folder is\never removed, and a symlinked folder is unlinked, never followed.",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\Support\\Files"
+            ],
+            "usedBy": [],
+            "constructor": null,
+            "cases": [],
+            "constants": [],
+            "properties": [],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "delete",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "delete(array $plugins): WP_Error|bool",
+                    "doc": "delete_plugins: true, false for none asked, or the error naming those left behind.",
+                    "shapes": [
+                        "@param array<int, string> $plugins plugin files, relative to the plugins folder"
+                    ],
+                    "params": [
+                        {
+                            "name": "plugins",
+                            "type": "array",
+                            "shape": "array<int, string>",
+                            "default": null,
+                            "doc": "plugin files, relative to the plugins folder"
+                        }
+                    ],
+                    "line": 25,
+                    "end": 39
+                },
+                {
+                    "routes": [],
+                    "name": "uninstall",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "uninstall(string $plugin): ?bool",
+                    "doc": "uninstall_plugin: pre_uninstall_plugin, then the plugin's uninstall.php\n(WP_UNINSTALL_PLUGIN naming it) or the callback it registered (heard on\nuninstall_<file>, with the plugin loaded); either is forgotten once run.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "plugin",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 46,
+                    "end": 69
+                },
+                {
+                    "routes": [],
+                    "name": "deleteOne",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "deleteOne(string $plugin, array $translations): bool",
+                    "doc": "One plugin, uninstalled, removed and announced; whether it is gone. @param array<string, mixed> $translations",
+                    "shapes": [
+                        "@param array<string, mixed> $translations"
+                    ],
+                    "params": [
+                        {
+                            "name": "plugin",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "translations",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 72,
+                    "end": 84
+                },
+                {
+                    "routes": [],
+                    "name": "removeFiles",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "removeFiles(string $plugin): bool",
+                    "doc": "The plugin's folder, or its file when it has none; false for anything outside the plugins folder.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "plugin",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 87,
+                    "end": 103
+                },
+                {
+                    "routes": [],
+                    "name": "removeTranslations",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "removeTranslations(string $slug, array $translations): void",
+                    "doc": "A folder plugin's installed translations (.po, .mo, .l10n.php, script .json), by locale. @param array<string, mixed> $translations",
+                    "shapes": [
+                        "@param array<string, mixed> $translations"
+                    ],
+                    "params": [
+                        {
+                            "name": "slug",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "translations",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 106,
+                    "end": 120
+                },
+                {
+                    "routes": [],
+                    "name": "forget",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "forget(string $file, array $registered): void",
+                    "doc": "The registered uninstall callback, dropped from the option. @param array<string, mixed> $registered",
+                    "shapes": [
+                        "@param array<string, mixed> $registered"
+                    ],
+                    "params": [
+                        {
+                            "name": "file",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "registered",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 123,
+                    "end": 129
+                },
+                {
+                    "routes": [],
+                    "name": "forgetUpdates",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "forgetUpdates(array $deleted): void",
+                    "doc": "The updates offered for plugins that are gone. @param array<int, string> $deleted",
+                    "shapes": [
+                        "@param array<int, string> $deleted"
+                    ],
+                    "params": [
+                        {
+                            "name": "deleted",
+                            "type": "array",
+                            "shape": "array<int, string>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 132,
+                    "end": 143
+                }
+            ]
+        },
+        {
             "name": "Minn\\Runtime\\PluginUpdates",
             "short": "PluginUpdates",
             "namespace": "Minn\\Runtime",
@@ -117778,6 +117971,7 @@
                 "Minn\\Rest\\MediaObject",
                 "Minn\\Rest\\MenusController",
                 "Minn\\Rest\\OEmbedController",
+                "Minn\\Rest\\PluginsController",
                 "Minn\\Rest\\PostCollectionParams",
                 "Minn\\Rest\\PostObject",
                 "Minn\\Rest\\PostsController",
@@ -125564,7 +125758,9 @@
             "implements": [],
             "extends": null,
             "uses": [],
-            "usedBy": [],
+            "usedBy": [
+                "Minn\\Runtime\\PluginRemoval"
+            ],
             "constructor": null,
             "cases": [],
             "constants": [],

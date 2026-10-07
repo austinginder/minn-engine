@@ -525,6 +525,23 @@ function activate_plugins($plugins, $redirect = '', $network_wide = false, $sile
     return true;
 }
 
+/** Whether a plugin can be uninstalled: it registered an uninstall callback, or ships an uninstall.php. */
+function is_uninstallable_plugin($plugin)
+{
+    $file = plugin_basename($plugin);
+    return isset(((array) get_option('uninstall_plugins'))[$file]) || file_exists(WP_PLUGIN_DIR . '/' . dirname($file) . '/uninstall.php');
+}
+
+function uninstall_plugin($plugin)
+{
+    return Minn\Runtime\PluginRemoval::uninstall((string) $plugin);
+}
+
+function delete_plugins($plugins, $deprecated = '')
+{
+    return Minn\Runtime\PluginRemoval::delete(array_values((array) $plugins));
+}
+
 function deactivate_plugins($plugins, $silent = false, $network_wide = null)
 {
     $current = get_option('active_plugins', []);

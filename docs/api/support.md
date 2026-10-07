@@ -200,6 +200,8 @@ every step as the result), and the symbolic-to-octal permission string
 conversion. The facade class keeps the reference's argument handling and
 maps each operation here.
 
+Used by: `Minn\Runtime\PluginRemoval`
+
 ### static `octalFromSymbolic(string $mode): string`
 
 drwxr-xr-x (or any rwx string) to its octal digits, the reference's tallying shape.

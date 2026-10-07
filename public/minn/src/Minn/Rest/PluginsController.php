@@ -16,6 +16,7 @@ use Minn\Http\Request;
 use Minn\Http\Response;
 use Minn\Http\Policy;
 use Minn\Http\Route;
+use Minn\Runtime\Runtime;
 use Minn\RestError;
 use Minn\Support\FileHeaders;
 use Minn\Content\Texturize;
@@ -124,6 +125,14 @@ final readonly class PluginsController
         $item = $this->find($plugin);
         if ($item['status'] === 'active') {
             throw new RestError('rest_cannot_delete_active_plugin', 'Cannot delete an active plugin. Please deactivate it first.', 400);
+        }
+        // A WordPress plugin is deleted as the reference deletes it (uninstalled first, the delete hooks around it).
+        if (Runtime::booted() && array_key_exists($plugin . '.php', $this->inventory->pluginFiles())) {
+            $deleted = \delete_plugins([$plugin . '.php']);
+            if ($deleted instanceof \WP_Error) {
+                throw new RestError((string) $deleted->get_error_code(), (string) $deleted->get_error_message(), 500);
+            }
+            return Reply::item(['deleted' => true, 'previous' => $item], Fields::fromQuery($request->query));
         }
         $folder = explode('/', $plugin, 2)[0];
         if (str_contains($plugin, '/')) {

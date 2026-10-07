@@ -436,7 +436,8 @@ function wp_get_installed_translations($type)
     $out = [];
     foreach (glob($dir . '/*.po') ?: [] as $file) {
         $base = basename($file, '.po');
-        if (!preg_match('/^(?:(.+)-)?([a-z]{2,3}(?:_[A-Z]{2})?(?:_[a-z]+)?)$/', $base, $m)) {
+        // A translation is installed with both halves: the .po without its .mo is not one.
+        if (!is_file(substr($file, 0, -3) . '.mo') || !preg_match('/^(?:(.+)-)?([a-z]{2,3}(?:_[A-Z]{2})?(?:_[a-z]+)?)$/', $base, $m)) {
             continue;
         }
         $domain = $m[1] !== '' ? $m[1] : 'default';

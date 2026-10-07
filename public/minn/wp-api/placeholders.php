@@ -73,12 +73,6 @@ function create_initial_taxonomies()
     return null;
 }
 
-function delete_plugins($plugins, $deprecated = '')
-{
-    \Minn\Runtime\PlaceholderTrace::hit('delete_plugins');
-    return null;
-}
-
 function edit_comment()
 {
     \Minn\Runtime\PlaceholderTrace::hit('edit_comment');
@@ -250,12 +244,6 @@ function has_meta($post_id)
 function is_login()
 {
     \Minn\Runtime\PlaceholderTrace::hit('is_login');
-    return null;
-}
-
-function is_uninstallable_plugin($plugin)
-{
-    \Minn\Runtime\PlaceholderTrace::hit('is_uninstallable_plugin');
     return null;
 }
 
