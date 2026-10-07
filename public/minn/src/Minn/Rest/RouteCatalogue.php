@@ -28,7 +28,7 @@ final readonly class RouteCatalogue
      */
     public function all(): array
     {
-        $bases = $this->types->declaredBases();
+        $bases = $this->types->routeBases();
         $routes = ['/' => ['namespace' => '', 'methods' => ['GET'], 'endpoints' => [['methods' => ['GET'], 'args' => ['context' => ['default' => 'view', 'required' => false]]]], '_links' => ['self' => [['href' => $this->url->to('/')]]]]];
         $namespaces = [];
         $arguments = [];
@@ -47,7 +47,9 @@ final readonly class RouteCatalogue
                     $namespaces[] = $namespace;
                     $routes['/' . $namespace] = ['namespace' => $namespace, 'methods' => ['GET'], 'endpoints' => [['methods' => ['GET'], 'args' => ['namespace' => ['default' => $namespace, 'required' => false], 'context' => ['default' => 'view', 'required' => false]]]], '_links' => ['self' => [['href' => $this->url->to('/' . $namespace)]]]];
                 }
-                $methods = array_values(array_unique(array_map(static fn (string $m) => $m === '*' ? 'GET' : $m, $methods)));
+                $methods = array_map(static fn (string $m) => $m === '*' ? 'GET' : $m, $methods);
+                // Two patterns can make one route (a list's GET and its create's POST): its methods are both's.
+                $methods = array_values(array_unique([...($routes[$route]['methods'] ?? []), ...$methods]));
                 $routes[$route] = ['namespace' => $namespace, 'methods' => $methods, 'endpoints' => [['methods' => $methods, 'args' => $arguments[$route] ?? []]]];
                 if (!str_contains($route, '(?P<')) {
                     $routes[$route]['_links'] = ['self' => [['href' => $this->url->to($route)]]];

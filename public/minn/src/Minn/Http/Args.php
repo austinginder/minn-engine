@@ -80,20 +80,24 @@ final class Args
         'search_columns' => ['default' => [], 'description' => 'Array of column names to be searched.', 'type' => 'array', 'items' => ['enum' => ['email', 'name', 'id', 'username', 'slug'], 'type' => 'string'], 'required' => false],
     ];
 
-    /** Read by Rest\TermsController::list(): a term collection (categories, tags, pattern categories). */
+    /** Read by Rest\TermCollectionParams: a term collection, either shape. */
     public const TERMS = [
         'page' => ['description' => 'Current page of the collection.', 'type' => 'integer', 'default' => 1, 'minimum' => 1, 'required' => false],
         'per_page' => ['description' => 'Maximum number of items to be returned in result set.', 'type' => 'integer', 'default' => 10, 'minimum' => 1, 'maximum' => 100, 'required' => false],
         'search' => ['description' => 'Limit results to those matching a string.', 'type' => 'string', 'required' => false],
         'exclude' => ['description' => 'Ensure result set excludes specific IDs.', 'type' => 'array', 'items' => ['type' => 'integer'], 'default' => [], 'required' => false],
         'include' => ['description' => 'Limit result set to specific IDs.', 'type' => 'array', 'items' => ['type' => 'integer'], 'default' => [], 'required' => false],
+        // A flat taxonomy's list takes an offset, a hierarchical one's a parent (Rest\TermCollectionParams keeps the one that applies).
+        'offset' => ['description' => 'Offset the result set by a specific number of items.', 'type' => 'integer', 'required' => false],
         'order' => ['description' => 'Order sort attribute ascending or descending.', 'type' => 'string', 'default' => 'asc', 'enum' => ['asc', 'desc'], 'required' => false],
         'orderby' => ['description' => 'Sort collection by term attribute.', 'type' => 'string', 'default' => 'name', 'enum' => ['id', 'include', 'name', 'slug', 'include_slugs', 'term_group', 'description', 'count'], 'required' => false],
+        'hide_empty' => ['description' => 'Whether to hide terms not assigned to any posts.', 'type' => 'boolean', 'default' => false, 'required' => false],
+        'parent' => ['description' => 'Limit result set to terms assigned to a specific parent.', 'type' => 'integer', 'required' => false],
         'post' => ['description' => 'Limit result set to terms assigned to a specific post.', 'type' => 'integer', 'default' => null, 'required' => false],
         'slug' => ['description' => 'Limit result set to terms with one or more specific slugs.', 'type' => 'array', 'items' => ['type' => 'string'], 'required' => false],
     ];
 
-    /** Read by Rest\CommentsController::list() and filter(): the comment collection. */
+    /** Read by Rest\CommentsController::list(): the comment collection. */
     public const COMMENTS = [
         'page' => ['description' => 'Current page of the collection.', 'type' => 'integer', 'default' => 1, 'minimum' => 1, 'required' => false],
         'per_page' => ['description' => 'Maximum number of items to be returned in result set.', 'type' => 'integer', 'default' => 10, 'minimum' => 1, 'maximum' => 100, 'required' => false],

@@ -54773,7 +54773,7 @@
             "namespace": "Minn\\Http",
             "kind": "final class",
             "file": "public/minn/src/Minn/Http/Args.php",
-            "lines": 164,
+            "lines": 168,
             "doc": "The parameters a route accepts, as the reference describes them in the\nREST index: name => {description, type, ...}. The descriptions, types,\nenums and bounds were captured from the reference, so a client that\nreads either index is told the same thing, and the router refuses a\nvalue the way the reference refuses it, before it judges the caller.\n\nA route declares only what it really reads. An argument published here\nthat the handler ignores would be worse than none at all, because a\nclient reading the index would build a request around it, so each set\nbelow names the code that consumes it. The sets keep the reference's\norder, because a refusal lists the invalid parameters in that order.\n`_fields` and `_embed` are read everywhere and declared nowhere, as the\nreference lists neither and validates neither.",
             "implements": [],
             "extends": null,
@@ -54799,6 +54799,7 @@
                 "Minn\\Rest\\SidebarsController",
                 "Minn\\Rest\\StatusesController",
                 "Minn\\Rest\\TaxonomiesController",
+                "Minn\\Rest\\TermCollectionParams",
                 "Minn\\Rest\\TermsController",
                 "Minn\\Rest\\TypesController",
                 "Minn\\Rest\\UserCollectionParams",
@@ -54846,14 +54847,14 @@
                 },
                 {
                     "name": "TERMS",
-                    "value": "array (   'page' =>    array (     'description' => 'Current page of the collection.',     'type' => 'integer',     'default' => 1,     'minimum' => 1,     'required' => false,   ),   'per_page' =>    array (     'description' => 'Maximum number of items to be returned in result set.',     'type' => 'integer',     'default' => 10,     'minimum' => 1,     'maximum' => 100,     'required' => false,   ),   'search' =>    array (     'description' => 'Limit results to those matching a string.',     'type' => 'string',     'required' => false,   ),   'exclude' =>    array (     'description' => 'Ensure result set excludes specific IDs.',     'type' => 'array',     'items' =>      array (       'type' => 'integer',     ),     'default' =>      array (     ),     'required' => false,   ),   'include' =>    array (     'description' => 'Limit result set to specific IDs.',     'type' => 'array',     'items' =>      array (       'type' => 'integer',     ),     'default' =>      array (     ),     'required' => false,   ),   'order' =>    array (     'description' => 'Order sort attribute ascending or descending.',     'type' => 'string',     'default' => 'asc',     'enum' =>      array (       0 => 'asc',       1 => 'desc',     ),     'required' => false,   ),   'orderby' =>    array (     'description' => 'Sort collection by term attribute.',     'type' => 'string',     'default' => 'name',     'enum' =>      array (       0 => 'id',       1 => 'include',       2 => 'name',       3 => 'slug',       4 => 'include_slugs',       5 => 'term_group',       6 => 'description',       7 => 'count',     ),     'required' => false,   ),   'post' =>    array (     'description' => 'Limit result set to terms assigned to a specific post.',     'type' => 'integer',     'default' => NULL,     'required' => false,   ),   'slug' =>    array (     'description' => 'Limit result set to terms with one or more specific slugs.',     'type' => 'array',     'items' =>      array (       'type' => 'string',     ),     'required' => false,   ), )",
-                    "doc": "Read by Rest\\TermsController::list(): a term collection (categories, tags, pattern categories).",
+                    "value": "array (   'page' =>    array (     'description' => 'Current page of the collection.',     'type' => 'integer',     'default' => 1,     'minimum' => 1,     'required' => false,   ),   'per_page' =>    array (     'description' => 'Maximum number of items to be returned in result set.',     'type' => 'integer',     'default' => 10,     'minimum' => 1,     'maximum' => 100,     'required' => false,   ),   'search' =>    array (     'description' => 'Limit results to those matching a string.',     'type' => 'string',     'required' => false,   ),   'exclude' =>    array (     'description' => 'Ensure result set excludes specific IDs.',     'type' => 'array',     'items' =>      array (       'type' => 'integer',     ),     'default' =>      array (     ),     'required' => false,   ),   'include' =>    array (     'description' => 'Limit result set to specific IDs.',     'type' => 'array',     'items' =>      array (       'type' => 'integer',     ),     'default' =>      array (     ),     'required' => false,   ),   'offset' =>    array (     'description' => 'Offset the result set by a specific number of items.',     'type' => 'integer',     'required' => false,   ),   'order' =>    array (     'description' => 'Order sort attribute ascending or descending.',     'type' => 'string',     'default' => 'asc',     'enum' =>      array (       0 => 'asc',       1 => 'desc',     ),     'required' => false,   ),   'orderby' =>    array (     'description' => 'Sort collection by term attribute.',     'type' => 'string',     'default' => 'name',     'enum' =>      array (       0 => 'id',       1 => 'include',       2 => 'name',       3 => 'slug',       4 => 'include_slugs',       5 => 'term_group',       6 => 'description',       7 => 'count',     ),     'required' => false,   ),   'hide_empty' =>    array (     'description' => 'Whether to hide terms not assigned to any posts.',     'type' => 'boolean',     'default' => false,     'required' => false,   ),   'parent' =>    array (     'description' => 'Limit result set to terms assigned to a specific parent.',     'type' => 'integer',     'required' => false,   ),   'post' =>    array (     'description' => 'Limit result set to terms assigned to a specific post.',     'type' => 'integer',     'default' => NULL,     'required' => false,   ),   'slug' =>    array (     'description' => 'Limit result set to terms with one or more specific slugs.',     'type' => 'array',     'items' =>      array (       'type' => 'string',     ),     'required' => false,   ), )",
+                    "doc": "Read by Rest\\TermCollectionParams: a term collection, either shape.",
                     "visibility": "public"
                 },
                 {
                     "name": "COMMENTS",
                     "value": "array (   'page' =>    array (     'description' => 'Current page of the collection.',     'type' => 'integer',     'default' => 1,     'minimum' => 1,     'required' => false,   ),   'per_page' =>    array (     'description' => 'Maximum number of items to be returned in result set.',     'type' => 'integer',     'default' => 10,     'minimum' => 1,     'maximum' => 100,     'required' => false,   ),   'search' =>    array (     'description' => 'Limit results to those matching a string.',     'type' => 'string',     'required' => false,   ),   'after' =>    array (     'description' => 'Limit response to comments published after a given ISO8601 compliant date.',     'type' => 'string',     'format' => 'date-time',     'required' => false,   ),   'author' =>    array (     'description' => 'Limit result set to comments assigned to specific user IDs. Requires authorization.',     'type' => 'array',     'items' =>      array (       'type' => 'integer',     ),     'required' => false,   ),   'author_exclude' =>    array (     'description' => 'Ensure result set excludes comments assigned to specific user IDs. Requires authorization.',     'type' => 'array',     'items' =>      array (       'type' => 'integer',     ),     'required' => false,   ),   'author_email' =>    array (     'default' => NULL,     'description' => 'Limit result set to that from a specific author email. Requires authorization.',     'format' => 'email',     'type' => 'string',     'required' => false,   ),   'before' =>    array (     'description' => 'Limit response to comments published before a given ISO8601 compliant date.',     'type' => 'string',     'format' => 'date-time',     'required' => false,   ),   'exclude' =>    array (     'description' => 'Ensure result set excludes specific IDs.',     'type' => 'array',     'items' =>      array (       'type' => 'integer',     ),     'default' =>      array (     ),     'required' => false,   ),   'include' =>    array (     'description' => 'Limit result set to specific IDs.',     'type' => 'array',     'items' =>      array (       'type' => 'integer',     ),     'default' =>      array (     ),     'required' => false,   ),   'offset' =>    array (     'description' => 'Offset the result set by a specific number of items.',     'type' => 'integer',     'required' => false,   ),   'order' =>    array (     'description' => 'Order sort attribute ascending or descending.',     'type' => 'string',     'default' => 'desc',     'enum' =>      array (       0 => 'asc',       1 => 'desc',     ),     'required' => false,   ),   'orderby' =>    array (     'description' => 'Sort collection by comment attribute.',     'type' => 'string',     'default' => 'date_gmt',     'enum' =>      array (       0 => 'date',       1 => 'date_gmt',       2 => 'id',       3 => 'include',       4 => 'post',       5 => 'parent',       6 => 'type',     ),     'required' => false,   ),   'parent' =>    array (     'default' =>      array (     ),     'description' => 'Limit result set to comments of specific parent IDs.',     'type' => 'array',     'items' =>      array (       'type' => 'integer',     ),     'required' => false,   ),   'parent_exclude' =>    array (     'default' =>      array (     ),     'description' => 'Ensure result set excludes specific parent IDs.',     'type' => 'array',     'items' =>      array (       'type' => 'integer',     ),     'required' => false,   ),   'post' =>    array (     'default' =>      array (     ),     'description' => 'Limit result set to comments assigned to specific post IDs.',     'type' => 'array',     'items' =>      array (       'type' => 'integer',     ),     'required' => false,   ),   'status' =>    array (     'default' => 'approve',     'description' => 'Limit result set to comments assigned a specific status. Requires authorization.',     'type' => 'string',     'required' => false,   ),   'type' =>    array (     'default' => 'comment',     'description' => 'Limit result set to comments assigned a specific type. Requires authorization.',     'type' => 'string',     'required' => false,   ),   'password' =>    array (     'description' => 'The password for the post if it is password protected.',     'type' => 'string',     'required' => false,   ), )",
-                    "doc": "Read by Rest\\CommentsController::list() and filter(): the comment collection.",
+                    "doc": "Read by Rest\\CommentsController::list(): the comment collection.",
                     "visibility": "public"
                 },
                 {
@@ -54909,8 +54910,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 181,
-                    "end": 184
+                    "line": 185,
+                    "end": 188
                 }
             ]
         },
@@ -59640,6 +59641,7 @@
                 "Minn\\Rest\\DeclaredPostsController",
                 "Minn\\Rest\\IndexController",
                 "Minn\\Rest\\PolicyGate",
+                "Minn\\Rest\\TermCollectionParams",
                 "Minn\\Rest\\TermObject"
             ],
             "constructor": null,
@@ -59663,6 +59665,7 @@
             ],
             "usedBy": [
                 "Minn\\Rest\\PostCollectionParams",
+                "Minn\\Rest\\TermCollectionParams",
                 "Minn\\Rest\\UserCollectionParams"
             ],
             "constructor": null,
@@ -80900,6 +80903,7 @@
                 "Minn\\Http\\Request",
                 "Minn\\Http\\Response",
                 "Minn\\Http\\Route",
+                "Minn\\Rest\\TermCollectionParams",
                 "Minn\\Rest\\TermsController"
             ],
             "usedBy": [
@@ -90836,7 +90840,7 @@
             "namespace": "Minn\\Rest",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Rest/RouteCatalogue.php",
-            "lines": 59,
+            "lines": 61,
             "doc": "The routes the engine serves, described in the reference's shape for the\nindex and for an OPTIONS request: every route's namespace, its methods\nand the parameters it declares, gathered per concrete route from the\nattributes so a client learns what really works on it, with the\nnamespaces they fall under. Routes are keyed as the reference spells them\n('/wp/v2/posts/(?P<id>[\\d]+)').",
             "implements": [],
             "extends": null,
@@ -90925,7 +90929,7 @@
                     ],
                     "params": [],
                     "line": 29,
-                    "end": 58
+                    "end": 60
                 },
                 {
                     "routes": [],
@@ -90946,8 +90950,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 66,
-                    "end": 74
+                    "line": 68,
+                    "end": 76
                 }
             ]
         },
@@ -91646,6 +91650,7 @@
                 "Minn\\Rest\\PostsController",
                 "Minn\\Rest\\RuntimeEnvelope",
                 "Minn\\Rest\\RuntimePrepare",
+                "Minn\\Rest\\TermsController",
                 "Minn\\Rest\\UsersController",
                 "Minn\\Runtime\\CommentEvents",
                 "Minn\\Runtime\\PostEvents",
@@ -96427,13 +96432,62 @@
             ]
         },
         {
+            "name": "Minn\\Rest\\TermCollectionParams",
+            "short": "TermCollectionParams",
+            "namespace": "Minn\\Rest",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Rest/TermCollectionParams.php",
+            "lines": 13,
+            "doc": "A taxonomy's term list parameters as the reference declares them (probe\nrest-term-lists): the context and Args::TERMS, a hierarchical taxonomy's\nwith a parent and no offset, a flat one's with an offset and no parent.\nPlugins change them through rest_{taxonomy}_collection_params when the\nlist runs.",
+            "implements": [
+                "Minn\\Http\\RouteParams"
+            ],
+            "extends": null,
+            "uses": [
+                "Minn\\Http\\Args",
+                "Minn\\Http\\RouteMiss",
+                "Minn\\Http\\RouteParams",
+                "Minn\\Rest\\TermObject"
+            ],
+            "usedBy": [
+                "Minn\\Rest\\DeclaredTermsController",
+                "Minn\\Rest\\TermsController"
+            ],
+            "constructor": null,
+            "cases": [],
+            "constants": [],
+            "properties": [],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "for",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "for(array $captures): array",
+                    "doc": "The parameters of the list a {base} capture names; none for a base no REST taxonomy has.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "captures",
+                            "type": "array",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 21,
+                    "end": 29
+                }
+            ]
+        },
+        {
             "name": "Minn\\Rest\\TermFilters",
             "short": "TermFilters",
             "namespace": "Minn\\Rest",
             "kind": "final class",
             "file": "public/minn/src/Minn/Rest/TermFilters.php",
-            "lines": 59,
-            "doc": "Terms a REST read answers with, as plugin code filters them on the\nreference (probe rest-term-filters): each through get_term and\nget_{taxonomy}, a list as well through get_terms with its taxonomies and\nthe query's arguments. What a filter changes (a count, a name) is what\nthe answer shows. Without the runtime, or with nothing hooked, the\nengine's own rows stand.",
+            "lines": 25,
+            "doc": "A term a REST read answers with, as plugin code filters it on the\nreference (probe rest-term-filters): through get_term and\nget_{taxonomy}. What a filter changes (a count, a name) is what the\nanswer shows. Without the runtime, or with nothing hooked, the engine's\nown row stands. (Lists run get_terms itself.)",
             "implements": [],
             "extends": null,
             "uses": [
@@ -96472,46 +96526,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 21,
-                    "end": 28
-                },
-                {
-                    "routes": [],
-                    "name": "page",
-                    "static": true,
-                    "visibility": "public",
-                    "signature": "page(array $terms, string $taxonomy, array $args): array",
-                    "doc": "A page of terms as get_terms hands it back.",
-                    "shapes": [
-                        "@param list<TermRecord> $terms",
-                        "@param array<string, mixed> $args the query's arguments, over WP_Term_Query's defaults",
-                        "@return list<TermRecord>"
-                    ],
-                    "params": [
-                        {
-                            "name": "terms",
-                            "type": "array",
-                            "shape": "list<TermRecord>",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "taxonomy",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "args",
-                            "type": "array",
-                            "shape": "array<string, mixed>",
-                            "default": null,
-                            "doc": "the query's arguments, over WP_Term_Query's defaults"
-                        }
-                    ],
-                    "line": 37,
-                    "end": 62
+                    "line": 20,
+                    "end": 27
                 },
                 {
                     "routes": [],
@@ -96537,8 +96553,80 @@
                             "doc": ""
                         }
                     ],
-                    "line": 65,
-                    "end": 75
+                    "line": 30,
+                    "end": 40
+                }
+            ]
+        },
+        {
+            "name": "Minn\\Rest\\TermListArgs",
+            "short": "TermListArgs",
+            "namespace": "Minn\\Rest",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Rest/TermListArgs.php",
+            "lines": 28,
+            "doc": "The get_terms arguments a term list request makes, as the reference\nmakes them before rest_{taxonomy}_query (probe rest-term-lists): the\ntaxonomy, each declared parameter the request carries under its query\nname (include_slugs ordering as slug__in), the offset (the page's unless\nthe list takes one and it is given), the parent a hierarchical list\ntakes, and ids alone for a HEAD request.",
+            "implements": [],
+            "extends": null,
+            "uses": [],
+            "usedBy": [
+                "Minn\\Rest\\TermsController"
+            ],
+            "constructor": null,
+            "cases": [],
+            "constants": [
+                {
+                    "name": "MAPPINGS",
+                    "value": "array (   'exclude' => 'exclude',   'include' => 'include',   'order' => 'order',   'orderby' => 'orderby',   'post' => 'post',   'hide_empty' => 'hide_empty',   'per_page' => 'number',   'search' => 'search',   'slug' => 'slug', )",
+                    "doc": "",
+                    "visibility": "private"
+                }
+            ],
+            "properties": [],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "of",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "of(WP_REST_Request $wp, array $registered, string $taxonomy, string $method): array",
+                    "doc": "The arguments before plugins see them.",
+                    "shapes": [
+                        "@param array<string, mixed> $registered the collection, as rest_{taxonomy}_collection_params left it",
+                        "@return array<string, mixed>"
+                    ],
+                    "params": [
+                        {
+                            "name": "wp",
+                            "type": "WP_REST_Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "registered",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": "the collection, as rest_{taxonomy}_collection_params left it"
+                        },
+                        {
+                            "name": "taxonomy",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "method",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 25,
+                    "end": 41
                 }
             ]
         },
@@ -96567,6 +96655,7 @@
                 "Minn\\Rest\\Api",
                 "Minn\\Rest\\PolicyGate",
                 "Minn\\Rest\\Services",
+                "Minn\\Rest\\TermCollectionParams",
                 "Minn\\Rest\\TermsController"
             ],
             "constructor": {
@@ -96800,7 +96889,7 @@
             "namespace": "Minn\\Rest",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Rest/TermsController.php",
-            "lines": 240,
+            "lines": 203,
             "doc": "wp/v2 categories, tags, and pattern categories: list, single, and the create/update/delete the taxonomy admin drives.",
             "implements": [],
             "extends": null,
@@ -96823,7 +96912,10 @@
                 "Minn\\Rest\\Context",
                 "Minn\\Rest\\Fields",
                 "Minn\\Rest\\Reply",
+                "Minn\\Rest\\RuntimeRoutes",
+                "Minn\\Rest\\TermCollectionParams",
                 "Minn\\Rest\\TermFilters",
+                "Minn\\Rest\\TermListArgs",
                 "Minn\\Rest\\TermObject",
                 "Minn\\Runtime\\TermEvents",
                 "Minn\\Support\\Kses"
@@ -96875,18 +96967,11 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 29,
-                "end": 36
+                "line": 27,
+                "end": 34
             },
             "cases": [],
-            "constants": [
-                {
-                    "name": "ORDER_BY",
-                    "value": "array (   'name' => 't.name',   'count' => 'tt.count',   'id' => 't.term_id',   'slug' => 't.slug', )",
-                    "doc": "",
-                    "visibility": "private"
-                }
-            ],
+            "constants": [],
             "properties": [
                 {
                     "name": "db",
@@ -96943,7 +97028,7 @@
                     "static": false,
                     "visibility": "public",
                     "signature": "list(Minn\\Http\\Request $request, string $base): Minn\\Http\\Response",
-                    "doc": "The categories or tags list.",
+                    "doc": "A taxonomy's term list as the reference serves it: the request's\nget_terms (wp_get_object_terms for a post's) through\nrest_{taxonomy}_collection_params and rest_{taxonomy}_query, counted\nby wp_count_terms without the page.",
                     "shapes": [],
                     "params": [
                         {
@@ -96961,8 +97046,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 40,
-                    "end": 111
+                    "line": 43,
+                    "end": 74
                 },
                 {
                     "routes": [
@@ -96997,8 +97082,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 115,
-                    "end": 132
+                    "line": 78,
+                    "end": 95
                 },
                 {
                     "routes": [
@@ -97027,8 +97112,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 137,
-                    "end": 177
+                    "line": 100,
+                    "end": 140
                 },
                 {
                     "routes": [
@@ -97065,8 +97150,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 183,
-                    "end": 216
+                    "line": 146,
+                    "end": 179
                 },
                 {
                     "routes": [
@@ -97101,8 +97186,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 228,
-                    "end": 249
+                    "line": 191,
+                    "end": 212
                 },
                 {
                     "routes": [],
@@ -97121,8 +97206,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 256,
-                    "end": 263
+                    "line": 219,
+                    "end": 226
                 },
                 {
                     "routes": [],
@@ -97148,8 +97233,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 219,
-                    "end": 224
+                    "line": 182,
+                    "end": 187
                 }
             ]
         },
@@ -97159,7 +97244,7 @@
             "namespace": "Minn\\Rest",
             "kind": "final class",
             "file": "public/minn/src/Minn/Rest/Types.php",
-            "lines": 162,
+            "lines": 179,
             "doc": "The engine's registry of built-in post types, seeded from the observed\ncontract (src/data/types.json) with _links attached at runtime.",
             "implements": [],
             "extends": null,
@@ -97310,6 +97395,20 @@
                 },
                 {
                     "routes": [],
+                    "name": "routeBases",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "routeBases(): array",
+                    "doc": "Every base the {base} routes serve: the declared post types' and the\ntaxonomies plugin code registered to show in REST under wp/v2.",
+                    "shapes": [
+                        "@return list<string>"
+                    ],
+                    "params": [],
+                    "line": 148,
+                    "end": 157
+                },
+                {
+                    "routes": [],
                     "name": "isDeclared",
                     "static": false,
                     "visibility": "public",
@@ -97325,8 +97424,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 143,
-                    "end": 146
+                    "line": 160,
+                    "end": 163
                 },
                 {
                     "routes": [],
@@ -97345,8 +97444,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 149,
-                    "end": 152
+                    "line": 166,
+                    "end": 169
                 },
                 {
                     "routes": [],
@@ -97365,8 +97464,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 164,
-                    "end": 173
+                    "line": 181,
+                    "end": 190
                 },
                 {
                     "routes": [],
@@ -97407,8 +97506,8 @@
                         "@return array<string, array> the registered types under wp/v2"
                     ],
                     "params": [],
-                    "line": 155,
-                    "end": 161
+                    "line": 172,
+                    "end": 178
                 }
             ]
         },

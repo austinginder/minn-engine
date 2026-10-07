@@ -171,7 +171,8 @@ function get_term($term, $taxonomy = '', $output = OBJECT, $filter = 'raw')
         }
         $object = new WP_Term((object) $row);
     }
-    $object = apply_filters('get_term', $object, $taxonomy);
+    // The filter is told the term's own taxonomy, whether or not the caller named one.
+    $object = apply_filters('get_term', $object, (string) $object->taxonomy);
     $object = apply_filters("get_{$object->taxonomy}", $object, $object->taxonomy);
     // Plugins' filters see the raw term; then it is put in the context asked for, on a copy of a term the caller handed in.
     if ($filter !== 'raw' && $object instanceof WP_Term) {

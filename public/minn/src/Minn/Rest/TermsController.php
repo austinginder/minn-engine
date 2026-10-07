@@ -24,8 +24,6 @@ use Minn\Support\Kses;
 /** wp/v2 categories, tags, and pattern categories: list, single, and the create/update/delete the taxonomy admin drives. */
 final readonly class TermsController
 {
-    private const ORDER_BY = ['name' => 't.name', 'count' => 'tt.count', 'id' => 't.term_id', 'slug' => 't.slug'];
-
     public function __construct(
         private Db $db,
         private Terms $terms,
@@ -35,79 +33,44 @@ final readonly class TermsController
     ) {
     }
 
-    /** The categories or tags list. */
-    #[Route(Method::Get, '/wp/v2/{base:categories|tags|wp_pattern_category}', policy: new Policy(Access::Public), args: [Args::CONTEXT, Args::TERMS])]
+    /**
+     * A taxonomy's term list as the reference serves it: the request's
+     * get_terms (wp_get_object_terms for a post's) through
+     * rest_{taxonomy}_collection_params and rest_{taxonomy}_query, counted
+     * by wp_count_terms without the page.
+     */
+    #[Route(Method::Get, '/wp/v2/{base:categories|tags|wp_pattern_category}', policy: new Policy(Access::Public), params: TermCollectionParams::class)]
     public function list(Request $request, string $base): Response
     {
-        $config = TermObject::config($base);
-        $perPage = max(1, min(100, (int) $request->query('per_page', '10')));
-        $page = max(1, (int) $request->query('page', '1'));
-        $order = strtoupper((string) $request->query('order', 'asc')) === 'DESC' ? 'DESC' : 'ASC';
-        $orderBy = self::ORDER_BY[(string) $request->query('orderby', 'name')] ?? 't.name';
-
-        $where = 'tt.taxonomy = ?';
-        $params = [$config['taxonomy']];
-        $search = (string) $request->query('search', '');
-        if ($search !== '') {
-            $where .= ' AND t.name LIKE ?';
-            $params[] = '%' . addcslashes($search, '%_\\') . '%';
+        $taxonomy = TermObject::config($base)['taxonomy'];
+        $params = TermCollectionParams::for(['base' => $base]);
+        $wp = RuntimeRoutes::sanitized($request, $params);
+        $object = \get_taxonomy($taxonomy);
+        if (Context::of($request)->isEdit() && !$this->caller->can((string) ($object->cap->edit_terms ?? 'manage_categories'))) {
+            throw $this->caller->refuse('rest_forbidden_context', 'Sorry, you are not allowed to edit terms in this taxonomy.');
         }
-        $include = array_values(array_filter(array_map(intval(...), explode(',', (string) $request->query('include', ''))), static fn (int $id) => $id > 0));
-        if ($include !== []) {
-            $where .= ' AND t.term_id IN (?)';
-            $params[] = $include;
+        $post = isset($wp['post']) ? (int) $wp['post'] : 0;
+        if (isset($wp['post']) && \get_post($post) === null) {
+            throw new RestError('rest_post_invalid_id', 'Invalid post ID.', 400);
         }
-        $exclude = array_values(array_filter(array_map(intval(...), explode(',', (string) $request->query('exclude', ''))), static fn (int $id) => $id > 0));
-        if ($exclude !== []) {
-            $where .= ' AND t.term_id NOT IN (?)';
-            $params[] = $exclude;
+        $registered = (array) \apply_filters("rest_{$taxonomy}_collection_params", $params, $object);
+        $args = (array) \apply_filters("rest_{$taxonomy}_query", TermListArgs::of($wp, $registered, $taxonomy, $request->method->value), $wp);
+        $found = empty($args['post']) ? \get_terms($args) : \wp_get_object_terms($args['post'], $taxonomy, $args);
+        $count = empty($args['post']) ? $args : ['object_ids' => $args['post']] + $args;
+        unset($count['number'], $count['offset']);
+        $total = (int) \wp_count_terms($count);
+        $perPage = (int) ($args['number'] ?? 0);
+        $pages = $perPage > 0 ? (int) ceil($total / $perPage) : 0;
+        if ($request->method === Method::Head) {
+            return Reply::list([], $total, $pages, null);
         }
-        $slug = (string) $request->query('slug', '');
-        if ($slug !== '') {
-            $slugs = array_values(array_filter(explode(',', $slug), static fn (string $s) => $s !== ''));
-            if ($slugs !== []) {
-                $where .= ' AND t.slug IN (?)';
-                $params[] = $slugs;
+        $objects = [];
+        foreach (is_array($found) ? $found : [] as $term) {
+            if ($term instanceof \WP_Term) {
+                $objects[] = $this->object->view(TermRecord::fromRow(get_object_vars($term)), $base);
             }
         }
-        $post = $request->query('post');
-        if ($post !== null && ctype_digit($post)) {
-            if ($this->db->value("SELECT ID FROM {$this->db->table('posts')} WHERE ID = ?", [(int) $post]) === null) {
-                throw new RestError('rest_post_invalid_id', 'Invalid post ID.', 400);
-            }
-            $where .= " AND tt.term_taxonomy_id IN (SELECT term_taxonomy_id FROM {$this->db->table('term_relationships')} WHERE object_id = ?)";
-            $params[] = (int) $post;
-        }
-
-        $terms = $this->db->table('terms');
-        $taxonomy = $this->db->table('term_taxonomy');
-        $total = (int) $this->db->value(
-            "SELECT COUNT(*) FROM {$terms} t JOIN {$taxonomy} tt ON tt.term_id = t.term_id WHERE {$where}",
-            $params,
-        );
-        $rows = $this->db->rows(
-            "SELECT t.term_id, t.name, t.slug, tt.description, tt.count, tt.parent
-             FROM {$terms} t JOIN {$taxonomy} tt ON tt.term_id = t.term_id
-             WHERE {$where} ORDER BY {$orderBy} {$order} LIMIT ?, ?",
-            [...$params, ($page - 1) * $perPage, $perPage],
-        );
-        $records = TermFilters::page(TermRecord::fromRows($rows), $config['taxonomy'], [
-            'orderby' => (string) $request->query('orderby', 'name'),
-            'order' => strtolower($order),
-            'hide_empty' => $request->flag('hide_empty'),
-            'include' => $include,
-            'exclude' => $exclude,
-            'number' => $perPage,
-            'offset' => ($page - 1) * $perPage,
-            'slug' => $slug === '' ? [] : array_values(array_filter(explode(',', $slug), static fn (string $s) => $s !== '')),
-            'search' => $search,
-        ]);
-        return Reply::list(
-            array_map(fn (TermRecord $term) => $this->object->view($term, $base), $records),
-            $total,
-            (int) ceil($total / $perPage),
-            Fields::fromQuery($request->query),
-        );
+        return Reply::list($objects, $total, $pages, Fields::fromQuery($request->query));
     }
 
     /** One category or tag. */

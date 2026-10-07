@@ -51,7 +51,7 @@ final readonly class Api
      */
     public function routes(): array
     {
-        return EngineRoutes::map($this->router, $this->services->types()->declaredBases());
+        return EngineRoutes::map($this->router, $this->services->types()->routeBases());
     }
 
     /** The API for one request: the shared services and the route table. */

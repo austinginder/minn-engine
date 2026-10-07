@@ -139,6 +139,23 @@ final class Types
         return $bases;
     }
 
+    /**
+     * Every base the {base} routes serve: the declared post types' and the
+     * taxonomies plugin code registered to show in REST under wp/v2.
+     *
+     * @return list<string>
+     */
+    public function routeBases(): array
+    {
+        $bases = $this->declaredBases();
+        foreach (Runtime::booted() ? \get_taxonomies(['show_in_rest' => true, '_builtin' => false], 'objects') : [] as $taxonomy) {
+            if (($taxonomy->rest_namespace ?: 'wp/v2') === 'wp/v2') {
+                $bases[] = (string) ($taxonomy->rest_base ?: $taxonomy->name);
+            }
+        }
+        return array_values(array_unique($bases));
+    }
+
     /** Whether the engine serves this type through its {base} routes: an extension declared it, or plugin code registered it to show in REST under wp/v2 (probe rest-plugin-types). */
     public function isDeclared(string $slug): bool
     {

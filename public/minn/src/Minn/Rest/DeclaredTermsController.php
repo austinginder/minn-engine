@@ -24,7 +24,7 @@ final readonly class DeclaredTermsController
     }
 
     /** A registered taxonomy's terms. */
-    #[Route(Method::Get, '/wp/v2/{base:[a-z0-9_-]+}', policy: new Policy(Access::Taxonomy, param: 'base'))]
+    #[Route(Method::Get, '/wp/v2/{base:[a-z0-9_-]+}', policy: new Policy(Access::Taxonomy, param: 'base'), params: TermCollectionParams::class)]
     public function list(Request $request, string $base): Response
     {
         return $this->terms->list($request, $base);

@@ -23068,7 +23068,7 @@
         },
         "get_term": {
             "file": "taxonomy.php",
-            "lines": 31,
+            "lines": 32,
             "kind": "composes",
             "minn": [],
             "composes": [

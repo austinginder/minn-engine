@@ -55,7 +55,7 @@ the wp/v2 surface: shapes and controllers
 | [`RestUrl`](#resturl) | final readonly class | 38 | REST URLs in the form the reference emits for the site's permalink mode: |
 | [`RevisionsController`](#revisionscontroller) | final readonly class | 142 | wp/v2 revisions and autosaves under posts, pages, and blocks. |
 | [`RouteArgs`](#routeargs) | final class | 36 | The argument groups a route registers with, filled the way register_rest_route fills them. |
-| [`RouteCatalogue`](#routecatalogue) | final readonly class | 59 | The routes the engine serves, described in the reference's shape for the |
+| [`RouteCatalogue`](#routecatalogue) | final readonly class | 61 | The routes the engine serves, described in the reference's shape for the |
 | [`RouteIndex`](#routeindex) | final class | 61 | The description of one route the REST index publishes: namespace, methods, endpoints with their argument schemas, self link. |
 | [`RouteMatch`](#routematch) | final class | 68 | Finds the registered handler for a method and path among the runtime's route table. |
 | [`RouteTable`](#routetable) | final class | 38 | The registered endpoints in dispatch shape: one handler list per route, methods as a set, non-numeric keys lifted into the route's options. |
@@ -75,10 +75,12 @@ the wp/v2 surface: shapes and controllers
 | [`TaxonomiesController`](#taxonomiescontroller) | final readonly class | 48 | wp/v2 taxonomies: the registry, whole or per type, in view or edit context. |
 | [`TemplateObject`](#templateobject) | final readonly class | 100 | The wp/v2/templates and wp/v2/template-parts resource. |
 | [`TemplatesController`](#templatescontroller) | final readonly class | 249 | wp/v2/templates and wp/v2/template-parts: the block theme's templates as |
-| [`TermFilters`](#termfilters) | final class | 59 | Terms a REST read answers with, as plugin code filters them on the |
+| [`TermCollectionParams`](#termcollectionparams) | final class | 13 | A taxonomy's term list parameters as the reference declares them (probe |
+| [`TermFilters`](#termfilters) | final class | 25 | A term a REST read answers with, as plugin code filters it on the |
+| [`TermListArgs`](#termlistargs) | final class | 28 | The get_terms arguments a term list request makes, as the reference |
 | [`TermObject`](#termobject) | final readonly class | 107 | The wp/v2 category and tag objects. |
-| [`TermsController`](#termscontroller) | final readonly class | 240 | wp/v2 categories, tags, and pattern categories: list, single, and the create/update/delete the taxonomy admin drives. |
-| [`Types`](#types) | final class | 162 | The engine's registry of built-in post types, seeded from the observed |
+| [`TermsController`](#termscontroller) | final readonly class | 203 | wp/v2 categories, tags, and pattern categories: list, single, and the create/update/delete the taxonomy admin drives. |
+| [`Types`](#types) | final class | 179 | The engine's registry of built-in post types, seeded from the observed |
 | [`TypesController`](#typescontroller) | final readonly class | 70 | wp/v2 types. In the edit context (probe rest-types-edit) a type adds its |
 | [`UserCollectionParams`](#usercollectionparams) | final class | 11 | The users list's parameters as the reference declares them (probe |
 | [`UserListArgs`](#userlistargs) | final class | 47 | The WP_User_Query arguments a user list request makes, as the reference |
@@ -2420,7 +2422,7 @@ and the runtime's namespaces folded into the index.
 - const `DISPATCH_DONE` = `array (   'rest_filter_response_fields' => 10, )` — rest_post_dispatch's defaults the engine does itself: every answer is cut to its _fields before it is served.
 - const `SERVE_DONE` = `array (   '_oembed_rest_pre_serve_request' => 10, )` — rest_pre_serve_request's defaults the engine does itself: oEmbed's XML (see oembedXml()).
 
-Used by: `Minn\Rest\Api`, `Minn\Rest\BatchController`, `Minn\Rest\CommentsController`, `Minn\Rest\Embed`, `Minn\Rest\MediaController`, `Minn\Rest\OEmbedController`, `Minn\Rest\PostsController`, `Minn\Rest\RuntimeEnvelope`, `Minn\Rest\RuntimePrepare`, `Minn\Rest\UsersController`, `Minn\Runtime\CommentEvents`, `Minn\Runtime\PostEvents`, `Minn\Runtime\PostSave`, `Minn\Runtime\TermEvents`, `Minn\Runtime\UserEvents`
+Used by: `Minn\Rest\Api`, `Minn\Rest\BatchController`, `Minn\Rest\CommentsController`, `Minn\Rest\Embed`, `Minn\Rest\MediaController`, `Minn\Rest\OEmbedController`, `Minn\Rest\PostsController`, `Minn\Rest\RuntimeEnvelope`, `Minn\Rest\RuntimePrepare`, `Minn\Rest\TermsController`, `Minn\Rest\UsersController`, `Minn\Runtime\CommentEvents`, `Minn\Runtime\PostEvents`, `Minn\Runtime\PostSave`, `Minn\Runtime\TermEvents`, `Minn\Runtime\UserEvents`
 
 
 ### static `gate(Minn\Http\Request $request): ?Minn\Http\Response`
@@ -3267,16 +3269,32 @@ Deletes a customised template part.
 Internals: `listing()` (private, line 120), `lookup()` (private, line 144), `single()` (private, line 162), `save()` (private, line 171), `delete()` (private, line 198), `trashed()` (private, line 215), `record()` (private, line 237), `readable()` (private, line 247), `requireWrite()` (private, line 258), `text()` (private, line 267)
 
 
+## TermCollectionParams
+
+`final class Minn\Rest\TermCollectionParams` · `public/minn/src/Minn/Rest/TermCollectionParams.php` · implements `Minn\Http\RouteParams`
+
+A taxonomy's term list parameters as the reference declares them (probe
+rest-term-lists): the context and Args::TERMS, a hierarchical taxonomy's
+with a parent and no offset, a flat one's with an offset and no parent.
+Plugins change them through rest_{taxonomy}_collection_params when the
+list runs.
+
+Used by: `Minn\Rest\DeclaredTermsController`, `Minn\Rest\TermsController`
+
+### static `for(array $captures): array`
+
+The parameters of the list a {base} capture names; none for a base no REST taxonomy has.
+
+
 ## TermFilters
 
 `final class Minn\Rest\TermFilters` · `public/minn/src/Minn/Rest/TermFilters.php`
 
-Terms a REST read answers with, as plugin code filters them on the
-reference (probe rest-term-filters): each through get_term and
-get_{taxonomy}, a list as well through get_terms with its taxonomies and
-the query's arguments. What a filter changes (a count, a name) is what
-the answer shows. Without the runtime, or with nothing hooked, the
-engine's own rows stand.
+A term a REST read answers with, as plugin code filters it on the
+reference (probe rest-term-filters): through get_term and
+get_{taxonomy}. What a filter changes (a count, a name) is what the
+answer shows. Without the runtime, or with nothing hooked, the engine's
+own row stands. (Lists run get_terms itself.)
 
 Used by: `Minn\Rest\TermsController`
 
@@ -3284,15 +3302,30 @@ Used by: `Minn\Rest\TermsController`
 
 A term as get_term hands it back.
 
-### static `page(array $terms, string $taxonomy, array $args): array`
+Internals: `record()` (private, line 30)
 
-A page of terms as get_terms hands it back.
 
-- `@param list<TermRecord> $terms`
-- `@param array<string, mixed> $args the query's arguments, over WP_Term_Query's defaults`
-- `@return list<TermRecord>`
+## TermListArgs
 
-Internals: `record()` (private, line 65)
+`final class Minn\Rest\TermListArgs` · `public/minn/src/Minn/Rest/TermListArgs.php`
+
+The get_terms arguments a term list request makes, as the reference
+makes them before rest_{taxonomy}_query (probe rest-term-lists): the
+taxonomy, each declared parameter the request carries under its query
+name (include_slugs ordering as slug__in), the offset (the page's unless
+the list takes one and it is given), the parent a hierarchical list
+takes, and ids alone for a HEAD request.
+
+- const `MAPPINGS` = `array (   'exclude' => 'exclude',   'include' => 'include',   'order' => 'order',   'orderby' => 'orderby',   'post' => 'post',   'hide_empty' => 'hide_empty',   'per_page' => 'number',   'search' => 'search',   'slug' => 'slug', )`
+
+Used by: `Minn\Rest\TermsController`
+
+### static `of(WP_REST_Request $wp, array $registered, string $taxonomy, string $method): array`
+
+The arguments before plugins see them.
+
+- `@param array<string, mixed> $registered the collection, as rest_{taxonomy}_collection_params left it`
+- `@return array<string, mixed>`
 
 
 ## TermObject
@@ -3303,7 +3336,7 @@ The wp/v2 category and tag objects.
 
 - const `TAXONOMIES` = `array (   'categories' =>    array (     'taxonomy' => 'category',     'has_parent' => true,     'post_arg' => 'categories',     'post_base' => 'posts',   ),   'tags' =>    array (     'taxonomy' => 'post_tag',     'has_parent' => false,     'post_arg' => 'tags',     'post_base' => 'posts',   ),   'wp_pattern_category' =>    array (     'taxonomy' => 'wp_pattern_category',     'has_parent' => false,     'post_arg' => 'wp_pattern_category',     'post_base' => 'blocks',   ), )`
 
-Used by: `Minn\Rest\Api`, `Minn\Rest\PolicyGate`, `Minn\Rest\Services`, `Minn\Rest\TermsController`
+Used by: `Minn\Rest\Api`, `Minn\Rest\PolicyGate`, `Minn\Rest\Services`, `Minn\Rest\TermCollectionParams`, `Minn\Rest\TermsController`
 
 ```php
 __construct(Minn\Db $db, Minn\Front\Permalinks $permalinks, Minn\Rest\RestUrl $url, Minn\Rest\Caller $caller)
@@ -3342,8 +3375,6 @@ Internals: `viewFields()` (private, line 80), `allowedVerbs()` (private, line 11
 
 wp/v2 categories, tags, and pattern categories: list, single, and the create/update/delete the taxonomy admin drives.
 
-- const `ORDER_BY` = `array (   'name' => 't.name',   'count' => 'tt.count',   'id' => 't.term_id',   'slug' => 't.slug', )`
-
 Used by: `Minn\Rest\Api`, `Minn\Rest\DeclaredTermsController`, `Minn\Rest\PolicyGate`
 
 ```php
@@ -3355,7 +3386,10 @@ __construct(Minn\Db $db, Minn\Content\Terms $terms, Minn\Content\Site $site, Min
 
 Route: `GET /wp/v2/{base:categories|tags|wp_pattern_category} (public)`
 
-The categories or tags list.
+A taxonomy's term list as the reference serves it: the request's
+get_terms (wp_get_object_terms for a post's) through
+rest_{taxonomy}_collection_params and rest_{taxonomy}_query, counted
+by wp_count_terms without the page.
 
 ### `single(Minn\Http\Request $request, string $base, string $id): Minn\Http\Response`
 
@@ -3393,7 +3427,7 @@ What creating a term needs (probe rest-plugin-caps): a plugin's
 taxonomy, its edit_terms when hierarchical and its assign_terms when
 flat; categories, manage_categories; the others, edit_posts.
 
-Internals: `requireParent()` (private, line 219)
+Internals: `requireParent()` (private, line 182)
 
 
 ## Types
@@ -3431,6 +3465,13 @@ The rest_base of every type an extension declared or plugin code registered unde
 
 - `@return list<string>`
 
+### `routeBases(): array`
+
+Every base the {base} routes serve: the declared post types' and the
+taxonomies plugin code registered to show in REST under wp/v2.
+
+- `@return list<string>`
+
 ### `isDeclared(string $slug): bool`
 
 Whether the engine serves this type through its {base} routes: an extension declared it, or plugin code registered it to show in REST under wp/v2 (probe rest-plugin-types).
@@ -3443,7 +3484,7 @@ Whether plugin code registered the type (not a built-in, not an extension's).
 
 The rest_base of a type slug.
 
-Internals: `core()` (private, line 37), `registered()` (private, line 78), `servedRegistered()` (private, line 155)
+Internals: `core()` (private, line 37), `registered()` (private, line 78), `servedRegistered()` (private, line 172)
 
 
 ## TypesController
