@@ -1,8 +1,10 @@
 <?php
 
-use Minn\Runtime\TermQuery;
+use Minn\Runtime\TermOrder;
+use Minn\Runtime\TermQueryRunner;
+use Minn\Runtime\TermQueryTree;
 
-/** Term queries as an object; the work is get_terms(), so both agree by construction. */
+/** Term queries as the reference runs them: Minn\Runtime\TermQueryRunner writes the clauses, runs the filters and the request. */
 #[AllowDynamicProperties]
 class WP_Term_Query
 {
@@ -29,7 +31,17 @@ class WP_Term_Query
         }
         $taxonomies = isset($query['taxonomy']) ? (array) $query['taxonomy'] : null;
         $this->query_var_defaults = apply_filters('get_terms_defaults', $this->query_var_defaults, $taxonomies);
-        $this->query_vars = TermQuery::coerce(wp_parse_args((array) $query, $this->query_var_defaults), static fn ($list) => wp_parse_id_list($list));
+        $query = wp_parse_args($query, $this->query_var_defaults);
+        $query['number'] = absint($query['number']);
+        $query['offset'] = absint($query['offset']);
+        if ((int) $query['parent'] > 0) {
+            $query['child_of'] = false;
+        }
+        if ($query['get'] === 'all') {
+            $query = array_replace($query, ['childless' => false, 'child_of' => 0, 'hide_empty' => 0, 'hierarchical' => false, 'pad_counts' => false]);
+        }
+        $query['taxonomy'] = $taxonomies;
+        $this->query_vars = $query;
         do_action_ref_array('parse_term_query', [&$this]);
     }
 
@@ -41,18 +53,33 @@ class WP_Term_Query
 
     public function get_terms()
     {
-        $this->parse_query($this->query_vars);
-        $args = &$this->query_vars;
-        $taxonomies = $args['taxonomy'];
-        $where = $taxonomies === null ? '1=1' : "tt.taxonomy IN ('" . implode("', '", array_map('esc_sql', $taxonomies)) . "')";
-        $this->request = "SELECT t.*, tt.* FROM {$GLOBALS['wpdb']->terms} AS t INNER JOIN {$GLOBALS['wpdb']->term_taxonomy} AS tt ON t.term_id = tt.term_id WHERE {$where}";
-        $this->request = apply_filters('terms_pre_query', null, $this) === null ? $this->request : $this->request;
-        $result = get_terms($args);
-        if (is_wp_error($result)) {
-            $this->terms = [];
-            return $this->terms;
-        }
-        $this->terms = $result;
-        return $this->terms;
+        global $wpdb;
+        return (new TermQueryRunner())->run($this, $wpdb);
+    }
+
+    protected function parse_orderby($orderby_raw)
+    {
+        return TermOrder::clause($this, (string) $orderby_raw);
+    }
+
+    protected function parse_order($order)
+    {
+        return TermOrder::direction($order);
+    }
+
+    protected function get_search_sql($search)
+    {
+        $like = '%' . $GLOBALS['wpdb']->esc_like((string) $search) . '%';
+        return $GLOBALS['wpdb']->prepare('((t.name LIKE %s) OR (t.slug LIKE %s))', $like, $like);
+    }
+
+    protected function populate_terms($terms)
+    {
+        return TermQueryTree::populate(is_array($terms) ? $terms : []);
+    }
+
+    protected function format_terms($term_objects, $_fields)
+    {
+        return TermQueryTree::format((array) $term_objects, (string) $_fields);
     }
 }

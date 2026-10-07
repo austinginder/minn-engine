@@ -159,13 +159,6 @@ final readonly class TermQuery
         return $args;
     }
 
-    /** How many terms the arguments match. */
-    public function count(array $args, ?array $taxonomies): int
-    {
-        [$join, $clause, $params] = $this->where($args, $taxonomies);
-        return (int) $this->db->value("SELECT COUNT(DISTINCT tt.term_taxonomy_id) FROM {$this->db->table('terms')} t JOIN {$this->db->table('term_taxonomy')} tt ON tt.term_id = t.term_id {$join} WHERE {$clause}", $params);
-    }
-
     /**
      * The term rows the arguments match, ordered and paged, with the tree
      * filters applied.
@@ -374,33 +367,6 @@ final readonly class TermQuery
         return array_map(static fn (array $r) => (int) $r['object_id'], $rows);
     }
 
-    /**
-     * The fields shapes get_terms() and wp_get_object_terms() share, over
-     * term objects with the reference's public properties.
-     *
-     * @param list<object> $terms
-     */
-    public static function shape(array $terms, string $fields): array
-    {
-        $map = static function (string $key) use ($terms): array {
-            $out = [];
-            foreach ($terms as $t) {
-                $out[$t->term_id] = $t->$key;
-            }
-            return $out;
-        };
-        return match ($fields) {
-            'ids' => array_map(static fn (object $t) => $t->term_id, $terms),
-            'tt_ids' => array_map(static fn (object $t) => $t->term_taxonomy_id, $terms),
-            'names' => array_map(static fn (object $t) => $t->name, $terms),
-            'slugs' => array_map(static fn (object $t) => $t->slug, $terms),
-            'id=>name' => $map('name'),
-            'id=>slug' => $map('slug'),
-            'id=>parent' => $map('parent'),
-            default => array_values($terms),
-        };
-    }
-
     /** @return list<int> */
     private static function ids(mixed $list): array
     {
@@ -414,41 +380,5 @@ final readonly class TermQuery
     private static function like(string $needle): string
     {
         return '%' . addcslashes($needle, '%_\\') . '%';
-    }
-
-    /**
-     * The typed shape of term query variables: counts as absolute integers,
-     * lists as lists, flags as booleans, the ways plugin code spells them
-     * tolerated on the way in.
-     *
-     * @param Closure(mixed): list<int> $idList the caller's id-list parser
-     */
-    public static function coerce(array $query, Closure $idList): array
-    {
-        $query['number'] = abs((int) $query['number']);
-        $query['offset'] = abs((int) $query['offset']);
-        if ($query['taxonomy'] !== null) {
-            $query['taxonomy'] = array_values(array_map('strval', (array) $query['taxonomy']));
-        }
-        if ($query['object_ids'] !== null) {
-            $query['object_ids'] = array_map('intval', (array) $query['object_ids']);
-        }
-        foreach (['include', 'exclude', 'exclude_tree', 'term_taxonomy_id'] as $key) {
-            $query[$key] = $query[$key] === '' || $query[$key] === null ? [] : $idList($query[$key]);
-        }
-        if ($query['term_taxonomy_id'] === []) {
-            $query['term_taxonomy_id'] = '';
-        }
-        foreach (['name', 'slug'] as $key) {
-            $query[$key] = $query[$key] === '' || $query[$key] === null ? [] : array_values(array_map('strval', (array) $query[$key]));
-        }
-        if (is_string($query['hide_empty'])) {
-            $query['hide_empty'] = $query['hide_empty'] === '1' || $query['hide_empty'] === 'true';
-        }
-        foreach (['hide_empty', 'hierarchical', 'childless', 'pad_counts', 'cache_results', 'update_term_meta_cache'] as $flag) {
-            $query[$flag] = (bool) $query[$flag];
-        }
-        $query['child_of'] = (int) $query['child_of'];
-        return $query;
     }
 }

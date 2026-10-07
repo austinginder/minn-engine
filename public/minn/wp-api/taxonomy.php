@@ -237,45 +237,31 @@ function _minn_term_lookup(string $term, ?string $taxonomy, ?int $parent): ?arra
 
 function get_terms($args = [], $deprecated = '')
 {
-    // The legacy shape: the taxonomy (or a list of them) first, the arguments second.
-    if (is_string($args) || (is_array($args) && !isset($args['taxonomy']) && !empty($deprecated) && wp_is_numeric_array($args))) {
-        $legacy = is_array($deprecated) ? $deprecated : [];
-        $legacy['taxonomy'] = $args;
-        $args = $legacy;
-    } elseif (is_array($args) && wp_is_numeric_array($args) && $args !== [] && is_string($args[0])) {
-        $legacy = is_array($deprecated) ? $deprecated : [];
-        $legacy['taxonomy'] = $args;
-        $args = $legacy;
+    $query = new WP_Term_Query();
+    // The legacy shape ($taxonomy, $args): a second argument, or a first that shares no key with the defaults.
+    $parsed = wp_parse_args($args);
+    $legacy = $deprecated || array_intersect_key($query->query_var_defaults, (array) $parsed) === [];
+    if ($legacy) {
+        $taxonomies = (array) $args;
+        $args = wp_parse_args($deprecated, ['suppress_filter' => false]);
+        $args['taxonomy'] = $taxonomies;
+    } else {
+        $args = wp_parse_args($args, ['suppress_filter' => false]);
+        $args['taxonomy'] = isset($args['taxonomy']) ? (array) $args['taxonomy'] : null;
     }
-    $args = wp_parse_args($args, TermQuery::DEFAULTS);
-    $taxonomies = $args['taxonomy'] === null ? null : array_values(array_map('strval', (array) $args['taxonomy']));
-    foreach ($taxonomies ?? [] as $taxonomy) {
+    foreach ((array) $args['taxonomy'] as $taxonomy) {
         if (!taxonomy_exists($taxonomy)) {
             return new WP_Error('invalid_taxonomy', 'Invalid taxonomy.');
         }
     }
-    $query = _minn_term_query();
-    $args = $query->normalise((array) apply_filters('get_terms_args', $args, $taxonomies ?? []));
-    // Under a parent with no children there is nothing to find, and the names are not looked at.
-    if ($args['parent'] !== '' && (int) $args['parent'] > 0 && !$query->hasChildren((int) $args['parent'], $taxonomies)) {
-        return $args['fields'] === 'count' || $args['count'] ? 0 : TermQuery::shape(apply_filters('get_terms', [], $taxonomies ?? [], $args, []), (string) $args['fields']);
+    $suppress = $args['suppress_filter'];
+    unset($args['suppress_filter']);
+    $terms = $query->query($args);
+    // A count is not filtered, as the reference has never filtered it.
+    if (!is_array($terms) || $suppress) {
+        return $terms;
     }
-    // Names are looked up as saving stores them, through the first taxonomy's name filters.
-    if ($args['name'] !== '' && $args['name'] !== []) {
-        $args['name'] = array_map(static fn ($name) => wp_unslash((string) sanitize_term_field('name', $name, 0, $taxonomies[0] ?? false, 'db')), (array) $args['name']);
-    }
-    if ($args['fields'] === 'count' || $args['count']) {
-        return (string) $query->count($args, $taxonomies);
-    }
-    $terms = array_map(static fn (array $r) => new WP_Term((object) $r), $query->rows($args, $taxonomies));
-    $terms = apply_filters('get_terms', $terms, $taxonomies ?? [], $args, []);
-    return TermQuery::shape($terms, (string) $args['fields']);
-}
-
-/** @internal the fields shapes get_terms and wp_get_object_terms share */
-function _minn_term_fields(array $terms, string $fields): array
-{
-    return TermQuery::shape($terms, $fields);
+    return apply_filters('get_terms', $terms, $query->query_vars['taxonomy'], $query->query_vars, $query);
 }
 
 function get_categories($args = '')
@@ -384,22 +370,24 @@ function get_tag_link($tag)
 
 function wp_get_object_terms($object_ids, $taxonomies, $args = [])
 {
-    $taxonomies = array_values(array_map('strval', (array) $taxonomies));
+    if (empty($object_ids) || empty($taxonomies)) {
+        return [];
+    }
+    $taxonomies = (array) $taxonomies;
     foreach ($taxonomies as $taxonomy) {
         if (!taxonomy_exists($taxonomy)) {
             return new WP_Error('invalid_taxonomy', 'Invalid taxonomy.');
         }
     }
-    $ids = array_map('intval', (array) $object_ids);
-    $args = wp_parse_args($args, ['fields' => 'all', 'orderby' => 'name', 'order' => 'ASC']);
-    $args['taxonomy'] = $taxonomies;
-    $args['object_ids'] = $ids;
-    $args['hide_empty'] = false;
-    $terms = get_terms($args);
-    if (is_wp_error($terms)) {
-        return $terms;
+    $object_ids = array_map('intval', (array) $object_ids);
+    $args = apply_filters('wp_get_object_terms_args', wp_parse_args($args, ['update_term_meta_cache' => false]), $object_ids, $taxonomies);
+    [$terms, $taxonomies, $args] = Minn\Runtime\ObjectTerms::byTaxonomyArgs($object_ids, $taxonomies, $args);
+    if ($taxonomies !== []) {
+        $rest = get_terms($args);
+        $terms = !empty($args['fields']) && str_starts_with((string) $args['fields'], 'id=>') ? $terms + (array) $rest : array_merge($terms, (array) $rest);
     }
-    return apply_filters('wp_get_object_terms', $terms, $ids, $taxonomies, $args);
+    $terms = apply_filters('get_object_terms', $terms, $object_ids, $taxonomies, $args);
+    return apply_filters('wp_get_object_terms', $terms, implode(',', $object_ids), "'" . implode("', '", array_map('esc_sql', $taxonomies)) . "'", $args);
 }
 
 function wp_set_object_terms($object_id, $terms, $taxonomy, $append = false)
@@ -1412,4 +1400,13 @@ function wp_get_split_term($old_term_id, $taxonomy)
 function single_tag_title($prefix = '', $display = true)
 {
     return single_term_title($prefix, $display);
+}
+
+function _pad_term_counts(&$terms, $taxonomy)
+{
+    Minn\Runtime\TermQueryTree::pad($terms, (string) $taxonomy);
+}
+
+function wp_lazyload_term_meta(array $term_ids)
+{
 }
