@@ -11,6 +11,7 @@ use Minn\Support\Email;
 use Minn\Support\Entities;
 use Minn\Support\Html;
 use Minn\Support\Json;
+use Minn\Support\KsesEntities;
 use Minn\Support\Kses;
 use Minn\Support\Paths;
 use Minn\Support\Time;
@@ -25,17 +26,6 @@ function wp_check_invalid_utf8($text, $strip = false)
     return $strip ? (string) iconv('UTF-8', 'UTF-8//IGNORE', $text) : '';
 }
 
-/** @internal the named entities the reference keeps intact when escaping */
-function _minn_known_entity(string $name): bool
-{
-    static $known = null;
-    if ($known === null) {
-        $table = json_decode((string) file_get_contents(Runtime::current()->engineDir . '/data/kses.json'), true);
-        $known = array_fill_keys(array_merge($table['entities'] ?? [], ['quot', 'amp', 'lt', 'gt', 'apos']), true);
-    }
-    return isset($known[$name]);
-}
-
 function _wp_specialchars($text, $quote_style = ENT_NOQUOTES, $charset = false, $double_encode = false)
 {
     $text = (string) $text;
@@ -46,7 +36,7 @@ function _wp_specialchars($text, $quote_style = ENT_NOQUOTES, $charset = false, 
         // &#036; the way the reference's screen-reader prices read).
         $text = wp_kses_normalize_entities($text);
     }
-    return Entities::specialchars($text, $quote_style, (bool) $double_encode, static fn (string $name) => _minn_known_entity($name));
+    return Entities::specialchars($text, $quote_style, (bool) $double_encode, KsesEntities::known(...));
 }
 
 function esc_html($text)

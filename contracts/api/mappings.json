@@ -2,12 +2,12 @@
     "generated": "2026-10-07",
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line)",
     "summary": {
-        "minn": 665,
+        "minn": 664,
         "composes": 972,
         "leaf": 660,
         "noop": 1952,
-        "functions": 4179,
-        "minnMethods": 762,
+        "functions": 4178,
+        "minnMethods": 763,
         "leafLinesOver15": 13
     },
     "functions": {
@@ -16608,16 +16608,6 @@
             ],
             "composes": []
         },
-        "_minn_known_entity": {
-            "file": "formatting.php",
-            "lines": 6,
-            "kind": "minn",
-            "minn": [
-                "Minn\\Runtime\\Runtime::current",
-                "Minn\\Runtime\\Runtime::engineDir"
-            ],
-            "composes": []
-        },
         "_minn_kses_policy": {
             "file": "kses.php",
             "lines": 4,
@@ -18329,10 +18319,10 @@
             "lines": 9,
             "kind": "minn",
             "minn": [
-                "Minn\\Support\\Entities::specialchars"
+                "Minn\\Support\\Entities::specialchars",
+                "Minn\\Support\\KsesEntities::known"
             ],
             "composes": [
-                "_minn_known_entity",
                 "wp_kses_normalize_entities"
             ]
         },
