@@ -4,12 +4,44 @@
 
 | Class | Kind | Lines | Summary |
 |---|---|---|---|
+| [`AutoUpdates`](#autoupdates) | final readonly class | 29 | Whether per-item auto-updates apply to plugins or themes, as the |
 | [`CoreStatus`](#corestatus) | final readonly class | 24 | The installed version comes from the update_core transient's |
 | [`Diagnostics`](#diagnostics) | final readonly class | 408 | The System view's facts about this install: the engine, PHP, the |
 | [`InstalledSoftware`](#installedsoftware) | final readonly class | 59 | What is installed, as the System view lists it: every extension and |
 | [`Logs`](#logs) | final readonly class | 150 | The log files the System view can read and clear: the debug log the |
 | [`Packages`](#packages) | final readonly class | 489 | Putting themes and extensions on disk. Themes come from wordpress.org |
-| [`Updates`](#updates) | final class | 394 | Update offers from wordpress.org for the site's plugins and themes: the |
+| [`Updates`](#updates) | final class | 396 | Update offers from wordpress.org for the site's plugins and themes: the |
+
+## AutoUpdates
+
+`final readonly class Minn\Ops\AutoUpdates` · `public/minn/src/Minn/Ops/AutoUpdates.php`
+
+Whether per-item auto-updates apply to plugins or themes, as the
+reference decides it (contracts/rest/minn-admin-v1.md "Auto-updates"):
+never when file mods are off (DISALLOW_FILE_MODS through file_mod_allowed,
+context automatic_updater), never when the updater is disabled
+(AUTOMATIC_UPDATER_DISABLED through automatic_updater_disabled, which a
+plugin may turn back), and then the type's own filter has the last word.
+Only plugins and themes can be on.
+
+Used by: `Minn\Admin\ThemesController`, `Minn\Admin\UpdatesController`, `Minn\Cron\Cron`, `Minn\Ops\Updates`
+
+```php
+__construct(Closure $filter)
+```
+- `@param Closure(string, mixed, mixed...): mixed $filter applies a filter, as apply_filters does`
+
+
+### static `forSite(): self`
+
+The gate as the site's plugins see it: through their filters once the runtime's hooks exist, as configured otherwise.
+
+### `enabledFor(string $type): bool`
+
+Whether per-item auto-updates apply to a type ("plugin" or "theme"; anything else is never on).
+
+Internals: `updaterOff()` (private, line 41)
+
 
 ## CoreStatus
 
@@ -353,7 +385,7 @@ Turns auto-updates on or off for one plugin or theme.
 
 Takes one plugin or theme off the auto-update list; the list after.
 
-### `runAuto(): array`
+### `runAuto(Minn\Ops\AutoUpdates $gate): array`
 
 Applies every offer on the auto-update lists: what was updated, and
 what was refused with the reason, by plugin file or theme slug.
@@ -378,5 +410,5 @@ Stylesheet => style.css headers. @return array<string, array<string, string>>
 
 - `@return array<string, array<string, string>>`
 
-Internals: `supplied()` (private, line 132), `saveAuto()` (private, line 267), `install()` (private, line 351), `vouched()` (private, line 374), `consume()` (private, line 392), `post()` (private, line 404), `map()` (private, line 414), `safeUrl()` (private, line 422)
+Internals: `supplied()` (private, line 132), `saveAuto()` (private, line 267), `install()` (private, line 353), `vouched()` (private, line 376), `consume()` (private, line 394), `post()` (private, line 406), `map()` (private, line 416), `safeUrl()` (private, line 424)
 

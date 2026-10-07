@@ -109,7 +109,7 @@ final readonly class Cron
     private function applyAutoUpdates(): array
     {
         $this->site->setOption('minn_auto_updates_last', (string) time());
-        $result = $this->updates->runAuto();
+        $result = $this->updates->runAuto(\Minn\Ops\AutoUpdates::forSite());
         $lines = ['applied ' . count($result['done']) . ' automatic update' . (count($result['done']) === 1 ? '' : 's')];
         foreach ($result['failed'] as $item => $reason) {
             $lines[] = "automatic update of {$item} refused: {$reason}";

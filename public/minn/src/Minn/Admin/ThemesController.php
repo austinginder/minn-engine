@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Minn\Admin;
 
+use Minn\Ops\AutoUpdates;
 use Minn\Ops\Updates;
 use Minn\Content\Site;
 use Minn\Front\Permalinks;
@@ -62,7 +63,7 @@ final readonly class ThemesController
             ];
         }
         usort($items, static fn (array $a, array $b): int => ($b['active'] <=> $a['active']) ?: strcasecmp($a['name'], $b['name']));
-        return Reply::answer($request, ['themes' => $items, 'auto_updates' => $this->caller->can('update_themes')]);
+        return Reply::answer($request, ['themes' => $items, 'auto_updates' => $this->caller->can('update_themes') && AutoUpdates::forSite()->enabledFor('theme')]);
     }
 
     /** Switches the active theme. */

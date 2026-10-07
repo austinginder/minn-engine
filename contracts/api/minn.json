@@ -5912,6 +5912,7 @@
                 "Minn\\Http\\Request",
                 "Minn\\Http\\Response",
                 "Minn\\Http\\Route",
+                "Minn\\Ops\\AutoUpdates",
                 "Minn\\Ops\\Updates",
                 "Minn\\RestError",
                 "Minn\\Rest\\Caller",
@@ -5964,8 +5965,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 28,
-                "end": 35
+                "line": 29,
+                "end": 36
             },
             "cases": [],
             "constants": [],
@@ -6036,8 +6037,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 39,
-                    "end": 66
+                    "line": 40,
+                    "end": 67
                 },
                 {
                     "routes": [
@@ -6058,8 +6059,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 70,
-                    "end": 91
+                    "line": 71,
+                    "end": 92
                 },
                 {
                     "routes": [],
@@ -6078,8 +6079,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 94,
-                    "end": 97
+                    "line": 95,
+                    "end": 98
                 },
                 {
                     "routes": [],
@@ -6092,8 +6093,8 @@
                         "@return array<string, array<string, string>> slug => style.css headers"
                     ],
                     "params": [],
-                    "line": 100,
-                    "end": 114
+                    "line": 101,
+                    "end": 115
                 },
                 {
                     "routes": [],
@@ -6112,8 +6113,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 116,
-                    "end": 124
+                    "line": 117,
+                    "end": 125
                 }
             ]
         },
@@ -6499,7 +6500,7 @@
             "namespace": "Minn\\Admin",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Admin/UpdatesController.php",
-            "lines": 117,
+            "lines": 120,
             "doc": "The minn-admin/v1 update routes: offers, directory meta, the check, the installs, the auto-update lists.",
             "implements": [],
             "extends": null,
@@ -6510,6 +6511,7 @@
                 "Minn\\Http\\Request",
                 "Minn\\Http\\Response",
                 "Minn\\Http\\Route",
+                "Minn\\Ops\\AutoUpdates",
                 "Minn\\Ops\\Updates",
                 "Minn\\RestError",
                 "Minn\\Rest\\Caller",
@@ -6539,8 +6541,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 21,
-                "end": 23
+                "line": 22,
+                "end": 24
             },
             "cases": [],
             "constants": [],
@@ -6584,8 +6586,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 27,
-                    "end": 38
+                    "line": 28,
+                    "end": 39
                 },
                 {
                     "routes": [
@@ -6606,8 +6608,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 42,
-                    "end": 46
+                    "line": 43,
+                    "end": 47
                 },
                 {
                     "routes": [
@@ -6628,8 +6630,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 50,
-                    "end": 67
+                    "line": 51,
+                    "end": 68
                 },
                 {
                     "routes": [
@@ -6650,8 +6652,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 71,
-                    "end": 82
+                    "line": 72,
+                    "end": 83
                 },
                 {
                     "routes": [
@@ -6672,8 +6674,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 86,
-                    "end": 103
+                    "line": 87,
+                    "end": 104
                 },
                 {
                     "routes": [
@@ -6694,8 +6696,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 107,
-                    "end": 115
+                    "line": 108,
+                    "end": 116
                 },
                 {
                     "routes": [
@@ -6716,8 +6718,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 119,
-                    "end": 133
+                    "line": 120,
+                    "end": 137
                 }
             ]
         },
@@ -34495,6 +34497,7 @@
                 "Minn\\Content\\Posts",
                 "Minn\\Content\\Site",
                 "Minn\\Db",
+                "Minn\\Ops\\AutoUpdates",
                 "Minn\\Ops\\Packages",
                 "Minn\\Ops\\Updates",
                 "Minn\\Runtime\\CronTable",
@@ -75700,6 +75703,102 @@
             ]
         },
         {
+            "name": "Minn\\Ops\\AutoUpdates",
+            "short": "AutoUpdates",
+            "namespace": "Minn\\Ops",
+            "kind": "final readonly class",
+            "file": "public/minn/src/Minn/Ops/AutoUpdates.php",
+            "lines": 29,
+            "doc": "Whether per-item auto-updates apply to plugins or themes, as the\nreference decides it (contracts/rest/minn-admin-v1.md \"Auto-updates\"):\nnever when file mods are off (DISALLOW_FILE_MODS through file_mod_allowed,\ncontext automatic_updater), never when the updater is disabled\n(AUTOMATIC_UPDATER_DISABLED through automatic_updater_disabled, which a\nplugin may turn back), and then the type's own filter has the last word.\nOnly plugins and themes can be on.",
+            "implements": [],
+            "extends": null,
+            "uses": [],
+            "usedBy": [
+                "Minn\\Admin\\ThemesController",
+                "Minn\\Admin\\UpdatesController",
+                "Minn\\Cron\\Cron",
+                "Minn\\Ops\\Updates"
+            ],
+            "constructor": {
+                "signature": "__construct(Closure $filter)",
+                "doc": "",
+                "shapes": [
+                    "@param Closure(string, mixed, mixed...): mixed $filter applies a filter, as apply_filters does"
+                ],
+                "params": [
+                    {
+                        "name": "filter",
+                        "type": "Closure",
+                        "shape": "Closure(string, mixed, mixed...): mixed",
+                        "default": null,
+                        "doc": "applies a filter, as apply_filters does"
+                    }
+                ],
+                "visibility": "public",
+                "line": 21,
+                "end": 23
+            },
+            "cases": [],
+            "constants": [],
+            "properties": [
+                {
+                    "name": "filter",
+                    "type": "Closure",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
+                }
+            ],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "forSite",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "forSite(): self",
+                    "doc": "The gate as the site's plugins see it: through their filters once the runtime's hooks exist, as configured otherwise.",
+                    "shapes": [],
+                    "params": [],
+                    "line": 26,
+                    "end": 29
+                },
+                {
+                    "routes": [],
+                    "name": "enabledFor",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "enabledFor(string $type): bool",
+                    "doc": "Whether per-item auto-updates apply to a type (\"plugin\" or \"theme\"; anything else is never on).",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "type",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 32,
+                    "end": 38
+                },
+                {
+                    "routes": [],
+                    "name": "updaterOff",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "updaterOff(): bool",
+                    "doc": "Whether the automatic updater is off for the whole site: file mods refused, or the updater disabled.",
+                    "shapes": [],
+                    "params": [],
+                    "line": 41,
+                    "end": 45
+                }
+            ]
+        },
+        {
             "name": "Minn\\Ops\\CoreStatus",
             "short": "CoreStatus",
             "namespace": "Minn\\Ops",
@@ -77436,7 +77535,7 @@
             "namespace": "Minn\\Ops",
             "kind": "final class",
             "file": "public/minn/src/Minn/Ops/Updates.php",
-            "lines": 394,
+            "lines": 396,
             "doc": "Update offers from wordpress.org for the site's plugins and themes: the\ndirectory's update-check endpoints asked with the installed headers, the\nanswer kept in the minn_updates option (JSON) for twelve hours, and the\noffers applied by downloading the release archive through the one\npackage unpacker. A plugin or theme the directory does not know keeps\nits folder untouched and is never offered anything. The per-item\nauto-update lists are the site's own auto_update_plugins and\nauto_update_themes options, in the shape the app already reads.\n\nThe directory is not the only source. A plugin that hosts itself answers\nfor its own version through the update transient's filter, which is where\nWordPress reads it too, so Runtime\\PluginUpdates asks the runtime the same\nquestion and its answer is merged in. Applying such an offer goes through\nthe publisher: a package outside the directory is unpacked only when\n`upgrader_pre_download` hands back a copy it verified.",
             "implements": [],
             "extends": null,
@@ -77444,6 +77543,7 @@
                 "Minn\\Content\\Inventory",
                 "Minn\\Content\\Site",
                 "Minn\\Http",
+                "Minn\\Ops\\AutoUpdates",
                 "Minn\\Ops\\Packages",
                 "Minn\\RestError",
                 "Minn\\Runtime\\PackageDownload",
@@ -77832,14 +77932,22 @@
                     "name": "runAuto",
                     "static": false,
                     "visibility": "public",
-                    "signature": "runAuto(): array",
+                    "signature": "runAuto(Minn\\Ops\\AutoUpdates $gate): array",
                     "doc": "Applies every offer on the auto-update lists: what was updated, and\nwhat was refused with the reason, by plugin file or theme slug.",
                     "shapes": [
                         "@return array{done: list<string>, failed: array<string, string>}"
                     ],
-                    "params": [],
+                    "params": [
+                        {
+                            "name": "gate",
+                            "type": "Minn\\Ops\\AutoUpdates",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
                     "line": 284,
-                    "end": 305
+                    "end": 307
                 },
                 {
                     "routes": [],
@@ -77852,8 +77960,8 @@
                         "@return array<string, string>"
                     ],
                     "params": [],
-                    "line": 308,
-                    "end": 315
+                    "line": 310,
+                    "end": 317
                 },
                 {
                     "routes": [],
@@ -77866,8 +77974,8 @@
                         "@return array<string, string>"
                     ],
                     "params": [],
-                    "line": 318,
-                    "end": 325
+                    "line": 320,
+                    "end": 327
                 },
                 {
                     "routes": [],
@@ -77880,8 +77988,8 @@
                         "@return array<string, array<string, string>>"
                     ],
                     "params": [],
-                    "line": 328,
-                    "end": 342
+                    "line": 330,
+                    "end": 344
                 },
                 {
                     "routes": [],
@@ -77981,8 +78089,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 351,
-                    "end": 364
+                    "line": 353,
+                    "end": 366
                 },
                 {
                     "routes": [],
@@ -78015,8 +78123,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 374,
-                    "end": 389
+                    "line": 376,
+                    "end": 391
                 },
                 {
                     "routes": [],
@@ -78049,8 +78157,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 392,
-                    "end": 401
+                    "line": 394,
+                    "end": 403
                 },
                 {
                     "routes": [],
@@ -78078,8 +78186,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 404,
-                    "end": 411
+                    "line": 406,
+                    "end": 413
                 },
                 {
                     "routes": [],
@@ -78098,8 +78206,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 414,
-                    "end": 420
+                    "line": 416,
+                    "end": 422
                 },
                 {
                     "routes": [],
@@ -78118,8 +78226,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 422,
-                    "end": 425
+                    "line": 424,
+                    "end": 427
                 }
             ]
         },

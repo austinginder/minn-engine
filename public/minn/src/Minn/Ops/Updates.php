@@ -281,11 +281,13 @@ final class Updates
      *
      * @return array{done: list<string>, failed: array<string, string>}
      */
-    public function runAuto(): array
+    public function runAuto(AutoUpdates $gate): array
     {
         $done = [];
         $failed = [];
-        foreach (array_intersect(array_keys($this->pluginOffers()), $this->auto('plugin')) as $file) {
+        $plugins = $gate->enabledFor('plugin') ? array_intersect(array_keys($this->pluginOffers()), $this->auto('plugin')) : [];
+        $themes = $gate->enabledFor('theme') ? array_intersect(array_keys($this->themeOffers()), $this->auto('theme')) : [];
+        foreach ($plugins as $file) {
             try {
                 $this->updatePlugin($file);
                 $done[] = $file;
@@ -293,7 +295,7 @@ final class Updates
                 $failed[$file] = $refusal->getMessage();
             }
         }
-        foreach (array_intersect(array_keys($this->themeOffers()), $this->auto('theme')) as $slug) {
+        foreach ($themes as $slug) {
             try {
                 $this->updateTheme($slug);
                 $done[] = $slug;

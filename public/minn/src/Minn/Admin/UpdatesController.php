@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Minn\Admin;
 
+use Minn\Ops\AutoUpdates;
 use Minn\Ops\Updates;
 use Minn\Http\Method;
 use Minn\Http\Request;
@@ -128,6 +129,9 @@ final readonly class UpdatesController
         $asset = (string) ($body['asset'] ?? '');
         if ($asset === '') {
             throw RestError::missingParams(['asset']);
+        }
+        if (!AutoUpdates::forSite()->enabledFor($type)) {
+            throw new RestError('minn_auto_updates_disabled', 'Automatic updates are turned off for this site.', 400);
         }
         return Reply::answer($request, ['auto' => !empty($body['enabled']) ? $this->updates->enableAuto($type, $asset) : $this->updates->disableAuto($type, $asset)]);
     }

@@ -25,6 +25,25 @@ if ( 200 !== $ph['status'] || ! is_dir( "$SITE/public" ) ) {
 $pass = 0;
 $fail = 0;
 
+// The parked reference's wp-config turns the automatic updater off so the
+// oracle stays still; the engine's site does not. Both stacks load this
+// mu-plugins folder (the reference's wp-content is the site's), and the
+// updater's filter outranks the constant on both, so for the run the gate is
+// one option, the same for each (contracts/rest/minn-admin-v1.md "Auto-updates").
+$GATE = "$SITE/public/wp-content/mu-plugins/zz-minn-updates-gate.php";
+@mkdir( dirname( $GATE ), 0755, true );
+file_put_contents( $GATE, "<?php\n// Written by the engine's tests/updates.test.php for its run, then removed.\nadd_filter( 'automatic_updater_disabled', static fn () => get_option( 'zz_minn_updater_disabled' ) === '1', 999 );\n" );
+function up_gate( bool $off ): void {
+	global $SITE;
+	shell_exec( 'wp --path=' . escapeshellarg( "$SITE/wp-reference" ) . ' option update zz_minn_updater_disabled ' . ( $off ? '1' : '0' ) . ' --skip-plugins --skip-themes 2>/dev/null' );
+}
+up_gate( false );
+register_shutdown_function( static function () use ( $GATE, $SITE ): void {
+	@unlink( $GATE );
+	shell_exec( 'wp --path=' . escapeshellarg( "$SITE/wp-reference" ) . ' option delete zz_minn_updater_disabled --skip-plugins --skip-themes 2>/dev/null' );
+} );
+
+
 function check( bool $ok, string $label, string $detail = '' ): void {
 	global $pass, $fail;
 	if ( $ok ) {
@@ -142,6 +161,10 @@ if ( $was ) {
 }
 up_parity( 'auto-updates refuses an unknown plugin', '/minn-admin/v1/auto-updates', $admin, array(), 'POST', '{"type":"plugin","asset":"nothing/nothing.php","enabled":true}' );
 up_parity( 'auto-updates for themes', '/minn-admin/v1/auto-updates', $admin, array(), 'POST', '{"type":"theme","asset":"twentytwentyfour","enabled":false}' );
+up_gate( true );
+up_parity( 'auto-updates refused while the updater is off', '/minn-admin/v1/auto-updates', $admin, array(), 'POST', json_encode( array( 'type' => 'plugin', 'asset' => $plugin, 'enabled' => true ) ) );
+up_parity( 'themes say auto-updates are off while the updater is', '/minn-admin/v1/themes', $admin, array( 'themes' ) );
+up_gate( false );
 
 // 4. A real update on the engine: the first INACTIVE plugin with an offer.
 [ , $plugins ] = up_fetch( $ENGINE, '/wp/v2/plugins', $admin );

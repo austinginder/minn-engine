@@ -5,9 +5,9 @@
         "minn": 664,
         "composes": 972,
         "leaf": 660,
-        "noop": 1952,
-        "functions": 4178,
-        "minnMethods": 763,
+        "noop": 1953,
+        "functions": 4179,
+        "minnMethods": 764,
         "leafLinesOver15": 13
     },
     "functions": {
@@ -34179,6 +34179,15 @@
                 "is_ssl",
                 "wp_get_environment_type"
             ]
+        },
+        "wp_is_auto_update_enabled_for_type": {
+            "file": "plugin.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Ops\\AutoUpdates::forSite"
+            ],
+            "composes": []
         },
         "wp_is_block_theme": {
             "file": "load.php",

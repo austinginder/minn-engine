@@ -344,10 +344,24 @@ dogfood site against its own reference, both freshly checked:
 - `POST auto-updates {type: plugin|theme, asset, enabled}` → `{auto: [...]}` writes
   `auto_update_plugins` / `auto_update_themes` (serialized string lists, the shape the
   app and WordPress share); an unknown asset is 404 `minn_auto_updates_unknown`.
-  `Minn\Cron` applies the listed offers once a day (`minn_auto_updates_last`).
+  When auto-updates are off for the type (below) the answer is 400
+  `minn_auto_updates_disabled`, "Automatic updates are turned off for this site.",
+  before the asset is looked up. `Minn\Cron` applies the listed offers once a day
+  (`minn_auto_updates_last`), for the types the same gate allows.
+- **Auto-updates** (`Minn\Ops\AutoUpdates`, behind `wp_is_auto_update_enabled_for_type`;
+  captured 2026-10-07 by running the reference with each condition): only `plugin` and
+  `theme` can be on (`core`, `translation`, anything else: false). Off when file mods are
+  refused (`DISALLOW_FILE_MODS` through `file_mod_allowed`, context `automatic_updater`;
+  then `automatic_updater_disabled` is not even asked). Otherwise `automatic_updater_disabled`
+  receives `AUTOMATIC_UPDATER_DISABLED` and a plugin may turn it back (false re-enables).
+  Then `plugins_auto_update_enabled` / `themes_auto_update_enabled` receive that answer
+  and have the last word. A version-control checkout does not change it. The parked
+  references define `AUTOMATIC_UPDATER_DISABLED` so the oracles never update
+  themselves; the updates suite puts both stacks under one gate with a temporary
+  mu-plugin on `automatic_updater_disabled`.
 - `GET themes` items carry `on_wporg` (the directory knows the stylesheet), `update`
   (the offered version or null) and `auto_update`; `auto_updates` is true for a caller
-  with `update_themes`. Theme names and authors are served as the reference serves
+  with `update_themes` while auto-updates are on for themes. Theme names and authors are served as the reference serves
   headers: tags stripped, a bare `&` as `&amp;`.
 - Notifications gain the reference's rows: `plugin-{file}-{version}` and
   `theme-{stylesheet}-{version}` of kind `updates` with the `update` payload the app

@@ -106,6 +106,12 @@ function wp_is_file_mod_allowed($context)
     return (bool) apply_filters('file_mod_allowed', !defined('DISALLOW_FILE_MODS') || !DISALLOW_FILE_MODS, $context);
 }
 
+/** Whether per-item auto-updates apply to plugins or themes (Minn\Ops\AutoUpdates). */
+function wp_is_auto_update_enabled_for_type($type)
+{
+    return Minn\Ops\AutoUpdates::forSite()->enabledFor((string) $type);
+}
+
 function is_plugin_active_for_network($plugin)
 {
     return false;
