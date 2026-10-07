@@ -9,7 +9,7 @@ the wp verbs the engine answers itself
 | [`Commands`](#commands) | final class | 94 | The verbs the engine answers to. Every one is registered for the |
 | [`CronCommand`](#croncommand) | final class | 277 | `wp cron`: the events, schedules, and spawn test a host and a fleet ask |
 | [`DirectorySearch`](#directorysearch) | final class | 37 | Shared wording for `wp theme search` and `wp plugin search`. The |
-| [`Installer`](#installer) | final class | 328 | The swap, both ways. Install parks WordPress's own files beside the |
+| [`Installer`](#installer) | final class | 339 | The swap, both ways. Install parks WordPress's own files beside the |
 | [`MaintenanceCommand`](#maintenancecommand) | final class | 65 | `wp maintenance-mode`: the `.maintenance` marker in the webroot. The |
 | [`MinnCommand`](#minncommand) | final class | 304 | Identifies the engine. |
 | [`OptionCommand`](#optioncommand) | final class | 185 | Options, read and written straight to the options table. Serialized |
@@ -222,6 +222,10 @@ The bin entry: runs one command against a webroot and returns the exit code.
 
 What the site will and will not get; the worst light decides install. The report lands in the output.
 
+### `update(array $options): int`
+
+Replaces this engine with the latest release on GitHub; --check only says whether there is one.
+
 ### `status(string $root): int`
 
 Prints what the webroot is running.
@@ -249,7 +253,7 @@ was moved or copied keeps a record its own eject must not act on).
 
 - `@return array<string, mixed>`
 
-Internals: `help()` (private, line 96), `writePlaceholders()` (private, line 261), `move()` (private, line 282), `copyTree()` (private, line 298), `removeTree()` (private, line 317), `version()` (private, line 334), `say()` (private, line 340)
+Internals: `help()` (private, line 101), `writePlaceholders()` (private, line 294), `move()` (private, line 315), `copyTree()` (private, line 331), `version()` (private, line 350), `say()` (private, line 355)
 
 
 ## MaintenanceCommand

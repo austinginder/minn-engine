@@ -11,14 +11,14 @@ the minn-admin/v1 namespace and serving the Minn Admin app
 | [`AppController`](#appcontroller) | final readonly class | 118 | Serves Minn Admin from the engine: the path-routed shell (every |
 | [`Appearance`](#appearance) | final readonly class | 82 | A person's Minn Admin appearance: the colour scheme and its custom |
 | [`BootPayload`](#bootpayload) | final readonly class | 234 | The window.MINN boot payload, assembled from the engine: the keys app.js |
-| [`BundleController`](#bundlecontroller) | final readonly class | 36 | What the app bundle carries: the changelog, the user guide, and the |
+| [`BundleController`](#bundlecontroller) | final readonly class | 44 | What the app bundle carries: the changelog, the user guide, and the |
 | [`Dashboard`](#dashboard) | final readonly class | 273 | The overview payload: stat cards, the activity chart, and the recent |
 | [`EditorController`](#editorcontroller) | final readonly class | 45 | The editor's helpers in minn-admin/v1: the edit lock, and the template |
 | [`Format`](#format) | final class | 51 | The dashboard's number, size, age, and title formatting. |
 | [`HiddenIntegrations`](#hiddenintegrations) | final readonly class | 94 | What a person hid from their own Minn Admin: the app's per-user map |
 | [`LanguageChoices`](#languagechoices) | final class | 42 | The language picker's markup. English always leads the list and carries the |
 | [`LanguageController`](#languagecontroller) | final readonly class | 99 | Languages: what is installed, what a person reads in, what the site defaults to. |
-| [`Notifications`](#notifications) | final readonly class | 202 | The bell feed: pending and recent comments, translation and core update |
+| [`Notifications`](#notifications) | final readonly class | 191 | The bell feed: pending and recent comments, translation offers and a |
 | [`OverviewController`](#overviewcontroller) | final readonly class | 141 | The Overview of minn-admin/v1: the payload, the drill-down behind one |
 | [`PackagesController`](#packagescontroller) | final readonly class | 113 | Adding and removing themes and extensions from the Extensions view. |
 | [`PostListMarkup`](#postlistmarkup) | final class | 39 | The markup a post list writes beside each post, as the reference writes |
@@ -30,9 +30,9 @@ the minn-admin/v1 namespace and serving the Minn Admin app
 | [`SystemController`](#systemcontroller) | final readonly class | 73 | The System view: diagnostics, the scheduled-post list, autoloaded options, and the logs. |
 | [`ThemesController`](#themescontroller) | final readonly class | 100 | The theme inventory of minn-admin/v1: every theme on disk with its |
 | [`Translations`](#translations) | final readonly class | 236 | Languages for the admin. A person's locale is their `locale` user meta, |
-| [`UpdatesController`](#updatescontroller) | final readonly class | 120 | The minn-admin/v1 update routes: offers, directory meta, the check, the installs, the auto-update lists. |
+| [`UpdatesController`](#updatescontroller) | final readonly class | 129 | The minn-admin/v1 update routes: offers, directory meta, the check, the installs, the auto-update lists. |
 | [`UploadsSize`](#uploadssize) | final readonly class | 93 | How much the uploads folder holds, as Minn Admin 0.43 works it out and |
-| [`V1Controller`](#v1controller) | final readonly class | 59 | The boot burst of minn-admin/v1: the bell feed and its read marker, the |
+| [`V1Controller`](#v1controller) | final readonly class | 81 | The boot burst of minn-admin/v1: the bell feed and its read marker, the |
 
 ## ActivityChart
 
@@ -317,7 +317,8 @@ Internals: `userSlice()` (private, line 91), `siteSlice()` (private, line 108), 
 `final readonly class Minn\Admin\BundleController` · `public/minn/src/Minn/Admin/BundleController.php`
 
 What the app bundle carries: the changelog, the user guide, and the
-translation offers (none: the engine has no update channel to poll).
+translation offers (none: the engine polls no translation channel);
+and beside them the engine's own changelog.
 
 Used by: `Minn\Rest\Api`
 
@@ -338,13 +339,19 @@ Route: `GET /minn-admin/v1/changelog (floor edit_posts)`
 
 The app's bundled changelog.
 
+### `engineChangelog(Minn\Http\Request $request): Minn\Http\Response`
+
+Route: `GET /minn-admin/v1/engine-changelog (floor edit_posts)`
+
+The engine's own changelog (changelog.md beside bootstrap.php), shown beside the app's on Minn.
+
 ### `guide(Minn\Http\Request $request): Minn\Http\Response`
 
 Route: `GET /minn-admin/v1/guide (floor edit_posts)`
 
 The app's bundled user guide.
 
-Internals: `bundled()` (private, line 50)
+Internals: `bundled()` (private, line 59)
 
 
 ## Dashboard
@@ -574,16 +581,16 @@ Internals: `setUserLocale()` (private, line 92), `ensure()` (private, line 104)
 
 `final readonly class Minn\Admin\Notifications` · `public/minn/src/Minn/Admin/Notifications.php`
 
-The bell feed: pending and recent comments, translation and core update
-offers, the core auto-update notice, and new registrations. Plugin and
-theme update rows need an extension inventory the engine does not have
+The bell feed: pending and recent comments, translation offers and a
+newer Minn, and new registrations. Plugin and theme update rows need an
+extension inventory the engine does not have
 (a recorded gap); on the reference database those sections are empty,
 so parity holds by construction.
 
 Used by: `Minn\Admin\V1Controller`, `Minn\Rest\Services`
 
 ```php
-__construct(Minn\Db $db, Minn\Content\Site $site, Minn\Content\Users $users, Minn\Auth\Capabilities $capabilities, Minn\Admin\ActivityFeed $feed, Minn\Ops\Updates $updates)
+__construct(Minn\Db $db, Minn\Content\Site $site, Minn\Content\Users $users, Minn\Auth\Capabilities $capabilities, Minn\Admin\ActivityFeed $feed, Minn\Ops\Updates $updates, Minn\Ops\Releases $releases)
 ```
 
 
@@ -595,7 +602,7 @@ The bell feed for a user, newest first, grouped and marked read or unread.
 
 An id marks one item read; an empty id marks everything read.
 
-Internals: `commentItems()` (private, line 66), `updateItems()` (private, line 94), `updateItem()` (private, line 125), `coreItems()` (private, line 136), `registrationItems()` (private, line 170), `commentItem()` (private, line 197), `translationCount()` (private, line 213)
+Internals: `commentItems()` (private, line 68), `updateItems()` (private, line 96), `updateItem()` (private, line 127), `coreItems()` (private, line 139), `registrationItems()` (private, line 160), `commentItem()` (private, line 187), `translationCount()` (private, line 203)
 
 
 ## OverviewController
@@ -1113,7 +1120,7 @@ The minn-admin/v1 update routes: offers, directory meta, the check, the installs
 Used by: `Minn\Rest\Api`
 
 ```php
-__construct(Minn\Ops\Updates $updates, Minn\Rest\Caller $caller)
+__construct(Minn\Ops\Updates $updates, Minn\Ops\CoreStatus $core, Minn\Rest\Caller $caller)
 ```
 
 
@@ -1133,7 +1140,7 @@ Icons and details for the installed plugins.
 
 Route: `POST /minn-admin/v1/check-updates (signed in)`
 
-Asks wordpress.org again, now.
+Asks again, now: wordpress.org for plugins and themes, and GitHub for Minn itself (its status answered as core).
 
 ### `updatePlugin(Minn\Http\Request $request): Minn\Http\Response`
 
@@ -1228,7 +1235,13 @@ Body {id} marks one read; {} marks all read.
 
 Route: `GET /minn-admin/v1/core (floor edit_posts)`
 
-The core status.
+Minn's version and any newer release; a day-old check of GitHub runs once the answer is sent.
+
+### `coreUpdate(Minn\Http\Request $request): Minn\Http\Response`
+
+Route: `POST /minn-admin/v1/core/update (floor edit_posts)`
+
+Replaces the running engine with the release on offer.
 
 ### `bootStatus(Minn\Http\Request $request): Minn\Http\Response`
 
@@ -1238,4 +1251,6 @@ The app's one-round-trip boot burst. Absent sections are the
 contract's own fallback: the client loads a missing section
 standalone. The engine serves what it can honestly answer and omits
 the plugin-inventory sections it has no installation for.
+
+Internals: `checkingReleases()` (private, line 94)
 

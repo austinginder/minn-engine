@@ -4,15 +4,46 @@
 
 | Class | Kind | Lines | Summary |
 |---|---|---|---|
+| [`Archive`](#archive) | final class | 69 | A zip unpacked the safe way, for the plugin and theme installer and for |
 | [`AutoUpdates`](#autoupdates) | final readonly class | 29 | Whether per-item auto-updates apply to plugins or themes, as the |
-| [`CoreStatus`](#corestatus) | final readonly class | 24 | The installed version comes from the update_core transient's |
+| [`CoreStatus`](#corestatus) | final readonly class | 48 | The core the app's update banner and chip speak of, which on Minn is |
 | [`Diagnostics`](#diagnostics) | final readonly class | 408 | The System view's facts about this install: the engine, PHP, the |
+| [`EngineUpdate`](#engineupdate) | final readonly class | 105 | Replaces the running engine with a published release. The release's |
 | [`InstalledSoftware`](#installedsoftware) | final readonly class | 59 | What is installed, as the System view lists it: every extension and |
 | [`Logs`](#logs) | final readonly class | 150 | The log files the System view can read and clear: the debug log the |
-| [`Packages`](#packages) | final readonly class | 507 | Putting themes and extensions on disk. Themes come from wordpress.org |
+| [`Packages`](#packages) | final readonly class | 442 | Putting themes and extensions on disk. Themes come from wordpress.org |
 | [`PluginsApi`](#pluginsapi) | final readonly class | 35 | plugins_api() as plugins call it and answer it (probe plugins-api): the |
+| [`Release`](#release) | final readonly class | 77 | One published Minn release as GitHub describes it: the version its tag |
+| [`Releases`](#releases) | final class | 89 | Whether a newer Minn is out, asked of GitHub at most once a day: the |
 | [`Unzip`](#unzip) | final readonly class | 101 | An archive unpacked as unzip_file() unpacks it (probe unzip-file): into |
 | [`Updates`](#updates) | final class | 401 | Update offers from wordpress.org for the site's plugins and themes: the |
+
+## Archive
+
+`final class Minn\Ops\Archive` · `public/minn/src/Minn/Ops/Archive.php`
+
+A zip unpacked the safe way, for the plugin and theme installer and for
+the engine's own update alike: every entry stays inside its folder (no
+absolute path, no "..", no backslash, no NUL), none is a symbolic link,
+there are no more than 20,000 of them, they unpack to no more than
+512 MB, and they all sit in exactly one top folder (macOS's __MACOSX
+noise aside). Nothing is written until every entry has passed.
+
+- const `MAX_BYTES` = `536870912`
+- const `MAX_ENTRIES` = `20000`
+
+Used by: `Minn\Ops\EngineUpdate`, `Minn\Ops\Packages`
+
+### static `unpackFolder(string $file, string $stage): string`
+
+Unpacks a zip file into a new folder $stage; the path of the one folder the archive held.
+
+### static `isFolderName(string $name): bool`
+
+A plain folder name: no separators, never "." or "..".
+
+Internals: `isSymlinkEntry()` (private, line 76)
+
 
 ## AutoUpdates
 
@@ -49,22 +80,36 @@ Internals: `updaterOff()` (private, line 41)
 
 `final readonly class Minn\Ops\CoreStatus` · `public/minn/src/Minn/Ops/CoreStatus.php`
 
-The installed version comes from the update_core transient's
-version_checked (the database's own record of what last phoned home);
-the engine never reads WordPress code files and never phones home
-itself. dbUpgrade is false by definition: there is no newer core code
-on disk for the database to lag behind.
+The core the app's update banner and chip speak of, which on Minn is
+Minn: the running engine's version, a newer release on offer
+(Ops\Releases, asked of GitHub once a day), and installing it
+(Ops\EngineUpdate). WordPress's own offer (the update_core transient a
+parked copy may write) is not Minn's to act on and is not shown.
+dbUpgrade is false: the database is WordPress's, and a Minn release
+never migrates it.
 
-Used by: `Minn\Admin\V1Controller`, `Minn\Rest\Api`
+Used by: `Minn\Admin\UpdatesController`, `Minn\Admin\V1Controller`, `Minn\Rest\Services`
 
 ```php
-__construct(Minn\Content\Site $site)
+__construct(Minn\Ops\Releases $releases, Minn\Ops\EngineUpdate $engine, string $version)
 ```
 
 
 ### `data(): array`
 
-The core version and any offer from the update transient.
+Minn's version, any offer, and when GitHub was last asked.
+
+### `due(): bool`
+
+Whether GitHub was last asked a day ago or more.
+
+### `refresh(): void`
+
+Asks GitHub now.
+
+### `update(): string`
+
+Installs the release on offer; the version now in place.
 
 
 ## Diagnostics
@@ -101,6 +146,49 @@ The scheduled events: the cron option's hooks and the engine's own scheduled pos
 The autoloaded options: the summary and the largest rows.
 
 Internals: `checks()` (private, line 65), `engineGroup()` (private, line 102), `phpGroup()` (private, line 123), `serverGroup()` (private, line 146), `opcacheOn()` (private, line 164), `cronOptionEvents()` (private, line 232), `humanInterval()` (private, line 255), `autoloadSummary()` (private, line 295), `cronSummary()` (private, line 310), `futurePosts()` (private, line 328), `databaseGroup()` (private, line 336), `check()` (private, line 374), `rows()` (private, line 380), `bytes()` (private, line 389), `offsetLabel()` (private, line 404), `relative()` (private, line 412)
+
+
+## EngineUpdate
+
+`final readonly class Minn\Ops\EngineUpdate` · `public/minn/src/Minn/Ops/EngineUpdate.php`
+
+Replaces the running engine with a published release. The release's
+minn.zip comes from the engine repository's own GitHub release downloads
+and nowhere else (every redirect hop is judged), must match the sha256
+GitHub publishes for it, and is unpacked beside the engine into a folder
+of its own, where it is checked again: its bootstrap names the version on
+offer and bin/minn is there. Then the
+swap, two renames in the folder the engine lives in: the running engine
+moves aside, the new one moves in, and the old copy is removed; when the
+second rename fails the first is undone. The legacy install record
+(.install.json, from installs that kept it inside the engine) comes
+along. One update runs at a time. A development checkout (a symbolic
+link, or a folder under git) is refused: git owns those. The site keeps
+answering throughout.
+
+- const `HOSTS` = `array (   0 => 'https://github.com/',   1 => 'https://objects.githubusercontent.com/',   2 => 'https://release-assets.githubusercontent.com/', )` — Where a release asset may come from: the release page's link and the hosts it redirects to.
+- const `MAX_DOWNLOAD` = `67108864`
+
+Used by: `Minn\Cli\Installer`, `Minn\Ops\CoreStatus`, `Minn\Rest\Services`
+
+```php
+__construct(string $engineDir)
+```
+
+
+### `apply(Minn\Ops\Release $release): string`
+
+Downloads, checks and installs a release; the version now in place.
+
+### `install(string $zip, string $sha256, string $version): string`
+
+Installs an archive in hand once it matches its checksum and holds the version named; the version now in place.
+
+### static `versionOf(string $engineDir): string`
+
+The version a bootstrap.php names; "0.0.0" when it names none.
+
+Internals: `swap()` (private, line 75), `refuseCheckout()` (private, line 120)
 
 
 ## InstalledSoftware
@@ -201,9 +289,7 @@ folder's identity checked and its destination proven to be a direct
 child of the kind's directory before it is moved into place. Removal
 proves the same containment before anything is deleted.
 
-- const `MAX_ARCHIVE` = `536870912` — The largest archive fetched or unpacked, in bytes.
-- const `MAX_ENTRIES` = `20000`
-- const `WPORG_THEMES` = `'https://api.wordpress.org/themes/info/1.2/'`
+- const `WPORG_THEMES` = `'https://api.wordpress.org/themes/info/1.2/'` — The largest archive fetched or unpacked, in bytes.
 - const `WPORG_PLUGINS` = `'https://api.wordpress.org/plugins/info/1.2/'`
 - const `INFO_OPTION` = `'minn_plugin_info'`
 - const `INFO_TTL` = `43200`
@@ -302,7 +388,7 @@ Removes a theme or plugin folder that is not in use.
 A package over https, every redirect hop included, refusing anything
 else; when host prefixes are given, every hop must start with one.
 
-Internals: `pluginPackage()` (private, line 158), `plain()` (private, line 217), `themePackage()` (private, line 311), `place()` (private, line 360), `isFolderName()` (private, line 444), `contained()` (private, line 450), `isSymlinkEntry()` (private, line 461), `identify()` (private, line 476), `describe()` (private, line 490), `removeTree()` (private, line 525)
+Internals: `pluginPackage()` (private, line 157), `plain()` (private, line 216), `themePackage()` (private, line 310), `place()` (private, line 359), `contained()` (private, line 406), `identify()` (private, line 421), `describe()` (private, line 435)
 
 
 ## PluginsApi
@@ -329,6 +415,110 @@ __construct(Closure $filter, Minn\Ops\Packages $packages, string $locale, string
 The answer for an action (plugin_information, query_plugins, ...): an object, a WP_Error, or what a plugin returned.
 
 Internals: `directory()` (private, line 41)
+
+
+## Release
+
+`final readonly class Minn\Ops\Release` · `public/minn/src/Minn/Ops/Release.php`
+
+One published Minn release as GitHub describes it: the version its tag
+names (v0.1.0 is 0.1.0), its notes and page, when it went out, and the
+minn.zip it ships with that file's sha256 (the digest GitHub publishes
+for every release asset). A draft, a pre-release, a tag that is not a
+version, or a release without minn.zip is not a release Minn offers.
+
+- const `ASSET` = `'minn.zip'` — The archive every release ships: the public/minn/ tree with Minn Admin bundled at minn/admin.
+
+Used by: `Minn\Ops\EngineUpdate`, `Minn\Ops\Releases`
+
+```php
+__construct(string $version, string $url, string $published, string $notes, string $package, string $sha256)
+```
+
+- readonly `string $version`
+- readonly `string $url`
+- readonly `string $published`
+- readonly `string $notes`
+- readonly `string $package`
+- readonly `string $sha256`
+
+### static `fromGitHub(array $answer): ?self`
+
+A release from GitHub's answer for releases/latest (or one entry of
+releases); null when it is not one Minn offers.
+
+- `@param array<string, mixed> $answer`
+
+### static `fromArray(array $row): ?self`
+
+A release as the minn_release option keeps it; null for anything else.
+
+- `@param array<string, mixed> $row`
+
+### `toArray(): array`
+
+The release as it is kept in the minn_release option.
+
+- `@return array{version: string, url: string, published: string, notes: string, package: string, sha256: string}`
+
+### `newerThan(string $installed): bool`
+
+Whether this release is newer than a version that is installed.
+
+
+## Releases
+
+`final class Minn\Ops\Releases` · `public/minn/src/Minn/Ops/Releases.php`
+
+Whether a newer Minn is out, asked of GitHub at most once a day: the
+latest published release of the engine's own repository, kept in the
+minn_release option (JSON) with the time it was asked. A check GitHub
+does not answer (offline, rate limited) keeps the last answer and waits
+a day like any other; a repository with no published release (a 404,
+which is also what a private one answers) offers nothing. This is Minn
+asking Minn, never wordpress.org.
+
+- const `OPTION` = `'minn_release'`
+- const `TTL` = `86400`
+- const `REPOSITORY` = `'austinginder/minn-engine'`
+- const `SOURCE` = `'https://api.github.com/repos/austinginder/minn-engine/releases/latest'`
+- const `DOWNLOADS` = `'https://github.com/austinginder/minn-engine/releases/download/'` — Where the repository's release assets download from; nothing else is installed.
+
+Used by: `Minn\Admin\Notifications`, `Minn\Cli\Installer`, `Minn\Ops\CoreStatus`, `Minn\Ops\EngineUpdate`, `Minn\Rest\Services`
+
+```php
+__construct(Closure $load, Closure $save, string $installed, string $source = self::SOURCE)
+```
+- `@param Closure(): ?string $load the stored answer, as JSON`
+- `@param Closure(string): void $save keeps the answer, as JSON`
+
+
+### static `forSite(Minn\Content\Site $site, string $installed): self`
+
+The check for a site, its answer kept in the site's minn_release option.
+
+### `stored(): array`
+
+The stored answer: when GitHub was last asked and the latest release then.
+
+- `@return array{checked: int, latest: ?array<string, string>}`
+
+### `due(): bool`
+
+Whether the stored answer is a day old, or there is none.
+
+### `refresh(): array`
+
+Asks GitHub now and keeps the answer; `answered` says whether GitHub
+did (when it did not, `latest` is the last answer kept).
+
+- `@return array{checked: int, latest: ?array<string, string>, answered: bool}`
+
+### `offer(): ?Minn\Ops\Release`
+
+The release on offer: the latest one, when it is newer than the running engine.
+
+Internals: `origin()` (private, line 103)
 
 
 ## Unzip

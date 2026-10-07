@@ -203,7 +203,7 @@ caller's host prefixes when given, no private address, and a body over
 the cap fails rather than being truncated. The messages are written for
 the person who asked for the download.
 
-Used by: `Minn\Admin\Translations`, `Minn\Ops\Packages`
+Used by: `Minn\Admin\Translations`, `Minn\Ops\EngineUpdate`, `Minn\Ops\Packages`
 
 ### static `https(string $url, int $maxBytes, array $hostPrefixes = array ( ), string $userAgent = 'Minn Engine'): string`
 

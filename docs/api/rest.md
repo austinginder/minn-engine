@@ -64,7 +64,7 @@ the wp/v2 surface: shapes and controllers
 | [`Schema`](#schema) | final readonly class | 473 | JSON-schema handling the way the REST API's argument validation does it: |
 | [`SchemaValues`](#schemavalues) | final class | 206 | The value side of JSON Schema, as the reference applies it: what counts |
 | [`SearchController`](#searchcontroller) | final readonly class | 121 | wp/v2 search over published content: id, title, url, type, and the |
-| [`Services`](#services) | final class | 387 | The objects one REST request shares, each made once, on first use, from |
+| [`Services`](#services) | final class | 405 | The objects one REST request shares, each made once, on first use, from |
 | [`Settings`](#settings) | final readonly class | 113 | The registered settings the Settings views read and write, mapped to |
 | [`SettingsController`](#settingscontroller) | final readonly class | 32 | wp/v2/settings: read and write, both behind manage_options; with plugins loaded, every registered setting (LiveSettings). |
 | [`SidebarsController`](#sidebarscontroller) | final readonly class | 192 | wp/v2/sidebars and wp/v2/widget-types as the reference answers them |
@@ -217,7 +217,7 @@ runtime's server calls for a core route, so a route the engine
 declines cannot bounce between the two. $as is the caller's own
 request object, which the route's parameters are set on.
 
-Internals: `controllers()` (private, line 73), `engineResponse()` (private, line 239), `withPageLinks()` (private, line 253), `options()` (private, line 284), `withAllow()` (private, line 297)
+Internals: `controllers()` (private, line 72), `engineResponse()` (private, line 238), `withPageLinks()` (private, line 252), `options()` (private, line 283), `withAllow()` (private, line 296)
 
 
 ## ApplicationPasswordsController
@@ -2799,6 +2799,18 @@ What happened lately.
 
 The overview payload.
 
+### `releases(): Minn\Ops\Releases`
+
+Minn's own releases, asked of GitHub once a day.
+
+### `coreStatus(): Minn\Ops\CoreStatus`
+
+Minn's version and the release on offer, behind the app's update banner.
+
+### `engineUpdate(): Minn\Ops\EngineUpdate`
+
+The engine replacing itself with a release.
+
 ### `notifications(): Minn\Admin\Notifications`
 
 The bell feed.
@@ -2835,7 +2847,7 @@ The wp/v2 media shape.
 
 The wp/v2 comment shape.
 
-Internals: `share()` (private, line 438)
+Internals: `share()` (private, line 459)
 
 
 ## Settings

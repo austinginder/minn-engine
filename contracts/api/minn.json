@@ -1643,8 +1643,8 @@
             "namespace": "Minn\\Admin",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Admin/BundleController.php",
-            "lines": 36,
-            "doc": "What the app bundle carries: the changelog, the user guide, and the\ntranslation offers (none: the engine has no update channel to poll).",
+            "lines": 44,
+            "doc": "What the app bundle carries: the changelog, the user guide, and the\ntranslation offers (none: the engine polls no translation channel);\nand beside them the engine's own changelog.",
             "implements": [],
             "extends": null,
             "uses": [
@@ -1682,8 +1682,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 22,
-                "end": 26
+                "line": 23,
+                "end": 27
             },
             "cases": [],
             "constants": [],
@@ -1727,8 +1727,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 30,
-                    "end": 33
+                    "line": 31,
+                    "end": 34
                 },
                 {
                     "routes": [
@@ -1749,8 +1749,30 @@
                             "doc": ""
                         }
                     ],
-                    "line": 37,
-                    "end": 40
+                    "line": 38,
+                    "end": 41
+                },
+                {
+                    "routes": [
+                        "GET /minn-admin/v1/engine-changelog (floor edit_posts)"
+                    ],
+                    "name": "engineChangelog",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "engineChangelog(Minn\\Http\\Request $request): Minn\\Http\\Response",
+                    "doc": "The engine's own changelog (changelog.md beside bootstrap.php), shown beside the app's on Minn.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "request",
+                            "type": "Minn\\Http\\Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 45,
+                    "end": 49
                 },
                 {
                     "routes": [
@@ -1771,8 +1793,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 44,
-                    "end": 47
+                    "line": 53,
+                    "end": 56
                 },
                 {
                     "routes": [],
@@ -1793,8 +1815,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 50,
-                    "end": 54
+                    "line": 59,
+                    "end": 63
                 }
             ]
         },
@@ -3258,8 +3280,8 @@
             "namespace": "Minn\\Admin",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Admin/Notifications.php",
-            "lines": 202,
-            "doc": "The bell feed: pending and recent comments, translation and core update\noffers, the core auto-update notice, and new registrations. Plugin and\ntheme update rows need an extension inventory the engine does not have\n(a recorded gap); on the reference database those sections are empty,\nso parity holds by construction.",
+            "lines": 191,
+            "doc": "The bell feed: pending and recent comments, translation offers and a\nnewer Minn, and new registrations. Plugin and theme update rows need an\nextension inventory the engine does not have\n(a recorded gap); on the reference database those sections are empty,\nso parity holds by construction.",
             "implements": [],
             "extends": null,
             "uses": [
@@ -3271,6 +3293,7 @@
                 "Minn\\Content\\Texturize",
                 "Minn\\Content\\Users",
                 "Minn\\Db",
+                "Minn\\Ops\\Releases",
                 "Minn\\Ops\\Updates",
                 "Minn\\Support\\Serialized"
             ],
@@ -3279,7 +3302,7 @@
                 "Minn\\Rest\\Services"
             ],
             "constructor": {
-                "signature": "__construct(Minn\\Db $db, Minn\\Content\\Site $site, Minn\\Content\\Users $users, Minn\\Auth\\Capabilities $capabilities, Minn\\Admin\\ActivityFeed $feed, Minn\\Ops\\Updates $updates)",
+                "signature": "__construct(Minn\\Db $db, Minn\\Content\\Site $site, Minn\\Content\\Users $users, Minn\\Auth\\Capabilities $capabilities, Minn\\Admin\\ActivityFeed $feed, Minn\\Ops\\Updates $updates, Minn\\Ops\\Releases $releases)",
                 "doc": "",
                 "shapes": [],
                 "params": [
@@ -3324,11 +3347,18 @@
                         "shape": "",
                         "default": null,
                         "doc": ""
+                    },
+                    {
+                        "name": "releases",
+                        "type": "Minn\\Ops\\Releases",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
                     }
                 ],
                 "visibility": "public",
-                "line": 25,
-                "end": 33
+                "line": 26,
+                "end": 35
             },
             "cases": [],
             "constants": [],
@@ -3386,6 +3416,15 @@
                     "doc": "",
                     "visibility": "private",
                     "promoted": true
+                },
+                {
+                    "name": "releases",
+                    "type": "Minn\\Ops\\Releases",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
                 }
             ],
             "methods": [
@@ -3406,8 +3445,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 36,
-                    "end": 58
+                    "line": 38,
+                    "end": 60
                 },
                 {
                     "routes": [],
@@ -3433,8 +3472,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 184,
-                    "end": 195
+                    "line": 174,
+                    "end": 185
                 },
                 {
                     "routes": [],
@@ -3455,8 +3494,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 66,
-                    "end": 86
+                    "line": 68,
+                    "end": 88
                 },
                 {
                     "routes": [],
@@ -3484,8 +3523,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 94,
-                    "end": 123
+                    "line": 96,
+                    "end": 125
                 },
                 {
                     "routes": [],
@@ -3525,8 +3564,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 125,
-                    "end": 128
+                    "line": 127,
+                    "end": 130
                 },
                 {
                     "routes": [],
@@ -3534,7 +3573,7 @@
                     "static": false,
                     "visibility": "private",
                     "signature": "coreItems(int $userId, int $now): array",
-                    "doc": "A core offer from the update transient, and the auto-update notice\nwhile it is under two weeks old.",
+                    "doc": "A newer Minn on offer (Ops\\Releases). WordPress's own core offer and\nits auto-update notice are not shown: on Minn they could only speak\nof a parked copy, which is not what serves the site.",
                     "shapes": [
                         "@return list<array>"
                     ],
@@ -3554,8 +3593,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 136,
-                    "end": 163
+                    "line": 139,
+                    "end": 153
                 },
                 {
                     "routes": [],
@@ -3590,8 +3629,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 170,
-                    "end": 181
+                    "line": 160,
+                    "end": 171
                 },
                 {
                     "routes": [],
@@ -3617,8 +3656,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 197,
-                    "end": 210
+                    "line": 187,
+                    "end": 200
                 },
                 {
                     "routes": [],
@@ -3629,8 +3668,8 @@
                     "doc": "Total translation offers across the three update transients.",
                     "shapes": [],
                     "params": [],
-                    "line": 213,
-                    "end": 223
+                    "line": 203,
+                    "end": 213
                 }
             ]
         },
@@ -6500,7 +6539,7 @@
             "namespace": "Minn\\Admin",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Admin/UpdatesController.php",
-            "lines": 120,
+            "lines": 129,
             "doc": "The minn-admin/v1 update routes: offers, directory meta, the check, the installs, the auto-update lists.",
             "implements": [],
             "extends": null,
@@ -6512,6 +6551,7 @@
                 "Minn\\Http\\Response",
                 "Minn\\Http\\Route",
                 "Minn\\Ops\\AutoUpdates",
+                "Minn\\Ops\\CoreStatus",
                 "Minn\\Ops\\Updates",
                 "Minn\\RestError",
                 "Minn\\Rest\\Caller",
@@ -6521,13 +6561,20 @@
                 "Minn\\Rest\\Api"
             ],
             "constructor": {
-                "signature": "__construct(Minn\\Ops\\Updates $updates, Minn\\Rest\\Caller $caller)",
+                "signature": "__construct(Minn\\Ops\\Updates $updates, Minn\\Ops\\CoreStatus $core, Minn\\Rest\\Caller $caller)",
                 "doc": "",
                 "shapes": [],
                 "params": [
                     {
                         "name": "updates",
                         "type": "Minn\\Ops\\Updates",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    },
+                    {
+                        "name": "core",
+                        "type": "Minn\\Ops\\CoreStatus",
                         "shape": "",
                         "default": null,
                         "doc": ""
@@ -6541,8 +6588,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 22,
-                "end": 24
+                "line": 23,
+                "end": 25
             },
             "cases": [],
             "constants": [],
@@ -6550,6 +6597,15 @@
                 {
                     "name": "updates",
                     "type": "Minn\\Ops\\Updates",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
+                },
+                {
+                    "name": "core",
+                    "type": "Minn\\Ops\\CoreStatus",
                     "readonly": true,
                     "static": false,
                     "doc": "",
@@ -6586,8 +6642,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 28,
-                    "end": 39
+                    "line": 29,
+                    "end": 40
                 },
                 {
                     "routes": [
@@ -6608,8 +6664,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 43,
-                    "end": 47
+                    "line": 44,
+                    "end": 48
                 },
                 {
                     "routes": [
@@ -6619,7 +6675,7 @@
                     "static": false,
                     "visibility": "public",
                     "signature": "check(Minn\\Http\\Request $request): Minn\\Http\\Response",
-                    "doc": "Asks wordpress.org again, now.",
+                    "doc": "Asks again, now: wordpress.org for plugins and themes, and GitHub for Minn itself (its status answered as core).",
                     "shapes": [],
                     "params": [
                         {
@@ -6630,8 +6686,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 51,
-                    "end": 68
+                    "line": 52,
+                    "end": 78
                 },
                 {
                     "routes": [
@@ -6652,8 +6708,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 72,
-                    "end": 83
+                    "line": 82,
+                    "end": 93
                 },
                 {
                     "routes": [
@@ -6674,8 +6730,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 87,
-                    "end": 104
+                    "line": 97,
+                    "end": 114
                 },
                 {
                     "routes": [
@@ -6696,8 +6752,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 108,
-                    "end": 116
+                    "line": 118,
+                    "end": 126
                 },
                 {
                     "routes": [
@@ -6718,8 +6774,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 120,
-                    "end": 137
+                    "line": 130,
+                    "end": 147
                 }
             ]
         },
@@ -6920,7 +6976,7 @@
             "namespace": "Minn\\Admin",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Admin/V1Controller.php",
-            "lines": 59,
+            "lines": 81,
             "doc": "The boot burst of minn-admin/v1: the bell feed and its read marker, the\ncore status, and the one-round-trip boot-status the app starts from.\nEvery route sits behind the same capability floor (edit_posts) the\nplugin declares.",
             "implements": [],
             "extends": null,
@@ -7088,7 +7144,7 @@
                     "static": false,
                     "visibility": "public",
                     "signature": "core(Minn\\Http\\Request $request): Minn\\Http\\Response",
-                    "doc": "The core status.",
+                    "doc": "Minn's version and any newer release; a day-old check of GitHub runs once the answer is sent.",
                     "shapes": [],
                     "params": [
                         {
@@ -7101,6 +7157,28 @@
                     ],
                     "line": 54,
                     "end": 58
+                },
+                {
+                    "routes": [
+                        "POST /minn-admin/v1/core/update (floor edit_posts)"
+                    ],
+                    "name": "coreUpdate",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "coreUpdate(Minn\\Http\\Request $request): Minn\\Http\\Response",
+                    "doc": "Replaces the running engine with the release on offer.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "request",
+                            "type": "Minn\\Http\\Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 62,
+                    "end": 66
                 },
                 {
                     "routes": [
@@ -7121,8 +7199,28 @@
                             "doc": ""
                         }
                     ],
-                    "line": 67,
-                    "end": 81
+                    "line": 75,
+                    "end": 91
+                },
+                {
+                    "routes": [],
+                    "name": "checkingReleases",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "checkingReleases(Minn\\Http\\Response $response): Minn\\Http\\Response",
+                    "doc": "The answer, with GitHub asked about Minn's releases after it is sent when the last check is a day old.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "response",
+                            "type": "Minn\\Http\\Response",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 94,
+                    "end": 103
                 }
             ]
         },
@@ -19301,12 +19399,15 @@
             "namespace": "Minn\\Cli",
             "kind": "final class",
             "file": "public/minn/src/Minn/Cli/Installer.php",
-            "lines": 328,
+            "lines": 339,
             "doc": "The swap, both ways. Install parks WordPress's own files beside the\nwebroot, lays the engine and its shape files down, and leaves\nwp-config.php and wp-content untouched; eject puts every parked file\nback and removes what install wrote. The install record at the webroot\n(.minn-install.php) is what eject works from. Preflight says what the site will and\nwill not get before anything moves.",
             "implements": [],
             "extends": null,
             "uses": [
-                "Minn\\Cli\\Preflight"
+                "Minn\\Cli\\Preflight",
+                "Minn\\Ops\\EngineUpdate",
+                "Minn\\Ops\\Releases",
+                "Minn\\Support\\Files"
             ],
             "usedBy": [
                 "Minn\\Cli\\MinnCommand",
@@ -19326,8 +19427,8 @@
                     }
                 ],
                 "visibility": "private",
-                "line": 49,
-                "end": 51
+                "line": 53,
+                "end": 55
             },
             "cases": [],
             "constants": [
@@ -19427,8 +19528,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 58,
-                    "end": 83
+                    "line": 62,
+                    "end": 88
                 },
                 {
                     "routes": [],
@@ -19447,8 +19548,28 @@
                             "doc": ""
                         }
                     ],
-                    "line": 86,
-                    "end": 94
+                    "line": 91,
+                    "end": 99
+                },
+                {
+                    "routes": [],
+                    "name": "update",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "update(array $options): int",
+                    "doc": "Replaces this engine with the latest release on GitHub; --check only says whether there is one.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "options",
+                            "type": "array",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 109,
+                    "end": 133
                 },
                 {
                     "routes": [],
@@ -19467,8 +19588,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 103,
-                    "end": 112
+                    "line": 136,
+                    "end": 145
                 },
                 {
                     "routes": [],
@@ -19496,8 +19617,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 120,
-                    "end": 175
+                    "line": 153,
+                    "end": 208
                 },
                 {
                     "routes": [],
@@ -19516,8 +19637,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 178,
-                    "end": 222
+                    "line": 211,
+                    "end": 255
                 },
                 {
                     "routes": [],
@@ -19536,8 +19657,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 225,
-                    "end": 234
+                    "line": 258,
+                    "end": 267
                 },
                 {
                     "routes": [],
@@ -19558,8 +19679,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 244,
-                    "end": 254
+                    "line": 277,
+                    "end": 287
                 },
                 {
                     "routes": [],
@@ -19570,8 +19691,8 @@
                     "doc": "",
                     "shapes": [],
                     "params": [],
-                    "line": 96,
-                    "end": 100
+                    "line": 101,
+                    "end": 106
                 },
                 {
                     "routes": [],
@@ -19590,8 +19711,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 261,
-                    "end": 279
+                    "line": 294,
+                    "end": 312
                 },
                 {
                     "routes": [],
@@ -19617,8 +19738,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 282,
-                    "end": 296
+                    "line": 315,
+                    "end": 329
                 },
                 {
                     "routes": [],
@@ -19644,28 +19765,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 298,
-                    "end": 315
-                },
-                {
-                    "routes": [],
-                    "name": "removeTree",
-                    "static": true,
-                    "visibility": "private",
-                    "signature": "removeTree(string $path): void",
-                    "doc": "",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "path",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 317,
-                    "end": 332
+                    "line": 331,
+                    "end": 348
                 },
                 {
                     "routes": [],
@@ -19676,8 +19777,8 @@
                     "doc": "",
                     "shapes": [],
                     "params": [],
-                    "line": 334,
-                    "end": 338
+                    "line": 350,
+                    "end": 353
                 },
                 {
                     "routes": [],
@@ -19696,8 +19797,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 340,
-                    "end": 343
+                    "line": 355,
+                    "end": 358
                 }
             ]
         },
@@ -30559,10 +30660,10 @@
                 "Minn\\Media\\Images",
                 "Minn\\Media\\Uploads",
                 "Minn\\Media\\Writer",
-                "Minn\\Ops\\CoreStatus",
                 "Minn\\Ops\\Diagnostics",
                 "Minn\\Ops\\InstalledSoftware",
                 "Minn\\Ops\\Packages",
+                "Minn\\Ops\\Releases",
                 "Minn\\Ops\\Updates",
                 "Minn\\Rest\\ApplicationPasswordsController",
                 "Minn\\Rest\\IndexController",
@@ -55713,6 +55814,7 @@
                 "Minn\\Http\\Subject",
                 "Minn\\Http\\Transport",
                 "Minn\\Http\\TrustedProxies",
+                "Minn\\Ops\\Releases",
                 "Minn\\Ops\\Updates"
             ],
             "constructor": null,
@@ -57374,6 +57476,7 @@
             ],
             "usedBy": [
                 "Minn\\Admin\\Translations",
+                "Minn\\Ops\\EngineUpdate",
                 "Minn\\Ops\\Packages"
             ],
             "constructor": null,
@@ -74858,6 +74961,117 @@
             ]
         },
         {
+            "name": "Minn\\Ops\\Archive",
+            "short": "Archive",
+            "namespace": "Minn\\Ops",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Ops/Archive.php",
+            "lines": 69,
+            "doc": "A zip unpacked the safe way, for the plugin and theme installer and for\nthe engine's own update alike: every entry stays inside its folder (no\nabsolute path, no \"..\", no backslash, no NUL), none is a symbolic link,\nthere are no more than 20,000 of them, they unpack to no more than\n512 MB, and they all sit in exactly one top folder (macOS's __MACOSX\nnoise aside). Nothing is written until every entry has passed.",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\RestError"
+            ],
+            "usedBy": [
+                "Minn\\Ops\\EngineUpdate",
+                "Minn\\Ops\\Packages"
+            ],
+            "constructor": null,
+            "cases": [],
+            "constants": [
+                {
+                    "name": "MAX_BYTES",
+                    "value": "536870912",
+                    "doc": "",
+                    "visibility": "public"
+                },
+                {
+                    "name": "MAX_ENTRIES",
+                    "value": "20000",
+                    "doc": "",
+                    "visibility": "private"
+                }
+            ],
+            "properties": [],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "unpackFolder",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "unpackFolder(string $file, string $stage): string",
+                    "doc": "Unpacks a zip file into a new folder $stage; the path of the one folder the archive held.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "file",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "stage",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 23,
+                    "end": 67
+                },
+                {
+                    "routes": [],
+                    "name": "isFolderName",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "isFolderName(string $name): bool",
+                    "doc": "A plain folder name: no separators, never \".\" or \"..\".",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "name",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 70,
+                    "end": 73
+                },
+                {
+                    "routes": [],
+                    "name": "isSymlinkEntry",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "isSymlinkEntry(ZipArchive $archive, int $index): bool",
+                    "doc": "Whether a zip entry is recorded as a symbolic link (a Unix entry whose mode says so).",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "archive",
+                            "type": "ZipArchive",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "index",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 76,
+                    "end": 84
+                }
+            ]
+        },
+        {
             "name": "Minn\\Ops\\AutoUpdates",
             "short": "AutoUpdates",
             "namespace": "Minn\\Ops",
@@ -74959,41 +75173,75 @@
             "namespace": "Minn\\Ops",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Ops/CoreStatus.php",
-            "lines": 24,
-            "doc": "The installed version comes from the update_core transient's\nversion_checked (the database's own record of what last phoned home);\nthe engine never reads WordPress code files and never phones home\nitself. dbUpgrade is false by definition: there is no newer core code\non disk for the database to lag behind.",
+            "lines": 48,
+            "doc": "The core the app's update banner and chip speak of, which on Minn is\nMinn: the running engine's version, a newer release on offer\n(Ops\\Releases, asked of GitHub once a day), and installing it\n(Ops\\EngineUpdate). WordPress's own offer (the update_core transient a\nparked copy may write) is not Minn's to act on and is not shown.\ndbUpgrade is false: the database is WordPress's, and a Minn release\nnever migrates it.",
             "implements": [],
             "extends": null,
             "uses": [
-                "Minn\\Content\\Site",
-                "Minn\\Support\\Serialized"
+                "Minn\\Ops\\EngineUpdate",
+                "Minn\\Ops\\Releases",
+                "Minn\\RestError"
             ],
             "usedBy": [
+                "Minn\\Admin\\UpdatesController",
                 "Minn\\Admin\\V1Controller",
-                "Minn\\Rest\\Api"
+                "Minn\\Rest\\Services"
             ],
             "constructor": {
-                "signature": "__construct(Minn\\Content\\Site $site)",
+                "signature": "__construct(Minn\\Ops\\Releases $releases, Minn\\Ops\\EngineUpdate $engine, string $version)",
                 "doc": "",
                 "shapes": [],
                 "params": [
                     {
-                        "name": "site",
-                        "type": "Minn\\Content\\Site",
+                        "name": "releases",
+                        "type": "Minn\\Ops\\Releases",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    },
+                    {
+                        "name": "engine",
+                        "type": "Minn\\Ops\\EngineUpdate",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    },
+                    {
+                        "name": "version",
+                        "type": "string",
                         "shape": "",
                         "default": null,
                         "doc": ""
                     }
                 ],
                 "visibility": "public",
-                "line": 19,
-                "end": 21
+                "line": 21,
+                "end": 26
             },
             "cases": [],
             "constants": [],
             "properties": [
                 {
-                    "name": "site",
-                    "type": "Minn\\Content\\Site",
+                    "name": "releases",
+                    "type": "Minn\\Ops\\Releases",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
+                },
+                {
+                    "name": "engine",
+                    "type": "Minn\\Ops\\EngineUpdate",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
+                },
+                {
+                    "name": "version",
+                    "type": "string",
                     "readonly": true,
                     "static": false,
                     "doc": "",
@@ -75008,11 +75256,47 @@
                     "static": false,
                     "visibility": "public",
                     "signature": "data(): array",
-                    "doc": "The core version and any offer from the update transient.",
+                    "doc": "Minn's version, any offer, and when GitHub was last asked.",
                     "shapes": [],
                     "params": [],
-                    "line": 24,
+                    "line": 29,
                     "end": 39
+                },
+                {
+                    "routes": [],
+                    "name": "due",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "due(): bool",
+                    "doc": "Whether GitHub was last asked a day ago or more.",
+                    "shapes": [],
+                    "params": [],
+                    "line": 42,
+                    "end": 45
+                },
+                {
+                    "routes": [],
+                    "name": "refresh",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "refresh(): void",
+                    "doc": "Asks GitHub now.",
+                    "shapes": [],
+                    "params": [],
+                    "line": 48,
+                    "end": 51
+                },
+                {
+                    "routes": [],
+                    "name": "update",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "update(): string",
+                    "doc": "Installs the release on offer; the version now in place.",
+                    "shapes": [],
+                    "params": [],
+                    "line": 54,
+                    "end": 65
                 }
             ]
         },
@@ -75566,6 +75850,194 @@
             ]
         },
         {
+            "name": "Minn\\Ops\\EngineUpdate",
+            "short": "EngineUpdate",
+            "namespace": "Minn\\Ops",
+            "kind": "final readonly class",
+            "file": "public/minn/src/Minn/Ops/EngineUpdate.php",
+            "lines": 105,
+            "doc": "Replaces the running engine with a published release. The release's\nminn.zip comes from the engine repository's own GitHub release downloads\nand nowhere else (every redirect hop is judged), must match the sha256\nGitHub publishes for it, and is unpacked beside the engine into a folder\nof its own, where it is checked again: its bootstrap names the version on\noffer and bin/minn is there. Then the\nswap, two renames in the folder the engine lives in: the running engine\nmoves aside, the new one moves in, and the old copy is removed; when the\nsecond rename fails the first is undone. The legacy install record\n(.install.json, from installs that kept it inside the engine) comes\nalong. One update runs at a time. A development checkout (a symbolic\nlink, or a folder under git) is refused: git owns those. The site keeps\nanswering throughout.",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\Http\\Download",
+                "Minn\\Ops\\Archive",
+                "Minn\\Ops\\Release",
+                "Minn\\Ops\\Releases",
+                "Minn\\Support\\Files"
+            ],
+            "usedBy": [
+                "Minn\\Cli\\Installer",
+                "Minn\\Ops\\CoreStatus",
+                "Minn\\Rest\\Services"
+            ],
+            "constructor": {
+                "signature": "__construct(string $engineDir)",
+                "doc": "",
+                "shapes": [],
+                "params": [
+                    {
+                        "name": "engineDir",
+                        "type": "string",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    }
+                ],
+                "visibility": "public",
+                "line": 33,
+                "end": 35
+            },
+            "cases": [],
+            "constants": [
+                {
+                    "name": "HOSTS",
+                    "value": "array (   0 => 'https://github.com/',   1 => 'https://objects.githubusercontent.com/',   2 => 'https://release-assets.githubusercontent.com/', )",
+                    "doc": "Where a release asset may come from: the release page's link and the hosts it redirects to.",
+                    "visibility": "private"
+                },
+                {
+                    "name": "MAX_DOWNLOAD",
+                    "value": "67108864",
+                    "doc": "",
+                    "visibility": "private"
+                }
+            ],
+            "properties": [
+                {
+                    "name": "engineDir",
+                    "type": "string",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
+                }
+            ],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "apply",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "apply(Minn\\Ops\\Release $release): string",
+                    "doc": "Downloads, checks and installs a release; the version now in place.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "release",
+                            "type": "Minn\\Ops\\Release",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 38,
+                    "end": 49
+                },
+                {
+                    "routes": [],
+                    "name": "install",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "install(string $zip, string $sha256, string $version): string",
+                    "doc": "Installs an archive in hand once it matches its checksum and holds the version named; the version now in place.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "zip",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "sha256",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "version",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 52,
+                    "end": 72
+                },
+                {
+                    "routes": [],
+                    "name": "versionOf",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "versionOf(string $engineDir): string",
+                    "doc": "The version a bootstrap.php names; \"0.0.0\" when it names none.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "engineDir",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 113,
+                    "end": 117
+                },
+                {
+                    "routes": [],
+                    "name": "swap",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "swap(string $zip, string $version, string $parent): string",
+                    "doc": "Unpacks, checks and swaps in the archive, one update at a time (install() holds the lock).",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "zip",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "version",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "parent",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 75,
+                    "end": 110
+                },
+                {
+                    "routes": [],
+                    "name": "refuseCheckout",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "refuseCheckout(): void",
+                    "doc": "A link, or a folder inside a git working copy at any depth (the engine's own repository keeps it two levels down).",
+                    "shapes": [],
+                    "params": [],
+                    "line": 120,
+                    "end": 129
+                }
+            ]
+        },
+        {
             "name": "Minn\\Ops\\InstalledSoftware",
             "short": "InstalledSoftware",
             "namespace": "Minn\\Ops",
@@ -75906,7 +76378,7 @@
             "namespace": "Minn\\Ops",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Ops/Packages.php",
-            "lines": 507,
+            "lines": 442,
             "doc": "Putting themes and extensions on disk. Themes come from wordpress.org\n(block themes render on the engine) or an uploaded zip; extensions come\nfrom an uploaded zip or a URL, and must carry a minn.json: a WordPress\nplugin would install but never run, so it is refused with the reason.\nEvery archive is unpacked through one guarded routine: exactly one\ntop-level folder that is a plain name (never \".\" or \"..\"), no absolute\nor dotted paths, no symbolic links, bounded entry count and size, the\nfolder's identity checked and its destination proven to be a direct\nchild of the kind's directory before it is moved into place. Removal\nproves the same containment before anything is deleted.",
             "implements": [],
             "extends": null,
@@ -75916,8 +76388,10 @@
                 "Minn\\Engine",
                 "Minn\\Extension\\Manifest",
                 "Minn\\Http\\Download",
+                "Minn\\Ops\\Archive",
                 "Minn\\RestError",
-                "Minn\\Support\\FileHeaders"
+                "Minn\\Support\\FileHeaders",
+                "Minn\\Support\\Files"
             ],
             "usedBy": [
                 "Minn\\Admin\\PackagesController",
@@ -75953,27 +76427,15 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 37,
-                "end": 39
+                "line": 36,
+                "end": 38
             },
             "cases": [],
             "constants": [
                 {
-                    "name": "MAX_ARCHIVE",
-                    "value": "536870912",
-                    "doc": "The largest archive fetched or unpacked, in bytes.",
-                    "visibility": "public"
-                },
-                {
-                    "name": "MAX_ENTRIES",
-                    "value": "20000",
-                    "doc": "",
-                    "visibility": "private"
-                },
-                {
                     "name": "WPORG_THEMES",
                     "value": "'https://api.wordpress.org/themes/info/1.2/'",
-                    "doc": "",
+                    "doc": "The largest archive fetched or unpacked, in bytes.",
                     "visibility": "private"
                 },
                 {
@@ -76035,8 +76497,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 42,
-                    "end": 66
+                    "line": 41,
+                    "end": 65
                 },
                 {
                     "routes": [],
@@ -76064,8 +76526,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 73,
-                    "end": 107
+                    "line": 72,
+                    "end": 106
                 },
                 {
                     "routes": [],
@@ -76084,8 +76546,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 110,
-                    "end": 143
+                    "line": 109,
+                    "end": 142
                 },
                 {
                     "routes": [],
@@ -76111,8 +76573,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 146,
-                    "end": 149
+                    "line": 145,
+                    "end": 148
                 },
                 {
                     "routes": [],
@@ -76138,8 +76600,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 152,
-                    "end": 155
+                    "line": 151,
+                    "end": 154
                 },
                 {
                     "routes": [],
@@ -76160,8 +76622,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 185,
-                    "end": 196
+                    "line": 184,
+                    "end": 195
                 },
                 {
                     "routes": [],
@@ -76190,8 +76652,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 206,
-                    "end": 214
+                    "line": 205,
+                    "end": 213
                 },
                 {
                     "routes": [],
@@ -76226,8 +76688,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 227,
-                    "end": 251
+                    "line": 226,
+                    "end": 250
                 },
                 {
                     "routes": [],
@@ -76262,8 +76724,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 258,
-                    "end": 282
+                    "line": 257,
+                    "end": 281
                 },
                 {
                     "routes": [],
@@ -76284,8 +76746,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 289,
-                    "end": 296
+                    "line": 288,
+                    "end": 295
                 },
                 {
                     "routes": [],
@@ -76311,8 +76773,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 299,
-                    "end": 302
+                    "line": 298,
+                    "end": 301
                 },
                 {
                     "routes": [],
@@ -76338,8 +76800,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 305,
-                    "end": 308
+                    "line": 304,
+                    "end": 307
                 },
                 {
                     "routes": [],
@@ -76367,8 +76829,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 334,
-                    "end": 346
+                    "line": 333,
+                    "end": 345
                 },
                 {
                     "routes": [],
@@ -76394,8 +76856,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 349,
-                    "end": 352
+                    "line": 348,
+                    "end": 351
                 },
                 {
                     "routes": [],
@@ -76421,8 +76883,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 423,
-                    "end": 441
+                    "line": 385,
+                    "end": 403
                 },
                 {
                     "routes": [],
@@ -76448,8 +76910,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 513,
-                    "end": 523
+                    "line": 458,
+                    "end": 468
                 },
                 {
                     "routes": [],
@@ -76475,8 +76937,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 158,
-                    "end": 178
+                    "line": 157,
+                    "end": 177
                 },
                 {
                     "routes": [],
@@ -76495,8 +76957,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 217,
-                    "end": 220
+                    "line": 216,
+                    "end": 219
                 },
                 {
                     "routes": [],
@@ -76522,8 +76984,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 311,
-                    "end": 328
+                    "line": 310,
+                    "end": 327
                 },
                 {
                     "routes": [],
@@ -76558,28 +77020,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 360,
-                    "end": 420
-                },
-                {
-                    "routes": [],
-                    "name": "isFolderName",
-                    "static": true,
-                    "visibility": "private",
-                    "signature": "isFolderName(string $name): bool",
-                    "doc": "A plain folder name: no separators, never \".\" or \"..\".",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "name",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 444,
-                    "end": 447
+                    "line": 359,
+                    "end": 382
                 },
                 {
                     "routes": [],
@@ -76605,35 +77047,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 450,
-                    "end": 458
-                },
-                {
-                    "routes": [],
-                    "name": "isSymlinkEntry",
-                    "static": true,
-                    "visibility": "private",
-                    "signature": "isSymlinkEntry(ZipArchive $archive, int $index): bool",
-                    "doc": "Whether a zip entry is recorded as a symbolic link (a Unix entry whose mode says so).",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "archive",
-                            "type": "ZipArchive",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "index",
-                            "type": "int",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 461,
-                    "end": 469
+                    "line": 406,
+                    "end": 414
                 },
                 {
                     "routes": [],
@@ -76661,8 +77076,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 476,
-                    "end": 487
+                    "line": 421,
+                    "end": 432
                 },
                 {
                     "routes": [],
@@ -76690,28 +77105,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 490,
-                    "end": 507
-                },
-                {
-                    "routes": [],
-                    "name": "removeTree",
-                    "static": true,
-                    "visibility": "private",
-                    "signature": "removeTree(string $dir): void",
-                    "doc": "",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "dir",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 525,
-                    "end": 532
+                    "line": 435,
+                    "end": 452
                 }
             ]
         },
@@ -76865,6 +77260,455 @@
                     ],
                     "line": 41,
                     "end": 52
+                }
+            ]
+        },
+        {
+            "name": "Minn\\Ops\\Release",
+            "short": "Release",
+            "namespace": "Minn\\Ops",
+            "kind": "final readonly class",
+            "file": "public/minn/src/Minn/Ops/Release.php",
+            "lines": 77,
+            "doc": "One published Minn release as GitHub describes it: the version its tag\nnames (v0.1.0 is 0.1.0), its notes and page, when it went out, and the\nminn.zip it ships with that file's sha256 (the digest GitHub publishes\nfor every release asset). A draft, a pre-release, a tag that is not a\nversion, or a release without minn.zip is not a release Minn offers.",
+            "implements": [],
+            "extends": null,
+            "uses": [],
+            "usedBy": [
+                "Minn\\Ops\\EngineUpdate",
+                "Minn\\Ops\\Releases"
+            ],
+            "constructor": {
+                "signature": "__construct(string $version, string $url, string $published, string $notes, string $package, string $sha256)",
+                "doc": "",
+                "shapes": [],
+                "params": [
+                    {
+                        "name": "version",
+                        "type": "string",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    },
+                    {
+                        "name": "url",
+                        "type": "string",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    },
+                    {
+                        "name": "published",
+                        "type": "string",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    },
+                    {
+                        "name": "notes",
+                        "type": "string",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    },
+                    {
+                        "name": "package",
+                        "type": "string",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    },
+                    {
+                        "name": "sha256",
+                        "type": "string",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    }
+                ],
+                "visibility": "public",
+                "line": 19,
+                "end": 27
+            },
+            "cases": [],
+            "constants": [
+                {
+                    "name": "ASSET",
+                    "value": "'minn.zip'",
+                    "doc": "The archive every release ships: the public/minn/ tree with Minn Admin bundled at minn/admin.",
+                    "visibility": "public"
+                }
+            ],
+            "properties": [
+                {
+                    "name": "version",
+                    "type": "string",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "public",
+                    "promoted": true
+                },
+                {
+                    "name": "url",
+                    "type": "string",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "public",
+                    "promoted": true
+                },
+                {
+                    "name": "published",
+                    "type": "string",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "public",
+                    "promoted": true
+                },
+                {
+                    "name": "notes",
+                    "type": "string",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "public",
+                    "promoted": true
+                },
+                {
+                    "name": "package",
+                    "type": "string",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "public",
+                    "promoted": true
+                },
+                {
+                    "name": "sha256",
+                    "type": "string",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "public",
+                    "promoted": true
+                }
+            ],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "fromGitHub",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "fromGitHub(array $answer): ?self",
+                    "doc": "A release from GitHub's answer for releases/latest (or one entry of\nreleases); null when it is not one Minn offers.",
+                    "shapes": [
+                        "@param array<string, mixed> $answer"
+                    ],
+                    "params": [
+                        {
+                            "name": "answer",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 35,
+                    "end": 59
+                },
+                {
+                    "routes": [],
+                    "name": "fromArray",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "fromArray(array $row): ?self",
+                    "doc": "A release as the minn_release option keeps it; null for anything else.",
+                    "shapes": [
+                        "@param array<string, mixed> $row"
+                    ],
+                    "params": [
+                        {
+                            "name": "row",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 66,
+                    "end": 73
+                },
+                {
+                    "routes": [],
+                    "name": "toArray",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "toArray(): array",
+                    "doc": "The release as it is kept in the minn_release option.",
+                    "shapes": [
+                        "@return array{version: string, url: string, published: string, notes: string, package: string, sha256: string}"
+                    ],
+                    "params": [],
+                    "line": 80,
+                    "end": 83
+                },
+                {
+                    "routes": [],
+                    "name": "newerThan",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "newerThan(string $installed): bool",
+                    "doc": "Whether this release is newer than a version that is installed.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "installed",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 86,
+                    "end": 89
+                }
+            ]
+        },
+        {
+            "name": "Minn\\Ops\\Releases",
+            "short": "Releases",
+            "namespace": "Minn\\Ops",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Ops/Releases.php",
+            "lines": 89,
+            "doc": "Whether a newer Minn is out, asked of GitHub at most once a day: the\nlatest published release of the engine's own repository, kept in the\nminn_release option (JSON) with the time it was asked. A check GitHub\ndoes not answer (offline, rate limited) keeps the last answer and waits\na day like any other; a repository with no published release (a 404,\nwhich is also what a private one answers) offers nothing. This is Minn\nasking Minn, never wordpress.org.",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\Content\\Site",
+                "Minn\\Http",
+                "Minn\\Ops\\Release"
+            ],
+            "usedBy": [
+                "Minn\\Admin\\Notifications",
+                "Minn\\Cli\\Installer",
+                "Minn\\Ops\\CoreStatus",
+                "Minn\\Ops\\EngineUpdate",
+                "Minn\\Rest\\Services"
+            ],
+            "constructor": {
+                "signature": "__construct(Closure $load, Closure $save, string $installed, string $source = self::SOURCE)",
+                "doc": "",
+                "shapes": [
+                    "@param Closure(): ?string $load the stored answer, as JSON",
+                    "@param Closure(string): void $save keeps the answer, as JSON"
+                ],
+                "params": [
+                    {
+                        "name": "load",
+                        "type": "Closure",
+                        "shape": "Closure(): ?string",
+                        "default": null,
+                        "doc": "the stored answer, as JSON"
+                    },
+                    {
+                        "name": "save",
+                        "type": "Closure",
+                        "shape": "Closure(string): void",
+                        "default": null,
+                        "doc": "keeps the answer, as JSON"
+                    },
+                    {
+                        "name": "installed",
+                        "type": "string",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    },
+                    {
+                        "name": "source",
+                        "type": "string",
+                        "shape": "",
+                        "default": "self::SOURCE",
+                        "doc": ""
+                    }
+                ],
+                "visibility": "public",
+                "line": 33,
+                "end": 39
+            },
+            "cases": [],
+            "constants": [
+                {
+                    "name": "OPTION",
+                    "value": "'minn_release'",
+                    "doc": "",
+                    "visibility": "public"
+                },
+                {
+                    "name": "TTL",
+                    "value": "86400",
+                    "doc": "",
+                    "visibility": "public"
+                },
+                {
+                    "name": "REPOSITORY",
+                    "value": "'austinginder/minn-engine'",
+                    "doc": "",
+                    "visibility": "public"
+                },
+                {
+                    "name": "SOURCE",
+                    "value": "'https://api.github.com/repos/austinginder/minn-engine/releases/latest'",
+                    "doc": "",
+                    "visibility": "public"
+                },
+                {
+                    "name": "DOWNLOADS",
+                    "value": "'https://github.com/austinginder/minn-engine/releases/download/'",
+                    "doc": "Where the repository's release assets download from; nothing else is installed.",
+                    "visibility": "public"
+                }
+            ],
+            "properties": [
+                {
+                    "name": "load",
+                    "type": "Closure",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
+                },
+                {
+                    "name": "save",
+                    "type": "Closure",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
+                },
+                {
+                    "name": "installed",
+                    "type": "string",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
+                },
+                {
+                    "name": "source",
+                    "type": "string",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
+                }
+            ],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "forSite",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "forSite(Minn\\Content\\Site $site, string $installed): self",
+                    "doc": "The check for a site, its answer kept in the site's minn_release option.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "site",
+                            "type": "Minn\\Content\\Site",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "installed",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 42,
+                    "end": 51
+                },
+                {
+                    "routes": [],
+                    "name": "stored",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "stored(): array",
+                    "doc": "The stored answer: when GitHub was last asked and the latest release then.",
+                    "shapes": [
+                        "@return array{checked: int, latest: ?array<string, string>}"
+                    ],
+                    "params": [],
+                    "line": 58,
+                    "end": 65
+                },
+                {
+                    "routes": [],
+                    "name": "due",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "due(): bool",
+                    "doc": "Whether the stored answer is a day old, or there is none.",
+                    "shapes": [],
+                    "params": [],
+                    "line": 68,
+                    "end": 71
+                },
+                {
+                    "routes": [],
+                    "name": "refresh",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "refresh(): array",
+                    "doc": "Asks GitHub now and keeps the answer; `answered` says whether GitHub\ndid (when it did not, `latest` is the last answer kept).",
+                    "shapes": [
+                        "@return array{checked: int, latest: ?array<string, string>, answered: bool}"
+                    ],
+                    "params": [],
+                    "line": 79,
+                    "end": 93
+                },
+                {
+                    "routes": [],
+                    "name": "offer",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "offer(): ?Minn\\Ops\\Release",
+                    "doc": "The release on offer: the latest one, when it is newer than the running engine.",
+                    "shapes": [],
+                    "params": [],
+                    "line": 96,
+                    "end": 101
+                },
+                {
+                    "routes": [],
+                    "name": "origin",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "origin(string $url): string",
+                    "doc": "",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "url",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 103,
+                    "end": 107
                 }
             ]
         },
@@ -79982,6 +80826,8 @@
                 "Minn\\Http\\Kernel",
                 "Minn\\Http\\Router",
                 "Minn\\Media\\Uploads",
+                "Minn\\Ops\\Archive",
+                "Minn\\Ops\\CoreStatus",
                 "Minn\\Ops\\Logs",
                 "Minn\\Ops\\Packages",
                 "Minn\\Ops\\Updates",
@@ -80577,7 +81423,6 @@
                 "Minn\\Http\\Request",
                 "Minn\\Http\\Response",
                 "Minn\\Http\\Router",
-                "Minn\\Ops\\CoreStatus",
                 "Minn\\RestError",
                 "Minn\\Rest\\AbilitiesController",
                 "Minn\\Rest\\ApplicationPasswordsController",
@@ -80671,8 +81516,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 39,
-                "end": 45
+                "line": 38,
+                "end": 44
             },
             "cases": [],
             "constants": [],
@@ -80726,8 +81571,8 @@
                         "@return array<string, list<string>> the engine's routes in the reference's form, route => methods"
                     ],
                     "params": [],
-                    "line": 52,
-                    "end": 55
+                    "line": 51,
+                    "end": 54
                 },
                 {
                     "routes": [],
@@ -80753,8 +81598,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 58,
-                    "end": 65
+                    "line": 57,
+                    "end": 64
                 },
                 {
                     "routes": [],
@@ -80765,8 +81610,8 @@
                     "doc": "Who is making this request.",
                     "shapes": [],
                     "params": [],
-                    "line": 135,
-                    "end": 138
+                    "line": 134,
+                    "end": 137
                 },
                 {
                     "routes": [],
@@ -80777,8 +81622,8 @@
                     "doc": "The wp/v2 post shape.",
                     "shapes": [],
                     "params": [],
-                    "line": 141,
-                    "end": 144
+                    "line": 140,
+                    "end": 143
                 },
                 {
                     "routes": [],
@@ -80789,8 +81634,8 @@
                     "doc": "The wp/v2 term shape.",
                     "shapes": [],
                     "params": [],
-                    "line": 147,
-                    "end": 150
+                    "line": 146,
+                    "end": 149
                 },
                 {
                     "routes": [],
@@ -80801,8 +81646,8 @@
                     "doc": "The wp/v2 user shape.",
                     "shapes": [],
                     "params": [],
-                    "line": 153,
-                    "end": 156
+                    "line": 152,
+                    "end": 155
                 },
                 {
                     "routes": [],
@@ -80813,8 +81658,8 @@
                     "doc": "The post types the surface knows.",
                     "shapes": [],
                     "params": [],
-                    "line": 159,
-                    "end": 162
+                    "line": 158,
+                    "end": 161
                 },
                 {
                     "routes": [],
@@ -80840,8 +81685,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 170,
-                    "end": 179
+                    "line": 169,
+                    "end": 178
                 },
                 {
                     "routes": [],
@@ -80860,8 +81705,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 182,
-                    "end": 209
+                    "line": 181,
+                    "end": 208
                 },
                 {
                     "routes": [],
@@ -80880,8 +81725,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 212,
-                    "end": 216
+                    "line": 211,
+                    "end": 215
                 },
                 {
                     "routes": [],
@@ -80907,8 +81752,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 225,
-                    "end": 237
+                    "line": 224,
+                    "end": 236
                 },
                 {
                     "routes": [],
@@ -80936,8 +81781,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 73,
-                    "end": 132
+                    "line": 72,
+                    "end": 131
                 },
                 {
                     "routes": [],
@@ -80956,8 +81801,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 239,
-                    "end": 246
+                    "line": 238,
+                    "end": 245
                 },
                 {
                     "routes": [],
@@ -80983,8 +81828,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 253,
-                    "end": 275
+                    "line": 252,
+                    "end": 274
                 },
                 {
                     "routes": [],
@@ -81003,8 +81848,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 284,
-                    "end": 291
+                    "line": 283,
+                    "end": 290
                 },
                 {
                     "routes": [],
@@ -81030,8 +81875,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 297,
-                    "end": 301
+                    "line": 296,
+                    "end": 300
                 }
             ]
         },
@@ -96585,7 +97430,7 @@
             "namespace": "Minn\\Rest",
             "kind": "final class",
             "file": "public/minn/src/Minn/Rest/Services.php",
-            "lines": 387,
+            "lines": 405,
             "doc": "The objects one REST request shares, each made once, on first use, from\nthe database door and the request. Every getter is typed and names its\ndependencies in plain constructor calls: there is no autowiring, and\nget() knows only the names listed here, so a wrong one fails at the\nfirst call rather than deep in a handler.",
             "implements": [],
             "extends": null,
@@ -96619,10 +97464,13 @@
                 "Minn\\Media\\Images",
                 "Minn\\Media\\Uploads",
                 "Minn\\Media\\Writer",
+                "Minn\\Ops\\CoreStatus",
                 "Minn\\Ops\\Diagnostics",
+                "Minn\\Ops\\EngineUpdate",
                 "Minn\\Ops\\InstalledSoftware",
                 "Minn\\Ops\\Logs",
                 "Minn\\Ops\\Packages",
+                "Minn\\Ops\\Releases",
                 "Minn\\Ops\\Updates",
                 "Minn\\Rest\\Caller",
                 "Minn\\Rest\\CommentObject",
@@ -96680,8 +97528,8 @@
                     }
                 ],
                 "visibility": "private",
-                "line": 106,
-                "end": 112
+                "line": 109,
+                "end": 115
             },
             "cases": [],
             "constants": [
@@ -96764,8 +97612,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 115,
-                    "end": 118
+                    "line": 118,
+                    "end": 121
                 },
                 {
                     "routes": [],
@@ -96784,8 +97632,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 128,
-                    "end": 133
+                    "line": 131,
+                    "end": 136
                 },
                 {
                     "routes": [],
@@ -96796,8 +97644,8 @@
                     "doc": "The record lookups the policy gate asks before it judges a caller.",
                     "shapes": [],
                     "params": [],
-                    "line": 136,
-                    "end": 139
+                    "line": 139,
+                    "end": 142
                 },
                 {
                     "routes": [],
@@ -96808,8 +97656,8 @@
                     "doc": "The database door.",
                     "shapes": [],
                     "params": [],
-                    "line": 142,
-                    "end": 145
+                    "line": 145,
+                    "end": 148
                 },
                 {
                     "routes": [],
@@ -96820,8 +97668,8 @@
                     "doc": "The request being answered.",
                     "shapes": [],
                     "params": [],
-                    "line": 148,
-                    "end": 151
+                    "line": 151,
+                    "end": 154
                 },
                 {
                     "routes": [],
@@ -96832,8 +97680,8 @@
                     "doc": "The site root, no trailing slash.",
                     "shapes": [],
                     "params": [],
-                    "line": 154,
-                    "end": 157
+                    "line": 157,
+                    "end": 160
                 },
                 {
                     "routes": [],
@@ -96844,8 +97692,8 @@
                     "doc": "wp-content under the site root.",
                     "shapes": [],
                     "params": [],
-                    "line": 160,
-                    "end": 163
+                    "line": 163,
+                    "end": 166
                 },
                 {
                     "routes": [],
@@ -96856,8 +97704,8 @@
                     "doc": "The users repository.",
                     "shapes": [],
                     "params": [],
-                    "line": 168,
-                    "end": 171
+                    "line": 171,
+                    "end": 174
                 },
                 {
                     "routes": [],
@@ -96868,8 +97716,8 @@
                     "doc": "The posts repository.",
                     "shapes": [],
                     "params": [],
-                    "line": 174,
-                    "end": 177
+                    "line": 177,
+                    "end": 180
                 },
                 {
                     "routes": [],
@@ -96880,8 +97728,8 @@
                     "doc": "The terms repository.",
                     "shapes": [],
                     "params": [],
-                    "line": 180,
-                    "end": 183
+                    "line": 183,
+                    "end": 186
                 },
                 {
                     "routes": [],
@@ -96892,8 +97740,8 @@
                     "doc": "The comments repository.",
                     "shapes": [],
                     "params": [],
-                    "line": 186,
-                    "end": 189
+                    "line": 189,
+                    "end": 192
                 },
                 {
                     "routes": [],
@@ -96904,8 +97752,8 @@
                     "doc": "The site's options.",
                     "shapes": [],
                     "params": [],
-                    "line": 192,
-                    "end": 195
+                    "line": 195,
+                    "end": 198
                 },
                 {
                     "routes": [],
@@ -96916,8 +97764,8 @@
                     "doc": "The post writer.",
                     "shapes": [],
                     "params": [],
-                    "line": 198,
-                    "end": 201
+                    "line": 201,
+                    "end": 204
                 },
                 {
                     "routes": [],
@@ -96928,8 +97776,8 @@
                     "doc": "Revisions and autosaves.",
                     "shapes": [],
                     "params": [],
-                    "line": 204,
-                    "end": 207
+                    "line": 207,
+                    "end": 210
                 },
                 {
                     "routes": [],
@@ -96940,8 +97788,8 @@
                     "doc": "The site editor's saved global styles.",
                     "shapes": [],
                     "params": [],
-                    "line": 210,
-                    "end": 213
+                    "line": 213,
+                    "end": 216
                 },
                 {
                     "routes": [],
@@ -96952,8 +97800,8 @@
                     "doc": "The active theme's global styles and variations.",
                     "shapes": [],
                     "params": [],
-                    "line": 216,
-                    "end": 219
+                    "line": 219,
+                    "end": 222
                 },
                 {
                     "routes": [],
@@ -96964,8 +97812,8 @@
                     "doc": "Classic menus and their items.",
                     "shapes": [],
                     "params": [],
-                    "line": 222,
-                    "end": 225
+                    "line": 225,
+                    "end": 228
                 },
                 {
                     "routes": [],
@@ -96976,8 +97824,8 @@
                     "doc": "What wp-content holds: plugins, themes, drop-ins.",
                     "shapes": [],
                     "params": [],
-                    "line": 228,
-                    "end": 231
+                    "line": 231,
+                    "end": 234
                 },
                 {
                     "routes": [],
@@ -96988,8 +97836,8 @@
                     "doc": "Link building from the permalink structure.",
                     "shapes": [],
                     "params": [],
-                    "line": 236,
-                    "end": 239
+                    "line": 239,
+                    "end": 242
                 },
                 {
                     "routes": [],
@@ -97000,8 +97848,8 @@
                     "doc": "REST URL building.",
                     "shapes": [],
                     "params": [],
-                    "line": 242,
-                    "end": 245
+                    "line": 245,
+                    "end": 248
                 },
                 {
                     "routes": [],
@@ -97012,8 +97860,8 @@
                     "doc": "The capability engine.",
                     "shapes": [],
                     "params": [],
-                    "line": 248,
-                    "end": 251
+                    "line": 251,
+                    "end": 254
                 },
                 {
                     "routes": [],
@@ -97024,8 +97872,8 @@
                     "doc": "Who is making this call.",
                     "shapes": [],
                     "params": [],
-                    "line": 254,
-                    "end": 257
+                    "line": 257,
+                    "end": 260
                 },
                 {
                     "routes": [],
@@ -97036,8 +97884,8 @@
                     "doc": "The session store.",
                     "shapes": [],
                     "params": [],
-                    "line": 260,
-                    "end": 263
+                    "line": 263,
+                    "end": 266
                 },
                 {
                     "routes": [],
@@ -97048,8 +97896,8 @@
                     "doc": "Application passwords for Basic auth.",
                     "shapes": [],
                     "params": [],
-                    "line": 266,
-                    "end": 269
+                    "line": 269,
+                    "end": 272
                 },
                 {
                     "routes": [],
@@ -97060,8 +97908,8 @@
                     "doc": "The extension loader.",
                     "shapes": [],
                     "params": [],
-                    "line": 274,
-                    "end": 277
+                    "line": 277,
+                    "end": 280
                 },
                 {
                     "routes": [],
@@ -97072,8 +97920,8 @@
                     "doc": "The post types the REST surface knows.",
                     "shapes": [],
                     "params": [],
-                    "line": 280,
-                    "end": 283
+                    "line": 283,
+                    "end": 286
                 },
                 {
                     "routes": [],
@@ -97084,8 +97932,8 @@
                     "doc": "The taxonomies the REST surface knows.",
                     "shapes": [],
                     "params": [],
-                    "line": 286,
-                    "end": 289
+                    "line": 289,
+                    "end": 292
                 },
                 {
                     "routes": [],
@@ -97096,8 +97944,8 @@
                     "doc": "The uploads directory.",
                     "shapes": [],
                     "params": [],
-                    "line": 292,
-                    "end": 295
+                    "line": 295,
+                    "end": 298
                 },
                 {
                     "routes": [],
@@ -97108,8 +97956,8 @@
                     "doc": "Stores an upload as an attachment.",
                     "shapes": [],
                     "params": [],
-                    "line": 298,
-                    "end": 301
+                    "line": 301,
+                    "end": 304
                 },
                 {
                     "routes": [],
@@ -97120,8 +97968,8 @@
                     "doc": "The JSON Schema validator, with the reference's filters passed in.",
                     "shapes": [],
                     "params": [],
-                    "line": 304,
-                    "end": 311
+                    "line": 307,
+                    "end": 314
                 },
                 {
                     "routes": [],
@@ -97132,8 +97980,8 @@
                     "doc": "The Minn Admin bundle on disk.",
                     "shapes": [],
                     "params": [],
-                    "line": 316,
-                    "end": 319
+                    "line": 319,
+                    "end": 322
                 },
                 {
                     "routes": [],
@@ -97144,8 +97992,8 @@
                     "doc": "Installing and removing themes and extensions.",
                     "shapes": [],
                     "params": [],
-                    "line": 322,
-                    "end": 325
+                    "line": 325,
+                    "end": 328
                 },
                 {
                     "routes": [],
@@ -97156,8 +98004,8 @@
                     "doc": "The debug log reader.",
                     "shapes": [],
                     "params": [],
-                    "line": 328,
-                    "end": 331
+                    "line": 331,
+                    "end": 334
                 },
                 {
                     "routes": [],
@@ -97168,8 +98016,8 @@
                     "doc": "Update checks and offers.",
                     "shapes": [],
                     "params": [],
-                    "line": 334,
-                    "end": 337
+                    "line": 337,
+                    "end": 340
                 },
                 {
                     "routes": [],
@@ -97180,8 +98028,8 @@
                     "doc": "Locales and the app's catalogs.",
                     "shapes": [],
                     "params": [],
-                    "line": 340,
-                    "end": 343
+                    "line": 343,
+                    "end": 346
                 },
                 {
                     "routes": [],
@@ -97192,8 +98040,8 @@
                     "doc": "The app's per-user appearance.",
                     "shapes": [],
                     "params": [],
-                    "line": 346,
-                    "end": 349
+                    "line": 349,
+                    "end": 352
                 },
                 {
                     "routes": [],
@@ -97204,8 +98052,8 @@
                     "doc": "The app's per-user hidden views.",
                     "shapes": [],
                     "params": [],
-                    "line": 352,
-                    "end": 355
+                    "line": 355,
+                    "end": 358
                 },
                 {
                     "routes": [],
@@ -97216,8 +98064,8 @@
                     "doc": "What happened lately.",
                     "shapes": [],
                     "params": [],
-                    "line": 358,
-                    "end": 361
+                    "line": 361,
+                    "end": 364
                 },
                 {
                     "routes": [],
@@ -97228,8 +98076,44 @@
                     "doc": "The overview payload.",
                     "shapes": [],
                     "params": [],
-                    "line": 364,
-                    "end": 367
+                    "line": 367,
+                    "end": 370
+                },
+                {
+                    "routes": [],
+                    "name": "releases",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "releases(): Minn\\Ops\\Releases",
+                    "doc": "Minn's own releases, asked of GitHub once a day.",
+                    "shapes": [],
+                    "params": [],
+                    "line": 373,
+                    "end": 376
+                },
+                {
+                    "routes": [],
+                    "name": "coreStatus",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "coreStatus(): Minn\\Ops\\CoreStatus",
+                    "doc": "Minn's version and the release on offer, behind the app's update banner.",
+                    "shapes": [],
+                    "params": [],
+                    "line": 379,
+                    "end": 382
+                },
+                {
+                    "routes": [],
+                    "name": "engineUpdate",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "engineUpdate(): Minn\\Ops\\EngineUpdate",
+                    "doc": "The engine replacing itself with a release.",
+                    "shapes": [],
+                    "params": [],
+                    "line": 385,
+                    "end": 388
                 },
                 {
                     "routes": [],
@@ -97240,8 +98124,8 @@
                     "doc": "The bell feed.",
                     "shapes": [],
                     "params": [],
-                    "line": 370,
-                    "end": 373
+                    "line": 391,
+                    "end": 394
                 },
                 {
                     "routes": [],
@@ -97252,8 +98136,8 @@
                     "doc": "The System view's payload.",
                     "shapes": [],
                     "params": [],
-                    "line": 376,
-                    "end": 379
+                    "line": 397,
+                    "end": 400
                 },
                 {
                     "routes": [],
@@ -97264,8 +98148,8 @@
                     "doc": "The active block theme's templates; null under a classic theme, where the routes answer as the reference does when it never registered them.",
                     "shapes": [],
                     "params": [],
-                    "line": 384,
-                    "end": 391
+                    "line": 405,
+                    "end": 412
                 },
                 {
                     "routes": [],
@@ -97276,8 +98160,8 @@
                     "doc": "Writes block templates; null under a classic theme.",
                     "shapes": [],
                     "params": [],
-                    "line": 394,
-                    "end": 398
+                    "line": 415,
+                    "end": 419
                 },
                 {
                     "routes": [],
@@ -97288,8 +98172,8 @@
                     "doc": "The wp/v2 post shape.",
                     "shapes": [],
                     "params": [],
-                    "line": 403,
-                    "end": 406
+                    "line": 424,
+                    "end": 427
                 },
                 {
                     "routes": [],
@@ -97300,8 +98184,8 @@
                     "doc": "The wp/v2 term shape.",
                     "shapes": [],
                     "params": [],
-                    "line": 409,
-                    "end": 412
+                    "line": 430,
+                    "end": 433
                 },
                 {
                     "routes": [],
@@ -97312,8 +98196,8 @@
                     "doc": "The wp/v2 user shape.",
                     "shapes": [],
                     "params": [],
-                    "line": 415,
-                    "end": 418
+                    "line": 436,
+                    "end": 439
                 },
                 {
                     "routes": [],
@@ -97324,8 +98208,8 @@
                     "doc": "The wp/v2 media shape.",
                     "shapes": [],
                     "params": [],
-                    "line": 421,
-                    "end": 424
+                    "line": 442,
+                    "end": 445
                 },
                 {
                     "routes": [],
@@ -97336,8 +98220,8 @@
                     "doc": "The wp/v2 comment shape.",
                     "shapes": [],
                     "params": [],
-                    "line": 427,
-                    "end": 430
+                    "line": 448,
+                    "end": 451
                 },
                 {
                     "routes": [],
@@ -97365,8 +98249,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 438,
-                    "end": 442
+                    "line": 459,
+                    "end": 463
                 }
             ]
         },
@@ -113551,7 +114435,7 @@
             "namespace": "Minn\\Runtime",
             "kind": "final class",
             "file": "public/minn/src/Minn/Runtime/PluginRemoval.php",
-            "lines": 127,
+            "lines": 124,
             "doc": "Deleting plugins as the reference's delete_plugins does it: each in turn\nis uninstalled first when it can be (its uninstall.php, or the callback\nit registered), then delete_plugin, its folder (or file) removed,\ndeleted_plugin, and its installed translations removed with it; the\nupdates offered for the deleted ones are forgotten. A plugin already\ngone counts as deleted. Only what lies inside the plugins folder is\never removed, and a symlinked folder is unlinked, never followed.",
             "implements": [],
             "extends": null,
@@ -113654,7 +114538,7 @@
                         }
                     ],
                     "line": 87,
-                    "end": 103
+                    "end": 100
                 },
                 {
                     "routes": [],
@@ -113682,8 +114566,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 106,
-                    "end": 120
+                    "line": 103,
+                    "end": 117
                 },
                 {
                     "routes": [],
@@ -113711,8 +114595,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 123,
-                    "end": 129
+                    "line": 120,
+                    "end": 126
                 },
                 {
                     "routes": [],
@@ -113733,8 +114617,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 132,
-                    "end": 143
+                    "line": 129,
+                    "end": 140
                 }
             ]
         },
@@ -125670,7 +126554,7 @@
             "namespace": "Minn\\Runtime",
             "kind": "final class",
             "file": "public/minn/src/Minn/Runtime/ThemeSwitch.php",
-            "lines": 148,
+            "lines": 145,
             "doc": "Switching the theme as the reference does it, in two halves. The switch\n(switch_theme): the leaving theme keeps its widgets and its menu\nlocations are remembered, the three theme options move, the switch is\nrecorded (theme_switched), the arriving theme's mods start with the\nclassic sidebars, only its mods stay autoloaded, then switch_theme. The\nnext load, on init (check_theme_switched): after_switch_theme with the\ntheme that left, whose defaults map the menu locations across\n(_wp_menus_changed) and look the widgets over, then the rules flushed\nand the record cleared. Deleting a theme fires delete_theme and\ndeleted_theme around its folder going, and forgets the update check.",
             "implements": [],
             "extends": null,
@@ -125813,7 +126697,7 @@
                         }
                     ],
                     "line": 138,
-                    "end": 148
+                    "end": 145
                 },
                 {
                     "routes": [],
@@ -125841,8 +126725,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 151,
-                    "end": 161
+                    "line": 148,
+                    "end": 158
                 },
                 {
                     "routes": [],
@@ -125868,8 +126752,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 164,
-                    "end": 167
+                    "line": 161,
+                    "end": 164
                 }
             ]
         },
@@ -128118,12 +129002,15 @@
             "namespace": "Minn\\Support",
             "kind": "final class",
             "file": "public/minn/src/Minn/Support/Files.php",
-            "lines": 61,
+            "lines": 66,
             "doc": "Recursive filesystem work behind WP_Filesystem_Direct: best-effort tree\ndelete and chmod (suppressed errors, keep-going semantics, the AND of\nevery step as the result), and the symbolic-to-octal permission string\nconversion. The facade class keeps the reference's argument handling and\nmaps each operation here.",
             "implements": [],
             "extends": null,
             "uses": [],
             "usedBy": [
+                "Minn\\Cli\\Installer",
+                "Minn\\Ops\\EngineUpdate",
+                "Minn\\Ops\\Packages",
                 "Minn\\Runtime\\PluginRemoval",
                 "Minn\\Runtime\\ThemeSwitch"
             ],
@@ -128170,7 +129057,7 @@
                         }
                     ],
                     "line": 34,
-                    "end": 54
+                    "end": 59
                 },
                 {
                     "routes": [],
@@ -128196,8 +129083,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 57,
-                    "end": 73
+                    "line": 62,
+                    "end": 78
                 }
             ]
         },
@@ -130590,7 +131477,6 @@
                 "Minn\\Content\\Terms",
                 "Minn\\Extension\\Loader",
                 "Minn\\Mail\\MailSettings",
-                "Minn\\Ops\\CoreStatus",
                 "Minn\\Ops\\Updates",
                 "Minn\\Rest\\PluginsController",
                 "Minn\\Rest\\PostObject",

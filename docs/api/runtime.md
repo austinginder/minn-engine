@@ -58,7 +58,7 @@ the WordPress runtime plugins load against
 | [`Patterns`](#patterns) | final class | 161 | The block pattern, pattern category, and block style registries as data. |
 | [`PlaceholderTrace`](#placeholdertrace) | final class | 27 | Records every call into a generated placeholder while a site opts in by |
 | [`Placeholders`](#placeholders) | final class | 49 | The printf placeholders plugin code hands wpdb::prepare, filled the way |
-| [`PluginRemoval`](#pluginremoval) | final class | 127 | Deleting plugins as the reference's delete_plugins does it: each in turn |
+| [`PluginRemoval`](#pluginremoval) | final class | 124 | Deleting plugins as the reference's delete_plugins does it: each in turn |
 | [`PluginUpdates`](#pluginupdates) | final class | 65 | The update offers the site's own plugins publish. A plugin that hosts |
 | [`Plugins`](#plugins) | final class | 238 | Loads the site's plugins into the runtime the way the reference does: |
 | [`PostData`](#postdata) | final class | 65 | The loop's view of a post, as the reference's generate_postdata and |
@@ -99,7 +99,7 @@ the WordPress runtime plugins load against
 | [`TermSave`](#termsave) | final class | 199 | wp_insert_term and wp_update_term in the reference's order (probe |
 | [`TermWriter`](#termwriter) | final readonly class | 119 | The decisions behind wp_delete_term and the object-term relationships: |
 | [`ThemeSupports`](#themesupports) | final class | 159 | What a theme supports, as add_theme_support keeps it (probe rest-themes): |
-| [`ThemeSwitch`](#themeswitch) | final class | 148 | Switching the theme as the reference does it, in two halves. The switch |
+| [`ThemeSwitch`](#themeswitch) | final class | 145 | Switching the theme as the reference does it, in two halves. The switch |
 | [`TreeWalk`](#treewalk) | final class | 74 | The Walker contract's traversal: elements keyed by the walker's |
 | [`UpdateCounts`](#updatecounts) | final class | 31 | The updates waiting, as wp_get_update_data counts them for the user |
 | [`UserEvents`](#userevents) | final readonly class | 102 | What the reference's REST users controller tells plugins, for the |
@@ -2436,7 +2436,7 @@ uninstall_plugin: pre_uninstall_plugin, then the plugin's uninstall.php
 (WP_UNINSTALL_PLUGIN naming it) or the callback it registered (heard on
 uninstall_<file>, with the plugin loaded); either is forgotten once run.
 
-Internals: `deleteOne()` (private, line 72), `removeFiles()` (private, line 87), `removeTranslations()` (private, line 106), `forget()` (private, line 123), `forgetUpdates()` (private, line 132)
+Internals: `deleteOne()` (private, line 72), `removeFiles()` (private, line 87), `removeTranslations()` (private, line 103), `forget()` (private, line 120), `forgetUpdates()` (private, line 129)
 
 
 ## PluginUpdates
@@ -4655,7 +4655,7 @@ delete_theme: the folder removed between delete_theme and deleted_theme
 
 - `@param (callable(string): bool)|null $remove`
 
-Internals: `removeFolder()` (private, line 138), `nextOfGroup()` (private, line 151), `names()` (private, line 164)
+Internals: `removeFolder()` (private, line 138), `nextOfGroup()` (private, line 148), `names()` (private, line 161)
 
 
 ## TreeWalk

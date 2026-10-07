@@ -15,7 +15,8 @@ use Minn\Rest\Reply;
 
 /**
  * What the app bundle carries: the changelog, the user guide, and the
- * translation offers (none: the engine has no update channel to poll).
+ * translation offers (none: the engine polls no translation channel);
+ * and beside them the engine's own changelog.
  */
 final readonly class BundleController
 {
@@ -37,6 +38,14 @@ final readonly class BundleController
     public function changelog(Request $request): Response
     {
         return Reply::answer($request, $this->bundled('changelog.md'));
+    }
+
+    /** The engine's own changelog (changelog.md beside bootstrap.php), shown beside the app's on Minn. */
+    #[Route(Method::Get, '/minn-admin/v1/engine-changelog', policy: new Policy(Access::Floor))]
+    public function engineChangelog(Request $request): Response
+    {
+        $file = MINN_ENGINE_DIR . '/changelog.md';
+        return Reply::answer($request, ['version' => MINN_ENGINE_VERSION, 'markdown' => is_file($file) ? (string) file_get_contents($file) : '']);
     }
 
     /** The app's bundled user guide. */

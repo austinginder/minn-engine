@@ -12,7 +12,7 @@ escaping, serialized readers, small helpers
 | [`Escape`](#escape) | final class | 25 | Text made safe for HTML the way WordPress's escapers make it (esc_html, |
 | [`FileHeaders`](#fileheaders) | final class | 27 | Header values from a plugin or theme file. The labels (Plugin Name, |
 | [`FileTree`](#filetree) | final class | 70 | Whole-directory reads and copies. The engine's own installer, the update |
-| [`Files`](#files) | final class | 61 | Recursive filesystem work behind WP_Filesystem_Direct: best-effort tree |
+| [`Files`](#files) | final class | 66 | Recursive filesystem work behind WP_Filesystem_Direct: best-effort tree |
 | [`Flag`](#flag) | final class | 11 | A yes or no as WordPress reads one from loose input (wp_validate_boolean). |
 | [`Html`](#html) | final class | 91 |  |
 | [`Ip`](#ip) | final class | 22 | Addresses with their identifying tail removed, for logs and analytics that |
@@ -226,7 +226,7 @@ every step as the result), and the symbolic-to-octal permission string
 conversion. The facade class keeps the reference's argument handling and
 maps each operation here.
 
-Used by: `Minn\Runtime\PluginRemoval`, `Minn\Runtime\ThemeSwitch`
+Used by: `Minn\Cli\Installer`, `Minn\Ops\EngineUpdate`, `Minn\Ops\Packages`, `Minn\Runtime\PluginRemoval`, `Minn\Runtime\ThemeSwitch`
 
 ### static `octalFromSymbolic(string $mode): string`
 
@@ -753,7 +753,7 @@ here executes the blob; each reader scans for the one shape it needs.
 
 - const `INVALID` = `'' . "\0" . 'minn:invalid' . "\0" . ''` — Returned by decode() when the blob is not a serialized value the reader accepts.
 
-Used by: `Minn\Admin\App`, `Minn\Admin\Appearance`, `Minn\Admin\Dashboard`, `Minn\Admin\HiddenIntegrations`, `Minn\Admin\Notifications`, `Minn\Admin\OverviewController`, `Minn\Admin\SiteController`, `Minn\Admin\UploadsSize`, `Minn\Auth\ApplicationPasswords`, `Minn\Auth\Capabilities`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Cli\OptionCommand`, `Minn\Cli\Preflight`, `Minn\Content\Inventory`, `Minn\Content\Menus`, `Minn\Content\PluginState`, `Minn\Content\PostWriter`, `Minn\Content\Terms`, `Minn\Extension\Loader`, `Minn\Mail\MailSettings`, `Minn\Ops\CoreStatus`, `Minn\Ops\Updates`, `Minn\Rest\PluginsController`, `Minn\Rest\PostObject`, `Minn\Runtime\CronTable`, `Minn\Runtime\Options`, `Minn\Runtime\Recovery`, `Minn\Support\SearchReplace`
+Used by: `Minn\Admin\App`, `Minn\Admin\Appearance`, `Minn\Admin\Dashboard`, `Minn\Admin\HiddenIntegrations`, `Minn\Admin\Notifications`, `Minn\Admin\OverviewController`, `Minn\Admin\SiteController`, `Minn\Admin\UploadsSize`, `Minn\Auth\ApplicationPasswords`, `Minn\Auth\Capabilities`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Cli\OptionCommand`, `Minn\Cli\Preflight`, `Minn\Content\Inventory`, `Minn\Content\Menus`, `Minn\Content\PluginState`, `Minn\Content\PostWriter`, `Minn\Content\Terms`, `Minn\Extension\Loader`, `Minn\Mail\MailSettings`, `Minn\Ops\Updates`, `Minn\Rest\PluginsController`, `Minn\Rest\PostObject`, `Minn\Runtime\CronTable`, `Minn\Runtime\Options`, `Minn\Runtime\Recovery`, `Minn\Support\SearchReplace`
 
 
 ### static `stringList(?string $blob): array`

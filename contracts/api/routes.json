@@ -1,7 +1,7 @@
 {
     "engine": "0.0.1",
-    "routes": 263,
-    "withPolicy": 257,
+    "routes": 265,
+    "withPolicy": 259,
     "entries": [
         {
             "method": "GET",
@@ -73,6 +73,28 @@
             "name": "Minn\\Admin\\BundleController::changelog",
             "handler": "Minn\\Admin\\BundleController::changelog",
             "summary": "The app's bundled changelog.",
+            "policy": {
+                "access": "Floor",
+                "describe": "floor edit_posts",
+                "signIn": {
+                    "code": "rest_not_logged_in",
+                    "message": "You are not currently logged in."
+                },
+                "refuse": {
+                    "code": "rest_forbidden",
+                    "message": "Sorry, you are not allowed to do that."
+                }
+            },
+            "args": [],
+            "body": [],
+            "index": true
+        },
+        {
+            "method": "GET",
+            "pattern": "/minn-admin/v1/engine-changelog",
+            "name": "Minn\\Admin\\BundleController::engineChangelog",
+            "handler": "Minn\\Admin\\BundleController::engineChangelog",
+            "summary": "The engine's own changelog (changelog.md beside bootstrap.php), shown beside the app's on Minn.",
             "policy": {
                 "access": "Floor",
                 "describe": "floor edit_posts",
@@ -1363,7 +1385,7 @@
             "pattern": "/minn-admin/v1/check-updates",
             "name": "Minn\\Admin\\UpdatesController::check",
             "handler": "Minn\\Admin\\UpdatesController::check",
-            "summary": "Asks wordpress.org again, now.",
+            "summary": "Asks again, now: wordpress.org for plugins and themes, and GitHub for Minn itself (its status answered as core).",
             "policy": {
                 "access": "SignedIn",
                 "describe": "signed in",
@@ -1506,7 +1528,29 @@
             "pattern": "/minn-admin/v1/core",
             "name": "Minn\\Admin\\V1Controller::core",
             "handler": "Minn\\Admin\\V1Controller::core",
-            "summary": "The core status.",
+            "summary": "Minn's version and any newer release; a day-old check of GitHub runs once the answer is sent.",
+            "policy": {
+                "access": "Floor",
+                "describe": "floor edit_posts",
+                "signIn": {
+                    "code": "rest_not_logged_in",
+                    "message": "You are not currently logged in."
+                },
+                "refuse": {
+                    "code": "rest_forbidden",
+                    "message": "Sorry, you are not allowed to do that."
+                }
+            },
+            "args": [],
+            "body": [],
+            "index": true
+        },
+        {
+            "method": "POST",
+            "pattern": "/minn-admin/v1/core/update",
+            "name": "Minn\\Admin\\V1Controller::coreUpdate",
+            "handler": "Minn\\Admin\\V1Controller::coreUpdate",
+            "summary": "Replaces the running engine with the release on offer.",
             "policy": {
                 "access": "Floor",
                 "describe": "floor edit_posts",
