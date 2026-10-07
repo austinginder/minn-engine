@@ -141,10 +141,7 @@ final class ThemeSwitch
             return false;
         }
         $path = rtrim((string) \get_theme_root($stylesheet), '/') . '/' . $stylesheet;
-        if (is_link($path) || is_file($path)) {
-            return @unlink($path);
-        }
-        return !is_dir($path) || Files::deleteTree($path);
+        return Files::deleteTree($path);
     }
 
     /** The first location left in $old that a name of the group names, with a menu in it. @param array<string, mixed> $old @param list<string> $group */

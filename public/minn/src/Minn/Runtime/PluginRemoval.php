@@ -96,10 +96,7 @@ final class PluginRemoval
         if ($parent === false || $rootReal === false || ($parent !== $rootReal && !str_starts_with($parent . '/', $rootReal . '/'))) {
             return !file_exists($path) && !is_link($path);
         }
-        if (is_link($path) || is_file($path)) {
-            return @unlink($path);
-        }
-        return !is_dir($path) || Files::deleteTree($path);
+        return Files::deleteTree($path);
     }
 
     /** A folder plugin's installed translations (.po, .mo, .l10n.php, script .json), by locale. @param array<string, mixed> $translations */

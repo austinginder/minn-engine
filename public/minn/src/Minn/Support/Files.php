@@ -33,7 +33,12 @@ final class Files
      */
     public static function deleteTree(string $path): bool
     {
-        $path = rtrim($path, '/') . '/';
+        // A link or a file named directly is removed itself: a trailing slash on a link would walk into its target.
+        $named = rtrim($path, '/');
+        if (is_link($named) || is_file($named)) {
+            return @unlink($named);
+        }
+        $path = $named . '/';
         $ok = true;
         $entries = @scandir($path);
         foreach (is_array($entries) ? $entries : [] as $entry) {
