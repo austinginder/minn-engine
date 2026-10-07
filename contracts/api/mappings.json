@@ -25886,12 +25886,14 @@
         },
         "outbound": {
             "file": "classes/WP_Http.php",
-            "lines": 36,
+            "lines": 39,
             "kind": "minn",
             "minn": [
                 "Minn\\Http\\Outbound::__construct"
             ],
-            "composes": []
+            "composes": [
+                "apply_filters"
+            ]
         },
         "paginate_comments_links": {
             "file": "comment.php",

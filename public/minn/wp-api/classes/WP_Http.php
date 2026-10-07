@@ -233,6 +233,9 @@ namespace {
             if (!array_filter($headers, static fn ($h) => stripos($h, 'connection:') === 0)) {
                 $headers[] = 'Connection: close';
             }
+            // Verification as plugins leave it: off, the certificate bundle given, or on (https_ssl_verify).
+            $verify = !$args['sslverify'] ? false : (!empty($args['sslcertificates']) ? (string) $args['sslcertificates'] : true);
+            $verify = apply_filters('https_ssl_verify', $verify, $url);
             return new Outbound(
                 method: strtoupper((string) $args['method']),
                 url: $url,
@@ -240,9 +243,9 @@ namespace {
                 body: $body === null ? null : (string) $body,
                 timeout: (float) $args['timeout'],
                 redirects: (int) $args['redirection'],
-                verifySsl: (bool) $args['sslverify'],
+                verifySsl: $verify !== false,
                 userAgent: (string) $args['user-agent'],
-                caInfo: !empty($args['sslcertificates']) ? (string) $args['sslcertificates'] : null,
+                caInfo: is_string($verify) && $verify !== '' ? $verify : null,
                 blocking: (bool) $args['blocking'],
                 prepare: self::curl_prepare($args, $url),
             );

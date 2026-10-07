@@ -123208,7 +123208,7 @@
             "namespace": "Minn\\Support",
             "kind": "final class",
             "file": "public/minn/src/Minn/Support/Kses.php",
-            "lines": 506,
+            "lines": 545,
             "doc": "The HTML a user without unfiltered_html may store. Tags outside the\nallowlist are removed and their text kept; attributes outside the tag's\nlist are dropped; URL attributes lose unsafe schemes; style attributes\nkeep only listed properties and no code. Comments keep their text, and\nblock delimiters are written back with their attribute values filtered.",
             "implements": [],
             "extends": null,
@@ -123263,8 +123263,8 @@
                 },
                 {
                     "name": "CSS_PROPERTIES",
-                    "value": "array (   0 => 'background',   1 => 'background-color',   2 => 'background-image',   3 => 'background-position',   4 => 'background-repeat',   5 => 'background-size',   6 => 'background-attachment',   7 => 'background-blend-mode',   8 => 'border',   9 => 'border-radius',   10 => 'border-width',   11 => 'border-color',   12 => 'border-style',   13 => 'border-spacing',   14 => 'border-collapse',   15 => 'border-top',   16 => 'border-right',   17 => 'border-bottom',   18 => 'border-left',   19 => 'border-top-color',   20 => 'border-right-color',   21 => 'border-bottom-color',   22 => 'border-left-color',   23 => 'border-top-width',   24 => 'border-right-width',   25 => 'border-bottom-width',   26 => 'border-left-width',   27 => 'border-top-style',   28 => 'border-right-style',   29 => 'border-bottom-style',   30 => 'border-left-style',   31 => 'border-top-left-radius',   32 => 'border-top-right-radius',   33 => 'border-bottom-right-radius',   34 => 'border-bottom-left-radius',   35 => 'caption-side',   36 => 'clear',   37 => 'color',   38 => 'columns',   39 => 'column-count',   40 => 'column-gap',   41 => 'column-width',   42 => 'column-span',   43 => 'column-rule',   44 => 'cursor',   45 => 'direction',   46 => 'display',   47 => 'filter',   48 => 'float',   49 => 'flex',   50 => 'flex-basis',   51 => 'flex-direction',   52 => 'flex-flow',   53 => 'flex-grow',   54 => 'flex-shrink',   55 => 'flex-wrap',   56 => 'font',   57 => 'font-family',   58 => 'font-size',   59 => 'font-style',   60 => 'font-variant',   61 => 'font-weight',   62 => 'font-display',   63 => 'gap',   64 => 'row-gap',   65 => 'column-gap',   66 => 'grid',   67 => 'grid-area',   68 => 'grid-auto-columns',   69 => 'grid-auto-flow',   70 => 'grid-auto-rows',   71 => 'grid-column',   72 => 'grid-column-end',   73 => 'grid-column-gap',   74 => 'grid-column-start',   75 => 'grid-gap',   76 => 'grid-row',   77 => 'grid-row-end',   78 => 'grid-row-gap',   79 => 'grid-row-start',   80 => 'grid-template',   81 => 'grid-template-areas',   82 => 'grid-template-columns',   83 => 'grid-template-rows',   84 => 'height',   85 => 'min-height',   86 => 'max-height',   87 => 'width',   88 => 'min-width',   89 => 'max-width',   90 => 'justify-content',   91 => 'justify-items',   92 => 'justify-self',   93 => 'align-content',   94 => 'align-items',   95 => 'align-self',   96 => 'letter-spacing',   97 => 'line-height',   98 => 'list-style',   99 => 'list-style-image',   100 => 'list-style-position',   101 => 'list-style-type',   102 => 'margin',   103 => 'margin-top',   104 => 'margin-right',   105 => 'margin-bottom',   106 => 'margin-left',   107 => 'margin-block',   108 => 'margin-block-start',   109 => 'margin-block-end',   110 => 'margin-inline',   111 => 'margin-inline-start',   112 => 'margin-inline-end',   113 => 'object-fit',   114 => 'object-position',   115 => 'opacity',   116 => 'order',   117 => 'overflow',   118 => 'overflow-wrap',   119 => 'overflow-x',   120 => 'overflow-y',   121 => 'padding',   122 => 'padding-top',   123 => 'padding-right',   124 => 'padding-bottom',   125 => 'padding-left',   126 => 'padding-block',   127 => 'padding-block-start',   128 => 'padding-block-end',   129 => 'padding-inline',   130 => 'padding-inline-start',   131 => 'padding-inline-end',   132 => 'position',   133 => 'resize',   134 => 'table-layout',   135 => 'text-align',   136 => 'text-decoration',   137 => 'text-indent',   138 => 'text-shadow',   139 => 'text-transform',   140 => 'text-wrap',   141 => 'vertical-align',   142 => 'visibility',   143 => 'white-space',   144 => 'word-break',   145 => 'word-spacing',   146 => 'word-wrap',   147 => 'writing-mode',   148 => 'aspect-ratio',   149 => 'box-shadow',   150 => 'box-sizing',   151 => 'z-index', )",
-                    "doc": "",
+                    "value": "array (   0 => 'background',   1 => 'background-color',   2 => 'background-image',   3 => 'background-position',   4 => 'background-repeat',   5 => 'background-size',   6 => 'background-attachment',   7 => 'background-blend-mode',   8 => 'border',   9 => 'border-radius',   10 => 'border-width',   11 => 'border-color',   12 => 'border-style',   13 => 'border-right',   14 => 'border-right-color',   15 => 'border-right-style',   16 => 'border-right-width',   17 => 'border-bottom',   18 => 'border-bottom-color',   19 => 'border-bottom-left-radius',   20 => 'border-bottom-right-radius',   21 => 'border-bottom-style',   22 => 'border-bottom-width',   23 => 'border-bottom-right-radius',   24 => 'border-bottom-left-radius',   25 => 'border-left',   26 => 'border-left-color',   27 => 'border-left-style',   28 => 'border-left-width',   29 => 'border-top',   30 => 'border-top-color',   31 => 'border-top-left-radius',   32 => 'border-top-right-radius',   33 => 'border-top-style',   34 => 'border-top-width',   35 => 'border-top-left-radius',   36 => 'border-top-right-radius',   37 => 'border-spacing',   38 => 'border-collapse',   39 => 'caption-side',   40 => 'columns',   41 => 'column-count',   42 => 'column-fill',   43 => 'column-gap',   44 => 'column-rule',   45 => 'column-span',   46 => 'column-width',   47 => 'display',   48 => 'color',   49 => 'filter',   50 => 'font',   51 => 'font-family',   52 => 'font-size',   53 => 'font-style',   54 => 'font-variant',   55 => 'font-weight',   56 => 'letter-spacing',   57 => 'line-height',   58 => 'text-align',   59 => 'text-decoration',   60 => 'text-indent',   61 => 'text-transform',   62 => 'white-space',   63 => 'height',   64 => 'min-height',   65 => 'max-height',   66 => 'width',   67 => 'min-width',   68 => 'max-width',   69 => 'margin',   70 => 'margin-right',   71 => 'margin-bottom',   72 => 'margin-left',   73 => 'margin-top',   74 => 'margin-block-start',   75 => 'margin-block-end',   76 => 'margin-inline-start',   77 => 'margin-inline-end',   78 => 'padding',   79 => 'padding-right',   80 => 'padding-bottom',   81 => 'padding-left',   82 => 'padding-top',   83 => 'padding-block-start',   84 => 'padding-block-end',   85 => 'padding-inline-start',   86 => 'padding-inline-end',   87 => 'flex',   88 => 'flex-basis',   89 => 'flex-direction',   90 => 'flex-flow',   91 => 'flex-grow',   92 => 'flex-shrink',   93 => 'flex-wrap',   94 => 'gap',   95 => 'column-gap',   96 => 'row-gap',   97 => 'grid-template-columns',   98 => 'grid-auto-columns',   99 => 'grid-column-start',   100 => 'grid-column-end',   101 => 'grid-column',   102 => 'grid-column-gap',   103 => 'grid-template-rows',   104 => 'grid-auto-rows',   105 => 'grid-row-start',   106 => 'grid-row-end',   107 => 'grid-row',   108 => 'grid-row-gap',   109 => 'grid-gap',   110 => 'justify-content',   111 => 'justify-items',   112 => 'justify-self',   113 => 'align-content',   114 => 'align-items',   115 => 'align-self',   116 => 'clear',   117 => 'cursor',   118 => 'direction',   119 => 'float',   120 => 'list-style-type',   121 => 'object-fit',   122 => 'object-position',   123 => 'opacity',   124 => 'overflow',   125 => 'vertical-align',   126 => 'writing-mode',   127 => 'position',   128 => 'top',   129 => 'right',   130 => 'bottom',   131 => 'left',   132 => 'z-index',   133 => 'box-shadow',   134 => 'aspect-ratio',   135 => 'container-type',   136 => 'fill',   137 => 'fill-opacity',   138 => 'fill-rule',   139 => 'stroke',   140 => 'stroke-dasharray',   141 => 'stroke-dashoffset',   142 => 'stroke-linecap',   143 => 'stroke-linejoin',   144 => 'stroke-miterlimit',   145 => 'stroke-opacity',   146 => 'stroke-width',   147 => 'color-interpolation',   148 => 'color-interpolation-filters',   149 => 'paint-order',   150 => 'stop-color',   151 => 'stop-opacity',   152 => 'flood-color',   153 => 'flood-opacity',   154 => 'lighting-color',   155 => 'marker',   156 => 'marker-end',   157 => 'marker-mid',   158 => 'marker-start',   159 => 'clip-path',   160 => 'clip-rule',   161 => 'mask',   162 => 'mask-type',   163 => 'cx',   164 => 'cy',   165 => 'r',   166 => 'rx',   167 => 'ry',   168 => 'x',   169 => 'y',   170 => 'd',   171 => 'alignment-baseline',   172 => 'baseline-shift',   173 => 'dominant-baseline',   174 => 'glyph-orientation-horizontal',   175 => 'glyph-orientation-vertical',   176 => 'text-anchor',   177 => 'unicode-bidi',   178 => 'word-spacing',   179 => 'font-size-adjust',   180 => 'font-stretch',   181 => 'color-rendering',   182 => 'image-rendering',   183 => 'shape-rendering',   184 => 'text-rendering',   185 => 'vector-effect',   186 => 'transform',   187 => 'transform-origin',   188 => 'pointer-events',   189 => 'visibility',   190 => '--*', )",
+                    "doc": "The properties style attributes keep, as the reference lists them before safe_style_css (probe safety-filters); --* stands for custom properties.",
                     "visibility": "private"
                 },
                 {
@@ -123286,7 +123286,17 @@
                     "visibility": "private"
                 }
             ],
-            "properties": [],
+            "properties": [
+                {
+                    "name": "styleHooks",
+                    "type": "?array",
+                    "readonly": false,
+                    "static": true,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": false
+                }
+            ],
             "methods": [
                 {
                     "routes": [],
@@ -123305,8 +123315,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 62,
-                    "end": 65
+                    "line": 75,
+                    "end": 78
                 },
                 {
                     "routes": [],
@@ -123325,8 +123335,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 68,
-                    "end": 71
+                    "line": 81,
+                    "end": 84
                 },
                 {
                     "routes": [],
@@ -123352,8 +123362,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 78,
-                    "end": 83
+                    "line": 91,
+                    "end": 96
                 },
                 {
                     "routes": [],
@@ -123372,8 +123382,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 86,
-                    "end": 89
+                    "line": 99,
+                    "end": 102
                 },
                 {
                     "routes": [],
@@ -123392,8 +123402,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 96,
-                    "end": 111
+                    "line": 109,
+                    "end": 124
                 },
                 {
                     "routes": [],
@@ -123421,8 +123431,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 119,
-                    "end": 123
+                    "line": 132,
+                    "end": 136
                 },
                 {
                     "routes": [],
@@ -123441,8 +123451,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 126,
-                    "end": 132
+                    "line": 139,
+                    "end": 145
                 },
                 {
                     "routes": [],
@@ -123470,8 +123480,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 141,
-                    "end": 153
+                    "line": 154,
+                    "end": 166
                 },
                 {
                     "routes": [],
@@ -123497,8 +123507,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 180,
-                    "end": 187
+                    "line": 193,
+                    "end": 200
                 },
                 {
                     "routes": [],
@@ -123519,8 +123529,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 235,
-                    "end": 270
+                    "line": 248,
+                    "end": 283
                 },
                 {
                     "routes": [],
@@ -123539,8 +123549,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 273,
-                    "end": 279
+                    "line": 286,
+                    "end": 292
                 },
                 {
                     "routes": [],
@@ -123559,8 +123569,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 282,
-                    "end": 289
+                    "line": 295,
+                    "end": 302
                 },
                 {
                     "routes": [],
@@ -123588,8 +123598,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 301,
-                    "end": 317
+                    "line": 314,
+                    "end": 330
                 },
                 {
                     "routes": [],
@@ -123615,8 +123625,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 459,
-                    "end": 473
+                    "line": 472,
+                    "end": 486
                 },
                 {
                     "routes": [],
@@ -123635,8 +123645,38 @@
                             "doc": ""
                         }
                     ],
-                    "line": 488,
-                    "end": 491
+                    "line": 501,
+                    "end": 504
+                },
+                {
+                    "routes": [],
+                    "name": "styleHooks",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "styleHooks(Closure $properties, Closure $allow): void",
+                    "doc": "The runtime's say over style attributes: the property list\n(safe_style_css) and each declaration (safecss_filter_attr_allow_css).\nThe facade sets these as it loads.",
+                    "shapes": [
+                        "@param Closure(list<string>): list<string> $properties",
+                        "@param Closure(bool, string): bool $allow"
+                    ],
+                    "params": [
+                        {
+                            "name": "properties",
+                            "type": "Closure",
+                            "shape": "Closure(list<string>): list<string>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "allow",
+                            "type": "Closure",
+                            "shape": "Closure(bool, string): bool",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 560,
+                    "end": 563
                 },
                 {
                     "routes": [],
@@ -123664,8 +123704,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 156,
-                    "end": 169
+                    "line": 169,
+                    "end": 182
                 },
                 {
                     "routes": [],
@@ -123691,8 +123731,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 190,
-                    "end": 211
+                    "line": 203,
+                    "end": 224
                 },
                 {
                     "routes": [],
@@ -123711,8 +123751,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 214,
-                    "end": 224
+                    "line": 227,
+                    "end": 237
                 },
                 {
                     "routes": [],
@@ -123731,8 +123771,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 320,
-                    "end": 330
+                    "line": 333,
+                    "end": 343
                 },
                 {
                     "routes": [],
@@ -123751,8 +123791,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 333,
-                    "end": 337
+                    "line": 346,
+                    "end": 350
                 },
                 {
                     "routes": [],
@@ -123771,8 +123811,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 348,
-                    "end": 363
+                    "line": 361,
+                    "end": 376
                 },
                 {
                     "routes": [],
@@ -123791,8 +123831,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 371,
-                    "end": 388
+                    "line": 384,
+                    "end": 401
                 },
                 {
                     "routes": [],
@@ -123811,8 +123851,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 391,
-                    "end": 395
+                    "line": 404,
+                    "end": 408
                 },
                 {
                     "routes": [],
@@ -123831,8 +123871,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 398,
-                    "end": 405
+                    "line": 411,
+                    "end": 418
                 },
                 {
                     "routes": [],
@@ -123865,8 +123905,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 413,
-                    "end": 435
+                    "line": 426,
+                    "end": 448
                 },
                 {
                     "routes": [],
@@ -123899,8 +123939,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 438,
-                    "end": 452
+                    "line": 451,
+                    "end": 465
                 },
                 {
                     "routes": [],
@@ -123919,8 +123959,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 476,
-                    "end": 485
+                    "line": 489,
+                    "end": 498
                 },
                 {
                     "routes": [],
@@ -123928,7 +123968,7 @@
                     "static": true,
                     "visibility": "private",
                     "signature": "css(string $style): string",
-                    "doc": "Listed properties plus custom properties (the reference keeps\n--my-var:4px); no url() outside images, relative image urls allowed\n(the reference keeps url(x.png)); no expression, behavior, script,\nor data: anywhere.",
+                    "doc": "The style attribute's declarations kept as written, as the reference\nkeeps them: a listed property (the list through safe_style_css when\nthe runtime hooks it; --* lets custom properties through), a value\nwith no expression, behavior, script, data: or escape, url() only on\nimage properties; each asked through safecss_filter_attr_allow_css.",
                     "shapes": [],
                     "params": [
                         {
@@ -123939,8 +123979,35 @@
                             "doc": ""
                         }
                     ],
-                    "line": 499,
-                    "end": 524
+                    "line": 513,
+                    "end": 537
+                },
+                {
+                    "routes": [],
+                    "name": "safeValue",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "safeValue(string $property, string $value): bool",
+                    "doc": "No expression, behavior, script, data: or escape anywhere; url() only on image properties, without parentheses around it.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "property",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "value",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 540,
+                    "end": 550
                 }
             ]
         },

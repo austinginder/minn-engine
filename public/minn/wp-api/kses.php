@@ -180,6 +180,12 @@ function _wp_kses_allow_pdf_objects($url)
     return Kses::pdfObject((string) $url, (string) (wp_upload_dir(null, false)['url'] ?? ''));
 }
 
+// Plugins' say over style attributes, wherever kses reads one: the property list and each declaration.
+Kses::styleHooks(
+    static fn (array $properties): array => array_values((array) apply_filters('safe_style_css', $properties)),
+    static fn (bool $allow, string $declaration): bool => (bool) apply_filters('safecss_filter_attr_allow_css', $allow, $declaration),
+);
+
 function safecss_filter_attr($css, $deprecated = '')
 {
     return Kses::style((string) $css);

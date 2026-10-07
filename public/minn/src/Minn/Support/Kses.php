@@ -19,6 +19,9 @@ use Minn\Html\Decoder;
  */
 final class Kses
 {
+    /** @var array{0: Closure(list<string>): list<string>, 1: Closure(bool, string): bool}|null */
+    private static ?array $styleHooks = null;
+
     /** @var array<string, list<string>> the smaller set for comments and descriptions */
     public const COMMENT = [
         'a' => ['href', 'title', 'rel'], 'abbr' => ['title'], 'acronym' => ['title'], 'b' => [],
@@ -33,29 +36,39 @@ final class Kses
     ];
     /** The URI schemes allowed by default. */
     public const SCHEMES = ['http', 'https', 'ftp', 'ftps', 'mailto', 'news', 'irc', 'gopher', 'nntp', 'feed', 'telnet', 'mms', 'rtsp', 'sms', 'svn', 'tel', 'fax', 'xmpp', 'webcal', 'urn'];
+    /** The properties style attributes keep, as the reference lists them before safe_style_css (probe safety-filters); --* stands for custom properties. */
     private const CSS_PROPERTIES = [
-        'background', 'background-color', 'background-image', 'background-position', 'background-repeat', 'background-size', 'background-attachment', 'background-blend-mode',
-        'border', 'border-radius', 'border-width', 'border-color', 'border-style', 'border-spacing', 'border-collapse',
-        'border-top', 'border-right', 'border-bottom', 'border-left',
-        'border-top-color', 'border-right-color', 'border-bottom-color', 'border-left-color',
-        'border-top-width', 'border-right-width', 'border-bottom-width', 'border-left-width',
-        'border-top-style', 'border-right-style', 'border-bottom-style', 'border-left-style',
-        'border-top-left-radius', 'border-top-right-radius', 'border-bottom-right-radius', 'border-bottom-left-radius',
-        'caption-side', 'clear', 'color', 'columns', 'column-count', 'column-gap', 'column-width', 'column-span', 'column-rule',
-        'cursor', 'direction', 'display', 'filter', 'float', 'flex', 'flex-basis', 'flex-direction', 'flex-flow', 'flex-grow', 'flex-shrink', 'flex-wrap',
-        'font', 'font-family', 'font-size', 'font-style', 'font-variant', 'font-weight', 'font-display',
-        'gap', 'row-gap', 'column-gap', 'grid', 'grid-area', 'grid-auto-columns', 'grid-auto-flow', 'grid-auto-rows', 'grid-column', 'grid-column-end',
-        'grid-column-gap', 'grid-column-start', 'grid-gap', 'grid-row', 'grid-row-end', 'grid-row-gap', 'grid-row-start', 'grid-template',
-        'grid-template-areas', 'grid-template-columns', 'grid-template-rows',
-        'height', 'min-height', 'max-height', 'width', 'min-width', 'max-width',
-        'justify-content', 'justify-items', 'justify-self', 'align-content', 'align-items', 'align-self',
-        'letter-spacing', 'line-height', 'list-style', 'list-style-image', 'list-style-position', 'list-style-type',
-        'margin', 'margin-top', 'margin-right', 'margin-bottom', 'margin-left', 'margin-block', 'margin-block-start', 'margin-block-end', 'margin-inline', 'margin-inline-start', 'margin-inline-end',
-        'object-fit', 'object-position', 'opacity', 'order', 'overflow', 'overflow-wrap', 'overflow-x', 'overflow-y',
-        'padding', 'padding-top', 'padding-right', 'padding-bottom', 'padding-left', 'padding-block', 'padding-block-start', 'padding-block-end', 'padding-inline', 'padding-inline-start', 'padding-inline-end',
-        'position', 'resize', 'table-layout', 'text-align', 'text-decoration', 'text-indent', 'text-shadow', 'text-transform', 'text-wrap',
-        'vertical-align', 'visibility', 'white-space', 'word-break', 'word-spacing', 'word-wrap', 'writing-mode',
-        'aspect-ratio', 'box-shadow', 'box-sizing', 'z-index',
+        'background', 'background-color', 'background-image', 'background-position', 'background-repeat',
+        'background-size', 'background-attachment', 'background-blend-mode', 'border', 'border-radius',
+        'border-width', 'border-color', 'border-style', 'border-right', 'border-right-color', 'border-right-style',
+        'border-right-width', 'border-bottom', 'border-bottom-color', 'border-bottom-left-radius',
+        'border-bottom-right-radius', 'border-bottom-style', 'border-bottom-width', 'border-bottom-right-radius',
+        'border-bottom-left-radius', 'border-left', 'border-left-color', 'border-left-style', 'border-left-width',
+        'border-top', 'border-top-color', 'border-top-left-radius', 'border-top-right-radius', 'border-top-style',
+        'border-top-width', 'border-top-left-radius', 'border-top-right-radius', 'border-spacing', 'border-collapse',
+        'caption-side', 'columns', 'column-count', 'column-fill', 'column-gap', 'column-rule', 'column-span',
+        'column-width', 'display', 'color', 'filter', 'font', 'font-family', 'font-size', 'font-style',
+        'font-variant', 'font-weight', 'letter-spacing', 'line-height', 'text-align', 'text-decoration',
+        'text-indent', 'text-transform', 'white-space', 'height', 'min-height', 'max-height', 'width', 'min-width',
+        'max-width', 'margin', 'margin-right', 'margin-bottom', 'margin-left', 'margin-top', 'margin-block-start',
+        'margin-block-end', 'margin-inline-start', 'margin-inline-end', 'padding', 'padding-right', 'padding-bottom',
+        'padding-left', 'padding-top', 'padding-block-start', 'padding-block-end', 'padding-inline-start',
+        'padding-inline-end', 'flex', 'flex-basis', 'flex-direction', 'flex-flow', 'flex-grow', 'flex-shrink',
+        'flex-wrap', 'gap', 'column-gap', 'row-gap', 'grid-template-columns', 'grid-auto-columns',
+        'grid-column-start', 'grid-column-end', 'grid-column', 'grid-column-gap', 'grid-template-rows',
+        'grid-auto-rows', 'grid-row-start', 'grid-row-end', 'grid-row', 'grid-row-gap', 'grid-gap',
+        'justify-content', 'justify-items', 'justify-self', 'align-content', 'align-items', 'align-self', 'clear',
+        'cursor', 'direction', 'float', 'list-style-type', 'object-fit', 'object-position', 'opacity', 'overflow',
+        'vertical-align', 'writing-mode', 'position', 'top', 'right', 'bottom', 'left', 'z-index', 'box-shadow',
+        'aspect-ratio', 'container-type', 'fill', 'fill-opacity', 'fill-rule', 'stroke', 'stroke-dasharray',
+        'stroke-dashoffset', 'stroke-linecap', 'stroke-linejoin', 'stroke-miterlimit', 'stroke-opacity',
+        'stroke-width', 'color-interpolation', 'color-interpolation-filters', 'paint-order', 'stop-color',
+        'stop-opacity', 'flood-color', 'flood-opacity', 'lighting-color', 'marker', 'marker-end', 'marker-mid',
+        'marker-start', 'clip-path', 'clip-rule', 'mask', 'mask-type', 'cx', 'cy', 'r', 'rx', 'ry', 'x', 'y', 'd',
+        'alignment-baseline', 'baseline-shift', 'dominant-baseline', 'glyph-orientation-horizontal',
+        'glyph-orientation-vertical', 'text-anchor', 'unicode-bidi', 'word-spacing', 'font-size-adjust',
+        'font-stretch', 'color-rendering', 'image-rendering', 'shape-rendering', 'text-rendering', 'vector-effect',
+        'transform', 'transform-origin', 'pointer-events', 'visibility', '--*',
     ];
 
     /** Post content as an author without unfiltered_html may store it. */
@@ -491,35 +504,61 @@ final class Kses
     }
 
     /**
-     * Listed properties plus custom properties (the reference keeps
-     * --my-var:4px); no url() outside images, relative image urls allowed
-     * (the reference keeps url(x.png)); no expression, behavior, script,
-     * or data: anywhere.
+     * The style attribute's declarations kept as written, as the reference
+     * keeps them: a listed property (the list through safe_style_css when
+     * the runtime hooks it; --* lets custom properties through), a value
+     * with no expression, behavior, script, data: or escape, url() only on
+     * image properties; each asked through safecss_filter_attr_allow_css.
      */
     private static function css(string $style): string
     {
+        $allowed = self::$styleHooks === null ? self::CSS_PROPERTIES : (self::$styleHooks[0])(self::CSS_PROPERTIES);
         $kept = [];
         foreach (explode(';', $style) as $declaration) {
+            $declaration = trim($declaration);
             if (!str_contains($declaration, ':')) {
                 continue;
             }
             [$property, $value] = array_map('trim', explode(':', $declaration, 2));
-            $property = strtolower($property);
-            $custom = preg_match('/^--[a-z0-9_-]+$/', $property) === 1;
-            if ((!$custom && !in_array($property, self::CSS_PROPERTIES, true)) || $value === '') {
+            $name = strtolower($property);
+            $custom = preg_match('/^--[a-z0-9_-]+$/', $name) === 1 && in_array('--*', $allowed, true);
+            if ((!$custom && !in_array($name, $allowed, true)) || $value === '') {
                 continue;
             }
-            if (preg_match('/expression|behavior|javascript|vbscript|@import|data:|\\\\|[<>{}]/i', $value)) {
-                continue;
+            $allow = self::safeValue($name, $value);
+            if (self::$styleHooks !== null) {
+                $allow = (self::$styleHooks[1])($allow, $declaration);
             }
-            if (preg_match('/url\s*\(/i', $value)) {
-                $image = in_array($property, ['background', 'background-image', 'list-style', 'list-style-image'], true);
-                if (!$image || !preg_match('/^[^()]*url\s*\(\s*["\']?[^"\')]*["\']?\s*\)[^()]*$/i', $value)) {
-                    continue;
-                }
+            if ($allow) {
+                $kept[] = $declaration;
             }
-            $kept[] = $property . ':' . $value;
         }
         return implode(';', $kept);
+    }
+
+    /** No expression, behavior, script, data: or escape anywhere; url() only on image properties, without parentheses around it. */
+    private static function safeValue(string $property, string $value): bool
+    {
+        if (preg_match('/expression|behavior|javascript|vbscript|@import|data:|\\\\|[<>{}]/i', $value)) {
+            return false;
+        }
+        if (!preg_match('/url\s*\(/i', $value)) {
+            return true;
+        }
+        $image = in_array($property, ['background', 'background-image', 'list-style', 'list-style-image'], true);
+        return $image && preg_match('/^[^()]*url\s*\(\s*["\']?[^"\')]*["\']?\s*\)[^()]*$/i', $value) === 1;
+    }
+
+    /**
+     * The runtime's say over style attributes: the property list
+     * (safe_style_css) and each declaration (safecss_filter_attr_allow_css).
+     * The facade sets these as it loads.
+     *
+     * @param Closure(list<string>): list<string> $properties
+     * @param Closure(bool, string): bool $allow
+     */
+    public static function styleHooks(Closure $properties, Closure $allow): void
+    {
+        self::$styleHooks = [$properties, $allow];
     }
 }
