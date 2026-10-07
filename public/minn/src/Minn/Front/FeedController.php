@@ -78,6 +78,14 @@ final readonly class FeedController
             return Response::redirect($this->permalinks->url($request->path . '/'));
         }
         $resolution = $this->resolver->resolve($request->withPath('/' . trim($path, '/') . '/'));
+        if (Runtime::booted() && Runtime::current()->get(PluginRules::MATCHED) === true) {
+            // A plugin's rule decided the address: the feed rides along as typed, as the rule's own feed var has it.
+            $typed = preg_match('#/feed/(rss2|rss|atom|rdf)/?$#', $request->path, $m) === 1 ? $m[1] : 'feed';
+            Runtime::current()->set(PluginRules::STATE, PluginRules::stashed() + ['feed' => $typed]);
+            if ($resolution->kind !== Kind::NotFound) {
+                return $this->served($resolution, $kind, ['feed' => $typed]);
+            }
+        }
         return $this->feed($resolution, $kind, $request);
     }
 
@@ -112,7 +120,7 @@ final readonly class FeedController
         $level = ob_get_level();
         ob_start();
         try {
-            $page = (new MainQueryBridge($this->site, $this->posts, $this->feeds->perFeed()))->stand($resolution, ['feed' => $kind] + $vars);
+            $page = (new MainQueryBridge($this->site, $this->posts, $this->feeds->perFeed()))->stand($resolution, $vars + ['feed' => $kind]);
             // Content renders against the feed's own queried object (a category feed marks its category current), images by the page rules.
             RenderState::current()->reset();
             Blocks::renderer()->withContext(new Context($resolution, $page->posts, count($page->posts), $this->feeds->perFeed(), true));

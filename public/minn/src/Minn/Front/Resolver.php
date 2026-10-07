@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Minn\Front;
 
-use Minn\Content\TermRecord;
 use Minn\Content\UserRecord;
 use Minn\Content\PostRecord;
 use Closure;
@@ -87,6 +86,15 @@ final readonly class Resolver
         if ($ruleVars !== null) {
             return $this->fromRuleVars($ruleVars);
         }
+        // Rules a plugin changed decide where they part from the engine's own reading.
+        $ruleVars = StoredRules::route($request->path);
+        if ($ruleVars !== null) {
+            $resolution = $this->fromRuleVars($ruleVars);
+            $slashable = in_array($resolution->kind, [Kind::Single, Kind::Page, Kind::Category, Kind::Tag, Kind::Author, Kind::Date, Kind::Taxonomy], true);
+            return $redirects->follows() && $slashable && !isset($ruleVars['paged']) && !str_ends_with($request->path, '/')
+                ? Resolution::redirect($this->permalinks->url($request->path . '/') . $request->queryStringWithout())
+                : $resolution;
+        }
         $resolution = $this->endpoint($request, $redirects) ?? $this->resolvePath($request, $redirects);
         if ($resolution->kind === Kind::NotFound) {
             $ruleVars = PluginRules::match($request->path, top: false);
@@ -107,11 +115,11 @@ final readonly class Resolver
     }
 
     /**
-     * The resolution a matched plugin rewrite rule stands for: its content
-     * vars when it names content, the home query otherwise (the reference's
-     * shape for a rule that only sets a plugin's own flags). The vars stay
-     * on the request state so get_query_var() answers them and the plugin's
-     * template_include callback can take the page over.
+     * The resolution a matched plugin rewrite rule stands for: what its vars
+     * name (Front\RuleRoutes), the home query when they name nothing (the
+     * reference's shape for a rule that only sets a plugin's own flags). The
+     * vars stay on the request state so get_query_var() answers them and the
+     * plugin's template_include callback can take the page over.
      *
      * @param array<string, string> $vars
      */
@@ -121,24 +129,8 @@ final readonly class Resolver
             Runtime::current()->set(PluginRules::STATE, $vars);
             Runtime::current()->set(PluginRules::MATCHED, true);
         }
-        $paged = max(1, (int) ($vars['paged'] ?? 1));
-        $id = (int) ($vars['p'] ?? $vars['page_id'] ?? 0);
-        if ($id > 0) {
-            $post = $this->posts->find($id);
-            if ($post !== null && $this->readable($post)) {
-                return Resolution::single($post, $paged);
-            }
-            return Resolution::notFound();
-        }
-        $pagename = (string) ($vars['pagename'] ?? '');
-        if ($pagename !== '') {
-            $single = $this->resolveSingle(array_values(array_filter(explode('/', $pagename), static fn (string $s) => $s !== '')), $paged, Redirects::Follow);
-            return $single ?? Resolution::notFound();
-        }
-        if (($vars['s'] ?? '') !== '') {
-            return $this->search((string) $vars['s'], $paged);
-        }
-        return Resolution::home($paged);
+        $page = fn (array $segments, int $paged): ?Resolution => $this->resolveSingle($segments, $paged, Redirects::Follow);
+        return (new RuleRoutes($this->posts, $this->archives(), $page, $this->readable(...)))->resolve($vars);
     }
 
     private function resolvePath(Request $request, Redirects $redirects): Resolution
@@ -191,13 +183,13 @@ final readonly class Resolver
         }
 
         $resolution = $this->pluginRoute($segments, $paged) ?? match (true) {
-            $segments === [] => $this->home($paged),
-            $segments[0] === 'category' => $this->termArchive('category', array_slice($segments, 1), $paged),
-            $segments[0] === 'tag' => $this->termArchive('post_tag', array_slice($segments, 1), $paged),
-            $segments[0] === 'author' => count($segments) === 2 ? $this->authorArchive($segments[1], $paged) : Resolution::notFound(),
-            $segments[0] === 'search' => count($segments) === 2 ? $this->search(rawurldecode($segments[1]), $paged) : Resolution::notFound(),
+            $segments === [] => $this->archives()->home($paged),
+            $segments[0] === 'category' => $this->archives()->term('category', array_slice($segments, 1), $paged),
+            $segments[0] === 'tag' => $this->archives()->term('post_tag', array_slice($segments, 1), $paged),
+            $segments[0] === 'author' => count($segments) === 2 ? $this->archives()->author($segments[1], $paged) : Resolution::notFound(),
+            $segments[0] === 'search' => count($segments) === 2 ? $this->archives()->search(rawurldecode($segments[1]), $paged) : Resolution::notFound(),
             $segments[0] === 'feed' => Resolution::notFound(),
-            preg_match('/^\d{4}$/', $segments[0]) === 1 => $this->dateArchive($segments, $paged),
+            preg_match('/^\d{4}$/', $segments[0]) === 1 => $this->archives()->date($segments, $paged),
             default => $this->resolveContent($segments, $paged, $redirects),
         };
         if (AttachmentAddresses::names($resolution)) {
@@ -223,14 +215,14 @@ final readonly class Resolver
         if ($request->has('cat')) {
             $term = $this->terms->find('category', (int) $request->query('cat', '0'));
             if ($term !== null && !$canonical) {
-                return $this->termResolution('category', $term, 1);
+                return $this->archives()->termResolution('category', $term, 1);
             }
             return $term === null || !$pretty ? Resolution::notFound() : Resolution::redirect($this->permalinks->forTerm($term));
         }
         if ($request->has('tag')) {
             $term = $this->terms->findBySlug('post_tag', (string) $request->query('tag'));
             if ($term !== null && !$canonical) {
-                return $this->termResolution('post_tag', $term, 1);
+                return $this->archives()->termResolution('post_tag', $term, 1);
             }
             return $term === null || !$pretty ? Resolution::notFound() : Resolution::redirect($this->permalinks->forTerm($term));
         }
@@ -238,7 +230,7 @@ final readonly class Resolver
             $row = $this->db->row("SELECT ID, user_nicename, display_name FROM {$this->db->table('users')} WHERE ID = ? LIMIT 1", [(int) $request->query('author', '0')]);
             $user = $row === null ? null : UserRecord::fromRow($row);
             if ($user !== null && !$canonical) {
-                return $this->authorArchive($user->nicename, 1);
+                return $this->archives()->author($user->nicename, 1);
             }
             return $user === null || !$pretty ? Resolution::notFound() : Resolution::redirect($this->permalinks->forAuthor($user));
         }
@@ -251,9 +243,9 @@ final readonly class Resolver
             return $this->dateRedirect((int) $request->query('year', '0'), $month, $day, $redirects);
         }
         if ($request->has('s')) {
-            return $this->search((string) $request->query('s'), max(1, (int) $request->query('paged', '1')));
+            return $this->archives()->search((string) $request->query('s'), max(1, (int) $request->query('paged', '1')));
         }
-        return $this->home(max(1, (int) $request->query('paged', '1')));
+        return $this->archives()->home(max(1, (int) $request->query('paged', '1')));
     }
 
     private function dateRedirect(int $year, ?int $month, ?int $day, Redirects $redirects): Resolution
@@ -274,25 +266,6 @@ final readonly class Resolver
     }
 
     /** A search's results; a page past the last one is a 404, as the home's and archives' are. */
-    private function search(string $term, int $paged): Resolution
-    {
-        return $paged > 1 && $paged > $this->pages($this->posts->count(PostFilter::all()->matching($term))) ? Resolution::notFound() : Resolution::search($term, $paged);
-    }
-
-    private function home(int $paged): Resolution
-    {
-        if ($this->permalinks->frontPageId > 0) {
-            $page = $this->posts->find($this->permalinks->frontPageId);
-            if ($page !== null && $page->isPage() && $this->readable($page)) {
-                return Resolution::frontPage($page, $paged);
-            }
-        }
-        $total = (int) $this->db->value(
-            "SELECT COUNT(*) FROM {$this->db->table('posts')} WHERE post_type = 'post' AND post_status = 'publish'",
-        );
-        return $paged > 1 && $paged > $this->pages($total) ? Resolution::notFound() : Resolution::home($paged);
-    }
-
     /**
      * A plugin's post type or taxonomy behind the path: its archive at the
      * has_archive slug (which wins over a page of the same name), a single
@@ -315,7 +288,7 @@ final readonly class Resolver
             $archiveSlug = is_string($archive) && $archive !== '' ? $archive : ($archive === true ? $this->permalinks->typeSlug((string) $name) : null);
             if ($archiveSlug !== null && $segments === self::segmentsOf($archiveSlug)) {
                 $total = $this->posts->count(PostFilter::types((string) $name));
-                return $paged > 1 && $paged > $this->pages($total) ? Resolution::notFound() : Resolution::postTypeArchive(['name' => (string) $name] + $type, $paged);
+                return $paged > 1 && $paged > $this->archives()->pages($total) ? Resolution::notFound() : Resolution::postTypeArchive(['name' => (string) $name] + $type, $paged);
             }
             $prefix = self::segmentsOf($this->permalinks->typeSlug((string) $name));
             if (count($segments) === count($prefix) + 1 && array_slice($segments, 0, count($prefix)) === $prefix) {
@@ -329,7 +302,7 @@ final readonly class Resolver
             }
             $prefix = self::segmentsOf($this->permalinks->taxonomySlug((string) $name) ?? (string) $name);
             if (count($segments) > count($prefix) && array_slice($segments, 0, count($prefix)) === $prefix) {
-                return $this->taxonomyArchive((string) $name, (array) ($taxonomy['object_type'] ?? []), array_slice($segments, count($prefix)), $paged);
+                return $this->archives()->taxonomy((string) $name, (array) ($taxonomy['object_type'] ?? []), array_slice($segments, count($prefix)), $paged);
             }
         }
         return null;
@@ -339,109 +312,6 @@ final readonly class Resolver
     private static function segmentsOf(string $slug): array
     {
         return array_values(array_filter(explode('/', $slug), static fn (string $s) => $s !== ''));
-    }
-
-    /**
-     * @param list<string> $types the post types the taxonomy attaches to
-     * @param list<string> $slugs
-     */
-    private function taxonomyArchive(string $taxonomy, array $types, array $slugs, int $paged): Resolution
-    {
-        $term = $this->terms->findBySlug($taxonomy, end($slugs));
-        if ($term === null || strcasecmp($this->terms->pathOf($term), implode('/', $slugs)) !== 0) {
-            return Resolution::notFound();
-        }
-        $total = $this->posts->count(PostFilter::types(...$types)->inTerm((int) $term['term_taxonomy_id']));
-        if ($total === 0 || $paged > $this->pages($total)) {
-            return Resolution::notFound();
-        }
-        return Resolution::taxonomy($term, $paged);
-    }
-
-    /** @param list<string> $slugs */
-    private function termArchive(string $taxonomy, array $slugs, int $paged): Resolution
-    {
-        if ($slugs === []) {
-            return Resolution::notFound();
-        }
-        $term = $this->terms->findBySlug($taxonomy, end($slugs));
-        if ($term === null || strcasecmp($this->terms->pathOf($term), implode('/', $slugs)) !== 0) {
-            return Resolution::notFound();
-        }
-        return $this->termResolution($taxonomy, $term, $paged);
-    }
-
-    /** The archive a found term stands for, 404 when it is empty or overpaged. */
-    private function termResolution(string $taxonomy, TermRecord $term, int $paged): Resolution
-    {
-        $total = $this->posts->count(PostFilter::all()->inTerm((int) $term['term_taxonomy_id']));
-        if ($total === 0 || $paged > $this->pages($total)) {
-            return Resolution::notFound();
-        }
-        return Resolution::term($taxonomy, $term, $paged);
-    }
-
-    private function authorArchive(string $name, int $paged): Resolution
-    {
-        $row = $this->db->row(
-            "SELECT ID, user_nicename, display_name FROM {$this->db->table('users')} WHERE user_nicename = ? LIMIT 1",
-            [$name],
-        );
-        $user = $row === null ? null : UserRecord::fromRow($row);
-        if ($user !== null) {
-            $total = $this->posts->count(PostFilter::all()->byAuthor($user->id));
-            if ($paged > 1 && $paged > $this->pages($total)) {
-                return Resolution::notFound();
-            }
-        }
-        return Resolution::author($name, $user, $paged);
-    }
-
-    /** @param list<string> $segments */
-    private function dateArchive(array $segments, int $paged): Resolution
-    {
-        if (count($segments) > 3) {
-            return Resolution::notFound();
-        }
-        foreach (array_slice($segments, 1) as $part) {
-            if (!preg_match('/^\d{1,2}$/', $part)) {
-                return Resolution::notFound();
-            }
-        }
-        $year = (int) $segments[0];
-        $month = isset($segments[1]) ? (int) $segments[1] : null;
-        $day = isset($segments[2]) ? (int) $segments[2] : null;
-        $range = self::dateRange($year, $month, $day);
-        if ($range === null) {
-            return Resolution::notFound();
-        }
-        $total = $this->posts->count(PostFilter::all()->between($range[0], $range[1]));
-        if ($total === 0 || $paged > $this->pages($total)) {
-            return Resolution::notFound();
-        }
-        return Resolution::date($year, $month, $day, $paged);
-    }
-
-    /**
-     * The site-local bounds of a date archive, or null when the date is invalid.
-     *
-     * @return array{0: string, 1: string}|null
-     */
-    public static function dateRange(int $year, ?int $month, ?int $day): ?array
-    {
-        if ($month !== null && ($month < 1 || $month > 12)) {
-            return null;
-        }
-        if ($day !== null && ($month === null || !checkdate($month, $day, $year))) {
-            return null;
-        }
-        $from = sprintf('%04d-%02d-%02d 00:00:00', $year, $month ?? 1, $day ?? 1);
-        $to = match (true) {
-            $day !== null => date('Y-m-d 00:00:00', strtotime("{$year}-{$month}-{$day} +1 day")),
-            $month !== null => date('Y-m-d 00:00:00', strtotime(sprintf('%04d-%02d-01 +1 month', $year, $month))),
-            default => sprintf('%04d-01-01 00:00:00', $year + 1),
-        };
-        return [$from, $to];
     }
 
     /** @param list<string> $segments */
@@ -470,7 +340,7 @@ final readonly class Resolver
         // A structure that opens with the category lets a bare category
         // path stand as the archive.
         if ($number === '' && str_starts_with($this->permalinks->structure, '/%category%')) {
-            $archive = $this->termArchive('category', $segments, $paged);
+            $archive = $this->archives()->term('category', $segments, $paged);
             if ($archive->kind !== Kind::NotFound) {
                 return $archive;
             }
@@ -504,7 +374,7 @@ final readonly class Resolver
                 $total = (int) $this->db->value(
                     "SELECT COUNT(*) FROM {$this->db->table('posts')} WHERE post_type = 'post' AND post_status = 'publish'",
                 );
-                return $paged > 1 && $paged > $this->pages($total) ? Resolution::notFound() : Resolution::postsPage($page, $paged);
+                return $paged > 1 && $paged > $this->archives()->pages($total) ? Resolution::notFound() : Resolution::postsPage($page, $paged);
             }
             return Resolution::single($page, $paged);
         }
@@ -545,6 +415,22 @@ final readonly class Resolver
         return $base;
     }
 
+    /** The archives a request may stand for. */
+    private function archives(): ArchiveAddresses
+    {
+        return new ArchiveAddresses($this->db, $this->posts, $this->terms, $this->permalinks, $this->readable(...));
+    }
+
+    /**
+     * The site-local bounds of a date archive, or null when the date is invalid.
+     *
+     * @return array{0: string, 1: string}|null
+     */
+    public static function dateRange(int $year, ?int $month, ?int $day): ?array
+    {
+        return ArchiveAddresses::dateRange($year, $month, $day);
+    }
+
     /** The addresses an attachment's page answers to. */
     private function attachments(): AttachmentAddresses
     {
@@ -572,10 +458,5 @@ final readonly class Resolver
             }
         }
         return ($this->canReadUnpublished)($post);
-    }
-
-    private function pages(int $total): int
-    {
-        return max(1, (int) ceil($total / $this->perPage));
     }
 }

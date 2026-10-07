@@ -15,7 +15,7 @@ The engine's own classes under `public/minn/src/Minn/`, one page per namespace, 
 | [`Minn\Cron`](cron.md) | 1 | scheduled publishing |
 | [`Minn\Extension`](extension.md) | 8 | the extension contract and its seams |
 | [`Minn\Feed`](feed.md) | 8 |  |
-| [`Minn\Front`](front.md) | 47 | URL resolution, permalinks, feeds, sitemaps and the public page |
+| [`Minn\Front`](front.md) | 50 | URL resolution, permalinks, feeds, sitemaps and the public page |
 | [`Minn\Html`](html.md) | 6 | the HTML tag processor |
 | [`Minn\Html\Tree`](html-tree.md) | 13 |  |
 | [`Minn\Http`](http.md) | 32 | request, response, routing, and the outgoing client |

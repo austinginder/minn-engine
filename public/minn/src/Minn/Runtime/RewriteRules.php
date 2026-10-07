@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Minn\Runtime;
 
+use Closure;
+
 /**
  * The rewrite rules WordPress makes from its structures, as the reference
  * makes them (probes rewrite-generate, rewrite-rules), so plugins that
@@ -80,6 +82,43 @@ final class RewriteRules
         if (!$rewrite->using_permalinks()) {
             return [];
         }
+        $filter = static function (string $name, array $rules): array {
+            $rules = (array) \apply_filters("{$name}_rewrite_rules", $rules);
+            return $name === 'post_tag' ? (array) \apply_filters_deprecated('tag_rewrite_rules', [$rules], '3.1.0', 'post_tag_rewrite_rules') : $rules;
+        };
+        [$top, $rules] = self::assemble($rewrite, $filter);
+        // As the reference does, a permastruct's rules join the top rules for good.
+        $rewrite->extra_rules_top = $top;
+        $rewrite->rules = $rules;
+        \do_action_ref_array('generate_rewrite_rules', [&$rewrite]);
+        $rewrite->rules = (array) \apply_filters('rewrite_rules_array', $rewrite->rules);
+        return $rewrite->rules;
+    }
+
+    /**
+     * The rules as the engine itself would make them, in their stored form
+     * and with no plugin's filter or action on them: what the stored rules
+     * are when no plugin changed them. The site's rewrite is left as it is.
+     *
+     * @return array<string, string>
+     */
+    public static function unfiltered(\WP_Rewrite $rewrite): array
+    {
+        $copy = clone $rewrite;
+        $copy->matches = 'matches';
+        return $copy->using_permalinks() ? self::assemble($copy, static fn (string $name, array $rules): array => $rules)[1] : [];
+    }
+
+    /**
+     * The sections in the reference's order, each through $section: the top
+     * rules (each permastruct's joining them), the fixed files, root,
+     * comments, search, author, dates, pages and posts, the bottom rules.
+     *
+     * @param Closure(string, array<string, string>): array<string, string> $section
+     * @return array{0: array<string, string>, 1: array<string, string>} the top rules, and every rule
+     */
+    private static function assemble(\WP_Rewrite $rewrite, Closure $section): array
+    {
         $index = $rewrite->index;
         $fixed = [
             'robots\.txt$' => $index . '?robots=1',
@@ -89,7 +128,6 @@ final class RewriteRules
             '.*wp-app\.php(/.*)?$' => $index . '?error=403',
             '.*wp-register.php$' => $index . '?register=true',
         ];
-        $section = static fn (string $name, array $rules): array => (array) \apply_filters("{$name}_rewrite_rules", $rules);
         $post = $section('post', self::generate($rewrite, ['struct' => (string) $rewrite->permalink_structure, 'ep_mask' => EP_PERMALINK]));
         $date = $section('date', self::generate($rewrite, ['struct' => (string) $rewrite->get_date_permastruct(), 'ep_mask' => EP_DATE]));
         $root = $section('root', self::generate($rewrite, ['struct' => $rewrite->root . '/', 'ep_mask' => EP_ROOT]));
@@ -97,19 +135,12 @@ final class RewriteRules
         $search = $section('search', self::generate($rewrite, ['struct' => (string) $rewrite->get_search_permastruct(), 'ep_mask' => EP_SEARCH]));
         $author = $section('author', self::generate($rewrite, ['struct' => (string) $rewrite->get_author_permastruct(), 'ep_mask' => EP_AUTHORS]));
         $page = $section('page', $rewrite->page_rewrite_rules());
+        $top = $rewrite->extra_rules_top;
         foreach ($rewrite->extra_permastructs as $name => $struct) {
-            $rules = $section((string) $name, self::generate($rewrite, is_array($struct) ? $struct : ['struct' => (string) $struct]));
-            if ($name === 'post_tag') {
-                $rules = (array) \apply_filters_deprecated('tag_rewrite_rules', [$rules], '3.1.0', 'post_tag_rewrite_rules');
-            }
-            // As the reference does, a permastruct's rules join the top rules for good.
-            $rewrite->extra_rules_top = array_merge($rewrite->extra_rules_top, $rules);
+            $top = array_merge($top, $section((string) $name, self::generate($rewrite, is_array($struct) ? $struct : ['struct' => (string) $struct])));
         }
         $singles = $rewrite->use_verbose_page_rules ? array_merge($page, $post) : array_merge($post, $page);
-        $rewrite->rules = array_merge($rewrite->extra_rules_top, $fixed, $root, $comments, $search, $author, $date, $singles, $rewrite->extra_rules);
-        \do_action_ref_array('generate_rewrite_rules', [&$rewrite]);
-        $rewrite->rules = (array) \apply_filters('rewrite_rules_array', $rewrite->rules);
-        return $rewrite->rules;
+        return [$top, array_merge($top, $fixed, $root, $comments, $search, $author, $date, $singles, $rewrite->extra_rules)];
     }
 
     /**

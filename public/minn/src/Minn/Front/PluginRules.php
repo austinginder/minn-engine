@@ -55,27 +55,39 @@ final class PluginRules
             if (@preg_match('#^' . str_replace('#', '\#', $regex) . '#', $subject, $matches) !== 1) {
                 continue;
             }
-            $query = (string) preg_replace('!^.+\?!', '', $query);
-            // Substitutions are urlencoded like the reference's WP_MatchesMapRegex,
-            // so a captured '&x=1' cannot split into extra query vars.
-            $query = (string) preg_replace_callback(
-                '/\$matches\[(\d+)\]/',
-                static fn (array $m): string => urlencode((string) ($matches[(int) $m[1]] ?? '')),
-                $query,
-            );
-            parse_str($query, $vars);
-            $allowed = (array) \apply_filters('query_vars', self::PUBLIC_VARS);
-            $kept = [];
-            foreach ($vars as $name => $value) {
-                if (in_array((string) $name, $allowed, true) && is_scalar($value)) {
-                    $kept[(string) $name] = (string) $value;
-                }
-            }
             // The first matching rule wins even when its vars all filter away
             // (the reference then runs the home query under that rule).
-            return $kept;
+            return self::varsOf($query, $matches);
         }
         return null;
+    }
+
+    /**
+     * A matched rule's query vars: its query with the matches put in
+     * (urlencoded like the reference's WP_MatchesMapRegex, so a captured
+     * '&x=1' cannot split into extra vars), only those the reference would
+     * recognise (the public vars and the query_vars filter's).
+     *
+     * @param array<int|string, string> $matches
+     * @return array<string, string>
+     */
+    public static function varsOf(string $query, array $matches): array
+    {
+        $query = (string) preg_replace('!^.+\?!', '', $query);
+        $query = (string) preg_replace_callback(
+            '/\$matches\[(\d+)\]/',
+            static fn (array $m): string => urlencode((string) ($matches[(int) $m[1]] ?? '')),
+            $query,
+        );
+        parse_str($query, $vars);
+        $allowed = (array) \apply_filters('query_vars', self::PUBLIC_VARS);
+        $kept = [];
+        foreach ($vars as $name => $value) {
+            if (in_array((string) $name, $allowed, true) && is_scalar($value)) {
+                $kept[(string) $name] = (string) $value;
+            }
+        }
+        return $kept;
     }
 
     /**
