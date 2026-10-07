@@ -24,7 +24,6 @@ use Minn\Content\Posts;
 use Minn\Content\Site;
 use Minn\Content\SiteIcon;
 use Minn\Content\Users;
-use Minn\Content\Comments;
 use Minn\Front\AdminBar;
 use Minn\Front\AssetsController;
 use Minn\Front\ProbeController;
@@ -325,7 +324,7 @@ final readonly class Engine
             new ProbeController($site, $permalinks, new SiteIcon($site, $posts, $permalinks), $cron, $bridge),
             $sitemapController,
             $feedController,
-            new CommentPostController($site, $posts, new Comments($db), $permalinks, $authenticator, $capabilities, new AuthCookies($db, $cookie)),
+            new CommentPostController(),
             $front,
         );
         $response = (new Kernel($router))->handle($request);

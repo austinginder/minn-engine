@@ -103,7 +103,7 @@ plugins paths (the secure variant over HTTPS, keyed off that scheme's
 salt) and the logged_in cookie on the site root, which is the one REST
 reads. Every value shares the username|expiration|token|hmac shape.
 
-Used by: `Minn\Auth\SignIn`, `Minn\Engine`, `Minn\Front\CommentPostController`
+Used by: `Minn\Auth\SignIn`, `Minn\Engine`
 
 ```php
 __construct(Minn\Db $db, Minn\Auth\Cookie $cookie)
@@ -158,7 +158,7 @@ A session whose nonce did not verify.
 
 A validated session: the user row and the raw session token behind it.
 
-Used by: `Minn\Admin\AppController`, `Minn\Admin\BootPayload`, `Minn\Auth\Authenticator`, `Minn\Auth\Cookie`, `Minn\Auth\SignIn`, `Minn\Engine`, `Minn\Front\AdminBar`, `Minn\Front\CommentPostController`, `Minn\Login\LoginController`, `Minn\Rest\Api`, `Minn\Rest\Caller`
+Used by: `Minn\Admin\AppController`, `Minn\Admin\BootPayload`, `Minn\Auth\Authenticator`, `Minn\Auth\Cookie`, `Minn\Auth\SignIn`, `Minn\Engine`, `Minn\Front\AdminBar`, `Minn\Login\LoginController`, `Minn\Rest\Api`, `Minn\Rest\Caller`
 
 ```php
 __construct(Minn\Content\UserRecord $user, string $token, ?array $applicationPassword = NULL)
@@ -183,7 +183,7 @@ a REST call must also carry a nonce bound to the same session.
 
 - const `NOBODY` = `'$wp$2y$10$q/tQZiHVAKXuCoJIeZTH0.rb6Otms4vDKv0NrPeGKdvracPiLPy4W'` — A real hash of a password nobody knows, checked against when the user does not exist so the answer takes as long either way.
 
-Used by: `Minn\Admin\AppController`, `Minn\Engine`, `Minn\Front\CommentPostController`, `Minn\Login\LoginController`, `Minn\Rest\ApplicationPasswordsController`, `Minn\Rest\Caller`, `Minn\Rest\IndexController`, `Minn\Rest\Services`
+Used by: `Minn\Admin\AppController`, `Minn\Engine`, `Minn\Login\LoginController`, `Minn\Rest\ApplicationPasswordsController`, `Minn\Rest\Caller`, `Minn\Rest\IndexController`, `Minn\Rest\Services`
 
 ```php
 __construct(Minn\Auth\Cookie $cookie, Minn\Content\Users $users)
@@ -245,7 +245,7 @@ The capability engine: a user's roles from {prefix}capabilities usermeta,
 what those roles and the user's own capabilities grant, and the meta-capability mapping for
 edit_post, delete_post, and read_post.
 
-Used by: `Minn\Admin\ActivityFeed`, `Minn\Admin\AdminTypes`, `Minn\Admin\AppController`, `Minn\Admin\BootPayload`, `Minn\Admin\Dashboard`, `Minn\Admin\HiddenIntegrations`, `Minn\Admin\LanguageController`, `Minn\Admin\Notifications`, `Minn\Admin\UploadsSize`, `Minn\Cli\Runtime`, `Minn\Content\Reader`, `Minn\Context`, `Minn\Engine`, `Minn\Front\AdminBar`, `Minn\Front\CommentPostController`, `Minn\Rest\Caller`, `Minn\Rest\Services`, `Minn\Runtime\Runtime`
+Used by: `Minn\Admin\ActivityFeed`, `Minn\Admin\AdminTypes`, `Minn\Admin\AppController`, `Minn\Admin\BootPayload`, `Minn\Admin\Dashboard`, `Minn\Admin\HiddenIntegrations`, `Minn\Admin\LanguageController`, `Minn\Admin\Notifications`, `Minn\Admin\UploadsSize`, `Minn\Cli\Runtime`, `Minn\Content\Reader`, `Minn\Context`, `Minn\Engine`, `Minn\Front\AdminBar`, `Minn\Rest\Caller`, `Minn\Rest\Services`, `Minn\Runtime\Runtime`
 
 ```php
 __construct(Minn\Db $db, Minn\Content\Users $users, Minn\Auth\Roles $roles)
@@ -602,7 +602,7 @@ defines, so the engine keys off exactly what the install used.
 
 - const `SCHEMES` = `array (   'logged_in' =>    array (     0 => 'LOGGED_IN_KEY',     1 => 'LOGGED_IN_SALT',   ),   'nonce' =>    array (     0 => 'NONCE_KEY',     1 => 'NONCE_SALT',   ),   'auth' =>    array (     0 => 'AUTH_KEY',     1 => 'AUTH_SALT',   ),   'secure_auth' =>    array (     0 => 'SECURE_AUTH_KEY',     1 => 'SECURE_AUTH_SALT',   ), )`
 
-Used by: `Minn\Auth\AuthCookies`, `Minn\Auth\Cookie`, `Minn\Auth\Nonce`, `Minn\Auth\PasswordReset`, `Minn\Blocks\Dynamic\Theme\Comments`, `Minn\Engine`, `Minn\Front\CommentPostController`
+Used by: `Minn\Auth\AuthCookies`, `Minn\Auth\Cookie`, `Minn\Auth\Nonce`, `Minn\Auth\PasswordReset`, `Minn\Blocks\Dynamic\Theme\Comments`, `Minn\Engine`
 
 ### static `configured(): bool`
 

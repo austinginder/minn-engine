@@ -7542,8 +7542,7 @@
             ],
             "usedBy": [
                 "Minn\\Auth\\SignIn",
-                "Minn\\Engine",
-                "Minn\\Front\\CommentPostController"
+                "Minn\\Engine"
             ],
             "constructor": {
                 "signature": "__construct(Minn\\Db $db, Minn\\Auth\\Cookie $cookie)",
@@ -7815,7 +7814,6 @@
                 "Minn\\Auth\\SignIn",
                 "Minn\\Engine",
                 "Minn\\Front\\AdminBar",
-                "Minn\\Front\\CommentPostController",
                 "Minn\\Login\\LoginController",
                 "Minn\\Rest\\Api",
                 "Minn\\Rest\\Caller"
@@ -7926,7 +7924,6 @@
             "usedBy": [
                 "Minn\\Admin\\AppController",
                 "Minn\\Engine",
-                "Minn\\Front\\CommentPostController",
                 "Minn\\Login\\LoginController",
                 "Minn\\Rest\\ApplicationPasswordsController",
                 "Minn\\Rest\\Caller",
@@ -8226,7 +8223,6 @@
                 "Minn\\Context",
                 "Minn\\Engine",
                 "Minn\\Front\\AdminBar",
-                "Minn\\Front\\CommentPostController",
                 "Minn\\Rest\\Caller",
                 "Minn\\Rest\\Services",
                 "Minn\\Runtime\\Runtime"
@@ -10057,8 +10053,7 @@
                 "Minn\\Auth\\Nonce",
                 "Minn\\Auth\\PasswordReset",
                 "Minn\\Blocks\\Dynamic\\Theme\\Comments",
-                "Minn\\Engine",
-                "Minn\\Front\\CommentPostController"
+                "Minn\\Engine"
             ],
             "constructor": null,
             "cases": [],
@@ -22719,9 +22714,7 @@
             "uses": [
                 "Minn\\Content\\Comments"
             ],
-            "usedBy": [
-                "Minn\\Front\\CommentPostController"
-            ],
+            "usedBy": [],
             "constructor": {
                 "signature": "__construct(Minn\\Content\\Comments $comments)",
                 "doc": "",
@@ -23347,8 +23340,6 @@
             "usedBy": [
                 "Minn\\Blocks\\Dynamic\\Theme\\Comments",
                 "Minn\\Content\\CommentModeration",
-                "Minn\\Engine",
-                "Minn\\Front\\CommentPostController",
                 "Minn\\Rest\\CommentObject",
                 "Minn\\Rest\\CommentsController",
                 "Minn\\Rest\\Services",
@@ -27237,7 +27228,6 @@
                 "Minn\\Front\\ArchiveAddresses",
                 "Minn\\Front\\AttachmentAddresses",
                 "Minn\\Front\\Canonical",
-                "Minn\\Front\\CommentPostController",
                 "Minn\\Front\\Endpoints",
                 "Minn\\Front\\Permalinks",
                 "Minn\\Front\\Renderer",
@@ -29298,7 +29288,6 @@
                 "Minn\\Front\\ArchiveAddresses",
                 "Minn\\Front\\Archives",
                 "Minn\\Front\\AttachmentAddresses",
-                "Minn\\Front\\CommentPostController",
                 "Minn\\Front\\FeedController",
                 "Minn\\Front\\Permalinks",
                 "Minn\\Front\\Renderer",
@@ -30475,7 +30464,6 @@
                 "Minn\\Context",
                 "Minn\\Engine",
                 "Minn\\Extension\\Seams",
-                "Minn\\Front\\CommentPostController",
                 "Minn\\Front\\Resolver",
                 "Minn\\Runtime\\CurrentUser",
                 "Minn\\Runtime\\Runtime",
@@ -31014,7 +31002,6 @@
                 "Minn\\Extension\\Loader",
                 "Minn\\Extension\\Seams",
                 "Minn\\Front\\AdminBar",
-                "Minn\\Front\\CommentPostController",
                 "Minn\\Front\\FeedController",
                 "Minn\\Front\\ProbeController",
                 "Minn\\Login\\LoginController",
@@ -33122,7 +33109,6 @@
                 "Minn\\Content\\Users",
                 "Minn\\Front\\AdminBar",
                 "Minn\\Front\\ArchiveAddresses",
-                "Minn\\Front\\CommentPostController",
                 "Minn\\Front\\Permalinks",
                 "Minn\\Front\\Resolution",
                 "Minn\\Front\\Resolver",
@@ -35208,7 +35194,6 @@
                 "Minn\\Auth\\Salts",
                 "Minn\\Auth\\Sessions",
                 "Minn\\Auth\\SignIn",
-                "Minn\\Content\\Comments",
                 "Minn\\Content\\PostRecord",
                 "Minn\\Content\\Posts",
                 "Minn\\Content\\Reader",
@@ -35285,8 +35270,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 69,
-                "end": 74
+                "line": 68,
+                "end": 73
             },
             "cases": [],
             "constants": [
@@ -35327,8 +35312,8 @@
                     "doc": "The front door: answer the request that arrived and send it. This is\nthe only place the engine touches the world, so everything under it\nis a function of a request, callable more than once in a process.",
                     "shapes": [],
                     "params": [],
-                    "line": 81,
-                    "end": 85
+                    "line": 80,
+                    "end": 84
                 },
                 {
                     "routes": [],
@@ -35347,8 +35332,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 92,
-                    "end": 111
+                    "line": 91,
+                    "end": 110
                 },
                 {
                     "routes": [],
@@ -35367,8 +35352,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 114,
-                    "end": 121
+                    "line": 113,
+                    "end": 120
                 },
                 {
                     "routes": [],
@@ -35401,8 +35386,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 128,
-                    "end": 159
+                    "line": 127,
+                    "end": 158
                 },
                 {
                     "routes": [],
@@ -35428,8 +35413,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 168,
-                    "end": 184
+                    "line": 167,
+                    "end": 183
                 },
                 {
                     "routes": [],
@@ -35455,8 +35440,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 187,
-                    "end": 263
+                    "line": 186,
+                    "end": 262
                 },
                 {
                     "routes": [],
@@ -35559,8 +35544,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 266,
-                    "end": 333
+                    "line": 265,
+                    "end": 332
                 }
             ]
         },
@@ -40578,171 +40563,26 @@
             "namespace": "Minn\\Front",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Front/CommentPostController.php",
-            "lines": 174,
+            "lines": 52,
             "doc": "wp-comments-post.php: the comment form's target. The reference's\nanswers, captured: 302 to the comment's anchor (with unapproved and\nmoderation-hash when held), plain pages with 200 for a missing field,\n403 when comments are closed, 409 for a duplicate, 429 for posting too\nquickly, and 405 for anything but POST.",
             "implements": [],
             "extends": null,
             "uses": [
-                "Minn\\Auth\\AuthCookies",
-                "Minn\\Auth\\Authenticated",
-                "Minn\\Auth\\Authenticator",
-                "Minn\\Auth\\Capabilities",
-                "Minn\\Auth\\Salts",
-                "Minn\\Content\\CommentModeration",
-                "Minn\\Content\\Comments",
-                "Minn\\Content\\PostRecord",
-                "Minn\\Content\\Posts",
-                "Minn\\Content\\Reader",
-                "Minn\\Content\\Site",
-                "Minn\\Content\\UserRecord",
-                "Minn\\Front\\Permalinks",
                 "Minn\\Http\\Access",
                 "Minn\\Http\\Method",
                 "Minn\\Http\\Policy",
                 "Minn\\Http\\Request",
                 "Minn\\Http\\Response",
                 "Minn\\Http\\Route",
-                "Minn\\Mail\\Mailer",
-                "Minn\\Runtime\\Runtime",
-                "Minn\\Support\\Html",
-                "Minn\\Support\\Kses"
+                "Minn\\Runtime\\Runtime"
             ],
             "usedBy": [
                 "Minn\\Engine"
             ],
-            "constructor": {
-                "signature": "__construct(Minn\\Content\\Site $site, Minn\\Content\\Posts $posts, Minn\\Content\\Comments $comments, Minn\\Front\\Permalinks $permalinks, Minn\\Auth\\Authenticator $authenticator, Minn\\Auth\\Capabilities $capabilities, Minn\\Auth\\AuthCookies $cookies)",
-                "doc": "",
-                "shapes": [],
-                "params": [
-                    {
-                        "name": "site",
-                        "type": "Minn\\Content\\Site",
-                        "shape": "",
-                        "default": null,
-                        "doc": ""
-                    },
-                    {
-                        "name": "posts",
-                        "type": "Minn\\Content\\Posts",
-                        "shape": "",
-                        "default": null,
-                        "doc": ""
-                    },
-                    {
-                        "name": "comments",
-                        "type": "Minn\\Content\\Comments",
-                        "shape": "",
-                        "default": null,
-                        "doc": ""
-                    },
-                    {
-                        "name": "permalinks",
-                        "type": "Minn\\Front\\Permalinks",
-                        "shape": "",
-                        "default": null,
-                        "doc": ""
-                    },
-                    {
-                        "name": "authenticator",
-                        "type": "Minn\\Auth\\Authenticator",
-                        "shape": "",
-                        "default": null,
-                        "doc": ""
-                    },
-                    {
-                        "name": "capabilities",
-                        "type": "Minn\\Auth\\Capabilities",
-                        "shape": "",
-                        "default": null,
-                        "doc": ""
-                    },
-                    {
-                        "name": "cookies",
-                        "type": "Minn\\Auth\\AuthCookies",
-                        "shape": "",
-                        "default": null,
-                        "doc": ""
-                    }
-                ],
-                "visibility": "public",
-                "line": 40,
-                "end": 49
-            },
+            "constructor": null,
             "cases": [],
-            "constants": [
-                {
-                    "name": "FLOOD_SECONDS",
-                    "value": "15",
-                    "doc": "",
-                    "visibility": "private"
-                }
-            ],
-            "properties": [
-                {
-                    "name": "site",
-                    "type": "Minn\\Content\\Site",
-                    "readonly": true,
-                    "static": false,
-                    "doc": "",
-                    "visibility": "private",
-                    "promoted": true
-                },
-                {
-                    "name": "posts",
-                    "type": "Minn\\Content\\Posts",
-                    "readonly": true,
-                    "static": false,
-                    "doc": "",
-                    "visibility": "private",
-                    "promoted": true
-                },
-                {
-                    "name": "comments",
-                    "type": "Minn\\Content\\Comments",
-                    "readonly": true,
-                    "static": false,
-                    "doc": "",
-                    "visibility": "private",
-                    "promoted": true
-                },
-                {
-                    "name": "permalinks",
-                    "type": "Minn\\Front\\Permalinks",
-                    "readonly": true,
-                    "static": false,
-                    "doc": "",
-                    "visibility": "private",
-                    "promoted": true
-                },
-                {
-                    "name": "authenticator",
-                    "type": "Minn\\Auth\\Authenticator",
-                    "readonly": true,
-                    "static": false,
-                    "doc": "",
-                    "visibility": "private",
-                    "promoted": true
-                },
-                {
-                    "name": "capabilities",
-                    "type": "Minn\\Auth\\Capabilities",
-                    "readonly": true,
-                    "static": false,
-                    "doc": "",
-                    "visibility": "private",
-                    "promoted": true
-                },
-                {
-                    "name": "cookies",
-                    "type": "Minn\\Auth\\AuthCookies",
-                    "readonly": true,
-                    "static": false,
-                    "doc": "",
-                    "visibility": "private",
-                    "promoted": true
-                }
-            ],
+            "constants": [],
+            "properties": [],
             "methods": [
                 {
                     "routes": [
@@ -40763,16 +40603,16 @@
                             "doc": ""
                         }
                     ],
-                    "line": 53,
-                    "end": 59
+                    "line": 26,
+                    "end": 32
                 },
                 {
                     "routes": [],
-                    "name": "postWithoutPlugins",
+                    "name": "submit",
                     "static": false,
                     "visibility": "private",
-                    "signature": "postWithoutPlugins(Minn\\Http\\Request $request): Minn\\Http\\Response",
-                    "doc": "The engine's own submission, from the reference's captured answers: what answers when no runtime is booted.",
+                    "signature": "submit(Minn\\Http\\Request $request): Minn\\Http\\Response",
+                    "doc": "The reference's own submission and redirect (contracts/runtime.md \"The\ncomment form\"), so a spam plugin's checks, the notifications and the\ncommenter cookies are WordPress's: a refusal with a status is the\nrefusal page, one without is a blank page; else set_comment_cookies,\nthe comment's link (or redirect_to), the held comment's id and hash\nwhen the commenter is not remembered, comment_post_redirect, and\nwp_safe_redirect's checks.",
                     "shapes": [],
                     "params": [
                         {
@@ -40783,164 +40623,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 62,
-                    "end": 139
-                },
-                {
-                    "routes": [],
-                    "name": "postWithPlugins",
-                    "static": false,
-                    "visibility": "private",
-                    "signature": "postWithPlugins(Minn\\Http\\Request $request): Minn\\Http\\Response",
-                    "doc": "With plugins loaded, the reference's own submission and redirect\n(contracts/runtime.md \"The comment form\"), so a spam plugin's checks,\nthe notifications and the commenter cookies are WordPress's: a refusal\nwith a status is the refusal page, one without is a blank page; else\nset_comment_cookies, the comment's link (or redirect_to), the held\ncomment's id and hash when the commenter is not remembered,\ncomment_post_redirect, and wp_safe_redirect's checks.",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "request",
-                            "type": "Minn\\Http\\Request",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 150,
-                    "end": 168
-                },
-                {
-                    "routes": [],
-                    "name": "approval",
-                    "static": false,
-                    "visibility": "private",
-                    "signature": "approval(?Minn\\Content\\UserRecord $user, string $author, string $email): string",
-                    "doc": "A moderator's own comment is approved; otherwise the moderation settings decide.",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "user",
-                            "type": "?Minn\\Content\\UserRecord",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "author",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "email",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 171,
-                    "end": 175
-                },
-                {
-                    "routes": [],
-                    "name": "rememberAuthor",
-                    "static": false,
-                    "visibility": "private",
-                    "signature": "rememberAuthor(Minn\\Http\\Response $response, string $author, string $email, string $url, bool $secure): Minn\\Http\\Response",
-                    "doc": "The reference remembers the commenter for a year, in three cookies keyed by the site hash.",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "response",
-                            "type": "Minn\\Http\\Response",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "author",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "email",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "url",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "secure",
-                            "type": "bool",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 178,
-                    "end": 186
-                },
-                {
-                    "routes": [],
-                    "name": "moderationHash",
-                    "static": false,
-                    "visibility": "private",
-                    "signature": "moderationHash(int $commentId): string",
-                    "doc": "",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "commentId",
-                            "type": "int",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 188,
-                    "end": 191
-                },
-                {
-                    "routes": [],
-                    "name": "notifyModerator",
-                    "static": false,
-                    "visibility": "private",
-                    "signature": "notifyModerator(Minn\\Content\\PostRecord $post, string $content, string $author): void",
-                    "doc": "",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "post",
-                            "type": "Minn\\Content\\PostRecord",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "content",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "author",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 193,
-                    "end": 197
+                    "line": 43,
+                    "end": 61
                 },
                 {
                     "routes": [],
@@ -40966,8 +40650,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 200,
-                    "end": 208
+                    "line": 64,
+                    "end": 72
                 }
             ]
         },
@@ -43492,7 +43176,6 @@
                 "Minn\\Front\\AdminBar",
                 "Minn\\Front\\ArchiveAddresses",
                 "Minn\\Front\\AttachmentAddresses",
-                "Minn\\Front\\CommentPostController",
                 "Minn\\Front\\FeedController",
                 "Minn\\Front\\ProbeController",
                 "Minn\\Front\\Renderer",
@@ -70500,7 +70183,6 @@
                 "Minn\\Cli\\MinnCommand",
                 "Minn\\Cli\\UserCommand",
                 "Minn\\Engine",
-                "Minn\\Front\\CommentPostController",
                 "Minn\\Login\\LoginController",
                 "Minn\\Mail\\Composer",
                 "Minn\\Runtime\\AccountFlows"
@@ -128632,7 +128314,6 @@
                 "Minn\\Content\\PasswordGate",
                 "Minn\\Content\\TermLinks",
                 "Minn\\Front\\AdminBar",
-                "Minn\\Front\\CommentPostController",
                 "Minn\\Front\\PostNavigation",
                 "Minn\\Front\\Renderer",
                 "Minn\\Front\\SitemapXml",
@@ -128935,7 +128616,6 @@
                 "Minn\\Blocks\\Dynamic\\Theme\\Comments",
                 "Minn\\Blocks\\Dynamic\\Theme\\Navigation",
                 "Minn\\Content\\Users",
-                "Minn\\Front\\CommentPostController",
                 "Minn\\Media\\Writer",
                 "Minn\\Rest\\CommentsController",
                 "Minn\\Rest\\MediaController",
