@@ -110599,7 +110599,7 @@
             "namespace": "Minn\\Runtime",
             "kind": "final class",
             "file": "public/minn/src/Minn/Runtime/Pages.php",
-            "lines": 113,
+            "lines": 116,
             "doc": "get_pages() as the reference shapes it: its arguments as a post query, and the tree order of the result.",
             "implements": [],
             "extends": null,
@@ -110657,7 +110657,7 @@
                         }
                     ],
                     "line": 15,
-                    "end": 45
+                    "end": 52
                 },
                 {
                     "routes": [],
@@ -110665,7 +110665,37 @@
                     "static": true,
                     "visibility": "public",
                     "signature": "arrange(array $pages, array $parsed): array",
-                    "doc": "Parents first, each followed by its own subtree, then the child_of,\nexclude_tree, and offset/number cuts, over objects with ID and post_parent.",
+                    "doc": "The pages as the reference leaves them: with a hierarchy (unless a\nparent is named or pages are picked by id) or a child_of, only what\ndescends from that page (the root by default), each parent followed\nby its subtree; then any branch left out, its places left empty.",
+                    "shapes": [
+                        "@param list<object> $pages objects with ID and post_parent",
+                        "@return array<int, object>"
+                    ],
+                    "params": [
+                        {
+                            "name": "pages",
+                            "type": "array",
+                            "shape": "list<object>",
+                            "default": null,
+                            "doc": "objects with ID and post_parent"
+                        },
+                        {
+                            "name": "parsed",
+                            "type": "array",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 63,
+                    "end": 77
+                },
+                {
+                    "routes": [],
+                    "name": "children",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "children(array $pages, int $parent): array",
+                    "doc": "What descends from a page within the list, depth first, siblings in\nlist order (get_page_children); a page whose parent is not reached is\nleft out.",
                     "shapes": [
                         "@param list<object> $pages",
                         "@return list<object>"
@@ -110679,15 +110709,15 @@
                             "doc": ""
                         },
                         {
-                            "name": "parsed",
-                            "type": "array",
+                            "name": "parent",
+                            "type": "int",
                             "shape": "",
                             "default": null,
                             "doc": ""
                         }
                     ],
-                    "line": 54,
-                    "end": 71
+                    "line": 87,
+                    "end": 103
                 },
                 {
                     "routes": [],
@@ -110715,30 +110745,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 103,
-                    "end": 119
-                },
-                {
-                    "routes": [],
-                    "name": "treeOrder",
-                    "static": true,
-                    "visibility": "private",
-                    "signature": "treeOrder(array $pages): array",
-                    "doc": "",
-                    "shapes": [
-                        "@param list<object> $pages @return list<object>"
-                    ],
-                    "params": [
-                        {
-                            "name": "pages",
-                            "type": "array",
-                            "shape": "list<object>",
-                            "default": null,
-                            "doc": "@return list<object>"
-                        }
-                    ],
-                    "line": 74,
-                    "end": 100
+                    "line": 106,
+                    "end": 122
                 }
             ]
         },

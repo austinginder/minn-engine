@@ -41,62 +41,65 @@ final class Pages
         if ($parsed['authors'] !== '') {
             $query['author'] = $parsed['authors'];
         }
+        // A number (and an offset into it) limits the query itself; the hierarchy is worked out from what it returns.
+        if (!empty($parsed['number'])) {
+            $query['posts_per_page'] = (int) $parsed['number'];
+            if (!empty($parsed['offset'])) {
+                $query['offset'] = (int) $parsed['offset'];
+            }
+        }
         return $query;
     }
 
     /**
-     * Parents first, each followed by its own subtree, then the child_of,
-     * exclude_tree, and offset/number cuts, over objects with ID and post_parent.
+     * The pages as the reference leaves them: with a hierarchy (unless a
+     * parent is named or pages are picked by id) or a child_of, only what
+     * descends from that page (the root by default), each parent followed
+     * by its subtree; then any branch left out, its places left empty.
+     *
+     * @param list<object> $pages objects with ID and post_parent
+     * @return array<int, object>
+     */
+    public static function arrange(array $pages, array $parsed): array
+    {
+        $picked = !empty($parsed['include']);
+        $childOf = $picked ? 0 : (int) $parsed['child_of'];
+        if ($childOf > 0 || ($parsed['hierarchical'] && (int) $parsed['parent'] < 0 && !$picked)) {
+            $pages = self::children($pages, $childOf);
+        }
+        $pages = array_values($pages);
+        foreach (\wp_parse_id_list($parsed['exclude_tree']) as $tree) {
+            $excluded = array_map(static fn (object $p) => (int) $p->ID, self::children($pages, $tree));
+            $excluded[] = $tree;
+            $pages = array_filter($pages, static fn (object $p) => !in_array((int) $p->ID, $excluded, true));
+        }
+        return $pages;
+    }
+
+    /**
+     * What descends from a page within the list, depth first, siblings in
+     * list order (get_page_children); a page whose parent is not reached is
+     * left out.
      *
      * @param list<object> $pages
      * @return list<object>
      */
-    public static function arrange(array $pages, array $parsed): array
-    {
-        if ($parsed['hierarchical'] && (int) $parsed['parent'] < 0) {
-            $pages = self::treeOrder($pages);
-        }
-        if ((int) $parsed['child_of'] > 0) {
-            $pages = self::descendants($pages, (int) $parsed['child_of']);
-        }
-        foreach ((array) $parsed['exclude_tree'] as $tree) {
-            $excluded = array_map(static fn (object $p) => (int) $p->ID, self::descendants($pages, (int) $tree));
-            $excluded[] = (int) $tree;
-            $pages = array_values(array_filter($pages, static fn (object $p) => !in_array((int) $p->ID, $excluded, true)));
-        }
-        if ((int) $parsed['offset'] > 0 || $parsed['number'] !== '') {
-            $pages = array_slice($pages, (int) $parsed['offset'], $parsed['number'] === '' ? null : (int) $parsed['number']);
-        }
-        return array_values($pages);
-    }
-
-    /** @param list<object> $pages @return list<object> */
-    private static function treeOrder(array $pages): array
+    public static function children(array $pages, int $parent): array
     {
         $byParent = [];
         foreach ($pages as $page) {
             $byParent[(int) $page->post_parent][] = $page;
         }
-        $known = array_map(static fn (object $p) => (int) $p->ID, $pages);
-        $walk = static function (int $parent) use (&$walk, &$byParent): array {
-            $out = [];
-            foreach ($byParent[$parent] ?? [] as $page) {
-                $out[] = $page;
-                array_push($out, ...$walk((int) $page->ID));
-            }
-            return $out;
-        };
-        $roots = [];
-        foreach ($pages as $page) {
-            if (!in_array((int) $page->post_parent, $known, true)) {
-                $roots[] = (int) $page->post_parent;
+        $out = [];
+        $stack = array_reverse($byParent[$parent] ?? []);
+        while ($stack !== []) {
+            $page = array_pop($stack);
+            $out[] = $page;
+            foreach (array_reverse($byParent[(int) $page->ID] ?? []) as $child) {
+                $stack[] = $child;
             }
         }
-        $ordered = [];
-        foreach (array_unique($roots) as $root) {
-            array_push($ordered, ...$walk($root));
-        }
-        return $ordered;
+        return $out;
     }
 
     /** Every page under one ancestor, in list order. @param list<object> $pages @return list<object> */

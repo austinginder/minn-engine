@@ -51,7 +51,7 @@ the WordPress runtime plugins load against
 | [`Options`](#options) | final class | 232 | Options as plugin code sees them: PHP values, decoded from the stored |
 | [`PackageDownload`](#packagedownload) | final class | 32 | The publisher's say over its own download. Before fetching an update |
 | [`PageMenu`](#pagemenu) | final class | 40 | The page-list menu a classic theme falls back to when no menu is |
-| [`Pages`](#pages) | final class | 113 | get_pages() as the reference shapes it: its arguments as a post query, and the tree order of the result. |
+| [`Pages`](#pages) | final class | 116 | get_pages() as the reference shapes it: its arguments as a post query, and the tree order of the result. |
 | [`Patterns`](#patterns) | final class | 161 | The block pattern, pattern category, and block style registries as data. |
 | [`PlaceholderTrace`](#placeholdertrace) | final class | 27 | Records every call into a generated placeholder while a site opts in by |
 | [`Placeholders`](#placeholders) | final class | 49 | The printf placeholders plugin code hands wpdb::prepare, filled the way |
@@ -2101,8 +2101,19 @@ The post query arguments the get_pages() arguments amount to. @param list<int> $
 
 ### static `arrange(array $pages, array $parsed): array`
 
-Parents first, each followed by its own subtree, then the child_of,
-exclude_tree, and offset/number cuts, over objects with ID and post_parent.
+The pages as the reference leaves them: with a hierarchy (unless a
+parent is named or pages are picked by id) or a child_of, only what
+descends from that page (the root by default), each parent followed
+by its subtree; then any branch left out, its places left empty.
+
+- `@param list<object> $pages objects with ID and post_parent`
+- `@return array<int, object>`
+
+### static `children(array $pages, int $parent): array`
+
+What descends from a page within the list, depth first, siblings in
+list order (get_page_children); a page whose parent is not reached is
+left out.
 
 - `@param list<object> $pages`
 - `@return list<object>`
@@ -2112,8 +2123,6 @@ exclude_tree, and offset/number cuts, over objects with ID and post_parent.
 Every page under one ancestor, in list order. @param list<object> $pages @return list<object>
 
 - `@param list<object> $pages @return list<object>`
-
-Internals: `treeOrder()` (private, line 74)
 
 
 ## Patterns
