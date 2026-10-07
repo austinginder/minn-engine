@@ -4,9 +4,9 @@
 
 | Class | Kind | Lines | Summary |
 |---|---|---|---|
-| [`LoginController`](#logincontroller) | final readonly class | 346 | Signing in. The page people see is /minn-admin/login: the form, the |
-| [`LoginForm`](#loginform) | final class | 150 | The sign-in page markup. |
-| [`LoginHooks`](#loginhooks) | final readonly class | 121 | The sign-in as plugins see it, when they are loaded. The credentials go |
+| [`LoginController`](#logincontroller) | final readonly class | 395 | Signing in. The page people see is /minn-admin/login: the form, the |
+| [`LoginForm`](#loginform) | final class | 164 | The sign-in page markup. |
+| [`LoginHooks`](#loginhooks) | final readonly class | 126 | The sign-in as plugins see it, when they are loaded. The credentials go |
 | [`ServeLogin`](#servelogin) | final class | 3 | Thrown by the wp-login.php shape file when plugin code require's it |
 
 ## LoginController
@@ -51,7 +51,7 @@ Route: `POST /wp-login.php (public)`
 
 Handles the posted form for each of those pages.
 
-Internals: `lostPassword()` (private, line 101), `openResetLink()` (private, line 143), `resetSession()` (private, line 160), `savePassword()` (private, line 175), `tokenLogin()` (private, line 208), `safeRedirect()` (private, line 284), `logout()` (private, line 303), `action()` (private, line 333), `actionUrl()` (private, line 344), `base()` (private, line 354), `tooManyAttempts()` (private, line 360), `render()` (private, line 367)
+Internals: `lostPassword()` (private, line 102), `retrieve()` (private, line 148), `openResetLink()` (private, line 166), `resetSession()` (private, line 183), `savePassword()` (private, line 198), `validateReset()` (private, line 236), `parts()` (private, line 247), `tokenLogin()` (private, line 258), `safeRedirect()` (private, line 334), `logout()` (private, line 353), `action()` (private, line 383), `actionUrl()` (private, line 394), `base()` (private, line 404), `tooManyAttempts()` (private, line 410), `render()` (private, line 417)
 
 
 ## LoginForm
@@ -81,19 +81,23 @@ plugins style against, so the shape is fixed.
 
 - `@param array<string, mixed> $args the parsed wp_login_form arguments`
 
-### static `lostPassword(string $siteName, string $action, string $error, string $message): string`
+### static `lostPassword(string $siteName, string $action, string $error, string $message, array $parts = array ( )): string`
 
-The "forgot password" form: one field, posts to itself.
+The lost-password form.
 
-### static `resetPassword(string $siteName, string $action, string $key, string $login, string $error): string`
+- `@param array{title?: string, head?: string, bodyClass?: string, headerUrl?: string, headerText?: string, message?: string, form?: string, footer?: string} $parts what plugins put on the page (LoginHooks::page())`
+
+### static `resetPassword(string $siteName, string $action, string $key, string $login, string $error, array $parts = array ( )): string`
 
 The new-password form; the key rides in a hidden field as on the reference.
+
+- `@param array{title?: string, head?: string, bodyClass?: string, headerUrl?: string, headerText?: string, message?: string, form?: string, footer?: string} $parts`
 
 ### static `notice(string $siteName, string $title, string $message, string $loginUrl): string`
 
 A message with a link back to sign-in.
 
-Internals: `page()` (private, line 123)
+Internals: `page()` (private, line 135)
 
 
 ## LoginHooks
@@ -144,14 +148,15 @@ cache is let go first: a plugin reading session_tokens on wp_login
 
 A sign-in page request arriving, as wp-login.php announces it: login_init, then login_form_{action}.
 
-### `page(string $action, string $title, string $siteName, string $homeUrl): array`
+### `page(string $action, string $title, string $siteName, string $homeUrl, ?Minn\Content\UserRecord $user = NULL): array`
 
 What plugins put on the sign-in page, where the reference's page puts
 it: the title (login_title), the head (login_enqueue_scripts, then
 login_head, which prints the styles and scripts), the body classes
 (login_body_class), the header's link and words (login_headerurl,
 login_headertext), the message above the form (login_message), the
-fields inside it (login_form), and the footer (login_footer).
+fields inside it (login_form, lostpassword_form or resetpass_form, as
+the page is), and the footer (login_footer).
 
 - `@return array{title: string, head: string, bodyClass: string, headerUrl: string, headerText: string, message: string, form: string, footer: string}|array{}`
 

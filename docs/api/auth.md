@@ -15,7 +15,7 @@ passwords, sessions, cookies, nonces, roles and capabilities
 | [`LoginThrottle`](#loginthrottle) | final readonly class | 78 | Failed sign-ins per address, so a password guesser meets a wall: twenty |
 | [`Nonce`](#nonce) | final class | 34 | The wp_rest nonce: ten characters of HMAC-md5(tick\|wp_rest\|uid\|token) |
 | [`Password`](#password) | final class | 33 | The stored password scheme. A modern "$wp$2y$..." value is bcrypt over |
-| [`PasswordReset`](#passwordreset) | final readonly class | 57 | Password reset keys in the reference's storage shape: user_activation_key |
+| [`PasswordReset`](#passwordreset) | final readonly class | 69 | Password reset keys in the reference's storage shape: user_activation_key |
 | [`Phpass`](#phpass) | final class | 62 | The portable phpass hash ($P$), from Openwall's public description of the |
 | [`PortableHash`](#portablehash) | final class | 61 | The portable phpass hash ("$P$"), the shape the reference stores in |
 | [`RegisteredCaps`](#registeredcaps) | final class | 22 | The capability names a plugin's post type or taxonomy registered, read |
@@ -483,19 +483,26 @@ __construct(Minn\Content\Users $users)
 
 Mints a key, stores its hash, returns the key for the link.
 
+### static `mint(): array`
+
+A new key and the value that stores it (the time it was issued and its
+hash), for a caller that saves it itself.
+
+- `@return array{0: string, 1: string}`
+
 ### `verify(Minn\Content\UserRecord $user, string $key): bool`
 
 True when the key matches the stored hash and has not expired.
 
-### `status(Minn\Content\UserRecord $user, string $key): string`
+### `status(Minn\Content\UserRecord $user, string $key, int $lifetime = self::LIFETIME): string`
 
-"valid", "expired" (a matching key past its day, or stored without a time), or "invalid".
+"valid", "expired" (a matching key past its lifetime, a day unless given, or stored without a time), or "invalid".
 
 ### `clear(Minn\Content\UserRecord $user): void`
 
 Forgets a user's reset key.
 
-Internals: `hash()` (private, line 62), `matches()` (private, line 67)
+Internals: `hash()` (private, line 74), `matches()` (private, line 79)
 
 
 ## Phpass

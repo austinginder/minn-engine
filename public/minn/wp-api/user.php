@@ -18,6 +18,33 @@ function _wp_get_current_user()
     return wp_set_current_user($id > 0 ? $id : 0);
 }
 
+/** A reset link mailed to the account a login or email names (the posted user_login when none is given): true, or the refusal. Minn\Runtime\AccountFlows. */
+function retrieve_password($user_login = '')
+{
+    if ($user_login === '' && Runtime::booted()) {
+        $user_login = (string) (Runtime::current()->request?->form['user_login'] ?? '');
+    }
+    return Minn\Runtime\AccountFlows::retrievePassword((string) $user_login);
+}
+
+/** A user's new password, announced through password_reset and after_password_reset. */
+function reset_password($user, $new_pass)
+{
+    Minn\Runtime\AccountFlows::resetPassword($user, (string) $new_pass);
+}
+
+/** A new account for a login and an email: its id, or every refusal at once. Minn\Runtime\AccountFlows. */
+function register_new_user($user_login, $user_email)
+{
+    return Minn\Runtime\AccountFlows::registerNewUser((string) $user_login, (string) $user_email);
+}
+
+/** A new account announced to the site, the user, or both (register_new_user and edit_user_created_user call it). */
+function wp_send_new_user_notifications($user_id, $notify = 'both')
+{
+    wp_new_user_notification($user_id, null, in_array($notify, ['admin', 'user', 'both'], true) ? $notify : 'both');
+}
+
 /** Application passwords are supported over HTTPS, or anywhere on a local site. */
 function wp_is_application_passwords_supported()
 {
@@ -267,8 +294,13 @@ function get_password_reset_key($user)
     if (is_wp_error($allow)) {
         return $allow;
     }
-    $key = (new PasswordReset(new Users(Runtime::current()->db)))->issue($user);
+    [$key, $stored] = PasswordReset::mint();
     do_action('retrieve_password_key', $user['user_login'], $key);
+    // Saved through wp_update_user, as the reference saves it (its filters and profile_update run).
+    $saved = wp_update_user(['ID' => (int) $user['ID'], 'user_activation_key' => $stored]);
+    if (is_wp_error($saved)) {
+        return new WP_Error('no_password_key_update', __('Could not save password reset key to database.'));
+    }
     return $key;
 }
 
@@ -293,7 +325,8 @@ function check_password_reset_key($key, $login)
     if ($key === '' || $user === null) {
         return new WP_Error('invalid_key', 'Invalid key.');
     }
-    $status = (new PasswordReset(new Users(Runtime::current()->db)))->status($user, $key);
+    $lifetime = (int) apply_filters('password_reset_expiration', DAY_IN_SECONDS);
+    $status = (new PasswordReset(new Users(Runtime::current()->db)))->status($user, $key, $lifetime);
     if ($status === 'valid') {
         return new WP_User((int) $user['ID']);
     }

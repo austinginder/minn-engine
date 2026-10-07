@@ -301,12 +301,6 @@ function resolve_block_template($template_type, $template_hierarchy, $fallback_t
     return null;
 }
 
-function retrieve_password($user_login = '')
-{
-    \Minn\Runtime\PlaceholderTrace::hit('retrieve_password');
-    return null;
-}
-
 function screen_icon()
 {
     \Minn\Runtime\PlaceholderTrace::hit('screen_icon');

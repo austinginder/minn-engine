@@ -9463,7 +9463,7 @@
             "namespace": "Minn\\Auth",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Auth/PasswordReset.php",
-            "lines": 57,
+            "lines": 69,
             "doc": "Password reset keys in the reference's storage shape: user_activation_key\nholds \"time:hash\", the key itself travels in the email link and is good\nfor a day. The hash is the reference's own ($generic$, FastHash), so a\nlink either stack sent works on the other. Older shapes still verify: a\nphpass hash (WordPress before 6.8) and the engine's former $minn$ HMAC.\nA matching key stored without its time is expired, as the reference\ntreats it.",
             "implements": [],
             "extends": null,
@@ -9539,6 +9539,20 @@
                 },
                 {
                     "routes": [],
+                    "name": "mint",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "mint(): array",
+                    "doc": "A new key and the value that stores it (the time it was issued and its\nhash), for a caller that saves it itself.",
+                    "shapes": [
+                        "@return array{0: string, 1: string}"
+                    ],
+                    "params": [],
+                    "line": 41,
+                    "end": 45
+                },
+                {
+                    "routes": [],
                     "name": "verify",
                     "static": false,
                     "visibility": "public",
@@ -9561,16 +9575,16 @@
                             "doc": ""
                         }
                     ],
-                    "line": 36,
-                    "end": 39
+                    "line": 48,
+                    "end": 51
                 },
                 {
                     "routes": [],
                     "name": "status",
                     "static": false,
                     "visibility": "public",
-                    "signature": "status(Minn\\Content\\UserRecord $user, string $key): string",
-                    "doc": "\"valid\", \"expired\" (a matching key past its day, or stored without a time), or \"invalid\".",
+                    "signature": "status(Minn\\Content\\UserRecord $user, string $key, int $lifetime = self::LIFETIME): string",
+                    "doc": "\"valid\", \"expired\" (a matching key past its lifetime, a day unless given, or stored without a time), or \"invalid\".",
                     "shapes": [],
                     "params": [
                         {
@@ -9586,10 +9600,17 @@
                             "shape": "",
                             "default": null,
                             "doc": ""
+                        },
+                        {
+                            "name": "lifetime",
+                            "type": "int",
+                            "shape": "",
+                            "default": "self::LIFETIME",
+                            "doc": ""
                         }
                     ],
-                    "line": 42,
-                    "end": 53
+                    "line": 54,
+                    "end": 65
                 },
                 {
                     "routes": [],
@@ -9608,8 +9629,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 56,
-                    "end": 59
+                    "line": 68,
+                    "end": 71
                 },
                 {
                     "routes": [],
@@ -9628,8 +9649,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 62,
-                    "end": 65
+                    "line": 74,
+                    "end": 77
                 },
                 {
                     "routes": [],
@@ -9655,8 +9676,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 67,
-                    "end": 74
+                    "line": 79,
+                    "end": 86
                 }
             ]
         },
@@ -62584,7 +62605,7 @@
             "namespace": "Minn\\Login",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Login/LoginController.php",
-            "lines": 346,
+            "lines": 395,
             "doc": "Signing in. The page people see is /minn-admin/login: the form, the\nlost-password and reset flows, and logout all live there and link there.\n/wp-login.php stays as the address tooling knows (one-time login links,\nuptime probes, scripted sign-ins) and answers in place with the same\nshapes; a bare GET of it sends a browser to the clean page. Sessions\nand cookies validate on the engine AND on WordPress either way.",
             "implements": [],
             "extends": null,
@@ -62609,6 +62630,7 @@
                 "Minn\\Login\\LoginForm",
                 "Minn\\Login\\LoginHooks",
                 "Minn\\Mail\\Mailer",
+                "Minn\\Runtime\\Runtime",
                 "Minn\\Support\\Html"
             ],
             "usedBy": [
@@ -62670,8 +62692,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 41,
-                "end": 50
+                "line": 42,
+                "end": 51
             },
             "cases": [],
             "constants": [
@@ -62781,8 +62803,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 59,
-                    "end": 98
+                    "line": 60,
+                    "end": 99
                 },
                 {
                     "routes": [
@@ -62805,8 +62827,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 245,
-                    "end": 278
+                    "line": 295,
+                    "end": 328
                 },
                 {
                     "routes": [],
@@ -62825,8 +62847,42 @@
                             "doc": ""
                         }
                     ],
-                    "line": 101,
-                    "end": 136
+                    "line": 102,
+                    "end": 140
+                },
+                {
+                    "routes": [],
+                    "name": "retrieve",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "retrieve(Minn\\Http\\Request $request, string $login, string $siteName): Minn\\Http\\Response",
+                    "doc": "A reset asked for with plugins loaded, as the reference asks for it\n(retrieve_password, its hooks and mail): the page again with the\nrefusal in its words, or on to \"check your email\". An unknown\naccount still counts against the address's attempts.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "request",
+                            "type": "Minn\\Http\\Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "login",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "siteName",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 148,
+                    "end": 159
                 },
                 {
                     "routes": [],
@@ -62845,8 +62901,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 143,
-                    "end": 157
+                    "line": 166,
+                    "end": 180
                 },
                 {
                     "routes": [],
@@ -62867,8 +62923,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 160,
-                    "end": 173
+                    "line": 183,
+                    "end": 196
                 },
                 {
                     "routes": [],
@@ -62887,8 +62943,78 @@
                             "doc": ""
                         }
                     ],
-                    "line": 175,
-                    "end": 200
+                    "line": 198,
+                    "end": 229
+                },
+                {
+                    "routes": [],
+                    "name": "validateReset",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "validateReset(Minn\\Content\\UserRecord $user, string $mismatch): string",
+                    "doc": "A new password judged as the reference judges it: the mismatch, then\nwhatever validate_password_reset adds; the first refusal as plain\nwords, or ''.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "user",
+                            "type": "Minn\\Content\\UserRecord",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "mismatch",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 236,
+                    "end": 244
+                },
+                {
+                    "routes": [],
+                    "name": "parts",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "parts(string $action, string $title, string $siteName, ?Minn\\Content\\UserRecord $user = NULL): array",
+                    "doc": "What plugins put on one of the sign-in pages (LoginHooks::page()), for a page titled $title. @return array<string, string>",
+                    "shapes": [
+                        "@return array<string, string>"
+                    ],
+                    "params": [
+                        {
+                            "name": "action",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "title",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "siteName",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "user",
+                            "type": "?Minn\\Content\\UserRecord",
+                            "shape": "",
+                            "default": "NULL",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 247,
+                    "end": 250
                 },
                 {
                     "routes": [],
@@ -62907,8 +63033,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 208,
-                    "end": 239
+                    "line": 258,
+                    "end": 289
                 },
                 {
                     "routes": [],
@@ -62927,8 +63053,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 284,
-                    "end": 296
+                    "line": 334,
+                    "end": 346
                 },
                 {
                     "routes": [],
@@ -62947,8 +63073,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 303,
-                    "end": 326
+                    "line": 353,
+                    "end": 376
                 },
                 {
                     "routes": [],
@@ -62967,8 +63093,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 333,
-                    "end": 341
+                    "line": 383,
+                    "end": 391
                 },
                 {
                     "routes": [],
@@ -63001,8 +63127,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 344,
-                    "end": 351
+                    "line": 394,
+                    "end": 401
                 },
                 {
                     "routes": [],
@@ -63021,8 +63147,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 354,
-                    "end": 357
+                    "line": 404,
+                    "end": 407
                 },
                 {
                     "routes": [],
@@ -63048,8 +63174,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 360,
-                    "end": 365
+                    "line": 410,
+                    "end": 415
                 },
                 {
                     "routes": [],
@@ -63082,8 +63208,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 367,
-                    "end": 379
+                    "line": 417,
+                    "end": 429
                 }
             ]
         },
@@ -63093,7 +63219,7 @@
             "namespace": "Minn\\Login",
             "kind": "final class",
             "file": "public/minn/src/Minn/Login/LoginForm.php",
-            "lines": 150,
+            "lines": 164,
             "doc": "The sign-in page markup.",
             "implements": [],
             "extends": null,
@@ -63228,9 +63354,11 @@
                     "name": "lostPassword",
                     "static": true,
                     "visibility": "public",
-                    "signature": "lostPassword(string $siteName, string $action, string $error, string $message): string",
-                    "doc": "The \"forgot password\" form: one field, posts to itself.",
-                    "shapes": [],
+                    "signature": "lostPassword(string $siteName, string $action, string $error, string $message, array $parts = array ( )): string",
+                    "doc": "The lost-password form.",
+                    "shapes": [
+                        "@param array{title?: string, head?: string, bodyClass?: string, headerUrl?: string, headerText?: string, message?: string, form?: string, footer?: string} $parts what plugins put on the page (LoginHooks::page())"
+                    ],
                     "params": [
                         {
                             "name": "siteName",
@@ -63259,19 +63387,28 @@
                             "shape": "",
                             "default": null,
                             "doc": ""
+                        },
+                        {
+                            "name": "parts",
+                            "type": "array",
+                            "shape": "array{title?: string, head?: string, bodyClass?: string, headerUrl?: string, headerText?: string, message?: string, form?: string, footer?: string}",
+                            "default": "array ( )",
+                            "doc": "what plugins put on the page (LoginHooks::page())"
                         }
                     ],
-                    "line": 87,
-                    "end": 97
+                    "line": 92,
+                    "end": 103
                 },
                 {
                     "routes": [],
                     "name": "resetPassword",
                     "static": true,
                     "visibility": "public",
-                    "signature": "resetPassword(string $siteName, string $action, string $key, string $login, string $error): string",
+                    "signature": "resetPassword(string $siteName, string $action, string $key, string $login, string $error, array $parts = array ( )): string",
                     "doc": "The new-password form; the key rides in a hidden field as on the reference.",
-                    "shapes": [],
+                    "shapes": [
+                        "@param array{title?: string, head?: string, bodyClass?: string, headerUrl?: string, headerText?: string, message?: string, form?: string, footer?: string} $parts"
+                    ],
                     "params": [
                         {
                             "name": "siteName",
@@ -63307,10 +63444,17 @@
                             "shape": "",
                             "default": null,
                             "doc": ""
+                        },
+                        {
+                            "name": "parts",
+                            "type": "array",
+                            "shape": "array{title?: string, head?: string, bodyClass?: string, headerUrl?: string, headerText?: string, message?: string, form?: string, footer?: string}",
+                            "default": "array ( )",
+                            "doc": ""
                         }
                     ],
-                    "line": 100,
-                    "end": 113
+                    "line": 110,
+                    "end": 124
                 },
                 {
                     "routes": [],
@@ -63350,17 +63494,19 @@
                             "doc": ""
                         }
                     ],
-                    "line": 116,
-                    "end": 121
+                    "line": 127,
+                    "end": 132
                 },
                 {
                     "routes": [],
                     "name": "page",
                     "static": true,
                     "visibility": "private",
-                    "signature": "page(string $siteName, string $title, string $error, string $message, string $form): string",
+                    "signature": "page(string $siteName, string $title, string $error, string $message, string $form, array $parts = array ( )): string",
                     "doc": "",
-                    "shapes": [],
+                    "shapes": [
+                        "@param array{title?: string, head?: string, bodyClass?: string, message?: string, footer?: string} $parts"
+                    ],
                     "params": [
                         {
                             "name": "siteName",
@@ -63396,10 +63542,17 @@
                             "shape": "",
                             "default": null,
                             "doc": ""
+                        },
+                        {
+                            "name": "parts",
+                            "type": "array",
+                            "shape": "array{title?: string, head?: string, bodyClass?: string, message?: string, footer?: string}",
+                            "default": "array ( )",
+                            "doc": ""
                         }
                     ],
-                    "line": 123,
-                    "end": 133
+                    "line": 135,
+                    "end": 147
                 }
             ]
         },
@@ -63409,7 +63562,7 @@
             "namespace": "Minn\\Login",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Login/LoginHooks.php",
-            "lines": 121,
+            "lines": 126,
             "doc": "The sign-in as plugins see it, when they are loaded. The credentials go\nthrough the reference's authenticate chain, so a plugin may refuse a\nsign-in (a breached password, a second factor, a locked account) or\naccept one the password alone would not; wp_login_failed is the chain's\nown report. wp_login follows a good sign-in and wp_logout a sign-out.\nThe engine's default refusals stay one vague sentence; a plugin's is\nshown in its own words, through login_errors.",
             "implements": [],
             "extends": null,
@@ -63573,8 +63726,8 @@
                     "name": "page",
                     "static": false,
                     "visibility": "public",
-                    "signature": "page(string $action, string $title, string $siteName, string $homeUrl): array",
-                    "doc": "What plugins put on the sign-in page, where the reference's page puts\nit: the title (login_title), the head (login_enqueue_scripts, then\nlogin_head, which prints the styles and scripts), the body classes\n(login_body_class), the header's link and words (login_headerurl,\nlogin_headertext), the message above the form (login_message), the\nfields inside it (login_form), and the footer (login_footer).",
+                    "signature": "page(string $action, string $title, string $siteName, string $homeUrl, ?Minn\\Content\\UserRecord $user = NULL): array",
+                    "doc": "What plugins put on the sign-in page, where the reference's page puts\nit: the title (login_title), the head (login_enqueue_scripts, then\nlogin_head, which prints the styles and scripts), the body classes\n(login_body_class), the header's link and words (login_headerurl,\nlogin_headertext), the message above the form (login_message), the\nfields inside it (login_form, lostpassword_form or resetpass_form, as\nthe page is), and the footer (login_footer).",
                     "shapes": [
                         "@return array{title: string, head: string, bodyClass: string, headerUrl: string, headerText: string, message: string, form: string, footer: string}|array{}"
                     ],
@@ -63606,10 +63759,17 @@
                             "shape": "",
                             "default": null,
                             "doc": ""
+                        },
+                        {
+                            "name": "user",
+                            "type": "?Minn\\Content\\UserRecord",
+                            "shape": "",
+                            "default": "NULL",
+                            "doc": ""
                         }
                     ],
-                    "line": 98,
-                    "end": 119
+                    "line": 99,
+                    "end": 124
                 },
                 {
                     "routes": [],
@@ -63642,8 +63802,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 122,
-                    "end": 125
+                    "line": 127,
+                    "end": 130
                 },
                 {
                     "routes": [],
@@ -63676,8 +63836,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 128,
-                    "end": 131
+                    "line": 133,
+                    "end": 136
                 },
                 {
                     "routes": [],
@@ -63696,8 +63856,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 134,
-                    "end": 139
+                    "line": 139,
+                    "end": 144
                 }
             ]
         },
@@ -66714,7 +66874,8 @@
                 "Minn\\Engine",
                 "Minn\\Front\\CommentPostController",
                 "Minn\\Login\\LoginController",
-                "Minn\\Mail\\Composer"
+                "Minn\\Mail\\Composer",
+                "Minn\\Runtime\\AccountFlows"
             ],
             "constructor": {
                 "signature": "__construct(Minn\\Mail\\MailSettings $settings, string $logFile)",
@@ -99404,6 +99565,170 @@
             ]
         },
         {
+            "name": "Minn\\Runtime\\AccountFlows",
+            "short": "AccountFlows",
+            "namespace": "Minn\\Runtime",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Runtime/AccountFlows.php",
+            "lines": 140,
+            "doc": "The account functions a sign-in page and plugins call, with the\nreference's checks, words, hooks and mail (probe account-flows): asking\nfor a password reset (retrieve_password), resetting one\n(reset_password), registering (register_new_user), and telling the site\nand the new user about a registration (wp_new_user_notification).",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\Mail\\Mailer",
+                "Minn\\Runtime\\Runtime"
+            ],
+            "usedBy": [],
+            "constructor": null,
+            "cases": [],
+            "constants": [
+                {
+                    "name": "NO_ACCOUNT",
+                    "value": "'<strong>Error:</strong> There is no account with that username or email address.'",
+                    "doc": "",
+                    "visibility": "private"
+                }
+            ],
+            "properties": [],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "retrievePassword",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "retrievePassword(string $login): WP_Error|bool",
+                    "doc": "A reset link mailed to the account a login or email names: true, or\nthe refusal (no name, no such account, a plugin's error, reset not\nallowed, or the mail failing).",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "login",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 25,
+                    "end": 64
+                },
+                {
+                    "routes": [],
+                    "name": "resetPassword",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "resetPassword(WP_User $user, string $password): void",
+                    "doc": "A new password for a user, announced before (password_reset) and after (after_password_reset).",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "user",
+                            "type": "WP_User",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "password",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 67,
+                    "end": 73
+                },
+                {
+                    "routes": [],
+                    "name": "registerNewUser",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "registerNewUser(string $login, string $email): WP_Error|int",
+                    "doc": "A new account for a login and an email, with a generated password and\nthe nag to change it: its id, or every refusal at once (the name\nempty, illegal, taken or barred; the email empty, malformed or taken;\nwhatever register_post and registration_errors add).",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "login",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "email",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 81,
+                    "end": 119
+                },
+                {
+                    "routes": [],
+                    "name": "newUserNotification",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "newUserNotification(int $userId, mixed $deprecated, string $notify): void",
+                    "doc": "A new account announced: to the site's address (unless only the user\nis told), then to the user with a link to set their password (unless\nonly the site is, or the old call shape asks for nobody).",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "userId",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "deprecated",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "notify",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 126,
+                    "end": 148
+                },
+                {
+                    "routes": [],
+                    "name": "resetLink",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "resetLink(WP_User $user, string $key): string",
+                    "doc": "The link that opens the password form for a user's key.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "user",
+                            "type": "WP_User",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "key",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 151,
+                    "end": 154
+                }
+            ]
+        },
+        {
             "name": "Minn\\Runtime\\AjaxController",
             "short": "AjaxController",
             "namespace": "Minn\\Runtime",
@@ -114633,6 +114958,7 @@
                 "Minn\\Front\\Permalinks",
                 "Minn\\Front\\PluginRules",
                 "Minn\\Front\\Resolver",
+                "Minn\\Login\\LoginController",
                 "Minn\\Login\\LoginHooks",
                 "Minn\\Mail\\Mailer",
                 "Minn\\Media\\Icons",
@@ -114674,6 +115000,7 @@
                 "Minn\\Rest\\UsersController",
                 "Minn\\Rest\\WidgetsController",
                 "Minn\\Runtime\\Abilities",
+                "Minn\\Runtime\\AccountFlows",
                 "Minn\\Runtime\\AjaxController",
                 "Minn\\Runtime\\ApplicationPasswordSignIn",
                 "Minn\\Runtime\\BlockFilters",
@@ -120635,7 +120962,7 @@
             "namespace": "Minn\\Runtime",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Runtime/UserInsert.php",
-            "lines": 112,
+            "lines": 115,
             "doc": "The decisions behind wp_insert_user: what a new account needs, which email\nand login collide, the resolved profile fields, and which columns an\nupdate changes. The sanitisers and lookups arrive as closures so the\nreference's filters apply. Behaviour pinned by contracts/fixtures/api/functions.json.",
             "implements": [],
             "extends": null,
@@ -120887,7 +121214,7 @@
                         }
                     ],
                     "line": 106,
-                    "end": 125
+                    "end": 128
                 }
             ]
         },

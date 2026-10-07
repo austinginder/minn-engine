@@ -276,6 +276,7 @@ endif;
 if (!function_exists('wp_new_user_notification')) :
 function wp_new_user_notification($user_id, $deprecated = null, $notify = '')
 {
+    Minn\Runtime\AccountFlows::newUserNotification((int) $user_id, $deprecated, (string) $notify);
 }
 endif;
 

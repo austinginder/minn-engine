@@ -18,6 +18,7 @@ use Minn\Http\Policy;
 use Minn\Http\Route;
 use Minn\Auth\Authenticated;
 use Minn\Auth\Nonce;
+use Minn\Runtime\Runtime;
 use Minn\Support\Html;
 use Minn\Auth\Password;
 use Minn\Auth\PasswordReset;
@@ -77,7 +78,7 @@ final readonly class LoginController
                     'expiredkey' => 'Your password reset link has expired. Please request a new link below.',
                     default => '',
                 };
-                return Response::html(LoginForm::lostPassword($siteName, $this->actionUrl($request, 'lostpassword'), $error, ''));
+                return Response::html(LoginForm::lostPassword($siteName, $this->actionUrl($request, 'lostpassword'), $error, '', $this->parts('lostpassword', 'Lost Password', $siteName)));
             case 'rp':
                 return $this->openResetLink($request);
             case 'resetpass':
@@ -85,7 +86,7 @@ final readonly class LoginController
                 if ($user === null) {
                     return Response::redirect($this->actionUrl($request, 'lostpassword', 'error=invalidkey'), 302);
                 }
-                return Response::html(LoginForm::resetPassword($siteName, $this->actionUrl($request, 'resetpass'), $key, $user->login, ''));
+                return Response::html(LoginForm::resetPassword($siteName, $this->actionUrl($request, 'resetpass'), $key, $user->login, '', $this->parts('resetpass', 'Reset Password', $siteName, $user)));
         }
         $message = match ((string) $request->query('checkemail', '')) {
             'confirm' => 'Check your email for the confirmation link, then visit the login page.',
@@ -119,6 +120,9 @@ final readonly class LoginController
         }
         $login = trim((string) ($request->form['user_login'] ?? ''));
         $siteName = (string) ($this->site->option('blogname') ?? 'Site');
+        if (Runtime::booted()) {
+            return $this->retrieve($request, $login, $siteName);
+        }
         if ($login === '') {
             return Response::html(LoginForm::lostPassword($siteName, $this->actionUrl($request, 'lostpassword'), 'Error: Please enter a username or email address.', ''));
         }
@@ -133,6 +137,25 @@ final readonly class LoginController
             Mailer::noticesFor($this->site)->passwordReset($user->login, $user->email, $link, $request->remoteAddress),
         );
         return Response::redirect($this->permalinks->url($this->base($request) . '?checkemail=confirm'), 302);
+    }
+
+    /**
+     * A reset asked for with plugins loaded, as the reference asks for it
+     * (retrieve_password, its hooks and mail): the page again with the
+     * refusal in its words, or on to "check your email". An unknown
+     * account still counts against the address's attempts.
+     */
+    private function retrieve(Request $request, string $login, string $siteName): Response
+    {
+        $result = \retrieve_password($login);
+        if (!$result instanceof \WP_Error) {
+            return Response::redirect($this->permalinks->url($this->base($request) . '?checkemail=confirm'), 302);
+        }
+        if (in_array($result->get_error_code(), ['invalidcombo', 'invalid_email'], true)) {
+            $this->signIn->recordFailure($request->remoteAddress);
+        }
+        $words = trim(html_entity_decode(strip_tags((string) $result->get_error_message()), ENT_QUOTES | ENT_HTML5, 'UTF-8'));
+        return Response::html(LoginForm::lostPassword($siteName, $this->actionUrl($request, 'lostpassword'), $words, '', $this->parts('lostpassword', 'Lost Password', $siteName)));
     }
 
     /**
@@ -153,7 +176,7 @@ final readonly class LoginController
             return Response::redirect($this->actionUrl($request, 'lostpassword', 'error=invalidkey'), 302);
         }
         $siteName = (string) ($this->site->option('blogname') ?? 'Site');
-        return Response::html(LoginForm::resetPassword($siteName, $this->actionUrl($request, 'resetpass'), $cookieKey, $user->login, ''));
+        return Response::html(LoginForm::resetPassword($siteName, $this->actionUrl($request, 'resetpass'), $cookieKey, $user->login, '', $this->parts('resetpass', 'Reset Password', $siteName, $user)));
     }
 
     /** The user and key from the reset cookie, when the key is still good. @return array{0: ?array, 1: string} */
@@ -190,13 +213,40 @@ final readonly class LoginController
         if ($pass1 === '') {
             return Response::html(LoginForm::resetPassword($siteName, $action, $key, $user->login, 'Error: The password cannot be empty.'));
         }
-        if ($pass1 !== $pass2) {
-            return Response::html(LoginForm::resetPassword($siteName, $action, $key, $user->login, 'Error: The passwords do not match.'));
+        $mismatch = $pass1 !== $pass2 ? 'Error: The passwords do not match.' : '';
+        $refusal = Runtime::booted() ? $this->validateReset($user, $mismatch) : $mismatch;
+        if ($refusal !== '') {
+            return Response::html(LoginForm::resetPassword($siteName, $action, $key, $user->login, $refusal, $this->parts('resetpass', 'Reset Password', $siteName, $user)));
         }
-        $this->users->update($user->id, ['user_pass' => Password::hash($pass1)]);
-        $this->reset->clear($user);
+        if (Runtime::booted()) {
+            \reset_password(new \WP_User($user->id), $pass1);
+        } else {
+            $this->users->update($user->id, ['user_pass' => Password::hash($pass1)]);
+            $this->reset->clear($user);
+        }
         return $this->signIn->endAll(Response::html(LoginForm::notice($siteName, 'Password Reset', 'Your password has been reset.', $this->permalinks->url($this->base($request)))), $user->id)
             ->withCookie('wp-resetpass-' . $this->signIn->hash(), ' ', ['expires' => time() - 31536000, 'path' => $this->base($request), 'httponly' => true, 'secure' => $request->secure, 'samesite' => 'Lax']);
+    }
+
+    /**
+     * A new password judged as the reference judges it: the mismatch, then
+     * whatever validate_password_reset adds; the first refusal as plain
+     * words, or ''.
+     */
+    private function validateReset(UserRecord $user, string $mismatch): string
+    {
+        $errors = new \WP_Error();
+        if ($mismatch !== '') {
+            $errors->add('password_reset_mismatch', '<strong>Error:</strong> The passwords do not match.');
+        }
+        \do_action('validate_password_reset', $errors, new \WP_User($user->id));
+        return $errors->has_errors() ? trim(html_entity_decode(strip_tags((string) $errors->get_error_message()), ENT_QUOTES | ENT_HTML5, 'UTF-8')) : '';
+    }
+
+    /** What plugins put on one of the sign-in pages (LoginHooks::page()), for a page titled $title. @return array<string, string> */
+    private function parts(string $action, string $title, string $siteName, ?UserRecord $user = null): array
+    {
+        return (new LoginHooks($this->users))->page($action, Html::esc($title) . ' &lsaquo; ' . Html::esc($siteName), $siteName, $this->permalinks->url('/'), $user);
     }
 
     /**

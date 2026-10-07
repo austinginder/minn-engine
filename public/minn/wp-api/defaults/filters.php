@@ -139,6 +139,10 @@ add_action('login_head', 'wp_site_icon', 99);
 add_action('login_footer', 'wp_print_footer_scripts', 20);
 add_action('login_init', 'send_frame_options_header', 10, 0);
 add_action('login_init', 'wp_admin_headers');
+// A changed password told to the site's address; a new account told to the site and the user.
+add_action('after_password_reset', 'wp_password_change_notification');
+add_action('register_new_user', 'wp_send_new_user_notifications');
+add_action('edit_user_created_user', 'wp_send_new_user_notifications', 10, 2);
 add_filter('determine_current_user', 'wp_validate_auth_cookie');
 add_filter('determine_current_user', 'wp_validate_logged_in_cookie', 20);
 add_filter('determine_current_user', 'wp_validate_application_password', 20);

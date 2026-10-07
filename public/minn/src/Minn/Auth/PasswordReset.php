@@ -27,9 +27,21 @@ final readonly class PasswordReset
     /** Mints a key, stores its hash, returns the key for the link. */
     public function issue(UserRecord $user): string
     {
-        $key = substr(str_replace(['+', '/', '='], '', base64_encode(random_bytes(24))), 0, 20);
-        $this->users->update($user->id, ['user_activation_key' => time() . ':' . self::hash($key)]);
+        [$key, $stored] = self::mint();
+        $this->users->update($user->id, ['user_activation_key' => $stored]);
         return $key;
+    }
+
+    /**
+     * A new key and the value that stores it (the time it was issued and its
+     * hash), for a caller that saves it itself.
+     *
+     * @return array{0: string, 1: string}
+     */
+    public static function mint(): array
+    {
+        $key = substr(str_replace(['+', '/', '='], '', base64_encode(random_bytes(24))), 0, 20);
+        return [$key, time() . ':' . self::hash($key)];
     }
 
     /** True when the key matches the stored hash and has not expired. */
@@ -38,8 +50,8 @@ final readonly class PasswordReset
         return $this->status($user, $key) === 'valid';
     }
 
-    /** "valid", "expired" (a matching key past its day, or stored without a time), or "invalid". */
-    public function status(UserRecord $user, string $key): string
+    /** "valid", "expired" (a matching key past its lifetime, a day unless given, or stored without a time), or "invalid". */
+    public function status(UserRecord $user, string $key, int $lifetime = self::LIFETIME): string
     {
         $stored = $user->activationKey;
         if ($key === '' || $stored === '') {
@@ -49,7 +61,7 @@ final readonly class PasswordReset
         if (!self::matches($key, $hash)) {
             return 'invalid';
         }
-        return $time === null || $time + self::LIFETIME < time() ? 'expired' : 'valid';
+        return $time === null || $time + $lifetime < time() ? 'expired' : 'valid';
     }
 
     /** Forgets a user's reset key. */

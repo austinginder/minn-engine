@@ -91,31 +91,36 @@ final readonly class LoginHooks
      * login_head, which prints the styles and scripts), the body classes
      * (login_body_class), the header's link and words (login_headerurl,
      * login_headertext), the message above the form (login_message), the
-     * fields inside it (login_form), and the footer (login_footer).
+     * fields inside it (login_form, lostpassword_form or resetpass_form, as
+     * the page is), and the footer (login_footer).
      *
      * @return array{title: string, head: string, bodyClass: string, headerUrl: string, headerText: string, message: string, form: string, footer: string}|array{}
      */
-    public function page(string $action, string $title, string $siteName, string $homeUrl): array
+    public function page(string $action, string $title, string $siteName, string $homeUrl, ?UserRecord $user = null): array
     {
         if (!Runtime::booted()) {
             return [];
         }
-        $printed = static function (string $hook): string {
+        $printed = static function (string $hook, mixed ...$args): string {
             ob_start();
-            \do_action($hook);
+            \do_action($hook, ...$args);
             return (string) ob_get_clean();
         };
-        $head = $printed('login_enqueue_scripts') . $printed('login_head');
-        return [
-            'title' => (string) \apply_filters('login_title', $title, 'Log In'),
-            'head' => $head,
-            'bodyClass' => implode(' ', array_map('sanitize_html_class', (array) \apply_filters('login_body_class', ['login', 'no-js', 'login-action-' . $action], $action))),
-            'headerUrl' => (string) \apply_filters('login_headerurl', $homeUrl),
-            'headerText' => (string) \apply_filters('login_headertext', $siteName),
-            'message' => (string) \apply_filters('login_message', ''),
-            'form' => $printed('login_form'),
-            'footer' => $printed('login_footer'),
-        ];
+        // In the reference's order: the page's head and header, then the form's own hook (the sign-in's,
+        // the lost-password form's, or the new-password form's, with its user), then the footer.
+        $parts = ['title' => (string) \apply_filters('login_title', $title, 'Log In')];
+        $parts['head'] = $printed('login_enqueue_scripts') . $printed('login_head');
+        $parts['bodyClass'] = implode(' ', array_map('sanitize_html_class', (array) \apply_filters('login_body_class', ['login', 'no-js', 'login-action-' . $action], $action)));
+        $parts['headerUrl'] = (string) \apply_filters('login_headerurl', $homeUrl);
+        $parts['headerText'] = (string) \apply_filters('login_headertext', $siteName);
+        $parts['message'] = (string) \apply_filters('login_message', '');
+        $parts['form'] = match ($action) {
+            'lostpassword', 'retrievepassword' => $printed('lostpassword_form'),
+            'rp', 'resetpass' => $printed('resetpass_form', $user === null ? null : new \WP_User($user->id)),
+            default => $printed('login_form'),
+        };
+        $parts['footer'] = $printed('login_footer');
+        return $parts;
     }
 
     /** Where a good sign-in lands, as login_redirect says (the requested address and the user beside it). */

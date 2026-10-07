@@ -84,7 +84,12 @@ final class LoginForm
     }
 
     /** The "forgot password" form: one field, posts to itself. */
-    public static function lostPassword(string $siteName, string $action, string $error, string $message): string
+    /**
+     * The lost-password form.
+     *
+     * @param array{title?: string, head?: string, bodyClass?: string, headerUrl?: string, headerText?: string, message?: string, form?: string, footer?: string} $parts what plugins put on the page (LoginHooks::page())
+     */
+    public static function lostPassword(string $siteName, string $action, string $error, string $message, array $parts = []): string
     {
         return self::page($siteName, 'Lost Password', $error, $message,
             '<form method="post" action="' . Html::attr($action) . '">'
@@ -92,12 +97,17 @@ final class LoginForm
             . '<p class="hint">Enter your username or email address and a link to choose a new password will be sent to you.</p>'
             . '<label for="user_login">Username or Email Address</label>'
             . '<input type="text" name="user_login" id="user_login" autocapitalize="none" autocomplete="username" autofocus required>'
+            . ($parts['form'] ?? '')
             . '<button type="submit" name="wp-submit">Get New Password</button>'
-            . '</form>');
+            . '</form>', $parts);
     }
 
-    /** The new-password form; the key rides in a hidden field as on the reference. */
-    public static function resetPassword(string $siteName, string $action, string $key, string $login, string $error): string
+    /**
+     * The new-password form; the key rides in a hidden field as on the reference.
+     *
+     * @param array{title?: string, head?: string, bodyClass?: string, headerUrl?: string, headerText?: string, message?: string, form?: string, footer?: string} $parts
+     */
+    public static function resetPassword(string $siteName, string $action, string $key, string $login, string $error, array $parts = []): string
     {
         return self::page($siteName, 'Reset Password', $error, '',
             '<form method="post" action="' . Html::attr($action) . '" autocomplete="off">'
@@ -108,8 +118,9 @@ final class LoginForm
             . '<input type="password" name="pass2" id="pass2" autocomplete="new-password" spellcheck="false" required>'
             . '<input type="hidden" name="rp_key" value="' . Html::attr($key) . '">'
             . '<input type="hidden" name="user_login" value="' . Html::attr($login) . '">'
+            . ($parts['form'] ?? '')
             . '<button type="submit" name="wp-submit">Save Password</button>'
-            . '</form>');
+            . '</form>', $parts);
     }
 
     /** A message with a link back to sign-in. */
@@ -120,16 +131,19 @@ final class LoginForm
             . '<p class="hint"><a href="' . Html::attr($loginUrl) . '">Log in</a></p></form>');
     }
 
-    private static function page(string $siteName, string $title, string $error, string $message, string $form): string
+    /** @param array{title?: string, head?: string, bodyClass?: string, message?: string, footer?: string} $parts */
+    private static function page(string $siteName, string $title, string $error, string $message, string $form, array $parts = []): string
     {
         $errorHtml = $error === '' ? '' : '<div class="err">' . Html::esc($error) . '</div>';
         $messageHtml = $message === '' ? '' : '<div class="msg">' . Html::esc($message) . '</div>';
         return '<!doctype html><html lang="en"><head><meta charset="utf-8">'
             . '<meta name="viewport" content="width=device-width, initial-scale=1">'
-            . '<title>' . Html::esc($title) . ' &lsaquo; ' . Html::esc($siteName) . '</title>'
-            . '<style>' . self::CSS . '</style></head><body>'
+            . '<title>' . ($parts['title'] ?? Html::esc($title) . ' &lsaquo; ' . Html::esc($siteName)) . '</title>'
+            . '<style>' . self::CSS . '</style>' . ($parts['head'] ?? '') . '</head>'
+            . '<body' . (isset($parts['bodyClass']) ? ' class="' . Html::attr($parts['bodyClass']) . '"' : '') . '>'
+            . ($parts['message'] ?? '')
             . preg_replace('/<h1>(.*?)<\/h1>/', '<h1>$1</h1>' . $errorHtml . $messageHtml, $form, 1)
-            . '</body></html>';
+            . ($parts['footer'] ?? '') . '</body></html>';
     }
 
     private const CSS = <<<'CSS'

@@ -105,12 +105,15 @@ final readonly class UserInsert
      */
     public static function changes(array $userdata, array $existing, array $resolved, Closure $url, Closure $hash): array
     {
+        ['user_activation_key' => $resetKey] = $userdata + ['user_activation_key' => null];
         $candidates = [
             'user_email' => $resolved['email'],
             'user_url' => isset($userdata['user_url']) ? $url((string) $userdata['user_url']) : null,
             'user_nicename' => $resolved['nicename'],
             'display_name' => $resolved['display_name'],
             'user_registered' => $userdata['user_registered'] ?? null,
+            // A password reset key is saved this way, as the reference saves it (get_password_reset_key).
+            'user_activation_key' => $resetKey,
         ];
         $columns = [];
         foreach ($candidates as $column => $value) {

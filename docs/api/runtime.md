@@ -6,6 +6,7 @@ the WordPress runtime plugins load against
 |---|---|---|---|
 | [`Abilities`](#abilities) | final class | 207 | The abilities registry behind the wp_*_ability facade, as the reference |
 | [`AbilityRun`](#abilityrun) | final class | 41 | Running an ability as the reference runs one (probe abilities-registry): |
+| [`AccountFlows`](#accountflows) | final class | 140 | The account functions a sign-in page and plugins call, with the |
 | [`AjaxController`](#ajaxcontroller) | final readonly class | 72 | admin-ajax.php, the endpoint plugins post their front-end work to: a form |
 | [`AllowedOptions`](#allowedoptions) | final class | 26 | The settings-page allowlist plugins extend: option group => the option |
 | [`ApplicationPasswordEvents`](#applicationpasswordevents) | final class | 46 | Application password changes made over REST, as the reference makes them |
@@ -92,7 +93,7 @@ the WordPress runtime plugins load against
 | [`ThemeSupports`](#themesupports) | final class | 159 | What a theme supports, as add_theme_support keeps it (probe rest-themes): |
 | [`TreeWalk`](#treewalk) | final class | 74 | The Walker contract's traversal: elements keyed by the walker's |
 | [`UserEvents`](#userevents) | final readonly class | 102 | What the reference's REST users controller tells plugins, for the |
-| [`UserInsert`](#userinsert) | final readonly class | 112 | The decisions behind wp_insert_user: what a new account needs, which email |
+| [`UserInsert`](#userinsert) | final readonly class | 115 | The decisions behind wp_insert_user: what a new account needs, which email |
 | [`UserOrder`](#userorder) | final class | 43 | A user query's ORDER BY keys as the reference writes them (probe |
 | [`UserQueryRoles`](#userqueryroles) | final class | 91 | A user query's roles and capabilities as the meta clauses the reference |
 | [`UserQueryRunner`](#userqueryrunner) | final class | 207 | WP_User_Query as the reference runs it (probe wp-user-query-sql): the |
@@ -214,6 +215,44 @@ True, or why the input does not fit.
 ### static `execute(WP_Ability $ability, mixed $callback, mixed $input): mixed`
 
 The ability's answer, or the error that stopped it.
+
+
+## AccountFlows
+
+`final class Minn\Runtime\AccountFlows` · `public/minn/src/Minn/Runtime/AccountFlows.php`
+
+The account functions a sign-in page and plugins call, with the
+reference's checks, words, hooks and mail (probe account-flows): asking
+for a password reset (retrieve_password), resetting one
+(reset_password), registering (register_new_user), and telling the site
+and the new user about a registration (wp_new_user_notification).
+
+- const `NO_ACCOUNT` = `'<strong>Error:</strong> There is no account with that username or email address.'`
+
+### static `retrievePassword(string $login): WP_Error|bool`
+
+A reset link mailed to the account a login or email names: true, or
+the refusal (no name, no such account, a plugin's error, reset not
+allowed, or the mail failing).
+
+### static `resetPassword(WP_User $user, string $password): void`
+
+A new password for a user, announced before (password_reset) and after (after_password_reset).
+
+### static `registerNewUser(string $login, string $email): WP_Error|int`
+
+A new account for a login and an email, with a generated password and
+the nag to change it: its id, or every refusal at once (the name
+empty, illegal, taken or barred; the email empty, malformed or taken;
+whatever register_post and registration_errors add).
+
+### static `newUserNotification(int $userId, mixed $deprecated, string $notify): void`
+
+A new account announced: to the site's address (unless only the user
+is told), then to the user with a link to set their password (unless
+only the site is, or the old call shape asks for nobody).
+
+Internals: `resetLink()` (private, line 151)
 
 
 ## AjaxController
@@ -3153,7 +3192,7 @@ blocks, texturize, paragraphs, shortcodes, block hooks, and the image
 attributes. What it has not (smilies, the capital P, insecure home
 addresses) runs with the plugins' own callbacks.
 
-Used by: `Minn\Admin\BootPayload`, `Minn\Auth\Authenticator`, `Minn\Auth\Capabilities`, `Minn\Auth\RegisteredCaps`, `Minn\Blocks\Dynamic\Theme\Comments`, `Minn\Blocks\Dynamic\Theme\Navigation`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Blocks\ImageTags`, `Minn\Blocks\RenderState`, `Minn\Cli\Runtime`, `Minn\Content\Blocks`, `Minn\Content\PostSlugs`, `Minn\Content\Reader`, `Minn\Content\Site`, `Minn\Content\Terms`, `Minn\Cron\Cron`, `Minn\Db`, `Minn\Engine`, `Minn\Extension\Extensions`, `Minn\Front\CommentPostController`, `Minn\Front\Feeds`, `Minn\Front\FrontController`, `Minn\Front\Permalinks`, `Minn\Front\PluginRules`, `Minn\Front\Resolver`, `Minn\Login\LoginHooks`, `Minn\Mail\Mailer`, `Minn\Media\Icons`, `Minn\Media\Images`, `Minn\Rest\AbilitiesController`, `Minn\Rest\Api`, `Minn\Rest\ApplicationPasswordsController`, `Minn\Rest\BatchController`, `Minn\Rest\BlockRendererController`, `Minn\Rest\BlockTypesController`, `Minn\Rest\Caller`, `Minn\Rest\CommentObject`, `Minn\Rest\Embed`, `Minn\Rest\InstalledThemesController`, `Minn\Rest\MediaController`, `Minn\Rest\MediaObject`, `Minn\Rest\MenusController`, `Minn\Rest\OEmbedController`, `Minn\Rest\PostCollectionParams`, `Minn\Rest\PostObject`, `Minn\Rest\PostsController`, `Minn\Rest\RegisteredType`, `Minn\Rest\RenderedFields`, `Minn\Rest\RestMeta`, `Minn\Rest\RuntimeEnvelope`, `Minn\Rest\RuntimePrepare`, `Minn\Rest\RuntimeRoutes`, `Minn\Rest\Services`, `Minn\Rest\SettingsController`, `Minn\Rest\SidebarsController`, `Minn\Rest\StatusesController`, `Minn\Rest\TemplatesController`, `Minn\Rest\TermFilters`, `Minn\Rest\TermObject`, `Minn\Rest\Types`, `Minn\Rest\TypesController`, `Minn\Rest\UserCollectionParams`, `Minn\Rest\UserObject`, `Minn\Rest\UsersController`, `Minn\Rest\WidgetsController`, `Minn\Runtime\Abilities`, `Minn\Runtime\AjaxController`, `Minn\Runtime\ApplicationPasswordSignIn`, `Minn\Runtime\BlockFilters`, `Minn\Runtime\BlockHooks`, `Minn\Runtime\CommentEvents`, `Minn\Runtime\Constants`, `Minn\Runtime\CurrentUser`, `Minn\Runtime\Deferrals`, `Minn\Runtime\FileUpload`, `Minn\Runtime\Interactivity`, `Minn\Runtime\NavMenu`, `Minn\Runtime\PackageDownload`, `Minn\Runtime\Patterns`, `Minn\Runtime\PlaceholderTrace`, `Minn\Runtime\PluginUpdates`, `Minn\Runtime\Plugins`, `Minn\Runtime\PostEvents`, `Minn\Runtime\PostSave`, `Minn\Runtime\RegisteredSettings`, `Minn\Runtime\Registry`, `Minn\Runtime\ScriptModules`, `Minn\Runtime\TermEvents`, `Minn\Runtime\TermQueryTree`, `Minn\Runtime\TermSave`, `Minn\Runtime\TermWriter`, `Minn\Runtime\ThemeSupports`, `Minn\Runtime\UserEvents`, `Minn\Theme\ArchiveTitle`, `Minn\Theme\ClassicContent`, `Minn\Theme\ClassicRenderer`, `Minn\Theme\MainQueryBridge`, `Minn\Theme\PageRenderer`, `Minn\Theme\Templates`
+Used by: `Minn\Admin\BootPayload`, `Minn\Auth\Authenticator`, `Minn\Auth\Capabilities`, `Minn\Auth\RegisteredCaps`, `Minn\Blocks\Dynamic\Theme\Comments`, `Minn\Blocks\Dynamic\Theme\Navigation`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Blocks\ImageTags`, `Minn\Blocks\RenderState`, `Minn\Cli\Runtime`, `Minn\Content\Blocks`, `Minn\Content\PostSlugs`, `Minn\Content\Reader`, `Minn\Content\Site`, `Minn\Content\Terms`, `Minn\Cron\Cron`, `Minn\Db`, `Minn\Engine`, `Minn\Extension\Extensions`, `Minn\Front\CommentPostController`, `Minn\Front\Feeds`, `Minn\Front\FrontController`, `Minn\Front\Permalinks`, `Minn\Front\PluginRules`, `Minn\Front\Resolver`, `Minn\Login\LoginController`, `Minn\Login\LoginHooks`, `Minn\Mail\Mailer`, `Minn\Media\Icons`, `Minn\Media\Images`, `Minn\Rest\AbilitiesController`, `Minn\Rest\Api`, `Minn\Rest\ApplicationPasswordsController`, `Minn\Rest\BatchController`, `Minn\Rest\BlockRendererController`, `Minn\Rest\BlockTypesController`, `Minn\Rest\Caller`, `Minn\Rest\CommentObject`, `Minn\Rest\Embed`, `Minn\Rest\InstalledThemesController`, `Minn\Rest\MediaController`, `Minn\Rest\MediaObject`, `Minn\Rest\MenusController`, `Minn\Rest\OEmbedController`, `Minn\Rest\PostCollectionParams`, `Minn\Rest\PostObject`, `Minn\Rest\PostsController`, `Minn\Rest\RegisteredType`, `Minn\Rest\RenderedFields`, `Minn\Rest\RestMeta`, `Minn\Rest\RuntimeEnvelope`, `Minn\Rest\RuntimePrepare`, `Minn\Rest\RuntimeRoutes`, `Minn\Rest\Services`, `Minn\Rest\SettingsController`, `Minn\Rest\SidebarsController`, `Minn\Rest\StatusesController`, `Minn\Rest\TemplatesController`, `Minn\Rest\TermFilters`, `Minn\Rest\TermObject`, `Minn\Rest\Types`, `Minn\Rest\TypesController`, `Minn\Rest\UserCollectionParams`, `Minn\Rest\UserObject`, `Minn\Rest\UsersController`, `Minn\Rest\WidgetsController`, `Minn\Runtime\Abilities`, `Minn\Runtime\AccountFlows`, `Minn\Runtime\AjaxController`, `Minn\Runtime\ApplicationPasswordSignIn`, `Minn\Runtime\BlockFilters`, `Minn\Runtime\BlockHooks`, `Minn\Runtime\CommentEvents`, `Minn\Runtime\Constants`, `Minn\Runtime\CurrentUser`, `Minn\Runtime\Deferrals`, `Minn\Runtime\FileUpload`, `Minn\Runtime\Interactivity`, `Minn\Runtime\NavMenu`, `Minn\Runtime\PackageDownload`, `Minn\Runtime\Patterns`, `Minn\Runtime\PlaceholderTrace`, `Minn\Runtime\PluginUpdates`, `Minn\Runtime\Plugins`, `Minn\Runtime\PostEvents`, `Minn\Runtime\PostSave`, `Minn\Runtime\RegisteredSettings`, `Minn\Runtime\Registry`, `Minn\Runtime\ScriptModules`, `Minn\Runtime\TermEvents`, `Minn\Runtime\TermQueryTree`, `Minn\Runtime\TermSave`, `Minn\Runtime\TermWriter`, `Minn\Runtime\ThemeSupports`, `Minn\Runtime\UserEvents`, `Minn\Theme\ArchiveTitle`, `Minn\Theme\ClassicContent`, `Minn\Theme\ClassicRenderer`, `Minn\Theme\MainQueryBridge`, `Minn\Theme\PageRenderer`, `Minn\Theme\Templates`
 
 ```php
 __construct(Minn\Context $context, bool $isAdmin = false)

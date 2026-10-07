@@ -9,8 +9,9 @@
  * title, head tag and style, body class, message, the field inside the
  * form, footer mark and header link; the login actions it heard; a
  * sign-in without its field refused in its words, one with it landing
- * where login_redirect says; and a sign-out landing where logout_redirect
- * says. The fixture, the run and the suite's user live only while it runs.
+ * where login_redirect says; a sign-out landing where logout_redirect
+ * says; and the lost-password form's own field, a reset asked for
+ * without it refused in the plugin's words and one with it sent on. The fixture, the run and the suite's user live only while it runs.
  *
  *   php tests/login-hooks.test.php
  */
@@ -147,6 +148,22 @@ $left = $both(static function (string $stack) use ($ask, $stacks): array {
 });
 $same('a sign-out: where it lands', $left);
 $same('a sign-out: the actions heard', $both($heard));
+
+$lostPages = $both(static function (string $stack) use ($ask): bool {
+    preg_match('/<form[^>]*>(.*?)<\/form>/s', $ask($stack, '/wp-login.php?action=lostpassword')[2], $form);
+    return str_contains($form[1] ?? '', 'name="zz_human_lost"');
+});
+$same('the lost-password page: the field in the form', $lostPages);
+$same('the lost-password page: the actions heard', $both($heard));
+$lostRefused = $both(static fn (string $stack) => str_contains($ask($stack, '/wp-login.php?action=lostpassword', ['user_login' => 'login-hooks-reader'])[2], 'Zz: prove it to reset.'));
+$same('a reset asked for without the field: refused in the plugin\'s words', $lostRefused);
+$same('a reset asked for without the field: the actions heard', $both($heard));
+$lostSent = $both(static function (string $stack) use ($ask): array {
+    [$status, $location] = $ask($stack, '/wp-login.php?action=lostpassword', ['user_login' => 'login-hooks-reader', 'zz_human_lost' => 'yes']);
+    return [$status, str_contains($location, 'checkemail=confirm')];
+});
+$same('a reset asked for with the field: on to check the email', $lostSent);
+$same('a reset asked for with the field: the actions heard', $both($heard));
 
 echo "\n{$pass} passed, {$fail} failed\n";
 exit($fail === 0 ? 0 : 1);
