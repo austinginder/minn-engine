@@ -232,7 +232,8 @@ final readonly class Resolver
             }
             $link = $this->permalinks->forPost($post);
             if ($pretty && !str_contains($link, '?')) {
-                return Resolution::redirect($link);
+                // The other arguments go along (?embed=true, a campaign's tags), as the reference's canonical redirect keeps them.
+                return Resolution::redirect($link . $request->queryStringWithout($key));
             }
             return Resolution::single($post);
         }

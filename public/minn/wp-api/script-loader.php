@@ -170,6 +170,10 @@ function _minn_source_url(string $id): string
 
 function wp_print_styles($handles = false)
 {
+    // Hooked to an action, it is handed the action's empty argument: that is every queued style.
+    if ($handles === '') {
+        $handles = false;
+    }
     do_action('wp_print_styles');
     return _minn_print_styles($handles);
 }

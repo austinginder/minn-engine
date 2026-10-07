@@ -464,3 +464,14 @@ function wp_setup_widgets_block_editor()
 {
     ThemeSupports::editorDefaults('widgets-block-editor');
 }
+
+/** The theme's stylesheet for the locale ({locale}.css), else for its text direction (rtl.css), through locale_stylesheet_uri. */
+function get_locale_stylesheet_uri()
+{
+    $dir = get_stylesheet_directory();
+    $uri = get_stylesheet_directory_uri();
+    $locale = get_locale();
+    $direction = (string) ($GLOBALS['wp_locale']->text_direction ?? '');
+    $stylesheet = file_exists("{$dir}/{$locale}.css") ? "{$uri}/{$locale}.css" : ($direction !== '' && file_exists("{$dir}/{$direction}.css") ? "{$uri}/{$direction}.css" : '');
+    return apply_filters('locale_stylesheet_uri', $stylesheet, $uri);
+}

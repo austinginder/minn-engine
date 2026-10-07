@@ -73,11 +73,23 @@ final readonly class PageRenderer
      * The reference's body-class tokens: the singular and template tokens
      * sit in front of the type token ("page", "single"), the custom-logo
      * and embed tokens follow the core set, the paging tokens come after
-     * those, and the theme (and child theme) tokens close the list.
+     * those, and the theme (and child theme) tokens close the list; then
+     * the body_class filter.
      *
      * @return list<string>
      */
     public function bodyClasses(Resolution $resolution, array $coreClasses): array
+    {
+        $classes = $this->themeClasses($resolution, $coreClasses);
+        if (Runtime::booted()) {
+            $filtered = Runtime::hooks()->filter('body_class', [$classes, []]);
+            $classes = is_array($filtered) ? array_values(array_map('strval', $filtered)) : $classes;
+        }
+        return $classes;
+    }
+
+    /** The body-class tokens before plugins filter them (bodyClasses()). @return list<string> */
+    public function themeClasses(Resolution $resolution, array $coreClasses): array
     {
         $paging = array_values(array_filter($coreClasses, static fn (string $c) => preg_match('/^(?:page|single)?-?paged-\d+$/', $c) === 1));
         $classes = array_values(array_diff($coreClasses, $paging));
@@ -109,10 +121,6 @@ final readonly class PageRenderer
         array_push($classes, ...(Extensions::runner()?->bodyClasses() ?? []));
         if ($this->bar !== null && !$resolution->preview) {
             $classes[] = 'minn-front-bar';
-        }
-        if (Runtime::booted()) {
-            $filtered = Runtime::hooks()->filter('body_class', [$classes, []]);
-            $classes = is_array($filtered) ? array_values(array_map('strval', $filtered)) : $classes;
         }
         return $classes;
     }

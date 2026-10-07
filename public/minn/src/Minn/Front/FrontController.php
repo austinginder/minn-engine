@@ -14,6 +14,7 @@ use Minn\Theme\ClassicRenderer;
 use Minn\Theme\PageRenderer;
 use Minn\Cron\Cron;
 use Minn\Runtime\Runtime;
+use Minn\Theme\EmbedRenderer;
 
 /**
  * The public site. One catch-all route: resolve the URL, then either
@@ -31,6 +32,7 @@ final readonly class FrontController
         private ?Cron $cron = null,
         private ?ClassicRenderer $classic = null,
         private ?SitemapController $sitemaps = null,
+        private ?EmbedRenderer $embeds = null,
     ) {
     }
 
@@ -70,6 +72,11 @@ final readonly class FrontController
         $resolution = $this->resolver->resolve($request);
         if ($resolution->kind === Kind::Redirect) {
             return Response::redirect((string) $resolution->location, $resolution->status);
+        }
+        if ($this->embeds !== null && Runtime::booted() && EmbedRenderer::asked($request, $resolution)) {
+            $core = $this->renderer->bodyClasses($resolution);
+            $classes = Runtime::current()->get('block_theme', false) ? $this->theme?->themeClasses($resolution, $core) : $this->classic?->themeClasses($resolution, $core);
+            return $this->embeds->render($resolution, $classes ?? $core)->withHeader('X-Powered-By', 'Minn');
         }
         if ($this->sitemaps !== null && Runtime::booted() && ($request->has('sitemap') || $request->has('sitemap-stylesheet'))) {
             return $this->sitemaps->queried($request);

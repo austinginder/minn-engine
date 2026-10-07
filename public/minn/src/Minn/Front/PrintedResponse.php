@@ -25,12 +25,12 @@ final class PrintedResponse
      *
      * @param array<string, mixed> $vars the request's own query variables
      */
-    public static function stand(MainQueryBridge $bridge, array $vars, ?Closure $print = null): ?Response
+    public static function stand(MainQueryBridge $bridge, array $vars, ?Closure $print = null, ?Resolution $resolution = null): ?Response
     {
         $level = ob_get_level();
         ob_start();
         try {
-            $bridge->stand(Resolution::home(), $vars);
+            $bridge->stand($resolution ?? Resolution::home(), $vars);
             if ($print === null) {
                 self::discard($level);
                 return null;

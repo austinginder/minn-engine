@@ -34880,6 +34880,7 @@
                 "Minn\\Support\\Serialized",
                 "Minn\\Theme\\ClassicRenderer",
                 "Minn\\Theme\\ClassicTheme",
+                "Minn\\Theme\\EmbedRenderer",
                 "Minn\\Theme\\MainQueryBridge",
                 "Minn\\Theme\\PageRenderer",
                 "Minn\\Theme\\Theme"
@@ -40058,6 +40059,114 @@
             ]
         },
         {
+            "name": "Minn\\Front\\EmbedCard",
+            "short": "EmbedCard",
+            "namespace": "Minn\\Front",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Front/EmbedCard.php",
+            "lines": 95,
+            "doc": "The parts of a post's embed card the reference's embed template prints,\nas markup: the featured image and its shape (the widest of the image's\nsizes; wide enough and it sits above the title, else beside it, both by\nfilter), the site's name and icon, the comments and sharing buttons, and\nthe sharing dialog (its ids the post's and a random number, as on the\nreference). The facade's template tags print them.",
+            "implements": [],
+            "extends": null,
+            "uses": [],
+            "usedBy": [],
+            "constructor": null,
+            "cases": [],
+            "constants": [],
+            "properties": [],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "thumbnail",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "thumbnail(): ?array",
+                    "doc": "The featured image the card shows: [attachment id, size, shape], or\nnull. A post's thumbnail, or an image attachment itself, through\nembed_thumbnail_id, embed_thumbnail_image_size and\nembed_thumbnail_image_shape.",
+                    "shapes": [
+                        "@return array{0: int, 1: string, 2: string}|null"
+                    ],
+                    "params": [],
+                    "line": 25,
+                    "end": 48
+                },
+                {
+                    "routes": [],
+                    "name": "featuredImage",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "featuredImage(?array $thumbnail, string $shape): string",
+                    "doc": "The featured image's block, when the card shows one of this shape.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "thumbnail",
+                            "type": "?array",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "shape",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 51,
+                    "end": 59
+                },
+                {
+                    "routes": [],
+                    "name": "siteTitle",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "siteTitle(): string",
+                    "doc": "The site's name and icon, linking home, the whole block through embed_site_title_html.",
+                    "shapes": [],
+                    "params": [],
+                    "line": 62,
+                    "end": 71
+                },
+                {
+                    "routes": [],
+                    "name": "commentsButton",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "commentsButton(): string",
+                    "doc": "The comments button: the count, linking to the comments; none on a 404, or with neither comments nor comments open.",
+                    "shapes": [],
+                    "params": [],
+                    "line": 74,
+                    "end": 83
+                },
+                {
+                    "routes": [],
+                    "name": "sharingButton",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "sharingButton(): string",
+                    "doc": "The button that opens the sharing dialog; none on a 404.",
+                    "shapes": [],
+                    "params": [],
+                    "line": 86,
+                    "end": 92
+                },
+                {
+                    "routes": [],
+                    "name": "sharingDialog",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "sharingDialog(): string",
+                    "doc": "The sharing dialog: the post's address and its embed code, each a tab; none on a 404.",
+                    "shapes": [],
+                    "params": [],
+                    "line": 95,
+                    "end": 108
+                }
+            ]
+        },
+        {
             "name": "Minn\\Front\\FeedController",
             "short": "FeedController",
             "namespace": "Minn\\Front",
@@ -41697,7 +41806,7 @@
             "namespace": "Minn\\Front",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Front/FrontController.php",
-            "lines": 66,
+            "lines": 72,
             "doc": "The public site. One catch-all route: resolve the URL, then either\nredirect or render, through the active block theme when there is one,\nthe classic PHP template runner when the theme is classic, and the\ninterim template otherwise.",
             "implements": [],
             "extends": null,
@@ -41717,13 +41826,14 @@
                 "Minn\\Http\\Route",
                 "Minn\\Runtime\\Runtime",
                 "Minn\\Theme\\ClassicRenderer",
+                "Minn\\Theme\\EmbedRenderer",
                 "Minn\\Theme\\PageRenderer"
             ],
             "usedBy": [
                 "Minn\\Engine"
             ],
             "constructor": {
-                "signature": "__construct(Minn\\Front\\Resolver $resolver, Minn\\Front\\Renderer $renderer, ?Minn\\Theme\\PageRenderer $theme = NULL, ?Minn\\Front\\FeedController $feeds = NULL, ?Minn\\Cron\\Cron $cron = NULL, ?Minn\\Theme\\ClassicRenderer $classic = NULL, ?Minn\\Front\\SitemapController $sitemaps = NULL)",
+                "signature": "__construct(Minn\\Front\\Resolver $resolver, Minn\\Front\\Renderer $renderer, ?Minn\\Theme\\PageRenderer $theme = NULL, ?Minn\\Front\\FeedController $feeds = NULL, ?Minn\\Cron\\Cron $cron = NULL, ?Minn\\Theme\\ClassicRenderer $classic = NULL, ?Minn\\Front\\SitemapController $sitemaps = NULL, ?Minn\\Theme\\EmbedRenderer $embeds = NULL)",
                 "doc": "",
                 "shapes": [],
                 "params": [
@@ -41775,11 +41885,18 @@
                         "shape": "",
                         "default": "NULL",
                         "doc": ""
+                    },
+                    {
+                        "name": "embeds",
+                        "type": "?Minn\\Theme\\EmbedRenderer",
+                        "shape": "",
+                        "default": "NULL",
+                        "doc": ""
                     }
                 ],
                 "visibility": "public",
-                "line": 26,
-                "end": 35
+                "line": 27,
+                "end": 37
             },
             "cases": [],
             "constants": [],
@@ -41846,6 +41963,15 @@
                     "doc": "",
                     "visibility": "private",
                     "promoted": true
+                },
+                {
+                    "name": "embeds",
+                    "type": "?Minn\\Theme\\EmbedRenderer",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
                 }
             ],
             "methods": [
@@ -41858,8 +41984,8 @@
                     "doc": "The themed (or interim) 404 page.",
                     "shapes": [],
                     "params": [],
-                    "line": 38,
-                    "end": 41
+                    "line": 40,
+                    "end": 43
                 },
                 {
                     "routes": [],
@@ -41878,8 +42004,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 44,
-                    "end": 50
+                    "line": 46,
+                    "end": 52
                 },
                 {
                     "routes": [
@@ -41900,8 +42026,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 54,
-                    "end": 66
+                    "line": 56,
+                    "end": 68
                 },
                 {
                     "routes": [],
@@ -41920,8 +42046,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 68,
-                    "end": 88
+                    "line": 70,
+                    "end": 95
                 }
             ]
         },
@@ -41955,6 +42081,7 @@
                 "Minn\\Theme\\ArchiveTitle",
                 "Minn\\Theme\\BodyClasses",
                 "Minn\\Theme\\ClassicRenderer",
+                "Minn\\Theme\\EmbedRenderer",
                 "Minn\\Theme\\HeadLinks",
                 "Minn\\Theme\\MainQueryBridge",
                 "Minn\\Theme\\PageRenderer",
@@ -43911,7 +44038,8 @@
             ],
             "usedBy": [
                 "Minn\\Front\\ProbeController",
-                "Minn\\Front\\SitemapController"
+                "Minn\\Front\\SitemapController",
+                "Minn\\Theme\\EmbedRenderer"
             ],
             "constructor": null,
             "cases": [],
@@ -43923,7 +44051,7 @@
                     "name": "stand",
                     "static": true,
                     "visibility": "public",
-                    "signature": "stand(Minn\\Theme\\MainQueryBridge $bridge, array $vars, ?Closure $print = NULL): ?Minn\\Http\\Response",
+                    "signature": "stand(Minn\\Theme\\MainQueryBridge $bridge, array $vars, ?Closure $print = NULL, ?Minn\\Front\\Resolution $resolution = NULL): ?Minn\\Http\\Response",
                     "doc": "The request served this way, or null for the theme to render.",
                     "shapes": [
                         "@param array<string, mixed> $vars the request's own query variables"
@@ -43946,6 +44074,13 @@
                         {
                             "name": "print",
                             "type": "?Closure",
+                            "shape": "",
+                            "default": "NULL",
+                            "doc": ""
+                        },
+                        {
+                            "name": "resolution",
+                            "type": "?Minn\\Front\\Resolution",
                             "shape": "",
                             "default": "NULL",
                             "doc": ""
@@ -44574,6 +44709,7 @@
                 "Minn\\Theme\\ArchiveTitle",
                 "Minn\\Theme\\BodyClasses",
                 "Minn\\Theme\\ClassicRenderer",
+                "Minn\\Theme\\EmbedRenderer",
                 "Minn\\Theme\\HeadLinks",
                 "Minn\\Theme\\MainQueryBridge",
                 "Minn\\Theme\\PageRenderer",
@@ -45135,7 +45271,7 @@
             "namespace": "Minn\\Front",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Front/Resolver.php",
-            "lines": 554,
+            "lines": 555,
             "doc": "Turns a public URL into a Resolution, following the reference's observed\nrules:\n\n- Unpaged content and archives without a trailing slash redirect to the\nslashed form, as typed (case kept); paged views, search, and 404s do not.\n- Query-var forms (?p=, ?page_id=, ?cat=, ?tag=, ?author=, ?m=, ?name=,\n?pagename=) redirect to the pretty form when the target is public.\n- Archive-shaped paths (category, tag, author, search, a four-digit year)\nare strict: a mismatch is a 404 with no guessing.\n- Plain-segment paths try the page hierarchy, then the post structure,\nthen redirect to the closest published page or post whose name starts\nwith the last segment, pages before posts, newest first.\n- Empty term and date archives are 404; an author archive is 200 for any\nname, even one that belongs to nobody.\n- Non-public posts are 404 to anonymous readers and served to a reader\nwho can edit them.",
             "implements": [],
             "extends": null,
@@ -45384,8 +45520,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 459,
-                    "end": 474
+                    "line": 460,
+                    "end": 475
                 },
                 {
                     "routes": [],
@@ -45461,7 +45597,7 @@
                         }
                     ],
                     "line": 211,
-                    "end": 292
+                    "end": 293
                 },
                 {
                     "routes": [],
@@ -45501,8 +45637,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 294,
-                    "end": 309
+                    "line": 295,
+                    "end": 310
                 },
                 {
                     "routes": [],
@@ -45521,8 +45657,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 311,
-                    "end": 323
+                    "line": 312,
+                    "end": 324
                 },
                 {
                     "routes": [],
@@ -45550,8 +45686,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 333,
-                    "end": 365
+                    "line": 334,
+                    "end": 366
                 },
                 {
                     "routes": [],
@@ -45572,8 +45708,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 368,
-                    "end": 371
+                    "line": 369,
+                    "end": 372
                 },
                 {
                     "routes": [],
@@ -45616,8 +45752,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 377,
-                    "end": 388
+                    "line": 378,
+                    "end": 389
                 },
                 {
                     "routes": [],
@@ -45652,8 +45788,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 391,
-                    "end": 401
+                    "line": 392,
+                    "end": 402
                 },
                 {
                     "routes": [],
@@ -45686,8 +45822,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 404,
-                    "end": 411
+                    "line": 405,
+                    "end": 412
                 },
                 {
                     "routes": [],
@@ -45713,8 +45849,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 413,
-                    "end": 427
+                    "line": 414,
+                    "end": 428
                 },
                 {
                     "routes": [],
@@ -45742,8 +45878,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 430,
-                    "end": 452
+                    "line": 431,
+                    "end": 453
                 },
                 {
                     "routes": [],
@@ -45778,8 +45914,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 477,
-                    "end": 515
+                    "line": 478,
+                    "end": 516
                 },
                 {
                     "routes": [],
@@ -45814,8 +45950,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 518,
-                    "end": 553
+                    "line": 519,
+                    "end": 554
                 },
                 {
                     "routes": [],
@@ -45826,8 +45962,8 @@
                     "doc": "The addresses a single answers to besides its own.",
                     "shapes": [],
                     "params": [],
-                    "line": 556,
-                    "end": 559
+                    "line": 557,
+                    "end": 560
                 },
                 {
                     "routes": [],
@@ -45860,8 +45996,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 561,
-                    "end": 568
+                    "line": 562,
+                    "end": 569
                 },
                 {
                     "routes": [],
@@ -45880,8 +46016,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 570,
-                    "end": 585
+                    "line": 571,
+                    "end": 586
                 },
                 {
                     "routes": [],
@@ -45900,8 +46036,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 587,
-                    "end": 590
+                    "line": 588,
+                    "end": 591
                 }
             ]
         },
@@ -60414,6 +60550,7 @@
                 "Minn\\Runtime\\Runtime",
                 "Minn\\Runtime\\TermEvents",
                 "Minn\\Runtime\\UserEvents",
+                "Minn\\Theme\\EmbedRenderer",
                 "Minn\\Theme\\FeedHeaders"
             ],
             "constructor": {
@@ -61002,6 +61139,7 @@
                 "Minn\\Rest\\UsersController",
                 "Minn\\Rest\\WidgetsController",
                 "Minn\\Runtime\\AjaxController",
+                "Minn\\Theme\\EmbedRenderer",
                 "Minn\\Theme\\FrontLifecycle"
             ],
             "constructor": {
@@ -73196,7 +73334,7 @@
             "namespace": "Minn\\Media",
             "kind": "final class",
             "file": "public/minn/src/Minn/Media/Sizing.php",
-            "lines": 224,
+            "lines": 226,
             "doc": "The image size arithmetic the media functions share: the crop or scale a\nresize needs, the registered size a requested box picks, and the srcset\ncandidates an image's sizes yield. Behaviour pinned by contracts/fixtures/api/media.json.",
             "implements": [],
             "extends": null,
@@ -73399,7 +73537,7 @@
                         }
                     ],
                     "line": 146,
-                    "end": 178
+                    "end": 180
                 },
                 {
                     "routes": [],
@@ -73418,8 +73556,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 181,
-                    "end": 191
+                    "line": 183,
+                    "end": 193
                 },
                 {
                     "routes": [],
@@ -73468,8 +73606,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 194,
-                    "end": 214
+                    "line": 196,
+                    "end": 216
                 },
                 {
                     "routes": [],
@@ -73497,8 +73635,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 228,
-                    "end": 236
+                    "line": 230,
+                    "end": 238
                 },
                 {
                     "routes": [],
@@ -73524,8 +73662,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 216,
-                    "end": 219
+                    "line": 218,
+                    "end": 221
                 }
             ]
         },
@@ -118031,6 +118169,7 @@
                 "Minn\\Theme\\ArchiveTitle",
                 "Minn\\Theme\\ClassicContent",
                 "Minn\\Theme\\ClassicRenderer",
+                "Minn\\Theme\\EmbedRenderer",
                 "Minn\\Theme\\FrontLifecycle",
                 "Minn\\Theme\\HeadLinks",
                 "Minn\\Theme\\MainQueryBridge",
@@ -129620,7 +129759,7 @@
             "namespace": "Minn\\Theme",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Theme/ClassicRenderer.php",
-            "lines": 139,
+            "lines": 145,
             "doc": "A whole page from the active classic theme: the reference's PHP template\nloader. The main query stands, template_redirect fires, the hierarchy\npicks a PHP file, template_include filters it, and load_template() runs\nit as the response body. The theme prints its own document; the engine\ncontributes the reference's wp_head defaults (title tag, robots, feed\nlinks, REST and oEmbed discovery, canonical, site icon) as hooks the\ntheme's wp_head() call fires.",
             "implements": [],
             "extends": null,
@@ -129868,6 +130007,35 @@
                 },
                 {
                     "routes": [],
+                    "name": "themeClasses",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "themeClasses(Minn\\Front\\Resolution $resolution, array $coreClasses): array",
+                    "doc": "The body-class tokens before plugins filter them (get_body_class filters them). @return list<string>",
+                    "shapes": [
+                        "@return list<string>"
+                    ],
+                    "params": [
+                        {
+                            "name": "resolution",
+                            "type": "Minn\\Front\\Resolution",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "coreClasses",
+                            "type": "array",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 121,
+                    "end": 124
+                },
+                {
+                    "routes": [],
                     "name": "template",
                     "static": false,
                     "visibility": "private",
@@ -129885,9 +130053,7 @@
                     "visibility": "private",
                     "signature": "bodyClasses(Minn\\Front\\Resolution $resolution, array $coreClasses): array",
                     "doc": "",
-                    "shapes": [
-                        "@param list<string> $coreClasses @return list<string>"
-                    ],
+                    "shapes": [],
                     "params": [
                         {
                             "name": "resolution",
@@ -129899,13 +130065,13 @@
                         {
                             "name": "coreClasses",
                             "type": "array",
-                            "shape": "list<string>",
+                            "shape": "",
                             "default": null,
-                            "doc": "@return list<string>"
+                            "doc": ""
                         }
                     ],
-                    "line": 120,
-                    "end": 135
+                    "line": 126,
+                    "end": 141
                 },
                 {
                     "routes": [],
@@ -129924,8 +130090,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 137,
-                    "end": 144
+                    "line": 143,
+                    "end": 150
                 },
                 {
                     "routes": [],
@@ -129936,8 +130102,8 @@
                     "doc": "The piece only the renderer holds: the engine stylesheets. The head defaults registered at setup_theme.",
                     "shapes": [],
                     "params": [],
-                    "line": 147,
-                    "end": 150
+                    "line": 153,
+                    "end": 156
                 },
                 {
                     "routes": [],
@@ -129948,8 +130114,8 @@
                     "doc": "The engine's block stylesheet, and the theme.json presets when the theme ships one, where the reference prints its block-library and global styles.",
                     "shapes": [],
                     "params": [],
-                    "line": 153,
-                    "end": 166
+                    "line": 159,
+                    "end": 172
                 }
             ]
         },
@@ -130075,6 +130241,118 @@
                     ],
                     "line": 26,
                     "end": 44
+                }
+            ]
+        },
+        {
+            "name": "Minn\\Theme\\EmbedRenderer",
+            "short": "EmbedRenderer",
+            "namespace": "Minn\\Theme",
+            "kind": "final readonly class",
+            "file": "public/minn/src/Minn/Theme/EmbedRenderer.php",
+            "lines": 32,
+            "doc": "A post's embed page (its /embed/ address, or ?embed= on it), the card\nanother site's iframe shows, as the reference prints it: the main query\nstood with the embed asked for, then the embed template (the theme's\nown embed-{type}.php or embed.php, else the engine's theme-compat one)\nthrough template_include, with embed_head, embed_content,\nembed_content_meta and embed_footer. An address that embeds nothing\ngets the 404 card.",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\Front\\Kind",
+                "Minn\\Front\\PrintedResponse",
+                "Minn\\Front\\Resolution",
+                "Minn\\Http\\Request",
+                "Minn\\Http\\Response",
+                "Minn\\Runtime\\Runtime",
+                "Minn\\Theme\\MainQueryBridge"
+            ],
+            "usedBy": [
+                "Minn\\Engine",
+                "Minn\\Front\\FrontController"
+            ],
+            "constructor": {
+                "signature": "__construct(Minn\\Theme\\MainQueryBridge $bridge)",
+                "doc": "",
+                "shapes": [],
+                "params": [
+                    {
+                        "name": "bridge",
+                        "type": "Minn\\Theme\\MainQueryBridge",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    }
+                ],
+                "visibility": "public",
+                "line": 25,
+                "end": 28
+            },
+            "cases": [],
+            "constants": [],
+            "properties": [
+                {
+                    "name": "bridge",
+                    "type": "Minn\\Theme\\MainQueryBridge",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
+                }
+            ],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "asked",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "asked(Minn\\Http\\Request $request, Minn\\Front\\Resolution $resolution): bool",
+                    "doc": "Whether a request for this resolution asks for its embed page.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "request",
+                            "type": "Minn\\Http\\Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "resolution",
+                            "type": "Minn\\Front\\Resolution",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 31,
+                    "end": 35
+                },
+                {
+                    "routes": [],
+                    "name": "render",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "render(Minn\\Front\\Resolution $resolution, array $bodyClasses): Minn\\Http\\Response",
+                    "doc": "The embed page, under the status the request's main query settled on;\nthe body classes the theme's page would carry (the Minn bar's aside).",
+                    "shapes": [
+                        "@param list<string> $bodyClasses"
+                    ],
+                    "params": [
+                        {
+                            "name": "resolution",
+                            "type": "Minn\\Front\\Resolution",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "bodyClasses",
+                            "type": "array",
+                            "shape": "list<string>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 43,
+                    "end": 53
                 }
             ]
         },
@@ -131605,6 +131883,7 @@
                 "Minn\\Front\\ProbeController",
                 "Minn\\Front\\SitemapController",
                 "Minn\\Theme\\ClassicRenderer",
+                "Minn\\Theme\\EmbedRenderer",
                 "Minn\\Theme\\PageRenderer"
             ],
             "constructor": {
@@ -131872,7 +132151,7 @@
             "namespace": "Minn\\Theme",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Theme/PageRenderer.php",
-            "lines": 197,
+            "lines": 205,
             "doc": "A whole page from the active block theme: the template the resolution\nmaps to, rendered against the main query, inside the document shell the\nreference emits (skip link, wp-site-blocks, the skip-link target on the\nfirst main element).",
             "implements": [],
             "extends": null,
@@ -132097,7 +132376,7 @@
                     "static": false,
                     "visibility": "public",
                     "signature": "bodyClasses(Minn\\Front\\Resolution $resolution, array $coreClasses): array",
-                    "doc": "The reference's body-class tokens: the singular and template tokens\nsit in front of the type token (\"page\", \"single\"), the custom-logo\nand embed tokens follow the core set, the paging tokens come after\nthose, and the theme (and child theme) tokens close the list.",
+                    "doc": "The reference's body-class tokens: the singular and template tokens\nsit in front of the type token (\"page\", \"single\"), the custom-logo\nand embed tokens follow the core set, the paging tokens come after\nthose, and the theme (and child theme) tokens close the list; then\nthe body_class filter.",
                     "shapes": [
                         "@return list<string>"
                     ],
@@ -132117,8 +132396,37 @@
                             "doc": ""
                         }
                     ],
-                    "line": 80,
-                    "end": 118
+                    "line": 81,
+                    "end": 89
+                },
+                {
+                    "routes": [],
+                    "name": "themeClasses",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "themeClasses(Minn\\Front\\Resolution $resolution, array $coreClasses): array",
+                    "doc": "The body-class tokens before plugins filter them (bodyClasses()). @return list<string>",
+                    "shapes": [
+                        "@return list<string>"
+                    ],
+                    "params": [
+                        {
+                            "name": "resolution",
+                            "type": "Minn\\Front\\Resolution",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "coreClasses",
+                            "type": "array",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 92,
+                    "end": 126
                 },
                 {
                     "routes": [],
@@ -132151,8 +132459,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 121,
-                    "end": 155
+                    "line": 129,
+                    "end": 163
                 },
                 {
                     "routes": [],
@@ -132163,8 +132471,8 @@
                     "doc": "The reference filters template_include under block themes too (the\ncanvas is the incoming value); a plugin swapping in its own PHP file\ntakes the whole response over, the CaptainCore Manager shape.",
                     "shapes": [],
                     "params": [],
-                    "line": 162,
-                    "end": 175
+                    "line": 170,
+                    "end": 183
                 },
                 {
                     "routes": [],
@@ -132185,8 +132493,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 183,
-                    "end": 189
+                    "line": 191,
+                    "end": 197
                 },
                 {
                     "routes": [],
@@ -132212,8 +132520,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 192,
-                    "end": 206
+                    "line": 200,
+                    "end": 214
                 },
                 {
                     "routes": [],
@@ -132253,8 +132561,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 214,
-                    "end": 238
+                    "line": 222,
+                    "end": 246
                 }
             ]
         },

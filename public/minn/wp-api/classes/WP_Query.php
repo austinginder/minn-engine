@@ -217,10 +217,11 @@ class WP_Query
 
     public function set_404()
     {
-        $feed = $this->is_feed;
+        [$feed, $embed] = [$this->is_feed, $this->is_embed];
         $this->init_query_flags();
         $this->is_404 = true;
         $this->is_feed = $feed;
+        $this->is_embed = $embed;
         do_action_ref_array('set_404', [$this]);
     }
 

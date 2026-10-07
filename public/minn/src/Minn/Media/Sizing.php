@@ -172,7 +172,9 @@ final class Sizing
             if (isset($sources[$image['width']]) && !$isSrc) {
                 continue;
             }
-            $sources[(int) $image['width']] = ['url' => $baseUrl . $image['file'], 'descriptor' => 'w', 'value' => (int) $image['width']];
+            $source = ['url' => $baseUrl . $image['file'], 'descriptor' => 'w', 'value' => (int) $image['width']];
+            // The image's own source leads the list, as the reference orders it.
+            $sources = $isSrc ? [(int) $image['width'] => $source] + $sources : $sources + [(int) $image['width'] => $source];
         }
         return $sources;
     }

@@ -304,7 +304,7 @@ final readonly class Engine
         $feedController = new \Minn\Front\FeedController($site, $posts, $permalinks, $resolver, $feeds, $notFound);
         $bridge = new \Minn\Theme\MainQueryBridge($site, $posts, $resolver->perPage());
         $sitemapController = new \Minn\Front\SitemapController(new Sitemaps($db, $site, $permalinks), $notFound, $bridge, $themed);
-        $front = new FrontController($resolver, new Renderer($db, $posts, $permalinks, $resolver->perPage()), $pages, $feedController, $cron, $classic, $sitemapController);
+        $front = new FrontController($resolver, new Renderer($db, $posts, $permalinks, $resolver->perPage()), $pages, $feedController, $cron, $classic, $sitemapController, new \Minn\Theme\EmbedRenderer($bridge));
 
         // The front's routes are public or judge their own session; a policy that asks
         // for more is refused outright rather than judged half-way.

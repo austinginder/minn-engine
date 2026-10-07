@@ -314,6 +314,25 @@ add_action('do_robots', 'do_robots');
 add_action('init', 'check_theme_switched', 99);
 add_action('after_switch_theme', '_wp_menus_changed');
 add_action('after_switch_theme', '_wp_sidebars_changed');
+// The embed page's steps, as the reference registers them (its emoji plumbing aside, as on every engine page).
+add_action('embed_head', 'enqueue_embed_scripts', 1);
+add_action('embed_head', 'wp_enqueue_embed_styles', 9);
+add_action('embed_head', 'print_embed_styles');
+add_action('embed_head', 'wp_robots');
+add_action('embed_head', 'rel_canonical');
+add_action('embed_head', 'wp_print_head_scripts', 20);
+add_action('embed_head', 'wp_print_styles', 20);
+add_action('embed_head', 'locale_stylesheet', 30);
+add_action('embed_footer', 'print_embed_sharing_dialog');
+add_action('embed_footer', 'print_embed_scripts');
+add_action('embed_footer', 'wp_print_footer_scripts', 20);
+add_action('embed_content_meta', 'print_embed_comments_button');
+add_action('embed_content_meta', 'print_embed_sharing_button');
+add_filter('the_excerpt_embed', 'wptexturize');
+add_filter('the_excerpt_embed', 'convert_chars');
+add_filter('the_excerpt_embed', 'wpautop');
+add_filter('the_excerpt_embed', 'shortcode_unautop');
+add_filter('the_excerpt_embed', 'wp_embed_excerpt_attachment');
 
 // The toolbar, set up and printed where the reference does it. On the
 // engine's own pages the Minn bar (or nothing) stands in its place, as the

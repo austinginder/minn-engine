@@ -432,7 +432,9 @@ function get_query_template($type, $templates = [])
     }
     $templates = apply_filters("{$type}_template_hierarchy", $templates);
     $template = locate_template($templates);
-    if ($template === '' && Runtime::current()->get('block_theme', false) && _minn_block_template_exists($templates)) {
+    // A block theme's own template wins over the engine's theme-compat stand-ins, as over nothing.
+    $compat = str_starts_with($template, MINN_ENGINE_DIR . '/wp-api/theme-compat/');
+    if (($template === '' || $compat) && Runtime::current()->get('block_theme', false) && _minn_block_template_exists($templates)) {
         $template = MINN_ENGINE_DIR . '/wp-api/template-canvas.php';
     }
     return apply_filters("{$type}_template", $template, $type, $templates);

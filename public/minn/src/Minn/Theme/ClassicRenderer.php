@@ -117,6 +117,12 @@ final readonly class ClassicRenderer
     }
 
     /** @param list<string> $coreClasses @return list<string> */
+    /** The body-class tokens before plugins filter them (get_body_class filters them). @return list<string> */
+    public function themeClasses(Resolution $resolution, array $coreClasses): array
+    {
+        return $this->bodyClasses($resolution, $coreClasses);
+    }
+
     private function bodyClasses(Resolution $resolution, array $coreClasses): array
     {
         $custom = null;

@@ -14,12 +14,13 @@ URL resolution, permalinks, feeds, sitemaps and the public page
 | [`CommentPostController`](#commentpostcontroller) | final readonly class | 174 | wp-comments-post.php: the comment form's target. The reference's |
 | [`CustomLogo`](#customlogo) | final class | 27 | The site logo a theme prints, as get_custom_logo builds it (probe |
 | [`DocumentTitle`](#documenttitle) | final class | 47 | The document title as parts (title, tagline, page, site) in the order the |
+| [`EmbedCard`](#embedcard) | final class | 95 | The parts of a post's embed card the reference's embed template prints, |
 | [`FeedController`](#feedcontroller) | final readonly class | 143 | The feeds: the site's, the comments', a post's or an archive's by the |
 | [`FeedTags`](#feedtags) | final class | 140 | The template tags a feed is written with that take more than a line, as |
 | [`FeedTemplates`](#feedtemplates) | final class | 295 | The feed templates do_feed_* loads, written from the reference's output |
 | [`FeedWriter`](#feedwriter) | final class | 35 | A feed as it is written: text as given, and what each template tag and |
 | [`Feeds`](#feeds) | final readonly class | 316 | The syndication feeds, byte for byte in the reference's shape: RSS 2.0 |
-| [`FrontController`](#frontcontroller) | final readonly class | 66 | The public site. One catch-all route: resolve the URL, then either |
+| [`FrontController`](#frontcontroller) | final readonly class | 72 | The public site. One catch-all route: resolve the URL, then either |
 | [`Kind`](#kind) | enum | 17 | What a public URL resolved to. |
 | [`ListSpacing`](#listspacing) | final readonly class | 30 | How a page list is spaced: the reference's "preserve" keeps newlines and |
 | [`ListingLinks`](#listinglinks) | final class | 53 | The prev/next links a paged listing prints: which page sits either side of |
@@ -36,7 +37,7 @@ URL resolution, permalinks, feeds, sitemaps and the public page
 | [`Redirects`](#redirects) | enum | 23 | Whether a resolution may answer with a canonical redirect. A GET or HEAD |
 | [`Renderer`](#renderer) | final readonly class | 156 | The interim public theme: one clean template until the block-theme |
 | [`Resolution`](#resolution) | final readonly class | 108 | The outcome of resolving a public URL: which kind of thing it names, |
-| [`Resolver`](#resolver) | final readonly class | 554 | Turns a public URL into a Resolution, following the reference's observed |
+| [`Resolver`](#resolver) | final readonly class | 555 | Turns a public URL into a Resolution, following the reference's observed |
 | [`SingleAddresses`](#singleaddresses) | final readonly class | 61 | The addresses a single answers to besides its own, as the reference |
 | [`SitemapController`](#sitemapcontroller) | final readonly class | 79 | The sitemap index, its pages, and the two stylesheets. With plugins |
 | [`SitemapRequest`](#sitemaprequest) | final class | 70 | A sitemap request at template_redirect, as the reference's sitemaps |
@@ -314,6 +315,47 @@ The parts joined with the reference's separator.
 - `@param array<string, string> $parts`
 
 
+## EmbedCard
+
+`final class Minn\Front\EmbedCard` · `public/minn/src/Minn/Front/EmbedCard.php`
+
+The parts of a post's embed card the reference's embed template prints,
+as markup: the featured image and its shape (the widest of the image's
+sizes; wide enough and it sits above the title, else beside it, both by
+filter), the site's name and icon, the comments and sharing buttons, and
+the sharing dialog (its ids the post's and a random number, as on the
+reference). The facade's template tags print them.
+
+### static `thumbnail(): ?array`
+
+The featured image the card shows: [attachment id, size, shape], or
+null. A post's thumbnail, or an image attachment itself, through
+embed_thumbnail_id, embed_thumbnail_image_size and
+embed_thumbnail_image_shape.
+
+- `@return array{0: int, 1: string, 2: string}|null`
+
+### static `featuredImage(?array $thumbnail, string $shape): string`
+
+The featured image's block, when the card shows one of this shape.
+
+### static `siteTitle(): string`
+
+The site's name and icon, linking home, the whole block through embed_site_title_html.
+
+### static `commentsButton(): string`
+
+The comments button: the count, linking to the comments; none on a 404, or with neither comments nor comments open.
+
+### static `sharingButton(): string`
+
+The button that opens the sharing dialog; none on a 404.
+
+### static `sharingDialog(): string`
+
+The sharing dialog: the post's address and its embed code, each a tab; none on a 404.
+
+
 ## FeedController
 
 `final readonly class Minn\Front\FeedController` · `public/minn/src/Minn/Front/FeedController.php`
@@ -523,7 +565,7 @@ interim template otherwise.
 Used by: `Minn\Engine`
 
 ```php
-__construct(Minn\Front\Resolver $resolver, Minn\Front\Renderer $renderer, ?Minn\Theme\PageRenderer $theme = NULL, ?Minn\Front\FeedController $feeds = NULL, ?Minn\Cron\Cron $cron = NULL, ?Minn\Theme\ClassicRenderer $classic = NULL, ?Minn\Front\SitemapController $sitemaps = NULL)
+__construct(Minn\Front\Resolver $resolver, Minn\Front\Renderer $renderer, ?Minn\Theme\PageRenderer $theme = NULL, ?Minn\Front\FeedController $feeds = NULL, ?Minn\Cron\Cron $cron = NULL, ?Minn\Theme\ClassicRenderer $classic = NULL, ?Minn\Front\SitemapController $sitemaps = NULL, ?Minn\Theme\EmbedRenderer $embeds = NULL)
 ```
 
 
@@ -541,7 +583,7 @@ Route: `* /{path*} (public)`
 
 The public page for any path; when scheduled work is due, the run follows the response.
 
-Internals: `page()` (private, line 68)
+Internals: `page()` (private, line 70)
 
 
 ## Kind
@@ -552,7 +594,7 @@ What a public URL resolved to.
 
 Cases: `Home`, `Single`, `Page`, `Category`, `Tag`, `Author`, `Date`, `Search`, `Taxonomy`, `PostTypeArchive`, `NotFound`, `Redirect`
 
-Used by: `Minn\Blocks\Context`, `Minn\Blocks\Dynamic\Categories`, `Minn\Blocks\Dynamic\Theme\Navigation`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Blocks\Dynamic\Theme\Structure`, `Minn\Front\AdminBar`, `Minn\Front\Canonical`, `Minn\Front\DocumentTitle`, `Minn\Front\FeedController`, `Minn\Front\FrontController`, `Minn\Front\Renderer`, `Minn\Front\Resolution`, `Minn\Front\Resolver`, `Minn\Front\SingleAddresses`, `Minn\Runtime\MainQuery`, `Minn\Theme\ArchiveTitle`, `Minn\Theme\BodyClasses`, `Minn\Theme\ClassicRenderer`, `Minn\Theme\HeadLinks`, `Minn\Theme\MainQueryBridge`, `Minn\Theme\PageRenderer`, `Minn\Theme\Templates`
+Used by: `Minn\Blocks\Context`, `Minn\Blocks\Dynamic\Categories`, `Minn\Blocks\Dynamic\Theme\Navigation`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Blocks\Dynamic\Theme\Structure`, `Minn\Front\AdminBar`, `Minn\Front\Canonical`, `Minn\Front\DocumentTitle`, `Minn\Front\FeedController`, `Minn\Front\FrontController`, `Minn\Front\Renderer`, `Minn\Front\Resolution`, `Minn\Front\Resolver`, `Minn\Front\SingleAddresses`, `Minn\Runtime\MainQuery`, `Minn\Theme\ArchiveTitle`, `Minn\Theme\BodyClasses`, `Minn\Theme\ClassicRenderer`, `Minn\Theme\EmbedRenderer`, `Minn\Theme\HeadLinks`, `Minn\Theme\MainQueryBridge`, `Minn\Theme\PageRenderer`, `Minn\Theme\Templates`
 
 
 ## ListSpacing
@@ -929,9 +971,9 @@ ends the request early (Printed, where the reference exits) ends it here
 too; when none did and there is nothing to print, null, and the theme
 renders the page on the query as it stands.
 
-Used by: `Minn\Front\ProbeController`, `Minn\Front\SitemapController`
+Used by: `Minn\Front\ProbeController`, `Minn\Front\SitemapController`, `Minn\Theme\EmbedRenderer`
 
-### static `stand(Minn\Theme\MainQueryBridge $bridge, array $vars, ?Closure $print = NULL): ?Minn\Http\Response`
+### static `stand(Minn\Theme\MainQueryBridge $bridge, array $vars, ?Closure $print = NULL, ?Minn\Front\Resolution $resolution = NULL): ?Minn\Http\Response`
 
 The request served this way, or null for the theme to render.
 
@@ -1058,7 +1100,7 @@ The outcome of resolving a public URL: which kind of thing it names,
 the record behind it, and the page number for paginated views. Redirects
 carry their target instead.
 
-Used by: `Minn\Blocks\Context`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Engine`, `Minn\Front\AdminBar`, `Minn\Front\DocumentTitle`, `Minn\Front\FeedController`, `Minn\Front\FrontController`, `Minn\Front\PrintedResponse`, `Minn\Front\Renderer`, `Minn\Front\Resolver`, `Minn\Front\SingleAddresses`, `Minn\Front\SitemapController`, `Minn\Runtime\MainQuery`, `Minn\Theme\ArchiveTitle`, `Minn\Theme\BodyClasses`, `Minn\Theme\ClassicRenderer`, `Minn\Theme\HeadLinks`, `Minn\Theme\MainQueryBridge`, `Minn\Theme\PageRenderer`, `Minn\Theme\Templates`
+Used by: `Minn\Blocks\Context`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Engine`, `Minn\Front\AdminBar`, `Minn\Front\DocumentTitle`, `Minn\Front\FeedController`, `Minn\Front\FrontController`, `Minn\Front\PrintedResponse`, `Minn\Front\Renderer`, `Minn\Front\Resolver`, `Minn\Front\SingleAddresses`, `Minn\Front\SitemapController`, `Minn\Runtime\MainQuery`, `Minn\Theme\ArchiveTitle`, `Minn\Theme\BodyClasses`, `Minn\Theme\ClassicRenderer`, `Minn\Theme\EmbedRenderer`, `Minn\Theme\HeadLinks`, `Minn\Theme\MainQueryBridge`, `Minn\Theme\PageRenderer`, `Minn\Theme\Templates`
 
 - readonly `Minn\Front\Kind $kind`
 - readonly `Minn\Content\PostRecord|Minn\Content\UserRecord|Minn\Content\TermRecord|array|null $record`
@@ -1182,7 +1224,7 @@ The site-local bounds of a date archive, or null when the date is invalid.
 
 - `@return array{0: string, 1: string}|null`
 
-Internals: `fromRuleVars()` (private, line 118), `resolvePath()` (private, line 143), `resolveQueryVars()` (private, line 211), `dateRedirect()` (private, line 294), `home()` (private, line 311), `pluginRoute()` (private, line 333), `segmentsOf()` (private, line 368), `taxonomyArchive()` (private, line 377), `termArchive()` (private, line 391), `termResolution()` (private, line 404), `authorArchive()` (private, line 413), `dateArchive()` (private, line 430), `resolveContent()` (private, line 477), `resolveSingle()` (private, line 518), `elsewhere()` (private, line 556), `singleOrRedirect()` (private, line 561), `readable()` (private, line 570), `pages()` (private, line 587)
+Internals: `fromRuleVars()` (private, line 118), `resolvePath()` (private, line 143), `resolveQueryVars()` (private, line 211), `dateRedirect()` (private, line 295), `home()` (private, line 312), `pluginRoute()` (private, line 334), `segmentsOf()` (private, line 369), `taxonomyArchive()` (private, line 378), `termArchive()` (private, line 392), `termResolution()` (private, line 405), `authorArchive()` (private, line 414), `dateArchive()` (private, line 431), `resolveContent()` (private, line 478), `resolveSingle()` (private, line 519), `elsewhere()` (private, line 557), `singleOrRedirect()` (private, line 562), `readable()` (private, line 571), `pages()` (private, line 588)
 
 
 ## SingleAddresses
