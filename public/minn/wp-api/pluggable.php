@@ -322,7 +322,9 @@ endif;
 if (!function_exists('wp_validate_auth_cookie')) :
 function wp_validate_auth_cookie($cookie = '', $scheme = '')
 {
-    return Runtime::current()->reader->userId ?: false;
+    // The engine's sign-in cookie session answers here; an application password answers through wp_validate_application_password.
+    $reader = Runtime::current()->reader;
+    return $reader->sessionToken !== '' && $reader->userId > 0 ? $reader->userId : false;
 }
 endif;
 

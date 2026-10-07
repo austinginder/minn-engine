@@ -142,6 +142,11 @@ final readonly class Engine
         $runtime->set('block_theme', $theme !== null);
         $runtime->set('theme', $theme);
         $runtime->set('engine_routes', static fn (): array => $api->routes());
+        // An application password's sign-in is heard again once plugins load (wp_validate_application_password), where they may refuse it.
+        $session = $api->caller()->session();
+        if ($session?->applicationPassword !== null) {
+            $runtime->set('application_password_auth', ['user' => $session->id(), 'item' => $session->applicationPassword, 'password' => Authenticator::basicCredentials($context->request)[1] ?? '']);
+        }
         Plugins::load($runtime);
         self::adoptSettledUser($api, $runtime);
         // As the reference's request parsing leaves things for rest_api_loaded:

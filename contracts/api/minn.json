@@ -7141,7 +7141,9 @@
             "usedBy": [
                 "Minn\\Auth\\Authenticator",
                 "Minn\\Rest\\ApplicationPasswordsController",
-                "Minn\\Rest\\Services"
+                "Minn\\Rest\\Services",
+                "Minn\\Runtime\\ApplicationPasswordEvents",
+                "Minn\\Runtime\\ApplicationPasswordSignIn"
             ],
             "constructor": {
                 "signature": "__construct(Minn\\Content\\Users $users)",
@@ -7900,7 +7902,7 @@
             "namespace": "Minn\\Auth",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Auth/Authenticator.php",
-            "lines": 124,
+            "lines": 139,
             "doc": "Resolves the current user two ways. A page load carries the cookie alone;\na REST call must also carry a nonce bound to the same session.",
             "implements": [],
             "extends": null,
@@ -8091,7 +8093,29 @@
                         }
                     ],
                     "line": 78,
-                    "end": 103
+                    "end": 99
+                },
+                {
+                    "routes": [],
+                    "name": "basicCredentials",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "basicCredentials(Minn\\Http\\Request $request): ?array",
+                    "doc": "The login and password an Authorization: Basic header carries, or null.",
+                    "shapes": [
+                        "@return array{0: string, 1: string}|null"
+                    ],
+                    "params": [
+                        {
+                            "name": "request",
+                            "type": "Minn\\Http\\Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 106,
+                    "end": 118
                 },
                 {
                     "routes": [],
@@ -8110,8 +8134,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 106,
-                    "end": 113
+                    "line": 121,
+                    "end": 128
                 },
                 {
                     "routes": [],
@@ -8132,8 +8156,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 120,
-                    "end": 126
+                    "line": 135,
+                    "end": 141
                 },
                 {
                     "routes": [],
@@ -8159,8 +8183,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 132,
-                    "end": 139
+                    "line": 147,
+                    "end": 154
                 }
             ]
         },
@@ -32997,6 +33021,7 @@
                 "Minn\\Rest\\Services",
                 "Minn\\Rest\\UserObject",
                 "Minn\\Rest\\UsersController",
+                "Minn\\Runtime\\ApplicationPasswordSignIn",
                 "Minn\\Theme\\PageRenderer"
             ],
             "constructor": {
@@ -34636,7 +34661,7 @@
             "namespace": "Minn",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Engine.php",
-            "lines": 265,
+            "lines": 270,
             "doc": "The engine's front door. An unmodified wp-config.php ends by requiring\nwp-settings.php, which is the engine's own boot file; it hands off here.\nREST is dispatched first (from the path or from ?rest_route=), then the\nadmin, the login endpoint, and finally the public site.",
             "implements": [],
             "extends": null,
@@ -34852,7 +34877,7 @@
                         }
                     ],
                     "line": 130,
-                    "end": 156
+                    "end": 161
                 },
                 {
                     "routes": [],
@@ -34878,8 +34903,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 165,
-                    "end": 181
+                    "line": 170,
+                    "end": 186
                 },
                 {
                     "routes": [],
@@ -34905,8 +34930,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 184,
-                    "end": 260
+                    "line": 189,
+                    "end": 265
                 },
                 {
                     "routes": [],
@@ -35009,8 +35034,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 263,
-                    "end": 329
+                    "line": 268,
+                    "end": 334
                 }
             ]
         },
@@ -77595,7 +77620,7 @@
             "namespace": "Minn\\Rest",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Rest/ApplicationPasswordsController.php",
-            "lines": 170,
+            "lines": 186,
             "doc": "wp/v2/users/{id}/application-passwords: list, create, rename, delete,\nand introspect the password that authenticated the call. Refusals and\nshapes follow the reference: 501 when passwords are unavailable (no\nHTTPS), 401 anonymous, 404 for an unknown user or password, arguments\nchecked before permissions.",
             "implements": [],
             "extends": null,
@@ -77618,7 +77643,11 @@
                 "Minn\\Rest\\Fields",
                 "Minn\\Rest\\Reply",
                 "Minn\\Rest\\RestUrl",
-                "Minn\\Rest\\Schema"
+                "Minn\\Rest\\RuntimePrepare",
+                "Minn\\Rest\\RuntimeRoutes",
+                "Minn\\Rest\\Schema",
+                "Minn\\Runtime\\ApplicationPasswordEvents",
+                "Minn\\Runtime\\Runtime"
             ],
             "usedBy": [
                 "Minn\\Rest\\Api"
@@ -77672,8 +77701,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 34,
-                "end": 42
+                "line": 36,
+                "end": 44
             },
             "cases": [],
             "constants": [
@@ -77773,8 +77802,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 46,
-                    "end": 51
+                    "line": 48,
+                    "end": 53
                 },
                 {
                     "routes": [
@@ -77802,8 +77831,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 55,
-                    "end": 71
+                    "line": 57,
+                    "end": 75
                 },
                 {
                     "routes": [
@@ -77831,8 +77860,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 75,
-                    "end": 79
+                    "line": 79,
+                    "end": 84
                 },
                 {
                     "routes": [
@@ -77860,8 +77889,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 83,
-                    "end": 92
+                    "line": 88,
+                    "end": 97
                 },
                 {
                     "routes": [
@@ -77896,8 +77925,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 96,
-                    "end": 100
+                    "line": 101,
+                    "end": 105
                 },
                 {
                     "routes": [
@@ -77934,8 +77963,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 106,
-                    "end": 118
+                    "line": 111,
+                    "end": 128
                 },
                 {
                     "routes": [
@@ -77970,8 +77999,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 122,
-                    "end": 130
+                    "line": 132,
+                    "end": 145
                 },
                 {
                     "routes": [],
@@ -78013,8 +78042,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 133,
-                    "end": 154
+                    "line": 148,
+                    "end": 169
                 },
                 {
                     "routes": [],
@@ -78042,8 +78071,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 157,
-                    "end": 164
+                    "line": 172,
+                    "end": 179
                 },
                 {
                     "routes": [],
@@ -78076,15 +78105,15 @@
                             "doc": ""
                         }
                     ],
-                    "line": 166,
-                    "end": 173
+                    "line": 181,
+                    "end": 188
                 },
                 {
                     "routes": [],
                     "name": "item",
                     "static": false,
                     "visibility": "private",
-                    "signature": "item(Minn\\Content\\UserRecord $user, array $record): array",
+                    "signature": "item(Minn\\Content\\UserRecord $user, array $record, ?string $plain = NULL): array",
                     "doc": "",
                     "shapes": [
                         "@param array<string, mixed> $user @param array<string, mixed> $record @return array<string, mixed>"
@@ -78103,10 +78132,17 @@
                             "shape": "",
                             "default": null,
                             "doc": ""
+                        },
+                        {
+                            "name": "plain",
+                            "type": "?string",
+                            "shape": "",
+                            "default": "NULL",
+                            "doc": ""
                         }
                     ],
-                    "line": 176,
-                    "end": 187
+                    "line": 191,
+                    "end": 205
                 },
                 {
                     "routes": [],
@@ -78125,8 +78161,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 190,
-                    "end": 197
+                    "line": 208,
+                    "end": 215
                 }
             ]
         },
@@ -91136,6 +91172,7 @@
             ],
             "usedBy": [
                 "Minn\\Rest\\Api",
+                "Minn\\Rest\\ApplicationPasswordsController",
                 "Minn\\Rest\\BlockTypesController",
                 "Minn\\Rest\\CommentObject",
                 "Minn\\Rest\\Embed",
@@ -91283,6 +91320,7 @@
             ],
             "usedBy": [
                 "Minn\\Rest\\Api",
+                "Minn\\Rest\\ApplicationPasswordsController",
                 "Minn\\Rest\\BatchController",
                 "Minn\\Rest\\CommentsController",
                 "Minn\\Rest\\Embed",
@@ -99408,6 +99446,243 @@
                     ],
                     "line": 22,
                     "end": 36
+                }
+            ]
+        },
+        {
+            "name": "Minn\\Runtime\\ApplicationPasswordEvents",
+            "short": "ApplicationPasswordEvents",
+            "namespace": "Minn\\Runtime",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Runtime/ApplicationPasswordEvents.php",
+            "lines": 46,
+            "doc": "Application password changes made over REST, as the reference makes them\n(probe rest-application-password-hooks): the prepared item (the name,\nand an app id a new one is given) through\nrest_pre_insert_application_password, then WP_Application_Passwords\n(which tells plugins through wp_create_, wp_update_ and\nwp_delete_application_password), then rest_after_insert_application_password.",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\Auth\\ApplicationPasswords"
+            ],
+            "usedBy": [
+                "Minn\\Rest\\ApplicationPasswordsController"
+            ],
+            "constructor": null,
+            "cases": [],
+            "constants": [],
+            "properties": [],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "create",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "create(int $userId, array $body, WP_REST_Request $request): WP_Error|array",
+                    "doc": "A new password: its record and its plain text in groups of four, or\nthe reference's refusal.",
+                    "shapes": [
+                        "@param array<string, mixed> $body",
+                        "@return array{0: array<string, mixed>, 1: string}|\\WP_Error"
+                    ],
+                    "params": [
+                        {
+                            "name": "userId",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "body",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "request",
+                            "type": "WP_REST_Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 26,
+                    "end": 37
+                },
+                {
+                    "routes": [],
+                    "name": "update",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "update(int $userId, string $uuid, array $body, WP_REST_Request $request): WP_Error|array",
+                    "doc": "A password renamed (when the body names it): its record as it stands.",
+                    "shapes": [
+                        "@param array<string, mixed> $body",
+                        "@return array<string, mixed>|\\WP_Error"
+                    ],
+                    "params": [
+                        {
+                            "name": "userId",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "uuid",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "body",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "request",
+                            "type": "WP_REST_Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 45,
+                    "end": 55
+                },
+                {
+                    "routes": [],
+                    "name": "prepared",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "prepared(array $fields, WP_REST_Request $request): object",
+                    "doc": "The item the request prepares (its name; a new one's app id), through rest_pre_insert_application_password. @param array<string, mixed> $fields",
+                    "shapes": [
+                        "@param array<string, mixed> $fields"
+                    ],
+                    "params": [
+                        {
+                            "name": "fields",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "request",
+                            "type": "WP_REST_Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 58,
+                    "end": 61
+                }
+            ]
+        },
+        {
+            "name": "Minn\\Runtime\\ApplicationPasswordSignIn",
+            "short": "ApplicationPasswordSignIn",
+            "namespace": "Minn\\Runtime",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Runtime/ApplicationPasswordSignIn.php",
+            "lines": 80,
+            "doc": "wp_authenticate_application_password as the reference answers it (probe\napplication-passwords-api): a user found already stands; outside an API\nrequest (application_password_is_api_request) nothing is tried; then the\nuser by login or email, the feature's availability (for the site, for\nthe user), and each of the user's passwords, a match passing through\nwp_authenticate_application_password_errors, recorded, and announced\n(application_password_did_authenticate); every refusal announced\nthrough application_password_failed_authentication.",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\Auth\\ApplicationPasswords",
+                "Minn\\Content\\Users",
+                "Minn\\Runtime\\Runtime"
+            ],
+            "usedBy": [],
+            "constructor": null,
+            "cases": [],
+            "constants": [],
+            "properties": [],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "authenticate",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "authenticate(mixed $input, string $username, string $password): mixed",
+                    "doc": "The signed-in user, the input unchanged, or the refusal.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "input",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "username",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "password",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 20,
+                    "end": 54
+                },
+                {
+                    "routes": [],
+                    "name": "validate",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "validate(mixed $input): mixed",
+                    "doc": "determine_current_user's application password step: an earlier\nanswer stands; else the user the REST request's application password\nsigned in (the engine checked the password before plugins loaded),\nheard again as the reference hears it: the feature's availability,\nwp_authenticate_application_password_errors, then\napplication_password_did_authenticate; a refusal is announced and\nleaves the request signed out.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "input",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 65,
+                    "end": 83
+                },
+                {
+                    "routes": [],
+                    "name": "refusal",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "refusal(mixed $user, string $username): ?WP_Error",
+                    "doc": "Why the user may not sign in by application password, or null when they may.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "user",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "username",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 86,
+                    "end": 95
                 }
             ]
         },
@@ -114222,6 +114497,7 @@
                 "Minn\\Media\\Images",
                 "Minn\\Rest\\AbilitiesController",
                 "Minn\\Rest\\Api",
+                "Minn\\Rest\\ApplicationPasswordsController",
                 "Minn\\Rest\\BatchController",
                 "Minn\\Rest\\BlockRendererController",
                 "Minn\\Rest\\BlockTypesController",
@@ -114257,6 +114533,7 @@
                 "Minn\\Rest\\WidgetsController",
                 "Minn\\Runtime\\Abilities",
                 "Minn\\Runtime\\AjaxController",
+                "Minn\\Runtime\\ApplicationPasswordSignIn",
                 "Minn\\Runtime\\BlockFilters",
                 "Minn\\Runtime\\BlockHooks",
                 "Minn\\Runtime\\CommentEvents",

@@ -8,7 +8,8 @@
  * an editor's draft list shows, the front page's signed-in state, and the
  * same without a token, with a token naming nobody, and with one naming a
  * user who does not exist; then with an administrator's sign-in cookie and
- * its REST nonce, where the cookie vouches only for its own user. The fixture and tokens live in both stacks only
+ * its REST nonce, where the cookie vouches only for its own user; and an
+ * application password, which a plugin that switches them off refuses. The fixture and tokens live in both stacks only
  * while the suite runs.
  *
  *   php tests/identity.test.php
@@ -61,11 +62,11 @@ register_shutdown_function(static function () use ($stacks, $WP): void {
 
 shell_exec("{$WP} user create identity-reader identity-reader@minn-engine.localhost --role=subscriber >/dev/null 2>&1");
 $reader = (int) trim((string) shell_exec("{$WP} user get identity-reader --field=ID 2>/dev/null"));
-/** A token for a user id, written to both stacks. */
-$token = static function (int $user) use ($stacks): string {
+/** A token for a user id (or for other settings), written to both stacks. */
+$token = static function (int|array $user) use ($stacks): string {
     $token = bin2hex(random_bytes(16));
     foreach ($stacks as $content) {
-        file_put_contents("{$content}/minn-identity/{$token}.json", json_encode(['user' => $user]));
+        file_put_contents("{$content}/minn-identity/{$token}.json", json_encode(is_array($user) ? $user : ['user' => $user]));
     }
     return $token;
 };
@@ -119,6 +120,21 @@ if (is_array($mint) && !empty($mint['cookie'])) {
     $compare('signed in with the nonce, a subscriber\'s token: who /users/me is', '/wp-json/wp/v2/users/me', $subscriber, $who, $session);
     $compare('signed in with the nonce, a token naming nobody: who /users/me is', '/wp-json/wp/v2/users/me', $token(0), $who, $session);
     $compare('signed in, a token naming nobody: the front page\'s signed-in state', '/', $token(0), $signedIn, [$session[0]]);
+}
+
+// An administrator's application password, signing REST requests in by Basic auth.
+$password = trim((string) shell_exec("{$WP} user application-password create 1 zz-identity-suite --porcelain 2>/dev/null"));
+$login = trim((string) shell_exec("{$WP} user get 1 --field=user_login 2>/dev/null"));
+if ($password !== '' && $login !== '') {
+    $basic = ['Authorization: Basic ' . base64_encode("{$login}:{$password}")];
+    $compare('an application password: who /users/me is', '/wp-json/wp/v2/users/me', '', $who, $basic);
+    $compare('an application password, switched off by a plugin: who /users/me is', '/wp-json/wp/v2/users/me', $token(['application_passwords' => false]), $who, $basic);
+    $compare('an application password, switched off by a plugin: the public posts', '/wp-json/wp/v2/posts?per_page=1&_fields=id', $token(['application_passwords' => false]), $drafts, $basic);
+}
+foreach (json_decode((string) shell_exec("{$WP} user application-password list 1 --format=json --fields=uuid,name 2>/dev/null"), true) ?: [] as $item) {
+    if (($item['name'] ?? '') === 'zz-identity-suite') {
+        shell_exec("{$WP} user application-password delete 1 " . escapeshellarg((string) $item['uuid']) . ' >/dev/null 2>&1');
+    }
 }
 
 echo "\n{$pass} passed, {$fail} failed\n";

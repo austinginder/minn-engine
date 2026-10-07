@@ -2,12 +2,12 @@
     "generated": "2026-10-07",
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line)",
     "summary": {
-        "minn": 644,
-        "composes": 928,
+        "minn": 646,
+        "composes": 933,
         "leaf": 649,
-        "noop": 1855,
-        "functions": 4006,
-        "minnMethods": 686,
+        "noop": 1864,
+        "functions": 4022,
+        "minnMethods": 690,
         "leafLinesOver15": 12
     },
     "functions": {
@@ -4135,6 +4135,116 @@
                 "get_option",
                 "header",
                 "wp_die"
+            ]
+        },
+        "WP_Application_Passwords::application_name_exists_for_user": {
+            "file": "classes/WP_Application_Passwords.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Application_Passwords::chunk_password": {
+            "file": "classes/WP_Application_Passwords.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Auth\\ApplicationPasswords::chunked"
+            ],
+            "composes": []
+        },
+        "WP_Application_Passwords::create_new_application_password": {
+            "file": "classes/WP_Application_Passwords.php",
+            "lines": 11,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "__",
+                "do_action",
+                "sanitize_text_field",
+                "update_site_option"
+            ]
+        },
+        "WP_Application_Passwords::delete_all_application_passwords": {
+            "file": "classes/WP_Application_Passwords.php",
+            "lines": 6,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "do_action"
+            ]
+        },
+        "WP_Application_Passwords::delete_application_password": {
+            "file": "classes/WP_Application_Passwords.php",
+            "lines": 6,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "do_action"
+            ]
+        },
+        "WP_Application_Passwords::get_user_application_password": {
+            "file": "classes/WP_Application_Passwords.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Application_Passwords::get_user_application_passwords": {
+            "file": "classes/WP_Application_Passwords.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Application_Passwords::is_in_use": {
+            "file": "classes/WP_Application_Passwords.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "get_site_option"
+            ]
+        },
+        "WP_Application_Passwords::notFound": {
+            "file": "classes/WP_Application_Passwords.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "__"
+            ]
+        },
+        "WP_Application_Passwords::record_application_password_usage": {
+            "file": "classes/WP_Application_Passwords.php",
+            "lines": 2,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Runtime\\Runtime::current",
+                "Minn\\Runtime\\Runtime::request"
+            ],
+            "composes": []
+        },
+        "WP_Application_Passwords::store": {
+            "file": "classes/WP_Application_Passwords.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Auth\\ApplicationPasswords::__construct",
+                "Minn\\Content\\Users::__construct",
+                "Minn\\Runtime\\Runtime::current",
+                "Minn\\Runtime\\Runtime::db"
+            ],
+            "composes": []
+        },
+        "WP_Application_Passwords::update_application_password": {
+            "file": "classes/WP_Application_Passwords.php",
+            "lines": 6,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "do_action",
+                "sanitize_text_field"
             ]
         },
         "WP_Block::__construct": {
@@ -29700,6 +29810,15 @@
                 "sanitize_user"
             ]
         },
+        "wp_authenticate_application_password": {
+            "file": "user.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Runtime\\ApplicationPasswordSignIn::authenticate"
+            ],
+            "composes": []
+        },
         "wp_authenticate_email_password": {
             "file": "user.php",
             "lines": 18,
@@ -32537,6 +32656,37 @@
             "minn": [],
             "composes": [
                 "wp_interactivity"
+            ]
+        },
+        "wp_is_application_passwords_available": {
+            "file": "user.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "apply_filters",
+                "wp_is_application_passwords_supported"
+            ]
+        },
+        "wp_is_application_passwords_available_for_user": {
+            "file": "user.php",
+            "lines": 5,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "apply_filters",
+                "get_user_by",
+                "wp_is_application_passwords_available"
+            ]
+        },
+        "wp_is_application_passwords_supported": {
+            "file": "user.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "is_ssl",
+                "wp_get_environment_type"
             ]
         },
         "wp_is_block_theme": {
@@ -35677,16 +35827,18 @@
             "file": "user.php",
             "lines": 1,
             "kind": "noop",
-            "minn": [],
+            "minn": [
+                "Minn\\Runtime\\ApplicationPasswordSignIn::validate"
+            ],
             "composes": []
         },
         "wp_validate_auth_cookie": {
             "file": "pluggable.php",
-            "lines": 1,
-            "kind": "noop",
+            "lines": 3,
+            "kind": "minn",
             "minn": [
                 "Minn\\Runtime\\Runtime::current",
-                "Minn\\Runtime\\Runtime::reader->userId"
+                "Minn\\Runtime\\Runtime::reader"
             ],
             "composes": []
         },

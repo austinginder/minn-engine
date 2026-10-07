@@ -80,15 +80,11 @@ final readonly class Authenticator
         if (!self::applicationPasswordsAvailable($request)) {
             return null;
         }
-        $header = $request->header('authorization') ?? '';
-        if (!preg_match('/^Basic\s+(\S+)$/i', $header, $m)) {
+        $credentials = self::basicCredentials($request);
+        if ($credentials === null) {
             return null;
         }
-        $decoded = base64_decode($m[1], true);
-        if ($decoded === false || !str_contains($decoded, ':')) {
-            return null;
-        }
-        [$login, $password] = explode(':', $decoded, 2);
+        [$login, $password] = $credentials;
         $user = $this->users->findByLogin($login) ?? (str_contains($login, '@') ? $this->users->findByEmail($login) : null);
         if ($user === null || !self::applicationPasswordsAvailableFor($user)) {
             return null;
@@ -100,6 +96,25 @@ final readonly class Authenticator
         }
         $record = $passwords->touch($user->id, (string) $record['uuid'], $request->remoteAddress) ?? $record;
         return new Authenticated($user, '', $record);
+    }
+
+    /**
+     * The login and password an Authorization: Basic header carries, or null.
+     *
+     * @return array{0: string, 1: string}|null
+     */
+    public static function basicCredentials(Request $request): ?array
+    {
+        $header = $request->header('authorization') ?? '';
+        if (!preg_match('/^Basic\s+(\S+)$/i', $header, $m)) {
+            return null;
+        }
+        $decoded = base64_decode($m[1], true);
+        if ($decoded === false || !str_contains($decoded, ':')) {
+            return null;
+        }
+        [$login, $password] = explode(':', $decoded, 2);
+        return [$login, $password];
     }
 
     /** Application passwords need HTTPS, unless plugin code says otherwise through the reference's filter. */

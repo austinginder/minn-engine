@@ -18,6 +18,8 @@ use Minn\Http\Request;
 use Minn\Http\Response;
 use Minn\Http\Route;
 use Minn\RestError;
+use Minn\Runtime\ApplicationPasswordEvents;
+use Minn\Runtime\Runtime;
 
 /**
  * wp/v2/users/{id}/application-passwords: list, create, rename, delete,
@@ -64,10 +66,12 @@ final readonly class ApplicationPasswordsController
             $this->validate('app_id', $body['app_id'], self::APP_ID_SCHEMA);
         }
         $user = $this->subject($request, $userId, 'rest_cannot_create_application_passwords', 'Sorry, you are not allowed to create application passwords for this user.');
-        [$record, $plain] = $this->passwords->create($user->id, (string) $body['name'], $appId);
-        $item = $this->item($user, $record);
-        $item = ['uuid' => $item['uuid'], 'app_id' => $item['app_id'], 'name' => $item['name'], 'created' => $item['created'], 'last_used' => $item['last_used'], 'last_ip' => $item['last_ip'], 'password' => $plain, '_links' => $item['_links']];
-        return Reply::item($item, Fields::fromQuery($request->query), 201);
+        $made = Runtime::booted() ? ApplicationPasswordEvents::create($user->id, $body, RuntimeRoutes::wpRequest($request)) : $this->passwords->create($user->id, (string) $body['name'], $appId);
+        if ($made instanceof \WP_Error) {
+            return RuntimeRoutes::fromWp($made);
+        }
+        [$record, $plain] = $made;
+        return Reply::item($this->item($user, $record, $plain), Fields::fromQuery($request->query), 201);
     }
 
     /** Removes every one. */
@@ -75,7 +79,8 @@ final readonly class ApplicationPasswordsController
     public function deleteAll(Request $request, string $userId): Response
     {
         $user = $this->subject($request, $userId, 'rest_cannot_delete_application_passwords', 'Sorry, you are not allowed to delete application passwords for this user.');
-        return Reply::item(['deleted' => true, 'count' => $this->passwords->deleteAll($user->id)], null);
+        $count = Runtime::booted() ? (int) \WP_Application_Passwords::delete_all_application_passwords($user->id) : $this->passwords->deleteAll($user->id);
+        return Reply::item(['deleted' => true, 'count' => $count], null);
     }
 
     /** The password the current Basic auth session used. */
@@ -111,7 +116,12 @@ final readonly class ApplicationPasswordsController
         }
         $user = $this->subject($request, $userId, 'rest_cannot_edit_application_password', 'Sorry, you are not allowed to edit this application password.');
         $record = $this->existing($user, $uuid);
-        if (array_key_exists('name', $body)) {
+        if (Runtime::booted()) {
+            $record = ApplicationPasswordEvents::update($user->id, (string) $record['uuid'], $body, RuntimeRoutes::wpRequest($request));
+            if ($record instanceof \WP_Error) {
+                return RuntimeRoutes::fromWp($record);
+            }
+        } elseif (array_key_exists('name', $body)) {
             $record = $this->passwords->rename($user->id, $uuid, (string) $body['name']) ?? $record;
         }
         return Reply::item($this->item($user, $record), Fields::fromQuery($request->query));
@@ -122,10 +132,15 @@ final readonly class ApplicationPasswordsController
     public function delete(Request $request, string $userId, string $uuid): Response
     {
         $user = $this->subject($request, $userId, 'rest_cannot_delete_application_password', 'Sorry, you are not allowed to delete this application password.');
-        $this->existing($user, $uuid);
-        $previous = $this->passwords->delete($user->id, $uuid) ?? [];
-        $item = $this->item($user, $previous);
+        $record = $this->existing($user, $uuid);
+        // The answer is prepared before the password goes, as the reference prepares it.
+        $item = $this->item($user, $record);
         unset($item['_links']);
+        if (Runtime::booted()) {
+            \WP_Application_Passwords::delete_application_password($user->id, (string) $record['uuid']);
+        } else {
+            $this->passwords->delete($user->id, (string) $record['uuid']);
+        }
         return Reply::item(['deleted' => true, 'previous' => $item], null);
     }
 
@@ -173,17 +188,20 @@ final readonly class ApplicationPasswordsController
     }
 
     /** @param array<string, mixed> $user @param array<string, mixed> $record @return array<string, mixed> */
-    private function item(UserRecord $user, array $record): array
+    private function item(UserRecord $user, array $record, ?string $plain = null): array
     {
-        return [
+        $item = [
             'uuid' => (string) ($record['uuid'] ?? ''),
             'app_id' => (string) ($record['app_id'] ?? ''),
             'name' => (string) ($record['name'] ?? ''),
             'created' => $this->when($record['created'] ?? null),
             'last_used' => $this->when($record['last_used'] ?? null),
             'last_ip' => isset($record['last_ip']) ? (string) $record['last_ip'] : null,
-            '_links' => ['self' => [['href' => $this->url->to('/wp/v2/users/' . $user->id . '/application-passwords/' . (string) ($record['uuid'] ?? '')), 'targetHints' => ['allow' => ['GET', 'POST', 'PUT', 'PATCH', 'DELETE']]]]],
         ];
+        // A new password is shown once, in the answer rest_prepare_application_password sees too.
+        $item += $plain === null ? [] : ['password' => $plain];
+        $item['_links'] = ['self' => [['href' => $this->url->to('/wp/v2/users/' . $user->id . '/application-passwords/' . (string) ($record['uuid'] ?? '')), 'targetHints' => ['allow' => ['GET', 'POST', 'PUT', 'PATCH', 'DELETE']]]]];
+        return RuntimePrepare::item('rest_prepare_application_password', $item, static fn () => $record);
     }
 
     /** A stored unix time as the site-local ISO stamp the reference prints, without an offset. */

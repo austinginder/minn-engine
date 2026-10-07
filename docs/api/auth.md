@@ -8,7 +8,7 @@ passwords, sessions, cookies, nonces, roles and capabilities
 | [`AuthCookies`](#authcookies) | final readonly class | 55 | The three cookies a sign-in sets: the auth cookie on the admin and |
 | [`AuthFailure`](#authfailure) | final readonly class | 18 | Why a request is not authenticated, as the reference's error code: a |
 | [`Authenticated`](#authenticated) | final readonly class | 16 | A validated session: the user row and the raw session token behind it. |
-| [`Authenticator`](#authenticator) | final readonly class | 124 | Resolves the current user two ways. A page load carries the cookie alone; |
+| [`Authenticator`](#authenticator) | final readonly class | 139 | Resolves the current user two ways. A page load carries the cookie alone; |
 | [`Capabilities`](#capabilities) | final readonly class | 260 | The capability engine: a user's roles from {prefix}capabilities usermeta, |
 | [`Cookie`](#cookie) | final readonly class | 75 | The logged_in auth cookie: username\|expiration\|token\|hmac, with |
 | [`FastHash`](#fasthash) | final class | 23 | The reference's hash for high-entropy secrets ("$generic$", WordPress 6.8 |
@@ -39,7 +39,7 @@ phpass (WordPress before 6.8, and the engine before this) and $wp$.
 
 - const `META` = `'_application_passwords'`
 
-Used by: `Minn\Auth\Authenticator`, `Minn\Rest\ApplicationPasswordsController`, `Minn\Rest\Services`
+Used by: `Minn\Auth\Authenticator`, `Minn\Rest\ApplicationPasswordsController`, `Minn\Rest\Services`, `Minn\Runtime\ApplicationPasswordEvents`, `Minn\Runtime\ApplicationPasswordSignIn`
 
 ```php
 __construct(Minn\Content\Users $users)
@@ -216,6 +216,12 @@ nonce. A wrong Basic pair is reported as not logged in.
 ### `applicationPassword(Minn\Http\Request $request): ?Minn\Auth\Authenticated`
 
 The user an Authorization: Basic header's application password unlocks, with the use recorded.
+
+### static `basicCredentials(Minn\Http\Request $request): ?array`
+
+The login and password an Authorization: Basic header carries, or null.
+
+- `@return array{0: string, 1: string}|null`
 
 ### static `applicationPasswordsAvailable(Minn\Http\Request $request): bool`
 

@@ -18,10 +18,37 @@ function _wp_get_current_user()
     return wp_set_current_user($id > 0 ? $id : 0);
 }
 
-/** An earlier callback's user, as given: the engine's REST layer signs application passwords in itself, and its user is the session's. */
+/** Application passwords are supported over HTTPS, or anywhere on a local site. */
+function wp_is_application_passwords_supported()
+{
+    return is_ssl() || wp_get_environment_type() === 'local';
+}
+
+function wp_is_application_passwords_available()
+{
+    return apply_filters('wp_is_application_passwords_available', wp_is_application_passwords_supported());
+}
+
+/** Whether a user may sign in by application password: the site allows them, then wp_is_application_passwords_available_for_user. */
+function wp_is_application_passwords_available_for_user($user)
+{
+    $user = is_numeric($user) ? get_user_by('id', $user) : $user;
+    if (!$user instanceof WP_User || !$user->exists() || !wp_is_application_passwords_available()) {
+        return false;
+    }
+    return apply_filters('wp_is_application_passwords_available_for_user', true, $user);
+}
+
+/** A user signed in by application password (in an API request), the input as given, or the refusal: Minn\Runtime\ApplicationPasswordSignIn. */
+function wp_authenticate_application_password($input_user, $username, $password)
+{
+    return Minn\Runtime\ApplicationPasswordSignIn::authenticate($input_user, (string) $username, (string) $password);
+}
+
+/** An earlier callback's user, as given; else the REST request's application password sign-in, heard again now that plugins may refuse it: Minn\Runtime\ApplicationPasswordSignIn. */
 function wp_validate_application_password($input_user)
 {
-    return $input_user;
+    return Minn\Runtime\ApplicationPasswordSignIn::validate($input_user);
 }
 
 function get_current_user_id()
