@@ -151,9 +151,13 @@ function get_role($role)
     return isset($roles[$role]) ? new WP_Role($role, $roles[$role]['capabilities']) : null;
 }
 
+/** The site's one roles object ($wp_roles), made the first time it is asked for. */
 function wp_roles()
 {
-    return new WP_Roles();
+    if (!isset($GLOBALS['wp_roles']) || !$GLOBALS['wp_roles'] instanceof WP_Roles) {
+        $GLOBALS['wp_roles'] = new WP_Roles();
+    }
+    return $GLOBALS['wp_roles'];
 }
 
 function get_editable_roles()

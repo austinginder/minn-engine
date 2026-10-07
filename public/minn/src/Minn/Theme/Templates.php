@@ -52,7 +52,23 @@ final readonly class Templates
     /** A template part's markup by slug, saved first. */
     public function part(string $slug): ?string
     {
-        return $this->saved('wp_template_part', $slug) ?? $this->theme->partFile($slug);
+        return $this->partSource($slug)[2];
+    }
+
+    /**
+     * Where a template part comes from: a part saved for the theme (its
+     * post id), the theme's file (its path), or nowhere; with its markup.
+     *
+     * @return array{0: 'post'|'file'|'none', 1: int|string, 2: ?string}
+     */
+    public function partSource(string $slug): array
+    {
+        $row = $this->savedRow('wp_template_part', $slug);
+        if ($row !== null) {
+            return ['post', (int) $row['ID'], (string) $row['post_content']];
+        }
+        $path = $this->theme->partPath($slug);
+        return $path === null ? ['none', '', null] : ['file', $path, (string) file_get_contents($path)];
     }
 
     /**
@@ -158,8 +174,15 @@ final readonly class Templates
 
     private function saved(string $type, ?string $slug): ?string
     {
-        $row = $this->db->row(
-            "SELECT p.post_content FROM {$this->db->table('posts')} p
+        $row = $this->savedRow($type, $slug);
+        return $row === null ? null : (string) $row['post_content'];
+    }
+
+    /** @return array{ID: int|string, post_content: string}|null the newest published template of a type (and slug) saved for the theme */
+    private function savedRow(string $type, ?string $slug): ?array
+    {
+        return $this->db->row(
+            "SELECT p.ID, p.post_content FROM {$this->db->table('posts')} p
              JOIN {$this->db->table('term_relationships')} tr ON tr.object_id = p.ID
              JOIN {$this->db->table('term_taxonomy')} tt ON tt.term_taxonomy_id = tr.term_taxonomy_id
              JOIN {$this->db->table('terms')} t ON t.term_id = tt.term_id
@@ -167,6 +190,5 @@ final readonly class Templates
                AND tt.taxonomy = 'wp_theme' AND t.slug = ? ORDER BY p.ID DESC LIMIT 1",
             [$type, $slug, $slug, $this->theme->slug],
         );
-        return $row === null ? null : (string) $row['post_content'];
     }
 }

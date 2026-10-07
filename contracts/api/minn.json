@@ -14642,7 +14642,7 @@
             "namespace": "Minn\\Blocks\\Dynamic\\Theme",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Blocks/Dynamic/Theme/Structure.php",
-            "lines": 86,
+            "lines": 105,
             "doc": "template-part, pattern, site-title, site-tagline, site-logo.",
             "implements": [],
             "extends": null,
@@ -14656,6 +14656,7 @@
                 "Minn\\Front\\Kind",
                 "Minn\\Front\\Permalinks",
                 "Minn\\Runtime\\BlockHooks",
+                "Minn\\Runtime\\Runtime",
                 "Minn\\Support\\Html",
                 "Minn\\Theme\\Templates",
                 "Minn\\Theme\\Theme"
@@ -14698,8 +14699,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 23,
-                "end": 29
+                "line": 24,
+                "end": 30
             },
             "cases": [],
             "constants": [],
@@ -14759,8 +14760,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 32,
-                    "end": 39
+                    "line": 33,
+                    "end": 40
                 },
                 {
                     "routes": [],
@@ -14786,8 +14787,56 @@
                             "doc": ""
                         }
                     ],
-                    "line": 42,
-                    "end": 59
+                    "line": 43,
+                    "end": 61
+                },
+                {
+                    "routes": [],
+                    "name": "announcePart",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "announcePart(Minn\\Blocks\\Block $block, string $slug, string $source, string|int $where, ?string $markup): void",
+                    "doc": "Tells plugins where a template part came from, as the reference does\nas it renders one: render_block_core_template_part_post (with the\nsaved part), _file (with the theme file's path) or _none.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "block",
+                            "type": "Minn\\Blocks\\Block",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "slug",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "source",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "where",
+                            "type": "string|int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "markup",
+                            "type": "?string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 68,
+                    "end": 79
                 },
                 {
                     "routes": [],
@@ -14813,8 +14862,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 61,
-                    "end": 77
+                    "line": 81,
+                    "end": 97
                 },
                 {
                     "routes": [],
@@ -14840,8 +14889,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 79,
-                    "end": 93
+                    "line": 99,
+                    "end": 113
                 },
                 {
                     "routes": [],
@@ -14860,8 +14909,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 95,
-                    "end": 104
+                    "line": 115,
+                    "end": 124
                 }
             ]
         },
@@ -116971,6 +117020,7 @@
                 "Minn\\Blocks\\Dynamic\\Theme\\Navigation",
                 "Minn\\Blocks\\Dynamic\\Theme\\PostBlocks",
                 "Minn\\Blocks\\Dynamic\\Theme\\QueryBlocks",
+                "Minn\\Blocks\\Dynamic\\Theme\\Structure",
                 "Minn\\Blocks\\ImageTags",
                 "Minn\\Blocks\\RenderState",
                 "Minn\\Cli\\Runtime",
@@ -117065,6 +117115,7 @@
                 "Minn\\Theme\\ClassicContent",
                 "Minn\\Theme\\ClassicRenderer",
                 "Minn\\Theme\\FrontLifecycle",
+                "Minn\\Theme\\HeadLinks",
                 "Minn\\Theme\\MainQueryBridge",
                 "Minn\\Theme\\PageRenderer",
                 "Minn\\Theme\\Templates"
@@ -129907,7 +129958,7 @@
             "namespace": "Minn\\Theme",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Theme/HeadLinks.php",
-            "lines": 114,
+            "lines": 133,
             "doc": "The links the reference puts in every head: the site and comments\nfeeds (plus the archive's own feed), the REST discovery link, the\nJSON alternate for the queried object, and the site icon set. The\nblock path prints them as one run; the classic path prints the same\npieces from the reference's wp_head hooks.",
             "implements": [],
             "extends": null,
@@ -129918,6 +129969,7 @@
                 "Minn\\Front\\Kind",
                 "Minn\\Front\\Permalinks",
                 "Minn\\Front\\Resolution",
+                "Minn\\Runtime\\Runtime",
                 "Minn\\Support\\Html"
             ],
             "usedBy": [
@@ -129952,8 +130004,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 24,
-                "end": 29
+                "line": 25,
+                "end": 30
             },
             "cases": [],
             "constants": [],
@@ -129996,8 +130048,8 @@
                     "doc": "The link to the engine's own block stylesheet.",
                     "shapes": [],
                     "params": [],
-                    "line": 32,
-                    "end": 35
+                    "line": 33,
+                    "end": 36
                 },
                 {
                     "routes": [],
@@ -130016,8 +130068,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 38,
-                    "end": 41
+                    "line": 39,
+                    "end": 42
                 },
                 {
                     "routes": [],
@@ -130028,8 +130080,30 @@
                     "doc": "The site and comments feed links.",
                     "shapes": [],
                     "params": [],
-                    "line": 44,
-                    "end": 49
+                    "line": 45,
+                    "end": 53
+                },
+                {
+                    "routes": [],
+                    "name": "siteFeeds",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "siteFeeds(array $args): string",
+                    "doc": "The site's two feed links as feed_links prints them: the posts feed\nand the comments feed (each unless its feed_links_show_* filter says\nno), titled with the caller's separator and words.",
+                    "shapes": [
+                        "@param array<string, mixed> $args"
+                    ],
+                    "params": [
+                        {
+                            "name": "args",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 62,
+                    "end": 69
                 },
                 {
                     "routes": [],
@@ -130048,8 +130122,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 52,
-                    "end": 80
+                    "line": 72,
+                    "end": 100
                 },
                 {
                     "routes": [],
@@ -130060,8 +130134,8 @@
                     "doc": "No trailing newline: the reference prints the JSON alternate and the RSD link on the same physical line.",
                     "shapes": [],
                     "params": [],
-                    "line": 83,
-                    "end": 86
+                    "line": 103,
+                    "end": 106
                 },
                 {
                     "routes": [],
@@ -130080,8 +130154,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 89,
-                    "end": 102
+                    "line": 109,
+                    "end": 122
                 },
                 {
                     "routes": [],
@@ -130092,8 +130166,8 @@
                     "doc": "The RSD link.",
                     "shapes": [],
                     "params": [],
-                    "line": 105,
-                    "end": 108
+                    "line": 125,
+                    "end": 128
                 },
                 {
                     "routes": [],
@@ -130112,8 +130186,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 111,
-                    "end": 121
+                    "line": 131,
+                    "end": 141
                 },
                 {
                     "routes": [],
@@ -130124,8 +130198,8 @@
                     "doc": "The site icon links: the 32 and 192 pixel icons, the Apple touch icon, and the tile image.",
                     "shapes": [],
                     "params": [],
-                    "line": 124,
-                    "end": 134
+                    "line": 144,
+                    "end": 154
                 }
             ]
         },
@@ -133209,7 +133283,7 @@
             "namespace": "Minn\\Theme",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Theme/Templates.php",
-            "lines": 153,
+            "lines": 175,
             "doc": "Which template renders a resolution, and where its markup comes from:\na wp_template post saved from the site editor (matched by slug and the\ntheme term) wins over the theme's file. Parts resolve the same way\nthrough wp_template_part.",
             "implements": [],
             "extends": null,
@@ -133370,6 +133444,28 @@
                 },
                 {
                     "routes": [],
+                    "name": "partSource",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "partSource(string $slug): array",
+                    "doc": "Where a template part comes from: a part saved for the theme (its\npost id), the theme's file (its path), or nowhere; with its markup.",
+                    "shapes": [
+                        "@return array{0: 'post'|'file'|'none', 1: int|string, 2: ?string}"
+                    ],
+                    "params": [
+                        {
+                            "name": "slug",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 64,
+                    "end": 72
+                },
+                {
+                    "routes": [],
                     "name": "candidates",
                     "static": false,
                     "visibility": "public",
@@ -133387,8 +133483,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 63,
-                    "end": 66
+                    "line": 79,
+                    "end": 82
                 },
                 {
                     "routes": [],
@@ -133399,8 +133495,8 @@
                     "doc": "The site editor's saved global styles for the active theme, when any.\nAn emptied node is stored as [] and reads as nothing, the way the\nreference reads it; a list where a map belongs is dropped the same way.",
                     "shapes": [],
                     "params": [],
-                    "line": 139,
-                    "end": 147
+                    "line": 155,
+                    "end": 163
                 },
                 {
                     "routes": [],
@@ -133419,8 +133515,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 150,
-                    "end": 157
+                    "line": 166,
+                    "end": 173
                 },
                 {
                     "routes": [],
@@ -133449,8 +133545,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 77,
-                    "end": 98
+                    "line": 93,
+                    "end": 114
                 },
                 {
                     "routes": [],
@@ -133471,8 +133567,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 101,
-                    "end": 132
+                    "line": 117,
+                    "end": 148
                 },
                 {
                     "routes": [],
@@ -133498,8 +133594,37 @@
                             "doc": ""
                         }
                     ],
-                    "line": 159,
-                    "end": 171
+                    "line": 175,
+                    "end": 179
+                },
+                {
+                    "routes": [],
+                    "name": "savedRow",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "savedRow(string $type, ?string $slug): ?array",
+                    "doc": "",
+                    "shapes": [
+                        "@return array{ID: int|string, post_content: string}|null the newest published template of a type (and slug) saved for the theme"
+                    ],
+                    "params": [
+                        {
+                            "name": "type",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "slug",
+                            "type": "?string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 182,
+                    "end": 193
                 }
             ]
         },
@@ -133509,7 +133634,7 @@
             "namespace": "Minn\\Theme",
             "kind": "final class",
             "file": "public/minn/src/Minn/Theme/Theme.php",
-            "lines": 327,
+            "lines": 334,
             "doc": "The active block theme on disk, read as data: theme.json, the templates\nand parts directories, and the patterns index. A child theme's files\nwin and its parent fills in what the child does not define; theme.json\nmerges the same way, with the child's preset lists replacing the\nparent's whole. The engine reads the site's installed theme the way it\nreads the site's database; it never runs the theme's PHP.",
             "implements": [],
             "extends": null,
@@ -133802,7 +133927,27 @@
                         }
                     ],
                     "line": 173,
-                    "end": 180
+                    "end": 177
+                },
+                {
+                    "routes": [],
+                    "name": "partPath",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "partPath(string $slug): ?string",
+                    "doc": "The file a template part is read from: this theme's, else its parent's; null when neither has one.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "slug",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 180,
+                    "end": 187
                 },
                 {
                     "routes": [],
@@ -133813,8 +133958,8 @@
                     "doc": "The theme's display name, as the stylesheet header states it; a child\ntheme answers with its own. Falls back to theme.json's title, then the\nfolder name.",
                     "shapes": [],
                     "params": [],
-                    "line": 187,
-                    "end": 196
+                    "line": 194,
+                    "end": 203
                 },
                 {
                     "routes": [],
@@ -133835,8 +133980,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 206,
-                    "end": 217
+                    "line": 213,
+                    "end": 224
                 },
                 {
                     "routes": [],
@@ -133855,8 +134000,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 232,
-                    "end": 240
+                    "line": 239,
+                    "end": 247
                 },
                 {
                     "routes": [],
@@ -133875,8 +134020,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 243,
-                    "end": 251
+                    "line": 250,
+                    "end": 258
                 },
                 {
                     "routes": [],
@@ -133895,8 +134040,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 254,
-                    "end": 262
+                    "line": 261,
+                    "end": 269
                 },
                 {
                     "routes": [],
@@ -133915,8 +134060,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 265,
-                    "end": 272
+                    "line": 272,
+                    "end": 279
                 },
                 {
                     "routes": [],
@@ -133937,8 +134082,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 280,
-                    "end": 294
+                    "line": 287,
+                    "end": 301
                 },
                 {
                     "routes": [],
@@ -133959,8 +134104,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 303,
-                    "end": 323
+                    "line": 310,
+                    "end": 330
                 },
                 {
                     "routes": [],
@@ -133971,8 +134116,8 @@
                     "doc": "The theme's stylesheet URL when it ships one; a child's own, else nothing (the parent's is not enqueued for it).",
                     "shapes": [],
                     "params": [],
-                    "line": 326,
-                    "end": 329
+                    "line": 333,
+                    "end": 336
                 },
                 {
                     "routes": [],
@@ -134096,8 +134241,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 220,
-                    "end": 229
+                    "line": 227,
+                    "end": 236
                 },
                 {
                     "routes": [],
@@ -134110,8 +134255,8 @@
                         "@return array<string, string>"
                     ],
                     "params": [],
-                    "line": 332,
-                    "end": 344
+                    "line": 339,
+                    "end": 351
                 }
             ]
         },

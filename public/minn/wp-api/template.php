@@ -633,11 +633,11 @@ function _wp_render_title_tag()
     echo '<title>' . wp_get_document_title() . '</title>' . "\n";
 }
 
+/** The site's feed and comments feed as head links, each unless its feed_links_show_* filter says no, titled in the caller's words. */
 function feed_links($args = [])
 {
-    $head = Runtime::current()->get('classic_head');
-    if ($head instanceof \Minn\Theme\HeadLinks && current_theme_supports('automatic-feed-links')) {
-        echo $head->feedLinks();
+    if (current_theme_supports('automatic-feed-links')) {
+        echo Minn\Theme\HeadLinks::siteFeeds((array) $args);
     }
 }
 

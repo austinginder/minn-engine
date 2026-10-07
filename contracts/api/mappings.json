@@ -4,8 +4,8 @@
     "summary": {
         "minn": 658,
         "composes": 968,
-        "leaf": 660,
-        "noop": 1921,
+        "leaf": 661,
+        "noop": 1920,
         "functions": 4137,
         "minnMethods": 731,
         "leafLinesOver15": 12
@@ -10207,13 +10207,15 @@
         },
         "WP_Roles::init_roles": {
             "file": "classes/WP_Role.php",
-            "lines": 7,
+            "lines": 8,
             "kind": "minn",
             "minn": [
                 "Minn\\Runtime\\Runtime::capabilities->roles",
                 "Minn\\Runtime\\Runtime::current"
             ],
-            "composes": []
+            "composes": [
+                "do_action"
+            ]
         },
         "WP_Roles::is_role": {
             "file": "classes/WP_Role.php",
@@ -15916,7 +15918,7 @@
         },
         "_minn_bind_hook_globals": {
             "file": "plugin.php",
-            "lines": 24,
+            "lines": 25,
             "kind": "minn",
             "minn": [
                 "Minn\\Runtime\\Runtime::actionCounters",
@@ -20566,12 +20568,10 @@
         },
         "feed_links": {
             "file": "template.php",
-            "lines": 4,
+            "lines": 3,
             "kind": "minn",
             "minn": [
-                "Minn\\Runtime\\Runtime::current",
-                "Minn\\Runtime\\Runtime::feedLinks",
-                "Minn\\Runtime\\Runtime::get"
+                "Minn\\Theme\\HeadLinks::siteFeeds"
             ],
             "composes": [
                 "current_theme_supports"
@@ -35683,8 +35683,8 @@
         },
         "wp_roles": {
             "file": "user.php",
-            "lines": 1,
-            "kind": "noop",
+            "lines": 4,
+            "kind": "leaf",
             "minn": [],
             "composes": []
         },

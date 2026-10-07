@@ -12,6 +12,7 @@ use Minn\Content\Site;
 use Minn\Front\Kind;
 use Minn\Front\Permalinks;
 use Minn\Runtime\BlockHooks;
+use Minn\Runtime\Runtime;
 use Minn\Support\Html;
 use Minn\Theme\Templates;
 use Minn\Theme\Theme;
@@ -42,7 +43,8 @@ final readonly class Structure
     private function templatePart(Block $block, Renderer $renderer): string
     {
         $slug = (string) $block->attr('slug', '');
-        $markup = $this->templates->part($slug);
+        [$source, $where, $markup] = $this->templates->partSource($slug);
+        self::announcePart($block, $slug, $source, $where, $markup);
         if ($markup === null || !$renderer->state()->enter('part:' . $slug)) {
             return '';
         }
@@ -56,6 +58,24 @@ final readonly class Structure
         $renderer->state()->leave('part:' . $slug);
         $classes = trim($block->className() . ' wp-block-template-part');
         return '<' . $tag . ' class="' . Html::attr($classes) . '">' . $inner . '</' . $tag . '>';
+    }
+
+    /**
+     * Tells plugins where a template part came from, as the reference does
+     * as it renders one: render_block_core_template_part_post (with the
+     * saved part), _file (with the theme file's path) or _none.
+     */
+    private static function announcePart(Block $block, string $slug, string $source, int|string $where, ?string $markup): void
+    {
+        if (!Runtime::booted()) {
+            return;
+        }
+        $id = (string) $block->attr('theme', \get_stylesheet()) . '//' . $slug;
+        match ($source) {
+            'post' => \do_action('render_block_core_template_part_post', $id, $block->attrs, \get_post((int) $where), $markup),
+            'file' => \do_action('render_block_core_template_part_file', $id, $block->attrs, $where, $markup),
+            default => \do_action('render_block_core_template_part_none', $id, $block->attrs, ''),
+        };
     }
 
     private function pattern(Block $block, Renderer $renderer): string

@@ -8,7 +8,7 @@ the template blocks a block theme composes with
 | [`Navigation`](#navigation) | final readonly class | 287 | navigation, navigation-link, page-list. A navigation block's items come |
 | [`PostBlocks`](#postblocks) | final readonly class | 248 | The post-* blocks: they render the context's current post. |
 | [`QueryBlocks`](#queryblocks) | final class | 274 | query, post-template, query-title, query-no-results, query-pagination, term-description. |
-| [`Structure`](#structure) | final readonly class | 86 | template-part, pattern, site-title, site-tagline, site-logo. |
+| [`Structure`](#structure) | final readonly class | 105 | template-part, pattern, site-title, site-tagline, site-logo. |
 
 ## Comments
 
@@ -111,5 +111,5 @@ __construct(Minn\Theme\Theme $theme, Minn\Theme\Templates $templates, Minn\Conte
 
 Registers this family's blocks with the renderer.
 
-Internals: `templatePart()` (private, line 42), `pattern()` (private, line 61), `siteTitle()` (private, line 79), `siteTagline()` (private, line 95)
+Internals: `templatePart()` (private, line 43), `announcePart()` (private, line 68), `pattern()` (private, line 81), `siteTitle()` (private, line 99), `siteTagline()` (private, line 115)
 

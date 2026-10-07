@@ -57,6 +57,7 @@ class WP_Roles
             $this->role_objects[$role] = new WP_Role($role, $data['capabilities']);
             $this->role_names[$role] = $data['name'];
         }
+        do_action('wp_roles_init', $this);
     }
 
     public function for_site($site_id = null)

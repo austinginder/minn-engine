@@ -14,7 +14,7 @@ the block-theme reader, templates, global styles and the page renderer
 | [`Folder`](#folder) | final readonly class | 77 | A theme folder read from disk: its style.css headers, which folder its templates come from, its screenshot, whether it is a block theme. |
 | [`FrontLifecycle`](#frontlifecycle) | final class | 93 | WordPress's front-end request steps around the main query, as WP::main |
 | [`GlobalStyles`](#globalstyles) | final readonly class | 555 | theme.json to CSS. Presets become custom properties on :root and their |
-| [`HeadLinks`](#headlinks) | final readonly class | 114 | The links the reference puts in every head: the site and comments |
+| [`HeadLinks`](#headlinks) | final readonly class | 133 | The links the reference puts in every head: the site and comments |
 | [`Hierarchy`](#hierarchy) | final class | 146 | The classic template hierarchy: the candidate file names each template |
 | [`MainQueryBridge`](#mainquerybridge) | final readonly class | 123 | Stands the main query for a themed page and runs the front-end steps |
 | [`NotModified`](#notmodified) | final class | 3 | Raised once a reader's copy of a feed has been found current and the |
@@ -28,8 +28,8 @@ the block-theme reader, templates, global styles and the page renderer
 | [`TemplatePatterns`](#templatepatterns) | final readonly class | 88 | A template can name a pattern instead of carrying its blocks, and the |
 | [`TemplateRecord`](#templaterecord) | final readonly class | 34 | One block template or template part, whatever it came from: a theme |
 | [`TemplateWriter`](#templatewriter) | final readonly class | 92 | Saving and removing block templates. A template the theme ships is never |
-| [`Templates`](#templates) | final readonly class | 153 | Which template renders a resolution, and where its markup comes from: |
-| [`Theme`](#theme) | final class | 327 | The active block theme on disk, read as data: theme.json, the templates |
+| [`Templates`](#templates) | final readonly class | 175 | Which template renders a resolution, and where its markup comes from: |
+| [`Theme`](#theme) | final class | 334 | The active block theme on disk, read as data: theme.json, the templates |
 | [`ThemeStyles`](#themestyles) | final readonly class | 115 | The active theme's global styles as wp/v2/global-styles/themes/{stylesheet} |
 | [`UserStyles`](#userstyles) | final readonly class | 106 | The site editor's saved global styles: one wp_global_styles post per |
 
@@ -359,6 +359,14 @@ Every head link for a resolution.
 ### `feedLinks(): string`
 
 The site and comments feed links.
+
+### static `siteFeeds(array $args): string`
+
+The site's two feed links as feed_links prints them: the posts feed
+and the comments feed (each unless its feed_links_show_* filter says
+no), titled with the caller's separator and words.
+
+- `@param array<string, mixed> $args`
 
 ### `extraFeedLink(Minn\Front\Resolution $resolution): string`
 
@@ -890,6 +898,13 @@ A template's markup by slug, saved first.
 
 A template part's markup by slug, saved first.
 
+### `partSource(string $slug): array`
+
+Where a template part comes from: a part saved for the theme (its
+post id), the theme's file (its path), or nowhere; with its markup.
+
+- `@return array{0: 'post'|'file'|'none', 1: int|string, 2: ?string}`
+
 ### `candidates(Minn\Front\Resolution $resolution): array`
 
 The block-theme template hierarchy for each kind of resolution.
@@ -906,7 +921,7 @@ reference reads it; a list where a map belongs is dropped the same way.
 
 A page's chosen custom template, from _wp_page_template meta.
 
-Internals: `filtered()` (private, line 77), `hierarchy()` (private, line 101), `saved()` (private, line 159)
+Internals: `filtered()` (private, line 93), `hierarchy()` (private, line 117), `saved()` (private, line 175), `savedRow()` (private, line 182)
 
 
 ## Theme
@@ -969,6 +984,10 @@ A template file's markup, or null.
 
 A template part file's markup, or null.
 
+### `partPath(string $slug): ?string`
+
+The file a template part is read from: this theme's, else its parent's; null when neither has one.
+
 ### `name(): string`
 
 The theme's display name, as the stylesheet header states it; a child
@@ -1019,7 +1038,7 @@ pattern into a template. A field the header omits is omitted here.
 
 The theme's stylesheet URL when it ships one; a child's own, else nothing (the parent's is not enqueued for it).
 
-Internals: `at()` (private, line 59), `withStylePartials()` (private, line 90), `partialFiles()` (private, line 126), `safe()` (private, line 157), `htmlFiles()` (private, line 220), `patternIndex()` (private, line 332)
+Internals: `at()` (private, line 59), `withStylePartials()` (private, line 90), `partialFiles()` (private, line 126), `safe()` (private, line 157), `htmlFiles()` (private, line 227), `patternIndex()` (private, line 339)
 
 
 ## ThemeStyles

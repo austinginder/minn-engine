@@ -10,6 +10,7 @@ use Minn\Content\Site;
 use Minn\Front\Kind;
 use Minn\Front\Permalinks;
 use Minn\Front\Resolution;
+use Minn\Runtime\Runtime;
 use Minn\Support\Html;
 
 /**
@@ -43,9 +44,28 @@ final readonly class HeadLinks
     /** The site and comments feed links. */
     public function feedLinks(): string
     {
+        if (Runtime::booted()) {
+            return self::siteFeeds([]);
+        }
         $site = Html::esc((string) ($this->site->option('blogname') ?? ''));
         return '<link rel="alternate" type="application/rss+xml" title="' . $site . ' &raquo; Feed" href="' . Html::attr($this->permalinks->url('/feed/')) . '" />' . "\n"
             . '<link rel="alternate" type="application/rss+xml" title="' . $site . ' &raquo; Comments Feed" href="' . Html::attr($this->permalinks->url('/comments/feed/')) . '" />' . "\n";
+    }
+
+    /**
+     * The site's two feed links as feed_links prints them: the posts feed
+     * and the comments feed (each unless its feed_links_show_* filter says
+     * no), titled with the caller's separator and words.
+     *
+     * @param array<string, mixed> $args
+     */
+    public static function siteFeeds(array $args): string
+    {
+        $args = \wp_parse_args($args, ['separator' => \_x('&raquo;', 'feed link'), 'feedtitle' => \__('%1$s %2$s Feed'), 'comstitle' => \__('%1$s %2$s Comments Feed')]);
+        $name = (string) \get_bloginfo('name');
+        $link = static fn (string $title, string $href): string => sprintf('<link rel="alternate" type="%s" title="%s" href="%s" />' . "\n", \feed_content_type(), \esc_attr(sprintf($title, $name, $args['separator'])), \esc_url($href));
+        $out = \apply_filters('feed_links_show_posts_feed', true) ? $link((string) $args['feedtitle'], (string) \get_feed_link()) : '';
+        return $out . (\apply_filters('feed_links_show_comments_feed', true) ? $link((string) $args['comstitle'], (string) \get_feed_link('comments_' . \get_default_feed())) : '');
     }
 
     /** The feed link a single or an archive adds. */

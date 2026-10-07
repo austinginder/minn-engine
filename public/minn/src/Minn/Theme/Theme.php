@@ -172,11 +172,18 @@ final class Theme
     /** A template part file's markup, or null. */
     public function partFile(string $slug): ?string
     {
+        $path = $this->partPath($slug);
+        return $path === null ? null : (string) file_get_contents($path);
+    }
+
+    /** The file a template part is read from: this theme's, else its parent's; null when neither has one. */
+    public function partPath(string $slug): ?string
+    {
         if (!self::safe($slug)) {
             return null;
         }
         $file = "{$this->dir}/parts/{$slug}.html";
-        return is_file($file) ? (string) file_get_contents($file) : $this->parent?->partFile($slug);
+        return is_file($file) ? $file : $this->parent?->partPath($slug);
     }
 
     /**
