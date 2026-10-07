@@ -9,6 +9,8 @@ public/wp-config.php
 logs/
 tailscale_port
 twin
+history/
+private/
 
 # OS noise
 .DS_Store
