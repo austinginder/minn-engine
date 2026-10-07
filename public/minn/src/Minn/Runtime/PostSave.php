@@ -9,6 +9,7 @@ use Minn\Content\PostSlugs;
 use Minn\Http\Request;
 use Minn\Rest\RuntimeRoutes;
 use Minn\RestError;
+use Minn\Support\Slashes;
 
 /**
  * A REST save's columns through the filters the reference's save runs
@@ -59,12 +60,12 @@ final class PostSave
         // What the request gave, as wp_insert_post_data's third argument has it: a new post's own fields and type.
         $given = array_intersect_key($columns, array_flip(array_values(array_intersect_key(self::FIELDS, $body)))) + ['post_type' => $type];
         $postarr = $before === null ? $columns : $columns + \get_post($id)->to_array();
-        $sanitized = self::sanitized(\wp_slash($postarr));
+        $sanitized = self::sanitized(Slashes::add($postarr));
         if (self::refusesEmpty($sanitized, $type)) {
             throw new RestError('empty_content', 'Content, title, and excerpt are empty.', 400);
         }
-        $value = static fn (string $column): string => (string) \wp_unslash($sanitized[$column] ?? '');
-        $row = array_intersect_key((array) \wp_unslash($sanitized), array_flip(self::DATA));
+        $value = static fn (string $column): string => (string) Slashes::strip($sanitized[$column] ?? '');
+        $row = array_intersect_key((array) Slashes::strip($sanitized), array_flip(self::DATA));
         if ($before !== null) {
             // An update keeps the guid it had, in its display form (probe insert-defaults).
             $row = array_replace($row, ['guid' => (string) \get_post_field('guid', $id)]);
@@ -78,7 +79,7 @@ final class PostSave
             $slug = $slug === '' || (!isset($body['slug']) && $id === 0) ? (string) \sanitize_title($value('post_title')) : $slug;
             $slug = self::slugFilters($slug, $id, $value('post_status'), $type, $parent, $slugs);
         }
-        $data = self::data(['post_name' => $slug, 'post_parent' => $parent] + $row, $sanitized, \wp_slash($before === null ? $given : $postarr), $id);
+        $data = self::data(['post_name' => $slug, 'post_parent' => $parent] + $row, $sanitized, Slashes::add($before === null ? $given : $postarr), $id);
         return self::changed($columns, $data, $before);
     }
 
@@ -99,7 +100,7 @@ final class PostSave
     /** wp_insert_post_empty_content over whether a type with an editor, a title and an excerpt has none of them. @param array<string, mixed> $sanitized */
     public static function refusesEmpty(array $sanitized, string $type): bool
     {
-        $none = static fn (string $column): bool => (string) \wp_unslash($sanitized[$column] ?? '') === '';
+        $none = static fn (string $column): bool => (string) Slashes::strip($sanitized[$column] ?? '') === '';
         $empty = $type !== 'attachment' && $none('post_content') && $none('post_title') && $none('post_excerpt')
             && \post_type_supports($type, 'editor') && \post_type_supports($type, 'title') && \post_type_supports($type, 'excerpt');
         return (bool) \apply_filters('wp_insert_post_empty_content', $empty, $sanitized);
@@ -172,7 +173,7 @@ final class PostSave
     {
         $data = array_replace(array_fill_keys(self::DATA, ''), array_intersect_key($row, array_flip(self::DATA)));
         $filter = ($row['post_type'] ?? '') === 'attachment' ? 'wp_insert_attachment_data' : 'wp_insert_post_data';
-        return (array) \wp_unslash(\apply_filters($filter, \wp_slash($data), $sanitized, $unsanitized, $postId > 0));
+        return (array) Slashes::strip(\apply_filters($filter, Slashes::add($data), $sanitized, $unsanitized, $postId > 0));
     }
 
     /**

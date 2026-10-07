@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Minn\Front;
 
 use Minn\Runtime\Runtime;
+use Minn\I18n\Gettext;
+use Minn\Support\Escape;
 
 /**
  * The nodes WordPress puts on the toolbar itself, as the reference adds
@@ -58,9 +60,9 @@ final class ToolbarMenus
         $bar->add_node([
             'id' => 'my-account',
             'parent' => 'top-secondary',
-            'title' => sprintf(\__('Howdy, %s'), '<span class="display-name">' . $user->display_name . '</span>') . $avatar,
+            'title' => sprintf(Gettext::text('Howdy, %s'), '<span class="display-name">' . $user->display_name . '</span>') . $avatar,
             'href' => $profile,
-            'meta' => ['class' => $avatar === '' ? '' : 'with-avatar', 'menu_title' => sprintf(\__('Howdy, %s'), $user->display_name), 'tabindex' => $profile === false ? 0 : ''],
+            'meta' => ['class' => $avatar === '' ? '' : 'with-avatar', 'menu_title' => sprintf(Gettext::text('Howdy, %s'), $user->display_name), 'tabindex' => $profile === false ? 0 : ''],
         ]);
     }
 
@@ -76,16 +78,16 @@ final class ToolbarMenus
         $bar->add_group(['parent' => 'my-account', 'id' => 'user-actions']);
         $card = \get_avatar($userId, 64) . "<span class='display-name'>{$user->display_name}</span>"
             . ($user->display_name !== $user->user_login ? "<span class='username'>{$user->user_login}</span>" : '')
-            . ($profile !== false ? "<span class='display-name edit-profile'>" . \__('Edit Profile') . '</span>' : '');
+            . ($profile !== false ? "<span class='display-name edit-profile'>" . Gettext::text('Edit Profile') . '</span>' : '');
         $bar->add_node(['parent' => 'user-actions', 'id' => 'user-info', 'title' => $card, 'href' => $profile]);
-        $bar->add_node(['parent' => 'user-actions', 'id' => 'logout', 'title' => \__('Log Out'), 'href' => \wp_logout_url()]);
+        $bar->add_node(['parent' => 'user-actions', 'id' => 'logout', 'title' => Gettext::text('Log Out'), 'href' => \wp_logout_url()]);
     }
 
     /** The menu button wp-admin's narrow screens show; the front end has none. */
     public static function sidebarToggle(\WP_Admin_Bar $bar): void
     {
         if (\is_admin()) {
-            $bar->add_node(['id' => 'menu-toggle', 'title' => self::ICON . '<span class="screen-reader-text">' . \__('Menu') . '</span>', 'href' => '#']);
+            $bar->add_node(['id' => 'menu-toggle', 'title' => self::ICON . '<span class="screen-reader-text">' . Gettext::text('Menu') . '</span>', 'href' => '#']);
         }
     }
 
@@ -96,20 +98,20 @@ final class ToolbarMenus
         $about = $reads ? \self_admin_url('about.php') : false;
         $bar->add_node([
             'id' => 'wp-logo',
-            'title' => self::ICON . '<span class="screen-reader-text">' . \__('About WordPress') . '</span>',
+            'title' => self::ICON . '<span class="screen-reader-text">' . Gettext::text('About WordPress') . '</span>',
             'href' => $about,
-            'meta' => ['menu_title' => \__('About WordPress')] + ($about === false ? ['tabindex' => 0] : []),
+            'meta' => ['menu_title' => Gettext::text('About WordPress')] + ($about === false ? ['tabindex' => 0] : []),
         ]);
         if ($reads) {
-            $bar->add_node(['parent' => 'wp-logo', 'id' => 'about', 'title' => \__('About WordPress'), 'href' => $about]);
-            $bar->add_node(['parent' => 'wp-logo', 'id' => 'contribute', 'title' => \__('Get Involved'), 'href' => \self_admin_url('contribute.php')]);
+            $bar->add_node(['parent' => 'wp-logo', 'id' => 'about', 'title' => Gettext::text('About WordPress'), 'href' => $about]);
+            $bar->add_node(['parent' => 'wp-logo', 'id' => 'contribute', 'title' => Gettext::text('Get Involved'), 'href' => \self_admin_url('contribute.php')]);
         }
         $external = [
-            'wporg' => [\__('WordPress.org'), \__('https://wordpress.org/')],
-            'documentation' => [\__('Documentation'), \__('https://wordpress.org/documentation/')],
-            'learn' => [\__('Learn WordPress'), \esc_url(\__('https://learn.wordpress.org/'))],
-            'support-forums' => [\__('Support'), \__('https://wordpress.org/support/forums/')],
-            'feedback' => [\__('Feedback'), \__('https://wordpress.org/support/forum/requests-and-feedback')],
+            'wporg' => [Gettext::text('WordPress.org'), Gettext::text('https://wordpress.org/')],
+            'documentation' => [Gettext::text('Documentation'), Gettext::text('https://wordpress.org/documentation/')],
+            'learn' => [Gettext::text('Learn WordPress'), \esc_url(Gettext::text('https://learn.wordpress.org/'))],
+            'support-forums' => [Gettext::text('Support'), Gettext::text('https://wordpress.org/support/forums/')],
+            'feedback' => [Gettext::text('Feedback'), Gettext::text('https://wordpress.org/support/forum/requests-and-feedback')],
         ];
         foreach ($external as $id => [$title, $href]) {
             $bar->add_node(['parent' => 'wp-logo-external', 'id' => $id, 'title' => $title, 'href' => $href]);
@@ -134,15 +136,15 @@ final class ToolbarMenus
         }
         $bar->add_node(['id' => 'site-name', 'title' => $title, 'href' => \is_admin() || !\current_user_can('read') ? \home_url('/') : \admin_url(), 'meta' => $meta]);
         if (\is_admin()) {
-            $bar->add_node(['parent' => 'site-name', 'id' => 'view-site', 'title' => \__('Visit Site'), 'href' => \home_url('/')]);
+            $bar->add_node(['parent' => 'site-name', 'id' => 'view-site', 'title' => Gettext::text('Visit Site'), 'href' => \home_url('/')]);
             return;
         }
         if (\current_user_can('read')) {
-            $bar->add_node(['parent' => 'site-name', 'id' => 'dashboard', 'title' => \__('Dashboard'), 'href' => \admin_url()]);
+            $bar->add_node(['parent' => 'site-name', 'id' => 'dashboard', 'title' => Gettext::text('Dashboard'), 'href' => \admin_url()]);
         }
         \wp_admin_bar_appearance_menu($bar);
         if (\current_user_can('activate_plugins')) {
-            $bar->add_node(['parent' => 'site-name', 'id' => 'plugins', 'title' => \__('Plugins'), 'href' => \admin_url('plugins.php')]);
+            $bar->add_node(['parent' => 'site-name', 'id' => 'plugins', 'title' => Gettext::text('Plugins'), 'href' => \admin_url('plugins.php')]);
         }
     }
 
@@ -151,17 +153,17 @@ final class ToolbarMenus
     {
         $bar->add_group(['parent' => 'site-name', 'id' => 'appearance']);
         if (\current_user_can('switch_themes')) {
-            $bar->add_node(['parent' => 'appearance', 'id' => 'themes', 'title' => \__('Themes'), 'href' => \admin_url('themes.php')]);
+            $bar->add_node(['parent' => 'appearance', 'id' => 'themes', 'title' => Gettext::text('Themes'), 'href' => \admin_url('themes.php')]);
         }
         if (!\current_user_can('edit_theme_options')) {
             return;
         }
         $widgets = \current_theme_supports('widgets');
         $links = [
-            'widgets' => [$widgets, \__('Widgets'), 'widgets.php', []],
-            'menus' => [$widgets || \current_theme_supports('menus'), \__('Menus'), 'nav-menus.php', []],
-            'background' => [\current_theme_supports('custom-background'), \__('Background'), 'themes.php?page=custom-background', ['class' => 'hide-if-customize']],
-            'header' => [\current_theme_supports('custom-header'), \__('Header'), 'themes.php?page=custom-header', ['class' => 'hide-if-customize']],
+            'widgets' => [$widgets, Gettext::text('Widgets'), 'widgets.php', []],
+            'menus' => [$widgets || \current_theme_supports('menus'), Gettext::text('Menus'), 'nav-menus.php', []],
+            'background' => [\current_theme_supports('custom-background'), Gettext::text('Background'), 'themes.php?page=custom-background', ['class' => 'hide-if-customize']],
+            'header' => [\current_theme_supports('custom-header'), Gettext::text('Header'), 'themes.php?page=custom-header', ['class' => 'hide-if-customize']],
         ];
         foreach ($links as $id => [$supported, $title, $page, $meta]) {
             if ($supported) {
@@ -179,7 +181,7 @@ final class ToolbarMenus
         $template = $GLOBALS['_wp_current_template_id'] ?? null;
         $bar->add_node([
             'id' => 'site-editor',
-            'title' => \__('Edit Site'),
+            'title' => Gettext::text('Edit Site'),
             'href' => \add_query_arg(['postType' => 'wp_template', 'postId' => $template ?: null, 'canvas' => 'edit'], \admin_url('site-editor.php')),
         ]);
     }
@@ -187,13 +189,13 @@ final class ToolbarMenus
     /** Customize, for a theme the customizer serves (a block theme only once something registers with it). */
     public static function customizeMenu(\WP_Admin_Bar $bar): void
     {
-        if (!\current_user_can('customize') || \is_admin() || (\wp_is_block_theme() && !\has_action('customize_register'))) {
+        if (!\current_user_can('customize') || \is_admin() || (\wp_is_block_theme() && !Runtime::hooks()->has('customize_register'))) {
             return;
         }
         $request = Runtime::current()->request;
         $here = (\is_ssl() ? 'https://' : 'http://') . ($request === null ? '' : $request->host . $request->path . $request->queryStringWithout());
-        $bar->add_node(['id' => 'customize', 'title' => \__('Customize'), 'href' => \add_query_arg('url', urlencode($here), \wp_customize_url()), 'meta' => ['class' => 'hide-if-no-customize']]);
-        \add_action('wp_before_admin_bar_render', 'wp_customize_support_script');
+        $bar->add_node(['id' => 'customize', 'title' => Gettext::text('Customize'), 'href' => \add_query_arg('url', urlencode($here), \wp_customize_url()), 'meta' => ['class' => 'hide-if-no-customize']]);
+        Runtime::hooks()->add('wp_before_admin_bar_render', 'wp_customize_support_script');
     }
 
     /** The count of updates waiting, when there are any. */
@@ -205,7 +207,7 @@ final class ToolbarMenus
         }
         $count = \number_format_i18n($total);
         $title = self::ICON . '<span class="ab-label" aria-hidden="true">' . $count . '</span>'
-            . '<span class="screen-reader-text updates-available-text">' . sprintf(\_n('%s update available', '%s updates available', $total), $count) . '</span>';
+            . '<span class="screen-reader-text updates-available-text">' . sprintf(Gettext::plural('%s update available', '%s updates available', $total), $count) . '</span>';
         $bar->add_node(['id' => 'updates', 'title' => $title, 'href' => \network_admin_url('update-core.php')]);
     }
 
@@ -218,7 +220,7 @@ final class ToolbarMenus
         $waiting = (int) \wp_count_comments()->moderated;
         $count = \number_format_i18n($waiting);
         $title = self::ICON . '<span class="ab-label awaiting-mod pending-count count-' . $waiting . '" aria-hidden="true">' . $count . '</span>'
-            . '<span class="screen-reader-text comments-in-moderation-text">' . sprintf(\_n('%s Comment in moderation', '%s Comments in moderation', $waiting), $count) . '</span>';
+            . '<span class="screen-reader-text comments-in-moderation-text">' . sprintf(Gettext::plural('%s Comment in moderation', '%s Comments in moderation', $waiting), $count) . '</span>';
         $bar->add_node(['id' => 'comments', 'title' => $title, 'href' => \admin_url('edit-comments.php')]);
     }
 
@@ -231,9 +233,9 @@ final class ToolbarMenus
         }
         $bar->add_node([
             'id' => 'new-content',
-            'title' => self::ICON . '<span class="ab-label">' . \_x('New', 'admin bar menu group label') . '</span>',
+            'title' => self::ICON . '<span class="ab-label">' . Gettext::inContext('New', 'admin bar menu group label') . '</span>',
             'href' => \admin_url((string) array_key_first($actions)),
-            'meta' => ['menu_title' => \_x('New', 'admin bar menu group label')],
+            'meta' => ['menu_title' => Gettext::inContext('New', 'admin bar menu group label')],
         ]);
         foreach ($actions as $page => [$title, $id]) {
             $bar->add_node(['parent' => 'new-content', 'id' => $id, 'title' => $title, 'href' => \admin_url($page)]);
@@ -253,7 +255,7 @@ final class ToolbarMenus
             $actions['media-new.php'] = [$types['attachment']->labels->name_admin_bar, 'new-media'];
         }
         if (\current_user_can('manage_links')) {
-            $actions['link-add.php'] = [\_x('Link', 'add new from admin bar'), 'new-link'];
+            $actions['link-add.php'] = [Gettext::inContext('Link', 'add new from admin bar'), 'new-link'];
         }
         if ($can('page')) {
             $actions['post-new.php?post_type=page'] = [$types['page']->labels->name_admin_bar, 'new-page'];
@@ -264,7 +266,7 @@ final class ToolbarMenus
             }
         }
         if (\current_user_can('create_users') || (\is_multisite() && \current_user_can('promote_users'))) {
-            $actions['user-new.php'] = [\_x('User', 'add new from admin bar'), 'new-user'];
+            $actions['user-new.php'] = [Gettext::inContext('User', 'add new from admin bar'), 'new-user'];
         }
         return $actions;
     }
@@ -279,7 +281,7 @@ final class ToolbarMenus
         [$title, $href] = match (true) {
             !empty($shown->post_type) => self::editPost($shown),
             !empty($shown->taxonomy) => self::editTerm($shown),
-            $shown instanceof \WP_User && \current_user_can('edit_user', $shown->ID) => [\__('Edit User'), \get_edit_user_link($shown->ID)],
+            $shown instanceof \WP_User && \current_user_can('edit_user', $shown->ID) => [Gettext::text('Edit User'), \get_edit_user_link($shown->ID)],
             default => [null, null],
         };
         if ($title !== null && $href) {
@@ -314,8 +316,8 @@ final class ToolbarMenus
         if (empty($short)) {
             return;
         }
-        $box = '<input class="shortlink-input" type="text" readonly="readonly" value="' . \esc_attr($short) . '" aria-label="' . \__('Shortlink') . '" />';
-        $bar->add_node(['id' => 'get-shortlink', 'title' => \__('Shortlink'), 'href' => $short, 'meta' => ['html' => $box]]);
+        $box = '<input class="shortlink-input" type="text" readonly="readonly" value="' . Escape::attr($short) . '" aria-label="' . Gettext::text('Shortlink') . '" />';
+        $bar->add_node(['id' => 'get-shortlink', 'title' => Gettext::text('Shortlink'), 'href' => $short, 'meta' => ['html' => $box]]);
     }
 
     /** The groups for the bar's right side and the logo menu's outside links. */
@@ -334,7 +336,7 @@ final class ToolbarMenus
         $bar->add_node([
             'parent' => 'top-secondary',
             'id' => 'recovery-mode',
-            'title' => \__('Exit Recovery Mode'),
+            'title' => Gettext::text('Exit Recovery Mode'),
             'href' => \wp_nonce_url(\add_query_arg('action', 'exit_recovery_mode', \wp_login_url()), 'exit_recovery_mode'),
         ]);
     }
@@ -347,8 +349,8 @@ final class ToolbarMenus
         }
         $form = '<form action="' . \esc_url(\home_url('/')) . '" method="get" id="adminbarsearch">'
             . '<input class="adminbar-input" name="s" id="adminbar-search" type="text" value="" maxlength="150" />'
-            . '<label for="adminbar-search" class="screen-reader-text">' . \__('Search') . '</label>'
-            . '<input type="submit" class="adminbar-button" value="' . \__('Search') . '" />'
+            . '<label for="adminbar-search" class="screen-reader-text">' . Gettext::text('Search') . '</label>'
+            . '<input type="submit" class="adminbar-button" value="' . Gettext::text('Search') . '" />'
             . '</form>';
         $bar->add_node(['parent' => 'top-secondary', 'id' => 'search', 'title' => $form, 'meta' => ['class' => 'admin-bar-search', 'tabindex' => -1]]);
     }

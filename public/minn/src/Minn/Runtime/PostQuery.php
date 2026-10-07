@@ -7,6 +7,7 @@ namespace Minn\Runtime;
 use Minn\Db;
 use Minn\Query\PostOrder;
 use Minn\Query\PostSearch;
+use Minn\I18n\Gettext;
 
 /**
  * WP_Query::get_posts as the reference runs it (probe wp-query-sql): the
@@ -87,15 +88,15 @@ final class PostQuery
         $this->parts->postType = $type;
         $this->pageSize($q);
         if (!isset($q['comments_per_page']) || $q['comments_per_page'] == 0) {
-            $q['comments_per_page'] = \get_option('comments_per_page');
+            $q['comments_per_page'] = Runtime::options()->filtered('comments_per_page');
         }
-        if ($query->is_home && (empty($query->query) || ($q['preview'] ?? '') === 'true') && \get_option('show_on_front') === 'page' && \get_option('page_on_front')) {
+        if ($query->is_home && (empty($query->query) || ($q['preview'] ?? '') === 'true') && Runtime::options()->filtered('show_on_front') === 'page' && Runtime::options()->filtered('page_on_front')) {
             $query->is_page = true;
             $query->is_home = false;
-            $q['page_id'] = \get_option('page_on_front');
+            $q['page_id'] = Runtime::options()->filtered('page_on_front');
         }
         if (isset($q['page'])) {
-            $q['page'] = is_scalar($q['page']) ? \absint(trim((string) $q['page'], '/')) : 0;
+            $q['page'] = is_scalar($q['page']) ? abs((int) (trim((string) $q['page'], '/'))) : 0;
         }
         $q['no_found_rows'] = isset($q['no_found_rows']) && $q['no_found_rows'];
         $t = $this->parts->table;
@@ -111,7 +112,7 @@ final class PostQuery
     {
         $query = $this->query;
         if (empty($q['posts_per_page'])) {
-            $q['posts_per_page'] = \get_option('posts_per_page');
+            $q['posts_per_page'] = Runtime::options()->filtered('posts_per_page');
         }
         if (!empty($q['showposts'])) {
             $q['showposts'] = (int) $q['showposts'];
@@ -124,7 +125,7 @@ final class PostQuery
             $q['nopaging'] = $q['posts_per_page'] == -1;
         }
         if ($query->is_feed) {
-            $q['posts_per_page'] = !empty($q['posts_per_rss']) ? $q['posts_per_rss'] : \get_option('posts_per_rss');
+            $q['posts_per_page'] = !empty($q['posts_per_rss']) ? $q['posts_per_rss'] : Runtime::options()->filtered('posts_per_rss');
             $q['nopaging'] = false;
         }
         $q['posts_per_page'] = (int) $q['posts_per_page'];
@@ -230,7 +231,7 @@ final class PostQuery
     /** The search stopwords, translated and filtered. @return list<string> */
     public function stopwords(): array
     {
-        $list = \_x(PostSearch::STOPWORDS, 'Comma-separated list of search stopwords in your language');
+        $list = Gettext::inContext(PostSearch::STOPWORDS, 'Comma-separated list of search stopwords in your language');
         return (array) \apply_filters('wp_search_stopwords', PostSearch::stopwords((string) $list));
     }
 
@@ -291,12 +292,12 @@ final class PostQuery
         if (!empty($q['nopaging']) || $this->query->is_singular) {
             return;
         }
-        $this->parts->page = \absint($q['paged']) ?: 1;
+        $this->parts->page = abs((int) ($q['paged'])) ?: 1;
         if (isset($q['offset']) && is_numeric($q['offset'])) {
-            $q['offset'] = \absint($q['offset']);
+            $q['offset'] = abs((int) ($q['offset']));
             $start = $q['offset'] . ', ';
         } else {
-            $start = \absint(($this->parts->page - 1) * $q['posts_per_page']) . ', ';
+            $start = abs((int) (($this->parts->page - 1) * $q['posts_per_page'])) . ', ';
         }
         $this->parts->limits = 'LIMIT ' . $start . $q['posts_per_page'];
     }

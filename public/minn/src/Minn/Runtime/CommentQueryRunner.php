@@ -44,7 +44,7 @@ final class CommentQueryRunner
         // An empty page counts nothing: the found rows are read only when the query found some.
         if ($found && $ids !== []) {
             $query->found_comments = (int) $this->wpdb->get_var(\apply_filters_ref_array('found_comments_query', ['SELECT FOUND_ROWS()', &$query]));
-            $query->max_num_pages = (int) ceil($query->found_comments / max(1, \absint($qv['number'])));
+            $query->max_num_pages = (int) ceil($query->found_comments / max(1, abs((int) ($qv['number']))));
         }
         if (($qv['fields'] ?? '') === 'ids') {
             $query->comments = $ids;

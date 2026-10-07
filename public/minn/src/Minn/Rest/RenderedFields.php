@@ -78,7 +78,7 @@ final class RenderedFields
      */
     public static function classes(array $classes, int $postId): array
     {
-        if (!Runtime::booted() || !\has_filter('post_class')) {
+        if (!Runtime::booted() || !Runtime::hooks()->has('post_class')) {
             return $classes;
         }
         return array_values(array_unique(array_map('strval', (array) \apply_filters('post_class', $classes, [], $postId))));

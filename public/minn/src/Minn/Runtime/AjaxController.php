@@ -55,7 +55,7 @@ final readonly class AjaxController
                 : new Response(200, $origin + ['Content-Type' => 'text/html; charset=UTF-8']);
         }
         $headers = $origin + [
-            'Content-Type' => 'text/html; charset=' . \get_option('blog_charset'),
+            'Content-Type' => 'text/html; charset=' . Runtime::options()->filtered('blog_charset'),
             'X-Robots-Tag' => 'noindex',
         ] + \wp_get_nocache_headers();
         $action = $this->action($request);
@@ -66,7 +66,7 @@ final readonly class AjaxController
         // endpoint says about the response is said before any of them runs.
         (new Response(200, $headers + ['X-Content-Type-Options' => 'nosniff']))->sendHead();
         foreach (self::ADMIN_FILTERS as [$hook, $callback]) {
-            \add_filter($hook, $callback);
+            Runtime::hooks()->add($hook, $callback);
         }
         $output = Runtime::capture('admin_init');
         $prefix = \is_user_logged_in() ? 'wp_ajax_' : 'wp_ajax_nopriv_';

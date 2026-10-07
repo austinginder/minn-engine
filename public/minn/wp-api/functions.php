@@ -765,13 +765,7 @@ function reset_mbstring_encoding()
 /** Everything is cast to bool except the string "false" in any case, which is false. */
 function wp_validate_boolean($value)
 {
-    if (is_bool($value)) {
-        return $value;
-    }
-    if (is_string($value) && strtolower($value) === 'false') {
-        return false;
-    }
-    return (bool) $value;
+    return Minn\Support\Flag::of($value);
 }
 
 function send_frame_options_header()

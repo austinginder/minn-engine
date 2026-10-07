@@ -68,7 +68,7 @@ final class RuntimeRoutes
         $result = self::ensure($server->dispatch($wpRequest));
         self::allow($result, (string) $matched[0], $wpRequest);
         // A plugin's answer keeps only its _fields, as the engine's own do (serve() then skips the filter).
-        if (\has_filter('rest_post_dispatch', 'rest_filter_response_fields') === self::DISPATCH_DONE['rest_filter_response_fields']) {
+        if (Runtime::hooks()->has('rest_post_dispatch', 'rest_filter_response_fields') === self::DISPATCH_DONE['rest_filter_response_fields']) {
             $result = \rest_filter_response_fields($result, $server, $wpRequest);
         }
         return self::toResponse(self::ensure($result));
@@ -274,7 +274,7 @@ final class RuntimeRoutes
         if ($xml !== null) {
             return $xml;
         }
-        if (!Runtime::hooks()->hasBeyond('rest_post_dispatch', self::DISPATCH_DONE) && !Runtime::hooks()->hasBeyond('rest_pre_serve_request', self::SERVE_DONE) && !\has_filter('rest_pre_echo_response')) {
+        if (!Runtime::hooks()->hasBeyond('rest_post_dispatch', self::DISPATCH_DONE) && !Runtime::hooks()->hasBeyond('rest_pre_serve_request', self::SERVE_DONE) && !Runtime::hooks()->has('rest_pre_echo_response')) {
             return $response;
         }
         $data = self::decode($response->body);
@@ -327,7 +327,7 @@ final class RuntimeRoutes
         if (!is_array($data)) {
             return null;
         }
-        $headers = ['Content-Type' => 'text/xml; charset=' . \get_option('blog_charset')] + $response->headers;
+        $headers = ['Content-Type' => 'text/xml; charset=' . Runtime::options()->filtered('blog_charset')] + $response->headers;
         return new Response(200, $headers, (string) \_oembed_create_xml($data), $response->cookies, $response->afterSend);
     }
 

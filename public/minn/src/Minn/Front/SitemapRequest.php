@@ -69,7 +69,7 @@ final class SitemapRequest
             self::notFound();
             return;
         }
-        $urls = $provider->get_url_list(max(1, (int) \absint(\get_query_var('paged'))), $subtype);
+        $urls = $provider->get_url_list(max(1, (int) abs((int) (\get_query_var('paged')))), $subtype);
         if (empty($urls)) {
             self::notFound();
             return;

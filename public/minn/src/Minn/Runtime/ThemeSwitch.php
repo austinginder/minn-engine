@@ -34,7 +34,7 @@ final class ThemeSwitch
         $new = \wp_get_theme($stylesheet);
         \set_theme_mod('sidebars_widgets', ['time' => time(), 'data' => \wp_get_sidebars_widgets()]);
         $locations = \get_theme_mod('nav_menu_locations');
-        if ($locations !== false || \get_option('theme_switch_menu_locations') !== false) {
+        if ($locations !== false || Runtime::options()->filtered('theme_switch_menu_locations') !== false) {
             \update_option('theme_switch_menu_locations', $locations, true);
         }
         \update_option('template', $new->get_template());
@@ -52,14 +52,14 @@ final class ThemeSwitch
     /** check_theme_switched: on the load after a switch, after_switch_theme with the theme that left. */
     public static function checkSwitched(): void
     {
-        $stylesheet = \get_option('theme_switched');
+        $stylesheet = Runtime::options()->filtered('theme_switched');
         if (!$stylesheet) {
             return;
         }
         $old = \wp_get_theme((string) $stylesheet);
-        if (\get_option('theme_switched_via_customizer')) {
-            \remove_action('after_switch_theme', '_wp_menus_changed');
-            \remove_action('after_switch_theme', '_wp_sidebars_changed');
+        if (Runtime::options()->filtered('theme_switched_via_customizer')) {
+            Runtime::hooks()->remove('after_switch_theme', '_wp_menus_changed');
+            Runtime::hooks()->remove('after_switch_theme', '_wp_sidebars_changed');
             \update_option('theme_switched_via_customizer', false);
         }
         \do_action('after_switch_theme', $old->exists() ? $old->get('Name') : (string) $stylesheet, $old);
@@ -70,7 +70,7 @@ final class ThemeSwitch
     /** _wp_menus_changed: the leaving theme's menu locations mapped onto the arriving theme's. */
     public static function menusChanged(): void
     {
-        $mapped = self::mapLocations(\get_nav_menu_locations(), \get_option('theme_switch_menu_locations'));
+        $mapped = self::mapLocations(\get_nav_menu_locations(), Runtime::options()->filtered('theme_switch_menu_locations'));
         \set_theme_mod('nav_menu_locations', $mapped);
         \delete_option('theme_switch_menu_locations');
     }

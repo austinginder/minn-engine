@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Minn\Front;
 
 use Closure;
+use Minn\Support\Escape;
 
 /**
  * The links between the pages of a post split with <!--nextpage-->, as
@@ -37,7 +38,7 @@ final class PageLinks
                 $link = $around(str_replace('%', (string) $i, (string) $args['pagelink']));
                 $link = $i !== $page || ($more === 0 && $page === 1)
                     ? $open($i) . $link . '</a>'
-                    : '<span class="post-page-numbers current" aria-current="' . \esc_attr((string) $args['aria_current']) . '">' . $link . '</span>';
+                    : '<span class="post-page-numbers current" aria-current="' . Escape::attr((string) $args['aria_current']) . '">' . $link . '</span>';
                 $out .= ($i === 1 ? ' ' : $args['separator']) . $filter($link, $i);
             }
             return $out . $args['after'];

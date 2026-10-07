@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace Minn\Runtime;
 
+use Minn\I18n\Gettext;
+use Minn\Support\Escape;
+
 /**
  * The updates waiting, as wp_get_update_data counts them for the user
  * (probe admin-bar): plugins and themes from their update transients,
@@ -35,11 +38,11 @@ final class UpdateCounts
         $counts['translations'] = ($core || $plugins || $themes) && \wp_get_translation_updates() ? 1 : 0;
         $counts['total'] = $counts['plugins'] + $counts['themes'] + $counts['wordpress'] + $counts['translations'];
         $titles = array_filter([
-            'wordpress' => $counts['wordpress'] ? sprintf(\__('%d WordPress Update'), $counts['wordpress']) : '',
-            'plugins' => $counts['plugins'] ? sprintf(\_n('%d Plugin Update', '%d Plugin Updates', $counts['plugins']), $counts['plugins']) : '',
-            'themes' => $counts['themes'] ? sprintf(\_n('%d Theme Update', '%d Theme Updates', $counts['themes']), $counts['themes']) : '',
-            'translations' => $counts['translations'] ? \__('Translation Updates') : '',
+            'wordpress' => $counts['wordpress'] ? sprintf(Gettext::text('%d WordPress Update'), $counts['wordpress']) : '',
+            'plugins' => $counts['plugins'] ? sprintf(Gettext::plural('%d Plugin Update', '%d Plugin Updates', $counts['plugins']), $counts['plugins']) : '',
+            'themes' => $counts['themes'] ? sprintf(Gettext::plural('%d Theme Update', '%d Theme Updates', $counts['themes']), $counts['themes']) : '',
+            'translations' => $counts['translations'] ? Gettext::text('Translation Updates') : '',
         ]);
-        return [['counts' => $counts, 'title' => $titles ? \esc_attr(implode(', ', $titles)) : ''], $titles];
+        return [['counts' => $counts, 'title' => $titles ? Escape::attr(implode(', ', $titles)) : ''], $titles];
     }
 }

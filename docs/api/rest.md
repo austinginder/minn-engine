@@ -1121,7 +1121,7 @@ Route: `GET /wp/v2/themes/{stylesheet:[^\/:<>\*\?"\|]+(?:\/[^\/:<>\*\?"\|]+)?} (
 
 One theme by its stylesheet.
 
-Internals: `item()` (private, line 76), `links()` (private, line 110), `viewsThemes()` (private, line 133), `viewsActive()` (private, line 139), `status()` (private, line 144), `requireRuntime()` (private, line 150)
+Internals: `item()` (private, line 77), `links()` (private, line 111), `viewsThemes()` (private, line 134), `viewsActive()` (private, line 140), `status()` (private, line 145), `requireRuntime()` (private, line 151)
 
 
 ## Links
@@ -1184,7 +1184,7 @@ Every shown setting's value. @return array<string, mixed>
 
 Writes the shown settings a body names, after refusing the values their schemas refuse.
 
-Internals: `refuseInvalid()` (private, line 81)
+Internals: `refuseInvalid()` (private, line 82)
 
 
 ## MediaController
@@ -1236,7 +1236,7 @@ Route: `DELETE /wp/v2/media/{id:[\d]+} (cap delete_post on {id}; attachment {id}
 
 Attachments cannot be trashed; force removes the row, its meta, and its files.
 
-Internals: `restDate()` (private, line 46), `storeWithPlugins()` (private, line 104), `insertedWithPlugins()` (private, line 131), `preparedAttachment()` (private, line 169), `finishedWithPlugins()` (private, line 191), `params()` (private, line 207), `attachment()` (private, line 271)
+Internals: `restDate()` (private, line 47), `storeWithPlugins()` (private, line 105), `insertedWithPlugins()` (private, line 132), `preparedAttachment()` (private, line 170), `finishedWithPlugins()` (private, line 192), `params()` (private, line 208), `attachment()` (private, line 272)
 
 
 ## MediaObject
@@ -1694,7 +1694,7 @@ rest_query_var-{name}, and the list's orderby names as the query's.
 - `@param array<string, mixed> $args`
 - `@return array<string, mixed>`
 
-Internals: `mimeTypes()` (private, line 101), `sticky()` (private, line 113), `taxonomies()` (private, line 127), `termClause()` (private, line 148), `formats()` (private, line 172)
+Internals: `mimeTypes()` (private, line 103), `sticky()` (private, line 115), `taxonomies()` (private, line 129), `termClause()` (private, line 150), `formats()` (private, line 174)
 
 
 ## PostObject
@@ -1916,7 +1916,7 @@ The names of the fields registered for the type that show in the context. @retur
 
 - `@return list<string>`
 
-Internals: `of()` (private, line 93), `wanted()` (private, line 100), `inContext()` (private, line 110), `refusal()` (private, line 116)
+Internals: `of()` (private, line 94), `wanted()` (private, line 101), `inContext()` (private, line 111), `refusal()` (private, line 117)
 
 
 ## RegisteredPostFields
@@ -2099,7 +2099,7 @@ REST does not know are left out.
 
 - `@return array<string, array{name: string, single: bool, schema: array<string, mixed>, prepare_callback: mixed}>`
 
-Internals: `prepare()` (private, line 115), `update()` (private, line 128), `replaceAll()` (private, line 159), `delete()` (private, line 184), `same()` (private, line 199), `refused()` (private, line 209), `failed()` (private, line 215), `nullStored()` (private, line 221), `gathered()` (private, line 228), `emptyValue()` (private, line 246), `request()` (private, line 257)
+Internals: `prepare()` (private, line 117), `update()` (private, line 130), `replaceAll()` (private, line 161), `delete()` (private, line 186), `same()` (private, line 201), `refused()` (private, line 211), `failed()` (private, line 217), `nullStored()` (private, line 223), `gathered()` (private, line 230), `emptyValue()` (private, line 248), `request()` (private, line 259)
 
 
 ## RestUrl

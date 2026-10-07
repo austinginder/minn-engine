@@ -13,6 +13,32 @@ namespace Minn\Support;
 final class Lists
 {
     /**
+     * A list as arguments give one (wp_parse_list): an array's entries
+     * trimmed, the empty ones dropped (keys kept); a string split on commas
+     * and whitespace.
+     *
+     * @return array<int|string, string>
+     */
+    public static function items(mixed $input): array
+    {
+        if (!is_array($input)) {
+            return preg_split('/[\s,]+/', (string) $input, -1, PREG_SPLIT_NO_EMPTY) ?: [];
+        }
+        return array_filter(array_map(static fn ($item): string => trim((string) $item), $input), static fn (string $item): bool => $item !== '');
+    }
+
+    /**
+     * Ids as arguments give them (wp_parse_id_list): each a whole number made
+     * positive, each once, in first-seen order.
+     *
+     * @return list<int>
+     */
+    public static function ids(mixed $input): array
+    {
+        return array_values(array_unique(array_map(static fn (string $id): int => abs((int) $id), self::items($input))));
+    }
+
+    /**
      * Items sorted by several fields, each ascending or descending.
      *
      * @param array<int|string, mixed> $items

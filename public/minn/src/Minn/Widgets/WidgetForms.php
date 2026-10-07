@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Minn\Widgets;
 
+use Minn\Support\Escape;
+
 /**
  * The core widgets' settings forms, the markup a widget's form() prints and
  * wp/v2/widgets returns as rendered_form, character for character as the
@@ -18,9 +20,9 @@ final class WidgetForms
     {
         return sprintf(
             "\t\t<p>\n\t\t\t<label for=\"%1\$s\">Title:</label>\n\t\t\t<input class=\"widefat\" id=\"%1\$s\" name=\"%2\$s\" type=\"text\" value=\"%3\$s\" />\n\t\t</p>\n",
-            \esc_attr($widget->get_field_id('title')),
-            \esc_attr($widget->get_field_name('title')),
-            \esc_attr((string) ($instance['title'] ?? '')),
+            Escape::attr($widget->get_field_id('title')),
+            Escape::attr($widget->get_field_name('title')),
+            Escape::attr((string) ($instance['title'] ?? '')),
         );
     }
 
@@ -40,7 +42,7 @@ final class WidgetForms
         }
         return self::title($widget, $instance)
             . sprintf("\n\t\t<p>\n\t\t\t<label for=\"%1\$s\">Sort by:</label>\n\t\t\t<select name=\"%2\$s\" id=\"%1\$s\" class=\"widefat\">\n%3\$s\t\t\t</select>\n\t\t</p>\n", self::id($widget, 'sortby'), self::name($widget, 'sortby'), $options)
-            . sprintf("\n\t\t<p>\n\t\t\t<label for=\"%1\$s\">Exclude:</label>\n\t\t\t<input type=\"text\" value=\"%3\$s\" name=\"%2\$s\" id=\"%1\$s\" class=\"widefat\" />\n\t\t\t<br />\n\t\t\t<small>Page IDs, separated by commas.</small>\n\t\t</p>\n\t\t", self::id($widget, 'exclude'), self::name($widget, 'exclude'), \esc_attr((string) ($instance['exclude'] ?? '')));
+            . sprintf("\n\t\t<p>\n\t\t\t<label for=\"%1\$s\">Exclude:</label>\n\t\t\t<input type=\"text\" value=\"%3\$s\" name=\"%2\$s\" id=\"%1\$s\" class=\"widefat\" />\n\t\t\t<br />\n\t\t\t<small>Page IDs, separated by commas.</small>\n\t\t</p>\n\t\t", self::id($widget, 'exclude'), self::name($widget, 'exclude'), Escape::attr((string) ($instance['exclude'] ?? '')));
     }
 
     /** The archives widget: title, dropdown and counts boxes. */
@@ -75,7 +77,7 @@ final class WidgetForms
     /** The custom HTML widget: hidden title and content fields its editor syncs. */
     public static function customHtml(\WP_Widget $widget, array $instance): string
     {
-        return sprintf("\t\t<input id=\"%1\$s\" name=\"%2\$s\" class=\"title sync-input\" type=\"hidden\" value=\"%3\$s\" />\n", self::id($widget, 'title'), self::name($widget, 'title'), \esc_attr((string) ($instance['title'] ?? '')))
+        return sprintf("\t\t<input id=\"%1\$s\" name=\"%2\$s\" class=\"title sync-input\" type=\"hidden\" value=\"%3\$s\" />\n", self::id($widget, 'title'), self::name($widget, 'title'), Escape::attr((string) ($instance['title'] ?? '')))
             . sprintf("\t\t<textarea id=\"%1\$s\" name=\"%2\$s\" class=\"content sync-input\" hidden>%3\$s</textarea>\n\t\t", self::id($widget, 'content'), self::name($widget, 'content'), \esc_textarea((string) ($instance['content'] ?? '')));
     }
 
@@ -88,7 +90,7 @@ final class WidgetForms
     /** The text widget in its visual mode: hidden fields the editor syncs. */
     public static function text(\WP_Widget $widget, array $instance): string
     {
-        return sprintf("\t\t\t\t\t\t\t\t<input id=\"%1\$s\" name=\"%2\$s\" class=\"title sync-input\" type=\"hidden\" value=\"%3\$s\">\n", self::id($widget, 'title'), self::name($widget, 'title'), \esc_attr((string) ($instance['title'] ?? '')))
+        return sprintf("\t\t\t\t\t\t\t\t<input id=\"%1\$s\" name=\"%2\$s\" class=\"title sync-input\" type=\"hidden\" value=\"%3\$s\">\n", self::id($widget, 'title'), self::name($widget, 'title'), Escape::attr((string) ($instance['title'] ?? '')))
             // The text goes into its hidden field as it is: the reference does not escape it here.
             . sprintf("\t\t\t<textarea id=\"%1\$s\" name=\"%2\$s\" class=\"text sync-input\" hidden>%3\$s</textarea>\n", self::id($widget, 'text'), self::name($widget, 'text'), (string) ($instance['text'] ?? ''))
             . sprintf("\t\t\t<input id=\"%1\$s\" name=\"%2\$s\" class=\"filter sync-input\" type=\"hidden\" value=\"on\">\n", self::id($widget, 'filter'), self::name($widget, 'filter'))
@@ -100,10 +102,10 @@ final class WidgetForms
     {
         $taxonomies = \get_taxonomies(['show_tagcloud' => true], 'object');
         $current = isset($instance['taxonomy']) && \taxonomy_exists((string) $instance['taxonomy']) ? (string) $instance['taxonomy'] : 'post_tag';
-        $out = sprintf("\t\t<p>\n\t\t\t<label for=\"%1\$s\">Title:</label>\n\t\t\t<input type=\"text\" class=\"widefat\" id=\"%1\$s\" name=\"%2\$s\" value=\"%3\$s\" />\n\t\t</p>\n", self::id($widget, 'title'), self::name($widget, 'title'), \esc_attr((string) ($instance['title'] ?? '')));
+        $out = sprintf("\t\t<p>\n\t\t\t<label for=\"%1\$s\">Title:</label>\n\t\t\t<input type=\"text\" class=\"widefat\" id=\"%1\$s\" name=\"%2\$s\" value=\"%3\$s\" />\n\t\t</p>\n", self::id($widget, 'title'), self::name($widget, 'title'), Escape::attr((string) ($instance['title'] ?? '')));
         $options = '';
         foreach ($taxonomies as $taxonomy) {
-            $options .= "\t\t\t\t\t\t\t\t\t\t\t<option value=\"" . \esc_attr($taxonomy->name) . '" ' . \selected($taxonomy->name, $current, false) . ">\n\t\t\t\t\t\t\t" . \esc_html($taxonomy->labels->name) . "\t\t\t\t\t\t</option>\n";
+            $options .= "\t\t\t\t\t\t\t\t\t\t\t<option value=\"" . Escape::attr($taxonomy->name) . '" ' . \selected($taxonomy->name, $current, false) . ">\n\t\t\t\t\t\t\t" . Escape::html($taxonomy->labels->name) . "\t\t\t\t\t\t</option>\n";
         }
         $out .= sprintf("\t\t\t\t\t\t<p>\n\t\t\t\t\t<label for=\"%1\$s\">Taxonomy:</label>\n\t\t\t\t\t<select class=\"widefat\" id=\"%1\$s\" name=\"%2\$s\">\n%3\$s\t\t\t\t\t\t\t\t\t\t</select>\n\t\t\t\t</p>\n", self::id($widget, 'taxonomy'), self::name($widget, 'taxonomy'), $options);
         return $out . sprintf("\t\t\t\t\t\t\t<p>\n\t\t\t\t<input type=\"checkbox\" class=\"checkbox\" id=\"%1\$s\" name=\"%2\$s\" %3\$s />\n\t\t\t\t<label for=\"%1\$s\">Show tag counts</label>\n\t\t\t</p>\n\t\t\t", self::id($widget, 'count'), self::name($widget, 'count'), \checked(!empty($instance['count']), true, false));
@@ -114,12 +116,12 @@ final class WidgetForms
     {
         $menus = \wp_get_nav_menus();
         $chosen = (int) ($instance['nav_menu'] ?? 0);
-        $out = "\t\t<p class=\"nav-menu-widget-no-menus-message\" " . ($menus === [] ? '' : ' style="display:none" ') . ">\n\t\t\tNo menus have been created yet. <a href=\"" . \esc_attr(\admin_url('nav-menus.php')) . "\">Create some</a>.\t\t</p>\n";
+        $out = "\t\t<p class=\"nav-menu-widget-no-menus-message\" " . ($menus === [] ? '' : ' style="display:none" ') . ">\n\t\t\tNo menus have been created yet. <a href=\"" . Escape::attr(\admin_url('nav-menus.php')) . "\">Create some</a>.\t\t</p>\n";
         $out .= "\t\t<div class=\"nav-menu-widget-form-controls\" " . ($menus === [] ? 'style="display:none"' : '') . ">\n";
-        $out .= sprintf("\t\t\t<p>\n\t\t\t\t<label for=\"%1\$s\">Title:</label>\n\t\t\t\t<input type=\"text\" class=\"widefat\" id=\"%1\$s\" name=\"%2\$s\" value=\"%3\$s\" />\n\t\t\t</p>\n", self::id($widget, 'title'), self::name($widget, 'title'), \esc_attr((string) ($instance['title'] ?? '')));
+        $out .= sprintf("\t\t\t<p>\n\t\t\t\t<label for=\"%1\$s\">Title:</label>\n\t\t\t\t<input type=\"text\" class=\"widefat\" id=\"%1\$s\" name=\"%2\$s\" value=\"%3\$s\" />\n\t\t\t</p>\n", self::id($widget, 'title'), self::name($widget, 'title'), Escape::attr((string) ($instance['title'] ?? '')));
         $options = '';
         foreach ($menus as $menu) {
-            $options .= "\t\t\t\t\t\t\t\t\t\t\t<option value=\"" . \esc_attr((string) $menu->term_id) . '" ' . \selected($chosen, $menu->term_id, false) . ">\n\t\t\t\t\t\t\t" . \esc_html($menu->name) . "\t\t\t\t\t\t</option>\n";
+            $options .= "\t\t\t\t\t\t\t\t\t\t\t<option value=\"" . Escape::attr((string) $menu->term_id) . '" ' . \selected($chosen, $menu->term_id, false) . ">\n\t\t\t\t\t\t\t" . Escape::html($menu->name) . "\t\t\t\t\t\t</option>\n";
         }
         $out .= sprintf("\t\t\t<p>\n\t\t\t\t<label for=\"%1\$s\">Select Menu:</label>\n\t\t\t\t<select id=\"%1\$s\" name=\"%2\$s\">\n\t\t\t\t\t<option value=\"0\">&mdash; Select &mdash;</option>\n%3\$s\t\t\t\t\t\t\t\t\t</select>\n\t\t\t</p>\n", self::id($widget, 'nav_menu'), self::name($widget, 'nav_menu'), $options);
         return $out . "\t\t\t\t\t</div>\n\t\t";
@@ -142,14 +144,14 @@ final class WidgetForms
         foreach (['show_summary', 'show_author', 'show_date'] as $key) {
             $args[$key] = isset($args[$key]) ? (int) $args[$key] : (int) $inputs[$key];
         }
-        $number = \esc_attr((string) ($args['number'] ?? ''));
+        $number = Escape::attr((string) ($args['number'] ?? ''));
         $items = (int) $args['items'] < 1 || (int) $args['items'] > 20 ? 10 : (int) $args['items'];
         $out = '';
         if ($inputs['url']) {
             $out .= "\t<p><label for=\"rss-url-{$number}\">Enter the RSS feed URL here:</label>\n\t<input class=\"widefat\" id=\"rss-url-{$number}\" name=\"widget-rss[{$number}][url]\" type=\"text\" value=\"" . \esc_url((string) $args['url']) . "\" /></p>\n";
         }
         if ($inputs['title']) {
-            $out .= "\t<p><label for=\"rss-title-{$number}\">Give the feed a title (optional):</label>\n\t<input class=\"widefat\" id=\"rss-title-{$number}\" name=\"widget-rss[{$number}][title]\" type=\"text\" value=\"" . \esc_attr((string) $args['title']) . "\" /></p>\n";
+            $out .= "\t<p><label for=\"rss-title-{$number}\">Give the feed a title (optional):</label>\n\t<input class=\"widefat\" id=\"rss-title-{$number}\" name=\"widget-rss[{$number}][title]\" type=\"text\" value=\"" . Escape::attr((string) $args['title']) . "\" /></p>\n";
         }
         if ($inputs['items']) {
             $options = '';
@@ -174,11 +176,11 @@ final class WidgetForms
 
     private static function id(\WP_Widget $widget, string $field): string
     {
-        return \esc_attr($widget->get_field_id($field));
+        return Escape::attr($widget->get_field_id($field));
     }
 
     private static function name(\WP_Widget $widget, string $field): string
     {
-        return \esc_attr($widget->get_field_name($field));
+        return Escape::attr($widget->get_field_name($field));
     }
 }

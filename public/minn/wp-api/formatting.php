@@ -9,11 +9,14 @@ use Minn\Runtime\Runtime;
 use Minn\Support\Accents;
 use Minn\Support\Email;
 use Minn\Support\Entities;
+use Minn\Support\Escape;
 use Minn\Support\Html;
 use Minn\Support\Json;
 use Minn\Support\KsesEntities;
 use Minn\Support\Kses;
+use Minn\Support\Lists;
 use Minn\Support\Paths;
+use Minn\Support\Slashes;
 use Minn\Support\Time;
 use Minn\Support\Url;
 
@@ -41,16 +44,12 @@ function _wp_specialchars($text, $quote_style = ENT_NOQUOTES, $charset = false, 
 
 function esc_html($text)
 {
-    $safe = wp_check_invalid_utf8((string) $text);
-    $safe = _wp_specialchars($safe, ENT_QUOTES);
-    return apply_filters('esc_html', $safe, $text);
+    return Escape::html($text);
 }
 
 function esc_attr($text)
 {
-    $safe = wp_check_invalid_utf8((string) $text);
-    $safe = _wp_specialchars($safe, ENT_QUOTES);
-    return apply_filters('attribute_escape', $safe, $text);
+    return Escape::attr($text);
 }
 
 function esc_textarea($text)
@@ -160,15 +159,12 @@ function wp_parse_args($args, $defaults = [])
 
 function wp_parse_list($input_list)
 {
-    if (!is_array($input_list)) {
-        return preg_split('/[\s,]+/', (string) $input_list, -1, PREG_SPLIT_NO_EMPTY);
-    }
-    return array_filter(array_map('trim', $input_list), static fn ($v) => $v !== '');
+    return Lists::items($input_list);
 }
 
 function wp_parse_id_list($input_list)
 {
-    return array_values(array_unique(array_map('absint', wp_parse_list($input_list))));
+    return Lists::ids($input_list);
 }
 
 function wp_parse_slug_list($input_list)
@@ -303,12 +299,12 @@ function stripslashes_from_strings_only($value)
 
 function wp_unslash($value)
 {
-    return stripslashes_deep($value);
+    return Slashes::strip($value);
 }
 
 function wp_slash($value)
 {
-    return map_deep($value, 'addslashes_strings_only');
+    return Slashes::add($value);
 }
 
 function addslashes_strings_only($value)

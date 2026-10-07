@@ -13,20 +13,7 @@ use Minn\Support\Serialized;
 
 function get_option($option, $default_value = false)
 {
-    $option = trim((string) $option);
-    if ($option === '') {
-        return false;
-    }
-    $pre = apply_filters("pre_option_{$option}", false, $option, $default_value);
-    $pre = apply_filters('pre_option', $pre, $option, $default_value);
-    if ($pre !== false) {
-        return $pre;
-    }
-    $value = Runtime::options()->get($option);
-    if ($value === null) {
-        return apply_filters("default_option_{$option}", $default_value, $option, func_num_args() > 1);
-    }
-    return apply_filters("option_{$option}", $value, $option);
+    return func_num_args() > 1 ? Runtime::options()->filtered((string) $option, $default_value) : Runtime::options()->filtered((string) $option);
 }
 
 function get_site_option($option, $default_value = false, $deprecated = true)

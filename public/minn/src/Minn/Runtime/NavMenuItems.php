@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Minn\Runtime;
 
+use Minn\I18n\Gettext;
+
 /**
  * Classic menu items as the reference serves them to walkers and plugins
  * (probe nav-menu-items). wp_setup_nav_menu_item dresses a nav_menu_item
@@ -117,7 +119,7 @@ final class NavMenuItems
     private static function pointsAtArchive(object $item): void
     {
         $type = \get_post_type_object((string) $item->object);
-        $item->type_label = \__('Post Type Archive');
+        $item->type_label = Gettext::text('Post Type Archive');
         if (!$type) {
             $item->_invalid = true;
         }
@@ -128,7 +130,7 @@ final class NavMenuItems
     /** A custom link: its own title and stored address. */
     private static function custom(object $item, string $url): void
     {
-        $item->type_label = \__('Custom Link');
+        $item->type_label = Gettext::text('Custom Link');
         $item->title = (string) $item->post_title;
         $item->url ??= $url;
     }

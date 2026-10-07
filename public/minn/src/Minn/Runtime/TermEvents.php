@@ -10,6 +10,7 @@ use Minn\RestError;
 use Minn\Rest\RegisteredFields;
 use Minn\Rest\RuntimeRoutes;
 use Minn\Rest\RestMeta;
+use Minn\Support\Slashes;
 
 /**
  * What the reference's REST terms controller tells plugins, for the
@@ -37,7 +38,7 @@ final readonly class TermEvents
     public function restCreate(string $taxonomy, array $body, Request $request): int
     {
         $prepared = self::prepared($taxonomy, $body, $request);
-        $made = \wp_insert_term(\wp_slash($prepared['name'] ?? null), $taxonomy, \wp_slash($prepared));
+        $made = \wp_insert_term(Slashes::add($prepared['name'] ?? null), $taxonomy, Slashes::add($prepared));
         if ($made instanceof \WP_Error) {
             throw self::refusal($made);
         }
@@ -57,7 +58,7 @@ final readonly class TermEvents
         if ($prepared === []) {
             return;
         }
-        $changed = \wp_update_term($termId, $taxonomy, \wp_slash($prepared));
+        $changed = \wp_update_term($termId, $taxonomy, Slashes::add($prepared));
         if ($changed instanceof \WP_Error) {
             throw self::refusal($changed);
         }

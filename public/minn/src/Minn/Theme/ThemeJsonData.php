@@ -19,7 +19,7 @@ final class ThemeJsonData
     public static function theme(array $json, string $dir): array
     {
         $hook = $GLOBALS['wp_filter']['wp_theme_json_data_theme'] ?? null;
-        if (!\has_filter('wp_theme_json_data_theme') || !is_object($hook)) {
+        if (!Runtime::hooks()->has('wp_theme_json_data_theme') || !is_object($hook)) {
             return $json;
         }
         $key = 'theme_json_data_theme:' . $dir . ':' . md5(serialize(array_map('array_keys', (array) $hook->callbacks)));

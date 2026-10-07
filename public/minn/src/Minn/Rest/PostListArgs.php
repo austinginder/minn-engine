@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Minn\Rest;
 
+use Minn\Runtime\Runtime;
+
 /**
  * The WP_Query arguments a post list request makes, as the reference makes
  * them before rest_{type}_query (probe rest-post-lists): each registered
@@ -112,7 +114,7 @@ final class PostListArgs
     /** Only sticky posts (those among the ids asked for), or none of them. @param array<string, mixed> $args @return array<string, mixed> */
     private static function sticky(array $args, bool $only): array
     {
-        $sticky = \get_option('sticky_posts', []);
+        $sticky = Runtime::options()->filtered('sticky_posts', []);
         $sticky = is_array($sticky) ? $sticky : [];
         $in = $args[self::IN] ?? [];
         if ($only) {

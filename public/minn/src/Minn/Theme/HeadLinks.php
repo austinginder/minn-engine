@@ -12,6 +12,8 @@ use Minn\Front\Permalinks;
 use Minn\Front\Resolution;
 use Minn\Runtime\Runtime;
 use Minn\Support\Html;
+use Minn\I18n\Gettext;
+use Minn\Support\Escape;
 
 /**
  * The links the reference puts in every head: the site and comments
@@ -61,9 +63,9 @@ final readonly class HeadLinks
      */
     public static function siteFeeds(array $args): string
     {
-        $args = \wp_parse_args($args, ['separator' => \_x('&raquo;', 'feed link'), 'feedtitle' => \__('%1$s %2$s Feed'), 'comstitle' => \__('%1$s %2$s Comments Feed')]);
+        $args = \wp_parse_args($args, ['separator' => Gettext::inContext('&raquo;', 'feed link'), 'feedtitle' => Gettext::text('%1$s %2$s Feed'), 'comstitle' => Gettext::text('%1$s %2$s Comments Feed')]);
         $name = (string) \get_bloginfo('name');
-        $link = static fn (string $title, string $href): string => sprintf('<link rel="alternate" type="%s" title="%s" href="%s" />' . "\n", \feed_content_type(), \esc_attr(sprintf($title, $name, $args['separator'])), \esc_url($href));
+        $link = static fn (string $title, string $href): string => sprintf('<link rel="alternate" type="%s" title="%s" href="%s" />' . "\n", \feed_content_type(), Escape::attr(sprintf($title, $name, $args['separator'])), \esc_url($href));
         $out = \apply_filters('feed_links_show_posts_feed', true) ? $link((string) $args['feedtitle'], (string) \get_feed_link()) : '';
         return $out . (\apply_filters('feed_links_show_comments_feed', true) ? $link((string) $args['comstitle'], (string) \get_feed_link('comments_' . \get_default_feed())) : '');
     }

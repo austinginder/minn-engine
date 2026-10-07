@@ -66,7 +66,7 @@ final readonly class PostsController
         $args = (array) \apply_filters("rest_{$type}_query", PostListArgs::of($wp, $registered, $type), $wp);
         $vars = PostListArgs::queryVars($args, $wp);
         if ($type === 'attachment' && !empty($vars['s'])) {
-            \add_filter('wp_allow_query_attachment_by_filename', '__return_true');
+            Runtime::hooks()->add('wp_allow_query_attachment_by_filename', '__return_true');
         }
         $query = new \WP_Query();
         $posts = $query->query($vars);

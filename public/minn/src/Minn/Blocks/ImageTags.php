@@ -77,7 +77,7 @@ final readonly class ImageTags
         return (string) preg_replace_callback('/<img\s[^>]*>/i', function (array $m) use ($context): string {
             $done = RenderState::current()->fittedImage($m[0]) || str_contains($m[0], ' decoding=') || str_contains($m[0], ' loading=');
             $tag = $done ? $m[0] : $this->fit($m[0]);
-            return \has_filter('wp_content_img_tag') ? (string) \apply_filters('wp_content_img_tag', $tag, $context, self::attachmentOf($tag)) : $tag;
+            return Runtime::hooks()->has('wp_content_img_tag') ? (string) \apply_filters('wp_content_img_tag', $tag, $context, self::attachmentOf($tag)) : $tag;
         }, $html);
     }
 

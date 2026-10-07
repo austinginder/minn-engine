@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Minn\Runtime;
 
+use Minn\Support\Slashes;
+
 /**
  * A post's revisions as the reference's wp_save_post_revision keeps them
  * (probe revisions): only for a type that supports revisions and while
@@ -55,7 +57,7 @@ final class PostRevisions
     public static function put(\WP_Post $post): ?int
     {
         $data = \_wp_post_revision_data($post);
-        $revisionId = \wp_insert_post(\wp_slash($data), true);
+        $revisionId = \wp_insert_post(Slashes::add($data), true);
         if (!is_int($revisionId) || $revisionId < 1) {
             return null;
         }

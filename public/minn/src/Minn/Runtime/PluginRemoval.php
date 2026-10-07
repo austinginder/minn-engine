@@ -46,7 +46,7 @@ final class PluginRemoval
     public static function uninstall(string $plugin): ?bool
     {
         $file = (string) \plugin_basename($plugin);
-        $registered = (array) \get_option('uninstall_plugins');
+        $registered = (array) Runtime::options()->filtered('uninstall_plugins');
         \do_action('pre_uninstall_plugin', $plugin, $registered);
         $script = WP_PLUGIN_DIR . '/' . dirname($file) . '/uninstall.php';
         if (file_exists($script)) {
@@ -62,7 +62,7 @@ final class PluginRemoval
             self::forget($file, $registered);
             \wp_register_plugin_realpath(WP_PLUGIN_DIR . '/' . $file);
             include_once WP_PLUGIN_DIR . '/' . $file;
-            \add_action("uninstall_{$file}", $callback);
+            Runtime::hooks()->add("uninstall_{$file}", $callback);
             \do_action("uninstall_{$file}");
         }
         return null;

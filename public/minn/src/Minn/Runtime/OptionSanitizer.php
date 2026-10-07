@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Minn\Runtime;
 
+use Minn\Support\Escape;
+
 /**
  * A core option's value cleaned as the reference's sanitize_option cleans
  * it (probe sanitize-option), before sanitize_option_{$option}: counts as
@@ -35,7 +37,7 @@ final class OptionSanitizer
         $original = $value;
         [$value, $error] = self::rule($option, $value);
         if ($error !== null) {
-            $value = \get_option($option);
+            $value = Runtime::options()->filtered($option);
             \add_settings_error($option, "invalid_{$option}", $error);
         }
         return \apply_filters("sanitize_option_{$option}", $value, $option, $original);
@@ -51,10 +53,10 @@ final class OptionSanitizer
         $text = is_scalar($value) ? (string) $value : '';
         return match (true) {
             in_array($option, ['admin_email', 'new_admin_email'], true) => self::email($text),
-            in_array($option, self::COUNTS, true) => [\absint($value), null],
+            in_array($option, self::COUNTS, true) => [abs((int) ($value)), null],
             in_array($option, ['posts_per_page', 'posts_per_rss'], true) => [self::perPage($value), null],
             in_array($option, ['default_ping_status', 'default_comment_status'], true) => [$text === '' || $text === '0' ? 'closed' : $value, null],
-            in_array($option, ['blogdescription', 'blogname'], true) => [\esc_html($text), null],
+            in_array($option, ['blogdescription', 'blogname'], true) => [Escape::html($text), null],
             $option === 'blog_charset' => [(string) preg_replace('/[^a-zA-Z0-9_-]/', '', $text), null],
             $option === 'blog_public' => [$value === null ? 1 : (int) $value, null],
             in_array($option, self::STRIPPED, true) => [\wp_kses($text, []), null],
@@ -70,7 +72,7 @@ final class OptionSanitizer
     {
         $text = is_scalar($value) ? (string) $value : '';
         return match (true) {
-            $option === 'WPLANG' => [!in_array($value, self::languages(), true) && !empty($value) ? \get_option($option) : $value, null],
+            $option === 'WPLANG' => [!in_array($value, self::languages(), true) && !empty($value) ? Runtime::options()->filtered($option) : $value, null],
             $option === 'illegal_names' => [self::words(is_array($value) ? $value : explode(' ', $text)), null],
             in_array($option, ['limited_email_domains', 'banned_email_domains'], true) => [self::domains(is_array($value) ? $value : explode("\n", $text)), null],
             $option === 'timezone_string' => !in_array($value, timezone_identifiers_list(\DateTimeZone::ALL_WITH_BC), true) && !empty($value) ? [$value, self::ERRORS[$option]] : [$value, null],

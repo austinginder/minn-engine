@@ -11,6 +11,7 @@ use Minn\RestError;
 use Minn\Rest\RegisteredFields;
 use Minn\Rest\RuntimeRoutes;
 use Minn\Rest\RestMeta;
+use Minn\Support\Slashes;
 
 /**
  * What the reference's REST comments controller tells plugins, for the
@@ -73,7 +74,7 @@ final readonly class CommentEvents
         if ($prepared instanceof \WP_Error) {
             throw self::refusal($prepared);
         }
-        $id = (int) \wp_insert_comment(\wp_filter_comment(\wp_slash((array) $prepared)));
+        $id = (int) \wp_insert_comment(\wp_filter_comment(Slashes::add((array) $prepared)));
         if ($id < 1) {
             throw new RestError('rest_comment_failed_create', 'Creating comment failed.', 500);
         }
@@ -97,7 +98,7 @@ final readonly class CommentEvents
                 self::requireContent($prepared);
             }
             self::requireLengths($prepared);
-            $updated = \wp_update_comment(\wp_slash(['comment_ID' => $comment->id] + $prepared), true);
+            $updated = \wp_update_comment(Slashes::add(['comment_ID' => $comment->id] + $prepared), true);
             if ($updated instanceof \WP_Error) {
                 throw new RestError('rest_comment_failed_edit', 'Updating comment failed.', 500);
             }

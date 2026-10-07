@@ -75,7 +75,7 @@ final class Plugins
         $hooks->action('muplugins_loaded', []);
         // Read through the option filters: WP-CLI's --skip-plugins, and a plugin
         // that switches others off per request, both answer there.
-        $active = \get_option('active_plugins');
+        $active = Runtime::options()->filtered('active_plugins');
         // An extension that killed a request is paused until someone lets
         // it back in; loading it again would only kill this one too.
         $paused = (new Recovery(new Site($runtime->db), $content))->pausedPlugins();
@@ -148,8 +148,8 @@ final class Plugins
     private static function loadThemeFunctions(Runtime $runtime): void
     {
         // Through the option filters, so WP-CLI's --skip-themes (an empty theme) is honoured.
-        $stylesheet = (string) (\get_option('stylesheet') ?: '');
-        $template = (string) (\get_option('template') ?: $stylesheet);
+        $stylesheet = (string) (Runtime::options()->filtered('stylesheet') ?: '');
+        $template = (string) (Runtime::options()->filtered('template') ?: $stylesheet);
         $themes = $runtime->contentDir() . '/themes';
         $slugs = $stylesheet === $template ? [$stylesheet] : [$stylesheet, $template];
         foreach ($slugs as $slug) {

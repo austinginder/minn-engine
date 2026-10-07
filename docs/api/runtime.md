@@ -51,10 +51,10 @@ the WordPress runtime plugins load against
 | [`ObjectCache`](#objectcache) | final class | 52 | The per-request object cache behind wp_cache_*: groups of keys, nothing persistent. |
 | [`ObjectTerms`](#objectterms) | final class | 30 | wp_get_object_terms's handling of taxonomies registered with their own |
 | [`OptionSanitizer`](#optionsanitizer) | final class | 114 | A core option's value cleaned as the reference's sanitize_option cleans |
-| [`Options`](#options) | final class | 232 | Options as plugin code sees them: PHP values, decoded from the stored |
+| [`Options`](#options) | final class | 258 | Options as plugin code sees them: PHP values, decoded from the stored |
 | [`PackageDownload`](#packagedownload) | final class | 32 | The publisher's say over its own download. Before fetching an update |
 | [`PageMenu`](#pagemenu) | final class | 40 | The page-list menu a classic theme falls back to when no menu is |
-| [`Pages`](#pages) | final class | 136 | get_pages() as the reference shapes it: its arguments as a post query |
+| [`Pages`](#pages) | final class | 129 | get_pages() as the reference shapes it: its arguments as a post query |
 | [`Patterns`](#patterns) | final class | 161 | The block pattern, pattern category, and block style registries as data. |
 | [`PlaceholderTrace`](#placeholdertrace) | final class | 27 | Records every call into a generated placeholder while a site opts in by |
 | [`Placeholders`](#placeholders) | final class | 49 | The printf placeholders plugin code hands wpdb::prepare, filled the way |
@@ -262,7 +262,7 @@ A new account announced: to the site's address (unless only the user
 is told), then to the user with a link to set their password (unless
 only the site is, or the old call shape asks for nobody).
 
-Internals: `resetLink()` (private, line 151)
+Internals: `resetLink()` (private, line 152)
 
 
 ## AjaxController
@@ -345,7 +345,7 @@ A password renamed (when the body names it): its record as it stands.
 - `@param array<string, mixed> $body`
 - `@return array<string, mixed>|\WP_Error`
 
-Internals: `prepared()` (private, line 58)
+Internals: `prepared()` (private, line 59)
 
 
 ## ApplicationPasswordSignIn
@@ -375,7 +375,7 @@ wp_authenticate_application_password_errors, then
 application_password_did_authenticate; a refusal is announced and
 leaves the request signed out.
 
-Internals: `refusal()` (private, line 86)
+Internals: `refusal()` (private, line 88)
 
 
 ## ArchiveLinks
@@ -878,7 +878,7 @@ rest_delete_comment, after a trash or a delete, with the comment as it was and t
 
 - `@param array<string, mixed> $data`
 
-Internals: `preprocessed()` (private, line 138), `requireContent()` (private, line 153), `field()` (private, line 163), `requireLengths()` (private, line 169), `refusal()` (private, line 178)
+Internals: `preprocessed()` (private, line 139), `requireContent()` (private, line 154), `field()` (private, line 164), `requireLengths()` (private, line 170), `refusal()` (private, line 179)
 
 
 ## CommentFeedQuery
@@ -930,7 +930,7 @@ The stored comment, or the refusal the form answers with.
 
 - `@param array<string, mixed> $form the posted fields, unslashed`
 
-Internals: `store()` (private, line 71), `postRefusal()` (private, line 89), `fieldRefusal()` (private, line 118)
+Internals: `store()` (private, line 73), `postRefusal()` (private, line 91), `fieldRefusal()` (private, line 120)
 
 
 ## CommentPages
@@ -1048,7 +1048,7 @@ The WHERE pieces (joined with AND by the caller) and the posts join
 - `@param array{join?: string, where?: string} $meta the meta query's SQL, when it has clauses`
 - `@return array{0: list<string>, 1: string}`
 
-Internals: `approved()` (private, line 75), `post()` (private, line 95), `types()` (private, line 110), `parentAndUser()` (private, line 138), `search()` (private, line 151), `posts()` (private, line 168), `given()` (private, line 188), `listOf()` (private, line 194), `bare()` (private, line 203)
+Internals: `approved()` (private, line 76), `post()` (private, line 96), `types()` (private, line 111), `parentAndUser()` (private, line 139), `search()` (private, line 152), `posts()` (private, line 169), `given()` (private, line 189), `listOf()` (private, line 195), `bare()` (private, line 204)
 
 
 ## CommentThreads
@@ -1709,7 +1709,7 @@ argument it isn't handed.
 
 - `@return array<string, mixed>`
 
-Internals: `prepared()` (private, line 174), `fields()` (private, line 221)
+Internals: `prepared()` (private, line 175), `fields()` (private, line 222)
 
 
 ## Meta
@@ -1875,7 +1875,7 @@ exist. Null for any other capability.
 - `@param list<mixed> $args the object id, then the key`
 - `@return list<string>|null`
 
-Internals: `refusal()` (private, line 176), `defaultFits()` (private, line 194)
+Internals: `refusal()` (private, line 178), `defaultFits()` (private, line 196)
 
 
 ## MetaTypes
@@ -1923,7 +1923,7 @@ Menu items with the classes and flags the reference adds for the current page.
 - `@param list<object> $items`
 - `@return list<object>`
 
-Internals: `menuForArgs()` (private, line 52), `wrapId()` (private, line 70), `container()` (private, line 85), `singularContext()` (private, line 156), `markQueriedAncestry()` (private, line 199), `isCurrent()` (private, line 222), `markAncestors()` (private, line 258), `currentUrl()` (private, line 308)
+Internals: `menuForArgs()` (private, line 54), `wrapId()` (private, line 72), `container()` (private, line 87), `singularContext()` (private, line 158), `markQueriedAncestry()` (private, line 201), `isCurrent()` (private, line 224), `markAncestors()` (private, line 260), `currentUrl()` (private, line 310)
 
 
 ## NavMenuItems
@@ -1956,7 +1956,7 @@ wp_get_nav_menu_items for a menu found.
 - `@param array<string, mixed> $args`
 - `@return array<int, object>`
 
-Internals: `menuItem()` (private, line 63), `pointsAtPost()` (private, line 86), `pointsAtTerm()` (private, line 103), `pointsAtArchive()` (private, line 117), `custom()` (private, line 129), `post()` (private, line 137), `term()` (private, line 156)
+Internals: `menuItem()` (private, line 65), `pointsAtPost()` (private, line 88), `pointsAtTerm()` (private, line 105), `pointsAtArchive()` (private, line 119), `custom()` (private, line 131), `post()` (private, line 139), `term()` (private, line 158)
 
 
 ## OEmbed
@@ -2070,7 +2070,7 @@ plugin's sanitize_callback.
 
 The value as sanitize_option leaves it, through sanitize_option_{$option}.
 
-Internals: `rule()` (private, line 49), `lists()` (private, line 69), `email()` (private, line 85), `perPage()` (private, line 92), `structure()` (private, line 100), `words()` (private, line 108), `domains()` (private, line 115), `languages()` (private, line 122)
+Internals: `rule()` (private, line 51), `lists()` (private, line 71), `email()` (private, line 87), `perPage()` (private, line 94), `structure()` (private, line 102), `words()` (private, line 110), `domains()` (private, line 117), `languages()` (private, line 124)
 
 
 ## Options
@@ -2109,6 +2109,14 @@ Whether plugin code is refused a write to this option.
 Every autoloaded option as stored. @return array<string, string>
 
 - `@return array<string, string>`
+
+### `filtered(string $name, mixed ...$default): mixed`
+
+An option as get_option() reads it, through the filters plugins hook:
+pre_option_{name}, then pre_option, may answer first; an unset option
+is its default (false when none is given) through
+default_option_{name}, which is told whether one was given; a set one
+goes through option_{name}.
 
 ### `get(string $name): mixed`
 
@@ -2172,7 +2180,7 @@ What the reference stores: arrays and objects serialized, scalars as their strin
 
 A stored option value decoded the way the reference reads it.
 
-Internals: `remember()` (private, line 147), `holdsObject()` (private, line 160), `switchAutoload()` (private, line 178)
+Internals: `remember()` (private, line 173), `holdsObject()` (private, line 186), `switchAutoload()` (private, line 204)
 
 
 ## PackageDownload
@@ -2287,8 +2295,6 @@ left out.
 Every page under one ancestor, in list order. @param list<object> $pages @return list<object>
 
 - `@param list<object> $pages @return list<object>`
-
-Internals: `ids()` (private, line 124)
 
 
 ## Patterns
@@ -2843,7 +2849,7 @@ The search stopwords, translated and filtered. @return list<string>
 
 - `@return list<string>`
 
-Internals: `prepare()` (private, line 50), `defaults()` (private, line 68), `pageSize()` (private, line 110), `clauses()` (private, line 139), `taxonomies()` (private, line 173), `searchOrder()` (private, line 238), `filtered()` (private, line 256), `through()` (private, line 279), `paging()` (private, line 289), `execute()` (private, line 305), `idsOnly()` (private, line 335), `select()` (private, line 357), `foundPosts()` (private, line 378)
+Internals: `prepare()` (private, line 51), `defaults()` (private, line 69), `pageSize()` (private, line 111), `clauses()` (private, line 140), `taxonomies()` (private, line 174), `searchOrder()` (private, line 239), `filtered()` (private, line 257), `through()` (private, line 280), `paging()` (private, line 290), `execute()` (private, line 306), `idsOnly()` (private, line 336), `select()` (private, line 358), `foundPosts()` (private, line 379)
 
 
 ## PostQueryParts
@@ -3071,7 +3077,7 @@ The new revision's id, or null when none was called for.
 
 The revision written through wp_insert_post, then _wp_put_post_revision; its id.
 
-Internals: `changed()` (private, line 42), `prune()` (private, line 67)
+Internals: `changed()` (private, line 44), `prune()` (private, line 69)
 
 
 ## PostSave
@@ -3159,7 +3165,7 @@ back.
 - `@param array<string, mixed> $unsanitized`
 - `@return array<string, mixed>`
 
-Internals: `prepared()` (private, line 187), `changed()` (private, line 222)
+Internals: `prepared()` (private, line 188), `changed()` (private, line 223)
 
 
 ## QueriedObject
@@ -3476,7 +3482,7 @@ Registers a post status.
 
 - `@param array<string, mixed> $args`
 
-Internals: `supportsFrom()` (private, line 183), `capabilities()` (private, line 197)
+Internals: `supportsFrom()` (private, line 185), `capabilities()` (private, line 199)
 
 
 ## RewriteRules
@@ -3567,7 +3573,7 @@ attributes. What it has not (an attachment's own link, smilies, the
 capital P, insecure home addresses) runs with the plugins' own
 callbacks.
 
-Used by: `Minn\Admin\BootPayload`, `Minn\Admin\PackagesController`, `Minn\Admin\ThemesController`, `Minn\Auth\Authenticator`, `Minn\Auth\Capabilities`, `Minn\Auth\RegisteredCaps`, `Minn\Auth\SignIn`, `Minn\Blocks\Dynamic\Theme\Navigation`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Blocks\Dynamic\Theme\Structure`, `Minn\Blocks\ImageTags`, `Minn\Blocks\RenderState`, `Minn\Cli\Runtime`, `Minn\Content\Blocks`, `Minn\Content\MediaShortcodes`, `Minn\Content\PostSlugs`, `Minn\Content\Reader`, `Minn\Content\Site`, `Minn\Content\Terms`, `Minn\Cron\Cron`, `Minn\Db`, `Minn\Engine`, `Minn\Extension\Extensions`, `Minn\Front\CommentPostController`, `Minn\Front\FrontController`, `Minn\Front\Permalinks`, `Minn\Front\ProbeController`, `Minn\Front\RequestParse`, `Minn\Front\Resolver`, `Minn\Front\RuleRoutes`, `Minn\Front\SitemapRequest`, `Minn\Front\ToolbarMenus`, `Minn\Login\LoginController`, `Minn\Login\LoginHooks`, `Minn\Login\LoginNotices`, `Minn\Mail\Mailer`, `Minn\Media\Icons`, `Minn\Media\Images`, `Minn\Rest\AbilitiesController`, `Minn\Rest\Api`, `Minn\Rest\ApplicationPasswordsController`, `Minn\Rest\BatchController`, `Minn\Rest\BlockRendererController`, `Minn\Rest\BlockTypesController`, `Minn\Rest\Caller`, `Minn\Rest\CommentObject`, `Minn\Rest\Embed`, `Minn\Rest\InstalledThemesController`, `Minn\Rest\MediaController`, `Minn\Rest\MediaObject`, `Minn\Rest\MenusController`, `Minn\Rest\OEmbedController`, `Minn\Rest\PluginsController`, `Minn\Rest\PostCollectionParams`, `Minn\Rest\PostObject`, `Minn\Rest\PostsController`, `Minn\Rest\RegisteredType`, `Minn\Rest\RenderedFields`, `Minn\Rest\RestMeta`, `Minn\Rest\RuntimeEnvelope`, `Minn\Rest\RuntimePrepare`, `Minn\Rest\RuntimeRoutes`, `Minn\Rest\Services`, `Minn\Rest\SettingsController`, `Minn\Rest\SidebarsController`, `Minn\Rest\StatusesController`, `Minn\Rest\TemplatesController`, `Minn\Rest\TermFilters`, `Minn\Rest\TermObject`, `Minn\Rest\Types`, `Minn\Rest\TypesController`, `Minn\Rest\UserCollectionParams`, `Minn\Rest\UserObject`, `Minn\Rest\UsersController`, `Minn\Rest\WidgetsController`, `Minn\Runtime\Abilities`, `Minn\Runtime\AccountFlows`, `Minn\Runtime\AjaxController`, `Minn\Runtime\ApplicationPasswordSignIn`, `Minn\Runtime\BlockFilters`, `Minn\Runtime\BlockHooks`, `Minn\Runtime\CommentEvents`, `Minn\Runtime\Constants`, `Minn\Runtime\CurrentUser`, `Minn\Runtime\Deferrals`, `Minn\Runtime\FileUpload`, `Minn\Runtime\Interactivity`, `Minn\Runtime\NavMenu`, `Minn\Runtime\PackageDownload`, `Minn\Runtime\Patterns`, `Minn\Runtime\PlaceholderTrace`, `Minn\Runtime\PluginUpdates`, `Minn\Runtime\Plugins`, `Minn\Runtime\PostEvents`, `Minn\Runtime\PostSave`, `Minn\Runtime\RegisteredSettings`, `Minn\Runtime\Registry`, `Minn\Runtime\ScriptModules`, `Minn\Runtime\TermEvents`, `Minn\Runtime\TermQueryTree`, `Minn\Runtime\TermSave`, `Minn\Runtime\TermWriter`, `Minn\Runtime\ThemeSupports`, `Minn\Runtime\UserEvents`, `Minn\Theme\ArchiveTitle`, `Minn\Theme\ClassicContent`, `Minn\Theme\ClassicRenderer`, `Minn\Theme\EmbedRenderer`, `Minn\Theme\FrontLifecycle`, `Minn\Theme\HeadLinks`, `Minn\Theme\MainQueryBridge`, `Minn\Theme\PageRenderer`, `Minn\Theme\Templates`, `Minn\Theme\Theme`, `Minn\Theme\ThemeJsonData`
+Used by: `Minn\Admin\BootPayload`, `Minn\Admin\PackagesController`, `Minn\Admin\ThemesController`, `Minn\Auth\Authenticator`, `Minn\Auth\Capabilities`, `Minn\Auth\RegisteredCaps`, `Minn\Auth\SignIn`, `Minn\Blocks\Dynamic\Theme\Comments`, `Minn\Blocks\Dynamic\Theme\Navigation`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Blocks\Dynamic\Theme\Structure`, `Minn\Blocks\ImageTags`, `Minn\Blocks\RenderState`, `Minn\Cli\Runtime`, `Minn\Content\Blocks`, `Minn\Content\MediaShortcodes`, `Minn\Content\PostSlugs`, `Minn\Content\Reader`, `Minn\Content\Site`, `Minn\Content\Terms`, `Minn\Cron\Cron`, `Minn\Db`, `Minn\Engine`, `Minn\Extension\Extensions`, `Minn\Front\CommentPostController`, `Minn\Front\FeedTags`, `Minn\Front\FeedTemplates`, `Minn\Front\FrontController`, `Minn\Front\Permalinks`, `Minn\Front\PostEmbed`, `Minn\Front\ProbeController`, `Minn\Front\RequestParse`, `Minn\Front\Resolver`, `Minn\Front\RuleRoutes`, `Minn\Front\SitemapRequest`, `Minn\Front\ToolbarMenus`, `Minn\I18n\Gettext`, `Minn\Login\LoginController`, `Minn\Login\LoginHooks`, `Minn\Login\LoginNotices`, `Minn\Mail\Mailer`, `Minn\Media\Icons`, `Minn\Media\Images`, `Minn\Rest\AbilitiesController`, `Minn\Rest\Api`, `Minn\Rest\ApplicationPasswordsController`, `Minn\Rest\BatchController`, `Minn\Rest\BlockRendererController`, `Minn\Rest\BlockTypesController`, `Minn\Rest\Caller`, `Minn\Rest\CommentObject`, `Minn\Rest\Embed`, `Minn\Rest\InstalledThemesController`, `Minn\Rest\LiveSettings`, `Minn\Rest\MediaController`, `Minn\Rest\MediaObject`, `Minn\Rest\MenusController`, `Minn\Rest\OEmbedController`, `Minn\Rest\PluginsController`, `Minn\Rest\PostCollectionParams`, `Minn\Rest\PostListArgs`, `Minn\Rest\PostObject`, `Minn\Rest\PostsController`, `Minn\Rest\RegisteredType`, `Minn\Rest\RenderedFields`, `Minn\Rest\RestMeta`, `Minn\Rest\RuntimeEnvelope`, `Minn\Rest\RuntimePrepare`, `Minn\Rest\RuntimeRoutes`, `Minn\Rest\Services`, `Minn\Rest\SettingsController`, `Minn\Rest\SidebarsController`, `Minn\Rest\StatusesController`, `Minn\Rest\TemplatesController`, `Minn\Rest\TermFilters`, `Minn\Rest\TermObject`, `Minn\Rest\Types`, `Minn\Rest\TypesController`, `Minn\Rest\UserCollectionParams`, `Minn\Rest\UserObject`, `Minn\Rest\UsersController`, `Minn\Rest\WidgetsController`, `Minn\Runtime\Abilities`, `Minn\Runtime\AccountFlows`, `Minn\Runtime\AjaxController`, `Minn\Runtime\ApplicationPasswordSignIn`, `Minn\Runtime\ArchiveLinks`, `Minn\Runtime\BlockFilters`, `Minn\Runtime\BlockHooks`, `Minn\Runtime\CommentEvents`, `Minn\Runtime\CommentFeedQuery`, `Minn\Runtime\CommentForm`, `Minn\Runtime\CommentPages`, `Minn\Runtime\Constants`, `Minn\Runtime\CurrentUser`, `Minn\Runtime\Deferrals`, `Minn\Runtime\FileUpload`, `Minn\Runtime\Interactivity`, `Minn\Runtime\MetaKeys`, `Minn\Runtime\NavMenu`, `Minn\Runtime\OptionSanitizer`, `Minn\Runtime\PackageDownload`, `Minn\Runtime\Patterns`, `Minn\Runtime\PlaceholderTrace`, `Minn\Runtime\PluginRemoval`, `Minn\Runtime\PluginUpdates`, `Minn\Runtime\Plugins`, `Minn\Runtime\PostEvents`, `Minn\Runtime\PostLinks`, `Minn\Runtime\PostQuery`, `Minn\Runtime\PostQueryResults`, `Minn\Runtime\PostQueryWhere`, `Minn\Runtime\PostSave`, `Minn\Runtime\RegisteredSettings`, `Minn\Runtime\Registry`, `Minn\Runtime\RewriteRules`, `Minn\Runtime\ScriptModules`, `Minn\Runtime\TermEvents`, `Minn\Runtime\TermQueryTree`, `Minn\Runtime\TermSave`, `Minn\Runtime\TermWriter`, `Minn\Runtime\ThemeSupports`, `Minn\Runtime\ThemeSwitch`, `Minn\Runtime\UserEvents`, `Minn\Theme\ArchiveTitle`, `Minn\Theme\ClassicContent`, `Minn\Theme\ClassicRenderer`, `Minn\Theme\EmbedRenderer`, `Minn\Theme\FeedHeaders`, `Minn\Theme\FrontLifecycle`, `Minn\Theme\HeadLinks`, `Minn\Theme\MainQueryBridge`, `Minn\Theme\PageRenderer`, `Minn\Theme\Templates`, `Minn\Theme\Theme`, `Minn\Theme\ThemeJsonData`
 
 ```php
 __construct(Minn\Context $context, bool $isAdmin = false)
@@ -4203,7 +4209,7 @@ Deletes a term, then tells plugins over REST with the term as it was and the res
 
 rest_insert_{taxonomy}, then rest_after_insert_{taxonomy}, with the term as it stands and the request.
 
-Internals: `prepared()` (private, line 74), `refusal()` (private, line 94)
+Internals: `prepared()` (private, line 75), `refusal()` (private, line 95)
 
 
 ## TermFields
@@ -4259,7 +4265,7 @@ ASC when asked for, DESC for anything else.
 
 The ORDER BY body for an orderby value, filtered as the reference filters it.
 
-Internals: `meta()` (private, line 54)
+Internals: `meta()` (private, line 56)
 
 
 ## TermQuery
@@ -4373,7 +4379,7 @@ by TermQueryTree (children, padded counts, the empty hidden, the page).
 Runs a term query object's variables: its terms in the shape the
 fields ask for, a count, or what a plugin answered first.
 
-Internals: `lists()` (private, line 75), `hierarchical()` (private, line 87), `settle()` (private, line 101), `inHierarchy()` (private, line 118), `order()` (private, line 129), `clauses()` (private, line 140), `exclusions()` (private, line 167), `names()` (private, line 188), `likes()` (private, line 207), `select()` (private, line 224), `limits()` (private, line 253), `meta()` (private, line 263)
+Internals: `lists()` (private, line 76), `hierarchical()` (private, line 88), `settle()` (private, line 102), `inHierarchy()` (private, line 119), `order()` (private, line 130), `clauses()` (private, line 141), `exclusions()` (private, line 168), `names()` (private, line 189), `likes()` (private, line 208), `select()` (private, line 225), `limits()` (private, line 254), `meta()` (private, line 264)
 
 
 ## TermQueryTree
@@ -4462,7 +4468,7 @@ A changed term's ids, or why not.
 - `@param array<string, mixed> $changes`
 - `@return array{term_id: int, term_taxonomy_id: int}|\WP_Error`
 
-Internals: `write()` (private, line 127), `nameTaken()` (private, line 160), `updatedSlug()` (private, line 184), `slugFromId()` (private, line 203), `row()` (private, line 216)
+Internals: `write()` (private, line 128), `nameTaken()` (private, line 161), `updatedSlug()` (private, line 185), `slugFromId()` (private, line 204), `row()` (private, line 217)
 
 
 ## TermWriter
@@ -4809,7 +4815,7 @@ ASC when asked for, DESC for anything else.
 
 The column or expression one orderby key stands for.
 
-Internals: `postCount()` (private, line 50)
+Internals: `postCount()` (private, line 52)
 
 
 ## UserQueryRoles
@@ -4872,7 +4878,7 @@ Builds the query's pieces from its variables, as prepare_query does.
 
 Runs the query: users_pre_query may answer it; the count follows; the results take the fields' shape.
 
-Internals: `fields()` (private, line 65), `published()` (private, line 80), `names()` (private, line 91), `meta()` (private, line 108), `order()` (private, line 141), `search()` (private, line 167)
+Internals: `fields()` (private, line 66), `published()` (private, line 81), `names()` (private, line 92), `meta()` (private, line 109), `order()` (private, line 142), `search()` (private, line 168)
 
 
 ## UserSave

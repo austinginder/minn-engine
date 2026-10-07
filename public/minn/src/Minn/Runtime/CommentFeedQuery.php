@@ -52,7 +52,7 @@ final class CommentFeedQuery
         $where = \apply_filters_ref_array('comment_feed_where', [$where, &$query]);
         $groupby = \apply_filters_ref_array('comment_feed_groupby', [$groupby, &$query]);
         $orderby = \apply_filters_ref_array('comment_feed_orderby', ['comment_date_gmt DESC', &$query]);
-        $limits = \apply_filters_ref_array('comment_feed_limits', ['LIMIT ' . \get_option('posts_per_rss'), &$query]);
+        $limits = \apply_filters_ref_array('comment_feed_limits', ['LIMIT ' . Runtime::options()->filtered('posts_per_rss'), &$query]);
         return "{$select} {$join} {$where} " . (!empty($groupby) ? 'GROUP BY ' . $groupby : '') . ' ' . (!empty($orderby) ? 'ORDER BY ' . $orderby : '') . " {$limits}";
     }
 

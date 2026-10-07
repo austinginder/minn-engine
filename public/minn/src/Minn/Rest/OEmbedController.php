@@ -51,7 +51,7 @@ final readonly class OEmbedController
         self::requireRuntime();
         $url = (string) $request->query['url'];
         $postId = (int) \apply_filters('oembed_request_post_id', \url_to_postid($url), $url);
-        $data = \get_oembed_response_data($postId, \absint($request->query['maxwidth'] ?? 600));
+        $data = \get_oembed_response_data($postId, abs((int) ($request->query['maxwidth'] ?? 600)));
         if (!$data) {
             throw new RestError('oembed_invalid_url', 'Not Found', 404);
         }

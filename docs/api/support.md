@@ -9,9 +9,11 @@ escaping, serialized readers, small helpers
 | [`DirectoryListing`](#directorylisting) | final class | 34 | Walks a directory the way the filesystem API lists it: named entries, dot entries skipped, hidden ones optional, recursion optional. |
 | [`Email`](#email) | final class | 69 | The address rules the reference applies: a local part from a fixed |
 | [`Entities`](#entities) | final class | 77 | HTML special-character encoding with the reference's quote styles and its |
+| [`Escape`](#escape) | final class | 25 | Text made safe for HTML the way WordPress's escapers make it (esc_html, |
 | [`FileHeaders`](#fileheaders) | final class | 27 | Header values from a plugin or theme file. The labels (Plugin Name, |
 | [`FileTree`](#filetree) | final class | 70 | Whole-directory reads and copies. The engine's own installer, the update |
 | [`Files`](#files) | final class | 61 | Recursive filesystem work behind WP_Filesystem_Direct: best-effort tree |
+| [`Flag`](#flag) | final class | 11 | A yes or no as WordPress reads one from loose input (wp_validate_boolean). |
 | [`Html`](#html) | final class | 91 |  |
 | [`Ip`](#ip) | final class | 22 | Addresses with their identifying tail removed, for logs and analytics that |
 | [`Json`](#json) | final class | 19 | Makes a value encodable: strings that are not valid UTF-8 get their high bytes replaced, recursively. |
@@ -19,13 +21,14 @@ escaping, serialized readers, small helpers
 | [`KsesEntities`](#ksesentities) | final class | 30 | The named references kses keeps as written: the list captured from the |
 | [`KsesPolicy`](#ksespolicy) | final readonly class | 115 | What one kses pass allows: the tags, each tag's attributes (allowed |
 | [`KsesValues`](#ksesvalues) | final class | 38 | The value rules an allowlist attribute may carry, as the reference judges |
-| [`Lists`](#lists) | final class | 90 | List shaping behind the facade's array utilities: the multi-field sort |
+| [`Lists`](#lists) | final class | 116 | List shaping behind the facade's array utilities: the multi-field sort |
 | [`Locale`](#locale) | final class | 31 | The locale's calendar and number vocabulary as data: the names a site |
 | [`Markers`](#markers) | final class | 59 | The BEGIN/END marker blocks insert_with_markers() maintains in files like |
 | [`Paths`](#paths) | final class | 64 | File-system path and permission spellings. |
 | [`ScriptTag`](#scripttag) | final class | 69 | Script elements as the reference builds them (probe script-tags): the |
 | [`SearchReplace`](#searchreplace) | final class | 38 | String replace that walks serialized-PHP arrays of scalars without |
 | [`Serialized`](#serialized) | final class | 311 | Tolerant readers for the serialized-PHP blobs WordPress stores. Nothing |
+| [`Slashes`](#slashes) | final class | 32 | Magic-quote slashes the way WordPress keeps them (wp_slash, wp_unslash): |
 | [`Time`](#time) | final class | 21 | Human-scale spans: a number of seconds as the largest whole unit it fills, rounded, never below one. |
 | [`Url`](#url) | final class | 202 | URL shaping the escaping and query helpers share: the character cleanup |
 | [`Utf8`](#utf8) | final class | 8 | Whether bytes are well-formed UTF-8 as the reference judges them: overlong |
@@ -127,7 +130,7 @@ controls Unicode puts there; each becomes the reference to the Unicode
 character it meant, and the five codes Windows-1252 leaves unassigned
 are removed. Only the exact unpadded decimal spelling is touched.
 
-Used by: `Minn\Support\Kses`
+Used by: `Minn\Support\Escape`, `Minn\Support\Kses`
 
 ### static `specialchars(string $text, string|int|false $quoteStyle, bool $doubleEncode, callable $knownEntity): string`
 
@@ -144,6 +147,29 @@ The reverse of specialchars: the five characters back, with the quote pairs the 
 Windows-1252 numeric references rewritten as the Unicode references they meant.
 
 Internals: `encodeStrayAmpersands()` (private, line 40)
+
+
+## Escape
+
+`final class Minn\Support\Escape` · `public/minn/src/Minn/Support/Escape.php`
+
+Text made safe for HTML the way WordPress's escapers make it (esc_html,
+esc_attr): invalid UTF-8 emptied, entities already present normalised
+rather than encoded again, the specials and both quotes encoded, then the
+filter plugins hook (esc_html, attribute_escape) handed the result and the
+original.
+
+Used by: `Minn\Content\MediaShortcodes`, `Minn\Front\EmbedCard`, `Minn\Front\FeedTags`, `Minn\Front\PageLinks`, `Minn\Front\PostEmbed`, `Minn\Front\ToolbarMarkup`, `Minn\Front\ToolbarMenus`, `Minn\Runtime\NavMenu`, `Minn\Runtime\OptionSanitizer`, `Minn\Runtime\UpdateCounts`, `Minn\Theme\HeadLinks`, `Minn\Widgets\WidgetForms`
+
+### static `html(mixed $text): string`
+
+Text for an element's content.
+
+### static `attr(mixed $text): string`
+
+Text for an attribute's value.
+
+Internals: `encoded()` (private, line 28)
 
 
 ## FileHeaders
@@ -216,6 +242,19 @@ reached through one would empty the real source.
 ### static `chmodTree(string $path, int $mode): bool`
 
 Apply a mode to every FILE under a directory (the directories themselves keep theirs); always reports true.
+
+
+## Flag
+
+`final class Minn\Support\Flag` · `public/minn/src/Minn/Support/Flag.php`
+
+A yes or no as WordPress reads one from loose input (wp_validate_boolean).
+
+Used by: `Minn\Content\MediaShortcodes`
+
+### static `of(mixed $value): bool`
+
+The string "false" in any case is no; anything else is PHP's truth.
 
 
 ## Html
@@ -306,7 +345,7 @@ block delimiters are written back with their attribute values filtered.
 - const `STRAY_AMPERSAND` = `'/&(?!(?:#[0-9]+|#[xX][0-9a-fA-F]+|[a-zA-Z][a-zA-Z0-9]{0,31});)/'`
 - const `MARKUP` = `array (   '&' => '&amp;',   '<' => '&lt;',   '>' => '&gt;',   '"' => '&quot;',   '\'' => '&apos;', )`
 
-Used by: `Minn\Blocks\Dynamic\LatestComments`, `Minn\Blocks\Dynamic\SocialLinks`, `Minn\Blocks\Dynamic\Theme\Comments`, `Minn\Blocks\Dynamic\Theme\Navigation`, `Minn\Content\Users`, `Minn\Media\Writer`, `Minn\Rest\MenusController`, `Minn\Rest\PostsWriteController`, `Minn\Rest\RevisionsController`, `Minn\Rest\TermsController`, `Minn\Rest\UsersController`, `Minn\Support\KsesPolicy`
+Used by: `Minn\Blocks\Dynamic\LatestComments`, `Minn\Blocks\Dynamic\SocialLinks`, `Minn\Blocks\Dynamic\Theme\Comments`, `Minn\Blocks\Dynamic\Theme\Navigation`, `Minn\Content\Users`, `Minn\Media\Writer`, `Minn\Rest\MenusController`, `Minn\Rest\PostsWriteController`, `Minn\Rest\RevisionsController`, `Minn\Rest\TermsController`, `Minn\Rest\UsersController`, `Minn\Support\Escape`, `Minn\Support\KsesPolicy`
 
 
 ### static `post(string $html): string`
@@ -421,7 +460,7 @@ The named references kses keeps as written: the list captured from the
 reference (data/kses.json) plus the five XML ones. Any other name is
 stored as "&amp;name;".
 
-Used by: `Minn\Feed\Tree`, `Minn\Support\Kses`, `Minn\Support\KsesPolicy`
+Used by: `Minn\Feed\Tree`, `Minn\Support\Escape`, `Minn\Support\Kses`, `Minn\Support\KsesPolicy`
 
 
 ### static `known(string $name): bool`
@@ -526,6 +565,23 @@ wp_list_sort() promises (loose comparison per field, first difference
 wins) and the row-shape conversions wpdb hands back for its OBJECT_K /
 ARRAY_A / ARRAY_N output formats.
 
+Used by: `Minn\Query\CommentOrder`, `Minn\Rest\InstalledThemesController`, `Minn\Rest\RegisteredFields`, `Minn\Runtime\CommentQueryWhere`, `Minn\Runtime\Pages`, `Minn\Runtime\TermOrder`, `Minn\Runtime\TermQueryRunner`, `Minn\Runtime\UserOrder`, `Minn\Runtime\UserQueryRunner`
+
+### static `items(mixed $input): array`
+
+A list as arguments give one (wp_parse_list): an array's entries
+trimmed, the empty ones dropped (keys kept); a string split on commas
+and whitespace.
+
+- `@return array<int|string, string>`
+
+### static `ids(mixed $input): array`
+
+Ids as arguments give them (wp_parse_id_list): each a whole number made
+positive, each once, in first-seen order.
+
+- `@return list<int>`
+
 ### static `sort(array $items, array $orderby, bool $preserveKeys): array`
 
 Items sorted by several fields, each ascending or descending.
@@ -554,7 +610,7 @@ get_page_children walk. Visited ids guard against a parent cycle.
 - `@param list<int> $visited`
 - `@return list<mixed>`
 
-Internals: `keyedByFirstColumn()` (private, line 90)
+Internals: `keyedByFirstColumn()` (private, line 116)
 
 
 ## Locale
@@ -737,6 +793,27 @@ float, string, arrays of those, and objects written as their class.
 The integer values of a serialized list such as sticky_posts.
 
 Internals: `read()` (private, line 79), `readObject()` (private, line 135), `encodeRecord()` (private, line 189), `encodeWrapper()` (private, line 206), `expect()` (private, line 213), `until()` (private, line 221), `encodeValue()` (private, line 254), `encodeObject()` (private, line 294)
+
+
+## Slashes
+
+`final class Minn\Support\Slashes` · `public/minn/src/Minn/Support/Slashes.php`
+
+Magic-quote slashes the way WordPress keeps them (wp_slash, wp_unslash):
+added to or stripped from every string inside a value, arrays and
+objects walked all the way down, anything else left as it is.
+
+Used by: `Minn\Rest\MediaController`, `Minn\Rest\RestMeta`, `Minn\Runtime\ApplicationPasswordEvents`, `Minn\Runtime\CommentEvents`, `Minn\Runtime\CommentForm`, `Minn\Runtime\PostRevisions`, `Minn\Runtime\PostSave`, `Minn\Runtime\TermEvents`, `Minn\Runtime\TermSave`
+
+### static `add(mixed $value): mixed`
+
+Every string in a value with its quotes and backslashes slashed.
+
+### static `strip(mixed $value): mixed`
+
+Every string in a value with one level of slashes taken off.
+
+Internals: `deep()` (private, line 27)
 
 
 ## Time

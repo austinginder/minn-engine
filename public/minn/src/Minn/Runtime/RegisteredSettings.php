@@ -66,10 +66,10 @@ final class RegisteredSettings
         $registered[$name] = $args;
         Runtime::current()->set(self::KEY, $registered);
         if (!empty($args['sanitize_callback'])) {
-            \add_filter("sanitize_option_{$name}", $args['sanitize_callback']);
+            Runtime::hooks()->add("sanitize_option_{$name}", $args['sanitize_callback']);
         }
         if (array_key_exists('default', $args)) {
-            \add_filter("default_option_{$name}", 'filter_default_option', 10, 3);
+            Runtime::hooks()->add("default_option_{$name}", 'filter_default_option', 10, 3);
         }
         \do_action('register_setting', $group, $name, $args);
     }
@@ -82,14 +82,14 @@ final class RegisteredSettings
             return;
         }
         if (!empty($deprecated)) {
-            \remove_filter("sanitize_option_{$name}", $deprecated);
+            Runtime::hooks()->remove("sanitize_option_{$name}", $deprecated);
         }
         $args = $registered[$name];
         if (!empty($args['sanitize_callback'])) {
-            \remove_filter("sanitize_option_{$name}", $args['sanitize_callback']);
+            Runtime::hooks()->remove("sanitize_option_{$name}", $args['sanitize_callback']);
         }
         if (array_key_exists('default', $args)) {
-            \remove_filter("default_option_{$name}", 'filter_default_option', 10);
+            Runtime::hooks()->remove("default_option_{$name}", 'filter_default_option', 10);
         }
         unset($registered[$name]);
         Runtime::current()->set(self::KEY, $registered);

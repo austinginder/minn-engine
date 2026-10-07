@@ -89,7 +89,7 @@ final class FrontLifecycle
             $headers = array_merge($headers, \wp_get_nocache_headers());
         }
         if ($status === 404 || ($status === null && empty($wp->query_vars['feed']))) {
-            $headers['Content-Type'] = \get_option('html_type') . '; charset=' . \get_option('blog_charset');
+            $headers['Content-Type'] = Runtime::options()->filtered('html_type') . '; charset=' . Runtime::options()->filtered('blog_charset');
         } elseif ($status === null) {
             [$feed, $fresh] = FeedHeaders::for($wp->query_vars, Runtime::current()->request);
             $headers = array_merge($headers, $feed);

@@ -522,7 +522,7 @@ The site icon as an RSS 2.0 image (titled with the feed's title), or '' without 
 
 The site icon as an Atom icon, or '' without one.
 
-Internals: `enclosures()` (private, line 37)
+Internals: `enclosures()` (private, line 40)
 
 
 ## FeedTemplates
@@ -547,7 +547,7 @@ rdf, rss), between wp_before_load_template and wp_after_load_template.
 
 - `@param Closure(string): void $send sends a header line (the Content-Type)`
 
-Internals: `syndication()` (private, line 58), `rss2()` (private, line 63), `rss2Item()` (private, line 82), `atom()` (private, line 108), `atomEntry()` (private, line 127), `rdf()` (private, line 154), `rdfItem()` (private, line 178), `rss()` (private, line 193), `commentsTitle()` (private, line 211), `commentTitle()` (private, line 223), `current()` (private, line 232), `rss2Comments()` (private, line 239), `rss2Comment()` (private, line 257), `atomComments()` (private, line 271), `atomComment()` (private, line 293)
+Internals: `syndication()` (private, line 60), `rss2()` (private, line 65), `rss2Item()` (private, line 84), `atom()` (private, line 110), `atomEntry()` (private, line 129), `rdf()` (private, line 156), `rdfItem()` (private, line 180), `rss()` (private, line 195), `commentsTitle()` (private, line 213), `commentTitle()` (private, line 225), `current()` (private, line 234), `rss2Comments()` (private, line 241), `rss2Comment()` (private, line 259), `atomComments()` (private, line 273), `atomComment()` (private, line 295)
 
 
 ## FeedWriter
@@ -926,7 +926,7 @@ _oembed_create_xml: the data as an oembed document, nested arrays as nested elem
 
 - `@param array<string, mixed> $data`
 
-Internals: `append()` (private, line 110)
+Internals: `append()` (private, line 113)
 
 
 ## PostNavigation
@@ -1664,7 +1664,7 @@ The way out of recovery mode, while the site is in it.
 
 The search box, on the front end.
 
-Internals: `profileUrl()` (private, line 43), `creatable()` (private, line 244), `editPost()` (private, line 291), `editTerm()` (private, line 301)
+Internals: `profileUrl()` (private, line 45), `creatable()` (private, line 246), `editPost()` (private, line 293), `editTerm()` (private, line 303)
 
 
 ## ToolbarTree

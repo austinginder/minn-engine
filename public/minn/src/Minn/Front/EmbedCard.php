@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace Minn\Front;
 
+use Minn\I18n\Gettext;
+use Minn\Support\Escape;
+
 /**
  * The parts of a post's embed card the reference's embed template prints,
  * as markup: the featured image and its shape (the widest of the image's
@@ -65,7 +68,7 @@ final class EmbedCard
             '<div class="wp-embed-site-title"><a href="%s" target="_top"><img src="%s" width="32" height="32" alt="" class="wp-embed-site-icon" /><span>%s</span></a></div>',
             \esc_url(\home_url()),
             \esc_url((string) \get_site_icon_url(32, \includes_url('images/w-logo-gray-white-bg.svg'))),
-            \esc_html((string) \get_bloginfo('name')),
+            Escape::html((string) \get_bloginfo('name')),
         );
         return (string) \apply_filters('embed_site_title_html', $title);
     }
@@ -77,7 +80,7 @@ final class EmbedCard
             return '';
         }
         $count = (int) \get_comments_number();
-        $words = sprintf(\_n('%s <span class="screen-reader-text">Comment</span>', '%s <span class="screen-reader-text">Comments</span>', $count), \number_format_i18n($count));
+        $words = sprintf(Gettext::plural('%s <span class="screen-reader-text">Comment</span>', '%s <span class="screen-reader-text">Comments</span>', $count), \number_format_i18n($count));
         return "\t<div class=\"wp-embed-comments\">\n\t\t<a href=\"" . \esc_url((string) \get_comments_link()) . "\" target=\"_top\">\n\t\t\t<span class=\"dashicons dashicons-admin-comments\"></span>\n\t\t\t"
             . $words . "\t\t</a>\n\t</div>\n\t";
     }

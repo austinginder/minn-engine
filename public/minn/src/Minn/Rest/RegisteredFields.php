@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Minn\Rest;
 
 use Minn\RestError;
+use Minn\Support\Lists;
 
 /**
  * The fields plugin code adds to an object type with register_rest_field,
@@ -102,7 +103,7 @@ final class RegisteredFields
         if (!isset($request['_fields'])) {
             return null;
         }
-        $wanted = array_map('trim', \wp_parse_list($request['_fields']));
+        $wanted = array_map('trim', Lists::items($request['_fields']));
         return $wanted === [] ? null : $wanted;
     }
 

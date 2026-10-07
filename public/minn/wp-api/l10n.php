@@ -1,7 +1,7 @@
 <?php
 /** Translation functions over Minn\I18n: text domains loaded from .l10n.php and .mo files. Behaviour from contracts/fixtures/api/l10n.json. */
 
-use Minn\I18n\Catalog;
+use Minn\I18n\Gettext;
 use Minn\I18n\ScriptTranslations;
 use Minn\I18n\TranslationFiles;
 use Minn\Runtime\Runtime;
@@ -44,43 +44,21 @@ function determine_locale()
     return apply_filters('determine_locale', get_locale());
 }
 
-/** @internal a message's translation in a domain, the domain loaded just in time when it is not yet */
-function _minn_translation($domain, $text, $context = null): ?string
-{
-    if (!is_scalar($text) || !Runtime::booted()) {
-        return null;
-    }
-    $domain = (string) $domain;
-    _load_textdomain_just_in_time($domain);
-    return Runtime::textDomains()->translate($domain, Catalog::key((string) $text, $context === null ? null : (string) $context));
-}
-
-/** @internal the plural form a count takes in a domain, or English's when no file has the message */
-function _minn_plural_translation($single, $plural, $number, $domain, $context = null)
-{
-    $domain = (string) $domain;
-    if (Runtime::booted() && is_scalar($single)) {
-        _load_textdomain_just_in_time($domain);
-        $form = Runtime::textDomains()->translatePlural($domain, Catalog::key((string) $single, $context === null ? null : (string) $context), (int) $number);
-        if ($form !== null) {
-            return $form;
-        }
-    }
-    return (int) $number === 1 ? $single : $plural;
-}
+// Engine code and these names translate through one class; it loads a domain just in time through the facade's loader.
+Gettext::loadWith(static fn (string $domain) => _load_textdomain_just_in_time($domain));
 
 function translate($text, $domain = 'default')
 {
-    $translation = _minn_translation($domain, $text) ?? $text;
-    $translation = apply_filters('gettext', $translation, $text, $domain);
-    return apply_filters("gettext_{$domain}", $translation, $text, $domain);
+    if (!is_scalar($text)) {
+        $text = apply_filters('gettext', $text, $text, $domain);
+        return apply_filters("gettext_{$domain}", $text, $text, $domain);
+    }
+    return Gettext::text((string) $text, (string) $domain);
 }
 
 function translate_with_gettext_context($text, $context, $domain = 'default')
 {
-    $translation = _minn_translation($domain, $text, $context) ?? $text;
-    $translation = apply_filters('gettext_with_context', $translation, $text, $context, $domain);
-    return apply_filters("gettext_with_context_{$domain}", $translation, $text, $context, $domain);
+    return Gettext::inContext((string) $text, (string) $context, (string) $domain);
 }
 
 function __($text, $domain = 'default')
@@ -105,16 +83,12 @@ function _ex($text, $context, $domain = 'default')
 
 function _n($single, $plural, $number, $domain = 'default')
 {
-    $translation = _minn_plural_translation($single, $plural, $number, $domain);
-    $translation = apply_filters('ngettext', $translation, $single, $plural, $number, $domain);
-    return apply_filters("ngettext_{$domain}", $translation, $single, $plural, $number, $domain);
+    return Gettext::plural((string) $single, (string) $plural, (int) $number, (string) $domain);
 }
 
 function _nx($single, $plural, $number, $context, $domain = 'default')
 {
-    $translation = _minn_plural_translation($single, $plural, $number, $domain, $context);
-    $translation = apply_filters('ngettext_with_context', $translation, $single, $plural, $number, $context, $domain);
-    return apply_filters("ngettext_with_context_{$domain}", $translation, $single, $plural, $number, $context, $domain);
+    return Gettext::pluralInContext((string) $single, (string) $plural, (int) $number, (string) $context, (string) $domain);
 }
 
 function _n_noop($singular, $plural, $domain = null)

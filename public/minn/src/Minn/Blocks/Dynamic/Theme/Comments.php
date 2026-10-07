@@ -17,6 +17,7 @@ use Minn\Front\Permalinks;
 use Minn\Support\Html;
 use Minn\Support\Kses;
 use Minn\Content\PasswordGate;
+use Minn\Runtime\Runtime;
 
 /** comments, comments-title, comment-template, the comment-* blocks, and the comment form. */
 final readonly class Comments
@@ -232,11 +233,11 @@ final readonly class Comments
             $fields['submit_field'] = '<p class="form-submit wp-block-button">%1$s %2$s</p>';
             return $fields;
         };
-        \add_filter('comment_form_defaults', $defaults);
+        Runtime::hooks()->add('comment_form_defaults', $defaults);
         ob_start();
         \comment_form([], $postId);
         $form = (string) ob_get_clean();
-        \remove_filter('comment_form_defaults', $defaults);
+        Runtime::hooks()->remove('comment_form_defaults', $defaults);
         $classes = implode(' ', ['comment-respond', 'wp-block-post-comments-form', ...Styles::classes($block->attrs)]);
         return str_replace('class="comment-respond"', 'class="' . Html::attr($classes) . '"', $form);
     }

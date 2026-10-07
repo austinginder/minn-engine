@@ -285,7 +285,7 @@ final readonly class Api
      */
     private function options(Request $request): ?Response
     {
-        if (Runtime::booted() && \has_filter('rest_pre_dispatch', 'rest_handle_options_request') === false) {
+        if (Runtime::booted() && Runtime::hooks()->has('rest_pre_dispatch', 'rest_handle_options_request') === false) {
             return null;
         }
         $entry = (new RouteCatalogue($this->router, $this->services->types(), $this->services->url()))->describing($request->path);

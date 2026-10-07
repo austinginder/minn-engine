@@ -31,7 +31,7 @@ final class PostLinks
     public static function post(\WP_Post $post, int $flags): string
     {
         $leavename = (bool) ($flags & self::LEAVE_NAME);
-        $structure = (string) \apply_filters('pre_post_link', (string) \get_option('permalink_structure'), $post, $leavename);
+        $structure = (string) \apply_filters('pre_post_link', (string) Runtime::options()->filtered('permalink_structure'), $post, $leavename);
         if ($structure !== '' && !self::plain($post, $flags)) {
             $link = \user_trailingslashit(\home_url(strtr($structure, self::tokens($post, $flags))), 'single');
         } else {
@@ -54,7 +54,7 @@ final class PostLinks
         }
         $author = \get_userdata((int) $post->post_author);
         $tokens['%author%'] = $author ? (string) $author->user_nicename : '';
-        $tokens['%category%'] = str_contains((string) \get_option('permalink_structure'), '%category%') ? self::category($post) : '';
+        $tokens['%category%'] = str_contains((string) Runtime::options()->filtered('permalink_structure'), '%category%') ? self::category($post) : '';
         return $tokens;
     }
 
@@ -64,7 +64,7 @@ final class PostLinks
         $categories = \get_the_category($post->ID);
         usort($categories, static fn ($a, $b) => (int) $a->term_id <=> (int) $b->term_id);
         $chosen = $categories === [] ? null : \apply_filters('post_link_category', $categories[0], $categories, $post);
-        $chosen = $chosen instanceof \WP_Term ? $chosen : \get_term((int) \get_option('default_category'), 'category');
+        $chosen = $chosen instanceof \WP_Term ? $chosen : \get_term((int) Runtime::options()->filtered('default_category'), 'category');
         if (!$chosen instanceof \WP_Term) {
             return '';
         }
@@ -76,7 +76,7 @@ final class PostLinks
     public static function page(\WP_Post $post, int $flags): string
     {
         $leavename = (bool) ($flags & self::LEAVE_NAME);
-        $pretty = (string) \get_option('permalink_structure') !== '';
+        $pretty = (string) Runtime::options()->filtered('permalink_structure') !== '';
         if (!$pretty || self::plain($post, $flags)) {
             $link = \home_url('?page_id=' . $post->ID);
         } else {
@@ -90,11 +90,11 @@ final class PostLinks
     {
         $leavename = (bool) ($flags & self::LEAVE_NAME);
         $parent = (int) $post->post_parent > 0 && (int) $post->post_parent !== (int) $post->ID ? \get_post((int) $post->post_parent) : null;
-        $pretty = (string) \get_option('permalink_structure') !== '';
+        $pretty = (string) Runtime::options()->filtered('permalink_structure') !== '';
         $link = '';
         if ($pretty && $parent instanceof \WP_Post && in_array($parent->post_type, \get_post_types(), true)) {
             $parentLink = $parent->post_type === 'page' ? self::page($parent, 0) : (string) \get_permalink($parent);
-            $name = is_numeric($post->post_name) || str_contains((string) \get_option('permalink_structure'), '%category%') ? 'attachment/' . $post->post_name : (string) $post->post_name;
+            $name = is_numeric($post->post_name) || str_contains((string) Runtime::options()->filtered('permalink_structure'), '%category%') ? 'attachment/' . $post->post_name : (string) $post->post_name;
             if (!str_contains($parentLink, '?')) {
                 $link = \user_trailingslashit(\trailingslashit($parentLink) . '%postname%');
                 $link = $leavename ? $link : str_replace('%postname%', $name, $link);

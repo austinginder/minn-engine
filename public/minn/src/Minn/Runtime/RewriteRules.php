@@ -334,7 +334,7 @@ final class RewriteRules
         if (((int) $args['ep_mask'] & (EP_PERMALINK | EP_PAGES)) !== 0) {
             $rules[$comments] = $level['query'] . '&cpage=' . $next;
         }
-        $front = (int) (function_exists('get_option') ? \get_option('page_on_front') : 0);
+        $front = (int) (function_exists('get_option') ? Runtime::options()->filtered('page_on_front') : 0);
         if (((int) $args['ep_mask'] & EP_ROOT) !== 0 && $front > 0) {
             $rules[$comments] = $level['query'] . '&page_id=' . $front . '&cpage=' . $next;
         }

@@ -19,6 +19,7 @@ use Minn\Http\Route;
 use Minn\Media\Upload;
 use Minn\Media\Writer;
 use Minn\RestError;
+use Minn\Support\Slashes;
 
 /**
  * wp/v2/media: list, single, upload on both transports (multipart field
@@ -148,7 +149,7 @@ final readonly class MediaController
         $args = $this->preparedAttachment($attachment, $params, $request) + ['post_mime_type' => $type, 'guid' => $this->library->urlOf($relative), 'post_parent' => $upload->parent];
         // No title left after the filter: the file's name, without its extension.
         $args = array_filter($args, static fn ($value, $key) => $key !== 'post_title' || trim((string) $value) !== '', ARRAY_FILTER_USE_BOTH) + ['post_title' => (string) preg_replace('/\.[^.]+$/', '', basename($relative))];
-        $id = \wp_insert_attachment(\wp_slash($args), $file, 0, true, false);
+        $id = \wp_insert_attachment(Slashes::add($args), $file, 0, true, false);
         if ($id instanceof \WP_Error) {
             throw new RestError($id->get_error_code(), $id->get_error_message(), 500);
         }
@@ -192,7 +193,7 @@ final readonly class MediaController
     {
         $events = new PostEvents();
         if (isset($params['alt_text'])) {
-            \update_post_meta($id, '_wp_attachment_image_alt', \wp_slash(\sanitize_text_field((string) $params['alt_text'])));
+            \update_post_meta($id, '_wp_attachment_image_alt', Slashes::add(\sanitize_text_field((string) $params['alt_text'])));
         }
         $events->restAfterInsert($id, $request, $before);
         $events->afterInsert($id, $before);
@@ -239,7 +240,7 @@ final readonly class MediaController
         $attachment->post_type = 'attachment';
         $attachment->page_template = null;
         $args = $this->preparedAttachment($attachment, $body, $request) + $parentArgs;
-        $saved = \wp_update_post(\wp_slash($args), true, false);
+        $saved = \wp_update_post(Slashes::add($args), true, false);
         if ($saved instanceof \WP_Error) {
             throw new RestError($saved->get_error_code(), $saved->get_error_message(), 500);
         }

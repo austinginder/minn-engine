@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace Minn\Front;
 
+use Minn\Runtime\Runtime;
+use Minn\Support\Escape;
+
 /**
  * A post as other sites embed it, the oEmbed provider side, as the
  * reference answers (probe oembed): the data (version, the site as
@@ -70,14 +73,14 @@ final class PostEmbed
         }
         $secret = \wp_generate_password(10, false);
         $title = \get_the_title($post);
-        $output = sprintf('<blockquote class="wp-embedded-content" data-secret="%1$s"><a href="%2$s">%3$s</a></blockquote>', \esc_attr($secret), \esc_url(\get_permalink($post)), $title);
+        $output = sprintf('<blockquote class="wp-embedded-content" data-secret="%1$s"><a href="%2$s">%3$s</a></blockquote>', Escape::attr($secret), \esc_url(\get_permalink($post)), $title);
         $output .= sprintf(
             '<iframe sandbox="allow-scripts" security="restricted" src="%1$s" width="%2$d" height="%3$d" title="%4$s" data-secret="%5$s" frameborder="0" marginwidth="0" marginheight="0" scrolling="no" class="wp-embedded-content"></iframe>',
             \esc_url(\get_post_embed_url($post) . '#?secret=' . $secret),
             abs($width),
             abs($height),
-            \esc_attr(sprintf('&#8220;%1$s&#8221; &#8212; %2$s', $title, \get_bloginfo('name'))),
-            \esc_attr($secret),
+            Escape::attr(sprintf('&#8220;%1$s&#8221; &#8212; %2$s', $title, \get_bloginfo('name'))),
+            Escape::attr($secret),
         );
         $script = (string) file_get_contents(MINN_ENGINE_DIR . '/assets/wp-embed.min.js');
         $output .= \wp_get_inline_script_tag($script . "\n//# sourceURL=" . \includes_url('js/wp-embed.min.js'));
@@ -92,7 +95,7 @@ final class PostEmbed
             return false;
         }
         $permalink = (string) \get_permalink($post);
-        $url = (string) \get_option('permalink_structure') !== '' && !str_contains($permalink, '?')
+        $url = (string) Runtime::options()->filtered('permalink_structure') !== '' && !str_contains($permalink, '?')
             ? \trailingslashit($permalink) . \user_trailingslashit('embed')
             : \add_query_arg(['embed' => 'true'], $permalink);
         return (string) \apply_filters('post_embed_url', $url, $post);

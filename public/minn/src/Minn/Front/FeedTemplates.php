@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Minn\Front;
 
 use Closure;
+use Minn\I18n\Gettext;
+use Minn\Runtime\Runtime;
 
 /**
  * The feed templates do_feed_* loads, written from the reference's output
@@ -40,8 +42,8 @@ final class FeedTemplates
                 'atom', 'atom-comments' => 'atom',
                 default => $name,
             };
-            $send('Content-Type: ' . \feed_content_type($type) . '; charset=' . \get_option('blog_charset'));
-            $w->put('<?xml version="1.0" encoding="' . \get_option('blog_charset') . '"' . ($name === 'atom-comments' ? ' ' : '') . '?' . '>');
+            $send('Content-Type: ' . \feed_content_type($type) . '; charset=' . Runtime::options()->filtered('blog_charset'));
+            $w->put('<?xml version="1.0" encoding="' . Runtime::options()->filtered('blog_charset') . '"' . ($name === 'atom-comments' ? ' ' : '') . '?' . '>');
             match ($name) {
                 'rss2' => self::rss2($w),
                 'rss2-comments' => self::rss2Comments($w),
@@ -91,7 +93,7 @@ final class FeedTemplates
             ->tag('the_category_rss', 'rss2')
             ->put("\t\t<guid isPermaLink=\"false\">")->tag('the_guid')->put("</guid>\n\n")
             ->put("\t\t\t\t\t<description><![CDATA[")->cdata('the_excerpt_rss')->put("]]></description>\n");
-        if (\get_option('rss_use_excerpt')) {
+        if (Runtime::options()->filtered('rss_use_excerpt')) {
             $w->put("\t\t\n");
         } else {
             $content = \get_the_content_feed('rss2');
@@ -138,7 +140,7 @@ final class FeedTemplates
             ->put("</id>\n\t\t<updated>", (string) \get_post_modified_time('Y-m-d\TH:i:s\Z', true), "</updated>\n\t\t<published>", (string) \get_post_time('Y-m-d\TH:i:s\Z', true), "</published>\n\t\t")
             ->tag('the_category_rss', 'atom')
             ->put("\n\t\t<summary type=\"")->tag('html_type_rss')->put('"><![CDATA[')->cdata('the_excerpt_rss')->put("]]></summary>\n\n");
-        if (!\get_option('rss_use_excerpt')) {
+        if (!Runtime::options()->filtered('rss_use_excerpt')) {
             $w->put("\t\t\t\t\t<content type=\"")->tag('html_type_rss')->put('" xml:base="')->tag('the_permalink_rss')
                 ->put('"><![CDATA[')->cdata('the_content_feed', 'atom')->put("]]></content>\n");
         }
@@ -184,7 +186,7 @@ final class FeedTemplates
             ->put("]]></dc:creator>\n\t<dc:date>", (string) \mysql2date('Y-m-d\TH:i:s\Z', (string) \get_post()->post_date_gmt, false), "</dc:date>\n\t")
             ->tag('the_category_rss', 'rdf')
             ->put("\n\t\t\t<description><![CDATA[")->cdata('the_excerpt_rss')->put("]]></description>\n");
-        if (!\get_option('rss_use_excerpt')) {
+        if (!Runtime::options()->filtered('rss_use_excerpt')) {
             $w->put("\t\t<content:encoded><![CDATA[")->cdata('the_content_feed', 'rdf')->put("]]></content:encoded>\n");
         }
         $w->put("\t\n\t")->act('rdf_item')->put("</item>\n");
@@ -211,21 +213,21 @@ final class FeedTemplates
     private static function commentsTitle(string $single): string
     {
         if (\is_singular()) {
-            return sprintf(\ent2ncr(\__($single)), \get_the_title_rss());
+            return sprintf(\ent2ncr(Gettext::text($single)), \get_the_title_rss());
         }
         if (\is_search()) {
-            return sprintf(\ent2ncr(\__('Comments for %1$s searching on %2$s')), \get_bloginfo_rss('name'), \get_search_query());
+            return sprintf(\ent2ncr(Gettext::text('Comments for %1$s searching on %2$s')), \get_bloginfo_rss('name'), \get_search_query());
         }
-        return sprintf(\ent2ncr(\__('Comments for %s')), \get_wp_title_rss());
+        return sprintf(\ent2ncr(Gettext::text('Comments for %s')), \get_wp_title_rss());
     }
 
     /** A comment's heading in a comments feed: by whom, and on what when the feed is not a single post's. */
     private static function commentTitle(\WP_Post $post): string
     {
         if (\is_singular()) {
-            return sprintf(\ent2ncr(\__('By: %s')), \get_comment_author_rss());
+            return sprintf(\ent2ncr(Gettext::text('By: %s')), \get_comment_author_rss());
         }
-        return sprintf(\ent2ncr(\__('Comment on %1$s by %2$s')), \apply_filters('the_title_rss', \get_the_title($post->ID)), \get_comment_author_rss());
+        return sprintf(\ent2ncr(Gettext::text('Comment on %1$s by %2$s')), \apply_filters('the_title_rss', \get_the_title($post->ID)), \get_comment_author_rss());
     }
 
     /** The comment the loop is on, with its post made the current one. @return array{0: object, 1: \WP_Post} */
@@ -261,7 +263,7 @@ final class FeedTemplates
             ->put("</link>\n\n\t\t<dc:creator><![CDATA[", FeedWriter::insideCdata((string) \get_comment_author_rss()), "]]></dc:creator>\n\t\t<pubDate>", (string) \mysql2date('D, d M Y H:i:s +0000', \get_comment_time('Y-m-d H:i:s', true, false), false), "</pubDate>\n\t\t<guid isPermaLink=\"false\">")->tag('comment_guid')
             ->put("</guid>\n\n");
         if (\post_password_required($post)) {
-            $w->put("\t\t\t\t\t<description>", \ent2ncr(\__('Protected Comments: Please enter your password to view comments.')), "</description>\n\t\t\t<content:encoded><![CDATA[", \get_the_password_form(), "]]></content:encoded>\n");
+            $w->put("\t\t\t\t\t<description>", \ent2ncr(Gettext::text('Protected Comments: Please enter your password to view comments.')), "</description>\n\t\t\t<content:encoded><![CDATA[", \get_the_password_form(), "]]></content:encoded>\n");
         } else {
             $w->put("\t\t\t\t\t<description><![CDATA[")->cdata('comment_text_rss')->put("]]></description>\n\t\t\t<content:encoded><![CDATA[")->cdata('comment_text')->put("]]></content:encoded>\n");
         }

@@ -59,6 +59,32 @@ final class Options
         return $out;
     }
 
+    /**
+     * An option as get_option() reads it, through the filters plugins hook:
+     * pre_option_{name}, then pre_option, may answer first; an unset option
+     * is its default (false when none is given) through
+     * default_option_{name}, which is told whether one was given; a set one
+     * goes through option_{name}.
+     */
+    public function filtered(string $name, mixed ...$default): mixed
+    {
+        $name = trim($name);
+        $fallback = $default[0] ?? false;
+        if ($name === '') {
+            return false;
+        }
+        $pre = \apply_filters("pre_option_{$name}", false, $name, $fallback);
+        $pre = \apply_filters('pre_option', $pre, $name, $fallback);
+        if ($pre !== false) {
+            return $pre;
+        }
+        $value = $this->get($name);
+        if ($value === null) {
+            return \apply_filters("default_option_{$name}", $fallback, $name, $default !== []);
+        }
+        return \apply_filters("option_{$name}", $value, $name);
+    }
+
     /** An option's value, decoded, or null when unset. */
     public function get(string $name): mixed
     {

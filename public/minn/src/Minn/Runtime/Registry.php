@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Minn\Runtime;
 
+use Minn\I18n\Gettext;
+
 /**
  * Post types, taxonomies, and statuses as plugin code registers and reads
  * them. The built-in set is data/registry.json, captured from the
@@ -111,7 +113,7 @@ final class Registry
             $labels[$key] = $value;
         }
         // A plugin's type also names its single-item template, last (probe rest-types-edit).
-        $labels['template_name'] ??= sprintf(\function_exists('__') ? \__('Single item: %s') : 'Single item: %s', (string) $labels['singular_name']);
+        $labels['template_name'] ??= sprintf(\function_exists('__') ? Gettext::text('Single item: %s') : 'Single item: %s', (string) $labels['singular_name']);
         $public = (bool) ($args['public'] ?? false);
         $capabilityType = $args['capability_type'] ?? 'post';
         // Meta capabilities are mapped by default only for the post and page families (probe rest-plugin-caps).
@@ -338,7 +340,7 @@ final class Registry
     /** Whether a registered rewrite settles into its full form: with pretty permalinks or in the admin; otherwise it stays as given. */
     public static function settlesRewrites(): bool
     {
-        return !Runtime::booted() || !\function_exists('get_option') || \is_admin() || (string) \get_option('permalink_structure') !== '';
+        return !Runtime::booted() || !\function_exists('get_option') || \is_admin() || (string) Runtime::options()->filtered('permalink_structure') !== '';
     }
 
     /** Forgets a non-builtin taxonomy. */

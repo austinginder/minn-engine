@@ -40,7 +40,7 @@ final class CommentListArgs
         $bounds = array_filter(['before' => $wp['before'], 'after' => $wp['after']], static fn ($date) => $date !== null && $date !== '');
         $args['date_query'] = $bounds === [] ? [] : [$bounds];
         if (empty($wp['offset'])) {
-            $args['offset'] = (int) ($args['number'] ?? 0) * (\absint($wp['page']) - 1);
+            $args['offset'] = (int) ($args['number'] ?? 0) * (abs((int) ($wp['page'])) - 1);
         }
         if ($method === 'HEAD') {
             $args += ['fields' => 'ids', 'update_comment_meta_cache' => false];

@@ -14,6 +14,7 @@ use Minn\Http\Route;
 use Minn\RestError;
 use Minn\Runtime\Runtime;
 use Minn\Runtime\ThemeSupports;
+use Minn\Support\Lists;
 
 /**
  * wp/v2/themes as the reference answers it (probe rest-themes): the
@@ -39,7 +40,7 @@ final readonly class InstalledThemesController
     public function list(Request $request): Response
     {
         self::requireRuntime();
-        $statuses = \wp_parse_list($request->query['status'] ?? []);
+        $statuses = Lists::items($request->query['status'] ?? []);
         if ($statuses === ['active'] ? !$this->viewsActive() : !$this->viewsThemes()) {
             throw $statuses === ['active']
                 ? $this->caller->refuse('rest_cannot_view_active_theme', 'Sorry, you are not allowed to view the active theme.')

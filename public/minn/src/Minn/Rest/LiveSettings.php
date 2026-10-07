@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Minn\Rest;
 
 use Minn\RestError;
+use Minn\Runtime\Runtime;
 
 /**
  * wp/v2/settings with plugins loaded, served from the registered settings
@@ -50,7 +51,7 @@ final readonly class LiveSettings
         $out = [];
         foreach ($this->shown() as $name => $args) {
             $value = \apply_filters('rest_pre_get_setting', null, $name, $args);
-            $value ??= \get_option($args['option_name'], $args['schema']['default']);
+            $value ??= Runtime::options()->filtered($args['option_name'], $args['schema']['default']);
             $out[$name] = $this->schema->validate($value, $args['schema'], $name) === true ? $this->schema->sanitize($value, $args['schema'], $name) : null;
         }
         return $out;
@@ -70,7 +71,7 @@ final readonly class LiveSettings
                 \update_option($args['option_name'], $value);
                 continue;
             }
-            if ($this->schema->validate(\get_option($args['option_name'], false), $args['schema'], $name) !== true) {
+            if ($this->schema->validate(Runtime::options()->filtered($args['option_name'], false), $args['schema'], $name) !== true) {
                 throw new RestError('rest_invalid_stored_value', sprintf('The %s property has an invalid stored value, and cannot be updated to null.', $name), 500);
             }
             \delete_option($args['option_name']);

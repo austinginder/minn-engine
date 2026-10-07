@@ -59,7 +59,7 @@ final class RuntimePrepare
         $request = Runtime::current()->get('rest_prepare_request');
         $request = $request instanceof \WP_REST_Request ? $request : new \WP_REST_Request('GET', '/');
         $item = RegisteredFields::add($item, self::objectType($filter), $request);
-        if (!\has_filter($filter)) {
+        if (!Runtime::hooks()->has($filter)) {
             return $item;
         }
         $response = RuntimeRoutes::itemResponse($item);

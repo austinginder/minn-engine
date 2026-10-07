@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Minn\Query;
 
+use Minn\Support\Lists;
+
 /**
  * WP_Comment_Query's ORDER BY and LIMIT as the reference writes them
  * (probe wp-comment-query-sql): no orderby means comment_date_gmt in the
@@ -87,19 +89,19 @@ final class CommentOrder
     /** LIMIT from number, and the offset (or the page when no offset is given). @param array<string, mixed> $qv */
     public static function limits(array $qv): string
     {
-        $number = \absint($qv['number'] ?? 0);
+        $number = abs((int) ($qv['number'] ?? 0));
         if ($number === 0) {
             return '';
         }
-        $offset = \absint($qv['offset'] ?? 0);
-        $start = $offset ?: max(0, $number * (\absint($qv['paged'] ?? 1) - 1));
+        $offset = abs((int) ($qv['offset'] ?? 0));
+        $start = $offset ?: max(0, $number * (abs((int) ($qv['paged'] ?? 1)) - 1));
         return "LIMIT {$start},{$number}";
     }
 
     /** The comment__in ids in the order given, or '' when none are. */
     private static function field(mixed $given, string $table): string
     {
-        $ids = \wp_parse_id_list($given);
+        $ids = Lists::ids($given);
         return $ids === [] ? '' : "FIELD( {$table}.comment_ID, " . implode(',', $ids) . ' )';
     }
 

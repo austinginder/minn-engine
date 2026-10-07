@@ -266,7 +266,7 @@ final readonly class LoginController
      */
     private function register(Request $request, string $siteName): Response
     {
-        if (!Runtime::booted() || !\get_option('users_can_register')) {
+        if (!Runtime::booted() || !Runtime::options()->filtered('users_can_register')) {
             return Response::redirect($this->permalinks->url($this->base($request) . '?registration=disabled'), 302);
         }
         $action = $this->actionUrl($request, 'register');

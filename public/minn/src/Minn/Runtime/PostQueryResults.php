@@ -94,7 +94,7 @@ final class PostQueryResults
     private function stickies(array $q): void
     {
         $query = $this->query;
-        $sticky = \get_option('sticky_posts');
+        $sticky = Runtime::options()->filtered('sticky_posts');
         if (!$query->is_home || $this->parts->page > 1 || !is_array($sticky) || $sticky === [] || $q['ignore_sticky_posts'] || !is_array($query->posts)) {
             return;
         }

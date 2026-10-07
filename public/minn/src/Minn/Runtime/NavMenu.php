@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Minn\Runtime;
 
+use Minn\Support\Escape;
+
 /**
  * Nav-menu item decoration for wp_nav_menu(): the reference's class tokens
  * (menu-item, the type and object tokens, menu-item-home) and the current
@@ -44,7 +46,7 @@ final class NavMenu
         if ($markup === '') {
             return false;
         }
-        $nav = sprintf((string) $args->items_wrap, \esc_attr(self::wrapId($menu, $args)), \esc_attr((string) $args->menu_class), $markup);
+        $nav = sprintf((string) $args->items_wrap, Escape::attr(self::wrapId($menu, $args)), Escape::attr((string) $args->menu_class), $markup);
         return self::container($nav, $args, (string) $menu->slug);
     }
 
@@ -91,10 +93,10 @@ final class NavMenu
         if (!in_array($args->container, (array) $allowed, true)) {
             return $nav;
         }
-        $attributes = $args->container_id ? ' id="' . \esc_attr((string) $args->container_id) . '"' : '';
-        $attributes .= ' class="' . \esc_attr((string) ($args->container_class ?: 'menu-' . $slug . '-container')) . '"';
+        $attributes = $args->container_id ? ' id="' . Escape::attr((string) $args->container_id) . '"' : '';
+        $attributes .= ' class="' . Escape::attr((string) ($args->container_class ?: 'menu-' . $slug . '-container')) . '"';
         if ($args->container === 'nav' && $args->container_aria_label) {
-            $attributes .= ' aria-label="' . \esc_attr((string) $args->container_aria_label) . '"';
+            $attributes .= ' aria-label="' . Escape::attr((string) $args->container_aria_label) . '"';
         }
         return '<' . $args->container . $attributes . '>' . $nav . '</' . $args->container . '>';
     }
@@ -107,8 +109,8 @@ final class NavMenu
      */
     public static function decorate(array $items): array
     {
-        $frontPageId = (int) \get_option('page_on_front');
-        $postsPageId = (int) \get_option('page_for_posts');
+        $frontPageId = (int) Runtime::options()->filtered('page_on_front');
+        $postsPageId = (int) Runtime::options()->filtered('page_for_posts');
         $queriedId = (int) \get_queried_object_id();
         $home = \untrailingslashit((string) \home_url());
         $context = self::singularContext();

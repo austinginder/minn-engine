@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Minn\Runtime;
 
+use Minn\I18n\Gettext;
+
 /**
  * wp_authenticate_application_password as the reference answers it (probe
  * application-passwords-api): a user found already stands; outside an API
@@ -38,7 +40,7 @@ final class ApplicationPasswordSignIn
         $password = (string) preg_replace('/[^a-z\d]/i', '', $password);
         $item = (new \Minn\Auth\ApplicationPasswords(new \Minn\Content\Users(Runtime::current()->db)))->verify((int) $user->ID, $password);
         if ($item === null) {
-            $error = new \WP_Error('incorrect_password', \__('The provided password is an invalid application password.'));
+            $error = new \WP_Error('incorrect_password', Gettext::text('The provided password is an invalid application password.'));
             \do_action('application_password_failed_authentication', $error);
             return $error;
         }
@@ -86,10 +88,10 @@ final class ApplicationPasswordSignIn
     private static function refusal(mixed $user, string $username): ?\WP_Error
     {
         return match (true) {
-            !$user instanceof \WP_User && \is_email($username) => new \WP_Error('invalid_email', \__('<strong>Error:</strong> Unknown email address. Check again or try your username.')),
-            !$user instanceof \WP_User => new \WP_Error('invalid_username', \__('<strong>Error:</strong> Unknown username. Check again or try your email address.')),
-            !\wp_is_application_passwords_available() => new \WP_Error('application_passwords_disabled', \__('Application passwords are not available.')),
-            !\wp_is_application_passwords_available_for_user($user) => new \WP_Error('application_passwords_disabled_for_user', \__('Application passwords are not available for your account. Please contact the site administrator for assistance.')),
+            !$user instanceof \WP_User && \is_email($username) => new \WP_Error('invalid_email', Gettext::text('<strong>Error:</strong> Unknown email address. Check again or try your username.')),
+            !$user instanceof \WP_User => new \WP_Error('invalid_username', Gettext::text('<strong>Error:</strong> Unknown username. Check again or try your email address.')),
+            !\wp_is_application_passwords_available() => new \WP_Error('application_passwords_disabled', Gettext::text('Application passwords are not available.')),
+            !\wp_is_application_passwords_available_for_user($user) => new \WP_Error('application_passwords_disabled_for_user', Gettext::text('Application passwords are not available for your account. Please contact the site administrator for assistance.')),
             default => null,
         };
     }

@@ -27,7 +27,7 @@ __construct(Minn\Content\Site $site, Minn\Front\Permalinks $permalinks)
 
 Registers this family's blocks with the renderer.
 
-Internals: `comments()` (private, line 47), `title()` (private, line 61), `template()` (private, line 78), `records()` (private, line 102), `count()` (private, line 115), `list()` (private, line 121), `avatar()` (private, line 151), `date()` (private, line 163), `authorName()` (private, line 175), `content()` (private, line 189), `replyLink()` (private, line 200), `form()` (private, line 213), `commentForm()` (private, line 228)
+Internals: `comments()` (private, line 48), `title()` (private, line 62), `template()` (private, line 79), `records()` (private, line 103), `count()` (private, line 116), `list()` (private, line 122), `avatar()` (private, line 152), `date()` (private, line 164), `authorName()` (private, line 176), `content()` (private, line 190), `replyLink()` (private, line 201), `form()` (private, line 214), `commentForm()` (private, line 229)
 
 
 ## Navigation

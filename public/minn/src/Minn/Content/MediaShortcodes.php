@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Minn\Content;
 
 use Minn\Runtime\Runtime;
+use Minn\Support\Escape;
+use Minn\Support\Flag;
 
 /**
  * The [video] and [audio] shortcodes as the reference prints them: a
@@ -41,7 +43,7 @@ final class MediaShortcodes
         if ($hosted === 'video/vimeo') {
             // The reference rewrites a Vimeo address to its bare form, with loop, for the player.
             $parts = (array) parse_url((string) $atts['src']);
-            $atts['src'] = \add_query_arg('loop', \wp_validate_boolean($atts['loop']) ? '1' : '0', 'https://' . ($parts['host'] ?? '') . ($parts['path'] ?? ''));
+            $atts['src'] = \add_query_arg('loop', Flag::of($atts['loop']) ? '1' : '0', 'https://' . ($parts['host'] ?? '') . ($parts['path'] ?? ''));
         }
         $sources = self::sources($atts, $types, $hosted, 'video');
         if (!is_array($sources)) {
@@ -52,7 +54,7 @@ final class MediaShortcodes
         [$atts['width'], $atts['height']] = self::fitted((int) $atts['width'], (int) $atts['height']);
         $library = self::library('video');
         $atts['class'] = \apply_filters('wp_video_shortcode_class', $atts['class'], $atts);
-        $attributes = self::attributes(['class' => $atts['class'], 'id' => sprintf('video-%d-%d', $postId, $instance), 'width' => \absint($atts['width']), 'height' => \absint($atts['height']), 'poster' => \esc_url((string) $atts['poster']), 'loop' => \wp_validate_boolean($atts['loop']), 'autoplay' => \wp_validate_boolean($atts['autoplay']), 'muted' => \wp_validate_boolean($atts['muted']), 'preload' => $atts['preload']], ['poster', 'loop', 'autoplay', 'muted', 'preload']);
+        $attributes = self::attributes(['class' => $atts['class'], 'id' => sprintf('video-%d-%d', $postId, $instance), 'width' => abs((int) ($atts['width'])), 'height' => abs((int) ($atts['height'])), 'poster' => \esc_url((string) $atts['poster']), 'loop' => Flag::of($atts['loop']), 'autoplay' => Flag::of($atts['autoplay']), 'muted' => Flag::of($atts['muted']), 'preload' => $atts['preload']], ['poster', 'loop', 'autoplay', 'muted', 'preload']);
         $html = '<video ' . $attributes . ' controls="controls">' . self::sourceTags($atts, $sources['order'], $instance, $hosted) . self::fallback($sources['file'], $library) . '</video>';
         $output = sprintf('<div style="%s" class="wp-video">%s</div>', empty($atts['width']) ? '' : sprintf('width: %dpx;', $atts['width']), $html);
         return (string) \apply_filters('wp_video_shortcode', $output, $atts, $video, $postId, $library);
@@ -76,7 +78,7 @@ final class MediaShortcodes
         [$audio, $postId, $atts] = [$sources['attachment'], self::postId(), $sources['atts']];
         $library = self::library('audio');
         $atts['class'] = \apply_filters('wp_audio_shortcode_class', $atts['class'], $atts);
-        $attributes = self::attributes(['class' => $atts['class'], 'id' => sprintf('audio-%d-%d', $postId, $instance), 'loop' => \wp_validate_boolean($atts['loop']), 'autoplay' => \wp_validate_boolean($atts['autoplay']), 'muted' => \wp_validate_boolean($atts['muted']), 'preload' => $atts['preload'], 'style' => $atts['style']], ['loop', 'autoplay', 'muted', 'preload']);
+        $attributes = self::attributes(['class' => $atts['class'], 'id' => sprintf('audio-%d-%d', $postId, $instance), 'loop' => Flag::of($atts['loop']), 'autoplay' => Flag::of($atts['autoplay']), 'muted' => Flag::of($atts['muted']), 'preload' => $atts['preload'], 'style' => $atts['style']], ['loop', 'autoplay', 'muted', 'preload']);
         $html = '<audio ' . $attributes . ' controls="controls">' . self::sourceTags($atts, $sources['order'], $instance, null) . self::fallback($sources['file'], $library) . '</audio>';
         return (string) \apply_filters('wp_audio_shortcode', $html, $atts, $audio, $postId, $library);
     }
@@ -107,7 +109,7 @@ final class MediaShortcodes
         if (!empty($atts['src'])) {
             $ext = strtolower((string) (\wp_check_filetype((string) $atts['src'], \wp_get_mime_types())['ext'] ?? ''));
             if ($hosted === null && !in_array($ext, $types, true)) {
-                return sprintf('<a class="wp-embedded-%s" href="%s">%s</a>', $kind, \esc_url((string) $atts['src']), \esc_html((string) $atts['src']));
+                return sprintf('<a class="wp-embedded-%s" href="%s">%s</a>', $kind, \esc_url((string) $atts['src']), Escape::html((string) $atts['src']));
             }
             $types = ['src', ...$types];
         } elseif (!self::anyOwnFormat($atts, $types)) {
@@ -161,7 +163,7 @@ final class MediaShortcodes
             if (in_array($name, $omitEmpty, true) && empty($value)) {
                 continue;
             }
-            $out[] = in_array($name, ['loop', 'autoplay', 'muted'], true) && $value === true ? $name : $name . '="' . \esc_attr((string) $value) . '"';
+            $out[] = in_array($name, ['loop', 'autoplay', 'muted'], true) && $value === true ? $name : $name . '="' . Escape::attr((string) $value) . '"';
         }
         return implode(' ', $out);
     }

@@ -78,7 +78,7 @@ final class PostQueryWhere
             $this->nameList($q, $names);
         }
         if ($q['attachment_id']) {
-            $q['p'] = \absint($q['attachment_id']);
+            $q['p'] = abs((int) ($q['attachment_id']));
         }
         $this->ids($q);
     }
@@ -138,8 +138,8 @@ final class PostQueryWhere
             }
             $page = !empty($found) ? $found->ID : 0;
         }
-        $postsPage = \get_option('page_for_posts');
-        if (\get_option('show_on_front') === 'page' && !empty($postsPage) && $page == $postsPage) {
+        $postsPage = Runtime::options()->filtered('page_for_posts');
+        if (Runtime::options()->filtered('show_on_front') === 'page' && !empty($postsPage) && $page == $postsPage) {
             return;
         }
         $q['pagename'] = \sanitize_title_for_query(\wp_basename($q['pagename']));
@@ -182,7 +182,7 @@ final class PostQueryWhere
         } elseif ($parentNotIn) {
             $this->parts->where .= " AND {$t}.post_parent NOT IN (" . implode(',', $ids($parentNotIn)) . ')';
         }
-        if ($q['page_id'] && (\get_option('show_on_front') !== 'page' || \get_option('page_for_posts') != $q['page_id'])) {
+        if ($q['page_id'] && (Runtime::options()->filtered('show_on_front') !== 'page' || Runtime::options()->filtered('page_for_posts') != $q['page_id'])) {
             $q['p'] = $q['page_id'];
             $this->parts->where = " AND {$t}.ID = " . $q['page_id'];
         }
@@ -238,7 +238,7 @@ final class PostQueryWhere
         $q['author_name'] = \sanitize_title_for_query($q['author_name']);
         $user = \get_user_by('slug', $q['author_name']);
         $q['author'] = $user ? $user->ID : false;
-        $this->parts->whichauthor .= " AND ({$this->table}.post_author = " . \absint($q['author']) . ')';
+        $this->parts->whichauthor .= " AND ({$this->table}.post_author = " . abs((int) ($q['author'])) . ')';
     }
 
     /** @param array<string, mixed> $q */

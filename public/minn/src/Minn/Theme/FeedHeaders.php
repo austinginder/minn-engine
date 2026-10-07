@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Minn\Theme;
 
 use Minn\Http\Request;
+use Minn\Runtime\Runtime;
 
 /**
  * The headers a feed is sent with, as the reference's send_headers sends
@@ -26,7 +27,7 @@ final class FeedHeaders
     public static function for(array $vars, ?Request $request): array
     {
         $feed = (string) $vars['feed'];
-        $headers = ['Content-Type' => \feed_content_type($feed === 'feed' ? \get_default_feed() : $feed) . '; charset=' . \get_option('blog_charset')];
+        $headers = ['Content-Type' => \feed_content_type($feed === 'feed' ? \get_default_feed() : $feed) . '; charset=' . Runtime::options()->filtered('blog_charset')];
         $last = (string) \mysql2date(self::FORMAT, \get_lastpostmodified('GMT'), false);
         if (self::carriesComments($vars, $feed)) {
             $comment = (string) \mysql2date(self::FORMAT, \get_lastcommentmodified('GMT'), false);

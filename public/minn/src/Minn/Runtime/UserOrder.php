@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Minn\Runtime;
 
+use Minn\Support\Lists;
+
 /**
  * A user query's ORDER BY keys as the reference writes them (probe
  * wp-user-query-sql): the user columns by their short or full names, the
@@ -38,7 +40,7 @@ final class UserOrder
             $orderby === 'ID' || $orderby === 'id' => 'ID',
             $orderby === 'meta_value' || $query->get('meta_key') === $orderby => "{$wpdb->usermeta}.meta_value",
             $orderby === 'meta_value_num' => "{$wpdb->usermeta}.meta_value+0",
-            $orderby === 'include' && !empty($vars['include']) => "FIELD( {$wpdb->users}.ID, " . implode(',', \wp_parse_id_list($vars['include'])) . ' )',
+            $orderby === 'include' && !empty($vars['include']) => "FIELD( {$wpdb->users}.ID, " . implode(',', Lists::ids($vars['include'])) . ' )',
             $orderby === 'nicename__in' => "FIELD( user_nicename, '" . implode("','", array_map('esc_sql', (array) $vars['nicename__in'])) . "' )",
             $orderby === 'login__in' => "FIELD( user_login, '" . implode("','", array_map('esc_sql', (array) $vars['login__in'])) . "' )",
             isset($clauses[$orderby]) => sprintf('CAST(%s.meta_value AS %s)', \esc_sql($clauses[$orderby]['alias']), \esc_sql($clauses[$orderby]['cast'])),

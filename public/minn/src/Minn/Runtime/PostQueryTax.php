@@ -87,7 +87,7 @@ final class PostQueryTax
         if (!empty($q['category__and']) && count((array) $q['category__and']) === 1) {
             $q['category__and'] = (array) $q['category__and'];
             $q['category__in'] ??= [];
-            $q['category__in'][] = \absint(reset($q['category__and']));
+            $q['category__in'][] = abs((int) (reset($q['category__and'])));
             unset($q['category__and']);
         }
         $clauses = [];
@@ -129,7 +129,7 @@ final class PostQueryTax
     {
         $clauses = [];
         if (!empty($q['tag_id'])) {
-            $q['tag_id'] = \absint($q['tag_id']);
+            $q['tag_id'] = abs((int) ($q['tag_id']));
             $clauses[] = ['taxonomy' => 'post_tag', 'terms' => $q['tag_id']];
         }
         foreach (['tag__in' => null, 'tag__not_in' => 'NOT IN', 'tag__and' => 'AND', 'tag_slug__in' => null, 'tag_slug__and' => 'AND'] as $var => $operator) {

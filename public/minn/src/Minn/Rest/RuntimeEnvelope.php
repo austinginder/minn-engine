@@ -50,7 +50,7 @@ final readonly class RuntimeEnvelope implements Envelope
         $wpRequest->set_default_params(self::defaults((array) $handler['args']));
         $wpRequest->set_attributes($handler);
         RuntimeRoutes::matched($request, $route, $handler);
-        if (!array_filter(self::FILTERS, static fn (string $filter): bool => \has_filter($filter))) {
+        if (!array_filter(self::FILTERS, static fn (string $filter): bool => Runtime::hooks()->has($filter))) {
             return $this->plain($invalid, $refusal, $invoke);
         }
         $response = $invalid === null ? null : RuntimeRoutes::toWpError($invalid);

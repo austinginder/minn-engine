@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Minn\Runtime;
 
 use Minn\Query\Sql;
+use Minn\Support\Lists;
 
 /**
  * WP_Term_Query::get_terms as the reference runs it (probe
@@ -78,7 +79,7 @@ final class TermQueryRunner
             $args[$key] = $args[$key] === '' || $args[$key] === null ? [] : (array) $args[$key];
         }
         foreach (['term_taxonomy_id', 'object_ids'] as $key) {
-            $args[$key] = is_array($args[$key]) ? $args[$key] : \wp_parse_id_list((string) $args[$key]);
+            $args[$key] = is_array($args[$key]) ? $args[$key] : Lists::ids((string) $args[$key]);
         }
         return $args;
     }
@@ -145,7 +146,7 @@ final class TermQueryRunner
         }
         $include = empty($args['include']) ? [] : $args['include'];
         if (!empty($include)) {
-            $this->where['inclusions'] = 't.term_id IN ( ' . implode(',', \wp_parse_id_list($include)) . ' )';
+            $this->where['inclusions'] = 't.term_id IN ( ' . implode(',', Lists::ids($include)) . ' )';
         }
         $exclusions = $this->exclusions($args, $taxonomies);
         $exclusions = \apply_filters('list_terms_exclusions', $exclusions, $args, $taxonomies);
@@ -168,13 +169,13 @@ final class TermQueryRunner
     {
         $included = !empty($args['include']);
         $exclusions = [];
-        $tree = $included || empty($args['exclude_tree']) ? [] : \wp_parse_id_list($args['exclude_tree']);
+        $tree = $included || empty($args['exclude_tree']) ? [] : Lists::ids($args['exclude_tree']);
         foreach ($tree as $trunk) {
             $exclusions = [...$exclusions, ...(array) \get_terms(['taxonomy' => reset($taxonomies), 'child_of' => (int) $trunk, 'fields' => 'ids', 'hide_empty' => 0])];
         }
         $exclusions = [...$tree, ...$exclusions];
         if (!$included && !empty($args['exclude'])) {
-            $exclusions = [...\wp_parse_id_list($args['exclude']), ...$exclusions];
+            $exclusions = [...Lists::ids($args['exclude']), ...$exclusions];
         }
         if ($args['childless']) {
             foreach ($taxonomies as $taxonomy) {

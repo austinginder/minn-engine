@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Minn\Runtime;
 
+use Minn\I18n\Gettext;
+
 /**
  * The meta keys code registers, kept where the reference keeps them
  * ($wp_meta_keys: object type => subtype => key => arguments), with what a
@@ -44,18 +46,18 @@ final class MetaKeys
         }
         $suffix = $subtype === '' ? '' : "_for_{$subtype}";
         if (is_callable($args['sanitize_callback'])) {
-            \add_filter("sanitize_{$objectType}_meta_{$key}{$suffix}", $args['sanitize_callback'], 10, 4);
+            Runtime::hooks()->add("sanitize_{$objectType}_meta_{$key}{$suffix}", $args['sanitize_callback'], 10, 4);
         }
         if (is_callable($args['auth_callback'])) {
-            \add_filter("auth_{$objectType}_meta_{$key}{$suffix}", $args['auth_callback'], 10, 6);
+            Runtime::hooks()->add("auth_{$objectType}_meta_{$key}{$suffix}", $args['auth_callback'], 10, 6);
         }
         if (array_key_exists('default', $args)) {
             if (!self::defaultFits($args)) {
-                \_doing_it_wrong('register_meta', \__('When registering a default meta value the data must match the type provided.'), '5.5.0');
+                \_doing_it_wrong('register_meta', Gettext::text('When registering a default meta value the data must match the type provided.'), '5.5.0');
                 return false;
             }
-            if (!\has_filter("default_{$objectType}_metadata", 'filter_default_metadata')) {
-                \add_filter("default_{$objectType}_metadata", 'filter_default_metadata', 10, 5);
+            if (!Runtime::hooks()->has("default_{$objectType}_metadata", 'filter_default_metadata')) {
+                Runtime::hooks()->add("default_{$objectType}_metadata", 'filter_default_metadata', 10, 5);
             }
         }
         if ($legacy) {
@@ -76,7 +78,7 @@ final class MetaKeys
         $suffix = $subtype === '' ? '' : "_for_{$subtype}";
         foreach (['sanitize' => 'sanitize_callback', 'auth' => 'auth_callback'] as $kind => $callback) {
             if (isset($args[$callback]) && is_callable($args[$callback])) {
-                \remove_filter("{$kind}_{$objectType}_meta_{$key}{$suffix}", $args[$callback]);
+                Runtime::hooks()->remove("{$kind}_{$objectType}_meta_{$key}{$suffix}", $args[$callback]);
             }
         }
         unset($GLOBALS['wp_meta_keys'][$objectType][$subtype][$key]);
@@ -164,7 +166,7 @@ final class MetaKeys
         $key = $args[1] ?? false;
         if ($key) {
             $allowed = !\is_protected_meta($key, $objectType);
-            $filter = \has_filter("auth_{$objectType}_meta_{$key}_for_{$subtype}") ? "auth_{$objectType}_meta_{$key}_for_{$subtype}" : "auth_{$objectType}_meta_{$key}";
+            $filter = Runtime::hooks()->has("auth_{$objectType}_meta_{$key}_for_{$subtype}") ? "auth_{$objectType}_meta_{$key}_for_{$subtype}" : "auth_{$objectType}_meta_{$key}";
             if (!\apply_filters($filter, $allowed, $key, $objectId, $userId, $capability, $caps)) {
                 $caps[] = $capability;
             }
@@ -177,14 +179,14 @@ final class MetaKeys
     {
         $rest = $args['show_in_rest'];
         if ($args['type'] === 'array' && !empty($rest) && (!is_array($rest) || empty($rest['schema']['items']))) {
-            return \__('When registering an "array" meta type to show in the REST API, you must specify the schema for each array item in "show_in_rest.schema.items".');
+            return Gettext::text('When registering an "array" meta type to show in the REST API, you must specify the schema for each array item in "show_in_rest.schema.items".');
         }
         if (!empty($args['revisions_enabled'])) {
             if ($objectType !== 'post') {
-                return \__('Meta keys cannot enable revisions support unless the object type supports revisions.');
+                return Gettext::text('Meta keys cannot enable revisions support unless the object type supports revisions.');
             }
             if ($subtype !== '' && !\post_type_supports($subtype, 'revisions')) {
-                return \__('Meta keys cannot enable revisions support unless the object subtype supports revisions.');
+                return Gettext::text('Meta keys cannot enable revisions support unless the object subtype supports revisions.');
             }
         }
         return null;

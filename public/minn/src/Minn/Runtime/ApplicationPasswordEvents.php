@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Minn\Runtime;
 
 use Minn\Auth\ApplicationPasswords;
+use Minn\Support\Slashes;
 
 /**
  * Application password changes made over REST, as the reference makes them
@@ -27,7 +28,7 @@ final class ApplicationPasswordEvents
     {
         $fields = array_intersect_key($body, ['name' => true]) + (empty($body['app_id']) ? [] : ['app_id' => $body['app_id']]);
         $prepared = self::prepared($fields, $request);
-        $made = \WP_Application_Passwords::create_new_application_password($userId, \wp_slash((array) $prepared));
+        $made = \WP_Application_Passwords::create_new_application_password($userId, Slashes::add((array) $prepared));
         if ($made instanceof \WP_Error) {
             return $made;
         }
@@ -45,7 +46,7 @@ final class ApplicationPasswordEvents
     public static function update(int $userId, string $uuid, array $body, \WP_REST_Request $request): array|\WP_Error
     {
         $prepared = self::prepared(array_intersect_key($body, ['name' => true]), $request);
-        $updated = \WP_Application_Passwords::update_application_password($userId, $uuid, \wp_slash((array) $prepared));
+        $updated = \WP_Application_Passwords::update_application_password($userId, $uuid, Slashes::add((array) $prepared));
         if ($updated instanceof \WP_Error) {
             return $updated;
         }

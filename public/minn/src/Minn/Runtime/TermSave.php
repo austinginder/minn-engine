@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Minn\Runtime;
 
 use Minn\Content\Terms;
+use Minn\Support\Slashes;
 
 /**
  * wp_insert_term and wp_update_term in the reference's order (probe
@@ -49,7 +50,7 @@ final class TermSave
         $args['name'] = $term;
         $args['taxonomy'] = $taxonomy;
         $args = (array) \sanitize_term($args, $taxonomy, 'db');
-        $name = (string) \wp_unslash((string) $args['name']);
+        $name = (string) Slashes::strip((string) $args['name']);
         $taken = self::nameTaken($name, $taxonomy, $args);
         if ($taken !== null) {
             return $taken;
@@ -61,7 +62,7 @@ final class TermSave
         if ($data['slug'] === '') {
             self::slugFromId($terms, $termId, $taxonomy, $data, $args);
         }
-        $ttId = $terms->addToTaxonomy($termId, $taxonomy, (string) \wp_unslash((string) $args['description']), (int) $args['parent']);
+        $ttId = $terms->addToTaxonomy($termId, $taxonomy, (string) Slashes::strip((string) $args['description']), (int) $args['parent']);
         // Nothing else holds this name and slug now; a plugin may still name a term to keep instead.
         $duplicate = \apply_filters('wp_insert_term_duplicate_term_check', null, $term, $taxonomy, $args, $ttId);
         if (is_object($duplicate) && isset($duplicate->term_id)) {
@@ -95,10 +96,10 @@ final class TermSave
         if (!$term instanceof \WP_Term) {
             return new \WP_Error('invalid_term', 'Empty Term.');
         }
-        $parsed = \wp_parse_args(array_merge((array) \wp_slash($term->to_array()), $changes), self::DEFAULTS);
+        $parsed = \wp_parse_args(array_merge((array) Slashes::add($term->to_array()), $changes), self::DEFAULTS);
         $args = (array) \sanitize_term($parsed, $taxonomy, 'db');
-        $name = (string) \wp_unslash((string) $args['name']);
-        $description = (string) \wp_unslash((string) $args['description']);
+        $name = (string) Slashes::strip((string) $args['name']);
+        $description = (string) Slashes::strip((string) $args['description']);
         $parsed['name'] = $name;
         $parsed['description'] = $description;
         if (trim($name) === '') {

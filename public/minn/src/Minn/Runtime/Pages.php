@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Minn\Runtime;
 
+use Minn\Support\Lists;
+
 /**
  * get_pages() as the reference shapes it: its arguments as a post query
  * (WP_Query, so its filters shape it), the tree order of the result, then
@@ -25,7 +27,7 @@ final class Pages
     public static function get(array $args): array
     {
         $parsed = array_merge(self::DEFAULTS, $args);
-        $query = self::queryArgs($parsed, self::ids($parsed['include']), self::ids($parsed['exclude']));
+        $query = self::queryArgs($parsed, Lists::ids($parsed['include']), Lists::ids($parsed['exclude']));
         return (array) \apply_filters('get_pages', self::arrange((new \WP_Query())->query($query), $parsed), $parsed);
     }
 
@@ -86,7 +88,7 @@ final class Pages
             $pages = self::children($pages, $childOf);
         }
         $pages = array_values($pages);
-        foreach (self::ids($parsed['exclude_tree']) as $tree) {
+        foreach (Lists::ids($parsed['exclude_tree']) as $tree) {
             $excluded = array_map(static fn (object $p) => (int) $p->ID, self::children($pages, $tree));
             $excluded[] = $tree;
             $pages = array_filter($pages, static fn (object $p) => !in_array((int) $p->ID, $excluded, true));
@@ -118,13 +120,6 @@ final class Pages
             }
         }
         return $out;
-    }
-
-    /** Ids as an argument gives them: a list, or a comma or space separated string. @return list<int> */
-    private static function ids(mixed $list): array
-    {
-        $items = is_array($list) ? $list : (preg_split('/[\s,]+/', (string) $list, -1, PREG_SPLIT_NO_EMPTY) ?: []);
-        return array_values(array_unique(array_map(static fn ($id): int => abs((int) $id), $items)));
     }
 
     /** Every page under one ancestor, in list order. @param list<object> $pages @return list<object> */

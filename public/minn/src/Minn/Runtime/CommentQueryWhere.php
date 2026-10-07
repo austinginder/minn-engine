@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Minn\Runtime;
 
 use Minn\Query\Sql;
+use Minn\Support\Lists;
 
 /**
  * WP_Comment_Query's WHERE pieces and the posts join, in the reference's
@@ -41,7 +42,7 @@ final class CommentQueryWhere
         $comments = $this->wpdb->comments;
         foreach (self::ID_LISTS as $var => $test) {
             if (!empty($qv[$var])) {
-                $where[] = str_replace('{c}', $comments, $test) . ' ( ' . implode(',', \wp_parse_id_list($qv[$var])) . ' )';
+                $where[] = str_replace('{c}', $comments, $test) . ' ( ' . implode(',', Lists::ids($qv[$var])) . ' )';
             }
         }
         ['author_email' => $email, 'author_url' => $url, 'karma' => $karma] = $qv + ['author_email' => '', 'author_url' => '', 'karma' => ''];
@@ -95,7 +96,7 @@ final class CommentQueryWhere
     private function post(array $qv): string
     {
         ['post_id' => $post] = $qv + ['post_id' => 0];
-        $post = \absint($post);
+        $post = abs((int) ($post));
         return $post > 0 ? "comment_post_ID = {$post}" : '';
     }
 
@@ -177,7 +178,7 @@ final class CommentQueryWhere
         $joined = $where !== [];
         foreach (self::AUTHOR_LISTS as $var => $test) {
             if (!empty($qv[$var])) {
-                $where[] = "{$test} ( " . implode(',', \wp_parse_id_list($qv[$var])) . ' )';
+                $where[] = "{$test} ( " . implode(',', Lists::ids($qv[$var])) . ' )';
                 $joined = $joined || str_starts_with($test, 'post_');
             }
         }

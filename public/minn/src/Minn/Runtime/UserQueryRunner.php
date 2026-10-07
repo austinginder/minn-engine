@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Minn\Runtime;
 
 use Minn\Query\Sql;
+use Minn\Support\Lists;
 
 /**
  * WP_User_Query as the reference runs it (probe wp-user-query-sql): the
@@ -37,8 +38,8 @@ final class UserQueryRunner
         $query->query_fields = $this->fields($qv);
         $query->query_from = "FROM {$users}";
         $query->query_where = 'WHERE 1=1';
-        $include = !empty($qv['include']) ? \wp_parse_id_list($qv['include']) : [];
-        $blog = isset($qv['blog_id']) ? \absint($qv['blog_id']) : 0;
+        $include = !empty($qv['include']) ? Lists::ids($qv['include']) : [];
+        $blog = isset($qv['blog_id']) ? abs((int) ($qv['blog_id'])) : 0;
         $query->query_where .= $this->published($qv, $blog) . $this->names($qv);
         $this->meta($query, $qv, $blog);
         $query->query_orderby = $this->order($query, $qv);
@@ -53,7 +54,7 @@ final class UserQueryRunner
         if ($include !== []) {
             $query->query_where .= " AND {$users}.ID IN (" . implode(',', $include) . ')';
         } elseif (!empty($qv['exclude'])) {
-            $query->query_where .= " AND {$users}.ID NOT IN (" . implode(',', \wp_parse_id_list($qv['exclude'])) . ')';
+            $query->query_where .= " AND {$users}.ID NOT IN (" . implode(',', Lists::ids($qv['exclude'])) . ')';
         }
         if (!empty($qv['date_query']) && is_array($qv['date_query'])) {
             $query->query_where .= (new \WP_Date_Query($qv['date_query'], 'user_registered'))->get_sql();

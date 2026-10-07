@@ -32,9 +32,9 @@ final class CommentPages
         }
         $args = \wp_parse_args($args, self::DEFAULTS);
         $original = $args;
-        if (\get_option('page_comments')) {
+        if (Runtime::options()->filtered('page_comments')) {
             $args['per_page'] = $args['per_page'] === '' ? \get_query_var('comments_per_page') : $args['per_page'];
-            $args['per_page'] = $args['per_page'] === '' ? \get_option('comments_per_page') : $args['per_page'];
+            $args['per_page'] = $args['per_page'] === '' ? Runtime::options()->filtered('comments_per_page') : $args['per_page'];
         }
         if (empty($args['per_page'])) {
             $args['per_page'] = 0;
@@ -43,7 +43,7 @@ final class CommentPages
         $page = 1;
         if ($args['per_page'] >= 1) {
             if ($args['max_depth'] === '') {
-                $args['max_depth'] = \get_option('thread_comments') ? \get_option('thread_comments_depth') : -1;
+                $args['max_depth'] = Runtime::options()->filtered('thread_comments') ? Runtime::options()->filtered('thread_comments_depth') : -1;
             }
             if ($args['max_depth'] > 1 && (int) $comment->comment_parent !== 0) {
                 return self::pageOf($comment->comment_parent, $args);
@@ -86,8 +86,8 @@ final class CommentPages
         if ($args['cpage'] !== null) {
             return $args['cpage'];
         }
-        if ($args['per_page'] === '' && \get_option('page_comments')) {
-            $args['per_page'] = \get_option('comments_per_page');
+        if ($args['per_page'] === '' && Runtime::options()->filtered('page_comments')) {
+            $args['per_page'] = Runtime::options()->filtered('comments_per_page');
         }
         if (empty($args['per_page'])) {
             $args['per_page'] = 0;
@@ -97,7 +97,7 @@ final class CommentPages
         if ($page === '' || $page === null) {
             $page = !empty($GLOBALS['in_comment_loop']) ? \get_query_var('cpage') : \get_page_of_comment($comment?->comment_ID, $args);
         }
-        return \get_option('default_comments_page') === 'oldest' && $page === 1 ? '' : $page;
+        return Runtime::options()->filtered('default_comments_page') === 'oldest' && $page === 1 ? '' : $page;
     }
 
     /** A post's link opened at a page of its comments, as pretty or plain links write it. */
@@ -105,7 +105,7 @@ final class CommentPages
     {
         $rewrite = $GLOBALS['wp_rewrite'] ?? null;
         $pretty = $rewrite instanceof \WP_Rewrite && $rewrite->using_permalinks();
-        if ($page && \get_option('page_comments')) {
+        if ($page && Runtime::options()->filtered('page_comments')) {
             $permalink = $pretty
                 ? \trailingslashit($permalink) . $rewrite->comments_pagination_base . '-' . $page
                 : \add_query_arg('cpage', $page, $permalink);

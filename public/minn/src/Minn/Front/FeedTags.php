@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace Minn\Front;
 
+use Minn\Runtime\Runtime;
+use Minn\Support\Escape;
+
 /**
  * The template tags a feed is written with that take more than a line, as
  * the reference answers them in a feed's loop (probe feed-tags): a post's
@@ -25,9 +28,9 @@ final class FeedTags
         $out = '';
         foreach (array_unique($names) as $name) {
             $out .= match ($type) {
-                'rdf' => "\t\t<dc:subject><![CDATA[" . FeedWriter::insideCdata(html_entity_decode($name, ENT_COMPAT, (string) \get_option('blog_charset'))) . "]]></dc:subject>\n",
-                'atom' => sprintf('<category scheme="%1$s" term="%2$s" />', \esc_attr(\get_bloginfo_rss('url')), \esc_attr($name)),
-                default => "\t\t<category><![CDATA[" . FeedWriter::insideCdata(html_entity_decode($name, ENT_COMPAT, (string) \get_option('blog_charset'))) . "]]></category>\n",
+                'rdf' => "\t\t<dc:subject><![CDATA[" . FeedWriter::insideCdata(html_entity_decode($name, ENT_COMPAT, (string) Runtime::options()->filtered('blog_charset'))) . "]]></dc:subject>\n",
+                'atom' => sprintf('<category scheme="%1$s" term="%2$s" />', Escape::attr(\get_bloginfo_rss('url')), Escape::attr($name)),
+                default => "\t\t<category><![CDATA[" . FeedWriter::insideCdata(html_entity_decode($name, ENT_COMPAT, (string) Runtime::options()->filtered('blog_charset'))) . "]]></category>\n",
             };
         }
         return (string) \apply_filters('the_category_rss', $out, $type);
@@ -52,7 +55,7 @@ final class FeedTags
                 continue;
             }
             $type = preg_split('/[ \t]/', trim($lines[2]))[0] ?? '';
-            $out .= \apply_filters('rss_enclosure', '<enclosure url="' . \esc_url(trim($lines[0])) . '" length="' . \absint(trim($lines[1])) . '" type="' . \esc_attr($type) . '" />' . "\n");
+            $out .= \apply_filters('rss_enclosure', '<enclosure url="' . \esc_url(trim($lines[0])) . '" length="' . abs((int) (trim($lines[1]))) . '" type="' . Escape::attr($type) . '" />' . "\n");
         }
         return $out;
     }
@@ -75,7 +78,7 @@ final class FeedTags
                     $type = trim($lines[$at]);
                 }
             }
-            $out .= \apply_filters('atom_enclosure', sprintf("<link href=\"%s\" rel=\"enclosure\" length=\"%d\" type=\"%s\" />\n", \esc_url(trim($lines[0])), \esc_attr((string) $length), \esc_attr($type)));
+            $out .= \apply_filters('atom_enclosure', sprintf("<link href=\"%s\" rel=\"enclosure\" length=\"%d\" type=\"%s\" />\n", \esc_url(trim($lines[0])), Escape::attr((string) $length), Escape::attr($type)));
         }
         return $out;
     }
@@ -90,11 +93,11 @@ final class FeedTags
             return '';
         }
         $unattached = $post->post_type === 'attachment' && (int) $post->post_parent === 0;
-        if (\get_option('permalink_structure')) {
+        if (Runtime::options()->filtered('permalink_structure')) {
             if ($unattached) {
                 $url = \add_query_arg('attachment_id', $postId, \home_url('/feed/') . (\get_default_feed() !== $feed ? "{$feed}/" : ''));
             } else {
-                $front = \get_option('show_on_front') === 'page' && (int) \get_option('page_on_front') === $postId;
+                $front = Runtime::options()->filtered('show_on_front') === 'page' && (int) Runtime::options()->filtered('page_on_front') === $postId;
                 $base = \trailingslashit((string) ($front ? \_get_page_link($postId) : \get_permalink($postId))) . 'feed';
                 $url = \user_trailingslashit($base . (\get_default_feed() !== $feed ? "/{$feed}" : ''), 'single_feed');
             }

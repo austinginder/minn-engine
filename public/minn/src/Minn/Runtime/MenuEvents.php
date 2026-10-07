@@ -9,6 +9,7 @@ use Minn\Content\Posts;
 use Minn\Http\Request;
 use Minn\Rest\RuntimeRoutes;
 use Minn\RestError;
+use Minn\I18n\Gettext;
 
 /**
  * Menus and their items saved as the reference saves them, telling
@@ -88,11 +89,11 @@ final readonly class MenuEvents
     public function saveItem(int $menuId, int $itemId, array $data, string $afterInsert = 'now'): int|\WP_Error
     {
         if ($menuId > 0 && $this->menus->find($menuId) === null) {
-            return new \WP_Error('invalid_menu_id', \__('Invalid menu ID.'));
+            return new \WP_Error('invalid_menu_id', Gettext::text('Invalid menu ID.'));
         }
         $before = $itemId > 0 ? $this->posts->find($itemId) : null;
         if ($itemId > 0 && ($before === null || $before->type !== 'nav_menu_item')) {
-            return new \WP_Error('update_nav_menu_item_failed', \__('The given object ID is not that of a menu item.'));
+            return new \WP_Error('update_nav_menu_item_failed', Gettext::text('The given object ID is not that of a menu item.'));
         }
         $args = array_merge(self::ITEM_DEFAULTS, $data, ['menu-item-db-id' => $itemId]);
         if ($itemId === 0 && $menuId > 0 && (int) $args['menu-item-position'] === 0) {

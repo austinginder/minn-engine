@@ -19,7 +19,7 @@ final class TermFilters
     /** A term as get_term hands it back. */
     public static function one(TermRecord $term, string $taxonomy): TermRecord
     {
-        if (!Runtime::booted() || (!\has_filter('get_term') && !\has_filter("get_{$taxonomy}"))) {
+        if (!Runtime::booted() || (!Runtime::hooks()->has('get_term') && !Runtime::hooks()->has("get_{$taxonomy}"))) {
             return $term;
         }
         $object = \get_term($term->id, $taxonomy);

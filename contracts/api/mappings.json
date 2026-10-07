@@ -2,12 +2,12 @@
     "generated": "2026-10-07",
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line)",
     "summary": {
-        "minn": 661,
-        "composes": 972,
-        "leaf": 665,
-        "noop": 1956,
-        "functions": 4180,
-        "minnMethods": 764,
+        "minn": 659,
+        "composes": 966,
+        "leaf": 663,
+        "noop": 1964,
+        "functions": 4178,
+        "minnMethods": 775,
         "leafLinesOver15": 13
     },
     "functions": {
@@ -16809,19 +16809,6 @@
             ],
             "composes": []
         },
-        "_minn_plural_translation": {
-            "file": "l10n.php",
-            "lines": 9,
-            "kind": "minn",
-            "minn": [
-                "Minn\\I18n\\Catalog::key",
-                "Minn\\Runtime\\Runtime::booted",
-                "Minn\\Runtime\\Runtime::textDomains"
-            ],
-            "composes": [
-                "_load_textdomain_just_in_time"
-            ]
-        },
         "_minn_post_before_save": {
             "file": "post.php",
             "lines": 5,
@@ -17503,19 +17490,6 @@
             ],
             "composes": []
         },
-        "_minn_translation": {
-            "file": "l10n.php",
-            "lines": 6,
-            "kind": "minn",
-            "minn": [
-                "Minn\\I18n\\Catalog::key",
-                "Minn\\Runtime\\Runtime::booted",
-                "Minn\\Runtime\\Runtime::textDomains"
-            ],
-            "composes": [
-                "_load_textdomain_just_in_time"
-            ]
-        },
         "_minn_traverse_block": {
             "file": "blocks.php",
             "lines": 18,
@@ -17684,13 +17658,12 @@
         },
         "_n": {
             "file": "l10n.php",
-            "lines": 3,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "_minn_plural_translation",
-                "apply_filters"
-            ]
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\I18n\\Gettext::plural"
+            ],
+            "composes": []
         },
         "_n_noop": {
             "file": "l10n.php",
@@ -17713,13 +17686,12 @@
         },
         "_nx": {
             "file": "l10n.php",
-            "lines": 3,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "_minn_plural_translation",
-                "apply_filters"
-            ]
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\I18n\\Gettext::pluralInContext"
+            ],
+            "composes": []
         },
         "_nx_noop": {
             "file": "l10n.php",
@@ -20567,14 +20539,12 @@
         },
         "esc_attr": {
             "file": "formatting.php",
-            "lines": 3,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "_wp_specialchars",
-                "apply_filters",
-                "wp_check_invalid_utf8"
-            ]
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Support\\Escape::attr"
+            ],
+            "composes": []
         },
         "esc_attr__": {
             "file": "l10n.php",
@@ -20608,14 +20578,12 @@
         },
         "esc_html": {
             "file": "formatting.php",
-            "lines": 3,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "_wp_specialchars",
-                "apply_filters",
-                "wp_check_invalid_utf8"
-            ]
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Support\\Escape::html"
+            ],
+            "composes": []
         },
         "esc_html__": {
             "file": "l10n.php",
@@ -22815,14 +22783,12 @@
         },
         "get_option": {
             "file": "option.php",
-            "lines": 14,
-            "kind": "minn",
+            "lines": 1,
+            "kind": "noop",
             "minn": [
                 "Minn\\Runtime\\Runtime::options"
             ],
-            "composes": [
-                "apply_filters"
-            ]
+            "composes": []
         },
         "get_page": {
             "file": "post.php",
@@ -30041,11 +30007,12 @@
         },
         "translate": {
             "file": "l10n.php",
-            "lines": 3,
-            "kind": "composes",
-            "minn": [],
+            "lines": 5,
+            "kind": "minn",
+            "minn": [
+                "Minn\\I18n\\Gettext::text"
+            ],
             "composes": [
-                "_minn_translation",
                 "apply_filters"
             ]
         },
@@ -30070,13 +30037,12 @@
         },
         "translate_with_gettext_context": {
             "file": "l10n.php",
-            "lines": 3,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "_minn_translation",
-                "apply_filters"
-            ]
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\I18n\\Gettext::inContext"
+            ],
+            "composes": []
         },
         "translations_api": {
             "file": "l10n.php",
@@ -35221,16 +35187,18 @@
             "file": "formatting.php",
             "lines": 1,
             "kind": "noop",
-            "minn": [],
-            "composes": [
-                "wp_parse_list"
-            ]
+            "minn": [
+                "Minn\\Support\\Lists::ids"
+            ],
+            "composes": []
         },
         "wp_parse_list": {
             "file": "formatting.php",
-            "lines": 4,
-            "kind": "leaf",
-            "minn": [],
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Support\\Lists::items"
+            ],
             "composes": []
         },
         "wp_parse_slug_list": {
@@ -36607,10 +36575,10 @@
             "file": "formatting.php",
             "lines": 1,
             "kind": "noop",
-            "minn": [],
-            "composes": [
-                "map_deep"
-            ]
+            "minn": [
+                "Minn\\Support\\Slashes::add"
+            ],
+            "composes": []
         },
         "wp_slash_strings_only": {
             "file": "formatting.php",
@@ -37083,10 +37051,10 @@
             "file": "formatting.php",
             "lines": 1,
             "kind": "noop",
-            "minn": [],
-            "composes": [
-                "stripslashes_deep"
-            ]
+            "minn": [
+                "Minn\\Support\\Slashes::strip"
+            ],
+            "composes": []
         },
         "wp_unspam_comment": {
             "file": "comment.php",
@@ -37403,9 +37371,11 @@
         },
         "wp_validate_boolean": {
             "file": "functions.php",
-            "lines": 7,
-            "kind": "leaf",
-            "minn": [],
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Support\\Flag::of"
+            ],
             "composes": []
         },
         "wp_validate_logged_in_cookie": {

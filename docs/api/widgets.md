@@ -74,5 +74,5 @@ nothing, when it is shown).
 - `@param array<string, mixed> $args`
 - `@param array<string, bool> $inputs`
 
-Internals: `number()` (private, line 170), `id()` (private, line 175), `name()` (private, line 180)
+Internals: `number()` (private, line 172), `id()` (private, line 177), `name()` (private, line 182)
 

@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Minn\Runtime;
 
+use Minn\Support\Slashes;
+
 /**
  * The comment form's submission with plugins loaded
  * (wp_handle_comment_submission), in the order the reference runs it
@@ -34,7 +36,7 @@ final class CommentForm
         $email = $text('email');
         $url = $text('url');
         $content = $text('comment');
-        $parent = \absint($text('comment_parent'));
+        $parent = abs((int) ($text('comment_parent')));
         if ($parent > 0) {
             $replied = \get_comment($parent);
             if (!$replied instanceof \WP_Comment || (string) $replied->comment_approved === '0') {
@@ -56,7 +58,7 @@ final class CommentForm
                 \kses_remove_filters();
                 \kses_init_filters();
             }
-        } elseif (\get_option('comment_registration')) {
+        } elseif (Runtime::options()->filtered('comment_registration')) {
             return new \WP_Error('not_logged_in', 'Sorry, you must be logged in to comment.', 403);
         }
         $missing = self::fieldRefusal($user, $author, $email);
@@ -77,7 +79,7 @@ final class CommentForm
         if (\is_wp_error($lengths)) {
             return $lengths;
         }
-        $id = \wp_new_comment(\wp_slash($data), true);
+        $id = \wp_new_comment(Slashes::add($data), true);
         if (\is_wp_error($id)) {
             return $id;
         }
@@ -117,7 +119,7 @@ final class CommentForm
     /** A signed-out commenter's name and email, when the site requires them. */
     private static function fieldRefusal(\WP_User $user, string $author, string $email): ?\WP_Error
     {
-        if (!\get_option('require_name_email') || $user->exists()) {
+        if (!Runtime::options()->filtered('require_name_email') || $user->exists()) {
             return null;
         }
         if ($email === '' || $author === '') {
