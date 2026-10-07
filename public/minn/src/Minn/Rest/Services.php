@@ -379,7 +379,13 @@ final class Services
     /** Minn's changelog, read from its repository. */
     public function engineChangelog(): Changelog
     {
-        return $this->share(Changelog::class, fn () => Changelog::forSite($this->site()));
+        return $this->share('engineChangelog', fn () => Changelog::engine($this->site()));
+    }
+
+    /** Minn Admin's changelog, read from its repository. */
+    public function adminChangelog(): Changelog
+    {
+        return $this->share('adminChangelog', fn () => Changelog::admin($this->site()));
     }
 
     /** Minn's version and the release on offer, behind the app's update banner. */

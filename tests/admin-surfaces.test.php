@@ -15,6 +15,8 @@ $REF    = 'https://ref.minn.localhost';
 $ROOT   = dirname( __DIR__ );
 
 require_once __DIR__ . '/lib.php';
+require_once dirname( __DIR__ ) . '/public/minn/src/Minn/Autoloader.php';
+Minn\Autoloader::register();
 
 [ $ph ] = minn_test_fetch( "$REF/?rest_route=/wp/v2/posts", 3 );
 if ( 200 !== $ph['status'] ) {
@@ -163,7 +165,14 @@ check( 200 === $s && 1 === count( $after['sessions'] ?? array() ) && $after['ses
 check( 200 === $s && 1 === count( $rb['sessions'] ?? array() ), 'WordPress reads the engine-written session store identically', json_encode( $rb ) );
 
 // 5. Bundled documents, appearance, the update slots.
-as_parity( 'changelog matches', '/minn-admin/v1/changelog', $admin );
+// Minn Admin's changelog is not in a Minn release: the engine reads it from
+// GitHub and leaves out Unreleased sections, so it is the reference's file
+// (the bundled one) without them. A difference here means the local file
+// and GitHub disagree on a released section.
+[ $rs, $rb ] = as_fetch( $REF, '/minn-admin/v1/changelog', $admin );
+[ $es, $eb ] = as_fetch( $ENGINE, '/minn-admin/v1/changelog', $admin );
+$released    = Minn\Ops\Changelog::released( (string) ( $rb['markdown'] ?? '' ) );
+check( 200 === $rs && 200 === $es && ( $rb['version'] ?? null ) === ( $eb['version'] ?? null ) && $released === ( $eb['markdown'] ?? null ), 'changelog is the bundled one without Unreleased sections (read from GitHub)', (string) minn_test_diff( $released, $eb['markdown'] ?? null ) );
 as_parity( 'guide matches', '/minn-admin/v1/guide', $admin );
 as_parity( 'plugin-updates matches (auto-updates and wordpress.org language updates are never offered here)', '/minn-admin/v1/plugin-updates', $admin, array( 'autoAllowed', 'translations', 'translationGroups' ) );
 as_parity( 'plugin-meta matches', '/minn-admin/v1/plugin-meta', $admin );

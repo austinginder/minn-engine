@@ -6,7 +6,7 @@
 |---|---|---|---|
 | [`Archive`](#archive) | final class | 69 | A zip unpacked the safe way, for the plugin and theme installer and for |
 | [`AutoUpdates`](#autoupdates) | final readonly class | 29 | Whether per-item auto-updates apply to plugins or themes, as the |
-| [`Changelog`](#changelog) | final class | 55 | Minn's changelog, read from the engine's GitHub repository rather than |
+| [`Changelog`](#changelog) | final class | 67 | A changelog read from its GitHub repository rather than shipped: a Minn |
 | [`CoreStatus`](#corestatus) | final readonly class | 48 | The core the app's update banner and chip speak of, which on Minn is |
 | [`Diagnostics`](#diagnostics) | final readonly class | 408 | The System view's facts about this install: the engine, PHP, the |
 | [`EngineUpdate`](#engineupdate) | final readonly class | 105 | Replaces the running engine with a published release. The release's |
@@ -81,30 +81,34 @@ Internals: `updaterOff()` (private, line 41)
 
 `final class Minn\Ops\Changelog` · `public/minn/src/Minn/Ops/Changelog.php`
 
-Minn's changelog, read from the engine's GitHub repository rather than
-shipped with it: a release carries no notes for anyone to find on the
-sites that run it. The file on the default branch is fetched at most once
-a day and kept in the minn_changelog option (JSON) with the time it was
-fetched; sections still marked Unreleased are left out, so a site only
-reads about releases that exist. A fetch GitHub does not answer keeps the
-last copy; a 404 (no such file, or a private repository) keeps nothing.
+A changelog read from its GitHub repository rather than shipped: a Minn
+release carries no notes, its own or Minn Admin's, for anyone to find on
+the sites that run it. The file on the default branch is fetched at most
+once a day and kept in an option (JSON) with the time it was fetched;
+sections still marked Unreleased are left out, so a site only reads about
+releases that exist. A fetch GitHub does not answer keeps the last copy; a
+404 (no such file, or a private repository) keeps nothing.
 
-- const `OPTION` = `'minn_changelog'`
 - const `TTL` = `86400`
-- const `SOURCE` = `'https://raw.githubusercontent.com/austinginder/minn-engine/main/changelog.md'`
+- const `ENGINE_SOURCE` = `'https://raw.githubusercontent.com/austinginder/minn-engine/main/changelog.md'`
+- const `ADMIN_SOURCE` = `'https://raw.githubusercontent.com/austinginder/minn-admin/main/changelog.md'`
 
 Used by: `Minn\Admin\BundleController`, `Minn\Rest\Services`
 
 ```php
-__construct(Closure $load, Closure $save, string $source = self::SOURCE)
+__construct(Closure $load, Closure $save, string $source)
 ```
 - `@param Closure(): ?string $load the stored copy, as JSON`
 - `@param Closure(string): void $save keeps the copy, as JSON`
 
 
-### static `forSite(Minn\Content\Site $site): self`
+### static `engine(Minn\Content\Site $site): self`
 
-The changelog for a site, its copy kept in the site's minn_changelog option.
+Minn's changelog for a site, kept in its minn_changelog option.
+
+### static `admin(Minn\Content\Site $site): self`
+
+Minn Admin's changelog for a site running Minn, kept in its minn_admin_changelog option.
 
 ### `markdown(): string`
 
@@ -113,6 +117,8 @@ The released sections as Markdown, fetched first when the copy is a day old; '' 
 ### static `released(string $markdown): string`
 
 The changelog without its Unreleased sections.
+
+Internals: `kept()` (private, line 49)
 
 
 ## CoreStatus

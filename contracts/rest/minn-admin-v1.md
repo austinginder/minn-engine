@@ -187,6 +187,15 @@ last answer and waits a day. A release counts only when it is published, not a
 pre-release, tagged `v<major>.<minor>.<patch>`, and carries a `minn.zip` asset;
 the asset's `digest` (`sha256:<hex>`) is the checksum the install demands.
 
+## GET /changelog (on the engine)
+
+Gate: the floor. `{ version, markdown }`: the bundle's version and Minn
+Admin's changelog. A Minn release does not carry the bundle's changelog.md,
+so `Ops\Changelog` reads it from `austinginder/minn-admin` on GitHub the
+same way as the engine's (below; option `minn_admin_changelog`). The
+reference answers its bundled file, Unreleased sections included; the
+suite compares the engine's answer with that file less those sections.
+
 ## GET /engine-changelog
 
 Gate: the floor (`edit_posts`). `{ version, markdown }`: `MINN_ENGINE_VERSION`

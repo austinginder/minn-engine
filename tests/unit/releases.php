@@ -122,7 +122,7 @@ return [
     'the changelog is fetched from the repository once a day, and a failed fetch keeps the last copy' => static function () use ($memory) {
         $stored = null;
         [$load, $save] = $memory($stored);
-        $changelog = new Changelog($load, $save);
+        $changelog = new Changelog($load, $save, Changelog::ENGINE_SOURCE);
         $fake = Minn\Http::fake(['raw.githubusercontent.com/*' => "# Changelog\n\n## **v0.1.0** - November 2 2026\n\nfirst\n"]);
         try {
             $first = $changelog->markdown();

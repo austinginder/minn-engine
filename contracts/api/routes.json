@@ -72,7 +72,7 @@
             "pattern": "/minn-admin/v1/changelog",
             "name": "Minn\\Admin\\BundleController::changelog",
             "handler": "Minn\\Admin\\BundleController::changelog",
-            "summary": "The app's bundled changelog.",
+            "summary": "Minn Admin's changelog, released sections only, beside the bundle's version.",
             "policy": {
                 "access": "Floor",
                 "describe": "floor edit_posts",

@@ -64,7 +64,7 @@ the wp/v2 surface: shapes and controllers
 | [`Schema`](#schema) | final readonly class | 473 | JSON-schema handling the way the REST API's argument validation does it: |
 | [`SchemaValues`](#schemavalues) | final class | 206 | The value side of JSON Schema, as the reference applies it: what counts |
 | [`SearchController`](#searchcontroller) | final readonly class | 121 | wp/v2 search over published content: id, title, url, type, and the |
-| [`Services`](#services) | final class | 411 | The objects one REST request shares, each made once, on first use, from |
+| [`Services`](#services) | final class | 417 | The objects one REST request shares, each made once, on first use, from |
 | [`Settings`](#settings) | final readonly class | 113 | The registered settings the Settings views read and write, mapped to |
 | [`SettingsController`](#settingscontroller) | final readonly class | 32 | wp/v2/settings: read and write, both behind manage_options; with plugins loaded, every registered setting (LiveSettings). |
 | [`SidebarsController`](#sidebarscontroller) | final readonly class | 192 | wp/v2/sidebars and wp/v2/widget-types as the reference answers them |
@@ -2807,6 +2807,10 @@ Minn's own releases, asked of GitHub once a day.
 
 Minn's changelog, read from its repository.
 
+### `adminChangelog(): Minn\Ops\Changelog`
+
+Minn Admin's changelog, read from its repository.
+
 ### `coreStatus(): Minn\Ops\CoreStatus`
 
 Minn's version and the release on offer, behind the app's update banner.
@@ -2851,7 +2855,7 @@ The wp/v2 media shape.
 
 The wp/v2 comment shape.
 
-Internals: `share()` (private, line 466)
+Internals: `share()` (private, line 472)
 
 
 ## Settings

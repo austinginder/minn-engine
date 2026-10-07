@@ -11,7 +11,7 @@ the minn-admin/v1 namespace and serving the Minn Admin app
 | [`AppController`](#appcontroller) | final readonly class | 118 | Serves Minn Admin from the engine: the path-routed shell (every |
 | [`Appearance`](#appearance) | final readonly class | 82 | A person's Minn Admin appearance: the colour scheme and its custom |
 | [`BootPayload`](#bootpayload) | final readonly class | 234 | The window.MINN boot payload, assembled from the engine: the keys app.js |
-| [`BundleController`](#bundlecontroller) | final readonly class | 44 | What the app bundle carries: the changelog, the user guide, and the |
+| [`BundleController`](#bundlecontroller) | final readonly class | 45 | What the app bundle answers for: the user guide it carries, the |
 | [`Dashboard`](#dashboard) | final readonly class | 273 | The overview payload: stat cards, the activity chart, and the recent |
 | [`EditorController`](#editorcontroller) | final readonly class | 45 | The editor's helpers in minn-admin/v1: the edit lock, and the template |
 | [`Format`](#format) | final class | 51 | The dashboard's number, size, age, and title formatting. |
@@ -316,14 +316,15 @@ Internals: `userSlice()` (private, line 91), `siteSlice()` (private, line 108), 
 
 `final readonly class Minn\Admin\BundleController` · `public/minn/src/Minn/Admin/BundleController.php`
 
-What the app bundle carries: the changelog, the user guide, and the
-translation offers (none: the engine polls no translation channel);
-and beside them the engine's own changelog, read from GitHub.
+What the app bundle answers for: the user guide it carries, the
+translation offers (none: the engine polls no translation channel), and
+the two changelogs, Minn Admin's and the engine's, read from GitHub
+because a release carries neither.
 
 Used by: `Minn\Rest\Api`
 
 ```php
-__construct(Minn\Admin\App $app, Minn\Rest\Caller $caller, Minn\Ops\Changelog $engineChangelog)
+__construct(Minn\Admin\App $app, Minn\Rest\Caller $caller, Minn\Ops\Changelog $adminChangelog, Minn\Ops\Changelog $engineChangelog)
 ```
 
 
@@ -337,7 +338,7 @@ The translation offers; none on the engine.
 
 Route: `GET /minn-admin/v1/changelog (floor edit_posts)`
 
-The app's bundled changelog.
+Minn Admin's changelog, released sections only, beside the bundle's version.
 
 ### `engineChangelog(Minn\Http\Request $request): Minn\Http\Response`
 
@@ -351,7 +352,7 @@ Route: `GET /minn-admin/v1/guide (floor edit_posts)`
 
 The app's bundled user guide.
 
-Internals: `bundled()` (private, line 60)
+Internals: `bundled()` (private, line 62)
 
 
 ## Dashboard

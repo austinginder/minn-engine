@@ -1643,8 +1643,8 @@
             "namespace": "Minn\\Admin",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Admin/BundleController.php",
-            "lines": 44,
-            "doc": "What the app bundle carries: the changelog, the user guide, and the\ntranslation offers (none: the engine polls no translation channel);\nand beside them the engine's own changelog, read from GitHub.",
+            "lines": 45,
+            "doc": "What the app bundle answers for: the user guide it carries, the\ntranslation offers (none: the engine polls no translation channel), and\nthe two changelogs, Minn Admin's and the engine's, read from GitHub\nbecause a release carries neither.",
             "implements": [],
             "extends": null,
             "uses": [
@@ -1663,7 +1663,7 @@
                 "Minn\\Rest\\Api"
             ],
             "constructor": {
-                "signature": "__construct(Minn\\Admin\\App $app, Minn\\Rest\\Caller $caller, Minn\\Ops\\Changelog $engineChangelog)",
+                "signature": "__construct(Minn\\Admin\\App $app, Minn\\Rest\\Caller $caller, Minn\\Ops\\Changelog $adminChangelog, Minn\\Ops\\Changelog $engineChangelog)",
                 "doc": "",
                 "shapes": [],
                 "params": [
@@ -1682,6 +1682,13 @@
                         "doc": ""
                     },
                     {
+                        "name": "adminChangelog",
+                        "type": "Minn\\Ops\\Changelog",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    },
+                    {
                         "name": "engineChangelog",
                         "type": "Minn\\Ops\\Changelog",
                         "shape": "",
@@ -1690,8 +1697,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 24,
-                "end": 29
+                "line": 25,
+                "end": 31
             },
             "cases": [],
             "constants": [],
@@ -1708,6 +1715,15 @@
                 {
                     "name": "caller",
                     "type": "Minn\\Rest\\Caller",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
+                },
+                {
+                    "name": "adminChangelog",
+                    "type": "Minn\\Ops\\Changelog",
                     "readonly": true,
                     "static": false,
                     "doc": "",
@@ -1744,8 +1760,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 33,
-                    "end": 36
+                    "line": 35,
+                    "end": 38
                 },
                 {
                     "routes": [
@@ -1755,7 +1771,7 @@
                     "static": false,
                     "visibility": "public",
                     "signature": "changelog(Minn\\Http\\Request $request): Minn\\Http\\Response",
-                    "doc": "The app's bundled changelog.",
+                    "doc": "Minn Admin's changelog, released sections only, beside the bundle's version.",
                     "shapes": [],
                     "params": [
                         {
@@ -1766,8 +1782,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 40,
-                    "end": 43
+                    "line": 42,
+                    "end": 45
                 },
                 {
                     "routes": [
@@ -1788,8 +1804,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 47,
-                    "end": 50
+                    "line": 49,
+                    "end": 52
                 },
                 {
                     "routes": [
@@ -1810,8 +1826,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 54,
-                    "end": 57
+                    "line": 56,
+                    "end": 59
                 },
                 {
                     "routes": [],
@@ -1832,8 +1848,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 60,
-                    "end": 64
+                    "line": 62,
+                    "end": 66
                 }
             ]
         },
@@ -75192,8 +75208,8 @@
             "namespace": "Minn\\Ops",
             "kind": "final class",
             "file": "public/minn/src/Minn/Ops/Changelog.php",
-            "lines": 55,
-            "doc": "Minn's changelog, read from the engine's GitHub repository rather than\nshipped with it: a release carries no notes for anyone to find on the\nsites that run it. The file on the default branch is fetched at most once\na day and kept in the minn_changelog option (JSON) with the time it was\nfetched; sections still marked Unreleased are left out, so a site only\nreads about releases that exist. A fetch GitHub does not answer keeps the\nlast copy; a 404 (no such file, or a private repository) keeps nothing.",
+            "lines": 67,
+            "doc": "A changelog read from its GitHub repository rather than shipped: a Minn\nrelease carries no notes, its own or Minn Admin's, for anyone to find on\nthe sites that run it. The file on the default branch is fetched at most\nonce a day and kept in an option (JSON) with the time it was fetched;\nsections still marked Unreleased are left out, so a site only reads about\nreleases that exist. A fetch GitHub does not answer keeps the last copy; a\n404 (no such file, or a private repository) keeps nothing.",
             "implements": [],
             "extends": null,
             "uses": [
@@ -75206,7 +75222,7 @@
                 "Minn\\Rest\\Services"
             ],
             "constructor": {
-                "signature": "__construct(Closure $load, Closure $save, string $source = self::SOURCE)",
+                "signature": "__construct(Closure $load, Closure $save, string $source)",
                 "doc": "",
                 "shapes": [
                     "@param Closure(): ?string $load the stored copy, as JSON",
@@ -75231,7 +75247,7 @@
                         "name": "source",
                         "type": "string",
                         "shape": "",
-                        "default": "self::SOURCE",
+                        "default": null,
                         "doc": ""
                     }
                 ],
@@ -75242,20 +75258,20 @@
             "cases": [],
             "constants": [
                 {
-                    "name": "OPTION",
-                    "value": "'minn_changelog'",
-                    "doc": "",
-                    "visibility": "public"
-                },
-                {
                     "name": "TTL",
                     "value": "86400",
                     "doc": "",
                     "visibility": "public"
                 },
                 {
-                    "name": "SOURCE",
+                    "name": "ENGINE_SOURCE",
                     "value": "'https://raw.githubusercontent.com/austinginder/minn-engine/main/changelog.md'",
+                    "doc": "",
+                    "visibility": "public"
+                },
+                {
+                    "name": "ADMIN_SOURCE",
+                    "value": "'https://raw.githubusercontent.com/austinginder/minn-admin/main/changelog.md'",
                     "doc": "",
                     "visibility": "public"
                 }
@@ -75292,11 +75308,11 @@
             "methods": [
                 {
                     "routes": [],
-                    "name": "forSite",
+                    "name": "engine",
                     "static": true,
                     "visibility": "public",
-                    "signature": "forSite(Minn\\Content\\Site $site): self",
-                    "doc": "The changelog for a site, its copy kept in the site's minn_changelog option.",
+                    "signature": "engine(Minn\\Content\\Site $site): self",
+                    "doc": "Minn's changelog for a site, kept in its minn_changelog option.",
                     "shapes": [],
                     "params": [
                         {
@@ -75308,7 +75324,27 @@
                         }
                     ],
                     "line": 38,
-                    "end": 46
+                    "end": 41
+                },
+                {
+                    "routes": [],
+                    "name": "admin",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "admin(Minn\\Content\\Site $site): self",
+                    "doc": "Minn Admin's changelog for a site running Minn, kept in its minn_admin_changelog option.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "site",
+                            "type": "Minn\\Content\\Site",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 44,
+                    "end": 47
                 },
                 {
                     "routes": [],
@@ -75319,8 +75355,8 @@
                     "doc": "The released sections as Markdown, fetched first when the copy is a day old; '' when there is none.",
                     "shapes": [],
                     "params": [],
-                    "line": 49,
-                    "end": 65
+                    "line": 61,
+                    "end": 77
                 },
                 {
                     "routes": [],
@@ -75339,8 +75375,42 @@
                             "doc": ""
                         }
                     ],
-                    "line": 68,
-                    "end": 73
+                    "line": 80,
+                    "end": 85
+                },
+                {
+                    "routes": [],
+                    "name": "kept",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "kept(Minn\\Content\\Site $site, string $option, string $source): self",
+                    "doc": "",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "site",
+                            "type": "Minn\\Content\\Site",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "option",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "source",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 49,
+                    "end": 58
                 }
             ]
         },
@@ -97608,7 +97678,7 @@
             "namespace": "Minn\\Rest",
             "kind": "final class",
             "file": "public/minn/src/Minn/Rest/Services.php",
-            "lines": 411,
+            "lines": 417,
             "doc": "The objects one REST request shares, each made once, on first use, from\nthe database door and the request. Every getter is typed and names its\ndependencies in plain constructor calls: there is no autowiring, and\nget() knows only the names listed here, so a wrong one fails at the\nfirst call rather than deep in a handler.",
             "implements": [],
             "extends": null,
@@ -98284,6 +98354,18 @@
                 },
                 {
                     "routes": [],
+                    "name": "adminChangelog",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "adminChangelog(): Minn\\Ops\\Changelog",
+                    "doc": "Minn Admin's changelog, read from its repository.",
+                    "shapes": [],
+                    "params": [],
+                    "line": 386,
+                    "end": 389
+                },
+                {
+                    "routes": [],
                     "name": "coreStatus",
                     "static": false,
                     "visibility": "public",
@@ -98291,8 +98373,8 @@
                     "doc": "Minn's version and the release on offer, behind the app's update banner.",
                     "shapes": [],
                     "params": [],
-                    "line": 386,
-                    "end": 389
+                    "line": 392,
+                    "end": 395
                 },
                 {
                     "routes": [],
@@ -98303,8 +98385,8 @@
                     "doc": "The engine replacing itself with a release.",
                     "shapes": [],
                     "params": [],
-                    "line": 392,
-                    "end": 395
+                    "line": 398,
+                    "end": 401
                 },
                 {
                     "routes": [],
@@ -98315,8 +98397,8 @@
                     "doc": "The bell feed.",
                     "shapes": [],
                     "params": [],
-                    "line": 398,
-                    "end": 401
+                    "line": 404,
+                    "end": 407
                 },
                 {
                     "routes": [],
@@ -98327,8 +98409,8 @@
                     "doc": "The System view's payload.",
                     "shapes": [],
                     "params": [],
-                    "line": 404,
-                    "end": 407
+                    "line": 410,
+                    "end": 413
                 },
                 {
                     "routes": [],
@@ -98339,8 +98421,8 @@
                     "doc": "The active block theme's templates; null under a classic theme, where the routes answer as the reference does when it never registered them.",
                     "shapes": [],
                     "params": [],
-                    "line": 412,
-                    "end": 419
+                    "line": 418,
+                    "end": 425
                 },
                 {
                     "routes": [],
@@ -98351,8 +98433,8 @@
                     "doc": "Writes block templates; null under a classic theme.",
                     "shapes": [],
                     "params": [],
-                    "line": 422,
-                    "end": 426
+                    "line": 428,
+                    "end": 432
                 },
                 {
                     "routes": [],
@@ -98363,8 +98445,8 @@
                     "doc": "The wp/v2 post shape.",
                     "shapes": [],
                     "params": [],
-                    "line": 431,
-                    "end": 434
+                    "line": 437,
+                    "end": 440
                 },
                 {
                     "routes": [],
@@ -98375,8 +98457,8 @@
                     "doc": "The wp/v2 term shape.",
                     "shapes": [],
                     "params": [],
-                    "line": 437,
-                    "end": 440
+                    "line": 443,
+                    "end": 446
                 },
                 {
                     "routes": [],
@@ -98387,8 +98469,8 @@
                     "doc": "The wp/v2 user shape.",
                     "shapes": [],
                     "params": [],
-                    "line": 443,
-                    "end": 446
+                    "line": 449,
+                    "end": 452
                 },
                 {
                     "routes": [],
@@ -98399,8 +98481,8 @@
                     "doc": "The wp/v2 media shape.",
                     "shapes": [],
                     "params": [],
-                    "line": 449,
-                    "end": 452
+                    "line": 455,
+                    "end": 458
                 },
                 {
                     "routes": [],
@@ -98411,8 +98493,8 @@
                     "doc": "The wp/v2 comment shape.",
                     "shapes": [],
                     "params": [],
-                    "line": 455,
-                    "end": 458
+                    "line": 461,
+                    "end": 464
                 },
                 {
                     "routes": [],
@@ -98440,8 +98522,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 466,
-                    "end": 470
+                    "line": 472,
+                    "end": 476
                 }
             ]
         },

@@ -109,7 +109,7 @@ final readonly class Api
             new StructureController($s->db(), $s->types(), $s->taxonomies(), $caller),
             new ThemesController($s->site(), $s->permalinks(), $s->updates(), $caller, $s->contentDir()),
             new PreferencesController($s->appearance(), $s->hiddenIntegrations(), $caller),
-            new BundleController($s->app(), $caller, $s->engineChangelog()),
+            new BundleController($s->app(), $caller, $s->adminChangelog(), $s->engineChangelog()),
             new LanguageController($s->translations(), $s->users(), $s->site(), $s->capabilities(), $caller),
             new PackagesController($s->packages(), $s->site(), $caller),
             new UpdatesController($s->updates(), $s->coreStatus(), $caller),

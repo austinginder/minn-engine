@@ -29,6 +29,13 @@ if (defined('WP_CLI') && WP_CLI) {
     return;
 }
 
+// Requested straight over the web (/minn/bootstrap.php) instead of through
+// wp-settings.php: nothing is served from here, and nothing says what is here.
+if (!defined('ABSPATH') && PHP_SAPI !== 'cli') {
+    http_response_code(404);
+    return;
+}
+
 Minn\Autoloader::register();
 
 // Before anything else, as the reference does: a fresh .maintenance answers every request.
