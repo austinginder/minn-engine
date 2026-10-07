@@ -386,7 +386,7 @@ function wp_set_auth_cookie($user_id, $remember = false, $secure = '', $token = 
     $secureLoggedIn = (bool) apply_filters('secure_logged_in_cookie', $secure && is_ssl(), (int) $user_id, $secure);
     $sessions = new Sessions(new Users($runtime->db));
     if ($token === '') {
-        $token = $sessions->create((int) $user_id, $expiration, $runtime->request?->remoteAddress ?? '', (string) ($runtime->request?->header('user-agent') ?? ''));
+        $token = WP_Session_Tokens::get_instance((int) $user_id)->create($expiration);
     }
     $hash = (new AuthCookies($runtime->db, new Cookie($runtime->db, new Users($runtime->db), $sessions)))->hash();
     $scheme = $secure ? 'secure_auth' : 'auth';

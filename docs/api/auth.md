@@ -22,7 +22,7 @@ passwords, sessions, cookies, nonces, roles and capabilities
 | [`Roles`](#roles) | final class | 68 | Role definitions from the site's {prefix}user_roles option, parsed by a |
 | [`Salts`](#salts) | final class | 35 | The site's own secret material, read from the constants wp-config.php |
 | [`Sessions`](#sessions) | final readonly class | 166 | The session_tokens usermeta store: {sha256(token): {expiration, ip, ua, |
-| [`SignIn`](#signin) | final readonly class | 70 | The door itself: what a sign-in surface needs beyond checking a |
+| [`SignIn`](#signin) | final readonly class | 73 | The door itself: what a sign-in surface needs beyond checking a |
 | [`TypeCapabilities`](#typecapabilities) | final readonly class | 51 | The capability names a post type's permissions are built from. Posts and |
 
 ## ApplicationPasswords
@@ -749,7 +749,7 @@ Ends every session of a user (a password reset) and clears the cookies from the 
 
 The response with the sign-in cookies cleared.
 
-Internals: `open()` (private, line 59)
+Internals: `open()` (private, line 60)
 
 
 ## TypeCapabilities

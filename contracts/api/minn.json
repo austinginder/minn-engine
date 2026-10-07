@@ -10657,7 +10657,7 @@
             "namespace": "Minn\\Auth",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Auth/SignIn.php",
-            "lines": 70,
+            "lines": 73,
             "doc": "The door itself: what a sign-in surface needs beyond checking a\npassword. Sessions are minted here, the three cookies ride out on the\nresponse, and the failure counter behind the throttle is kept in one\nplace with the session store and the cookie jar it protects.",
             "implements": [],
             "extends": null,
@@ -10668,7 +10668,8 @@
                 "Minn\\Auth\\Sessions",
                 "Minn\\Content\\UserRecord",
                 "Minn\\Http\\Request",
-                "Minn\\Http\\Response"
+                "Minn\\Http\\Response",
+                "Minn\\Runtime\\Runtime"
             ],
             "usedBy": [
                 "Minn\\Engine",
@@ -10702,8 +10703,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 21,
-                "end": 26
+                "line": 22,
+                "end": 27
             },
             "cases": [],
             "constants": [
@@ -10761,8 +10762,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 29,
-                    "end": 32
+                    "line": 30,
+                    "end": 33
                 },
                 {
                     "routes": [],
@@ -10781,8 +10782,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 35,
-                    "end": 38
+                    "line": 36,
+                    "end": 39
                 },
                 {
                     "routes": [],
@@ -10793,8 +10794,8 @@
                     "doc": "The cookie-name hash the sign-in cookies, the postpass cookie, and the reset cookie share.",
                     "shapes": [],
                     "params": [],
-                    "line": 41,
-                    "end": 44
+                    "line": 42,
+                    "end": 45
                 },
                 {
                     "routes": [],
@@ -10827,8 +10828,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 47,
-                    "end": 50
+                    "line": 48,
+                    "end": 51
                 },
                 {
                     "routes": [],
@@ -10861,8 +10862,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 53,
-                    "end": 56
+                    "line": 54,
+                    "end": 57
                 },
                 {
                     "routes": [],
@@ -10888,8 +10889,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 68,
-                    "end": 72
+                    "line": 72,
+                    "end": 76
                 },
                 {
                     "routes": [],
@@ -10915,8 +10916,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 75,
-                    "end": 79
+                    "line": 79,
+                    "end": 83
                 },
                 {
                     "routes": [],
@@ -10935,8 +10936,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 82,
-                    "end": 85
+                    "line": 86,
+                    "end": 89
                 },
                 {
                     "routes": [],
@@ -10976,8 +10977,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 59,
-                    "end": 65
+                    "line": 60,
+                    "end": 69
                 }
             ]
         },
@@ -116965,6 +116966,7 @@
                 "Minn\\Auth\\Authenticator",
                 "Minn\\Auth\\Capabilities",
                 "Minn\\Auth\\RegisteredCaps",
+                "Minn\\Auth\\SignIn",
                 "Minn\\Blocks\\Dynamic\\Theme\\Comments",
                 "Minn\\Blocks\\Dynamic\\Theme\\Navigation",
                 "Minn\\Blocks\\Dynamic\\Theme\\PostBlocks",

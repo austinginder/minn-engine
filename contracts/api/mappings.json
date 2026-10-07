@@ -3,11 +3,11 @@
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line)",
     "summary": {
         "minn": 658,
-        "composes": 963,
-        "leaf": 658,
-        "noop": 1906,
-        "functions": 4115,
-        "minnMethods": 732,
+        "composes": 968,
+        "leaf": 660,
+        "noop": 1921,
+        "functions": 4137,
+        "minnMethods": 731,
         "leafLinesOver15": 12
     },
     "functions": {
@@ -10563,6 +10563,112 @@
             "minn": [],
             "composes": []
         },
+        "WP_Session_Tokens::__construct": {
+            "file": "classes/WP_Session_Tokens.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Session_Tokens::create": {
+            "file": "classes/WP_Session_Tokens.php",
+            "lines": 12,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "apply_filters",
+                "wp_generate_password",
+                "wp_unslash"
+            ]
+        },
+        "WP_Session_Tokens::destroy": {
+            "file": "classes/WP_Session_Tokens.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Session_Tokens::destroy_all": {
+            "file": "classes/WP_Session_Tokens.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Session_Tokens::destroy_all_for_all_users": {
+            "file": "classes/WP_Session_Tokens.php",
+            "lines": 2,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "apply_filters"
+            ]
+        },
+        "WP_Session_Tokens::destroy_others": {
+            "file": "classes/WP_Session_Tokens.php",
+            "lines": 6,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Session_Tokens::drop_sessions": {
+            "file": "classes/WP_Session_Tokens.php",
+            "lines": 0,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Session_Tokens::get": {
+            "file": "classes/WP_Session_Tokens.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Session_Tokens::get_all": {
+            "file": "classes/WP_Session_Tokens.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Session_Tokens::get_instance": {
+            "file": "classes/WP_Session_Tokens.php",
+            "lines": 2,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "apply_filters"
+            ]
+        },
+        "WP_Session_Tokens::hash_token": {
+            "file": "classes/WP_Session_Tokens.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Session_Tokens::is_still_valid": {
+            "file": "classes/WP_Session_Tokens.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Session_Tokens::update": {
+            "file": "classes/WP_Session_Tokens.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Session_Tokens::verify": {
+            "file": "classes/WP_Session_Tokens.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
         "WP_Site_Health::__construct": {
             "file": "classes/WP_Site_Health.php",
             "lines": 11,
@@ -13573,6 +13679,69 @@
                 "Minn\\Runtime\\Runtime::db->prefix"
             ],
             "composes": [
+                "update_user_meta"
+            ]
+        },
+        "WP_User_Meta_Session_Tokens::destroy_all_sessions": {
+            "file": "classes/WP_Session_Tokens.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "WP_User_Meta_Session_Tokens::destroy_other_sessions": {
+            "file": "classes/WP_Session_Tokens.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "WP_User_Meta_Session_Tokens::drop_sessions": {
+            "file": "classes/WP_Session_Tokens.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "delete_metadata"
+            ]
+        },
+        "WP_User_Meta_Session_Tokens::get_session": {
+            "file": "classes/WP_Session_Tokens.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "WP_User_Meta_Session_Tokens::get_sessions": {
+            "file": "classes/WP_Session_Tokens.php",
+            "lines": 5,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "get_user_meta"
+            ]
+        },
+        "WP_User_Meta_Session_Tokens::prepare_session": {
+            "file": "classes/WP_Session_Tokens.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "WP_User_Meta_Session_Tokens::update_session": {
+            "file": "classes/WP_Session_Tokens.php",
+            "lines": 7,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "WP_User_Meta_Session_Tokens::update_sessions": {
+            "file": "classes/WP_Session_Tokens.php",
+            "lines": 5,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "delete_user_meta",
                 "update_user_meta"
             ]
         },
@@ -35759,7 +35928,6 @@
                 "Minn\\Auth\\AuthCookies::mint",
                 "Minn\\Auth\\Cookie::__construct",
                 "Minn\\Auth\\Sessions::__construct",
-                "Minn\\Auth\\Sessions::create",
                 "Minn\\Content\\Users::__construct",
                 "Minn\\Runtime\\Runtime::current"
             ],
