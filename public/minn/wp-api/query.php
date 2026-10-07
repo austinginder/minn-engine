@@ -406,10 +406,36 @@ function _minn_document_title(array $parts): string
     return (string) apply_filters('document_title', $title);
 }
 
+/** The document title: the parts the page renderer stood, or, for anything else (a feed, code of its own), the parts the main query makes. */
 function wp_get_document_title()
 {
     $parts = Runtime::current()->get('document_title_parts');
-    return _minn_document_title(is_array($parts) ? $parts : ['title' => get_bloginfo('name')]);
+    return _minn_document_title(is_array($parts) ? $parts : _minn_query_title_parts());
+}
+
+/** @internal the document title's parts as the reference makes them from the main query's state (probe feed-tags) */
+function _minn_query_title_parts(): array
+{
+    $title = match (true) {
+        is_404() => __('Page not found'),
+        is_search() => sprintf(__('Search Results for &#8220;%s&#8221;'), get_search_query()),
+        is_front_page() => get_bloginfo('name', 'display'),
+        is_post_type_archive() => post_type_archive_title('', false),
+        is_tax() => single_term_title('', false),
+        is_home() || is_singular() => single_post_title('', false),
+        is_category() || is_tag() => single_term_title('', false),
+        is_author() && get_queried_object() => get_queried_object()->display_name,
+        is_year() => get_the_date(_x('Y', 'yearly archives date format')),
+        is_month() => get_the_date(_x('F Y', 'monthly archives date format')),
+        is_day() => get_the_date(),
+        default => '',
+    };
+    $parts = ['title' => $title];
+    $paged = max((int) ($GLOBALS['paged'] ?? 0), (int) ($GLOBALS['page'] ?? 0));
+    if ($paged >= 2 && !is_404()) {
+        $parts['page'] = sprintf(__('Page %s'), $paged);
+    }
+    return $parts + (is_front_page() ? ['tagline' => get_bloginfo('description', 'display')] : ['site' => get_bloginfo('name', 'display')]);
 }
 
 /** A slug the post no longer has sends a 404 to the post's current link (the engine's resolver already did this before plugins ran). */

@@ -411,6 +411,15 @@ function get_comment_date($format = '', $comment_id = 0)
     return apply_filters('get_comment_date', mysql2date($format === '' ? get_option('date_format') : $format, $comment->comment_date), $format, $comment);
 }
 
+/** When an approved comment last arrived, in GMT ('gmt', and the server's own, which is GMT here) or the site's time ('blog'); false with none. */
+function get_lastcommentmodified($timezone = 'server')
+{
+    global $wpdb;
+    $timezone = strtolower((string) $timezone);
+    $value = $wpdb->get_var('SELECT ' . ($timezone === 'blog' ? 'comment_date' : 'comment_date_gmt') . " FROM {$wpdb->comments} WHERE comment_approved = '1' ORDER BY comment_date_gmt DESC LIMIT 1");
+    return apply_filters('get_lastcommentmodified', $value === null ? false : $value, $timezone);
+}
+
 function get_comment_link($comment = null, $args = [])
 {
     $comment = get_comment($comment);

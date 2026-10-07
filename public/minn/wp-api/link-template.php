@@ -293,18 +293,19 @@ function bloginfo($show = '')
     echo get_bloginfo($show, 'display');
 }
 
+/** A feed's address (the default feed bare, through feed_link handed '' for it), or its ?feed= form without pretty permalinks. */
 function get_feed_link($feed = '')
 {
-    $home = home_url();
     $feed = (string) $feed;
-    $default = get_default_feed();
-    if (str_starts_with($feed, 'comments_')) {
-        $feed = substr($feed, 9);
-        $suffix = $feed === $default ? '' : '/' . $feed;
-        return apply_filters('feed_link', $home . '/comments/feed' . $suffix . '/', $feed);
+    if (!get_option('permalink_structure')) {
+        $feed = str_replace('comments_', 'comments-', $feed !== '' ? $feed : get_default_feed());
+        return apply_filters('feed_link', home_url("?feed={$feed}"), $feed);
     }
-    $suffix = $feed === '' || $feed === $default ? '' : '/' . $feed;
-    return apply_filters('feed_link', $home . '/feed' . $suffix . '/', $feed);
+    $comments = str_contains($feed, 'comments_');
+    $feed = str_replace('comments_', '', $feed);
+    $feed = $feed === get_default_feed() ? '' : $feed;
+    $path = preg_replace('#/+#', '/', '/' . ($comments ? 'comments/' : '') . 'feed/' . $feed);
+    return apply_filters('feed_link', home_url(user_trailingslashit(rtrim((string) $path, '/'), 'feed')), $feed);
 }
 
 function get_default_feed()

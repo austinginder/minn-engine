@@ -570,11 +570,28 @@ class WP_Query
 
     public function have_comments()
     {
+        if ($this->current_comment + 1 < $this->comment_count) {
+            return true;
+        }
+        if ($this->current_comment + 1 === $this->comment_count) {
+            $this->rewind_comments();
+        }
         return false;
     }
 
     public function the_comment()
     {
+        $GLOBALS['comment'] = $this->next_comment();
+        if ($this->current_comment === 0) {
+            do_action('comment_loop_start');
+        }
+    }
+
+    public function next_comment()
+    {
+        ++$this->current_comment;
+        $this->comment = $this->comments[$this->current_comment] ?? null;
+        return $this->comment;
     }
 
     public function rewind_comments()

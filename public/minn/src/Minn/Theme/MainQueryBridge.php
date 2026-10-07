@@ -36,13 +36,18 @@ final readonly class MainQueryBridge
     ) {
     }
 
-    /** The page of posts a resolution shows, through the runtime's main query when it is up. */
-    public function stand(Resolution $resolution): Page
+    /**
+     * The page of posts a resolution shows, through the runtime's main query
+     * when it is up; the variables a request adds of its own (a feed's) win.
+     *
+     * @param array<string, mixed> $extra
+     */
+    public function stand(Resolution $resolution, array $extra = []): Page
     {
         if (!Runtime::booted()) {
             return $this->listing($resolution);
         }
-        $vars = $this->vars($resolution);
+        $vars = $extra + $this->vars($resolution);
         \_minn_seed_wp_request($vars);
         $wp = $GLOBALS['wp'];
         $request = Runtime::current()->request;

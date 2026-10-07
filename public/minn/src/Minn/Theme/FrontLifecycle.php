@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Minn\Theme;
 
 use Minn\Http\Response;
+use Minn\Runtime\Runtime;
 
 /**
  * WordPress's front-end request steps around the main query, as WP::main
@@ -75,11 +76,16 @@ final class FrontLifecycle
     {
         $headers = \is_user_logged_in() ? \wp_get_nocache_headers() : [];
         $status = !empty($wp->query_vars['error']) ? (int) $wp->query_vars['error'] : null;
+        $fresh = false;
         if ($status === 404 && !\is_user_logged_in()) {
             $headers = array_merge($headers, \wp_get_nocache_headers());
         }
-        if ($status === null || $status === 404) {
+        if ($status === 404 || ($status === null && empty($wp->query_vars['feed']))) {
             $headers['Content-Type'] = \get_option('html_type') . '; charset=' . \get_option('blog_charset');
+        } elseif ($status === null) {
+            [$feed, $fresh] = FeedHeaders::for($wp->query_vars, Runtime::current()->request);
+            $headers = array_merge($headers, $feed);
+            $status = $fresh ? 304 : null;
         }
         if (\is_singular()) {
             $post = \get_queried_object();
@@ -96,6 +102,10 @@ final class FrontLifecycle
         }
         foreach ($headers as $name => $value) {
             Response::emitHeader("{$name}: {$value}");
+        }
+        // A reader whose copy of the feed is current is told so, and nothing more.
+        if ($fresh) {
+            throw new NotModified();
         }
         \do_action_ref_array('send_headers', [&$wp]);
     }

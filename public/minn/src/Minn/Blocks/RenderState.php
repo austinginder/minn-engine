@@ -100,6 +100,25 @@ final class RenderState
         }
     }
 
+    /**
+     * Runs rendering whose images do not count toward the page's loading
+     * budget (an excerpt's): the reference fits no image while it makes one,
+     * so whatever was seen meanwhile is given back.
+     *
+     * @template T
+     * @param \Closure(): T $render
+     * @return T
+     */
+    public function aside(\Closure $render): mixed
+    {
+        [$images, $claimed] = [$this->images, $this->priorityClaimed];
+        try {
+            return $render();
+        } finally {
+            [$this->images, $this->priorityClaimed] = [$images, $claimed];
+        }
+    }
+
     /** True once, for the image that gets fetchpriority="high". */
     public function claimPriority(): bool
     {

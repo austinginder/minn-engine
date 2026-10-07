@@ -13,7 +13,7 @@ the block parser and renderer
 | [`Layout`](#layout) | final class | 124 | The layout-support classes the reference adds at render time. Every |
 | [`Parser`](#parser) | final class | 91 | Parses block markup into a tree. The grammar is the delimiter comment: |
 | [`QueryVars`](#queryvars) | final class | 122 | The query variables a Query Loop block's context asks for, the way the |
-| [`RenderState`](#renderstate) | final class | 302 | Per-request rendering state, owned by the renderer. The reference numbers |
+| [`RenderState`](#renderstate) | final class | 321 | Per-request rendering state, owned by the renderer. The reference numbers |
 | [`Renderer`](#renderer) | final class | 231 | Renders a block tree the way the reference renders post_content: |
 | [`Selector`](#selector) | final class | 42 | The CSS selector a block type declares for its root or for one feature, from its `selectors` map or the older per-support keys. |
 | [`Serializer`](#serializer) | final class | 46 | Parsed blocks back to markup. A core block is written by its short name; |
@@ -340,6 +340,14 @@ Content images seen so far in this page, for the loading rules.
 
 Images a plugin's block filter removed from the page give their budget
 back, so the next image still counts as if the hidden ones never rendered.
+
+### `aside(Closure $render): mixed`
+
+Runs rendering whose images do not count toward the page's loading
+budget (an excerpt's): the reference fits no image while it makes one,
+so whatever was seen meanwhile is given back.
+
+- `@param \Closure(): T $render`
 
 ### `claimPriority(): bool`
 

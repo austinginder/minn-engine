@@ -262,6 +262,9 @@ final class PostQuery
             $parts->where = \apply_filters_ref_array('posts_where', [$parts->where, &$query]);
             $parts->join = \apply_filters_ref_array('posts_join', [$parts->join, &$query]);
         }
+        if ($query->is_comment_feed && !$query->is_singular) {
+            CommentFeedQuery::listing($query, $parts, $this->wpdb);
+        }
         $this->paging($q);
         if ($filter) {
             $this->through(['posts_where_paged' => 'where', 'posts_groupby' => 'groupby', 'posts_join_paged' => 'join', 'posts_orderby' => 'orderby', 'posts_distinct' => 'distinct', 'post_limits' => 'limits', 'posts_fields' => 'fields'], 'posts_clauses');
@@ -320,6 +323,9 @@ final class PostQuery
         }
         if (!$q['suppress_filters']) {
             $query->posts = \apply_filters_ref_array('posts_results', [$query->posts, &$query]);
+        }
+        if ($query->is_comment_feed && $query->is_singular && !empty($query->posts)) {
+            CommentFeedQuery::single($query, $this->wpdb);
         }
         (new PostQueryResults($query, $this->parts))->settle($q);
         return $query->posts;

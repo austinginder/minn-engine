@@ -30,13 +30,15 @@ final class ClassicContent
         }
         $raw = (string) ($post->content);
         if (PasswordGate::is($post)) {
-            $raw = PasswordGate::form($post, $permalinks->url(''), $permalinks->forPost($post));
+            // The form takes the content's place and runs the content filters, paragraphs first, as the reference's the_content does.
+            return Runtime::contentFilter(\wpautop(PasswordGate::form($post, $permalinks->url(''), $permalinks->forPost($post))));
         }
         if (trim($raw) === '') {
             return '';
         }
         $more = strpos($raw, '<!--more-->');
-        if (!\is_singular() && $more !== false) {
+        // The teaser stops at the more tag unless the whole text is wanted: a single post or page, or a feed ($more, as setup_postdata leaves it).
+        if (!\is_singular() && empty($GLOBALS['more']) && $more !== false) {
             $label = $moreLinkText ?? '(more&hellip;)';
             $suffix = "\n" . ' <a href="' . Html::attr($permalinks->forPost($post) . '#more-' . $post->id) . '" class="more-link"><span aria-label="Continue reading ' . Html::attr(Texturize::text($post->title)) . '">' . $label . '</span></a>';
             $content = rtrim(Blocks::render(substr($raw, 0, $more))) . $suffix;

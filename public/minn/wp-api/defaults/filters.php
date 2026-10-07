@@ -67,6 +67,19 @@ add_filter('the_content_feed', 'wp_staticize_emoji');
 add_filter('the_content_feed', '_oembed_filter_feed_content');
 add_filter('the_excerpt_rss', 'ent2ncr', 8);
 add_filter('the_excerpt_rss', 'convert_chars');
+// What a feed's text runs through on its way out (probe feed-tags).
+add_filter('the_title_rss', 'ent2ncr', 8);
+add_filter('the_title_rss', 'strip_tags');
+add_filter('the_title_rss', 'esc_html');
+add_filter('the_content_rss', 'ent2ncr', 8);
+add_filter('comment_author_rss', 'ent2ncr', 8);
+add_filter('comment_text_rss', 'ent2ncr', 8);
+add_filter('comment_text_rss', 'esc_html');
+add_filter('comment_text_rss', 'wp_staticize_emoji');
+add_filter('bloginfo_rss', 'ent2ncr', 8);
+add_filter('the_author', 'ent2ncr', 8);
+add_filter('the_guid', 'esc_url');
+add_filter('term_name_rss', 'convert_chars');
 add_action('wp_head', 'wp_enqueue_scripts', 1);
 add_action('wp_enqueue_scripts', 'wp_common_block_scripts_and_styles', 10);
 // A block widget's content runs the block and shortcode pipelines; fitting an
@@ -306,3 +319,14 @@ add_action('wp_body_open', 'wp_admin_bar_render', 0);
 add_action('wp_footer', 'wp_admin_bar_render', 1000);
 add_action('in_admin_header', 'wp_admin_bar_render', 0);
 add_filter('show_admin_bar', '_minn_front_toolbar', 100);
+
+// The feeds: their handlers, and what each feed's head carries (the generator line, the site icon).
+add_action('do_feed_rdf', 'do_feed_rdf', 10, 0);
+add_action('do_feed_rss', 'do_feed_rss', 10, 0);
+add_action('do_feed_rss2', 'do_feed_rss2', 10, 1);
+add_action('do_feed_atom', 'do_feed_atom', 10, 1);
+foreach (['rss2_head', 'commentsrss2_head', 'rss_head', 'rdf_header', 'atom_head', 'comments_atom_head'] as $minnFeedHead) {
+    add_action($minnFeedHead, 'the_generator');
+}
+add_action('rss2_head', 'rss2_site_icon');
+add_action('atom_head', 'atom_site_icon');

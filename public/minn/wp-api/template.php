@@ -730,13 +730,29 @@ function the_generator($type)
     echo apply_filters('the_generator', get_the_generator($type), $type) . "\n";
 }
 
+/** The generator line for a type; with none, the type the feed hook it runs on implies (nothing outside one). */
 function get_the_generator($type = '')
 {
-    $version = (string) ($GLOBALS['wp_version'] ?? '');
+    if (empty($type)) {
+        $type = match (current_filter()) {
+            'rss2_head', 'commentsrss2_head' => 'rss2',
+            'rss_head', 'opml_head' => 'comment',
+            'rdf_header' => 'rdf',
+            'atom_head', 'comments_atom_head', 'app_head' => 'atom',
+            default => '',
+        };
+        if ($type === '') {
+            return null;
+        }
+    }
+    $version = (string) get_bloginfo('version');
     $gen = match ($type) {
-        'atom' => '<generator uri="https://wordpress.org/" version="' . esc_attr($version) . '">WordPress</generator>',
-        'rss2' => '<generator>' . esc_url_raw('https://wordpress.org/?v=' . $version) . '</generator>',
+        'html' => '<meta name="generator" content="WordPress ' . esc_attr($version) . '">',
+        'atom' => '<generator uri="https://wordpress.org/" version="' . esc_attr(get_bloginfo_rss('version')) . '">WordPress</generator>',
+        'rss2' => '<generator>' . sanitize_url('https://wordpress.org/?v=' . get_bloginfo_rss('version')) . '</generator>',
+        'rdf' => '<admin:generatorAgent rdf:resource="' . sanitize_url('https://wordpress.org/?v=' . get_bloginfo_rss('version')) . '" />',
         'comment' => '<!-- generator="WordPress/' . esc_attr($version) . '" -->',
+        'export' => '<!-- generator="WordPress/' . esc_attr(get_bloginfo_rss('version')) . '" created="' . gmdate('Y-m-d H:i') . '" -->',
         default => '<meta name="generator" content="WordPress ' . esc_attr($version) . '" />',
     };
     return apply_filters("get_the_generator_{$type}", $gen, $type);

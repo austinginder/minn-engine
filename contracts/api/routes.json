@@ -1,7 +1,7 @@
 {
     "engine": "0.0.1",
-    "routes": 273,
-    "withPolicy": 267,
+    "routes": 275,
+    "withPolicy": 269,
     "entries": [
         {
             "method": "GET",
@@ -1648,7 +1648,7 @@
             "pattern": "/comments/feed",
             "name": "Minn\\Front\\FeedController::commentsFeed",
             "handler": "Minn\\Front\\FeedController::commentsFeed",
-            "summary": "The comments feed.",
+            "summary": "The site's comments feed in one of its kinds.",
             "policy": {
                 "access": "Public",
                 "describe": "public"
@@ -1662,7 +1662,35 @@
             "pattern": "/comments/feed/",
             "name": "Minn\\Front\\FeedController::commentsFeed",
             "handler": "Minn\\Front\\FeedController::commentsFeed",
-            "summary": "The comments feed.",
+            "summary": "The site's comments feed in one of its kinds.",
+            "policy": {
+                "access": "Public",
+                "describe": "public"
+            },
+            "args": [],
+            "body": [],
+            "index": true
+        },
+        {
+            "method": "GET",
+            "pattern": "/comments/feed/{kind:rss2|rss|atom|rdf}",
+            "name": "Minn\\Front\\FeedController::commentsFeed",
+            "handler": "Minn\\Front\\FeedController::commentsFeed",
+            "summary": "The site's comments feed in one of its kinds.",
+            "policy": {
+                "access": "Public",
+                "describe": "public"
+            },
+            "args": [],
+            "body": [],
+            "index": true
+        },
+        {
+            "method": "GET",
+            "pattern": "/comments/feed/{kind:rss2|rss|atom|rdf}/",
+            "name": "Minn\\Front\\FeedController::commentsFeed",
+            "handler": "Minn\\Front\\FeedController::commentsFeed",
+            "summary": "The site's comments feed in one of its kinds.",
             "policy": {
                 "access": "Public",
                 "describe": "public"

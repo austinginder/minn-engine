@@ -14,7 +14,10 @@ URL resolution, permalinks, feeds, sitemaps and the public page
 | [`CommentPostController`](#commentpostcontroller) | final readonly class | 174 | wp-comments-post.php: the comment form's target. The reference's |
 | [`CustomLogo`](#customlogo) | final class | 27 | The site logo a theme prints, as get_custom_logo builds it (probe |
 | [`DocumentTitle`](#documenttitle) | final class | 47 | The document title as parts (title, tagline, page, site) in the order the |
-| [`FeedController`](#feedcontroller) | final readonly class | 94 | The feeds: the site's, the comments', a post's or an archive's by the |
+| [`FeedController`](#feedcontroller) | final readonly class | 143 | The feeds: the site's, the comments', a post's or an archive's by the |
+| [`FeedTags`](#feedtags) | final class | 140 | The template tags a feed is written with that take more than a line, as |
+| [`FeedTemplates`](#feedtemplates) | final class | 295 | The feed templates do_feed_* loads, written from the reference's output |
+| [`FeedWriter`](#feedwriter) | final class | 35 | A feed as it is written: text as given, and what each template tag and |
 | [`Feeds`](#feeds) | final readonly class | 316 | The syndication feeds, byte for byte in the reference's shape: RSS 2.0 |
 | [`FrontController`](#frontcontroller) | final readonly class | 57 | The public site. One catch-all route: resolve the URL, then either |
 | [`Kind`](#kind) | enum | 17 | What a public URL resolved to. |
@@ -29,7 +32,7 @@ URL resolution, permalinks, feeds, sitemaps and the public page
 | [`PostEmbed`](#postembed) | final class | 104 | A post as other sites embed it, the oEmbed provider side, as the |
 | [`PostNavigation`](#postnavigation) | final class | 36 | The links to the posts either side of this one, and the nav block that |
 | [`ProbeController`](#probecontroller) | final readonly class | 57 | The surface monitors, crawlers, and hosting checks hit that is not a |
-| [`Redirects`](#redirects) | enum | 17 | Whether a resolution may answer with a canonical redirect. A GET or HEAD |
+| [`Redirects`](#redirects) | enum | 23 | Whether a resolution may answer with a canonical redirect. A GET or HEAD |
 | [`Renderer`](#renderer) | final readonly class | 156 | The interim public theme: one clean template until the block-theme |
 | [`Resolution`](#resolution) | final readonly class | 108 | The outcome of resolving a public URL: which kind of thing it names, |
 | [`Resolver`](#resolver) | final readonly class | 554 | Turns a public URL into a Resolution, following the reference's observed |
@@ -335,13 +338,17 @@ Route: `GET /feed/{kind:rss2|rss|atom|rdf}/ (public)`
 
 The site feed in one of its kinds.
 
-### `commentsFeed(Minn\Http\Request $request): Minn\Http\Response`
+### `commentsFeed(Minn\Http\Request $request, string $kind = 'rss2'): Minn\Http\Response`
 
 Route: `GET /comments/feed (public)`
 
 Route: `GET /comments/feed/ (public)`
 
-The comments feed.
+Route: `GET /comments/feed/{kind:rss2|rss|atom|rdf} (public)`
+
+Route: `GET /comments/feed/{kind:rss2|rss|atom|rdf}/ (public)`
+
+The site's comments feed in one of its kinds.
 
 ### `pathFeed(Minn\Http\Request $request, string $path, string $kind = 'rss2'): Minn\Http\Response`
 
@@ -357,9 +364,104 @@ A post's comment feed, or an archive's feed, by resolving the path in front of /
 
 ### `queryFeed(Minn\Http\Request $request, Minn\Front\Resolution $resolution, string $kind): Minn\Http\Response`
 
-The ?feed= query form on any resolvable path.
+The ?feed= query form on any resolvable path: any feed a handler answers, a plugin's own included.
 
-Internals: `feed()` (private, line 82), `feedResponse()` (private, line 114)
+Internals: `feed()` (private, line 95), `served()` (private, line 110), `engineFeed()` (private, line 134), `feedResponse()` (private, line 166)
+
+
+## FeedTags
+
+`final class Minn\Front\FeedTags` · `public/minn/src/Minn/Front/FeedTags.php`
+
+The template tags a feed is written with that take more than a line, as
+the reference answers them in a feed's loop (probe feed-tags): a post's
+categories and tags in each feed's markup, its enclosures for RSS and
+Atom, the link to its comments feed, the feed's build date, and the site
+icon a feed carries.
+
+### static `categories(string $type): string`
+
+A post's category and tag names (each once) in a feed type's markup, before the_category_rss.
+
+### static `rssEnclosures(): string`
+
+The current post's enclosures as RSS has them: address, length, and the type the third line starts with.
+
+### static `atomEnclosures(): string`
+
+The current post's enclosures as Atom links: the length a line that is a number, the type a line that is a known MIME type.
+
+### static `postCommentsFeedLink(int $postId, string $feed): string`
+
+The address of a post's comments feed in a feed type (the default one bare), through post_comments_feed_link.
+
+### static `buildDate(string $format): string`
+
+When the feed last changed, in a format: the newest of its posts'
+modifications (and comments, for a comments feed); once the loop has
+run out, the site's last modification; failing both, now.
+
+### static `rss2Icon(): string`
+
+The site icon as an RSS 2.0 image (titled with the feed's title), or '' without one.
+
+### static `atomIcon(): string`
+
+The site icon as an Atom icon, or '' without one.
+
+Internals: `enclosures()` (private, line 37)
+
+
+## FeedTemplates
+
+`final class Minn\Front\FeedTemplates` · `public/minn/src/Minn/Front/FeedTemplates.php`
+
+The feed templates do_feed_* loads, written from the reference's output
+(suite feed-hooks, probes feed-templates): RSS 2.0, Atom, RDF and RSS
+0.92 for posts, RSS 2.0 and Atom for comments. Each is written through
+the template tags, so every feed filter has its say, and fires each feed
+action where the reference fires it; the whitespace between is the
+reference's. A template is written once a request, as require_once
+loads it, and sends its content type through the header callback first.
+
+- const `SYNDICATION` = `'	xmlns:sy="http://purl.org/rss/1.0/modules/syndication/" '`
+
+
+### static `load(string $name, Closure $send): string`
+
+A feed template by its name (rss2, rss2-comments, atom, atom-comments,
+rdf, rss), between wp_before_load_template and wp_after_load_template.
+
+- `@param Closure(string): void $send sends a header line (the Content-Type)`
+
+Internals: `syndication()` (private, line 58), `rss2()` (private, line 63), `rss2Item()` (private, line 82), `atom()` (private, line 108), `atomEntry()` (private, line 127), `rdf()` (private, line 154), `rdfItem()` (private, line 178), `rss()` (private, line 193), `commentsTitle()` (private, line 211), `commentTitle()` (private, line 223), `current()` (private, line 232), `rss2Comments()` (private, line 239), `rss2Comment()` (private, line 257), `atomComments()` (private, line 271), `atomComment()` (private, line 293)
+
+
+## FeedWriter
+
+`final class Minn\Front\FeedWriter` · `public/minn/src/Minn/Front/FeedWriter.php`
+
+A feed as it is written: text as given, and what each template tag and
+action prints, in the order the template asks for them.
+
+Used by: `Minn\Front\FeedTemplates`
+
+
+### `put(string ...$text): self`
+
+Text as written.
+
+### `tag(string $function, mixed ...$args): self`
+
+What a function that prints (a template tag) prints, called with its arguments.
+
+### `act(string $hook, mixed ...$args): self`
+
+What an action's callbacks print.
+
+### `text(): string`
+
+Everything written so far.
 
 
 ## Feeds
@@ -873,6 +975,10 @@ Used by: `Minn\Front\Resolver`, `Minn\Front\SingleAddresses`
 ### static `forMethod(Minn\Http\Method $method): self`
 
 The mode a request's method allows.
+
+### static `forRequest(Minn\Http\Request $request): self`
+
+The mode for a request: its method's, except that a feed is served where it was asked for, as the reference serves it.
 
 ### `follows(): bool`
 

@@ -80,7 +80,7 @@ final readonly class Resolver
      */
     public function resolve(Request $request): Resolution
     {
-        $redirects = Redirects::forMethod($request->method);
+        $redirects = Redirects::forRequest($request);
         // A plugin's own rewrite rules: 'top' rules outrank everything the
         // engine would resolve, 'bottom' rules catch what it could not.
         $ruleVars = PluginRules::match($request->path, top: true);

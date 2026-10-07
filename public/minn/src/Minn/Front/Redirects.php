@@ -21,6 +21,12 @@ enum Redirects
         return $method->canonicalRedirects() ? self::Follow : self::Hold;
     }
 
+    /** The mode for a request: its method's, except that a feed is served where it was asked for, as the reference serves it. */
+    public static function forRequest(\Minn\Http\Request $request): self
+    {
+        return $request->has('feed') ? self::Hold : self::forMethod($request->method);
+    }
+
     /** Whether a canonical redirect may be answered. */
     public function follows(): bool
     {

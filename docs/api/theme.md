@@ -7,15 +7,17 @@ the block-theme reader, templates, global styles and the page renderer
 | [`ArchiveTitle`](#archivetitle) | final class | 54 | The label and name an archive titles itself with: `Category:` around the |
 | [`BodyClasses`](#bodyclasses) | final class | 65 | The body-class list a classic theme's body_class() starts from, in the |
 | [`BodyFacts`](#bodyfacts) | final readonly class | 11 | The facts about a page that decide the body classes a classic theme's |
-| [`ClassicContent`](#classiccontent) | final class | 37 | What a classic theme's the_content() prints: the engine's block pipeline |
+| [`ClassicContent`](#classiccontent) | final class | 39 | What a classic theme's the_content() prints: the engine's block pipeline |
 | [`ClassicRenderer`](#classicrenderer) | final readonly class | 139 | A whole page from the active classic theme: the reference's PHP template |
 | [`ClassicTheme`](#classictheme) | final readonly class | 31 | The active classic (PHP-template) theme on disk. A theme is classic when |
+| [`FeedHeaders`](#feedheaders) | final class | 50 | The headers a feed is sent with, as the reference's send_headers sends |
 | [`Folder`](#folder) | final readonly class | 77 | A theme folder read from disk: its style.css headers, which folder its templates come from, its screenshot, whether it is a block theme. |
-| [`FrontLifecycle`](#frontlifecycle) | final class | 84 | WordPress's front-end request steps around the main query, as WP::main |
+| [`FrontLifecycle`](#frontlifecycle) | final class | 93 | WordPress's front-end request steps around the main query, as WP::main |
 | [`GlobalStyles`](#globalstyles) | final readonly class | 555 | theme.json to CSS. Presets become custom properties on :root and their |
 | [`HeadLinks`](#headlinks) | final readonly class | 114 | The links the reference puts in every head: the site and comments |
 | [`Hierarchy`](#hierarchy) | final class | 146 | The classic template hierarchy: the candidate file names each template |
-| [`MainQueryBridge`](#mainquerybridge) | final readonly class | 118 | Stands the main query for a themed page and runs the front-end steps |
+| [`MainQueryBridge`](#mainquerybridge) | final readonly class | 123 | Stands the main query for a themed page and runs the front-end steps |
+| [`NotModified`](#notmodified) | final class | 3 | Raised once a reader's copy of a feed has been found current and the |
 | [`PageRenderer`](#pagerenderer) | final readonly class | 197 | A whole page from the active block theme: the template the resolution |
 | [`PatternText`](#patterntext) | final class | 198 | Block-theme patterns are PHP files whose only code is a handful of |
 | [`StylePresets`](#stylepresets) | final class | 174 | The preset side of theme.json: the colour, gradient, font-size, |
@@ -163,6 +165,30 @@ Used by: `Minn\Engine`, `Minn\Theme\ClassicRenderer`
 ### static `active(Minn\Content\Site $site, string $themesDir): ?self`
 
 The active classic theme, or null under a block theme.
+
+
+## FeedHeaders
+
+`final class Minn\Theme\FeedHeaders` · `public/minn/src/Minn/Theme/FeedHeaders.php`
+
+The headers a feed is sent with, as the reference's send_headers sends
+them (suite feed-hooks): the feed type's content type, and when the site
+last changed (its posts, and its comments too for a comments feed) as
+Last-Modified with an ETag over it; a reader whose copy carries that
+date or tag is told the copy is current.
+
+- const `FORMAT` = `'D, d M Y H:i:s'`
+
+Used by: `Minn\Theme\FrontLifecycle`
+
+### static `for(array $vars, ?Minn\Http\Request $request): array`
+
+The headers, and whether the reader's copy is current.
+
+- `@param array<string, mixed> $vars the request's query variables`
+- `@return array{0: array<string, string>, 1: bool}`
+
+Internals: `carriesComments()` (private, line 50)
 
 
 ## Folder
@@ -437,22 +463,36 @@ engine resolved. Without the runtime, the engine's own listing.
 
 - const `LISTINGS` = `array (   0 =>    \Minn\Front\Kind::Home,   1 =>    \Minn\Front\Kind::Category,   2 =>    \Minn\Front\Kind::Tag,   3 =>    \Minn\Front\Kind::Taxonomy,   4 =>    \Minn\Front\Kind::PostTypeArchive,   5 =>    \Minn\Front\Kind::Author,   6 =>    \Minn\Front\Kind::Date,   7 =>    \Minn\Front\Kind::Search, )`
 
-Used by: `Minn\Theme\ClassicRenderer`, `Minn\Theme\PageRenderer`
+Used by: `Minn\Front\FeedController`, `Minn\Theme\ClassicRenderer`, `Minn\Theme\PageRenderer`
 
 ```php
 __construct(Minn\Content\Site $site, Minn\Content\Posts $posts, int $perPage)
 ```
 
 
-### `stand(Minn\Front\Resolution $resolution): Minn\Content\Page`
+### `stand(Minn\Front\Resolution $resolution, array $extra = array ( )): Minn\Content\Page`
 
-The page of posts a resolution shows, through the runtime's main query when it is up.
+The page of posts a resolution shows, through the runtime's main query
+when it is up; the variables a request adds of its own (a feed's) win.
+
+- `@param array<string, mixed> $extra`
 
 ### `perPage(): int`
 
 Posts per page.
 
-Internals: `vars()` (private, line 76), `queried()` (private, line 96), `seeded()` (private, line 109), `objectTypes()` (private, line 117), `listing()` (private, line 124)
+Internals: `vars()` (private, line 81), `queried()` (private, line 101), `seeded()` (private, line 114), `objectTypes()` (private, line 122), `listing()` (private, line 129)
+
+
+## NotModified
+
+`final class Minn\Theme\NotModified` · `public/minn/src/Minn/Theme/NotModified.php` · implements `Throwable`, `Stringable`
+
+Raised once a reader's copy of a feed has been found current and the
+headers that say so are sent: the reference stops the request there, so
+the engine answers with nothing more.
+
+Used by: `Minn\Front\FeedController`, `Minn\Theme\FrontLifecycle`
 
 
 ## PageRenderer

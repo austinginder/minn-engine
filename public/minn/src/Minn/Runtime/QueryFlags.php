@@ -56,6 +56,10 @@ final readonly class QueryFlags
             }
         }
         $vars = self::sanitize($vars);
+        if (is_string($vars['feed'] ?? null) && str_starts_with($vars['feed'], 'comments-')) {
+            $vars['feed'] = substr($vars['feed'], 9);
+            $vars['withcomments'] = 1;
+        }
         $on = [];
         if ((int) $vars['p'] < 0 || (int) $vars['page_id'] < 0) {
             $vars['error'] = '404';
@@ -88,6 +92,8 @@ final readonly class QueryFlags
         if (!empty($on['is_page']) && (int) $option('wp_page_for_privacy_policy') > 0 && $pageId === (int) $option('wp_page_for_privacy_policy')) {
             $on['is_privacy_policy'] = true;
         }
+        // A feed of comments: asked for, or a single post's feed that does not refuse them (the posts page's feed is its posts').
+        $on['is_comment_feed'] = $on['is_feed'] && (!empty($vars['withcomments']) || (empty($vars['withoutcomments']) && $on['is_singular']));
         return new self($vars, array_filter($on));
     }
 

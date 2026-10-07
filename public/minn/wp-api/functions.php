@@ -896,14 +896,30 @@ function wp_die($message = '', $title = '', $args = [])
         $callback = apply_filters('wp_die_json_handler', '_json_wp_die_handler');
     } elseif (defined('XMLRPC_REQUEST') && XMLRPC_REQUEST) {
         $callback = apply_filters('wp_die_xmlrpc_handler', '_xmlrpc_wp_die_handler');
+    } elseif (wp_is_xml_request() || (isset($GLOBALS['wp_query']) && (is_feed() || is_comment_feed() || is_trackback()))) {
+        $callback = apply_filters('wp_die_xml_handler', '_xml_wp_die_handler');
     } else {
         $callback = apply_filters('wp_die_handler', '_default_wp_die_handler');
     }
     $callback($message, $title, $args);
 }
 
+/** A charset's usual spelling: UTF-8 and ISO-8859-1 however they were written, anything else as given. */
+function _canonical_charset($charset)
+{
+    $name = strtolower((string) $charset);
+    if ($name === 'utf-8' || $name === 'utf8') {
+        return 'UTF-8';
+    }
+    if ($name === 'iso-8859-1' || $name === 'iso8859-1') {
+        return 'ISO-8859-1';
+    }
+    return $charset;
+}
+
 function _wp_die_process_input($message, $title = '', $args = [])
 {
+    $original = $args;
     $defaults = ['response' => 0, 'code' => '', 'exit' => true, 'back_link' => false, 'link_url' => '', 'link_text' => '', 'text_direction' => 'ltr', 'charset' => 'utf-8', 'additional_errors' => []];
     if (is_wp_error($message)) {
         $errors = [];
@@ -927,7 +943,31 @@ function _wp_die_process_input($message, $title = '', $args = [])
     if ($title === '') {
         $title = 'WordPress &rsaquo; Error';
     }
+    if (empty($args['code'])) {
+        $args['code'] = 'wp_die';
+    }
+    // The charset a handler declares is the site's unless the caller names one.
+    if (($args['charset'] ?? '') === 'utf-8' && !array_key_exists('charset', (array) $original)) {
+        $args['charset'] = _canonical_charset((string) get_option('blog_charset'));
+    }
     return [$message, $title, $args];
+}
+
+/** The error as an XML document (a feed's, or any request that asked for XML), its status and no caching. */
+function _xml_wp_die_handler($message, $title = '', $args = [])
+{
+    [$message, $title, $args] = _wp_die_process_input($message, $title, $args);
+    $message = htmlspecialchars((string) $message);
+    $title = htmlspecialchars((string) $title);
+    if (!headers_sent()) {
+        header("Content-Type: text/xml; charset={$args['charset']}");
+        status_header((int) $args['response']);
+        nocache_headers();
+    }
+    echo "<error>\n    <code>{$args['code']}</code>\n    <title><![CDATA[{$title}]]></title>\n    <message><![CDATA[{$message}]]></message>\n    <data>\n        <status>{$args['response']}</status>\n    </data>\n</error>\n";
+    if ($args['exit']) {
+        exit;
+    }
 }
 
 function _default_wp_die_handler($message, $title = '', $args = [])

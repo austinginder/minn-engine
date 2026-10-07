@@ -943,12 +943,16 @@ function wp_trim_excerpt($text = '', $post = null)
     $text = $raw;
     if (trim($text) === '') {
         $post = get_post($post);
-        $text = excerpt_remove_footnotes(excerpt_remove_blocks(strip_shortcodes(get_the_content('', false, $post))));
-        $images = remove_filter('the_content', 'wp_filter_content_tags', 12);
-        $blocks = remove_filter('the_content', 'do_blocks', 9);
-        $text = str_replace(']]>', ']]&gt;', (string) apply_filters('the_content', $text));
-        $blocks && add_filter('the_content', 'do_blocks', 9);
-        $images && add_filter('the_content', 'wp_filter_content_tags', 12);
+        // No image the excerpt renders counts toward the page's loading budget, as the reference fits none here.
+        $text = Minn\Blocks\RenderState::current()->aside(static function () use ($post): string {
+            $text = excerpt_remove_footnotes(excerpt_remove_blocks(strip_shortcodes(get_the_content('', false, $post))));
+            $images = remove_filter('the_content', 'wp_filter_content_tags', 12);
+            $blocks = remove_filter('the_content', 'do_blocks', 9);
+            $text = str_replace(']]>', ']]&gt;', (string) apply_filters('the_content', $text));
+            $blocks && add_filter('the_content', 'do_blocks', 9);
+            $images && add_filter('the_content', 'wp_filter_content_tags', 12);
+            return $text;
+        });
         $text = wp_trim_words($text, (int) apply_filters('excerpt_length', 55), apply_filters('excerpt_more', ' [&hellip;]'));
     }
     return apply_filters('wp_trim_excerpt', $text, $raw);

@@ -133,23 +133,143 @@ function the_permalink_rss()
     echo esc_url(apply_filters('the_permalink_rss', get_permalink()));
 }
 
-function self_link()
+/** The address of the feed being read: the site's host (and port) with the path the request asked for. */
+function get_self_link()
 {
-    $host = wp_parse_url(home_url());
-    echo esc_url(apply_filters('self_link', set_url_scheme('http://' . ($_SERVER['HTTP_HOST'] ?? ($host['host'] ?? '')) . wp_unslash($_SERVER['REQUEST_URI'] ?? '/'))));
+    $home = wp_parse_url(home_url());
+    $domain = ($home['host'] ?? '') . (isset($home['port']) ? ':' . $home['port'] : '');
+    return esc_url(apply_filters('self_link', set_url_scheme('http://' . $domain . wp_unslash($_SERVER['REQUEST_URI'] ?? ''))));
 }
 
-/** The post title for a feed item, filtered but otherwise plain (probed). */
+function self_link()
+{
+    echo get_self_link();
+}
+
+/** The post title for a feed item, through the_title_rss (handed the title alone). */
 function get_the_title_rss($post = 0)
 {
-    return apply_filters('the_title_rss', get_the_title($post), $post);
+    return apply_filters('the_title_rss', get_the_title($post));
+}
+
+function the_title_rss()
+{
+    echo get_the_title_rss();
+}
+
+/** The page's document title as a feed's title, through get_wp_title_rss. */
+function get_wp_title_rss($deprecated = '&#8211;')
+{
+    return apply_filters('get_wp_title_rss', wp_get_document_title(), $deprecated);
+}
+
+function wp_title_rss($deprecated = '&#8211;')
+{
+    echo apply_filters('wp_title_rss', get_wp_title_rss(), $deprecated);
+}
+
+function the_content_feed($feed_type = null)
+{
+    echo get_the_content_feed($feed_type);
+}
+
+function the_excerpt_rss()
+{
+    echo apply_filters('the_excerpt_rss', get_the_excerpt());
+}
+
+function comments_link_feed()
+{
+    echo esc_url(apply_filters('comments_link_feed', get_comments_link()));
+}
+
+function get_post_comments_feed_link($post_id = 0, $feed = '')
+{
+    return Minn\Front\FeedTags::postCommentsFeedLink(absint($post_id), (string) $feed);
+}
+
+function post_comments_feed_link($link_text = '', $post_id = 0, $feed = '')
+{
+    $link = '<a href="' . esc_url(get_post_comments_feed_link($post_id, $feed)) . '">' . ($link_text !== '' ? $link_text : __('Comments Feed')) . '</a>';
+    echo apply_filters('post_comments_feed_link_html', $link, absint($post_id), $feed);
+}
+
+function get_the_category_rss($type = null)
+{
+    return Minn\Front\FeedTags::categories((string) ($type ?: get_default_feed()));
+}
+
+function the_category_rss($type = null)
+{
+    echo get_the_category_rss($type);
+}
+
+function html_type_rss()
+{
+    echo str_contains((string) get_bloginfo('html_type'), 'xhtml') ? 'xhtml' : 'html';
+}
+
+function rss_enclosure()
+{
+    echo Minn\Front\FeedTags::rssEnclosures();
+}
+
+function atom_enclosure()
+{
+    echo Minn\Front\FeedTags::atomEnclosures();
+}
+
+function get_comment_guid($comment_id = null)
+{
+    $comment = get_comment($comment_id);
+    return is_object($comment) ? get_the_guid($comment->comment_post_ID) . '#comment-' . $comment->comment_ID : false;
+}
+
+function comment_guid($comment_id = null)
+{
+    echo esc_url(get_comment_guid($comment_id));
+}
+
+function comment_link($comment = null)
+{
+    echo esc_url(apply_filters('comment_link', get_comment_link($comment)));
+}
+
+function get_comment_author_rss()
+{
+    return apply_filters('comment_author_rss', get_comment_author());
+}
+
+function comment_author_rss()
+{
+    echo get_comment_author_rss();
+}
+
+function comment_text_rss()
+{
+    echo apply_filters('comment_text_rss', get_comment_text());
+}
+
+function get_feed_build_date($format)
+{
+    return Minn\Front\FeedTags::buildDate((string) $format);
+}
+
+function rss2_site_icon()
+{
+    echo Minn\Front\FeedTags::rss2Icon();
+}
+
+function atom_site_icon()
+{
+    echo Minn\Front\FeedTags::atomIcon();
 }
 
 /** The rendered content for a feed item: the full pipeline, CDATA close escaped, then the feed filter. */
 function get_the_content_feed($feed_type = null)
 {
-    if ($feed_type === null) {
-        $feed_type = 'rss2';
+    if (!$feed_type) {
+        $feed_type = get_default_feed();
     }
     $post = get_post();
     if ($post === null) {
@@ -158,4 +278,45 @@ function get_the_content_feed($feed_type = null)
     $content = \Minn\Theme\ClassicContent::render(Minn\Content\PostRecord::fromRow($post->to_array()), null);
     $content = str_replace(']]>', ']]&gt;', $content);
     return apply_filters('the_content_feed', $content, $feed_type);
+}
+
+/** The feed the query asks for (leading underscores dropped; the default for none), by its do_feed_{feed} handlers; a 404 when nothing handles it. */
+function do_feed()
+{
+    $feed = (string) preg_replace('/^_+/', '', (string) get_query_var('feed'));
+    if ($feed === '' || $feed === 'feed') {
+        $feed = get_default_feed();
+    }
+    if (!has_action("do_feed_{$feed}")) {
+        wp_die(__('<strong>Error:</strong> This is not a valid feed template.'), '', ['response' => 404]);
+    }
+    do_action("do_feed_{$feed}", $GLOBALS['wp_query']->is_comment_feed ?? false, $feed);
+}
+
+/** @internal a feed template (Minn\Front\FeedTemplates) printed, its content type sent as it starts */
+function _minn_feed_template(string $name): void
+{
+    echo Minn\Front\FeedTemplates::load($name, static function (string $line): void {
+        header($line, true);
+    });
+}
+
+function do_feed_rdf()
+{
+    _minn_feed_template('rdf');
+}
+
+function do_feed_rss()
+{
+    _minn_feed_template('rss');
+}
+
+function do_feed_rss2($for_comments)
+{
+    _minn_feed_template($for_comments ? 'rss2-comments' : 'rss2');
+}
+
+function do_feed_atom($for_comments)
+{
+    _minn_feed_template($for_comments ? 'atom-comments' : 'atom');
 }

@@ -15933,7 +15933,7 @@
             "namespace": "Minn\\Blocks",
             "kind": "final class",
             "file": "public/minn/src/Minn/Blocks/RenderState.php",
-            "lines": 302,
+            "lines": 321,
             "doc": "Per-request rendering state, owned by the renderer. The reference numbers\ngalleries, style variations, and search inputs from ONE counter that runs\nacross every block rendered in the request (a list response keeps\ncounting from post to post), so the counter lives here, not on any block.\nLeaf helpers with no renderer in hand reach it through current().",
             "implements": [],
             "extends": null,
@@ -16222,6 +16222,28 @@
                 },
                 {
                     "routes": [],
+                    "name": "aside",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "aside(Closure $render): mixed",
+                    "doc": "Runs rendering whose images do not count toward the page's loading\nbudget (an excerpt's): the reference fits no image while it makes one,\nso whatever was seen meanwhile is given back.",
+                    "shapes": [
+                        "@param \\Closure(): T $render"
+                    ],
+                    "params": [
+                        {
+                            "name": "render",
+                            "type": "Closure",
+                            "shape": "\\Closure(): T",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 112,
+                    "end": 120
+                },
+                {
+                    "routes": [],
                     "name": "claimPriority",
                     "static": false,
                     "visibility": "public",
@@ -16229,8 +16251,8 @@
                     "doc": "True once, for the image that gets fetchpriority=\"high\".",
                     "shapes": [],
                     "params": [],
-                    "line": 104,
-                    "end": 110
+                    "line": 123,
+                    "end": 129
                 },
                 {
                     "routes": [],
@@ -16241,8 +16263,8 @@
                     "doc": "Whether no element has taken high fetch priority yet on this page.",
                     "shapes": [],
                     "params": [],
-                    "line": 113,
-                    "end": 116
+                    "line": 132,
+                    "end": 135
                 },
                 {
                     "routes": [],
@@ -16253,8 +16275,8 @@
                     "doc": "Takes high fetch priority off the table for the rest of the page; a plugin prioritising its own element does this.",
                     "shapes": [],
                     "params": [],
-                    "line": 119,
-                    "end": 122
+                    "line": 138,
+                    "end": 141
                 },
                 {
                     "routes": [],
@@ -16265,8 +16287,8 @@
                     "doc": "Puts high fetch priority back on offer, so the next large enough image takes it.",
                     "shapes": [],
                     "params": [],
-                    "line": 125,
-                    "end": 128
+                    "line": 144,
+                    "end": 147
                 },
                 {
                     "routes": [],
@@ -16292,8 +16314,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 131,
-                    "end": 134
+                    "line": 150,
+                    "end": 153
                 },
                 {
                     "routes": [],
@@ -16306,8 +16328,8 @@
                         "@return array<string, string>"
                     ],
                     "params": [],
-                    "line": 141,
-                    "end": 144
+                    "line": 160,
+                    "end": 163
                 },
                 {
                     "routes": [],
@@ -16326,8 +16348,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 147,
-                    "end": 150
+                    "line": 166,
+                    "end": 169
                 },
                 {
                     "routes": [],
@@ -16340,8 +16362,8 @@
                         "@return array<string, true>"
                     ],
                     "params": [],
-                    "line": 157,
-                    "end": 160
+                    "line": 176,
+                    "end": 179
                 },
                 {
                     "routes": [],
@@ -16374,8 +16396,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 163,
-                    "end": 166
+                    "line": 182,
+                    "end": 185
                 },
                 {
                     "routes": [],
@@ -16388,8 +16410,8 @@
                         "@return list<array{0: string, 1: string, 2: int}>"
                     ],
                     "params": [],
-                    "line": 173,
-                    "end": 176
+                    "line": 192,
+                    "end": 195
                 },
                 {
                     "routes": [],
@@ -16400,8 +16422,8 @@
                     "doc": "The next wp-elements-N class; the reference numbers these apart from the shared counter.",
                     "shapes": [],
                     "params": [],
-                    "line": 179,
-                    "end": 182
+                    "line": 198,
+                    "end": 201
                 },
                 {
                     "routes": [],
@@ -16420,8 +16442,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 185,
-                    "end": 189
+                    "line": 204,
+                    "end": 208
                 },
                 {
                     "routes": [],
@@ -16432,8 +16454,8 @@
                     "doc": "A page list renders plain on its own and takes the navigation block's\nitem classes, submenu toggles, and interactivity only while it sits\ninside one, so the navigation block marks the span it owns.",
                     "shapes": [],
                     "params": [],
-                    "line": 196,
-                    "end": 199
+                    "line": 215,
+                    "end": 218
                 },
                 {
                     "routes": [],
@@ -16444,8 +16466,8 @@
                     "doc": "Leaves a navigation block.",
                     "shapes": [],
                     "params": [],
-                    "line": 202,
-                    "end": 205
+                    "line": 221,
+                    "end": 224
                 },
                 {
                     "routes": [],
@@ -16456,8 +16478,8 @@
                     "doc": "Whether rendering is inside a navigation block.",
                     "shapes": [],
                     "params": [],
-                    "line": 208,
-                    "end": 211
+                    "line": 227,
+                    "end": 230
                 },
                 {
                     "routes": [],
@@ -16476,8 +16498,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 214,
-                    "end": 221
+                    "line": 233,
+                    "end": 240
                 },
                 {
                     "routes": [],
@@ -16496,8 +16518,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 224,
-                    "end": 227
+                    "line": 243,
+                    "end": 246
                 },
                 {
                     "routes": [],
@@ -16508,8 +16530,8 @@
                     "doc": "True while the block tree is shallower than the cap; deeper blocks render as nothing.",
                     "shapes": [],
                     "params": [],
-                    "line": 230,
-                    "end": 237
+                    "line": 249,
+                    "end": 256
                 },
                 {
                     "routes": [],
@@ -16520,8 +16542,8 @@
                     "doc": "Leaves one nesting level.",
                     "shapes": [],
                     "params": [],
-                    "line": 240,
-                    "end": 243
+                    "line": 259,
+                    "end": 262
                 },
                 {
                     "routes": [],
@@ -16532,8 +16554,8 @@
                     "doc": "How deep the block tree is right now; zero outside a page render.",
                     "shapes": [],
                     "params": [],
-                    "line": 246,
-                    "end": 249
+                    "line": 265,
+                    "end": 268
                 },
                 {
                     "routes": [],
@@ -16552,8 +16574,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 252,
-                    "end": 257
+                    "line": 271,
+                    "end": 276
                 },
                 {
                     "routes": [],
@@ -16564,8 +16586,8 @@
                     "doc": "The pending elements class, cleared.",
                     "shapes": [],
                     "params": [],
-                    "line": 260,
-                    "end": 265
+                    "line": 279,
+                    "end": 284
                 },
                 {
                     "routes": [],
@@ -16584,8 +16606,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 268,
-                    "end": 271
+                    "line": 287,
+                    "end": 290
                 },
                 {
                     "routes": [],
@@ -16598,8 +16620,8 @@
                         "@return list<string>"
                     ],
                     "params": [],
-                    "line": 278,
-                    "end": 281
+                    "line": 297,
+                    "end": 300
                 },
                 {
                     "routes": [],
@@ -16618,8 +16640,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 284,
-                    "end": 287
+                    "line": 303,
+                    "end": 306
                 },
                 {
                     "routes": [],
@@ -16632,8 +16654,8 @@
                         "@return list<int>"
                     ],
                     "params": [],
-                    "line": 294,
-                    "end": 297
+                    "line": 313,
+                    "end": 316
                 },
                 {
                     "routes": [],
@@ -16644,8 +16666,8 @@
                     "doc": "Clears every per-request counter.",
                     "shapes": [],
                     "params": [],
-                    "line": 300,
-                    "end": 316
+                    "line": 319,
+                    "end": 335
                 }
             ]
         },
@@ -39986,7 +40008,7 @@
             "namespace": "Minn\\Front",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Front/FeedController.php",
-            "lines": 94,
+            "lines": 143,
             "doc": "The feeds: the site's, the comments', a post's or an archive's by the\npath in front of /feed/, and the ?feed= query form on any page.",
             "implements": [],
             "extends": null,
@@ -40007,7 +40029,10 @@
                 "Minn\\Http\\Policy",
                 "Minn\\Http\\Request",
                 "Minn\\Http\\Response",
-                "Minn\\Http\\Route"
+                "Minn\\Http\\Route",
+                "Minn\\Runtime\\Runtime",
+                "Minn\\Theme\\MainQueryBridge",
+                "Minn\\Theme\\NotModified"
             ],
             "usedBy": [
                 "Minn\\Engine",
@@ -40062,8 +40087,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 27,
-                "end": 36
+                "line": 30,
+                "end": 39
             },
             "cases": [],
             "constants": [],
@@ -40153,19 +40178,21 @@
                             "doc": ""
                         }
                     ],
-                    "line": 43,
-                    "end": 49
+                    "line": 46,
+                    "end": 52
                 },
                 {
                     "routes": [
                         "GET /comments/feed (public)",
-                        "GET /comments/feed/ (public)"
+                        "GET /comments/feed/ (public)",
+                        "GET /comments/feed/{kind:rss2|rss|atom|rdf} (public)",
+                        "GET /comments/feed/{kind:rss2|rss|atom|rdf}/ (public)"
                     ],
                     "name": "commentsFeed",
                     "static": false,
                     "visibility": "public",
-                    "signature": "commentsFeed(Minn\\Http\\Request $request): Minn\\Http\\Response",
-                    "doc": "The comments feed.",
+                    "signature": "commentsFeed(Minn\\Http\\Request $request, string $kind = 'rss2'): Minn\\Http\\Response",
+                    "doc": "The site's comments feed in one of its kinds.",
                     "shapes": [],
                     "params": [
                         {
@@ -40174,10 +40201,17 @@
                             "shape": "",
                             "default": null,
                             "doc": ""
+                        },
+                        {
+                            "name": "kind",
+                            "type": "string",
+                            "shape": "",
+                            "default": "'rss2'",
+                            "doc": ""
                         }
                     ],
-                    "line": 54,
-                    "end": 60
+                    "line": 59,
+                    "end": 68
                 },
                 {
                     "routes": [
@@ -40215,8 +40249,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 67,
-                    "end": 74
+                    "line": 75,
+                    "end": 82
                 },
                 {
                     "routes": [],
@@ -40224,7 +40258,7 @@
                     "static": false,
                     "visibility": "public",
                     "signature": "queryFeed(Minn\\Http\\Request $request, Minn\\Front\\Resolution $resolution, string $kind): Minn\\Http\\Response",
-                    "doc": "The ?feed= query form on any resolvable path.",
+                    "doc": "The ?feed= query form on any resolvable path: any feed a handler answers, a plugin's own included.",
                     "shapes": [],
                     "params": [
                         {
@@ -40249,8 +40283,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 77,
-                    "end": 80
+                    "line": 85,
+                    "end": 92
                 },
                 {
                     "routes": [],
@@ -40258,7 +40292,7 @@
                     "static": false,
                     "visibility": "private",
                     "signature": "feed(Minn\\Front\\Resolution $resolution, string $kind, Minn\\Http\\Request $request): Minn\\Http\\Response",
-                    "doc": "",
+                    "doc": "A feed for a resolution: through WordPress's feed lifecycle when the runtime is up, the engine's own otherwise.",
                     "shapes": [],
                     "params": [
                         {
@@ -40283,8 +40317,78 @@
                             "doc": ""
                         }
                     ],
-                    "line": 82,
-                    "end": 112
+                    "line": 95,
+                    "end": 101
+                },
+                {
+                    "routes": [],
+                    "name": "served",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "served(Minn\\Front\\Resolution $resolution, string $kind, array $vars): Minn\\Http\\Response",
+                    "doc": "A feed as the reference serves it: the main query with the feed asked\nfor (send_headers, wp and template_redirect around it), then do_feed,\nwhose handler prints the feed and its content type.",
+                    "shapes": [
+                        "@param array<string, mixed> $vars what the request asks of the feed besides its type"
+                    ],
+                    "params": [
+                        {
+                            "name": "resolution",
+                            "type": "Minn\\Front\\Resolution",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "kind",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "vars",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": "what the request asks of the feed besides its type"
+                        }
+                    ],
+                    "line": 110,
+                    "end": 131
+                },
+                {
+                    "routes": [],
+                    "name": "engineFeed",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "engineFeed(Minn\\Front\\Resolution $resolution, string $kind, Minn\\Http\\Request $request): Minn\\Http\\Response",
+                    "doc": "The engine's own rendering, for a request served without the runtime.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "resolution",
+                            "type": "Minn\\Front\\Resolution",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "kind",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "request",
+                            "type": "Minn\\Http\\Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 134,
+                    "end": 164
                 },
                 {
                     "routes": [],
@@ -40310,8 +40414,634 @@
                             "doc": ""
                         }
                     ],
-                    "line": 114,
-                    "end": 117
+                    "line": 166,
+                    "end": 169
+                }
+            ]
+        },
+        {
+            "name": "Minn\\Front\\FeedTags",
+            "short": "FeedTags",
+            "namespace": "Minn\\Front",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Front/FeedTags.php",
+            "lines": 140,
+            "doc": "The template tags a feed is written with that take more than a line, as\nthe reference answers them in a feed's loop (probe feed-tags): a post's\ncategories and tags in each feed's markup, its enclosures for RSS and\nAtom, the link to its comments feed, the feed's build date, and the site\nicon a feed carries.",
+            "implements": [],
+            "extends": null,
+            "uses": [],
+            "usedBy": [],
+            "constructor": null,
+            "cases": [],
+            "constants": [],
+            "properties": [],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "categories",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "categories(string $type): string",
+                    "doc": "A post's category and tag names (each once) in a feed type's markup, before the_category_rss.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "type",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 17,
+                    "end": 34
+                },
+                {
+                    "routes": [],
+                    "name": "rssEnclosures",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "rssEnclosures(): string",
+                    "doc": "The current post's enclosures as RSS has them: address, length, and the type the third line starts with.",
+                    "shapes": [],
+                    "params": [],
+                    "line": 47,
+                    "end": 58
+                },
+                {
+                    "routes": [],
+                    "name": "atomEnclosures",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "atomEnclosures(): string",
+                    "doc": "The current post's enclosures as Atom links: the length a line that is a number, the type a line that is a known MIME type.",
+                    "shapes": [],
+                    "params": [],
+                    "line": 61,
+                    "end": 81
+                },
+                {
+                    "routes": [],
+                    "name": "postCommentsFeedLink",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "postCommentsFeedLink(int $postId, string $feed): string",
+                    "doc": "The address of a post's comments feed in a feed type (the default one bare), through post_comments_feed_link.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "postId",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "feed",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 84,
+                    "end": 106
+                },
+                {
+                    "routes": [],
+                    "name": "buildDate",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "buildDate(string $format): string",
+                    "doc": "When the feed last changed, in a format: the newest of its posts'\nmodifications (and comments, for a comments feed); once the loop has\nrun out, the site's last modification; failing both, now.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "format",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 113,
+                    "end": 132
+                },
+                {
+                    "routes": [],
+                    "name": "rss2Icon",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "rss2Icon(): string",
+                    "doc": "The site icon as an RSS 2.0 image (titled with the feed's title), or '' without one.",
+                    "shapes": [],
+                    "params": [],
+                    "line": 135,
+                    "end": 145
+                },
+                {
+                    "routes": [],
+                    "name": "atomIcon",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "atomIcon(): string",
+                    "doc": "The site icon as an Atom icon, or '' without one.",
+                    "shapes": [],
+                    "params": [],
+                    "line": 148,
+                    "end": 152
+                },
+                {
+                    "routes": [],
+                    "name": "enclosures",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "enclosures(): array",
+                    "doc": "",
+                    "shapes": [
+                        "@return list<list<string>> the current post's enclosures, each as its lines, unless its password is wanted"
+                    ],
+                    "params": [],
+                    "line": 37,
+                    "end": 44
+                }
+            ]
+        },
+        {
+            "name": "Minn\\Front\\FeedTemplates",
+            "short": "FeedTemplates",
+            "namespace": "Minn\\Front",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Front/FeedTemplates.php",
+            "lines": 295,
+            "doc": "The feed templates do_feed_* loads, written from the reference's output\n(suite feed-hooks, probes feed-templates): RSS 2.0, Atom, RDF and RSS\n0.92 for posts, RSS 2.0 and Atom for comments. Each is written through\nthe template tags, so every feed filter has its say, and fires each feed\naction where the reference fires it; the whitespace between is the\nreference's. A template is written once a request, as require_once\nloads it, and sends its content type through the header callback first.",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\Front\\FeedWriter"
+            ],
+            "usedBy": [],
+            "constructor": null,
+            "cases": [],
+            "constants": [
+                {
+                    "name": "SYNDICATION",
+                    "value": "'\txmlns:sy=\"http://purl.org/rss/1.0/modules/syndication/\" '",
+                    "doc": "",
+                    "visibility": "private"
+                }
+            ],
+            "properties": [
+                {
+                    "name": "loaded",
+                    "type": "array",
+                    "readonly": false,
+                    "static": true,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": false
+                }
+            ],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "load",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "load(string $name, Closure $send): string",
+                    "doc": "A feed template by its name (rss2, rss2-comments, atom, atom-comments,\nrdf, rss), between wp_before_load_template and wp_after_load_template.",
+                    "shapes": [
+                        "@param Closure(string): void $send sends a header line (the Content-Type)"
+                    ],
+                    "params": [
+                        {
+                            "name": "name",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "send",
+                            "type": "Closure",
+                            "shape": "Closure(string): void",
+                            "default": null,
+                            "doc": "sends a header line (the Content-Type)"
+                        }
+                    ],
+                    "line": 31,
+                    "end": 55
+                },
+                {
+                    "routes": [],
+                    "name": "syndication",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "syndication(Minn\\Front\\FeedWriter $w): Minn\\Front\\FeedWriter",
+                    "doc": "What the period and frequency of updates are, as the syndication module says.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "w",
+                            "type": "Minn\\Front\\FeedWriter",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 58,
+                    "end": 61
+                },
+                {
+                    "routes": [],
+                    "name": "rss2",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "rss2(Minn\\Front\\FeedWriter $w): void",
+                    "doc": "",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "w",
+                            "type": "Minn\\Front\\FeedWriter",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 63,
+                    "end": 80
+                },
+                {
+                    "routes": [],
+                    "name": "rss2Item",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "rss2Item(Minn\\Front\\FeedWriter $w): void",
+                    "doc": "",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "w",
+                            "type": "Minn\\Front\\FeedWriter",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 82,
+                    "end": 106
+                },
+                {
+                    "routes": [],
+                    "name": "atom",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "atom(Minn\\Front\\FeedWriter $w): void",
+                    "doc": "",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "w",
+                            "type": "Minn\\Front\\FeedWriter",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 108,
+                    "end": 125
+                },
+                {
+                    "routes": [],
+                    "name": "atomEntry",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "atomEntry(Minn\\Front\\FeedWriter $w): void",
+                    "doc": "",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "w",
+                            "type": "Minn\\Front\\FeedWriter",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 127,
+                    "end": 152
+                },
+                {
+                    "routes": [],
+                    "name": "rdf",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "rdf(Minn\\Front\\FeedWriter $w): void",
+                    "doc": "",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "w",
+                            "type": "Minn\\Front\\FeedWriter",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 154,
+                    "end": 176
+                },
+                {
+                    "routes": [],
+                    "name": "rdfItem",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "rdfItem(Minn\\Front\\FeedWriter $w): void",
+                    "doc": "",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "w",
+                            "type": "Minn\\Front\\FeedWriter",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 178,
+                    "end": 191
+                },
+                {
+                    "routes": [],
+                    "name": "rss",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "rss(Minn\\Front\\FeedWriter $w): void",
+                    "doc": "",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "w",
+                            "type": "Minn\\Front\\FeedWriter",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 193,
+                    "end": 208
+                },
+                {
+                    "routes": [],
+                    "name": "commentsTitle",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "commentsTitle(string $single): string",
+                    "doc": "The heading of a comments feed: the post's, the search's, or the site's.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "single",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 211,
+                    "end": 220
+                },
+                {
+                    "routes": [],
+                    "name": "commentTitle",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "commentTitle(WP_Post $post): string",
+                    "doc": "A comment's heading in a comments feed: by whom, and on what when the feed is not a single post's.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "post",
+                            "type": "WP_Post",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 223,
+                    "end": 229
+                },
+                {
+                    "routes": [],
+                    "name": "current",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "current(): array",
+                    "doc": "The comment the loop is on, with its post made the current one. @return array{0: object, 1: \\WP_Post}",
+                    "shapes": [
+                        "@return array{0: object, 1: \\WP_Post}"
+                    ],
+                    "params": [],
+                    "line": 232,
+                    "end": 237
+                },
+                {
+                    "routes": [],
+                    "name": "rss2Comments",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "rss2Comments(Minn\\Front\\FeedWriter $w): void",
+                    "doc": "",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "w",
+                            "type": "Minn\\Front\\FeedWriter",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 239,
+                    "end": 255
+                },
+                {
+                    "routes": [],
+                    "name": "rss2Comment",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "rss2Comment(Minn\\Front\\FeedWriter $w): void",
+                    "doc": "",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "w",
+                            "type": "Minn\\Front\\FeedWriter",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 257,
+                    "end": 269
+                },
+                {
+                    "routes": [],
+                    "name": "atomComments",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "atomComments(Minn\\Front\\FeedWriter $w): void",
+                    "doc": "",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "w",
+                            "type": "Minn\\Front\\FeedWriter",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 271,
+                    "end": 291
+                },
+                {
+                    "routes": [],
+                    "name": "atomComment",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "atomComment(Minn\\Front\\FeedWriter $w): void",
+                    "doc": "",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "w",
+                            "type": "Minn\\Front\\FeedWriter",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 293,
+                    "end": 311
+                }
+            ]
+        },
+        {
+            "name": "Minn\\Front\\FeedWriter",
+            "short": "FeedWriter",
+            "namespace": "Minn\\Front",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Front/FeedWriter.php",
+            "lines": 35,
+            "doc": "A feed as it is written: text as given, and what each template tag and\naction prints, in the order the template asks for them.",
+            "implements": [],
+            "extends": null,
+            "uses": [],
+            "usedBy": [
+                "Minn\\Front\\FeedTemplates"
+            ],
+            "constructor": null,
+            "cases": [],
+            "constants": [],
+            "properties": [
+                {
+                    "name": "out",
+                    "type": "string",
+                    "readonly": false,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": false
+                }
+            ],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "put",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "put(string ...$text): self",
+                    "doc": "Text as written.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "text",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 16,
+                    "end": 20
+                },
+                {
+                    "routes": [],
+                    "name": "tag",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "tag(string $function, mixed ...$args): self",
+                    "doc": "What a function that prints (a template tag) prints, called with its arguments.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "function",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "args",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 23,
+                    "end": 32
+                },
+                {
+                    "routes": [],
+                    "name": "act",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "act(string $hook, mixed ...$args): self",
+                    "doc": "What an action's callbacks print.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "hook",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "args",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 35,
+                    "end": 38
+                },
+                {
+                    "routes": [],
+                    "name": "text",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "text(): string",
+                    "doc": "Everything written so far.",
+                    "shapes": [],
+                    "params": [],
+                    "line": 41,
+                    "end": 44
                 }
             ]
         },
@@ -43294,12 +44024,13 @@
             "namespace": "Minn\\Front",
             "kind": "enum",
             "file": "public/minn/src/Minn/Front/Redirects.php",
-            "lines": 17,
+            "lines": 23,
             "doc": "Whether a resolution may answer with a canonical redirect. A GET or HEAD\nfollows them (the trailing slash, the pretty permalink for ?p=, the\nguessed destination); any other method holds and resolves the path as\ntyped, as the reference's redirect_canonical bails on a POST.",
             "implements": [],
             "extends": null,
             "uses": [
-                "Minn\\Http\\Method"
+                "Minn\\Http\\Method",
+                "Minn\\Http\\Request"
             ],
             "usedBy": [
                 "Minn\\Front\\Resolver",
@@ -43343,6 +44074,26 @@
                 },
                 {
                     "routes": [],
+                    "name": "forRequest",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "forRequest(Minn\\Http\\Request $request): self",
+                    "doc": "The mode for a request: its method's, except that a feed is served where it was asked for, as the reference serves it.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "request",
+                            "type": "Minn\\Http\\Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 25,
+                    "end": 28
+                },
+                {
+                    "routes": [],
                     "name": "follows",
                     "static": false,
                     "visibility": "public",
@@ -43350,8 +44101,8 @@
                     "doc": "Whether a canonical redirect may be answered.",
                     "shapes": [],
                     "params": [],
-                    "line": 25,
-                    "end": 28
+                    "line": 31,
+                    "end": 34
                 }
             ]
         },
@@ -59199,6 +59950,7 @@
                 "Minn\\Front\\FeedController",
                 "Minn\\Front\\FrontController",
                 "Minn\\Front\\ProbeController",
+                "Minn\\Front\\Redirects",
                 "Minn\\Front\\Resolver",
                 "Minn\\Front\\SitemapController",
                 "Minn\\Http\\Envelope",
@@ -59253,7 +60005,8 @@
                 "Minn\\Runtime\\PostSave",
                 "Minn\\Runtime\\Runtime",
                 "Minn\\Runtime\\TermEvents",
-                "Minn\\Runtime\\UserEvents"
+                "Minn\\Runtime\\UserEvents",
+                "Minn\\Theme\\FeedHeaders"
             ],
             "constructor": {
                 "signature": "__construct(Minn\\Http\\Method $method, string $path, array $query, array $headers, array $cookies, string $body, bool $secure, string $host, array $form = array ( ), array $files = array ( ), string $remoteAddress = '', array $server = array ( ))",
@@ -103201,6 +103954,167 @@
             ]
         },
         {
+            "name": "Minn\\Runtime\\CommentFeedQuery",
+            "short": "CommentFeedQuery",
+            "namespace": "Minn\\Runtime",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Runtime/CommentFeedQuery.php",
+            "lines": 50,
+            "doc": "The comments a comments feed's main query carries, as the reference\nfinds them (probe comment-feed-query). For a listing (the site's, an\narchive's, a search's) they come before its posts, which are then\nnarrowed to the posts those comments are on; for a single post they come\nafter it. Either way the comment_feed_* filters shape the query (handed\nthe WP_Query), only approved comments that are not notes count, newest\nfirst, as many as a feed carries.",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\Runtime\\PostQueryParts"
+            ],
+            "usedBy": [
+                "Minn\\Runtime\\PostQuery"
+            ],
+            "constructor": null,
+            "cases": [],
+            "constants": [],
+            "properties": [],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "listing",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "listing(WP_Query $query, Minn\\Runtime\\PostQueryParts $parts, object $wpdb): void",
+                    "doc": "A listing's comments, then its posts narrowed to theirs: the posts query's join and where as they stand after posts_join.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "query",
+                            "type": "WP_Query",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "parts",
+                            "type": "Minn\\Runtime\\PostQueryParts",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "wpdb",
+                            "type": "object",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 19,
+                    "end": 37
+                },
+                {
+                    "routes": [],
+                    "name": "single",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "single(WP_Query $query, object $wpdb): void",
+                    "doc": "A single post's comments, once the query has found the post.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "query",
+                            "type": "WP_Query",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "wpdb",
+                            "type": "object",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 40,
+                    "end": 46
+                },
+                {
+                    "routes": [],
+                    "name": "request",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "request(WP_Query $query, string $join, string $where, string $groupby, string $select): string",
+                    "doc": "The request, its pieces through the comment_feed_* filters.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "query",
+                            "type": "WP_Query",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "join",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "where",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "groupby",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "select",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 49,
+                    "end": 57
+                },
+                {
+                    "routes": [],
+                    "name": "keep",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "keep(WP_Query $query, array $rows): void",
+                    "doc": "",
+                    "shapes": [
+                        "@param list<mixed> $rows rows or ids, each made a WP_Comment"
+                    ],
+                    "params": [
+                        {
+                            "name": "query",
+                            "type": "WP_Query",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "rows",
+                            "type": "array",
+                            "shape": "list<mixed>",
+                            "default": null,
+                            "doc": "rows or ids, each made a WP_Comment"
+                        }
+                    ],
+                    "line": 60,
+                    "end": 64
+                }
+            ]
+        },
+        {
             "name": "Minn\\Runtime\\CommentForm",
             "short": "CommentForm",
             "namespace": "Minn\\Runtime",
@@ -112114,7 +113028,7 @@
             "namespace": "Minn\\Runtime",
             "kind": "final class",
             "file": "public/minn/src/Minn/Runtime/PostQuery.php",
-            "lines": 371,
+            "lines": 377,
             "doc": "WP_Query::get_posts as the reference runs it (probe wp-query-sql): the\nvariables parsed and handed to pre_get_posts, the clauses written piece by\npiece, every filter a plugin may change them through in the reference's\norder (suppress_filters keeps the ones it keeps), the request split into\nan id query when that is cheaper, the count, a single post's status check\nand preview, sticky posts on the home listing, and the results filters.",
             "implements": [],
             "extends": null,
@@ -112122,6 +113036,7 @@
                 "Minn\\Db",
                 "Minn\\Query\\PostOrder",
                 "Minn\\Query\\PostSearch",
+                "Minn\\Runtime\\CommentFeedQuery",
                 "Minn\\Runtime\\PostQueryParts",
                 "Minn\\Runtime\\PostQueryResults",
                 "Minn\\Runtime\\PostQueryStatus",
@@ -112422,7 +113337,7 @@
                         }
                     ],
                     "line": 256,
-                    "end": 273
+                    "end": 276
                 },
                 {
                     "routes": [],
@@ -112450,8 +113365,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 276,
-                    "end": 283
+                    "line": 279,
+                    "end": 286
                 },
                 {
                     "routes": [],
@@ -112472,8 +113387,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 286,
-                    "end": 299
+                    "line": 289,
+                    "end": 302
                 },
                 {
                     "routes": [],
@@ -112494,8 +113409,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 302,
-                    "end": 326
+                    "line": 305,
+                    "end": 332
                 },
                 {
                     "routes": [],
@@ -112516,8 +113431,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 329,
-                    "end": 348
+                    "line": 335,
+                    "end": 354
                 },
                 {
                     "routes": [],
@@ -112552,8 +113467,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 351,
-                    "end": 369
+                    "line": 357,
+                    "end": 375
                 },
                 {
                     "routes": [],
@@ -112574,8 +113489,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 372,
-                    "end": 388
+                    "line": 378,
+                    "end": 394
                 }
             ]
         },
@@ -112591,6 +113506,7 @@
             "extends": null,
             "uses": [],
             "usedBy": [
+                "Minn\\Runtime\\CommentFeedQuery",
                 "Minn\\Runtime\\PostQuery",
                 "Minn\\Runtime\\PostQueryResults",
                 "Minn\\Runtime\\PostQueryStatus",
@@ -114472,7 +115388,7 @@
             "namespace": "Minn\\Runtime",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Runtime/QueryFlags.php",
-            "lines": 160,
+            "lines": 166,
             "doc": "The conditional flags a set of query variables implies (is_single, is_archive,\nis_home, ...), derived the way the reference's parse step derives them, plus\nthe variables after the integer casts that step applies.",
             "implements": [],
             "extends": null,
@@ -114604,7 +115520,7 @@
                         }
                     ],
                     "line": 51,
-                    "end": 92
+                    "end": 98
                 },
                 {
                     "routes": [],
@@ -114632,8 +115548,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 161,
-                    "end": 170
+                    "line": 167,
+                    "end": 176
                 },
                 {
                     "routes": [],
@@ -114655,8 +115571,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 102,
-                    "end": 129
+                    "line": 108,
+                    "end": 135
                 },
                 {
                     "routes": [],
@@ -114684,8 +115600,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 132,
-                    "end": 153
+                    "line": 138,
+                    "end": 159
                 }
             ]
         },
@@ -115918,6 +116834,7 @@
                 "Minn\\Engine",
                 "Minn\\Extension\\Extensions",
                 "Minn\\Front\\CommentPostController",
+                "Minn\\Front\\FeedController",
                 "Minn\\Front\\Feeds",
                 "Minn\\Front\\FrontController",
                 "Minn\\Front\\Permalinks",
@@ -115997,6 +116914,7 @@
                 "Minn\\Theme\\ArchiveTitle",
                 "Minn\\Theme\\ClassicContent",
                 "Minn\\Theme\\ClassicRenderer",
+                "Minn\\Theme\\FrontLifecycle",
                 "Minn\\Theme\\MainQueryBridge",
                 "Minn\\Theme\\PageRenderer",
                 "Minn\\Theme\\Templates"
@@ -127317,7 +128235,7 @@
             "namespace": "Minn\\Theme",
             "kind": "final class",
             "file": "public/minn/src/Minn/Theme/ClassicContent.php",
-            "lines": 37,
+            "lines": 39,
             "doc": "What a classic theme's the_content() prints: the engine's block pipeline\n(render, password gate, the more-tag teaser in listings), the cached\nembeds, then the runtime's shortcodes and the_content filters so plugin\ncode sees the same hook order the reference runs.",
             "implements": [],
             "extends": null,
@@ -127362,7 +128280,7 @@
                         }
                     ],
                     "line": 25,
-                    "end": 57
+                    "end": 59
                 }
             ]
         },
@@ -127831,6 +128749,95 @@
             ]
         },
         {
+            "name": "Minn\\Theme\\FeedHeaders",
+            "short": "FeedHeaders",
+            "namespace": "Minn\\Theme",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Theme/FeedHeaders.php",
+            "lines": 50,
+            "doc": "The headers a feed is sent with, as the reference's send_headers sends\nthem (suite feed-hooks): the feed type's content type, and when the site\nlast changed (its posts, and its comments too for a comments feed) as\nLast-Modified with an ETag over it; a reader whose copy carries that\ndate or tag is told the copy is current.",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\Http\\Request"
+            ],
+            "usedBy": [
+                "Minn\\Theme\\FrontLifecycle"
+            ],
+            "constructor": null,
+            "cases": [],
+            "constants": [
+                {
+                    "name": "FORMAT",
+                    "value": "'D, d M Y H:i:s'",
+                    "doc": "",
+                    "visibility": "private"
+                }
+            ],
+            "properties": [],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "for",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "for(array $vars, ?Minn\\Http\\Request $request): array",
+                    "doc": "The headers, and whether the reader's copy is current.",
+                    "shapes": [
+                        "@param array<string, mixed> $vars the request's query variables",
+                        "@return array{0: array<string, string>, 1: bool}"
+                    ],
+                    "params": [
+                        {
+                            "name": "vars",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": "the request's query variables"
+                        },
+                        {
+                            "name": "request",
+                            "type": "?Minn\\Http\\Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 26,
+                    "end": 47
+                },
+                {
+                    "routes": [],
+                    "name": "carriesComments",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "carriesComments(array $vars, string $feed): bool",
+                    "doc": "",
+                    "shapes": [
+                        "@param array<string, mixed> $vars whether the feed's last change counts the comments: a comments feed, or a single post's"
+                    ],
+                    "params": [
+                        {
+                            "name": "vars",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": "whether the feed's last change counts the comments: a comments feed, or a single post's"
+                        },
+                        {
+                            "name": "feed",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 50,
+                    "end": 64
+                }
+            ]
+        },
+        {
             "name": "Minn\\Theme\\Folder",
             "short": "Folder",
             "namespace": "Minn\\Theme",
@@ -128080,12 +129087,15 @@
             "namespace": "Minn\\Theme",
             "kind": "final class",
             "file": "public/minn/src/Minn/Theme/FrontLifecycle.php",
-            "lines": 84,
+            "lines": 93,
             "doc": "WordPress's front-end request steps around the main query, as WP::main\nruns them (front lifecycle trace): parse the request (do_parse_request\nmay take it over; query_vars names the public variables, a plugin's own\nread from the query string; request filters the result; parse_request\nfollows), the main query, the 404 decision (pre_handle_404 first), the\nglobals, and the headers (wp_headers, the status, send_headers). The\nengine has already resolved the URL; these steps tell plugins about it\nin the reference's order and let them change what the query asks.",
             "implements": [],
             "extends": null,
             "uses": [
-                "Minn\\Http\\Response"
+                "Minn\\Http\\Response",
+                "Minn\\Runtime\\Runtime",
+                "Minn\\Theme\\FeedHeaders",
+                "Minn\\Theme\\NotModified"
             ],
             "usedBy": [
                 "Minn\\Theme\\MainQueryBridge"
@@ -128129,8 +129139,8 @@
                             "doc": "the query string and form, where a plugin's own variables are read"
                         }
                     ],
-                    "line": 28,
-                    "end": 47
+                    "line": 29,
+                    "end": 48
                 },
                 {
                     "routes": [],
@@ -128156,8 +129166,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 54,
-                    "end": 66
+                    "line": 55,
+                    "end": 67
                 },
                 {
                     "routes": [],
@@ -128176,8 +129186,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 74,
-                    "end": 101
+                    "line": 75,
+                    "end": 111
                 }
             ]
         },
@@ -129217,7 +130227,7 @@
             "namespace": "Minn\\Theme",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Theme/MainQueryBridge.php",
-            "lines": 118,
+            "lines": 123,
             "doc": "Stands the main query for a themed page and runs the front-end steps\naround it as WP::main does (FrontLifecycle): the request parsed, the main\nquery through WP_Query (so pre_get_posts and every posts_* filter shape\nit), the 404 decision, the globals, the headers, then \"wp\" and\ntemplate_redirect. A listing's posts are the query's; a single post the\nquery does not find (a preview, a draft its author reads) is the one the\nengine resolved. Without the runtime, the engine's own listing.",
             "implements": [],
             "extends": null,
@@ -129236,6 +130246,7 @@
                 "Minn\\Theme\\FrontLifecycle"
             ],
             "usedBy": [
+                "Minn\\Front\\FeedController",
                 "Minn\\Theme\\ClassicRenderer",
                 "Minn\\Theme\\PageRenderer"
             ],
@@ -129314,9 +130325,11 @@
                     "name": "stand",
                     "static": false,
                     "visibility": "public",
-                    "signature": "stand(Minn\\Front\\Resolution $resolution): Minn\\Content\\Page",
-                    "doc": "The page of posts a resolution shows, through the runtime's main query when it is up.",
-                    "shapes": [],
+                    "signature": "stand(Minn\\Front\\Resolution $resolution, array $extra = array ( )): Minn\\Content\\Page",
+                    "doc": "The page of posts a resolution shows, through the runtime's main query\nwhen it is up; the variables a request adds of its own (a feed's) win.",
+                    "shapes": [
+                        "@param array<string, mixed> $extra"
+                    ],
                     "params": [
                         {
                             "name": "resolution",
@@ -129324,10 +130337,17 @@
                             "shape": "",
                             "default": null,
                             "doc": ""
+                        },
+                        {
+                            "name": "extra",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": "array ( )",
+                            "doc": ""
                         }
                     ],
-                    "line": 40,
-                    "end": 61
+                    "line": 45,
+                    "end": 66
                 },
                 {
                     "routes": [],
@@ -129338,8 +130358,8 @@
                     "doc": "Posts per page.",
                     "shapes": [],
                     "params": [],
-                    "line": 64,
-                    "end": 67
+                    "line": 69,
+                    "end": 72
                 },
                 {
                     "routes": [],
@@ -129360,8 +130380,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 76,
-                    "end": 88
+                    "line": 81,
+                    "end": 93
                 },
                 {
                     "routes": [],
@@ -129389,8 +130409,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 96,
-                    "end": 106
+                    "line": 101,
+                    "end": 111
                 },
                 {
                     "routes": [],
@@ -129418,8 +130438,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 109,
-                    "end": 114
+                    "line": 114,
+                    "end": 119
                 },
                 {
                     "routes": [],
@@ -129440,8 +130460,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 117,
-                    "end": 122
+                    "line": 122,
+                    "end": 127
                 },
                 {
                     "routes": [],
@@ -129460,10 +130480,34 @@
                             "doc": ""
                         }
                     ],
-                    "line": 124,
-                    "end": 144
+                    "line": 129,
+                    "end": 149
                 }
             ]
+        },
+        {
+            "name": "Minn\\Theme\\NotModified",
+            "short": "NotModified",
+            "namespace": "Minn\\Theme",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Theme/NotModified.php",
+            "lines": 3,
+            "doc": "Raised once a reader's copy of a feed has been found current and the\nheaders that say so are sent: the reference stops the request there, so\nthe engine answers with nothing more.",
+            "implements": [
+                "Throwable",
+                "Stringable"
+            ],
+            "extends": "Exception",
+            "uses": [],
+            "usedBy": [
+                "Minn\\Front\\FeedController",
+                "Minn\\Theme\\FrontLifecycle"
+            ],
+            "constructor": null,
+            "cases": [],
+            "constants": [],
+            "properties": [],
+            "methods": []
         },
         {
             "name": "Minn\\Theme\\PageRenderer",
