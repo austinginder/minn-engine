@@ -32,7 +32,7 @@ request, response, routing, and the outgoing client
 | [`RouteMiss`](#routemiss) | final class | 3 | A handler declining a request its pattern matched: the router swallows |
 | [`RouteParams`](#routeparams) | interface | 10 | The parameters a route takes when they depend on what its captures name |
 | [`RouteRow`](#routerow) | final readonly class | 81 | One line of the route table: what a route is, who it is for, and what it |
-| [`Router`](#router) | final class | 240 | Matches a request to a #[Route] on one of the registered handler |
+| [`Router`](#router) | final class | 254 | Matches a request to a #[Route] on one of the registered handler |
 | [`Subject`](#subject) | enum | 46 | The record a route capture names, so a policy can have it looked up |
 | [`Transport`](#transport) | final class | 138 | The engine's outgoing HTTP transport over curl: it sends exactly what an |
 | [`TrustedProxies`](#trustedproxies) | final readonly class | 104 | Which addresses in front of the engine may speak for the client. |
@@ -1103,7 +1103,7 @@ reads to tell a route that does not take part from no route at all.
 
 Null when nothing matched, so the caller can fall through.
 
-Internals: `admits()` (private, line 118), `arguments()` (private, line 179), `answer()` (private, line 196), `enveloped()` (private, line 214), `methodsOf()` (private, line 242), `literal()` (private, line 255)
+Internals: `admits()` (private, line 118), `arguments()` (private, line 179), `answer()` (private, line 196), `enveloped()` (private, line 214), `methodsOf()` (private, line 242), `literal()` (private, line 255), `spells()` (private, line 266)
 
 
 ## Subject

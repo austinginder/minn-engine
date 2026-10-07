@@ -63054,7 +63054,7 @@
             "namespace": "Minn\\Http",
             "kind": "final class",
             "file": "public/minn/src/Minn/Http/Router.php",
-            "lines": 240,
+            "lines": 254,
             "doc": "Matches a request to a #[Route] on one of the registered handler\nobjects, has the check refuse a bad argument, has the gate judge the\nroute's policy, and invokes the method with the request plus the named\npattern captures. That order is the reference's: an invalid parameter is\nanswered before the caller is looked at. The gate is the one\nthing a router cannot be built without: a policy nobody judges is a\nroute nobody may call.",
             "implements": [],
             "extends": null,
@@ -63475,6 +63475,33 @@
                     ],
                     "line": 255,
                     "end": 259
+                },
+                {
+                    "routes": [],
+                    "name": "spells",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "spells(Minn\\Http\\Route $route, string $path): bool",
+                    "doc": "Whether a route names a path in so many words: its captures, if any,\nonly choose among words ({base:categories|tags}), so the path is one of\nthe routes it spells rather than a value it captures.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "route",
+                            "type": "Minn\\Http\\Route",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "path",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 266,
+                    "end": 273
                 }
             ]
         },

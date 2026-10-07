@@ -100,7 +100,7 @@ final class Router
         }
         foreach ($this->routes as ['route' => $route]) {
             $method = $route->method;
-            if ($method === Method::Any || $method === Method::Head || !preg_match($route->regex(), $request->path, $captures) || ($literal !== null && self::literal($route) !== $literal)) {
+            if ($method === Method::Any || $method === Method::Head || !preg_match($route->regex(), $request->path, $captures) || ($literal !== null && !self::spells($route, $literal))) {
                 continue;
             }
             $captures = array_filter($captures, is_string(...), ARRAY_FILTER_USE_KEY);
@@ -256,5 +256,19 @@ final class Router
     {
         $path = (string) preg_replace('/\{\w+:(\w+)\}/', '$1', $route->pattern);
         return str_contains($path, '{') ? null : $path;
+    }
+
+    /**
+     * Whether a route names a path in so many words: its captures, if any,
+     * only choose among words ({base:categories|tags}), so the path is one of
+     * the routes it spells rather than a value it captures.
+     */
+    private static function spells(Route $route, string $path): bool
+    {
+        $words = (string) preg_replace_callback('/\{\w+:([\w-]+(?:\|[\w-]+)*)\}/', static fn (array $m): string => '(?:' . $m[1] . ')', $route->pattern);
+        if (str_contains($words, '{')) {
+            return false;
+        }
+        return preg_match('#^' . str_replace('#', '\\#', $words) . '$#', $path) === 1;
     }
 }
