@@ -12,67 +12,67 @@ abstract class WP_REST_Controller
 
     public function register_routes()
     {
-        _doing_it_wrong('WP_REST_Controller::register_routes', "Method '%s' must be overridden.", '4.7.0');
+        _doing_it_wrong('WP_REST_Controller::register_routes', sprintf(__("Method '%s' must be overridden."), __METHOD__), '4.7.0');
     }
 
     public function get_items_permissions_check($request)
     {
-        return new WP_Error('invalid-method', "Method 'get_items_permissions_check' not implemented. Must be overridden in subclass.", ['status' => 405]);
+        return new WP_Error('invalid-method', sprintf(__("Method '%s' not implemented. Must be overridden in subclass."), __METHOD__), ['status' => 405]);
     }
 
     public function get_items($request)
     {
-        return new WP_Error('invalid-method', "Method 'get_items' not implemented. Must be overridden in subclass.", ['status' => 405]);
+        return new WP_Error('invalid-method', sprintf(__("Method '%s' not implemented. Must be overridden in subclass."), __METHOD__), ['status' => 405]);
     }
 
     public function get_item_permissions_check($request)
     {
-        return new WP_Error('invalid-method', "Method 'get_item_permissions_check' not implemented. Must be overridden in subclass.", ['status' => 405]);
+        return new WP_Error('invalid-method', sprintf(__("Method '%s' not implemented. Must be overridden in subclass."), __METHOD__), ['status' => 405]);
     }
 
     public function get_item($request)
     {
-        return new WP_Error('invalid-method', "Method 'get_item' not implemented. Must be overridden in subclass.", ['status' => 405]);
+        return new WP_Error('invalid-method', sprintf(__("Method '%s' not implemented. Must be overridden in subclass."), __METHOD__), ['status' => 405]);
     }
 
     public function create_item_permissions_check($request)
     {
-        return new WP_Error('invalid-method', "Method 'create_item_permissions_check' not implemented. Must be overridden in subclass.", ['status' => 405]);
+        return new WP_Error('invalid-method', sprintf(__("Method '%s' not implemented. Must be overridden in subclass."), __METHOD__), ['status' => 405]);
     }
 
     public function create_item($request)
     {
-        return new WP_Error('invalid-method', "Method 'create_item' not implemented. Must be overridden in subclass.", ['status' => 405]);
+        return new WP_Error('invalid-method', sprintf(__("Method '%s' not implemented. Must be overridden in subclass."), __METHOD__), ['status' => 405]);
     }
 
     public function update_item_permissions_check($request)
     {
-        return new WP_Error('invalid-method', "Method 'update_item_permissions_check' not implemented. Must be overridden in subclass.", ['status' => 405]);
+        return new WP_Error('invalid-method', sprintf(__("Method '%s' not implemented. Must be overridden in subclass."), __METHOD__), ['status' => 405]);
     }
 
     public function update_item($request)
     {
-        return new WP_Error('invalid-method', "Method 'update_item' not implemented. Must be overridden in subclass.", ['status' => 405]);
+        return new WP_Error('invalid-method', sprintf(__("Method '%s' not implemented. Must be overridden in subclass."), __METHOD__), ['status' => 405]);
     }
 
     public function delete_item_permissions_check($request)
     {
-        return new WP_Error('invalid-method', "Method 'delete_item_permissions_check' not implemented. Must be overridden in subclass.", ['status' => 405]);
+        return new WP_Error('invalid-method', sprintf(__("Method '%s' not implemented. Must be overridden in subclass."), __METHOD__), ['status' => 405]);
     }
 
     public function delete_item($request)
     {
-        return new WP_Error('invalid-method', "Method 'delete_item' not implemented. Must be overridden in subclass.", ['status' => 405]);
+        return new WP_Error('invalid-method', sprintf(__("Method '%s' not implemented. Must be overridden in subclass."), __METHOD__), ['status' => 405]);
     }
 
     protected function prepare_item_for_database($request)
     {
-        return new WP_Error('invalid-method', "Method 'prepare_item_for_database' not implemented. Must be overridden in subclass.", ['status' => 405]);
+        return new WP_Error('invalid-method', sprintf(__("Method '%s' not implemented. Must be overridden in subclass."), __METHOD__), ['status' => 405]);
     }
 
     public function prepare_item_for_response($item, $request)
     {
-        return new WP_Error('invalid-method', "Method 'prepare_item_for_response' not implemented. Must be overridden in subclass.", ['status' => 405]);
+        return new WP_Error('invalid-method', sprintf(__("Method '%s' not implemented. Must be overridden in subclass."), __METHOD__), ['status' => 405]);
     }
 
     public function prepare_response_for_collection($response)

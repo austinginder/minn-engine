@@ -3,10 +3,10 @@
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line)",
     "summary": {
         "minn": 647,
-        "composes": 935,
+        "composes": 943,
         "leaf": 649,
-        "noop": 1866,
-        "functions": 4027,
+        "noop": 1859,
+        "functions": 4028,
         "minnMethods": 695,
         "leafLinesOver15": 12
     },
@@ -8677,28 +8677,36 @@
             "lines": 1,
             "kind": "noop",
             "minn": [],
-            "composes": []
+            "composes": [
+                "__"
+            ]
         },
         "WP_REST_Controller::create_item_permissions_check": {
             "file": "classes/WP_REST_Controller.php",
             "lines": 1,
             "kind": "noop",
             "minn": [],
-            "composes": []
+            "composes": [
+                "__"
+            ]
         },
         "WP_REST_Controller::delete_item": {
             "file": "classes/WP_REST_Controller.php",
             "lines": 1,
             "kind": "noop",
             "minn": [],
-            "composes": []
+            "composes": [
+                "__"
+            ]
         },
         "WP_REST_Controller::delete_item_permissions_check": {
             "file": "classes/WP_REST_Controller.php",
             "lines": 1,
             "kind": "noop",
             "minn": [],
-            "composes": []
+            "composes": [
+                "__"
+            ]
         },
         "WP_REST_Controller::filter_response_by_context": {
             "file": "classes/WP_REST_Controller.php",
@@ -8755,14 +8763,18 @@
             "lines": 1,
             "kind": "noop",
             "minn": [],
-            "composes": []
+            "composes": [
+                "__"
+            ]
         },
         "WP_REST_Controller::get_item_permissions_check": {
             "file": "classes/WP_REST_Controller.php",
             "lines": 1,
             "kind": "noop",
             "minn": [],
-            "composes": []
+            "composes": [
+                "__"
+            ]
         },
         "WP_REST_Controller::get_item_schema": {
             "file": "classes/WP_REST_Controller.php",
@@ -8776,14 +8788,18 @@
             "lines": 1,
             "kind": "noop",
             "minn": [],
-            "composes": []
+            "composes": [
+                "__"
+            ]
         },
         "WP_REST_Controller::get_items_permissions_check": {
             "file": "classes/WP_REST_Controller.php",
             "lines": 1,
             "kind": "noop",
             "minn": [],
-            "composes": []
+            "composes": [
+                "__"
+            ]
         },
         "WP_REST_Controller::get_object_type": {
             "file": "classes/WP_REST_Controller.php",
@@ -8804,14 +8820,18 @@
             "lines": 1,
             "kind": "noop",
             "minn": [],
-            "composes": []
+            "composes": [
+                "__"
+            ]
         },
         "WP_REST_Controller::prepare_item_for_response": {
             "file": "classes/WP_REST_Controller.php",
             "lines": 1,
             "kind": "noop",
             "minn": [],
-            "composes": []
+            "composes": [
+                "__"
+            ]
         },
         "WP_REST_Controller::prepare_response_for_collection": {
             "file": "classes/WP_REST_Controller.php",
@@ -8826,6 +8846,7 @@
             "kind": "noop",
             "minn": [],
             "composes": [
+                "__",
                 "_doing_it_wrong"
             ]
         },
@@ -8852,14 +8873,18 @@
             "lines": 1,
             "kind": "noop",
             "minn": [],
-            "composes": []
+            "composes": [
+                "__"
+            ]
         },
         "WP_REST_Controller::update_item_permissions_check": {
             "file": "classes/WP_REST_Controller.php",
             "lines": 1,
             "kind": "noop",
             "minn": [],
-            "composes": []
+            "composes": [
+                "__"
+            ]
         },
         "WP_REST_Request::__construct": {
             "file": "classes/WP_REST_Request.php",
@@ -15041,65 +15066,86 @@
         },
         "_deprecated_argument": {
             "file": "functions.php",
-            "lines": 1,
-            "kind": "noop",
+            "lines": 6,
+            "kind": "composes",
             "minn": [],
             "composes": [
-                "do_action"
+                "__",
+                "_minn_notice_wanted",
+                "do_action",
+                "wp_trigger_error"
             ]
         },
         "_deprecated_class": {
             "file": "functions.php",
-            "lines": 1,
-            "kind": "noop",
+            "lines": 6,
+            "kind": "composes",
             "minn": [],
             "composes": [
-                "do_action"
+                "__",
+                "_minn_notice_wanted",
+                "do_action",
+                "wp_trigger_error"
             ]
         },
         "_deprecated_constructor": {
             "file": "functions.php",
-            "lines": 1,
-            "kind": "noop",
+            "lines": 6,
+            "kind": "composes",
             "minn": [],
             "composes": [
-                "do_action"
+                "__",
+                "_minn_notice_wanted",
+                "do_action",
+                "wp_trigger_error"
             ]
         },
         "_deprecated_file": {
             "file": "functions.php",
-            "lines": 1,
-            "kind": "noop",
+            "lines": 6,
+            "kind": "composes",
             "minn": [],
             "composes": [
-                "do_action"
+                "__",
+                "_minn_notice_wanted",
+                "do_action",
+                "wp_trigger_error"
             ]
         },
         "_deprecated_function": {
             "file": "functions.php",
-            "lines": 1,
-            "kind": "noop",
+            "lines": 6,
+            "kind": "composes",
             "minn": [],
             "composes": [
-                "do_action"
+                "__",
+                "_minn_notice_wanted",
+                "do_action",
+                "wp_trigger_error"
             ]
         },
         "_deprecated_hook": {
             "file": "functions.php",
-            "lines": 1,
-            "kind": "noop",
+            "lines": 6,
+            "kind": "composes",
             "minn": [],
             "composes": [
-                "do_action"
+                "__",
+                "_minn_notice_wanted",
+                "do_action",
+                "wp_trigger_error"
             ]
         },
         "_doing_it_wrong": {
             "file": "functions.php",
-            "lines": 1,
-            "kind": "noop",
+            "lines": 7,
+            "kind": "composes",
             "minn": [],
             "composes": [
-                "do_action"
+                "__",
+                "_minn_notice_wanted",
+                "do_action",
+                "wp_trigger_error"
             ]
         },
         "_draft_or_post_title": {
@@ -16157,6 +16203,15 @@
             "minn": [],
             "composes": [
                 "get_allowed_mime_types"
+            ]
+        },
+        "_minn_notice_wanted": {
+            "file": "functions.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "apply_filters"
             ]
         },
         "_minn_page_descendants": {
@@ -35441,11 +35496,12 @@
         },
         "wp_trigger_error": {
             "file": "functions.php",
-            "lines": 1,
-            "kind": "noop",
+            "lines": 10,
+            "kind": "composes",
             "minn": [],
             "composes": [
-                "do_action"
+                "do_action",
+                "wp_kses"
             ]
         },
         "wp_trim_excerpt": {

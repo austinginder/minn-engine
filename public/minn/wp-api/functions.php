@@ -344,44 +344,95 @@ function is_blog_installed()
     return true;
 }
 
+/** @internal Whether a debugging notice is raised: only under WP_DEBUG, and only while its filter (handed true and anything else it is given) still says so. */
+function _minn_notice_wanted($filter, ...$args)
+{
+    return defined('WP_DEBUG') && WP_DEBUG && apply_filters($filter, true, ...$args);
+}
+
 function _deprecated_function($function_name, $version, $replacement = '')
 {
     do_action('deprecated_function_run', $function_name, $replacement, $version);
+    if (_minn_notice_wanted('deprecated_function_trigger_error')) {
+        wp_trigger_error('', $replacement
+            ? sprintf(__('Function %1$s is <strong>deprecated</strong> since version %2$s! Use %3$s instead.'), $function_name, $version, $replacement)
+            : sprintf(__('Function %1$s is <strong>deprecated</strong> since version %2$s with no alternative available.'), $function_name, $version), E_USER_DEPRECATED);
+    }
 }
 
 function _deprecated_argument($function_name, $version, $message = '')
 {
     do_action('deprecated_argument_run', $function_name, $message, $version);
+    if (_minn_notice_wanted('deprecated_argument_trigger_error')) {
+        wp_trigger_error('', $message
+            ? sprintf(__('Function %1$s was called with an argument that is <strong>deprecated</strong> since version %2$s! %3$s'), $function_name, $version, $message)
+            : sprintf(__('Function %1$s was called with an argument that is <strong>deprecated</strong> since version %2$s with no alternative available.'), $function_name, $version), E_USER_DEPRECATED);
+    }
 }
 
 function _deprecated_hook($hook, $version, $replacement = '', $message = '')
 {
     do_action('deprecated_hook_run', $hook, $replacement, $version, $message);
+    if (_minn_notice_wanted('deprecated_hook_trigger_error')) {
+        wp_trigger_error('', ($replacement
+            ? sprintf(__('Hook %1$s is <strong>deprecated</strong> since version %2$s! Use %3$s instead.'), $hook, $version, $replacement)
+            : sprintf(__('Hook %1$s is <strong>deprecated</strong> since version %2$s with no alternative available.'), $hook, $version)) . ($message ? ' ' . $message : ''), E_USER_DEPRECATED);
+    }
 }
 
 function _deprecated_file($file, $version, $replacement = '', $message = '')
 {
     do_action('deprecated_file_included', $file, $replacement, $version, $message);
+    if (_minn_notice_wanted('deprecated_file_trigger_error')) {
+        wp_trigger_error('', ($replacement
+            ? sprintf(__('File %1$s is <strong>deprecated</strong> since version %2$s! Use %3$s instead.'), $file, $version, $replacement)
+            : sprintf(__('File %1$s is <strong>deprecated</strong> since version %2$s with no alternative available.'), $file, $version)) . ($message ? ' ' . $message : ''), E_USER_DEPRECATED);
+    }
 }
 
 function _deprecated_class($class_name, $version, $replacement = '')
 {
     do_action('deprecated_class_run', $class_name, $replacement, $version);
+    if (_minn_notice_wanted('deprecated_class_trigger_error')) {
+        wp_trigger_error('', $replacement
+            ? sprintf(__('Class %1$s is <strong>deprecated</strong> since version %2$s! Use %3$s instead.'), $class_name, $version, $replacement)
+            : sprintf(__('Class %1$s is <strong>deprecated</strong> since version %2$s with no alternative available.'), $class_name, $version), E_USER_DEPRECATED);
+    }
 }
 
 function _deprecated_constructor($class_name, $version, $parent_class = '')
 {
     do_action('deprecated_constructor_run', $class_name, $version, $parent_class);
+    if (_minn_notice_wanted('deprecated_constructor_trigger_error')) {
+        wp_trigger_error('', $parent_class
+            ? sprintf(__('The called constructor method for %1$s class in %2$s is <strong>deprecated</strong> since version %3$s! Use %4$s instead.'), $class_name, $parent_class, $version, '<code>__construct()</code>')
+            : sprintf(__('The called constructor method for %1$s class is <strong>deprecated</strong> since version %2$s! Use %3$s instead.'), $class_name, $version, '<code>__construct()</code>'), E_USER_DEPRECATED);
+    }
 }
 
 function _doing_it_wrong($function_name, $message, $version)
 {
     do_action('doing_it_wrong_run', $function_name, $message, $version);
+    if (!_minn_notice_wanted('doing_it_wrong_trigger_error', $function_name, $message, $version)) {
+        return;
+    }
+    $message .= ' ' . sprintf(__('Please see <a href="%s">Debugging in WordPress</a> for more information.'), __('https://developer.wordpress.org/advanced-administration/debug/debug-wordpress/'));
+    $since = $version ? sprintf(__('(This message was added in version %s.)'), $version) : '';
+    wp_trigger_error('', sprintf(__('Function %1$s was called <strong>incorrectly</strong>. %2$s %3$s'), $function_name, $message, $since));
 }
 
 function wp_trigger_error($function_name, $message, $error_level = E_USER_NOTICE)
 {
+    if (!defined('WP_DEBUG') || !WP_DEBUG) {
+        return;
+    }
     do_action('wp_trigger_error_run', $function_name, $message, $error_level);
+    // The notice keeps links (http and https only), line breaks, code and emphasis; a fatal is thrown rather than raised.
+    $message = wp_kses(((string) $function_name !== '' ? "{$function_name}(): " : '') . $message, ['a' => ['href' => true], 'br' => [], 'code' => [], 'em' => [], 'strong' => []], ['http', 'https']);
+    if ($error_level === E_USER_ERROR) {
+        throw new WP_Exception($message);
+    }
+    trigger_error($message, $error_level);
 }
 
 function apache_mod_loaded($mod, $default_value = false)
