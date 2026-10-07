@@ -11,6 +11,7 @@ the WordPress runtime plugins load against
 | [`AllowedOptions`](#allowedoptions) | final class | 26 | The settings-page allowlist plugins extend: option group => the option |
 | [`ApplicationPasswordEvents`](#applicationpasswordevents) | final class | 46 | Application password changes made over REST, as the reference makes them |
 | [`ApplicationPasswordSignIn`](#applicationpasswordsignin) | final class | 80 | wp_authenticate_application_password as the reference answers it (probe |
+| [`ArchiveLinks`](#archivelinks) | final class | 41 | A post type's archive address and its feed, as the reference gives them |
 | [`AssetEdits`](#assetedits) | final class | 29 | What a plugin did to $wp_scripts->registered or $wp_styles->registered |
 | [`Assets`](#assets) | final class | 411 | The registry behind wp_register_/wp_enqueue_ for scripts and styles: |
 | [`Avatar`](#avatar) | final class | 62 | Avatars the way get_avatar_data and get_avatar decide them: the argument |
@@ -41,10 +42,12 @@ the WordPress runtime plugins load against
 | [`Hooks`](#hooks) | final class | 338 | The hook registry plugin code registers into and the engine fires. |
 | [`Interactivity`](#interactivity) | final class | 509 | Server-side directive processing for the Interactivity API: the state and |
 | [`MainQuery`](#mainquery) | final class | 34 | The query variables the reference's main query would carry for a URL the |
+| [`MenuEvents`](#menuevents) | final readonly class | 220 | Menus and their items saved as the reference saves them, telling |
 | [`Meta`](#meta) | final readonly class | 210 | The four meta tables behind get_metadata and friends: reads by object, and the row-level writes the update and delete rules need. |
 | [`MetaKeys`](#metakeys) | final class | 183 | The meta keys code registers, kept where the reference keeps them |
 | [`MetaTypes`](#metatypes) | final class | 21 | Meta types a plugin brought, by the table it named on $wpdb as |
 | [`NavMenu`](#navmenu) | final class | 303 | Nav-menu item decoration for wp_nav_menu(): the reference's class tokens |
+| [`NavMenuItems`](#navmenuitems) | final class | 154 | Classic menu items as the reference serves them to walkers and plugins |
 | [`OEmbed`](#oembed) | final class | 92 | oEmbed as data: provider matching against the wildcard table, response parsing, and the markup an oEmbed payload becomes. |
 | [`ObjectCache`](#objectcache) | final class | 52 | The per-request object cache behind wp_cache_*: groups of keys, nothing persistent. |
 | [`ObjectTerms`](#objectterms) | final class | 30 | wp_get_object_terms's handling of taxonomies registered with their own |
@@ -373,6 +376,29 @@ application_password_did_authenticate; a refusal is announced and
 leaves the request signed out.
 
 Internals: `refusal()` (private, line 86)
+
+
+## ArchiveLinks
+
+`final class Minn\Runtime\ArchiveLinks` · `public/minn/src/Minn/Runtime/ArchiveLinks.php`
+
+A post type's archive address and its feed, as the reference gives them
+(probe archive-links). The posts' archive is the posts page when the
+front is a page with one, else the bare home; a type with an archive
+lives under its named archive or its rewrite slug (after the
+structure's front unless it declines it), or at ?post_type= without
+rewrites or pretty permalinks; any other type has none (false, no
+filter). Its feed is the archive's /feed/ (/feed/{type}/ for one not the
+default) when the type's rewrite takes feeds, else ?feed= with the type
+spelled out.
+
+### static `archive(string $postType): string|false`
+
+get_post_type_archive_link.
+
+### static `feed(string $postType, string $feed): string|false`
+
+get_post_type_archive_feed_link.
 
 
 ## AssetEdits
@@ -1621,6 +1647,88 @@ The query vars a resolution amounts to.
 - `@return array<string, mixed>`
 
 
+## MenuEvents
+
+`final readonly class Minn\Runtime\MenuEvents` · `public/minn/src/Minn/Runtime/MenuEvents.php`
+
+Menus and their items saved as the reference saves them, telling
+plugins what it tells them (probe rest-menu-save). A menu is a nav_menu
+term: made or changed through wp_insert_term / wp_update_term (the term
+actions), then wp_create_nav_menu or wp_update_nav_menu; deleted, its
+items go through wp_delete_post, the term through wp_delete_term, then
+wp_delete_nav_menu. An item is written by the engine, with the post
+save actions around it, then wp_add_nav_menu_item (a new one) and
+wp_update_nav_menu_item, handed the reference's menu-item-* arguments.
+
+- const `ITEM_DEFAULTS` = `array (   'menu-item-db-id' => 0,   'menu-item-object-id' => 0,   'menu-item-object' => '',   'menu-item-parent-id' => 0,   'menu-item-position' => 0,   'menu-item-type' => 'custom',   'menu-item-title' => '',   'menu-item-url' => '',   'menu-item-description' => '',   'menu-item-attr-title' => '',   'menu-item-target' => '',   'menu-item-classes' => '',   'menu-item-xfn' => '',   'menu-item-status' => '',   'menu-item-post-date' => '',   'menu-item-post-date-gmt' => '', )` — The arguments an item is saved with, and their defaults, as the reference lists them.
+
+```php
+__construct(Minn\Content\Menus $menus, Minn\Content\Posts $posts)
+```
+
+
+### `saveMenu(int $menuId, array $data): WP_Error|int`
+
+wp_update_nav_menu_object: a menu made (menu id 0) or changed, its id
+or the refusal. The name is checked first, as the reference checks it.
+
+- `@param array<string, mixed> $data menu-name, description`
+
+### `deleteMenu(int $menuId): void`
+
+wp_delete_nav_menu: the items through wp_delete_post, the term through wp_delete_term, the locations let go, then wp_delete_nav_menu.
+
+### `saveItem(int $menuId, int $itemId, array $data, string $afterInsert = 'now'): WP_Error|int`
+
+wp_update_nav_menu_item: an item made (id 0) or changed in a menu, its
+id or the refusal; the post save actions around the write, then the
+item actions, and wp_after_insert_post "now" or (a REST save, which
+fires it after its own actions) "later".
+
+- `@param array<string, mixed> $data menu-item-* arguments`
+
+### `restMenu(int $menuId, array $fields, Minn\Http\Request $request): int`
+
+A menu saved over REST, as the reference's menus controller saves one:
+the request's fields (name, description, those given) through
+rest_pre_insert_nav_menu, then saveMenu(), then rest_insert_nav_menu
+and rest_after_insert_nav_menu.
+
+- `@param array<string, mixed> $fields name, description`
+
+### `restDeleteMenu(int $menuId, array $previous, Minn\Http\Request $request): void`
+
+A menu deleted over REST: deleteMenu(), then rest_delete_nav_menu with the menu as it was and the response. @param array<string, mixed> $previous
+
+- `@param array<string, mixed> $previous`
+
+### `restItem(int $itemId, array $args, Minn\Http\Request $request): int`
+
+An item saved over REST, as the reference's menu-items controller saves
+one: its menu-id and menu-item-* arguments through
+rest_pre_insert_nav_menu_item, then saveItem(), then
+rest_insert_nav_menu_item, rest_after_insert_nav_menu_item and
+wp_after_insert_post.
+
+- `@param array<string, mixed> $args menu-id and menu-item-* arguments, the item's own filled in for an update`
+
+### `restDeleteItem(int $itemId, array $previous, Minn\Http\Request $request): void`
+
+An item deleted over REST: wp_delete_post, then rest_delete_nav_menu_item with the item as it was and the response. @param array<string, mixed> $previous
+
+- `@param array<string, mixed> $previous`
+
+### `savedArgs(int $itemId): array`
+
+An item's own saved values as menu-item-* arguments, which a REST
+update starts from: the reference's save resets to its default any
+argument it isn't handed.
+
+- `@return array<string, mixed>`
+
+Internals: `prepared()` (private, line 174), `fields()` (private, line 221)
+
+
 ## Meta
 
 `final readonly class Minn\Runtime\Meta` · `public/minn/src/Minn/Runtime/Meta.php`
@@ -1833,6 +1941,39 @@ Menu items with the classes and flags the reference adds for the current page.
 - `@return list<object>`
 
 Internals: `menuForArgs()` (private, line 52), `wrapId()` (private, line 70), `container()` (private, line 85), `singularContext()` (private, line 156), `markQueriedAncestry()` (private, line 199), `isCurrent()` (private, line 222), `markAncestors()` (private, line 258), `currentUrl()` (private, line 308)
+
+
+## NavMenuItems
+
+`final class Minn\Runtime\NavMenuItems` · `public/minn/src/Minn/Runtime/NavMenuItems.php`
+
+Classic menu items as the reference serves them to walkers and plugins
+(probe nav-menu-items). wp_setup_nav_menu_item dresses a nav_menu_item
+post with the fields walkers read: its _menu_item_* meta (ids as
+strings), kept when already set; then by its kind the label, address
+and title of what it points at (a post's title through the_title, every
+time, the item's own title winning when it has one; a post or term
+gone, or a post trashed, marks it _invalid; a post not published is
+labelled by its status); its title attribute and description through
+their filters. A post or term of another kind is dressed as a would-be
+item, as the admin's boxes use it: id 0, its own title, address and
+parent. wp_get_nav_menu_items reads a menu's items through get_posts,
+sets each up, drops the invalid ones outside the admin, and for ARRAY_A
+output sorts them by the output key and numbers that key from 1, all
+before its filter.
+
+### static `setUp(mixed $item): mixed`
+
+wp_setup_nav_menu_item: the item dressed, whatever it was, then the filter.
+
+### static `forMenu(WP_Term $menu, array $args): array`
+
+wp_get_nav_menu_items for a menu found.
+
+- `@param array<string, mixed> $args`
+- `@return array<int, object>`
+
+Internals: `menuItem()` (private, line 63), `pointsAtPost()` (private, line 86), `pointsAtTerm()` (private, line 103), `pointsAtArchive()` (private, line 117), `custom()` (private, line 129), `post()` (private, line 137), `term()` (private, line 156)
 
 
 ## OEmbed
@@ -2427,7 +2568,7 @@ functions so the facade's own writes say the same (contracts/runtime.md
 "Writes tell plugins"). Without a booted runtime every method does
 nothing, so a write with no plugins loaded is exactly what it was.
 
-Used by: `Minn\Rest\MediaController`, `Minn\Rest\PostsWriteController`
+Used by: `Minn\Rest\MediaController`, `Minn\Rest\PostsWriteController`, `Minn\Runtime\MenuEvents`
 
 ### `live(): bool`
 
@@ -3957,7 +4098,7 @@ saves one (rest_pre_insert_{taxonomy}, then the runtime's wp_insert_term
 or wp_update_term, and wp_delete_term), and the REST actions follow.
 Without a booted runtime each write is the engine's own.
 
-Used by: `Minn\Rest\TermsController`
+Used by: `Minn\Rest\TermsController`, `Minn\Runtime\MenuEvents`
 
 ### `live(): bool`
 

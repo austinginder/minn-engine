@@ -625,12 +625,6 @@ function wp_update_image_subsizes($attachment_id)
     return null;
 }
 
-function wp_update_nav_menu_item($menu_id = 0, $menu_item_db_id = 0, $menu_item_data = [], $fire_after_hooks = true)
-{
-    \Minn\Runtime\PlaceholderTrace::hit('wp_update_nav_menu_item');
-    return null;
-}
-
 function wp_update_php_annotation($before = '<p class="description">', $after = '</p>', $display = true)
 {
     \Minn\Runtime\PlaceholderTrace::hit('wp_update_php_annotation');

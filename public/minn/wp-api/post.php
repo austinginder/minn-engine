@@ -615,15 +615,16 @@ function get_sample_permalink($post, $title = null, $name = null)
     return $post === null ? ['', ''] : PostLinks::sample($post, $title === null ? null : (string) $title, $name === null ? null : (string) $name);
 }
 
+/** A post type's archive address, false for a type with none (Runtime\ArchiveLinks). */
 function get_post_type_archive_link($post_type)
 {
-    $type = get_post_type_object($post_type);
-    if ($type === null || !$type->has_archive) {
-        return false;
-    }
-    // A named archive (has_archive "shop") lives at that name; otherwise at the type's rewrite slug.
-    $slug = is_string($type->has_archive) && $type->has_archive !== '' ? $type->has_archive : (is_array($type->rewrite) && !empty($type->rewrite['slug']) ? $type->rewrite['slug'] : $type->name);
-    return apply_filters('post_type_archive_link', home_url('/' . $slug . '/'), $post_type);
+    return Minn\Runtime\ArchiveLinks::archive((string) $post_type);
+}
+
+/** A post type's archive feed, false for a type with no archive (Runtime\ArchiveLinks). */
+function get_post_type_archive_feed_link($post_type, $feed = '')
+{
+    return Minn\Runtime\ArchiveLinks::feed((string) $post_type, (string) $feed);
 }
 
 function wp_get_shortlink($id = 0, $context = 'post', $allow_slugs = true)

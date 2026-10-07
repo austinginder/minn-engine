@@ -34,7 +34,7 @@ the wp/v2 surface: shapes and controllers
 | [`MediaObject`](#mediaobject) | final readonly class | 164 | The wp/v2 media object, view and edit context. |
 | [`MenuItemObject`](#menuitemobject) | final readonly class | 74 | The wp/v2/menu-items resource. |
 | [`MenuObject`](#menuobject) | final readonly class | 37 | The wp/v2/menus resource: a nav_menu term plus locations and auto_add. |
-| [`MenusController`](#menuscontroller) | final readonly class | 312 | wp/v2/menus, menu-items, and menu-locations. Viewing needs edit_posts; |
+| [`MenusController`](#menuscontroller) | final readonly class | 358 | wp/v2/menus, menu-items, and menu-locations. Viewing needs edit_posts; |
 | [`NavigationController`](#navigationcontroller) | final readonly class | 48 | wp/v2/navigation: the block theme's navigation menus, stored as |
 | [`OEmbedController`](#oembedcontroller) | final readonly class | 72 | oembed/1.0 as the reference answers it (probe oembed). embed is the |
 | [`ParamCheck`](#paramcheck) | final class | 76 | The required / validate / sanitize pass over a request's declared arguments. |
@@ -1310,6 +1310,8 @@ The wp/v2 menu shape.
 wp/v2/menus, menu-items, and menu-locations. Viewing needs edit_posts;
 writes need edit_theme_options. Anonymous callers get 401.
 
+- const `NEW_ITEM` = `array (   'menu-id' => 0,   'menu-item-db-id' => 0,   'menu-item-object-id' => 0,   'menu-item-object' => '',   'menu-item-parent-id' => 0,   'menu-item-position' => 1,   'menu-item-type' => 'custom',   'menu-item-title' => '',   'menu-item-url' => '',   'menu-item-description' => '',   'menu-item-attr-title' => '',   'menu-item-target' => '',   'menu-item-classes' => '',   'menu-item-xfn' => '',   'menu-item-status' => 'publish', )` — The arguments a new item starts from, as the reference's REST controller prepares them.
+
 Used by: `Minn\Rest\Api`
 
 ```php
@@ -1397,7 +1399,7 @@ Route: `GET /wp/v2/menu-locations/{location:[\w-]+} (cap edit_theme_options)`
 
 One menu location.
 
-Internals: `locationItem()` (private, line 286), `titleFrom()` (private, line 302), `urlFrom()` (private, line 312), `refuse()` (private, line 322), `plain()` (private, line 332)
+Internals: `locationItem()` (private, line 302), `argsFrom()` (private, line 325), `titleFrom()` (private, line 348), `urlFrom()` (private, line 358), `refuse()` (private, line 368), `plain()` (private, line 378)
 
 
 ## NavigationController
@@ -2365,7 +2367,7 @@ and the runtime's namespaces folded into the index.
 - const `DISPATCH_DONE` = `array (   'rest_filter_response_fields' => 10, )` — rest_post_dispatch's defaults the engine does itself: every answer is cut to its _fields before it is served.
 - const `SERVE_DONE` = `array (   '_oembed_rest_pre_serve_request' => 10, )` — rest_pre_serve_request's defaults the engine does itself: oEmbed's XML (see oembedXml()).
 
-Used by: `Minn\Rest\Api`, `Minn\Rest\ApplicationPasswordsController`, `Minn\Rest\BatchController`, `Minn\Rest\CommentsController`, `Minn\Rest\Embed`, `Minn\Rest\MediaController`, `Minn\Rest\OEmbedController`, `Minn\Rest\PostsController`, `Minn\Rest\RuntimeEnvelope`, `Minn\Rest\RuntimePrepare`, `Minn\Rest\TermsController`, `Minn\Rest\UsersController`, `Minn\Runtime\CommentEvents`, `Minn\Runtime\PostEvents`, `Minn\Runtime\PostSave`, `Minn\Runtime\TermEvents`, `Minn\Runtime\UserEvents`
+Used by: `Minn\Rest\Api`, `Minn\Rest\ApplicationPasswordsController`, `Minn\Rest\BatchController`, `Minn\Rest\CommentsController`, `Minn\Rest\Embed`, `Minn\Rest\MediaController`, `Minn\Rest\OEmbedController`, `Minn\Rest\PostsController`, `Minn\Rest\RuntimeEnvelope`, `Minn\Rest\RuntimePrepare`, `Minn\Rest\TermsController`, `Minn\Rest\UsersController`, `Minn\Runtime\CommentEvents`, `Minn\Runtime\MenuEvents`, `Minn\Runtime\PostEvents`, `Minn\Runtime\PostSave`, `Minn\Runtime\TermEvents`, `Minn\Runtime\UserEvents`
 
 
 ### static `gate(Minn\Http\Request $request): ?Minn\Http\Response`

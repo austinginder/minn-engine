@@ -220,7 +220,7 @@ $commentBracketCeiling = 78;
 $commentBrackets = 0;
 $userBracketCeiling = 73;
 $userBrackets = 0;
-$bracketCeiling = 223;
+$bracketCeiling = 220;
 $unions = 0;
 $brackets = 0;
 foreach (new RecursiveIteratorIterator(new RecursiveDirectoryIterator($root, FilesystemIterator::SKIP_DOTS)) as $file) {

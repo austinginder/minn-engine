@@ -218,6 +218,7 @@ final readonly class Menus
             }
         }
         $menuId = $knownMenuId ?? $this->menuIdOf($id);
+        $excerpt = (string) $row['post_excerpt'];
         return new MenuItem(
             $id,
             $title,
@@ -230,7 +231,8 @@ final readonly class Menus
             $meta['_menu_item_target'] ?? '',
             $this->classList($meta['_menu_item_classes'] ?? null),
             $this->xfnList($meta['_menu_item_xfn'] ?? null),
-            $meta['_menu_item_attr_title'] ?? '',
+            // The reference keeps the title attribute as the excerpt; an item the engine wrote before kept it as meta.
+            $excerpt !== '' ? $excerpt : ($meta['_menu_item_attr_title'] ?? ''),
             trim((string) $row['post_content']),
             (string) $row['post_status'],
             $menuId,
@@ -367,7 +369,9 @@ final readonly class Menus
      *   menuId: int,
      *   attrTitle: string,
      *   description: string,
-     *   authorId: int
+     *   authorId: int,
+     *   classes?: list<string>,
+     *   xfn?: string
      * } $fields
      */
     public function createItem(array $fields): int
@@ -376,14 +380,16 @@ final readonly class Menus
         $site = $this->site();
         $now = $site->localNow();
         $gmt = gmdate('Y-m-d H:i:s');
-        $slug = $writer->uniqueSlug($fields['title'] !== '' ? $fields['title'] : 'menu-item', 0, 'nav_menu_item');
+        // As the reference names an item: by its title, by its id with none, not at all while a draft.
+        $draft = in_array($fields['status'], ['draft', 'pending', 'auto-draft'], true);
+        $slug = $draft || $fields['title'] === '' ? '' : $writer->uniqueSlug($fields['title'], 0, 'nav_menu_item');
         $id = $writer->insert([
             'post_author' => $fields['authorId'],
             'post_date' => $now,
             'post_date_gmt' => $gmt,
-            'post_content' => $fields['description'],
+            'post_content' => self::content($fields['type'], $fields['title'], $fields['description']),
             'post_title' => $fields['title'],
-            'post_excerpt' => '',
+            'post_excerpt' => $fields['attrTitle'],
             'post_status' => $fields['status'],
             'comment_status' => 'closed',
             'ping_status' => 'closed',
@@ -394,17 +400,20 @@ final readonly class Menus
             'post_modified' => $now,
             'post_modified_gmt' => $gmt,
             'post_content_filtered' => '',
-            'post_parent' => 0,
+            'post_parent' => $this->originalParent($fields['type'], $fields['object'], $fields['objectId']),
             'guid' => '',
             'menu_order' => $fields['menuOrder'],
             'post_type' => 'nav_menu_item',
             'post_mime_type' => '',
             'comment_count' => 0,
         ]);
+        $slug = $draft || $slug !== '' ? $slug : (string) $id;
         $home = rtrim((string) ($site->option('home') ?? ''), '/');
-        $writer->update($id, ['guid' => $home . '/' . $slug . '/']);
-        $objectId = $fields['type'] === 'custom' ? $id : $fields['objectId'];
-        $this->writeMeta($id, $fields['type'], $fields['object'], $objectId, $fields['parent'], $fields['url'], $fields['target'], $fields['attrTitle']);
+        $writer->update($id, ['post_name' => $slug, 'guid' => $draft ? $home . '/?p=' . $id : $home . '/' . $slug . '/']);
+        $this->writeMeta($id, [
+            'type' => $fields['type'], 'menu_item_parent' => (string) $fields['parent'], 'object_id' => (string) ($fields['type'] === 'custom' ? $id : $fields['objectId']),
+            'object' => $fields['object'], 'target' => $fields['target'], 'classes' => $fields['classes'] ?? [''], 'xfn' => $fields['xfn'] ?? '', 'url' => $fields['url'],
+        ]);
         if ($fields['menuId'] > 0) {
             $writer->setTerms($id, 'nav_menu', [$fields['menuId']]);
         } else {
@@ -423,45 +432,32 @@ final readonly class Menus
         $writer = $this->writer();
         $site = $this->site();
         $item = $this->findItem($id);
-        if ($item === null) {
+        $post = $this->posts->find($id);
+        if ($item === null || $post === null) {
             return;
         }
-        $columns = [
-            'post_modified' => $site->localNow(),
-            'post_modified_gmt' => gmdate('Y-m-d H:i:s'),
-        ];
-        if (isset($fields['title'])) {
-            $columns['post_title'] = (string) $fields['title'];
-        }
-        if (isset($fields['description'])) {
-            $columns['post_content'] = (string) $fields['description'];
-        }
-        if (isset($fields['status'])) {
-            $columns['post_status'] = (string) $fields['status'];
-        }
-        if (isset($fields['menuOrder'])) {
-            $columns['menu_order'] = (int) $fields['menuOrder'];
-        }
-        $writer->update($id, $columns);
         $type = (string) ($fields['type'] ?? $item->type);
         $object = (string) ($fields['object'] ?? $item->object);
-        $objectId = (int) ($fields['objectId'] ?? $item->objectId);
-        if ($type === 'custom') {
-            $objectId = $id;
-        }
-        $parent = (int) ($fields['parent'] ?? $item->parent);
+        $objectId = $type === 'custom' ? $id : (int) ($fields['objectId'] ?? $item->objectId);
+        $title = (string) ($fields['title'] ?? $post->title);
+        $description = (string) ($fields['description'] ?? trim($post->content));
+        $writer->update($id, array_filter([
+            'post_modified' => $site->localNow(),
+            'post_modified_gmt' => gmdate('Y-m-d H:i:s'),
+            'post_parent' => $this->originalParent($type, $object, $objectId),
+            'post_title' => $title,
+            'post_content' => self::content($type, $title, $description),
+            'post_excerpt' => isset($fields['attrTitle']) ? (string) $fields['attrTitle'] : null,
+            'post_status' => isset($fields['status']) ? (string) $fields['status'] : null,
+            'menu_order' => isset($fields['menuOrder']) ? (int) $fields['menuOrder'] : null,
+        ], static fn ($value) => $value !== null));
         $url = (string) ($fields['url'] ?? ($type === 'custom' ? $item->url : ''));
-        if ($type !== 'custom') {
-            $url = (string) ($fields['url'] ?? '');
-        }
-        $target = (string) ($fields['target'] ?? $item->target);
-        $attrTitle = (string) ($fields['attrTitle'] ?? $item->attrTitle);
-        $this->writeMeta($id, $type, $object, $objectId, $parent, $url, $target, $attrTitle);
-        if (isset($fields['menuId'])) {
-            $menuId = (int) $fields['menuId'];
-            if ($menuId > 0) {
-                $writer->setTerms($id, 'nav_menu', [$menuId]);
-            }
+        $this->writeMeta($id, [
+            'type' => $type, 'menu_item_parent' => (string) (int) ($fields['parent'] ?? $item->parent), 'object_id' => (string) $objectId, 'object' => $object,
+            'target' => (string) ($fields['target'] ?? $item->target), 'classes' => $fields['classes'] ?? $item->classes, 'xfn' => (string) ($fields['xfn'] ?? implode(' ', $item->xfn)), 'url' => $url,
+        ]);
+        if (isset($fields['menuId']) && (int) $fields['menuId'] > 0) {
+            $writer->setTerms($id, 'nav_menu', [(int) $fields['menuId']]);
         }
     }
 
@@ -499,18 +495,35 @@ final readonly class Menus
         $this->writer()->destroy($id);
     }
 
-    private function writeMeta(int $id, string $type, string $object, int $objectId, int $parent, string $url, string $target, string $attrTitle): void
+    /**
+     * The item's _menu_item_* meta, as the reference keeps it (the classes a
+     * list; no title attribute, which is the excerpt).
+     *
+     * @param array<string, string|list<string>> $meta
+     */
+    private function writeMeta(int $id, array $meta): void
     {
         $writer = $this->writer();
-        $writer->setMeta($id, '_menu_item_type', $type);
-        $writer->setMeta($id, '_menu_item_object', $object);
-        $writer->setMeta($id, '_menu_item_object_id', (string) $objectId);
-        $writer->setMeta($id, '_menu_item_menu_item_parent', (string) $parent);
-        $writer->setMeta($id, '_menu_item_url', $url);
-        $writer->setMeta($id, '_menu_item_target', $target);
-        $writer->setMeta($id, '_menu_item_attr_title', $attrTitle);
-        $writer->setMeta($id, '_menu_item_classes', Serialized::serializeStringList(['']));
-        $writer->setMeta($id, '_menu_item_xfn', '');
+        foreach ($meta as $key => $value) {
+            $writer->setMeta($id, '_menu_item_' . $key, is_array($value) ? Serialized::serializeStringList($value === [] ? [''] : array_values($value)) : $value);
+        }
+        $writer->deleteMeta($id, '_menu_item_attr_title');
+    }
+
+    /** What an item stores as its parent post: the parent of the post or term it points at. */
+    private function originalParent(string $type, string $object, int $objectId): int
+    {
+        return match ($type) {
+            'post_type' => $this->posts->find($objectId)?->parentId ?? 0,
+            'taxonomy' => $this->terms->find($object, $objectId)?->parentId ?? 0,
+            default => 0,
+        };
+    }
+
+    /** An item's content: its description, or a space for an item that names nothing of its own (as the reference keeps one). */
+    private static function content(string $type, string $title, string $description): string
+    {
+        return $type !== 'custom' && $title === '' && $description === '' ? ' ' : $description;
     }
 
     private function writer(): PostWriter

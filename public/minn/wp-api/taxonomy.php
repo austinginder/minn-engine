@@ -727,39 +727,17 @@ function is_nav_menu($menu)
     return wp_get_nav_menu_object($menu) !== false;
 }
 
+/** A menu's items, set up as walkers read them (Runtime\NavMenuItems); false for no menu. */
 function wp_get_nav_menu_items($menu, $args = [])
 {
     $menu = wp_get_nav_menu_object($menu);
-    if (!$menu) {
-        return false;
-    }
-    $items = get_posts(['post_type' => 'nav_menu_item', 'post_status' => 'publish', 'numberposts' => -1, 'orderby' => 'menu_order', 'order' => 'ASC', 'tax_query' => [['taxonomy' => 'nav_menu', 'field' => 'term_id', 'terms' => [$menu->term_id]]]]);
-    foreach ($items as $item) {
-        $item->db_id = $item->ID;
-        $item->menu_item_parent = (string) (int) get_post_meta($item->ID, '_menu_item_menu_item_parent', true);
-        $item->object_id = (string) (int) get_post_meta($item->ID, '_menu_item_object_id', true);
-        $item->object = (string) get_post_meta($item->ID, '_menu_item_object', true);
-        $item->type = (string) get_post_meta($item->ID, '_menu_item_type', true);
-        $item->type_label = ucfirst($item->type);
-        $item->url = (string) get_post_meta($item->ID, '_menu_item_url', true);
-        if ($item->type === 'post_type' && (int) $item->object_id > 0) {
-            $item->url = (string) get_permalink((int) $item->object_id);
-            $item->title = $item->post_title !== '' ? $item->post_title : get_the_title((int) $item->object_id);
-        } elseif ($item->type === 'taxonomy' && (int) $item->object_id > 0) {
-            $link = get_term_link((int) $item->object_id, $item->object);
-            $item->url = is_wp_error($link) ? '' : $link;
-            $term = get_term((int) $item->object_id, $item->object);
-            $item->title = $item->post_title !== '' ? $item->post_title : ($term instanceof WP_Term ? $term->name : '');
-        } else {
-            $item->title = $item->post_title;
-        }
-        $item->target = (string) get_post_meta($item->ID, '_menu_item_target', true);
-        $item->attr_title = $item->post_excerpt;
-        $item->description = $item->post_content;
-        $item->classes = (array) get_post_meta($item->ID, '_menu_item_classes', true);
-        $item->xfn = (string) get_post_meta($item->ID, '_menu_item_xfn', true);
-    }
-    return apply_filters('wp_get_nav_menu_items', $items, $menu, $args);
+    return $menu ? Minn\Runtime\NavMenuItems::forMenu($menu, (array) $args) : false;
+}
+
+/** A menu item, post or term dressed with the fields walkers read (Runtime\NavMenuItems). */
+function wp_setup_nav_menu_item($menu_item)
+{
+    return Minn\Runtime\NavMenuItems::setUp($menu_item);
 }
 
 function is_object_in_taxonomy($object_type, $taxonomy)
@@ -1198,46 +1176,33 @@ function wp_create_nav_menu($menu_name)
     return wp_update_nav_menu_object(0, ['menu-name' => $menu_name]);
 }
 
+/** A menu made (id 0) or changed, as the reference saves one (Runtime\MenuEvents): its id or the refusal. */
 function wp_update_nav_menu_object($menu_id = 0, $menu_data = [])
 {
-    $menu_id = (int) $menu_id;
-    $menus = _minn_menus();
-    $named = array_key_exists('menu-name', $menu_data);
-    $name = trim((string) ($menu_data['menu-name'] ?? ''));
-    if ($named || $menu_id === 0) {
-        $refusal = $menus->refuseName($name, $menu_id);
-        if ($refusal !== null) {
-            return new WP_Error($refusal->code, $refusal->message, $refusal->data);
-        }
-    }
-    $description = array_key_exists('description', $menu_data) ? (string) $menu_data['description'] : null;
-    if ($menu_id === 0) {
-        $menu_id = $menus->createMenu($name, (string) $description);
-        do_action('wp_create_nav_menu', $menu_id, $menu_data);
-    } else {
-        $menus->updateMenu($menu_id, $named ? $name : null, $description);
-    }
-    do_action('wp_update_nav_menu', $menu_id, $menu_data);
-    return $menu_id;
+    return _minn_menu_events()->saveMenu((int) $menu_id, (array) $menu_data);
 }
 
+/** A menu deleted with its items, as the reference deletes one (Runtime\MenuEvents). */
 function wp_delete_nav_menu($menu)
 {
     $object = wp_get_nav_menu_object($menu);
     if (!$object) {
         return false;
     }
-    $id = (int) $object->term_id;
-    _minn_menus()->deleteMenu($id);
-    // A deleted menu leaves its theme locations empty rather than pointing at
-    // a term that is gone.
-    $locations = get_nav_menu_locations();
-    $kept = array_filter($locations, static fn ($assigned) => (int) $assigned !== $id);
-    if (count($kept) !== count($locations)) {
-        set_theme_mod('nav_menu_locations', $kept);
-    }
-    do_action('wp_delete_nav_menu', $id);
+    _minn_menu_events()->deleteMenu((int) $object->term_id);
     return true;
+}
+
+/** A menu item made (id 0) or changed, as the reference saves one (Runtime\MenuEvents): its id or the refusal. */
+function wp_update_nav_menu_item($menu_id = 0, $menu_item_db_id = 0, $menu_item_data = [], $fire_after_hooks = true)
+{
+    return _minn_menu_events()->saveItem((int) $menu_id, (int) $menu_item_db_id, (array) $menu_item_data, $fire_after_hooks ? 'now' : 'later');
+}
+
+/** @internal the menu writes that tell plugins */
+function _minn_menu_events(): Minn\Runtime\MenuEvents
+{
+    return new Minn\Runtime\MenuEvents(_minn_menus(), _minn_posts());
 }
 
 function _get_term_hierarchy($taxonomy)

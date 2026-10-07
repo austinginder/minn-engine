@@ -24,6 +24,12 @@ use Minn\Support\Kses;
  */
 final readonly class MenusController
 {
+    /** The arguments a new item starts from, as the reference's REST controller prepares them. */
+    private const NEW_ITEM = [
+        'menu-id' => 0, 'menu-item-db-id' => 0, 'menu-item-object-id' => 0, 'menu-item-object' => '', 'menu-item-parent-id' => 0, 'menu-item-position' => 1, 'menu-item-type' => 'custom',
+        'menu-item-title' => '', 'menu-item-url' => '', 'menu-item-description' => '', 'menu-item-attr-title' => '', 'menu-item-target' => '', 'menu-item-classes' => '', 'menu-item-xfn' => '', 'menu-item-status' => 'publish',
+    ];
+
     public function __construct(
         private Menus $menus,
         private MenuObject $menuObject,
@@ -81,7 +87,11 @@ final readonly class MenusController
         }
         $name = $this->plain((string) $body['name']);
         $this->refuse($this->menus->refuseName($name));
-        $id = $this->menus->createMenu($name, $this->plain((string) ($body['description'] ?? '')));
+        $description = $this->plain((string) ($body['description'] ?? ''));
+        // With plugins loaded, saved as the reference saves it, telling them (Runtime\MenuEvents).
+        $id = Runtime::booted()
+            ? \_minn_menu_events()->restMenu(0, ['name' => $name] + (array_key_exists('description', $body) ? ['description' => $description] : []), $request)
+            : $this->menus->createMenu($name, $description);
         $row = $this->menus->find($id);
         return Reply::item($this->menuObject->view($row ?? []), Fields::fromQuery($request->query), 201)
             ->withHeader('Location', $this->url->to("/wp/v2/menus/{$id}"));
@@ -102,11 +112,12 @@ final readonly class MenusController
         if ($name !== null) {
             $this->refuse($this->menus->refuseName($name, (int) $id));
         }
-        $this->menus->updateMenu(
-            (int) $id,
-            $name,
-            array_key_exists('description', $body) ? $this->plain((string) $body['description']) : null,
-        );
+        $description = array_key_exists('description', $body) ? $this->plain((string) $body['description']) : null;
+        if (Runtime::booted()) {
+            \_minn_menu_events()->restMenu((int) $id, array_filter(['name' => $name, 'description' => $description], static fn ($v) => $v !== null), $request);
+        } else {
+            $this->menus->updateMenu((int) $id, $name, $description);
+        }
         return Reply::item($this->menuObject->view($this->menus->find((int) $id) ?? $row), Fields::fromQuery($request->query));
     }
 
@@ -123,7 +134,7 @@ final readonly class MenusController
         }
         $previous = $this->menuObject->view($row);
         unset($previous['_links']);
-        $this->menus->deleteMenu((int) $id);
+        Runtime::booted() ? \_minn_menu_events()->restDeleteMenu((int) $id, $previous, $request) : $this->menus->deleteMenu((int) $id);
         return Reply::item(['deleted' => true, 'previous' => $previous], Fields::fromQuery($request->query));
     }
 
@@ -170,7 +181,7 @@ final readonly class MenusController
         if ($type === 'custom' && $title === '') {
             throw new RestError('rest_title_required', 'The title is required when using a custom menu item type.', 400);
         }
-        $id = $this->menus->createItem([
+        $id = Runtime::booted() ? \_minn_menu_events()->restItem(0, $this->argsFrom($body, self::NEW_ITEM), $request) : $this->menus->createItem([
             'title' => $title,
             'url' => $this->urlFrom($body),
             'type' => $type,
@@ -201,6 +212,11 @@ final readonly class MenusController
             throw new RestError('rest_post_invalid_id', 'Invalid post ID.', 404);
         }
         $body = $request->json();
+        if (Runtime::booted()) {
+            $events = \_minn_menu_events();
+            $events->restItem((int) $id, $this->argsFrom($body, ['menu-id' => $item->menuId] + $events->savedArgs((int) $id)), $request);
+            return Reply::item($this->itemObject->view($this->menus->findItem((int) $id), Context::Edit), Fields::fromQuery($request->query));
+        }
         $fields = [];
         if (array_key_exists('title', $body)) {
             $fields['title'] = $this->titleFrom($body);
@@ -255,7 +271,7 @@ final readonly class MenusController
         }
         $previous = $this->itemObject->view($item, Context::View);
         unset($previous['_links']);
-        $this->menus->deleteItem((int) $id);
+        Runtime::booted() ? \_minn_menu_events()->restDeleteItem((int) $id, $previous, $request) : $this->menus->deleteItem((int) $id);
         return Reply::item(['deleted' => true, 'previous' => $previous], Fields::fromQuery($request->query));
     }
 
@@ -296,6 +312,36 @@ final readonly class MenusController
         }
         $item = ['name' => $name, 'description' => $description, 'menu' => $menu, '_links' => $links];
         return RuntimePrepare::item('rest_prepare_menu_location', $item, static fn () => (object) ['name' => $name, 'description' => $description]);
+    }
+
+    /**
+     * The request's item fields as the reference's menu-item-* save
+     * arguments, over the ones given.
+     *
+     * @param array<string, mixed> $body
+     * @param array<string, mixed> $args
+     * @return array<string, mixed>
+     */
+    private function argsFrom(array $body, array $args): array
+    {
+        $keys = ['menus' => 'menu-id', 'type' => 'menu-item-type', 'object' => 'menu-item-object', 'object_id' => 'menu-item-object-id', 'parent' => 'menu-item-parent-id', 'menu_order' => 'menu-item-position', 'target' => 'menu-item-target', 'status' => 'menu-item-status', 'attr_title' => 'menu-item-attr-title', 'description' => 'menu-item-description', 'classes' => 'menu-item-classes', 'xfn' => 'menu-item-xfn'];
+        foreach ($keys as $field => $key) {
+            if (array_key_exists($field, $body)) {
+                $value = $body[$field];
+                $args[$key] = match (true) {
+                    in_array($field, ['menus', 'object_id', 'parent', 'menu_order'], true) => (int) $value,
+                    is_array($value) => implode(' ', array_map('strval', $value)),
+                    default => $value,
+                };
+            }
+        }
+        if (array_key_exists('title', $body)) {
+            $args['menu-item-title'] = $this->titleFrom($body);
+        }
+        if (array_key_exists('url', $body)) {
+            $args['menu-item-url'] = $this->urlFrom($body);
+        }
+        return $args;
     }
 
     /** @param array<string, mixed> $body */

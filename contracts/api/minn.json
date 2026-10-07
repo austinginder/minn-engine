@@ -25602,7 +25602,7 @@
             "namespace": "Minn\\Content",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Content/Menus.php",
-            "lines": 513,
+            "lines": 526,
             "doc": "Classic nav_menu terms and nav_menu_item posts. The front uses these\nwhen a navigation block has no inner blocks and no wp_navigation post;\nREST serves the same rows as wp/v2/menus and menu-items.",
             "implements": [],
             "extends": null,
@@ -25624,7 +25624,8 @@
                 "Minn\\Blocks\\Dynamic\\Theme\\Navigation",
                 "Minn\\Rest\\MenuObject",
                 "Minn\\Rest\\MenusController",
-                "Minn\\Rest\\Services"
+                "Minn\\Rest\\Services",
+                "Minn\\Runtime\\MenuEvents"
             ],
             "constructor": {
                 "signature": "__construct(Minn\\Db $db, Minn\\Content\\Posts $posts, Minn\\Content\\Terms $terms, Minn\\Front\\Permalinks $permalinks, ?Minn\\Content\\PostWriter $writer = NULL, ?Minn\\Content\\Site $site = NULL)",
@@ -25920,8 +25921,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 290,
-                    "end": 298
+                    "line": 292,
+                    "end": 300
                 },
                 {
                     "routes": [],
@@ -25947,8 +25948,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 305,
-                    "end": 319
+                    "line": 307,
+                    "end": 321
                 },
                 {
                     "routes": [],
@@ -25974,8 +25975,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 322,
-                    "end": 326
+                    "line": 324,
+                    "end": 328
                 },
                 {
                     "routes": [],
@@ -26008,8 +26009,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 329,
-                    "end": 342
+                    "line": 331,
+                    "end": 344
                 },
                 {
                     "routes": [],
@@ -26028,8 +26029,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 345,
-                    "end": 354
+                    "line": 347,
+                    "end": 356
                 },
                 {
                     "routes": [],
@@ -26037,7 +26038,7 @@
                     "static": false,
                     "visibility": "public",
                     "signature": "createItem(array $fields): int",
-                    "doc": "title: string,\nurl: string,\ntype: string,\nobject: string,\nobjectId: int,\nparent: int,\nmenuOrder: int,\ntarget: string,\nstatus: string,\nmenuId: int,\nattrTitle: string,\ndescription: string,\nauthorId: int\n} $fields",
+                    "doc": "title: string,\nurl: string,\ntype: string,\nobject: string,\nobjectId: int,\nparent: int,\nmenuOrder: int,\ntarget: string,\nstatus: string,\nmenuId: int,\nattrTitle: string,\ndescription: string,\nauthorId: int,\nclasses?: list<string>,\nxfn?: string\n} $fields",
                     "shapes": [
                         "@param array{"
                     ],
@@ -26050,8 +26051,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 373,
-                    "end": 414
+                    "line": 377,
+                    "end": 423
                 },
                 {
                     "routes": [],
@@ -26079,8 +26080,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 421,
-                    "end": 466
+                    "line": 430,
+                    "end": 462
                 },
                 {
                     "routes": [],
@@ -26108,8 +26109,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 469,
-                    "end": 480
+                    "line": 465,
+                    "end": 476
                 },
                 {
                     "routes": [],
@@ -26142,8 +26143,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 483,
-                    "end": 494
+                    "line": 479,
+                    "end": 490
                 },
                 {
                     "routes": [],
@@ -26162,8 +26163,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 497,
-                    "end": 500
+                    "line": 493,
+                    "end": 496
                 },
                 {
                     "routes": [],
@@ -26192,7 +26193,7 @@
                         }
                     ],
                     "line": 185,
-                    "end": 239
+                    "end": 241
                 },
                 {
                     "routes": [],
@@ -26213,8 +26214,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 242,
-                    "end": 253
+                    "line": 244,
+                    "end": 255
                 },
                 {
                     "routes": [],
@@ -26233,8 +26234,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 255,
-                    "end": 264
+                    "line": 257,
+                    "end": 266
                 },
                 {
                     "routes": [],
@@ -26255,8 +26256,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 267,
-                    "end": 274
+                    "line": 269,
+                    "end": 276
                 },
                 {
                     "routes": [],
@@ -26277,17 +26278,19 @@
                             "doc": ""
                         }
                     ],
-                    "line": 277,
-                    "end": 287
+                    "line": 279,
+                    "end": 289
                 },
                 {
                     "routes": [],
                     "name": "writeMeta",
                     "static": false,
                     "visibility": "private",
-                    "signature": "writeMeta(int $id, string $type, string $object, int $objectId, int $parent, string $url, string $target, string $attrTitle): void",
-                    "doc": "",
-                    "shapes": [],
+                    "signature": "writeMeta(int $id, array $meta): void",
+                    "doc": "The item's _menu_item_* meta, as the reference keeps it (the classes a\nlist; no title attribute, which is the excerpt).",
+                    "shapes": [
+                        "@param array<string, string|list<string>> $meta"
+                    ],
                     "params": [
                         {
                             "name": "id",
@@ -26296,6 +26299,26 @@
                             "default": null,
                             "doc": ""
                         },
+                        {
+                            "name": "meta",
+                            "type": "array",
+                            "shape": "array<string, string|list<string>>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 504,
+                    "end": 511
+                },
+                {
+                    "routes": [],
+                    "name": "originalParent",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "originalParent(string $type, string $object, int $objectId): int",
+                    "doc": "What an item stores as its parent post: the parent of the post or term it points at.",
+                    "shapes": [],
+                    "params": [
                         {
                             "name": "type",
                             "type": "string",
@@ -26316,38 +26339,44 @@
                             "shape": "",
                             "default": null,
                             "doc": ""
-                        },
+                        }
+                    ],
+                    "line": 514,
+                    "end": 521
+                },
+                {
+                    "routes": [],
+                    "name": "content",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "content(string $type, string $title, string $description): string",
+                    "doc": "An item's content: its description, or a space for an item that names nothing of its own (as the reference keeps one).",
+                    "shapes": [],
+                    "params": [
                         {
-                            "name": "parent",
-                            "type": "int",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "url",
+                            "name": "type",
                             "type": "string",
                             "shape": "",
                             "default": null,
                             "doc": ""
                         },
                         {
-                            "name": "target",
+                            "name": "title",
                             "type": "string",
                             "shape": "",
                             "default": null,
                             "doc": ""
                         },
                         {
-                            "name": "attrTitle",
+                            "name": "description",
                             "type": "string",
                             "shape": "",
                             "default": null,
                             "doc": ""
                         }
                     ],
-                    "line": 502,
-                    "end": 514
+                    "line": 524,
+                    "end": 527
                 },
                 {
                     "routes": [],
@@ -26358,8 +26387,8 @@
                     "doc": "",
                     "shapes": [],
                     "params": [],
-                    "line": 516,
-                    "end": 522
+                    "line": 529,
+                    "end": 535
                 },
                 {
                     "routes": [],
@@ -26370,8 +26399,8 @@
                     "doc": "",
                     "shapes": [],
                     "params": [],
-                    "line": 524,
-                    "end": 530
+                    "line": 537,
+                    "end": 543
                 }
             ]
         },
@@ -29428,6 +29457,7 @@
                 "Minn\\Rest\\RevisionsController",
                 "Minn\\Rest\\Services",
                 "Minn\\Rest\\TemplateObject",
+                "Minn\\Runtime\\MenuEvents",
                 "Minn\\Theme\\ClassicRenderer",
                 "Minn\\Theme\\MainQueryBridge",
                 "Minn\\Theme\\PageRenderer",
@@ -62073,6 +62103,7 @@
                 "Minn\\Rest\\WidgetsController",
                 "Minn\\Runtime\\AjaxController",
                 "Minn\\Runtime\\CommentEvents",
+                "Minn\\Runtime\\MenuEvents",
                 "Minn\\Runtime\\PostEvents",
                 "Minn\\Runtime\\PostSave",
                 "Minn\\Runtime\\Runtime",
@@ -80955,6 +80986,7 @@
                 "Minn\\Rest\\UsersController",
                 "Minn\\Rest\\WidgetsController",
                 "Minn\\Runtime\\CommentEvents",
+                "Minn\\Runtime\\MenuEvents",
                 "Minn\\Runtime\\PostSave",
                 "Minn\\Runtime\\TermEvents",
                 "Minn\\Runtime\\UserEvents"
@@ -88469,7 +88501,7 @@
             "namespace": "Minn\\Rest",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Rest/MenusController.php",
-            "lines": 312,
+            "lines": 358,
             "doc": "wp/v2/menus, menu-items, and menu-locations. Viewing needs edit_posts;\nwrites need edit_theme_options. Anonymous callers get 401.",
             "implements": [],
             "extends": null,
@@ -88541,11 +88573,18 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 27,
-                "end": 34
+                "line": 33,
+                "end": 40
             },
             "cases": [],
-            "constants": [],
+            "constants": [
+                {
+                    "name": "NEW_ITEM",
+                    "value": "array (   'menu-id' => 0,   'menu-item-db-id' => 0,   'menu-item-object-id' => 0,   'menu-item-object' => '',   'menu-item-parent-id' => 0,   'menu-item-position' => 1,   'menu-item-type' => 'custom',   'menu-item-title' => '',   'menu-item-url' => '',   'menu-item-description' => '',   'menu-item-attr-title' => '',   'menu-item-target' => '',   'menu-item-classes' => '',   'menu-item-xfn' => '',   'menu-item-status' => 'publish', )",
+                    "doc": "The arguments a new item starts from, as the reference's REST controller prepares them.",
+                    "visibility": "private"
+                }
+            ],
             "properties": [
                 {
                     "name": "menus",
@@ -88613,8 +88652,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 38,
-                    "end": 61
+                    "line": 44,
+                    "end": 67
                 },
                 {
                     "routes": [
@@ -88642,8 +88681,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 65,
-                    "end": 72
+                    "line": 71,
+                    "end": 78
                 },
                 {
                     "routes": [
@@ -88664,8 +88703,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 76,
-                    "end": 88
+                    "line": 82,
+                    "end": 98
                 },
                 {
                     "routes": [
@@ -88695,8 +88734,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 94,
-                    "end": 111
+                    "line": 104,
+                    "end": 122
                 },
                 {
                     "routes": [
@@ -88724,8 +88763,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 115,
-                    "end": 128
+                    "line": 126,
+                    "end": 139
                 },
                 {
                     "routes": [
@@ -88746,8 +88785,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 132,
-                    "end": 148
+                    "line": 143,
+                    "end": 159
                 },
                 {
                     "routes": [
@@ -88775,8 +88814,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 152,
-                    "end": 161
+                    "line": 163,
+                    "end": 172
                 },
                 {
                     "routes": [
@@ -88797,8 +88836,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 165,
-                    "end": 191
+                    "line": 176,
+                    "end": 202
                 },
                 {
                     "routes": [
@@ -88828,8 +88867,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 197,
-                    "end": 243
+                    "line": 208,
+                    "end": 259
                 },
                 {
                     "routes": [
@@ -88857,8 +88896,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 247,
-                    "end": 260
+                    "line": 263,
+                    "end": 276
                 },
                 {
                     "routes": [
@@ -88879,8 +88918,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 264,
-                    "end": 272
+                    "line": 280,
+                    "end": 288
                 },
                 {
                     "routes": [
@@ -88908,8 +88947,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 276,
-                    "end": 283
+                    "line": 292,
+                    "end": 299
                 },
                 {
                     "routes": [],
@@ -88937,8 +88976,39 @@
                             "doc": ""
                         }
                     ],
-                    "line": 286,
-                    "end": 299
+                    "line": 302,
+                    "end": 315
+                },
+                {
+                    "routes": [],
+                    "name": "argsFrom",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "argsFrom(array $body, array $args): array",
+                    "doc": "The request's item fields as the reference's menu-item-* save\narguments, over the ones given.",
+                    "shapes": [
+                        "@param array<string, mixed> $body",
+                        "@param array<string, mixed> $args",
+                        "@return array<string, mixed>"
+                    ],
+                    "params": [
+                        {
+                            "name": "body",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "args",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 325,
+                    "end": 345
                 },
                 {
                     "routes": [],
@@ -88959,8 +89029,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 302,
-                    "end": 309
+                    "line": 348,
+                    "end": 355
                 },
                 {
                     "routes": [],
@@ -88981,8 +89051,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 312,
-                    "end": 319
+                    "line": 358,
+                    "end": 365
                 },
                 {
                     "routes": [],
@@ -89001,8 +89071,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 322,
-                    "end": 330
+                    "line": 368,
+                    "end": 376
                 },
                 {
                     "routes": [],
@@ -89021,8 +89091,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 332,
-                    "end": 335
+                    "line": 378,
+                    "end": 381
                 }
             ]
         },
@@ -95685,6 +95755,7 @@
                 "Minn\\Rest\\TermsController",
                 "Minn\\Rest\\UsersController",
                 "Minn\\Runtime\\CommentEvents",
+                "Minn\\Runtime\\MenuEvents",
                 "Minn\\Runtime\\PostEvents",
                 "Minn\\Runtime\\PostSave",
                 "Minn\\Runtime\\TermEvents",
@@ -104210,6 +104281,72 @@
             ]
         },
         {
+            "name": "Minn\\Runtime\\ArchiveLinks",
+            "short": "ArchiveLinks",
+            "namespace": "Minn\\Runtime",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Runtime/ArchiveLinks.php",
+            "lines": 41,
+            "doc": "A post type's archive address and its feed, as the reference gives them\n(probe archive-links). The posts' archive is the posts page when the\nfront is a page with one, else the bare home; a type with an archive\nlives under its named archive or its rewrite slug (after the\nstructure's front unless it declines it), or at ?post_type= without\nrewrites or pretty permalinks; any other type has none (false, no\nfilter). Its feed is the archive's /feed/ (/feed/{type}/ for one not the\ndefault) when the type's rewrite takes feeds, else ?feed= with the type\nspelled out.",
+            "implements": [],
+            "extends": null,
+            "uses": [],
+            "usedBy": [],
+            "constructor": null,
+            "cases": [],
+            "constants": [],
+            "properties": [],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "archive",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "archive(string $postType): string|false",
+                    "doc": "get_post_type_archive_link.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "postType",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 21,
+                    "end": 39
+                },
+                {
+                    "routes": [],
+                    "name": "feed",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "feed(string $postType, string $feed): string|false",
+                    "doc": "get_post_type_archive_feed_link.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "postType",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "feed",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 42,
+                    "end": 57
+                }
+            ]
+        },
+        {
             "name": "Minn\\Runtime\\AssetEdits",
             "short": "AssetEdits",
             "namespace": "Minn\\Runtime",
@@ -110483,6 +110620,399 @@
             ]
         },
         {
+            "name": "Minn\\Runtime\\MenuEvents",
+            "short": "MenuEvents",
+            "namespace": "Minn\\Runtime",
+            "kind": "final readonly class",
+            "file": "public/minn/src/Minn/Runtime/MenuEvents.php",
+            "lines": 220,
+            "doc": "Menus and their items saved as the reference saves them, telling\nplugins what it tells them (probe rest-menu-save). A menu is a nav_menu\nterm: made or changed through wp_insert_term / wp_update_term (the term\nactions), then wp_create_nav_menu or wp_update_nav_menu; deleted, its\nitems go through wp_delete_post, the term through wp_delete_term, then\nwp_delete_nav_menu. An item is written by the engine, with the post\nsave actions around it, then wp_add_nav_menu_item (a new one) and\nwp_update_nav_menu_item, handed the reference's menu-item-* arguments.",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\Content\\Menus",
+                "Minn\\Content\\Posts",
+                "Minn\\Http\\Request",
+                "Minn\\RestError",
+                "Minn\\Rest\\RuntimeRoutes",
+                "Minn\\Runtime\\PostEvents",
+                "Minn\\Runtime\\TermEvents"
+            ],
+            "usedBy": [],
+            "constructor": {
+                "signature": "__construct(Minn\\Content\\Menus $menus, Minn\\Content\\Posts $posts)",
+                "doc": "",
+                "shapes": [],
+                "params": [
+                    {
+                        "name": "menus",
+                        "type": "Minn\\Content\\Menus",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    },
+                    {
+                        "name": "posts",
+                        "type": "Minn\\Content\\Posts",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    }
+                ],
+                "visibility": "public",
+                "line": 32,
+                "end": 36
+            },
+            "cases": [],
+            "constants": [
+                {
+                    "name": "ITEM_DEFAULTS",
+                    "value": "array (   'menu-item-db-id' => 0,   'menu-item-object-id' => 0,   'menu-item-object' => '',   'menu-item-parent-id' => 0,   'menu-item-position' => 0,   'menu-item-type' => 'custom',   'menu-item-title' => '',   'menu-item-url' => '',   'menu-item-description' => '',   'menu-item-attr-title' => '',   'menu-item-target' => '',   'menu-item-classes' => '',   'menu-item-xfn' => '',   'menu-item-status' => '',   'menu-item-post-date' => '',   'menu-item-post-date-gmt' => '', )",
+                    "doc": "The arguments an item is saved with, and their defaults, as the reference lists them.",
+                    "visibility": "private"
+                }
+            ],
+            "properties": [
+                {
+                    "name": "menus",
+                    "type": "Minn\\Content\\Menus",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
+                },
+                {
+                    "name": "posts",
+                    "type": "Minn\\Content\\Posts",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
+                }
+            ],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "saveMenu",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "saveMenu(int $menuId, array $data): WP_Error|int",
+                    "doc": "wp_update_nav_menu_object: a menu made (menu id 0) or changed, its id\nor the refusal. The name is checked first, as the reference checks it.",
+                    "shapes": [
+                        "@param array<string, mixed> $data menu-name, description"
+                    ],
+                    "params": [
+                        {
+                            "name": "menuId",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "data",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": "menu-name, description"
+                        }
+                    ],
+                    "line": 44,
+                    "end": 63
+                },
+                {
+                    "routes": [],
+                    "name": "deleteMenu",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "deleteMenu(int $menuId): void",
+                    "doc": "wp_delete_nav_menu: the items through wp_delete_post, the term through wp_delete_term, the locations let go, then wp_delete_nav_menu.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "menuId",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 66,
+                    "end": 78
+                },
+                {
+                    "routes": [],
+                    "name": "saveItem",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "saveItem(int $menuId, int $itemId, array $data, string $afterInsert = 'now'): WP_Error|int",
+                    "doc": "wp_update_nav_menu_item: an item made (id 0) or changed in a menu, its\nid or the refusal; the post save actions around the write, then the\nitem actions, and wp_after_insert_post \"now\" or (a REST save, which\nfires it after its own actions) \"later\".",
+                    "shapes": [
+                        "@param array<string, mixed> $data menu-item-* arguments"
+                    ],
+                    "params": [
+                        {
+                            "name": "menuId",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "itemId",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "data",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": "menu-item-* arguments"
+                        },
+                        {
+                            "name": "afterInsert",
+                            "type": "string",
+                            "shape": "",
+                            "default": "'now'",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 88,
+                    "end": 117
+                },
+                {
+                    "routes": [],
+                    "name": "restMenu",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "restMenu(int $menuId, array $fields, Minn\\Http\\Request $request): int",
+                    "doc": "A menu saved over REST, as the reference's menus controller saves one:\nthe request's fields (name, description, those given) through\nrest_pre_insert_nav_menu, then saveMenu(), then rest_insert_nav_menu\nand rest_after_insert_nav_menu.",
+                    "shapes": [
+                        "@param array<string, mixed> $fields name, description"
+                    ],
+                    "params": [
+                        {
+                            "name": "menuId",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "fields",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": "name, description"
+                        },
+                        {
+                            "name": "request",
+                            "type": "Minn\\Http\\Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 127,
+                    "end": 137
+                },
+                {
+                    "routes": [],
+                    "name": "restDeleteMenu",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "restDeleteMenu(int $menuId, array $previous, Minn\\Http\\Request $request): void",
+                    "doc": "A menu deleted over REST: deleteMenu(), then rest_delete_nav_menu with the menu as it was and the response. @param array<string, mixed> $previous",
+                    "shapes": [
+                        "@param array<string, mixed> $previous"
+                    ],
+                    "params": [
+                        {
+                            "name": "menuId",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "previous",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "request",
+                            "type": "Minn\\Http\\Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 140,
+                    "end": 145
+                },
+                {
+                    "routes": [],
+                    "name": "restItem",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "restItem(int $itemId, array $args, Minn\\Http\\Request $request): int",
+                    "doc": "An item saved over REST, as the reference's menu-items controller saves\none: its menu-id and menu-item-* arguments through\nrest_pre_insert_nav_menu_item, then saveItem(), then\nrest_insert_nav_menu_item, rest_after_insert_nav_menu_item and\nwp_after_insert_post.",
+                    "shapes": [
+                        "@param array<string, mixed> $args menu-id and menu-item-* arguments, the item's own filled in for an update"
+                    ],
+                    "params": [
+                        {
+                            "name": "itemId",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "args",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": "menu-id and menu-item-* arguments, the item's own filled in for an update"
+                        },
+                        {
+                            "name": "request",
+                            "type": "Minn\\Http\\Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 156,
+                    "end": 171
+                },
+                {
+                    "routes": [],
+                    "name": "restDeleteItem",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "restDeleteItem(int $itemId, array $previous, Minn\\Http\\Request $request): void",
+                    "doc": "An item deleted over REST: wp_delete_post, then rest_delete_nav_menu_item with the item as it was and the response. @param array<string, mixed> $previous",
+                    "shapes": [
+                        "@param array<string, mixed> $previous"
+                    ],
+                    "params": [
+                        {
+                            "name": "itemId",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "previous",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "request",
+                            "type": "Minn\\Http\\Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 184,
+                    "end": 191
+                },
+                {
+                    "routes": [],
+                    "name": "savedArgs",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "savedArgs(int $itemId): array",
+                    "doc": "An item's own saved values as menu-item-* arguments, which a REST\nupdate starts from: the reference's save resets to its default any\nargument it isn't handed.",
+                    "shapes": [
+                        "@return array<string, mixed>"
+                    ],
+                    "params": [
+                        {
+                            "name": "itemId",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 200,
+                    "end": 213
+                },
+                {
+                    "routes": [],
+                    "name": "prepared",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "prepared(mixed $prepared): array",
+                    "doc": "What a rest_pre_insert filter handed back, as arguments; its refusal as the request's. @return array<string, mixed>",
+                    "shapes": [
+                        "@return array<string, mixed>"
+                    ],
+                    "params": [
+                        {
+                            "name": "prepared",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 174,
+                    "end": 181
+                },
+                {
+                    "routes": [],
+                    "name": "fields",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "fields(array $args, int $menuId, int $authorId): array",
+                    "doc": "The menu-item-* arguments as the engine's item fields.",
+                    "shapes": [
+                        "@param array<string, mixed> $args",
+                        "@return array<string, mixed>"
+                    ],
+                    "params": [
+                        {
+                            "name": "args",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "menuId",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "authorId",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 221,
+                    "end": 241
+                }
+            ]
+        },
+        {
             "name": "Minn\\Runtime\\Meta",
             "short": "Meta",
             "namespace": "Minn\\Runtime",
@@ -111745,6 +112275,222 @@
                     "params": [],
                     "line": 308,
                     "end": 315
+                }
+            ]
+        },
+        {
+            "name": "Minn\\Runtime\\NavMenuItems",
+            "short": "NavMenuItems",
+            "namespace": "Minn\\Runtime",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Runtime/NavMenuItems.php",
+            "lines": 154,
+            "doc": "Classic menu items as the reference serves them to walkers and plugins\n(probe nav-menu-items). wp_setup_nav_menu_item dresses a nav_menu_item\npost with the fields walkers read: its _menu_item_* meta (ids as\nstrings), kept when already set; then by its kind the label, address\nand title of what it points at (a post's title through the_title, every\ntime, the item's own title winning when it has one; a post or term\ngone, or a post trashed, marks it _invalid; a post not published is\nlabelled by its status); its title attribute and description through\ntheir filters. A post or term of another kind is dressed as a would-be\nitem, as the admin's boxes use it: id 0, its own title, address and\nparent. wp_get_nav_menu_items reads a menu's items through get_posts,\nsets each up, drops the invalid ones outside the admin, and for ARRAY_A\noutput sorts them by the output key and numbers that key from 1, all\nbefore its filter.",
+            "implements": [],
+            "extends": null,
+            "uses": [],
+            "usedBy": [],
+            "constructor": null,
+            "cases": [],
+            "constants": [],
+            "properties": [],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "setUp",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "setUp(mixed $item): mixed",
+                    "doc": "wp_setup_nav_menu_item: the item dressed, whatever it was, then the filter.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "item",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 26,
+                    "end": 34
+                },
+                {
+                    "routes": [],
+                    "name": "forMenu",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "forMenu(WP_Term $menu, array $args): array",
+                    "doc": "wp_get_nav_menu_items for a menu found.",
+                    "shapes": [
+                        "@param array<string, mixed> $args",
+                        "@return array<int, object>"
+                    ],
+                    "params": [
+                        {
+                            "name": "menu",
+                            "type": "WP_Term",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "args",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 42,
+                    "end": 60
+                },
+                {
+                    "routes": [],
+                    "name": "menuItem",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "menuItem(object $item): void",
+                    "doc": "A nav_menu_item post: its meta, what it points at, its attribute and description.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "item",
+                            "type": "object",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 63,
+                    "end": 83
+                },
+                {
+                    "routes": [],
+                    "name": "pointsAtPost",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "pointsAtPost(object $item): void",
+                    "doc": "An item for a post: the post type's name (its status's for a post not published), the post's address and filtered title.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "item",
+                            "type": "object",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 86,
+                    "end": 100
+                },
+                {
+                    "routes": [],
+                    "name": "pointsAtTerm",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "pointsAtTerm(object $item): void",
+                    "doc": "An item for a term: the taxonomy's name, the term's address and name.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "item",
+                            "type": "object",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 103,
+                    "end": 114
+                },
+                {
+                    "routes": [],
+                    "name": "pointsAtArchive",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "pointsAtArchive(object $item): void",
+                    "doc": "An item for a post type's archive: the archives label, the archive's address.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "item",
+                            "type": "object",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 117,
+                    "end": 126
+                },
+                {
+                    "routes": [],
+                    "name": "custom",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "custom(object $item, string $url): void",
+                    "doc": "A custom link: its own title and stored address.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "item",
+                            "type": "object",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "url",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 129,
+                    "end": 134
+                },
+                {
+                    "routes": [],
+                    "name": "post",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "post(object $item): void",
+                    "doc": "A post of another kind, as a would-be item for it.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "item",
+                            "type": "object",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 137,
+                    "end": 153
+                },
+                {
+                    "routes": [],
+                    "name": "term",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "term(object $item): void",
+                    "doc": "A term, as a would-be item for it.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "item",
+                            "type": "object",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 156,
+                    "end": 175
                 }
             ]
         },
@@ -114542,7 +115288,8 @@
             ],
             "usedBy": [
                 "Minn\\Rest\\MediaController",
-                "Minn\\Rest\\PostsWriteController"
+                "Minn\\Rest\\PostsWriteController",
+                "Minn\\Runtime\\MenuEvents"
             ],
             "constructor": null,
             "cases": [],
@@ -122812,7 +123559,8 @@
                 "Minn\\Runtime\\Runtime"
             ],
             "usedBy": [
-                "Minn\\Rest\\TermsController"
+                "Minn\\Rest\\TermsController",
+                "Minn\\Runtime\\MenuEvents"
             ],
             "constructor": null,
             "cases": [],
