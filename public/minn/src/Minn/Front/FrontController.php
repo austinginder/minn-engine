@@ -15,6 +15,7 @@ use Minn\Theme\PageRenderer;
 use Minn\Cron\Cron;
 use Minn\Runtime\Runtime;
 use Minn\Theme\EmbedRenderer;
+use Minn\Theme\Printed;
 
 /**
  * The public site. One catch-all route: resolve the URL, then either
@@ -71,8 +72,33 @@ final readonly class FrontController
     {
         $resolution = $this->resolver->resolve($request);
         if ($resolution->kind === Kind::Redirect) {
-            return Response::redirect((string) $resolution->location, $resolution->status);
+            // With plugins loaded the move is made at template_redirect on the page as typed, where plugins see it: a
+            // former slug's by wp_old_slug_redirect (on the 404 it is), any other by redirect_canonical, which a plugin
+            // may change or refuse. Without them, or for a move that holds even as typed (a trackback's), it is made here.
+            $typed = Runtime::booted() ? $this->resolver->resolve($request, Redirects::Hold) : null;
+            $formerSlug = $typed !== null && $typed->kind === Kind::Redirect && $typed->status === 301;
+            if ($typed === null || ($typed->kind === Kind::Redirect && !$formerSlug)) {
+                return Response::redirect((string) $resolution->location, $resolution->status);
+            }
+            Runtime::current()->set($formerSlug ? 'old_slug_location' : 'canonical_location', [(string) $resolution->location, $resolution->status]);
+            $resolution = $formerSlug ? Resolution::notFound() : $typed;
         }
+        $level = ob_get_level();
+        try {
+            return $this->rendered($request, $resolution);
+        } catch (Printed) {
+            // A handler sent the response whole (a redirect at template_redirect), where the reference exits.
+            while (ob_get_level() > $level) {
+                ob_end_clean();
+            }
+            $code = http_response_code();
+            return new Response(is_int($code) && $code > 0 ? $code : 302, [], '');
+        }
+    }
+
+    /** The page for a resolution: an embed, a sitemap's or feed's query form, else the theme's. */
+    private function rendered(Request $request, Resolution $resolution): Response
+    {
         if ($this->embeds !== null && Runtime::booted() && EmbedRenderer::asked($request, $resolution)) {
             $core = $this->renderer->bodyClasses($resolution);
             $classes = Runtime::current()->get('block_theme', false) ? $this->theme?->themeClasses($resolution, $core) : $this->classic?->themeClasses($resolution, $core);

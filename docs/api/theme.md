@@ -619,7 +619,7 @@ Raised once a WordPress handler has printed a whole response (a sitemap,
 a stylesheet) or sent a redirect, where the reference exits: the request
 ends there and the engine answers with what was printed.
 
-Used by: `Minn\Front\PrintedResponse`, `Minn\Front\SitemapRequest`
+Used by: `Minn\Front\FrontController`, `Minn\Front\PrintedResponse`, `Minn\Front\SitemapRequest`
 
 
 ## StylePresets

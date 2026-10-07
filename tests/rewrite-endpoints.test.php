@@ -8,8 +8,8 @@
  * and rebuilt again without them at the end. Each address is compared on
  * status and where a move goes, and on what the request amounted to at
  * template_redirect: the endpoint vars, get_query_var, the conditionals
- * and the queried object (a move is the engine's before the page's steps
- * run, so for one only the move is compared).
+ * and the queried object (a move is redirect_canonical's, after the
+ * fixture's note, on both stacks).
  *
  *   php tests/rewrite-endpoints.test.php
  */
@@ -77,7 +77,7 @@ $ask = static function (string $stack, string $path) use ($stacks, $run, $ENGINE
     $noted = is_file($log) ? array_values(array_filter(explode("\n", (string) file_get_contents($log)))) : [];
     @unlink($log);
     $status = curl_getinfo($ch, CURLINFO_RESPONSE_CODE);
-    return [$status, str_replace([$REF, str_replace('https://', 'http://', $ENGINE), $ENGINE], '{site}', $l[1] ?? ''), $status >= 300 && $status < 400 ? '(moved)' : $noted];
+    return [$status, str_replace([$REF, str_replace('https://', 'http://', $ENGINE), $ENGINE], '{site}', $l[1] ?? ''), $noted];
 };
 
 echo "rewrite endpoints\n";

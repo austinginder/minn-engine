@@ -22,7 +22,7 @@ URL resolution, permalinks, feeds, sitemaps and the public page
 | [`FeedTemplates`](#feedtemplates) | final class | 295 | The feed templates do_feed_* loads, written from the reference's output |
 | [`FeedWriter`](#feedwriter) | final class | 35 | A feed as it is written: text as given, and what each template tag and |
 | [`Feeds`](#feeds) | final readonly class | 316 | The syndication feeds, byte for byte in the reference's shape: RSS 2.0 |
-| [`FrontController`](#frontcontroller) | final readonly class | 72 | The public site. One catch-all route: resolve the URL, then either |
+| [`FrontController`](#frontcontroller) | final readonly class | 97 | The public site. One catch-all route: resolve the URL, then either |
 | [`Kind`](#kind) | enum | 17 | What a public URL resolved to. |
 | [`ListSpacing`](#listspacing) | final readonly class | 30 | How a page list is spaced: the reference's "preserve" keeps newlines and |
 | [`ListingLinks`](#listinglinks) | final class | 53 | The prev/next links a paged listing prints: which page sits either side of |
@@ -663,7 +663,7 @@ Route: `* /{path*} (public)`
 
 The public page for any path; when scheduled work is due, the run follows the response.
 
-Internals: `page()` (private, line 70)
+Internals: `page()` (private, line 71), `rendered()` (private, line 100)
 
 
 ## Kind
@@ -1124,7 +1124,7 @@ typed, as the reference's redirect_canonical bails on a POST.
 
 Cases: `Follow`, `Hold`
 
-Used by: `Minn\Front\AttachmentAddresses`, `Minn\Front\Resolver`, `Minn\Front\SingleAddresses`, `Minn\Front\SingleQueries`
+Used by: `Minn\Front\AttachmentAddresses`, `Minn\Front\FrontController`, `Minn\Front\Resolver`, `Minn\Front\SingleAddresses`, `Minn\Front\SingleQueries`
 
 ### static `forMethod(Minn\Http\Method $method): self`
 
@@ -1325,7 +1325,7 @@ The link builder.
 
 Posts per page.
 
-### `resolve(Minn\Http\Request $request): Minn\Front\Resolution`
+### `resolve(Minn\Http\Request $request, ?Minn\Front\Redirects $mode = NULL): Minn\Front\Resolution`
 
 $canonical mirrors the reference's redirect_canonical rule: only GET
 and HEAD get trailing-slash, pretty-URL, and 404-guess redirects;

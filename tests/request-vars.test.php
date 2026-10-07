@@ -9,8 +9,9 @@
  * address shapes: home and its pages, a post, pages and a child page, an
  * attachment, the archives (category, tag, author, dates, search), their
  * paged, feed, comment-page and embed forms, query-string forms, and
- * addresses that find nothing. A move is the engine's before the page's
- * steps run, so for one only the status and destination are compared.
+ * addresses that find nothing, and query-string forms that move (the
+ * move is redirect_canonical's, at template_redirect after the fixture's
+ * note, on both stacks).
  *
  *   php tests/request-vars.test.php
  */
@@ -69,7 +70,7 @@ $ask = static function (string $stack, string $path) use ($stacks, $run, $ENGINE
     $log = "{$stacks[$stack][1]}/minn-request/{$run}.log";
     $noted = is_file($log) ? json_decode((string) file_get_contents($log), true) : null;
     @unlink($log);
-    return ['status' => $status, 'to' => str_replace([$REF, str_replace('https://', 'http://', $ENGINE), $ENGINE], '{site}', $l[1] ?? ''), 'noted' => $status >= 300 && $status < 400 ? '(moved)' : $noted];
+    return ['status' => $status, 'to' => str_replace([$REF, str_replace('https://', 'http://', $ENGINE), $ENGINE], '{site}', $l[1] ?? ''), 'noted' => $noted];
 };
 
 echo "request vars\n";

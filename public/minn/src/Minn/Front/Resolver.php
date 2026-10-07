@@ -78,9 +78,9 @@ final readonly class Resolver
      * and HEAD get trailing-slash, pretty-URL, and 404-guess redirects;
      * every other method renders what the query alone finds, as typed.
      */
-    public function resolve(Request $request): Resolution
+    public function resolve(Request $request, ?Redirects $mode = null): Resolution
     {
-        $redirects = Redirects::forRequest($request);
+        $redirects = $mode ?? Redirects::forRequest($request);
         // A plugin's own rewrite rules: 'top' rules outrank everything the
         // engine would resolve, 'bottom' rules catch what it could not.
         $ruleVars = PluginRules::match($request->path, top: true);

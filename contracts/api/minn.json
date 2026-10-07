@@ -42270,7 +42270,7 @@
             "namespace": "Minn\\Front",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Front/FrontController.php",
-            "lines": 72,
+            "lines": 97,
             "doc": "The public site. One catch-all route: resolve the URL, then either\nredirect or render, through the active block theme when there is one,\nthe classic PHP template runner when the theme is classic, and the\ninterim template otherwise.",
             "implements": [],
             "extends": null,
@@ -42278,6 +42278,7 @@
                 "Minn\\Cron\\Cron",
                 "Minn\\Front\\FeedController",
                 "Minn\\Front\\Kind",
+                "Minn\\Front\\Redirects",
                 "Minn\\Front\\Renderer",
                 "Minn\\Front\\Resolution",
                 "Minn\\Front\\Resolver",
@@ -42291,7 +42292,8 @@
                 "Minn\\Runtime\\Runtime",
                 "Minn\\Theme\\ClassicRenderer",
                 "Minn\\Theme\\EmbedRenderer",
-                "Minn\\Theme\\PageRenderer"
+                "Minn\\Theme\\PageRenderer",
+                "Minn\\Theme\\Printed"
             ],
             "usedBy": [
                 "Minn\\Engine"
@@ -42359,8 +42361,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 27,
-                "end": 37
+                "line": 28,
+                "end": 38
             },
             "cases": [],
             "constants": [],
@@ -42448,8 +42450,8 @@
                     "doc": "The themed (or interim) 404 page.",
                     "shapes": [],
                     "params": [],
-                    "line": 40,
-                    "end": 43
+                    "line": 41,
+                    "end": 44
                 },
                 {
                     "routes": [],
@@ -42468,8 +42470,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 46,
-                    "end": 52
+                    "line": 47,
+                    "end": 53
                 },
                 {
                     "routes": [
@@ -42490,8 +42492,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 56,
-                    "end": 68
+                    "line": 57,
+                    "end": 69
                 },
                 {
                     "routes": [],
@@ -42510,8 +42512,35 @@
                             "doc": ""
                         }
                     ],
-                    "line": 70,
-                    "end": 95
+                    "line": 71,
+                    "end": 97
+                },
+                {
+                    "routes": [],
+                    "name": "rendered",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "rendered(Minn\\Http\\Request $request, Minn\\Front\\Resolution $resolution): Minn\\Http\\Response",
+                    "doc": "The page for a resolution: an embed, a sitemap's or feed's query form, else the theme's.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "request",
+                            "type": "Minn\\Http\\Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "resolution",
+                            "type": "Minn\\Front\\Resolution",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 100,
+                    "end": 121
                 }
             ]
         },
@@ -44840,6 +44869,7 @@
             ],
             "usedBy": [
                 "Minn\\Front\\AttachmentAddresses",
+                "Minn\\Front\\FrontController",
                 "Minn\\Front\\Resolver",
                 "Minn\\Front\\SingleAddresses",
                 "Minn\\Front\\SingleQueries"
@@ -46318,7 +46348,7 @@
                     "name": "resolve",
                     "static": false,
                     "visibility": "public",
-                    "signature": "resolve(Minn\\Http\\Request $request): Minn\\Front\\Resolution",
+                    "signature": "resolve(Minn\\Http\\Request $request, ?Minn\\Front\\Redirects $mode = NULL): Minn\\Front\\Resolution",
                     "doc": "$canonical mirrors the reference's redirect_canonical rule: only GET\nand HEAD get trailing-slash, pretty-URL, and 404-guess redirects;\nevery other method renders what the query alone finds, as typed.",
                     "shapes": [],
                     "params": [
@@ -46327,6 +46357,13 @@
                             "type": "Minn\\Http\\Request",
                             "shape": "",
                             "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "mode",
+                            "type": "?Minn\\Front\\Redirects",
+                            "shape": "",
+                            "default": "NULL",
                             "doc": ""
                         }
                     ],
@@ -133955,6 +133992,7 @@
             "extends": "Exception",
             "uses": [],
             "usedBy": [
+                "Minn\\Front\\FrontController",
                 "Minn\\Front\\PrintedResponse",
                 "Minn\\Front\\SitemapRequest"
             ],

@@ -438,40 +438,50 @@ function _minn_query_title_parts(): array
     return $parts + (is_front_page() ? ['tagline' => get_bloginfo('description', 'display')] : ['site' => get_bloginfo('name', 'display')]);
 }
 
-/** A slug the post no longer has sends a 404 to the post's current link (the engine's resolver already did this before plugins ran). */
+/**
+ * A slug the post no longer has sends its 404 to the post's current link, through old_slug_redirect_url. The engine
+ * found the post as it resolved the request (by the type the address names and its date); this makes the move.
+ */
 function wp_old_slug_redirect()
 {
-    $slug = (string) get_query_var('name');
-    if (!is_404() || $slug === '') {
+    $found = Runtime::current()->get('old_slug_location');
+    if (!is_404() || !is_array($found)) {
         return;
     }
-    $post = _minn_posts()->byOldSlug($slug, ['post']);
-    if ($post === null) {
-        return;
-    }
-    $link = apply_filters('old_slug_redirect_url', get_permalink((int) $post['ID']));
+    $link = apply_filters('old_slug_redirect_url', $found[0]);
     if ($link && wp_redirect($link, 301)) {
-        exit;
+        throw new Minn\Theme\Printed();
     }
 }
 
-/** The canonical form of a URL by the engine's resolution: redirects to it, or hands it back when told not to. */
+/**
+ * The canonical form of a URL by the engine's resolution, through the redirect_canonical filter: moves there (ending
+ * the request), or hands it back when told not to. At template_redirect it is the move the engine found for this request.
+ */
 function redirect_canonical($requested_url = null, $do_redirect = true)
 {
     $runtime = Runtime::current();
-    if ($runtime->request === null) {
+    $request = $runtime->request;
+    if ($request === null) {
         return null;
     }
-    $location = Canonical::location($runtime->db, $runtime->request, $requested_url === null ? null : (string) $requested_url);
-    $location = apply_filters('redirect_canonical', $location, $requested_url ?? $runtime->request->path);
-    if (!$location) {
+    // Hooked to template_redirect it is handed the action's empty argument: that is this request.
+    $requested_url = empty($requested_url) ? null : (string) $requested_url;
+    $found = $requested_url === null ? $runtime->get('canonical_location') : null;
+    if ($requested_url === null && !is_array($found)) {
+        return null;
+    }
+    $location = is_array($found) ? $found[0] : Canonical::location($runtime->db, $request, (string) $requested_url);
+    $requested = $requested_url ?? (is_ssl() ? 'https://' : 'http://') . $request->host . $request->path . $request->queryStringWithout();
+    $location = apply_filters('redirect_canonical', $location, $requested);
+    if (!$location || $location === $requested) {
         return null;
     }
     if (!$do_redirect) {
         return $location;
     }
-    if (wp_redirect($location, 301)) {
-        exit;
+    if (wp_redirect($location, is_array($found) ? (int) $found[1] : 301)) {
+        throw new Minn\Theme\Printed();
     }
     return null;
 }

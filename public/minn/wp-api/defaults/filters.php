@@ -309,6 +309,8 @@ add_action('template_redirect', 'wp_shortlink_header', 11, 0);
 // The sitemaps server, built on every request (its own template_redirect step answers sitemap requests after the canonical one), and robots.txt.
 add_action('init', 'wp_sitemaps_get_server');
 add_action('template_redirect', '_minn_sitemap_canonical');
+add_action('template_redirect', 'wp_old_slug_redirect');
+add_action('template_redirect', 'redirect_canonical');
 add_action('do_robots', 'do_robots');
 // The load after a theme switch tells plugins (after_switch_theme), whose defaults map the menus and look the widgets over.
 add_action('init', 'check_theme_switched', 99);

@@ -27290,14 +27290,17 @@
         },
         "redirect_canonical": {
             "file": "query.php",
-            "lines": 16,
+            "lines": 24,
             "kind": "minn",
             "minn": [
                 "Minn\\Front\\Canonical::location",
-                "Minn\\Runtime\\Runtime::current"
+                "Minn\\Runtime\\Runtime::current",
+                "Minn\\Runtime\\Runtime::get",
+                "Minn\\Theme\\Printed::__construct"
             ],
             "composes": [
                 "apply_filters",
+                "is_ssl",
                 "wp_redirect"
             ]
         },
@@ -35062,16 +35065,15 @@
         },
         "wp_old_slug_redirect": {
             "file": "query.php",
-            "lines": 12,
+            "lines": 8,
             "kind": "minn",
             "minn": [
-                "Minn\\Content\\Posts::byOldSlug"
+                "Minn\\Runtime\\Runtime::current",
+                "Minn\\Runtime\\Runtime::get",
+                "Minn\\Theme\\Printed::__construct"
             ],
             "composes": [
-                "_minn_posts",
                 "apply_filters",
-                "get_permalink",
-                "get_query_var",
                 "is_404",
                 "wp_redirect"
             ]
