@@ -13,12 +13,13 @@ the wp verbs the engine answers itself
 | [`MaintenanceCommand`](#maintenancecommand) | final class | 65 | `wp maintenance-mode`: the `.maintenance` marker in the webroot. The |
 | [`MinnCommand`](#minncommand) | final class | 304 | Identifies the engine. |
 | [`OptionCommand`](#optioncommand) | final class | 185 | Options, read and written straight to the options table. Serialized |
-| [`PluginCommand`](#plugincommand) | final class | 475 | `wp plugin list\|install\|update\|activate\|deactivate\|delete`: the inventory and the fleet's install/update/delete. |
+| [`PackageInstaller`](#packageinstaller) | final readonly class | 138 | Puts a theme or a plugin on disk for `wp theme install` and `wp plugin |
+| [`PluginCommand`](#plugincommand) | final class | 386 | `wp plugin list\|install\|update\|activate\|deactivate\|delete`: the inventory and the fleet's install/update/delete. |
 | [`Preflight`](#preflight) | final class | 360 | What a site will and will not get from the engine, before anything |
 | [`RewriteCommand`](#rewritecommand) | final class | 52 | `wp rewrite flush\|structure`: permalink_structure is the engine's |
 | [`Runtime`](#runtime) | final class | 80 | The engine, booted for a command: reads the site's wp-config.php (which |
 | [`SearchReplaceCommand`](#searchreplacecommand) | final class | 143 | `wp search-replace`: walks every string column, including serialized |
-| [`ThemeCommand`](#themecommand) | final class | 425 | `wp theme list\|install\|update\|activate\|delete`: the inventory CaptainCore |
+| [`ThemeCommand`](#themecommand) | final class | 332 | `wp theme list\|install\|update\|activate\|delete`: the inventory CaptainCore |
 | [`UserCommand`](#usercommand) | final class | 366 | Users: the list and get views, and the one-time login link. |
 
 ## AssetUpdate
@@ -503,6 +504,37 @@ Deletes an option.
 Internals: `readValue()` (private, line 171), `decode()` (private, line 188), `encode()` (private, line 194)
 
 
+## PackageInstaller
+
+`final readonly class Minn\Cli\PackageInstaller` · `public/minn/src/Minn/Cli/PackageInstaller.php`
+
+Puts a theme or a plugin on disk for `wp theme install` and `wp plugin
+install`: a wordpress.org slug, a local zip, or a zip URL, saying along
+the way what WP-CLI says. The two kinds differ only in their words, in
+where they live, and in a plugin being allowed to be a single file.
+
+Used by: `Minn\Cli\PluginCommand`, `Minn\Cli\ThemeCommand`
+
+
+### static `themes(Minn\Ops\Packages $packages): self`
+
+The installer `wp theme install` uses.
+
+### static `plugins(Minn\Ops\Packages $packages): self`
+
+The installer `wp plugin install` uses.
+
+### `install(string $source, bool $force, string $version): array`
+
+One source onto disk: the folder when it is there afterwards (put
+there now, or already there), null when it could not be installed,
+and whether this call put it there.
+
+- `@return array{0: ?string, 1: bool}`
+
+Internals: `fromDirectory()` (private, line 79), `archive()` (private, line 112), `present()` (private, line 138), `refuse()` (private, line 148)
+
+
 ## PluginCommand
 
 `final class Minn\Cli\PluginCommand` · `public/minn/src/Minn/Cli/PluginCommand.php`
@@ -685,7 +717,7 @@ options:
 - yaml
 ---
 
-Internals: `switch()` (private, line 328), `installOne()` (private, line 361), `installArchive()` (private, line 421), `pinVersion()` (private, line 450), `activateFolder()` (private, line 474)
+Internals: `switch()` (private, line 326), `pinVersion()` (private, line 360), `activateFolder()` (private, line 384)
 
 
 ## Preflight
@@ -1012,7 +1044,7 @@ options:
 - yaml
 ---
 
-Internals: `pinVersion()` (private, line 229), `installOne()` (private, line 255), `installArchive()` (private, line 315), `switchTo()` (private, line 343)
+Internals: `pinVersion()` (private, line 227), `switchTo()` (private, line 249)
 
 
 ## UserCommand

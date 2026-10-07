@@ -20428,24 +20428,328 @@
             ]
         },
         {
+            "name": "Minn\\Cli\\PackageInstaller",
+            "short": "PackageInstaller",
+            "namespace": "Minn\\Cli",
+            "kind": "final readonly class",
+            "file": "public/minn/src/Minn/Cli/PackageInstaller.php",
+            "lines": 138,
+            "doc": "Puts a theme or a plugin on disk for `wp theme install` and `wp plugin\ninstall`: a wordpress.org slug, a local zip, or a zip URL, saying along\nthe way what WP-CLI says. The two kinds differ only in their words, in\nwhere they live, and in a plugin being allowed to be a single file.",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\Ops\\Packages",
+                "Minn\\RestError"
+            ],
+            "usedBy": [
+                "Minn\\Cli\\PluginCommand",
+                "Minn\\Cli\\ThemeCommand"
+            ],
+            "constructor": {
+                "signature": "__construct(Minn\\Ops\\Packages $packages, string $kind, string $invalidSlug, string $notFound)",
+                "doc": "",
+                "shapes": [],
+                "params": [
+                    {
+                        "name": "packages",
+                        "type": "Minn\\Ops\\Packages",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    },
+                    {
+                        "name": "kind",
+                        "type": "string",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    },
+                    {
+                        "name": "invalidSlug",
+                        "type": "string",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    },
+                    {
+                        "name": "notFound",
+                        "type": "string",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    }
+                ],
+                "visibility": "private",
+                "line": 19,
+                "end": 25
+            },
+            "cases": [],
+            "constants": [],
+            "properties": [
+                {
+                    "name": "packages",
+                    "type": "Minn\\Ops\\Packages",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
+                },
+                {
+                    "name": "kind",
+                    "type": "string",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
+                },
+                {
+                    "name": "invalidSlug",
+                    "type": "string",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
+                },
+                {
+                    "name": "notFound",
+                    "type": "string",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
+                }
+            ],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "themes",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "themes(Minn\\Ops\\Packages $packages): self",
+                    "doc": "The installer `wp theme install` uses.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "packages",
+                            "type": "Minn\\Ops\\Packages",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 28,
+                    "end": 31
+                },
+                {
+                    "routes": [],
+                    "name": "plugins",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "plugins(Minn\\Ops\\Packages $packages): self",
+                    "doc": "The installer `wp plugin install` uses.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "packages",
+                            "type": "Minn\\Ops\\Packages",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 34,
+                    "end": 37
+                },
+                {
+                    "routes": [],
+                    "name": "install",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "install(string $source, bool $force, string $version): array",
+                    "doc": "One source onto disk: the folder when it is there afterwards (put\nthere now, or already there), null when it could not be installed,\nand whether this call put it there.",
+                    "shapes": [
+                        "@return array{0: ?string, 1: bool}"
+                    ],
+                    "params": [
+                        {
+                            "name": "source",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "force",
+                            "type": "bool",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "version",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 46,
+                    "end": 71
+                },
+                {
+                    "routes": [],
+                    "name": "fromDirectory",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "fromDirectory(string $slug, array $info, bool $force, string $version, bool $existed): array",
+                    "doc": "A wordpress.org release onto disk, replacing an installed copy when forced.",
+                    "shapes": [
+                        "@param array<string, mixed> $info the directory's answer for the slug",
+                        "@return array{0: ?string, 1: bool}"
+                    ],
+                    "params": [
+                        {
+                            "name": "slug",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "info",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": "the directory's answer for the slug"
+                        },
+                        {
+                            "name": "force",
+                            "type": "bool",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "version",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "existed",
+                            "type": "bool",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 79,
+                    "end": 105
+                },
+                {
+                    "routes": [],
+                    "name": "archive",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "archive(string $source, bool $force): array",
+                    "doc": "A zip from a URL or a local path, unpacked into place.",
+                    "shapes": [
+                        "@return array{0: ?string, 1: bool}"
+                    ],
+                    "params": [
+                        {
+                            "name": "source",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "force",
+                            "type": "bool",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 112,
+                    "end": 135
+                },
+                {
+                    "routes": [],
+                    "name": "present",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "present(string $dest): bool",
+                    "doc": "Whether something of this kind is already at the path (a plugin may be a single file beside it).",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "dest",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 138,
+                    "end": 141
+                },
+                {
+                    "routes": [],
+                    "name": "refuse",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "refuse(string $source, string $reason): array",
+                    "doc": "The two warnings WP-CLI gives for a source it could not install.",
+                    "shapes": [
+                        "@return array{0: null, 1: false}"
+                    ],
+                    "params": [
+                        {
+                            "name": "source",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "reason",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 148,
+                    "end": 153
+                }
+            ]
+        },
+        {
             "name": "Minn\\Cli\\PluginCommand",
             "short": "PluginCommand",
             "namespace": "Minn\\Cli",
             "kind": "final class",
             "file": "public/minn/src/Minn/Cli/PluginCommand.php",
-            "lines": 475,
+            "lines": 386,
             "doc": "`wp plugin list|install|update|activate|deactivate|delete`: the inventory and the fleet's install/update/delete.",
             "implements": [],
             "extends": null,
             "uses": [
                 "Minn\\Cli\\AssetUpdate",
                 "Minn\\Cli\\DirectorySearch",
+                "Minn\\Cli\\PackageInstaller",
                 "Minn\\Cli\\Runtime",
                 "Minn\\Content\\Inventory",
                 "Minn\\Content\\PluginState",
                 "Minn\\Extension\\Loader",
-                "Minn\\Ops\\Packages",
-                "Minn\\RestError"
+                "Minn\\Ops\\Packages"
             ],
             "usedBy": [
                 "Minn\\Cli\\Commands"
@@ -20486,8 +20790,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 48,
-                    "end": 57
+                    "line": 47,
+                    "end": 56
                 },
                 {
                     "routes": [],
@@ -20513,8 +20817,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 71,
-                    "end": 74
+                    "line": 70,
+                    "end": 73
                 },
                 {
                     "routes": [],
@@ -20540,8 +20844,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 86,
-                    "end": 89
+                    "line": 85,
+                    "end": 88
                 },
                 {
                     "routes": [],
@@ -20567,8 +20871,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 110,
-                    "end": 149
+                    "line": 109,
+                    "end": 147
                 },
                 {
                     "routes": [],
@@ -20594,8 +20898,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 191,
-                    "end": 198
+                    "line": 189,
+                    "end": 196
                 },
                 {
                     "routes": [],
@@ -20621,8 +20925,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 210,
-                    "end": 235
+                    "line": 208,
+                    "end": 233
                 },
                 {
                     "routes": [],
@@ -20648,8 +20952,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 247,
-                    "end": 256
+                    "line": 245,
+                    "end": 254
                 },
                 {
                     "routes": [],
@@ -20675,8 +20979,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 271,
-                    "end": 280
+                    "line": 269,
+                    "end": 278
                 },
                 {
                     "routes": [],
@@ -20702,8 +21006,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 322,
-                    "end": 325
+                    "line": 320,
+                    "end": 323
                 },
                 {
                     "routes": [],
@@ -20729,97 +21033,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 328,
-                    "end": 359
-                },
-                {
-                    "routes": [],
-                    "name": "installOne",
-                    "static": false,
-                    "visibility": "private",
-                    "signature": "installOne(Minn\\Ops\\Packages $packages, string $source, bool $force, string $version, ?bool $fresh): ?string",
-                    "doc": "",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "packages",
-                            "type": "Minn\\Ops\\Packages",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "source",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "force",
-                            "type": "bool",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "version",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "fresh",
-                            "type": "?bool",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 361,
-                    "end": 419
-                },
-                {
-                    "routes": [],
-                    "name": "installArchive",
-                    "static": false,
-                    "visibility": "private",
-                    "signature": "installArchive(Minn\\Ops\\Packages $packages, string $source, bool $force, ?bool $fresh): ?string",
-                    "doc": "",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "packages",
-                            "type": "Minn\\Ops\\Packages",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "source",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "force",
-                            "type": "bool",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "fresh",
-                            "type": "?bool",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 421,
-                    "end": 447
+                    "line": 326,
+                    "end": 357
                 },
                 {
                     "routes": [],
@@ -20845,8 +21060,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 450,
-                    "end": 472
+                    "line": 360,
+                    "end": 382
                 },
                 {
                     "routes": [],
@@ -20872,8 +21087,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 474,
-                    "end": 489
+                    "line": 384,
+                    "end": 399
                 }
             ]
         },
@@ -21811,17 +22026,17 @@
             "namespace": "Minn\\Cli",
             "kind": "final class",
             "file": "public/minn/src/Minn/Cli/ThemeCommand.php",
-            "lines": 425,
+            "lines": 332,
             "doc": "`wp theme list|install|update|activate|delete`: the inventory CaptainCore\nreads, and the install/update the fleet's `wp theme` verbs run.",
             "implements": [],
             "extends": null,
             "uses": [
                 "Minn\\Cli\\AssetUpdate",
                 "Minn\\Cli\\DirectorySearch",
+                "Minn\\Cli\\PackageInstaller",
                 "Minn\\Cli\\Runtime",
                 "Minn\\Content\\Inventory",
                 "Minn\\Ops\\Packages",
-                "Minn\\RestError",
                 "Minn\\Support\\FileHeaders"
             ],
             "usedBy": [
@@ -21863,8 +22078,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 50,
-                    "end": 59
+                    "line": 49,
+                    "end": 58
                 },
                 {
                     "routes": [],
@@ -21890,8 +22105,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 80,
-                    "end": 116
+                    "line": 79,
+                    "end": 114
                 },
                 {
                     "routes": [],
@@ -21917,8 +22132,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 158,
-                    "end": 165
+                    "line": 156,
+                    "end": 163
                 },
                 {
                     "routes": [],
@@ -21944,8 +22159,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 177,
-                    "end": 180
+                    "line": 175,
+                    "end": 178
                 },
                 {
                     "routes": [],
@@ -21971,8 +22186,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 195,
-                    "end": 226
+                    "line": 193,
+                    "end": 224
                 },
                 {
                     "routes": [],
@@ -21998,8 +22213,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 373,
-                    "end": 381
+                    "line": 279,
+                    "end": 287
                 },
                 {
                     "routes": [],
@@ -22025,8 +22240,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 393,
-                    "end": 399
+                    "line": 299,
+                    "end": 305
                 },
                 {
                     "routes": [],
@@ -22052,8 +22267,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 438,
-                    "end": 441
+                    "line": 344,
+                    "end": 347
                 },
                 {
                     "routes": [],
@@ -22079,97 +22294,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 229,
-                    "end": 249
-                },
-                {
-                    "routes": [],
-                    "name": "installOne",
-                    "static": false,
-                    "visibility": "private",
-                    "signature": "installOne(Minn\\Ops\\Packages $packages, string $source, bool $force, string $version, ?bool $fresh): ?string",
-                    "doc": "Puts one source on disk. Returns the folder when it is present (fresh\nor already there); null when the source could not be installed.",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "packages",
-                            "type": "Minn\\Ops\\Packages",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "source",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "force",
-                            "type": "bool",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "version",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "fresh",
-                            "type": "?bool",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 255,
-                    "end": 313
-                },
-                {
-                    "routes": [],
-                    "name": "installArchive",
-                    "static": false,
-                    "visibility": "private",
-                    "signature": "installArchive(Minn\\Ops\\Packages $packages, string $source, bool $force, ?bool $fresh): ?string",
-                    "doc": "",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "packages",
-                            "type": "Minn\\Ops\\Packages",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "source",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "force",
-                            "type": "bool",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "fresh",
-                            "type": "?bool",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 315,
-                    "end": 341
+                    "line": 227,
+                    "end": 247
                 },
                 {
                     "routes": [],
@@ -22195,8 +22321,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 343,
-                    "end": 361
+                    "line": 249,
+                    "end": 267
                 }
             ]
         },
@@ -76516,6 +76642,7 @@
                 "Minn\\Admin\\PackagesController",
                 "Minn\\Cli\\AssetUpdate",
                 "Minn\\Cli\\DirectorySearch",
+                "Minn\\Cli\\PackageInstaller",
                 "Minn\\Cli\\PluginCommand",
                 "Minn\\Cli\\ThemeCommand",
                 "Minn\\Cron\\Cron",
@@ -80164,8 +80291,7 @@
                 "Minn\\Admin\\UpdatesController",
                 "Minn\\Cli\\AssetUpdate",
                 "Minn\\Cli\\DirectorySearch",
-                "Minn\\Cli\\PluginCommand",
-                "Minn\\Cli\\ThemeCommand",
+                "Minn\\Cli\\PackageInstaller",
                 "Minn\\Engine",
                 "Minn\\Http\\Envelope",
                 "Minn\\Http\\Kernel",

@@ -6,7 +6,6 @@ namespace Minn\Cli;
 
 use Minn\Ops\Packages;
 use Minn\Content\Inventory;
-use Minn\RestError;
 use Minn\Support\FileHeaders;
 use WP_CLI;
 use WP_CLI\Formatter;
@@ -80,7 +79,7 @@ final class ThemeCommand
     public function install(array $args, array $assocArgs): void
     {
         $runtime = Runtime::boot();
-        $packages = new Packages($runtime->site, rtrim(ABSPATH, '/') . '/wp-content');
+        $installer = PackageInstaller::themes(new Packages($runtime->site, rtrim(ABSPATH, '/') . '/wp-content'));
         $force = isset($assocArgs['force']);
         $activate = isset($assocArgs['activate']);
         $version = (string) ($assocArgs['version'] ?? '');
@@ -88,8 +87,7 @@ final class ThemeCommand
         $already = 0;
         $missing = 0;
         foreach ($args as $source) {
-            $fresh = false;
-            $folder = $this->installOne($packages, $source, $force, $version, $fresh);
+            [$folder, $fresh] = $installer->install($source, $force, $version);
             if ($folder === null) {
                 $missing++;
                 continue;
@@ -232,112 +230,20 @@ final class ThemeCommand
             WP_CLI::error('Please specify one or more themes, or use --all.');
         }
         $runtime = Runtime::boot();
-        $packages = new Packages($runtime->site, rtrim(ABSPATH, '/') . '/wp-content');
+        $installer = PackageInstaller::themes(new Packages($runtime->site, rtrim(ABSPATH, '/') . '/wp-content'));
         $done = 0;
         foreach ($args as $slug) {
             if (!is_dir(rtrim(ABSPATH, '/') . '/wp-content/themes/' . $slug)) {
                 WP_CLI::error("The '{$slug}' theme could not be found.");
             }
-            $fresh = false;
-            if ($this->installOne($packages, $slug, true, $version, $fresh) !== null && $fresh) {
+            [$folder, $fresh] = $installer->install($slug, true, $version);
+            if ($folder !== null && $fresh) {
                 $done++;
             }
         }
         if ($done > 0) {
             WP_CLI::success("Installed {$done} of " . count($args) . ' themes.');
         }
-    }
-
-    /**
-     * Puts one source on disk. Returns the folder when it is present (fresh
-     * or already there); null when the source could not be installed.
-     */
-    private function installOne(Packages $packages, string $source, bool $force, string $version, ?bool &$fresh): ?string
-    {
-        $fresh = false;
-        $themes = rtrim(ABSPATH, '/') . '/wp-content/themes';
-        if (preg_match('#^https?://#i', $source)) {
-            return $this->installArchive($packages, $source, $force, $fresh);
-        }
-        if (is_file($source) || str_ends_with(strtolower($source), '.zip')) {
-            if (!is_file($source)) {
-                WP_CLI::warning("{$source}: Invalid slug provided");
-                WP_CLI::warning("The '{$source}' theme could not be found.");
-                return null;
-            }
-            return $this->installArchive($packages, $source, $force, $fresh);
-        }
-        if (!preg_match('/^[a-z0-9-]+$/', $source)) {
-            WP_CLI::warning("{$source}: Invalid slug provided");
-            WP_CLI::warning("The '{$source}' theme could not be found.");
-            return null;
-        }
-        $dest = "{$themes}/{$source}";
-        if (is_dir($dest) && !$force) {
-            WP_CLI::warning("{$source}: Theme already installed.");
-            return $source;
-        }
-        try {
-            $info = $packages->directoryTheme($source);
-        } catch (RestError) {
-            $info = null;
-        }
-        if ($info === null) {
-            WP_CLI::warning("{$source}: Theme not found");
-            WP_CLI::warning("The '{$source}' theme could not be found.");
-            return null;
-        }
-        $name = html_entity_decode(strip_tags((string) ($info['name'] ?? $source)), ENT_QUOTES | ENT_HTML5, 'UTF-8');
-        $useVersion = $version !== '' ? $version : (string) ($info['version'] ?? '');
-        $link = $version !== ''
-            ? 'https://downloads.wordpress.org/theme/' . $source . '.' . $version . '.zip'
-            : (string) ($info['download_link'] ?? '');
-        WP_CLI::log("Installing {$name} ({$useVersion})");
-        WP_CLI::log("Downloading installation package from {$link}...");
-        $existed = is_dir($dest);
-        try {
-            WP_CLI::log('Unpacking the package...');
-            WP_CLI::log('Installing the theme...');
-            if ($existed) {
-                WP_CLI::log('Removing the old version of the theme...');
-            }
-            $folder = ($force ? $packages->replaceTheme($source, $version) : $packages->installTheme($source, $version));
-        } catch (RestError $error) {
-            WP_CLI::warning($source . ': ' . $error->getMessage());
-            WP_CLI::warning("The '{$source}' theme could not be found.");
-            return null;
-        }
-        WP_CLI::log($existed ? 'Theme updated successfully.' : 'Theme installed successfully.');
-        $fresh = true;
-        return $folder;
-    }
-
-    private function installArchive(Packages $packages, string $source, bool $force, ?bool &$fresh): ?string
-    {
-        $fresh = false;
-        try {
-            if (preg_match('#^https?://#i', $source)) {
-                WP_CLI::log("Downloading installation package from {$source}...");
-                $bytes = $packages->fetch(preg_replace('#^http://#i', 'https://', $source) ?? $source);
-            } else {
-                $bytes = (string) file_get_contents($source);
-            }
-            WP_CLI::log('Unpacking the package...');
-            WP_CLI::log('Installing the theme...');
-            $result = ($force ? $packages->unpackReplacing($bytes, 'theme') : $packages->unpack($bytes, 'theme'));
-        } catch (RestError $error) {
-            if ($error->status === 409) {
-                $folder = basename((string) ($error->extra['destination'] ?? ''));
-                WP_CLI::warning(($folder !== '' ? $folder : $source) . ': Theme already installed.');
-                return $folder !== '' ? $folder : null;
-            }
-            WP_CLI::warning($source . ': ' . $error->getMessage());
-            WP_CLI::warning("The '{$source}' theme could not be found.");
-            return null;
-        }
-        WP_CLI::log('Theme installed successfully.');
-        $fresh = true;
-        return $result['folder'];
     }
 
     private function switchTo(Runtime $runtime, string $slug): void

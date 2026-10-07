@@ -8,7 +8,6 @@ use Minn\Ops\Packages;
 use Minn\Content\Inventory;
 use Minn\Content\PluginState;
 use Minn\Extension\Loader;
-use Minn\RestError;
 use WP_CLI;
 use WP_CLI\Formatter;
 
@@ -110,7 +109,7 @@ final class PluginCommand
     public function install(array $args, array $assocArgs): void
     {
         $runtime = Runtime::boot();
-        $packages = new Packages($runtime->site, rtrim(ABSPATH, '/') . '/wp-content');
+        $installer = PackageInstaller::plugins(new Packages($runtime->site, rtrim(ABSPATH, '/') . '/wp-content'));
         $force = isset($assocArgs['force']);
         $activate = isset($assocArgs['activate']);
         $version = (string) ($assocArgs['version'] ?? '');
@@ -118,8 +117,7 @@ final class PluginCommand
         $already = 0;
         $missing = 0;
         foreach ($args as $source) {
-            $fresh = false;
-            $folder = $this->installOne($packages, $source, $force, $version, $fresh);
+            [$folder, $fresh] = $installer->install($source, $force, $version);
             if ($folder === null) {
                 $missing++;
                 continue;
@@ -358,94 +356,6 @@ final class PluginCommand
         WP_CLI::success(ucfirst($verb) . " {$done} of {$total} plugins.");
     }
 
-    private function installOne(Packages $packages, string $source, bool $force, string $version, ?bool &$fresh): ?string
-    {
-        $fresh = false;
-        $plugins = rtrim(ABSPATH, '/') . '/wp-content/plugins';
-        if (preg_match('#^https?://#i', $source)) {
-            return $this->installArchive($packages, $source, $force, $fresh);
-        }
-        if (is_file($source) || str_ends_with(strtolower($source), '.zip')) {
-            if (!is_file($source)) {
-                WP_CLI::warning("{$source}: Invalid plugin slug.");
-                WP_CLI::warning("The '{$source}' plugin could not be found.");
-                return null;
-            }
-            return $this->installArchive($packages, $source, $force, $fresh);
-        }
-        if (!preg_match('/^[a-z0-9-]+$/', $source)) {
-            WP_CLI::warning("{$source}: Invalid plugin slug.");
-            WP_CLI::warning("The '{$source}' plugin could not be found.");
-            return null;
-        }
-        $dest = "{$plugins}/{$source}";
-        if ((is_dir($dest) || is_file($dest . '.php')) && !$force) {
-            WP_CLI::warning("{$source}: Plugin already installed.");
-            return $source;
-        }
-        try {
-            $info = $packages->directoryPlugin($source);
-        } catch (RestError) {
-            $info = null;
-        }
-        if ($info === null) {
-            WP_CLI::warning("{$source}: Plugin not found.");
-            WP_CLI::warning("The '{$source}' plugin could not be found.");
-            return null;
-        }
-        $name = html_entity_decode(strip_tags((string) ($info['name'] ?? $source)), ENT_QUOTES | ENT_HTML5, 'UTF-8');
-        $useVersion = $version !== '' ? $version : (string) ($info['version'] ?? '');
-        $link = $version !== ''
-            ? 'https://downloads.wordpress.org/plugin/' . $source . '.' . $version . '.zip'
-            : (string) ($info['download_link'] ?? '');
-        WP_CLI::log("Installing {$name} ({$useVersion})");
-        WP_CLI::log("Downloading installation package from {$link}...");
-        $existed = is_dir($dest);
-        try {
-            WP_CLI::log('Unpacking the package...');
-            WP_CLI::log('Installing the plugin...');
-            if ($existed) {
-                WP_CLI::log('Removing the old version of the plugin...');
-            }
-            $folder = ($force ? $packages->replacePlugin($source, $version) : $packages->installPlugin($source, $version));
-        } catch (RestError $error) {
-            WP_CLI::warning($source . ': ' . $error->getMessage());
-            WP_CLI::warning("The '{$source}' plugin could not be found.");
-            return null;
-        }
-        WP_CLI::log($existed ? 'Plugin updated successfully.' : 'Plugin installed successfully.');
-        $fresh = true;
-        return $folder;
-    }
-
-    private function installArchive(Packages $packages, string $source, bool $force, ?bool &$fresh): ?string
-    {
-        $fresh = false;
-        try {
-            if (preg_match('#^https?://#i', $source)) {
-                WP_CLI::log("Downloading installation package from {$source}...");
-                $bytes = $packages->fetch(preg_replace('#^http://#i', 'https://', $source) ?? $source);
-            } else {
-                $bytes = (string) file_get_contents($source);
-            }
-            WP_CLI::log('Unpacking the package...');
-            WP_CLI::log('Installing the plugin...');
-            $result = ($force ? $packages->unpackReplacing($bytes, 'plugin') : $packages->unpack($bytes, 'plugin'));
-        } catch (RestError $error) {
-            if ($error->status === 409) {
-                $folder = basename((string) ($error->extra['destination'] ?? ''));
-                WP_CLI::warning(($folder !== '' ? $folder : $source) . ': Plugin already installed.');
-                return $folder !== '' ? $folder : null;
-            }
-            WP_CLI::warning($source . ': ' . $error->getMessage());
-            WP_CLI::warning("The '{$source}' plugin could not be found.");
-            return null;
-        }
-        WP_CLI::log('Plugin installed successfully.');
-        $fresh = true;
-        return $result['folder'];
-    }
-
     /** `--version` on update force-installs that release using the install wording. */
     private function pinVersion(array $args, string $version): void
     {
@@ -453,7 +363,7 @@ final class PluginCommand
             WP_CLI::error('Please specify one or more plugins, or use --all.');
         }
         $runtime = Runtime::boot();
-        $packages = new Packages($runtime->site, rtrim(ABSPATH, '/') . '/wp-content');
+        $installer = PackageInstaller::plugins(new Packages($runtime->site, rtrim(ABSPATH, '/') . '/wp-content'));
         $done = 0;
         foreach ($args as $slug) {
             $dest = rtrim(ABSPATH, '/') . '/wp-content/plugins/' . $slug;
@@ -461,8 +371,8 @@ final class PluginCommand
                 WP_CLI::warning("The '{$slug}' plugin could not be found.");
                 continue;
             }
-            $fresh = false;
-            if ($this->installOne($packages, $slug, true, $version, $fresh) !== null && $fresh) {
+            [$folder, $fresh] = $installer->install($slug, true, $version);
+            if ($folder !== null && $fresh) {
                 $done++;
             }
         }
