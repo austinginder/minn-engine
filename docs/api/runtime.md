@@ -18,7 +18,10 @@ the WordPress runtime plugins load against
 | [`CommentCloser`](#commentcloser) | final readonly class | 22 | The Discussion setting that closes comments on old posts. Observed on the |
 | [`CommentEvents`](#commentevents) | final readonly class | 253 | What the reference's REST comments controller tells plugins, for the |
 | [`CommentForm`](#commentform) | final class | 107 | The comment form's submission with plugins loaded |
-| [`CommentQuery`](#commentquery) | final readonly class | 117 | Comment reads in the get_comments() shape: arguments to rows or a count, and the approval breakdown wp_count_comments reports. |
+| [`CommentQuery`](#commentquery) | final readonly class | 28 | The approval breakdown wp_count_comments reports (comment lists run through WP_Comment_Query and Minn\Runtime\CommentQueryRunner). |
+| [`CommentQueryRunner`](#commentqueryrunner) | final class | 104 | WP_Comment_Query as the reference runs it (probe wp-comment-query-sql): |
+| [`CommentQueryWhere`](#commentquerywhere) | final class | 190 | WP_Comment_Query's WHERE pieces and the posts join, in the reference's |
+| [`CommentThreads`](#commentthreads) | final class | 68 | A threaded or flat comment query's descendants as the reference fills |
 | [`Connectors`](#connectors) | final class | 212 | The connectors registry: the external services a site talks to (AI |
 | [`Constants`](#constants) | final class | 83 | The constants plugin code expects: the fixed set from data/constants.json |
 | [`CronTable`](#crontable) | final class | 131 | The cron option's shape, operated on as data: timestamp => hook => key => |
@@ -737,24 +740,12 @@ Internals: `store()` (private, line 71), `postRefusal()` (private, line 89), `fi
 
 `final readonly class Minn\Runtime\CommentQuery` · `public/minn/src/Minn/Runtime/CommentQuery.php`
 
-Comment reads in the get_comments() shape: arguments to rows or a count, and the approval breakdown wp_count_comments reports.
-
-- const `DEFAULTS` = `array (   'post_id' => 0,   'post__in' =>    array (   ),   'status' => 'all',   'number' => '',   'offset' => 0,   'orderby' => 'comment_date_gmt',   'order' => 'DESC',   'fields' => '',   'count' => false,   'parent' => '',   'type' => '',   'author_email' => '',   'user_id' => '',   'search' => '',   'include_unapproved' =>    array (   ),   'comment__in' =>    array (   ),   'comment__not_in' =>    array (   ),   'post_status' => '',   'post_type' => '',   'author__in' =>    array (   ),   'date_query' => NULL,   'hierarchical' => false, )`
+The approval breakdown wp_count_comments reports (comment lists run through WP_Comment_Query and Minn\Runtime\CommentQueryRunner).
 
 ```php
 __construct(Minn\Db $db)
 ```
 
-
-### `count(array $args): int`
-
-How many comments match the query args.
-
-### `rows(array $args): array`
-
-The comment rows matching the query args, ordered as asked.
-
-- `@return list<array<string, mixed>>`
 
 ### `breakdown(int $postId): array`
 
@@ -762,7 +753,99 @@ The counts wp_count_comments reports, for one post or the site. @return array<st
 
 - `@return array<string, int>`
 
-Internals: `where()` (private, line 53)
+
+## CommentQueryRunner
+
+`final class Minn\Runtime\CommentQueryRunner` · `public/minn/src/Minn/Runtime/CommentQueryRunner.php`
+
+WP_Comment_Query as the reference runs it (probe wp-comment-query-sql):
+the variables filled and handed to pre_get_comments, the meta query's
+SQL, comments_pre_query (which may answer), the clauses (the date query
+among them) handed to comments_clauses, the request, found_comments_query
+when a limited query counts what it found, then the ids, the count, or
+the comments through the_comments, threaded or flattened when asked.
+Results are not cached between queries (the reference keeps them in the
+object cache by last_changed).
+
+Used by: `Minn\Runtime\CommentQuery`
+
+```php
+__construct(object $wpdb)
+```
+
+
+### `run(WP_Comment_Query $query): mixed`
+
+Runs the query, as WP_Comment_Query::get_comments() does: a count, ids, or comments.
+
+Internals: `request()` (private, line 68), `comments()` (private, line 100)
+
+
+## CommentQueryWhere
+
+`final class Minn\Runtime\CommentQueryWhere` · `public/minn/src/Minn/Runtime/CommentQueryWhere.php`
+
+WP_Comment_Query's WHERE pieces and the posts join, in the reference's
+order (probe wp-comment-query-sql): the approval statuses (with the
+readers whose held comments show), the post, the id lists, the author's
+email and url, karma, the types (notes left out unless asked for), the
+parent (0 for a threaded or flat query that names none), the user, the
+search, the post's own fields, the author lists, then the meta and date
+queries.
+
+- const `ID_LISTS` = `array (   'comment__in' => '{c}.comment_ID IN',   'comment__not_in' => '{c}.comment_ID NOT IN',   'parent__in' => 'comment_parent IN',   'parent__not_in' => 'comment_parent NOT IN',   'post__in' => 'comment_post_ID IN',   'post__not_in' => 'comment_post_ID NOT IN', )`
+- const `AUTHOR_LISTS` = `array (   'author__in' => 'user_id IN',   'author__not_in' => 'user_id NOT IN',   'post_author__in' => 'post_author IN',   'post_author__not_in' => 'post_author NOT IN', )`
+- const `POST_FIELDS` = `array (   0 => 'post_author',   1 => 'post_name',   2 => 'post_parent',   3 => 'post_status',   4 => 'post_type', )`
+- const `SEARCHED` = `array (   0 => 'comment_author',   1 => 'comment_author_email',   2 => 'comment_author_url',   3 => 'comment_author_IP',   4 => 'comment_content', )`
+- const `ALL` = `'( comment_approved = \'0\' OR comment_approved = \'1\' )'`
+
+Used by: `Minn\Runtime\CommentQueryRunner`
+
+```php
+__construct(object $wpdb)
+```
+
+
+### `pieces(WP_Comment_Query $query, array $meta): array`
+
+The WHERE pieces (joined with AND by the caller) and the posts join
+('' when no post field is asked after).
+
+- `@param array{join?: string, where?: string} $meta the meta query's SQL, when it has clauses`
+- `@return array{0: list<string>, 1: string}`
+
+Internals: `approved()` (private, line 75), `post()` (private, line 95), `types()` (private, line 110), `parentAndUser()` (private, line 138), `search()` (private, line 151), `posts()` (private, line 168), `given()` (private, line 188), `listOf()` (private, line 194), `bare()` (private, line 203)
+
+
+## CommentThreads
+
+`final class Minn\Runtime\CommentThreads` · `public/minn/src/Minn/Runtime/CommentThreads.php`
+
+A threaded or flat comment query's descendants as the reference fills
+them (probe wp-comment-query-sql): one more comment query a level, with
+the query's own variables but the level's parents, no parent, no limit
+and no count; a threaded query hangs each reply under its parent, marks
+every comment's children as known and keeps the top level by id, a flat
+one lists the top level and then each level in its query's order.
+
+- const `LEVEL` = `array (   'parent' => '',   'hierarchical' => false,   'number' => 0,   'offset' => 0,   'no_found_rows' => true, )`
+
+Used by: `Minn\Runtime\CommentQueryRunner`
+
+### `fill(WP_Comment_Query $query, array $top): array`
+
+The query's top-level comments with their descendants filled in.
+
+- `@param list<\WP_Comment> $top`
+- `@return array<int, \WP_Comment>`
+
+### static `flatten(array $children, array $args): array`
+
+A comment's children, then each one's own, depth first, as a list.
+
+- `@param array<array-key, mixed> $children`
+- `@param array<string, mixed> $args get_children()'s arguments, handed down`
+- `@return list<\WP_Comment>`
 
 
 ## Connectors

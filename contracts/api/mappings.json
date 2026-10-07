@@ -2,12 +2,12 @@
     "generated": "2026-10-07",
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line)",
     "summary": {
-        "minn": 643,
+        "minn": 644,
         "composes": 928,
         "leaf": 649,
         "noop": 1853,
-        "functions": 4003,
-        "minnMethods": 684,
+        "functions": 4004,
+        "minnMethods": 686,
         "leafLinesOver15": 12
     },
     "functions": {
@@ -4769,10 +4769,15 @@
         },
         "WP_Comment::get_children": {
             "file": "classes/WP_Comment.php",
-            "lines": 1,
-            "kind": "noop",
-            "minn": [],
-            "composes": []
+            "lines": 8,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Runtime\\CommentThreads::flatten"
+            ],
+            "composes": [
+                "get_comments",
+                "wp_parse_args"
+            ]
         },
         "WP_Comment::get_instance": {
             "file": "classes/WP_Comment.php",
@@ -4806,19 +4811,30 @@
         },
         "WP_Comment_Query::get_comments": {
             "file": "classes/WP_Comment_Query.php",
-            "lines": 28,
+            "lines": 2,
             "kind": "minn",
             "minn": [
-                "Minn\\Runtime\\CommentQuery::__construct",
-                "Minn\\Runtime\\CommentQuery::count",
-                "Minn\\Runtime\\CommentQuery::rows",
-                "Minn\\Runtime\\Runtime::current",
-                "Minn\\Runtime\\Runtime::db"
+                "Minn\\Runtime\\CommentQueryRunner::__construct"
             ],
-            "composes": [
-                "apply_filters_ref_array",
-                "do_action_ref_array"
-            ]
+            "composes": []
+        },
+        "WP_Comment_Query::parse_order": {
+            "file": "classes/WP_Comment_Query.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Query\\CommentOrder::direction"
+            ],
+            "composes": []
+        },
+        "WP_Comment_Query::parse_orderby": {
+            "file": "classes/WP_Comment_Query.php",
+            "lines": 3,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Query\\CommentOrder::clause"
+            ],
+            "composes": []
         },
         "WP_Comment_Query::parse_query": {
             "file": "classes/WP_Comment_Query.php",
@@ -4838,13 +4854,6 @@
             "composes": [
                 "wp_parse_args"
             ]
-        },
-        "WP_Comment_Query::threaded": {
-            "file": "classes/WP_Comment_Query.php",
-            "lines": 14,
-            "kind": "leaf",
-            "minn": [],
-            "composes": []
         },
         "WP_Connector_Registry::__construct": {
             "file": "classes/WP_Connector_Registry.php",
@@ -20895,19 +20904,10 @@
         },
         "get_comments": {
             "file": "comment.php",
-            "lines": 10,
-            "kind": "minn",
-            "minn": [
-                "Minn\\Runtime\\CommentQuery::__construct",
-                "Minn\\Runtime\\CommentQuery::count",
-                "Minn\\Runtime\\CommentQuery::rows",
-                "Minn\\Runtime\\Runtime::current",
-                "Minn\\Runtime\\Runtime::db"
-            ],
-            "composes": [
-                "apply_filters",
-                "wp_parse_args"
-            ]
+            "lines": 2,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
         },
         "get_comments_link": {
             "file": "comment.php",

@@ -56,16 +56,8 @@ function get_comment($comment = null, $output = OBJECT)
 
 function get_comments($args = '')
 {
-    $args = wp_parse_args($args, CommentQuery::DEFAULTS);
-    $query = new CommentQuery(Runtime::current()->db);
-    if ($args['count']) {
-        return $query->count($args);
-    }
-    $rows = $query->rows($args);
-    if ($args['fields'] === 'ids') {
-        return array_map(static fn (array $r) => (int) $r['comment_ID'], $rows);
-    }
-    return apply_filters('the_comments', array_map(static fn (array $r) => new WP_Comment((object) $r), $rows), null);
+    $query = new WP_Comment_Query();
+    return $query->query($args);
 }
 
 function get_comments_number($post = 0)

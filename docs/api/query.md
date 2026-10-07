@@ -5,6 +5,7 @@ shared SQL fragments
 | Class | Kind | Lines | Summary |
 |---|---|---|---|
 | [`AuthorPostsSql`](#authorpostssql) | final class | 30 | get_posts_by_author_sql as the reference writes it: for each type, its |
+| [`CommentOrder`](#commentorder) | final class | 100 | WP_Comment_Query's ORDER BY and LIMIT as the reference writes them |
 | [`DateSql`](#datesql) | final class | 248 | The WHERE fragment of a date query in the reference's shape: before and |
 | [`MetaSql`](#metasql) | final class | 252 | The JOIN and WHERE fragments of a meta query in the reference's shape: |
 | [`MimeWhere`](#mimewhere) | final class | 36 | wp_post_mime_type_where as the reference writes it (probe wp-query-sql): |
@@ -27,6 +28,53 @@ narrows it; WHERE in front when asked.
 The clause for the posts an author's lists count, as the reader may see them.
 
 - `@param list<array{type: string, readPrivate: bool}> $types each type that exists, and whether the reader may read its private posts`
+
+
+## CommentOrder
+
+`final class Minn\Query\CommentOrder` · `public/minn/src/Minn/Query/CommentOrder.php`
+
+WP_Comment_Query's ORDER BY and LIMIT as the reference writes them
+(probe wp-comment-query-sql): no orderby means comment_date_gmt in the
+order asked; a list, a string of keys or a map of keys to directions
+each become a column, a meta value or the FIELD() list comment__in
+gives; a key it does not know is dropped (none left means
+comment_date_gmt), and unless comment_ID or comment__in is among them a
+comment_ID tiebreak follows, in the first date clause's direction or
+DESC.
+
+- const `COLUMNS` = `array (   0 => 'comment_agent',   1 => 'comment_approved',   2 => 'comment_author',   3 => 'comment_author_email',   4 => 'comment_author_IP',   5 => 'comment_author_url',   6 => 'comment_content',   7 => 'comment_date',   8 => 'comment_date_gmt',   9 => 'comment_ID',   10 => 'comment_karma',   11 => 'comment_parent',   12 => 'comment_post_ID',   13 => 'comment_type',   14 => 'user_id', )`
+- const `IDS` = `'comment__in'`
+
+Used by: `Minn\Runtime\CommentQueryRunner`
+
+### static `direction(mixed $order): string`
+
+ASC when asked for, DESC for anything else.
+
+### static `build(array $qv, string $table, string $metaTable, array $metaClauses): string`
+
+The ORDER BY body for the query's orderby and order ('' for none).
+
+- `@param array<string, mixed> $qv`
+- `@param array<array-key, array<string, mixed>> $metaClauses the meta query's clauses, by name`
+
+### static `clause(string $by, array $qv, string $table, string $metaTable, array $metaClauses): string`
+
+One orderby key as SQL, or '' when the reference does not take it: a
+column, the meta value (as a number when asked), a named meta
+clause's cast value, or the FIELD() list keeping comment__in's order.
+
+- `@param array<string, mixed> $qv`
+- `@param array<array-key, array<string, mixed>> $metaClauses`
+
+### static `limits(array $qv): string`
+
+LIMIT from number, and the offset (or the page when no offset is given). @param array<string, mixed> $qv
+
+- `@param array<string, mixed> $qv`
+
+Internals: `field()` (private, line 100), `tiebreak()` (private, line 107)
 
 
 ## DateSql
@@ -269,7 +317,7 @@ one term, its title match.
 Literal quoting for the SQL fragments the query classes hand to plugins,
 which embed them verbatim in their own statements.
 
-Used by: `Minn\Query\DateSql`, `Minn\Query\MetaSql`, `Minn\Query\PostSearch`, `Minn\Query\TaxSql`, `Minn\Runtime\PostQueryStatus`, `Minn\Runtime\PostQueryWhere`, `Minn\Runtime\TermQueryRunner`, `Minn\Runtime\UserQueryRunner`
+Used by: `Minn\Query\DateSql`, `Minn\Query\MetaSql`, `Minn\Query\PostSearch`, `Minn\Query\TaxSql`, `Minn\Runtime\CommentQueryWhere`, `Minn\Runtime\PostQueryStatus`, `Minn\Runtime\PostQueryWhere`, `Minn\Runtime\TermQueryRunner`, `Minn\Runtime\UserQueryRunner`
 
 ### static `quote(string $value): string`
 

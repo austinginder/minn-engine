@@ -1,9 +1,13 @@
 <?php
 
-use Minn\Runtime\CommentQuery;
-use Minn\Runtime\Runtime;
+use Minn\Query\CommentOrder;
+use Minn\Runtime\CommentQueryRunner;
 
-/** The comment query object: vars in the reference's order, rows from Minn\Runtime\CommentQuery. */
+/**
+ * The comment query plugin code runs, as the reference runs it:
+ * Minn\Runtime\CommentQueryRunner fires the query's hooks, writes its
+ * clauses and request, and threads the results when asked.
+ */
 #[AllowDynamicProperties]
 class WP_Comment_Query
 {
@@ -15,6 +19,7 @@ class WP_Comment_Query
     public $comments;
     public $found_comments = 0;
     public $max_num_pages = 0;
+    protected $sql_clauses = ['select' => '', 'from' => '', 'where' => '', 'groupby' => '', 'orderby' => '', 'limits' => ''];
 
     public function __construct($query = '')
     {
@@ -40,54 +45,22 @@ class WP_Comment_Query
         return $this->get_comments();
     }
 
+    /** The comments (or ids, or a count) for the vars: Minn\Runtime\CommentQueryRunner runs the reference's steps. */
     public function get_comments()
     {
-        $this->parse_query();
-        do_action_ref_array('pre_get_comments', [&$this]);
-        $vars = $this->query_vars;
-        $args = array_intersect_key($vars, CommentQuery::DEFAULTS) + CommentQuery::DEFAULTS;
-        foreach (['post__in', 'include_unapproved', 'comment__in', 'comment__not_in', 'author__in'] as $list) {
-            $args[$list] = $args[$list] === '' ? [] : (array) $args[$list];
-        }
-        $args['orderby'] = $args['orderby'] === '' ? 'comment_date_gmt' : $args['orderby'];
-        if ($args['number'] !== '' && (int) $args['number'] > 0 && (int) $vars['paged'] > 1 && (int) $args['offset'] === 0) {
-            $args['offset'] = ((int) $vars['paged'] - 1) * (int) $args['number'];
-        }
-        $engine = new CommentQuery(Runtime::current()->db);
-        if ($vars['count']) {
-            return $engine->count($args);
-        }
-        $rows = $engine->rows($args);
-        if ($args['number'] !== '' && (int) $args['number'] > 0 && !$vars['no_found_rows']) {
-            $this->found_comments = $engine->count(['number' => '', 'offset' => 0] + $args);
-            $this->max_num_pages = (int) ceil($this->found_comments / (int) $args['number']);
-        }
-        if ($vars['fields'] === 'ids') {
-            $this->comments = array_map(static fn (array $r) => (int) $r['comment_ID'], $rows);
-            return $this->comments;
-        }
-        $comments = array_map(static fn (array $r) => new WP_Comment((object) $r), $rows);
-        $comments = apply_filters_ref_array('the_comments', [$comments, &$this]);
-        $this->comments = $vars['hierarchical'] === 'threaded' ? $this->threaded($comments) : $comments;
-        return $this->comments;
+        global $wpdb;
+        return (new CommentQueryRunner($wpdb))->run($this);
     }
 
-    /** Replies hang under their parents; the top level comes back. */
-    private function threaded(array $comments): array
+    protected function parse_orderby($orderby)
     {
-        $byId = [];
-        foreach ($comments as $comment) {
-            $byId[(int) $comment->comment_ID] = $comment;
-        }
-        $top = [];
-        foreach ($comments as $comment) {
-            $parent = (int) $comment->comment_parent;
-            if ($parent > 0 && isset($byId[$parent])) {
-                $byId[$parent]->add_child($comment);
-            } else {
-                $top[] = $comment;
-            }
-        }
-        return $top;
+        global $wpdb;
+        $clauses = $this->meta_query instanceof WP_Meta_Query ? (array) $this->meta_query->get_clauses() : [];
+        return CommentOrder::clause((string) $orderby, (array) $this->query_vars, $wpdb->comments, $wpdb->commentmeta, $clauses) ?: false;
+    }
+
+    protected function parse_order($order)
+    {
+        return CommentOrder::direction($order);
     }
 }

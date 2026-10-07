@@ -1,5 +1,7 @@
 <?php
 
+use Minn\Runtime\CommentThreads;
+
 /** A comment row as an object. */
 #[AllowDynamicProperties]
 final class WP_Comment
@@ -45,9 +47,17 @@ final class WP_Comment
         return get_object_vars($this);
     }
 
+    /** The replies, queried once (threaded, every status by default) then kept; flat lists them depth first. */
     public function get_children($args = [])
     {
-        return $this->children ?? [];
+        $args = wp_parse_args($args, ['format' => 'tree', 'status' => 'all', 'hierarchical' => 'threaded', 'orderby' => '']);
+        $args['parent'] = $this->comment_ID;
+        if (!$this->populated_children) {
+            $found = get_comments($args);
+            array_map([$this, 'add_child'], array_filter(is_array($found) ? $found : [], static fn ($c) => $c instanceof WP_Comment));
+            $this->populated_children = true;
+        }
+        return $args['format'] === 'flat' ? CommentThreads::flatten($this->children ?? [], $args) : ($this->children ?? []);
     }
 
     public function add_child(WP_Comment $child)

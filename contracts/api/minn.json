@@ -74737,6 +74737,226 @@
             ]
         },
         {
+            "name": "Minn\\Query\\CommentOrder",
+            "short": "CommentOrder",
+            "namespace": "Minn\\Query",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Query/CommentOrder.php",
+            "lines": 100,
+            "doc": "WP_Comment_Query's ORDER BY and LIMIT as the reference writes them\n(probe wp-comment-query-sql): no orderby means comment_date_gmt in the\norder asked; a list, a string of keys or a map of keys to directions\neach become a column, a meta value or the FIELD() list comment__in\ngives; a key it does not know is dropped (none left means\ncomment_date_gmt), and unless comment_ID or comment__in is among them a\ncomment_ID tiebreak follows, in the first date clause's direction or\nDESC.",
+            "implements": [],
+            "extends": null,
+            "uses": [],
+            "usedBy": [
+                "Minn\\Runtime\\CommentQueryRunner"
+            ],
+            "constructor": null,
+            "cases": [],
+            "constants": [
+                {
+                    "name": "COLUMNS",
+                    "value": "array (   0 => 'comment_agent',   1 => 'comment_approved',   2 => 'comment_author',   3 => 'comment_author_email',   4 => 'comment_author_IP',   5 => 'comment_author_url',   6 => 'comment_content',   7 => 'comment_date',   8 => 'comment_date_gmt',   9 => 'comment_ID',   10 => 'comment_karma',   11 => 'comment_parent',   12 => 'comment_post_ID',   13 => 'comment_type',   14 => 'user_id', )",
+                    "doc": "",
+                    "visibility": "private"
+                },
+                {
+                    "name": "IDS",
+                    "value": "'comment__in'",
+                    "doc": "",
+                    "visibility": "private"
+                }
+            ],
+            "properties": [],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "direction",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "direction(mixed $order): string",
+                    "doc": "ASC when asked for, DESC for anything else.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "order",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 23,
+                    "end": 26
+                },
+                {
+                    "routes": [],
+                    "name": "build",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "build(array $qv, string $table, string $metaTable, array $metaClauses): string",
+                    "doc": "The ORDER BY body for the query's orderby and order ('' for none).",
+                    "shapes": [
+                        "@param array<string, mixed> $qv",
+                        "@param array<array-key, array<string, mixed>> $metaClauses the meta query's clauses, by name"
+                    ],
+                    "params": [
+                        {
+                            "name": "qv",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "table",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "metaTable",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "metaClauses",
+                            "type": "array",
+                            "shape": "array<array-key, array<string, mixed>>",
+                            "default": null,
+                            "doc": "the meta query's clauses, by name"
+                        }
+                    ],
+                    "line": 34,
+                    "end": 63
+                },
+                {
+                    "routes": [],
+                    "name": "clause",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "clause(string $by, array $qv, string $table, string $metaTable, array $metaClauses): string",
+                    "doc": "One orderby key as SQL, or '' when the reference does not take it: a\ncolumn, the meta value (as a number when asked), a named meta\nclause's cast value, or the FIELD() list keeping comment__in's order.",
+                    "shapes": [
+                        "@param array<string, mixed> $qv",
+                        "@param array<array-key, array<string, mixed>> $metaClauses"
+                    ],
+                    "params": [
+                        {
+                            "name": "by",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "qv",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "table",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "metaTable",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "metaClauses",
+                            "type": "array",
+                            "shape": "array<array-key, array<string, mixed>>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 73,
+                    "end": 85
+                },
+                {
+                    "routes": [],
+                    "name": "limits",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "limits(array $qv): string",
+                    "doc": "LIMIT from number, and the offset (or the page when no offset is given). @param array<string, mixed> $qv",
+                    "shapes": [
+                        "@param array<string, mixed> $qv"
+                    ],
+                    "params": [
+                        {
+                            "name": "qv",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 88,
+                    "end": 97
+                },
+                {
+                    "routes": [],
+                    "name": "field",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "field(mixed $given, string $table): string",
+                    "doc": "The comment__in ids in the order given, or '' when none are.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "given",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "table",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 100,
+                    "end": 104
+                },
+                {
+                    "routes": [],
+                    "name": "tiebreak",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "tiebreak(array $parts): string",
+                    "doc": "The tiebreak's direction: the first date clause's, else DESC. @param list<string> $parts",
+                    "shapes": [
+                        "@param list<string> $parts"
+                    ],
+                    "params": [
+                        {
+                            "name": "parts",
+                            "type": "array",
+                            "shape": "list<string>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 107,
+                    "end": 115
+                }
+            ]
+        },
+        {
             "name": "Minn\\Query\\DateSql",
             "short": "DateSql",
             "namespace": "Minn\\Query",
@@ -76164,6 +76384,7 @@
                 "Minn\\Query\\MetaSql",
                 "Minn\\Query\\PostSearch",
                 "Minn\\Query\\TaxSql",
+                "Minn\\Runtime\\CommentQueryWhere",
                 "Minn\\Runtime\\PostQueryStatus",
                 "Minn\\Runtime\\PostQueryWhere",
                 "Minn\\Runtime\\TermQueryRunner",
@@ -101742,12 +101963,13 @@
             "namespace": "Minn\\Runtime",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Runtime/CommentQuery.php",
-            "lines": 117,
-            "doc": "Comment reads in the get_comments() shape: arguments to rows or a count, and the approval breakdown wp_count_comments reports.",
+            "lines": 28,
+            "doc": "The approval breakdown wp_count_comments reports (comment lists run through WP_Comment_Query and Minn\\Runtime\\CommentQueryRunner).",
             "implements": [],
             "extends": null,
             "uses": [
-                "Minn\\Db"
+                "Minn\\Db",
+                "Minn\\Runtime\\CommentQueryRunner"
             ],
             "usedBy": [],
             "constructor": {
@@ -101764,18 +101986,11 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 14,
-                "end": 16
+                "line": 12,
+                "end": 14
             },
             "cases": [],
-            "constants": [
-                {
-                    "name": "DEFAULTS",
-                    "value": "array (   'post_id' => 0,   'post__in' =>    array (   ),   'status' => 'all',   'number' => '',   'offset' => 0,   'orderby' => 'comment_date_gmt',   'order' => 'DESC',   'fields' => '',   'count' => false,   'parent' => '',   'type' => '',   'author_email' => '',   'user_id' => '',   'search' => '',   'include_unapproved' =>    array (   ),   'comment__in' =>    array (   ),   'comment__not_in' =>    array (   ),   'post_status' => '',   'post_type' => '',   'author__in' =>    array (   ),   'date_query' => NULL,   'hierarchical' => false, )",
-                    "doc": "",
-                    "visibility": "public"
-                }
-            ],
+            "constants": [],
             "properties": [
                 {
                     "name": "db",
@@ -101788,48 +102003,6 @@
                 }
             ],
             "methods": [
-                {
-                    "routes": [],
-                    "name": "count",
-                    "static": false,
-                    "visibility": "public",
-                    "signature": "count(array $args): int",
-                    "doc": "How many comments match the query args.",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "args",
-                            "type": "array",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 19,
-                    "end": 23
-                },
-                {
-                    "routes": [],
-                    "name": "rows",
-                    "static": false,
-                    "visibility": "public",
-                    "signature": "rows(array $args): array",
-                    "doc": "The comment rows matching the query args, ordered as asked.",
-                    "shapes": [
-                        "@return list<array<string, mixed>>"
-                    ],
-                    "params": [
-                        {
-                            "name": "args",
-                            "type": "array",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 30,
-                    "end": 50
-                },
                 {
                     "routes": [],
                     "name": "breakdown",
@@ -101849,30 +102022,535 @@
                             "doc": ""
                         }
                     ],
-                    "line": 106,
-                    "end": 125
-                },
+                    "line": 17,
+                    "end": 36
+                }
+            ]
+        },
+        {
+            "name": "Minn\\Runtime\\CommentQueryRunner",
+            "short": "CommentQueryRunner",
+            "namespace": "Minn\\Runtime",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Runtime/CommentQueryRunner.php",
+            "lines": 104,
+            "doc": "WP_Comment_Query as the reference runs it (probe wp-comment-query-sql):\nthe variables filled and handed to pre_get_comments, the meta query's\nSQL, comments_pre_query (which may answer), the clauses (the date query\namong them) handed to comments_clauses, the request, found_comments_query\nwhen a limited query counts what it found, then the ids, the count, or\nthe comments through the_comments, threaded or flattened when asked.\nResults are not cached between queries (the reference keeps them in the\nobject cache by last_changed).",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\Query\\CommentOrder",
+                "Minn\\Runtime\\CommentQueryWhere",
+                "Minn\\Runtime\\CommentThreads"
+            ],
+            "usedBy": [
+                "Minn\\Runtime\\CommentQuery"
+            ],
+            "constructor": {
+                "signature": "__construct(object $wpdb)",
+                "doc": "",
+                "shapes": [],
+                "params": [
+                    {
+                        "name": "wpdb",
+                        "type": "object",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    }
+                ],
+                "visibility": "public",
+                "line": 21,
+                "end": 23
+            },
+            "cases": [],
+            "constants": [],
+            "properties": [
+                {
+                    "name": "wpdb",
+                    "type": "object",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
+                }
+            ],
+            "methods": [
                 {
                     "routes": [],
-                    "name": "where",
+                    "name": "run",
                     "static": false,
-                    "visibility": "private",
-                    "signature": "where(array $args): array",
-                    "doc": "",
-                    "shapes": [
-                        "@return array{0: string, 1: list<mixed>}"
-                    ],
+                    "visibility": "public",
+                    "signature": "run(WP_Comment_Query $query): mixed",
+                    "doc": "Runs the query, as WP_Comment_Query::get_comments() does: a count, ids, or comments.",
+                    "shapes": [],
                     "params": [
                         {
-                            "name": "args",
-                            "type": "array",
+                            "name": "query",
+                            "type": "WP_Comment_Query",
                             "shape": "",
                             "default": null,
                             "doc": ""
                         }
                     ],
-                    "line": 53,
-                    "end": 103
+                    "line": 26,
+                    "end": 59
+                },
+                {
+                    "routes": [],
+                    "name": "request",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "request(WP_Comment_Query $query, array $meta): array",
+                    "doc": "The clauses through comments_clauses, kept on the query and written\nas its request, and whether the request counts the rows it found.",
+                    "shapes": [
+                        "@param array{join?: string, where?: string} $meta",
+                        "@return array{0: string, 1: bool}"
+                    ],
+                    "params": [
+                        {
+                            "name": "query",
+                            "type": "WP_Comment_Query",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "meta",
+                            "type": "array",
+                            "shape": "array{join?: string, where?: string}",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 68,
+                    "end": 90
+                },
+                {
+                    "routes": [],
+                    "name": "comments",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "comments(array $ids, array $qv): array",
+                    "doc": "The comments for the ids in their order, each through get_comment(),\ntheir posts loaded first when asked.",
+                    "shapes": [
+                        "@param list<int> $ids",
+                        "@param array<string, mixed> $qv",
+                        "@return list<\\WP_Comment>"
+                    ],
+                    "params": [
+                        {
+                            "name": "ids",
+                            "type": "array",
+                            "shape": "list<int>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "qv",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 100,
+                    "end": 121
+                }
+            ]
+        },
+        {
+            "name": "Minn\\Runtime\\CommentQueryWhere",
+            "short": "CommentQueryWhere",
+            "namespace": "Minn\\Runtime",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Runtime/CommentQueryWhere.php",
+            "lines": 190,
+            "doc": "WP_Comment_Query's WHERE pieces and the posts join, in the reference's\norder (probe wp-comment-query-sql): the approval statuses (with the\nreaders whose held comments show), the post, the id lists, the author's\nemail and url, karma, the types (notes left out unless asked for), the\nparent (0 for a threaded or flat query that names none), the user, the\nsearch, the post's own fields, the author lists, then the meta and date\nqueries.",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\Query\\Sql"
+            ],
+            "usedBy": [
+                "Minn\\Runtime\\CommentQueryRunner"
+            ],
+            "constructor": {
+                "signature": "__construct(object $wpdb)",
+                "doc": "",
+                "shapes": [],
+                "params": [
+                    {
+                        "name": "wpdb",
+                        "type": "object",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    }
+                ],
+                "visibility": "public",
+                "line": 26,
+                "end": 28
+            },
+            "cases": [],
+            "constants": [
+                {
+                    "name": "ID_LISTS",
+                    "value": "array (   'comment__in' => '{c}.comment_ID IN',   'comment__not_in' => '{c}.comment_ID NOT IN',   'parent__in' => 'comment_parent IN',   'parent__not_in' => 'comment_parent NOT IN',   'post__in' => 'comment_post_ID IN',   'post__not_in' => 'comment_post_ID NOT IN', )",
+                    "doc": "",
+                    "visibility": "private"
+                },
+                {
+                    "name": "AUTHOR_LISTS",
+                    "value": "array (   'author__in' => 'user_id IN',   'author__not_in' => 'user_id NOT IN',   'post_author__in' => 'post_author IN',   'post_author__not_in' => 'post_author NOT IN', )",
+                    "doc": "",
+                    "visibility": "private"
+                },
+                {
+                    "name": "POST_FIELDS",
+                    "value": "array (   0 => 'post_author',   1 => 'post_name',   2 => 'post_parent',   3 => 'post_status',   4 => 'post_type', )",
+                    "doc": "",
+                    "visibility": "private"
+                },
+                {
+                    "name": "SEARCHED",
+                    "value": "array (   0 => 'comment_author',   1 => 'comment_author_email',   2 => 'comment_author_url',   3 => 'comment_author_IP',   4 => 'comment_content', )",
+                    "doc": "",
+                    "visibility": "private"
+                },
+                {
+                    "name": "ALL",
+                    "value": "'( comment_approved = \\'0\\' OR comment_approved = \\'1\\' )'",
+                    "doc": "",
+                    "visibility": "private"
+                }
+            ],
+            "properties": [
+                {
+                    "name": "wpdb",
+                    "type": "object",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
+                }
+            ],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "pieces",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "pieces(WP_Comment_Query $query, array $meta): array",
+                    "doc": "The WHERE pieces (joined with AND by the caller) and the posts join\n('' when no post field is asked after).",
+                    "shapes": [
+                        "@param array{join?: string, where?: string} $meta the meta query's SQL, when it has clauses",
+                        "@return array{0: list<string>, 1: string}"
+                    ],
+                    "params": [
+                        {
+                            "name": "query",
+                            "type": "WP_Comment_Query",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "meta",
+                            "type": "array",
+                            "shape": "array{join?: string, where?: string}",
+                            "default": null,
+                            "doc": "the meta query's SQL, when it has clauses"
+                        }
+                    ],
+                    "line": 37,
+                    "end": 67
+                },
+                {
+                    "routes": [],
+                    "name": "approved",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "approved(array $qv): string",
+                    "doc": "The approval test: each status (all is approved or held, any is no\ntest), and the held comments of the readers named by email or user id.",
+                    "shapes": [
+                        "@param array<string, mixed> $qv"
+                    ],
+                    "params": [
+                        {
+                            "name": "qv",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 75,
+                    "end": 92
+                },
+                {
+                    "routes": [],
+                    "name": "post",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "post(array $qv): string",
+                    "doc": "The one post asked for. @param array<string, mixed> $qv",
+                    "shapes": [
+                        "@param array<string, mixed> $qv"
+                    ],
+                    "params": [
+                        {
+                            "name": "qv",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 95,
+                    "end": 100
+                },
+                {
+                    "routes": [],
+                    "name": "types",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "types(array $qv): array",
+                    "doc": "The types in (comment stands for itself and the empty type, pings for\npingbacks and trackbacks) and out; notes stay out unless asked for,\nand all asks for no test at all.",
+                    "shapes": [
+                        "@param array<string, mixed> $qv",
+                        "@return list<string>"
+                    ],
+                    "params": [
+                        {
+                            "name": "qv",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 110,
+                    "end": 135
+                },
+                {
+                    "routes": [],
+                    "name": "parentAndUser",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "parentAndUser(array $qv): array",
+                    "doc": "The parent (top level for a threaded or flat query naming none), then the user. @param array<string, mixed> $qv @return list<string>",
+                    "shapes": [
+                        "@param array<string, mixed> $qv @return list<string>"
+                    ],
+                    "params": [
+                        {
+                            "name": "qv",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": "@return list<string>"
+                        }
+                    ],
+                    "line": 138,
+                    "end": 148
+                },
+                {
+                    "routes": [],
+                    "name": "search",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "search(array $qv): array",
+                    "doc": "A LIKE test over the author's name, email, url, IP and the content. @param array<string, mixed> $qv @return list<string>",
+                    "shapes": [
+                        "@param array<string, mixed> $qv @return list<string>"
+                    ],
+                    "params": [
+                        {
+                            "name": "qv",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": "@return list<string>"
+                        }
+                    ],
+                    "line": 151,
+                    "end": 159
+                },
+                {
+                    "routes": [],
+                    "name": "posts",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "posts(array $qv): array",
+                    "doc": "The post's own fields, then the comment and post author lists, and\nthe posts join when a post column is tested.",
+                    "shapes": [
+                        "@param array<string, mixed> $qv",
+                        "@return array{0: list<string>, 1: string}"
+                    ],
+                    "params": [
+                        {
+                            "name": "qv",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 168,
+                    "end": 185
+                },
+                {
+                    "routes": [],
+                    "name": "given",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "given(mixed $value): bool",
+                    "doc": "A value the query tests: anything but '', null and false.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "value",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 188,
+                    "end": 191
+                },
+                {
+                    "routes": [],
+                    "name": "listOf",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "listOf(mixed $value): array",
+                    "doc": "An array as given, or a comma (or space) separated string split. @return list<mixed>",
+                    "shapes": [
+                        "@return list<mixed>"
+                    ],
+                    "params": [
+                        {
+                            "name": "value",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 194,
+                    "end": 200
+                },
+                {
+                    "routes": [],
+                    "name": "bare",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "bare(string $sql): string",
+                    "doc": "A meta or date query's SQL without its leading AND.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "sql",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 203,
+                    "end": 206
+                }
+            ]
+        },
+        {
+            "name": "Minn\\Runtime\\CommentThreads",
+            "short": "CommentThreads",
+            "namespace": "Minn\\Runtime",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Runtime/CommentThreads.php",
+            "lines": 68,
+            "doc": "A threaded or flat comment query's descendants as the reference fills\nthem (probe wp-comment-query-sql): one more comment query a level, with\nthe query's own variables but the level's parents, no parent, no limit\nand no count; a threaded query hangs each reply under its parent, marks\nevery comment's children as known and keeps the top level by id, a flat\none lists the top level and then each level in its query's order.",
+            "implements": [],
+            "extends": null,
+            "uses": [],
+            "usedBy": [
+                "Minn\\Runtime\\CommentQueryRunner"
+            ],
+            "constructor": null,
+            "cases": [],
+            "constants": [
+                {
+                    "name": "LEVEL",
+                    "value": "array (   'parent' => '',   'hierarchical' => false,   'number' => 0,   'offset' => 0,   'no_found_rows' => true, )",
+                    "doc": "",
+                    "visibility": "private"
+                }
+            ],
+            "properties": [],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "fill",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "fill(WP_Comment_Query $query, array $top): array",
+                    "doc": "The query's top-level comments with their descendants filled in.",
+                    "shapes": [
+                        "@param list<\\WP_Comment> $top",
+                        "@return array<int, \\WP_Comment>"
+                    ],
+                    "params": [
+                        {
+                            "name": "query",
+                            "type": "WP_Comment_Query",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "top",
+                            "type": "array",
+                            "shape": "list<\\WP_Comment>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 25,
+                    "end": 62
+                },
+                {
+                    "routes": [],
+                    "name": "flatten",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "flatten(array $children, array $args): array",
+                    "doc": "A comment's children, then each one's own, depth first, as a list.",
+                    "shapes": [
+                        "@param array<array-key, mixed> $children",
+                        "@param array<string, mixed> $args get_children()'s arguments, handed down",
+                        "@return list<\\WP_Comment>"
+                    ],
+                    "params": [
+                        {
+                            "name": "children",
+                            "type": "array",
+                            "shape": "array<array-key, mixed>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "args",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": "get_children()'s arguments, handed down"
+                        }
+                    ],
+                    "line": 71,
+                    "end": 81
                 }
             ]
         },
