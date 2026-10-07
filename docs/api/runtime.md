@@ -87,7 +87,9 @@ the WordPress runtime plugins load against
 | [`TreeWalk`](#treewalk) | final class | 74 | The Walker contract's traversal: elements keyed by the walker's |
 | [`UserEvents`](#userevents) | final readonly class | 102 | What the reference's REST users controller tells plugins, for the |
 | [`UserInsert`](#userinsert) | final readonly class | 112 | The decisions behind wp_insert_user: what a new account needs, which email |
-| [`UserQuery`](#userquery) | final readonly class | 49 | The user listing behind WP_User_Query: role filtering through the |
+| [`UserOrder`](#userorder) | final class | 43 | A user query's ORDER BY keys as the reference writes them (probe |
+| [`UserQueryRoles`](#userqueryroles) | final class | 91 | A user query's roles and capabilities as the meta clauses the reference |
+| [`UserQueryRunner`](#userqueryrunner) | final class | 207 | WP_User_Query as the reference runs it (probe wp-user-query-sql): the |
 | [`UserSave`](#usersave) | final class | 70 | An account's fields through the filters the reference's wp_insert_user |
 | [`WidgetAreas`](#widgetareas) | final class | 84 | The widgets helper functions as the reference answers them (probe |
 
@@ -4132,28 +4134,93 @@ The columns an update actually changes.
 - `@return array<string, string>`
 
 
-## UserQuery
+## UserOrder
 
-`final readonly class Minn\Runtime\UserQuery` · `public/minn/src/Minn/Runtime/UserQuery.php`
+`final class Minn\Runtime\UserOrder` · `public/minn/src/Minn/Runtime/UserOrder.php`
 
-The user listing behind WP_User_Query: role filtering through the
-capabilities meta, include/exclude, column search with * wildcards,
-ordering and paging. Returns raw user rows; the facade shapes them into
-WP_User objects, string ids, or column records the reference's way.
+A user query's ORDER BY keys as the reference writes them (probe
+wp-user-query-sql): the user columns by their short or full names, the
+display name, a post count (its subquery joined in), the id, the meta
+key or meta value, the order include or a name list gives, or a named
+meta clause; '' for a key it does not know.
 
-- const `COLUMNS` = `array (   0 => 'ID',   1 => 'user_login',   2 => 'user_nicename',   3 => 'user_email',   4 => 'user_url',   5 => 'user_registered',   6 => 'display_name', )`
+- const `SHORT` = `array (   0 => 'login',   1 => 'nicename',   2 => 'email',   3 => 'url',   4 => 'registered', )`
+- const `FULL` = `array (   0 => 'user_login',   1 => 'user_nicename',   2 => 'user_email',   3 => 'user_url',   4 => 'user_registered', )`
+
+Used by: `Minn\Runtime\UserQueryRunner`
+
+### static `direction(mixed $order): string`
+
+ASC when asked for, DESC for anything else.
+
+### static `clause(WP_User_Query $query, string $orderby, object $wpdb): string`
+
+The column or expression one orderby key stands for.
+
+Internals: `postCount()` (private, line 50)
+
+
+## UserQueryRoles
+
+`final class Minn\Runtime\UserQueryRoles` · `public/minn/src/Minn/Runtime/UserQueryRoles.php`
+
+A user query's roles and capabilities as the meta clauses the reference
+writes for them (probe wp-user-query-sql): a capability matches its own
+name or any role granting it, capability__in and __not_in widen the role
+lists, and each role is a LIKE on the site's capabilities meta (NOT LIKE
+to leave it out).
+
+Used by: `Minn\Runtime\UserQueryRunner`
 
 ```php
-__construct(Minn\Db $db)
+__construct(string $capabilitiesKey)
 ```
 
 
-### `run(array $args): array`
+### `clauses(array $qv, array $queries, array $roles): array`
 
-Runs a WP_User_Query-shaped args array and returns its rows and total.
+The meta query's clauses once the roles and capabilities join them.
 
-- `@param array<string, mixed> $args`
-- `@return array{rows: list<array>, total: int}`
+- `@param array<string, mixed> $qv`
+- `@param array<array-key, mixed> $queries the meta query's own clauses`
+- `@param array<string, array{capabilities: array<string, bool>}> $roles the site's roles`
+- `@return array<array-key, mixed>`
+
+Internals: `lists()` (private, line 67), `firstOf()` (private, line 89), `like()` (private, line 100)
+
+
+## UserQueryRunner
+
+`final class Minn\Runtime\UserQueryRunner` · `public/minn/src/Minn/Runtime/UserQueryRunner.php`
+
+WP_User_Query as the reference runs it (probe wp-user-query-sql): the
+variables filled and handed to pre_get_users; the fields (a column list,
+ids, the count), published authors, nicenames and logins, the meta query
+with the roles and capabilities joined in, the order (post counts joined
+in, include and list orders kept), the limit, a search over the columns
+its shape suggests (through user_search_columns), ids in or out, the date
+query, then pre_user_query; the query (users_pre_query may answer it),
+found_users_query, and the results shaped as the fields ask.
+
+- const `COLUMNS` = `array (   0 => 'id',   1 => 'user_login',   2 => 'user_pass',   3 => 'user_nicename',   4 => 'user_email',   5 => 'user_url',   6 => 'user_registered',   7 => 'user_activation_key',   8 => 'user_status',   9 => 'display_name', )`
+- const `SEARCHABLE` = `array (   0 => 'ID',   1 => 'user_login',   2 => 'user_email',   3 => 'user_url',   4 => 'user_nicename',   5 => 'display_name', )`
+- const `EMAIL` = `'user_email'`
+- const `URL` = `'user_url'`
+
+```php
+__construct(object $wpdb)
+```
+
+
+### `prepare(WP_User_Query $query): void`
+
+Builds the query's pieces from its variables, as prepare_query does.
+
+### `query(WP_User_Query $query): void`
+
+Runs the query: users_pre_query may answer it; the count follows; the results take the fields' shape.
+
+Internals: `fields()` (private, line 65), `published()` (private, line 80), `names()` (private, line 91), `meta()` (private, line 108), `order()` (private, line 141), `search()` (private, line 167)
 
 
 ## UserSave

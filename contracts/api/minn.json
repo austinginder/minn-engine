@@ -34601,7 +34601,6 @@
                 "Minn\\Runtime\\Runtime",
                 "Minn\\Runtime\\TermQuery",
                 "Minn\\Runtime\\TermWriter",
-                "Minn\\Runtime\\UserQuery",
                 "Minn\\Theme\\ClassicRenderer",
                 "Minn\\Theme\\PageRenderer",
                 "Minn\\Theme\\TemplateIndex",
@@ -74669,6 +74668,75 @@
             ]
         },
         {
+            "name": "Minn\\Query\\AuthorPostsSql",
+            "short": "AuthorPostsSql",
+            "namespace": "Minn\\Query",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Query/AuthorPostsSql.php",
+            "lines": 30,
+            "doc": "get_posts_by_author_sql as the reference writes it: for each type, its\npublished posts, and its private ones the reader may see (all of them\nwith the cap to read others', their own otherwise), OR'd; an author\nnarrows it; WHERE in front when asked.",
+            "implements": [],
+            "extends": null,
+            "uses": [],
+            "usedBy": [],
+            "constructor": null,
+            "cases": [],
+            "constants": [],
+            "properties": [],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "sql",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "sql(array $types, int $reader, string $full, ?int $author, string $publicOnly): string",
+                    "doc": "The clause for the posts an author's lists count, as the reader may see them.",
+                    "shapes": [
+                        "@param list<array{type: string, readPrivate: bool}> $types each type that exists, and whether the reader may read its private posts"
+                    ],
+                    "params": [
+                        {
+                            "name": "types",
+                            "type": "array",
+                            "shape": "list<array{type: string, readPrivate: bool}>",
+                            "default": null,
+                            "doc": "each type that exists, and whether the reader may read its private posts"
+                        },
+                        {
+                            "name": "reader",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": "the signed-in reader's id, 0 when signed out"
+                        },
+                        {
+                            "name": "full",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "author",
+                            "type": "?int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "publicOnly",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 21,
+                    "end": 41
+                }
+            ]
+        },
+        {
             "name": "Minn\\Query\\DateSql",
             "short": "DateSql",
             "namespace": "Minn\\Query",
@@ -76098,7 +76166,8 @@
                 "Minn\\Query\\TaxSql",
                 "Minn\\Runtime\\PostQueryStatus",
                 "Minn\\Runtime\\PostQueryWhere",
-                "Minn\\Runtime\\TermQueryRunner"
+                "Minn\\Runtime\\TermQueryRunner",
+                "Minn\\Runtime\\UserQueryRunner"
             ],
             "constructor": null,
             "cases": [],
@@ -119957,49 +120026,157 @@
             ]
         },
         {
-            "name": "Minn\\Runtime\\UserQuery",
-            "short": "UserQuery",
+            "name": "Minn\\Runtime\\UserOrder",
+            "short": "UserOrder",
             "namespace": "Minn\\Runtime",
-            "kind": "final readonly class",
-            "file": "public/minn/src/Minn/Runtime/UserQuery.php",
-            "lines": 49,
-            "doc": "The user listing behind WP_User_Query: role filtering through the\ncapabilities meta, include/exclude, column search with * wildcards,\nordering and paging. Returns raw user rows; the facade shapes them into\nWP_User objects, string ids, or column records the reference's way.",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Runtime/UserOrder.php",
+            "lines": 43,
+            "doc": "A user query's ORDER BY keys as the reference writes them (probe\nwp-user-query-sql): the user columns by their short or full names, the\ndisplay name, a post count (its subquery joined in), the id, the meta\nkey or meta value, the order include or a name list gives, or a named\nmeta clause; '' for a key it does not know.",
             "implements": [],
             "extends": null,
-            "uses": [
-                "Minn\\Db"
+            "uses": [],
+            "usedBy": [
+                "Minn\\Runtime\\UserQueryRunner"
             ],
-            "usedBy": [],
+            "constructor": null,
+            "cases": [],
+            "constants": [
+                {
+                    "name": "SHORT",
+                    "value": "array (   0 => 'login',   1 => 'nicename',   2 => 'email',   3 => 'url',   4 => 'registered', )",
+                    "doc": "",
+                    "visibility": "private"
+                },
+                {
+                    "name": "FULL",
+                    "value": "array (   0 => 'user_login',   1 => 'user_nicename',   2 => 'user_email',   3 => 'user_url',   4 => 'user_registered', )",
+                    "doc": "",
+                    "visibility": "private"
+                }
+            ],
+            "properties": [],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "direction",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "direction(mixed $order): string",
+                    "doc": "ASC when asked for, DESC for anything else.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "order",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 20,
+                    "end": 26
+                },
+                {
+                    "routes": [],
+                    "name": "clause",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "clause(WP_User_Query $query, string $orderby, object $wpdb): string",
+                    "doc": "The column or expression one orderby key stands for.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "query",
+                            "type": "WP_User_Query",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "orderby",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "wpdb",
+                            "type": "object",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 29,
+                    "end": 47
+                },
+                {
+                    "routes": [],
+                    "name": "postCount",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "postCount(WP_User_Query $query, object $wpdb): string",
+                    "doc": "Joins each author's published post count in, and orders by it.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "query",
+                            "type": "WP_User_Query",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "wpdb",
+                            "type": "object",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 50,
+                    "end": 55
+                }
+            ]
+        },
+        {
+            "name": "Minn\\Runtime\\UserQueryRoles",
+            "short": "UserQueryRoles",
+            "namespace": "Minn\\Runtime",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Runtime/UserQueryRoles.php",
+            "lines": 91,
+            "doc": "A user query's roles and capabilities as the meta clauses the reference\nwrites for them (probe wp-user-query-sql): a capability matches its own\nname or any role granting it, capability__in and __not_in widen the role\nlists, and each role is a LIKE on the site's capabilities meta (NOT LIKE\nto leave it out).",
+            "implements": [],
+            "extends": null,
+            "uses": [],
+            "usedBy": [
+                "Minn\\Runtime\\UserQueryRunner"
+            ],
             "constructor": {
-                "signature": "__construct(Minn\\Db $db)",
+                "signature": "__construct(string $capabilitiesKey)",
                 "doc": "",
                 "shapes": [],
                 "params": [
                     {
-                        "name": "db",
-                        "type": "Minn\\Db",
+                        "name": "capabilitiesKey",
+                        "type": "string",
                         "shape": "",
                         "default": null,
                         "doc": ""
                     }
                 ],
                 "visibility": "public",
-                "line": 19,
-                "end": 21
+                "line": 16,
+                "end": 18
             },
             "cases": [],
-            "constants": [
-                {
-                    "name": "COLUMNS",
-                    "value": "array (   0 => 'ID',   1 => 'user_login',   2 => 'user_nicename',   3 => 'user_email',   4 => 'user_url',   5 => 'user_registered',   6 => 'display_name', )",
-                    "doc": "",
-                    "visibility": "private"
-                }
-            ],
+            "constants": [],
             "properties": [
                 {
-                    "name": "db",
-                    "type": "Minn\\Db",
+                    "name": "capabilitiesKey",
+                    "type": "string",
                     "readonly": true,
                     "static": false,
                     "doc": "",
@@ -120010,26 +120187,419 @@
             "methods": [
                 {
                     "routes": [],
-                    "name": "run",
+                    "name": "clauses",
                     "static": false,
                     "visibility": "public",
-                    "signature": "run(array $args): array",
-                    "doc": "Runs a WP_User_Query-shaped args array and returns its rows and total.",
+                    "signature": "clauses(array $qv, array $queries, array $roles): array",
+                    "doc": "The meta query's clauses once the roles and capabilities join them.",
                     "shapes": [
-                        "@param array<string, mixed> $args",
-                        "@return array{rows: list<array>, total: int}"
+                        "@param array<string, mixed> $qv",
+                        "@param array<array-key, mixed> $queries the meta query's own clauses",
+                        "@param array<string, array{capabilities: array<string, bool>}> $roles the site's roles",
+                        "@return array<array-key, mixed>"
                     ],
                     "params": [
                         {
-                            "name": "args",
+                            "name": "qv",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "queries",
+                            "type": "array",
+                            "shape": "array<array-key, mixed>",
+                            "default": null,
+                            "doc": "the meta query's own clauses"
+                        },
+                        {
+                            "name": "roles",
+                            "type": "array",
+                            "shape": "array<string, array{capabilities: array<string, bool>}>",
+                            "default": null,
+                            "doc": "the site's roles"
+                        }
+                    ],
+                    "line": 28,
+                    "end": 56
+                },
+                {
+                    "routes": [],
+                    "name": "lists",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "lists(array $qv, array $roles): array",
+                    "doc": "The roles asked for, the role__in and role__not_in lists (widened by\nthe roles granting capability__in and __not_in, then the capabilities\nthemselves), and the roles granting each capability asked for.",
+                    "shapes": [
+                        "@param array<string, mixed> $qv",
+                        "@param array<string, array{capabilities: array<string, bool>}> $roles",
+                        "@return array{0: array{roles: list<string>, capabilities: list<string>}, 1: list<string>, 2: list<string>, 3: array<string, list<string>>}"
+                    ],
+                    "params": [
+                        {
+                            "name": "qv",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "roles",
+                            "type": "array",
+                            "shape": "array<string, array{capabilities: array<string, bool>}>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 67,
+                    "end": 86
+                },
+                {
+                    "routes": [],
+                    "name": "firstOf",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "firstOf(array $wanted, array $granted): ?string",
+                    "doc": "The first of the wanted capabilities a role grants, in the order asked. @param list<string> $wanted @param list<string> $granted",
+                    "shapes": [
+                        "@param list<string> $wanted @param list<string> $granted"
+                    ],
+                    "params": [
+                        {
+                            "name": "wanted",
+                            "type": "array",
+                            "shape": "list<string>",
+                            "default": null,
+                            "doc": "@param list<string> $granted"
+                        },
+                        {
+                            "name": "granted",
+                            "type": "array",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 89,
+                    "end": 97
+                },
+                {
+                    "routes": [],
+                    "name": "like",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "like(string $role, string $compare = 'LIKE'): array",
+                    "doc": "",
+                    "shapes": [
+                        "@return array<string, string>"
+                    ],
+                    "params": [
+                        {
+                            "name": "role",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "compare",
+                            "type": "string",
+                            "shape": "",
+                            "default": "'LIKE'",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 100,
+                    "end": 103
+                }
+            ]
+        },
+        {
+            "name": "Minn\\Runtime\\UserQueryRunner",
+            "short": "UserQueryRunner",
+            "namespace": "Minn\\Runtime",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Runtime/UserQueryRunner.php",
+            "lines": 207,
+            "doc": "WP_User_Query as the reference runs it (probe wp-user-query-sql): the\nvariables filled and handed to pre_get_users; the fields (a column list,\nids, the count), published authors, nicenames and logins, the meta query\nwith the roles and capabilities joined in, the order (post counts joined\nin, include and list orders kept), the limit, a search over the columns\nits shape suggests (through user_search_columns), ids in or out, the date\nquery, then pre_user_query; the query (users_pre_query may answer it),\nfound_users_query, and the results shaped as the fields ask.",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\Query\\Sql",
+                "Minn\\Runtime\\UserOrder",
+                "Minn\\Runtime\\UserQueryRoles"
+            ],
+            "usedBy": [],
+            "constructor": {
+                "signature": "__construct(object $wpdb)",
+                "doc": "",
+                "shapes": [],
+                "params": [
+                    {
+                        "name": "wpdb",
+                        "type": "object",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    }
+                ],
+                "visibility": "public",
+                "line": 26,
+                "end": 28
+            },
+            "cases": [],
+            "constants": [
+                {
+                    "name": "COLUMNS",
+                    "value": "array (   0 => 'id',   1 => 'user_login',   2 => 'user_pass',   3 => 'user_nicename',   4 => 'user_email',   5 => 'user_url',   6 => 'user_registered',   7 => 'user_activation_key',   8 => 'user_status',   9 => 'display_name', )",
+                    "doc": "",
+                    "visibility": "private"
+                },
+                {
+                    "name": "SEARCHABLE",
+                    "value": "array (   0 => 'ID',   1 => 'user_login',   2 => 'user_email',   3 => 'user_url',   4 => 'user_nicename',   5 => 'display_name', )",
+                    "doc": "",
+                    "visibility": "private"
+                },
+                {
+                    "name": "EMAIL",
+                    "value": "'user_email'",
+                    "doc": "",
+                    "visibility": "private"
+                },
+                {
+                    "name": "URL",
+                    "value": "'user_url'",
+                    "doc": "",
+                    "visibility": "private"
+                }
+            ],
+            "properties": [
+                {
+                    "name": "wpdb",
+                    "type": "object",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
+                }
+            ],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "prepare",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "prepare(WP_User_Query $query): void",
+                    "doc": "Builds the query's pieces from its variables, as prepare_query does.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "query",
+                            "type": "WP_User_Query",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 31,
+                    "end": 62
+                },
+                {
+                    "routes": [],
+                    "name": "query",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "query(WP_User_Query $query): void",
+                    "doc": "Runs the query: users_pre_query may answer it; the count follows; the results take the fields' shape.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "query",
+                            "type": "WP_User_Query",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 188,
+                    "end": 224
+                },
+                {
+                    "routes": [],
+                    "name": "fields",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "fields(array $qv): string",
+                    "doc": "The SELECT's fields: named columns, ids, and the count's own. @param array<string, mixed> $qv",
+                    "shapes": [
+                        "@param array<string, mixed> $qv"
+                    ],
+                    "params": [
+                        {
+                            "name": "qv",
                             "type": "array",
                             "shape": "array<string, mixed>",
                             "default": null,
                             "doc": ""
                         }
                     ],
-                    "line": 29,
-                    "end": 62
+                    "line": 65,
+                    "end": 77
+                },
+                {
+                    "routes": [],
+                    "name": "published",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "published(array $qv, int $blog): string",
+                    "doc": "Authors with published posts (of public types, or the ones named). @param array<string, mixed> $qv",
+                    "shapes": [
+                        "@param array<string, mixed> $qv"
+                    ],
+                    "params": [
+                        {
+                            "name": "qv",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "blog",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 80,
+                    "end": 88
+                },
+                {
+                    "routes": [],
+                    "name": "names",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "names(array $qv): string",
+                    "doc": "One nicename or login, or lists of them, in or out. @param array<string, mixed> $qv",
+                    "shapes": [
+                        "@param array<string, mixed> $qv"
+                    ],
+                    "params": [
+                        {
+                            "name": "qv",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 91,
+                    "end": 105
+                },
+                {
+                    "routes": [],
+                    "name": "meta",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "meta(WP_User_Query $query, array $qv, int $blog): void",
+                    "doc": "The meta query with roles and capabilities, joined and written in. @param array<string, mixed> $qv",
+                    "shapes": [
+                        "@param array<string, mixed> $qv"
+                    ],
+                    "params": [
+                        {
+                            "name": "query",
+                            "type": "WP_User_Query",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "qv",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "blog",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 108,
+                    "end": 138
+                },
+                {
+                    "routes": [],
+                    "name": "order",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "order(WP_User_Query $query, array $qv): string",
+                    "doc": "ORDER BY from a key, a list, or a map of keys to directions; user_login when none is usable. @param array<string, mixed> $qv",
+                    "shapes": [
+                        "@param array<string, mixed> $qv"
+                    ],
+                    "params": [
+                        {
+                            "name": "query",
+                            "type": "WP_User_Query",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "qv",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 141,
+                    "end": 158
+                },
+                {
+                    "routes": [],
+                    "name": "search",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "search(WP_User_Query $query, string $search, array $given): string",
+                    "doc": "The search: wildcards at either end, the columns given (those the\nreference searches) or those its shape suggests, through\nuser_search_columns; ID matched exactly, the rest by LIKE.",
+                    "shapes": [
+                        "@param list<string> $given"
+                    ],
+                    "params": [
+                        {
+                            "name": "query",
+                            "type": "WP_User_Query",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "search",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "given",
+                            "type": "array",
+                            "shape": "list<string>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 167,
+                    "end": 185
                 }
             ]
         },

@@ -2,12 +2,12 @@
     "generated": "2026-10-07",
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line)",
     "summary": {
-        "minn": 640,
-        "composes": 927,
-        "leaf": 650,
+        "minn": 643,
+        "composes": 928,
+        "leaf": 649,
         "noop": 1853,
-        "functions": 4000,
-        "minnMethods": 681,
+        "functions": 4003,
+        "minnMethods": 684,
         "leafLinesOver15": 12
     },
     "functions": {
@@ -13253,6 +13253,16 @@
             "minn": [],
             "composes": []
         },
+        "WP_User_Query::fill_query_vars": {
+            "file": "classes/WP_User_Query.php",
+            "lines": 2,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "get_current_blog_id",
+                "wp_parse_args"
+            ]
+        },
         "WP_User_Query::get": {
             "file": "classes/WP_User_Query.php",
             "lines": 1,
@@ -13274,23 +13284,39 @@
             "minn": [],
             "composes": []
         },
-        "WP_User_Query::prepare_query": {
+        "WP_User_Query::parse_order": {
             "file": "classes/WP_User_Query.php",
             "lines": 1,
             "kind": "noop",
-            "minn": [],
-            "composes": [
-                "wp_parse_args"
-            ]
+            "minn": [
+                "Minn\\Runtime\\UserOrder::direction"
+            ],
+            "composes": []
+        },
+        "WP_User_Query::parse_orderby": {
+            "file": "classes/WP_User_Query.php",
+            "lines": 2,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Runtime\\UserOrder::clause"
+            ],
+            "composes": []
+        },
+        "WP_User_Query::prepare_query": {
+            "file": "classes/WP_User_Query.php",
+            "lines": 6,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Runtime\\UserQueryRunner::__construct"
+            ],
+            "composes": []
         },
         "WP_User_Query::query": {
             "file": "classes/WP_User_Query.php",
-            "lines": 3,
+            "lines": 2,
             "kind": "minn",
             "minn": [
-                "Minn\\Runtime\\Runtime::current",
-                "Minn\\Runtime\\Runtime::db",
-                "Minn\\Runtime\\UserQuery::__construct"
+                "Minn\\Runtime\\UserQueryRunner::__construct"
             ],
             "composes": []
         },
@@ -13298,13 +13324,6 @@
             "file": "classes/WP_User_Query.php",
             "lines": 1,
             "kind": "noop",
-            "minn": [],
-            "composes": []
-        },
-        "WP_User_Query::shape": {
-            "file": "classes/WP_User_Query.php",
-            "lines": 14,
-            "kind": "leaf",
             "minn": [],
             "composes": []
         },
@@ -22390,6 +22409,21 @@
             "composes": [
                 "wp_parse_args",
                 "wp_parse_id_list"
+            ]
+        },
+        "get_posts_by_author_sql": {
+            "file": "post.php",
+            "lines": 9,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Query\\AuthorPostsSql::sql"
+            ],
+            "composes": [
+                "apply_filters_deprecated",
+                "current_user_can",
+                "get_current_user_id",
+                "get_post_type_object",
+                "is_user_logged_in"
             ]
         },
         "get_preview_post_link": {

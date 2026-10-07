@@ -2248,3 +2248,16 @@ function _post_format_request($qvs)
     }
     return $qvs;
 }
+
+function get_posts_by_author_sql($post_type, $full = true, $post_author = null, $public_only = false)
+{
+    $types = [];
+    foreach ((array) $post_type as $type) {
+        $object = get_post_type_object($type);
+        if ($object) {
+            $cap = apply_filters_deprecated('pub_priv_sql_capability', [''], '3.2.0');
+            $types[] = ['type' => (string) $type, 'readPrivate' => (bool) ($cap ?: current_user_can($object->cap->read_private_posts))];
+        }
+    }
+    return Minn\Query\AuthorPostsSql::sql($types, is_user_logged_in() ? get_current_user_id() : 0, $full ? 'full' : '', $post_author === null ? null : (int) $post_author, $public_only ? 'public' : '');
+}

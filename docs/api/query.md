@@ -4,6 +4,7 @@ shared SQL fragments
 
 | Class | Kind | Lines | Summary |
 |---|---|---|---|
+| [`AuthorPostsSql`](#authorpostssql) | final class | 30 | get_posts_by_author_sql as the reference writes it: for each type, its |
 | [`DateSql`](#datesql) | final class | 248 | The WHERE fragment of a date query in the reference's shape: before and |
 | [`MetaSql`](#metasql) | final class | 252 | The JOIN and WHERE fragments of a meta query in the reference's shape: |
 | [`MimeWhere`](#mimewhere) | final class | 36 | wp_post_mime_type_where as the reference writes it (probe wp-query-sql): |
@@ -11,6 +12,22 @@ shared SQL fragments
 | [`PostSearch`](#postsearch) | final class | 118 | WP_Query's search as the reference writes it (probe wp-query-sql): the |
 | [`Sql`](#sql) | final class | 42 | Literal quoting for the SQL fragments the query classes hand to plugins, |
 | [`TaxSql`](#taxsql) | final class | 164 | The JOIN and WHERE fragments of a taxonomy query in the reference's |
+
+## AuthorPostsSql
+
+`final class Minn\Query\AuthorPostsSql` · `public/minn/src/Minn/Query/AuthorPostsSql.php`
+
+get_posts_by_author_sql as the reference writes it: for each type, its
+published posts, and its private ones the reader may see (all of them
+with the cap to read others', their own otherwise), OR'd; an author
+narrows it; WHERE in front when asked.
+
+### static `sql(array $types, int $reader, string $full, ?int $author, string $publicOnly): string`
+
+The clause for the posts an author's lists count, as the reader may see them.
+
+- `@param list<array{type: string, readPrivate: bool}> $types each type that exists, and whether the reader may read its private posts`
+
 
 ## DateSql
 
@@ -252,7 +269,7 @@ one term, its title match.
 Literal quoting for the SQL fragments the query classes hand to plugins,
 which embed them verbatim in their own statements.
 
-Used by: `Minn\Query\DateSql`, `Minn\Query\MetaSql`, `Minn\Query\PostSearch`, `Minn\Query\TaxSql`, `Minn\Runtime\PostQueryStatus`, `Minn\Runtime\PostQueryWhere`, `Minn\Runtime\TermQueryRunner`
+Used by: `Minn\Query\DateSql`, `Minn\Query\MetaSql`, `Minn\Query\PostSearch`, `Minn\Query\TaxSql`, `Minn\Runtime\PostQueryStatus`, `Minn\Runtime\PostQueryWhere`, `Minn\Runtime\TermQueryRunner`, `Minn\Runtime\UserQueryRunner`
 
 ### static `quote(string $value): string`
 
