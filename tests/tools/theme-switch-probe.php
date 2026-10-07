@@ -27,6 +27,9 @@ $read = static function () use ($names): array {
     }
     return $out;
 };
+// The stored rules are whatever the last flush left (another suite's plugin, another
+// state); regenerate them first, so the switch is measured from this site's own.
+flush_rewrite_rules(false);
 $saved = $read();
 register_shutdown_function(static function () use ($saved): void {
     global $wpdb;
