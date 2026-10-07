@@ -830,23 +830,16 @@ function upload_is_user_over_quota($display_message = true)
     return false;
 }
 
+/** A theme's folder deleted between delete_theme and deleted_theme (ThemeSwitch::delete); never the active theme or its parent. */
 function delete_theme($stylesheet, $redirect = '')
 {
     if (empty($stylesheet)) {
         return false;
     }
-    $theme_dir = trailingslashit(get_theme_root($stylesheet)) . $stylesheet;
-    if (!is_dir($theme_dir)) {
-        return true;
-    }
     if (get_stylesheet() === $stylesheet || get_template() === $stylesheet) {
         return new WP_Error('could_not_remove_theme', 'Could not fully remove the theme.');
     }
-    do_action('delete_theme', $stylesheet);
-    WP_Filesystem();
-    $deleted = $GLOBALS['wp_filesystem']->delete($theme_dir, true);
-    do_action('deleted_theme', $stylesheet, (bool) $deleted);
-    return $deleted ? true : new WP_Error('could_not_remove_theme', 'Could not fully remove the theme.');
+    return Minn\Runtime\ThemeSwitch::delete((string) $stylesheet) ? true : new WP_Error('could_not_remove_theme', 'Could not fully remove the theme.');
 }
 
 function _wp_oembed_get_object()

@@ -12,6 +12,8 @@ use Minn\Http\Response;
 use Minn\Http\Access;
 use Minn\Http\Policy;
 use Minn\Http\Route;
+use Minn\Runtime\ThemeSwitch;
+use Minn\Runtime\Runtime;
 use Minn\Rest\Caller;
 use Minn\Rest\Reply;
 use Minn\RestError;
@@ -54,7 +56,12 @@ final readonly class PackagesController
         if ($stylesheet === (string) ($this->site->option('stylesheet') ?? '') || $stylesheet === (string) ($this->site->option('template') ?? '')) {
             throw new RestError('theme_in_use', 'The active theme (or its parent) cannot be deleted.', 400);
         }
-        $this->packages->remove('theme', $stylesheet);
+        // With plugins loaded, they hear it as on the reference (delete_theme, deleted_theme); a name that is no folder name is refused either way.
+        if (Runtime::booted() && preg_match('/^[A-Za-z0-9_-][A-Za-z0-9._-]*$/', $stylesheet) === 1) {
+            ThemeSwitch::delete($stylesheet, fn (string $folder): bool => $this->packages->remove('theme', $folder) === null);
+        } else {
+            $this->packages->remove('theme', $stylesheet);
+        }
         return Reply::answer($request, ['deleted' => true]);
     }
 

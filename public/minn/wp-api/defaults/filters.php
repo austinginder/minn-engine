@@ -310,6 +310,10 @@ add_action('template_redirect', 'wp_shortlink_header', 11, 0);
 add_action('init', 'wp_sitemaps_get_server');
 add_action('template_redirect', '_minn_sitemap_canonical');
 add_action('do_robots', 'do_robots');
+// The load after a theme switch tells plugins (after_switch_theme), whose defaults map the menus and look the widgets over.
+add_action('init', 'check_theme_switched', 99);
+add_action('after_switch_theme', '_wp_menus_changed');
+add_action('after_switch_theme', '_wp_sidebars_changed');
 
 // The toolbar, set up and printed where the reference does it. On the
 // engine's own pages the Minn bar (or nothing) stands in its place, as the

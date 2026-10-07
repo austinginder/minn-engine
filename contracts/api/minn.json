@@ -3977,7 +3977,7 @@
             "namespace": "Minn\\Admin",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Admin/PackagesController.php",
-            "lines": 108,
+            "lines": 113,
             "doc": "Adding and removing themes and extensions from the Extensions view.",
             "implements": [],
             "extends": null,
@@ -3992,7 +3992,9 @@
                 "Minn\\Ops\\Packages",
                 "Minn\\RestError",
                 "Minn\\Rest\\Caller",
-                "Minn\\Rest\\Reply"
+                "Minn\\Rest\\Reply",
+                "Minn\\Runtime\\Runtime",
+                "Minn\\Runtime\\ThemeSwitch"
             ],
             "usedBy": [
                 "Minn\\Rest\\Api"
@@ -4025,8 +4027,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 22,
-                "end": 24
+                "line": 24,
+                "end": 26
             },
             "cases": [],
             "constants": [],
@@ -4079,8 +4081,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 28,
-                    "end": 31
+                    "line": 30,
+                    "end": 33
                 },
                 {
                     "routes": [
@@ -4101,8 +4103,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 35,
-                    "end": 39
+                    "line": 37,
+                    "end": 41
                 },
                 {
                     "routes": [
@@ -4123,8 +4125,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 43,
-                    "end": 47
+                    "line": 45,
+                    "end": 49
                 },
                 {
                     "routes": [
@@ -4145,8 +4147,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 51,
-                    "end": 59
+                    "line": 53,
+                    "end": 66
                 },
                 {
                     "routes": [
@@ -4167,8 +4169,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 63,
-                    "end": 67
+                    "line": 70,
+                    "end": 74
                 },
                 {
                     "routes": [
@@ -4189,8 +4191,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 71,
-                    "end": 99
+                    "line": 78,
+                    "end": 106
                 },
                 {
                     "routes": [
@@ -4211,8 +4213,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 103,
-                    "end": 106
+                    "line": 110,
+                    "end": 113
                 },
                 {
                     "routes": [
@@ -4233,8 +4235,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 110,
-                    "end": 113
+                    "line": 117,
+                    "end": 120
                 },
                 {
                     "routes": [],
@@ -4260,8 +4262,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 115,
-                    "end": 125
+                    "line": 122,
+                    "end": 132
                 }
             ]
         },
@@ -5897,7 +5899,7 @@
             "namespace": "Minn\\Admin",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Admin/ThemesController.php",
-            "lines": 95,
+            "lines": 100,
             "doc": "The theme inventory of minn-admin/v1: every theme on disk with its\nheaders, screenshot, and update offer, and the switch of the active one.",
             "implements": [],
             "extends": null,
@@ -5914,6 +5916,7 @@
                 "Minn\\RestError",
                 "Minn\\Rest\\Caller",
                 "Minn\\Rest\\Reply",
+                "Minn\\Runtime\\Runtime",
                 "Minn\\Support\\FileHeaders"
             ],
             "usedBy": [
@@ -5961,8 +5964,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 27,
-                "end": 34
+                "line": 28,
+                "end": 35
             },
             "cases": [],
             "constants": [],
@@ -6033,8 +6036,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 38,
-                    "end": 65
+                    "line": 39,
+                    "end": 66
                 },
                 {
                     "routes": [
@@ -6055,8 +6058,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 69,
-                    "end": 85
+                    "line": 70,
+                    "end": 91
                 },
                 {
                     "routes": [],
@@ -6075,8 +6078,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 88,
-                    "end": 91
+                    "line": 94,
+                    "end": 97
                 },
                 {
                     "routes": [],
@@ -6089,8 +6092,8 @@
                         "@return array<string, array<string, string>> slug => style.css headers"
                     ],
                     "params": [],
-                    "line": 94,
-                    "end": 108
+                    "line": 100,
+                    "end": 114
                 },
                 {
                     "routes": [],
@@ -6109,8 +6112,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 110,
-                    "end": 118
+                    "line": 116,
+                    "end": 124
                 }
             ]
         },
@@ -117919,6 +117922,8 @@
             ],
             "usedBy": [
                 "Minn\\Admin\\BootPayload",
+                "Minn\\Admin\\PackagesController",
+                "Minn\\Admin\\ThemesController",
                 "Minn\\Auth\\Authenticator",
                 "Minn\\Auth\\Capabilities",
                 "Minn\\Auth\\RegisteredCaps",
@@ -123612,6 +123617,214 @@
             ]
         },
         {
+            "name": "Minn\\Runtime\\ThemeSwitch",
+            "short": "ThemeSwitch",
+            "namespace": "Minn\\Runtime",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Runtime/ThemeSwitch.php",
+            "lines": 148,
+            "doc": "Switching the theme as the reference does it, in two halves. The switch\n(switch_theme): the leaving theme keeps its widgets and its menu\nlocations are remembered, the three theme options move, the switch is\nrecorded (theme_switched), the arriving theme's mods start with the\nclassic sidebars, only its mods stay autoloaded, then switch_theme. The\nnext load, on init (check_theme_switched): after_switch_theme with the\ntheme that left, whose defaults map the menu locations across\n(_wp_menus_changed) and look the widgets over, then the rules flushed\nand the record cleared. Deleting a theme fires delete_theme and\ndeleted_theme around its folder going, and forgets the update check.",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\Support\\Files"
+            ],
+            "usedBy": [
+                "Minn\\Admin\\PackagesController"
+            ],
+            "constructor": null,
+            "cases": [],
+            "constants": [
+                {
+                    "name": "SLUG_GROUPS",
+                    "value": "array (   0 =>    array (     0 => 'primary',     1 => 'menu-1',     2 => 'main',     3 => 'header',     4 => 'navigation',     5 => 'top',   ),   1 =>    array (     0 => 'secondary',     1 => 'menu-2',     2 => 'footer',     3 => 'subsidiary',     4 => 'bottom',   ),   2 =>    array (     0 => 'social',   ), )",
+                    "doc": "The menu location names, by role, a theme's locations are matched across by.",
+                    "visibility": "private"
+                }
+            ],
+            "properties": [],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "switchTo",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "switchTo(string $stylesheet): void",
+                    "doc": "switch_theme.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "stylesheet",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 31,
+                    "end": 50
+                },
+                {
+                    "routes": [],
+                    "name": "checkSwitched",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "checkSwitched(): void",
+                    "doc": "check_theme_switched: on the load after a switch, after_switch_theme with the theme that left.",
+                    "shapes": [],
+                    "params": [],
+                    "line": 53,
+                    "end": 68
+                },
+                {
+                    "routes": [],
+                    "name": "menusChanged",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "menusChanged(): void",
+                    "doc": "_wp_menus_changed: the leaving theme's menu locations mapped onto the arriving theme's.",
+                    "shapes": [],
+                    "params": [],
+                    "line": 71,
+                    "end": 76
+                },
+                {
+                    "routes": [],
+                    "name": "mapLocations",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "mapLocations(array $new, mixed $old): array",
+                    "doc": "wp_map_nav_menu_locations: with one location on each side, it is\nkept; otherwise a location of the same name keeps its menu, then by\nrole, each name of a role in turn hands the next unused location of\nthat role (with a menu) to the arriving locations that name it.",
+                    "shapes": [
+                        "@param array<string, int> $new"
+                    ],
+                    "params": [
+                        {
+                            "name": "new",
+                            "type": "array",
+                            "shape": "array<string, int>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "old",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 86,
+                    "end": 117
+                },
+                {
+                    "routes": [],
+                    "name": "delete",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "delete(string $stylesheet, ?callable $remove = NULL): bool",
+                    "doc": "delete_theme: the folder removed between delete_theme and deleted_theme\n(by $remove when the caller removes it its own way); false for no name.",
+                    "shapes": [
+                        "@param (callable(string): bool)|null $remove"
+                    ],
+                    "params": [
+                        {
+                            "name": "stylesheet",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "remove",
+                            "type": "?callable",
+                            "shape": "(callable(string): bool)|null",
+                            "default": "NULL",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 125,
+                    "end": 135
+                },
+                {
+                    "routes": [],
+                    "name": "removeFolder",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "removeFolder(string $stylesheet): bool",
+                    "doc": "A theme's folder, directly inside the themes folder (a symlink unlinked, never followed); one already gone counts.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "stylesheet",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 138,
+                    "end": 148
+                },
+                {
+                    "routes": [],
+                    "name": "nextOfGroup",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "nextOfGroup(array $old, array $group): ?string",
+                    "doc": "The first location left in $old that a name of the group names, with a menu in it. @param array<string, mixed> $old @param list<string> $group",
+                    "shapes": [
+                        "@param array<string, mixed> $old @param list<string> $group"
+                    ],
+                    "params": [
+                        {
+                            "name": "old",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": "@param list<string> $group"
+                        },
+                        {
+                            "name": "group",
+                            "type": "array",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 151,
+                    "end": 161
+                },
+                {
+                    "routes": [],
+                    "name": "names",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "names(string $location, string $slug): bool",
+                    "doc": "Whether a location and a role's name contain one another, letter case aside.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "location",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "slug",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 164,
+                    "end": 167
+                }
+            ]
+        },
+        {
             "name": "Minn\\Runtime\\TreeWalk",
             "short": "TreeWalk",
             "namespace": "Minn\\Runtime",
@@ -125759,7 +125972,8 @@
             "extends": null,
             "uses": [],
             "usedBy": [
-                "Minn\\Runtime\\PluginRemoval"
+                "Minn\\Runtime\\PluginRemoval",
+                "Minn\\Runtime\\ThemeSwitch"
             ],
             "constructor": null,
             "cases": [],

@@ -516,6 +516,11 @@ function wp_prime_option_caches($options)
 }
 
 /** Per option, whether its autoload flag changed; a missing option reports false. */
+function wp_set_option_autoload($option, $autoload)
+{
+    return (bool) (wp_set_option_autoload_values([$option => $autoload])[$option] ?? false);
+}
+
 function wp_set_option_autoload_values($options)
 {
     $results = [];

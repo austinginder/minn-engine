@@ -166,12 +166,28 @@ function is_child_theme()
 
 function switch_theme($stylesheet)
 {
-    $old = wp_get_theme();
-    $new = wp_get_theme($stylesheet);
-    update_option('template', $new->get_template());
-    update_option('stylesheet', $new->get_stylesheet());
-    update_option('current_theme', $new->get('Name'));
-    do_action('switch_theme', $new->get('Name'), $new, $old);
+    Minn\Runtime\ThemeSwitch::switchTo((string) $stylesheet);
+}
+
+function check_theme_switched()
+{
+    Minn\Runtime\ThemeSwitch::checkSwitched();
+}
+
+function _wp_menus_changed()
+{
+    Minn\Runtime\ThemeSwitch::menusChanged();
+}
+
+/** @internal after a switch the widgets are looked over against the arriving theme's sidebars */
+function _wp_sidebars_changed()
+{
+    retrieve_widgets(true);
+}
+
+function wp_map_nav_menu_locations($new_nav_menu_locations, $old_nav_menu_locations)
+{
+    return Minn\Runtime\ThemeSwitch::mapLocations((array) $new_nav_menu_locations, $old_nav_menu_locations);
 }
 
 function validate_current_theme()

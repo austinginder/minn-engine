@@ -20,7 +20,7 @@ the minn-admin/v1 namespace and serving the Minn Admin app
 | [`LanguageController`](#languagecontroller) | final readonly class | 99 | Languages: what is installed, what a person reads in, what the site defaults to. |
 | [`Notifications`](#notifications) | final readonly class | 202 | The bell feed: pending and recent comments, translation and core update |
 | [`OverviewController`](#overviewcontroller) | final readonly class | 141 | The Overview of minn-admin/v1: the payload, the drill-down behind one |
-| [`PackagesController`](#packagescontroller) | final readonly class | 108 | Adding and removing themes and extensions from the Extensions view. |
+| [`PackagesController`](#packagescontroller) | final readonly class | 113 | Adding and removing themes and extensions from the Extensions view. |
 | [`PostListMarkup`](#postlistmarkup) | final class | 39 | The markup a post list writes beside each post, as the reference writes |
 | [`PreferencesController`](#preferencescontroller) | final readonly class | 115 | A person's own settings in minn-admin/v1: their appearance, the views |
 | [`RenderController`](#rendercontroller) | final readonly class | 52 | The editor's island previews: block markup rendered by the same |
@@ -28,7 +28,7 @@ the minn-admin/v1 namespace and serving the Minn Admin app
 | [`SiteController`](#sitecontroller) | final readonly class | 87 | The small Settings-view routes of minn-admin/v1: the site logo, the |
 | [`StructureController`](#structurecontroller) | final readonly class | 131 | The Structure view of minn-admin/v1: post types, taxonomies, and the |
 | [`SystemController`](#systemcontroller) | final readonly class | 73 | The System view: diagnostics, the scheduled-post list, autoloaded options, and the logs. |
-| [`ThemesController`](#themescontroller) | final readonly class | 95 | The theme inventory of minn-admin/v1: every theme on disk with its |
+| [`ThemesController`](#themescontroller) | final readonly class | 100 | The theme inventory of minn-admin/v1: every theme on disk with its |
 | [`Translations`](#translations) | final readonly class | 236 | Languages for the admin. A person's locale is their `locale` user meta, |
 | [`UpdatesController`](#updatescontroller) | final readonly class | 117 | The minn-admin/v1 update routes: offers, directory meta, the check, the installs, the auto-update lists. |
 | [`UploadsSize`](#uploadssize) | final readonly class | 93 | How much the uploads folder holds, as Minn Admin 0.43 works it out and |
@@ -700,7 +700,7 @@ Route: `GET /minn-admin/v1/plugins/info (floor edit_posts + install_plugins)`
 
 One wordpress.org plugin's details.
 
-Internals: `uploaded()` (private, line 115)
+Internals: `uploaded()` (private, line 122)
 
 
 ## PostListMarkup
@@ -1032,7 +1032,7 @@ Route: `POST /minn-admin/v1/themes/activate (floor edit_posts)`
 
 Switches the active theme.
 
-Internals: `themeText()` (private, line 88), `themeFolders()` (private, line 94), `screenshot()` (private, line 110)
+Internals: `themeText()` (private, line 94), `themeFolders()` (private, line 100), `screenshot()` (private, line 116)
 
 
 ## Translations

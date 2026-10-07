@@ -13,6 +13,7 @@ use Minn\Http\Response;
 use Minn\Http\Access;
 use Minn\Http\Policy;
 use Minn\Http\Route;
+use Minn\Runtime\Runtime;
 use Minn\Rest\Caller;
 use Minn\Rest\Reply;
 use Minn\RestError;
@@ -77,6 +78,11 @@ final readonly class ThemesController
         $template = $folders[$stylesheet]['Template'];
         if ($template !== '' && !isset($folders[$template])) {
             throw new RestError('not_found', 'The parent theme is not installed.', 404);
+        }
+        // With plugins loaded the switch is the reference's (switch_theme now, after_switch_theme on the next load).
+        if (Runtime::booted()) {
+            \switch_theme($stylesheet);
+            return Reply::answer($request, ['active' => $stylesheet]);
         }
         $this->site->setOption('stylesheet', $stylesheet);
         $this->site->setOption('template', $template === '' ? $stylesheet : $template);
