@@ -115,7 +115,7 @@ Sections, in capture order (rows only when their gate and data allow):
    `core-{version}`, time = transient `last_checked`. The engine offers Minn
    instead (see `GET /core`): id `minn-{version}`, title "Minn {version} is
    available", `update: { type: "core", version, name: "Minn" }`, time = when
-   GitHub was last asked. The suite drops `core`-type rows from both sides
+   the update service was last asked. The suite drops `core`-type rows from both sides
    before the diff.
 7. Core auto-update notice — from the `auto_core_update_notified` option,
    `type == success` within 14 days. Oracle only: WordPress's auto-updates
@@ -171,28 +171,36 @@ version.php, an offer from `wp_version_check()`, `update` `{ version,
 locale }` when the first offer says `upgrade`. On the engine core is Minn
 itself, a deliberate divergence (2026-10-07): `{ product: "minn", version,
 dbUpgrade: false, checked, update }`, where `version` is
-`MINN_ENGINE_VERSION`, `checked` the time GitHub was last asked, and
-`update` `{ version, url, published }` when the latest published release of
-`austinginder/minn-engine` is newer, else null. WordPress's own offer (the
+`MINN_ENGINE_VERSION`, `checked` the time the update service was last asked,
+and `update` `{ version, url, published }` when the latest installable
+release is newer, else null. WordPress's own offer (the
 `update_core` transient a parked copy may write) is never shown: it is not
 Minn's to install. The app keys its "Update Minn" wording off the boot
 payload's `engine`, not off `product`.
 
-`Ops\Releases` asks `api.github.com/repos/austinginder/minn-engine/releases/latest`
-at most once a day and keeps the answer in the `minn_release` option (JSON
-`{ checked, latest }`). A request to `/core` or `/boot-status` that finds the
-answer a day old asks again after its response is sent. A 404 (no published
-release, or a private repository) offers nothing; any other failure keeps the
-last answer and waits a day. A release counts only when it is published, not a
-pre-release, tagged `v<major>.<minor>.<patch>`, and carries a `minn.zip` asset;
-the asset's `digest` (`sha256:<hex>`) is the checksum the install demands.
+`Ops\Releases` asks the Minn update service,
+`https://updates.minn.run/v1/minn/releases/latest` (`Ops\Directory`), at most
+once a day and keeps the answer in the `minn_release` option (JSON
+`{ checked, latest }`). The engine never asks GitHub itself: the service reads
+the release from `austinginder/minn-engine` with a read-only token and answers
+`{ version, url, published, notes, package, sha256, signature }`, the same shape
+the option keeps. It answers only installable releases: published, not a
+pre-release, tagged `v<major>.<minor>.<patch>`, with a `minn.zip` asset, the
+`sha256` GitHub records for it, and `minn.zip.sig`; anything else is a 404,
+which offers nothing (so does a private repository the service cannot read).
+`Release::fromArray` also refuses a package outside
+`https://updates.minn.run/v1/minn/download/<version>/minn.zip`, a missing
+checksum or a missing signature. A request to `/core` or `/boot-status` that
+finds the answer a day old asks again after its response is sent; any failure
+other than a 404 keeps the last answer and waits a day.
 
 ## GET /changelog (on the engine)
 
 Gate: the floor. `{ version, markdown }`: the bundle's version and Minn
 Admin's changelog. A Minn release does not carry the bundle's changelog.md,
-so `Ops\Changelog` reads it from `austinginder/minn-admin` on GitHub the
-same way as the engine's (below; option `minn_admin_changelog`). The
+so `Ops\Changelog` reads it through the update service
+(`/v1/minn-admin/changelog`, from `austinginder/minn-admin` on GitHub) the same
+way as the engine's (below; option `minn_admin_changelog`). The
 reference answers its bundled file, Unreleased sections included; the
 suite compares the engine's answer with that file less those sections.
 
@@ -200,21 +208,26 @@ suite compares the engine's answer with that file less those sections.
 
 Gate: the floor (`edit_posts`). `{ version, markdown }`: `MINN_ENGINE_VERSION`
 and Minn's changelog. The changelog is not in a release (nothing on a site
-running Minn names its history); `Ops\Changelog` reads `changelog.md` from the
-repository's default branch on raw.githubusercontent.com at most once a day,
-keeps it in the `minn_changelog` option, and leaves out sections still marked
-Unreleased. A 404 (a private repository) answers `''`; any other failure keeps
-the last copy. Engine only: the oracle has no such route.
+running Minn names its history); `Ops\Changelog` reads it through the update
+service (`/v1/minn/changelog`: `changelog.md` on the repository's default
+branch) at most once a day, keeps it in the `minn_changelog` option, and
+leaves out sections still marked Unreleased. A 404 answers `''`; any other
+failure keeps the last copy. Engine only: the oracle has no such route.
 
 ## POST /core/update
 
 Gate `update_core`. Installs the release on offer and answers `{ version }`.
 Nothing newer on offer: 400 `minn_current`. A failed install: 500
 `minn_update_failed` with the reason. `Ops\EngineUpdate` downloads `minn.zip`
-only from `https://github.com/austinginder/minn-engine/releases/download/`
-(every redirect hop judged; objects.githubusercontent.com and
-release-assets.githubusercontent.com are the allowed CDN hosts), refuses
-an asset without a published sha256 or one that does not match it, unpacks it
+only from the update service (`/v1/minn/download/<version>/minn.zip`, which
+fetches it from the GitHub release once, checks it against GitHub's sha256 and
+keeps it in R2; every redirect hop is pinned to updates.minn.run), refuses an
+archive that does not match its sha256, then checks its Ed25519 signature
+(`minn.zip.sig`, made by `scripts/build-release.php` with the key from
+`scripts/release-key.php`) against `EngineUpdate::KEYS`, the public keys built
+into the engine; a signature from any other key, or none, installs nothing,
+so neither GitHub nor the service can stand in a build. A PHP without sodium
+refuses with that reason. It then unpacks it
 through `Ops\Archive` beside the engine, checks that its bootstrap names the
 offered version and `bin/minn` is there, then swaps the folder in two renames
 (the running engine aside, the new one in; the first is undone when the second
@@ -222,7 +235,7 @@ fails) and removes the old copy. A legacy `.install.json` inside the engine
 comes along. One update runs at a time (a lock in the temp folder keyed by
 the engine's path). A development checkout (a link, or a folder under git at
 any depth) is refused. The same install runs from the command line as
-`php minn/bin/minn update` (`--check` only asks GitHub).
+`php minn/bin/minn update` (`--check` only asks the service).
 
 ## GET /boot-status
 
@@ -392,7 +405,7 @@ dogfood site against its own reference, both freshly checked:
   (offers and current alike; the svg, 2x, or 1x icon; the directory URL).
 - `POST check-updates {}` → `{ok, pluginUpdates, themeUpdates, translations: 0,
   translationGroups: [], plugins: n, themes: n}`, plus on the engine `core` (the
-  `GET /core` answer after asking GitHub again; `update_core` alone may call it).
+  `GET /core` answer after asking the update service again; `update_core` alone may call it).
 - `POST plugins/update {plugin}` (with or without `.php`) downloads the offer's
   `downloads.wordpress.org` package through the one unpacker, replaces the folder,
   and answers `{updated: true, version}`; nothing offered → 400 `no_update`; an

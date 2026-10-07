@@ -9,10 +9,11 @@ use Minn\Content\Site;
 use Minn\Http;
 
 /**
- * A changelog read from its GitHub repository rather than shipped: a Minn
- * release carries no notes, its own or Minn Admin's, for anyone to find on
- * the sites that run it. The file on the default branch is fetched at most
- * once a day and kept in an option (JSON) with the time it was fetched;
+ * A changelog read from its repository rather than shipped: a Minn release
+ * carries no notes, its own or Minn Admin's, for anyone to find on the
+ * sites that run it. The update service reads changelog.md from the
+ * repository's default branch on GitHub; the engine asks the service at most
+ * once a day and keeps the copy in an option (JSON) with the time it came;
  * sections still marked Unreleased are left out, so a site only reads about
  * releases that exist. A fetch GitHub does not answer keeps the last copy; a
  * 404 (no such file, or a private repository) keeps nothing.
@@ -20,8 +21,8 @@ use Minn\Http;
 final class Changelog
 {
     public const TTL = 86400;
-    public const ENGINE_SOURCE = 'https://raw.githubusercontent.com/' . Releases::REPOSITORY . '/main/changelog.md';
-    public const ADMIN_SOURCE = 'https://raw.githubusercontent.com/austinginder/minn-admin/main/changelog.md';
+    public const ENGINE_SOURCE = Directory::BASE . 'minn/changelog';
+    public const ADMIN_SOURCE = Directory::BASE . 'minn-admin/changelog';
 
     /**
      * @param Closure(): ?string $load the stored copy, as JSON
@@ -66,7 +67,7 @@ final class Changelog
         if ($checked > time() - self::TTL) {
             return $markdown;
         }
-        $reply = Http::get($this->source, timeout: 5.0, hosts: ['https://raw.githubusercontent.com/'], maxBytes: 4194304);
+        $reply = Http::get($this->source, timeout: 5.0, hosts: [Directory::ORIGIN], maxBytes: 4194304);
         if ($reply->ok()) {
             $markdown = self::released($reply->body);
         } elseif ($reply->code === 404) {

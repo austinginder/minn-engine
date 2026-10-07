@@ -3,25 +3,29 @@
 declare(strict_types=1);
 
 use Minn\Ops\Changelog;
+use Minn\Ops\Directory;
 use Minn\Ops\EngineUpdate;
 use Minn\Ops\Release;
 use Minn\Ops\Releases;
 
 /**
- * Minn's own releases: GitHub's answer read into a release (or not), the
- * once-a-day check kept and offered against the running version, the
- * changelog read from the repository, and the engine swapping itself for a
- * release archive in a scratch webroot. No request leaves the process: the
- * GitHub answers are faked.
+ * Minn's own releases: the update service's answer read into a release (or
+ * not), the once-a-day check kept and offered against the running version,
+ * the changelog read through the service, and the engine swapping itself for
+ * a signed release archive in a scratch webroot. No request leaves the
+ * process: the service's answers are faked, and the signing key is made here.
  */
-$github = static fn (array $over = []): array => $over + [
-    'tag_name' => 'v0.2.0',
-    'html_url' => 'https://github.com/austinginder/minn-engine/releases/tag/v0.2.0',
-    'published_at' => '2026-10-20T12:00:00Z',
-    'body' => '## Notes',
-    'draft' => false,
-    'prerelease' => false,
-    'assets' => [['name' => 'minn.zip', 'browser_download_url' => 'https://github.com/austinginder/minn-engine/releases/download/v0.2.0/minn.zip', 'digest' => 'sha256:' . str_repeat('ab', 32)]],
+$pair = sodium_crypto_sign_keypair();
+$public = base64_encode(sodium_crypto_sign_publickey($pair));
+$sign = static fn (string $zip): string => base64_encode(sodium_crypto_sign_detached($zip, sodium_crypto_sign_secretkey($pair)));
+$answer = static fn (array $over = []): array => $over + [
+    'version' => '0.2.0',
+    'url' => 'https://github.com/austinginder/minn-engine/releases/tag/v0.2.0',
+    'published' => '2026-10-20T12:00:00Z',
+    'notes' => '## Notes',
+    'package' => Directory::BASE . 'minn/download/0.2.0/minn.zip',
+    'sha256' => str_repeat('ab', 32),
+    'signature' => base64_encode(str_repeat("\x07", 64)),
 ];
 $memory = static function (?string &$stored): array {
     return [static function () use (&$stored): ?string {
@@ -41,7 +45,7 @@ $check = static function (array $answers, ?string &$stored, string $installed = 
         $fake->restore();
     }
 };
-// A scratch webroot holding a minimal engine at $version, and the zip of another at $next.
+// A scratch webroot holding a minimal engine at $version, and the zip of another.
 $webroot = static function (string $version): string {
     $root = sys_get_temp_dir() . '/minn-update-' . bin2hex(random_bytes(4));
     mkdir("{$root}/minn/bin", 0755, true);
@@ -54,12 +58,11 @@ $archive = static function (string $version, bool $engine = true): string {
     $file = tempnam(sys_get_temp_dir(), 'minn-zip-');
     $zip = new ZipArchive();
     $zip->open($file, ZipArchive::OVERWRITE);
-    $top = 'minn';
     if ($engine) {
-        $zip->addFromString("{$top}/bootstrap.php", "<?php\ndefine('MINN_ENGINE_VERSION', '{$version}');\n");
-        $zip->addFromString("{$top}/bin/minn", "#!/usr/bin/env php\n");
+        $zip->addFromString('minn/bootstrap.php', "<?php\ndefine('MINN_ENGINE_VERSION', '{$version}');\n");
+        $zip->addFromString('minn/bin/minn', "#!/usr/bin/env php\n");
     }
-    $zip->addFromString("{$top}/src/New.php", '<?php');
+    $zip->addFromString('minn/src/New.php', '<?php');
     $zip->close();
     $bytes = (string) file_get_contents($file);
     unlink($file);
@@ -71,42 +74,55 @@ $clean = static function (string $root): void {
 };
 
 return [
-    'a published release with minn.zip reads its version, page, package and sha256' => static function () use ($github) {
-        $release = Release::fromGitHub($github());
+    'a release from the service reads its version, page, package, sha256 and signature' => static function () use ($answer) {
+        $release = Release::fromArray($answer());
         return $release !== null && $release->version === '0.2.0' && $release->sha256 === str_repeat('ab', 32)
-            && str_ends_with($release->package, '/v0.2.0/minn.zip') && $release->notes === '## Notes' ?: json_encode($release);
+            && $release->package === 'https://updates.minn.run/v1/minn/download/0.2.0/minn.zip' && $release->notes === '## Notes'
+            && $release->toArray() === $answer() ?: json_encode($release);
     },
-    'a draft, a pre-release, a tag that is not a version, or no minn.zip is no release' => static function () use ($github) {
-        return Release::fromGitHub($github(['draft' => true])) === null
-            && Release::fromGitHub($github(['prerelease' => true])) === null
-            && Release::fromGitHub($github(['tag_name' => 'nightly'])) === null
-            && Release::fromGitHub($github(['assets' => [['name' => 'other.zip']]])) === null;
+    'a package anywhere but Minn\'s downloads, a missing checksum or signature, or a version that is not one, is no release' => static function () use ($answer) {
+        foreach ([
+            ['package' => 'https://github.com/austinginder/minn-engine/releases/download/v0.2.0/minn.zip'],
+            ['package' => Directory::BASE . 'minn/download/0.3.0/minn.zip'],
+            ['sha256' => ''],
+            ['signature' => ''],
+            ['signature' => 'not-a-signature'],
+            ['version' => 'nightly'],
+        ] as $over) {
+            if (Release::fromArray($answer($over)) !== null) {
+                return json_encode($over);
+            }
+        }
+        return true;
     },
-    'an asset without a sha256 digest keeps an empty checksum' => static function () use ($github) {
-        $release = Release::fromGitHub($github(['assets' => [['name' => 'minn.zip', 'browser_download_url' => 'https://github.com/x/minn.zip']]]));
-        return $release !== null && $release->sha256 === '';
-    },
-    'the check keeps the latest release and offers it when it is newer' => static function () use ($check, $github) {
+    'the check asks the update service, keeps the latest release and offers it when it is newer' => static function () use ($memory, $answer) {
         $stored = null;
-        $releases = $check(['api.github.com/*' => $github()], $stored);
-        $offer = $releases->offer();
-        return $offer !== null && $offer->version === '0.2.0' && !$releases->due() ?: (string) $stored;
+        [$load, $save] = $memory($stored);
+        $fake = Minn\Http::fake(['updates.minn.run/*' => $answer()]);
+        try {
+            $releases = new Releases($load, $save, '0.1.0');
+            $releases->refresh();
+            $asked = array_map(static fn ($request) => $request->url, $fake->sent());
+        } finally {
+            $fake->restore();
+        }
+        return $asked === [Directory::BASE . 'minn/releases/latest'] && $releases->offer()?->version === '0.2.0' && !$releases->due() ?: json_encode($asked);
     },
-    'the running version or a newer one is offered nothing' => static function () use ($check, $github) {
+    'the running version or a newer one is offered nothing' => static function () use ($check, $answer) {
         $stored = null;
-        return $check(['api.github.com/*' => $github()], $stored, '0.2.0')->offer() === null
-            && $check(['api.github.com/*' => $github()], $stored, '0.3.0')->offer() === null;
+        return $check(['updates.minn.run/*' => $answer()], $stored, '0.2.0')->offer() === null
+            && $check(['updates.minn.run/*' => $answer()], $stored, '0.3.0')->offer() === null;
     },
-    'a repository with no published release (404) offers nothing' => static function () use ($check, $github) {
+    'no installable release (404) offers nothing' => static function () use ($check, $answer) {
         $stored = null;
-        $check(['api.github.com/*' => $github()], $stored);
-        $releases = $check(['api.github.com/*' => Minn\Http::reply(['message' => 'Not Found'], 404)], $stored);
+        $check(['updates.minn.run/*' => $answer()], $stored);
+        $releases = $check(['updates.minn.run/*' => Minn\Http::reply(['error' => 'no_release'], 404)], $stored);
         return $releases->offer() === null && json_decode((string) $stored, true)['latest'] === null;
     },
-    'a check GitHub does not answer keeps the last answer, and waits a day' => static function () use ($check, $github) {
+    'a check the service does not answer keeps the last answer, and waits a day' => static function () use ($check, $answer) {
         $stored = null;
-        $check(['api.github.com/*' => $github()], $stored);
-        $releases = $check(['api.github.com/*' => Minn\Http::reply('rate limited', 403)], $stored);
+        $check(['updates.minn.run/*' => $answer()], $stored);
+        $releases = $check(['updates.minn.run/*' => Minn\Http::reply(['error' => 'upstream_failed'], 502)], $stored);
         return $releases->offer()?->version === '0.2.0' && !$releases->due();
     },
     'a day-old answer is due' => static function () use ($memory) {
@@ -119,50 +135,69 @@ return [
         $out = Changelog::released($md);
         return $out === "# Changelog\n\n## **v0.1.0** - November 2 2026\n\nfirst\n" ?: $out;
     },
-    'the changelog is fetched from the repository once a day, and a failed fetch keeps the last copy' => static function () use ($memory) {
+    'the changelog is read through the service once a day, and a failed read keeps the last copy' => static function () use ($memory) {
         $stored = null;
         [$load, $save] = $memory($stored);
         $changelog = new Changelog($load, $save, Changelog::ENGINE_SOURCE);
-        $fake = Minn\Http::fake(['raw.githubusercontent.com/*' => "# Changelog\n\n## **v0.1.0** - November 2 2026\n\nfirst\n"]);
+        $fake = Minn\Http::fake(['updates.minn.run/*' => "# Changelog\n\n## **v0.1.0** - November 2 2026\n\nfirst\n"]);
         try {
             $first = $changelog->markdown();
             $again = $changelog->markdown();
-            $fetches = count($fake->sent('raw.githubusercontent.com/*'));
+            $sent = array_map(static fn ($request) => $request->url, $fake->sent());
         } finally {
             $fake->restore();
         }
         $stored = json_encode(['checked' => time() - Changelog::TTL - 1, 'markdown' => $first]);
-        $fake = Minn\Http::fake(['raw.githubusercontent.com/*' => Minn\Http::reply('busy', 503)]);
+        $fake = Minn\Http::fake(['updates.minn.run/*' => Minn\Http::reply('busy', 503)]);
         try {
             $kept = $changelog->markdown();
         } finally {
             $fake->restore();
         }
-        $fake = Minn\Http::fake(['raw.githubusercontent.com/*' => Minn\Http::reply('404: Not Found', 404)]);
+        $fake = Minn\Http::fake(['updates.minn.run/*' => Minn\Http::reply('{"error":"not_found"}', 404)]);
         $stored = json_encode(['checked' => 0, 'markdown' => $first]);
         try {
             $gone = $changelog->markdown();
         } finally {
             $fake->restore();
         }
-        return str_contains($first, 'v0.1.0') && $again === $first && $fetches === 1 && $kept === $first && $gone === '' ?: json_encode([$first, $fetches, $kept, $gone]);
+        return str_contains($first, 'v0.1.0') && $again === $first && $sent === [Directory::BASE . 'minn/changelog'] && $kept === $first && $gone === '' ?: json_encode([$first, $sent, $kept, $gone]);
     },
-    'the engine swaps itself for a release archive and carries the install record' => static function () use ($webroot, $archive, $leftovers, $clean) {
+    'the engine swaps itself for a signed release archive and carries the install record' => static function () use ($webroot, $archive, $leftovers, $clean, $public, $sign) {
         $root = $webroot('0.1.0');
         try {
             $zip = $archive('0.2.0');
-            $done = (new EngineUpdate("{$root}/minn"))->install($zip, hash('sha256', $zip), '0.2.0');
+            $done = (new EngineUpdate("{$root}/minn", [$public]))->install($zip, hash('sha256', $zip), $sign($zip), '0.2.0');
             return $done === '0.2.0' && EngineUpdate::versionOf("{$root}/minn") === '0.2.0' && is_file("{$root}/minn/src/New.php")
                 && file_get_contents("{$root}/minn/.install.json") === '{"park":"x"}' && $leftovers($root) === [] ?: json_encode(scandir($root));
         } finally {
             $clean($root);
         }
     },
-    'an archive that does not match its checksum changes nothing' => static function () use ($webroot, $archive, $leftovers, $clean) {
+    'an archive signed by a key the engine does not trust, or not signed, changes nothing' => static function () use ($webroot, $archive, $leftovers, $clean, $sign) {
         $root = $webroot('0.1.0');
         try {
             $zip = $archive('0.2.0');
-            (new EngineUpdate("{$root}/minn"))->install($zip, str_repeat('0', 64), '0.2.0');
+            $answers = [];
+            $other = base64_encode(sodium_crypto_sign_publickey(sodium_crypto_sign_keypair()));
+            foreach ([[$other, $sign($zip)], [EngineUpdate::KEYS[0], $sign($zip)], [$other, '']] as [$key, $signature]) {
+                try {
+                    (new EngineUpdate("{$root}/minn", [$key]))->install($zip, hash('sha256', $zip), $signature, '0.2.0');
+                    $answers[] = 'installed';
+                } catch (RuntimeException $e) {
+                    $answers[] = str_contains($e->getMessage(), 'not signed by a key this Minn trusts') ? 'refused' : $e->getMessage();
+                }
+            }
+            return $answers === ['refused', 'refused', 'refused'] && EngineUpdate::versionOf("{$root}/minn") === '0.1.0' && $leftovers($root) === [] ?: json_encode($answers);
+        } finally {
+            $clean($root);
+        }
+    },
+    'an archive that does not match its checksum changes nothing' => static function () use ($webroot, $archive, $leftovers, $clean, $public, $sign) {
+        $root = $webroot('0.1.0');
+        try {
+            $zip = $archive('0.2.0');
+            (new EngineUpdate("{$root}/minn", [$public]))->install($zip, str_repeat('0', 64), $sign($zip), '0.2.0');
             return 'installed';
         } catch (RuntimeException $e) {
             return str_contains($e->getMessage(), 'checksum') && EngineUpdate::versionOf("{$root}/minn") === '0.1.0' && $leftovers($root) === [] ?: $e->getMessage();
@@ -170,13 +205,13 @@ return [
             $clean($root);
         }
     },
-    'an archive holding another version, or no engine, changes nothing' => static function () use ($webroot, $archive, $leftovers, $clean) {
+    'a signed archive holding another version, or no engine, changes nothing' => static function () use ($webroot, $archive, $leftovers, $clean, $public, $sign) {
         $root = $webroot('0.1.0');
         try {
             $answers = [];
             foreach ([[$archive('0.3.0'), '0.2.0'], [$archive('0.2.0', false), '0.2.0']] as [$zip, $version]) {
                 try {
-                    (new EngineUpdate("{$root}/minn"))->install($zip, hash('sha256', $zip), $version);
+                    (new EngineUpdate("{$root}/minn", [$public]))->install($zip, hash('sha256', $zip), $sign($zip), $version);
                     $answers[] = 'installed';
                 } catch (RuntimeException $e) {
                     $answers[] = $e->getMessage();
@@ -188,25 +223,27 @@ return [
             $clean($root);
         }
     },
-    'a package that is not one of the engine repository\'s own release downloads is refused before any download' => static function () use ($webroot, $clean) {
+    'a package that is not on the update service is refused before any download' => static function () use ($webroot, $clean) {
         $root = $webroot('0.1.0');
+        $fake = Minn\Http::fake([]);
         try {
-            $elsewhere = new Release('0.2.0', '', '', '', 'https://github.com/someone/else/releases/download/v0.2.0/minn.zip', str_repeat('ab', 32));
+            $elsewhere = new Release('0.2.0', '', '', '', 'https://github.com/austinginder/minn-engine/releases/download/v0.2.0/minn.zip', str_repeat('ab', 32), base64_encode(str_repeat("\x07", 64)));
             (new EngineUpdate("{$root}/minn"))->apply($elsewhere);
             return 'installed';
         } catch (RuntimeException $e) {
-            return str_contains($e->getMessage(), "not one of Minn's own GitHub releases") && EngineUpdate::versionOf("{$root}/minn") === '0.1.0' ?: $e->getMessage();
+            return str_contains($e->getMessage(), 'not on the Minn update service') && $fake->sent() === [] && EngineUpdate::versionOf("{$root}/minn") === '0.1.0' ?: $e->getMessage();
         } finally {
+            $fake->restore();
             $clean($root);
         }
     },
-    'a second update while one runs changes nothing' => static function () use ($webroot, $archive, $clean) {
+    'a second update while one runs changes nothing' => static function () use ($webroot, $archive, $clean, $public, $sign) {
         $root = $webroot('0.1.0');
         $held = fopen(sys_get_temp_dir() . '/minn-update-' . md5("{$root}/minn") . '.lock', 'c');
         flock($held, LOCK_EX);
         try {
             $zip = $archive('0.2.0');
-            (new EngineUpdate("{$root}/minn"))->install($zip, hash('sha256', $zip), '0.2.0');
+            (new EngineUpdate("{$root}/minn", [$public]))->install($zip, hash('sha256', $zip), $sign($zip), '0.2.0');
             return 'installed';
         } catch (RuntimeException $e) {
             return str_contains($e->getMessage(), 'Another update') && EngineUpdate::versionOf("{$root}/minn") === '0.1.0' ?: $e->getMessage();
@@ -216,7 +253,7 @@ return [
             $clean($root);
         }
     },
-    'a development checkout (a link, or under git) is refused' => static function () use ($webroot, $archive, $clean) {
+    'a development checkout (a link, or under git) is refused' => static function () use ($webroot, $archive, $clean, $public, $sign) {
         $root = $webroot('0.1.0');
         try {
             symlink("{$root}/minn", "{$root}/linked");
@@ -227,7 +264,7 @@ return [
             $refused = 0;
             foreach (["{$root}/linked", "{$root}/repo/public/minn"] as $dir) {
                 try {
-                    (new EngineUpdate($dir))->install($zip, hash('sha256', $zip), '0.2.0');
+                    (new EngineUpdate($dir, [$public]))->install($zip, hash('sha256', $zip), $sign($zip), '0.2.0');
                 } catch (RuntimeException $e) {
                     $refused += str_contains($e->getMessage(), 'development checkout') ? 1 : 0;
                 }

@@ -12,11 +12,18 @@
  * Minn Admin's archive is checked against the sha256 GitHub publishes for it
  * and unpacked through the engine's own archive checks. The finished zip is
  * opened again and checked before its sha256 is printed and written beside it.
+ * Last, the zip is signed with the release key (scripts/release-key.php;
+ * ~/Keys/minn-release/ed25519.key, or --key / MINN_SIGNING_KEY) into
+ * dist/minn.zip.sig, and the signature is checked against the keys the
+ * engine trusts (Ops\EngineUpdate::KEYS): upload minn.zip and minn.zip.sig
+ * to the GitHub release together, or the update service offers nothing.
  *
  *   php scripts/build-release.php                    build from HEAD
  *   php scripts/build-release.php --admin-zip=PATH   bundle a Minn Admin zip in hand instead
  *   php scripts/build-release.php --out=DIR          write somewhere other than dist/
  *   php scripts/build-release.php --allow-dirty      build although public/minn has uncommitted changes
+ *   php scripts/build-release.php --key=PATH         sign with another key file
+ *   php scripts/build-release.php --unsigned         skip signing (a local test build; nothing will install it)
  */
 
 declare(strict_types=1);
@@ -31,7 +38,7 @@ const ADMIN_RELEASE = 'https://api.github.com/repos/austinginder/minn-admin/rele
 /** What the engine reads from Minn Admin (Admin\App, BundleController, Translations, AdminBar); nothing else ships. */
 const ADMIN_KEEP = ['minn-admin.php', 'license', 'manifest.json', 'docs/user-guide.md', 'assets/', 'languages/'];
 
-$options = getopt('', ['admin-zip:', 'out:', 'allow-dirty']);
+$options = getopt('', ['admin-zip:', 'out:', 'allow-dirty', 'key:', 'unsigned']);
 $fail = static function (string $message): never {
     fwrite(STDERR, "build-release: {$message}\n");
     exit(1);
@@ -170,8 +177,29 @@ $check->close();
 $sha256 = hash_file('sha256', $target);
 file_put_contents("{$target}.sha256", "{$sha256}  minn.zip\n");
 
+// The signature the engine checks before it installs anything.
+$signed = 'unsigned (--unsigned)';
+@unlink("{$target}.sig");
+if (!isset($options['unsigned'])) {
+    $keyFile = (string) ($options['key'] ?? (getenv('MINN_SIGNING_KEY') ?: getenv('HOME') . '/Keys/minn-release/ed25519.key'));
+    $secret = base64_decode(trim((string) @file_get_contents($keyFile)), true);
+    if ($secret === false || strlen($secret) !== SODIUM_CRYPTO_SIGN_SECRETKEYBYTES) {
+        $fail("no release signing key at {$keyFile} (php scripts/release-key.php, or --unsigned for a local test build).");
+    }
+    $signature = sodium_crypto_sign_detached((string) file_get_contents($target), $secret);
+    $trusted = false;
+    foreach (Minn\Ops\EngineUpdate::KEYS as $key) {
+        $trusted = $trusted || sodium_crypto_sign_verify_detached($signature, (string) file_get_contents($target), (string) base64_decode($key, true));
+    }
+    if (!$trusted) {
+        $fail("the key at {$keyFile} is not one Ops\\EngineUpdate::KEYS trusts; an engine would refuse this release.");
+    }
+    file_put_contents("{$target}.sig", base64_encode($signature) . "\n");
+    $signed = "signed, {$target}.sig";
+}
+
 printf(
-    "%s\n  Minn %s, Minn Admin %s (%s; %d of its files left out)\n  %d files, %.1f MB\n  sha256 %s\n",
+    "%s\n  Minn %s, Minn Admin %s (%s; %d of its files left out)\n  %d files, %.1f MB\n  sha256 %s\n  %s\n",
     $target,
     $version,
     $adminVersion,
@@ -180,4 +208,5 @@ printf(
     $count,
     filesize($target) / 1048576,
     $sha256,
+    $signed,
 );

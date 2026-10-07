@@ -10,7 +10,7 @@ use RuntimeException;
 /**
  * The core the app's update banner and chip speak of, which on Minn is
  * Minn: the running engine's version, a newer release on offer
- * (Ops\Releases, asked of GitHub once a day), and installing it
+ * (Ops\Releases, asked of the update service once a day), and installing it
  * (Ops\EngineUpdate). WordPress's own offer (the update_core transient a
  * parked copy may write) is not Minn's to act on and is not shown.
  * dbUpgrade is false: the database is WordPress's, and a Minn release
@@ -25,7 +25,7 @@ final readonly class CoreStatus
     ) {
     }
 
-    /** Minn's version, any offer, and when GitHub was last asked. */
+    /** Minn's version, any offer, and when the update service was last asked. */
     public function data(): array
     {
         $offer = $this->releases->offer();
@@ -38,13 +38,13 @@ final readonly class CoreStatus
         ];
     }
 
-    /** Whether GitHub was last asked a day ago or more. */
+    /** Whether the update service was last asked a day ago or more. */
     public function due(): bool
     {
         return $this->releases->due();
     }
 
-    /** Asks GitHub now. */
+    /** Asks the update service now. */
     public function refresh(): void
     {
         $this->releases->refresh();

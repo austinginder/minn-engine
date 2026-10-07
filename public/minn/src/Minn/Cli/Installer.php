@@ -101,11 +101,11 @@ final class Installer
     private function help(): int
     {
         $this->say("Usage: minn <preflight|install|eject|status> <webroot> [--park=<dir>] [--force]");
-        $this->say("       minn update [--check]   replace this engine with the latest release on GitHub");
+        $this->say("       minn update [--check]   replace this engine with the latest release");
         return 0;
     }
 
-    /** Replaces this engine with the latest release on GitHub; --check only says whether there is one. */
+    /** Replaces this engine with the latest release from the Minn update service; --check only says whether there is one. */
     public function update(array $options): int
     {
         $installed = EngineUpdate::versionOf($this->engineDir);
@@ -116,7 +116,7 @@ final class Installer
             $state = $json;
         }, $installed);
         if (!$releases->refresh()['answered']) {
-            $this->say("GitHub did not answer, so it is not known whether a newer Minn than {$installed} is out. Try again later.");
+            $this->say("The Minn update service did not answer, so it is not known whether a newer Minn than {$installed} is out. Try again later.");
             return 1;
         }
         $offer = $releases->offer();

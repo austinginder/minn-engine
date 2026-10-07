@@ -47,7 +47,7 @@ final readonly class UpdatesController
         return Reply::answer($request, (object) $this->updates->pluginMeta());
     }
 
-    /** Asks again, now: wordpress.org for plugins and themes, and GitHub for Minn itself (its status answered as core). */
+    /** Asks again, now: wordpress.org for plugins and themes, and the Minn update service for Minn itself (its status answered as core). */
     #[Route(Method::Post, '/minn-admin/v1/check-updates', policy: new Policy(Access::SignedIn))]
     public function check(Request $request): Response
     {

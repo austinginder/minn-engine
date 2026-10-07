@@ -6708,7 +6708,7 @@
                     "static": false,
                     "visibility": "public",
                     "signature": "check(Minn\\Http\\Request $request): Minn\\Http\\Response",
-                    "doc": "Asks again, now: wordpress.org for plugins and themes, and GitHub for Minn itself (its status answered as core).",
+                    "doc": "Asks again, now: wordpress.org for plugins and themes, and the Minn update service for Minn itself (its status answered as core).",
                     "shapes": [],
                     "params": [
                         {
@@ -7177,7 +7177,7 @@
                     "static": false,
                     "visibility": "public",
                     "signature": "core(Minn\\Http\\Request $request): Minn\\Http\\Response",
-                    "doc": "Minn's version and any newer release; a day-old check of GitHub runs once the answer is sent.",
+                    "doc": "Minn's version and any newer release; a day-old check of the update service runs once the answer is sent.",
                     "shapes": [],
                     "params": [
                         {
@@ -7241,7 +7241,7 @@
                     "static": false,
                     "visibility": "private",
                     "signature": "checkingReleases(Minn\\Http\\Response $response): Minn\\Http\\Response",
-                    "doc": "The answer, with GitHub asked about Minn's releases after it is sent when the last check is a day old.",
+                    "doc": "The answer, with the update service asked about Minn's releases after it is sent when the last check is a day old.",
                     "shapes": [],
                     "params": [
                         {
@@ -19590,7 +19590,7 @@
                     "static": false,
                     "visibility": "public",
                     "signature": "update(array $options): int",
-                    "doc": "Replaces this engine with the latest release on GitHub; --check only says whether there is one.",
+                    "doc": "Replaces this engine with the latest release from the Minn update service; --check only says whether there is one.",
                     "shapes": [],
                     "params": [
                         {
@@ -75209,13 +75209,13 @@
             "kind": "final class",
             "file": "public/minn/src/Minn/Ops/Changelog.php",
             "lines": 67,
-            "doc": "A changelog read from its GitHub repository rather than shipped: a Minn\nrelease carries no notes, its own or Minn Admin's, for anyone to find on\nthe sites that run it. The file on the default branch is fetched at most\nonce a day and kept in an option (JSON) with the time it was fetched;\nsections still marked Unreleased are left out, so a site only reads about\nreleases that exist. A fetch GitHub does not answer keeps the last copy; a\n404 (no such file, or a private repository) keeps nothing.",
+            "doc": "A changelog read from its repository rather than shipped: a Minn release\ncarries no notes, its own or Minn Admin's, for anyone to find on the\nsites that run it. The update service reads changelog.md from the\nrepository's default branch on GitHub; the engine asks the service at most\nonce a day and keeps the copy in an option (JSON) with the time it came;\nsections still marked Unreleased are left out, so a site only reads about\nreleases that exist. A fetch GitHub does not answer keeps the last copy; a\n404 (no such file, or a private repository) keeps nothing.",
             "implements": [],
             "extends": null,
             "uses": [
                 "Minn\\Content\\Site",
                 "Minn\\Http",
-                "Minn\\Ops\\Releases"
+                "Minn\\Ops\\Directory"
             ],
             "usedBy": [
                 "Minn\\Admin\\BundleController",
@@ -75252,8 +75252,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 30,
-                "end": 35
+                "line": 31,
+                "end": 36
             },
             "cases": [],
             "constants": [
@@ -75265,13 +75265,13 @@
                 },
                 {
                     "name": "ENGINE_SOURCE",
-                    "value": "'https://raw.githubusercontent.com/austinginder/minn-engine/main/changelog.md'",
+                    "value": "'https://updates.minn.run/v1/minn/changelog'",
                     "doc": "",
                     "visibility": "public"
                 },
                 {
                     "name": "ADMIN_SOURCE",
-                    "value": "'https://raw.githubusercontent.com/austinginder/minn-admin/main/changelog.md'",
+                    "value": "'https://updates.minn.run/v1/minn-admin/changelog'",
                     "doc": "",
                     "visibility": "public"
                 }
@@ -75323,8 +75323,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 38,
-                    "end": 41
+                    "line": 39,
+                    "end": 42
                 },
                 {
                     "routes": [],
@@ -75343,8 +75343,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 44,
-                    "end": 47
+                    "line": 45,
+                    "end": 48
                 },
                 {
                     "routes": [],
@@ -75355,8 +75355,8 @@
                     "doc": "The released sections as Markdown, fetched first when the copy is a day old; '' when there is none.",
                     "shapes": [],
                     "params": [],
-                    "line": 61,
-                    "end": 77
+                    "line": 62,
+                    "end": 78
                 },
                 {
                     "routes": [],
@@ -75375,8 +75375,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 80,
-                    "end": 85
+                    "line": 81,
+                    "end": 86
                 },
                 {
                     "routes": [],
@@ -75409,8 +75409,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 49,
-                    "end": 58
+                    "line": 50,
+                    "end": 59
                 }
             ]
         },
@@ -75421,7 +75421,7 @@
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Ops/CoreStatus.php",
             "lines": 48,
-            "doc": "The core the app's update banner and chip speak of, which on Minn is\nMinn: the running engine's version, a newer release on offer\n(Ops\\Releases, asked of GitHub once a day), and installing it\n(Ops\\EngineUpdate). WordPress's own offer (the update_core transient a\nparked copy may write) is not Minn's to act on and is not shown.\ndbUpgrade is false: the database is WordPress's, and a Minn release\nnever migrates it.",
+            "doc": "The core the app's update banner and chip speak of, which on Minn is\nMinn: the running engine's version, a newer release on offer\n(Ops\\Releases, asked of the update service once a day), and installing it\n(Ops\\EngineUpdate). WordPress's own offer (the update_core transient a\nparked copy may write) is not Minn's to act on and is not shown.\ndbUpgrade is false: the database is WordPress's, and a Minn release\nnever migrates it.",
             "implements": [],
             "extends": null,
             "uses": [
@@ -75503,7 +75503,7 @@
                     "static": false,
                     "visibility": "public",
                     "signature": "data(): array",
-                    "doc": "Minn's version, any offer, and when GitHub was last asked.",
+                    "doc": "Minn's version, any offer, and when the update service was last asked.",
                     "shapes": [],
                     "params": [],
                     "line": 29,
@@ -75515,7 +75515,7 @@
                     "static": false,
                     "visibility": "public",
                     "signature": "due(): bool",
-                    "doc": "Whether GitHub was last asked a day ago or more.",
+                    "doc": "Whether the update service was last asked a day ago or more.",
                     "shapes": [],
                     "params": [],
                     "line": 42,
@@ -75527,7 +75527,7 @@
                     "static": false,
                     "visibility": "public",
                     "signature": "refresh(): void",
-                    "doc": "Asks GitHub now.",
+                    "doc": "Asks the update service now.",
                     "shapes": [],
                     "params": [],
                     "line": 48,
@@ -76097,20 +76097,77 @@
             ]
         },
         {
+            "name": "Minn\\Ops\\Directory",
+            "short": "Directory",
+            "namespace": "Minn\\Ops",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Ops/Directory.php",
+            "lines": 11,
+            "doc": "The Minn update service, https://updates.minn.run: the one place the\nengine asks about anything it does not have yet. Minn's own releases and\nchangelogs come from here (read from GitHub by the service), and the\nplugin and theme directory will too, so a site running Minn talks to Minn\nand never to wordpress.org. Every address the engine fetches from the\nservice is built here, and every download from it is pinned to ORIGIN.",
+            "implements": [],
+            "extends": null,
+            "uses": [],
+            "usedBy": [
+                "Minn\\Ops\\Changelog",
+                "Minn\\Ops\\EngineUpdate",
+                "Minn\\Ops\\Release",
+                "Minn\\Ops\\Releases"
+            ],
+            "constructor": null,
+            "cases": [],
+            "constants": [
+                {
+                    "name": "ORIGIN",
+                    "value": "'https://updates.minn.run/'",
+                    "doc": "",
+                    "visibility": "public"
+                },
+                {
+                    "name": "BASE",
+                    "value": "'https://updates.minn.run/v1/'",
+                    "doc": "",
+                    "visibility": "public"
+                }
+            ],
+            "properties": [],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "url",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "url(string $path): string",
+                    "doc": "An address on the service: a path under /v1/, such as \"minn/releases/latest\".",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "path",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 21,
+                    "end": 24
+                }
+            ]
+        },
+        {
             "name": "Minn\\Ops\\EngineUpdate",
             "short": "EngineUpdate",
             "namespace": "Minn\\Ops",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Ops/EngineUpdate.php",
-            "lines": 105,
-            "doc": "Replaces the running engine with a published release. The release's\nminn.zip comes from the engine repository's own GitHub release downloads\nand nowhere else (every redirect hop is judged), must match the sha256\nGitHub publishes for it, and is unpacked beside the engine into a folder\nof its own, where it is checked again: its bootstrap names the version on\noffer and bin/minn is there. Then the\nswap, two renames in the folder the engine lives in: the running engine\nmoves aside, the new one moves in, and the old copy is removed; when the\nsecond rename fails the first is undone. The legacy install record\n(.install.json, from installs that kept it inside the engine) comes\nalong. One update runs at a time. A development checkout (a symbolic\nlink, or a folder under git) is refused: git owns those. The site keeps\nanswering throughout.",
+            "lines": 129,
+            "doc": "Replaces the running engine with a published release. The release's\nminn.zip comes from the Minn update service and nowhere else (every\nredirect hop is judged), must match the sha256 its release records, and\nmust carry an Ed25519 signature made with a key this engine was built to\ntrust (KEYS; the secret half never leaves the release maintainer's\nmachine, so neither GitHub nor the service can stand in a build of their\nown). It is unpacked beside the engine into a folder of its own, where it\nis checked again: its bootstrap names the version on offer and bin/minn is\nthere. Then the swap, two renames in the folder the engine lives in: the\nrunning engine moves aside, the new one moves in, and the old copy is\nremoved; when the second rename fails the first is undone. The legacy\ninstall record (.install.json, from installs that kept it inside the\nengine) comes along. One update runs at a time. A development checkout (a\nsymbolic link, or a folder under git) is refused: git owns those. The\nsite keeps answering throughout.",
             "implements": [],
             "extends": null,
             "uses": [
                 "Minn\\Http\\Download",
                 "Minn\\Ops\\Archive",
+                "Minn\\Ops\\Directory",
                 "Minn\\Ops\\Release",
-                "Minn\\Ops\\Releases",
                 "Minn\\Support\\Files"
             ],
             "usedBy": [
@@ -76119,9 +76176,11 @@
                 "Minn\\Rest\\Services"
             ],
             "constructor": {
-                "signature": "__construct(string $engineDir)",
+                "signature": "__construct(string $engineDir, array $keys = self::KEYS)",
                 "doc": "",
-                "shapes": [],
+                "shapes": [
+                    "@param list<string> $keys the release keys to trust (tests pass their own)"
+                ],
                 "params": [
                     {
                         "name": "engineDir",
@@ -76129,19 +76188,26 @@
                         "shape": "",
                         "default": null,
                         "doc": ""
+                    },
+                    {
+                        "name": "keys",
+                        "type": "array",
+                        "shape": "list<string>",
+                        "default": "self::KEYS",
+                        "doc": "the release keys to trust (tests pass their own)"
                     }
                 ],
                 "visibility": "public",
-                "line": 33,
-                "end": 35
+                "line": 40,
+                "end": 42
             },
             "cases": [],
             "constants": [
                 {
-                    "name": "HOSTS",
-                    "value": "array (   0 => 'https://github.com/',   1 => 'https://objects.githubusercontent.com/',   2 => 'https://release-assets.githubusercontent.com/', )",
-                    "doc": "Where a release asset may come from: the release page's link and the hosts it redirects to.",
-                    "visibility": "private"
+                    "name": "KEYS",
+                    "value": "array (   0 => '+Usjnr1ZTudBbWToqYLkZ1Oy2yKN07d9+u62AIJ2FG8=', )",
+                    "doc": "The public halves of the keys that sign Minn releases (base64 Ed25519;\nscripts/release-key.php). A new key ships here in a release signed by\nan old one before it signs anything.",
+                    "visibility": "public"
                 },
                 {
                     "name": "MAX_DOWNLOAD",
@@ -76154,6 +76220,15 @@
                 {
                     "name": "engineDir",
                     "type": "string",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
+                },
+                {
+                    "name": "keys",
+                    "type": "array",
                     "readonly": true,
                     "static": false,
                     "doc": "",
@@ -76179,16 +76254,16 @@
                             "doc": ""
                         }
                     ],
-                    "line": 38,
-                    "end": 49
+                    "line": 45,
+                    "end": 53
                 },
                 {
                     "routes": [],
                     "name": "install",
                     "static": false,
                     "visibility": "public",
-                    "signature": "install(string $zip, string $sha256, string $version): string",
-                    "doc": "Installs an archive in hand once it matches its checksum and holds the version named; the version now in place.",
+                    "signature": "install(string $zip, string $sha256, string $signature, string $version): string",
+                    "doc": "Installs an archive in hand once it matches its checksum and signature and holds the version named; the version now in place.",
                     "shapes": [],
                     "params": [
                         {
@@ -76206,6 +76281,13 @@
                             "doc": ""
                         },
                         {
+                            "name": "signature",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
                             "name": "version",
                             "type": "string",
                             "shape": "",
@@ -76213,8 +76295,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 52,
-                    "end": 72
+                    "line": 56,
+                    "end": 79
                 },
                 {
                     "routes": [],
@@ -76233,8 +76315,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 113,
-                    "end": 117
+                    "line": 139,
+                    "end": 143
                 },
                 {
                     "routes": [],
@@ -76267,8 +76349,35 @@
                             "doc": ""
                         }
                     ],
-                    "line": 75,
-                    "end": 110
+                    "line": 82,
+                    "end": 117
+                },
+                {
+                    "routes": [],
+                    "name": "signed",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "signed(string $zip, string $signature): bool",
+                    "doc": "Whether one of the trusted keys made this signature over the archive.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "zip",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "signature",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 120,
+                    "end": 136
                 },
                 {
                     "routes": [],
@@ -76279,8 +76388,8 @@
                     "doc": "A link, or a folder inside a git working copy at any depth (the engine's own repository keeps it two levels down).",
                     "shapes": [],
                     "params": [],
-                    "line": 120,
-                    "end": 129
+                    "line": 146,
+                    "end": 155
                 }
             ]
         },
@@ -77516,17 +77625,19 @@
             "namespace": "Minn\\Ops",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Ops/Release.php",
-            "lines": 77,
-            "doc": "One published Minn release as GitHub describes it: the version its tag\nnames (v0.1.0 is 0.1.0), its notes and page, when it went out, and the\nminn.zip it ships with that file's sha256 (the digest GitHub publishes\nfor every release asset). A draft, a pre-release, a tag that is not a\nversion, or a release without minn.zip is not a release Minn offers.",
+            "lines": 58,
+            "doc": "One published Minn release as the update service describes it (and as\nthe minn_release option keeps it, the same shape): the version, its notes\nand page, when it went out, and its minn.zip with that file's sha256 and\nits Ed25519 signature. Anything else is not a release Minn offers: a\nversion that is not major.minor.patch, a package anywhere but Minn's own\ndownloads, a missing checksum, or a missing signature.",
             "implements": [],
             "extends": null,
-            "uses": [],
+            "uses": [
+                "Minn\\Ops\\Directory"
+            ],
             "usedBy": [
                 "Minn\\Ops\\EngineUpdate",
                 "Minn\\Ops\\Releases"
             ],
             "constructor": {
-                "signature": "__construct(string $version, string $url, string $published, string $notes, string $package, string $sha256)",
+                "signature": "__construct(string $version, string $url, string $published, string $notes, string $package, string $sha256, string $signature)",
                 "doc": "",
                 "shapes": [],
                 "params": [
@@ -77571,11 +77682,18 @@
                         "shape": "",
                         "default": null,
                         "doc": ""
+                    },
+                    {
+                        "name": "signature",
+                        "type": "string",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
                     }
                 ],
                 "visibility": "public",
-                "line": 19,
-                "end": 27
+                "line": 23,
+                "end": 32
             },
             "cases": [],
             "constants": [
@@ -77583,6 +77701,12 @@
                     "name": "ASSET",
                     "value": "'minn.zip'",
                     "doc": "The archive every release ships: the public/minn/ tree with Minn Admin bundled at minn/admin.",
+                    "visibility": "public"
+                },
+                {
+                    "name": "DOWNLOADS",
+                    "value": "'https://updates.minn.run/v1/minn/download/'",
+                    "doc": "Where release packages download from; EngineUpdate fetches nothing else.",
                     "visibility": "public"
                 }
             ],
@@ -77640,38 +77764,25 @@
                     "doc": "",
                     "visibility": "public",
                     "promoted": true
+                },
+                {
+                    "name": "signature",
+                    "type": "string",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "public",
+                    "promoted": true
                 }
             ],
             "methods": [
-                {
-                    "routes": [],
-                    "name": "fromGitHub",
-                    "static": true,
-                    "visibility": "public",
-                    "signature": "fromGitHub(array $answer): ?self",
-                    "doc": "A release from GitHub's answer for releases/latest (or one entry of\nreleases); null when it is not one Minn offers.",
-                    "shapes": [
-                        "@param array<string, mixed> $answer"
-                    ],
-                    "params": [
-                        {
-                            "name": "answer",
-                            "type": "array",
-                            "shape": "array<string, mixed>",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 35,
-                    "end": 59
-                },
                 {
                     "routes": [],
                     "name": "fromArray",
                     "static": true,
                     "visibility": "public",
                     "signature": "fromArray(array $row): ?self",
-                    "doc": "A release as the minn_release option keeps it; null for anything else.",
+                    "doc": "A release from the service's answer or the stored option; null when it is not one Minn offers.",
                     "shapes": [
                         "@param array<string, mixed> $row"
                     ],
@@ -77684,8 +77795,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 66,
-                    "end": 73
+                    "line": 39,
+                    "end": 55
                 },
                 {
                     "routes": [],
@@ -77695,11 +77806,11 @@
                     "signature": "toArray(): array",
                     "doc": "The release as it is kept in the minn_release option.",
                     "shapes": [
-                        "@return array{version: string, url: string, published: string, notes: string, package: string, sha256: string}"
+                        "@return array{version: string, url: string, published: string, notes: string, package: string, sha256: string, signature: string}"
                     ],
                     "params": [],
-                    "line": 80,
-                    "end": 83
+                    "line": 62,
+                    "end": 65
                 },
                 {
                     "routes": [],
@@ -77718,8 +77829,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 86,
-                    "end": 89
+                    "line": 68,
+                    "end": 71
                 }
             ]
         },
@@ -77729,21 +77840,20 @@
             "namespace": "Minn\\Ops",
             "kind": "final class",
             "file": "public/minn/src/Minn/Ops/Releases.php",
-            "lines": 89,
-            "doc": "Whether a newer Minn is out, asked of GitHub at most once a day: the\nlatest published release of the engine's own repository, kept in the\nminn_release option (JSON) with the time it was asked. A check GitHub\ndoes not answer (offline, rate limited) keeps the last answer and waits\na day like any other; a repository with no published release (a 404,\nwhich is also what a private one answers) offers nothing. This is Minn\nasking Minn, never wordpress.org.",
+            "lines": 86,
+            "doc": "Whether a newer Minn is out, asked of the Minn update service at most\nonce a day: its latest installable release (published on GitHub, read\nby the service), kept in the minn_release option (JSON) with the time it\nwas asked. A check the service does not answer (offline, GitHub rate\nlimiting it) keeps the last answer and waits a day like any other; no\ninstallable release (a 404) offers nothing. This is Minn asking Minn,\nnever wordpress.org, and never GitHub directly.",
             "implements": [],
             "extends": null,
             "uses": [
                 "Minn\\Content\\Site",
                 "Minn\\Http",
+                "Minn\\Ops\\Directory",
                 "Minn\\Ops\\Release"
             ],
             "usedBy": [
                 "Minn\\Admin\\Notifications",
                 "Minn\\Cli\\Installer",
-                "Minn\\Ops\\Changelog",
                 "Minn\\Ops\\CoreStatus",
-                "Minn\\Ops\\EngineUpdate",
                 "Minn\\Rest\\Services"
             ],
             "constructor": {
@@ -77784,8 +77894,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 33,
-                "end": 39
+                "line": 30,
+                "end": 36
             },
             "cases": [],
             "constants": [
@@ -77802,21 +77912,9 @@
                     "visibility": "public"
                 },
                 {
-                    "name": "REPOSITORY",
-                    "value": "'austinginder/minn-engine'",
-                    "doc": "",
-                    "visibility": "public"
-                },
-                {
                     "name": "SOURCE",
-                    "value": "'https://api.github.com/repos/austinginder/minn-engine/releases/latest'",
+                    "value": "'https://updates.minn.run/v1/minn/releases/latest'",
                     "doc": "",
-                    "visibility": "public"
-                },
-                {
-                    "name": "DOWNLOADS",
-                    "value": "'https://github.com/austinginder/minn-engine/releases/download/'",
-                    "doc": "Where the repository's release assets download from; nothing else is installed.",
                     "visibility": "public"
                 }
             ],
@@ -77883,8 +77981,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 42,
-                    "end": 51
+                    "line": 39,
+                    "end": 48
                 },
                 {
                     "routes": [],
@@ -77897,8 +77995,8 @@
                         "@return array{checked: int, latest: ?array<string, string>}"
                     ],
                     "params": [],
-                    "line": 58,
-                    "end": 65
+                    "line": 55,
+                    "end": 62
                 },
                 {
                     "routes": [],
@@ -77909,8 +78007,8 @@
                     "doc": "Whether the stored answer is a day old, or there is none.",
                     "shapes": [],
                     "params": [],
-                    "line": 68,
-                    "end": 71
+                    "line": 65,
+                    "end": 68
                 },
                 {
                     "routes": [],
@@ -77918,13 +78016,13 @@
                     "static": false,
                     "visibility": "public",
                     "signature": "refresh(): array",
-                    "doc": "Asks GitHub now and keeps the answer; `answered` says whether GitHub\ndid (when it did not, `latest` is the last answer kept).",
+                    "doc": "Asks the service now and keeps the answer; `answered` says whether it\ndid (when it did not, `latest` is the last answer kept).",
                     "shapes": [
                         "@return array{checked: int, latest: ?array<string, string>, answered: bool}"
                     ],
                     "params": [],
-                    "line": 79,
-                    "end": 93
+                    "line": 76,
+                    "end": 90
                 },
                 {
                     "routes": [],
@@ -77935,8 +78033,8 @@
                     "doc": "The release on offer: the latest one, when it is newer than the running engine.",
                     "shapes": [],
                     "params": [],
-                    "line": 96,
-                    "end": 101
+                    "line": 93,
+                    "end": 98
                 },
                 {
                     "routes": [],
@@ -77955,8 +78053,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 103,
-                    "end": 107
+                    "line": 100,
+                    "end": 104
                 }
             ]
         },

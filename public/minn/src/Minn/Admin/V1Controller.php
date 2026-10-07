@@ -49,7 +49,7 @@ final readonly class V1Controller
         return Reply::answer($request, ['ok' => true]);
     }
 
-    /** Minn's version and any newer release; a day-old check of GitHub runs once the answer is sent. */
+    /** Minn's version and any newer release; a day-old check of the update service runs once the answer is sent. */
     #[Route(Method::Get, '/minn-admin/v1/core', policy: new Policy(Access::Floor))]
     public function core(Request $request): Response
     {
@@ -90,7 +90,7 @@ final readonly class V1Controller
         return $checks ? $this->checkingReleases($response) : $response;
     }
 
-    /** The answer, with GitHub asked about Minn's releases after it is sent when the last check is a day old. */
+    /** The answer, with the update service asked about Minn's releases after it is sent when the last check is a day old. */
     private function checkingReleases(Response $response): Response
     {
         if (!$this->core->due()) {

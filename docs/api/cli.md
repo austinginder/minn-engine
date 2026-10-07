@@ -224,7 +224,7 @@ What the site will and will not get; the worst light decides install. The report
 
 ### `update(array $options): int`
 
-Replaces this engine with the latest release on GitHub; --check only says whether there is one.
+Replaces this engine with the latest release from the Minn update service; --check only says whether there is one.
 
 ### `status(string $root): int`
 

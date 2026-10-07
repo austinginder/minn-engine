@@ -1385,7 +1385,7 @@
             "pattern": "/minn-admin/v1/check-updates",
             "name": "Minn\\Admin\\UpdatesController::check",
             "handler": "Minn\\Admin\\UpdatesController::check",
-            "summary": "Asks again, now: wordpress.org for plugins and themes, and GitHub for Minn itself (its status answered as core).",
+            "summary": "Asks again, now: wordpress.org for plugins and themes, and the Minn update service for Minn itself (its status answered as core).",
             "policy": {
                 "access": "SignedIn",
                 "describe": "signed in",
@@ -1528,7 +1528,7 @@
             "pattern": "/minn-admin/v1/core",
             "name": "Minn\\Admin\\V1Controller::core",
             "handler": "Minn\\Admin\\V1Controller::core",
-            "summary": "Minn's version and any newer release; a day-old check of GitHub runs once the answer is sent.",
+            "summary": "Minn's version and any newer release; a day-old check of the update service runs once the answer is sent.",
             "policy": {
                 "access": "Floor",
                 "describe": "floor edit_posts",

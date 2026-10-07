@@ -9,22 +9,19 @@ use Minn\Content\Site;
 use Minn\Http;
 
 /**
- * Whether a newer Minn is out, asked of GitHub at most once a day: the
- * latest published release of the engine's own repository, kept in the
- * minn_release option (JSON) with the time it was asked. A check GitHub
- * does not answer (offline, rate limited) keeps the last answer and waits
- * a day like any other; a repository with no published release (a 404,
- * which is also what a private one answers) offers nothing. This is Minn
- * asking Minn, never wordpress.org.
+ * Whether a newer Minn is out, asked of the Minn update service at most
+ * once a day: its latest installable release (published on GitHub, read
+ * by the service), kept in the minn_release option (JSON) with the time it
+ * was asked. A check the service does not answer (offline, GitHub rate
+ * limiting it) keeps the last answer and waits a day like any other; no
+ * installable release (a 404) offers nothing. This is Minn asking Minn,
+ * never wordpress.org, and never GitHub directly.
  */
 final class Releases
 {
     public const OPTION = 'minn_release';
     public const TTL = 86400;
-    public const REPOSITORY = 'austinginder/minn-engine';
-    public const SOURCE = 'https://api.github.com/repos/' . self::REPOSITORY . '/releases/latest';
-    /** Where the repository's release assets download from; nothing else is installed. */
-    public const DOWNLOADS = 'https://github.com/' . self::REPOSITORY . '/releases/download/';
+    public const SOURCE = Directory::BASE . 'minn/releases/latest';
 
     /**
      * @param Closure(): ?string $load the stored answer, as JSON
@@ -71,7 +68,7 @@ final class Releases
     }
 
     /**
-     * Asks GitHub now and keeps the answer; `answered` says whether GitHub
+     * Asks the service now and keeps the answer; `answered` says whether it
      * did (when it did not, `latest` is the last answer kept).
      *
      * @return array{checked: int, latest: ?array<string, string>, answered: bool}
@@ -79,11 +76,11 @@ final class Releases
     public function refresh(): array
     {
         $latest = $this->stored()['latest'];
-        $reply = Http::get($this->source, headers: ['Accept: application/vnd.github+json', 'X-GitHub-Api-Version: 2022-11-28'], timeout: 5.0, hosts: [self::origin($this->source)], maxBytes: 1048576);
+        $reply = Http::get($this->source, headers: ['Accept: application/json'], timeout: 5.0, hosts: [self::origin($this->source)], maxBytes: 1048576);
         $answered = $reply->ok() || $reply->code === 404;
         if ($reply->ok()) {
             $answer = $reply->json();
-            $latest = is_array($answer) ? Release::fromGitHub($answer)?->toArray() : null;
+            $latest = is_array($answer) ? Release::fromArray($answer)?->toArray() : null;
         } elseif ($reply->code === 404) {
             $latest = null;
         }

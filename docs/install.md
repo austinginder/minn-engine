@@ -122,26 +122,36 @@ WordPress writes.
 
 ## Update
 
-Minn updates itself from its own GitHub releases, never from wordpress.org.
-Once a day the site asks GitHub for the latest published release of
-`austinginder/minn-engine` (kept in the `minn_release` option), and Minn Admin
-offers a newer one as Update Minn. From the command line, in the webroot:
+Minn updates itself through the Minn update service, never from wordpress.org.
+Once a day the site asks `https://updates.minn.run` for the latest installable
+release (kept in the `minn_release` option); the service reads it from the
+engine's GitHub releases, and Minn Admin offers a newer one as Update Minn.
+From the command line, in the webroot:
 
 ```
-php minn/bin/minn update --check   # ask GitHub, install nothing
+php minn/bin/minn update --check   # ask the update service, install nothing
 php minn/bin/minn update           # install the newer release
 ```
 
-The release's `minn.zip` is downloaded from the repository's own release
-downloads only, checked against the sha256 GitHub publishes for the asset,
-unpacked beside the engine, checked again (its bootstrap must name the version
-on offer), and swapped in with two renames: the running `minn/` moves aside,
-the new one moves in, and the old one is removed. If the second rename fails
-the first is undone. `wp-config.php`, `wp-content/` and the database are not
-touched. A `minn/` that is a symbolic link or sits inside a git checkout is
-refused (update it with git), and the web server must be able to write to the
-webroot for the Minn Admin button to work; the command line works either way
-when run as the files' owner.
+The release's `minn.zip` is downloaded from the update service only, checked
+against the sha256 its GitHub release records, and checked again against its
+Ed25519 signature: the public keys of the release signing key are built into
+the engine, and the secret half never leaves the release maintainer's machine,
+so neither GitHub nor the service can substitute a build. A release without a
+signature is never offered. The archive is then unpacked beside the engine,
+checked a third way (its bootstrap must name the version on offer), and
+swapped in with two renames: the running `minn/` moves aside, the new one
+moves in, and the old one is removed. If the second rename fails the first is
+undone. `wp-config.php`, `wp-content/` and the database are not touched. A
+`minn/` that is a symbolic link or sits inside a git checkout is refused
+(update it with git), and the web server must be able to write to the webroot
+for the Minn Admin button to work; the command line works either way when run
+as the files' owner.
+
+Cutting a release: `php scripts/build-release.php` builds and signs
+`dist/minn.zip` (key from `php scripts/release-key.php generate`, kept at
+`~/Keys/minn-release/ed25519.key`); upload `minn.zip` and `minn.zip.sig` to the
+GitHub release together.
 
 ## Proven on a real site
 

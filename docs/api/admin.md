@@ -1141,7 +1141,7 @@ Icons and details for the installed plugins.
 
 Route: `POST /minn-admin/v1/check-updates (signed in)`
 
-Asks again, now: wordpress.org for plugins and themes, and GitHub for Minn itself (its status answered as core).
+Asks again, now: wordpress.org for plugins and themes, and the Minn update service for Minn itself (its status answered as core).
 
 ### `updatePlugin(Minn\Http\Request $request): Minn\Http\Response`
 
@@ -1236,7 +1236,7 @@ Body {id} marks one read; {} marks all read.
 
 Route: `GET /minn-admin/v1/core (floor edit_posts)`
 
-Minn's version and any newer release; a day-old check of GitHub runs once the answer is sent.
+Minn's version and any newer release; a day-old check of the update service runs once the answer is sent.
 
 ### `coreUpdate(Minn\Http\Request $request): Minn\Http\Response`
 
