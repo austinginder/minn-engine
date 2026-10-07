@@ -2,12 +2,12 @@
     "generated": "2026-10-07",
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line)",
     "summary": {
-        "minn": 661,
-        "composes": 972,
+        "minn": 663,
+        "composes": 974,
         "leaf": 663,
-        "noop": 1967,
-        "functions": 4189,
-        "minnMethods": 779,
+        "noop": 1965,
+        "functions": 4191,
+        "minnMethods": 780,
         "leafLinesOver15": 13
     },
     "functions": {
@@ -16801,6 +16801,15 @@
                 "get_permalink"
             ]
         },
+        "_minn_password_settings": {
+            "file": "pluggable.php",
+            "lines": 2,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "apply_filters"
+            ]
+        },
         "_minn_pattern_markup": {
             "file": "blocks.php",
             "lines": 11,
@@ -17095,6 +17104,16 @@
                 "Minn\\Runtime\\MetaKeys::of"
             ],
             "composes": []
+        },
+        "_minn_rehash_password": {
+            "file": "user.php",
+            "lines": 3,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "wp_password_needs_rehash",
+                "wp_set_password"
+            ]
         },
         "_minn_reload_textdomains": {
             "file": "l10n.php",
@@ -31329,10 +31348,11 @@
         },
         "wp_authenticate_email_password": {
             "file": "user.php",
-            "lines": 18,
+            "lines": 19,
             "kind": "composes",
             "minn": [],
             "composes": [
+                "_minn_rehash_password",
                 "apply_filters",
                 "esc_html",
                 "get_user_by",
@@ -31350,10 +31370,11 @@
         },
         "wp_authenticate_username_password": {
             "file": "user.php",
-            "lines": 25,
+            "lines": 26,
             "kind": "composes",
             "minn": [],
             "composes": [
+                "_minn_rehash_password",
                 "apply_filters",
                 "esc_html",
                 "get_user_by",
@@ -33963,12 +33984,14 @@
         },
         "wp_hash_password": {
             "file": "pluggable.php",
-            "lines": 1,
-            "kind": "noop",
+            "lines": 2,
+            "kind": "minn",
             "minn": [
                 "Minn\\Auth\\Password::hash"
             ],
-            "composes": []
+            "composes": [
+                "_minn_password_settings"
+            ]
         },
         "wp_head": {
             "file": "template.php",
@@ -35388,10 +35411,15 @@
         },
         "wp_password_needs_rehash": {
             "file": "pluggable.php",
-            "lines": 1,
-            "kind": "noop",
-            "minn": [],
-            "composes": []
+            "lines": 2,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Auth\\Password::needsRehash"
+            ],
+            "composes": [
+                "_minn_password_settings",
+                "apply_filters"
+            ]
         },
         "wp_plugin_directory_constants": {
             "file": "misc.php",
@@ -36504,7 +36532,7 @@
         },
         "wp_set_password": {
             "file": "pluggable.php",
-            "lines": 2,
+            "lines": 3,
             "kind": "minn",
             "minn": [
                 "Minn\\Content\\Users::__construct",
@@ -36512,6 +36540,7 @@
                 "Minn\\Runtime\\Runtime::db"
             ],
             "composes": [
+                "clean_user_cache",
                 "do_action",
                 "wp_hash_password"
             ]

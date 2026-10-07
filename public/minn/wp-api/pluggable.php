@@ -151,9 +151,17 @@ endif;
 if (!function_exists('wp_hash_password')) :
 function wp_hash_password($password)
 {
-    return Password::hash((string) $password);
+    [$algorithm, $options] = _minn_password_settings();
+    return Password::hash((string) $password, $algorithm, $options);
 }
 endif;
+
+/** @internal the hashing algorithm and its options, through wp_hash_password_algorithm then wp_hash_password_options (probe password-rehash) */
+function _minn_password_settings(): array
+{
+    $algorithm = apply_filters('wp_hash_password_algorithm', PASSWORD_BCRYPT);
+    return [(string) $algorithm, (array) apply_filters('wp_hash_password_options', [], $algorithm)];
+}
 
 if (!function_exists('wp_check_password')) :
 function wp_check_password($password, $hash, $user_id = '')
@@ -166,7 +174,8 @@ endif;
 if (!function_exists('wp_password_needs_rehash')) :
 function wp_password_needs_rehash($hash, $user_id = '')
 {
-    return !str_starts_with((string) $hash, '$wp$');
+    [$algorithm, $options] = _minn_password_settings();
+    return apply_filters('password_needs_rehash', Password::needsRehash((string) $hash, $algorithm, $options), $hash, $user_id);
 }
 endif;
 
@@ -174,6 +183,7 @@ if (!function_exists('wp_set_password')) :
 function wp_set_password($password, $user_id)
 {
     (new Users(Runtime::current()->db))->setPassword((int) $user_id, wp_hash_password($password));
+    clean_user_cache((int) $user_id);
     do_action('wp_set_password', $password, $user_id);
 }
 endif;

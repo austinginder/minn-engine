@@ -7905,7 +7905,7 @@
             "namespace": "Minn\\Auth",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Auth/Authenticator.php",
-            "lines": 139,
+            "lines": 143,
             "doc": "Resolves the current user two ways. A page load carries the cookie alone;\na REST call must also carry a nonce bound to the same session.",
             "implements": [],
             "extends": null,
@@ -8167,7 +8167,7 @@
                     "static": false,
                     "visibility": "public",
                     "signature": "login(string $username, string $password): ?Minn\\Content\\UserRecord",
-                    "doc": "Username and password to a user row; no session is created here.",
+                    "doc": "Username and password to a user row, an outdated hash replaced as the sign-in succeeds; no session is created here.",
                     "shapes": [],
                     "params": [
                         {
@@ -8186,7 +8186,7 @@
                         }
                     ],
                     "line": 147,
-                    "end": 154
+                    "end": 158
                 }
             ]
         },
@@ -9369,11 +9369,13 @@
             "namespace": "Minn\\Auth",
             "kind": "final class",
             "file": "public/minn/src/Minn/Auth/Password.php",
-            "lines": 33,
-            "doc": "The stored password scheme. A modern \"$wp$2y$...\" value is bcrypt over\nbase64(HMAC-sha384(password, \"wp-sha384\")); a bare \"$2y$\" value is plain\nbcrypt. Legacy phpass \"$P$\" hashes are not verified.",
+            "lines": 59,
+            "doc": "The stored password scheme. A modern \"$wp$2y$...\" value is bcrypt over\nbase64(HMAC-sha384(password, \"wp-sha384\")) at PHP's default cost (10 up\nto PHP 8.3, 12 from 8.4) unless the site's options say otherwise; under\nanother algorithm (argon2id) the hash is that algorithm's own. Legacy\nphpass \"$P$\" hashes and any other password_hash() value still verify, and\na sign-in replaces whatever needsRehash() says is outdated (probe\npassword-rehash).",
             "implements": [],
             "extends": null,
-            "uses": [],
+            "uses": [
+                "Minn\\Auth\\PortableHash"
+            ],
             "usedBy": [
                 "Minn\\Auth\\ApplicationPasswords",
                 "Minn\\Auth\\AuthCookies",
@@ -9394,7 +9396,7 @@
                     "static": true,
                     "visibility": "public",
                     "signature": "verify(string $password, string $hash): bool",
-                    "doc": "Whether a password matches a stored hash of either scheme.",
+                    "doc": "Whether a password matches a stored hash: the \"$wp$\" scheme, legacy phpass, or any hash password_hash() makes.",
                     "shapes": [],
                     "params": [
                         {
@@ -9412,17 +9414,19 @@
                             "doc": ""
                         }
                     ],
-                    "line": 15,
-                    "end": 25
+                    "line": 19,
+                    "end": 28
                 },
                 {
                     "routes": [],
                     "name": "hash",
                     "static": true,
                     "visibility": "public",
-                    "signature": "hash(string $password): string",
-                    "doc": "A stored hash in the modern scheme: \"$wp\" plus bcrypt over the pre-hash.",
-                    "shapes": [],
+                    "signature": "hash(string $password, string $algorithm = Minn\\Auth\\PASSWORD_BCRYPT, array $options = array ( )): string",
+                    "doc": "A stored hash: bcrypt in the \"$wp$\" scheme over the pre-hash, or, under\nany other algorithm, that algorithm's own hash of the password.",
+                    "shapes": [
+                        "@param array<string, mixed> $options password_hash() options (cost, ...); PHP's defaults when empty"
+                    ],
                     "params": [
                         {
                             "name": "password",
@@ -9430,10 +9434,60 @@
                             "shape": "",
                             "default": null,
                             "doc": ""
+                        },
+                        {
+                            "name": "algorithm",
+                            "type": "string",
+                            "shape": "",
+                            "default": "Minn\\Auth\\PASSWORD_BCRYPT",
+                            "doc": ""
+                        },
+                        {
+                            "name": "options",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": "array ( )",
+                            "doc": "password_hash() options (cost, ...); PHP's defaults when empty"
                         }
                     ],
-                    "line": 28,
-                    "end": 32
+                    "line": 36,
+                    "end": 42
+                },
+                {
+                    "routes": [],
+                    "name": "needsRehash",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "needsRehash(string $hash, string $algorithm = Minn\\Auth\\PASSWORD_BCRYPT, array $options = array ( )): bool",
+                    "doc": "Whether a stored hash is not the one these settings would make: under\nbcrypt, anything outside the \"$wp$\" scheme or at another cost; under\nanother algorithm, whatever PHP says is outdated for it.",
+                    "shapes": [
+                        "@param array<string, mixed> $options"
+                    ],
+                    "params": [
+                        {
+                            "name": "hash",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "algorithm",
+                            "type": "string",
+                            "shape": "",
+                            "default": "Minn\\Auth\\PASSWORD_BCRYPT",
+                            "doc": ""
+                        },
+                        {
+                            "name": "options",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": "array ( )",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 51,
+                    "end": 57
                 },
                 {
                     "routes": [],
@@ -9452,8 +9506,28 @@
                             "doc": ""
                         }
                     ],
-                    "line": 40,
-                    "end": 43
+                    "line": 70,
+                    "end": 73
+                },
+                {
+                    "routes": [],
+                    "name": "prehash",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "prehash(string $password): string",
+                    "doc": "",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "password",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 59,
+                    "end": 62
                 }
             ]
         },
@@ -9694,6 +9768,7 @@
             "uses": [],
             "usedBy": [
                 "Minn\\Auth\\ApplicationPasswords",
+                "Minn\\Auth\\Password",
                 "Minn\\Auth\\PasswordReset",
                 "Minn\\Content\\PasswordGate",
                 "Minn\\Login\\LoginController"

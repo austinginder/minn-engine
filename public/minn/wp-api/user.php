@@ -386,6 +386,7 @@ function wp_authenticate_username_password($user, $username, $password)
     if (!wp_check_password($password, $found->user_pass, $found->ID)) {
         return new WP_Error('incorrect_password', '<strong>Error:</strong> The password you entered for the username <strong>' . esc_html($username) . '</strong> is incorrect.');
     }
+    _minn_rehash_password($found, $password);
     return $found;
 }
 
@@ -409,7 +410,16 @@ function wp_authenticate_email_password($user, $email, $password)
     if (!wp_check_password($password, $found->user_pass, $found->ID)) {
         return new WP_Error('incorrect_password', '<strong>Error:</strong> The password you entered for the email address <strong>' . esc_html($email) . '</strong> is incorrect.');
     }
+    _minn_rehash_password($found, $password);
     return $found;
+}
+
+/** @internal a good sign-in replaces an outdated hash (another cost, phpass, plain bcrypt) with the current one (probe password-rehash) */
+function _minn_rehash_password(WP_User $user, string $password): void
+{
+    if (wp_password_needs_rehash($user->user_pass, $user->ID)) {
+        wp_set_password($password, $user->ID);
+    }
 }
 
 /** The multisite step of the chain; on a single site nobody is marked as spam, so the user passes through. */

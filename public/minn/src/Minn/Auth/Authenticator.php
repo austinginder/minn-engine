@@ -143,12 +143,16 @@ final readonly class Authenticator
     /** A real hash of a password nobody knows, checked against when the user does not exist so the answer takes as long either way. */
     private const NOBODY = '$wp$2y$10$q/tQZiHVAKXuCoJIeZTH0.rb6Otms4vDKv0NrPeGKdvracPiLPy4W';
 
-    /** Username and password to a user row; no session is created here. */
+    /** Username and password to a user row, an outdated hash replaced as the sign-in succeeds; no session is created here. */
     public function login(string $username, string $password): ?UserRecord
     {
         $user = $this->users->findByLogin($username) ?? (str_contains($username, '@') ? $this->users->findByEmail($username) : null);
         if (!Password::verify($password, $user?->passwordHash ?? self::NOBODY) || $user === null) {
             return null;
+        }
+        if (Password::needsRehash($user->passwordHash)) {
+            $this->users->setPassword($user->id, Password::hash($password));
+            return $this->users->find($user->id);
         }
         return $user;
     }

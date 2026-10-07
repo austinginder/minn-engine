@@ -49,8 +49,21 @@ but not `manage_options`, `edit_others_posts`, or `promote_users`.
 - Password verification for modern installs: the stored hash is
   `$wp$` + bcrypt of `base64( HMAC-sha384( password, "wp-sha384" ) )`, so
   `password_verify( base64(hmac_sha384(pw, "wp-sha384")), substr(hash, 3) )`.
-  A bare `$2y$` bcrypt hash is verified directly. Legacy phpass `$P$` is not
-  supported yet.
+  A bare `$2y$` bcrypt hash, an argon2id hash, and legacy phpass `$P$` verify
+  too (probe `password-rehash`).
+- New hashes use PHP's default bcrypt cost: 10 up to PHP 8.3, **12 from PHP
+  8.4**. The engine pinned 10 until 2026-10-07; under PHP 8.5 WordPress then
+  rewrote every engine-made hash at its next sign-in, and because the auth
+  cookie carries the hash's last four characters, that silently signed out
+  every Minn session (the round trip caught it once its reference ran on the
+  same PHP as the engine). `wp_hash_password_algorithm` then
+  `wp_hash_password_options` choose the algorithm and options, for hashing and
+  for `wp_password_needs_rehash` alike; under bcrypt anything outside `$wp$`
+  or at another cost needs a rehash, under another algorithm PHP's own rule
+  decides, and `password_needs_rehash` has the last word. A good sign-in
+  (username or email step of the authenticate chain, and the non-booted
+  fallback) replaces an outdated hash through `wp_set_password`; a failed one
+  leaves it.
 - `minn_create_session()` generates a 43-char token, stores
   `sha256(token) => {expiration, ip, ua, login}` in the `session_tokens`
   usermeta (serialized by the engine, existing live sessions preserved and

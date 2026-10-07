@@ -8,13 +8,13 @@ passwords, sessions, cookies, nonces, roles and capabilities
 | [`AuthCookies`](#authcookies) | final readonly class | 55 | The three cookies a sign-in sets: the auth cookie on the admin and |
 | [`AuthFailure`](#authfailure) | final readonly class | 18 | Why a request is not authenticated, as the reference's error code: a |
 | [`Authenticated`](#authenticated) | final readonly class | 16 | A validated session: the user row and the raw session token behind it. |
-| [`Authenticator`](#authenticator) | final readonly class | 139 | Resolves the current user two ways. A page load carries the cookie alone; |
+| [`Authenticator`](#authenticator) | final readonly class | 143 | Resolves the current user two ways. A page load carries the cookie alone; |
 | [`Capabilities`](#capabilities) | final readonly class | 260 | The capability engine: a user's roles from {prefix}capabilities usermeta, |
 | [`Cookie`](#cookie) | final readonly class | 75 | The logged_in auth cookie: username\|expiration\|token\|hmac, with |
 | [`FastHash`](#fasthash) | final class | 23 | The reference's hash for high-entropy secrets ("$generic$", WordPress 6.8 |
 | [`LoginThrottle`](#loginthrottle) | final readonly class | 78 | Failed sign-ins per address, so a password guesser meets a wall: twenty |
 | [`Nonce`](#nonce) | final class | 34 | The wp_rest nonce: ten characters of HMAC-md5(tick\|wp_rest\|uid\|token) |
-| [`Password`](#password) | final class | 33 | The stored password scheme. A modern "$wp$2y$..." value is bcrypt over |
+| [`Password`](#password) | final class | 59 | The stored password scheme. A modern "$wp$2y$..." value is bcrypt over |
 | [`PasswordReset`](#passwordreset) | final readonly class | 69 | Password reset keys in the reference's storage shape: user_activation_key |
 | [`PortableHash`](#portablehash) | final class | 61 | The portable phpass hash ("$P$"), from the published algorithm: an |
 | [`RegisteredCaps`](#registeredcaps) | final class | 22 | The capability names a plugin's post type or taxonomy registered, read |
@@ -234,7 +234,7 @@ Whether Basic auth may sign this user in; the runtime's filter has the last word
 
 ### `login(string $username, string $password): ?Minn\Content\UserRecord`
 
-Username and password to a user row; no session is created here.
+Username and password to a user row, an outdated hash replaced as the sign-in succeeds; no session is created here.
 
 
 ## Capabilities
@@ -436,18 +436,33 @@ The nonce for a given tick.
 `final class Minn\Auth\Password` · `public/minn/src/Minn/Auth/Password.php`
 
 The stored password scheme. A modern "$wp$2y$..." value is bcrypt over
-base64(HMAC-sha384(password, "wp-sha384")); a bare "$2y$" value is plain
-bcrypt. Legacy phpass "$P$" hashes are not verified.
+base64(HMAC-sha384(password, "wp-sha384")) at PHP's default cost (10 up
+to PHP 8.3, 12 from 8.4) unless the site's options say otherwise; under
+another algorithm (argon2id) the hash is that algorithm's own. Legacy
+phpass "$P$" hashes and any other password_hash() value still verify, and
+a sign-in replaces whatever needsRehash() says is outdated (probe
+password-rehash).
 
 Used by: `Minn\Auth\ApplicationPasswords`, `Minn\Auth\AuthCookies`, `Minn\Auth\Authenticator`, `Minn\Auth\Cookie`, `Minn\Cli\UserCommand`, `Minn\Content\Users`, `Minn\Rest\UsersController`
 
 ### static `verify(string $password, string $hash): bool`
 
-Whether a password matches a stored hash of either scheme.
+Whether a password matches a stored hash: the "$wp$" scheme, legacy phpass, or any hash password_hash() makes.
 
-### static `hash(string $password): string`
+### static `hash(string $password, string $algorithm = Minn\Auth\PASSWORD_BCRYPT, array $options = array ( )): string`
 
-A stored hash in the modern scheme: "$wp" plus bcrypt over the pre-hash.
+A stored hash: bcrypt in the "$wp$" scheme over the pre-hash, or, under
+any other algorithm, that algorithm's own hash of the password.
+
+- `@param array<string, mixed> $options password_hash() options (cost, ...); PHP's defaults when empty`
+
+### static `needsRehash(string $hash, string $algorithm = Minn\Auth\PASSWORD_BCRYPT, array $options = array ( )): bool`
+
+Whether a stored hash is not the one these settings would make: under
+bcrypt, anything outside the "$wp$" scheme or at another cost; under
+another algorithm, whatever PHP says is outdated for it.
+
+- `@param array<string, mixed> $options`
 
 ### static `fragment(string $hash): string`
 
@@ -455,6 +470,8 @@ The four characters of the hash the cookie key is derived from: the
 LAST four for a "$wp$" hash, offset 8 for legacy phpass. Getting this
 wrong yields a cookie that verifies nowhere while every other check
 passes, so both branches are pinned by the auth suite.
+
+Internals: `prehash()` (private, line 59)
 
 
 ## PasswordReset
@@ -518,7 +535,7 @@ directions of each are accepted.
 
 - const `ALPHABET` = `'./0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'`
 
-Used by: `Minn\Auth\ApplicationPasswords`, `Minn\Auth\PasswordReset`, `Minn\Content\PasswordGate`, `Minn\Login\LoginController`
+Used by: `Minn\Auth\ApplicationPasswords`, `Minn\Auth\Password`, `Minn\Auth\PasswordReset`, `Minn\Content\PasswordGate`, `Minn\Login\LoginController`
 
 ### static `hash(string $password, int $countLog2 = 13): string`
 
