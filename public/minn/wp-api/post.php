@@ -2258,6 +2258,42 @@ function _post_format_request($qvs)
     return $qvs;
 }
 
+/** @internal a format's term reads by the format's name (probe post-format-terms) */
+function _post_format_get_term($term)
+{
+    if (isset($term->slug)) {
+        $term->name = get_post_format_string(preg_replace('/^post-format-/', '', (string) $term->slug));
+    }
+    return $term;
+}
+
+/** @internal format terms in a term list read by their format's names; a list of names is read as format slugs (probe post-format-terms) */
+function _post_format_get_terms($terms, $taxonomies, $args)
+{
+    if (!in_array('post_format', (array) $taxonomies, true)) {
+        return $terms;
+    }
+    foreach ((array) $terms as $order => $term) {
+        if (($args['fields'] ?? '') === 'names') {
+            $terms[$order] = get_post_format_string(preg_replace('/^post-format-/', '', (string) $term));
+        } elseif (isset($term->taxonomy) && $term->taxonomy === 'post_format') {
+            $terms[$order] = _post_format_get_term($term);
+        }
+    }
+    return $terms;
+}
+
+/** @internal format terms among a post's terms read by their format's names (probe post-format-terms) */
+function _post_format_wp_get_object_terms($terms)
+{
+    foreach ((array) $terms as $order => $term) {
+        if (isset($term->taxonomy) && $term->taxonomy === 'post_format') {
+            $terms[$order] = _post_format_get_term($term);
+        }
+    }
+    return $terms;
+}
+
 function get_posts_by_author_sql($post_type, $full = true, $post_author = null, $public_only = false)
 {
     $types = [];

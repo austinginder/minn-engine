@@ -30,16 +30,10 @@ final class BodyClasses
         ?string $parentSlug,
         BodyFacts $facts,
     ): array {
-        $paging = array_values(array_filter($coreClasses, static fn (string $c) => preg_match('/^(?:page|single)?-?paged-\d+$/', $c) === 1));
+        $paging = array_values(array_filter($coreClasses, static fn (string $c) => preg_match('/^(?:[a-z-]+-)?paged-\d+$/', $c) === 1));
         $classes = array_values(array_diff($coreClasses, $paging));
-        // The bare paged token seats after the view tokens (home blog paged ...), the numbered ones after the embed token.
-        if (in_array('paged', $classes, true)) {
-            $classes = [...array_values(array_diff($classes, ['paged'])), 'paged'];
-        }
+        // The numbered paging tokens seat after the embed token.
         $classes = self::withSingularTokens($resolution, $classes, $customTemplate);
-        if ($facts->privacyPage) {
-            array_unshift($classes, 'privacy-policy');
-        }
         if ($facts->loggedIn) {
             $classes[] = 'logged-in';
         }

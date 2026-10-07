@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Minn\Theme;
 
+use Closure;
 use Minn\Front\Kind;
 use Minn\Front\PrintedResponse;
 use Minn\Front\Resolution;
@@ -36,14 +37,15 @@ final readonly class EmbedRenderer
 
     /**
      * The embed page, under the status the request's main query settled on;
-     * the body classes the theme's page would carry (the Minn bar's aside).
+     * the body classes the theme's page would carry (the Minn bar's aside),
+     * read once its main query stands.
      *
-     * @param list<string> $bodyClasses
+     * @param Closure(): list<string> $bodyClasses
      */
-    public function render(Resolution $resolution, array $bodyClasses): Response
+    public function render(Resolution $resolution, Closure $bodyClasses): Response
     {
-        Runtime::current()->set('classic_body_classes', array_values(array_diff($bodyClasses, ['minn-front-bar'])));
-        $response = PrintedResponse::stand($this->bridge, ['embed' => true], static function (): void {
+        $response = PrintedResponse::stand($this->bridge, ['embed' => true], static function () use ($bodyClasses): void {
+            Runtime::current()->set('classic_body_classes', array_values(array_diff($bodyClasses(), ['minn-front-bar'])));
             $template = (string) \apply_filters('template_include', \get_embed_template());
             if ($template !== '' && is_file($template)) {
                 \load_template($template, false);

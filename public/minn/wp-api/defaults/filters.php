@@ -304,6 +304,9 @@ add_action('set_user_role', 'wp_cache_set_users_last_changed');
 add_action('plugins_loaded', [WP_Site_Health::class, 'get_instance'], 0);
 // The front end's request and template steps, as the reference registers them.
 add_filter('request', '_post_format_request');
+add_filter('get_post_format', '_post_format_get_term');
+add_filter('get_terms', '_post_format_get_terms', 10, 3);
+add_filter('wp_get_object_terms', '_post_format_wp_get_object_terms');
 add_action('template_redirect', 'rest_output_link_header', 11, 0);
 add_action('template_redirect', 'wp_shortlink_header', 11, 0);
 // The sitemaps server, built on every request (its own template_redirect step answers sitemap requests after the canonical one), and robots.txt.

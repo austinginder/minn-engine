@@ -2365,6 +2365,50 @@ both stacks, and the engine adds only `Requests` and
   and `curl_multi` (`request_multiple` sends one after another; the answers
   come back in input order, the reference's in completion order).
 
+## The main query decides the page (2026-10-07)
+
+The WooCommerce suite (`tests/woo.test.php`) compares whole body-class lists and titles, and they
+showed the engine building both from the resolution (one kind per page) while the reference reads
+the main query, whose flags combine. Both now come from the main query; the resolution keeps the
+template choice, the canonical moves and the record.
+
+- **Title**: `wp_get_document_title()` is the one path (both theme kinds, feeds, embeds), from the
+  main query's flags: a date archive is `August 2026`, a listing past its first page adds
+  `Page N`, a search inside an archive reads `Search Results for …`. `Front\DocumentTitle` is gone.
+- **Body classes**: `Theme\QueryClasses` reads the main query: `home`, `blog`, `privacy-policy`,
+  `archive`, `date`, `search` + `search-results`/`search-no-results` (the page's posts),
+  `paged`, `attachment`, `error404`, then the singular's or the archive's own tokens, then
+  `paged-N` and the view's `{prefix}-paged-N` (single, page, category, tag, date, author, search,
+  post-type, in that precedence; none for the front or a plain taxonomy). The bare `paged` is
+  the listing's page only (`/multi/2/` is `paged-2 single-paged-2`); a 404 has no paging tokens.
+  Embeds read the classes after their own main query stands.
+- **Date flags** (probe `date-flags`): only the most specific part named raises its flag (time,
+  day, month, year), and `m` raises one more by its digit count (1-5 year, 6-7 month, 8-9 day, 10+
+  time); `w` raises only `is_date`.
+- **Search flags** (probe `search-flags`): a query is a search when it was given `s` at all (empty,
+  `0`, `false`, an array; not null), read from the query as first asked so a re-parse keeps it,
+  and never when it names a single.
+- **`error` from the query string** is ignored by the request parse; only a path no rule matches
+  sets it.
+- **404 for an empty listing** (`FrontLifecycle::handle404`): past the first page, or an empty
+  date that names nothing else; a date inside an existing term's, author's or type's archive, or
+  inside a search, is a 200.
+- **Post format terms** (probe `post-format-terms`): `_post_format_get_term` on `get_post_format`,
+  `_post_format_get_terms` on `get_terms`, `_post_format_wp_get_object_terms` on
+  `wp_get_object_terms`, as defaults plugins can remove. A format term reads by its format's name
+  (`Aside`); a names list is read as format slugs, so `get_terms(fields=names)` answers `""` for a
+  format term on both stacks (the names arrive already named).
+- **`add_query_arg()` without a URL** starts from the request URI with its query string
+  (WooCommerce's Store API builds `add_to_cart.url` from it).
+- **REST links**: a plugin's `add_links()` keeps every key but `href` as the link's attributes (a
+  literal `attributes` key included); `self` links on plugin routes carry `targetHints.allow`.
+- **The static front page's query** (probe `front-query`): a home query naming nothing but
+  `paged`, `page`, `cpage` or `preview` becomes the front page's (`page_id`, singular, the
+  queried object the page); a given `paged` moves into `page` and `paged` reads `""`, while
+  `is_paged` keeps the parse's answer. `/page/2/` under a static front is `home paged … page
+  page-id-N … paged-2 page-paged-2`, titled `Site – Page 2 – Tagline`. Any other var keeps it
+  the home listing.
+
 ## plugins_api (2026-10-07)
 
 `plugins_api($action, $args)` (`Ops\PluginsApi`, probe plugins-api) was

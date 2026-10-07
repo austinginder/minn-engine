@@ -90,10 +90,21 @@ final class PostQuery
         if (!isset($q['comments_per_page']) || $q['comments_per_page'] == 0) {
             $q['comments_per_page'] = Runtime::options()->filtered('comments_per_page');
         }
-        if ($query->is_home && (empty($query->query) || ($q['preview'] ?? '') === 'true') && Runtime::options()->filtered('show_on_front') === 'page' && Runtime::options()->filtered('page_on_front')) {
+        // A home query naming nothing but its page, comment page or preview is the static front page's; a page
+        // number given as paged becomes the page's own (probe front-query).
+        $frontOnly = array_diff_key((array) $query->query, array_flip(['paged', 'page', 'cpage', 'preview'])) === [];
+        if ($query->is_home && $frontOnly && Runtime::options()->filtered('show_on_front') === 'page' && Runtime::options()->filtered('page_on_front')) {
             $query->is_page = true;
+            $query->is_singular = true;
             $query->is_home = false;
+            // What it stands for is now the page, not the listing the flags first named.
+            $query->queried_object = null;
+            $query->queried_object_id = null;
             $q['page_id'] = Runtime::options()->filtered('page_on_front');
+            if (isset($query->query['paged'])) {
+                $q['page'] = (int) $q['paged'];
+                $q['paged'] = '';
+            }
         }
         if (isset($q['page'])) {
             $q['page'] = is_scalar($q['page']) ? abs((int) (trim((string) $q['page'], '/'))) : 0;

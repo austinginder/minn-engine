@@ -389,28 +389,21 @@ function _minn_seed_wp_request(array $vars): void
     $wp->did_permalink = get_option('permalink_structure') !== '';
 }
 
-/** The reference's title pipeline over the engine's parts; the result is ready to print inside <title>. */
-function _minn_document_title(array $parts): string
+/** The document title from the main query's state, through the reference's title filters; ready to print inside <title>. */
+function wp_get_document_title()
 {
     $title = apply_filters('pre_get_document_title', '');
     if (!empty($title)) {
         return (string) $title;
     }
     $sep = apply_filters('document_title_separator', '-');
-    $parts = apply_filters('document_title_parts', $parts);
+    $parts = apply_filters('document_title_parts', _minn_query_title_parts());
     $title = implode(" $sep ", array_filter((array) $parts));
     $title = wptexturize($title);
     $title = convert_chars($title);
     $title = esc_html($title);
     $title = capital_P_dangit($title);
     return (string) apply_filters('document_title', $title);
-}
-
-/** The document title: the parts the page renderer stood, or, for anything else (a feed, code of its own), the parts the main query makes. */
-function wp_get_document_title()
-{
-    $parts = Runtime::current()->get('document_title_parts');
-    return _minn_document_title(is_array($parts) ? $parts : _minn_query_title_parts());
 }
 
 /** @internal the document title's parts as the reference makes them from the main query's state (probe feed-tags) */

@@ -54,8 +54,9 @@ final readonly class FrontController
     {
         $page = $this->bridge->stand($resolution);
         $resolution = MainQueryBridge::verdict($resolution);
-        $html = $this->theme?->render($resolution, $this->renderer->bodyClasses($resolution), $this->renderer->title($resolution))
-            ?? $this->classic?->render($resolution, $this->renderer->bodyClasses($resolution), $this->renderer->title($resolution))
+        $classes = $this->renderer->bodyClasses();
+        $html = $this->theme?->render($resolution, $classes)
+            ?? $this->classic?->render($resolution, $classes)
             ?? $this->renderer->render($resolution, $page);
         return Response::html($html, $resolution->status);
     }
@@ -109,9 +110,12 @@ final readonly class FrontController
     private function rendered(Request $request, Resolution $resolution): Response
     {
         if ($this->embeds !== null && EmbedRenderer::asked($request, $resolution)) {
-            $core = $this->renderer->bodyClasses($resolution);
-            $classes = Runtime::current()->get('block_theme', false) ? $this->theme?->themeClasses($resolution, $core) : $this->classic?->themeClasses($resolution, $core);
-            return $this->embeds->render($resolution, $classes ?? $core)->withHeader('X-Powered-By', 'Minn');
+            // The classes are the embed's main query's, read once it stands.
+            $classes = function () use ($resolution): array {
+                $core = $this->renderer->bodyClasses();
+                return (Runtime::current()->get('block_theme', false) ? $this->theme?->themeClasses($resolution, $core) : $this->classic?->themeClasses($resolution, $core)) ?? $core;
+            };
+            return $this->embeds->render($resolution, $classes)->withHeader('X-Powered-By', 'Minn');
         }
         if ($this->sitemaps !== null && ($request->has('sitemap') || $request->has('sitemap-stylesheet'))) {
             return $this->sitemaps->queried($request);

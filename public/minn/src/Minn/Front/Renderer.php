@@ -10,6 +10,7 @@ use Minn\Content\Page;
 use Minn\Content\Excerpt;
 use Minn\Db;
 use Minn\Support\Html;
+use Minn\Theme\QueryClasses;
 use Minn\Content\PasswordGate;
 
 /**
@@ -26,65 +27,15 @@ final readonly class Renderer
     }
 
     /**
-     * An attachment's page: "attachment" first, then the single tokens, its
-     * id again as the attachment's, and its MIME subtype.
+     * The body classes the main query stands for (Theme\QueryClasses);
+     * none before one stands.
      *
      * @return list<string>
      */
-    private function attachmentClasses(Resolution $resolution): array
+    public function bodyClasses(): array
     {
-        $mime = str_replace(['application/', 'image/', 'text/', 'audio/', 'video/', 'music/'], '', (string) ($resolution->record['post_mime_type'] ?? ''));
-        return ['attachment', 'single', 'single-attachment', 'postid-' . $resolution->id(), 'attachmentid-' . $resolution->id(), 'attachment-' . preg_replace('/[^A-Za-z0-9_-]/', '', $mime)];
-    }
-
-    /**
-     * The body classes a resolution carries.
-     *
-     * @return list<string>
-     */
-    public function bodyClasses(Resolution $resolution): array
-    {
-        $classes = match ($resolution->kind) {
-            Kind::Home => $resolution->postsPage ? ['blog'] : ['home', 'blog'],
-            Kind::Single => ($resolution->record['post_type'] ?? 'post') === 'attachment' ? $this->attachmentClasses($resolution) : [
-                'single',
-                'single-' . (string) ($resolution->record['post_type'] ?? 'post'),
-                'postid-' . $resolution->id(),
-                ...(($resolution->record['post_type'] ?? 'post') === 'post' ? ['single-format-standard'] : []),
-            ],
-            Kind::Taxonomy => ['archive', 'tax-' . (string) $resolution->record['taxonomy'], 'term-' . (string) $resolution->record['slug'], 'term-' . $resolution->id()],
-            Kind::PostTypeArchive => ['archive', 'post-type-archive', 'post-type-archive-' . (string) ($resolution->record['name'] ?? '')],
-            Kind::Page => [...($resolution->front ? ['home'] : []), ...$this->pageClasses($resolution->record)],
-            Kind::Category => ['archive', 'category', 'category-' . $resolution->record['slug'], 'category-' . $resolution->id()],
-            Kind::Tag => ['archive', 'tag', 'tag-' . $resolution->record['slug'], 'tag-' . $resolution->id()],
-            Kind::Author => array_merge(
-                ['archive', 'author'],
-                $resolution->record === null ? [] : ['author-' . $resolution->record['user_nicename'], 'author-' . $resolution->id()],
-            ),
-            Kind::Date => ['archive', 'date'],
-            Kind::Search => ['search', 'search-results'],
-            Kind::NotFound => ['error404'],
-            Kind::Redirect => [],
-        };
-        if ($resolution->paged > 1) {
-            $prefix = match ($resolution->kind) {
-                Kind::Single => 'single-paged-',
-                Kind::Page => 'page-paged-',
-                default => null,
-            };
-            array_splice($classes, $resolution->front ? 1 : 0, 0, ['paged']);
-            $classes[] = 'paged-' . $resolution->paged;
-            if ($prefix !== null) {
-                $classes[] = $prefix . $resolution->paged;
-            }
-        }
-        return $classes;
-    }
-
-    /** The document title: the item's title with the site name, or the site name alone. */
-    public function title(Resolution $resolution): string
-    {
-        return DocumentTitle::compose(DocumentTitle::parts($resolution, (string) ($this->db->option('blogname') ?? ''), (string) ($this->db->option('blogdescription') ?? '')));
+        $query = $GLOBALS['wp_query'] ?? null;
+        return $query instanceof \WP_Query ? (new QueryClasses($this->db))->of($query) : [];
     }
 
     /** The interim page for a resolution, without a theme: a listing shows the main query's page of posts. */
@@ -97,7 +48,7 @@ final readonly class Renderer
             default => $this->archive($resolution, $page),
         };
         $heading = $title === '' ? $site : $title . ' – ' . $site;
-        $classes = implode(' ', $this->bodyClasses($resolution));
+        $classes = implode(' ', $this->bodyClasses());
         return '<!doctype html><html lang="en"><head><meta charset="utf-8">'
             . '<meta name="viewport" content="width=device-width, initial-scale=1">'
             . '<title>' . Html::esc($heading) . '</title>'
@@ -107,23 +58,6 @@ final readonly class Renderer
             . '<main>' . $main . '</main>'
             . '<footer class="site-footer">Served by Minn Engine ' . Html::esc(MINN_ENGINE_VERSION) . '</footer>'
             . '</body></html>';
-    }
-
-    private function pageClasses(PostRecord $page): array
-    {
-        $classes = ['page', 'page-id-' . $page->id];
-        $hasChildren = (int) $this->db->value(
-            "SELECT COUNT(*) FROM {$this->db->table('posts')} WHERE post_parent = ? AND post_type = 'page' AND post_status = 'publish'",
-            [$page->id],
-        );
-        if ($hasChildren > 0) {
-            $classes[] = 'page-parent';
-        }
-        if ($page->parentId > 0) {
-            $classes[] = 'page-child';
-            $classes[] = 'parent-pageid-' . $page->parentId;
-        }
-        return $classes;
     }
 
     private function article(PostRecord $post): string

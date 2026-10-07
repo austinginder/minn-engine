@@ -26,7 +26,6 @@ use Minn\Front\AdminBar;
 use Minn\Front\Kind;
 use Minn\Front\Permalinks;
 use Minn\Front\Resolution;
-use Minn\Front\DocumentTitle;
 use Minn\Runtime\Runtime;
 use Minn\Support\Html;
 
@@ -84,7 +83,7 @@ final readonly class PageRenderer
     /** The body-class tokens before plugins filter them (bodyClasses()). @return list<string> */
     public function themeClasses(Resolution $resolution, array $coreClasses): array
     {
-        $paging = array_values(array_filter($coreClasses, static fn (string $c) => preg_match('/^(?:page|single)?-?paged-\d+$/', $c) === 1));
+        $paging = array_values(array_filter($coreClasses, static fn (string $c) => preg_match('/^(?:[a-z-]+-)?paged-\d+$/', $c) === 1));
         $classes = array_values(array_diff($coreClasses, $paging));
         if ($resolution->kind === Kind::Single) {
             $at = (int) array_search('single', $classes, true);
@@ -119,7 +118,7 @@ final readonly class PageRenderer
     }
 
     /** The page for a resolution, or null when the theme has no template for it. */
-    public function render(Resolution $resolution, array $coreClasses, string $title): ?string
+    public function render(Resolution $resolution, array $coreClasses): ?string
     {
         $template = $this->templates->forResolution($resolution);
         if ($template === null) {
@@ -141,7 +140,7 @@ final readonly class PageRenderer
         // The stylesheet comes after the body: it lists the containers and
         // variations that rendering discovered.
         $styles = new GlobalStyles($this->theme, $this->templates->userStyles());
-        $title = $this->documentTitle($resolution);
+        $title = \wp_get_document_title();
         $bar = $resolution->preview ? null : $this->bar;
         $document = '<!DOCTYPE html>' . "\n" . '<html lang="en">' . "\n"
             . $this->head($resolution, $title, $styles, $bar)
@@ -184,18 +183,6 @@ final readonly class PageRenderer
             return [$body, $m[1]];
         }
         return [(string) preg_replace('/<main(\s|>)/', '<main id="wp--skip-link--target"$1', $body, 1), 'wp--skip-link--target'];
-    }
-
-    /** The title through the reference's document_title filters, which plugin code rewrites it with; the engine's parts feed them. */
-    private function documentTitle(Resolution $resolution): string
-    {
-        $parts = DocumentTitle::parts($resolution, (string) ($this->site->option('blogname') ?? ''), (string) ($this->site->option('blogdescription') ?? ''));
-        if ($resolution->kind === Kind::PostTypeArchive) {
-            // A plugin may rename its archive (WooCommerce titles the product archive after the shop page).
-            $parts['title'] = (string) \apply_filters('post_type_archive_title', $parts['title'], (string) ($resolution->record['name'] ?? ''));
-        }
-        Runtime::current()->set('document_title_parts', $parts);
-        return \_minn_document_title($parts);
     }
 
     /**

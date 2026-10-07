@@ -9,7 +9,6 @@ use Minn\Content\Reader;
 use Minn\Content\Site;
 use Minn\Content\SiteIcon;
 use Minn\Front\AdminBar;
-use Minn\Front\DocumentTitle;
 use Minn\Front\Kind;
 use Minn\Front\Permalinks;
 use Minn\Front\Resolution;
@@ -48,7 +47,7 @@ final readonly class ClassicRenderer
     }
 
     /** The page for a resolution through the theme's PHP templates. */
-    public function render(Resolution $resolution, array $coreClasses, string $title): ?string
+    public function render(Resolution $resolution, array $coreClasses): ?string
     {
         // Without the runtime (or with the theme's functions.php refused by
         // the symbol gate) the templates would fatal on the theme's own
@@ -62,7 +61,6 @@ final readonly class ClassicRenderer
             Runtime::current()->set('classic_bar', $this->bar);
         }
         Runtime::current()->set('classic_body_classes', $this->bodyClasses($resolution, $coreClasses));
-        $this->standTitle($resolution);
         $this->registerHead();
         $this->bridge->stand($resolution);
         $template = (string) \apply_filters('template_include', $this->template());
@@ -132,21 +130,11 @@ final readonly class ClassicRenderer
         }
         $parent = $this->theme->template !== $this->theme->stylesheet ? $this->theme->template : null;
         return BodyClasses::classic($resolution, $coreClasses, $custom, $this->theme->stylesheet, $parent, new BodyFacts(
-            privacyPage: $resolution->kind === Kind::Page && $resolution->id() === (int) ($this->site->option('wp_page_for_privacy_policy') ?? 0),
             loggedIn: Reader::current()->loggedIn(),
             customLogo: (int) \get_theme_mod('custom_logo') > 0,
             embedResponsive: \current_theme_supports('responsive-embeds') !== false,
             bar: $this->bar !== null && !$resolution->preview,
         ));
-    }
-
-    private function standTitle(Resolution $resolution): void
-    {
-        $parts = DocumentTitle::parts($resolution, (string) ($this->site->option('blogname') ?? ''), (string) ($this->site->option('blogdescription') ?? ''));
-        if ($resolution->kind === Kind::PostTypeArchive) {
-            $parts['title'] = (string) \apply_filters('post_type_archive_title', $parts['title'], (string) ($resolution->record['name'] ?? ''));
-        }
-        Runtime::current()->set('document_title_parts', $parts);
     }
 
     /** The piece only the renderer holds: the engine stylesheets. The head defaults registered at setup_theme. */

@@ -47,8 +47,9 @@ final readonly class QueryFlags
      *
      * @param array<string, mixed> $vars the filled query variables
      * @param callable(string): mixed $option a filtered option read
+     * @param array<string, mixed> $asked the query as it was given, before filling (a search is one that named s)
      */
-    public static function derive(array $vars, Registry $registry, callable $option): self
+    public static function derive(array $vars, Registry $registry, callable $option, array $asked): self
     {
         foreach (self::INTEGER_VARS as $key) {
             if (isset($vars[$key]) && $vars[$key] !== '' && !is_array($vars[$key])) {
@@ -68,7 +69,8 @@ final readonly class QueryFlags
         $on['is_embed'] = !empty($vars['embed']);
         $on['is_trackback'] = !empty($vars['tb']);
         $on['is_paged'] = !empty($vars['paged']) && (int) $vars['paged'] > 1;
-        $on['is_search'] = !empty($vars['s']);
+        // Naming s at all asks for a search (an empty one too), unless the query names a single (probe search-flags).
+        $on['is_search'] = isset($asked['s']);
         $on['is_feed'] = !empty($vars['feed']);
         $on['is_robots'] = !empty($vars['robots']);
         $on['is_favicon'] = !empty($vars['favicon']);
@@ -83,6 +85,7 @@ final readonly class QueryFlags
             $on += self::archiveFlags($vars, $registry);
         }
         $on['is_singular'] = !empty($on['is_single']) || !empty($on['is_page']);
+        $on['is_search'] = $on['is_search'] && !$on['is_singular'];
         $on['is_home'] = !$on['is_singular'] && empty($on['is_archive']) && !$on['is_search'] && !$on['is_feed'] && !$on['is_trackback'] && !$on['is_404'] && !$on['is_embed'] && !$on['is_robots'] && !$on['is_favicon'];
         $pageId = (int) $vars['page_id'];
         if (!empty($on['is_page']) && $pageId > 0 && $pageId === (int) $option('page_for_posts')) {
@@ -142,10 +145,25 @@ final readonly class QueryFlags
         $on = [];
         if ($vars['year'] || $vars['monthnum'] || $vars['day'] || $vars['w'] || !empty($vars['m']) || !empty($vars['hour']) || !empty($vars['minute']) || !empty($vars['second'])) {
             $on['is_date'] = true;
-            $on['is_year'] = (bool) $vars['year'];
-            $on['is_month'] = (bool) $vars['monthnum'];
-            $on['is_day'] = (bool) $vars['day'];
-            $on['is_time'] = !empty($vars['hour']) || !empty($vars['minute']) || !empty($vars['second']);
+            // The most specific part named raises its one flag, and m one more by its digit count (probe date-flags).
+            $named = match (true) {
+                !empty($vars['hour']) || !empty($vars['minute']) || !empty($vars['second']) => 'is_time',
+                (bool) $vars['day'] => 'is_day',
+                (bool) $vars['monthnum'] => 'is_month',
+                (bool) $vars['year'] => 'is_year',
+                default => null,
+            };
+            $digits = strlen((string) $vars['m']);
+            $fromM = match (true) {
+                $digits === 0 => null,
+                $digits < 6 => 'is_year',
+                $digits < 8 => 'is_month',
+                $digits < 10 => 'is_day',
+                default => 'is_time',
+            };
+            foreach (['is_year', 'is_month', 'is_day', 'is_time'] as $flag) {
+                $on[$flag] = $flag === $named || $flag === $fromM;
+            }
         }
         $categoryIds = array_filter(array_map('intval', preg_split('/[\s,]+/', (string) ($vars['cat'] ?? ''), -1, PREG_SPLIT_NO_EMPTY)), static fn (int $id) => $id > 0);
         $on['is_category'] = $categoryIds !== [] || !empty($vars['category_name']) || !empty($vars['category__in']) || !empty($vars['category__and']);

@@ -54,10 +54,11 @@ final class FrontLifecycle
      * The 404 decision, the one place it is made: a plugin's
      * pre_handle_404 may make it; otherwise a request for something the
      * site does not have is a 404, as is an empty page past the first of
-     * any listing and an empty date archive (an existing term, author or
-     * type with no posts, an empty search, the front: a 200); the status
-     * and no-cache headers follow. A feed is never a 404: one of nothing
-     * is an empty feed.
+     * any listing and an empty date archive that names nothing else (an
+     * existing term, author or type with no posts, a date inside one of
+     * those or inside a search, an empty search, the front: a 200); the
+     * status and no-cache headers follow. A feed is never a 404: one of
+     * nothing is an empty feed.
      */
     public static function handle404(\WP_Query $query, bool $notFound): void
     {
@@ -65,7 +66,8 @@ final class FrontLifecycle
             return;
         }
         $empty = empty($query->posts) && !$query->is_robots() && !$query->is_favicon();
-        if (!$query->is_feed() && ($notFound || ($empty && ($query->is_paged() || $query->is_date())))) {
+        $bareDate = $query->is_date() && !$query->is_search() && $query->get_queried_object() === null;
+        if (!$query->is_feed() && ($notFound || ($empty && ($query->is_paged() || $bareDate)))) {
             $query->set_404();
             \status_header(404);
             \nocache_headers();

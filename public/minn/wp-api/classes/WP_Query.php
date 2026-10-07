@@ -126,7 +126,7 @@ class WP_Query
         }
         $this->query_vars_changed = true;
         $this->init_query_flags();
-        $derived = QueryFlags::derive($this->fill_query_vars($this->query_vars), Runtime::registry(), static fn (string $name) => get_option($name));
+        $derived = QueryFlags::derive($this->fill_query_vars($this->query_vars), Runtime::registry(), static fn (string $name) => get_option($name), (array) $this->query);
         $this->query_vars = $derived->vars;
         foreach ($derived->flags as $flag => $on) {
             $this->{$flag} = $on;
