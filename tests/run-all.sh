@@ -7,9 +7,10 @@
 # own parked WordPress on 127.0.0.1:8128. Nothing here writes to it, so a run
 # that dies half way can no longer strand the marketing page on another theme.
 #
-# References: 8123 the test site's, 8124 the dogfood site's, 8128 the
-# marketing site's, 8129 the round-trip site's. Each is started below when
-# its port is quiet. A suite whose reference is unreachable skips and says so.
+# References: 8123 the test site's, 8124 the dogfood site's, 8126 the
+# WooCommerce lab's, 8128 the marketing site's, 8129 the round-trip site's.
+# Each is started below when its port is quiet. A suite whose reference is
+# unreachable skips and says so.
 set -u
 cd "$( dirname "$0" )"
 
@@ -20,6 +21,8 @@ SITE_ROOT="$( cd .. && pwd )"
 php tools/site-skeleton.php "$TEST_ROOT" >/dev/null
 php tools/site-skeleton.php "$SITE_ROOT" >/dev/null
 [ -d ~/Cove/Sites/dogfood.localhost/public ] && php tools/site-skeleton.php ~/Cove/Sites/dogfood.localhost >/dev/null
+WOO_ROOT="${MINN_WOO_ROOT:-~/Cove/Sites/minnwoo.localhost}"
+[ -d "$WOO_ROOT/public" ] && php tools/site-skeleton.php "$WOO_ROOT" >/dev/null
 
 # Start a reference server when its port is quiet, so no suite skips on the
 # dev box. Servers started here are stopped on exit; ones already running are
@@ -71,12 +74,14 @@ pin_locale
 start_reference "$TEST_ROOT/wp-reference" 8123
 start_reference "$DOGFOOD_REF" 8124
 start_reference "$SITE_ROOT/wp-reference" 8128
+# The WooCommerce lab (tests/woo.test.php); it skips when there is none.
+[ -f "$WOO_ROOT/private/woo-baseline.sql" ] && start_reference "$WOO_ROOT/wp-reference" 8126
 # The round trip runs on a copy of a real site (tests/round-trip.test.php); it skips when there is none.
 ROUNDTRIP_ROOT="${MINN_ROUNDTRIP_ROOT:-~/Cove/Sites/cove-minn.localhost}"
 [ -f "$ROUNDTRIP_ROOT/private/round-trip.json" ] && start_reference "$ROUNDTRIP_ROOT/wp-reference" 8129
 
 failed=0
-for suite in unit http style hooks api runtime ajax hook-trace front-lifecycle rest-gate abilities rest-posts auth identity application-passwords caps writes login-endpoint login-hooks rest-parity allow embed minn-v1 comments media settings users terms write-fields editor templates navigation permalinks blocks theme classic styles probes dogfood cli layout hardening security install cron-mail cron reader extensions front-method recovery front-page menus declared-types global-styles reusable-blocks admin-surfaces updates site code-size l10n dropins feeds requests mail html-api comment-form feed-hooks sitemap-hooks embed-template attachment-pages canonical-hooks request-vars plugin-rules rewrite-endpoints rest-envelope round-trip; do
+for suite in unit http style hooks api runtime ajax hook-trace front-lifecycle rest-gate abilities rest-posts auth identity application-passwords caps writes login-endpoint login-hooks rest-parity allow embed minn-v1 comments media settings users terms write-fields editor templates navigation permalinks blocks theme classic styles probes dogfood cli layout hardening security install cron-mail cron reader extensions front-method recovery front-page menus declared-types global-styles reusable-blocks admin-surfaces updates site code-size l10n dropins feeds requests mail html-api comment-form feed-hooks sitemap-hooks embed-template attachment-pages canonical-hooks request-vars plugin-rules rewrite-endpoints rest-envelope round-trip woo; do
 	printf '\n=== %s ===\n' "$suite"
 	php "$suite.test.php" || failed=1
 done
