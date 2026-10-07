@@ -5,12 +5,13 @@ not a page. Suite: `tests/probes.test.php` (status, content type, and for
 feeds, sitemaps, robots, xmlrpc, and cron the body, after host, generator
 version, container suffix, and per-request ids are neutralised). Pinned copies
 in `contracts/fixtures/probes/`; re-capture with `--capture`. Code:
-`public/minn/src/Minn/Front/{ProbeController,Feeds,Sitemaps}.php`, `public/minn/src/Minn/Rest/IndexController.php`.
+`public/minn/src/Minn/Front/{ProbeController,FeedController,FeedTemplates,SitemapController}.php`, `public/minn/src/Minn/Rest/IndexController.php`.
 
-## Feeds (`Feeds`)
+## Feeds (`FeedController`, `FeedTemplates`, `wp-api/feed.php`)
 
-Byte for byte with the reference, tabs and blank lines included; the shapes are
-in the code. Facts worth knowing:
+Byte for byte with the reference, tabs and blank lines included; every feed
+runs WordPress's feed lifecycle (the main query, then `do_feed`), so the
+shapes are in the feed templates. Facts worth knowing:
 
 - `/feed/` and `/feed/rss2/` are RSS 2.0; `/feed/atom/` and `/feed/rdf/` exist;
   `?feed=rss2` works on any resolvable path and the self link keeps the query.

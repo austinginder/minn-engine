@@ -64,7 +64,7 @@ The classic paragraph rules: a blank line makes a paragraph, a single newline a 
 The content pipeline's front door: block markup goes through the block
 renderer (Minn\Blocks), classic content rides the paragraph pipeline.
 
-Used by: `Minn\Admin\RenderController`, `Minn\Blocks\Dynamic\Theme\Comments`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Front\FeedController`, `Minn\Front\Feeds`, `Minn\Front\Renderer`, `Minn\Rest\CommentObject`, `Minn\Rest\MediaObject`, `Minn\Rest\RenderedFields`, `Minn\Rest\RevisionsController`, `Minn\Theme\ClassicContent`, `Minn\Theme\PageRenderer`
+Used by: `Minn\Admin\RenderController`, `Minn\Blocks\Dynamic\Theme\Comments`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Front\FeedController`, `Minn\Front\Renderer`, `Minn\Rest\CommentObject`, `Minn\Rest\MediaObject`, `Minn\Rest\RenderedFields`, `Minn\Rest\RevisionsController`, `Minn\Theme\ClassicContent`, `Minn\Theme\PageRenderer`
 
 
 ### static `render(string $raw): string`
@@ -134,7 +134,7 @@ One row of the comments table, read by name: $comment->author, ->content,
 ->postId, ->parentId, and isApproved() for the status the reference
 stores as '1'. Array access is the migration bridge, read-only.
 
-Used by: `Minn\Admin\Notifications`, `Minn\Blocks\Context`, `Minn\Blocks\Dynamic\LatestComments`, `Minn\Blocks\Dynamic\Theme\Comments`, `Minn\Content\Comments`, `Minn\Front\CommentList`, `Minn\Front\Feeds`, `Minn\Rest\CommentObject`, `Minn\Rest\CommentsController`, `Minn\Runtime\CommentEvents`
+Used by: `Minn\Admin\Notifications`, `Minn\Blocks\Context`, `Minn\Blocks\Dynamic\LatestComments`, `Minn\Blocks\Dynamic\Theme\Comments`, `Minn\Content\Comments`, `Minn\Front\CommentList`, `Minn\Rest\CommentObject`, `Minn\Rest\CommentsController`, `Minn\Runtime\CommentEvents`
 
 - readonly `int $id`
 - readonly `int $postId`
@@ -210,7 +210,7 @@ Reads and writes over the comments table.
 - const `UPDATABLE` = `array (   0 => 'comment_post_ID',   1 => 'comment_author',   2 => 'comment_author_email',   3 => 'comment_author_url',   4 => 'comment_author_IP',   5 => 'comment_date',   6 => 'comment_date_gmt',   7 => 'comment_content',   8 => 'comment_karma',   9 => 'comment_approved',   10 => 'comment_agent',   11 => 'comment_type',   12 => 'comment_parent',   13 => 'user_id', )`
 - const `FIELD_LENGTHS` = `array (   'comment_author' => 245,   'comment_author_email' => 100,   'comment_author_url' => 200,   'comment_content' => 65525, )` — The comment form fields whose length the table limits, with the length a stock table gives each.
 
-Used by: `Minn\Blocks\Dynamic\Theme\Comments`, `Minn\Content\CommentModeration`, `Minn\Engine`, `Minn\Front\CommentPostController`, `Minn\Front\Feeds`, `Minn\Rest\CommentObject`, `Minn\Rest\CommentsController`, `Minn\Rest\Services`, `Minn\Runtime\CommentEvents`, `Minn\Theme\PageRenderer`
+Used by: `Minn\Blocks\Dynamic\Theme\Comments`, `Minn\Content\CommentModeration`, `Minn\Engine`, `Minn\Front\CommentPostController`, `Minn\Rest\CommentObject`, `Minn\Rest\CommentsController`, `Minn\Rest\Services`, `Minn\Runtime\CommentEvents`, `Minn\Theme\PageRenderer`
 
 ```php
 __construct(Minn\Db $db)
@@ -443,7 +443,7 @@ texturized (a feed texturizes first, so its inline code stays raw). A hand-writt
 - const `ALLOWED` = `array (   0 => 'core/paragraph',   1 => 'core/heading',   2 => 'core/list',   3 => 'core/quote',   4 => 'core/pullquote',   5 => 'core/verse',   6 => 'core/preformatted',   7 => 'core/table',   8 => 'core/group',   9 => 'core/columns',   10 => 'core/column',   11 => 'core/media-text',   12 => 'core/html',   13 => 'core/more',   14 => 'core/freeform', )`
 - const `INLINE` = `array (   0 => 'a',   1 => 'abbr',   2 => 'b',   3 => 'bdi',   4 => 'bdo',   5 => 'br',   6 => 'cite',   7 => 'code',   8 => 'data',   9 => 'dfn',   10 => 'em',   11 => 'i',   12 => 'kbd',   13 => 'mark',   14 => 'q',   15 => 's',   16 => 'samp',   17 => 'small',   18 => 'span',   19 => 'strong',   20 => 'sub',   21 => 'sup',   22 => 'time',   23 => 'u',   24 => 'var',   25 => 'wbr',   26 => 'del',   27 => 'ins', )`
 
-Used by: `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Front\Feeds`, `Minn\Front\Renderer`, `Minn\Rest\RenderedFields`
+Used by: `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Front\Renderer`, `Minn\Rest\RenderedFields`
 
 ### static `render(Minn\Content\PostRecord $post): string`
 
@@ -780,7 +780,7 @@ reference shows them to a reader who has not entered the password.
 
 - const `EXCERPT` = `'There is no excerpt because this is a protected post.'`
 
-Used by: `Minn\Blocks\Dynamic\LatestPosts`, `Minn\Blocks\Dynamic\Theme\Comments`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Front\Feeds`, `Minn\Front\Renderer`, `Minn\Theme\ClassicContent`
+Used by: `Minn\Blocks\Dynamic\LatestPosts`, `Minn\Blocks\Dynamic\Theme\Comments`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Front\Renderer`, `Minn\Theme\ClassicContent`
 
 ### static `is(Minn\Content\PostRecord $post): bool`
 
@@ -864,7 +864,7 @@ What a listing is narrowed to. Every field is optional and the object is
 immutable, so a filter reads as a sentence: types('post')->inTerm(12).
 Dates are site-local "Y-m-d H:i:s" bounds, from inclusive, to exclusive.
 
-Used by: `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Content\Posts`, `Minn\Front\ArchiveAddresses`, `Minn\Front\FeedController`, `Minn\Front\Renderer`, `Minn\Front\Resolver`, `Minn\Front\RuleRoutes`, `Minn\Theme\MainQueryBridge`
+Used by: `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Content\Posts`, `Minn\Front\ArchiveAddresses`, `Minn\Front\Renderer`, `Minn\Front\Resolver`, `Minn\Front\RuleRoutes`, `Minn\Theme\MainQueryBridge`
 
 ```php
 __construct(array $types = array (   0 => 'post', ), ?int $term = NULL, ?int $author = NULL, ?string $from = NULL, ?string $to = NULL, ?string $search = NULL)
@@ -921,7 +921,7 @@ Array access is the migration bridge: code that still reads
 $post['post_title'] keeps working while it is moved over. New code
 reads the properties. The style suite counts the bracket reads down.
 
-Used by: `Minn\Auth\Capabilities`, `Minn\Blocks\Context`, `Minn\Blocks\Dynamic\LatestPosts`, `Minn\Blocks\Dynamic\Theme\Navigation`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Content\Excerpt`, `Minn\Content\Page`, `Minn\Content\PasswordGate`, `Minn\Content\PostStatus`, `Minn\Content\PostWriter`, `Minn\Content\Posts`, `Minn\Engine`, `Minn\Extension\SeamRunner`, `Minn\Front\ArchiveAddresses`, `Minn\Front\AttachmentAddresses`, `Minn\Front\Canonical`, `Minn\Front\CommentPostController`, `Minn\Front\Endpoints`, `Minn\Front\Feeds`, `Minn\Front\Permalinks`, `Minn\Front\Renderer`, `Minn\Front\RequestParse`, `Minn\Front\Resolution`, `Minn\Front\Resolver`, `Minn\Front\RuleRoutes`, `Minn\Front\SingleAddresses`, `Minn\Front\SingleQueries`, `Minn\Front\Sitemaps`, `Minn\Media\Writer`, `Minn\Rest\CommentsController`, `Minn\Rest\GlobalStylesController`, `Minn\Rest\GlobalStylesObject`, `Minn\Rest\MediaController`, `Minn\Rest\MediaObject`, `Minn\Rest\PostObject`, `Minn\Rest\PostsController`, `Minn\Rest\PostsWriteController`, `Minn\Rest\RegisteredPostFields`, `Minn\Rest\RenderedFields`, `Minn\Rest\RevisionsController`, `Minn\Rest\SearchController`, `Minn\Runtime\CommentCloser`, `Minn\Runtime\PostEvents`, `Minn\Runtime\PostSave`, `Minn\Theme\ClassicContent`, `Minn\Theme\HeadLinks`, `Minn\Theme\MainQueryBridge`, `Minn\Theme\UserStyles`
+Used by: `Minn\Auth\Capabilities`, `Minn\Blocks\Context`, `Minn\Blocks\Dynamic\LatestPosts`, `Minn\Blocks\Dynamic\Theme\Navigation`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Content\Excerpt`, `Minn\Content\Page`, `Minn\Content\PasswordGate`, `Minn\Content\PostStatus`, `Minn\Content\PostWriter`, `Minn\Content\Posts`, `Minn\Engine`, `Minn\Extension\SeamRunner`, `Minn\Front\ArchiveAddresses`, `Minn\Front\AttachmentAddresses`, `Minn\Front\Canonical`, `Minn\Front\CommentPostController`, `Minn\Front\Endpoints`, `Minn\Front\Permalinks`, `Minn\Front\Renderer`, `Minn\Front\RequestParse`, `Minn\Front\Resolution`, `Minn\Front\Resolver`, `Minn\Front\RuleRoutes`, `Minn\Front\SingleAddresses`, `Minn\Front\SingleQueries`, `Minn\Front\Sitemaps`, `Minn\Media\Writer`, `Minn\Rest\CommentsController`, `Minn\Rest\GlobalStylesController`, `Minn\Rest\GlobalStylesObject`, `Minn\Rest\MediaController`, `Minn\Rest\MediaObject`, `Minn\Rest\PostObject`, `Minn\Rest\PostsController`, `Minn\Rest\PostsWriteController`, `Minn\Rest\RegisteredPostFields`, `Minn\Rest\RenderedFields`, `Minn\Rest\RevisionsController`, `Minn\Rest\SearchController`, `Minn\Runtime\CommentCloser`, `Minn\Runtime\PostEvents`, `Minn\Runtime\PostSave`, `Minn\Theme\ClassicContent`, `Minn\Theme\HeadLinks`, `Minn\Theme\MainQueryBridge`, `Minn\Theme\UserStyles`
 
 - readonly `int $id`
 - readonly `int $authorId`
@@ -1264,7 +1264,7 @@ Internals: `fit()` (private, line 171), `saveSticky()` (private, line 265), `rev
 Reads over the posts table. A single post comes back as a PostRecord and
 a listing as a Page of them; rendering and escaping happen elsewhere.
 
-Used by: `Minn\Admin\RenderController`, `Minn\Admin\SiteController`, `Minn\Blocks\Dynamic\LatestComments`, `Minn\Blocks\Dynamic\Theme\Navigation`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Blocks\ImageTags`, `Minn\Blocks\Renderer`, `Minn\Content\Menus`, `Minn\Content\PostWriter`, `Minn\Content\SiteIcon`, `Minn\Cron\Cron`, `Minn\Engine`, `Minn\Front\ArchiveAddresses`, `Minn\Front\Archives`, `Minn\Front\AttachmentAddresses`, `Minn\Front\CommentPostController`, `Minn\Front\FeedController`, `Minn\Front\Feeds`, `Minn\Front\Permalinks`, `Minn\Front\Renderer`, `Minn\Front\Resolver`, `Minn\Front\RuleRoutes`, `Minn\Front\SingleAddresses`, `Minn\Front\SingleQueries`, `Minn\Media\Writer`, `Minn\Rest\BlocksController`, `Minn\Rest\CommentObject`, `Minn\Rest\CommentsController`, `Minn\Rest\MediaController`, `Minn\Rest\MediaObject`, `Minn\Rest\PostObject`, `Minn\Rest\PostsController`, `Minn\Rest\PostsWriteController`, `Minn\Rest\RegisteredPostFields`, `Minn\Rest\RevisionsController`, `Minn\Rest\Services`, `Minn\Rest\TemplateObject`, `Minn\Runtime\MenuEvents`, `Minn\Theme\ClassicRenderer`, `Minn\Theme\MainQueryBridge`, `Minn\Theme\PageRenderer`, `Minn\Theme\Templates`, `Minn\Theme\UserStyles`
+Used by: `Minn\Admin\RenderController`, `Minn\Admin\SiteController`, `Minn\Blocks\Dynamic\LatestComments`, `Minn\Blocks\Dynamic\Theme\Navigation`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Blocks\ImageTags`, `Minn\Blocks\Renderer`, `Minn\Content\Menus`, `Minn\Content\PostWriter`, `Minn\Content\SiteIcon`, `Minn\Cron\Cron`, `Minn\Engine`, `Minn\Front\ArchiveAddresses`, `Minn\Front\Archives`, `Minn\Front\AttachmentAddresses`, `Minn\Front\CommentPostController`, `Minn\Front\FeedController`, `Minn\Front\Permalinks`, `Minn\Front\Renderer`, `Minn\Front\Resolver`, `Minn\Front\RuleRoutes`, `Minn\Front\SingleAddresses`, `Minn\Front\SingleQueries`, `Minn\Media\Writer`, `Minn\Rest\BlocksController`, `Minn\Rest\CommentObject`, `Minn\Rest\CommentsController`, `Minn\Rest\MediaController`, `Minn\Rest\MediaObject`, `Minn\Rest\PostObject`, `Minn\Rest\PostsController`, `Minn\Rest\PostsWriteController`, `Minn\Rest\RegisteredPostFields`, `Minn\Rest\RevisionsController`, `Minn\Rest\Services`, `Minn\Rest\TemplateObject`, `Minn\Runtime\MenuEvents`, `Minn\Theme\ClassicRenderer`, `Minn\Theme\MainQueryBridge`, `Minn\Theme\PageRenderer`, `Minn\Theme\Templates`, `Minn\Theme\UserStyles`
 
 ```php
 __construct(Minn\Db $db)
@@ -1539,7 +1539,7 @@ Internals: `named()` (private, line 44)
 
 Site-wide options and the site's clock.
 
-Used by: `Minn\Admin\ActivityChart`, `Minn\Admin\App`, `Minn\Admin\BootPayload`, `Minn\Admin\Dashboard`, `Minn\Admin\LanguageController`, `Minn\Admin\Notifications`, `Minn\Admin\OverviewController`, `Minn\Admin\PackagesController`, `Minn\Admin\RenderController`, `Minn\Admin\SiteController`, `Minn\Admin\ThemesController`, `Minn\Admin\Translations`, `Minn\Admin\UploadsSize`, `Minn\Blocks\Dynamic\Dates`, `Minn\Blocks\Dynamic\LatestComments`, `Minn\Blocks\Dynamic\LatestPosts`, `Minn\Blocks\Dynamic\Theme\Comments`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Blocks\Dynamic\Theme\Structure`, `Minn\Blocks\Renderer`, `Minn\Cli\MinnCommand`, `Minn\Cli\Runtime`, `Minn\Content\Inventory`, `Minn\Content\Menus`, `Minn\Content\PluginState`, `Minn\Content\PostSlugs`, `Minn\Content\PostWriter`, `Minn\Content\Revisions`, `Minn\Content\SiteIcon`, `Minn\Context`, `Minn\Cron\Cron`, `Minn\Engine`, `Minn\Extension\Loader`, `Minn\Extension\Seams`, `Minn\Front\AdminBar`, `Minn\Front\CommentPostController`, `Minn\Front\FeedController`, `Minn\Front\Feeds`, `Minn\Front\ProbeController`, `Minn\Front\Sitemaps`, `Minn\Login\LoginController`, `Minn\Mail\MailSettings`, `Minn\Mail\Mailer`, `Minn\Media\Images`, `Minn\Media\Uploads`, `Minn\Media\Writer`, `Minn\Ops\CoreStatus`, `Minn\Ops\Diagnostics`, `Minn\Ops\InstalledSoftware`, `Minn\Ops\Packages`, `Minn\Ops\Updates`, `Minn\Rest\ApplicationPasswordsController`, `Minn\Rest\CommentsController`, `Minn\Rest\IndexController`, `Minn\Rest\PluginsController`, `Minn\Rest\PostsWriteController`, `Minn\Rest\Services`, `Minn\Rest\Settings`, `Minn\Rest\TermsController`, `Minn\Rest\UsersController`, `Minn\Runtime\Plugins`, `Minn\Runtime\Recovery`, `Minn\Runtime\Runtime`, `Minn\Theme\ClassicRenderer`, `Minn\Theme\ClassicTheme`, `Minn\Theme\HeadLinks`, `Minn\Theme\MainQueryBridge`, `Minn\Theme\PageRenderer`, `Minn\Theme\TemplateIndex`, `Minn\Theme\TemplateWriter`, `Minn\Theme\Theme`, `Minn\Theme\ThemeStyles`, `Minn\Theme\UserStyles`
+Used by: `Minn\Admin\ActivityChart`, `Minn\Admin\App`, `Minn\Admin\BootPayload`, `Minn\Admin\Dashboard`, `Minn\Admin\LanguageController`, `Minn\Admin\Notifications`, `Minn\Admin\OverviewController`, `Minn\Admin\PackagesController`, `Minn\Admin\RenderController`, `Minn\Admin\SiteController`, `Minn\Admin\ThemesController`, `Minn\Admin\Translations`, `Minn\Admin\UploadsSize`, `Minn\Blocks\Dynamic\Dates`, `Minn\Blocks\Dynamic\LatestComments`, `Minn\Blocks\Dynamic\LatestPosts`, `Minn\Blocks\Dynamic\Theme\Comments`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Blocks\Dynamic\Theme\Structure`, `Minn\Blocks\Renderer`, `Minn\Cli\MinnCommand`, `Minn\Cli\Runtime`, `Minn\Content\Inventory`, `Minn\Content\Menus`, `Minn\Content\PluginState`, `Minn\Content\PostSlugs`, `Minn\Content\PostWriter`, `Minn\Content\Revisions`, `Minn\Content\SiteIcon`, `Minn\Context`, `Minn\Cron\Cron`, `Minn\Engine`, `Minn\Extension\Loader`, `Minn\Extension\Seams`, `Minn\Front\AdminBar`, `Minn\Front\CommentPostController`, `Minn\Front\FeedController`, `Minn\Front\ProbeController`, `Minn\Front\Sitemaps`, `Minn\Login\LoginController`, `Minn\Mail\MailSettings`, `Minn\Mail\Mailer`, `Minn\Media\Images`, `Minn\Media\Uploads`, `Minn\Media\Writer`, `Minn\Ops\CoreStatus`, `Minn\Ops\Diagnostics`, `Minn\Ops\InstalledSoftware`, `Minn\Ops\Packages`, `Minn\Ops\Updates`, `Minn\Rest\ApplicationPasswordsController`, `Minn\Rest\CommentsController`, `Minn\Rest\IndexController`, `Minn\Rest\PluginsController`, `Minn\Rest\PostsWriteController`, `Minn\Rest\Services`, `Minn\Rest\Settings`, `Minn\Rest\TermsController`, `Minn\Rest\UsersController`, `Minn\Runtime\Plugins`, `Minn\Runtime\Recovery`, `Minn\Runtime\Runtime`, `Minn\Theme\ClassicRenderer`, `Minn\Theme\ClassicTheme`, `Minn\Theme\HeadLinks`, `Minn\Theme\MainQueryBridge`, `Minn\Theme\PageRenderer`, `Minn\Theme\TemplateIndex`, `Minn\Theme\TemplateWriter`, `Minn\Theme\Theme`, `Minn\Theme\ThemeStyles`, `Minn\Theme\UserStyles`
 
 ```php
 __construct(Minn\Db $db)
@@ -1902,7 +1902,7 @@ texturize battery post; anything beyond it is a documented gap.
 
 - const `SKIP` = `'pre|code|kbd|style|script|tt|textarea'`
 
-Used by: `Minn\Admin\ActivityFeed`, `Minn\Admin\Format`, `Minn\Admin\Notifications`, `Minn\Blocks\Dynamic\Theme\Comments`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Blocks\Renderer`, `Minn\Content\Blocks`, `Minn\Content\Excerpt`, `Minn\Front\Feeds`, `Minn\Rest\GlobalStylesObject`, `Minn\Rest\MediaObject`, `Minn\Rest\PluginsController`, `Minn\Rest\RenderedFields`, `Minn\Rest\RevisionsController`, `Minn\Rest\SearchController`, `Minn\Theme\ClassicContent`, `Minn\Theme\PageRenderer`
+Used by: `Minn\Admin\ActivityFeed`, `Minn\Admin\Format`, `Minn\Admin\Notifications`, `Minn\Blocks\Dynamic\Theme\Comments`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Blocks\Renderer`, `Minn\Content\Blocks`, `Minn\Content\Excerpt`, `Minn\Rest\GlobalStylesObject`, `Minn\Rest\MediaObject`, `Minn\Rest\PluginsController`, `Minn\Rest\RenderedFields`, `Minn\Rest\RevisionsController`, `Minn\Rest\SearchController`, `Minn\Theme\ClassicContent`, `Minn\Theme\PageRenderer`
 
 ### static `html(string $html): string`
 
@@ -1982,7 +1982,7 @@ Records are read-only; writes go through the repository.
 
 `final readonly class Minn\Content\Users` · `public/minn/src/Minn/Content/Users.php`
 
-Used by: `Minn\Admin\ActivityFeed`, `Minn\Admin\Appearance`, `Minn\Admin\Dashboard`, `Minn\Admin\HiddenIntegrations`, `Minn\Admin\LanguageController`, `Minn\Admin\Notifications`, `Minn\Admin\OverviewController`, `Minn\Admin\SessionsController`, `Minn\Admin\Translations`, `Minn\Auth\ApplicationPasswords`, `Minn\Auth\Authenticator`, `Minn\Auth\Capabilities`, `Minn\Auth\Cookie`, `Minn\Auth\PasswordReset`, `Minn\Auth\Sessions`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Cli\Runtime`, `Minn\Engine`, `Minn\Front\Feeds`, `Minn\Login\LoginController`, `Minn\Login\LoginHooks`, `Minn\Rest\ApplicationPasswordsController`, `Minn\Rest\PostObject`, `Minn\Rest\Services`, `Minn\Rest\UserObject`, `Minn\Rest\UsersController`, `Minn\Runtime\ApplicationPasswordSignIn`, `Minn\Theme\PageRenderer`
+Used by: `Minn\Admin\ActivityFeed`, `Minn\Admin\Appearance`, `Minn\Admin\Dashboard`, `Minn\Admin\HiddenIntegrations`, `Minn\Admin\LanguageController`, `Minn\Admin\Notifications`, `Minn\Admin\OverviewController`, `Minn\Admin\SessionsController`, `Minn\Admin\Translations`, `Minn\Auth\ApplicationPasswords`, `Minn\Auth\Authenticator`, `Minn\Auth\Capabilities`, `Minn\Auth\Cookie`, `Minn\Auth\PasswordReset`, `Minn\Auth\Sessions`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Cli\Runtime`, `Minn\Engine`, `Minn\Login\LoginController`, `Minn\Login\LoginHooks`, `Minn\Rest\ApplicationPasswordsController`, `Minn\Rest\PostObject`, `Minn\Rest\Services`, `Minn\Rest\UserObject`, `Minn\Rest\UsersController`, `Minn\Runtime\ApplicationPasswordSignIn`, `Minn\Theme\PageRenderer`
 
 ```php
 __construct(Minn\Db $db)

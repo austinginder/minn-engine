@@ -38,7 +38,7 @@ and a request cannot inherit the extensions of the one before it.
 Before the front has loaded any (REST and the command line never do)
 there are none.
 
-Used by: `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Blocks\Renderer`, `Minn\Engine`, `Minn\Front\Feeds`, `Minn\Theme\ClassicContent`, `Minn\Theme\PageRenderer`
+Used by: `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Blocks\Renderer`, `Minn\Engine`, `Minn\Theme\ClassicContent`, `Minn\Theme\PageRenderer`
 
 ### static `set(Minn\Extension\Seams $seams): void`
 

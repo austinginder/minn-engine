@@ -27,7 +27,6 @@ use Minn\Content\Users;
 use Minn\Content\Comments;
 use Minn\Front\AdminBar;
 use Minn\Front\AssetsController;
-use Minn\Front\Feeds;
 use Minn\Front\ProbeController;
 use Minn\Front\Sitemaps;
 use Minn\Front\FrontController;
@@ -283,8 +282,6 @@ final readonly class Engine
         $classic = $classicTheme === null ? null : \Minn\Theme\ClassicRenderer::create($db, $classicTheme, Theme::forStyles($site, $permalinks, ABSPATH . 'wp-content/themes'), $permalinks, $resolver->perPage(), $bar);
 
         $posts = new Posts($db);
-        $generator = (string) (\Minn\Support\Serialized::field($site->option('_site_transient_update_core'), 'version_checked') ?? '');
-        $feeds = new Feeds($db, $site, $posts, new Comments($db), $users, $permalinks, $generator);
         $front = null;
         // The runtime is booted for this request, so the cron option's due
         // hooks fire through the facade: on every wp-cron.php hit, and after
@@ -301,7 +298,7 @@ final readonly class Engine
         $cron = Cron::create($db, $site, ABSPATH . 'wp-content', $permalinks->url('/'), self::WP_VERSION, $fireDueEvents);
         $notFound = static function () use (&$front): Response { return $front->notFound(); };
         $themed = static function (\Minn\Front\Resolution $resolution) use (&$front): Response { return $front->themed($resolution); };
-        $feedController = new \Minn\Front\FeedController($site, $posts, $permalinks, $resolver, $feeds, $notFound);
+        $feedController = new \Minn\Front\FeedController($site, $posts, $permalinks, $resolver, $notFound);
         $bridge = new \Minn\Theme\MainQueryBridge($site, $posts, $resolver->perPage());
         $sitemapController = new \Minn\Front\SitemapController(new Sitemaps($db, $site, $permalinks), $notFound, $bridge, $themed);
         $front = new FrontController($resolver, new Renderer($db, $posts, $permalinks, $resolver->perPage()), $pages, $feedController, $cron, $classic, $sitemapController, new \Minn\Theme\EmbedRenderer($bridge));

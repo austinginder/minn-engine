@@ -18,11 +18,10 @@ URL resolution, permalinks, feeds, sitemaps and the public page
 | [`DocumentTitle`](#documenttitle) | final class | 47 | The document title as parts (title, tagline, page, site) in the order the |
 | [`EmbedCard`](#embedcard) | final class | 95 | The parts of a post's embed card the reference's embed template prints, |
 | [`Endpoints`](#endpoints) | final class | 44 | Rewrite endpoints plugins add (add_rewrite_endpoint: a shop's account |
-| [`FeedController`](#feedcontroller) | final readonly class | 151 | The feeds: the site's, the comments', a post's or an archive's by the |
+| [`FeedController`](#feedcontroller) | final readonly class | 109 | The feeds: the site's, the comments', a post's or an archive's by the |
 | [`FeedTags`](#feedtags) | final class | 140 | The template tags a feed is written with that take more than a line, as |
 | [`FeedTemplates`](#feedtemplates) | final class | 295 | The feed templates do_feed_* loads, written from the reference's output |
 | [`FeedWriter`](#feedwriter) | final class | 35 | A feed as it is written: text as given, and what each template tag and |
-| [`Feeds`](#feeds) | final readonly class | 316 | The syndication feeds, byte for byte in the reference's shape: RSS 2.0 |
 | [`FrontController`](#frontcontroller) | final readonly class | 97 | The public site. One catch-all route: resolve the URL, then either |
 | [`Kind`](#kind) | enum | 17 | What a public URL resolved to. |
 | [`ListSpacing`](#listspacing) | final readonly class | 30 | How a page list is spaced: the reference's "preserve" keeps newlines and |
@@ -509,12 +508,14 @@ Whether an endpoint placed so may follow the address a resolution stands for.
 `final readonly class Minn\Front\FeedController` · `public/minn/src/Minn/Front/FeedController.php`
 
 The feeds: the site's, the comments', a post's or an archive's by the
-path in front of /feed/, and the ?feed= query form on any page.
+path in front of /feed/, and the ?feed= query form on any page. Each is
+WordPress's feed lifecycle: the main query with the feed asked for, then
+do_feed, whose handler prints the feed and its content type.
 
 Used by: `Minn\Engine`, `Minn\Front\FrontController`
 
 ```php
-__construct(Minn\Content\Site $site, Minn\Content\Posts $posts, Minn\Front\Permalinks $permalinks, Minn\Front\Resolver $resolver, Minn\Front\Feeds $feeds, Closure $notFound)
+__construct(Minn\Content\Site $site, Minn\Content\Posts $posts, Minn\Front\Permalinks $permalinks, Minn\Front\Resolver $resolver, Closure $notFound)
 ```
 
 
@@ -558,7 +559,7 @@ A post's comment feed, or an archive's feed, by resolving the path in front of /
 
 The ?feed= query form on any resolvable path: any feed a handler answers, a plugin's own included.
 
-Internals: `feed()` (private, line 103), `served()` (private, line 118), `engineFeed()` (private, line 142), `feedResponse()` (private, line 174)
+Internals: `feed()` (private, line 97), `served()` (private, line 109), `perFeed()` (private, line 133)
 
 
 ## FeedTags
@@ -654,51 +655,6 @@ What an action's callbacks print.
 ### `text(): string`
 
 Everything written so far.
-
-
-## Feeds
-
-`final readonly class Minn\Front\Feeds` · `public/minn/src/Minn/Front/Feeds.php`
-
-The syndication feeds, byte for byte in the reference's shape: RSS 2.0
-for the site, its archives, and comments; Atom and RDF for the site.
-The whitespace inside each item is part of the captured output and is
-reproduced as-is.
-
-Used by: `Minn\Engine`, `Minn\Front\FeedController`
-
-```php
-__construct(Minn\Db $db, Minn\Content\Site $site, Minn\Content\Posts $posts, Minn\Content\Comments $comments, Minn\Content\Users $users, Minn\Front\Permalinks $permalinks, string $generatorVersion)
-```
-
-
-### static `contentType(string $kind): string`
-
-The content type of a feed kind.
-
-### `posts(array $posts, string $kind, string $selfUrl, string $title): string`
-
-The site feed, or an archive's, in the chosen kind. @param list<array> $posts
-
-- `@param list<array> $posts`
-
-### `comments(?Minn\Content\PostRecord $post, string $selfUrl): string`
-
-The site's or one post's comments as RSS 2.0.
-
-### `perFeed(): int`
-
-How many items a feed carries.
-
-### static `rfc2822(string $gmt): string`
-
-A GMT datetime in RFC 2822 form.
-
-### static `isoZ(string $gmt): string`
-
-A GMT datetime in ISO 8601 form.
-
-Internals: `rss2()` (private, line 61), `rssItem()` (private, line 86), `atom()` (private, line 113), `rdf()` (private, line 157), `content()` (private, line 249), `latestModified()` (private, line 272), `commentCount()` (private, line 281), `authorName()` (private, line 286), `termNames()` (private, line 292), `cdata()` (private, line 307), `plainExcerpt()` (private, line 312), `language()` (private, line 320), `title()` (private, line 327)
 
 
 ## FrontController
@@ -914,7 +870,7 @@ other status keeps the query form, which is what the reference emits.
 
 - const `QUERY_ONLY` = `array (   0 => 'wp_pattern_category',   1 => 'wp_theme',   2 => 'wp_template_part_area', )` — Core taxonomies with no front-end archive: their terms link by query only.
 
-Used by: `Minn\Admin\AppController`, `Minn\Admin\BootPayload`, `Minn\Admin\RenderController`, `Minn\Admin\SiteController`, `Minn\Admin\ThemesController`, `Minn\Blocks\Dynamic\Archives`, `Minn\Blocks\Dynamic\Categories`, `Minn\Blocks\Dynamic\LatestComments`, `Minn\Blocks\Dynamic\LatestPosts`, `Minn\Blocks\Dynamic\Search`, `Minn\Blocks\Dynamic\TagCloud`, `Minn\Blocks\Dynamic\Theme\Comments`, `Minn\Blocks\Dynamic\Theme\Navigation`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Blocks\Dynamic\Theme\Structure`, `Minn\Blocks\Renderer`, `Minn\Cli\Runtime`, `Minn\Content\Menus`, `Minn\Content\SiteIcon`, `Minn\Engine`, `Minn\Front\AdminBar`, `Minn\Front\ArchiveAddresses`, `Minn\Front\AttachmentAddresses`, `Minn\Front\CommentPostController`, `Minn\Front\FeedController`, `Minn\Front\Feeds`, `Minn\Front\ProbeController`, `Minn\Front\Renderer`, `Minn\Front\Resolver`, `Minn\Front\SingleAddresses`, `Minn\Front\SingleQueries`, `Minn\Front\Sitemaps`, `Minn\Login\LoginController`, `Minn\Media\Uploads`, `Minn\Ops\Diagnostics`, `Minn\Rest\CommentObject`, `Minn\Rest\IndexController`, `Minn\Rest\MediaObject`, `Minn\Rest\PostObject`, `Minn\Rest\RegisteredPostFields`, `Minn\Rest\RestUrl`, `Minn\Rest\SearchController`, `Minn\Rest\Services`, `Minn\Rest\TermObject`, `Minn\Rest\UserObject`, `Minn\Theme\ClassicContent`, `Minn\Theme\ClassicRenderer`, `Minn\Theme\HeadLinks`, `Minn\Theme\PageRenderer`, `Minn\Theme\Theme`, `Minn\Theme\ThemeStyles`
+Used by: `Minn\Admin\AppController`, `Minn\Admin\BootPayload`, `Minn\Admin\RenderController`, `Minn\Admin\SiteController`, `Minn\Admin\ThemesController`, `Minn\Blocks\Dynamic\Archives`, `Minn\Blocks\Dynamic\Categories`, `Minn\Blocks\Dynamic\LatestComments`, `Minn\Blocks\Dynamic\LatestPosts`, `Minn\Blocks\Dynamic\Search`, `Minn\Blocks\Dynamic\TagCloud`, `Minn\Blocks\Dynamic\Theme\Comments`, `Minn\Blocks\Dynamic\Theme\Navigation`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Blocks\Dynamic\Theme\Structure`, `Minn\Blocks\Renderer`, `Minn\Cli\Runtime`, `Minn\Content\Menus`, `Minn\Content\SiteIcon`, `Minn\Engine`, `Minn\Front\AdminBar`, `Minn\Front\ArchiveAddresses`, `Minn\Front\AttachmentAddresses`, `Minn\Front\CommentPostController`, `Minn\Front\FeedController`, `Minn\Front\ProbeController`, `Minn\Front\Renderer`, `Minn\Front\Resolver`, `Minn\Front\SingleAddresses`, `Minn\Front\SingleQueries`, `Minn\Front\Sitemaps`, `Minn\Login\LoginController`, `Minn\Media\Uploads`, `Minn\Ops\Diagnostics`, `Minn\Rest\CommentObject`, `Minn\Rest\IndexController`, `Minn\Rest\MediaObject`, `Minn\Rest\PostObject`, `Minn\Rest\RegisteredPostFields`, `Minn\Rest\RestUrl`, `Minn\Rest\SearchController`, `Minn\Rest\Services`, `Minn\Rest\TermObject`, `Minn\Rest\UserObject`, `Minn\Theme\ClassicContent`, `Minn\Theme\ClassicRenderer`, `Minn\Theme\HeadLinks`, `Minn\Theme\PageRenderer`, `Minn\Theme\Theme`, `Minn\Theme\ThemeStyles`
 
 ```php
 __construct(Minn\Content\Posts $posts, Minn\Content\Terms $terms, string $home, string $structure, int $frontPageId = 0, int $postsPageId = 0, ?Closure $registry = NULL)
