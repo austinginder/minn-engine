@@ -28,7 +28,7 @@ class WP_Date_Query
     private function builder(): DateSql
     {
         $db = Runtime::current()->db;
-        return new DateSql(['posts' => $db->table('posts'), 'comments' => $db->table('comments'), 'users' => $db->table('users'), 'blogs' => $db->table('blogs')], 'post_date');
+        return new DateSql(['posts' => $db->table('posts'), 'comments' => $db->table('comments'), 'users' => $db->table('users'), 'blogs' => $db->table('blogs')], 'post_date', (int) get_option('start_of_week'));
     }
 
     public function sanitize_query($queries, $parent_query = null)

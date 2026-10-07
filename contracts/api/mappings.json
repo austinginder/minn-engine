@@ -5,9 +5,9 @@
         "minn": 639,
         "composes": 919,
         "leaf": 652,
-        "noop": 1841,
-        "functions": 3981,
-        "minnMethods": 670,
+        "noop": 1842,
+        "functions": 3982,
+        "minnMethods": 671,
         "leafLinesOver15": 12
     },
     "functions": {
@@ -5167,7 +5167,9 @@
                 "Minn\\Runtime\\Runtime::db",
                 "Minn\\Runtime\\Runtime::table"
             ],
-            "composes": []
+            "composes": [
+                "get_option"
+            ]
         },
         "WP_Date_Query::get_compare": {
             "file": "classes/WP_Date_Query.php",
@@ -17246,6 +17248,17 @@
                 "is_wp_error",
                 "wp_get_image_editor",
                 "wp_update_attachment_metadata"
+            ]
+        },
+        "_wp_mysql_week": {
+            "file": "functions.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Query\\DateSql::week"
+            ],
+            "composes": [
+                "get_option"
             ]
         },
         "_wp_oembed_get_object": {

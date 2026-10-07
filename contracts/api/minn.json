@@ -74392,7 +74392,7 @@
             "namespace": "Minn\\Query",
             "kind": "final class",
             "file": "public/minn/src/Minn/Query/DateSql.php",
-            "lines": 157,
+            "lines": 248,
             "doc": "The WHERE fragment of a date query in the reference's shape: before and\nafter bounds as full datetimes (inclusive bounds close the day), the\ndate parts as MySQL functions compared or listed, groups joined by\ntheir relation, columns validated against the known date columns.",
             "implements": [],
             "extends": null,
@@ -74401,7 +74401,7 @@
             ],
             "usedBy": [],
             "constructor": {
-                "signature": "__construct(array $tables, string $defaultColumn = 'post_date')",
+                "signature": "__construct(array $tables, string $defaultColumn = 'post_date', int $startOfWeek = 1)",
                 "doc": "",
                 "shapes": [
                     "@param array<string, string> $tables table key to prefixed table name"
@@ -74420,11 +74420,18 @@
                         "shape": "",
                         "default": "'post_date'",
                         "doc": ""
+                    },
+                    {
+                        "name": "startOfWeek",
+                        "type": "int",
+                        "shape": "",
+                        "default": "1",
+                        "doc": ""
                     }
                 ],
                 "visibility": "public",
-                "line": 30,
-                "end": 32
+                "line": 29,
+                "end": 31
             },
             "cases": [],
             "constants": [
@@ -74435,15 +74442,15 @@
                     "visibility": "private"
                 },
                 {
-                    "name": "PARTS",
-                    "value": "array (   'year' => 'YEAR',   'month' => 'MONTH',   'monthnum' => 'MONTH',   'week' => 'WEEK',   'w' => 'WEEK',   'dayofyear' => 'DAYOFYEAR',   'day' => 'DAYOFMONTH',   'dayofweek' => 'DAYOFWEEK',   'dayofweek_iso' => 'WEEKDAY',   'hour' => 'HOUR',   'minute' => 'MINUTE',   'second' => 'SECOND', )",
+                    "name": "PART_ORDER",
+                    "value": "array (   0 => 'year',   1 => 'month',   2 => 'monthnum',   3 => 'week',   4 => 'w',   5 => 'dayofyear',   6 => 'day',   7 => 'dayofweek',   8 => 'dayofweek_iso',   9 => 'hour',   10 => 'minute',   11 => 'second', )",
                     "doc": "",
                     "visibility": "private"
                 },
                 {
-                    "name": "PART_ORDER",
-                    "value": "array (   0 => 'year',   1 => 'month',   2 => 'monthnum',   3 => 'week',   4 => 'w',   5 => 'dayofyear',   6 => 'day',   7 => 'dayofweek',   8 => 'dayofweek_iso',   9 => 'hour',   10 => 'minute',   11 => 'second', )",
-                    "doc": "",
+                    "name": "RANGES",
+                    "value": "array (   'month' =>    array (     0 => 1,     1 => 12,   ),   'week' =>    array (     0 => 1,     1 => 53,   ),   'dayofyear' =>    array (     0 => 1,     1 => 366,   ),   'day' =>    array (     0 => 1,     1 => 31,   ),   'dayofweek' =>    array (     0 => 1,     1 => 7,   ),   'dayofweek_iso' =>    array (     0 => 1,     1 => 7,   ),   'hour' =>    array (     0 => 0,     1 => 23,   ),   'minute' =>    array (     0 => 0,     1 => 59,   ),   'second' =>    array (     0 => 0,     1 => 59,   ), )",
+                    "doc": "The ranges a date part is checked against, as the reference names them in its notice.",
                     "visibility": "private"
                 }
             ],
@@ -74465,9 +74472,65 @@
                     "doc": "",
                     "visibility": "private",
                     "promoted": true
+                },
+                {
+                    "name": "startOfWeek",
+                    "type": "int",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
                 }
             ],
             "methods": [
+                {
+                    "routes": [],
+                    "name": "week",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "week(string $column, int $startOfWeek): string",
+                    "doc": "The week of a column as the reference counts it from the site's first day of the week.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "column",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "startOfWeek",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 34,
+                    "end": 41
+                },
+                {
+                    "routes": [],
+                    "name": "validate",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "validate(array $clause): void",
+                    "doc": "Notices for parts out of range and for a year, month and day that make no date (probe query-clauses).",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "clause",
+                            "type": "array",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 44,
+                    "end": 61
+                },
                 {
                     "routes": [],
                     "name": "sanitize",
@@ -74492,8 +74555,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 35,
-                    "end": 58
+                    "line": 64,
+                    "end": 89
                 },
                 {
                     "routes": [],
@@ -74512,8 +74575,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 61,
-                    "end": 69
+                    "line": 92,
+                    "end": 100
                 },
                 {
                     "routes": [],
@@ -74532,8 +74595,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 72,
-                    "end": 84
+                    "line": 103,
+                    "end": 115
                 },
                 {
                     "routes": [],
@@ -74552,8 +74615,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 87,
-                    "end": 91
+                    "line": 118,
+                    "end": 122
                 },
                 {
                     "routes": [],
@@ -74561,7 +74624,7 @@
                     "static": true,
                     "visibility": "public",
                     "signature": "datetime(mixed $value, bool $endOfUnit): string",
-                    "doc": "A full datetime from a string or a parts array; a parts array rounds up to the end of its unit when asked.",
+                    "doc": "A full datetime from a string or a parts array. A string as precise as\na year, a month, a day or a minute is read as those parts, so an end\nbound reaches the end of its unit; any other string is read as a time\nin the site's zone. Missing parts start (or end) the unit.",
                     "shapes": [],
                     "params": [
                         {
@@ -74579,8 +74642,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 149,
-                    "end": 162
+                    "line": 231,
+                    "end": 253
                 },
                 {
                     "routes": [],
@@ -74606,8 +74669,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 93,
-                    "end": 109
+                    "line": 124,
+                    "end": 135
                 },
                 {
                     "routes": [],
@@ -74615,7 +74678,7 @@
                     "static": false,
                     "visibility": "private",
                     "signature": "clause(array $clause): string",
-                    "doc": "",
+                    "doc": "One clause as the reference writes it: the bounds, the date parts in\norder (a part whose value builds to nothing is left out), then the\ntime; more than one piece joined by AND inside parentheses.",
                     "shapes": [],
                     "params": [
                         {
@@ -74626,25 +74689,18 @@
                             "doc": ""
                         }
                     ],
-                    "line": 111,
-                    "end": 133
+                    "line": 142,
+                    "end": 175
                 },
                 {
                     "routes": [],
-                    "name": "part",
+                    "name": "value",
                     "static": true,
                     "visibility": "private",
-                    "signature": "part(string $expression, string $compare, mixed $value): string",
-                    "doc": "",
+                    "signature": "value(string $compare, mixed $value): string",
+                    "doc": "A part's value as the comparison wants it: a list, a range, or one number.",
                     "shapes": [],
                     "params": [
-                        {
-                            "name": "expression",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
                         {
                             "name": "compare",
                             "type": "string",
@@ -74660,8 +74716,42 @@
                             "doc": ""
                         }
                     ],
-                    "line": 135,
-                    "end": 146
+                    "line": 178,
+                    "end": 189
+                },
+                {
+                    "routes": [],
+                    "name": "time",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "time(string $column, string $compare, array $clause): string",
+                    "doc": "The time of day: listed or ranged parts each on their own; a single\npart by its function; an hour with a second and no minute not at\nall; otherwise the parts as one decimal, DATE_FORMAT( col, '%H.%i%s' ).",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "column",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "compare",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "clause",
+                            "type": "array",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 196,
+                    "end": 223
                 },
                 {
                     "routes": [],
@@ -74680,8 +74770,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 164,
-                    "end": 168
+                    "line": 255,
+                    "end": 259
                 }
             ]
         },
@@ -74691,7 +74781,7 @@
             "namespace": "Minn\\Query",
             "kind": "final class",
             "file": "public/minn/src/Minn/Query/MetaSql.php",
-            "lines": 242,
+            "lines": 252,
             "doc": "The JOIN and WHERE fragments of a meta query in the reference's shape:\none meta-table join per clause (the first under the table's own name,\nthen mt1, mt2, ...), INNER joins unless an OR relation or a NOT EXISTS\nclause needs LEFT ones, and casts by the clause's declared type. Under\nan OR relation a clause shares an equality-shaped sibling's join.",
             "implements": [],
             "extends": null,
@@ -74736,8 +74826,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 30,
-                "end": 36
+                "line": 31,
+                "end": 37
             },
             "cases": [],
             "constants": [
@@ -74774,8 +74864,8 @@
                     "promoted": false
                 },
                 {
-                    "name": "join",
-                    "type": "string",
+                    "name": "joins",
+                    "type": "array",
                     "readonly": false,
                     "static": false,
                     "doc": "",
@@ -74846,8 +74936,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 43,
-                    "end": 73
+                    "line": 44,
+                    "end": 76
                 },
                 {
                     "routes": [],
@@ -74866,8 +74956,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 76,
-                    "end": 79
+                    "line": 89,
+                    "end": 92
                 },
                 {
                     "routes": [],
@@ -74888,8 +74978,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 86,
-                    "end": 94
+                    "line": 99,
+                    "end": 107
                 },
                 {
                     "routes": [],
@@ -74902,8 +74992,8 @@
                         "@return array<string, array{alias: string, cast: string}> clauses seen while building, by name or alias"
                     ],
                     "params": [],
-                    "line": 101,
-                    "end": 104
+                    "line": 114,
+                    "end": 117
                 },
                 {
                     "routes": [],
@@ -74911,7 +75001,7 @@
                     "static": true,
                     "visibility": "public",
                     "signature": "hasOr(array $queries): bool",
-                    "doc": "Whether any level of the query relates its clauses by OR.",
+                    "doc": "Whether any level of the query relates two or more clauses by OR.",
                     "shapes": [],
                     "params": [
                         {
@@ -74922,8 +75012,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 126,
-                    "end": 137
+                    "line": 139,
+                    "end": 150
                 },
                 {
                     "routes": [],
@@ -74942,8 +75032,30 @@
                             "doc": ""
                         }
                     ],
-                    "line": 243,
-                    "end": 254
+                    "line": 253,
+                    "end": 264
+                },
+                {
+                    "routes": [],
+                    "name": "normalized",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "normalized(array $clause): array",
+                    "doc": "A clause with its compare and compare_key settled: upper case, IN for a list, = for anything unknown. @return array<string, mixed>",
+                    "shapes": [
+                        "@return array<string, mixed>"
+                    ],
+                    "params": [
+                        {
+                            "name": "clause",
+                            "type": "array",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 79,
+                    "end": 86
                 },
                 {
                     "routes": [],
@@ -74962,8 +75074,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 107,
-                    "end": 123
+                    "line": 120,
+                    "end": 136
                 },
                 {
                     "routes": [],
@@ -74989,8 +75101,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 139,
-                    "end": 163
+                    "line": 152,
+                    "end": 171
                 },
                 {
                     "routes": [],
@@ -75032,8 +75144,8 @@
                             "doc": "earlier clauses of the same group"
                         }
                     ],
-                    "line": 166,
-                    "end": 185
+                    "line": 174,
+                    "end": 195
                 },
                 {
                     "routes": [],
@@ -75059,8 +75171,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 187,
-                    "end": 197
+                    "line": 197,
+                    "end": 207
                 },
                 {
                     "routes": [],
@@ -75086,8 +75198,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 199,
-                    "end": 208
+                    "line": 209,
+                    "end": 218
                 },
                 {
                     "routes": [],
@@ -75108,8 +75220,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 211,
-                    "end": 217
+                    "line": 221,
+                    "end": 227
                 },
                 {
                     "routes": [],
@@ -75144,8 +75256,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 220,
-                    "end": 240
+                    "line": 230,
+                    "end": 250
                 }
             ]
         },
@@ -75155,7 +75267,7 @@
             "namespace": "Minn\\Query",
             "kind": "final class",
             "file": "public/minn/src/Minn/Query/Sql.php",
-            "lines": 26,
+            "lines": 42,
             "doc": "Literal quoting for the SQL fragments the query classes hand to plugins,\nwhich embed them verbatim in their own statements.",
             "implements": [],
             "extends": null,
@@ -75249,6 +75361,42 @@
                     ],
                     "line": 32,
                     "end": 35
+                },
+                {
+                    "routes": [],
+                    "name": "group",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "group(array $chunks, string $relation, int $depth): string",
+                    "doc": "Clauses joined as the reference joins them at every depth (probe\nquery-clauses): wrapped in parentheses, each clause and the relation\non its own line, indented two spaces a level.",
+                    "shapes": [
+                        "@param list<string> $chunks"
+                    ],
+                    "params": [
+                        {
+                            "name": "chunks",
+                            "type": "array",
+                            "shape": "list<string>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "relation",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "depth",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 44,
+                    "end": 51
                 }
             ]
         },
@@ -75258,7 +75406,7 @@
             "namespace": "Minn\\Query",
             "kind": "final class",
             "file": "public/minn/src/Minn/Query/TaxSql.php",
-            "lines": 142,
+            "lines": 140,
             "doc": "The JOIN and WHERE fragments of a taxonomy query in the reference's\nshape: IN clauses join term_relationships (the first under the table's\nown name, then tt1, tt2, ..., shared between IN siblings under OR),\nNOT IN and AND read subqueries, EXISTS checks the taxonomy, and a term\nnobody has yields \"0 = 1\".",
             "implements": [],
             "extends": null,
@@ -75310,8 +75458,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 28,
-                "end": 35
+                "line": 29,
+                "end": 36
             },
             "cases": [],
             "constants": [],
@@ -75326,8 +75474,8 @@
                     "promoted": false
                 },
                 {
-                    "name": "join",
-                    "type": "string",
+                    "name": "joins",
+                    "type": "array",
                     "readonly": false,
                     "static": false,
                     "doc": "",
@@ -75407,8 +75555,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 38,
-                    "end": 68
+                    "line": 39,
+                    "end": 69
                 },
                 {
                     "routes": [],
@@ -75429,8 +75577,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 75,
-                    "end": 82
+                    "line": 76,
+                    "end": 83
                 },
                 {
                     "routes": [],
@@ -75443,8 +75591,8 @@
                         "@return array<string, array{terms: list<mixed>, field: string}> the terms asked for, by taxonomy"
                     ],
                     "params": [],
-                    "line": 89,
-                    "end": 92
+                    "line": 90,
+                    "end": 93
                 },
                 {
                     "routes": [],
@@ -75470,8 +75618,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 94,
-                    "end": 118
+                    "line": 95,
+                    "end": 114
                 },
                 {
                     "routes": [],
@@ -75504,8 +75652,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 120,
-                    "end": 142
+                    "line": 116,
+                    "end": 140
                 },
                 {
                     "routes": [],
@@ -75538,8 +75686,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 144,
-                    "end": 156
+                    "line": 142,
+                    "end": 154
                 }
             ]
         },

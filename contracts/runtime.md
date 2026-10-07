@@ -4575,3 +4575,31 @@ reference finds it (probe `image-downsize`).
   any image lacking a thumbnail size. A REST read that touched one, such as
   minn-admin's ACF field on a page linking such images, grew until it hit
   the memory limit.
+
+WP_Meta_Query, WP_Tax_Query and WP_Date_Query hand back the reference's
+SQL byte for byte (probe `query-clauses`). Plugins embed these fragments in
+their own statements, and some edit them as strings.
+- **Layout.** Every group is wrapped at every depth, each clause and
+  relation on its own line, indented two spaces a level. Joins are
+  separated as the reference separates them.
+- **Meta queries.**
+  - `queries` keeps each clause as given; a lone clause relates by OR.
+  - The builder settles compare and compare_key, and `get_clauses` lists
+    each clause as settled, then its alias and cast.
+  - `has_or_relation` needs two or more clauses under OR.
+- **Tax queries.**
+  - NOT IN, AND and EXISTS read the reference's tab-laid subqueries.
+  - Term ids are listed in ascending order.
+  - `queried_terms` names every clause but a NOT IN; an EXISTS names
+    only its field.
+- **Date queries.**
+  - A date-only (or year, month, minute) string bound reaches the end of
+    its unit when exclusive.
+  - The week counts from the site's first day of the week
+    (`_wp_mysql_week`).
+  - The ISO day of the week is `WEEKDAY() + 1`.
+  - Hour, minute and second together compare as one
+    `DATE_FORMAT( col, '%H.%i%s' )` decimal. An hour with a second and no
+    minute adds nothing, and a part that builds to zero is left out.
+  - Values out of range, and a year, month and day that make no date, earn
+    the reference's notices.

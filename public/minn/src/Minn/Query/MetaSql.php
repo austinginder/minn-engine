@@ -22,7 +22,8 @@ final class MetaSql
 
     private int $aliasCount = 0;
 
-    private string $join = '';
+    /** @var list<string> */
+    private array $joins = [];
 
     private bool $orRelation = false;
 
@@ -52,13 +53,11 @@ final class MetaSql
                 continue;
             }
             if (self::isFirstOrder($query)) {
-                $clause = $query;
-                $clause['compare'] = strtoupper((string) ($clause['compare'] ?? (isset($clause['value']) && is_array($clause['value']) ? 'IN' : '=')));
-                if (!in_array($clause['compare'], self::OPERATORS, true)) {
-                    $clause['compare'] = '=';
+                // A clause stays as given (an empty list value dropped); the builder settles its compare.
+                if (array_key_exists('value', $query) && $query['value'] === []) {
+                    unset($query['value']);
                 }
-                $clause['compare_key'] = strtoupper((string) ($clause['compare_key'] ?? (isset($clause['key']) && is_array($clause['key']) ? 'IN' : '=')));
-                $clean[$key] = $clause;
+                $clean[$key] = $query;
                 continue;
             }
             $group = self::sanitize($query);
@@ -66,10 +65,24 @@ final class MetaSql
                 $clean[$key] = $group;
             }
         }
-        if ($clean !== [] && !isset($clean['relation'])) {
-            $clean['relation'] = 'AND';
+        if ($clean === []) {
+            return [];
         }
+        // One clause relates by OR, so key-only clauses combine (probe query-clauses); the relation comes last.
+        $relation = count(array_diff_key($clean, ['relation' => true])) === 1 ? 'OR' : ($clean['relation'] ?? 'AND');
+        unset($clean['relation']);
+        $clean['relation'] = $relation;
         return $clean;
+    }
+
+    /** A clause with its compare and compare_key settled: upper case, IN for a list, = for anything unknown. @return array<string, mixed> */
+    private static function normalized(array $clause): array
+    {
+        $compare = strtoupper((string) ($clause['compare'] ?? (isset($clause['value']) && is_array($clause['value']) ? 'IN' : '=')));
+        $clause['compare'] = in_array($compare, self::OPERATORS, true) ? $compare : '=';
+        $key = strtoupper((string) ($clause['compare_key'] ?? (isset($clause['key']) && is_array($clause['key']) ? 'IN' : '=')));
+        $clause['compare_key'] = in_array($key, ['=', '!=', 'LIKE', 'NOT LIKE', 'IN', 'NOT IN', 'REGEXP', 'NOT REGEXP', 'RLIKE', 'EXISTS', 'NOT EXISTS'], true) ? $key : '=';
+        return $clause;
     }
 
     /** A clause rather than a group: it names a key or a value. */
@@ -90,7 +103,7 @@ final class MetaSql
         }
         $this->orRelation = self::hasOrWithNotExists($queries);
         $where = $this->group($queries, 0);
-        return ['join' => $this->join, 'where' => $where === '' ? '' : ' AND ' . $where];
+        return ['join' => implode(' ', $this->joins), 'where' => $where === '' ? '' : ' AND ' . $where];
     }
 
     /**
@@ -122,13 +135,13 @@ final class MetaSql
         return false;
     }
 
-    /** Whether any level of the query relates its clauses by OR. */
+    /** Whether any level of the query relates two or more clauses by OR. */
     public static function hasOr(array $queries): bool
     {
+        if (($queries['relation'] ?? '') === 'OR' && count(array_diff_key($queries, ['relation' => true])) > 1) {
+            return true;
+        }
         foreach ($queries as $key => $query) {
-            if ($key === 'relation' && $query === 'OR') {
-                return true;
-            }
             if (is_array($query) && !self::isFirstOrder($query) && self::hasOr($query)) {
                 return true;
             }
@@ -154,22 +167,19 @@ final class MetaSql
                 }
             }
         }
-        $parts = array_filter($parts, static fn (string $p) => $p !== '');
-        if ($parts === []) {
-            return '';
-        }
-        $sql = implode(" {$relation} ", $parts);
-        return count($parts) > 1 || $depth === 0 ? "( {$sql} )" : $sql;
+        return Sql::group(array_values(array_filter($parts, static fn (string $p) => $p !== '')), (string) $relation, $depth);
     }
 
     /** @param list<array{compare: string, alias: string}> $siblings earlier clauses of the same group */
     private function clause(array $clause, ?string $name, string $relation, array &$siblings): string
     {
+        $clause = self::normalized($clause);
         $compare = (string) $clause['compare'];
         $alias = $this->alias($clause, $relation, $siblings);
         $siblings[] = ['compare' => $compare, 'alias' => $alias];
         $cast = self::cast((string) ($clause['type'] ?? ''));
-        $this->clauses[$name ?? $alias] = ['alias' => $alias, 'cast' => $cast] + $clause;
+        // The clause as the builder settled it, then where it reads from.
+        $this->clauses[$name ?? $alias] = $clause + ['alias' => $alias, 'cast' => $cast];
         if ($compare === 'NOT EXISTS') {
             return "{$alias}.{$this->objectColumn} IS NULL";
         }
@@ -235,7 +245,7 @@ final class MetaSql
         if ($compare === 'NOT EXISTS') {
             $on .= ' AND ' . $this->keyClause($alias, $clause);
         }
-        $this->join .= " {$joinType} {$as} ON ( {$on} )";
+        $this->joins[] = " {$joinType} {$as} ON ( {$on} )";
         return $alias;
     }
 

@@ -33,4 +33,20 @@ final class Sql
     {
         return implode(',', array_map(static fn ($v) => self::quote((string) $v), $values));
     }
+
+    /**
+     * Clauses joined as the reference joins them at every depth (probe
+     * query-clauses): wrapped in parentheses, each clause and the relation
+     * on its own line, indented two spaces a level.
+     *
+     * @param list<string> $chunks
+     */
+    public static function group(array $chunks, string $relation, int $depth): string
+    {
+        if ($chunks === []) {
+            return '';
+        }
+        $indent = str_repeat('  ', $depth);
+        return '( ' . "\n  " . $indent . implode(' ' . "\n  " . $indent . $relation . ' ' . "\n  " . $indent, $chunks) . "\n" . $indent . ')';
+    }
 }

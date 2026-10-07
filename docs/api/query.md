@@ -4,10 +4,10 @@ shared SQL fragments
 
 | Class | Kind | Lines | Summary |
 |---|---|---|---|
-| [`DateSql`](#datesql) | final class | 157 | The WHERE fragment of a date query in the reference's shape: before and |
-| [`MetaSql`](#metasql) | final class | 242 | The JOIN and WHERE fragments of a meta query in the reference's shape: |
-| [`Sql`](#sql) | final class | 26 | Literal quoting for the SQL fragments the query classes hand to plugins, |
-| [`TaxSql`](#taxsql) | final class | 142 | The JOIN and WHERE fragments of a taxonomy query in the reference's |
+| [`DateSql`](#datesql) | final class | 248 | The WHERE fragment of a date query in the reference's shape: before and |
+| [`MetaSql`](#metasql) | final class | 252 | The JOIN and WHERE fragments of a meta query in the reference's shape: |
+| [`Sql`](#sql) | final class | 42 | Literal quoting for the SQL fragments the query classes hand to plugins, |
+| [`TaxSql`](#taxsql) | final class | 140 | The JOIN and WHERE fragments of a taxonomy query in the reference's |
 
 ## DateSql
 
@@ -19,14 +19,22 @@ date parts as MySQL functions compared or listed, groups joined by
 their relation, columns validated against the known date columns.
 
 - const `COLUMNS` = `array (   'posts' =>    array (     0 => 'post_date',     1 => 'post_date_gmt',     2 => 'post_modified',     3 => 'post_modified_gmt',   ),   'comments' =>    array (     0 => 'comment_date',     1 => 'comment_date_gmt',   ),   'users' =>    array (     0 => 'user_registered',   ),   'blogs' =>    array (     0 => 'registered',     1 => 'last_updated',   ), )`
-- const `PARTS` = `array (   'year' => 'YEAR',   'month' => 'MONTH',   'monthnum' => 'MONTH',   'week' => 'WEEK',   'w' => 'WEEK',   'dayofyear' => 'DAYOFYEAR',   'day' => 'DAYOFMONTH',   'dayofweek' => 'DAYOFWEEK',   'dayofweek_iso' => 'WEEKDAY',   'hour' => 'HOUR',   'minute' => 'MINUTE',   'second' => 'SECOND', )`
 - const `PART_ORDER` = `array (   0 => 'year',   1 => 'month',   2 => 'monthnum',   3 => 'week',   4 => 'w',   5 => 'dayofyear',   6 => 'day',   7 => 'dayofweek',   8 => 'dayofweek_iso',   9 => 'hour',   10 => 'minute',   11 => 'second', )`
+- const `RANGES` = `array (   'month' =>    array (     0 => 1,     1 => 12,   ),   'week' =>    array (     0 => 1,     1 => 53,   ),   'dayofyear' =>    array (     0 => 1,     1 => 366,   ),   'day' =>    array (     0 => 1,     1 => 31,   ),   'dayofweek' =>    array (     0 => 1,     1 => 7,   ),   'dayofweek_iso' =>    array (     0 => 1,     1 => 7,   ),   'hour' =>    array (     0 => 0,     1 => 23,   ),   'minute' =>    array (     0 => 0,     1 => 59,   ),   'second' =>    array (     0 => 0,     1 => 59,   ), )` — The ranges a date part is checked against, as the reference names them in its notice.
 
 ```php
-__construct(array $tables, string $defaultColumn = 'post_date')
+__construct(array $tables, string $defaultColumn = 'post_date', int $startOfWeek = 1)
 ```
 - `@param array<string, string> $tables table key to prefixed table name`
 
+
+### static `week(string $column, int $startOfWeek): string`
+
+The week of a column as the reference counts it from the site's first day of the week.
+
+### static `validate(array $clause): void`
+
+Notices for parts out of range and for a year, month and day that make no date (probe query-clauses).
 
 ### `sanitize(array $queries, array $defaults): array`
 
@@ -46,9 +54,12 @@ The WHERE fragment for a date query.
 
 ### static `datetime(mixed $value, bool $endOfUnit): string`
 
-A full datetime from a string or a parts array; a parts array rounds up to the end of its unit when asked.
+A full datetime from a string or a parts array. A string as precise as
+a year, a month, a day or a minute is read as those parts, so an end
+bound reaches the end of its unit; any other string is read as a time
+in the site's zone. Missing parts start (or end) the unit.
 
-Internals: `group()` (private, line 93), `clause()` (private, line 111), `part()` (private, line 135), `compare()` (private, line 164)
+Internals: `group()` (private, line 124), `clause()` (private, line 142), `value()` (private, line 178), `time()` (private, line 196), `compare()` (private, line 255)
 
 
 ## MetaSql
@@ -94,13 +105,13 @@ The clauses the last build resolved, by name.
 
 ### static `hasOr(array $queries): bool`
 
-Whether any level of the query relates its clauses by OR.
+Whether any level of the query relates two or more clauses by OR.
 
 ### static `cast(string $type): string`
 
 The CAST target for a clause type; CHAR means no cast.
 
-Internals: `hasOrWithNotExists()` (private, line 107), `group()` (private, line 139), `clause()` (private, line 166), `keyClause()` (private, line 187), `valueClause()` (private, line 199), `values()` (private, line 211), `alias()` (private, line 220)
+Internals: `normalized()` (private, line 79), `hasOrWithNotExists()` (private, line 120), `group()` (private, line 152), `clause()` (private, line 174), `keyClause()` (private, line 197), `valueClause()` (private, line 209), `values()` (private, line 221), `alias()` (private, line 230)
 
 
 ## Sql
@@ -127,6 +138,14 @@ A LIKE operand with its wildcards escaped; quote() afterwards.
 ### static `list(array $values): string`
 
 A comma list of quoted literals.
+
+### static `group(array $chunks, string $relation, int $depth): string`
+
+Clauses joined as the reference joins them at every depth (probe
+query-clauses): wrapped in parentheses, each clause and the relation
+on its own line, indented two spaces a level.
+
+- `@param list<string> $chunks`
 
 
 ## TaxSql
@@ -161,5 +180,5 @@ The terms the last build matched, by taxonomy.
 
 - `@return array<string, array{terms: list<mixed>, field: string}> the terms asked for, by taxonomy`
 
-Internals: `group()` (private, line 94), `clause()` (private, line 120), `inClause()` (private, line 144)
+Internals: `group()` (private, line 95), `clause()` (private, line 116), `inClause()` (private, line 142)
 

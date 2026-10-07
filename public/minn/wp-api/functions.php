@@ -24,6 +24,12 @@ function wp_timezone()
     return new DateTimeZone(wp_timezone_string());
 }
 
+/** The MySQL week of a column, counted from the site's first day of the week (probe query-clauses). */
+function _wp_mysql_week($column)
+{
+    return Minn\Query\DateSql::week((string) $column, (int) get_option('start_of_week'));
+}
+
 function current_time($type, $gmt = false)
 {
     if ($type === 'timestamp' || $type === 'U') {

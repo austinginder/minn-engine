@@ -17,7 +17,8 @@ final class TaxSql
 {
     private int $aliasCount = 0;
 
-    private string $join = '';
+    /** @var list<string> */
+    private array $joins = [];
 
     /** @var array<string, array{terms: list<mixed>, field: string}> */
     private array $queriedTerms = [];
@@ -78,7 +79,7 @@ final class TaxSql
             return ['join' => '', 'where' => ''];
         }
         $where = $this->group($queries, 0);
-        return ['join' => $this->join, 'where' => $where === '' ? '' : ' AND ' . $where];
+        return ['join' => implode(' ', $this->joins), 'where' => $where === '' ? '' : ' AND ' . $where];
     }
 
     /**
@@ -109,34 +110,31 @@ final class TaxSql
                 }
             }
         }
-        $parts = array_filter($parts, static fn (string $p) => $p !== '');
-        if ($parts === []) {
-            return '';
-        }
-        $sql = implode(" {$relation} ", $parts);
-        return $depth === 0 ? "( {$sql} )" : (count($parts) > 1 ? "( {$sql} )" : $sql);
+        return Sql::group(array_values(array_filter($parts, static fn (string $p) => $p !== '')), (string) $relation, $depth);
     }
 
     private function clause(array $clause, string $relation, ?string &$shared): string
     {
         $taxonomy = (string) $clause['taxonomy'];
         $operator = (string) $clause['operator'];
-        if ($operator === 'EXISTS' || $operator === 'NOT EXISTS') {
-            $sub = "SELECT 1 FROM {$this->relationships} INNER JOIN {$this->termTaxonomy} ON {$this->termTaxonomy}.term_taxonomy_id = {$this->relationships}.term_taxonomy_id"
-                . " WHERE {$this->termTaxonomy}.taxonomy = " . Sql::quote($taxonomy) . " AND {$this->relationships}.object_id = {$this->primaryTable}.{$this->primaryId}";
-            return ($operator === 'EXISTS' ? 'EXISTS' : 'NOT EXISTS') . " ( {$sub} )";
+        // Every clause but a NOT IN names what it asked for: its terms (when it has any) and its field.
+        if ($taxonomy !== '' && $operator !== 'NOT IN') {
+            $this->queriedTerms[$taxonomy] = ($clause['terms'] === [] ? [] : ['terms' => $clause['terms']]) + ['field' => (string) $clause['field']];
         }
-        if ($taxonomy !== '' && $clause['terms'] !== []) {
-            $this->queriedTerms[$taxonomy] = ['terms' => $clause['terms'], 'field' => (string) $clause['field']];
+        $object = "{$this->primaryTable}.{$this->primaryId}";
+        if ($operator === 'EXISTS' || $operator === 'NOT EXISTS') {
+            // The reference's own layout, tabs and all (probe query-clauses).
+            return ($operator === 'EXISTS' ? 'EXISTS' : 'NOT EXISTS') . " (\n\t\t\t\t\tSELECT 1\n\t\t\t\t\tFROM {$this->relationships}\n\t\t\t\t\tINNER JOIN {$this->termTaxonomy}\n\t\t\t\t\tON {$this->termTaxonomy}.term_taxonomy_id = {$this->relationships}.term_taxonomy_id\n\t\t\t\t\tWHERE {$this->termTaxonomy}.taxonomy = " . Sql::quote($taxonomy) . "\n\t\t\t\t\tAND {$this->relationships}.object_id = {$object}\n\t\t\t\t)";
         }
         $ids = ($this->termTaxonomyIds)($taxonomy, (string) $clause['field'], $clause['terms'], (bool) $clause['include_children'] && $operator !== 'AND');
         if ($ids === []) {
             return $operator === 'NOT IN' ? '' : '0 = 1';
         }
+        sort($ids, SORT_NUMERIC);
         $list = implode(',', $ids);
         return match ($operator) {
-            'NOT IN' => "{$this->primaryTable}.{$this->primaryId} NOT IN ( SELECT object_id FROM {$this->relationships} WHERE term_taxonomy_id IN ({$list}) )",
-            'AND' => "( SELECT COUNT(1) FROM {$this->relationships} WHERE term_taxonomy_id IN ({$list}) AND object_id = {$this->primaryTable}.{$this->primaryId} ) = " . count($ids),
+            'NOT IN' => "{$object} NOT IN (\n\t\t\t\tSELECT object_id\n\t\t\t\tFROM {$this->relationships}\n\t\t\t\tWHERE term_taxonomy_id IN ({$list})\n\t\t\t)",
+            'AND' => "(\n\t\t\t\tSELECT COUNT(1)\n\t\t\t\tFROM {$this->relationships}\n\t\t\t\tWHERE term_taxonomy_id IN ({$list})\n\t\t\t\tAND object_id = {$object}\n\t\t\t) = " . count($ids),
             default => $this->inClause($list, $relation, $shared),
         };
     }
@@ -149,7 +147,7 @@ final class TaxSql
             $alias = $this->aliasCount === 0 ? $this->relationships : 'tt' . $this->aliasCount;
             $this->aliasCount++;
             $as = $alias === $this->relationships ? $this->relationships : "{$this->relationships} AS {$alias}";
-            $this->join .= " LEFT JOIN {$as} ON ({$this->primaryTable}.{$this->primaryId} = {$alias}.object_id)";
+            $this->joins[] = " LEFT JOIN {$as} ON ({$this->primaryTable}.{$this->primaryId} = {$alias}.object_id)";
             $shared = $alias;
         }
         return "{$alias}.term_taxonomy_id IN ({$list})";
