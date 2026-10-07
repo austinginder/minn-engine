@@ -4,9 +4,9 @@
     "summary": {
         "minn": 661,
         "composes": 976,
-        "leaf": 661,
-        "noop": 1941,
-        "functions": 4169,
+        "leaf": 663,
+        "noop": 1944,
+        "functions": 4174,
         "minnMethods": 750,
         "leafLinesOver15": 12
     },
@@ -12828,10 +12828,10 @@
         },
         "WP_Theme_JSON::merge": {
             "file": "classes/WP_Theme_JSON.php",
-            "lines": 2,
+            "lines": 3,
             "kind": "minn",
             "minn": [
-                "Minn\\Runtime\\PlaceholderTrace::hit"
+                "Minn\\Theme\\Theme::merge"
             ],
             "composes": []
         },
@@ -13084,6 +13084,44 @@
             "kind": "minn",
             "minn": [
                 "Minn\\Runtime\\PlaceholderTrace::hit"
+            ],
+            "composes": []
+        },
+        "WP_Theme_JSON_Data::__construct": {
+            "file": "classes/WP_Theme_JSON_Data.php",
+            "lines": 2,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Theme_JSON_Data::get_data": {
+            "file": "classes/WP_Theme_JSON_Data.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Theme_JSON_Data::get_theme_json": {
+            "file": "classes/WP_Theme_JSON_Data.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Theme_JSON_Data::update_with": {
+            "file": "classes/WP_Theme_JSON_Data.php",
+            "lines": 2,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Theme_JSON_Resolver::clean_cached_data": {
+            "file": "classes/WP_Theme_JSON_Resolver.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Runtime\\Runtime::current",
+                "Minn\\Runtime\\Runtime::set"
             ],
             "composes": []
         },

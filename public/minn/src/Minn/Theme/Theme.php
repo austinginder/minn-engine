@@ -5,6 +5,8 @@ declare(strict_types=1);
 
 namespace Minn\Theme;
 
+use Minn\Runtime\Runtime;
+
 use Minn\Content\Site;
 use Minn\Front\Permalinks;
 
@@ -70,12 +72,18 @@ final class Theme
         return $this->parent?->slug;
     }
 
-    /** The theme.json with the parent's merged in. */
+    /** The theme.json with the parent's merged in; with plugins loaded, through wp_theme_json_data_theme. */
     public function json(): array
+    {
+        return Runtime::booted() ? ThemeJsonData::theme($this->rawJson(), $this->dir) : $this->rawJson();
+    }
+
+    /** The theme.json as written, the parent's merged in. */
+    private function rawJson(): array
     {
         if ($this->json === null) {
             $own = (array) json_decode((string) file_get_contents("{$this->dir}/theme.json"), true);
-            $this->json = $this->parent === null ? $own : self::merge($this->parent->json(), $own);
+            $this->json = $this->parent === null ? $own : self::merge($this->parent->rawJson(), $own);
             $this->json = $this->withStylePartials($this->json);
         }
         return $this->json;

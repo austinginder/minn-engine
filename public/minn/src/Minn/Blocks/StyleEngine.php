@@ -163,7 +163,8 @@ final class StyleEngine
         return is_string($value) ? [$property => $value] : [];
     }
 
-    private static function kebab(string $text): string
+    /** A name in kebab case, as the reference's _wp_to_kebab_case cuts it ("lineHeight", "Zz Space" become "line-height", "zz-space"). */
+    public static function kebab(string $text): string
     {
         preg_match_all('/[A-Z]{2,}(?=[A-Z][a-z]+[0-9]*|\b)|[A-Z]?[a-z]+[0-9]*|[A-Z]|[0-9]+/', str_replace("'", '', $text), $words);
         return strtolower(implode('-', $words[0]));

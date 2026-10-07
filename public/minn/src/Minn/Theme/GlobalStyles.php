@@ -134,7 +134,8 @@ final readonly class GlobalStyles
         // defaults print for every theme, each key replaceable by the theme.
         $styles = $this->styles();
         $presets = StylePresets::presets($settings);
-        $variables = ':root{' . StylePresets::presetProperties($presets) . '}';
+        $variables = ':root{' . StylePresets::presetProperties($presets) . StylePresets::customProperties((array) ($settings['custom'] ?? [])) . '}';
+        $variables .= $this->blockCustomProperties((array) ($settings['blocks'] ?? []));
         $variables .= '.wp-block-button{--wp--preset--dimension--25: 25%;--wp--preset--dimension--50: 50%;--wp--preset--dimension--75: 75%;--wp--preset--dimension--100: 100%;}';
         $layout = (array) ($settings['layout'] ?? []);
         $base = ':root { --wp--style--global--content-size: ' . ($layout['contentSize'] ?? '620px') . ';--wp--style--global--wide-size: ' . ($layout['wideSize'] ?? '1000px') . '; }';
@@ -278,6 +279,21 @@ final readonly class GlobalStyles
             // An element's own CSS, under the element's selector (probe editor-styles).
             if (is_string($rules['css'] ?? null) && $rules['css'] !== '') {
                 $out .= self::scopedCss($rules['css'], $full);
+            }
+        }
+        return $out;
+    }
+
+    /** Each block's own settings.custom as custom properties on the block's root selector. @param array<string, mixed> $blocks */
+    private function blockCustomProperties(array $blocks): string
+    {
+        $out = '';
+        foreach ($blocks as $name => $settings) {
+            $properties = StylePresets::customProperties((array) (((array) $settings)['custom'] ?? []));
+            if ($properties !== '') {
+                $slug = str_starts_with((string) $name, 'core/') ? substr((string) $name, 5) : str_replace('/', '-', (string) $name);
+                $selectors = self::selectorsOf((string) $name);
+                $out .= (is_string($selectors['root'] ?? null) ? $selectors['root'] : (self::BLOCK_SELECTORS[$name] ?? ".wp-block-{$slug}")) . '{' . $properties . '}';
             }
         }
         return $out;

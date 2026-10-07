@@ -329,10 +329,12 @@ class WP_Theme_JSON
         return null;
     }
 
+    /** Another layer over this one: maps merge key by key, lists (palettes, sizes) are replaced. */
     public function merge($incoming)
     {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_Theme_JSON::merge');
-        return null;
+        if ($incoming instanceof WP_Theme_JSON) {
+            $this->theme_json = Minn\Theme\Theme::merge((array) $this->theme_json, (array) $incoming->get_raw_data());
+        }
     }
 
     public function get_svg_filters($origins)

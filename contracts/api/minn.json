@@ -17433,12 +17433,14 @@
             "namespace": "Minn\\Blocks",
             "kind": "final class",
             "file": "public/minn/src/Minn/Blocks/StyleEngine.php",
-            "lines": 147,
+            "lines": 148,
             "doc": "What a block's style object comes to, as the reference's style engine\nreads it (probe style-engine): the declarations each style property\nmakes and the class names a preset or a set colour earns.\n\n- Groups in the order background, colour, border, shadow, dimensions,\nspacing, typography, and properties in their order within a group.\n- A value goes into the declarations as given. Whether it makes CSS is\nfor the declarations holder to judge.\n- A preset (\"var:preset|color|base\") becomes a custom property only\nwhere the definition names one for its kind (a colour, a gradient,\nspacing, a font size or family, a shadow, a dimension, a border radius,\na border side's colour). Elsewhere it makes nothing, and with presets\nturned into class names it makes none anywhere.\n- Sides and corners (\"padding\" => [\"top\" => ...]) name their own\nproperties in the order given. Border sides come after the whole\nborder.",
             "implements": [],
             "extends": null,
             "uses": [],
-            "usedBy": [],
+            "usedBy": [
+                "Minn\\Theme\\StylePresets"
+            ],
             "constructor": null,
             "cases": [],
             "constants": [
@@ -17537,6 +17539,26 @@
                     ],
                     "line": 67,
                     "end": 76
+                },
+                {
+                    "routes": [],
+                    "name": "kebab",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "kebab(string $text): string",
+                    "doc": "A name in kebab case, as the reference's _wp_to_kebab_case cuts it (\"lineHeight\", \"Zz Space\" become \"line-height\", \"zz-space\").",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "text",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 167,
+                    "end": 171
                 },
                 {
                     "routes": [],
@@ -17788,26 +17810,6 @@
                     ],
                     "line": 158,
                     "end": 164
-                },
-                {
-                    "routes": [],
-                    "name": "kebab",
-                    "static": true,
-                    "visibility": "private",
-                    "signature": "kebab(string $text): string",
-                    "doc": "",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "text",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 166,
-                    "end": 170
                 }
             ]
         },
@@ -119329,7 +119331,9 @@
                 "Minn\\Theme\\HeadLinks",
                 "Minn\\Theme\\MainQueryBridge",
                 "Minn\\Theme\\PageRenderer",
-                "Minn\\Theme\\Templates"
+                "Minn\\Theme\\Templates",
+                "Minn\\Theme\\Theme",
+                "Minn\\Theme\\ThemeJsonData"
             ],
             "constructor": {
                 "signature": "__construct(Minn\\Context $context, bool $isAdmin = false)",
@@ -131968,7 +131972,7 @@
             "namespace": "Minn\\Theme",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Theme/GlobalStyles.php",
-            "lines": 555,
+            "lines": 571,
             "doc": "theme.json to CSS. Presets become custom properties on :root and their\nhas-* utility classes; settings.layout sizes, root styles, elements, and\nper-block styles become rules; the containers, galleries, and style\nvariations the page actually rendered get their own stylesheets. The\nlayout rules themselves (flow, constrained, flex, grid, alignments) are\nthe engine's own, written to the same class hooks.",
             "implements": [],
             "extends": null,
@@ -132117,8 +132121,8 @@
                     "doc": "The @font-face rules for every family that declares font files, as\nthe reference prints them in its own style element: family (quoted\nwhen it has a space), style, weight, display, then the sources with\nfile:./ resolved against the theme that carries the file and the\nformat named from the extension. Families without files print\nnothing.",
                     "shapes": [],
                     "params": [],
-                    "line": 155,
-                    "end": 183
+                    "line": 156,
+                    "end": 184
                 },
                 {
                     "routes": [],
@@ -132132,7 +132136,7 @@
                     ],
                     "params": [],
                     "line": 129,
-                    "end": 145
+                    "end": 146
                 },
                 {
                     "routes": [],
@@ -132151,8 +132155,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 185,
-                    "end": 200
+                    "line": 186,
+                    "end": 201
                 },
                 {
                     "routes": [],
@@ -132178,8 +132182,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 203,
-                    "end": 220
+                    "line": 204,
+                    "end": 221
                 },
                 {
                     "routes": [],
@@ -132205,8 +132209,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 223,
-                    "end": 232
+                    "line": 224,
+                    "end": 233
                 },
                 {
                     "routes": [],
@@ -132225,8 +132229,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 239,
-                    "end": 251
+                    "line": 240,
+                    "end": 252
                 },
                 {
                     "routes": [],
@@ -132252,8 +132256,30 @@
                             "doc": ""
                         }
                     ],
-                    "line": 253,
-                    "end": 284
+                    "line": 254,
+                    "end": 285
+                },
+                {
+                    "routes": [],
+                    "name": "blockCustomProperties",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "blockCustomProperties(array $blocks): string",
+                    "doc": "Each block's own settings.custom as custom properties on the block's root selector. @param array<string, mixed> $blocks",
+                    "shapes": [
+                        "@param array<string, mixed> $blocks"
+                    ],
+                    "params": [
+                        {
+                            "name": "blocks",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 288,
+                    "end": 300
                 },
                 {
                     "routes": [],
@@ -132279,8 +132305,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 292,
-                    "end": 317
+                    "line": 308,
+                    "end": 333
                 },
                 {
                     "routes": [],
@@ -132301,8 +132327,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 320,
-                    "end": 325
+                    "line": 336,
+                    "end": 341
                 },
                 {
                     "routes": [],
@@ -132332,8 +132358,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 335,
-                    "end": 360
+                    "line": 351,
+                    "end": 376
                 },
                 {
                     "routes": [],
@@ -132352,8 +132378,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 362,
-                    "end": 372
+                    "line": 378,
+                    "end": 388
                 },
                 {
                     "routes": [],
@@ -132379,8 +132405,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 382,
-                    "end": 403
+                    "line": 398,
+                    "end": 419
                 },
                 {
                     "routes": [],
@@ -132406,8 +132432,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 406,
-                    "end": 416
+                    "line": 422,
+                    "end": 432
                 },
                 {
                     "routes": [],
@@ -132433,8 +132459,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 419,
-                    "end": 422
+                    "line": 435,
+                    "end": 438
                 },
                 {
                     "routes": [],
@@ -132453,8 +132479,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 425,
-                    "end": 454
+                    "line": 441,
+                    "end": 470
                 },
                 {
                     "routes": [],
@@ -132465,8 +132491,8 @@
                     "doc": "",
                     "shapes": [],
                     "params": [],
-                    "line": 456,
-                    "end": 473
+                    "line": 472,
+                    "end": 489
                 },
                 {
                     "routes": [],
@@ -132494,8 +132520,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 481,
-                    "end": 544
+                    "line": 497,
+                    "end": 560
                 },
                 {
                     "routes": [],
@@ -132517,8 +132543,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 554,
-                    "end": 571
+                    "line": 570,
+                    "end": 587
                 }
             ]
         },
@@ -134008,11 +134034,13 @@
             "namespace": "Minn\\Theme",
             "kind": "final class",
             "file": "public/minn/src/Minn/Theme/StylePresets.php",
-            "lines": 174,
+            "lines": 195,
             "doc": "The preset side of theme.json: the colour, gradient, font-size,\nfont-family, spacing, and shadow lists a theme declares over core's\nown, as the custom properties on :root and the has-* utility classes\nthe reference prints for them. Pure: settings in, CSS fragments out.",
             "implements": [],
             "extends": null,
-            "uses": [],
+            "uses": [
+                "Minn\\Blocks\\StyleEngine"
+            ],
             "usedBy": [
                 "Minn\\Theme\\GlobalStyles"
             ],
@@ -134038,8 +134066,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 17,
-                    "end": 32
+                    "line": 19,
+                    "end": 34
                 },
                 {
                     "routes": [],
@@ -134060,8 +134088,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 42,
-                    "end": 59
+                    "line": 44,
+                    "end": 61
                 },
                 {
                     "routes": [],
@@ -134082,8 +134110,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 66,
-                    "end": 69
+                    "line": 68,
+                    "end": 71
                 },
                 {
                     "routes": [],
@@ -134102,8 +134130,37 @@
                             "doc": ""
                         }
                     ],
-                    "line": 72,
-                    "end": 81
+                    "line": 74,
+                    "end": 83
+                },
+                {
+                    "routes": [],
+                    "name": "customProperties",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "customProperties(array $custom, string $prefix = '--wp--custom--'): string",
+                    "doc": "A settings.custom tree as custom properties: --wp--custom-- and the path\nto each value, every key in kebab case, lists by index; empty values\nare left out.",
+                    "shapes": [
+                        "@param array<array-key, mixed> $custom"
+                    ],
+                    "params": [
+                        {
+                            "name": "custom",
+                            "type": "array",
+                            "shape": "array<array-key, mixed>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "prefix",
+                            "type": "string",
+                            "shape": "",
+                            "default": "'--wp--custom--'",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 92,
+                    "end": 104
                 },
                 {
                     "routes": [],
@@ -134122,8 +134179,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 84,
-                    "end": 106
+                    "line": 107,
+                    "end": 129
                 },
                 {
                     "routes": [],
@@ -134153,8 +134210,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 116,
-                    "end": 126
+                    "line": 139,
+                    "end": 149
                 },
                 {
                     "routes": [],
@@ -134182,8 +134239,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 135,
-                    "end": 145
+                    "line": 158,
+                    "end": 168
                 },
                 {
                     "routes": [],
@@ -134209,8 +134266,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 153,
-                    "end": 172
+                    "line": 176,
+                    "end": 195
                 },
                 {
                     "routes": [],
@@ -134229,8 +134286,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 175,
-                    "end": 185
+                    "line": 198,
+                    "end": 208
                 }
             ]
         },
@@ -136265,14 +136322,16 @@
             "namespace": "Minn\\Theme",
             "kind": "final class",
             "file": "public/minn/src/Minn/Theme/Theme.php",
-            "lines": 334,
+            "lines": 340,
             "doc": "The active block theme on disk, read as data: theme.json, the templates\nand parts directories, and the patterns index. A child theme's files\nwin and its parent fills in what the child does not define; theme.json\nmerges the same way, with the child's preset lists replacing the\nparent's whole. The engine reads the site's installed theme the way it\nreads the site's database; it never runs the theme's PHP.",
             "implements": [],
             "extends": null,
             "uses": [
                 "Minn\\Content\\Site",
                 "Minn\\Front\\Permalinks",
-                "Minn\\Theme\\PatternText"
+                "Minn\\Runtime\\Runtime",
+                "Minn\\Theme\\PatternText",
+                "Minn\\Theme\\ThemeJsonData"
             ],
             "usedBy": [
                 "Minn\\Admin\\RenderController",
@@ -136325,8 +136384,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 25,
-                "end": 31
+                "line": 27,
+                "end": 33
             },
             "cases": [],
             "constants": [],
@@ -136418,8 +136477,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 34,
-                    "end": 44
+                    "line": 36,
+                    "end": 46
                 },
                 {
                     "routes": [],
@@ -136452,8 +136511,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 51,
-                    "end": 57
+                    "line": 53,
+                    "end": 59
                 },
                 {
                     "routes": [],
@@ -136464,8 +136523,8 @@
                     "doc": "The theme's own name, and the parent's, for body classes.",
                     "shapes": [],
                     "params": [],
-                    "line": 68,
-                    "end": 71
+                    "line": 70,
+                    "end": 73
                 },
                 {
                     "routes": [],
@@ -136473,11 +136532,11 @@
                     "static": false,
                     "visibility": "public",
                     "signature": "json(): array",
-                    "doc": "The theme.json with the parent's merged in.",
+                    "doc": "The theme.json with the parent's merged in; with plugins loaded, through wp_theme_json_data_theme.",
                     "shapes": [],
                     "params": [],
-                    "line": 74,
-                    "end": 82
+                    "line": 76,
+                    "end": 79
                 },
                 {
                     "routes": [],
@@ -136490,8 +136549,8 @@
                         "@return list<string>"
                     ],
                     "params": [],
-                    "line": 116,
-                    "end": 123
+                    "line": 124,
+                    "end": 131
                 },
                 {
                     "routes": [],
@@ -136517,8 +136576,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 145,
-                    "end": 154
+                    "line": 153,
+                    "end": 162
                 },
                 {
                     "routes": [],
@@ -136537,8 +136596,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 163,
-                    "end": 170
+                    "line": 171,
+                    "end": 178
                 },
                 {
                     "routes": [],
@@ -136557,8 +136616,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 173,
-                    "end": 177
+                    "line": 181,
+                    "end": 185
                 },
                 {
                     "routes": [],
@@ -136577,8 +136636,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 180,
-                    "end": 187
+                    "line": 188,
+                    "end": 195
                 },
                 {
                     "routes": [],
@@ -136589,8 +136648,8 @@
                     "doc": "The theme's display name, as the stylesheet header states it; a child\ntheme answers with its own. Falls back to theme.json's title, then the\nfolder name.",
                     "shapes": [],
                     "params": [],
-                    "line": 194,
-                    "end": 203
+                    "line": 202,
+                    "end": 211
                 },
                 {
                     "routes": [],
@@ -136611,8 +136670,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 213,
-                    "end": 224
+                    "line": 221,
+                    "end": 232
                 },
                 {
                     "routes": [],
@@ -136631,8 +136690,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 239,
-                    "end": 247
+                    "line": 247,
+                    "end": 255
                 },
                 {
                     "routes": [],
@@ -136651,8 +136710,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 250,
-                    "end": 258
+                    "line": 258,
+                    "end": 266
                 },
                 {
                     "routes": [],
@@ -136671,8 +136730,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 261,
-                    "end": 269
+                    "line": 269,
+                    "end": 277
                 },
                 {
                     "routes": [],
@@ -136691,8 +136750,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 272,
-                    "end": 279
+                    "line": 280,
+                    "end": 287
                 },
                 {
                     "routes": [],
@@ -136713,8 +136772,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 287,
-                    "end": 301
+                    "line": 295,
+                    "end": 309
                 },
                 {
                     "routes": [],
@@ -136735,8 +136794,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 310,
-                    "end": 330
+                    "line": 318,
+                    "end": 338
                 },
                 {
                     "routes": [],
@@ -136747,8 +136806,8 @@
                     "doc": "The theme's stylesheet URL when it ships one; a child's own, else nothing (the parent's is not enqueued for it).",
                     "shapes": [],
                     "params": [],
-                    "line": 333,
-                    "end": 336
+                    "line": 341,
+                    "end": 344
                 },
                 {
                     "routes": [],
@@ -136788,8 +136847,20 @@
                             "doc": ""
                         }
                     ],
-                    "line": 59,
-                    "end": 65
+                    "line": 61,
+                    "end": 67
+                },
+                {
+                    "routes": [],
+                    "name": "rawJson",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "rawJson(): array",
+                    "doc": "The theme.json as written, the parent's merged in.",
+                    "shapes": [],
+                    "params": [],
+                    "line": 82,
+                    "end": 90
                 },
                 {
                     "routes": [],
@@ -136808,8 +136879,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 90,
-                    "end": 108
+                    "line": 98,
+                    "end": 116
                 },
                 {
                     "routes": [],
@@ -136830,8 +136901,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 126,
-                    "end": 139
+                    "line": 134,
+                    "end": 147
                 },
                 {
                     "routes": [],
@@ -136850,8 +136921,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 157,
-                    "end": 160
+                    "line": 165,
+                    "end": 168
                 },
                 {
                     "routes": [],
@@ -136872,8 +136943,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 227,
-                    "end": 236
+                    "line": 235,
+                    "end": 244
                 },
                 {
                     "routes": [],
@@ -136886,8 +136957,60 @@
                         "@return array<string, string>"
                     ],
                     "params": [],
-                    "line": 339,
-                    "end": 351
+                    "line": 347,
+                    "end": 359
+                }
+            ]
+        },
+        {
+            "name": "Minn\\Theme\\ThemeJsonData",
+            "short": "ThemeJsonData",
+            "namespace": "Minn\\Theme",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Theme/ThemeJsonData.php",
+            "lines": 20,
+            "doc": "The theme's theme.json as plugins and the theme's own functions may\nchange it (wp_theme_json_data_theme, a WP_Theme_JSON_Data they update\nwith presets and settings of their own), as the reference's resolver\nhands it to them. Worked out once a request for each set of callbacks,\nso a filter added late still counts.",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\Runtime\\Runtime"
+            ],
+            "usedBy": [
+                "Minn\\Theme\\Theme"
+            ],
+            "constructor": null,
+            "cases": [],
+            "constants": [],
+            "properties": [],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "theme",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "theme(array $json, string $dir): array",
+                    "doc": "The theme layer through wp_theme_json_data_theme; as written when nothing filters it. @param array<string, mixed> $json",
+                    "shapes": [
+                        "@param array<string, mixed> $json"
+                    ],
+                    "params": [
+                        {
+                            "name": "json",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "dir",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 19,
+                    "end": 34
                 }
             ]
         },

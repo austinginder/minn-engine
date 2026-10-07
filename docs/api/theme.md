@@ -14,7 +14,7 @@ the block-theme reader, templates, global styles and the page renderer
 | [`FeedHeaders`](#feedheaders) | final class | 50 | The headers a feed is sent with, as the reference's send_headers sends |
 | [`Folder`](#folder) | final readonly class | 77 | A theme folder read from disk: its style.css headers, which folder its templates come from, its screenshot, whether it is a block theme. |
 | [`FrontLifecycle`](#frontlifecycle) | final class | 96 | WordPress's front-end request steps around the main query, as WP::main |
-| [`GlobalStyles`](#globalstyles) | final readonly class | 555 | theme.json to CSS. Presets become custom properties on :root and their |
+| [`GlobalStyles`](#globalstyles) | final readonly class | 571 | theme.json to CSS. Presets become custom properties on :root and their |
 | [`HeadLinks`](#headlinks) | final readonly class | 133 | The links the reference puts in every head: the site and comments |
 | [`Hierarchy`](#hierarchy) | final class | 146 | The classic template hierarchy: the candidate file names each template |
 | [`MainQueryBridge`](#mainquerybridge) | final readonly class | 138 | Stands the main query for a themed page and runs the front-end steps |
@@ -22,7 +22,7 @@ the block-theme reader, templates, global styles and the page renderer
 | [`PageRenderer`](#pagerenderer) | final readonly class | 205 | A whole page from the active block theme: the template the resolution |
 | [`PatternText`](#patterntext) | final class | 198 | Block-theme patterns are PHP files whose only code is a handful of |
 | [`Printed`](#printed) | final class | 3 | Raised once a WordPress handler has printed a whole response (a sitemap, |
-| [`StylePresets`](#stylepresets) | final class | 174 | The preset side of theme.json: the colour, gradient, font-size, |
+| [`StylePresets`](#stylepresets) | final class | 195 | The preset side of theme.json: the colour, gradient, font-size, |
 | [`StyleSettings`](#stylesettings) | final class | 82 | The settings and styles nodes as wp/v2/global-styles reports them: |
 | [`TemplateHierarchy`](#templatehierarchy) | final class | 75 | The templates a block theme falls back through for a template slug, as |
 | [`TemplateIndex`](#templateindex) | final class | 250 | Every block template and template part the site offers, in the order the |
@@ -31,7 +31,8 @@ the block-theme reader, templates, global styles and the page renderer
 | [`TemplateRecord`](#templaterecord) | final readonly class | 34 | One block template or template part, whatever it came from: a theme |
 | [`TemplateWriter`](#templatewriter) | final readonly class | 92 | Saving and removing block templates. A template the theme ships is never |
 | [`Templates`](#templates) | final readonly class | 175 | Which template renders a resolution, and where its markup comes from: |
-| [`Theme`](#theme) | final class | 334 | The active block theme on disk, read as data: theme.json, the templates |
+| [`Theme`](#theme) | final class | 340 | The active block theme on disk, read as data: theme.json, the templates |
+| [`ThemeJsonData`](#themejsondata) | final class | 20 | The theme's theme.json as plugins and the theme's own functions may |
 | [`ThemeStyles`](#themestyles) | final readonly class | 115 | The active theme's global styles as wp/v2/global-styles/themes/{stylesheet} |
 | [`UserStyles`](#userstyles) | final readonly class | 106 | The site editor's saved global styles: one wp_global_styles post per |
 
@@ -369,7 +370,7 @@ file:./ resolved against the theme that carries the file and the
 format named from the extension. Families without files print
 nothing.
 
-Internals: `parts()` (private, line 129), `fontUrl()` (private, line 185), `structuralRules()` (private, line 203), `gapRules()` (private, line 223), `rootStyles()` (private, line 239), `elementStyles()` (private, line 253), `blockStyles()` (private, line 292), `selectorsOf()` (private, line 320), `byFeature()` (private, line 335), `withoutEmpty()` (private, line 362), `scopedCss()` (private, line 382), `scope()` (private, line 406), `append()` (private, line 419), `variationStyles()` (private, line 425), `containerStyles()` (private, line 456), `declarations()` (private, line 481), `ordered()` (private, line 554)
+Internals: `parts()` (private, line 129), `fontUrl()` (private, line 186), `structuralRules()` (private, line 204), `gapRules()` (private, line 224), `rootStyles()` (private, line 240), `elementStyles()` (private, line 254), `blockCustomProperties()` (private, line 288), `blockStyles()` (private, line 308), `selectorsOf()` (private, line 336), `byFeature()` (private, line 351), `withoutEmpty()` (private, line 378), `scopedCss()` (private, line 398), `scope()` (private, line 422), `append()` (private, line 435), `variationStyles()` (private, line 441), `containerStyles()` (private, line 472), `declarations()` (private, line 497), `ordered()` (private, line 570)
 
 
 ## HeadLinks
@@ -655,6 +656,14 @@ The font family presets in the settings.
 ### static `presetProperties(array $presets): string`
 
 The presets as custom properties for :root.
+
+### static `customProperties(array $custom, string $prefix = '--wp--custom--'): string`
+
+A settings.custom tree as custom properties: --wp--custom-- and the path
+to each value, every key in kebab case, lists by index; empty values
+are left out.
+
+- `@param array<array-key, mixed> $custom`
 
 ### static `presetClasses(array $presets): string`
 
@@ -1021,7 +1030,7 @@ The theme's own name, and the parent's, for body classes.
 
 ### `json(): array`
 
-The theme.json with the parent's merged in.
+The theme.json with the parent's merged in; with plugins loaded, through wp_theme_json_data_theme.
 
 ### `styleFiles(): array`
 
@@ -1097,7 +1106,26 @@ pattern into a template. A field the header omits is omitted here.
 
 The theme's stylesheet URL when it ships one; a child's own, else nothing (the parent's is not enqueued for it).
 
-Internals: `at()` (private, line 59), `withStylePartials()` (private, line 90), `partialFiles()` (private, line 126), `safe()` (private, line 157), `htmlFiles()` (private, line 227), `patternIndex()` (private, line 339)
+Internals: `at()` (private, line 61), `rawJson()` (private, line 82), `withStylePartials()` (private, line 98), `partialFiles()` (private, line 134), `safe()` (private, line 165), `htmlFiles()` (private, line 235), `patternIndex()` (private, line 347)
+
+
+## ThemeJsonData
+
+`final class Minn\Theme\ThemeJsonData` · `public/minn/src/Minn/Theme/ThemeJsonData.php`
+
+The theme's theme.json as plugins and the theme's own functions may
+change it (wp_theme_json_data_theme, a WP_Theme_JSON_Data they update
+with presets and settings of their own), as the reference's resolver
+hands it to them. Worked out once a request for each set of callbacks,
+so a filter added late still counts.
+
+Used by: `Minn\Theme\Theme`
+
+### static `theme(array $json, string $dir): array`
+
+The theme layer through wp_theme_json_data_theme; as written when nothing filters it. @param array<string, mixed> $json
+
+- `@param array<string, mixed> $json`
 
 
 ## ThemeStyles

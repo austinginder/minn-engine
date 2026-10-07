@@ -61,6 +61,12 @@ final class WP_Theme_JSON_Resolver
         return $id;
     }
 
+    /** Forgets what was worked out (the engine works the filtered layers out per set of filters, so nothing goes stale). */
+    public static function clean_cached_data()
+    {
+        Runtime::current()->set('block_style_partials_registered', false);
+    }
+
     /** Defaults, theme, and (for origin custom) the site editor's saved styles, merged. */
     public static function get_merged_data($origin = 'custom'): WP_Theme_JSON
     {

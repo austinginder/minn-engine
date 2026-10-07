@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Minn\Theme;
 
+use Minn\Blocks\StyleEngine;
+
 /**
  * The preset side of theme.json: the colour, gradient, font-size,
  * font-family, spacing, and shadow lists a theme declares over core's
@@ -75,6 +77,27 @@ final class StylePresets
         foreach ($presets as $kind => $entries) {
             foreach ($entries as $entry) {
                 $out .= "--wp--preset--{$kind}--{$entry['slug']}: {$entry['value']};";
+            }
+        }
+        return $out;
+    }
+
+    /**
+     * A settings.custom tree as custom properties: --wp--custom-- and the path
+     * to each value, every key in kebab case, lists by index; empty values
+     * are left out.
+     *
+     * @param array<array-key, mixed> $custom
+     */
+    public static function customProperties(array $custom, string $prefix = '--wp--custom--'): string
+    {
+        $out = '';
+        foreach ($custom as $key => $value) {
+            $name = $prefix . StyleEngine::kebab((string) $key);
+            if (is_array($value)) {
+                $out .= self::customProperties($value, $name . '--');
+            } elseif (is_scalar($value)) {
+                $out .= $name . ': ' . (is_bool($value) ? ($value ? '1' : '') : (string) $value) . ';';
             }
         }
         return $out;
