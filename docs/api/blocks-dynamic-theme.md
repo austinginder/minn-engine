@@ -4,7 +4,7 @@ the template blocks a block theme composes with
 
 | Class | Kind | Lines | Summary |
 |---|---|---|---|
-| [`Comments`](#comments) | final readonly class | 262 | comments, comments-title, comment-template, the comment-* blocks, and the comment form. |
+| [`Comments`](#comments) | final readonly class | 245 | comments, comments-title, comment-template, the comment-* blocks, and the comment form. |
 | [`Navigation`](#navigation) | final readonly class | 287 | navigation, navigation-link, page-list. A navigation block's items come |
 | [`PostBlocks`](#postblocks) | final readonly class | 255 | The post-* blocks: they render the context's current post. |
 | [`QueryBlocks`](#queryblocks) | final class | 274 | query, post-template, query-title, query-no-results, query-pagination, term-description. |
@@ -27,7 +27,7 @@ __construct(Minn\Db $db, Minn\Content\Comments $comments, Minn\Content\Site $sit
 
 Registers this family's blocks with the renderer.
 
-Internals: `comments()` (private, line 53), `title()` (private, line 67), `template()` (private, line 84), `list()` (private, line 99), `avatar()` (private, line 129), `date()` (private, line 141), `authorName()` (private, line 153), `content()` (private, line 167), `replyLink()` (private, line 178), `form()` (private, line 191), `formWithPlugins()` (private, line 223), `visible()` (private, line 247), `linkedEmail()` (private, line 265), `approved()` (private, line 279)
+Internals: `comments()` (private, line 53), `title()` (private, line 67), `template()` (private, line 84), `list()` (private, line 99), `avatar()` (private, line 129), `date()` (private, line 141), `authorName()` (private, line 153), `content()` (private, line 167), `replyLink()` (private, line 178), `form()` (private, line 191), `commentForm()` (private, line 206), `visible()` (private, line 230), `linkedEmail()` (private, line 248), `approved()` (private, line 262)
 
 
 ## Navigation
