@@ -1,11 +1,12 @@
 <?php
-/** The abilities API: a recording registry, initialised lazily the reference's way. Registry in Minn\Runtime\Abilities. */
+/** The abilities API: categories and abilities registered on their own init actions, as objects. Registry in Minn\Runtime\Abilities. */
 
 use Minn\Runtime\Abilities;
 
 function wp_register_ability_category(string $slug, array $args)
 {
-    return Abilities::registerCategory($slug, $args);
+    $row = Abilities::registerCategory($slug, $args);
+    return $row === null ? null : new WP_Ability_Category($slug, $row);
 }
 
 function wp_register_ability(string $name, array $args)
@@ -16,12 +17,14 @@ function wp_register_ability(string $name, array $args)
 
 function wp_unregister_ability_category(string $slug)
 {
-    return Abilities::unregisterCategory($slug);
+    $row = Abilities::unregisterCategory($slug);
+    return $row === null ? null : new WP_Ability_Category($slug, $row);
 }
 
 function wp_unregister_ability(string $name)
 {
-    return Abilities::unregister($name);
+    $row = Abilities::unregister($name);
+    return $row === null ? null : new WP_Ability($name, $row);
 }
 
 function wp_get_ability(string $name)
@@ -32,30 +35,33 @@ function wp_get_ability(string $name)
 
 function wp_get_abilities($args = [])
 {
-    $rows = Abilities::all();
     $category = (string) (((array) $args)['category'] ?? '');
-    if ($category !== '') {
-        $rows = array_filter($rows, static fn (array $row) => (string) ($row['category'] ?? '') === $category);
+    $out = [];
+    foreach (Abilities::all() as $name => $row) {
+        if ($category === '' || (string) ($row['category'] ?? '') === $category) {
+            $out[$name] = new WP_Ability($name, $row);
+        }
     }
-    return array_map(static fn (array $row) => new WP_Ability((string) $row['name'], $row), array_values($rows));
+    return $out;
 }
 
 function wp_has_ability(string $name)
 {
-    return Abilities::find($name) !== null;
+    return Abilities::ability($name) !== null;
 }
 
 function wp_get_ability_category(string $slug)
 {
-    return Abilities::findCategory($slug);
+    $row = Abilities::findCategory($slug);
+    return $row === null ? null : new WP_Ability_Category($slug, $row);
 }
 
 function wp_get_ability_categories()
 {
-    return Abilities::allCategories();
+    return array_map(static fn (array $row) => new WP_Ability_Category((string) $row['slug'], $row), Abilities::allCategories());
 }
 
 function wp_has_ability_category(string $slug)
 {
-    return Abilities::findCategory($slug) !== null;
+    return Abilities::category($slug) !== null;
 }

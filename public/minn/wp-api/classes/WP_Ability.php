@@ -1,5 +1,14 @@
 <?php
-/** One registered ability: the recorded arguments behind the reflection-listed getters. */
+
+use Minn\Runtime\AbilityRun;
+
+/**
+ * One registered ability: its recorded arguments behind the getters, and a
+ * run as the reference runs one (probe abilities-registry): the input
+ * checked against the input schema, then the permission, then the
+ * callback between wp_before_execute_ability and wp_after_execute_ability,
+ * its output checked against the output schema.
+ */
 class WP_Ability
 {
     protected $name;
@@ -48,21 +57,31 @@ class WP_Ability
 
     public function get_meta_item($key, $default_value = null)
     {
-        return $this->get_meta()[$key] ?? $default_value;
+        return array_key_exists($key, $this->get_meta()) ? $this->get_meta()[$key] : $default_value;
+    }
+
+    /** What the permission callback answers: true, false, or its error. */
+    public function check_permissions($input = null)
+    {
+        $callback = $this->args['permission_callback'] ?? null;
+        if (!is_callable($callback)) {
+            return false;
+        }
+        return $input === null ? call_user_func($callback) : call_user_func($callback, $input);
     }
 
     public function has_permission($input = null)
     {
-        $callback = $this->args['permission_callback'] ?? null;
-        return is_callable($callback) ? (bool) $callback($input) : false;
+        return $this->check_permissions($input) === true;
+    }
+
+    public function validate_input($input = null)
+    {
+        return AbilityRun::input($this->name, $this->get_input_schema(), $input);
     }
 
     public function execute($input = null)
     {
-        if (!$this->has_permission($input)) {
-            return new WP_Error('ability_permission_denied', 'You do not have permission to execute this ability.');
-        }
-        $callback = $this->args['execute_callback'] ?? null;
-        return is_callable($callback) ? $callback($input) : new WP_Error('ability_no_callback', 'No execute callback.');
+        return AbilityRun::execute($this, $this->args['execute_callback'] ?? null, $input);
     }
 }

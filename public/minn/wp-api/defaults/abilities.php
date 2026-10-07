@@ -9,10 +9,11 @@
  * way the reference gates it.
  */
 
-// Registered on the abilities init, as the reference registers core's own:
-// the facade is loaded before any request has a runtime, and an ability
-// registry belongs to a request.
-add_action('wp_abilities_api_init', static function (): void {
+// Registered on the two init actions, as the reference registers core's
+// own (probe abilities-registry): the categories on theirs, the abilities on
+// theirs. An ability registry belongs to a request.
+function wp_register_core_ability_categories()
+{
     wp_register_ability_category('site', [
         'label' => 'Site',
         'description' => 'Abilities that retrieve or modify site information and settings.',
@@ -21,7 +22,11 @@ add_action('wp_abilities_api_init', static function (): void {
         'label' => 'User',
         'description' => 'Abilities that retrieve or modify user information and settings.',
         ]);
+}
+add_action('wp_abilities_api_categories_init', 'wp_register_core_ability_categories');
 
+function wp_register_core_abilities()
+{
     wp_register_ability('core/get-site-info', [
         'label' => 'Get Site Information',
         'description' => 'Returns site information configured in WordPress. By default returns all fields, or optionally a filtered subset.',
@@ -285,7 +290,8 @@ add_action('wp_abilities_api_init', static function (): void {
         'execute_callback' => static fn (mixed $input): mixed => _minn_ability_get_environment_info((array) ($input ?? [])),
         'permission_callback' => static fn (): bool => _minn_ability_may_get_environment_info(),
     ]);
-});
+}
+add_action('wp_abilities_api_init', 'wp_register_core_abilities');
 
 /** The site facts core's get-site-info answers with, narrowed to the fields asked for. */
 function _minn_ability_get_site_info(array $input): array

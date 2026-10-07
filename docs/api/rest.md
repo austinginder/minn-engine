@@ -4,7 +4,7 @@ the wp/v2 surface: shapes and controllers
 
 | Class | Kind | Lines | Summary |
 |---|---|---|---|
-| [`AbilitiesController`](#abilitiescontroller) | final readonly class | 142 | wp-abilities/v1: what this site can be asked to do, and the doing of it. |
+| [`AbilitiesController`](#abilitiescontroller) | final readonly class | 150 | wp-abilities/v1: what this site can be asked to do, and the doing of it. |
 | [`Api`](#api) | final readonly class | 229 | The REST API: wires the controllers for one request and dispatches a |
 | [`ApplicationPasswordsController`](#applicationpasswordscontroller) | final readonly class | 170 | wp/v2/users/{id}/application-passwords: list, create, rename, delete, |
 | [`ArgCheck`](#argcheck) | final readonly class | 83 | Judges a route's declared arguments against the request before the |
@@ -140,7 +140,7 @@ Route: `GET /wp-abilities/v1/categories/{slug:[a-z0-9]+(?:-[a-z0-9]+)*} (signed 
 
 One category by slug.
 
-Internals: `boot()` (private, line 108), `find()` (private, line 116), `object()` (private, line 131), `category()` (private, line 156)
+Internals: `boot()` (private, line 116), `find()` (private, line 124), `object()` (private, line 139), `category()` (private, line 164)
 
 
 ## Api

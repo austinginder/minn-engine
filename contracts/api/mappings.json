@@ -1,13 +1,13 @@
 {
-    "generated": "2026-10-06",
+    "generated": "2026-10-07",
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line)",
     "summary": {
-        "minn": 634,
+        "minn": 638,
         "composes": 920,
         "leaf": 652,
-        "noop": 1838,
-        "functions": 3974,
-        "minnMethods": 665,
+        "noop": 1841,
+        "functions": 3981,
+        "minnMethods": 669,
         "leafLinesOver15": 12
     },
     "functions": {
@@ -3981,11 +3981,20 @@
             "minn": [],
             "composes": []
         },
-        "WP_Ability::execute": {
+        "WP_Ability::check_permissions": {
             "file": "classes/WP_Ability.php",
             "lines": 5,
             "kind": "leaf",
             "minn": [],
+            "composes": []
+        },
+        "WP_Ability::execute": {
+            "file": "classes/WP_Ability.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Runtime\\AbilityRun::execute"
+            ],
             "composes": []
         },
         "WP_Ability::get_category": {
@@ -4046,8 +4055,52 @@
         },
         "WP_Ability::has_permission": {
             "file": "classes/WP_Ability.php",
-            "lines": 2,
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Ability::validate_input": {
+            "file": "classes/WP_Ability.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Runtime\\AbilityRun::input"
+            ],
+            "composes": []
+        },
+        "WP_Ability_Category::__construct": {
+            "file": "classes/WP_Ability_Category.php",
+            "lines": 4,
             "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Ability_Category::get_description": {
+            "file": "classes/WP_Ability_Category.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Ability_Category::get_label": {
+            "file": "classes/WP_Ability_Category.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Ability_Category::get_meta": {
+            "file": "classes/WP_Ability_Category.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Ability_Category::get_slug": {
+            "file": "classes/WP_Ability_Category.php",
+            "lines": 1,
+            "kind": "noop",
             "minn": [],
             "composes": []
         },
@@ -30968,7 +31021,7 @@
         },
         "wp_get_abilities": {
             "file": "abilities.php",
-            "lines": 6,
+            "lines": 8,
             "kind": "minn",
             "minn": [
                 "Minn\\Runtime\\Abilities::all"
@@ -30995,8 +31048,8 @@
         },
         "wp_get_ability_category": {
             "file": "abilities.php",
-            "lines": 1,
-            "kind": "noop",
+            "lines": 2,
+            "kind": "minn",
             "minn": [
                 "Minn\\Runtime\\Abilities::findCategory"
             ],
@@ -31977,7 +32030,7 @@
             "lines": 1,
             "kind": "noop",
             "minn": [
-                "Minn\\Runtime\\Abilities::find"
+                "Minn\\Runtime\\Abilities::ability"
             ],
             "composes": []
         },
@@ -31986,7 +32039,7 @@
             "lines": 1,
             "kind": "noop",
             "minn": [
-                "Minn\\Runtime\\Abilities::findCategory"
+                "Minn\\Runtime\\Abilities::category"
             ],
             "composes": []
         },
@@ -33667,8 +33720,8 @@
         },
         "wp_register_ability_category": {
             "file": "abilities.php",
-            "lines": 1,
-            "kind": "noop",
+            "lines": 2,
+            "kind": "minn",
             "minn": [
                 "Minn\\Runtime\\Abilities::registerCategory"
             ],
@@ -35046,8 +35099,8 @@
         },
         "wp_unregister_ability": {
             "file": "abilities.php",
-            "lines": 1,
-            "kind": "noop",
+            "lines": 2,
+            "kind": "minn",
             "minn": [
                 "Minn\\Runtime\\Abilities::unregister"
             ],
@@ -35055,8 +35108,8 @@
         },
         "wp_unregister_ability_category": {
             "file": "abilities.php",
-            "lines": 1,
-            "kind": "noop",
+            "lines": 2,
+            "kind": "minn",
             "minn": [
                 "Minn\\Runtime\\Abilities::unregisterCategory"
             ],

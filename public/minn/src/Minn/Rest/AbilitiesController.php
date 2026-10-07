@@ -43,7 +43,8 @@ final readonly class AbilitiesController
         $category = (string) $request->query('category', '');
         $items = [];
         foreach (Abilities::all() as $ability) {
-            if ($category !== '' && (string) ($ability['category'] ?? '') !== $category) {
+            // Only abilities shown in REST are listed (probe abilities-registry).
+            if (empty($ability['meta']['show_in_rest']) || ($category !== '' && (string) ($ability['category'] ?? '') !== $category)) {
                 continue;
             }
             $items[] = $this->object($ability);
@@ -61,19 +62,26 @@ final readonly class AbilitiesController
     public function run(Request $request, string $name): Response
     {
         $this->boot();
-        $this->find($name);
+        $ability = new \WP_Ability($name, $this->find($name));
         $readOnly = Abilities::isReadOnly($name);
         if ($readOnly && $request->method !== Method::Get) {
             throw new RestError('rest_ability_invalid_method', 'Read-only abilities require GET method.', 405);
         }
         if (!$readOnly && $request->method !== Method::Post) {
-            throw new RestError('rest_ability_invalid_method', 'Abilities that are not read-only require POST method.', 405);
+            throw new RestError('rest_ability_invalid_method', 'Abilities that perform updates require POST method.', 405);
         }
-        if (!Abilities::permits($name)) {
+        // No input is null, not an empty object: the input schema judges it (probe abilities-registry).
+        $input = $request->method === Method::Get ? ($request->query['input'] ?? null) : ($request->json()['input'] ?? null);
+        if ($ability->check_permissions($input) !== true) {
             throw new RestError('rest_ability_cannot_execute', 'Sorry, you are not allowed to execute this ability.', 403);
         }
-        $input = $request->method === Method::Get ? ($request->query['input'] ?? []) : ($request->json()['input'] ?? []);
-        return Reply::answer($request, Abilities::execute($name, $input));
+        $result = $ability->execute($input);
+        if ($result instanceof \WP_Error) {
+            $data = $result->get_error_data();
+            $status = is_array($data) && isset($data['status']) ? (int) $data['status'] : (in_array($result->get_error_code(), ['ability_invalid_input', 'ability_missing_input_schema'], true) ? 400 : 500);
+            throw new RestError((string) $result->get_error_code(), $result->get_error_message(), $status, is_array($data) ? $data : []);
+        }
+        return Reply::answer($request, $result);
     }
 
     /** One ability by name. */
@@ -97,7 +105,7 @@ final readonly class AbilitiesController
     public function category_(Request $request, string $slug): Response
     {
         $this->boot();
-        $category = Abilities::findCategory($slug);
+        $category = Abilities::category($slug);
         if ($category === null) {
             throw new RestError('rest_ability_category_not_found', 'Ability category not found.', 404);
         }
@@ -115,8 +123,8 @@ final readonly class AbilitiesController
     /** @return array<string, mixed> */
     private function find(string $name): array
     {
-        $ability = Abilities::find($name);
-        if ($ability === null) {
+        $ability = Abilities::ability($name);
+        if ($ability === null || empty($ability['meta']['show_in_rest'])) {
             throw new RestError('rest_ability_not_found', 'Ability not found.', 404);
         }
         return $ability;
@@ -136,8 +144,8 @@ final readonly class AbilitiesController
             'label' => (string) ($ability['label'] ?? ''),
             'description' => (string) ($ability['description'] ?? ''),
             'category' => (string) ($ability['category'] ?? ''),
-            'input_schema' => $ability['input_schema'] ?? null,
-            'output_schema' => $ability['output_schema'] ?? null,
+            'input_schema' => $ability['input_schema'] ?? [],
+            'output_schema' => $ability['output_schema'] ?? [],
             'meta' => $ability['meta'] ?? [],
             '_links' => [
                 'self' => [['href' => $this->url->to('/wp-abilities/v1/abilities/' . $name), 'targetHints' => ['allow' => ['GET']]]],

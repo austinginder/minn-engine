@@ -4386,8 +4386,9 @@ wp/v2/types serves the edit context (probe `rest-types-edit`):
   - The post and page `editor` support carries `notes`.
   - A hierarchical plugin type starts from the page labels.
   - A plugin type's labels gain `template_name`.
-- **Not done.** A plugin type's own REST routes (`/wp/v2/product`) are
-  still not served. That is the next unit.
+- **Plugin type routes.** A plugin type's own REST routes (`/wp/v2/product`)
+  were not served when this was written; they are now (probe
+  `rest-plugin-types`, below).
 
 A plugin's post types and taxonomies are served over REST with the
 default controllers' shape (probe `rest-plugin-types`):
@@ -4538,3 +4539,26 @@ counts (WooCommerce counts only visible products there) now match.
   (WooCommerce drops hentry and adds a product's classes).
 - **Not done.** get_terms_args and terms_clauses wait for the term query's
   SQL to be the reference's.
+
+The abilities API works as the reference's does (probe `abilities-registry`):
+- **Registration.** Categories register only on
+  `wp_abilities_api_categories_init`, abilities only on
+  `wp_abilities_api_init`. Each action fires once, on the first lookup of
+  its kind, categories first. Before, categories registered on the
+  abilities action, so the categories that plugins register on their own
+  action never existed.
+- **Return values.** A registration returns a `WP_Ability_Category` or a
+  `WP_Ability`, and unregistering returns what was removed.
+- **Refusals.** These come with the reference's notices: outside the
+  action, a duplicate, a malformed slug or name, a missing label,
+  description, category or callback, an unknown category.
+- **Meta.** An ability's meta gains the three annotations, show_in_rest
+  and public.
+- **Running.** Input is checked against the input schema (input given to
+  an ability without one is refused). Then the permission callback must
+  answer true. Then come `wp_before_execute_ability`, the callback, the
+  output checked against the output schema, and
+  `wp_after_execute_ability`.
+- **Over REST.** Only abilities shown in REST are listed or run. No input
+  is null, not an empty object. Errors keep their status, invalid input
+  is a 400, and the update method message is the reference's.

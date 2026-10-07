@@ -4,7 +4,8 @@ the WordPress runtime plugins load against
 
 | Class | Kind | Lines | Summary |
 |---|---|---|---|
-| [`Abilities`](#abilities) | final class | 151 | The abilities registry behind the wp_*_ability facade: categories and |
+| [`Abilities`](#abilities) | final class | 207 | The abilities registry behind the wp_*_ability facade, as the reference |
+| [`AbilityRun`](#abilityrun) | final class | 41 | Running an ability as the reference runs one (probe abilities-registry): |
 | [`AjaxController`](#ajaxcontroller) | final readonly class | 72 | admin-ajax.php, the endpoint plugins post their front-end work to: a form |
 | [`AllowedOptions`](#allowedoptions) | final class | 26 | The settings-page allowlist plugins extend: option group => the option |
 | [`Assets`](#assets) | final class | 365 | The registry behind wp_register_/wp_enqueue_ for scripts and styles: |
@@ -87,71 +88,117 @@ the WordPress runtime plugins load against
 
 `final class Minn\Runtime\Abilities` · `public/minn/src/Minn/Runtime/Abilities.php`
 
-The abilities registry behind the wp_*_ability facade: categories and
-abilities recorded per request. The reference initialises the API
-lazily, firing wp_abilities_api_init once on first access so plugin
-registrations land before any lookup.
+The abilities registry behind the wp_*_ability facade, as the reference
+keeps it (probe abilities-registry). Categories register only on
+wp_abilities_api_categories_init and abilities only on
+wp_abilities_api_init; each action fires once, lazily, on the first
+lookup of its kind (abilities after categories). A registration is
+checked as the reference checks it (slug or name shape, duplicates,
+required fields, a known category) and refused with its notice. An
+ability's meta gains the default annotations, show_in_rest and public.
 
 - const `STATE` = `'abilities'`
+- const `CATEGORIES` = `'WP_Ability_Categories_Registry'`
+- const `ABILITIES` = `'WP_Abilities_Registry'`
+- const `NAME` = `'/^[a-z0-9-]+\\/[a-z0-9-]+$/'`
+- const `SLUG` = `'/^[a-z0-9]+(?:-[a-z0-9]+)*$/'`
 
 Used by: `Minn\Rest\AbilitiesController`
 
+### static `initializeCategories(): void`
+
+Fires the categories action once.
+
 ### static `initialize(): void`
 
-Fires the init action once, then answers every later call from the recorded state.
+Fires the categories action, then the abilities action, each once.
 
-### static `registerCategory(string $slug, array $args): bool`
+### static `registerCategory(string $slug, array $args): ?array`
 
-Registers an ability category.
+Registers a category; its row, or null with the reference's notice. @return array<string, mixed>|null
+
+- `@return array<string, mixed>|null`
 
 ### static `register(string $name, array $args): ?array`
 
-Registers an ability, or null when the name is taken or malformed.
+Registers an ability; its row, or null with the reference's notice. @return array<string, mixed>|null
 
-### static `unregister(string $name): bool`
+- `@return array<string, mixed>|null`
 
-Removes an ability or a category.
+### static `unregister(string $name): ?array`
 
-### static `unregisterCategory(string $slug): bool`
+Removes an ability; its row, or null with the reference's notice. @return array<string, mixed>|null
 
-Removes a category.
+- `@return array<string, mixed>|null`
+
+### static `unregisterCategory(string $slug): ?array`
+
+Removes a category; its row, or null with the reference's notice. @return array<string, mixed>|null
+
+- `@return array<string, mixed>|null`
 
 ### static `find(string $name): ?array`
 
-One ability or category, or null.
+One ability, or null with the reference's notice. @return array<string, mixed>|null
+
+- `@return array<string, mixed>|null`
+
+### static `ability(string $name): ?array`
+
+One ability, or null, asked after without a notice. @return array<string, mixed>|null
 
 - `@return array<string, mixed>|null`
 
 ### static `findCategory(string $slug): ?array`
 
-One category, or null.
+One category, or null with the reference's notice. @return array<string, mixed>|null
+
+- `@return array<string, mixed>|null`
+
+### static `category(string $slug): ?array`
+
+One category, or null, asked after without a notice. @return array<string, mixed>|null
+
+- `@return array<string, mixed>|null`
 
 ### static `all(): array`
 
-Every ability, or every category.
+Every ability, by name. @return array<string, array>
 
 - `@return array<string, array>`
 
-### static `permits(string $name): bool`
+### static `allCategories(): array`
 
-Whether the caller may run an ability: its own permission callback
-decides, and an ability without one is open to any signed-in caller,
-as the reference treats it.
+Every category, by slug. @return array<string, array>
 
-### static `execute(string $name, mixed $input = NULL): mixed`
-
-Runs an ability and returns what it produced. The caller checks
-permits() first; this only executes.
+- `@return array<string, array>`
 
 ### static `isReadOnly(string $name): bool`
 
 Whether an ability is marked read-only, which decides the method its run endpoint takes.
 
-### static `allCategories(): array`
+Internals: `state()` (private, line 26), `save()` (private, line 32), `refusal()` (private, line 185), `meta()` (private, line 201), `forget()` (private, line 210)
 
-Every category.
 
-Internals: `state()` (private, line 18), `save()` (private, line 24), `forget()` (private, line 77)
+## AbilityRun
+
+`final class Minn\Runtime\AbilityRun` · `public/minn/src/Minn/Runtime/AbilityRun.php`
+
+Running an ability as the reference runs one (probe abilities-registry):
+input given to an ability without an input schema is refused, input that
+its schema refuses is ability_invalid_input; a permission callback that
+does not answer true is ability_invalid_permissions (an error it returns
+is reported as a notice); then wp_before_execute_ability, the callback
+(an error it returns is the answer), the output checked against the
+output schema (ability_invalid_output), and wp_after_execute_ability.
+
+### static `input(string $name, array $schema, mixed $input): WP_Error|true`
+
+True, or why the input does not fit.
+
+### static `execute(WP_Ability $ability, mixed $callback, mixed $input): mixed`
+
+The ability's answer, or the error that stopped it.
 
 
 ## AjaxController
