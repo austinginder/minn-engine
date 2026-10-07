@@ -4,7 +4,7 @@
         "name": "admin",
         "url": "https://minn.localhost",
         "description": "",
-        "link": "http://127.0.0.1:8123/author/admin/",
+        "link": "https://minn.localhost/author/admin/",
         "slug": "admin",
         "avatar_urls": {
             "24": "https://secure.gravatar.com/avatar/91363ac538a6a04a7c9e2d4a024e1d9c66f8b7ccea20f6aeabcf7e968194cd31?s=24&d=mm&r=g",
@@ -17,7 +17,7 @@
         "_links": {
             "self": [
                 {
-                    "href": "http://127.0.0.1:8123/wp-json/wp/v2/users/1",
+                    "href": "https://minn.localhost/wp-json/wp/v2/users/1",
                     "targetHints": {
                         "allow": [
                             "GET"
@@ -27,7 +27,7 @@
             ],
             "collection": [
                 {
-                    "href": "http://127.0.0.1:8123/wp-json/wp/v2/users"
+                    "href": "https://minn.localhost/wp-json/wp/v2/users"
                 }
             ]
         }
@@ -37,7 +37,7 @@
         "name": "Erin Editor",
         "url": "",
         "description": "",
-        "link": "http://127.0.0.1:8123/author/editor/",
+        "link": "https://minn.localhost/author/editor/",
         "slug": "editor",
         "avatar_urls": {
             "24": "https://secure.gravatar.com/avatar/ef41879e2570db22142e8bb8dca3613f0aab3fe1eba5ff7249a9b64ed226a610?s=24&d=mm&r=g",
@@ -50,7 +50,7 @@
         "_links": {
             "self": [
                 {
-                    "href": "http://127.0.0.1:8123/wp-json/wp/v2/users/2",
+                    "href": "https://minn.localhost/wp-json/wp/v2/users/2",
                     "targetHints": {
                         "allow": [
                             "GET"
@@ -60,7 +60,7 @@
             ],
             "collection": [
                 {
-                    "href": "http://127.0.0.1:8123/wp-json/wp/v2/users"
+                    "href": "https://minn.localhost/wp-json/wp/v2/users"
                 }
             ]
         }
@@ -70,7 +70,7 @@
         "name": "scribe",
         "url": "",
         "description": "",
-        "link": "http://127.0.0.1:8123/author/scribe/",
+        "link": "https://minn.localhost/author/scribe/",
         "slug": "scribe",
         "avatar_urls": {
             "24": "https://secure.gravatar.com/avatar/bba157c381d350078b150307633952f0e687726bce9ceafcb5f23d0bd0c33a52?s=24&d=mm&r=g",
@@ -83,7 +83,7 @@
         "_links": {
             "self": [
                 {
-                    "href": "http://127.0.0.1:8123/wp-json/wp/v2/users/3",
+                    "href": "https://minn.localhost/wp-json/wp/v2/users/3",
                     "targetHints": {
                         "allow": [
                             "GET"
@@ -93,7 +93,7 @@
             ],
             "collection": [
                 {
-                    "href": "http://127.0.0.1:8123/wp-json/wp/v2/users"
+                    "href": "https://minn.localhost/wp-json/wp/v2/users"
                 }
             ]
         }

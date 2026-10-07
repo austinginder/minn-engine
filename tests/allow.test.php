@@ -30,7 +30,7 @@ $check = static function (string $label, bool $ok, string $detail = '') use (&$p
     }
 };
 
-$up = @file_get_contents($REF . '/?rest_route=/', false, stream_context_create(['http' => ['timeout' => 3, 'ignore_errors' => true]]));
+$up = @file_get_contents($REF . '/?rest_route=/', false, stream_context_create(['http' => ['timeout' => 30, 'ignore_errors' => true]]));
 if ($up === false) {
     echo "allow suite: reference not running at $REF; skipping\n";
     exit(0);

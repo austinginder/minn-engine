@@ -92,11 +92,15 @@ Two pieces make the copy fit to test on:
   transfer, never paid, so no gateway is asked. A copy of another live
   site needs its own list: look for plugins whose credentials are in the
   database and whose client is not `wp_remote_*`.
-- **The oracle stands in for the site over HTTPS.** `php -S 127.0.0.1:8129
-  router.php` serves a request as HTTPS when it carries `X-Forwarded-Proto:
-  https`, and the suite sends `Host: cove-minn.localhost` with it, so
+- **The oracle stands in for the site over HTTPS.** Cove serves the parked
+  copy as the site's twin (`cove twin cove-minn add
+  --as-site=ref.cove-minn.localhost`), and `ref.cove-minn.localhost`
+  answers as `cove-minn.localhost` over HTTPS on the same PHP as Minn, so
   WordPress signs in with secure cookies and builds links exactly as it
-  does for the real site. Every request goes over IPv4 on both stacks, so
+  does for the real site. (Until 2026-10-07 a `php -S` oracle on 8129 was
+  told the host with `Host` and `X-Forwarded-Proto` headers; it ran the
+  CLI's PHP 8.3, which hid that WordPress on PHP 8.4+ rewrites cost-10
+  password hashes at sign-in.) Every request goes over IPv4 on both stacks, so
   plugins that key visitors by address (CleanTalk) see `127.0.0.1` on each.
 
 ## The day

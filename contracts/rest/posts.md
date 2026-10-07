@@ -6,13 +6,17 @@ tags, types, and the `_fields` filter. Suites: `tests/rest-posts.test.php`
 
 ## Fixture capture
 
-The reference WordPress runs from the parked copy against the same database:
+The reference WordPress runs from the parked copy against the same database,
+served by Cove as the site's twin answering as the site:
 
 ```bash
-cd wp-reference && php -S 127.0.0.1:8123
-curl -s 'http://127.0.0.1:8123/?rest_route=/wp/v2/posts'   | jq . > ../contracts/fixtures/rest/posts-list.json
-curl -s 'http://127.0.0.1:8123/?rest_route=/wp/v2/posts/1' | jq . > ../contracts/fixtures/rest/posts-single.json
+curl -s 'https://ref.minn.localhost/?rest_route=/wp/v2/posts'   | jq . > contracts/fixtures/rest/posts-list.json
+curl -s 'https://ref.minn.localhost/?rest_route=/wp/v2/posts/1' | jq . > contracts/fixtures/rest/posts-single.json
 ```
+
+(The fixtures were captured from a `php -S 127.0.0.1:8123` oracle; their
+base was rewritten to `https://minn.localhost`, which a capture from the
+twin now produces.)
 
 Fixtures are data captured from observed behavior; they carry no license
 entanglement. The Cove stack rewrites URLs per request host, so suites

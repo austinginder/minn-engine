@@ -7,7 +7,7 @@
   "email": "admin@minn-engine.localhost",
   "url": "https://minn.localhost",
   "description": "",
-  "link": "http://127.0.0.1:8123/?author=1",
+  "link": "https://minn.localhost/?author=1",
   "locale": "en_US",
   "nickname": "admin",
   "slug": "admin",
@@ -93,7 +93,7 @@
   "_links": {
     "self": [
       {
-        "href": "http://127.0.0.1:8123/index.php?rest_route=/wp/v2/users/1",
+        "href": "https://minn.localhost/index.php?rest_route=/wp/v2/users/1",
         "targetHints": {
           "allow": [
             "GET",
@@ -107,7 +107,7 @@
     ],
     "collection": [
       {
-        "href": "http://127.0.0.1:8123/index.php?rest_route=/wp/v2/users"
+        "href": "https://minn.localhost/index.php?rest_route=/wp/v2/users"
       }
     ]
   }

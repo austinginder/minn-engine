@@ -17,9 +17,9 @@ function minn_test_url(): string {
 	return rtrim( getenv( 'MINN_TEST_URL' ) ?: 'https://minn.localhost', '/' );
 }
 
-/** The parked WordPress the test site is diffed against. */
+/** The parked WordPress the test site is diffed against: its Cove twin (`cove twin minn add --as-site=ref.minn.localhost`), answering as the site's own host over HTTPS. */
 function minn_test_reference_url(): string {
-	return rtrim( getenv( 'MINN_TEST_REF' ) ?: 'http://127.0.0.1:8123', '/' );
+	return rtrim( getenv( 'MINN_TEST_REF' ) ?: 'https://ref.minn.localhost', '/' );
 }
 
 function minn_test_fetch( string $url, int $timeout = 10 ): array {

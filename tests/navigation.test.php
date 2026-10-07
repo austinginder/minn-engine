@@ -5,7 +5,7 @@
  * lifecycle proven cross-stack. Removes every menu it creates and leaves
  * the fixture menu untouched.
  *
- * Ref: (cd wp-reference && php -S 127.0.0.1:8123) — SKIPs cleanly when down.
+ * Ref: (its Cove twin: cove twin minn add --as-site=ref.minn.localhost) — SKIPs cleanly when down.
  */
 
 require_once __DIR__ . '/lib.php';
@@ -18,7 +18,7 @@ $MENU   = 4;
 
 [ $ph ] = minn_test_fetch( "$REF/?rest_route=/wp/v2/posts", 3 );
 if ( 200 !== $ph['status'] ) {
-	echo "SKIP: reference WordPress not running at $REF (start: cd wp-reference && php -S 127.0.0.1:8123)\n";
+	echo "SKIP: reference WordPress not running at $REF (its Cove twin: cove twin minn add --as-site=ref.minn.localhost)\n";
 	exit( 0 );
 }
 

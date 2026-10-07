@@ -3,7 +3,7 @@
         "id": 1,
         "count": 10,
         "description": "",
-        "link": "http://127.0.0.1:8123/category/uncategorized/",
+        "link": "https://minn.localhost/category/uncategorized/",
         "name": "Uncategorized",
         "slug": "uncategorized",
         "taxonomy": "category",
@@ -12,7 +12,7 @@
         "_links": {
             "self": [
                 {
-                    "href": "http://127.0.0.1:8123/wp-json/wp/v2/categories/1",
+                    "href": "https://minn.localhost/wp-json/wp/v2/categories/1",
                     "targetHints": {
                         "allow": [
                             "GET"
@@ -22,17 +22,17 @@
             ],
             "collection": [
                 {
-                    "href": "http://127.0.0.1:8123/wp-json/wp/v2/categories"
+                    "href": "https://minn.localhost/wp-json/wp/v2/categories"
                 }
             ],
             "about": [
                 {
-                    "href": "http://127.0.0.1:8123/wp-json/wp/v2/taxonomies/category"
+                    "href": "https://minn.localhost/wp-json/wp/v2/taxonomies/category"
                 }
             ],
             "wp:post_type": [
                 {
-                    "href": "http://127.0.0.1:8123/wp-json/wp/v2/posts?categories=1"
+                    "href": "https://minn.localhost/wp-json/wp/v2/posts?categories=1"
                 }
             ],
             "curies": [

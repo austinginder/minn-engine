@@ -8,7 +8,7 @@
 require_once __DIR__ . '/lib.php';
 
 $ENGINE = rtrim(getenv('MINN_TEST_URL') ?: 'https://minn.localhost', '/');
-$REF = 'http://127.0.0.1:8123';
+$REF = 'https://ref.minn.localhost';
 $DIR = dirname(__DIR__) . '/contracts/fixtures/probes';
 
 // path => [status, content-type prefix, compare body?]
@@ -76,7 +76,7 @@ if (in_array('--capture', $argv, true)) {
     exit(0);
 }
 
-$live = @file_get_contents("$REF/wp-json/", false, stream_context_create(['http' => ['timeout' => 2, 'ignore_errors' => true]])) !== false;
+$live = @file_get_contents("$REF/wp-json/", false, stream_context_create(['http' => ['timeout' => 30, 'ignore_errors' => true]])) !== false;
 $pass = 0;
 $fail = 0;
 $check = static function (bool $ok, string $label, string $detail = '') use (&$pass, &$fail): void {

@@ -92,6 +92,11 @@ add_action('wp_ajax_minn_state', static function (): void {
 });
 
 add_action('wp_ajax_nopriv_minn_headers', static function (): void {
+    // The status wp_die() leaves depends on whether the echo below has gone out:
+    // a host that buffers output (php.ini-production's 4096, most hosting) answers
+    // 200, one that does not (Cove's FrankenPHP has no php.ini) keeps the 201.
+    // The engine always buffers; buffer here so both stacks are a buffered host.
+    ob_start();
     header('X-Minn-Test: 1');
     status_header(201);
     echo 'made';

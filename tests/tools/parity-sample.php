@@ -10,7 +10,7 @@ declare(strict_types=1);
  * the suite that owns it compares it; the tool refuses to write when any
  * pair disagrees, so the page can never show a claim the stacks do not keep.
  *
- *   (cd ~/Cove/Sites/minn.localhost/wp-reference && php -S 127.0.0.1:8123 router.php &)
+ *   cove twin minn add --as-site=ref.minn.localhost   # once: wp-reference/ answers as the site at ref.minn.localhost
  *   php tests/tools/parity-sample.php
  */
 

@@ -1,7 +1,7 @@
 <?php
 /**
- * WooCommerce parity on the lab (minnwoo.localhost, its parked WordPress on
- * 127.0.0.1:8126; roadmap item W): the store's addresses (status, where a
+ * WooCommerce parity on the lab (minnwoo.localhost, its parked WordPress at
+ * its Cove twin, ref.minnwoo.localhost; roadmap item W): the store's addresses (status, where a
  * move goes, the body classes WooCommerce and themes key off, the title),
  * the Store API's reads, and a guest checkout taken on each stack through
  * the Store API the block checkout uses: the cart after each step, the
@@ -13,7 +13,7 @@
  * after it (private/woo-baseline.sql beside the site; a killed run is
  * healed by the next one).
  *
- *   (cd ~/Cove/Sites/minnwoo.localhost/wp-reference && php -S 127.0.0.1:8126 router.php &)
+ *   cove twin minnwoo add --as-site=ref.minnwoo.localhost   # once: wp-reference/ answers as the site at ref.minnwoo.localhost
  *   php tests/woo.test.php
  */
 
@@ -23,7 +23,7 @@ require __DIR__ . '/lib.php';
 
 $SITE = getenv('MINN_WOO_ROOT') ?: '~/Cove/Sites/minnwoo.localhost';
 $ENGINE = rtrim(getenv('MINN_WOO_URL') ?: 'https://minnwoo.localhost', '/');
-$REF = rtrim(getenv('MINN_WOO_REF') ?: 'http://127.0.0.1:8126', '/');
+$REF = rtrim(getenv('MINN_WOO_REF') ?: 'https://ref.minnwoo.localhost', '/');
 $MAILPIT = getenv('MINN_MAILPIT') ?: 'https://cove.localhost/mail-api/v1';
 $WP = '/opt/homebrew/bin/wp --path=' . escapeshellarg("{$SITE}/wp-reference");
 $BASELINE = "{$SITE}/private/woo-baseline.sql";

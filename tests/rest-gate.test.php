@@ -38,7 +38,7 @@ foreach ([$siteRoot . '/public/wp-content/plugins/minn-test-gate', $siteRoot . '
         @symlink($fixture, $link);
     }
 }
-if (@file_get_contents($REF . '/?rest_route=/', false, stream_context_create(['http' => ['timeout' => 3, 'ignore_errors' => true]])) === false) {
+if (@file_get_contents($REF . '/?rest_route=/', false, stream_context_create(['http' => ['timeout' => 30, 'ignore_errors' => true]])) === false) {
     echo "SKIP: reference not running at {$REF}\n";
     exit(0);
 }

@@ -23,7 +23,7 @@ if (!is_file(dirname(__DIR__) . '/site/minn-site/style.css')) {
 // serves the Minn site theme permanently, so there is nothing to pin and
 // nothing to restore. Its own parked WordPress answers on 8128.
 $ENGINE = rtrim(getenv('MINN_SITE_URL') ?: 'https://minn-engine.localhost', '/');
-$REF = rtrim(getenv('MINN_SITE_REF') ?: 'http://127.0.0.1:8128', '/');
+$REF = rtrim(getenv('MINN_SITE_REF') ?: 'https://ref.minn-engine.localhost', '/');
 
 $src = (string) file_get_contents(__DIR__ . '/theme.test.php');
 preg_match('/function theme_body.*?\n}\n/s', $src, $m);
@@ -162,7 +162,7 @@ foreach (['/wp-content/themes/minn-site/style.css', '/wp-content/themes/minn-sit
     $check($ah['status'] === 200, "asset served: $asset");
 }
 
-$probe = @file_get_contents($REF . '/', false, stream_context_create(['http' => ['ignore_errors' => true, 'timeout' => 5]]));
+$probe = @file_get_contents($REF . '/', false, stream_context_create(['http' => ['ignore_errors' => true, 'timeout' => 30]]));
 if ($probe === false || $probe === '') {
     echo "  skip parity: reference not running at $REF\n";
 } else {

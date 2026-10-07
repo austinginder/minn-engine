@@ -10,7 +10,7 @@
 require_once __DIR__ . '/lib.php';
 
 $ENGINE = rtrim(getenv('MINN_TEST_URL') ?: 'https://minn.localhost', '/');
-$REF = 'http://127.0.0.1:8123';
+$REF = 'https://ref.minn.localhost';
 $DIR = dirname(__DIR__) . '/contracts/fixtures/theme';
 $pages = ['/', '/hello-world/', '/building-in-the-open/', '/sample-page/', '/sample-page/docs/', '/category/uncategorized/', '/tag/engine/',
     '/author/admin/', '/2026/08/', '/?s=hello', '/nonexistent/', '/zz-block-battery-media/', '/zz-block-battery-layout/', '/page/2/', '/battery-image/'];
@@ -63,7 +63,7 @@ if (in_array('--capture', $argv, true)) {
     exit(0);
 }
 
-$live = @file_get_contents("$REF/wp-json/", false, stream_context_create(['http' => ['timeout' => 2, 'ignore_errors' => true]])) !== false;
+$live = @file_get_contents("$REF/wp-json/", false, stream_context_create(['http' => ['timeout' => 30, 'ignore_errors' => true]])) !== false;
 $pass = 0;
 $fail = 0;
 foreach ($pages as $path) {

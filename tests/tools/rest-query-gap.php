@@ -13,13 +13,13 @@
  * list. Live ignored is the finding.
  *
  *   php tests/tools/rest-query-gap.php
- *   php tests/tools/rest-query-gap.php --engine=https://dogfood.localhost --ref=http://127.0.0.1:8124
+ *   php tests/tools/rest-query-gap.php --engine=https://dogfood.localhost --ref=https://ref.dogfood.localhost
  */
 
 declare(strict_types=1);
 
 $ENGINE = rtrim((string) (getenv('MINN_TEST_URL') ?: 'https://minn.localhost'), '/');
-$REF = rtrim((string) (getenv('MINN_REF_URL') ?: 'http://127.0.0.1:8123'), '/');
+$REF = rtrim((string) (getenv('MINN_REF_URL') ?: 'https://ref.minn.localhost'), '/');
 foreach ($argv ?? [] as $arg) {
     if (str_starts_with($arg, '--engine=')) {
         $ENGINE = rtrim(substr($arg, 9), '/');

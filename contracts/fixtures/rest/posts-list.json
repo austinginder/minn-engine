@@ -11,12 +11,12 @@
         "slug": "zz-block-battery-dynamic",
         "status": "publish",
         "type": "post",
-        "link": "http://127.0.0.1:8123/zz-block-battery-dynamic/",
+        "link": "https://minn.localhost/zz-block-battery-dynamic/",
         "title": {
             "rendered": "Block battery: dynamic"
         },
         "content": {
-            "rendered": "<ul class=\"wp-block-latest-posts__list has-dates wp-block-latest-posts is-layout-flow wp-block-latest-posts-is-layout-flow\"><li><a class=\"wp-block-latest-posts__post-title\" href=\"http://127.0.0.1:8123/zz-block-battery-dynamic/\">Block battery: dynamic</a><time datetime=\"2026-08-28T10:03:00+00:00\" class=\"wp-block-latest-posts__post-date\">August 28, 2026</time></li>\n<li><a class=\"wp-block-latest-posts__post-title\" href=\"http://127.0.0.1:8123/zz-block-battery-layout/\">Block battery: layout</a><time datetime=\"2026-08-28T10:02:00+00:00\" class=\"wp-block-latest-posts__post-date\">August 28, 2026</time></li>\n<li><a class=\"wp-block-latest-posts__post-title\" href=\"http://127.0.0.1:8123/zz-block-battery-media/\">Block battery: media</a><time datetime=\"2026-08-28T10:01:00+00:00\" class=\"wp-block-latest-posts__post-date\">August 28, 2026</time></li>\n</ul>\n\n<ul class=\"wp-block-categories-list wp-block-categories-taxonomy-category wp-block-categories\">\t<li class=\"cat-item cat-item-1\"><a href=\"http://127.0.0.1:8123/category/uncategorized/\">Uncategorized</a>\n</li>\n</ul>\n\n<ul class=\"wp-block-archives-list wp-block-archives\">\t<li><a href='http://127.0.0.1:8123/2026/08/'>August 2026</a></li>\n</ul>\n\n<form role=\"search\" method=\"get\" action=\"http://127.0.0.1:8123/\" class=\"wp-block-search__button-outside wp-block-search__text-button wp-block-search\" ><label class=\"wp-block-search__label\" for=\"wp-block-search__input-1\" >Search</label><div class=\"wp-block-search__inside-wrapper\" ><input class=\"wp-block-search__input\" id=\"wp-block-search__input-1\" placeholder=\"\" value=\"\" type=\"search\" name=\"s\" required /><button aria-label=\"Search\" class=\"wp-block-search__button wp-element-button\" type=\"submit\" >Search</button></div></form>\n\n<p class=\"wp-block-tag-cloud\"><a href=\"http://127.0.0.1:8123/tag/engine/\" class=\"tag-cloud-link tag-link-2 tag-link-position-1\" style=\"font-size: 8pt;\" aria-label=\"engine (1 item)\">engine</a>\n<a href=\"http://127.0.0.1:8123/tag/parity/\" class=\"tag-cloud-link tag-link-3 tag-link-position-2\" style=\"font-size: 8pt;\" aria-label=\"parity (1 item)\">parity</a></p>\n\n<ol class=\"has-avatars has-dates has-excerpts wp-block-latest-comments\"><li class=\"wp-block-latest-comments__comment\"><img alt='' src='https://secure.gravatar.com/avatar/8e1606e6fba450a9362af43874c1b2dfad34c782e33d0a51e1b46c18a2a567dd?s=48&#038;d=mm&#038;r=g' srcset='https://secure.gravatar.com/avatar/8e1606e6fba450a9362af43874c1b2dfad34c782e33d0a51e1b46c18a2a567dd?s=96&#038;d=mm&#038;r=g 2x' class='avatar avatar-48 photo wp-block-latest-comments__comment-avatar' height='48' width='48' /><article><footer class=\"wp-block-latest-comments__comment-meta\"><a class=\"wp-block-latest-comments__comment-author\" href=\"https://wordpress.org/\">A WordPress Commenter</a> on <a class=\"wp-block-latest-comments__comment-link\" href=\"http://127.0.0.1:8123/hello-world/#comment-1\">Hello world!</a><time datetime=\"2026-08-28T02:21:33+00:00\" class=\"wp-block-latest-comments__comment-date\">August 28, 2026</time></footer><div class=\"wp-block-latest-comments__comment-excerpt\"><p>Hi, this is a comment. To get started with moderating, editing, and deleting comments, please visit the Comments screen in&hellip;</p>\n</div></article></li></ol>\n",
+            "rendered": "<ul class=\"wp-block-latest-posts__list has-dates wp-block-latest-posts is-layout-flow wp-block-latest-posts-is-layout-flow\"><li><a class=\"wp-block-latest-posts__post-title\" href=\"https://minn.localhost/zz-block-battery-dynamic/\">Block battery: dynamic</a><time datetime=\"2026-08-28T10:03:00+00:00\" class=\"wp-block-latest-posts__post-date\">August 28, 2026</time></li>\n<li><a class=\"wp-block-latest-posts__post-title\" href=\"https://minn.localhost/zz-block-battery-layout/\">Block battery: layout</a><time datetime=\"2026-08-28T10:02:00+00:00\" class=\"wp-block-latest-posts__post-date\">August 28, 2026</time></li>\n<li><a class=\"wp-block-latest-posts__post-title\" href=\"https://minn.localhost/zz-block-battery-media/\">Block battery: media</a><time datetime=\"2026-08-28T10:01:00+00:00\" class=\"wp-block-latest-posts__post-date\">August 28, 2026</time></li>\n</ul>\n\n<ul class=\"wp-block-categories-list wp-block-categories-taxonomy-category wp-block-categories\">\t<li class=\"cat-item cat-item-1\"><a href=\"https://minn.localhost/category/uncategorized/\">Uncategorized</a>\n</li>\n</ul>\n\n<ul class=\"wp-block-archives-list wp-block-archives\">\t<li><a href='https://minn.localhost/2026/08/'>August 2026</a></li>\n</ul>\n\n<form role=\"search\" method=\"get\" action=\"https://minn.localhost/\" class=\"wp-block-search__button-outside wp-block-search__text-button wp-block-search\" ><label class=\"wp-block-search__label\" for=\"wp-block-search__input-1\" >Search</label><div class=\"wp-block-search__inside-wrapper\" ><input class=\"wp-block-search__input\" id=\"wp-block-search__input-1\" placeholder=\"\" value=\"\" type=\"search\" name=\"s\" required /><button aria-label=\"Search\" class=\"wp-block-search__button wp-element-button\" type=\"submit\" >Search</button></div></form>\n\n<p class=\"wp-block-tag-cloud\"><a href=\"https://minn.localhost/tag/engine/\" class=\"tag-cloud-link tag-link-2 tag-link-position-1\" style=\"font-size: 8pt;\" aria-label=\"engine (1 item)\">engine</a>\n<a href=\"https://minn.localhost/tag/parity/\" class=\"tag-cloud-link tag-link-3 tag-link-position-2\" style=\"font-size: 8pt;\" aria-label=\"parity (1 item)\">parity</a></p>\n\n<ol class=\"has-avatars has-dates has-excerpts wp-block-latest-comments\"><li class=\"wp-block-latest-comments__comment\"><img alt='' src='https://secure.gravatar.com/avatar/8e1606e6fba450a9362af43874c1b2dfad34c782e33d0a51e1b46c18a2a567dd?s=48&#038;d=mm&#038;r=g' srcset='https://secure.gravatar.com/avatar/8e1606e6fba450a9362af43874c1b2dfad34c782e33d0a51e1b46c18a2a567dd?s=96&#038;d=mm&#038;r=g 2x' class='avatar avatar-48 photo wp-block-latest-comments__comment-avatar' height='48' width='48' /><article><footer class=\"wp-block-latest-comments__comment-meta\"><a class=\"wp-block-latest-comments__comment-author\" href=\"https://wordpress.org/\">A WordPress Commenter</a> on <a class=\"wp-block-latest-comments__comment-link\" href=\"https://minn.localhost/hello-world/#comment-1\">Hello world!</a><time datetime=\"2026-08-28T02:21:33+00:00\" class=\"wp-block-latest-comments__comment-date\">August 28, 2026</time></footer><div class=\"wp-block-latest-comments__comment-excerpt\"><p>Hi, this is a comment. To get started with moderating, editing, and deleting comments, please visit the Comments screen in&hellip;</p>\n</div></article></li></ol>\n",
             "protected": false
         },
         "excerpt": {
@@ -49,7 +49,7 @@
         "_links": {
             "self": [
                 {
-                    "href": "http://127.0.0.1:8123/wp-json/wp/v2/posts/611",
+                    "href": "https://minn.localhost/wp-json/wp/v2/posts/611",
                     "targetHints": {
                         "allow": [
                             "GET"
@@ -59,41 +59,41 @@
             ],
             "collection": [
                 {
-                    "href": "http://127.0.0.1:8123/wp-json/wp/v2/posts"
+                    "href": "https://minn.localhost/wp-json/wp/v2/posts"
                 }
             ],
             "about": [
                 {
-                    "href": "http://127.0.0.1:8123/wp-json/wp/v2/types/post"
+                    "href": "https://minn.localhost/wp-json/wp/v2/types/post"
                 }
             ],
             "replies": [
                 {
                     "embeddable": true,
-                    "href": "http://127.0.0.1:8123/wp-json/wp/v2/comments?post=611"
+                    "href": "https://minn.localhost/wp-json/wp/v2/comments?post=611"
                 }
             ],
             "version-history": [
                 {
                     "count": 0,
-                    "href": "http://127.0.0.1:8123/wp-json/wp/v2/posts/611/revisions"
+                    "href": "https://minn.localhost/wp-json/wp/v2/posts/611/revisions"
                 }
             ],
             "wp:attachment": [
                 {
-                    "href": "http://127.0.0.1:8123/wp-json/wp/v2/media?parent=611"
+                    "href": "https://minn.localhost/wp-json/wp/v2/media?parent=611"
                 }
             ],
             "wp:term": [
                 {
                     "taxonomy": "category",
                     "embeddable": true,
-                    "href": "http://127.0.0.1:8123/wp-json/wp/v2/categories?post=611"
+                    "href": "https://minn.localhost/wp-json/wp/v2/categories?post=611"
                 },
                 {
                     "taxonomy": "post_tag",
                     "embeddable": true,
-                    "href": "http://127.0.0.1:8123/wp-json/wp/v2/tags?post=611"
+                    "href": "https://minn.localhost/wp-json/wp/v2/tags?post=611"
                 }
             ],
             "curies": [
@@ -117,7 +117,7 @@
         "slug": "zz-block-battery-layout",
         "status": "publish",
         "type": "post",
-        "link": "http://127.0.0.1:8123/zz-block-battery-layout/",
+        "link": "https://minn.localhost/zz-block-battery-layout/",
         "title": {
             "rendered": "Block battery: layout"
         },
@@ -155,7 +155,7 @@
         "_links": {
             "self": [
                 {
-                    "href": "http://127.0.0.1:8123/wp-json/wp/v2/posts/610",
+                    "href": "https://minn.localhost/wp-json/wp/v2/posts/610",
                     "targetHints": {
                         "allow": [
                             "GET"
@@ -165,41 +165,41 @@
             ],
             "collection": [
                 {
-                    "href": "http://127.0.0.1:8123/wp-json/wp/v2/posts"
+                    "href": "https://minn.localhost/wp-json/wp/v2/posts"
                 }
             ],
             "about": [
                 {
-                    "href": "http://127.0.0.1:8123/wp-json/wp/v2/types/post"
+                    "href": "https://minn.localhost/wp-json/wp/v2/types/post"
                 }
             ],
             "replies": [
                 {
                     "embeddable": true,
-                    "href": "http://127.0.0.1:8123/wp-json/wp/v2/comments?post=610"
+                    "href": "https://minn.localhost/wp-json/wp/v2/comments?post=610"
                 }
             ],
             "version-history": [
                 {
                     "count": 0,
-                    "href": "http://127.0.0.1:8123/wp-json/wp/v2/posts/610/revisions"
+                    "href": "https://minn.localhost/wp-json/wp/v2/posts/610/revisions"
                 }
             ],
             "wp:attachment": [
                 {
-                    "href": "http://127.0.0.1:8123/wp-json/wp/v2/media?parent=610"
+                    "href": "https://minn.localhost/wp-json/wp/v2/media?parent=610"
                 }
             ],
             "wp:term": [
                 {
                     "taxonomy": "category",
                     "embeddable": true,
-                    "href": "http://127.0.0.1:8123/wp-json/wp/v2/categories?post=610"
+                    "href": "https://minn.localhost/wp-json/wp/v2/categories?post=610"
                 },
                 {
                     "taxonomy": "post_tag",
                     "embeddable": true,
-                    "href": "http://127.0.0.1:8123/wp-json/wp/v2/tags?post=610"
+                    "href": "https://minn.localhost/wp-json/wp/v2/tags?post=610"
                 }
             ],
             "curies": [
@@ -223,7 +223,7 @@
         "slug": "zz-block-battery-media",
         "status": "publish",
         "type": "post",
-        "link": "http://127.0.0.1:8123/zz-block-battery-media/",
+        "link": "https://minn.localhost/zz-block-battery-media/",
         "title": {
             "rendered": "Block battery: media"
         },
@@ -261,7 +261,7 @@
         "_links": {
             "self": [
                 {
-                    "href": "http://127.0.0.1:8123/wp-json/wp/v2/posts/609",
+                    "href": "https://minn.localhost/wp-json/wp/v2/posts/609",
                     "targetHints": {
                         "allow": [
                             "GET"
@@ -271,41 +271,41 @@
             ],
             "collection": [
                 {
-                    "href": "http://127.0.0.1:8123/wp-json/wp/v2/posts"
+                    "href": "https://minn.localhost/wp-json/wp/v2/posts"
                 }
             ],
             "about": [
                 {
-                    "href": "http://127.0.0.1:8123/wp-json/wp/v2/types/post"
+                    "href": "https://minn.localhost/wp-json/wp/v2/types/post"
                 }
             ],
             "replies": [
                 {
                     "embeddable": true,
-                    "href": "http://127.0.0.1:8123/wp-json/wp/v2/comments?post=609"
+                    "href": "https://minn.localhost/wp-json/wp/v2/comments?post=609"
                 }
             ],
             "version-history": [
                 {
                     "count": 0,
-                    "href": "http://127.0.0.1:8123/wp-json/wp/v2/posts/609/revisions"
+                    "href": "https://minn.localhost/wp-json/wp/v2/posts/609/revisions"
                 }
             ],
             "wp:attachment": [
                 {
-                    "href": "http://127.0.0.1:8123/wp-json/wp/v2/media?parent=609"
+                    "href": "https://minn.localhost/wp-json/wp/v2/media?parent=609"
                 }
             ],
             "wp:term": [
                 {
                     "taxonomy": "category",
                     "embeddable": true,
-                    "href": "http://127.0.0.1:8123/wp-json/wp/v2/categories?post=609"
+                    "href": "https://minn.localhost/wp-json/wp/v2/categories?post=609"
                 },
                 {
                     "taxonomy": "post_tag",
                     "embeddable": true,
-                    "href": "http://127.0.0.1:8123/wp-json/wp/v2/tags?post=609"
+                    "href": "https://minn.localhost/wp-json/wp/v2/tags?post=609"
                 }
             ],
             "curies": [
@@ -329,7 +329,7 @@
         "slug": "zz-block-battery-text",
         "status": "publish",
         "type": "post",
-        "link": "http://127.0.0.1:8123/zz-block-battery-text/",
+        "link": "https://minn.localhost/zz-block-battery-text/",
         "title": {
             "rendered": "Block battery: text"
         },
@@ -367,7 +367,7 @@
         "_links": {
             "self": [
                 {
-                    "href": "http://127.0.0.1:8123/wp-json/wp/v2/posts/608",
+                    "href": "https://minn.localhost/wp-json/wp/v2/posts/608",
                     "targetHints": {
                         "allow": [
                             "GET"
@@ -377,41 +377,41 @@
             ],
             "collection": [
                 {
-                    "href": "http://127.0.0.1:8123/wp-json/wp/v2/posts"
+                    "href": "https://minn.localhost/wp-json/wp/v2/posts"
                 }
             ],
             "about": [
                 {
-                    "href": "http://127.0.0.1:8123/wp-json/wp/v2/types/post"
+                    "href": "https://minn.localhost/wp-json/wp/v2/types/post"
                 }
             ],
             "replies": [
                 {
                     "embeddable": true,
-                    "href": "http://127.0.0.1:8123/wp-json/wp/v2/comments?post=608"
+                    "href": "https://minn.localhost/wp-json/wp/v2/comments?post=608"
                 }
             ],
             "version-history": [
                 {
                     "count": 0,
-                    "href": "http://127.0.0.1:8123/wp-json/wp/v2/posts/608/revisions"
+                    "href": "https://minn.localhost/wp-json/wp/v2/posts/608/revisions"
                 }
             ],
             "wp:attachment": [
                 {
-                    "href": "http://127.0.0.1:8123/wp-json/wp/v2/media?parent=608"
+                    "href": "https://minn.localhost/wp-json/wp/v2/media?parent=608"
                 }
             ],
             "wp:term": [
                 {
                     "taxonomy": "category",
                     "embeddable": true,
-                    "href": "http://127.0.0.1:8123/wp-json/wp/v2/categories?post=608"
+                    "href": "https://minn.localhost/wp-json/wp/v2/categories?post=608"
                 },
                 {
                     "taxonomy": "post_tag",
                     "embeddable": true,
-                    "href": "http://127.0.0.1:8123/wp-json/wp/v2/tags?post=608"
+                    "href": "https://minn.localhost/wp-json/wp/v2/tags?post=608"
                 }
             ],
             "curies": [
@@ -435,7 +435,7 @@
         "slug": "scribe-published",
         "status": "publish",
         "type": "post",
-        "link": "http://127.0.0.1:8123/scribe-published/",
+        "link": "https://minn.localhost/scribe-published/",
         "title": {
             "rendered": "Scribe published"
         },
@@ -473,7 +473,7 @@
         "_links": {
             "self": [
                 {
-                    "href": "http://127.0.0.1:8123/wp-json/wp/v2/posts/11",
+                    "href": "https://minn.localhost/wp-json/wp/v2/posts/11",
                     "targetHints": {
                         "allow": [
                             "GET"
@@ -483,47 +483,47 @@
             ],
             "collection": [
                 {
-                    "href": "http://127.0.0.1:8123/wp-json/wp/v2/posts"
+                    "href": "https://minn.localhost/wp-json/wp/v2/posts"
                 }
             ],
             "about": [
                 {
-                    "href": "http://127.0.0.1:8123/wp-json/wp/v2/types/post"
+                    "href": "https://minn.localhost/wp-json/wp/v2/types/post"
                 }
             ],
             "author": [
                 {
                     "embeddable": true,
-                    "href": "http://127.0.0.1:8123/wp-json/wp/v2/users/3"
+                    "href": "https://minn.localhost/wp-json/wp/v2/users/3"
                 }
             ],
             "replies": [
                 {
                     "embeddable": true,
-                    "href": "http://127.0.0.1:8123/wp-json/wp/v2/comments?post=11"
+                    "href": "https://minn.localhost/wp-json/wp/v2/comments?post=11"
                 }
             ],
             "version-history": [
                 {
                     "count": 0,
-                    "href": "http://127.0.0.1:8123/wp-json/wp/v2/posts/11/revisions"
+                    "href": "https://minn.localhost/wp-json/wp/v2/posts/11/revisions"
                 }
             ],
             "wp:attachment": [
                 {
-                    "href": "http://127.0.0.1:8123/wp-json/wp/v2/media?parent=11"
+                    "href": "https://minn.localhost/wp-json/wp/v2/media?parent=11"
                 }
             ],
             "wp:term": [
                 {
                     "taxonomy": "category",
                     "embeddable": true,
-                    "href": "http://127.0.0.1:8123/wp-json/wp/v2/categories?post=11"
+                    "href": "https://minn.localhost/wp-json/wp/v2/categories?post=11"
                 },
                 {
                     "taxonomy": "post_tag",
                     "embeddable": true,
-                    "href": "http://127.0.0.1:8123/wp-json/wp/v2/tags?post=11"
+                    "href": "https://minn.localhost/wp-json/wp/v2/tags?post=11"
                 }
             ],
             "curies": [
@@ -547,7 +547,7 @@
         "slug": "editor-authored-post",
         "status": "publish",
         "type": "post",
-        "link": "http://127.0.0.1:8123/editor-authored-post/",
+        "link": "https://minn.localhost/editor-authored-post/",
         "title": {
             "rendered": "Editor authored post"
         },
@@ -585,7 +585,7 @@
         "_links": {
             "self": [
                 {
-                    "href": "http://127.0.0.1:8123/wp-json/wp/v2/posts/9",
+                    "href": "https://minn.localhost/wp-json/wp/v2/posts/9",
                     "targetHints": {
                         "allow": [
                             "GET"
@@ -595,47 +595,47 @@
             ],
             "collection": [
                 {
-                    "href": "http://127.0.0.1:8123/wp-json/wp/v2/posts"
+                    "href": "https://minn.localhost/wp-json/wp/v2/posts"
                 }
             ],
             "about": [
                 {
-                    "href": "http://127.0.0.1:8123/wp-json/wp/v2/types/post"
+                    "href": "https://minn.localhost/wp-json/wp/v2/types/post"
                 }
             ],
             "author": [
                 {
                     "embeddable": true,
-                    "href": "http://127.0.0.1:8123/wp-json/wp/v2/users/2"
+                    "href": "https://minn.localhost/wp-json/wp/v2/users/2"
                 }
             ],
             "replies": [
                 {
                     "embeddable": true,
-                    "href": "http://127.0.0.1:8123/wp-json/wp/v2/comments?post=9"
+                    "href": "https://minn.localhost/wp-json/wp/v2/comments?post=9"
                 }
             ],
             "version-history": [
                 {
                     "count": 0,
-                    "href": "http://127.0.0.1:8123/wp-json/wp/v2/posts/9/revisions"
+                    "href": "https://minn.localhost/wp-json/wp/v2/posts/9/revisions"
                 }
             ],
             "wp:attachment": [
                 {
-                    "href": "http://127.0.0.1:8123/wp-json/wp/v2/media?parent=9"
+                    "href": "https://minn.localhost/wp-json/wp/v2/media?parent=9"
                 }
             ],
             "wp:term": [
                 {
                     "taxonomy": "category",
                     "embeddable": true,
-                    "href": "http://127.0.0.1:8123/wp-json/wp/v2/categories?post=9"
+                    "href": "https://minn.localhost/wp-json/wp/v2/categories?post=9"
                 },
                 {
                     "taxonomy": "post_tag",
                     "embeddable": true,
-                    "href": "http://127.0.0.1:8123/wp-json/wp/v2/tags?post=9"
+                    "href": "https://minn.localhost/wp-json/wp/v2/tags?post=9"
                 }
             ],
             "curies": [
@@ -659,7 +659,7 @@
         "slug": "excerpt-block-filter-probe",
         "status": "publish",
         "type": "post",
-        "link": "http://127.0.0.1:8123/excerpt-block-filter-probe/",
+        "link": "https://minn.localhost/excerpt-block-filter-probe/",
         "title": {
             "rendered": "Excerpt block filter probe"
         },
@@ -697,7 +697,7 @@
         "_links": {
             "self": [
                 {
-                    "href": "http://127.0.0.1:8123/wp-json/wp/v2/posts/8",
+                    "href": "https://minn.localhost/wp-json/wp/v2/posts/8",
                     "targetHints": {
                         "allow": [
                             "GET"
@@ -707,41 +707,41 @@
             ],
             "collection": [
                 {
-                    "href": "http://127.0.0.1:8123/wp-json/wp/v2/posts"
+                    "href": "https://minn.localhost/wp-json/wp/v2/posts"
                 }
             ],
             "about": [
                 {
-                    "href": "http://127.0.0.1:8123/wp-json/wp/v2/types/post"
+                    "href": "https://minn.localhost/wp-json/wp/v2/types/post"
                 }
             ],
             "replies": [
                 {
                     "embeddable": true,
-                    "href": "http://127.0.0.1:8123/wp-json/wp/v2/comments?post=8"
+                    "href": "https://minn.localhost/wp-json/wp/v2/comments?post=8"
                 }
             ],
             "version-history": [
                 {
                     "count": 0,
-                    "href": "http://127.0.0.1:8123/wp-json/wp/v2/posts/8/revisions"
+                    "href": "https://minn.localhost/wp-json/wp/v2/posts/8/revisions"
                 }
             ],
             "wp:attachment": [
                 {
-                    "href": "http://127.0.0.1:8123/wp-json/wp/v2/media?parent=8"
+                    "href": "https://minn.localhost/wp-json/wp/v2/media?parent=8"
                 }
             ],
             "wp:term": [
                 {
                     "taxonomy": "category",
                     "embeddable": true,
-                    "href": "http://127.0.0.1:8123/wp-json/wp/v2/categories?post=8"
+                    "href": "https://minn.localhost/wp-json/wp/v2/categories?post=8"
                 },
                 {
                     "taxonomy": "post_tag",
                     "embeddable": true,
-                    "href": "http://127.0.0.1:8123/wp-json/wp/v2/tags?post=8"
+                    "href": "https://minn.localhost/wp-json/wp/v2/tags?post=8"
                 }
             ],
             "curies": [
@@ -765,7 +765,7 @@
         "slug": "texturize-battery-its-quoted-fine",
         "status": "publish",
         "type": "post",
-        "link": "http://127.0.0.1:8123/texturize-battery-its-quoted-fine/",
+        "link": "https://minn.localhost/texturize-battery-its-quoted-fine/",
         "title": {
             "rendered": "Texturize battery: it&#8217;s &#8220;quoted&#8221; &#8212; fine"
         },
@@ -803,7 +803,7 @@
         "_links": {
             "self": [
                 {
-                    "href": "http://127.0.0.1:8123/wp-json/wp/v2/posts/7",
+                    "href": "https://minn.localhost/wp-json/wp/v2/posts/7",
                     "targetHints": {
                         "allow": [
                             "GET"
@@ -813,41 +813,41 @@
             ],
             "collection": [
                 {
-                    "href": "http://127.0.0.1:8123/wp-json/wp/v2/posts"
+                    "href": "https://minn.localhost/wp-json/wp/v2/posts"
                 }
             ],
             "about": [
                 {
-                    "href": "http://127.0.0.1:8123/wp-json/wp/v2/types/post"
+                    "href": "https://minn.localhost/wp-json/wp/v2/types/post"
                 }
             ],
             "replies": [
                 {
                     "embeddable": true,
-                    "href": "http://127.0.0.1:8123/wp-json/wp/v2/comments?post=7"
+                    "href": "https://minn.localhost/wp-json/wp/v2/comments?post=7"
                 }
             ],
             "version-history": [
                 {
                     "count": 0,
-                    "href": "http://127.0.0.1:8123/wp-json/wp/v2/posts/7/revisions"
+                    "href": "https://minn.localhost/wp-json/wp/v2/posts/7/revisions"
                 }
             ],
             "wp:attachment": [
                 {
-                    "href": "http://127.0.0.1:8123/wp-json/wp/v2/media?parent=7"
+                    "href": "https://minn.localhost/wp-json/wp/v2/media?parent=7"
                 }
             ],
             "wp:term": [
                 {
                     "taxonomy": "category",
                     "embeddable": true,
-                    "href": "http://127.0.0.1:8123/wp-json/wp/v2/categories?post=7"
+                    "href": "https://minn.localhost/wp-json/wp/v2/categories?post=7"
                 },
                 {
                     "taxonomy": "post_tag",
                     "embeddable": true,
-                    "href": "http://127.0.0.1:8123/wp-json/wp/v2/tags?post=7"
+                    "href": "https://minn.localhost/wp-json/wp/v2/tags?post=7"
                 }
             ],
             "curies": [
@@ -871,7 +871,7 @@
         "slug": "building-in-the-open",
         "status": "publish",
         "type": "post",
-        "link": "http://127.0.0.1:8123/building-in-the-open/",
+        "link": "https://minn.localhost/building-in-the-open/",
         "title": {
             "rendered": "Building in the open"
         },
@@ -914,7 +914,7 @@
         "_links": {
             "self": [
                 {
-                    "href": "http://127.0.0.1:8123/wp-json/wp/v2/posts/5",
+                    "href": "https://minn.localhost/wp-json/wp/v2/posts/5",
                     "targetHints": {
                         "allow": [
                             "GET"
@@ -924,41 +924,41 @@
             ],
             "collection": [
                 {
-                    "href": "http://127.0.0.1:8123/wp-json/wp/v2/posts"
+                    "href": "https://minn.localhost/wp-json/wp/v2/posts"
                 }
             ],
             "about": [
                 {
-                    "href": "http://127.0.0.1:8123/wp-json/wp/v2/types/post"
+                    "href": "https://minn.localhost/wp-json/wp/v2/types/post"
                 }
             ],
             "replies": [
                 {
                     "embeddable": true,
-                    "href": "http://127.0.0.1:8123/wp-json/wp/v2/comments?post=5"
+                    "href": "https://minn.localhost/wp-json/wp/v2/comments?post=5"
                 }
             ],
             "version-history": [
                 {
                     "count": 0,
-                    "href": "http://127.0.0.1:8123/wp-json/wp/v2/posts/5/revisions"
+                    "href": "https://minn.localhost/wp-json/wp/v2/posts/5/revisions"
                 }
             ],
             "wp:attachment": [
                 {
-                    "href": "http://127.0.0.1:8123/wp-json/wp/v2/media?parent=5"
+                    "href": "https://minn.localhost/wp-json/wp/v2/media?parent=5"
                 }
             ],
             "wp:term": [
                 {
                     "taxonomy": "category",
                     "embeddable": true,
-                    "href": "http://127.0.0.1:8123/wp-json/wp/v2/categories?post=5"
+                    "href": "https://minn.localhost/wp-json/wp/v2/categories?post=5"
                 },
                 {
                     "taxonomy": "post_tag",
                     "embeddable": true,
-                    "href": "http://127.0.0.1:8123/wp-json/wp/v2/tags?post=5"
+                    "href": "https://minn.localhost/wp-json/wp/v2/tags?post=5"
                 }
             ],
             "curies": [
@@ -982,7 +982,7 @@
         "slug": "hello-world",
         "status": "publish",
         "type": "post",
-        "link": "http://127.0.0.1:8123/hello-world/",
+        "link": "https://minn.localhost/hello-world/",
         "title": {
             "rendered": "Hello world!"
         },
@@ -1020,7 +1020,7 @@
         "_links": {
             "self": [
                 {
-                    "href": "http://127.0.0.1:8123/wp-json/wp/v2/posts/1",
+                    "href": "https://minn.localhost/wp-json/wp/v2/posts/1",
                     "targetHints": {
                         "allow": [
                             "GET"
@@ -1030,47 +1030,47 @@
             ],
             "collection": [
                 {
-                    "href": "http://127.0.0.1:8123/wp-json/wp/v2/posts"
+                    "href": "https://minn.localhost/wp-json/wp/v2/posts"
                 }
             ],
             "about": [
                 {
-                    "href": "http://127.0.0.1:8123/wp-json/wp/v2/types/post"
+                    "href": "https://minn.localhost/wp-json/wp/v2/types/post"
                 }
             ],
             "author": [
                 {
                     "embeddable": true,
-                    "href": "http://127.0.0.1:8123/wp-json/wp/v2/users/1"
+                    "href": "https://minn.localhost/wp-json/wp/v2/users/1"
                 }
             ],
             "replies": [
                 {
                     "embeddable": true,
-                    "href": "http://127.0.0.1:8123/wp-json/wp/v2/comments?post=1"
+                    "href": "https://minn.localhost/wp-json/wp/v2/comments?post=1"
                 }
             ],
             "version-history": [
                 {
                     "count": 0,
-                    "href": "http://127.0.0.1:8123/wp-json/wp/v2/posts/1/revisions"
+                    "href": "https://minn.localhost/wp-json/wp/v2/posts/1/revisions"
                 }
             ],
             "wp:attachment": [
                 {
-                    "href": "http://127.0.0.1:8123/wp-json/wp/v2/media?parent=1"
+                    "href": "https://minn.localhost/wp-json/wp/v2/media?parent=1"
                 }
             ],
             "wp:term": [
                 {
                     "taxonomy": "category",
                     "embeddable": true,
-                    "href": "http://127.0.0.1:8123/wp-json/wp/v2/categories?post=1"
+                    "href": "https://minn.localhost/wp-json/wp/v2/categories?post=1"
                 },
                 {
                     "taxonomy": "post_tag",
                     "embeddable": true,
-                    "href": "http://127.0.0.1:8123/wp-json/wp/v2/tags?post=1"
+                    "href": "https://minn.localhost/wp-json/wp/v2/tags?post=1"
                 }
             ],
             "curies": [

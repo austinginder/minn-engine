@@ -136,7 +136,9 @@ $ask = static function (string $base, string $method, string $route, string $mod
         }
     }
     ksort($kept);
-    $text = str_replace([$base, str_replace('/', '\/', $base)], '{base}', substr($raw, $size));
+    // The reference answers as the site, so the site's address stands for either stack's base.
+    $site = minn_test_url();
+    $text = str_replace([$base, str_replace('/', '\/', $base), $site, str_replace('/', '\/', $site)], '{base}', substr($raw, $size));
     return ['status' => curl_getinfo($ch, CURLINFO_RESPONSE_CODE), 'headers' => $kept, 'body' => json_decode($text, true) ?? $text];
 };
 

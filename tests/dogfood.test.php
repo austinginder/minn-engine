@@ -13,13 +13,13 @@ declare(strict_types=1);
  * first differing line per path.
  *
  *   MINN_DOGFOOD_ENGINE=https://dogfood.localhost \
- *   MINN_DOGFOOD_REF=http://127.0.0.1:8124 php tests/dogfood.test.php [--all]
+ *   MINN_DOGFOOD_REF=https://ref.dogfood.localhost php tests/dogfood.test.php [--all]
  */
 
 require __DIR__ . '/lib.php';
 
 $ENGINE = getenv('MINN_DOGFOOD_ENGINE') ?: 'https://dogfood.localhost';
-$REF = getenv('MINN_DOGFOOD_REF') ?: 'http://127.0.0.1:8124';
+$REF = getenv('MINN_DOGFOOD_REF') ?: 'https://ref.dogfood.localhost';
 
 $src = (string) file_get_contents(__DIR__ . '/theme.test.php');
 preg_match('/function theme_body.*?\n}\n/s', $src, $m);
@@ -44,9 +44,9 @@ $fetch = static function (string $base, string $path): string {
     return (string) @file_get_contents($base . $path, false, $context);
 };
 
-$probe = @file_get_contents($REF . '/', false, stream_context_create(['http' => ['ignore_errors' => true, 'timeout' => 5]]));
+$probe = @file_get_contents($REF . '/', false, stream_context_create(['http' => ['ignore_errors' => true, 'timeout' => 30]]));
 if ($probe === false || $probe === '') {
-    echo "dogfood suite: reference not running at $REF (cd wp-reference && php -S 127.0.0.1:8124 router.php); skipping\n";
+    echo "dogfood suite: reference not running at $REF (its Cove twin: cove twin dogfood add --as-site=ref.dogfood.localhost); skipping\n";
     exit(0);
 }
 

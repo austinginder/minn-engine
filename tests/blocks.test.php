@@ -11,7 +11,7 @@
 require_once __DIR__ . '/lib.php';
 
 $ENGINE = rtrim(getenv('MINN_TEST_URL') ?: 'https://minn.localhost', '/');
-$REF = 'http://127.0.0.1:8123';
+$REF = 'https://ref.minn.localhost';
 $DIR = dirname(__DIR__) . '/contracts/fixtures/blocks';
 $manifest = json_decode((string) file_get_contents("$DIR/manifest.json"), true);
 
@@ -34,7 +34,7 @@ function blocks_first_diff(string $a, string $b): string
     return count($lb) > count($la) ? 'engine output is shorter' : 'no line diff';
 }
 
-$live = @file_get_contents("$REF/wp-json/", false, stream_context_create(['http' => ['timeout' => 2, 'ignore_errors' => true]])) !== false;
+$live = @file_get_contents("$REF/wp-json/", false, stream_context_create(['http' => ['timeout' => 30, 'ignore_errors' => true]])) !== false;
 echo $live ? "Live mode: engine vs fixture vs reference\n" : "Fixture mode\n";
 $pass = 0;
 $fail = 0;

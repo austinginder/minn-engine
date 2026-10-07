@@ -16,10 +16,12 @@ $log = [];
 $say = static function (string $label, $value) use (&$log): void {
     $log[] = [$label, $value];
 };
-$base = rtrim((string) (getenv('MINN_FEED_BASE') ?: 'http://127.0.0.1:8123/wp-content/uploads/minn-feed-probe'), '/');
+$base = rtrim((string) (getenv('MINN_FEED_BASE') ?: 'https://ref.minn.localhost/wp-content/uploads/minn-feed-probe'), '/');
 add_filter('http_request_host_is_external', '__return_true');
 $port = (int) parse_url($base, PHP_URL_PORT);
 add_filter('http_allowed_safe_ports', static fn ($ports) => $port > 0 ? array_merge((array) $ports, [$port]) : $ports);
+// The staged feeds come over a Cove site's local HTTPS, whose certificate authority WordPress's own bundle does not know.
+add_filter('http_request_args', static fn (array $args): array => ['sslverify' => false] + $args);
 $files = ['rss2.xml', 'atom.xml', 'rdf.xml', 'edge.xml', 'atom-edge.xml', 'latin1.xml', 'tags.xml', 'sort.xml', 'cp1252.xml', 'empty.xml', 'page.html'];
 $errors = ['broken.xml', 'notfeed.txt', 'no-such-feed.xml'];
 $clear = static function () use ($base, $files, $errors): void {

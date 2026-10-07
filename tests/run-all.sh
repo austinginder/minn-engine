@@ -4,13 +4,18 @@
 # The suites drive the TEST site (minn.localhost by default, MINN_TEST_ROOT),
 # never the marketing site. minn-engine.localhost holds this repository and
 # serves the Minn site theme; only tests/site.test.php reads it, against its
-# own parked WordPress on 127.0.0.1:8128. Nothing here writes to it, so a run
-# that dies half way can no longer strand the marketing page on another theme.
+# own parked WordPress, at its Cove twin. Nothing here writes to it, so a
+# run that dies half way can no longer strand the marketing page on another
+# theme.
 #
-# References: 8123 the test site's, 8124 the dogfood site's, 8126 the
-# WooCommerce lab's, 8128 the marketing site's, 8129 the round-trip site's.
-# Each is started below when its port is quiet. A suite whose reference is
-# unreachable skips and says so.
+# References: each site's parked WordPress (wp-reference/) is served by Cove
+# as the site's twin. wp.<site>.localhost browses as a site of its own;
+# ref.<site>.localhost answers as the site itself, over HTTPS, and that is
+# what the suites diff against (set up once per site with
+# `cove twin <site> add --as-site=ref.<site>.localhost`): the test site's,
+# the dogfood site's, the WooCommerce lab's, the marketing site's, and the
+# round-trip site's. Cove serves them, so nothing is started here; a suite
+# whose twin is missing skips and says so.
 set -u
 cd "$( dirname "$0" )"
 
@@ -24,23 +29,10 @@ php tools/site-skeleton.php "$SITE_ROOT" >/dev/null
 WOO_ROOT="${MINN_WOO_ROOT:-~/Cove/Sites/minnwoo.localhost}"
 [ -d "$WOO_ROOT/public" ] && php tools/site-skeleton.php "$WOO_ROOT" >/dev/null
 
-# Start a reference server when its port is quiet, so no suite skips on the
-# dev box. Servers started here are stopped on exit; ones already running are
-# left alone. Set MINN_NO_AUTOSTART=1 to run against whatever is up.
-DOGFOOD_REF="${MINN_DOGFOOD_REF_DIR:-$HOME/Cove/Sites/dogfood.localhost/wp-reference}"
-started=()
-start_reference() {
-	local dir="$1" port="$2"
-	[ -n "${MINN_NO_AUTOSTART:-}" ] && return
-	curl -s -o /dev/null "http://127.0.0.1:$port/" && return
-	[ -f "$dir/router.php" ] || { echo "reference for :$port not found at $dir; its suites will skip"; return; }
-	( cd "$dir" && php -S "127.0.0.1:$port" router.php >"/tmp/minn-ref-$port.log" 2>&1 ) &
-	started+=("$!")
-	until curl -s -o /dev/null "http://127.0.0.1:$port/"; do sleep 0.5; done
-	echo "started reference on :$port from $dir"
-}
-stop_references() {
-	for pid in "${started[@]:-}"; do [ -n "$pid" ] && pkill -P "$pid" 2>/dev/null; kill "$pid" 2>/dev/null; done
+# Each reference is the site's Cove twin; say which are missing up front.
+check_twin() {
+	curl -sk -o /dev/null --max-time 30 "https://ref.$1.localhost/" \
+		|| echo "no twin answers for $1.localhost (cove twin $1 add --as-site=ref.$1.localhost); its suites will skip"
 }
 # The test site runs twentytwentyfive, the theme the fixtures were captured
 # under, and is left on it. The suites' own pin (tests/lib.php) sees the theme
@@ -63,7 +55,7 @@ restore_locale() {
 	done
 	return 0
 }
-cleanup() { stop_references; restore_locale; }
+cleanup() { restore_locale; }
 # EXIT alone does not fire when the run is signalled (a killed background
 # job, a Ctrl-C, a harness timeout), so catch the signals too and exit through
 # the same path, or a run that dies mid-way leaves a locale pinned.
@@ -71,14 +63,11 @@ trap cleanup EXIT
 trap 'cleanup; trap - EXIT; exit 130' INT
 trap 'cleanup; trap - EXIT; exit 143' TERM HUP
 pin_locale
-start_reference "$TEST_ROOT/wp-reference" 8123
-start_reference "$DOGFOOD_REF" 8124
-start_reference "$SITE_ROOT/wp-reference" 8128
-# The WooCommerce lab (tests/woo.test.php); it skips when there is none.
-[ -f "$WOO_ROOT/private/woo-baseline.sql" ] && start_reference "$WOO_ROOT/wp-reference" 8126
-# The round trip runs on a copy of a real site (tests/round-trip.test.php); it skips when there is none.
+for twin_site in minn dogfood minn-engine; do check_twin "$twin_site"; done
+# The WooCommerce lab and the round trip's site are optional; their suites skip without them.
+[ -f "$WOO_ROOT/private/woo-baseline.sql" ] && check_twin minnwoo
 ROUNDTRIP_ROOT="${MINN_ROUNDTRIP_ROOT:-~/Cove/Sites/cove-minn.localhost}"
-[ -f "$ROUNDTRIP_ROOT/private/round-trip.json" ] && start_reference "$ROUNDTRIP_ROOT/wp-reference" 8129
+[ -f "$ROUNDTRIP_ROOT/private/round-trip.json" ] && check_twin cove-minn
 
 failed=0
 for suite in unit http style hooks api runtime ajax hook-trace front-lifecycle rest-gate abilities rest-posts auth identity application-passwords caps writes login-endpoint login-hooks rest-parity allow embed minn-v1 comments media settings users terms write-fields editor templates navigation permalinks blocks theme classic styles probes dogfood cli layout hardening security install cron-mail cron reader extensions front-method recovery front-page menus declared-types global-styles reusable-blocks admin-surfaces updates site code-size l10n dropins feeds requests mail html-api comment-form feed-hooks sitemap-hooks embed-template attachment-pages canonical-hooks request-vars plugin-rules rewrite-endpoints rest-envelope round-trip woo; do

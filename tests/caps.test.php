@@ -10,11 +10,11 @@
  * byte-for-byte.
  *
  * Run:  php tests/caps.test.php
- * Ref:  (cd wp-reference && php -S 127.0.0.1:8123) — SKIPs when down.
+ * Ref:  (its Cove twin: cove twin minn add --as-site=ref.minn.localhost) — SKIPs when down.
  */
 
 $ENGINE = rtrim( getenv( 'MINN_TEST_URL' ) ?: 'https://minn.localhost', '/' );
-$REF    = 'http://127.0.0.1:8123';
+$REF    = 'https://ref.minn.localhost';
 $ROOT   = dirname( __DIR__ );
 
 require_once __DIR__ . '/lib.php';

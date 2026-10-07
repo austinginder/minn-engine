@@ -4,18 +4,18 @@
  * terms, replies, parents, in lists and singles, with and without _fields,
  * as the reference answers them (contracts/rest/embed.md).
  *
- * Ref: (cd wp-reference && php -S 127.0.0.1:8123 router.php) — SKIPs cleanly when down.
+ * Ref: (its Cove twin: cove twin minn add --as-site=ref.minn.localhost) — SKIPs cleanly when down.
  */
 
 $ENGINE = 'https://minn.localhost';
-$REF    = 'http://127.0.0.1:8123';
+$REF    = 'https://ref.minn.localhost';
 $ROOT   = dirname( __DIR__ );
 
 require_once __DIR__ . '/lib.php';
 
 [ $ph ] = minn_test_fetch( "$REF/?rest_route=/wp/v2/posts", 3 );
 if ( 200 !== $ph['status'] ) {
-	echo "SKIP: reference WordPress not running at $REF (start: cd wp-reference && php -S 127.0.0.1:8123 router.php)\n";
+	echo "SKIP: reference WordPress not running at $REF (its Cove twin: cove twin minn add --as-site=ref.minn.localhost)\n";
 	exit( 0 );
 }
 

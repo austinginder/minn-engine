@@ -13,7 +13,7 @@
 
 $ENGINE  = rtrim( getenv( 'MINN_TEST_URL' ) ?: 'https://minn.localhost', '/' );
 $FIXDIR  = __DIR__ . '/../contracts/fixtures/rest';
-$CAPTURE = 'http://127.0.0.1:8123';
+$CAPTURE = 'https://minn.localhost'; // the base the fixtures were captured under
 
 require_once __DIR__ . '/lib.php';
 

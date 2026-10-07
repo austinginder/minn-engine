@@ -6,19 +6,19 @@
  * finding.
  *
  * Run:  php tests/rest-parity.test.php
- * Ref:  (cd wp-reference && php -S 127.0.0.1:8123) — SKIPs cleanly when down.
+ * Ref:  (its Cove twin: cove twin minn add --as-site=ref.minn.localhost) — SKIPs cleanly when down.
  * Env:  MINN_TEST_URL overrides the engine origin.
  */
 
 $ENGINE = rtrim( getenv( 'MINN_TEST_URL' ) ?: 'https://minn.localhost', '/' );
-$REF    = 'http://127.0.0.1:8123';
+$REF    = 'https://ref.minn.localhost';
 
 require_once __DIR__ . '/lib.php';
 
 // Reference reachable?
 [ $ph ] = minn_test_fetch( "$REF/?rest_route=/wp/v2/posts", 3 );
 if ( 200 !== $ph['status'] ) {
-	echo "SKIP: reference WordPress not running at $REF (start: cd wp-reference && php -S 127.0.0.1:8123)\n";
+	echo "SKIP: reference WordPress not running at $REF (its Cove twin: cove twin minn add --as-site=ref.minn.localhost)\n";
 	exit( 0 );
 }
 

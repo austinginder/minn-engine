@@ -14,7 +14,7 @@
  */
 
 $root = dirname(__DIR__, 2);
-$ref = 'http://127.0.0.1:8123';
+$ref = 'https://ref.minn.localhost';
 $dir = "$root/contracts/fixtures/blocks";
 @mkdir($dir, 0755, true);
 $manifestFile = "$dir/manifest.json";

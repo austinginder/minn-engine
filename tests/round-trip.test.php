@@ -18,9 +18,8 @@
  *   5. Restore, and remove the files both days uploaded.
  *
  * The site is a local copy (MINN_ROUNDTRIP_ROOT) with Minn installed in
- * public/ and WordPress parked in wp-reference/, whose oracle must be running
- * (cd wp-reference && php -S 127.0.0.1:8129 router.php; the router serves a
- * request as HTTPS when it carries X-Forwarded-Proto: https). The site's
+ * public/ and WordPress parked in wp-reference/, served at its Cove twin
+ * (cove twin cove-minn add --as-site=ref.cove-minn.localhost) as the site's own host. The site's
  * private/ folder holds round-trip.json (the owner's sign-in, the site URL,
  * the oracle URL, and skip_tables: big tables the day has no business
  * touching, left out of the baseline) and, after a run, the full report.
@@ -59,7 +58,8 @@ if ( ! $rt->hasBaseline() ) {
 }
 $REF     = rtrim( getenv( 'MINN_ROUNDTRIP_REF' ) ?: $cfg['oracle'], '/' );
 $URL     = rtrim( $cfg['url'], '/' );
-$AS_SITE = array( 'Host: ' . parse_url( $URL, PHP_URL_HOST ), 'X-Forwarded-Proto: https' );
+// A twin answers as the site already; an oracle on a bare port is told which site it is.
+$AS_SITE = str_starts_with( $REF, 'https://' ) ? array() : array( 'Host: ' . parse_url( $URL, PHP_URL_HOST ), 'X-Forwarded-Proto: https' );
 $UPLOADS = "$ROOT/public/wp-content/uploads";
 $cfg['login_path'] ??= '/wp-login.php';
 [ $probe ] = ( new RtClient( $REF, $AS_SITE ) )->request( 'GET', $cfg['login_path'] );
@@ -290,7 +290,7 @@ $carried          = new RtClient( $REF, $AS_SITE );
 $carried->cookies = $minn->cookies;
 $carried->fetchNonce();
 [ $s, $who ] = $carried->rest( 'GET', '/wp/v2/users/me' );
-check( 200 === $s && ( $me['id'] ?? -1 ) === ( $who['id'] ?? 0 ), "accepts the session Minn signed in (no second sign-in)" );
+check( 200 === $s && ( $me['id'] ?? -1 ) === ( $who['id'] ?? 0 ), "accepts the session Minn signed in (no second sign-in)", json_encode( array( $s, $carried->nonce, $who['id'] ?? $who['code'] ?? null, $me['id'] ?? null ) ) );
 [ $s ] = $wb->rest( 'POST', "/wp/v2/posts/{$ids['post']}", array( 'content' => $p['content']['raw'] . "\n\n<!-- wp:paragraph -->\n<p>Back on WordPress.</p>\n<!-- /wp:paragraph -->" ) );
 check( 200 === $s, "keeps working: revises Minn's post" );
 if ( $ids['reply'] > 0 ) {

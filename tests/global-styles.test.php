@@ -5,7 +5,7 @@
  * request by request against the oracle for an admin, an editor, an author
  * and an anonymous caller, plus a write round trip through the engine that
  * WordPress reads back. Fixtures pin the captured shapes without the oracle.
- * Ref: php -S 127.0.0.1:8123 in the test site's wp-reference.
+ * Ref: the test site's Cove twin (cove twin minn add --as-site=ref.minn.localhost).
  */
 
 require_once __DIR__ . '/lib.php';

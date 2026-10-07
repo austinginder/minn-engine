@@ -13,7 +13,7 @@ require __DIR__ . '/lib.php';
 
 $ROOT   = dirname( __DIR__ );
 $ENGINE = getenv( 'MINN_ENGINE' ) ?: 'https://minn.localhost';
-$REF    = getenv( 'MINN_REF' ) ?: 'http://127.0.0.1:8123';
+$REF    = getenv( 'MINN_REF' ) ?: 'https://ref.minn.localhost';
 
 [ $ph ] = minn_test_fetch( "$REF/?rest_route=/wp/v2/posts", 3 );
 if ( 200 !== $ph['status'] ) {

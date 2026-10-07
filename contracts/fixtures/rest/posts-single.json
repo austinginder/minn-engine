@@ -10,7 +10,7 @@
     "slug": "hello-world",
     "status": "publish",
     "type": "post",
-    "link": "http://127.0.0.1:8123/hello-world/",
+    "link": "https://minn.localhost/hello-world/",
     "title": {
         "rendered": "Hello world!"
     },
@@ -48,7 +48,7 @@
     "_links": {
         "self": [
             {
-                "href": "http://127.0.0.1:8123/wp-json/wp/v2/posts/1",
+                "href": "https://minn.localhost/wp-json/wp/v2/posts/1",
                 "targetHints": {
                     "allow": [
                         "GET"
@@ -58,47 +58,47 @@
         ],
         "collection": [
             {
-                "href": "http://127.0.0.1:8123/wp-json/wp/v2/posts"
+                "href": "https://minn.localhost/wp-json/wp/v2/posts"
             }
         ],
         "about": [
             {
-                "href": "http://127.0.0.1:8123/wp-json/wp/v2/types/post"
+                "href": "https://minn.localhost/wp-json/wp/v2/types/post"
             }
         ],
         "author": [
             {
                 "embeddable": true,
-                "href": "http://127.0.0.1:8123/wp-json/wp/v2/users/1"
+                "href": "https://minn.localhost/wp-json/wp/v2/users/1"
             }
         ],
         "replies": [
             {
                 "embeddable": true,
-                "href": "http://127.0.0.1:8123/wp-json/wp/v2/comments?post=1"
+                "href": "https://minn.localhost/wp-json/wp/v2/comments?post=1"
             }
         ],
         "version-history": [
             {
                 "count": 0,
-                "href": "http://127.0.0.1:8123/wp-json/wp/v2/posts/1/revisions"
+                "href": "https://minn.localhost/wp-json/wp/v2/posts/1/revisions"
             }
         ],
         "wp:attachment": [
             {
-                "href": "http://127.0.0.1:8123/wp-json/wp/v2/media?parent=1"
+                "href": "https://minn.localhost/wp-json/wp/v2/media?parent=1"
             }
         ],
         "wp:term": [
             {
                 "taxonomy": "category",
                 "embeddable": true,
-                "href": "http://127.0.0.1:8123/wp-json/wp/v2/categories?post=1"
+                "href": "https://minn.localhost/wp-json/wp/v2/categories?post=1"
             },
             {
                 "taxonomy": "post_tag",
                 "embeddable": true,
-                "href": "http://127.0.0.1:8123/wp-json/wp/v2/tags?post=1"
+                "href": "https://minn.localhost/wp-json/wp/v2/tags?post=1"
             }
         ],
         "curies": [

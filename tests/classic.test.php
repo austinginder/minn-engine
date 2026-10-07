@@ -11,12 +11,12 @@
 require_once __DIR__ . '/lib.php';
 
 $ENGINE = rtrim(getenv('MINN_TEST_URL') ?: 'https://minn.localhost', '/');
-$REF = 'http://127.0.0.1:8123';
+$REF = 'https://ref.minn.localhost';
 $ROOT = dirname(__DIR__);
 $THEMES = minn_test_site_root() . '/wp-reference/wp-content/themes';
 $SLUG = 'minn-classic-fixture';
 
-$live = @file_get_contents("$REF/wp-json/", false, stream_context_create(['http' => ['timeout' => 2, 'ignore_errors' => true]])) !== false;
+$live = @file_get_contents("$REF/wp-json/", false, stream_context_create(['http' => ['timeout' => 30, 'ignore_errors' => true]])) !== false;
 if (!$live) {
     echo "  skip classic suite: reference not running on 8123\n\n0 passed, 0 failed\n";
     exit(0);

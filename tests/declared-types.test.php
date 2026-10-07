@@ -2,11 +2,11 @@
 /**
  * Extra post types declared in minn.json: they join wp/v2/types and get a
  * collection at their rest_base, at live parity with a WordPress plugin
- * that register_post_type's the same slug. Ref: php -S 127.0.0.1:8123.
+ * that register_post_type's the same slug. Ref: the Cove twin (cove twin minn add --as-site=ref.minn.localhost).
  */
 
 $ENGINE = 'https://minn.localhost';
-$REF    = 'http://127.0.0.1:8123';
+$REF    = 'https://ref.minn.localhost';
 $ROOT   = dirname( __DIR__ );
 
 require_once __DIR__ . '/lib.php';

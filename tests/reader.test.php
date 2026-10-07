@@ -11,7 +11,7 @@ declare(strict_types=1);
  */
 
 $ENGINE = 'https://minn.localhost';
-$REF = 'http://127.0.0.1:8123';
+$REF = 'https://ref.minn.localhost';
 $ROOT = dirname(__DIR__);
 require_once __DIR__ . '/lib.php';
 
@@ -92,7 +92,7 @@ function bothPost(string $label, string $path, string $data, array $headersFor =
         sleep(16);
     }
     $e = page($ENGINE . $path, $data, $headersFor === null ? [] : [$headersFor[$ENGINE]]);
-    $shape = static fn (array $p, string $base): string => $p['status'] . ' ' . preg_replace(['/^' . preg_quote($base, '/') . '/', '/comment-\d+/', '/unapproved=\d+/', '/moderation-hash=[0-9a-f]+/'], ['', 'comment-N', 'unapproved=N', 'moderation-hash=H'], $p['headers']['location'] ?? '');
+    $shape = static fn (array $p, string $base): string => $p['status'] . ' ' . preg_replace(['/^(?:' . preg_quote($base, '/') . '|' . preg_quote(minn_test_url(), '/') . ')/', '/comment-\d+/', '/unapproved=\d+/', '/moderation-hash=[0-9a-f]+/'], ['', 'comment-N', 'unapproved=N', 'moderation-hash=H'], $p['headers']['location'] ?? '');
     check($shape($e, $ENGINE) === $shape($r, $REF), $label, 'engine ' . $shape($e, $ENGINE) . ' / reference ' . $shape($r, $REF));
     return [$e, $r];
 }
@@ -110,7 +110,7 @@ register_shutdown_function(static function () use (&$created): void {
     wp("db query \"DELETE FROM wp_options WHERE option_name LIKE 'minn_login_throttle_%'\"");
 });
 $engineCookieHash = md5($ENGINE);
-$refCookieHash = md5($REF);
+$refCookieHash = md5(minn_test_url()); // the reference answers as the site, so its siteurl (and cookie hash) is the site's
 
 echo "reader suite: $ENGINE (engine) vs $REF (reference)\n";
 

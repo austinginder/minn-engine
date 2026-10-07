@@ -17,7 +17,7 @@ declare(strict_types=1);
 require __DIR__ . '/lib.php';
 
 $ENGINE = rtrim(getenv('MINN_TEST_URL') ?: 'https://minn.localhost', '/');
-$REF = 'http://127.0.0.1:8123';
+$REF = 'https://ref.minn.localhost';
 $WP = '/opt/homebrew/bin/wp';
 $PUBLIC = minn_test_site_root() . '/public';
 
@@ -27,7 +27,7 @@ eval($m[0]);
 preg_match('/function theme_first_diff.*?\n}\n/s', $src, $m);
 eval($m[0]);
 
-$probe = @file_get_contents($REF . '/', false, stream_context_create(['http' => ['ignore_errors' => true, 'timeout' => 5]]));
+$probe = @file_get_contents($REF . '/', false, stream_context_create(['http' => ['ignore_errors' => true, 'timeout' => 30]]));
 if ($probe === false || $probe === '') {
     echo "front-page suite: reference not running at $REF; skipping\n";
     exit(0);

@@ -69,7 +69,7 @@ $get = static function (string $base, string $content, string $run, string $path
     $headers = [];
     foreach (preg_split('/\r?\n/', $head) ?: [] as $line) {
         if (preg_match('/^([A-Za-z-]+):\s*(.*)$/', $line, $m) === 1 && in_array(strtolower($m[1]), HEADERS, true)) {
-            $headers[] = strtolower($m[1]) . ': ' . str_replace($base, '{home}', trim($m[2]));
+            $headers[] = strtolower($m[1]) . ': ' . str_replace([$base, minn_test_url()], '{home}', trim($m[2]));
         }
     }
     sort($headers);

@@ -8,6 +8,7 @@ public/wp-config.php
 # Cove site runtime
 logs/
 tailscale_port
+twin
 
 # OS noise
 .DS_Store

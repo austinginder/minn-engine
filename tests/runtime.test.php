@@ -58,7 +58,7 @@ $check('plugin code cannot add, update, or delete the engine-owned options', add
 $check('feed content runs the_content', str_contains($feed, 'minn-test-plugin-content'));
 
 // The plugin's REST routes: engine and reference answer from the same code on the same database.
-$reference = 'http://127.0.0.1:8123';
+$reference = 'https://ref.minn.localhost';
 $referenceUp = @file_get_contents($reference . '/?rest_route=/', false, stream_context_create(['http' => ['timeout' => 3, 'ignore_errors' => true]])) !== false;
 [$h, $engineEcho] = minn_test_fetch($base . '/wp-json/minn-test/v1/echo?word=hi&n=2');
 $check('plugin route answers on the engine', ($h['status'] ?? 0) === 200 && json_decode($engineEcho, true) === ['echo' => 'hi', 'n' => 2, 'user' => 0, 'title' => 'Hello world!'], substr($engineEcho, 0, 200));

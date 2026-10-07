@@ -156,7 +156,7 @@ $same('a sign-in without the field: the actions heard', $both($heard));
 
 $landed = $both(static function (string $stack) use ($ask, $password, $stacks): array {
     [$status, $location] = $ask($stack, '/wp-login.php', ['log' => 'login-hooks-reader', 'pwd' => $password, 'zz_human' => 'yes', 'testcookie' => '1']);
-    return [$status, str_replace($stacks[$stack][0], '{site}', $location)];
+    return [$status, str_replace([$stacks[$stack][0], minn_test_url()], '{site}', $location)];
 });
 $same('a sign-in with the field: where it lands', $landed);
 $same('a sign-in with the field: the actions heard', $both($heard));
@@ -167,7 +167,7 @@ $left = $both(static function (string $stack) use ($ask, $stacks): array {
     $link = (string) ($m[1] ?? '');
     $path = $link === '' ? '/wp-login.php?action=logout' : (string) preg_replace('#^https?://[^/]+#', '', $link);
     [$status, $location] = $ask($stack, $path);
-    return [$status, str_replace($stacks[$stack][0], '{site}', $location)];
+    return [$status, str_replace([$stacks[$stack][0], minn_test_url()], '{site}', $location)];
 });
 $same('a sign-out: where it lands', $left);
 $same('a sign-out: the actions heard', $both($heard));
@@ -204,7 +204,7 @@ shell_exec("{$WP} option update users_can_register 1 >/dev/null 2>&1");
 $registerPages = $both(static function (string $stack) use ($ask, $stacks): array {
     preg_match('/<form[^>]*>(.*?)<\/form>/s', $ask($stack, '/wp-login.php?action=register')[2], $form);
     preg_match('/name="redirect_to" value="([^"]*)"/', $form[1] ?? '', $landing);
-    return [str_contains($form[1] ?? '', 'name="zz_human_reg"'), str_replace($stacks[$stack][0], '{site}', html_entity_decode($landing[1] ?? ''))];
+    return [str_contains($form[1] ?? '', 'name="zz_human_reg"'), str_replace([$stacks[$stack][0], minn_test_url()], '{site}', html_entity_decode($landing[1] ?? ''))];
 });
 $same('the registration page: the field in the form, and where it lands', $registerPages);
 $same('the registration page: the actions heard', $both($heard));

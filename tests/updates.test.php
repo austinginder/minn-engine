@@ -5,20 +5,20 @@
  * update of an inactive plugin, engine vs the site's own reference
  * (contracts/rest/minn-admin-v1.md "Updates").
  *
- * Ref: dogfood's parked WordPress on 127.0.0.1:8124 — SKIPs cleanly when down.
+ * Ref: dogfood's parked WordPress at its Cove twin (cove twin dogfood add --as-site=ref.dogfood.localhost) — SKIPs cleanly when down.
  * Needs the network: wordpress.org answers both stacks.
  */
 
 $ENGINE = 'https://dogfood.localhost';
-$REF    = 'http://127.0.0.1:8124';
+$REF    = 'https://ref.dogfood.localhost';
 $SITE   = getenv( 'MINN_DOGFOOD_SITE' ) ?: '~/Cove/Sites/dogfood.localhost';
 $ROOT   = dirname( __DIR__ );
 
 require_once __DIR__ . '/lib.php';
 
-[ $ph ] = minn_test_fetch( "$REF/?rest_route=/wp/v2/posts", 3 );
+[ $ph ] = minn_test_fetch( "$REF/?rest_route=/wp/v2/posts", 30 );
 if ( 200 !== $ph['status'] || ! is_dir( "$SITE/public" ) ) {
-	echo "SKIP: dogfood reference not running at $REF (start: cd $SITE/wp-reference && php -S 127.0.0.1:8124 router.php)\n";
+	echo "SKIP: dogfood reference not running at $REF (its Cove twin: cove twin dogfood add --as-site=ref.dogfood.localhost)\n";
 	exit( 0 );
 }
 

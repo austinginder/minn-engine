@@ -10,7 +10,7 @@
 require_once __DIR__ . '/lib.php';
 
 $ENGINE = rtrim(getenv('MINN_TEST_URL') ?: 'https://minn.localhost', '/');
-$REF = 'http://127.0.0.1:8123';
+$REF = 'https://ref.minn.localhost';
 $FIXTURE = dirname(__DIR__) . '/contracts/fixtures/front/methods.json';
 
 // method + path; expected status and location live in the fixture.
@@ -55,7 +55,7 @@ function method_fetch(string $base, string $method, string $path): array
     return [$status, $location, minn_test_neutralise($body)];
 }
 
-$refUp = @file_get_contents($REF . '/?rest_route=/', false, stream_context_create(['http' => ['timeout' => 2, 'ignore_errors' => true]])) !== false;
+$refUp = @file_get_contents($REF . '/?rest_route=/', false, stream_context_create(['http' => ['timeout' => 30, 'ignore_errors' => true]])) !== false;
 
 if (in_array('--capture', $argv, true)) {
     if (!$refUp) {

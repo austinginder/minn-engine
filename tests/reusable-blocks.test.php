@@ -4,8 +4,8 @@
  * blocks, and the taxonomy that files them. Diffed request by request
  * against the oracle for an admin, an author and an anonymous caller, with a
  * write round trip the oracle reads back. The suite makes its own rows and
- * removes them on shutdown. Ref: php -S 127.0.0.1:8123 in the test site's
- * wp-reference.
+ * removes them on shutdown. Ref: the test site's Cove twin
+ * (cove twin minn add --as-site=ref.minn.localhost).
  */
 
 require_once __DIR__ . '/lib.php';

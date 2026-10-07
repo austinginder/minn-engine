@@ -10,7 +10,7 @@ declare(strict_types=1);
  */
 
 $ENGINE = 'https://minn.localhost';
-$REF = 'http://127.0.0.1:8123';
+$REF = 'https://ref.minn.localhost';
 $ROOT = dirname(__DIR__);
 // Cove's dashboard route to Mailpit's API (it adds the credentials Mailpit's own port asks for); local only.
 $MAILPIT = getenv('MINN_MAILPIT') ?: 'https://cove.localhost/mail-api/v1';

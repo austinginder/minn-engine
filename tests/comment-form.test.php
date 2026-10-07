@@ -206,16 +206,16 @@ $respond = static function (string $base, string $cookie): string {
     $html = (string) curl_exec($ch);
     $at = strpos($html, '<div id="respond"');
     $form = $at === false ? '(no form)' : substr($html, $at, (int) strpos($html, '<!-- #respond -->', $at) - $at);
-    $form = str_replace([$base, rawurlencode($base)], '{home}', $form);
+    $form = str_replace([$base, rawurlencode($base), minn_test_url(), rawurlencode(minn_test_url())], '{home}', $form);
     return (string) preg_replace(['/_wpnonce=[0-9a-f]+/', '/value="[0-9a-f]{10}"/'], ['_wpnonce={nonce}', 'value="{nonce}"'], $form);
 };
 foreach (['a signed-out reader' => 'none', 'a remembered commenter' => 'commenter', 'a signed-in administrator' => 'admin'] as $reader => $kind) {
     $forms = [];
     foreach (['reference' => $REF, 'engine' => $ENGINE] as $stack => $base) {
-        $hash = md5($base); // COOKIEHASH: the address each stack answers at
+        $hash = md5(minn_test_url()); // COOKIEHASH: the site's address, which both stacks answer as
         $cookie = match ($kind) {
             'commenter' => "comment_author_{$hash}=Remy+Reader; comment_author_email_{$hash}=remy%40example.com; comment_author_url_{$hash}=https%3A%2F%2Fremy.example",
-            'admin' => 'wordpress_logged_in_' . md5($base) . '=' . rawurlencode((string) ($mint['cookie'] ?? '')),
+            'admin' => 'wordpress_logged_in_' . $hash . '=' . rawurlencode((string) ($mint['cookie'] ?? '')),
             default => '',
         };
         $forms[$stack] = $respond($base, $cookie);

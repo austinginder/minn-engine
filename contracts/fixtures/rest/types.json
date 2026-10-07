@@ -17,12 +17,12 @@
         "_links": {
             "collection": [
                 {
-                    "href": "http://127.0.0.1:8123/wp-json/wp/v2/types"
+                    "href": "https://minn.localhost/wp-json/wp/v2/types"
                 }
             ],
             "wp:items": [
                 {
-                    "href": "http://127.0.0.1:8123/wp-json/wp/v2/posts"
+                    "href": "https://minn.localhost/wp-json/wp/v2/posts"
                 }
             ],
             "curies": [
@@ -49,12 +49,12 @@
         "_links": {
             "collection": [
                 {
-                    "href": "http://127.0.0.1:8123/wp-json/wp/v2/types"
+                    "href": "https://minn.localhost/wp-json/wp/v2/types"
                 }
             ],
             "wp:items": [
                 {
-                    "href": "http://127.0.0.1:8123/wp-json/wp/v2/pages"
+                    "href": "https://minn.localhost/wp-json/wp/v2/pages"
                 }
             ],
             "curies": [
@@ -81,12 +81,12 @@
         "_links": {
             "collection": [
                 {
-                    "href": "http://127.0.0.1:8123/wp-json/wp/v2/types"
+                    "href": "https://minn.localhost/wp-json/wp/v2/types"
                 }
             ],
             "wp:items": [
                 {
-                    "href": "http://127.0.0.1:8123/wp-json/wp/v2/media"
+                    "href": "https://minn.localhost/wp-json/wp/v2/media"
                 }
             ],
             "curies": [
@@ -115,12 +115,12 @@
         "_links": {
             "collection": [
                 {
-                    "href": "http://127.0.0.1:8123/wp-json/wp/v2/types"
+                    "href": "https://minn.localhost/wp-json/wp/v2/types"
                 }
             ],
             "wp:items": [
                 {
-                    "href": "http://127.0.0.1:8123/wp-json/wp/v2/menu-items"
+                    "href": "https://minn.localhost/wp-json/wp/v2/menu-items"
                 }
             ],
             "curies": [
@@ -149,12 +149,12 @@
         "_links": {
             "collection": [
                 {
-                    "href": "http://127.0.0.1:8123/wp-json/wp/v2/types"
+                    "href": "https://minn.localhost/wp-json/wp/v2/types"
                 }
             ],
             "wp:items": [
                 {
-                    "href": "http://127.0.0.1:8123/wp-json/wp/v2/blocks"
+                    "href": "https://minn.localhost/wp-json/wp/v2/blocks"
                 }
             ],
             "curies": [
@@ -181,12 +181,12 @@
         "_links": {
             "collection": [
                 {
-                    "href": "http://127.0.0.1:8123/wp-json/wp/v2/types"
+                    "href": "https://minn.localhost/wp-json/wp/v2/types"
                 }
             ],
             "wp:items": [
                 {
-                    "href": "http://127.0.0.1:8123/wp-json/wp/v2/templates"
+                    "href": "https://minn.localhost/wp-json/wp/v2/templates"
                 }
             ],
             "curies": [
@@ -213,12 +213,12 @@
         "_links": {
             "collection": [
                 {
-                    "href": "http://127.0.0.1:8123/wp-json/wp/v2/types"
+                    "href": "https://minn.localhost/wp-json/wp/v2/types"
                 }
             ],
             "wp:items": [
                 {
-                    "href": "http://127.0.0.1:8123/wp-json/wp/v2/template-parts"
+                    "href": "https://minn.localhost/wp-json/wp/v2/template-parts"
                 }
             ],
             "curies": [
@@ -245,12 +245,12 @@
         "_links": {
             "collection": [
                 {
-                    "href": "http://127.0.0.1:8123/wp-json/wp/v2/types"
+                    "href": "https://minn.localhost/wp-json/wp/v2/types"
                 }
             ],
             "wp:items": [
                 {
-                    "href": "http://127.0.0.1:8123/wp-json/wp/v2/global-styles"
+                    "href": "https://minn.localhost/wp-json/wp/v2/global-styles"
                 }
             ],
             "curies": [
@@ -277,12 +277,12 @@
         "_links": {
             "collection": [
                 {
-                    "href": "http://127.0.0.1:8123/wp-json/wp/v2/types"
+                    "href": "https://minn.localhost/wp-json/wp/v2/types"
                 }
             ],
             "wp:items": [
                 {
-                    "href": "http://127.0.0.1:8123/wp-json/wp/v2/navigation"
+                    "href": "https://minn.localhost/wp-json/wp/v2/navigation"
                 }
             ],
             "curies": [
@@ -309,12 +309,12 @@
         "_links": {
             "collection": [
                 {
-                    "href": "http://127.0.0.1:8123/wp-json/wp/v2/types"
+                    "href": "https://minn.localhost/wp-json/wp/v2/types"
                 }
             ],
             "wp:items": [
                 {
-                    "href": "http://127.0.0.1:8123/wp-json/wp/v2/font-families"
+                    "href": "https://minn.localhost/wp-json/wp/v2/font-families"
                 }
             ],
             "curies": [
@@ -341,12 +341,12 @@
         "_links": {
             "collection": [
                 {
-                    "href": "http://127.0.0.1:8123/wp-json/wp/v2/types"
+                    "href": "https://minn.localhost/wp-json/wp/v2/types"
                 }
             ],
             "wp:items": [
                 {
-                    "href": "http://127.0.0.1:8123/wp-json/wp/v2/font-families/(?P<font_family_id>[\\d]+)/font-faces"
+                    "href": "https://minn.localhost/wp-json/wp/v2/font-families/(?P<font_family_id>[\\d]+)/font-faces"
                 }
             ],
             "curies": [

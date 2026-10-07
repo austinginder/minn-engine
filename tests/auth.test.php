@@ -8,11 +8,11 @@
  * failure matrix so a permissive regression cannot pass quietly.
  *
  * Run:  php tests/auth.test.php
- * Ref:  (cd wp-reference && php -S 127.0.0.1:8123) — SKIPs cleanly when down.
+ * Ref:  (its Cove twin: cove twin minn add --as-site=ref.minn.localhost) — SKIPs cleanly when down.
  */
 
 $ENGINE = rtrim( getenv( 'MINN_TEST_URL' ) ?: 'https://minn.localhost', '/' );
-$REF    = 'http://127.0.0.1:8123';
+$REF    = 'https://ref.minn.localhost';
 $ROOT   = dirname( __DIR__ );
 
 require_once __DIR__ . '/lib.php';

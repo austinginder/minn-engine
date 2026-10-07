@@ -7,7 +7,8 @@
 // are skipped, as is the skip link, which sits off-screen.
 //
 // Env:  MINN_GEOMETRY_ENGINE (default https://dogfood.localhost)
-//       MINN_GEOMETRY_REF    (default http://127.0.0.1:8124, the dogfood reference)
+//       MINN_GEOMETRY_REF    (default https://wp.dogfood.localhost, the dogfood reference: the
+//                            browsing twin, so the page's styles and scripts load from WordPress)
 //       MINN_GEOMETRY_PATHS  (comma-separated; default the dogfood paths)
 // Skips cleanly when the reference is not running.
 
@@ -18,7 +19,7 @@ require( './pin-theme' ).pinTheme();
 // the block battery); the default is the dogfood site against 8124.
 const DEV = process.argv.includes( '--dev' );
 const ENGINE = ( process.env.MINN_GEOMETRY_ENGINE || ( DEV ? 'https://minn.localhost' : 'https://dogfood.localhost' ) ).replace( /\/$/, '' );
-const REF = ( process.env.MINN_GEOMETRY_REF || ( DEV ? 'http://127.0.0.1:8123' : 'http://127.0.0.1:8124' ) ).replace( /\/$/, '' );
+const REF = ( process.env.MINN_GEOMETRY_REF || ( DEV ? 'https://wp.minn.localhost' : 'https://wp.dogfood.localhost' ) ).replace( /\/$/, '' );
 const DEV_PATHS = '/,/hello-world/,/building-in-the-open/,/sample-page/,/sample-page/docs/,/category/uncategorized/,/tag/engine/,/author/admin/,/2026/08/,/?s=open,/nonexistent/,/zz-block-battery-media/,/zz-block-battery-layout/,/page/2/,/docs/';
 const DOGFOOD_PATHS = '/,/page/2/,/about/,/contact/,/case-studies/,/corporate/,/residential/11-fifth-3/,/news/,/news/title-here-like-this/,/nonexistent-page/,/?s=design';
 const PATHS = ( process.env.MINN_GEOMETRY_PATHS || ( DEV ? DEV_PATHS : DOGFOOD_PATHS ) ).split( ',' );

@@ -3033,7 +3033,7 @@
     "_links": {
         "self": [
             {
-                "href": "http://127.0.0.1:8123/wp-json/wp/v2/global-styles/themes/twentytwentyfive",
+                "href": "https://minn.localhost/wp-json/wp/v2/global-styles/themes/twentytwentyfive",
                 "targetHints": {
                     "allow": [
                         "GET"

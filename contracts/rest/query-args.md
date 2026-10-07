@@ -29,7 +29,7 @@ Dogfood (richer media):
 ```
 php tests/tools/rest-query-gap.php \
   --engine=https://dogfood.localhost \
-  --ref=http://127.0.0.1:8124
+  --ref=https://ref.dogfood.localhost
 ```
 
 Paging (`page`, `per_page`, `offset`), `context`, `_fields`, and sort

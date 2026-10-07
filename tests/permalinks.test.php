@@ -8,11 +8,11 @@
  * case is fetched from it too and compared the same way.
  *
  * Re-capture from the oracle with:  php tests/permalinks.test.php --capture
- * Oracle: (cd wp-reference && php -S 127.0.0.1:8123 router.php)
+ * Oracle: (its Cove twin: cove twin minn add --as-site=ref.minn.localhost)
  */
 
 $ENGINE = rtrim(getenv('MINN_TEST_URL') ?: 'https://minn.localhost', '/');
-$REF = 'http://127.0.0.1:8123';
+$REF = 'https://ref.minn.localhost';
 $FIXTURE = dirname(__DIR__) . '/contracts/fixtures/front/permalinks.json';
 
 // The tokens that are contract; theme and template tokens are not.
@@ -79,7 +79,7 @@ function permalink_fetch(string $base, string $path): array
 }
 
 if (in_array('--capture', $argv, true)) {
-    $probe = @file_get_contents("{$REF}/wp-json/", false, stream_context_create(['http' => ['timeout' => 3, 'ignore_errors' => true]]));
+    $probe = @file_get_contents("{$REF}/wp-json/", false, stream_context_create(['http' => ['timeout' => 30, 'ignore_errors' => true]]));
     if ($probe === false) {
         fwrite(STDERR, "Reference not running at {$REF}\n");
         exit(1);
@@ -100,7 +100,7 @@ if (!is_array($expected)) {
     exit(1);
 }
 
-$liveProbe = @file_get_contents("{$REF}/wp-json/", false, stream_context_create(['http' => ['timeout' => 2, 'ignore_errors' => true]]));
+$liveProbe = @file_get_contents("{$REF}/wp-json/", false, stream_context_create(['http' => ['timeout' => 30, 'ignore_errors' => true]]));
 $live = $liveProbe !== false;
 echo $live ? "Live mode: engine vs fixture vs reference\n" : "Fixture mode: reference not running, engine vs fixture only\n";
 

@@ -8,9 +8,11 @@ Suite: `tests/permalinks.test.php` (fixture mode plus a live diff when the
 oracle is up). Code: `public/minn/src/Minn/Front/`.
 
 The shared database now runs `permalink_structure = /%postname%/`. The
-oracle needs `router.php` under `wp-reference/` so the built-in server routes
-pretty paths through `index.php`:
-`(cd wp-reference && php -S 127.0.0.1:8123 router.php)`.
+oracle is the test site's Cove twin, `https://ref.minn.localhost`
+(`cove twin minn add --as-site=ref.minn.localhost`), which answers as
+`minn.localhost` over HTTPS. Since 2026-10-07 it therefore makes the
+host-dependent canonical moves the old `php -S 127.0.0.1:8123` oracle never
+showed (see "Open, host-dependent" below).
 
 ## What the oracle taught
 
@@ -152,8 +154,11 @@ pretty paths through `index.php`:
   also sends an attachment page to its file while attachment pages are
   off, drops `/page/1/` (`/hello-world/page/1/` to `/hello-world/`), and
   moves feed aliases to the feed form (`/rss2/` to `/feed/`,
-  `/hello-world/atom/` to `/hello-world/feed/atom/`). The suites reach it
-  as 127.0.0.1, where it answers all of these 200 as the engine does.
+  `/hello-world/atom/` to `/hello-world/feed/atom/`). The old 127.0.0.1
+  oracle answered all of these 200, as the engine still does; the twin
+  shows them, so permalinks, probes, theme, feed-hooks, attachment-pages,
+  embed-template and request-vars fail on them until the engine makes
+  them.
 
 **Body-class tokens** (the contract; the surrounding markup is engine-defined),
 read from the main query (`Theme\QueryClasses`), so flags combine as the query's

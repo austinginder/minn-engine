@@ -11,7 +11,7 @@
         "slug": "docs",
         "status": "publish",
         "type": "page",
-        "link": "http://127.0.0.1:8123/sample-page/docs/",
+        "link": "https://minn.localhost/sample-page/docs/",
         "title": {
             "rendered": "Docs"
         },
@@ -43,7 +43,7 @@
         "_links": {
             "self": [
                 {
-                    "href": "http://127.0.0.1:8123/wp-json/wp/v2/pages/6",
+                    "href": "https://minn.localhost/wp-json/wp/v2/pages/6",
                     "targetHints": {
                         "allow": [
                             "GET"
@@ -53,35 +53,35 @@
             ],
             "collection": [
                 {
-                    "href": "http://127.0.0.1:8123/wp-json/wp/v2/pages"
+                    "href": "https://minn.localhost/wp-json/wp/v2/pages"
                 }
             ],
             "about": [
                 {
-                    "href": "http://127.0.0.1:8123/wp-json/wp/v2/types/page"
+                    "href": "https://minn.localhost/wp-json/wp/v2/types/page"
                 }
             ],
             "replies": [
                 {
                     "embeddable": true,
-                    "href": "http://127.0.0.1:8123/wp-json/wp/v2/comments?post=6"
+                    "href": "https://minn.localhost/wp-json/wp/v2/comments?post=6"
                 }
             ],
             "version-history": [
                 {
                     "count": 0,
-                    "href": "http://127.0.0.1:8123/wp-json/wp/v2/pages/6/revisions"
+                    "href": "https://minn.localhost/wp-json/wp/v2/pages/6/revisions"
                 }
             ],
             "up": [
                 {
                     "embeddable": true,
-                    "href": "http://127.0.0.1:8123/wp-json/wp/v2/pages/2"
+                    "href": "https://minn.localhost/wp-json/wp/v2/pages/2"
                 }
             ],
             "wp:attachment": [
                 {
-                    "href": "http://127.0.0.1:8123/wp-json/wp/v2/media?parent=6"
+                    "href": "https://minn.localhost/wp-json/wp/v2/media?parent=6"
                 }
             ],
             "curies": [
@@ -105,7 +105,7 @@
         "slug": "sample-page",
         "status": "publish",
         "type": "page",
-        "link": "http://127.0.0.1:8123/sample-page/",
+        "link": "https://minn.localhost/sample-page/",
         "title": {
             "rendered": "Sample Page"
         },
@@ -137,7 +137,7 @@
         "_links": {
             "self": [
                 {
-                    "href": "http://127.0.0.1:8123/wp-json/wp/v2/pages/2",
+                    "href": "https://minn.localhost/wp-json/wp/v2/pages/2",
                     "targetHints": {
                         "allow": [
                             "GET"
@@ -147,35 +147,35 @@
             ],
             "collection": [
                 {
-                    "href": "http://127.0.0.1:8123/wp-json/wp/v2/pages"
+                    "href": "https://minn.localhost/wp-json/wp/v2/pages"
                 }
             ],
             "about": [
                 {
-                    "href": "http://127.0.0.1:8123/wp-json/wp/v2/types/page"
+                    "href": "https://minn.localhost/wp-json/wp/v2/types/page"
                 }
             ],
             "author": [
                 {
                     "embeddable": true,
-                    "href": "http://127.0.0.1:8123/wp-json/wp/v2/users/1"
+                    "href": "https://minn.localhost/wp-json/wp/v2/users/1"
                 }
             ],
             "replies": [
                 {
                     "embeddable": true,
-                    "href": "http://127.0.0.1:8123/wp-json/wp/v2/comments?post=2"
+                    "href": "https://minn.localhost/wp-json/wp/v2/comments?post=2"
                 }
             ],
             "version-history": [
                 {
                     "count": 0,
-                    "href": "http://127.0.0.1:8123/wp-json/wp/v2/pages/2/revisions"
+                    "href": "https://minn.localhost/wp-json/wp/v2/pages/2/revisions"
                 }
             ],
             "wp:attachment": [
                 {
-                    "href": "http://127.0.0.1:8123/wp-json/wp/v2/media?parent=2"
+                    "href": "https://minn.localhost/wp-json/wp/v2/media?parent=2"
                 }
             ],
             "curies": [
