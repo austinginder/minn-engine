@@ -15,8 +15,9 @@ the wp/v2 surface: shapes and controllers
 | [`BlocksController`](#blockscontroller) | final readonly class | 69 | wp/v2/blocks: synced patterns and reusable blocks, stored as wp_block |
 | [`Caller`](#caller) | final class | 121 | Who is making this REST call. Resolved once from the cookie and nonce; |
 | [`Catalogue`](#catalogue) | final class | 70 | The route table read from the classes alone: every #[Route] under |
-| [`CommentObject`](#commentobject) | final readonly class | 83 | The wp/v2 comment object; edit context adds the moderation-desk fields. |
-| [`CommentsController`](#commentscontroller) | final readonly class | 326 | wp/v2/comments: the status tabs with pagination headers, single, |
+| [`CommentListArgs`](#commentlistargs) | final class | 35 | The WP_Comment_Query arguments a comment list request makes, as the |
+| [`CommentObject`](#commentobject) | final readonly class | 87 | The wp/v2 comment object; edit context adds the moderation-desk fields. |
+| [`CommentsController`](#commentscontroller) | final readonly class | 336 | wp/v2/comments: the status tabs with pagination headers, single, |
 | [`Context`](#context) | enum | 18 | The view a REST caller asked for. View is the public shape, edit adds the |
 | [`DeclaredPostsController`](#declaredpostscontroller) | final readonly class | 56 | wp/v2/{rest_base} for extra post types declared by an active extension. |
 | [`DeclaredTermsController`](#declaredtermscontroller) | final readonly class | 43 | wp/v2/{rest_base} for the taxonomies plugin code registers to show in |
@@ -37,13 +38,13 @@ the wp/v2 surface: shapes and controllers
 | [`MenusController`](#menuscontroller) | final readonly class | 312 | wp/v2/menus, menu-items, and menu-locations. Viewing needs edit_posts; |
 | [`NavigationController`](#navigationcontroller) | final readonly class | 48 | wp/v2/navigation: the block theme's navigation menus, stored as |
 | [`OEmbedController`](#oembedcontroller) | final readonly class | 72 | oembed/1.0 as the reference answers it (probe oembed). embed is the |
-| [`ParamCheck`](#paramcheck) | final class | 75 | The required / validate / sanitize pass over a request's declared arguments. |
+| [`ParamCheck`](#paramcheck) | final class | 76 | The required / validate / sanitize pass over a request's declared arguments. |
 | [`PluginsController`](#pluginscontroller) | final readonly class | 236 | wp/v2 plugins: what sits in wp-content/plugins, in the reference's |
 | [`PolicyGate`](#policygate) | final readonly class | 147 | Judges a route's policy against the caller, with the reference's |
 | [`PostCollectionParams`](#postcollectionparams) | final class | 167 | A post type's collection parameters as the reference builds them for its |
 | [`PostListArgs`](#postlistargs) | final class | 152 | The WP_Query arguments a post list request makes, as the reference makes |
 | [`PostObject`](#postobject) | final readonly class | 530 | Builds the wp/v2 post and page objects in the reference's shape: the |
-| [`PostsController`](#postscontroller) | final readonly class | 195 | wp/v2 posts and pages, read side. |
+| [`PostsController`](#postscontroller) | final readonly class | 179 | wp/v2 posts and pages, read side. |
 | [`PostsWriteController`](#postswritecontroller) | final readonly class | 459 | wp/v2 posts and pages, write side: create, update, trash, and force |
 | [`RegisteredFields`](#registeredfields) | final class | 105 | The fields plugin code adds to an object type with register_rest_field, |
 | [`RegisteredPostFields`](#registeredpostfields) | final readonly class | 89 | The REST object of a post whose type plugin code registered (probe rest-plugin-types), built by what the type supports. |
@@ -60,7 +61,7 @@ the wp/v2 surface: shapes and controllers
 | [`RouteTable`](#routetable) | final class | 38 | The registered endpoints in dispatch shape: one handler list per route, methods as a set, non-numeric keys lifted into the route's options. |
 | [`RuntimeEnvelope`](#runtimeenvelope) | final readonly class | 123 | The REST server's filters around one of Minn's own routes, as the |
 | [`RuntimePrepare`](#runtimeprepare) | final class | 70 | An item a REST response carries, through the filter the reference runs |
-| [`RuntimeRoutes`](#runtimeroutes) | final class | 387 | Routes plugin code registered with register_rest_route(), answered |
+| [`RuntimeRoutes`](#runtimeroutes) | final class | 406 | Routes plugin code registered with register_rest_route(), answered |
 | [`Schema`](#schema) | final readonly class | 473 | JSON-schema handling the way the REST API's argument validation does it: |
 | [`SchemaValues`](#schemavalues) | final class | 206 | The value side of JSON Schema, as the reference applies it: what counts |
 | [`SearchController`](#searchcontroller) | final readonly class | 121 | wp/v2 search over published content: id, title, url, type, and the |
@@ -599,6 +600,32 @@ The rows as the JSON catalogue: a version line and one entry per route.
 Internals: `classes()` (private, line 68)
 
 
+## CommentListArgs
+
+`final class Minn\Rest\CommentListArgs` · `public/minn/src/Minn/Rest/CommentListArgs.php`
+
+The WP_Comment_Query arguments a comment list request makes, as the
+reference makes them before rest_comment_query (probe
+rest-comment-lists): each declared parameter the request carries under
+its query name, an empty email and search when none is given, the
+orderby name mapped to the query's, the found rows counted, the posts
+loaded, the date bounds as one clause, the offset the page makes when
+none is given, and ids alone for a HEAD request.
+
+- const `MAPPINGS` = `array (   'author' => 'author__in',   'author_email' => 'author_email',   'author_exclude' => 'author__not_in',   'exclude' => 'comment__not_in',   'include' => 'comment__in',   'offset' => 'offset',   'order' => 'order',   'parent' => 'parent__in',   'parent_exclude' => 'parent__not_in',   'per_page' => 'number',   'post' => 'post__in',   'search' => 'search',   'status' => 'status',   'type' => 'type', )`
+- const `ORDERBY` = `array (   'date' => 'comment_date',   'date_gmt' => 'comment_date_gmt',   'id' => 'comment_ID',   'include' => 'comment__in',   'post' => 'comment_post_ID',   'parent' => 'comment_parent',   'type' => 'comment_type', )`
+
+Used by: `Minn\Rest\CommentsController`
+
+### static `of(WP_REST_Request $wp, array $registered, string $method): array`
+
+The arguments before plugins see them: a parameter maps when the
+collection (as rest_comment_collection_params left it) still has it.
+
+- `@param array<string, mixed> $registered`
+- `@return array<string, mixed>`
+
+
 ## CommentObject
 
 `final readonly class Minn\Rest\CommentObject` · `public/minn/src/Minn/Rest/CommentObject.php`
@@ -641,7 +668,9 @@ __construct(Minn\Content\Comments $comments, Minn\Content\Posts $posts, Minn\Con
 
 Route: `GET /wp/v2/comments (public)`
 
-The comments list with its status tabs and pagination headers.
+The comments list as the reference serves it: the request's
+WP_Comment_Query through rest_comment_query, its totals (counted again
+when a page comes back empty), and the comments the caller may read.
 
 ### `single(Minn\Http\Request $request, string $id): Minn\Http\Response`
 
@@ -671,7 +700,7 @@ Route: `DELETE /wp/v2/comments/{id:[\d]+} (cap moderate_comments; comment {id} m
 
 Trash remembers where the comment came from; force removes it outright.
 
-Internals: `events()` (private, line 158), `filter()` (private, line 233), `guarded()` (private, line 256), `date()` (private, line 287), `plainComment()` (private, line 302), `prepared()` (private, line 324), `cleanComment()` (private, line 344)
+Internals: `totals()` (private, line 76), `events()` (private, line 174), `allowed()` (private, line 256), `readablePost()` (private, line 293), `readable()` (private, line 302), `plainComment()` (private, line 312), `prepared()` (private, line 334), `cleanComment()` (private, line 354)
 
 
 ## Context
@@ -1113,7 +1142,7 @@ clause, so posts, pages, and media build their lists the same way.
 
 - const `TERM_ARGS` = `array (   'categories' => 'category',   'tags' => 'post_tag',   'wp_pattern_category' => 'wp_pattern_category', )` — The list parameters that name terms, by the taxonomy they filter on.
 
-Used by: `Minn\Rest\CommentsController`, `Minn\Rest\MediaController`
+Used by: `Minn\Rest\MediaController`
 
 ```php
 __construct(int $page = 1, int $perPage = 10, array $include = array ( ), array $exclude = array ( ), array $author = array ( ), array $authorExclude = array ( ), array $parent = array ( ), array $parentExclude = array ( ), array $slugs = array ( ), array $words = array ( ), ?int $menuOrder = NULL, string $orderBy = 'date', string $order = 'DESC', array $terms = array ( ), array $termsExclude = array ( ))
@@ -1561,7 +1590,7 @@ The parameters after sanitising, or the refusal listing every invalid one.
 - `@param callable(string, mixed): (array{value: mixed}|array{error: array{0: string, 1: mixed}}) $sanitize`
 - `@return array{0: array<string, array<string, mixed>>, 1: Refusal|null} the parameters after sanitising, and the refusal if any failed`
 
-Internals: `refusal()` (private, line 81)
+Internals: `refusal()` (private, line 82)
 
 
 ## PluginsController
@@ -1831,7 +1860,7 @@ One post of any type, with the reference's read rules.
 
 A viewable type's single post points at its page on the site.
 
-Internals: `sanitized()` (private, line 87), `totals()` (private, line 105), `readable()` (private, line 124), `visibleStatuses()` (private, line 147)
+Internals: `totals()` (private, line 89), `readable()` (private, line 108), `visibleStatuses()` (private, line 131)
 
 
 ## PostsWriteController
@@ -2389,7 +2418,7 @@ and the runtime's namespaces folded into the index.
 - const `DISPATCH_DONE` = `array (   'rest_filter_response_fields' => 10, )` — rest_post_dispatch's defaults the engine does itself: every answer is cut to its _fields before it is served.
 - const `SERVE_DONE` = `array (   '_oembed_rest_pre_serve_request' => 10, )` — rest_pre_serve_request's defaults the engine does itself: oEmbed's XML (see oembedXml()).
 
-Used by: `Minn\Rest\Api`, `Minn\Rest\BatchController`, `Minn\Rest\Embed`, `Minn\Rest\MediaController`, `Minn\Rest\OEmbedController`, `Minn\Rest\PostsController`, `Minn\Rest\RuntimeEnvelope`, `Minn\Rest\RuntimePrepare`, `Minn\Runtime\CommentEvents`, `Minn\Runtime\PostEvents`, `Minn\Runtime\PostSave`, `Minn\Runtime\TermEvents`, `Minn\Runtime\UserEvents`
+Used by: `Minn\Rest\Api`, `Minn\Rest\BatchController`, `Minn\Rest\CommentsController`, `Minn\Rest\Embed`, `Minn\Rest\MediaController`, `Minn\Rest\OEmbedController`, `Minn\Rest\PostsController`, `Minn\Rest\RuntimeEnvelope`, `Minn\Rest\RuntimePrepare`, `Minn\Runtime\CommentEvents`, `Minn\Runtime\PostEvents`, `Minn\Runtime\PostSave`, `Minn\Runtime\TermEvents`, `Minn\Runtime\UserEvents`
 
 
 ### static `gate(Minn\Http\Request $request): ?Minn\Http\Response`
@@ -2418,6 +2447,13 @@ The engine's index plus the namespaces and routes the runtime holds.
 
 An in-process call's own request object stands for the engine's request: the server sets its route's parameters on it, as the reference's dispatch does.
 
+### static `sanitized(Minn\Http\Request $request, array $registered): WP_REST_Request`
+
+The request as the list's handler reads it: its parameters with their
+defaults, sanitized by their schemas, as plugins' filters see it too.
+
+- `@param array<string, array<string, mixed>> $registered`
+
 ### static `wpRequest(Minn\Http\Request $request): WP_REST_Request`
 
 The request as the runtime's server reads it, and as a REST filter or action hands it to plugins: the same object each time.
@@ -2438,10 +2474,10 @@ An engine answer as plugins handle one: its data decoded (an empty
 object stays one), its links on the response rather than in the data,
 its status and headers.
 
-### static `wpHeaders(array $headers): array`
+### static `wpHeaders(array $headers, string $route = ''): array`
 
 A route's own headers as the reference's response object holds them:
-a list's totals are numbers.
+a list's totals are numbers, but the comments list's stay text.
 
 - `@param array<string, string> $headers`
 - `@return array<string, string|int>`
@@ -2469,7 +2505,7 @@ nothing hooked, the answer goes out as it is.
 
 A callback's return as a response object, an error converted.
 
-Internals: `allow()` (private, line 82), `oembedXml()` (private, line 301), `look()` (private, line 315), `remember()` (private, line 320), `decode()` (private, line 327), `expand()` (private, line 347), `newWpRequest()` (private, line 373), `toResponse()` (private, line 396)
+Internals: `allow()` (private, line 83), `oembedXml()` (private, line 321), `look()` (private, line 335), `remember()` (private, line 340), `decode()` (private, line 347), `expand()` (private, line 367), `newWpRequest()` (private, line 393), `toResponse()` (private, line 416)
 
 
 ## Schema

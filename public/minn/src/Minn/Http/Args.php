@@ -98,11 +98,15 @@ final class Args
         'before' => ['description' => 'Limit response to comments published before a given ISO8601 compliant date.', 'type' => 'string', 'format' => 'date-time', 'required' => false],
         'exclude' => ['description' => 'Ensure result set excludes specific IDs.', 'type' => 'array', 'items' => ['type' => 'integer'], 'default' => [], 'required' => false],
         'include' => ['description' => 'Limit result set to specific IDs.', 'type' => 'array', 'items' => ['type' => 'integer'], 'default' => [], 'required' => false],
+        'offset' => ['description' => 'Offset the result set by a specific number of items.', 'type' => 'integer', 'required' => false],
+        'order' => ['description' => 'Order sort attribute ascending or descending.', 'type' => 'string', 'default' => 'desc', 'enum' => ['asc', 'desc'], 'required' => false],
+        'orderby' => ['description' => 'Sort collection by comment attribute.', 'type' => 'string', 'default' => 'date_gmt', 'enum' => ['date', 'date_gmt', 'id', 'include', 'post', 'parent', 'type'], 'required' => false],
         'parent' => ['default' => [], 'description' => 'Limit result set to comments of specific parent IDs.', 'type' => 'array', 'items' => ['type' => 'integer'], 'required' => false],
         'parent_exclude' => ['default' => [], 'description' => 'Ensure result set excludes specific parent IDs.', 'type' => 'array', 'items' => ['type' => 'integer'], 'required' => false],
         'post' => ['default' => [], 'description' => 'Limit result set to comments assigned to specific post IDs.', 'type' => 'array', 'items' => ['type' => 'integer'], 'required' => false],
         'status' => ['default' => 'approve', 'description' => 'Limit result set to comments assigned a specific status. Requires authorization.', 'type' => 'string', 'required' => false],
         'type' => ['default' => 'comment', 'description' => 'Limit result set to comments assigned a specific type. Requires authorization.', 'type' => 'string', 'required' => false],
+        'password' => ['description' => 'The password for the post if it is password protected.', 'type' => 'string', 'required' => false],
     ];
 
     /**

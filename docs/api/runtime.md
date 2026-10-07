@@ -19,7 +19,7 @@ the WordPress runtime plugins load against
 | [`CommentEvents`](#commentevents) | final readonly class | 253 | What the reference's REST comments controller tells plugins, for the |
 | [`CommentForm`](#commentform) | final class | 107 | The comment form's submission with plugins loaded |
 | [`CommentQuery`](#commentquery) | final readonly class | 28 | The approval breakdown wp_count_comments reports (comment lists run through WP_Comment_Query and Minn\Runtime\CommentQueryRunner). |
-| [`CommentQueryRunner`](#commentqueryrunner) | final class | 104 | WP_Comment_Query as the reference runs it (probe wp-comment-query-sql): |
+| [`CommentQueryRunner`](#commentqueryrunner) | final class | 105 | WP_Comment_Query as the reference runs it (probe wp-comment-query-sql): |
 | [`CommentQueryWhere`](#commentquerywhere) | final class | 190 | WP_Comment_Query's WHERE pieces and the posts join, in the reference's |
 | [`CommentThreads`](#commentthreads) | final class | 68 | A threaded or flat comment query's descendants as the reference fills |
 | [`Connectors`](#connectors) | final class | 212 | The connectors registry: the external services a site talks to (AI |
@@ -778,7 +778,7 @@ __construct(object $wpdb)
 
 Runs the query, as WP_Comment_Query::get_comments() does: a count, ids, or comments.
 
-Internals: `request()` (private, line 68), `comments()` (private, line 100)
+Internals: `request()` (private, line 69), `comments()` (private, line 101)
 
 
 ## CommentQueryWhere

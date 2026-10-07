@@ -164,6 +164,7 @@ $cases = [
     'two a page' => ['number' => 2],
     'two a page, found' => ['number' => 2, 'no_found_rows' => false],
     'page two' => ['number' => 2, 'paged' => 2, 'no_found_rows' => false],
+    'a page past the end, found' => ['number' => 2, 'paged' => 9, 'no_found_rows' => false],
     'an offset' => ['number' => 2, 'offset' => 1],
     'counted' => ['count' => true],
     'ids' => ['fields' => 'ids'],

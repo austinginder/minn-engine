@@ -7,10 +7,9 @@ the repositories and records: posts, users, terms, comments, and the render pipe
 | [`Autop`](#autop) | final class | 34 | Classic-content paragraphing: blank lines become paragraphs, single |
 | [`Blocks`](#blocks) | final class | 46 | The content pipeline's front door: block markup goes through the block |
 | [`CommentClasses`](#commentclasses) | final class | 26 | The class tokens a rendered comment carries: its type, its author, odd/even and thread alternation, depth, then the caller's extras. |
-| [`CommentFilter`](#commentfilter) | final readonly class | 46 | What a comment listing is narrowed to. Every field is optional; the id |
 | [`CommentModeration`](#commentmoderation) | final readonly class | 43 | Whether a comment may be stored and in what state: the duplicate and |
 | [`CommentRecord`](#commentrecord) | final readonly class | 114 | One row of the comments table, read by name: $comment->author, ->content, |
-| [`Comments`](#comments) | final readonly class | 331 | Reads and writes over the comments table. |
+| [`Comments`](#comments) | final readonly class | 268 | Reads and writes over the comments table. |
 | [`ContentScan`](#contentscan) | final class | 196 | What a site's stored content asks of the engine: shortcodes, block |
 | [`Emoji`](#emoji) | final class | 68 | Emoji as the reference's mail and feeds carry them, from the list the |
 | [`Excerpt`](#excerpt) | final class | 101 | The reference's generated excerpt, as captured from probe posts: |
@@ -96,55 +95,6 @@ The class list a comment's list item carries, in the reference's order.
 
 - `@param list<string> $extra`
 - `@return list<string>`
-
-
-## CommentFilter
-
-`final readonly class Minn\Content\CommentFilter` · `public/minn/src/Minn/Content/CommentFilter.php`
-
-What a comment listing is narrowed to. Every field is optional; the id
-lists keep zero, because post=0 means "comments without a post". Dates
-are site-local "Y-m-d H:i:s", after and before both exclusive. With publicPostsOnly the
-comments of unpublished or protected posts are left out.
-
-Used by: `Minn\Content\Comments`, `Minn\Rest\CommentsController`
-
-```php
-__construct(array $post = array ( ), array $include = array ( ), array $exclude = array ( ), array $parent = array ( ), array $parentExclude = array ( ), array $author = array ( ), array $authorExclude = array ( ), string $authorEmail = '', string $type = 'comment', string $search = '', string $after = '', string $before = '', bool $publicPostsOnly = false)
-```
-- `@param list<int> $post`
-- `@param list<int> $include`
-- `@param list<int> $exclude`
-- `@param list<int> $parent`
-- `@param list<int> $parentExclude`
-- `@param list<int> $author`
-- `@param list<int> $authorExclude`
-
-- readonly `array $post`
-- readonly `array $include`
-- readonly `array $exclude`
-- readonly `array $parent`
-- readonly `array $parentExclude`
-- readonly `array $author`
-- readonly `array $authorExclude`
-- readonly `string $authorEmail`
-- readonly `string $type`
-- readonly `string $search`
-- readonly `string $after`
-- readonly `string $before`
-- readonly `bool $publicPostsOnly`
-
-### `onPublicPosts(): self`
-
-The same filter kept to comments on published, unprotected posts: what an anonymous reader may see.
-
-### static `all(): self`
-
-No narrowing at all.
-
-### `isPlainType(): bool`
-
-The plain kind: an empty type or "comment".
 
 
 ## CommentModeration
@@ -278,14 +228,6 @@ One meta value of a comment, or null when it has none.
 
 Adds a meta row; a second row with the same key is allowed, as the reference allows it.
 
-### `page(array $approvedTokens, int $page, int $perPage, ?Minn\Content\CommentFilter $filter = NULL): array`
-
-One page of comments carrying the given approval tokens, newest first,
-narrowed by the filter.
-
-- `@param list<string> $approvedTokens`
-- `@return array{comments: list<CommentRecord>, total: int}`
-
 ### `duplicate(int $postId, string $author, string $email, string $content, int $userId): bool`
 
 The same words on the same post from the same person, in any status but trash or spam.
@@ -385,8 +327,6 @@ stored row; the approval shorthands hold/approve become the stored 0/1.
 - `@param array<string, mixed> $data`
 - `@param array<string, mixed> $current`
 - `@return array<string, mixed>`
-
-Internals: `idFilter()` (private, line 95)
 
 
 ## ContentScan
@@ -942,7 +882,7 @@ Array access is the migration bridge: code that still reads
 $post['post_title'] keeps working while it is moved over. New code
 reads the properties. The style suite counts the bracket reads down.
 
-Used by: `Minn\Auth\Capabilities`, `Minn\Blocks\Context`, `Minn\Blocks\Dynamic\LatestPosts`, `Minn\Blocks\Dynamic\Theme\Navigation`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Content\Excerpt`, `Minn\Content\Page`, `Minn\Content\PasswordGate`, `Minn\Content\PostStatus`, `Minn\Content\PostWriter`, `Minn\Content\Posts`, `Minn\Engine`, `Minn\Extension\SeamRunner`, `Minn\Front\Canonical`, `Minn\Front\CommentPostController`, `Minn\Front\Feeds`, `Minn\Front\Permalinks`, `Minn\Front\Renderer`, `Minn\Front\Resolution`, `Minn\Front\Resolver`, `Minn\Front\SingleAddresses`, `Minn\Front\Sitemaps`, `Minn\Media\Writer`, `Minn\Rest\GlobalStylesController`, `Minn\Rest\GlobalStylesObject`, `Minn\Rest\MediaController`, `Minn\Rest\MediaObject`, `Minn\Rest\PostObject`, `Minn\Rest\PostsController`, `Minn\Rest\PostsWriteController`, `Minn\Rest\RegisteredPostFields`, `Minn\Rest\RenderedFields`, `Minn\Rest\RevisionsController`, `Minn\Rest\SearchController`, `Minn\Runtime\CommentCloser`, `Minn\Runtime\PostEvents`, `Minn\Runtime\PostSave`, `Minn\Theme\ClassicContent`, `Minn\Theme\HeadLinks`, `Minn\Theme\MainQueryBridge`, `Minn\Theme\UserStyles`
+Used by: `Minn\Auth\Capabilities`, `Minn\Blocks\Context`, `Minn\Blocks\Dynamic\LatestPosts`, `Minn\Blocks\Dynamic\Theme\Navigation`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Content\Excerpt`, `Minn\Content\Page`, `Minn\Content\PasswordGate`, `Minn\Content\PostStatus`, `Minn\Content\PostWriter`, `Minn\Content\Posts`, `Minn\Engine`, `Minn\Extension\SeamRunner`, `Minn\Front\Canonical`, `Minn\Front\CommentPostController`, `Minn\Front\Feeds`, `Minn\Front\Permalinks`, `Minn\Front\Renderer`, `Minn\Front\Resolution`, `Minn\Front\Resolver`, `Minn\Front\SingleAddresses`, `Minn\Front\Sitemaps`, `Minn\Media\Writer`, `Minn\Rest\CommentsController`, `Minn\Rest\GlobalStylesController`, `Minn\Rest\GlobalStylesObject`, `Minn\Rest\MediaController`, `Minn\Rest\MediaObject`, `Minn\Rest\PostObject`, `Minn\Rest\PostsController`, `Minn\Rest\PostsWriteController`, `Minn\Rest\RegisteredPostFields`, `Minn\Rest\RenderedFields`, `Minn\Rest\RevisionsController`, `Minn\Rest\SearchController`, `Minn\Runtime\CommentCloser`, `Minn\Runtime\PostEvents`, `Minn\Runtime\PostSave`, `Minn\Theme\ClassicContent`, `Minn\Theme\HeadLinks`, `Minn\Theme\MainQueryBridge`, `Minn\Theme\UserStyles`
 
 - readonly `int $id`
 - readonly `int $authorId`

@@ -38,69 +38,6 @@ final readonly class Comments
         $this->db->execute("INSERT INTO {$this->db->table('commentmeta')} (comment_id, meta_key, meta_value) VALUES (?, ?, ?)", [$id, $key, $value]);
     }
 
-    /**
-     * One page of comments carrying the given approval tokens, newest first,
-     * narrowed by the filter.
-     *
-     * @param list<string> $approvedTokens
-     * @return array{comments: list<CommentRecord>, total: int}
-     */
-    public function page(array $approvedTokens, int $page, int $perPage, ?CommentFilter $filter = null): array
-    {
-        $filter ??= CommentFilter::all();
-        $params = [$approvedTokens];
-        $from = "FROM {$this->db->table('comments')} c"
-            . ($filter->publicPostsOnly ? " INNER JOIN {$this->db->table('posts')} p ON p.ID = c.comment_post_ID AND p.post_status = 'publish' AND p.post_password = ''" : '')
-            . ' WHERE c.comment_approved IN (?)';
-        if ($filter->isPlainType()) {
-            $from .= " AND c.comment_type IN ('', 'comment')";
-        } else {
-            $from .= ' AND c.comment_type = ?';
-            $params[] = $filter->type;
-        }
-        $this->idFilter($from, $params, 'c.comment_post_ID', $filter->post);
-        $this->idFilter($from, $params, 'c.comment_ID', $filter->include);
-        $this->idFilter($from, $params, 'c.comment_ID', $filter->exclude, true);
-        $this->idFilter($from, $params, 'c.comment_parent', $filter->parent);
-        $this->idFilter($from, $params, 'c.comment_parent', $filter->parentExclude, true);
-        $this->idFilter($from, $params, 'c.user_id', $filter->author);
-        $this->idFilter($from, $params, 'c.user_id', $filter->authorExclude, true);
-        if ($filter->authorEmail !== '') {
-            $from .= ' AND LOWER(c.comment_author_email) = ?';
-            $params[] = strtolower($filter->authorEmail);
-        }
-        $search = trim($filter->search);
-        if ($search !== '') {
-            $like = '%' . addcslashes($search, '%_\\') . '%';
-            $from .= ' AND (c.comment_content LIKE ? OR c.comment_author LIKE ? OR c.comment_author_email LIKE ?)';
-            $params = [...$params, $like, $like, $like];
-        }
-        if ($filter->after !== '') {
-            $from .= ' AND c.comment_date > ?';
-            $params[] = $filter->after;
-        }
-        if ($filter->before !== '') {
-            $from .= ' AND c.comment_date < ?';
-            $params[] = $filter->before;
-        }
-        $total = (int) $this->db->value("SELECT COUNT(*) {$from}", $params);
-        $rows = $this->db->rows(
-            "SELECT c.* {$from} ORDER BY c.comment_date_gmt DESC LIMIT ? OFFSET ?",
-            [...$params, $perPage, ($page - 1) * $perPage],
-        );
-        return ['comments' => CommentRecord::fromRows($rows), 'total' => $total];
-    }
-
-    /** @param list<int> $ids */
-    private function idFilter(string &$from, array &$params, string $column, array $ids, bool $not = false): void
-    {
-        if ($ids === []) {
-            return;
-        }
-        $from .= ' AND ' . $column . ($not ? ' NOT' : '') . ' IN (?)';
-        $params[] = $ids;
-    }
-
     /** The same words on the same post from the same person, in any status but trash or spam. */
     public function duplicate(int $postId, string $author, string $email, string $content, int $userId): bool
     {

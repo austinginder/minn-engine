@@ -22591,290 +22591,6 @@
             ]
         },
         {
-            "name": "Minn\\Content\\CommentFilter",
-            "short": "CommentFilter",
-            "namespace": "Minn\\Content",
-            "kind": "final readonly class",
-            "file": "public/minn/src/Minn/Content/CommentFilter.php",
-            "lines": 46,
-            "doc": "What a comment listing is narrowed to. Every field is optional; the id\nlists keep zero, because post=0 means \"comments without a post\". Dates\nare site-local \"Y-m-d H:i:s\", after and before both exclusive. With publicPostsOnly the\ncomments of unpublished or protected posts are left out.",
-            "implements": [],
-            "extends": null,
-            "uses": [],
-            "usedBy": [
-                "Minn\\Content\\Comments",
-                "Minn\\Rest\\CommentsController"
-            ],
-            "constructor": {
-                "signature": "__construct(array $post = array ( ), array $include = array ( ), array $exclude = array ( ), array $parent = array ( ), array $parentExclude = array ( ), array $author = array ( ), array $authorExclude = array ( ), string $authorEmail = '', string $type = 'comment', string $search = '', string $after = '', string $before = '', bool $publicPostsOnly = false)",
-                "doc": "",
-                "shapes": [
-                    "@param list<int> $post",
-                    "@param list<int> $include",
-                    "@param list<int> $exclude",
-                    "@param list<int> $parent",
-                    "@param list<int> $parentExclude",
-                    "@param list<int> $author",
-                    "@param list<int> $authorExclude"
-                ],
-                "params": [
-                    {
-                        "name": "post",
-                        "type": "array",
-                        "shape": "list<int>",
-                        "default": "array ( )",
-                        "doc": ""
-                    },
-                    {
-                        "name": "include",
-                        "type": "array",
-                        "shape": "list<int>",
-                        "default": "array ( )",
-                        "doc": ""
-                    },
-                    {
-                        "name": "exclude",
-                        "type": "array",
-                        "shape": "list<int>",
-                        "default": "array ( )",
-                        "doc": ""
-                    },
-                    {
-                        "name": "parent",
-                        "type": "array",
-                        "shape": "list<int>",
-                        "default": "array ( )",
-                        "doc": ""
-                    },
-                    {
-                        "name": "parentExclude",
-                        "type": "array",
-                        "shape": "list<int>",
-                        "default": "array ( )",
-                        "doc": ""
-                    },
-                    {
-                        "name": "author",
-                        "type": "array",
-                        "shape": "list<int>",
-                        "default": "array ( )",
-                        "doc": ""
-                    },
-                    {
-                        "name": "authorExclude",
-                        "type": "array",
-                        "shape": "list<int>",
-                        "default": "array ( )",
-                        "doc": ""
-                    },
-                    {
-                        "name": "authorEmail",
-                        "type": "string",
-                        "shape": "",
-                        "default": "''",
-                        "doc": ""
-                    },
-                    {
-                        "name": "type",
-                        "type": "string",
-                        "shape": "",
-                        "default": "'comment'",
-                        "doc": ""
-                    },
-                    {
-                        "name": "search",
-                        "type": "string",
-                        "shape": "",
-                        "default": "''",
-                        "doc": ""
-                    },
-                    {
-                        "name": "after",
-                        "type": "string",
-                        "shape": "",
-                        "default": "''",
-                        "doc": ""
-                    },
-                    {
-                        "name": "before",
-                        "type": "string",
-                        "shape": "",
-                        "default": "''",
-                        "doc": ""
-                    },
-                    {
-                        "name": "publicPostsOnly",
-                        "type": "bool",
-                        "shape": "",
-                        "default": "false",
-                        "doc": ""
-                    }
-                ],
-                "visibility": "public",
-                "line": 24,
-                "end": 39
-            },
-            "cases": [],
-            "constants": [],
-            "properties": [
-                {
-                    "name": "post",
-                    "type": "array",
-                    "readonly": true,
-                    "static": false,
-                    "doc": "",
-                    "visibility": "public",
-                    "promoted": true
-                },
-                {
-                    "name": "include",
-                    "type": "array",
-                    "readonly": true,
-                    "static": false,
-                    "doc": "",
-                    "visibility": "public",
-                    "promoted": true
-                },
-                {
-                    "name": "exclude",
-                    "type": "array",
-                    "readonly": true,
-                    "static": false,
-                    "doc": "",
-                    "visibility": "public",
-                    "promoted": true
-                },
-                {
-                    "name": "parent",
-                    "type": "array",
-                    "readonly": true,
-                    "static": false,
-                    "doc": "",
-                    "visibility": "public",
-                    "promoted": true
-                },
-                {
-                    "name": "parentExclude",
-                    "type": "array",
-                    "readonly": true,
-                    "static": false,
-                    "doc": "",
-                    "visibility": "public",
-                    "promoted": true
-                },
-                {
-                    "name": "author",
-                    "type": "array",
-                    "readonly": true,
-                    "static": false,
-                    "doc": "",
-                    "visibility": "public",
-                    "promoted": true
-                },
-                {
-                    "name": "authorExclude",
-                    "type": "array",
-                    "readonly": true,
-                    "static": false,
-                    "doc": "",
-                    "visibility": "public",
-                    "promoted": true
-                },
-                {
-                    "name": "authorEmail",
-                    "type": "string",
-                    "readonly": true,
-                    "static": false,
-                    "doc": "",
-                    "visibility": "public",
-                    "promoted": true
-                },
-                {
-                    "name": "type",
-                    "type": "string",
-                    "readonly": true,
-                    "static": false,
-                    "doc": "",
-                    "visibility": "public",
-                    "promoted": true
-                },
-                {
-                    "name": "search",
-                    "type": "string",
-                    "readonly": true,
-                    "static": false,
-                    "doc": "",
-                    "visibility": "public",
-                    "promoted": true
-                },
-                {
-                    "name": "after",
-                    "type": "string",
-                    "readonly": true,
-                    "static": false,
-                    "doc": "",
-                    "visibility": "public",
-                    "promoted": true
-                },
-                {
-                    "name": "before",
-                    "type": "string",
-                    "readonly": true,
-                    "static": false,
-                    "doc": "",
-                    "visibility": "public",
-                    "promoted": true
-                },
-                {
-                    "name": "publicPostsOnly",
-                    "type": "bool",
-                    "readonly": true,
-                    "static": false,
-                    "doc": "",
-                    "visibility": "public",
-                    "promoted": true
-                }
-            ],
-            "methods": [
-                {
-                    "routes": [],
-                    "name": "onPublicPosts",
-                    "static": false,
-                    "visibility": "public",
-                    "signature": "onPublicPosts(): self",
-                    "doc": "The same filter kept to comments on published, unprotected posts: what an anonymous reader may see.",
-                    "shapes": [],
-                    "params": [],
-                    "line": 42,
-                    "end": 45
-                },
-                {
-                    "routes": [],
-                    "name": "all",
-                    "static": true,
-                    "visibility": "public",
-                    "signature": "all(): self",
-                    "doc": "No narrowing at all.",
-                    "shapes": [],
-                    "params": [],
-                    "line": 48,
-                    "end": 51
-                },
-                {
-                    "routes": [],
-                    "name": "isPlainType",
-                    "static": false,
-                    "visibility": "public",
-                    "signature": "isPlainType(): bool",
-                    "doc": "The plain kind: an empty type or \"comment\".",
-                    "shapes": [],
-                    "params": [],
-                    "line": 54,
-                    "end": 57
-                }
-            ]
-        },
-        {
             "name": "Minn\\Content\\CommentModeration",
             "short": "CommentModeration",
             "namespace": "Minn\\Content",
@@ -23505,12 +23221,11 @@
             "namespace": "Minn\\Content",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Content/Comments.php",
-            "lines": 331,
+            "lines": 268,
             "doc": "Reads and writes over the comments table.",
             "implements": [],
             "extends": null,
             "uses": [
-                "Minn\\Content\\CommentFilter",
                 "Minn\\Content\\CommentRecord",
                 "Minn\\Db"
             ],
@@ -23653,50 +23368,6 @@
                 },
                 {
                     "routes": [],
-                    "name": "page",
-                    "static": false,
-                    "visibility": "public",
-                    "signature": "page(array $approvedTokens, int $page, int $perPage, ?Minn\\Content\\CommentFilter $filter = NULL): array",
-                    "doc": "One page of comments carrying the given approval tokens, newest first,\nnarrowed by the filter.",
-                    "shapes": [
-                        "@param list<string> $approvedTokens",
-                        "@return array{comments: list<CommentRecord>, total: int}"
-                    ],
-                    "params": [
-                        {
-                            "name": "approvedTokens",
-                            "type": "array",
-                            "shape": "list<string>",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "page",
-                            "type": "int",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "perPage",
-                            "type": "int",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "filter",
-                            "type": "?Minn\\Content\\CommentFilter",
-                            "shape": "",
-                            "default": "NULL",
-                            "doc": ""
-                        }
-                    ],
-                    "line": 48,
-                    "end": 92
-                },
-                {
-                    "routes": [],
                     "name": "duplicate",
                     "static": false,
                     "visibility": "public",
@@ -23740,8 +23411,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 105,
-                    "end": 108
+                    "line": 42,
+                    "end": 45
                 },
                 {
                     "routes": [],
@@ -23788,8 +23459,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 111,
-                    "end": 121
+                    "line": 48,
+                    "end": 58
                 },
                 {
                     "routes": [],
@@ -23829,8 +23500,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 128,
-                    "end": 136
+                    "line": 65,
+                    "end": 73
                 },
                 {
                     "routes": [],
@@ -23849,8 +23520,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 140,
-                    "end": 149
+                    "line": 77,
+                    "end": 86
                 },
                 {
                     "routes": [],
@@ -23883,8 +23554,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 152,
-                    "end": 159
+                    "line": 89,
+                    "end": 96
                 },
                 {
                     "routes": [],
@@ -23903,8 +23574,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 162,
-                    "end": 173
+                    "line": 99,
+                    "end": 110
                 },
                 {
                     "routes": [],
@@ -23930,8 +23601,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 176,
-                    "end": 185
+                    "line": 113,
+                    "end": 122
                 },
                 {
                     "routes": [],
@@ -23952,8 +23623,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 192,
-                    "end": 197
+                    "line": 129,
+                    "end": 134
                 },
                 {
                     "routes": [],
@@ -23981,8 +23652,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 204,
-                    "end": 209
+                    "line": 141,
+                    "end": 146
                 },
                 {
                     "routes": [],
@@ -23995,8 +23666,8 @@
                         "@return array<string, int>"
                     ],
                     "params": [],
-                    "line": 222,
-                    "end": 237
+                    "line": 159,
+                    "end": 174
                 },
                 {
                     "routes": [],
@@ -24017,8 +23688,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 240,
-                    "end": 243
+                    "line": 177,
+                    "end": 180
                 },
                 {
                     "routes": [],
@@ -24039,8 +23710,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 246,
-                    "end": 254
+                    "line": 183,
+                    "end": 191
                 },
                 {
                     "routes": [],
@@ -24068,8 +23739,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 257,
-                    "end": 263
+                    "line": 194,
+                    "end": 200
                 },
                 {
                     "routes": [],
@@ -24095,8 +23766,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 266,
-                    "end": 269
+                    "line": 203,
+                    "end": 206
                 },
                 {
                     "routes": [],
@@ -24115,8 +23786,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 272,
-                    "end": 276
+                    "line": 209,
+                    "end": 213
                 },
                 {
                     "routes": [],
@@ -24135,8 +23806,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 279,
-                    "end": 287
+                    "line": 216,
+                    "end": 224
                 },
                 {
                     "routes": [],
@@ -24155,8 +23826,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 290,
-                    "end": 297
+                    "line": 227,
+                    "end": 234
                 },
                 {
                     "routes": [],
@@ -24177,8 +23848,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 304,
-                    "end": 313
+                    "line": 241,
+                    "end": 250
                 },
                 {
                     "routes": [],
@@ -24208,58 +23879,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 323,
-                    "end": 339
-                },
-                {
-                    "routes": [],
-                    "name": "idFilter",
-                    "static": false,
-                    "visibility": "private",
-                    "signature": "idFilter(string $from, array $params, string $column, array $ids, bool $not = false): void",
-                    "doc": "",
-                    "shapes": [
-                        "@param list<int> $ids"
-                    ],
-                    "params": [
-                        {
-                            "name": "from",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "params",
-                            "type": "array",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "column",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "ids",
-                            "type": "array",
-                            "shape": "list<int>",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "not",
-                            "type": "bool",
-                            "shape": "",
-                            "default": "false",
-                            "doc": ""
-                        }
-                    ],
-                    "line": 95,
-                    "end": 102
+                    "line": 260,
+                    "end": 276
                 }
             ]
         },
@@ -27108,6 +26729,7 @@
                 "Minn\\Front\\SingleAddresses",
                 "Minn\\Front\\Sitemaps",
                 "Minn\\Media\\Writer",
+                "Minn\\Rest\\CommentsController",
                 "Minn\\Rest\\GlobalStylesController",
                 "Minn\\Rest\\GlobalStylesObject",
                 "Minn\\Rest\\MediaController",
@@ -55151,7 +54773,7 @@
             "namespace": "Minn\\Http",
             "kind": "final class",
             "file": "public/minn/src/Minn/Http/Args.php",
-            "lines": 153,
+            "lines": 157,
             "doc": "The parameters a route accepts, as the reference describes them in the\nREST index: name => {description, type, ...}. The descriptions, types,\nenums and bounds were captured from the reference, so a client that\nreads either index is told the same thing, and the router refuses a\nvalue the way the reference refuses it, before it judges the caller.\n\nA route declares only what it really reads. An argument published here\nthat the handler ignores would be worse than none at all, because a\nclient reading the index would build a request around it, so each set\nbelow names the code that consumes it. The sets keep the reference's\norder, because a refusal lists the invalid parameters in that order.\n`_fields` and `_embed` are read everywhere and declared nowhere, as the\nreference lists neither and validates neither.",
             "implements": [],
             "extends": null,
@@ -55172,6 +54794,7 @@
                 "Minn\\Rest\\PostCollectionParams",
                 "Minn\\Rest\\PostsController",
                 "Minn\\Rest\\RuntimeEnvelope",
+                "Minn\\Rest\\RuntimeRoutes",
                 "Minn\\Rest\\SearchController",
                 "Minn\\Rest\\SidebarsController",
                 "Minn\\Rest\\StatusesController",
@@ -55228,7 +54851,7 @@
                 },
                 {
                     "name": "COMMENTS",
-                    "value": "array (   'page' =>    array (     'description' => 'Current page of the collection.',     'type' => 'integer',     'default' => 1,     'minimum' => 1,     'required' => false,   ),   'per_page' =>    array (     'description' => 'Maximum number of items to be returned in result set.',     'type' => 'integer',     'default' => 10,     'minimum' => 1,     'maximum' => 100,     'required' => false,   ),   'search' =>    array (     'description' => 'Limit results to those matching a string.',     'type' => 'string',     'required' => false,   ),   'after' =>    array (     'description' => 'Limit response to comments published after a given ISO8601 compliant date.',     'type' => 'string',     'format' => 'date-time',     'required' => false,   ),   'author' =>    array (     'description' => 'Limit result set to comments assigned to specific user IDs. Requires authorization.',     'type' => 'array',     'items' =>      array (       'type' => 'integer',     ),     'required' => false,   ),   'author_exclude' =>    array (     'description' => 'Ensure result set excludes comments assigned to specific user IDs. Requires authorization.',     'type' => 'array',     'items' =>      array (       'type' => 'integer',     ),     'required' => false,   ),   'author_email' =>    array (     'default' => NULL,     'description' => 'Limit result set to that from a specific author email. Requires authorization.',     'format' => 'email',     'type' => 'string',     'required' => false,   ),   'before' =>    array (     'description' => 'Limit response to comments published before a given ISO8601 compliant date.',     'type' => 'string',     'format' => 'date-time',     'required' => false,   ),   'exclude' =>    array (     'description' => 'Ensure result set excludes specific IDs.',     'type' => 'array',     'items' =>      array (       'type' => 'integer',     ),     'default' =>      array (     ),     'required' => false,   ),   'include' =>    array (     'description' => 'Limit result set to specific IDs.',     'type' => 'array',     'items' =>      array (       'type' => 'integer',     ),     'default' =>      array (     ),     'required' => false,   ),   'parent' =>    array (     'default' =>      array (     ),     'description' => 'Limit result set to comments of specific parent IDs.',     'type' => 'array',     'items' =>      array (       'type' => 'integer',     ),     'required' => false,   ),   'parent_exclude' =>    array (     'default' =>      array (     ),     'description' => 'Ensure result set excludes specific parent IDs.',     'type' => 'array',     'items' =>      array (       'type' => 'integer',     ),     'required' => false,   ),   'post' =>    array (     'default' =>      array (     ),     'description' => 'Limit result set to comments assigned to specific post IDs.',     'type' => 'array',     'items' =>      array (       'type' => 'integer',     ),     'required' => false,   ),   'status' =>    array (     'default' => 'approve',     'description' => 'Limit result set to comments assigned a specific status. Requires authorization.',     'type' => 'string',     'required' => false,   ),   'type' =>    array (     'default' => 'comment',     'description' => 'Limit result set to comments assigned a specific type. Requires authorization.',     'type' => 'string',     'required' => false,   ), )",
+                    "value": "array (   'page' =>    array (     'description' => 'Current page of the collection.',     'type' => 'integer',     'default' => 1,     'minimum' => 1,     'required' => false,   ),   'per_page' =>    array (     'description' => 'Maximum number of items to be returned in result set.',     'type' => 'integer',     'default' => 10,     'minimum' => 1,     'maximum' => 100,     'required' => false,   ),   'search' =>    array (     'description' => 'Limit results to those matching a string.',     'type' => 'string',     'required' => false,   ),   'after' =>    array (     'description' => 'Limit response to comments published after a given ISO8601 compliant date.',     'type' => 'string',     'format' => 'date-time',     'required' => false,   ),   'author' =>    array (     'description' => 'Limit result set to comments assigned to specific user IDs. Requires authorization.',     'type' => 'array',     'items' =>      array (       'type' => 'integer',     ),     'required' => false,   ),   'author_exclude' =>    array (     'description' => 'Ensure result set excludes comments assigned to specific user IDs. Requires authorization.',     'type' => 'array',     'items' =>      array (       'type' => 'integer',     ),     'required' => false,   ),   'author_email' =>    array (     'default' => NULL,     'description' => 'Limit result set to that from a specific author email. Requires authorization.',     'format' => 'email',     'type' => 'string',     'required' => false,   ),   'before' =>    array (     'description' => 'Limit response to comments published before a given ISO8601 compliant date.',     'type' => 'string',     'format' => 'date-time',     'required' => false,   ),   'exclude' =>    array (     'description' => 'Ensure result set excludes specific IDs.',     'type' => 'array',     'items' =>      array (       'type' => 'integer',     ),     'default' =>      array (     ),     'required' => false,   ),   'include' =>    array (     'description' => 'Limit result set to specific IDs.',     'type' => 'array',     'items' =>      array (       'type' => 'integer',     ),     'default' =>      array (     ),     'required' => false,   ),   'offset' =>    array (     'description' => 'Offset the result set by a specific number of items.',     'type' => 'integer',     'required' => false,   ),   'order' =>    array (     'description' => 'Order sort attribute ascending or descending.',     'type' => 'string',     'default' => 'desc',     'enum' =>      array (       0 => 'asc',       1 => 'desc',     ),     'required' => false,   ),   'orderby' =>    array (     'description' => 'Sort collection by comment attribute.',     'type' => 'string',     'default' => 'date_gmt',     'enum' =>      array (       0 => 'date',       1 => 'date_gmt',       2 => 'id',       3 => 'include',       4 => 'post',       5 => 'parent',       6 => 'type',     ),     'required' => false,   ),   'parent' =>    array (     'default' =>      array (     ),     'description' => 'Limit result set to comments of specific parent IDs.',     'type' => 'array',     'items' =>      array (       'type' => 'integer',     ),     'required' => false,   ),   'parent_exclude' =>    array (     'default' =>      array (     ),     'description' => 'Ensure result set excludes specific parent IDs.',     'type' => 'array',     'items' =>      array (       'type' => 'integer',     ),     'required' => false,   ),   'post' =>    array (     'default' =>      array (     ),     'description' => 'Limit result set to comments assigned to specific post IDs.',     'type' => 'array',     'items' =>      array (       'type' => 'integer',     ),     'required' => false,   ),   'status' =>    array (     'default' => 'approve',     'description' => 'Limit result set to comments assigned a specific status. Requires authorization.',     'type' => 'string',     'required' => false,   ),   'type' =>    array (     'default' => 'comment',     'description' => 'Limit result set to comments assigned a specific type. Requires authorization.',     'type' => 'string',     'required' => false,   ),   'password' =>    array (     'description' => 'The password for the post if it is password protected.',     'type' => 'string',     'required' => false,   ), )",
                     "doc": "Read by Rest\\CommentsController::list() and filter(): the comment collection.",
                     "visibility": "public"
                 },
@@ -55285,8 +54908,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 170,
-                    "end": 173
+                    "line": 174,
+                    "end": 177
                 }
             ]
         },
@@ -80151,12 +79774,83 @@
             ]
         },
         {
+            "name": "Minn\\Rest\\CommentListArgs",
+            "short": "CommentListArgs",
+            "namespace": "Minn\\Rest",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Rest/CommentListArgs.php",
+            "lines": 35,
+            "doc": "The WP_Comment_Query arguments a comment list request makes, as the\nreference makes them before rest_comment_query (probe\nrest-comment-lists): each declared parameter the request carries under\nits query name, an empty email and search when none is given, the\norderby name mapped to the query's, the found rows counted, the posts\nloaded, the date bounds as one clause, the offset the page makes when\nnone is given, and ids alone for a HEAD request.",
+            "implements": [],
+            "extends": null,
+            "uses": [],
+            "usedBy": [
+                "Minn\\Rest\\CommentsController"
+            ],
+            "constructor": null,
+            "cases": [],
+            "constants": [
+                {
+                    "name": "MAPPINGS",
+                    "value": "array (   'author' => 'author__in',   'author_email' => 'author_email',   'author_exclude' => 'author__not_in',   'exclude' => 'comment__not_in',   'include' => 'comment__in',   'offset' => 'offset',   'order' => 'order',   'parent' => 'parent__in',   'parent_exclude' => 'parent__not_in',   'per_page' => 'number',   'post' => 'post__in',   'search' => 'search',   'status' => 'status',   'type' => 'type', )",
+                    "doc": "",
+                    "visibility": "private"
+                },
+                {
+                    "name": "ORDERBY",
+                    "value": "array (   'date' => 'comment_date',   'date_gmt' => 'comment_date_gmt',   'id' => 'comment_ID',   'include' => 'comment__in',   'post' => 'comment_post_ID',   'parent' => 'comment_parent',   'type' => 'comment_type', )",
+                    "doc": "",
+                    "visibility": "private"
+                }
+            ],
+            "properties": [],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "of",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "of(WP_REST_Request $wp, array $registered, string $method): array",
+                    "doc": "The arguments before plugins see them: a parameter maps when the\ncollection (as rest_comment_collection_params left it) still has it.",
+                    "shapes": [
+                        "@param array<string, mixed> $registered",
+                        "@return array<string, mixed>"
+                    ],
+                    "params": [
+                        {
+                            "name": "wp",
+                            "type": "WP_REST_Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "registered",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "method",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 28,
+                    "end": 49
+                }
+            ]
+        },
+        {
             "name": "Minn\\Rest\\CommentObject",
             "short": "CommentObject",
             "namespace": "Minn\\Rest",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Rest/CommentObject.php",
-            "lines": 83,
+            "lines": 87,
             "doc": "The wp/v2 comment object; edit context adds the moderation-desk fields.",
             "implements": [],
             "extends": null,
@@ -80338,7 +80032,7 @@
                         }
                     ],
                     "line": 40,
-                    "end": 96
+                    "end": 100
                 }
             ]
         },
@@ -80348,14 +80042,14 @@
             "namespace": "Minn\\Rest",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Rest/CommentsController.php",
-            "lines": 326,
+            "lines": 336,
             "doc": "wp/v2/comments: the status tabs with pagination headers, single,\nsigned-in replies, moderation updates, trash, and force delete.",
             "implements": [],
             "extends": null,
             "uses": [
-                "Minn\\Content\\CommentFilter",
                 "Minn\\Content\\CommentRecord",
                 "Minn\\Content\\Comments",
+                "Minn\\Content\\PostRecord",
                 "Minn\\Content\\Posts",
                 "Minn\\Content\\Site",
                 "Minn\\Http\\Access",
@@ -80368,11 +80062,12 @@
                 "Minn\\Http\\Subject",
                 "Minn\\RestError",
                 "Minn\\Rest\\Caller",
+                "Minn\\Rest\\CommentListArgs",
                 "Minn\\Rest\\CommentObject",
                 "Minn\\Rest\\Context",
                 "Minn\\Rest\\Fields",
-                "Minn\\Rest\\ListQuery",
                 "Minn\\Rest\\Reply",
+                "Minn\\Rest\\RuntimeRoutes",
                 "Minn\\Runtime\\CommentEvents",
                 "Minn\\Support\\Email",
                 "Minn\\Support\\Kses"
@@ -80483,7 +80178,7 @@
                     "static": false,
                     "visibility": "public",
                     "signature": "list(Minn\\Http\\Request $request): Minn\\Http\\Response",
-                    "doc": "The comments list with its status tabs and pagination headers.",
+                    "doc": "The comments list as the reference serves it: the request's\nWP_Comment_Query through rest_comment_query, its totals (counted again\nwhen a page comes back empty), and the comments the caller may read.",
                     "shapes": [],
                     "params": [
                         {
@@ -80494,8 +80189,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 42,
-                    "end": 69
+                    "line": 46,
+                    "end": 67
                 },
                 {
                     "routes": [
@@ -80523,8 +80218,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 73,
-                    "end": 90
+                    "line": 89,
+                    "end": 106
                 },
                 {
                     "routes": [
@@ -80545,8 +80240,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 94,
-                    "end": 155
+                    "line": 110,
+                    "end": 171
                 },
                 {
                     "routes": [
@@ -80576,8 +80271,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 167,
-                    "end": 203
+                    "line": 183,
+                    "end": 219
                 },
                 {
                     "routes": [
@@ -80605,8 +80300,45 @@
                             "doc": ""
                         }
                     ],
-                    "line": 207,
-                    "end": 230
+                    "line": 223,
+                    "end": 246
+                },
+                {
+                    "routes": [],
+                    "name": "totals",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "totals(WP_Comment_Query $query, array $args, int $perPage): array",
+                    "doc": "The total and the page count: the query's own, or, when it found\nnothing (a page past the end), a count without the page.",
+                    "shapes": [
+                        "@param array<string, mixed> $args",
+                        "@return array{0: int, 1: int}"
+                    ],
+                    "params": [
+                        {
+                            "name": "query",
+                            "type": "WP_Comment_Query",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "args",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "perPage",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 76,
+                    "end": 85
                 },
                 {
                     "routes": [],
@@ -80617,75 +80349,96 @@
                     "doc": "Tells plugins about the writes, through the runtime's comment functions.",
                     "shapes": [],
                     "params": [],
-                    "line": 158,
-                    "end": 161
+                    "line": 174,
+                    "end": 177
                 },
                 {
                     "routes": [],
-                    "name": "filter",
-                    "static": true,
-                    "visibility": "private",
-                    "signature": "filter(Minn\\Http\\Request $request): Minn\\Content\\CommentFilter",
-                    "doc": "The collection parameters as the reference reads them; the caps are checked by guarded().",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "request",
-                            "type": "Minn\\Http\\Request",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 233,
-                    "end": 249
-                },
-                {
-                    "routes": [],
-                    "name": "guarded",
+                    "name": "allowed",
                     "static": false,
                     "visibility": "private",
-                    "signature": "guarded(Minn\\Content\\CommentFilter $filter): Minn\\Content\\CommentFilter",
-                    "doc": "The filter, once this caller may use it: comments without a post\nbelong to moderators, an unreadable post's comments to its editors,\nand type, author, and author_email to anyone who can edit posts.",
+                    "signature": "allowed(WP_REST_Request $wp, Minn\\Rest\\Context $context, string $email): void",
+                    "doc": "What this caller may ask the list for: the edit context and other\nstatuses are for moderators and editors; comments without a post\nbelong to moderators, an unreadable post's to those who may read it\n(or who give its password); type, author, author_exclude and\nauthor_email to anyone who can edit posts (the email judged as sent,\nbefore sanitizing empties a bad one).",
                     "shapes": [],
                     "params": [
                         {
-                            "name": "filter",
-                            "type": "Minn\\Content\\CommentFilter",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 256,
-                    "end": 284
-                },
-                {
-                    "routes": [],
-                    "name": "date",
-                    "static": true,
-                    "visibility": "private",
-                    "signature": "date(?string $value, string $param): string",
-                    "doc": "A REST date-time as site-local \"Y-m-d H:i:s\", or the reference's parameter error.",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "value",
-                            "type": "?string",
+                            "name": "wp",
+                            "type": "WP_REST_Request",
                             "shape": "",
                             "default": null,
                             "doc": ""
                         },
                         {
-                            "name": "param",
+                            "name": "context",
+                            "type": "Minn\\Rest\\Context",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "email",
                             "type": "string",
                             "shape": "",
                             "default": null,
                             "doc": ""
                         }
                     ],
-                    "line": 287,
+                    "line": 256,
+                    "end": 290
+                },
+                {
+                    "routes": [],
+                    "name": "readablePost",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "readablePost(Minn\\Content\\PostRecord $post, string $password): bool",
+                    "doc": "A post whose comments this caller may read: one it may read, unlocked or opened with its password.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "post",
+                            "type": "Minn\\Content\\PostRecord",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "password",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 293,
                     "end": 299
+                },
+                {
+                    "routes": [],
+                    "name": "readable",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "readable(WP_Comment $comment, string $password): bool",
+                    "doc": "A listed comment this caller may read: a moderator any, its author their own, anyone an approved one on a post they may read.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "comment",
+                            "type": "WP_Comment",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "password",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 302,
+                    "end": 309
                 },
                 {
                     "routes": [],
@@ -80704,8 +80457,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 302,
-                    "end": 309
+                    "line": 312,
+                    "end": 319
                 },
                 {
                     "routes": [],
@@ -80734,8 +80487,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 324,
-                    "end": 342
+                    "line": 334,
+                    "end": 352
                 },
                 {
                     "routes": [],
@@ -80754,8 +80507,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 344,
-                    "end": 353
+                    "line": 354,
+                    "end": 363
                 }
             ]
         },
@@ -83127,7 +82880,6 @@
                 "Minn\\Http\\Request"
             ],
             "usedBy": [
-                "Minn\\Rest\\CommentsController",
                 "Minn\\Rest\\MediaController"
             ],
             "constructor": {
@@ -85693,7 +85445,7 @@
             "namespace": "Minn\\Rest",
             "kind": "final class",
             "file": "public/minn/src/Minn/Rest/ParamCheck.php",
-            "lines": 75,
+            "lines": 76,
             "doc": "The required / validate / sanitize pass over a request's declared arguments.\nThe callbacks are plugin code and may answer with a WP_Error; the caller\nhands them in already normalised to true, false, or [message, details].",
             "implements": [],
             "extends": null,
@@ -85781,7 +85533,7 @@
                         }
                     ],
                     "line": 60,
-                    "end": 79
+                    "end": 80
                 },
                 {
                     "routes": [],
@@ -85807,8 +85559,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 81,
-                    "end": 87
+                    "line": 82,
+                    "end": 88
                 }
             ]
         },
@@ -87790,7 +87542,7 @@
             "namespace": "Minn\\Rest",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Rest/PostsController.php",
-            "lines": 195,
+            "lines": 179,
             "doc": "wp/v2 posts and pages, read side.",
             "implements": [],
             "extends": null,
@@ -87994,8 +87746,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 178,
-                    "end": 181
+                    "line": 162,
+                    "end": 165
                 },
                 {
                     "routes": [],
@@ -88028,8 +87780,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 184,
-                    "end": 207
+                    "line": 168,
+                    "end": 191
                 },
                 {
                     "routes": [],
@@ -88055,37 +87807,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 210,
-                    "end": 216
-                },
-                {
-                    "routes": [],
-                    "name": "sanitized",
-                    "static": false,
-                    "visibility": "private",
-                    "signature": "sanitized(Minn\\Http\\Request $request, array $registered): WP_REST_Request",
-                    "doc": "The request as the list's handler reads it: its parameters with their\ndefaults, sanitized by their schemas, as plugins' filters see it too.",
-                    "shapes": [
-                        "@param array<string, array<string, mixed>> $registered"
-                    ],
-                    "params": [
-                        {
-                            "name": "request",
-                            "type": "Minn\\Http\\Request",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "registered",
-                            "type": "array",
-                            "shape": "array<string, array<string, mixed>>",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 87,
-                    "end": 95
+                    "line": 194,
+                    "end": 200
                 },
                 {
                     "routes": [],
@@ -88114,8 +87837,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 105,
-                    "end": 121
+                    "line": 89,
+                    "end": 105
                 },
                 {
                     "routes": [],
@@ -88134,8 +87857,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 124,
-                    "end": 140
+                    "line": 108,
+                    "end": 124
                 },
                 {
                     "routes": [],
@@ -88168,8 +87891,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 147,
-                    "end": 174
+                    "line": 131,
+                    "end": 158
                 }
             ]
         },
@@ -91899,11 +91622,12 @@
             "namespace": "Minn\\Rest",
             "kind": "final class",
             "file": "public/minn/src/Minn/Rest/RuntimeRoutes.php",
-            "lines": 387,
+            "lines": 406,
             "doc": "Routes plugin code registered with register_rest_route(), answered\nthrough the runtime's server after the engine's own routes have had\ntheir turn; the runtime's say before the engine answers at all (an\nauthentication refusal, a pre-dispatch answer, a removed endpoint);\nand the runtime's namespaces folded into the index.",
             "implements": [],
             "extends": null,
             "uses": [
+                "Minn\\Http\\Args",
                 "Minn\\Http\\Request",
                 "Minn\\Http\\Response",
                 "Minn\\RestError",
@@ -91913,6 +91637,7 @@
             "usedBy": [
                 "Minn\\Rest\\Api",
                 "Minn\\Rest\\BatchController",
+                "Minn\\Rest\\CommentsController",
                 "Minn\\Rest\\Embed",
                 "Minn\\Rest\\MediaController",
                 "Minn\\Rest\\OEmbedController",
@@ -91988,8 +91713,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 34,
-                    "end": 55
+                    "line": 35,
+                    "end": 56
                 },
                 {
                     "routes": [],
@@ -92008,8 +91733,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 58,
-                    "end": 74
+                    "line": 59,
+                    "end": 75
                 },
                 {
                     "routes": [],
@@ -92037,8 +91762,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 91,
-                    "end": 101
+                    "line": 92,
+                    "end": 102
                 },
                 {
                     "routes": [],
@@ -92057,8 +91782,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 104,
-                    "end": 131
+                    "line": 105,
+                    "end": 132
                 },
                 {
                     "routes": [],
@@ -92084,8 +91809,37 @@
                             "doc": ""
                         }
                     ],
-                    "line": 143,
-                    "end": 147
+                    "line": 144,
+                    "end": 148
+                },
+                {
+                    "routes": [],
+                    "name": "sanitized",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "sanitized(Minn\\Http\\Request $request, array $registered): WP_REST_Request",
+                    "doc": "The request as the list's handler reads it: its parameters with their\ndefaults, sanitized by their schemas, as plugins' filters see it too.",
+                    "shapes": [
+                        "@param array<string, array<string, mixed>> $registered"
+                    ],
+                    "params": [
+                        {
+                            "name": "request",
+                            "type": "Minn\\Http\\Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "registered",
+                            "type": "array",
+                            "shape": "array<string, array<string, mixed>>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 156,
+                    "end": 164
                 },
                 {
                     "routes": [],
@@ -92104,8 +91858,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 150,
-                    "end": 154
+                    "line": 167,
+                    "end": 171
                 },
                 {
                     "routes": [],
@@ -92140,8 +91894,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 161,
-                    "end": 165
+                    "line": 178,
+                    "end": 182
                 },
                 {
                     "routes": [],
@@ -92160,8 +91914,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 168,
-                    "end": 174
+                    "line": 185,
+                    "end": 191
                 },
                 {
                     "routes": [],
@@ -92180,16 +91934,16 @@
                             "doc": ""
                         }
                     ],
-                    "line": 181,
-                    "end": 197
+                    "line": 198,
+                    "end": 214
                 },
                 {
                     "routes": [],
                     "name": "wpHeaders",
                     "static": true,
                     "visibility": "public",
-                    "signature": "wpHeaders(array $headers): array",
-                    "doc": "A route's own headers as the reference's response object holds them:\na list's totals are numbers.",
+                    "signature": "wpHeaders(array $headers, string $route = ''): array",
+                    "doc": "A route's own headers as the reference's response object holds them:\na list's totals are numbers, but the comments list's stay text.",
                     "shapes": [
                         "@param array<string, string> $headers",
                         "@return array<string, string|int>"
@@ -92201,10 +91955,17 @@
                             "shape": "array<string, string>",
                             "default": null,
                             "doc": ""
+                        },
+                        {
+                            "name": "route",
+                            "type": "string",
+                            "shape": "",
+                            "default": "''",
+                            "doc": ""
                         }
                     ],
-                    "line": 206,
-                    "end": 214
+                    "line": 223,
+                    "end": 234
                 },
                 {
                     "routes": [],
@@ -92225,8 +91986,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 222,
-                    "end": 229
+                    "line": 242,
+                    "end": 249
                 },
                 {
                     "routes": [],
@@ -92245,8 +92006,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 232,
-                    "end": 242
+                    "line": 252,
+                    "end": 262
                 },
                 {
                     "routes": [],
@@ -92272,8 +92033,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 251,
-                    "end": 294
+                    "line": 271,
+                    "end": 314
                 },
                 {
                     "routes": [],
@@ -92292,8 +92053,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 389,
-                    "end": 393
+                    "line": 409,
+                    "end": 413
                 },
                 {
                     "routes": [],
@@ -92326,8 +92087,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 82,
-                    "end": 88
+                    "line": 83,
+                    "end": 89
                 },
                 {
                     "routes": [],
@@ -92353,8 +92114,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 301,
-                    "end": 312
+                    "line": 321,
+                    "end": 332
                 },
                 {
                     "routes": [],
@@ -92375,8 +92136,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 315,
-                    "end": 318
+                    "line": 335,
+                    "end": 338
                 },
                 {
                     "routes": [],
@@ -92409,8 +92170,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 320,
-                    "end": 324
+                    "line": 340,
+                    "end": 344
                 },
                 {
                     "routes": [],
@@ -92429,8 +92190,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 327,
-                    "end": 337
+                    "line": 347,
+                    "end": 357
                 },
                 {
                     "routes": [],
@@ -92452,8 +92213,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 347,
-                    "end": 371
+                    "line": 367,
+                    "end": 391
                 },
                 {
                     "routes": [],
@@ -92472,8 +92233,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 373,
-                    "end": 386
+                    "line": 393,
+                    "end": 406
                 },
                 {
                     "routes": [],
@@ -92492,8 +92253,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 396,
-                    "end": 404
+                    "line": 416,
+                    "end": 424
                 }
             ]
         },
@@ -102033,7 +101794,7 @@
             "namespace": "Minn\\Runtime",
             "kind": "final class",
             "file": "public/minn/src/Minn/Runtime/CommentQueryRunner.php",
-            "lines": 104,
+            "lines": 105,
             "doc": "WP_Comment_Query as the reference runs it (probe wp-comment-query-sql):\nthe variables filled and handed to pre_get_comments, the meta query's\nSQL, comments_pre_query (which may answer), the clauses (the date query\namong them) handed to comments_clauses, the request, found_comments_query\nwhen a limited query counts what it found, then the ids, the count, or\nthe comments through the_comments, threaded or flattened when asked.\nResults are not cached between queries (the reference keeps them in the\nobject cache by last_changed).",
             "implements": [],
             "extends": null,
@@ -102094,7 +101855,7 @@
                         }
                     ],
                     "line": 26,
-                    "end": 59
+                    "end": 60
                 },
                 {
                     "routes": [],
@@ -102123,8 +101884,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 68,
-                    "end": 90
+                    "line": 69,
+                    "end": 91
                 },
                 {
                     "routes": [],
@@ -102154,8 +101915,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 100,
-                    "end": 121
+                    "line": 101,
+                    "end": 122
                 }
             ]
         },

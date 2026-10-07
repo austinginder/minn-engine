@@ -9,7 +9,7 @@ use Minn\Http\Policy;
 use Minn\Http\Args;
 use Minn\Http\Subject;
 use Minn\Http\Access;
-use Minn\Content\CommentFilter;
+use Minn\Content\PostRecord;
 use Minn\Content\CommentRecord;
 use Minn\Content\Comments;
 use Minn\Content\Posts;
@@ -37,35 +37,51 @@ final readonly class CommentsController
     ) {
     }
 
-    /** The comments list with its status tabs and pagination headers. */
+    /**
+     * The comments list as the reference serves it: the request's
+     * WP_Comment_Query through rest_comment_query, its totals (counted again
+     * when a page comes back empty), and the comments the caller may read.
+     */
     #[Route(Method::Get, '/wp/v2/comments', policy: new Policy(Access::Public), args: [Args::CONTEXT, Args::COMMENTS])]
     public function list(Request $request): Response
     {
         $context = Context::of($request);
-        $status = (string) $request->query('status', 'approve');
-        if ($context->isEdit() && !$this->caller->can('moderate_comments')) {
-            throw $this->caller->refuse('rest_forbidden_context', 'Sorry, you are not allowed to edit comments.');
+        $wp = RuntimeRoutes::sanitized($request, Args::CONTEXT + Args::COMMENTS);
+        $this->allowed($wp, $context, (string) $request->query('author_email', ''));
+        $registered = (array) \apply_filters('rest_comment_collection_params', Args::CONTEXT + Args::COMMENTS);
+        $args = (array) \apply_filters('rest_comment_query', CommentListArgs::of($wp, $registered, $request->method->value), $wp);
+        $query = new \WP_Comment_Query();
+        $found = $query->query($args);
+        [$total, $pages] = self::totals($query, $args, (int) $wp['per_page']);
+        if ($request->method === Method::Head) {
+            return Reply::list([], $total, $pages, null);
         }
-        if ($status !== 'approve' && !$this->caller->can('edit_posts')) {
-            throw $this->caller->refuse('rest_forbidden_param', 'Query parameter not permitted: status');
+        $password = is_string($wp['password']) ? $wp['password'] : '';
+        $objects = [];
+        foreach (is_array($found) ? $found : [] as $comment) {
+            if ($comment instanceof \WP_Comment && $this->readable($comment, $password)) {
+                $objects[] = $this->object->build(CommentRecord::fromRow($comment->to_array()), $context);
+            }
         }
-        // An unknown status simply matches nothing.
-        $tokens = Comments::tokensFor($status) ?? [$status];
-        $perPage = max(1, min(100, (int) $request->query('per_page', '10')));
-        $page = max(1, (int) $request->query('page', '1'));
-        $filter = $this->guarded(self::filter($request));
-        $result = $this->comments->page(
-            $tokens,
-            $page,
-            $perPage,
-            $this->caller->can('moderate_comments') ? $filter : $filter->onPublicPosts(),
-        );
-        return Reply::list(
-            array_map(fn (CommentRecord $c) => $this->object->build($c, $context), $result['comments']),
-            $result['total'],
-            (int) ceil($result['total'] / $perPage),
-            Fields::fromQuery($request->query),
-        );
+        return Reply::list($objects, $total, $pages, Fields::fromQuery($request->query));
+    }
+
+    /**
+     * The total and the page count: the query's own, or, when it found
+     * nothing (a page past the end), a count without the page.
+     *
+     * @param array<string, mixed> $args
+     * @return array{0: int, 1: int}
+     */
+    private static function totals(\WP_Comment_Query $query, array $args, int $perPage): array
+    {
+        $total = (int) $query->found_comments;
+        if ($total >= 1) {
+            return [$total, (int) $query->max_num_pages];
+        }
+        unset($args['number'], $args['offset']);
+        $total = (int) (new \WP_Comment_Query())->query(['count' => true, 'orderby' => 'none'] + $args);
+        return [$total, $perPage > 0 ? (int) ceil($total / $perPage) : 0];
     }
 
     /** One comment, if the caller may read it. */
@@ -229,48 +245,39 @@ final readonly class CommentsController
         return Reply::item($data, $fields);
     }
 
-    /** The collection parameters as the reference reads them; the caps are checked by guarded(). */
-    private static function filter(Request $request): CommentFilter
-    {
-        return new CommentFilter(
-            post: ListQuery::idsWithZero((string) $request->query('post', '')),
-            include: ListQuery::idsWithZero((string) $request->query('include', '')),
-            exclude: ListQuery::idsWithZero((string) $request->query('exclude', '')),
-            parent: ListQuery::idsWithZero((string) $request->query('parent', '')),
-            parentExclude: ListQuery::idsWithZero((string) $request->query('parent_exclude', '')),
-            author: ListQuery::idsWithZero((string) $request->query('author', '')),
-            authorExclude: ListQuery::idsWithZero((string) $request->query('author_exclude', '')),
-            authorEmail: (string) $request->query('author_email', ''),
-            type: (string) $request->query('type', 'comment') ?: 'comment',
-            search: (string) $request->query('search', ''),
-            after: self::date($request->query('after'), 'after'),
-            before: self::date($request->query('before'), 'before'),
-        );
-    }
-
     /**
-     * The filter, once this caller may use it: comments without a post
-     * belong to moderators, an unreadable post's comments to its editors,
-     * and type, author, and author_email to anyone who can edit posts.
+     * What this caller may ask the list for: the edit context and other
+     * statuses are for moderators and editors; comments without a post
+     * belong to moderators, an unreadable post's to those who may read it
+     * (or who give its password); type, author, author_exclude and
+     * author_email to anyone who can edit posts (the email judged as sent,
+     * before sanitizing empties a bad one).
      */
-    private function guarded(CommentFilter $filter): CommentFilter
+    private function allowed(\WP_REST_Request $wp, Context $context, string $email): void
     {
-        if (in_array(0, $filter->post, true) && !$this->caller->can('moderate_comments')) {
-            throw $this->caller->refuse('rest_cannot_read', 'Sorry, you are not allowed to read comments without a post.');
+        if ($context->isEdit() && !$this->caller->can('moderate_comments')) {
+            throw $this->caller->refuse('rest_forbidden_context', 'Sorry, you are not allowed to edit comments.');
         }
-        foreach ($filter->post as $postId) {
+        if ($wp['status'] !== 'approve' && !$this->caller->can('edit_posts')) {
+            throw $this->caller->refuse('rest_forbidden_param', 'Query parameter not permitted: status');
+        }
+        $password = is_string($wp['password']) ? $wp['password'] : '';
+        foreach (array_map('intval', (array) $wp['post']) as $postId) {
+            if ($postId === 0 && !$this->caller->can('moderate_comments')) {
+                throw $this->caller->refuse('rest_cannot_read', 'Sorry, you are not allowed to read comments without a post.');
+            }
             $post = $postId === 0 ? null : $this->posts->find($postId);
-            if ($post !== null && (!$post->isPublished() || $post->isProtected()) && !$this->caller->can('read_post', $postId)) {
+            if ($post !== null && !$this->readablePost($post, $password)) {
                 throw $this->caller->refuse('rest_cannot_read_post', 'Sorry, you are not allowed to read the post for this comment.');
             }
         }
-        foreach (['type' => !$filter->isPlainType(), 'author' => $filter->author !== [], 'author_exclude' => $filter->authorExclude !== []] as $param => $used) {
+        foreach (['type' => !in_array($wp['type'], ['', 'comment', null], true), 'author' => !empty($wp['author']), 'author_exclude' => !empty($wp['author_exclude'])] as $param => $used) {
             if ($used && !$this->caller->can('edit_posts')) {
                 throw $this->caller->refuse('rest_forbidden_param', "Query parameter not permitted: {$param}");
             }
         }
-        if ($filter->authorEmail !== '') {
-            if (Email::check($filter->authorEmail) !== null) {
+        if ($email !== '') {
+            if (Email::check($email) !== null) {
                 throw new RestError('rest_invalid_param', 'Invalid parameter(s): author_email', 400, [
                     'params' => ['author_email' => 'Invalid email address.'],
                     'details' => ['author_email' => ['code' => 'rest_invalid_email', 'message' => 'Invalid email address.', 'data' => null]],
@@ -280,22 +287,25 @@ final readonly class CommentsController
                 throw $this->caller->refuse('rest_forbidden_param', 'Query parameter not permitted: author_email');
             }
         }
-        return $filter;
     }
 
-    /** A REST date-time as site-local "Y-m-d H:i:s", or the reference's parameter error. */
-    private static function date(?string $value, string $param): string
+    /** A post whose comments this caller may read: one it may read, unlocked or opened with its password. */
+    private function readablePost(PostRecord $post, string $password): bool
     {
-        if ($value === null || $value === '') {
-            return '';
+        if ($this->caller->can('read_post', $post->id)) {
+            return true;
         }
-        if (preg_match('/^\d{4}-\d{2}-\d{2}[T ]\d{2}:\d{2}:\d{2}(?:Z|[+-]\d{2}:\d{2})?$/', $value) !== 1) {
-            throw new RestError('rest_invalid_param', "Invalid parameter(s): {$param}", 400, [
-                'params' => [$param => 'Invalid date.'],
-                'details' => [$param => ['code' => 'rest_invalid_date', 'message' => 'Invalid date.', 'data' => null]],
-            ]);
+        return $post->isPublished() && (!$post->isProtected() || hash_equals($post->password, $password));
+    }
+
+    /** A listed comment this caller may read: a moderator any, its author their own, anyone an approved one on a post they may read. */
+    private function readable(\WP_Comment $comment, string $password): bool
+    {
+        if ($this->caller->can('moderate_comments') || ((int) $comment->user_id > 0 && (int) $comment->user_id === $this->caller->id())) {
+            return true;
         }
-        return (string) preg_replace('/(Z|[+-]\d{2}:\d{2})$/', '', str_replace('T', ' ', $value));
+        $post = (int) $comment->comment_post_ID > 0 ? $this->posts->find((int) $comment->comment_post_ID) : null;
+        return $comment->comment_approved === '1' && $post !== null && $this->readablePost($post, $password);
     }
 
     /** A comment row of the plain kind, or the reference's invalid-id error. */

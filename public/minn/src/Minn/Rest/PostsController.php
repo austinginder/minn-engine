@@ -52,7 +52,7 @@ final readonly class PostsController
         $context = Context::of($request);
         $this->visibleStatuses($request, $type, $context);
         $registered = PostCollectionParams::ofType($type);
-        $wp = $this->sanitized($request, $registered);
+        $wp = RuntimeRoutes::sanitized($request, $registered);
         if ($wp['orderby'] === 'relevance' && empty($wp['search'])) {
             throw new RestError('rest_no_search_term_defined', 'You need to define a search term to order by relevance.', 400);
         }
@@ -76,22 +76,6 @@ final readonly class PostsController
             $objects[] = $context->isEdit() ? $this->object->edit($record, $this->caller->id()) : $this->object->view($record);
         }
         return Reply::list($objects, $total, $pages, Fields::fromQuery($request->query));
-    }
-
-    /**
-     * The request as the list's handler reads it: its parameters with their
-     * defaults, sanitized by their schemas, as plugins' filters see it too.
-     *
-     * @param array<string, array<string, mixed>> $registered
-     */
-    private function sanitized(Request $request, array $registered): \WP_REST_Request
-    {
-        $wp = RuntimeRoutes::wpRequest($request);
-        $args = array_map(static fn (array $arg): array => array_diff_key($arg, [Args::HANDLER_VALIDATES => true]) + ['validate_callback' => 'rest_validate_request_arg', 'sanitize_callback' => 'rest_sanitize_request_arg'], $registered);
-        $wp->set_attributes(['args' => $args] + (array) $wp->get_attributes());
-        $wp->set_default_params(array_map(static fn (array $arg) => $arg['default'], array_filter($args, static fn (array $arg) => array_key_exists('default', $arg))));
-        $wp->sanitize_params();
-        return $wp;
     }
 
     /**

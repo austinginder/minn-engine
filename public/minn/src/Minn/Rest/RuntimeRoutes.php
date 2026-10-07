@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Minn\Rest;
 
+use Minn\Http\Args;
 use Minn\Http\Request;
 use Minn\Http\Response;
 use Minn\RestError;
@@ -146,6 +147,22 @@ final class RuntimeRoutes
         self::$requests[$request] = $wpRequest;
     }
 
+    /**
+     * The request as the list's handler reads it: its parameters with their
+     * defaults, sanitized by their schemas, as plugins' filters see it too.
+     *
+     * @param array<string, array<string, mixed>> $registered
+     */
+    public static function sanitized(Request $request, array $registered): \WP_REST_Request
+    {
+        $wp = self::wpRequest($request);
+        $args = array_map(static fn (array $arg): array => array_diff_key($arg, [Args::HANDLER_VALIDATES => true]) + ['validate_callback' => 'rest_validate_request_arg', 'sanitize_callback' => 'rest_sanitize_request_arg'], $registered);
+        $wp->set_attributes(['args' => $args] + (array) $wp->get_attributes());
+        $wp->set_default_params(array_map(static fn (array $arg) => $arg['default'], array_filter($args, static fn (array $arg) => array_key_exists('default', $arg))));
+        $wp->sanitize_params();
+        return $wp;
+    }
+
     /** The request as the runtime's server reads it, and as a REST filter or action hands it to plugins: the same object each time. */
     public static function wpRequest(Request $request): \WP_REST_Request
     {
@@ -198,13 +215,16 @@ final class RuntimeRoutes
 
     /**
      * A route's own headers as the reference's response object holds them:
-     * a list's totals are numbers.
+     * a list's totals are numbers, but the comments list's stay text.
      *
      * @param array<string, string> $headers
      * @return array<string, string|int>
      */
-    public static function wpHeaders(array $headers): array
+    public static function wpHeaders(array $headers, string $route = ''): array
     {
+        if ($route === '/wp/v2/comments') {
+            return $headers;
+        }
         foreach (['X-WP-Total', 'X-WP-TotalPages'] as $name) {
             if (isset($headers[$name]) && ctype_digit((string) $headers[$name])) {
                 $headers[$name] = (int) $headers[$name];

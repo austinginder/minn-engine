@@ -91,6 +91,10 @@ final readonly class CommentObject
         if ($c->parentId > 0) {
             $links['in-reply-to'] = [['embeddable' => true, 'href' => $this->url->to('/wp/v2/comments/' . $c->parentId)]];
         }
+        // Replies are counted through the comment query (any approval, any type), as plugins' clauses see it.
+        if (Runtime::booted() && (int) \get_comments(['count' => true, 'orderby' => 'none', 'parent' => $id, 'type' => 'all']) > 0) {
+            $links['children'] = [['embeddable' => true, 'href' => $this->url->to('/wp/v2/comments') . '?parent=' . $id]];
+        }
         $object['_links'] = $links;
         return $object;
     }

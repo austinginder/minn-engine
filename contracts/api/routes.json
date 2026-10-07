@@ -2839,7 +2839,7 @@
             "pattern": "/wp/v2/comments",
             "name": "Minn\\Rest\\CommentsController::list",
             "handler": "Minn\\Rest\\CommentsController::list",
-            "summary": "The comments list with its status tabs and pagination headers.",
+            "summary": "The comments list as the reference serves it: the request's WP_Comment_Query through rest_comment_query, its totals (counted again when a page comes back empty), and the comments the caller may read.",
             "policy": {
                 "access": "Public",
                 "describe": "public"
@@ -2929,6 +2929,36 @@
                     "default": [],
                     "required": false
                 },
+                "offset": {
+                    "description": "Offset the result set by a specific number of items.",
+                    "type": "integer",
+                    "required": false
+                },
+                "order": {
+                    "description": "Order sort attribute ascending or descending.",
+                    "type": "string",
+                    "default": "desc",
+                    "enum": [
+                        "asc",
+                        "desc"
+                    ],
+                    "required": false
+                },
+                "orderby": {
+                    "description": "Sort collection by comment attribute.",
+                    "type": "string",
+                    "default": "date_gmt",
+                    "enum": [
+                        "date",
+                        "date_gmt",
+                        "id",
+                        "include",
+                        "post",
+                        "parent",
+                        "type"
+                    ],
+                    "required": false
+                },
                 "parent": {
                     "default": [],
                     "description": "Limit result set to comments of specific parent IDs.",
@@ -2965,6 +2995,11 @@
                 "type": {
                     "default": "comment",
                     "description": "Limit result set to comments assigned a specific type. Requires authorization.",
+                    "type": "string",
+                    "required": false
+                },
+                "password": {
+                    "description": "The password for the post if it is password protected.",
                     "type": "string",
                     "required": false
                 }

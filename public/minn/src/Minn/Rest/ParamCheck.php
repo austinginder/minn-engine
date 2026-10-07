@@ -64,7 +64,8 @@ final class ParamCheck
         foreach ($params as $source => $values) {
             foreach ($values as $key => $value) {
                 $callback = $args[$key]['sanitize_callback'] ?? null;
-                if (!isset($args[$key]) || $callback === null || $callback === false) {
+                // A null (a default of null, say) is left as it is, unset to the handler.
+                if ($value === null || !isset($args[$key]) || $callback === null || $callback === false) {
                     continue;
                 }
                 $result = $sanitize($key, $value);
