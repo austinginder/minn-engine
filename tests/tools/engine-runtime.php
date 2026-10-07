@@ -40,3 +40,6 @@ if ($theme !== null) {
 }
 // The theme's setup, as a request's boot runs it: its functions.php, after_setup_theme (its supports) and wp_loaded.
 Minn\Runtime\Plugins::loadTheme($runtime);
+// The current user settles before init, as the reference settles it; WP-CLI, which runs the reference's probes, then drops kses (it hooks kses_remove_filters on init at 11).
+wp_get_current_user();
+kses_remove_filters();

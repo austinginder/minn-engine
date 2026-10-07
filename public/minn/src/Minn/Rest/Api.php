@@ -163,14 +163,17 @@ final readonly class Api
 
     /**
      * Runs the request as a user already proven by the outer request, for
-     * the in-process calls plugin code makes; a user who no longer exists
-     * leaves the caller as the request itself resolves it.
+     * the in-process calls plugin code makes, or as the user plugin code
+     * settled (determine_current_user; 0 for nobody); a user who no longer
+     * exists leaves the caller as the request itself resolves it.
      */
     public function actingAs(int $userId, string $token): self
     {
-        $user = $this->services->users()->find($userId);
+        $user = $userId > 0 ? $this->services->users()->find($userId) : null;
         if ($user !== null) {
             $this->services->caller()->resolveAs(new Authenticated($user, $token));
+        } elseif ($userId === 0) {
+            $this->services->caller()->resolveAnonymous();
         }
         return $this;
     }

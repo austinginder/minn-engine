@@ -5,7 +5,7 @@ the wp/v2 surface: shapes and controllers
 | Class | Kind | Lines | Summary |
 |---|---|---|---|
 | [`AbilitiesController`](#abilitiescontroller) | final readonly class | 150 | wp-abilities/v1: what this site can be asked to do, and the doing of it. |
-| [`Api`](#api) | final readonly class | 265 | The REST API: wires the controllers for one request and dispatches a |
+| [`Api`](#api) | final readonly class | 268 | The REST API: wires the controllers for one request and dispatches a |
 | [`ApplicationPasswordsController`](#applicationpasswordscontroller) | final readonly class | 170 | wp/v2/users/{id}/application-passwords: list, create, rename, delete, |
 | [`ArgCheck`](#argcheck) | final readonly class | 83 | Judges a route's declared arguments against the request before the |
 | [`BatchController`](#batchcontroller) | final readonly class | 159 | batch/v1 as the reference answers it (probe rest-batch): up to 25 |
@@ -13,7 +13,7 @@ the wp/v2 surface: shapes and controllers
 | [`BlockRendererController`](#blockrenderercontroller) | final readonly class | 89 | wp/v2/block-renderer as the reference answers it (probe |
 | [`BlockTypesController`](#blocktypescontroller) | final readonly class | 117 | wp/v2/block-types as the reference answers it (probe rest-block-types): |
 | [`BlocksController`](#blockscontroller) | final readonly class | 69 | wp/v2/blocks: synced patterns and reusable blocks, stored as wp_block |
-| [`Caller`](#caller) | final class | 121 | Who is making this REST call. Resolved once from the cookie and nonce; |
+| [`Caller`](#caller) | final class | 143 | Who is making this REST call. Resolved once from the cookie and nonce; |
 | [`Catalogue`](#catalogue) | final class | 70 | The route table read from the classes alone: every #[Route] under |
 | [`CommentListArgs`](#commentlistargs) | final class | 35 | The WP_Comment_Query arguments a comment list request makes, as the |
 | [`CommentObject`](#commentobject) | final readonly class | 87 | The wp/v2 comment object; edit context adds the moderation-desk fields. |
@@ -197,8 +197,9 @@ The post types the surface knows.
 ### `actingAs(int $userId, string $token): self`
 
 Runs the request as a user already proven by the outer request, for
-the in-process calls plugin code makes; a user who no longer exists
-leaves the caller as the request itself resolves it.
+the in-process calls plugin code makes, or as the user plugin code
+settled (determine_current_user; 0 for nobody); a user who no longer
+exists leaves the caller as the request itself resolves it.
 
 ### `handle(string $route): Minn\Http\Response`
 
@@ -216,7 +217,7 @@ runtime's server calls for a core route, so a route the engine
 declines cannot bounce between the two. $as is the caller's own
 request object, which the route's parameters are set on.
 
-Internals: `controllers()` (private, line 73), `engineResponse()` (private, line 238), `withPageLinks()` (private, line 252), `options()` (private, line 283), `withAllow()` (private, line 296)
+Internals: `controllers()` (private, line 73), `engineResponse()` (private, line 241), `withPageLinks()` (private, line 255), `options()` (private, line 286), `withAllow()` (private, line 299)
 
 
 ## ApplicationPasswordsController
@@ -528,6 +529,19 @@ Settles the caller as a session already proven elsewhere: an
 in-process request a plugin makes through rest_do_request() carries
 no nonce, so it runs as whoever the outer request resolved.
 
+### `resolveAnonymous(): void`
+
+Settles the caller as nobody: plugin code (determine_current_user) signed the request out.
+
+### `cookieBound(): bool`
+
+Whether a sign-in cookie vouches for this caller (or failed to, for
+want of its nonce): a cookie's nonce vouches for its own user only.
+
+### `resolveInvalidNonce(): void`
+
+Settles the caller as one whose cookie's nonce does not vouch for the user plugin code named.
+
 ### `session(): ?Minn\Auth\Authenticated`
 
 The session, or null for an anonymous or refused caller.
@@ -572,7 +586,7 @@ same rest_forbidden the reference uses. Returns the caller's id.
 
 401 for an anonymous caller, 403 for one who is signed in but refused.
 
-Internals: `resolve()` (private, line 135)
+Internals: `resolve()` (private, line 157)
 
 
 ## Catalogue

@@ -326,6 +326,14 @@ function wp_validate_auth_cookie($cookie = '', $scheme = '')
 }
 endif;
 
+if (!function_exists('wp_validate_logged_in_cookie')) :
+/** The user an earlier determine_current_user callback found, else the session's (the engine's session covers the logged-in cookie). */
+function wp_validate_logged_in_cookie($user_id)
+{
+    return $user_id ?: wp_validate_auth_cookie();
+}
+endif;
+
 if (!function_exists('wp_logout')) :
 function wp_logout()
 {

@@ -5,8 +5,8 @@
         "minn": 644,
         "composes": 928,
         "leaf": 649,
-        "noop": 1853,
-        "functions": 4004,
+        "noop": 1855,
+        "functions": 4006,
         "minnMethods": 686,
         "leafLinesOver15": 12
     },
@@ -17313,14 +17313,16 @@
         },
         "_wp_get_current_user": {
             "file": "user.php",
-            "lines": 9,
+            "lines": 8,
             "kind": "minn",
             "minn": [
                 "Minn\\Runtime\\Runtime::current",
-                "Minn\\Runtime\\Runtime::get",
-                "Minn\\Runtime\\Runtime::set"
+                "Minn\\Runtime\\Runtime::get"
             ],
-            "composes": []
+            "composes": [
+                "apply_filters",
+                "wp_set_current_user"
+            ]
         },
         "_wp_get_image_size_from_meta": {
             "file": "media.php",
@@ -35671,6 +35673,13 @@
             "minn": [],
             "composes": []
         },
+        "wp_validate_application_password": {
+            "file": "user.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
         "wp_validate_auth_cookie": {
             "file": "pluggable.php",
             "lines": 1,
@@ -35687,6 +35696,15 @@
             "kind": "leaf",
             "minn": [],
             "composes": []
+        },
+        "wp_validate_logged_in_cookie": {
+            "file": "pluggable.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "wp_validate_auth_cookie"
+            ]
         },
         "wp_validate_redirect": {
             "file": "pluggable.php",

@@ -143,6 +143,7 @@ final readonly class Engine
         $runtime->set('theme', $theme);
         $runtime->set('engine_routes', static fn (): array => $api->routes());
         Plugins::load($runtime);
+        self::adoptSettledUser($api, $runtime);
         // As the reference's request parsing leaves things for rest_api_loaded:
         // the route among the query vars, and REST_REQUEST (hook-trace).
         \_minn_rewrite();
@@ -152,6 +153,31 @@ final readonly class Engine
         }
         // Creating the server fires rest_api_init once; the plugins' routes register there.
         \rest_get_server();
+    }
+
+    /**
+     * The user plugin code settled (determine_current_user) as the REST
+     * caller, as the reference's cookie check leaves it: a request a
+     * plugin signs in by its own token is that user; a sign-in cookie
+     * vouches only for its own user (another one fails its nonce, and
+     * without a nonce the request is nobody, plugin code included).
+     */
+    private static function adoptSettledUser(Api $api, Runtime $runtime): void
+    {
+        $caller = $api->caller();
+        $settled = $runtime->reader->userId;
+        if ($settled === $caller->id()) {
+            return;
+        }
+        if (!$caller->cookieBound()) {
+            $api->actingAs($settled, $runtime->reader->sessionToken);
+            return;
+        }
+        if ($caller->id() > 0) {
+            $caller->resolveInvalidNonce();
+        }
+        \wp_set_current_user(0);
+        $runtime->identify(Reader::anonymous($runtime->reader->postPassword));
     }
 
     /** The response the request's own surface produces: REST, then the admin, the login endpoint, and the public site. */
@@ -206,7 +232,8 @@ final readonly class Engine
         );
         $context = $context->withReader($reader);
         // The runtime boots below with this context, and Reader::current() reads it from there.
-        $canReadUnpublished = static fn (PostRecord $post): bool => $reader->canEdit((int) $post['ID']);
+        // The reader plugins settle (determine_current_user) is the one asked, not the session's.
+        $canReadUnpublished = static fn (PostRecord $post): bool => Reader::current()->canEdit((int) $post['ID']);
         $resolver = Resolver::fromDb($db, $canReadUnpublished);
         $permalinks = $resolver->permalinks();
         $theme = Theme::active($site, $permalinks, $context->themesDir());
@@ -239,7 +266,7 @@ final readonly class Engine
         $site = $context->site;
         $capabilities = $context->capabilities;
         Plugins::load($runtime);
-        $seams = new Seams($db, $site, $request, $context->reader);
+        $seams = new Seams($db, $site, $request, $runtime->reader);
         $loader = new Loader(ABSPATH . 'wp-content', $site);
         $loader->register($seams);
         Extensions::set($seams);

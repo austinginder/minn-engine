@@ -45,7 +45,8 @@ final class Runtime
     /** The request being answered, absent on the command line. */
     public readonly ?Request $request;
     /** Who is reading this request. */
-    public readonly Reader $reader;
+    /** Who reads this request; settled again (identify()) once plugins have said who the user is. */
+    public Reader $reader;
     /** The capability engine. */
     public readonly Capabilities $capabilities;
     /** The minn/ folder: the engine's own files. */
@@ -78,6 +79,12 @@ final class Runtime
         $this->engineDir = $context->engineDir;
         $this->absPath = $context->absPath;
         $this->version = $context->version;
+    }
+
+    /** The request's reader from now on: the user plugin code named through determine_current_user (Runtime\CurrentUser). */
+    public function identify(Reader $reader): void
+    {
+        $this->reader = $reader;
     }
 
     /** Holds the extension seams this request registered, so nothing static has to. */

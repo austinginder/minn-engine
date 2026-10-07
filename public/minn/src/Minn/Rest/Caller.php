@@ -37,6 +37,28 @@ final class Caller
         $this->resolved = $session;
     }
 
+    /** Settles the caller as nobody: plugin code (determine_current_user) signed the request out. */
+    public function resolveAnonymous(): void
+    {
+        $this->resolved = AuthFailure::notLoggedIn();
+    }
+
+    /**
+     * Whether a sign-in cookie vouches for this caller (or failed to, for
+     * want of its nonce): a cookie's nonce vouches for its own user only.
+     */
+    public function cookieBound(): bool
+    {
+        $resolved = $this->resolve();
+        return $resolved instanceof Authenticated ? $resolved->applicationPassword === null : $resolved->code === 'rest_cookie_invalid_nonce';
+    }
+
+    /** Settles the caller as one whose cookie's nonce does not vouch for the user plugin code named. */
+    public function resolveInvalidNonce(): void
+    {
+        $this->resolved = AuthFailure::invalidNonce();
+    }
+
     /** The session, or null for an anonymous or refused caller. */
     public function session(): ?Authenticated
     {

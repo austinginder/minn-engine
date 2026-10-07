@@ -130,6 +130,9 @@ if (Minn\Runtime\Runtime::booted()) {
 }
 
 // The authenticate chain and the comment field filters.
+add_filter('determine_current_user', 'wp_validate_auth_cookie');
+add_filter('determine_current_user', 'wp_validate_logged_in_cookie', 20);
+add_filter('determine_current_user', 'wp_validate_application_password', 20);
 add_filter('authenticate', 'wp_authenticate_username_password', 20, 3);
 add_filter('authenticate', 'wp_authenticate_email_password', 20, 3);
 add_filter('authenticate', 'wp_authenticate_spam_check', 99);

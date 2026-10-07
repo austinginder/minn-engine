@@ -13,10 +13,15 @@ function _wp_get_current_user()
     if ($user instanceof WP_User) {
         return $user;
     }
-    $id = $runtime->reader->userId;
-    $user = new WP_User($id > 0 ? $id : 0);
-    $runtime->set('current_user', $user);
-    return $user;
+    // Who the request is, as plugins may say (the engine's own session answers through wp_validate_auth_cookie).
+    $id = (int) apply_filters('determine_current_user', false);
+    return wp_set_current_user($id > 0 ? $id : 0);
+}
+
+/** An earlier callback's user, as given: the engine's REST layer signs application passwords in itself, and its user is the session's. */
+function wp_validate_application_password($input_user)
+{
+    return $input_user;
 }
 
 function get_current_user_id()

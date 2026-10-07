@@ -109,6 +109,8 @@ final class Plugins
         \load_default_textdomain();
         self::loadThemeFunctions($runtime);
         $hooks->action('after_setup_theme', []);
+        // The current user is settled here, as WP::init() settles it, with every plugin's determine_current_user in place.
+        CurrentUser::settle($runtime);
         $hooks->action('init', []);
         $hooks->action('wp_loaded', []);
     }

@@ -29924,6 +29924,7 @@
                 "Minn\\Extension\\Seams",
                 "Minn\\Front\\CommentPostController",
                 "Minn\\Front\\Resolver",
+                "Minn\\Runtime\\CurrentUser",
                 "Minn\\Runtime\\Runtime",
                 "Minn\\Theme\\ClassicRenderer",
                 "Minn\\Theme\\PageRenderer"
@@ -34635,7 +34636,7 @@
             "namespace": "Minn",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Engine.php",
-            "lines": 238,
+            "lines": 265,
             "doc": "The engine's front door. An unmodified wp-config.php ends by requiring\nwp-settings.php, which is the engine's own boot file; it hands off here.\nREST is dispatched first (from the path or from ?rest_route=), then the\nadmin, the login endpoint, and finally the public site.",
             "implements": [],
             "extends": null,
@@ -34851,7 +34852,34 @@
                         }
                     ],
                     "line": 130,
-                    "end": 155
+                    "end": 156
+                },
+                {
+                    "routes": [],
+                    "name": "adoptSettledUser",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "adoptSettledUser(Minn\\Rest\\Api $api, Minn\\Runtime\\Runtime $runtime): void",
+                    "doc": "The user plugin code settled (determine_current_user) as the REST\ncaller, as the reference's cookie check leaves it: a request a\nplugin signs in by its own token is that user; a sign-in cookie\nvouches only for its own user (another one fails its nonce, and\nwithout a nonce the request is nobody, plugin code included).",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "api",
+                            "type": "Minn\\Rest\\Api",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "runtime",
+                            "type": "Minn\\Runtime\\Runtime",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 165,
+                    "end": 181
                 },
                 {
                     "routes": [],
@@ -34877,8 +34905,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 158,
-                    "end": 233
+                    "line": 184,
+                    "end": 260
                 },
                 {
                     "routes": [],
@@ -34981,8 +35009,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 236,
-                    "end": 302
+                    "line": 263,
+                    "end": 329
                 }
             ]
         },
@@ -77077,7 +77105,7 @@
             "namespace": "Minn\\Rest",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Rest/Api.php",
-            "lines": 265,
+            "lines": 268,
             "doc": "The REST API: wires the controllers for one request and dispatches a\nroute. Errors thrown anywhere underneath become the reference's error\npayload under the reference's headers.",
             "implements": [],
             "extends": null,
@@ -77348,7 +77376,7 @@
                     "static": false,
                     "visibility": "public",
                     "signature": "actingAs(int $userId, string $token): self",
-                    "doc": "Runs the request as a user already proven by the outer request, for\nthe in-process calls plugin code makes; a user who no longer exists\nleaves the caller as the request itself resolves it.",
+                    "doc": "Runs the request as a user already proven by the outer request, for\nthe in-process calls plugin code makes, or as the user plugin code\nsettled (determine_current_user; 0 for nobody); a user who no longer\nexists leaves the caller as the request itself resolves it.",
                     "shapes": [],
                     "params": [
                         {
@@ -77366,8 +77394,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 169,
-                    "end": 176
+                    "line": 170,
+                    "end": 179
                 },
                 {
                     "routes": [],
@@ -77386,8 +77414,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 179,
-                    "end": 208
+                    "line": 182,
+                    "end": 211
                 },
                 {
                     "routes": [],
@@ -77406,8 +77434,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 211,
-                    "end": 215
+                    "line": 214,
+                    "end": 218
                 },
                 {
                     "routes": [],
@@ -77433,8 +77461,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 224,
-                    "end": 236
+                    "line": 227,
+                    "end": 239
                 },
                 {
                     "routes": [],
@@ -77482,8 +77510,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 238,
-                    "end": 245
+                    "line": 241,
+                    "end": 248
                 },
                 {
                     "routes": [],
@@ -77509,8 +77537,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 252,
-                    "end": 274
+                    "line": 255,
+                    "end": 277
                 },
                 {
                     "routes": [],
@@ -77529,8 +77557,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 283,
-                    "end": 290
+                    "line": 286,
+                    "end": 293
                 },
                 {
                     "routes": [],
@@ -77556,8 +77584,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 296,
-                    "end": 300
+                    "line": 299,
+                    "end": 303
                 }
             ]
         },
@@ -79347,7 +79375,7 @@
             "namespace": "Minn\\Rest",
             "kind": "final class",
             "file": "public/minn/src/Minn/Rest/Caller.php",
-            "lines": 121,
+            "lines": 143,
             "doc": "Who is making this REST call. Resolved once from the cookie and nonce;\nan anonymous or failed caller has id 0 and every capability check fails.",
             "implements": [],
             "extends": null,
@@ -79506,6 +79534,42 @@
                 },
                 {
                     "routes": [],
+                    "name": "resolveAnonymous",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "resolveAnonymous(): void",
+                    "doc": "Settles the caller as nobody: plugin code (determine_current_user) signed the request out.",
+                    "shapes": [],
+                    "params": [],
+                    "line": 41,
+                    "end": 44
+                },
+                {
+                    "routes": [],
+                    "name": "cookieBound",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "cookieBound(): bool",
+                    "doc": "Whether a sign-in cookie vouches for this caller (or failed to, for\nwant of its nonce): a cookie's nonce vouches for its own user only.",
+                    "shapes": [],
+                    "params": [],
+                    "line": 50,
+                    "end": 54
+                },
+                {
+                    "routes": [],
+                    "name": "resolveInvalidNonce",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "resolveInvalidNonce(): void",
+                    "doc": "Settles the caller as one whose cookie's nonce does not vouch for the user plugin code named.",
+                    "shapes": [],
+                    "params": [],
+                    "line": 57,
+                    "end": 60
+                },
+                {
+                    "routes": [],
                     "name": "session",
                     "static": false,
                     "visibility": "public",
@@ -79513,8 +79577,8 @@
                     "doc": "The session, or null for an anonymous or refused caller.",
                     "shapes": [],
                     "params": [],
-                    "line": 41,
-                    "end": 45
+                    "line": 63,
+                    "end": 67
                 },
                 {
                     "routes": [],
@@ -79525,8 +79589,8 @@
                     "doc": "The caller's user id, 0 when anonymous.",
                     "shapes": [],
                     "params": [],
-                    "line": 48,
-                    "end": 51
+                    "line": 70,
+                    "end": 73
                 },
                 {
                     "routes": [],
@@ -79552,8 +79616,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 59,
-                    "end": 65
+                    "line": 81,
+                    "end": 87
                 },
                 {
                     "routes": [],
@@ -79564,8 +79628,8 @@
                     "doc": "Whether the caller can edit posts of some type shown in REST: what\nthe reference asks before showing statuses, block types and the\nactive theme. A plugin's types count once plugins are loaded.",
                     "shapes": [],
                     "params": [],
-                    "line": 72,
-                    "end": 83
+                    "line": 94,
+                    "end": 105
                 },
                 {
                     "routes": [],
@@ -79576,8 +79640,8 @@
                     "doc": "The capability engine.",
                     "shapes": [],
                     "params": [],
-                    "line": 86,
-                    "end": 89
+                    "line": 108,
+                    "end": 111
                 },
                 {
                     "routes": [],
@@ -79610,8 +79674,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 95,
-                    "end": 105
+                    "line": 117,
+                    "end": 127
                 },
                 {
                     "routes": [],
@@ -79630,8 +79694,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 112,
-                    "end": 117
+                    "line": 134,
+                    "end": 139
                 },
                 {
                     "routes": [],
@@ -79650,8 +79714,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 120,
-                    "end": 127
+                    "line": 142,
+                    "end": 149
                 },
                 {
                     "routes": [],
@@ -79677,8 +79741,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 130,
-                    "end": 133
+                    "line": 152,
+                    "end": 155
                 },
                 {
                     "routes": [],
@@ -79689,8 +79753,8 @@
                     "doc": "",
                     "shapes": [],
                     "params": [],
-                    "line": 135,
-                    "end": 138
+                    "line": 157,
+                    "end": 160
                 }
             ]
         },
@@ -102988,6 +103052,50 @@
             ]
         },
         {
+            "name": "Minn\\Runtime\\CurrentUser",
+            "short": "CurrentUser",
+            "namespace": "Minn\\Runtime",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Runtime/CurrentUser.php",
+            "lines": 13,
+            "doc": "Who the request is, as the reference settles it before init: the user\ndetermine_current_user names (the engine's own session, through\nwp_validate_auth_cookie, when no plugin hooks it), which the request's\nreader then follows. A plugin that signs in by its own token or cookie\n(JWT, OAuth, single sign-on) is heard; one that names nobody signs the\nrequest out.",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\Content\\Reader",
+                "Minn\\Runtime\\Runtime"
+            ],
+            "usedBy": [
+                "Minn\\Runtime\\Plugins"
+            ],
+            "constructor": null,
+            "cases": [],
+            "constants": [],
+            "properties": [],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "settle",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "settle(Minn\\Runtime\\Runtime $runtime): int",
+                    "doc": "Settles the request's user and reader; returns the user's id (0 for nobody).",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "runtime",
+                            "type": "Minn\\Runtime\\Runtime",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 20,
+                    "end": 28
+                }
+            ]
+        },
+        {
             "name": "Minn\\Runtime\\DbDelta",
             "short": "DbDelta",
             "namespace": "Minn\\Runtime",
@@ -108528,7 +108636,7 @@
             "namespace": "Minn\\Runtime",
             "kind": "final class",
             "file": "public/minn/src/Minn/Runtime/Plugins.php",
-            "lines": 236,
+            "lines": 238,
             "doc": "Loads the site's plugins into the runtime the way the reference does:\nmu-plugins first, then active_plugins in stored order, each file\nincluded once. A plugin loads only when the static symbol read finds\nnothing the runtime lacks; otherwise it is reported and skipped so the\nsite keeps rendering. The lifecycle actions fire between the phases.",
             "implements": [],
             "extends": null,
@@ -108536,6 +108644,7 @@
                 "Minn\\Content\\Site",
                 "Minn\\Http\\Failure",
                 "Minn\\Login\\ServeLogin",
+                "Minn\\Runtime\\CurrentUser",
                 "Minn\\Runtime\\Recovery",
                 "Minn\\Runtime\\Runtime",
                 "Minn\\Runtime\\Symbols",
@@ -108621,8 +108730,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 123,
-                    "end": 137
+                    "line": 125,
+                    "end": 139
                 },
                 {
                     "routes": [],
@@ -108635,8 +108744,8 @@
                         "@return list<string>"
                     ],
                     "params": [],
-                    "line": 182,
-                    "end": 185
+                    "line": 184,
+                    "end": 187
                 },
                 {
                     "routes": [],
@@ -108649,8 +108758,8 @@
                         "@return array<string, array<string, mixed>> plugin file => why it did not load"
                     ],
                     "params": [],
-                    "line": 192,
-                    "end": 195
+                    "line": 194,
+                    "end": 197
                 },
                 {
                     "routes": [],
@@ -108669,8 +108778,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 198,
-                    "end": 201
+                    "line": 200,
+                    "end": 203
                 },
                 {
                     "routes": [],
@@ -108690,7 +108799,7 @@
                         }
                     ],
                     "line": 67,
-                    "end": 114
+                    "end": 116
                 },
                 {
                     "routes": [],
@@ -108709,8 +108818,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 146,
-                    "end": 162
+                    "line": 148,
+                    "end": 164
                 },
                 {
                     "routes": [],
@@ -108736,8 +108845,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 169,
-                    "end": 175
+                    "line": 171,
+                    "end": 177
                 },
                 {
                     "routes": [],
@@ -108770,8 +108879,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 203,
-                    "end": 226
+                    "line": 205,
+                    "end": 228
                 },
                 {
                     "routes": [],
@@ -108804,8 +108913,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 234,
-                    "end": 246
+                    "line": 236,
+                    "end": 248
                 },
                 {
                     "routes": [],
@@ -108824,8 +108933,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 249,
-                    "end": 254
+                    "line": 251,
+                    "end": 256
                 }
             ]
         },
@@ -114053,7 +114162,7 @@
             "namespace": "Minn\\Runtime",
             "kind": "final class",
             "file": "public/minn/src/Minn/Runtime/Runtime.php",
-            "lines": 361,
+            "lines": 368,
             "doc": "The WordPress runtime the engine offers plugin code: the procedural\nfacade under minn/wp-api/ plus the services it delegates to. One per\nrequest; the facade reaches it through these statics.",
             "implements": [],
             "extends": null,
@@ -114152,6 +114261,7 @@
                 "Minn\\Runtime\\BlockHooks",
                 "Minn\\Runtime\\CommentEvents",
                 "Minn\\Runtime\\Constants",
+                "Minn\\Runtime\\CurrentUser",
                 "Minn\\Runtime\\Deferrals",
                 "Minn\\Runtime\\FileUpload",
                 "Minn\\Runtime\\Interactivity",
@@ -114200,8 +114310,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 69,
-                "end": 81
+                "line": 70,
+                "end": 82
             },
             "cases": [],
             "constants": [
@@ -114360,9 +114470,9 @@
                 {
                     "name": "reader",
                     "type": "Minn\\Content\\Reader",
-                    "readonly": true,
+                    "readonly": false,
                     "static": false,
-                    "doc": "Who is reading this request.",
+                    "doc": "Who reads this request; settled again (identify()) once plugins have said who the user is.",
                     "visibility": "public",
                     "promoted": false
                 },
@@ -114451,6 +114561,26 @@
             "methods": [
                 {
                     "routes": [],
+                    "name": "identify",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "identify(Minn\\Content\\Reader $reader): void",
+                    "doc": "The request's reader from now on: the user plugin code named through determine_current_user (Runtime\\CurrentUser).",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "reader",
+                            "type": "Minn\\Content\\Reader",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 85,
+                    "end": 88
+                },
+                {
+                    "routes": [],
                     "name": "useSeams",
                     "static": false,
                     "visibility": "public",
@@ -114466,8 +114596,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 84,
-                    "end": 87
+                    "line": 91,
+                    "end": 94
                 },
                 {
                     "routes": [],
@@ -114478,8 +114608,8 @@
                     "doc": "The extension seams, or null before the front has registered any (REST and the CLI never do).",
                     "shapes": [],
                     "params": [],
-                    "line": 90,
-                    "end": 93
+                    "line": 97,
+                    "end": 100
                 },
                 {
                     "routes": [],
@@ -114490,8 +114620,8 @@
                     "doc": "The render state for this request, made on first use: one set of counters for everything rendered.",
                     "shapes": [],
                     "params": [],
-                    "line": 96,
-                    "end": 99
+                    "line": 103,
+                    "end": 106
                 },
                 {
                     "routes": [],
@@ -114510,8 +114640,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 102,
-                    "end": 105
+                    "line": 109,
+                    "end": 112
                 },
                 {
                     "routes": [],
@@ -114522,8 +114652,8 @@
                     "doc": "The block renderer for this request, made on first use over this request's own database door.",
                     "shapes": [],
                     "params": [],
-                    "line": 108,
-                    "end": 111
+                    "line": 115,
+                    "end": 118
                 },
                 {
                     "routes": [],
@@ -114542,8 +114672,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 125,
-                    "end": 152
+                    "line": 132,
+                    "end": 159
                 },
                 {
                     "routes": [],
@@ -114554,8 +114684,8 @@
                     "doc": "The booted runtime; throws when there is none.",
                     "shapes": [],
                     "params": [],
-                    "line": 155,
-                    "end": 161
+                    "line": 162,
+                    "end": 168
                 },
                 {
                     "routes": [],
@@ -114566,8 +114696,8 @@
                     "doc": "Whether the runtime is up.",
                     "shapes": [],
                     "params": [],
-                    "line": 164,
-                    "end": 167
+                    "line": 171,
+                    "end": 174
                 },
                 {
                     "routes": [],
@@ -114578,8 +114708,8 @@
                     "doc": "The hook registry.",
                     "shapes": [],
                     "params": [],
-                    "line": 170,
-                    "end": 173
+                    "line": 177,
+                    "end": 180
                 },
                 {
                     "routes": [],
@@ -114590,8 +114720,8 @@
                     "doc": "The options store.",
                     "shapes": [],
                     "params": [],
-                    "line": 176,
-                    "end": 179
+                    "line": 183,
+                    "end": 186
                 },
                 {
                     "routes": [],
@@ -114617,8 +114747,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 190,
-                    "end": 205
+                    "line": 197,
+                    "end": 212
                 },
                 {
                     "routes": [],
@@ -114637,8 +114767,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 225,
-                    "end": 228
+                    "line": 232,
+                    "end": 235
                 },
                 {
                     "routes": [],
@@ -114649,8 +114779,8 @@
                     "doc": "The object cache.",
                     "shapes": [],
                     "params": [],
-                    "line": 231,
-                    "end": 234
+                    "line": 238,
+                    "end": 241
                 },
                 {
                     "routes": [],
@@ -114661,8 +114791,8 @@
                     "doc": "The text domains loaded for this request.",
                     "shapes": [],
                     "params": [],
-                    "line": 237,
-                    "end": 240
+                    "line": 244,
+                    "end": 247
                 },
                 {
                     "routes": [],
@@ -114673,8 +114803,8 @@
                     "doc": "The locales this request switched into.",
                     "shapes": [],
                     "params": [],
-                    "line": 243,
-                    "end": 246
+                    "line": 250,
+                    "end": 253
                 },
                 {
                     "routes": [],
@@ -114685,8 +114815,8 @@
                     "doc": "The shortcode registry.",
                     "shapes": [],
                     "params": [],
-                    "line": 249,
-                    "end": 252
+                    "line": 256,
+                    "end": 259
                 },
                 {
                     "routes": [],
@@ -114697,8 +114827,8 @@
                     "doc": "The script modules registry.",
                     "shapes": [],
                     "params": [],
-                    "line": 255,
-                    "end": 261
+                    "line": 262,
+                    "end": 268
                 },
                 {
                     "routes": [],
@@ -114709,8 +114839,8 @@
                     "doc": "The interactivity API.",
                     "shapes": [],
                     "params": [],
-                    "line": 264,
-                    "end": 267
+                    "line": 271,
+                    "end": 274
                 },
                 {
                     "routes": [],
@@ -114721,8 +114851,8 @@
                     "doc": "The registered block templates.",
                     "shapes": [],
                     "params": [],
-                    "line": 270,
-                    "end": 273
+                    "line": 277,
+                    "end": 280
                 },
                 {
                     "routes": [],
@@ -114733,8 +114863,8 @@
                     "doc": "The post types, taxonomies, and statuses.",
                     "shapes": [],
                     "params": [],
-                    "line": 276,
-                    "end": 279
+                    "line": 283,
+                    "end": 286
                 },
                 {
                     "routes": [],
@@ -114745,8 +114875,8 @@
                     "doc": "A fresh post query over the runtime's registry.",
                     "shapes": [],
                     "params": [],
-                    "line": 282,
-                    "end": 285
+                    "line": 289,
+                    "end": 292
                 },
                 {
                     "routes": [],
@@ -114772,8 +114902,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 288,
-                    "end": 291
+                    "line": 295,
+                    "end": 298
                 },
                 {
                     "routes": [],
@@ -114799,8 +114929,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 294,
-                    "end": 297
+                    "line": 301,
+                    "end": 304
                 },
                 {
                     "routes": [],
@@ -114811,8 +114941,8 @@
                     "doc": "Whether the request is over HTTPS.",
                     "shapes": [],
                     "params": [],
-                    "line": 300,
-                    "end": 303
+                    "line": 307,
+                    "end": 310
                 },
                 {
                     "routes": [],
@@ -114823,8 +114953,8 @@
                     "doc": "wp-content under the site root.",
                     "shapes": [],
                     "params": [],
-                    "line": 306,
-                    "end": 309
+                    "line": 313,
+                    "end": 316
                 },
                 {
                     "routes": [],
@@ -114843,8 +114973,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 312,
-                    "end": 335
+                    "line": 319,
+                    "end": 342
                 },
                 {
                     "routes": [],
@@ -114855,8 +114985,8 @@
                     "doc": "The pluggable functions, once the plugins have had their chance to\ndefine their own: each is defined only where no plugin did. The plugin\nloader calls this before plugins_loaded; a boot that loads no plugins\ncalls it straight away.",
                     "shapes": [],
                     "params": [],
-                    "line": 361,
-                    "end": 364
+                    "line": 368,
+                    "end": 371
                 },
                 {
                     "routes": [],
@@ -114867,8 +114997,8 @@
                     "doc": "Fresh per-request state, for suites.",
                     "shapes": [],
                     "params": [],
-                    "line": 367,
-                    "end": 383
+                    "line": 374,
+                    "end": 390
                 },
                 {
                     "routes": [],
@@ -114887,8 +115017,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 342,
-                    "end": 353
+                    "line": 349,
+                    "end": 360
                 }
             ]
         },
