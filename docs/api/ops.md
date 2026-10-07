@@ -9,8 +9,8 @@
 | [`Diagnostics`](#diagnostics) | final readonly class | 408 | The System view's facts about this install: the engine, PHP, the |
 | [`InstalledSoftware`](#installedsoftware) | final readonly class | 59 | What is installed, as the System view lists it: every extension and |
 | [`Logs`](#logs) | final readonly class | 150 | The log files the System view can read and clear: the debug log the |
-| [`Packages`](#packages) | final readonly class | 489 | Putting themes and extensions on disk. Themes come from wordpress.org |
-| [`PluginsApi`](#pluginsapi) | final readonly class | 38 | plugins_api() as plugins call it and answer it (probe plugins-api): the |
+| [`Packages`](#packages) | final readonly class | 507 | Putting themes and extensions on disk. Themes come from wordpress.org |
+| [`PluginsApi`](#pluginsapi) | final readonly class | 35 | plugins_api() as plugins call it and answer it (probe plugins-api): the |
 | [`Unzip`](#unzip) | final readonly class | 101 | An archive unpacked as unzip_file() unpacks it (probe unzip-file): into |
 | [`Updates`](#updates) | final class | 401 | Update offers from wordpress.org for the site's plugins and themes: the |
 
@@ -208,7 +208,7 @@ proves the same containment before anything is deleted.
 - const `INFO_OPTION` = `'minn_plugin_info'`
 - const `INFO_TTL` = `43200`
 
-Used by: `Minn\Admin\PackagesController`, `Minn\Cli\AssetUpdate`, `Minn\Cli\DirectorySearch`, `Minn\Cli\PackageInstaller`, `Minn\Cli\PluginCommand`, `Minn\Cli\ThemeCommand`, `Minn\Cron\Cron`, `Minn\Ops\Updates`, `Minn\Rest\PluginsController`, `Minn\Rest\Services`
+Used by: `Minn\Admin\PackagesController`, `Minn\Cli\AssetUpdate`, `Minn\Cli\DirectorySearch`, `Minn\Cli\PackageInstaller`, `Minn\Cli\PluginCommand`, `Minn\Cli\ThemeCommand`, `Minn\Cron\Cron`, `Minn\Ops\PluginsApi`, `Minn\Ops\Updates`, `Minn\Rest\PluginsController`, `Minn\Rest\Services`
 
 ```php
 __construct(Minn\Content\Site $site, string $contentDir)
@@ -245,6 +245,15 @@ Installs a wordpress.org plugin over the folder already there.
 
 One wordpress.org plugin record, or null when the slug is unknown.
 
+- `@return array<string, mixed>|null`
+
+### `pluginsAction(string $action, array $request): ?array`
+
+The directory's answer to a plugins_api() action, its request passed
+as given (Ops\PluginsApi); null when it did not answer. One of the
+directory calls Track H moves behind the Minn update service.
+
+- `@param array<string, mixed> $request`
 - `@return array<string, mixed>|null`
 
 ### `queryThemes(string $search, int $page, int $perPage): array`
@@ -293,7 +302,7 @@ Removes a theme or plugin folder that is not in use.
 A package over https, every redirect hop included, refusing anything
 else; when host prefixes are given, every hop must start with one.
 
-Internals: `pluginPackage()` (private, line 158), `plain()` (private, line 199), `themePackage()` (private, line 293), `place()` (private, line 342), `isFolderName()` (private, line 426), `contained()` (private, line 432), `isSymlinkEntry()` (private, line 443), `identify()` (private, line 458), `describe()` (private, line 472), `removeTree()` (private, line 507)
+Internals: `pluginPackage()` (private, line 158), `plain()` (private, line 217), `themePackage()` (private, line 311), `place()` (private, line 360), `isFolderName()` (private, line 444), `contained()` (private, line 450), `isSymlinkEntry()` (private, line 461), `identify()` (private, line 476), `describe()` (private, line 490), `removeTree()` (private, line 525)
 
 
 ## PluginsApi
@@ -304,13 +313,13 @@ plugins_api() as plugins call it and answer it (probe plugins-api): the
 arguments as an object with the reader's locale and the major.minor
 version beside them, through plugins_api_args; then whatever a plugin
 answers through plugins_api (a self-hosted plugin's own information, or
-an error) stands, and only when nobody answers does the directory's info
-API; plugins_api_result is handed what came back either way.
-
-- const `URL` = `'https://api.wordpress.org/plugins/info/1.2/'`
+an error) stands, and only when nobody answers is the directory asked,
+through Ops\Packages (the engine's one door to it, which Track H moves
+behind the Minn update service); plugins_api_result is handed what came
+back either way.
 
 ```php
-__construct(Closure $filter, string $locale, string $version, string $home)
+__construct(Closure $filter, Minn\Ops\Packages $packages, string $locale, string $version)
 ```
 - `@param Closure(string, mixed...): mixed $filter applies a filter, as apply_filters does`
 
@@ -319,7 +328,7 @@ __construct(Closure $filter, string $locale, string $version, string $home)
 
 The answer for an action (plugin_information, query_plugins, ...): an object, a WP_Error, or what a plugin returned.
 
-Internals: `directory()` (private, line 42)
+Internals: `directory()` (private, line 41)
 
 
 ## Unzip

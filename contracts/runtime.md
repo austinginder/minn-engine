@@ -2375,8 +2375,10 @@ an object with the reader's `locale` and the major.minor `wp_version`
 beside them, through `plugins_api_args`; whatever `plugins_api` answers
 other than false stands (a self-hosted plugin's own information, or a
 `WP_Error`), and only when nobody answers is the directory's info API
-asked (`api.wordpress.org/plugins/info/1.2/`, the arguments as its
-`request`, the answer an object at the top with arrays inside);
+asked, through `Ops\Packages::pluginsAction` (the engine's existing door
+to it, which Track H moves behind the Minn update service; no new
+wordpress.org call site), the arguments as its `request`, the answer an
+object at the top with arrays inside;
 `plugins_api_result` is handed what came back either way, errors included.
 
 ## unzip_file (2026-10-07)

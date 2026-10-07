@@ -55507,7 +55507,6 @@
                 "Minn\\Http\\Subject",
                 "Minn\\Http\\Transport",
                 "Minn\\Http\\TrustedProxies",
-                "Minn\\Ops\\PluginsApi",
                 "Minn\\Ops\\Updates"
             ],
             "constructor": null,
@@ -75700,7 +75699,7 @@
             "namespace": "Minn\\Ops",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Ops/Packages.php",
-            "lines": 489,
+            "lines": 507,
             "doc": "Putting themes and extensions on disk. Themes come from wordpress.org\n(block themes render on the engine) or an uploaded zip; extensions come\nfrom an uploaded zip or a URL, and must carry a minn.json: a WordPress\nplugin would install but never run, so it is refused with the reason.\nEvery archive is unpacked through one guarded routine: exactly one\ntop-level folder that is a plain name (never \".\" or \"..\"), no absolute\nor dotted paths, no symbolic links, bounded entry count and size, the\nfolder's identity checked and its destination proven to be a direct\nchild of the kind's directory before it is moved into place. Removal\nproves the same containment before anything is deleted.",
             "implements": [],
             "extends": null,
@@ -75721,6 +75720,7 @@
                 "Minn\\Cli\\PluginCommand",
                 "Minn\\Cli\\ThemeCommand",
                 "Minn\\Cron\\Cron",
+                "Minn\\Ops\\PluginsApi",
                 "Minn\\Ops\\Updates",
                 "Minn\\Rest\\PluginsController",
                 "Minn\\Rest\\Services"
@@ -75958,6 +75958,36 @@
                 },
                 {
                     "routes": [],
+                    "name": "pluginsAction",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "pluginsAction(string $action, array $request): ?array",
+                    "doc": "The directory's answer to a plugins_api() action, its request passed\nas given (Ops\\PluginsApi); null when it did not answer. One of the\ndirectory calls Track H moves behind the Minn update service.",
+                    "shapes": [
+                        "@param array<string, mixed> $request",
+                        "@return array<string, mixed>|null"
+                    ],
+                    "params": [
+                        {
+                            "name": "action",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "request",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 206,
+                    "end": 214
+                },
+                {
+                    "routes": [],
                     "name": "queryThemes",
                     "static": false,
                     "visibility": "public",
@@ -75989,8 +76019,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 209,
-                    "end": 233
+                    "line": 227,
+                    "end": 251
                 },
                 {
                     "routes": [],
@@ -76025,8 +76055,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 240,
-                    "end": 264
+                    "line": 258,
+                    "end": 282
                 },
                 {
                     "routes": [],
@@ -76047,8 +76077,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 271,
-                    "end": 278
+                    "line": 289,
+                    "end": 296
                 },
                 {
                     "routes": [],
@@ -76074,8 +76104,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 281,
-                    "end": 284
+                    "line": 299,
+                    "end": 302
                 },
                 {
                     "routes": [],
@@ -76101,8 +76131,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 287,
-                    "end": 290
+                    "line": 305,
+                    "end": 308
                 },
                 {
                     "routes": [],
@@ -76130,8 +76160,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 316,
-                    "end": 328
+                    "line": 334,
+                    "end": 346
                 },
                 {
                     "routes": [],
@@ -76157,8 +76187,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 331,
-                    "end": 334
+                    "line": 349,
+                    "end": 352
                 },
                 {
                     "routes": [],
@@ -76184,8 +76214,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 405,
-                    "end": 423
+                    "line": 423,
+                    "end": 441
                 },
                 {
                     "routes": [],
@@ -76211,8 +76241,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 495,
-                    "end": 505
+                    "line": 513,
+                    "end": 523
                 },
                 {
                     "routes": [],
@@ -76258,8 +76288,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 199,
-                    "end": 202
+                    "line": 217,
+                    "end": 220
                 },
                 {
                     "routes": [],
@@ -76285,8 +76315,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 293,
-                    "end": 310
+                    "line": 311,
+                    "end": 328
                 },
                 {
                     "routes": [],
@@ -76321,8 +76351,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 342,
-                    "end": 402
+                    "line": 360,
+                    "end": 420
                 },
                 {
                     "routes": [],
@@ -76341,8 +76371,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 426,
-                    "end": 429
+                    "line": 444,
+                    "end": 447
                 },
                 {
                     "routes": [],
@@ -76368,8 +76398,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 432,
-                    "end": 440
+                    "line": 450,
+                    "end": 458
                 },
                 {
                     "routes": [],
@@ -76395,8 +76425,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 443,
-                    "end": 451
+                    "line": 461,
+                    "end": 469
                 },
                 {
                     "routes": [],
@@ -76424,8 +76454,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 458,
-                    "end": 469
+                    "line": 476,
+                    "end": 487
                 },
                 {
                     "routes": [],
@@ -76453,8 +76483,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 472,
-                    "end": 489
+                    "line": 490,
+                    "end": 507
                 },
                 {
                     "routes": [],
@@ -76473,8 +76503,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 507,
-                    "end": 514
+                    "line": 525,
+                    "end": 532
                 }
             ]
         },
@@ -76484,16 +76514,16 @@
             "namespace": "Minn\\Ops",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Ops/PluginsApi.php",
-            "lines": 38,
-            "doc": "plugins_api() as plugins call it and answer it (probe plugins-api): the\narguments as an object with the reader's locale and the major.minor\nversion beside them, through plugins_api_args; then whatever a plugin\nanswers through plugins_api (a self-hosted plugin's own information, or\nan error) stands, and only when nobody answers does the directory's info\nAPI; plugins_api_result is handed what came back either way.",
+            "lines": 35,
+            "doc": "plugins_api() as plugins call it and answer it (probe plugins-api): the\narguments as an object with the reader's locale and the major.minor\nversion beside them, through plugins_api_args; then whatever a plugin\nanswers through plugins_api (a self-hosted plugin's own information, or\nan error) stands, and only when nobody answers is the directory asked,\nthrough Ops\\Packages (the engine's one door to it, which Track H moves\nbehind the Minn update service); plugins_api_result is handed what came\nback either way.",
             "implements": [],
             "extends": null,
             "uses": [
-                "Minn\\Http"
+                "Minn\\Ops\\Packages"
             ],
             "usedBy": [],
             "constructor": {
-                "signature": "__construct(Closure $filter, string $locale, string $version, string $home)",
+                "signature": "__construct(Closure $filter, Minn\\Ops\\Packages $packages, string $locale, string $version)",
                 "doc": "",
                 "shapes": [
                     "@param Closure(string, mixed...): mixed $filter applies a filter, as apply_filters does"
@@ -76505,6 +76535,13 @@
                         "shape": "Closure(string, mixed...): mixed",
                         "default": null,
                         "doc": "applies a filter, as apply_filters does"
+                    },
+                    {
+                        "name": "packages",
+                        "type": "Minn\\Ops\\Packages",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
                     },
                     {
                         "name": "locale",
@@ -76519,32 +76556,27 @@
                         "shape": "",
                         "default": null,
                         "doc": ""
-                    },
-                    {
-                        "name": "home",
-                        "type": "string",
-                        "shape": "",
-                        "default": null,
-                        "doc": ""
                     }
                 ],
                 "visibility": "public",
-                "line": 23,
-                "end": 25
+                "line": 22,
+                "end": 24
             },
             "cases": [],
-            "constants": [
-                {
-                    "name": "URL",
-                    "value": "'https://api.wordpress.org/plugins/info/1.2/'",
-                    "doc": "",
-                    "visibility": "private"
-                }
-            ],
+            "constants": [],
             "properties": [
                 {
                     "name": "filter",
                     "type": "Closure",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
+                },
+                {
+                    "name": "packages",
+                    "type": "Minn\\Ops\\Packages",
                     "readonly": true,
                     "static": false,
                     "doc": "",
@@ -76562,15 +76594,6 @@
                 },
                 {
                     "name": "version",
-                    "type": "string",
-                    "readonly": true,
-                    "static": false,
-                    "doc": "",
-                    "visibility": "private",
-                    "promoted": true
-                },
-                {
-                    "name": "home",
                     "type": "string",
                     "readonly": true,
                     "static": false,
@@ -76604,8 +76627,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 28,
-                    "end": 39
+                    "line": 27,
+                    "end": 38
                 },
                 {
                     "routes": [],
@@ -76633,8 +76656,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 42,
-                    "end": 54
+                    "line": 41,
+                    "end": 52
                 }
             ]
         },

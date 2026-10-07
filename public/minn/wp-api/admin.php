@@ -744,7 +744,8 @@ function request_filesystem_credentials($form_post, $type = '', $error = false, 
 
 function plugins_api($action, $args = [])
 {
-    return (new Minn\Ops\PluginsApi(apply_filters(...), get_user_locale(), (string) $GLOBALS['wp_version'], home_url()))->ask((string) $action, $args);
+    $packages = new Minn\Ops\Packages(Runtime::current()->site, rtrim(ABSPATH, '/') . '/wp-content');
+    return (new Minn\Ops\PluginsApi(apply_filters(...), $packages, get_user_locale(), (string) $GLOBALS['wp_version']))->ask((string) $action, $args);
 }
 
 function unzip_file($file, $to)

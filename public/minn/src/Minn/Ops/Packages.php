@@ -195,6 +195,24 @@ final readonly class Packages
         return $data;
     }
 
+    /**
+     * The directory's answer to a plugins_api() action, its request passed
+     * as given (Ops\PluginsApi); null when it did not answer. One of the
+     * directory calls Track H moves behind the Minn update service.
+     *
+     * @param array<string, mixed> $request
+     * @return array<string, mixed>|null
+     */
+    public function pluginsAction(string $action, array $request): ?array
+    {
+        try {
+            $data = json_decode($this->fetch(self::WPORG_PLUGINS . '?' . http_build_query(['action' => $action, 'request' => $request])), true);
+        } catch (RestError) {
+            return null;
+        }
+        return is_array($data) ? $data : null;
+    }
+
     /** Directory text as the app shows it: tags stripped, entities decoded. */
     private static function plain(string $value): string
     {
