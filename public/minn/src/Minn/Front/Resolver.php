@@ -135,9 +135,23 @@ final readonly class Resolver
         $follows = $redirects->follows();
         $slashed = str_ends_with($path, '/');
         $slash = fn (): Resolution => Resolution::redirect($this->permalinks->url($path . '/') . $request->queryStringWithout());
-        // A feed is served where it was asked for, its trailing slash aside.
-        if (($vars['feed'] ?? '') !== '') {
-            return $follows && !$slashed ? $slash() : $resolution;
+        // With attachment pages off, every address of an attachment, its feed and embed among them, goes to the file.
+        if (AttachmentAddresses::names($resolution) && $this->db->option('wp_attachment_pages_enabled') !== '1') {
+            return $this->attachments()->answer($resolution, $request, $redirects);
+        }
+        // A feed alias moves to the feed's own address (/rss2/ and /feed/rss2/ to /feed/, /hello-world/atom/ to
+        // /hello-world/feed/atom/, /hello-world/?feed=rss2 to /hello-world/feed/: the query's kind wins over the path's);
+        // a search's feed is served where it was asked for, its trailing slash aside.
+        $asked = is_string($request->query['feed'] ?? null) && in_array(preg_replace('/^comments-/', '', $request->query['feed']), ['feed', 'rss2', 'rss', 'atom', 'rdf'], true) ? $request->query['feed'] : '';
+        $pathFeed = (string) ($vars['feed'] ?? '');
+        if ($pathFeed !== '' || ($asked !== '' && $resolution->kind !== Kind::NotFound)) {
+            $feed = Permalinks::feedPath((string) preg_replace('#(?:/feed)?/(?:feed|rdf|rss|rss2|atom)/?$#', '/', $path), $asked !== '' ? $asked : $pathFeed);
+            if ($follows && $resolution->kind !== Kind::Search && ($feed !== $path || $asked !== '')) {
+                return Resolution::redirect($this->permalinks->url($feed) . $request->queryStringWithout('feed'));
+            }
+            if ($pathFeed !== '') {
+                return $follows && !$slashed ? $slash() : $resolution;
+            }
         }
         if ($resolution->kind === Kind::NotFound) {
             return $this->missing($vars, $redirects) ?? $resolution;
@@ -155,6 +169,10 @@ final readonly class Resolver
             // An old-style page number (the reference no longer honours one) and the front page at its own path: the plain address.
             return $follows ? Resolution::redirect($this->permalinks->forPost($record)) : ($resolution->front ? $resolution : Resolution::notFound());
         }
+        $paging = $follows && $resolution->kind !== Kind::Search ? $this->pagedMove($resolution, $request, $path) : null;
+        if ($paging !== null) {
+            return $paging;
+        }
         if (isset($vars['embed']) || $this->endpointIn($vars)) {
             return $follows && !$slashed ? $slash() : $resolution;
         }
@@ -166,6 +184,25 @@ final readonly class Resolver
         }
         $slashable = in_array($resolution->kind, [Kind::Single, Kind::Page, Kind::Category, Kind::Tag, Kind::Author, Kind::Date], true);
         return $follows && $slashable && !isset($vars['paged']) && !$slashed ? $slash() : $resolution;
+    }
+
+    /**
+     * A listing page that is not one: a post (not a page) asked for with a
+     * page of listing (/hello-world/page/2/, ?paged=2) moves to the post, the
+     * rest of the query along but that; the first page of any listing or page
+     * drops its /page/1/. Null when neither applies.
+     */
+    private function pagedMove(Resolution $resolution, Request $request, string $path): ?Resolution
+    {
+        $paged = $resolution->vars['paged'] ?? null;
+        $record = $resolution->record instanceof PostRecord ? $resolution->record : null;
+        if ($record !== null && $resolution->kind === Kind::Single && ($paged !== null || $request->has('paged'))) {
+            return Resolution::redirect($this->permalinks->forPost($record) . $request->queryStringWithout('paged'));
+        }
+        if ($paged !== null && (int) $paged === 1) {
+            return Resolution::redirect($this->permalinks->url((string) preg_replace('#/page/1/?$#', '/', $path)) . $request->queryStringWithout());
+        }
+        return null;
     }
 
     /**

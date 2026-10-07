@@ -43,6 +43,10 @@ final readonly class SingleQueries
         if ($attachment !== null) {
             return $attachment;
         }
+        if ($request->has('name') && $redirects->follows() && $this->permalinks->isPretty() && $request->has('feed')) {
+            // The reference's canonical redirect leaves a name asked with a feed behind: the site's feed.
+            return Resolution::redirect($this->permalinks->url(Permalinks::feedPath('/', (string) $request->query('feed'))) . $request->queryStringWithout('name', 'feed'));
+        }
         if ($request->has('name')) {
             // A name is a post's, or the named type's (the other arguments go along when it moves).
             $type = is_string($request->query['post_type'] ?? null) && $request->query['post_type'] !== '' ? $request->query['post_type'] : 'post';
@@ -70,10 +74,24 @@ final readonly class SingleQueries
             return $post->type === ($key === 'p' ? 'post' : 'page') ? Resolution::single($post) : Resolution::notFound();
         }
         $link = $this->permalinks->forPost($post);
-        // A comment page or listing page asked for stays as typed; otherwise the other arguments go along (?embed=true,
-        // a campaign's tags) but for the preview flag, the post's page and type, as the reference's canonical redirect keeps them.
-        $moves = $pretty && !str_contains($link, '?') && !$request->has('cpage') && !$request->has('paged');
-        return $moves ? Resolution::redirect($link . $request->queryStringWithout($key, 'preview', 'page', 'post_type')) : Resolution::single($post);
+        if (!$pretty || str_contains($link, '?')) {
+            return Resolution::single($post);
+        }
+        // The reference's canonical redirect, as observed under the site's own host: a listing page asked for alongside
+        // moves to the front's (?p=1&paged=2 to /, ?page_id=2&paged=3 to /page/3/), a comment page to the front with it
+        // (?p=1&cpage=2 to /?cpage=2), a feed to the post's feed; otherwise the other arguments go along (?embed=true, a
+        // campaign's tags) but for the preview flag, the post's page and type.
+        if ($request->has('paged')) {
+            $paged = (int) $request->query('paged', '0');
+            return Resolution::redirect($this->permalinks->url($key === 'page_id' && $paged > 1 ? "/page/{$paged}/" : '/') . $request->queryStringWithout($key, 'paged'));
+        }
+        if ($request->has('cpage')) {
+            return Resolution::redirect($this->permalinks->url('/') . $request->queryStringWithout($key));
+        }
+        if ($request->has('feed')) {
+            return Resolution::redirect(Permalinks::feedPath($link, (string) $request->query('feed')) . $request->queryStringWithout($key, 'feed'));
+        }
+        return Resolution::redirect($link . $request->queryStringWithout($key, 'preview', 'page', 'post_type'));
     }
 
     /** ?pagename=: the page at that path (the front page moves to the root), else one by the last slug. */

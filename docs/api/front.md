@@ -8,7 +8,7 @@ URL resolution, permalinks, feeds, sitemaps and the public page
 | [`ArchiveAddresses`](#archiveaddresses) | final readonly class | 97 | The archives an address may stand for, as the reference answers them: |
 | [`Archives`](#archives) | final readonly class | 62 | The archive periods wp_get_archives lists: months, years, days and weeks |
 | [`AssetsController`](#assetscontroller) | final readonly class | 32 | The engine's own static assets, served under a reserved path. |
-| [`AttachmentAddresses`](#attachmentaddresses) | final readonly class | 66 | The addresses an attachment's page answers to besides those its rules |
+| [`AttachmentAddresses`](#attachmentaddresses) | final readonly class | 80 | The addresses an attachment's page answers to besides those its rules |
 | [`Calendar`](#calendar) | final readonly class | 99 | One month as the calendar widget and block draw it: a table whose caption |
 | [`CalendarLabels`](#calendarlabels) | final readonly class | 44 | The words a calendar prints: weekday names Sunday first, the short form |
 | [`Canonical`](#canonical) | final class | 28 | Where a URL should redirect to, by the engine's own resolution: the |
@@ -28,21 +28,21 @@ URL resolution, permalinks, feeds, sitemaps and the public page
 | [`PageLinks`](#pagelinks) | final class | 40 | The links between the pages of a post split with <!--nextpage-->, as |
 | [`PageList`](#pagelist) | final readonly class | 96 | The page hierarchy as wp_list_pages and wp_dropdown_pages draw it: nested |
 | [`Pagination`](#pagination) | final class | 62 | Numbered page links in the reference's shape: previous, the end and |
-| [`Permalinks`](#permalinks) | final readonly class | 237 | Builds public URLs from the site's permalink structure. With an empty |
+| [`Permalinks`](#permalinks) | final readonly class | 248 | Builds public URLs from the site's permalink structure. With an empty |
 | [`PostEmbed`](#postembed) | final class | 104 | A post as other sites embed it, the oEmbed provider side, as the |
 | [`PostNavigation`](#postnavigation) | final class | 36 | The links to the posts either side of this one, and the nav block that |
 | [`PrintedResponse`](#printedresponse) | final class | 39 | A response WordPress's handlers print themselves (a sitemap, robots.txt), |
 | [`ProbeController`](#probecontroller) | final readonly class | 66 | The surface monitors, crawlers, and hosting checks hit that is not a |
-| [`QueryMoves`](#querymoves) | final readonly class | 81 | Where the root's archive query forms move under pretty permalinks, as |
+| [`QueryMoves`](#querymoves) | final readonly class | 119 | Where the root's archive query forms move under pretty permalinks, as |
 | [`Redirects`](#redirects) | enum | 23 | Whether a resolution may answer with a canonical redirect. A GET or HEAD |
 | [`Renderer`](#renderer) | final readonly class | 90 | The interim public theme: one clean template until the block-theme |
 | [`RequestParse`](#requestparse) | final class | 42 | The query vars the reference's request parse sets for an address |
 | [`Resolution`](#resolution) | final readonly class | 116 | The outcome of resolving a public URL: which kind of thing it names, |
-| [`Resolver`](#resolver) | final readonly class | 288 | Turns a public URL into a Resolution the way the reference's request |
+| [`Resolver`](#resolver) | final readonly class | 325 | Turns a public URL into a Resolution the way the reference's request |
 | [`RuleRoutes`](#ruleroutes) | final readonly class | 151 | What a matched rewrite rule's query vars name, as the reference's main |
 | [`RuleTable`](#ruletable) | final class | 86 | An address read as WordPress's request parse reads it (suites |
 | [`SingleAddresses`](#singleaddresses) | final readonly class | 67 | The addresses a single answers to besides its own, as the reference |
-| [`SingleQueries`](#singlequeries) | final readonly class | 82 | The single a query string asks for, as the reference's request parse and |
+| [`SingleQueries`](#singlequeries) | final readonly class | 100 | The single a query string asks for, as the reference's request parse and |
 | [`SitemapController`](#sitemapcontroller) | final readonly class | 65 | The sitemap index, its pages, and the two stylesheets, as the |
 | [`SitemapRequest`](#sitemaprequest) | final class | 70 | A sitemap request at template_redirect, as the reference's sitemaps |
 | [`SitemapXml`](#sitemapxml) | final class | 43 | The two sitemap documents, index and URL set, from entry maps; one builder for the engine's routes and the facade's renderer. |
@@ -215,8 +215,8 @@ slug under another address, "attachment/" between or not): by id or
 slug in the query (?attachment_id=, ?attachment=), and as a post (?p=,
 ?page_id=), which moves to its own page. With
 attachment pages off (wp_attachment_pages_enabled, the default) every
-other address answers as typed; with them on, one that is not its own
-moves there. An attachment is readable as its parent is.
+address moves to the file itself; with them on, one that is not its own
+moves to its page. An attachment is readable as its parent is.
 
 Used by: `Minn\Front\Resolver`, `Minn\Front\SingleQueries`
 
@@ -239,11 +239,14 @@ An attachment asked for as a post (?p=, ?page_id=): it moves to its own page wha
 
 ### `answer(Minn\Front\Resolution $resolution, Minn\Http\Request $request, Minn\Front\Redirects $redirects): Minn\Front\Resolution`
 
-The page as typed, or (attachment pages on, the address not its own)
-a move to its own: the other query arguments along, ?attachment=
+With attachment pages off (the default), a move to the file itself,
+from every address, its embed and feed among them: the query along,
+though an ?attachment_id= address leaves its id behind unless it asked
+for an embed. With them on, the page as typed, or (the address not its
+own) a move to its own: the other query arguments along, ?attachment=
 among them; an embed stays where it was asked for.
 
-Internals: `readable()` (private, line 80)
+Internals: `readable()` (private, line 94)
 
 
 ## Calendar
@@ -813,6 +816,12 @@ Whether the site uses a permalink structure.
 
 A URL under the home.
 
+### static `feedPath(string $base, string $type): string`
+
+A feed's address under a base path ("/", "/category/news/",
+"/hello-world/"): feed/ for the default feed (rss2, and rss with it),
+feed/<type>/ for another; a comments-<type> feed is its <type>.
+
 ### `forPost(Minn\Content\PostRecord $post): string`
 
 A post's permalink.
@@ -859,7 +868,7 @@ A search's URL.
 
 A listing URL for a page number.
 
-Internals: `hasPrettyLink()` (private, line 227), `fill()` (private, line 232)
+Internals: `hasPrettyLink()` (private, line 238), `fill()` (private, line 243)
 
 
 ## PostEmbed
@@ -1014,7 +1023,7 @@ The site icon, or the reference's default.
 
 Where the root's archive query forms move under pretty permalinks, as
 the reference's canonical redirect answers them (suite permalinks): a
-date (?m=, ?year=) first, then an author by id, then a term when the
+feed (?feed=) first, then a date (?m=, ?year=), then an author by id, then a term when the
 query names exactly one taxonomy (?cat= or ?category_name=, ?tag=,
 ?taxonomy= with ?term=, a registered taxonomy's own var; ?post_format=
 counts as one but never moves itself), each to its pretty address with
@@ -1033,7 +1042,7 @@ __construct(Minn\Db $db, Minn\Content\Terms $terms, Minn\Front\Permalinks $perma
 
 The move a root request's query string makes; null when it makes none.
 
-Internals: `date()` (private, line 43), `author()` (private, line 57), `term()` (private, line 68), `lastSlug()` (private, line 100)
+Internals: `date()` (private, line 46), `author()` (private, line 60), `feed()` (private, line 76), `term()` (private, line 93), `oneTerm()` (private, line 106), `lastSlug()` (private, line 138)
 
 
 ## Redirects
@@ -1055,7 +1064,7 @@ The mode a request's method allows.
 
 ### static `forRequest(Minn\Http\Request $request): self`
 
-The mode for a request: its method's, except that a feed is served where it was asked for, as the reference serves it.
+The mode for a request: its method's (a feed's query form moves too, under the site's own host).
 
 ### `follows(): bool`
 
@@ -1262,7 +1271,7 @@ $canonical mirrors the reference's redirect_canonical rule: only GET
 and HEAD get trailing-slash, pretty-URL, and 404-guess redirects;
 every other method renders what the query alone finds, as typed.
 
-Internals: `resolvePath()` (private, line 100), `canonical()` (private, line 132), `missing()` (private, line 178), `viewableTypes()` (private, line 208), `endpointIn()` (private, line 221), `segments()` (private, line 233), `resolveQueryVars()` (private, line 244), `rootVars()` (private, line 269), `archives()` (private, line 296), `attachments()` (private, line 302), `elsewhere()` (private, line 308), `readable()` (private, line 313)
+Internals: `resolvePath()` (private, line 100), `canonical()` (private, line 132), `pagedMove()` (private, line 195), `missing()` (private, line 215), `viewableTypes()` (private, line 245), `endpointIn()` (private, line 258), `segments()` (private, line 270), `resolveQueryVars()` (private, line 281), `rootVars()` (private, line 306), `archives()` (private, line 333), `attachments()` (private, line 339), `elsewhere()` (private, line 345), `readable()` (private, line 350)
 
 
 ## RuleRoutes
@@ -1385,7 +1394,7 @@ __construct(Minn\Content\Posts $posts, Minn\Front\Permalinks $permalinks, Minn\F
 
 The resolution the query's single vars amount to; null when it has none of them.
 
-Internals: `byId()` (private, line 56), `byPath()` (private, line 80), `singleOrRedirect()` (private, line 95)
+Internals: `byId()` (private, line 60), `byPath()` (private, line 98), `singleOrRedirect()` (private, line 113)
 
 
 ## SitemapController

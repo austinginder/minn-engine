@@ -39137,8 +39137,8 @@
             "namespace": "Minn\\Front",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Front/AttachmentAddresses.php",
-            "lines": 66,
-            "doc": "The addresses an attachment's page answers to besides those its rules\nfind (Front\\RuleTable: a loose one by its slug at the top, any by its\nslug under another address, \"attachment/\" between or not): by id or\nslug in the query (?attachment_id=, ?attachment=), and as a post (?p=,\n?page_id=), which moves to its own page. With\nattachment pages off (wp_attachment_pages_enabled, the default) every\nother address answers as typed; with them on, one that is not its own\nmoves there. An attachment is readable as its parent is.",
+            "lines": 80,
+            "doc": "The addresses an attachment's page answers to besides those its rules\nfind (Front\\RuleTable: a loose one by its slug at the top, any by its\nslug under another address, \"attachment/\" between or not): by id or\nslug in the query (?attachment_id=, ?attachment=), and as a post (?p=,\n?page_id=), which moves to its own page. With\nattachment pages off (wp_attachment_pages_enabled, the default) every\naddress moves to the file itself; with them on, one that is not its own\nmoves to its page. An attachment is readable as its parent is.",
             "implements": [],
             "extends": null,
             "uses": [
@@ -39328,7 +39328,7 @@
                     "static": false,
                     "visibility": "public",
                     "signature": "answer(Minn\\Front\\Resolution $resolution, Minn\\Http\\Request $request, Minn\\Front\\Redirects $redirects): Minn\\Front\\Resolution",
-                    "doc": "The page as typed, or (attachment pages on, the address not its own)\na move to its own: the other query arguments along, ?attachment=\namong them; an embed stays where it was asked for.",
+                    "doc": "With attachment pages off (the default), a move to the file itself,\nfrom every address, its embed and feed among them: the query along,\nthough an ?attachment_id= address leaves its id behind unless it asked\nfor an embed. With them on, the page as typed, or (the address not its\nown) a move to its own: the other query arguments along, ?attachment=\namong them; an embed stays where it was asked for.",
                     "shapes": [],
                     "params": [
                         {
@@ -39353,8 +39353,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 69,
-                    "end": 77
+                    "line": 72,
+                    "end": 91
                 },
                 {
                     "routes": [],
@@ -39373,8 +39373,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 80,
-                    "end": 87
+                    "line": 94,
+                    "end": 101
                 }
             ]
         },
@@ -42334,7 +42334,7 @@
             "namespace": "Minn\\Front",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Front/Permalinks.php",
-            "lines": 237,
+            "lines": 248,
             "doc": "Builds public URLs from the site's permalink structure. With an empty\nstructure every link is a query-string form (?p=, ?cat=); with a\nstructure, published and private posts get their pretty form and every\nother status keeps the query form, which is what the reference emits.",
             "implements": [],
             "extends": null,
@@ -42647,6 +42647,33 @@
                 },
                 {
                     "routes": [],
+                    "name": "feedPath",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "feedPath(string $base, string $type): string",
+                    "doc": "A feed's address under a base path (\"/\", \"/category/news/\",\n\"/hello-world/\"): feed/ for the default feed (rss2, and rss with it),\nfeed/<type>/ for another; a comments-<type> feed is its <type>.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "base",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "type",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 95,
+                    "end": 99
+                },
+                {
+                    "routes": [],
                     "name": "forPost",
                     "static": false,
                     "visibility": "public",
@@ -42662,8 +42689,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 91,
-                    "end": 112
+                    "line": 102,
+                    "end": 123
                 },
                 {
                     "routes": [],
@@ -42682,8 +42709,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 115,
-                    "end": 121
+                    "line": 126,
+                    "end": 132
                 },
                 {
                     "routes": [],
@@ -42702,8 +42729,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 124,
-                    "end": 130
+                    "line": 135,
+                    "end": 141
                 },
                 {
                     "routes": [],
@@ -42714,8 +42741,8 @@
                     "doc": "A page link with the %pagename% token left in place, for a plugin that fills it itself.",
                     "shapes": [],
                     "params": [],
-                    "line": 133,
-                    "end": 136
+                    "line": 144,
+                    "end": 147
                 },
                 {
                     "routes": [],
@@ -42734,8 +42761,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 139,
-                    "end": 142
+                    "line": 150,
+                    "end": 153
                 },
                 {
                     "routes": [],
@@ -42754,8 +42781,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 149,
-                    "end": 160
+                    "line": 160,
+                    "end": 171
                 },
                 {
                     "routes": [],
@@ -42774,8 +42801,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 163,
-                    "end": 189
+                    "line": 174,
+                    "end": 200
                 },
                 {
                     "routes": [],
@@ -42794,8 +42821,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 192,
-                    "end": 197
+                    "line": 203,
+                    "end": 208
                 },
                 {
                     "routes": [],
@@ -42828,8 +42855,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 200,
-                    "end": 213
+                    "line": 211,
+                    "end": 224
                 },
                 {
                     "routes": [],
@@ -42848,8 +42875,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 216,
-                    "end": 219
+                    "line": 227,
+                    "end": 230
                 },
                 {
                     "routes": [],
@@ -42875,8 +42902,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 222,
-                    "end": 225
+                    "line": 233,
+                    "end": 236
                 },
                 {
                     "routes": [],
@@ -42895,8 +42922,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 227,
-                    "end": 230
+                    "line": 238,
+                    "end": 241
                 },
                 {
                     "routes": [],
@@ -42915,8 +42942,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 232,
-                    "end": 258
+                    "line": 243,
+                    "end": 269
                 }
             ]
         },
@@ -43632,8 +43659,8 @@
             "namespace": "Minn\\Front",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Front/QueryMoves.php",
-            "lines": 81,
-            "doc": "Where the root's archive query forms move under pretty permalinks, as\nthe reference's canonical redirect answers them (suite permalinks): a\ndate (?m=, ?year=) first, then an author by id, then a term when the\nquery names exactly one taxonomy (?cat= or ?category_name=, ?tag=,\n?taxonomy= with ?term=, a registered taxonomy's own var; ?post_format=\ncounts as one but never moves itself), each to its pretty address with\nthe other arguments along. Nothing moves while a search is asked for\n(?s=, even empty), past the first page, or to something the site does\nnot have. The singles' forms are SingleQueries'.",
+            "lines": 119,
+            "doc": "Where the root's archive query forms move under pretty permalinks, as\nthe reference's canonical redirect answers them (suite permalinks): a\nfeed (?feed=) first, then a date (?m=, ?year=), then an author by id, then a term when the\nquery names exactly one taxonomy (?cat= or ?category_name=, ?tag=,\n?taxonomy= with ?term=, a registered taxonomy's own var; ?post_format=\ncounts as one but never moves itself), each to its pretty address with\nthe other arguments along. Nothing moves while a search is asked for\n(?s=, even empty), past the first page, or to something the site does\nnot have. The singles' forms are SingleQueries'.",
             "implements": [],
             "extends": null,
             "uses": [
@@ -43730,7 +43757,7 @@
                         }
                     ],
                     "line": 35,
-                    "end": 41
+                    "end": 44
                 },
                 {
                     "routes": [],
@@ -43749,8 +43776,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 43,
-                    "end": 55
+                    "line": 46,
+                    "end": 58
                 },
                 {
                     "routes": [],
@@ -43769,8 +43796,28 @@
                             "doc": ""
                         }
                     ],
-                    "line": 57,
-                    "end": 65
+                    "line": 60,
+                    "end": 68
+                },
+                {
+                    "routes": [],
+                    "name": "feed",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "feed(Minn\\Http\\Request $request): ?Minn\\Front\\Resolution",
+                    "doc": "?feed=: the feed at its pretty address: a comments feed under\n/comments/, one taxonomy's term's under the term, any other the\nsite's, an author or date asked with it left behind. An unknown kind\nof feed moves nowhere.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "request",
+                            "type": "Minn\\Http\\Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 76,
+                    "end": 90
                 },
                 {
                     "routes": [],
@@ -43789,8 +43836,30 @@
                             "doc": ""
                         }
                     ],
-                    "line": 68,
-                    "end": 98
+                    "line": 93,
+                    "end": 97
+                },
+                {
+                    "routes": [],
+                    "name": "oneTerm",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "oneTerm(Minn\\Http\\Request $request): ?array",
+                    "doc": "The term of the one taxonomy the query names, with the arguments that\nname it; null when it names none, more than one, or a term the site\ndoes not have.",
+                    "shapes": [
+                        "@return array{0: TermRecord, 1: list<string>}|null"
+                    ],
+                    "params": [
+                        {
+                            "name": "request",
+                            "type": "Minn\\Http\\Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 106,
+                    "end": 136
                 },
                 {
                     "routes": [],
@@ -43809,8 +43878,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 100,
-                    "end": 104
+                    "line": 138,
+                    "end": 142
                 }
             ]
         },
@@ -43876,7 +43945,7 @@
                     "static": true,
                     "visibility": "public",
                     "signature": "forRequest(Minn\\Http\\Request $request): self",
-                    "doc": "The mode for a request: its method's, except that a feed is served where it was asked for, as the reference serves it.",
+                    "doc": "The mode for a request: its method's (a feed's query form moves too, under the site's own host).",
                     "shapes": [],
                     "params": [
                         {
@@ -44795,7 +44864,7 @@
             "namespace": "Minn\\Front",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Front/Resolver.php",
-            "lines": 288,
+            "lines": 325,
             "doc": "Turns a public URL into a Resolution the way the reference's request\nparse does: the root by its query string, any other path by the first\nof the site's rewrite rules it fits (Front\\RuleTable), whose query vars\nname what it is (Front\\RuleRoutes). What is left here are the\nreference's canonical answers around that (redirect_canonical,\nwp_old_slug_redirect):\n\n- Unpaged content and archives without a trailing slash redirect to the\nslashed form, as typed (case kept), as do an embed's and an endpoint's\naddresses; paged views, search, and 404s do not.\n- Query-var forms redirect to the pretty form when the target is\npublic: a single's (?p=, ?page_id=, ?name=, ?pagename=; SingleQueries)\nand an archive's (?m=, ?year=, ?author=, one taxonomy's term;\nQueryMoves), unless a search is asked for.\n- A single asked for under a category it is not in (where the\nstructure names one), or with an old-style page number, moves to its\nown address; a trackback address goes to the post; the front page\nanswers only at the root.\n- A name the site no longer has: the post that used to have it, else the\nclosest published page or post whose name starts with it, pages before\nposts, newest first. Archives never guess.\n- Non-public posts are 404 to anonymous readers and served to a reader\nwho can edit them.",
             "implements": [],
             "extends": null,
@@ -45082,7 +45151,41 @@
                         }
                     ],
                     "line": 132,
-                    "end": 169
+                    "end": 187
+                },
+                {
+                    "routes": [],
+                    "name": "pagedMove",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "pagedMove(Minn\\Front\\Resolution $resolution, Minn\\Http\\Request $request, string $path): ?Minn\\Front\\Resolution",
+                    "doc": "A listing page that is not one: a post (not a page) asked for with a\npage of listing (/hello-world/page/2/, ?paged=2) moves to the post, the\nrest of the query along but that; the first page of any listing or page\ndrops its /page/1/. Null when neither applies.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "resolution",
+                            "type": "Minn\\Front\\Resolution",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "request",
+                            "type": "Minn\\Http\\Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "path",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 195,
+                    "end": 206
                 },
                 {
                     "routes": [],
@@ -45110,8 +45213,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 178,
-                    "end": 200
+                    "line": 215,
+                    "end": 237
                 },
                 {
                     "routes": [],
@@ -45124,8 +45227,8 @@
                         "@return list<string>"
                     ],
                     "params": [],
-                    "line": 208,
-                    "end": 218
+                    "line": 245,
+                    "end": 255
                 },
                 {
                     "routes": [],
@@ -45146,8 +45249,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 221,
-                    "end": 230
+                    "line": 258,
+                    "end": 267
                 },
                 {
                     "routes": [],
@@ -45168,8 +45271,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 233,
-                    "end": 236
+                    "line": 270,
+                    "end": 273
                 },
                 {
                     "routes": [],
@@ -45195,8 +45298,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 244,
-                    "end": 259
+                    "line": 281,
+                    "end": 296
                 },
                 {
                     "routes": [],
@@ -45217,8 +45320,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 269,
-                    "end": 293
+                    "line": 306,
+                    "end": 330
                 },
                 {
                     "routes": [],
@@ -45229,8 +45332,8 @@
                     "doc": "The archives a request may stand for.",
                     "shapes": [],
                     "params": [],
-                    "line": 296,
-                    "end": 299
+                    "line": 333,
+                    "end": 336
                 },
                 {
                     "routes": [],
@@ -45241,8 +45344,8 @@
                     "doc": "The addresses an attachment's page answers to.",
                     "shapes": [],
                     "params": [],
-                    "line": 302,
-                    "end": 305
+                    "line": 339,
+                    "end": 342
                 },
                 {
                     "routes": [],
@@ -45253,8 +45356,8 @@
                     "doc": "The addresses a single answers to besides its own.",
                     "shapes": [],
                     "params": [],
-                    "line": 308,
-                    "end": 311
+                    "line": 345,
+                    "end": 348
                 },
                 {
                     "routes": [],
@@ -45273,8 +45376,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 313,
-                    "end": 328
+                    "line": 350,
+                    "end": 365
                 }
             ]
         },
@@ -45943,7 +46046,7 @@
             "namespace": "Minn\\Front",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Front/SingleQueries.php",
-            "lines": 82,
+            "lines": 100,
             "doc": "The single a query string asks for, as the reference's request parse and\ncanonical redirect answer it: by id (?p=, ?page_id=, any viewable type's;\nan attachment's goes to its own page), an attachment by id or slug (?attachment_id=,\n?attachment=), a post by slug (?name=), a page by path (?pagename=).\nWith canonical redirects on, an address that is not the single's own\nmoves there, the other query arguments along; without, each var is\nstrict about the type it finds.",
             "implements": [],
             "extends": null,
@@ -46081,7 +46184,7 @@
                         }
                     ],
                     "line": 35,
-                    "end": 53
+                    "end": 57
                 },
                 {
                     "routes": [],
@@ -46114,8 +46217,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 56,
-                    "end": 77
+                    "line": 60,
+                    "end": 95
                 },
                 {
                     "routes": [],
@@ -46141,8 +46244,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 80,
-                    "end": 93
+                    "line": 98,
+                    "end": 111
                 },
                 {
                     "routes": [],
@@ -46175,8 +46278,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 95,
-                    "end": 102
+                    "line": 113,
+                    "end": 120
                 }
             ]
         },

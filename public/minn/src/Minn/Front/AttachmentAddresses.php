@@ -17,8 +17,8 @@ use Minn\Http\Request;
  * slug in the query (?attachment_id=, ?attachment=), and as a post (?p=,
  * ?page_id=), which moves to its own page. With
  * attachment pages off (wp_attachment_pages_enabled, the default) every
- * other address answers as typed; with them on, one that is not its own
- * moves there. An attachment is readable as its parent is.
+ * address moves to the file itself; with them on, one that is not its own
+ * moves to its page. An attachment is readable as its parent is.
  */
 final readonly class AttachmentAddresses
 {
@@ -62,13 +62,27 @@ final readonly class AttachmentAddresses
     }
 
     /**
-     * The page as typed, or (attachment pages on, the address not its own)
-     * a move to its own: the other query arguments along, ?attachment=
+     * With attachment pages off (the default), a move to the file itself,
+     * from every address, its embed and feed among them: the query along,
+     * though an ?attachment_id= address leaves its id behind unless it asked
+     * for an embed. With them on, the page as typed, or (the address not its
+     * own) a move to its own: the other query arguments along, ?attachment=
      * among them; an embed stays where it was asked for.
      */
     public function answer(Resolution $resolution, Request $request, Redirects $redirects): Resolution
     {
-        if (!$redirects->follows() || $request->has('embed') || $this->db->option('wp_attachment_pages_enabled') !== '1' || !$resolution->record instanceof PostRecord) {
+        if (!$redirects->follows() || !$resolution->record instanceof PostRecord) {
+            return $resolution;
+        }
+        if ($this->db->option('wp_attachment_pages_enabled') !== '1') {
+            $file = (string) $this->posts->meta($resolution->record->id, '_wp_attached_file');
+            if ($file === '') {
+                return $resolution;
+            }
+            $query = $request->has('attachment_id') && !$request->has('embed') ? $request->queryStringWithout('attachment_id') : $request->queryStringWithout();
+            return Resolution::redirect($this->permalinks->url('/wp-content/uploads/' . ltrim($file, '/')) . $query);
+        }
+        if ($request->has('embed')) {
             return $resolution;
         }
         $link = $this->permalinks->forAttachment($resolution->record) . $request->queryStringWithout('attachment_id');

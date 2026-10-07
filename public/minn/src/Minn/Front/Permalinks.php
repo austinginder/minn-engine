@@ -87,6 +87,17 @@ final readonly class Permalinks
         return $this->home . $path;
     }
 
+    /**
+     * A feed's address under a base path ("/", "/category/news/",
+     * "/hello-world/"): feed/ for the default feed (rss2, and rss with it),
+     * feed/<type>/ for another; a comments-<type> feed is its <type>.
+     */
+    public static function feedPath(string $base, string $type): string
+    {
+        $type = str_starts_with($type, 'comments-') ? substr($type, 9) : $type;
+        return rtrim($base, '/') . '/feed/' . (in_array($type, ['', 'feed', 'rss2', 'rss'], true) ? '' : $type . '/');
+    }
+
     /** A post's permalink. */
     public function forPost(PostRecord $post): string
     {

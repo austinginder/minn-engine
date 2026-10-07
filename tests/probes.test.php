@@ -15,10 +15,10 @@ $DIR = dirname(__DIR__) . '/contracts/fixtures/probes';
 $probes = [
     '/feed/' => [200, 'application/rss+xml', true],
     '/feed' => [301, '', false],
-    '/feed/rss2/' => [200, 'application/rss+xml', true],
+    '/feed/rss2/' => [301, '', false], // the default feed's alias moves to /feed/ under the site's own host
     '/feed/atom/' => [200, 'application/atom+xml', true],
     '/feed/rdf/' => [200, 'application/rdf+xml', true],
-    '/?feed=rss2' => [200, 'application/rss+xml', true],
+    '/?feed=rss2' => [301, '', false], // the query form moves to /feed/
     '/comments/feed/' => [200, 'application/rss+xml', true],
     '/hello-world/feed/' => [200, 'application/rss+xml', true],
     '/category/uncategorized/feed/' => [200, 'application/rss+xml', true],

@@ -12,7 +12,7 @@ oracle is the test site's Cove twin, `https://ref.minn.localhost`
 (`cove twin minn add --as-site=ref.minn.localhost`), which answers as
 `minn.localhost` over HTTPS. Since 2026-10-07 it therefore makes the
 host-dependent canonical moves the old `php -S 127.0.0.1:8123` oracle never
-showed (see "Open, host-dependent" below).
+showed (see "Under the site's own host" below).
 
 ## What the oracle taught
 
@@ -150,15 +150,35 @@ showed (see "Open, host-dependent" below).
   names nothing else. A date inside an existing term's, author's or type's
   archive, or inside a search, is a 200 (`?year=2025&cat=1` moves to
   `/2025/?cat=1`, which answers 200).
-- Open, host-dependent: reached under the site's own host, the reference
-  also sends an attachment page to its file while attachment pages are
-  off, drops `/page/1/` (`/hello-world/page/1/` to `/hello-world/`), and
-  moves feed aliases to the feed form (`/rss2/` to `/feed/`,
-  `/hello-world/atom/` to `/hello-world/feed/atom/`). The old 127.0.0.1
-  oracle answered all of these 200, as the engine still does; the twin
-  shows them, so permalinks, probes, theme, feed-hooks, attachment-pages,
-  embed-template and request-vars fail on them until the engine makes
-  them.
+- Under the site's own host (the twin answers as it; the old 127.0.0.1
+  oracle made none of these, so the engine learned 200s for them until
+  2026-10-07), the reference also makes these moves, and so does the engine:
+  - **Page one** is dropped from any listing or page (`/page/1/` to `/`,
+    `/category/x/page/1/` to `/category/x/`, `/sample-page/page/1/` to
+    `/sample-page/`), the query along; a search keeps it. A post (not a
+    page) asked with a listing page (`/hello-world/page/3/`,
+    `/hello-world/?paged=2`) moves to the post; `/sample-page/page/2/` is a
+    page's own page and stays.
+  - **Feed aliases** move to the feed's address, `feed/` for the default
+    feed (rss2, rss) and `feed/<type>/` otherwise: `/rss2/`, `/feed/rss2/`
+    and `/feed/rss/` to `/feed/`, `/rdf/` to `/feed/rdf/`,
+    `/hello-world/atom/` to `/hello-world/feed/atom/`, a missing item's too
+    (`/nonexistent/rss2/` to `/nonexistent/feed/`). A `?feed=` on a path
+    wins over the path's kind (`/feed/?feed=atom` to `/feed/atom/`,
+    `/hello-world/?feed=rss2` to `/hello-world/feed/`). A search's feed
+    stays. On the root, `?feed=` moves first of all the query forms:
+    `comments-<type>` to `/comments/feed/…`, with one taxonomy's term to the
+    term's feed (`?feed=atom&cat=1`), with `?p=` to the post's, otherwise to
+    `/feed/…` with any author or date argument left behind
+    (`?feed=rss2&author=1` to `/feed/`), and with `?name=` to `/feed/` too.
+    An unknown kind (`?feed=bogus`) is a 404.
+  - **Attachment pages off** (`wp_attachment_pages_enabled`, the default):
+    every address of an attachment, its embed and feed among them, moves to
+    the file itself, the query along, though `?attachment_id=` is left
+    behind unless the request asked for an embed (`?attachment=` stays).
+  - **`?p=` / `?page_id=` with a listing or comment page** move to the
+    front, not the post: `?p=1&paged=N` to `/`, `?page_id=2&paged=3` to
+    `/page/3/` (`paged=1` to `/`), `?p=1&cpage=2&x=1` to `/?cpage=2&x=1`.
 
 **Body-class tokens** (the contract; the surrounding markup is engine-defined),
 read from the main query (`Theme\QueryClasses`), so flags combine as the query's

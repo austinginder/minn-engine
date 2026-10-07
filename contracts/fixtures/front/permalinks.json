@@ -8,12 +8,9 @@
         ]
     },
     "/page/1/": {
-        "status": 200,
-        "location": null,
-        "classes": [
-            "blog",
-            "home"
-        ]
+        "status": 301,
+        "location": "/",
+        "classes": []
     },
     "/page/2/": {
         "status": 404,
@@ -75,30 +72,14 @@
         "classes": []
     },
     "/hello-world/page/2/": {
-        "status": 200,
-        "location": null,
-        "classes": [
-            "paged",
-            "paged-2",
-            "postid-1",
-            "single",
-            "single-format-standard",
-            "single-paged-2",
-            "single-post"
-        ]
+        "status": 301,
+        "location": "/hello-world/",
+        "classes": []
     },
     "/hello-world/page/2": {
-        "status": 200,
-        "location": null,
-        "classes": [
-            "paged",
-            "paged-2",
-            "postid-1",
-            "single",
-            "single-format-standard",
-            "single-paged-2",
-            "single-post"
-        ]
+        "status": 301,
+        "location": "/hello-world/",
+        "classes": []
     },
     "/hello-world/2/": {
         "status": 301,
@@ -667,6 +648,449 @@
         "classes": [
             "error404"
         ]
+    },
+    "/page/1": {
+        "status": 301,
+        "location": "/",
+        "classes": []
+    },
+    "/page/1/?x=1": {
+        "status": 301,
+        "location": "/?x=1",
+        "classes": []
+    },
+    "/category/uncategorized/page/1/": {
+        "status": 301,
+        "location": "/category/uncategorized/",
+        "classes": []
+    },
+    "/tag/engine/page/1/": {
+        "status": 301,
+        "location": "/tag/engine/",
+        "classes": []
+    },
+    "/author/admin/page/1/": {
+        "status": 301,
+        "location": "/author/admin/",
+        "classes": []
+    },
+    "/2026/page/1/": {
+        "status": 301,
+        "location": "/2026/",
+        "classes": []
+    },
+    "/search/hello/page/1/": {
+        "status": 200,
+        "location": null,
+        "classes": [
+            "search",
+            "search-results"
+        ]
+    },
+    "/?s=hello&paged=1": {
+        "status": 200,
+        "location": null,
+        "classes": [
+            "search",
+            "search-results"
+        ]
+    },
+    "/hello-world/page/1/": {
+        "status": 301,
+        "location": "/hello-world/",
+        "classes": []
+    },
+    "/hello-world/page/3/": {
+        "status": 301,
+        "location": "/hello-world/",
+        "classes": []
+    },
+    "/sample-page/page/1/": {
+        "status": 301,
+        "location": "/sample-page/",
+        "classes": []
+    },
+    "/sample-page/page/2/": {
+        "status": 200,
+        "location": null,
+        "classes": [
+            "page",
+            "page-id-2",
+            "page-paged-2",
+            "page-parent",
+            "paged",
+            "paged-2"
+        ]
+    },
+    "/hello-world/?paged=2": {
+        "status": 301,
+        "location": "/hello-world/",
+        "classes": []
+    },
+    "/hello-world/?cpage=2": {
+        "status": 200,
+        "location": null,
+        "classes": [
+            "postid-1",
+            "single",
+            "single-format-standard",
+            "single-post"
+        ]
+    },
+    "/?p=1&paged=2": {
+        "status": 301,
+        "location": "/",
+        "classes": []
+    },
+    "/?p=1&paged=3": {
+        "status": 301,
+        "location": "/",
+        "classes": []
+    },
+    "/?p=1&paged=1": {
+        "status": 301,
+        "location": "/",
+        "classes": []
+    },
+    "/?p=1&cpage=2": {
+        "status": 301,
+        "location": "/?cpage=2",
+        "classes": []
+    },
+    "/?p=1&cpage=1": {
+        "status": 301,
+        "location": "/?cpage=1",
+        "classes": []
+    },
+    "/?p=1&cpage=2&x=1": {
+        "status": 301,
+        "location": "/?cpage=2&x=1",
+        "classes": []
+    },
+    "/?page_id=2&paged=2": {
+        "status": 301,
+        "location": "/page/2/",
+        "classes": []
+    },
+    "/?page_id=2&paged=3": {
+        "status": 301,
+        "location": "/page/3/",
+        "classes": []
+    },
+    "/?page_id=6&paged=2": {
+        "status": 301,
+        "location": "/page/2/",
+        "classes": []
+    },
+    "/?p=1&page=2": {
+        "status": 301,
+        "location": "/hello-world/",
+        "classes": []
+    },
+    "/rss2/": {
+        "status": 301,
+        "location": "/feed/",
+        "classes": []
+    },
+    "/rss/": {
+        "status": 301,
+        "location": "/feed/",
+        "classes": []
+    },
+    "/rdf/": {
+        "status": 301,
+        "location": "/feed/rdf/",
+        "classes": []
+    },
+    "/atom/": {
+        "status": 301,
+        "location": "/feed/atom/",
+        "classes": []
+    },
+    "/feed/rss2/": {
+        "status": 301,
+        "location": "/feed/",
+        "classes": []
+    },
+    "/feed/rss/": {
+        "status": 301,
+        "location": "/feed/",
+        "classes": []
+    },
+    "/feed/atom/": {
+        "status": 200,
+        "location": null,
+        "classes": []
+    },
+    "/feed/rdf/": {
+        "status": 200,
+        "location": null,
+        "classes": []
+    },
+    "/feed/": {
+        "status": 200,
+        "location": null,
+        "classes": []
+    },
+    "/comments/rss2/": {
+        "status": 301,
+        "location": "/comments/feed/",
+        "classes": []
+    },
+    "/comments/feed/rss2/": {
+        "status": 301,
+        "location": "/comments/feed/",
+        "classes": []
+    },
+    "/comments/feed/atom/": {
+        "status": 200,
+        "location": null,
+        "classes": []
+    },
+    "/comments/feed/": {
+        "status": 200,
+        "location": null,
+        "classes": []
+    },
+    "/category/uncategorized/rss2/": {
+        "status": 301,
+        "location": "/category/uncategorized/feed/",
+        "classes": []
+    },
+    "/category/uncategorized/feed/rss2/": {
+        "status": 301,
+        "location": "/category/uncategorized/feed/",
+        "classes": []
+    },
+    "/category/uncategorized/feed/atom/": {
+        "status": 200,
+        "location": null,
+        "classes": []
+    },
+    "/tag/engine/rss2/": {
+        "status": 301,
+        "location": "/tag/engine/feed/",
+        "classes": []
+    },
+    "/author/admin/rss2/": {
+        "status": 301,
+        "location": "/author/admin/feed/",
+        "classes": []
+    },
+    "/2026/rss2/": {
+        "status": 301,
+        "location": "/2026/feed/",
+        "classes": []
+    },
+    "/hello-world/rss2/": {
+        "status": 301,
+        "location": "/hello-world/feed/",
+        "classes": []
+    },
+    "/hello-world/feed/rss2/": {
+        "status": 301,
+        "location": "/hello-world/feed/",
+        "classes": []
+    },
+    "/hello-world/feed/rss/": {
+        "status": 301,
+        "location": "/hello-world/feed/",
+        "classes": []
+    },
+    "/hello-world/atom/": {
+        "status": 301,
+        "location": "/hello-world/feed/atom/",
+        "classes": []
+    },
+    "/hello-world/feed/atom/": {
+        "status": 200,
+        "location": null,
+        "classes": []
+    },
+    "/search/hello/rss2/": {
+        "status": 200,
+        "location": null,
+        "classes": []
+    },
+    "/search/hello/feed/rss2/": {
+        "status": 200,
+        "location": null,
+        "classes": []
+    },
+    "/?feed=rss2": {
+        "status": 301,
+        "location": "/feed/",
+        "classes": []
+    },
+    "/?feed=rss": {
+        "status": 301,
+        "location": "/feed/",
+        "classes": []
+    },
+    "/?feed=atom": {
+        "status": 301,
+        "location": "/feed/atom/",
+        "classes": []
+    },
+    "/?feed=rdf": {
+        "status": 301,
+        "location": "/feed/rdf/",
+        "classes": []
+    },
+    "/?feed=comments-rss2": {
+        "status": 301,
+        "location": "/comments/feed/",
+        "classes": []
+    },
+    "/?feed=comments-atom": {
+        "status": 301,
+        "location": "/comments/feed/atom/",
+        "classes": []
+    },
+    "/?feed=rss2&cat=1": {
+        "status": 301,
+        "location": "/category/uncategorized/feed/",
+        "classes": []
+    },
+    "/?feed=atom&cat=1": {
+        "status": 301,
+        "location": "/category/uncategorized/feed/atom/",
+        "classes": []
+    },
+    "/?feed=rss2&p=1": {
+        "status": 301,
+        "location": "/hello-world/feed/",
+        "classes": []
+    },
+    "/?feed=rss2&x=1": {
+        "status": 301,
+        "location": "/feed/?x=1",
+        "classes": []
+    },
+    "/?s=hello&feed=rss2": {
+        "status": 200,
+        "location": null,
+        "classes": []
+    },
+    "/?feed=rss2&tag=engine": {
+        "status": 301,
+        "location": "/tag/engine/feed/",
+        "classes": []
+    },
+    "/?feed=rss2&author=1": {
+        "status": 301,
+        "location": "/feed/",
+        "classes": []
+    },
+    "/?feed=rss2&m=2026": {
+        "status": 301,
+        "location": "/feed/",
+        "classes": []
+    },
+    "/?feed=bogus": {
+        "status": 404,
+        "location": null,
+        "classes": []
+    },
+    "/hello-world/?feed=rss2": {
+        "status": 301,
+        "location": "/hello-world/feed/",
+        "classes": []
+    },
+    "/category/uncategorized/?feed=atom": {
+        "status": 301,
+        "location": "/category/uncategorized/feed/atom/",
+        "classes": []
+    },
+    "/feed/?feed=atom": {
+        "status": 301,
+        "location": "/feed/atom/",
+        "classes": []
+    },
+    "/2026/?feed=rss2": {
+        "status": 301,
+        "location": "/2026/feed/",
+        "classes": []
+    },
+    "/?name=hello-world&feed=rss2": {
+        "status": 301,
+        "location": "/feed/",
+        "classes": []
+    },
+    "/search/hello/?feed=rss2": {
+        "status": 200,
+        "location": null,
+        "classes": []
+    },
+    "/nonexistent/rss2/": {
+        "status": 301,
+        "location": "/nonexistent/feed/",
+        "classes": []
+    },
+    "/category/nope/rss2/": {
+        "status": 301,
+        "location": "/category/nope/feed/",
+        "classes": []
+    },
+    "/?page_id=2&cpage=2": {
+        "status": 301,
+        "location": "/?cpage=2",
+        "classes": []
+    },
+    "/?page_id=2&paged=1": {
+        "status": 301,
+        "location": "/",
+        "classes": []
+    },
+    "/battery-image/": {
+        "status": 301,
+        "location": "/wp-content/uploads/2026/08/minn-battery.png",
+        "classes": []
+    },
+    "/battery-image/?x=1": {
+        "status": 301,
+        "location": "/wp-content/uploads/2026/08/minn-battery.png?x=1",
+        "classes": []
+    },
+    "/battery-image/embed/": {
+        "status": 301,
+        "location": "/wp-content/uploads/2026/08/minn-battery.png",
+        "classes": []
+    },
+    "/battery-image/feed/": {
+        "status": 301,
+        "location": "/wp-content/uploads/2026/08/minn-battery.png",
+        "classes": []
+    },
+    "/hello-world/battery-image/": {
+        "status": 301,
+        "location": "/wp-content/uploads/2026/08/minn-battery.png",
+        "classes": []
+    },
+    "/?attachment_id=607": {
+        "status": 301,
+        "location": "/wp-content/uploads/2026/08/minn-battery.png",
+        "classes": []
+    },
+    "/?attachment_id=607&x=1": {
+        "status": 301,
+        "location": "/wp-content/uploads/2026/08/minn-battery.png?x=1",
+        "classes": []
+    },
+    "/?attachment_id=607&embed=true": {
+        "status": 301,
+        "location": "/wp-content/uploads/2026/08/minn-battery.png?attachment_id=607&embed=true",
+        "classes": []
+    },
+    "/?attachment=battery-image": {
+        "status": 301,
+        "location": "/wp-content/uploads/2026/08/minn-battery.png?attachment=battery-image",
+        "classes": []
+    },
+    "/?p=607": {
+        "status": 301,
+        "location": "/battery-image/",
+        "classes": []
     },
     "/category/uncategorized/": {
         "status": 200,

@@ -14,7 +14,7 @@ use Minn\Runtime\Runtime;
 /**
  * Where the root's archive query forms move under pretty permalinks, as
  * the reference's canonical redirect answers them (suite permalinks): a
- * date (?m=, ?year=) first, then an author by id, then a term when the
+ * feed (?feed=) first, then a date (?m=, ?year=), then an author by id, then a term when the
  * query names exactly one taxonomy (?cat= or ?category_name=, ?tag=,
  * ?taxonomy= with ?term=, a registered taxonomy's own var; ?post_format=
  * counts as one but never moves itself), each to its pretty address with
@@ -36,6 +36,9 @@ final readonly class QueryMoves
     {
         if ($request->has('s') || (int) $request->query('paged', '1') > 1) {
             return null;
+        }
+        if ($request->has('feed')) {
+            return $this->feed($request);
         }
         return $this->date($request) ?? $this->author($request) ?? $this->term($request);
     }
@@ -64,8 +67,43 @@ final readonly class QueryMoves
         return $row === null ? null : Resolution::redirect($this->permalinks->forAuthor(UserRecord::fromRow($row)) . $request->queryStringWithout('author', 'paged'));
     }
 
+    /**
+     * ?feed=: the feed at its pretty address: a comments feed under
+     * /comments/, one taxonomy's term's under the term, any other the
+     * site's, an author or date asked with it left behind. An unknown kind
+     * of feed moves nowhere.
+     */
+    private function feed(Request $request): ?Resolution
+    {
+        $type = (string) $request->query('feed');
+        if (!in_array(preg_replace('/^comments-/', '', $type), ['feed', 'rss2', 'rss', 'atom', 'rdf'], true)) {
+            return null;
+        }
+        if (str_starts_with($type, 'comments-')) {
+            return Resolution::redirect($this->permalinks->url(Permalinks::feedPath('/comments/', $type)) . $request->queryStringWithout('feed'));
+        }
+        $term = $this->oneTerm($request);
+        if ($term !== null) {
+            return Resolution::redirect(Permalinks::feedPath($this->permalinks->forTerm($term[0]), $type) . $request->queryStringWithout('feed', ...$term[1]));
+        }
+        return Resolution::redirect($this->permalinks->url(Permalinks::feedPath('/', $type)) . $request->queryStringWithout('feed', 'author', 'm', 'year', 'monthnum', 'day'));
+    }
+
     /** The one taxonomy's term the query names, at its pretty address. */
     private function term(Request $request): ?Resolution
+    {
+        $term = $this->oneTerm($request);
+        return $term === null ? null : Resolution::redirect($this->permalinks->forTerm($term[0]) . $request->queryStringWithout('paged', ...$term[1]));
+    }
+
+    /**
+     * The term of the one taxonomy the query names, with the arguments that
+     * name it; null when it names none, more than one, or a term the site
+     * does not have.
+     *
+     * @return array{0: TermRecord, 1: list<string>}|null
+     */
+    private function oneTerm(Request $request): ?array
     {
         $named = [];
         if ($request->has('cat') || $request->has('category_name')) {
@@ -94,7 +132,7 @@ final readonly class QueryMoves
         }
         [$consumed, $find] = reset($named);
         $term = $consumed === [] ? null : $find();
-        return $term === null ? null : Resolution::redirect($this->permalinks->forTerm($term) . $request->queryStringWithout('paged', ...$consumed));
+        return $term === null ? null : [$term, $consumed];
     }
 
     private static function lastSlug(string $path): string
