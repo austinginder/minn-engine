@@ -39,8 +39,8 @@ WordPress users are pointed at Minn Admin first, because it is the shipped
 phase and it is the interface the engine boots. The glossary behind the
 visual is `contracts/lexicon.md` (the Speak / Hear / Mute policy). The
 **minn-site theme** serves that glossary as a filterable page at `/lexicon/`
-(raw at `/lexicon.md`) from its own `content/lexicon.md`. `/code-size/` and
-`/php/` are the same: theme pages. The engine does not register these routes.
+(raw at `/lexicon.md`) from its own `content/lexicon.md`. `/code-size/`,
+`/coverage/` and `/php/` are the same: theme pages. The engine does not register these routes.
 
 `functions.php` enqueues `style.css` and owns those pages (it answers
 on `init`, so WordPress and the engine both serve them). The theme toggle
@@ -58,6 +58,27 @@ writes `contracts/code-size.json` plus `site/minn-site/content/code-size.json`.
 Refresh at each release with `php tests/tools/code-size.php` (or
 `--wordpress=7.2` for a named version). `tests/code-size.test.php` pins the
 report's arithmetic, not the page.
+
+## The coverage page
+
+`/coverage/` (with `/coverage/files/` and `/coverage.json`) lives in the theme
+too: how much of the WordPress interface the engine implements, commit by
+commit. `tests/tools/coverage-history.php` replays the engine's git history
+through `git cat-file --batch`, tokenizes `public/minn/wp-api/` at every commit,
+and measures it against today's reference inventory (`contracts/api/functions.json`,
+`classes.json`, `hooks.json`, held fixed so every commit meets the same
+WordPress): functions and class methods implemented, constant, placeholder or
+missing; hooks fired by literal name; probe rows, suites, fixtures; and the
+plugin gate replayed with a site's cached `minn_runtime_symbols` scan (default
+shop-dogfood; pass another site root as the first argument). It writes only
+`site/minn-site/content/coverage.json`, so commit that in the theme repo.
+Only committed work counts. Refresh after a batch of runtime work or at each
+release: `php tests/tools/coverage-history.php` (about ten seconds). At HEAD it
+agrees with `tests/tools/coverage.php` on hooks, wp-admin and the plugin
+figures; its wp-includes count can run a few higher because `mappings.json`
+misses a handful of defined functions. It prints any plugin the replayed gate
+refuses at HEAD: that list should match `runtime-report.php` (empty today). The
+site's plugins stay unnamed in the JSON; only counts are published.
 
 ## Keeping the marketing page honest
 

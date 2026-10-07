@@ -101,6 +101,13 @@ $check($csh['status'] === 200, 'theme /code-size/ answers 200', (string) $csh['s
 $check(str_contains($cs, '<title>Code size · Minn</title>'), 'code-size title');
 [$jsh] = minn_test_fetch($ENGINE . '/code-size.json');
 $check($jsh['status'] === 200, 'theme /code-size.json answers 200', (string) $jsh['status']);
+[$cvh, $cv] = minn_test_fetch($ENGINE . '/coverage/');
+$check($cvh['status'] === 200, 'theme /coverage/ answers 200', (string) $cvh['status']);
+$check(str_contains($cv, '<title>Coverage · Minn</title>') && str_contains($cv, 'id="cov-chart-data"'), 'coverage title and chart data');
+[$cfh, $cf] = minn_test_fetch($ENGINE . '/coverage/files/');
+$check($cfh['status'] === 200 && str_contains($cf, 'id="cov-files"'), 'theme /coverage/files/ answers 200 with the file table', (string) $cfh['status']);
+[$cjh] = minn_test_fetch($ENGINE . '/coverage.json');
+$check($cjh['status'] === 200, 'theme /coverage.json answers 200', (string) $cjh['status']);
 [$llh, $ll] = minn_test_fetch($ENGINE . '/looks-like/');
 $check($llh['status'] === 200, 'theme /looks-like/ answers 200', (string) $llh['status']);
 $check(str_contains($ll, '<title>What a host inspects · Minn'), 'looks-like title');
