@@ -26,14 +26,6 @@ use Minn\Support\Kses;
 /** wp/v2 users: me, list, single, and the create/update/delete-with-reassign the Users view drives. */
 final readonly class UsersController
 {
-    private const ORDER_BY = [
-        'id' => 'u.ID',
-        'name' => 'u.display_name',
-        'registered_date' => 'u.user_registered',
-        'slug' => 'u.user_nicename',
-        'email' => 'u.user_email',
-    ];
-
     public function __construct(
         private Db $db,
         private Users $users,
@@ -73,64 +65,76 @@ final readonly class UsersController
         return $this->delete($request, (string) $this->caller->id());
     }
 
-    /** View context lists published authors; edit context lists everyone. */
-    #[Route(Method::Get, '/wp/v2/users', policy: new Policy(Access::Public), args: [Args::CONTEXT, Args::USERS])]
+    /**
+     * The users list as the reference serves it: the request's WP_User_Query
+     * through rest_user_collection_params and rest_user_query (a reader who
+     * may not list users sees published authors only), its totals (counted
+     * again without the page when it found none), and the users it found.
+     */
+    #[Route(Method::Get, '/wp/v2/users', policy: new Policy(Access::Public), params: UserCollectionParams::class)]
     public function list(Request $request): Response
     {
-        $self = $this->caller->id();
         $context = Context::of($request);
-        if ($context->isEdit() && !$this->caller->can('list_users')) {
-            throw $this->caller->refuse('rest_forbidden_context', 'Sorry, you are not allowed to edit users.');
+        $params = UserCollectionParams::for([]);
+        $wp = RuntimeRoutes::sanitized($request, $params);
+        $this->listAllowed($wp, $context);
+        $registered = (array) \apply_filters('rest_user_collection_params', $params);
+        $types = (array) ($params['has_published_posts']['items']['enum'] ?? []);
+        $reader = $this->caller->can('list_users') ? 'lister' : 'public';
+        $args = (array) \apply_filters('rest_user_query', UserListArgs::of($wp, $registered, $request->method->value, $types, $reader), $wp);
+        $query = new \WP_User_Query($args);
+        [$total, $pages] = self::totals($query, $args);
+        if ($request->method === Method::Head) {
+            return Reply::list([], $total, $pages, null);
         }
-        $perPage = max(1, min(100, (int) $request->query('per_page', '10')));
-        $page = max(1, (int) $request->query('page', '1'));
-        $order = strtoupper((string) $request->query('order', 'asc')) === 'DESC' ? 'DESC' : 'ASC';
-        $orderBy = self::ORDER_BY[(string) $request->query('orderby', 'name')] ?? 'u.display_name';
-        if ($request->query('orderby') === 'email' && !$this->caller->can('list_users')) {
-            throw $this->caller->refuse('rest_forbidden_orderby', 'Sorry, you are not allowed to order users by this parameter.');
+        $objects = [];
+        foreach ((array) $query->get_results() as $user) {
+            if ($user instanceof \WP_User) {
+                $record = UserRecord::fromRow((array) $user->data);
+                $objects[] = $context->isEdit() ? $this->object->edit($record) : $this->object->view($record);
+            }
         }
+        return Reply::list($objects, $total, $pages, Fields::fromQuery($request->query));
+    }
 
-        $where = $context->isEdit()
-            ? '1 = 1'
-            : "u.ID IN ( SELECT post_author FROM {$this->db->table('posts')}
-               WHERE post_status = 'publish' AND post_type IN ('post','page') )";
-        $params = [];
-        $include = array_values(array_filter(array_map(intval(...), explode(',', (string) $request->query('include', ''))), static fn (int $id) => $id > 0));
-        if ($include !== []) {
-            $where .= ' AND u.ID IN (?)';
-            $params[] = $include;
-        }
-        $exclude = array_values(array_filter(array_map(intval(...), explode(',', (string) $request->query('exclude', ''))), static fn (int $id) => $id > 0));
-        if ($exclude !== []) {
-            $where .= ' AND u.ID NOT IN (?)';
-            $params[] = $exclude;
-        }
-        $slug = (string) $request->query('slug', '');
-        if ($slug !== '') {
-            $slugs = array_values(array_filter(explode(',', $slug), static fn (string $s) => $s !== ''));
-            if ($slugs !== []) {
-                $where .= ' AND u.user_nicename IN (?)';
-                $params[] = $slugs;
+    /**
+     * What a reader who may not list users may not ask the list for: the
+     * edit context, an email or registration order, roles, capabilities;
+     * the authors shorthand is for those who may edit posts.
+     */
+    private function listAllowed(\WP_REST_Request $wp, Context $context): void
+    {
+        $lister = $this->caller->can('list_users');
+        $refusals = [
+            ['rest_forbidden_context', 'Sorry, you are not allowed to edit users.', $context->isEdit() && !$lister],
+            ['rest_forbidden_orderby', 'Sorry, you are not allowed to order users by this parameter.', in_array($wp['orderby'], ['email', 'registered_date'], true) && !$lister],
+            ['rest_user_cannot_view', 'Sorry, you are not allowed to filter users by role.', !empty($wp['roles']) && !$lister],
+            ['rest_user_cannot_view', 'Sorry, you are not allowed to filter users by capability.', !empty($wp['capabilities']) && !$lister],
+            ['rest_forbidden_who', 'Sorry, you are not allowed to query users by this parameter.', ($wp['who'] ?? '') === 'authors' && !$this->caller->can('edit_posts')],
+        ];
+        foreach ($refusals as [$code, $message, $refused]) {
+            if ($refused) {
+                throw $this->caller->refuse($code, $message);
             }
         }
-        foreach (preg_split('/\s+/', trim((string) $request->query('search', ''))) ?: [] as $word) {
-            if ($word === '') {
-                continue;
-            }
-            $like = '%' . addcslashes($word, '%_\\') . '%';
-            $where .= ' AND (u.user_login LIKE ? OR u.user_nicename LIKE ? OR u.display_name LIKE ?)';
-            $params = [...$params, $like, $like, $like];
+    }
+
+    /**
+     * The total and the page count: the query's own, or, when it found
+     * none, a count without the page; pages by the query's own number.
+     *
+     * @param array<string, mixed> $args
+     * @return array{0: int, 1: int}
+     */
+    private static function totals(\WP_User_Query $query, array $args): array
+    {
+        $perPage = (int) ($args['number'] ?? 0);
+        $total = (int) $query->get_total();
+        if ($total < 1) {
+            unset($args['number'], $args['offset']);
+            $total = (int) (new \WP_User_Query($args))->get_total();
         }
-        $table = $this->db->table('users');
-        $total = (int) $this->db->value("SELECT COUNT(*) FROM {$table} u WHERE {$where}", $params);
-        $rows = $this->db->rows(
-            "SELECT u.* FROM {$table} u WHERE {$where} ORDER BY {$orderBy} {$order} LIMIT ?, ?",
-            [...$params, ($page - 1) * $perPage, $perPage],
-        );
-        $objects = $context->isEdit()
-            ? array_map(fn (UserRecord $u) => $this->object->edit($u), UserRecord::fromRows($rows))
-            : array_map(fn (UserRecord $u) => $this->object->view($u), UserRecord::fromRows($rows));
-        return Reply::list($objects, $total, (int) ceil($total / $perPage), Fields::fromQuery($request->query));
+        return [$total, $perPage > 0 ? (int) ceil($total / $perPage) : 0];
     }
 
     /** One user. */

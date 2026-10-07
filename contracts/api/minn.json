@@ -54773,7 +54773,7 @@
             "namespace": "Minn\\Http",
             "kind": "final class",
             "file": "public/minn/src/Minn/Http/Args.php",
-            "lines": 157,
+            "lines": 164,
             "doc": "The parameters a route accepts, as the reference describes them in the\nREST index: name => {description, type, ...}. The descriptions, types,\nenums and bounds were captured from the reference, so a client that\nreads either index is told the same thing, and the router refuses a\nvalue the way the reference refuses it, before it judges the caller.\n\nA route declares only what it really reads. An argument published here\nthat the handler ignores would be worse than none at all, because a\nclient reading the index would build a request around it, so each set\nbelow names the code that consumes it. The sets keep the reference's\norder, because a refusal lists the invalid parameters in that order.\n`_fields` and `_embed` are read everywhere and declared nowhere, as the\nreference lists neither and validates neither.",
             "implements": [],
             "extends": null,
@@ -54801,6 +54801,7 @@
                 "Minn\\Rest\\TaxonomiesController",
                 "Minn\\Rest\\TermsController",
                 "Minn\\Rest\\TypesController",
+                "Minn\\Rest\\UserCollectionParams",
                 "Minn\\Rest\\UsersController",
                 "Minn\\Rest\\WidgetsController"
             ],
@@ -54839,8 +54840,8 @@
                 },
                 {
                     "name": "USERS",
-                    "value": "array (   'page' =>    array (     'description' => 'Current page of the collection.',     'type' => 'integer',     'default' => 1,     'minimum' => 1,     'required' => false,   ),   'per_page' =>    array (     'description' => 'Maximum number of items to be returned in result set.',     'type' => 'integer',     'default' => 10,     'minimum' => 1,     'maximum' => 100,     'required' => false,   ),   'search' =>    array (     'description' => 'Limit results to those matching a string.',     'type' => 'string',     'required' => false,   ),   'exclude' =>    array (     'description' => 'Ensure result set excludes specific IDs.',     'type' => 'array',     'items' =>      array (       'type' => 'integer',     ),     'default' =>      array (     ),     'required' => false,   ),   'include' =>    array (     'description' => 'Limit result set to specific IDs.',     'type' => 'array',     'items' =>      array (       'type' => 'integer',     ),     'default' =>      array (     ),     'required' => false,   ),   'order' =>    array (     'default' => 'asc',     'description' => 'Order sort attribute ascending or descending.',     'enum' =>      array (       0 => 'asc',       1 => 'desc',     ),     'type' => 'string',     'required' => false,   ),   'orderby' =>    array (     'default' => 'name',     'description' => 'Sort collection by user attribute.',     'enum' =>      array (       0 => 'id',       1 => 'include',       2 => 'name',       3 => 'registered_date',       4 => 'slug',       5 => 'include_slugs',       6 => 'email',       7 => 'url',     ),     'type' => 'string',     'required' => false,   ),   'slug' =>    array (     'description' => 'Limit result set to users with one or more specific slugs.',     'type' => 'array',     'items' =>      array (       'type' => 'string',     ),     'required' => false,   ), )",
-                    "doc": "Read by Rest\\UsersController::list(): the user collection.",
+                    "value": "array (   'page' =>    array (     'description' => 'Current page of the collection.',     'type' => 'integer',     'default' => 1,     'minimum' => 1,     'required' => false,   ),   'per_page' =>    array (     'description' => 'Maximum number of items to be returned in result set.',     'type' => 'integer',     'default' => 10,     'minimum' => 1,     'maximum' => 100,     'required' => false,   ),   'search' =>    array (     'description' => 'Limit results to those matching a string.',     'type' => 'string',     'required' => false,   ),   'exclude' =>    array (     'description' => 'Ensure result set excludes specific IDs.',     'type' => 'array',     'items' =>      array (       'type' => 'integer',     ),     'default' =>      array (     ),     'required' => false,   ),   'include' =>    array (     'description' => 'Limit result set to specific IDs.',     'type' => 'array',     'items' =>      array (       'type' => 'integer',     ),     'default' =>      array (     ),     'required' => false,   ),   'offset' =>    array (     'description' => 'Offset the result set by a specific number of items.',     'type' => 'integer',     'required' => false,   ),   'order' =>    array (     'default' => 'asc',     'description' => 'Order sort attribute ascending or descending.',     'enum' =>      array (       0 => 'asc',       1 => 'desc',     ),     'type' => 'string',     'required' => false,   ),   'orderby' =>    array (     'default' => 'name',     'description' => 'Sort collection by user attribute.',     'enum' =>      array (       0 => 'id',       1 => 'include',       2 => 'name',       3 => 'registered_date',       4 => 'slug',       5 => 'include_slugs',       6 => 'email',       7 => 'url',     ),     'type' => 'string',     'required' => false,   ),   'slug' =>    array (     'description' => 'Limit result set to users with one or more specific slugs.',     'type' => 'array',     'items' =>      array (       'type' => 'string',     ),     'required' => false,   ),   'roles' =>    array (     'description' => 'Limit result set to users matching at least one specific role provided. Accepts csv list or single role.',     'type' => 'array',     'items' =>      array (       'type' => 'string',     ),     'required' => false,   ),   'capabilities' =>    array (     'description' => 'Limit result set to users matching at least one specific capability provided. Accepts csv list or single capability.',     'type' => 'array',     'items' =>      array (       'type' => 'string',     ),     'required' => false,   ),   'who' =>    array (     'description' => 'Limit result set to users who are considered authors.',     'type' => 'string',     'enum' =>      array (       0 => 'authors',     ),     'required' => false,   ),   'has_published_posts' =>    array (     'description' => 'Limit result set to users who have published posts.',     'type' =>      array (       0 => 'boolean',       1 => 'array',     ),     'items' =>      array (       'type' => 'string',       'enum' =>        array (       ),     ),     'required' => false,   ),   'search_columns' =>    array (     'default' =>      array (     ),     'description' => 'Array of column names to be searched.',     'type' => 'array',     'items' =>      array (       'enum' =>        array (         0 => 'email',         1 => 'name',         2 => 'id',         3 => 'username',         4 => 'slug',       ),       'type' => 'string',     ),     'required' => false,   ), )",
+                    "doc": "Read by Rest\\UserCollectionParams: the user collection.",
                     "visibility": "public"
                 },
                 {
@@ -54908,8 +54909,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 174,
-                    "end": 177
+                    "line": 181,
+                    "end": 184
                 }
             ]
         },
@@ -59661,7 +59662,8 @@
                 "Minn\\Http"
             ],
             "usedBy": [
-                "Minn\\Rest\\PostCollectionParams"
+                "Minn\\Rest\\PostCollectionParams",
+                "Minn\\Rest\\UserCollectionParams"
             ],
             "constructor": null,
             "cases": [],
@@ -77060,7 +77062,7 @@
             "namespace": "Minn\\Rest",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Rest/Api.php",
-            "lines": 261,
+            "lines": 265,
             "doc": "The REST API: wires the controllers for one request and dispatches a\nroute. Errors thrown anywhere underneath become the reference's error\npayload under the reference's headers.",
             "implements": [],
             "extends": null,
@@ -77493,7 +77495,7 @@
                         }
                     ],
                     "line": 252,
-                    "end": 270
+                    "end": 274
                 },
                 {
                     "routes": [],
@@ -77512,8 +77514,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 279,
-                    "end": 286
+                    "line": 283,
+                    "end": 290
                 },
                 {
                     "routes": [],
@@ -77539,8 +77541,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 292,
-                    "end": 296
+                    "line": 296,
+                    "end": 300
                 }
             ]
         },
@@ -91644,6 +91646,7 @@
                 "Minn\\Rest\\PostsController",
                 "Minn\\Rest\\RuntimeEnvelope",
                 "Minn\\Rest\\RuntimePrepare",
+                "Minn\\Rest\\UsersController",
                 "Minn\\Runtime\\CommentEvents",
                 "Minn\\Runtime\\PostEvents",
                 "Minn\\Runtime\\PostSave",
@@ -97600,6 +97603,151 @@
             ]
         },
         {
+            "name": "Minn\\Rest\\UserCollectionParams",
+            "short": "UserCollectionParams",
+            "namespace": "Minn\\Rest",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Rest/UserCollectionParams.php",
+            "lines": 11,
+            "doc": "The users list's parameters as the reference declares them (probe\nrest-user-lists): the context, Args::USERS, and has_published_posts\ntaking the REST post types by name. Plugins change them through\nrest_user_collection_params when the list runs.",
+            "implements": [
+                "Minn\\Http\\RouteParams"
+            ],
+            "extends": null,
+            "uses": [
+                "Minn\\Http\\Args",
+                "Minn\\Http\\RouteParams",
+                "Minn\\Runtime\\Runtime"
+            ],
+            "usedBy": [
+                "Minn\\Rest\\UsersController"
+            ],
+            "constructor": null,
+            "cases": [],
+            "constants": [],
+            "properties": [],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "for",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "for(array $captures): array",
+                    "doc": "The list's parameters (the route has no captures).",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "captures",
+                            "type": "array",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 20,
+                    "end": 26
+                }
+            ]
+        },
+        {
+            "name": "Minn\\Rest\\UserListArgs",
+            "short": "UserListArgs",
+            "namespace": "Minn\\Rest",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Rest/UserListArgs.php",
+            "lines": 47,
+            "doc": "The WP_User_Query arguments a user list request makes, as the reference\nmakes them before rest_user_query (probe rest-user-lists): each declared\nparameter the request carries under its query name (a search wrapped in\nwildcards), the offset (the page's when none is given), the orderby name\nmapped to the query's, the published authors (every REST post type, for\na reader who may not list users), the authors shorthand, the search\ncolumns (a reader who may not list users searches names and logins\nonly), and ids alone for a HEAD request.",
+            "implements": [],
+            "extends": null,
+            "uses": [],
+            "usedBy": [
+                "Minn\\Rest\\UsersController"
+            ],
+            "constructor": null,
+            "cases": [],
+            "constants": [
+                {
+                    "name": "MAPPINGS",
+                    "value": "array (   'exclude' => 'exclude',   'include' => 'include',   'order' => 'order',   'per_page' => 'number',   'search' => 'search',   'roles' => 'role__in',   'capabilities' => 'capability__in',   'slug' => 'nicename__in', )",
+                    "doc": "",
+                    "visibility": "private"
+                },
+                {
+                    "name": "ORDERBY",
+                    "value": "array (   'id' => 'ID',   'include' => 'include',   'name' => 'display_name',   'registered_date' => 'registered',   'slug' => 'user_nicename',   'include_slugs' => 'nicename__in',   'email' => 'user_email',   'url' => 'user_url', )",
+                    "doc": "",
+                    "visibility": "private"
+                },
+                {
+                    "name": "COLUMNS",
+                    "value": "array (   'email' => 'user_email',   'name' => 'display_name',   'id' => 'ID',   'username' => 'user_login',   'slug' => 'user_nicename', )",
+                    "doc": "",
+                    "visibility": "private"
+                },
+                {
+                    "name": "PUBLIC_COLUMNS",
+                    "value": "array (   0 => 'ID',   1 => 'user_login',   2 => 'user_nicename',   3 => 'display_name', )",
+                    "doc": "",
+                    "visibility": "private"
+                }
+            ],
+            "properties": [],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "of",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "of(WP_REST_Request $wp, array $registered, string $method, array $types, string $reader): array",
+                    "doc": "The arguments before plugins see them, for a reader who is a 'lister'\n(may list users) or 'public'.",
+                    "shapes": [
+                        "@param array<string, mixed> $registered the collection, as rest_user_collection_params left it",
+                        "@param array<string, string> $types the REST post types, by name",
+                        "@return array<string, mixed>"
+                    ],
+                    "params": [
+                        {
+                            "name": "wp",
+                            "type": "WP_REST_Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "registered",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": "the collection, as rest_user_collection_params left it"
+                        },
+                        {
+                            "name": "method",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "types",
+                            "type": "array",
+                            "shape": "array<string, string>",
+                            "default": null,
+                            "doc": "the REST post types, by name"
+                        },
+                        {
+                            "name": "reader",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 32,
+                    "end": 62
+                }
+            ]
+        },
+        {
             "name": "Minn\\Rest\\UserObject",
             "short": "UserObject",
             "namespace": "Minn\\Rest",
@@ -97831,7 +97979,7 @@
             "namespace": "Minn\\Rest",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Rest/UsersController.php",
-            "lines": 338,
+            "lines": 342,
             "doc": "wp/v2 users: me, list, single, and the create/update/delete-with-reassign the Users view drives.",
             "implements": [],
             "extends": null,
@@ -97856,6 +98004,9 @@
                 "Minn\\Rest\\Fields",
                 "Minn\\Rest\\Reply",
                 "Minn\\Rest\\RestUrl",
+                "Minn\\Rest\\RuntimeRoutes",
+                "Minn\\Rest\\UserCollectionParams",
+                "Minn\\Rest\\UserListArgs",
                 "Minn\\Rest\\UserObject",
                 "Minn\\Runtime\\Runtime",
                 "Minn\\Runtime\\UserEvents",
@@ -97920,18 +98071,11 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 37,
-                "end": 46
+                "line": 29,
+                "end": 38
             },
             "cases": [],
-            "constants": [
-                {
-                    "name": "ORDER_BY",
-                    "value": "array (   'id' => 'u.ID',   'name' => 'u.display_name',   'registered_date' => 'u.user_registered',   'slug' => 'u.user_nicename',   'email' => 'u.user_email', )",
-                    "doc": "",
-                    "visibility": "private"
-                }
-            ],
+            "constants": [],
             "properties": [
                 {
                     "name": "db",
@@ -98017,8 +98161,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 50,
-                    "end": 58
+                    "line": 42,
+                    "end": 50
                 },
                 {
                     "routes": [
@@ -98041,8 +98185,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 64,
-                    "end": 67
+                    "line": 56,
+                    "end": 59
                 },
                 {
                     "routes": [
@@ -98063,8 +98207,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 71,
-                    "end": 74
+                    "line": 63,
+                    "end": 66
                 },
                 {
                     "routes": [
@@ -98074,7 +98218,7 @@
                     "static": false,
                     "visibility": "public",
                     "signature": "list(Minn\\Http\\Request $request): Minn\\Http\\Response",
-                    "doc": "View context lists published authors; edit context lists everyone.",
+                    "doc": "The users list as the reference serves it: the request's WP_User_Query\nthrough rest_user_collection_params and rest_user_query (a reader who\nmay not list users sees published authors only), its totals (counted\nagain without the page when it found none), and the users it found.",
                     "shapes": [],
                     "params": [
                         {
@@ -98085,8 +98229,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 78,
-                    "end": 134
+                    "line": 75,
+                    "end": 98
                 },
                 {
                     "routes": [
@@ -98114,8 +98258,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 138,
-                    "end": 158
+                    "line": 142,
+                    "end": 162
                 },
                 {
                     "routes": [
@@ -98136,8 +98280,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 184,
-                    "end": 232
+                    "line": 188,
+                    "end": 236
                 },
                 {
                     "routes": [
@@ -98167,8 +98311,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 238,
-                    "end": 301
+                    "line": 242,
+                    "end": 305
                 },
                 {
                     "routes": [
@@ -98196,8 +98340,65 @@
                             "doc": ""
                         }
                     ],
-                    "line": 305,
-                    "end": 348
+                    "line": 309,
+                    "end": 352
+                },
+                {
+                    "routes": [],
+                    "name": "listAllowed",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "listAllowed(WP_REST_Request $wp, Minn\\Rest\\Context $context): void",
+                    "doc": "What a reader who may not list users may not ask the list for: the\nedit context, an email or registration order, roles, capabilities;\nthe authors shorthand is for those who may edit posts.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "wp",
+                            "type": "WP_REST_Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "context",
+                            "type": "Minn\\Rest\\Context",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 105,
+                    "end": 120
+                },
+                {
+                    "routes": [],
+                    "name": "totals",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "totals(WP_User_Query $query, array $args): array",
+                    "doc": "The total and the page count: the query's own, or, when it found\nnone, a count without the page; pages by the query's own number.",
+                    "shapes": [
+                        "@param array<string, mixed> $args",
+                        "@return array{0: int, 1: int}"
+                    ],
+                    "params": [
+                        {
+                            "name": "query",
+                            "type": "WP_User_Query",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "args",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 129,
+                    "end": 138
                 },
                 {
                     "routes": [],
@@ -98216,8 +98417,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 160,
-                    "end": 166
+                    "line": 164,
+                    "end": 170
                 },
                 {
                     "routes": [],
@@ -98236,8 +98437,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 169,
-                    "end": 175
+                    "line": 173,
+                    "end": 179
                 },
                 {
                     "routes": [],
@@ -98256,8 +98457,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 177,
-                    "end": 180
+                    "line": 181,
+                    "end": 184
                 },
                 {
                     "routes": [],
@@ -98276,8 +98477,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 355,
-                    "end": 363
+                    "line": 359,
+                    "end": 367
                 }
             ]
         },
@@ -114265,6 +114466,7 @@
                 "Minn\\Rest\\TermObject",
                 "Minn\\Rest\\Types",
                 "Minn\\Rest\\TypesController",
+                "Minn\\Rest\\UserCollectionParams",
                 "Minn\\Rest\\UserObject",
                 "Minn\\Rest\\UsersController",
                 "Minn\\Rest\\WidgetsController",

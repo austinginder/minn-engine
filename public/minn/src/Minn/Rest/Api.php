@@ -257,6 +257,10 @@ final readonly class Api
         }
         $pages = (int) $pages;
         $page = max(1, (int) ($request->query['page'] ?? 1));
+        // The users list reads its page from the offset, which a given offset sets.
+        if ($request->path === '/wp/v2/users' && isset($request->query['offset'])) {
+            $page = (int) ceil((int) $request->query['offset'] / max(1, (int) ($request->query['per_page'] ?? 10)) + 1);
+        }
         // The parameters as the request object holds them (in process, as the caller set them).
         $base = \add_query_arg(\urlencode_deep(RuntimeRoutes::wpRequest($request)->get_query_params()), $this->services->url()->to($request->path));
         $links = [];

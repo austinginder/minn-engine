@@ -61,16 +61,23 @@ final class Args
         'mime_type' => ['default' => null, 'description' => 'Limit result set to attachments of a particular MIME type or MIME types.', 'type' => 'array', 'items' => ['type' => 'string'], 'required' => false],
     ];
 
-    /** Read by Rest\UsersController::list(): the user collection. */
+    /** Read by Rest\UserCollectionParams: the user collection. */
     public const USERS = [
         'page' => ['description' => 'Current page of the collection.', 'type' => 'integer', 'default' => 1, 'minimum' => 1, 'required' => false],
         'per_page' => ['description' => 'Maximum number of items to be returned in result set.', 'type' => 'integer', 'default' => 10, 'minimum' => 1, 'maximum' => 100, 'required' => false],
         'search' => ['description' => 'Limit results to those matching a string.', 'type' => 'string', 'required' => false],
         'exclude' => ['description' => 'Ensure result set excludes specific IDs.', 'type' => 'array', 'items' => ['type' => 'integer'], 'default' => [], 'required' => false],
         'include' => ['description' => 'Limit result set to specific IDs.', 'type' => 'array', 'items' => ['type' => 'integer'], 'default' => [], 'required' => false],
+        'offset' => ['description' => 'Offset the result set by a specific number of items.', 'type' => 'integer', 'required' => false],
         'order' => ['default' => 'asc', 'description' => 'Order sort attribute ascending or descending.', 'enum' => ['asc', 'desc'], 'type' => 'string', 'required' => false],
         'orderby' => ['default' => 'name', 'description' => 'Sort collection by user attribute.', 'enum' => ['id', 'include', 'name', 'registered_date', 'slug', 'include_slugs', 'email', 'url'], 'type' => 'string', 'required' => false],
         'slug' => ['description' => 'Limit result set to users with one or more specific slugs.', 'type' => 'array', 'items' => ['type' => 'string'], 'required' => false],
+        'roles' => ['description' => 'Limit result set to users matching at least one specific role provided. Accepts csv list or single role.', 'type' => 'array', 'items' => ['type' => 'string'], 'required' => false],
+        'capabilities' => ['description' => 'Limit result set to users matching at least one specific capability provided. Accepts csv list or single capability.', 'type' => 'array', 'items' => ['type' => 'string'], 'required' => false],
+        'who' => ['description' => 'Limit result set to users who are considered authors.', 'type' => 'string', 'enum' => ['authors'], 'required' => false],
+        // The post types' enum is filled in at run time (Rest\UserCollectionParams).
+        'has_published_posts' => ['description' => 'Limit result set to users who have published posts.', 'type' => ['boolean', 'array'], 'items' => ['type' => 'string', 'enum' => []], 'required' => false],
+        'search_columns' => ['default' => [], 'description' => 'Array of column names to be searched.', 'type' => 'array', 'items' => ['enum' => ['email', 'name', 'id', 'username', 'slug'], 'type' => 'string'], 'required' => false],
     ];
 
     /** Read by Rest\TermsController::list(): a term collection (categories, tags, pattern categories). */

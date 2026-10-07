@@ -61,8 +61,8 @@ final readonly class RuntimeEnvelope implements Envelope
         if (!\is_wp_error($response)) {
             $answer = \apply_filters('rest_dispatch_request', null, $wpRequest, $route, $handler);
             $response = $answer ?? self::run($invoke);
-            // A core write answers in the edit context, and says so on the request plugins see next.
-            if ($answer === null && $request->method !== Method::Get && str_starts_with($route, '/wp/v2/') && $route !== '/wp/v2/settings' && !\is_wp_error($response)) {
+            // A core write answers in the edit context, and says so on the request plugins see next (a HEAD is a read).
+            if ($answer === null && !in_array($request->method, [Method::Get, Method::Head], true) && str_starts_with($route, '/wp/v2/') && $route !== '/wp/v2/settings' && !\is_wp_error($response)) {
                 $wpRequest->set_param('context', 'edit');
             }
         }

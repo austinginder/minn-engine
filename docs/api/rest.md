@@ -5,7 +5,7 @@ the wp/v2 surface: shapes and controllers
 | Class | Kind | Lines | Summary |
 |---|---|---|---|
 | [`AbilitiesController`](#abilitiescontroller) | final readonly class | 150 | wp-abilities/v1: what this site can be asked to do, and the doing of it. |
-| [`Api`](#api) | final readonly class | 261 | The REST API: wires the controllers for one request and dispatches a |
+| [`Api`](#api) | final readonly class | 265 | The REST API: wires the controllers for one request and dispatches a |
 | [`ApplicationPasswordsController`](#applicationpasswordscontroller) | final readonly class | 170 | wp/v2/users/{id}/application-passwords: list, create, rename, delete, |
 | [`ArgCheck`](#argcheck) | final readonly class | 83 | Judges a route's declared arguments against the request before the |
 | [`BatchController`](#batchcontroller) | final readonly class | 159 | batch/v1 as the reference answers it (probe rest-batch): up to 25 |
@@ -80,8 +80,10 @@ the wp/v2 surface: shapes and controllers
 | [`TermsController`](#termscontroller) | final readonly class | 240 | wp/v2 categories, tags, and pattern categories: list, single, and the create/update/delete the taxonomy admin drives. |
 | [`Types`](#types) | final class | 162 | The engine's registry of built-in post types, seeded from the observed |
 | [`TypesController`](#typescontroller) | final readonly class | 70 | wp/v2 types. In the edit context (probe rest-types-edit) a type adds its |
+| [`UserCollectionParams`](#usercollectionparams) | final class | 11 | The users list's parameters as the reference declares them (probe |
+| [`UserListArgs`](#userlistargs) | final class | 47 | The WP_User_Query arguments a user list request makes, as the reference |
 | [`UserObject`](#userobject) | final readonly class | 106 | The wp/v2 user objects: the public view shape and the edit-context shape. |
-| [`UsersController`](#userscontroller) | final readonly class | 338 | wp/v2 users: me, list, single, and the create/update/delete-with-reassign the Users view drives. |
+| [`UsersController`](#userscontroller) | final readonly class | 342 | wp/v2 users: me, list, single, and the create/update/delete-with-reassign the Users view drives. |
 | [`WidgetObject`](#widgetobject) | final readonly class | 55 | A widget as wp/v2/widgets shows it (probe rest-widgets): its id and base, |
 | [`WidgetsController`](#widgetscontroller) | final readonly class | 169 | wp/v2/widgets as the reference answers it (probe rest-widgets), for |
 
@@ -213,7 +215,7 @@ runtime's server calls for a core route, so a route the engine
 declines cannot bounce between the two. $as is the caller's own
 request object, which the route's parameters are set on.
 
-Internals: `controllers()` (private, line 73), `engineResponse()` (private, line 238), `withPageLinks()` (private, line 252), `options()` (private, line 279), `withAllow()` (private, line 292)
+Internals: `controllers()` (private, line 73), `engineResponse()` (private, line 238), `withPageLinks()` (private, line 252), `options()` (private, line 283), `withAllow()` (private, line 296)
 
 
 ## ApplicationPasswordsController
@@ -2418,7 +2420,7 @@ and the runtime's namespaces folded into the index.
 - const `DISPATCH_DONE` = `array (   'rest_filter_response_fields' => 10, )` — rest_post_dispatch's defaults the engine does itself: every answer is cut to its _fields before it is served.
 - const `SERVE_DONE` = `array (   '_oembed_rest_pre_serve_request' => 10, )` — rest_pre_serve_request's defaults the engine does itself: oEmbed's XML (see oembedXml()).
 
-Used by: `Minn\Rest\Api`, `Minn\Rest\BatchController`, `Minn\Rest\CommentsController`, `Minn\Rest\Embed`, `Minn\Rest\MediaController`, `Minn\Rest\OEmbedController`, `Minn\Rest\PostsController`, `Minn\Rest\RuntimeEnvelope`, `Minn\Rest\RuntimePrepare`, `Minn\Runtime\CommentEvents`, `Minn\Runtime\PostEvents`, `Minn\Runtime\PostSave`, `Minn\Runtime\TermEvents`, `Minn\Runtime\UserEvents`
+Used by: `Minn\Rest\Api`, `Minn\Rest\BatchController`, `Minn\Rest\CommentsController`, `Minn\Rest\Embed`, `Minn\Rest\MediaController`, `Minn\Rest\OEmbedController`, `Minn\Rest\PostsController`, `Minn\Rest\RuntimeEnvelope`, `Minn\Rest\RuntimePrepare`, `Minn\Rest\UsersController`, `Minn\Runtime\CommentEvents`, `Minn\Runtime\PostEvents`, `Minn\Runtime\PostSave`, `Minn\Runtime\TermEvents`, `Minn\Runtime\UserEvents`
 
 
 ### static `gate(Minn\Http\Request $request): ?Minn\Http\Response`
@@ -3477,6 +3479,52 @@ One post type.
 Internals: `embedded()` (private, line 63), `mayEdit()` (private, line 68), `withEditFields()` (private, line 75)
 
 
+## UserCollectionParams
+
+`final class Minn\Rest\UserCollectionParams` · `public/minn/src/Minn/Rest/UserCollectionParams.php` · implements `Minn\Http\RouteParams`
+
+The users list's parameters as the reference declares them (probe
+rest-user-lists): the context, Args::USERS, and has_published_posts
+taking the REST post types by name. Plugins change them through
+rest_user_collection_params when the list runs.
+
+Used by: `Minn\Rest\UsersController`
+
+### static `for(array $captures): array`
+
+The list's parameters (the route has no captures).
+
+
+## UserListArgs
+
+`final class Minn\Rest\UserListArgs` · `public/minn/src/Minn/Rest/UserListArgs.php`
+
+The WP_User_Query arguments a user list request makes, as the reference
+makes them before rest_user_query (probe rest-user-lists): each declared
+parameter the request carries under its query name (a search wrapped in
+wildcards), the offset (the page's when none is given), the orderby name
+mapped to the query's, the published authors (every REST post type, for
+a reader who may not list users), the authors shorthand, the search
+columns (a reader who may not list users searches names and logins
+only), and ids alone for a HEAD request.
+
+- const `MAPPINGS` = `array (   'exclude' => 'exclude',   'include' => 'include',   'order' => 'order',   'per_page' => 'number',   'search' => 'search',   'roles' => 'role__in',   'capabilities' => 'capability__in',   'slug' => 'nicename__in', )`
+- const `ORDERBY` = `array (   'id' => 'ID',   'include' => 'include',   'name' => 'display_name',   'registered_date' => 'registered',   'slug' => 'user_nicename',   'include_slugs' => 'nicename__in',   'email' => 'user_email',   'url' => 'user_url', )`
+- const `COLUMNS` = `array (   'email' => 'user_email',   'name' => 'display_name',   'id' => 'ID',   'username' => 'user_login',   'slug' => 'user_nicename', )`
+- const `PUBLIC_COLUMNS` = `array (   0 => 'ID',   1 => 'user_login',   2 => 'user_nicename',   3 => 'display_name', )`
+
+Used by: `Minn\Rest\UsersController`
+
+### static `of(WP_REST_Request $wp, array $registered, string $method, array $types, string $reader): array`
+
+The arguments before plugins see them, for a reader who is a 'lister'
+(may list users) or 'public'.
+
+- `@param array<string, mixed> $registered the collection, as rest_user_collection_params left it`
+- `@param array<string, string> $types the REST post types, by name`
+- `@return array<string, mixed>`
+
+
 ## UserObject
 
 `final readonly class Minn\Rest\UserObject` · `public/minn/src/Minn/Rest/UserObject.php`
@@ -3511,8 +3559,6 @@ Internals: `viewFields()` (private, line 50), `editFields()` (private, line 79)
 
 wp/v2 users: me, list, single, and the create/update/delete-with-reassign the Users view drives.
 
-- const `ORDER_BY` = `array (   'id' => 'u.ID',   'name' => 'u.display_name',   'registered_date' => 'u.user_registered',   'slug' => 'u.user_nicename',   'email' => 'u.user_email', )`
-
 Used by: `Minn\Rest\Api`
 
 ```php
@@ -3546,7 +3592,10 @@ Deletes the signed-in user as users/{id} deletes any; signed out there is no suc
 
 Route: `GET /wp/v2/users (public)`
 
-View context lists published authors; edit context lists everyone.
+The users list as the reference serves it: the request's WP_User_Query
+through rest_user_collection_params and rest_user_query (a reader who
+may not list users sees published authors only), its totals (counted
+again without the page when it found none), and the users it found.
 
 ### `single(Minn\Http\Request $request, string $id): Minn\Http\Response`
 
@@ -3576,7 +3625,7 @@ Route: `DELETE /wp/v2/users/{id:[\d]+} (cap delete_users; user {id} must exist)`
 
 reassign is REQUIRED (checked before the user lookup), and so is force.
 
-Internals: `hasPublishedContent()` (private, line 160), `validRole()` (private, line 169), `validEmail()` (private, line 177), `loginRefusal()` (private, line 355)
+Internals: `listAllowed()` (private, line 105), `totals()` (private, line 129), `hasPublishedContent()` (private, line 164), `validRole()` (private, line 173), `validEmail()` (private, line 181), `loginRefusal()` (private, line 359)
 
 
 ## WidgetObject
