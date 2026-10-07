@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Minn\Rest;
 
-use Minn\Runtime\Runtime;
 use Minn\Runtime\PostEvents;
 use Minn\Http\Policy;
 use Minn\Http\Args;

@@ -1236,7 +1236,7 @@ Route: `DELETE /wp/v2/media/{id:[\d]+} (cap delete_post on {id}; attachment {id}
 
 Attachments cannot be trashed; force removes the row, its meta, and its files.
 
-Internals: `restDate()` (private, line 47), `storeWithPlugins()` (private, line 105), `insertedWithPlugins()` (private, line 132), `preparedAttachment()` (private, line 170), `finishedWithPlugins()` (private, line 192), `params()` (private, line 208), `attachment()` (private, line 272)
+Internals: `restDate()` (private, line 46), `storeWithPlugins()` (private, line 104), `insertedWithPlugins()` (private, line 131), `preparedAttachment()` (private, line 169), `finishedWithPlugins()` (private, line 191), `params()` (private, line 207), `attachment()` (private, line 271)
 
 
 ## MediaObject

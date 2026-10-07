@@ -5,9 +5,9 @@
         "minn": 661,
         "composes": 969,
         "leaf": 663,
-        "noop": 1967,
-        "functions": 4186,
-        "minnMethods": 776,
+        "noop": 1968,
+        "functions": 4187,
+        "minnMethods": 777,
         "leafLinesOver15": 13
     },
     "functions": {
@@ -27121,6 +27121,19 @@
             "composes": [
                 "plugins_url",
                 "trailingslashit"
+            ]
+        },
+        "plugins_api": {
+            "file": "admin.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Ops\\PluginsApi::__construct"
+            ],
+            "composes": [
+                "apply_filters",
+                "get_user_locale",
+                "home_url"
             ]
         },
         "plugins_url": {

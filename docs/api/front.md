@@ -1232,7 +1232,7 @@ posts, newest first. Archives never guess.
 - Non-public posts are 404 to anonymous readers and served to a reader
 who can edit them.
 
-Used by: `Minn\Engine`, `Minn\Front\Canonical`, `Minn\Front\FrontController`, `Minn\Theme\PageRenderer`
+Used by: `Minn\Engine`, `Minn\Front\Canonical`, `Minn\Front\FrontController`
 
 ```php
 __construct(Minn\Db $db, Minn\Content\Posts $posts, Minn\Content\Terms $terms, Minn\Front\Permalinks $permalinks, Closure $canReadUnpublished, int $perPage)

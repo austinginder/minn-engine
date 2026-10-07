@@ -26,11 +26,9 @@ use Minn\Front\AdminBar;
 use Minn\Front\Kind;
 use Minn\Front\Permalinks;
 use Minn\Front\Resolution;
-use Minn\Front\Resolver;
 use Minn\Front\DocumentTitle;
 use Minn\Runtime\Runtime;
 use Minn\Support\Html;
-use Minn\Support\Serialized;
 
 /**
  * A whole page from the active block theme: the template the resolution

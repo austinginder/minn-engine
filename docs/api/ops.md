@@ -10,6 +10,7 @@
 | [`InstalledSoftware`](#installedsoftware) | final readonly class | 59 | What is installed, as the System view lists it: every extension and |
 | [`Logs`](#logs) | final readonly class | 150 | The log files the System view can read and clear: the debug log the |
 | [`Packages`](#packages) | final readonly class | 489 | Putting themes and extensions on disk. Themes come from wordpress.org |
+| [`PluginsApi`](#pluginsapi) | final readonly class | 38 | plugins_api() as plugins call it and answer it (probe plugins-api): the |
 | [`Unzip`](#unzip) | final readonly class | 101 | An archive unpacked as unzip_file() unpacks it (probe unzip-file): into |
 | [`Updates`](#updates) | final class | 401 | Update offers from wordpress.org for the site's plugins and themes: the |
 
@@ -293,6 +294,32 @@ A package over https, every redirect hop included, refusing anything
 else; when host prefixes are given, every hop must start with one.
 
 Internals: `pluginPackage()` (private, line 158), `plain()` (private, line 199), `themePackage()` (private, line 293), `place()` (private, line 342), `isFolderName()` (private, line 426), `contained()` (private, line 432), `isSymlinkEntry()` (private, line 443), `identify()` (private, line 458), `describe()` (private, line 472), `removeTree()` (private, line 507)
+
+
+## PluginsApi
+
+`final readonly class Minn\Ops\PluginsApi` · `public/minn/src/Minn/Ops/PluginsApi.php`
+
+plugins_api() as plugins call it and answer it (probe plugins-api): the
+arguments as an object with the reader's locale and the major.minor
+version beside them, through plugins_api_args; then whatever a plugin
+answers through plugins_api (a self-hosted plugin's own information, or
+an error) stands, and only when nobody answers does the directory's info
+API; plugins_api_result is handed what came back either way.
+
+- const `URL` = `'https://api.wordpress.org/plugins/info/1.2/'`
+
+```php
+__construct(Closure $filter, string $locale, string $version, string $home)
+```
+- `@param Closure(string, mixed...): mixed $filter applies a filter, as apply_filters does`
+
+
+### `ask(string $action, object|array $args): mixed`
+
+The answer for an action (plugin_information, query_plugins, ...): an object, a WP_Error, or what a plugin returned.
+
+Internals: `directory()` (private, line 42)
 
 
 ## Unzip

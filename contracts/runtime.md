@@ -2365,6 +2365,20 @@ both stacks, and the engine adds only `Requests` and
   and `curl_multi` (`request_multiple` sends one after another; the answers
   come back in input order, the reference's in completion order).
 
+## plugins_api (2026-10-07)
+
+`plugins_api($action, $args)` (`Ops\PluginsApi`, probe plugins-api) was
+missing, so the plugins that call it (Blocksy Companion, CaptainCore
+Manager, CleanTalk and Elementor on the anchor site) fatalled, and the
+25 that answer through its filter were never asked. The arguments become
+an object with the reader's `locale` and the major.minor `wp_version`
+beside them, through `plugins_api_args`; whatever `plugins_api` answers
+other than false stands (a self-hosted plugin's own information, or a
+`WP_Error`), and only when nobody answers is the directory's info API
+asked (`api.wordpress.org/plugins/info/1.2/`, the arguments as its
+`request`, the answer an object at the top with arrays inside);
+`plugins_api_result` is handed what came back either way, errors included.
+
 ## unzip_file (2026-10-07)
 
 `unzip_file($file, $to)` (`Ops\Unzip`, probe unzip-file) refuses with

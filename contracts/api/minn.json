@@ -44709,8 +44709,7 @@
             "usedBy": [
                 "Minn\\Engine",
                 "Minn\\Front\\Canonical",
-                "Minn\\Front\\FrontController",
-                "Minn\\Theme\\PageRenderer"
+                "Minn\\Front\\FrontController"
             ],
             "constructor": {
                 "signature": "__construct(Minn\\Db $db, Minn\\Content\\Posts $posts, Minn\\Content\\Terms $terms, Minn\\Front\\Permalinks $permalinks, Closure $canReadUnpublished, int $perPage)",
@@ -55508,6 +55507,7 @@
                 "Minn\\Http\\Subject",
                 "Minn\\Http\\Transport",
                 "Minn\\Http\\TrustedProxies",
+                "Minn\\Ops\\PluginsApi",
                 "Minn\\Ops\\Updates"
             ],
             "constructor": null,
@@ -76479,6 +76479,166 @@
             ]
         },
         {
+            "name": "Minn\\Ops\\PluginsApi",
+            "short": "PluginsApi",
+            "namespace": "Minn\\Ops",
+            "kind": "final readonly class",
+            "file": "public/minn/src/Minn/Ops/PluginsApi.php",
+            "lines": 38,
+            "doc": "plugins_api() as plugins call it and answer it (probe plugins-api): the\narguments as an object with the reader's locale and the major.minor\nversion beside them, through plugins_api_args; then whatever a plugin\nanswers through plugins_api (a self-hosted plugin's own information, or\nan error) stands, and only when nobody answers does the directory's info\nAPI; plugins_api_result is handed what came back either way.",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\Http"
+            ],
+            "usedBy": [],
+            "constructor": {
+                "signature": "__construct(Closure $filter, string $locale, string $version, string $home)",
+                "doc": "",
+                "shapes": [
+                    "@param Closure(string, mixed...): mixed $filter applies a filter, as apply_filters does"
+                ],
+                "params": [
+                    {
+                        "name": "filter",
+                        "type": "Closure",
+                        "shape": "Closure(string, mixed...): mixed",
+                        "default": null,
+                        "doc": "applies a filter, as apply_filters does"
+                    },
+                    {
+                        "name": "locale",
+                        "type": "string",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    },
+                    {
+                        "name": "version",
+                        "type": "string",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    },
+                    {
+                        "name": "home",
+                        "type": "string",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    }
+                ],
+                "visibility": "public",
+                "line": 23,
+                "end": 25
+            },
+            "cases": [],
+            "constants": [
+                {
+                    "name": "URL",
+                    "value": "'https://api.wordpress.org/plugins/info/1.2/'",
+                    "doc": "",
+                    "visibility": "private"
+                }
+            ],
+            "properties": [
+                {
+                    "name": "filter",
+                    "type": "Closure",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
+                },
+                {
+                    "name": "locale",
+                    "type": "string",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
+                },
+                {
+                    "name": "version",
+                    "type": "string",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
+                },
+                {
+                    "name": "home",
+                    "type": "string",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
+                }
+            ],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "ask",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "ask(string $action, object|array $args): mixed",
+                    "doc": "The answer for an action (plugin_information, query_plugins, ...): an object, a WP_Error, or what a plugin returned.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "action",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "args",
+                            "type": "object|array",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 28,
+                    "end": 39
+                },
+                {
+                    "routes": [],
+                    "name": "directory",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "directory(string $action, array $request): object",
+                    "doc": "",
+                    "shapes": [
+                        "@param array<string, mixed> $request"
+                    ],
+                    "params": [
+                        {
+                            "name": "action",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "request",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 42,
+                    "end": 54
+                }
+            ]
+        },
+        {
             "name": "Minn\\Ops\\Unzip",
             "short": "Unzip",
             "namespace": "Minn\\Ops",
@@ -86138,7 +86298,6 @@
                 "Minn\\Rest\\Reply",
                 "Minn\\Rest\\RuntimeRoutes",
                 "Minn\\Runtime\\PostEvents",
-                "Minn\\Runtime\\Runtime",
                 "Minn\\Support\\Slashes"
             ],
             "usedBy": [
@@ -86186,8 +86345,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 31,
-                "end": 38
+                "line": 30,
+                "end": 37
             },
             "cases": [],
             "constants": [],
@@ -86265,8 +86424,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 42,
-                    "end": 45
+                    "line": 41,
+                    "end": 44
                 },
                 {
                     "routes": [
@@ -86294,8 +86453,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 60,
-                    "end": 69
+                    "line": 59,
+                    "end": 68
                 },
                 {
                     "routes": [
@@ -86316,8 +86475,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 73,
-                    "end": 92
+                    "line": 72,
+                    "end": 91
                 },
                 {
                     "routes": [
@@ -86347,8 +86506,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 217,
-                    "end": 252
+                    "line": 216,
+                    "end": 251
                 },
                 {
                     "routes": [
@@ -86376,8 +86535,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 256,
-                    "end": 270
+                    "line": 255,
+                    "end": 269
                 },
                 {
                     "routes": [],
@@ -86403,8 +86562,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 47,
-                    "end": 56
+                    "line": 46,
+                    "end": 55
                 },
                 {
                     "routes": [],
@@ -86440,8 +86599,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 105,
-                    "end": 122
+                    "line": 104,
+                    "end": 121
                 },
                 {
                     "routes": [],
@@ -86481,8 +86640,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 132,
-                    "end": 161
+                    "line": 131,
+                    "end": 160
                 },
                 {
                     "routes": [],
@@ -86518,8 +86677,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 170,
-                    "end": 184
+                    "line": 169,
+                    "end": 183
                 },
                 {
                     "routes": [],
@@ -86561,8 +86720,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 192,
-                    "end": 200
+                    "line": 191,
+                    "end": 199
                 },
                 {
                     "routes": [],
@@ -86583,8 +86742,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 208,
-                    "end": 211
+                    "line": 207,
+                    "end": 210
                 },
                 {
                     "routes": [],
@@ -86603,8 +86762,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 272,
-                    "end": 279
+                    "line": 271,
+                    "end": 278
                 }
             ]
         },
@@ -119571,7 +119730,6 @@
                 "Minn\\Rest\\Embed",
                 "Minn\\Rest\\InstalledThemesController",
                 "Minn\\Rest\\LiveSettings",
-                "Minn\\Rest\\MediaController",
                 "Minn\\Rest\\OEmbedController",
                 "Minn\\Rest\\PluginsController",
                 "Minn\\Rest\\PostCollectionParams",
@@ -130165,8 +130323,7 @@
                 "Minn\\Runtime\\CronTable",
                 "Minn\\Runtime\\Options",
                 "Minn\\Runtime\\Recovery",
-                "Minn\\Support\\SearchReplace",
-                "Minn\\Theme\\PageRenderer"
+                "Minn\\Support\\SearchReplace"
             ],
             "constructor": null,
             "cases": [],
@@ -133945,10 +134102,8 @@
                 "Minn\\Front\\Kind",
                 "Minn\\Front\\Permalinks",
                 "Minn\\Front\\Resolution",
-                "Minn\\Front\\Resolver",
                 "Minn\\Runtime\\Runtime",
                 "Minn\\Support\\Html",
-                "Minn\\Support\\Serialized",
                 "Minn\\Theme\\GlobalStyles",
                 "Minn\\Theme\\HeadLinks",
                 "Minn\\Theme\\MainQueryBridge",
@@ -134015,8 +134170,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 43,
-                "end": 52
+                "line": 41,
+                "end": 50
             },
             "cases": [],
             "constants": [],
@@ -134131,8 +134286,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 55,
-                    "end": 68
+                    "line": 53,
+                    "end": 66
                 },
                 {
                     "routes": [],
@@ -134160,8 +134315,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 79,
-                    "end": 84
+                    "line": 77,
+                    "end": 82
                 },
                 {
                     "routes": [],
@@ -134189,8 +134344,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 87,
-                    "end": 121
+                    "line": 85,
+                    "end": 119
                 },
                 {
                     "routes": [],
@@ -134223,8 +134378,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 124,
-                    "end": 158
+                    "line": 122,
+                    "end": 156
                 },
                 {
                     "routes": [],
@@ -134235,8 +134390,8 @@
                     "doc": "The reference filters template_include under block themes too (the\ncanvas is the incoming value); a plugin swapping in its own PHP file\ntakes the whole response over, the CaptainCore Manager shape.",
                     "shapes": [],
                     "params": [],
-                    "line": 165,
-                    "end": 175
+                    "line": 163,
+                    "end": 173
                 },
                 {
                     "routes": [],
@@ -134257,8 +134412,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 183,
-                    "end": 189
+                    "line": 181,
+                    "end": 187
                 },
                 {
                     "routes": [],
@@ -134277,8 +134432,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 192,
-                    "end": 201
+                    "line": 190,
+                    "end": 199
                 },
                 {
                     "routes": [],
@@ -134318,8 +134473,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 209,
-                    "end": 228
+                    "line": 207,
+                    "end": 226
                 }
             ]
         },

@@ -742,6 +742,11 @@ function request_filesystem_credentials($form_post, $type = '', $error = false, 
     return true;
 }
 
+function plugins_api($action, $args = [])
+{
+    return (new Minn\Ops\PluginsApi(apply_filters(...), get_user_locale(), (string) $GLOBALS['wp_version'], home_url()))->ask((string) $action, $args);
+}
+
 function unzip_file($file, $to)
 {
     global $wp_filesystem;

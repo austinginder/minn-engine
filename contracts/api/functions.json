@@ -8326,6 +8326,10 @@
         "file": "wp-includes/theme.php",
         "params": []
     },
+    "display_plugins_table": {
+        "file": "wp-admin/includes/plugin-install.php",
+        "params": []
+    },
     "display_space_usage": {
         "file": "wp-admin/includes/ms.php",
         "params": []
@@ -16380,9 +16384,58 @@
             }
         ]
     },
+    "install_dashboard": {
+        "file": "wp-admin/includes/plugin-install.php",
+        "params": []
+    },
     "install_network": {
         "file": "wp-admin/includes/schema.php",
         "params": []
+    },
+    "install_plugin_information": {
+        "file": "wp-admin/includes/plugin-install.php",
+        "params": []
+    },
+    "install_plugin_install_status": {
+        "file": "wp-admin/includes/plugin-install.php",
+        "params": [
+            {
+                "name": "api"
+            },
+            {
+                "name": "loop",
+                "optional": true,
+                "default": false
+            }
+        ]
+    },
+    "install_plugins_favorites_form": {
+        "file": "wp-admin/includes/plugin-install.php",
+        "params": []
+    },
+    "install_plugins_upload": {
+        "file": "wp-admin/includes/plugin-install.php",
+        "params": []
+    },
+    "install_popular_tags": {
+        "file": "wp-admin/includes/plugin-install.php",
+        "params": [
+            {
+                "name": "args",
+                "optional": true,
+                "default": []
+            }
+        ]
+    },
+    "install_search_form": {
+        "file": "wp-admin/includes/plugin-install.php",
+        "params": [
+            {
+                "name": "deprecated",
+                "optional": true,
+                "default": true
+            }
+        ]
     },
     "install_theme_information": {
         "file": "wp-admin/includes/theme-install.php",
@@ -18793,6 +18846,19 @@
         "params": [
             {
                 "name": "plugin"
+            }
+        ]
+    },
+    "plugins_api": {
+        "file": "wp-admin/includes/plugin-install.php",
+        "params": [
+            {
+                "name": "action"
+            },
+            {
+                "name": "args",
+                "optional": true,
+                "default": []
             }
         ]
     },
@@ -31748,6 +31814,23 @@
     "wp_get_password_hint": {
         "file": "wp-includes/user.php",
         "params": []
+    },
+    "wp_get_plugin_action_button": {
+        "file": "wp-admin/includes/plugin-install.php",
+        "params": [
+            {
+                "name": "name"
+            },
+            {
+                "name": "data"
+            },
+            {
+                "name": "compatible_php"
+            },
+            {
+                "name": "compatible_wp"
+            }
+        ]
     },
     "wp_get_plugin_error": {
         "file": "wp-admin/includes/plugin.php",
