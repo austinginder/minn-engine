@@ -38,7 +38,7 @@ final class RuntimeRoutes
         if ($error instanceof \WP_Error) {
             return self::toResponse(\rest_convert_error_to_response($error));
         }
-        $server = \rest_get_server();
+        $server = self::server();
         $wpRequest = self::wpRequest($request);
         $early = \apply_filters('rest_pre_dispatch', null, $server, $wpRequest);
         if ($early !== null) {
@@ -58,7 +58,7 @@ final class RuntimeRoutes
     /** Null when the runtime has no route for the request either. */
     public static function dispatch(Request $request): ?Response
     {
-        $server = \rest_get_server();
+        $server = self::server();
         $wpRequest = self::wpRequest($request);
         $matched = $server->match_request_to_handler($wpRequest);
         if ($matched instanceof \WP_Error) {
@@ -92,13 +92,31 @@ final class RuntimeRoutes
     public static function allowedMethods(string $route, \WP_REST_Request $wpRequest): array
     {
         $allowed = [];
-        foreach ((array) (\rest_get_server()->get_routes()[$route] ?? []) as $handler) {
+        foreach ((array) (self::server()->get_routes()[$route] ?? []) as $handler) {
             $permitted = empty($handler['permission_callback']) || call_user_func($handler['permission_callback'], $wpRequest) === true;
             foreach (array_keys((array) ($handler['methods'] ?? [])) as $method) {
                 $allowed[strtoupper((string) $method)] = $permitted;
             }
         }
         return array_keys(array_filter($allowed));
+    }
+
+    /**
+     * The methods a self link's caller may use there, as the reference
+     * hints them on every self link it serves (targetHints.allow): the
+     * route the link names, each of its methods whose handler lets this
+     * caller through; null when no route of the runtime's takes the link.
+     *
+     * @return list<string>|null
+     */
+    public static function targetHints(string $href): ?array
+    {
+        $wpRequest = \WP_REST_Request::from_url($href);
+        if (!$wpRequest instanceof \WP_REST_Request) {
+            return null;
+        }
+        $matched = self::server()->match_request_to_handler($wpRequest);
+        return $matched instanceof \WP_Error ? null : self::allowedMethods((string) $matched[0], $wpRequest);
     }
 
     /** The engine's index plus the namespaces and routes the runtime holds. */
@@ -108,7 +126,7 @@ final class RuntimeRoutes
         if (!is_array($data) || !isset($data['routes'])) {
             return $response;
         }
-        $server = \rest_get_server();
+        $server = self::server();
         $runtime = $server->get_data_for_routes($server->get_routes(), 'view');
         unset($runtime['/']);
         // A namespace index carries only its own namespace's routes and no namespace list.
@@ -283,7 +301,7 @@ final class RuntimeRoutes
         }
         $embedded = is_array($data) && array_key_exists('_embedded', $data) ? $data['_embedded'] : null;
         $wpRequest = self::wpRequest($request);
-        $server = \rest_get_server();
+        $server = self::server();
         $result = self::toWp($response);
         if ($embedded !== null) {
             $plain = $result->get_data();
@@ -381,10 +399,9 @@ final class RuntimeRoutes
                 $rel = str_replace('{rel}', substr($rel, $colon + 1), $curies[substr($rel, 0, $colon)]);
             }
             foreach ((array) $items as $item) {
+                // As a plugin hands add_links() one: the href and the link's attributes beside it.
                 $item = (array) $item;
-                $href = (string) ($item['href'] ?? '');
-                unset($item['href']);
-                $out[$rel][] = ['href' => $href, 'attributes' => $item];
+                $out[$rel][] = ['href' => (string) ($item['href'] ?? '')] + $item;
             }
         }
         return $out;
@@ -413,9 +430,15 @@ final class RuntimeRoutes
     }
 
     /** The runtime's response as the engine sends it, with the reference's header set. */
+    /** The runtime's REST server, the one door to it (built, with rest_api_init, on first use). */
+    public static function server(): \WP_REST_Server
+    {
+        return \rest_get_server();
+    }
+
     private static function toResponse(\WP_REST_Response $response): Response
     {
-        $data = \rest_get_server()->response_to_data($response, false);
+        $data = self::server()->response_to_data($response, false);
         $headers = Reply::HEADERS;
         foreach ((array) $response->get_headers() as $name => $value) {
             $headers[$name] = (string) $value;

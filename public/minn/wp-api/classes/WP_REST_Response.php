@@ -36,8 +36,9 @@ class WP_REST_Response extends WP_HTTP_Response
             if (isset($set['href'])) {
                 $set = [$set];
             }
-            foreach ($set as $attributes) {
-                $this->add_link($rel, $attributes['href'], $attributes['attributes'] ?? []);
+            // Every key of a link but its href is an attribute (embeddable, targetHints, even one named attributes).
+            foreach ($set as $link) {
+                $this->add_link($rel, $link['href'], array_diff_key($link, ['href' => true]));
             }
         }
     }

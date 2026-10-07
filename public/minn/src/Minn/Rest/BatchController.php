@@ -90,7 +90,7 @@ final readonly class BatchController
             return $this->batchablePath($sub->path) ? null : self::error(new RestError('rest_batch_not_allowed', 'The requested route does not support batch requests.', 400), $this->router->allowed($sub));
         }
         $wpRequest = new \WP_REST_Request($sub->method->value, $sub->path);
-        $matched = \rest_get_server()->match_request_to_handler($wpRequest);
+        $matched = RuntimeRoutes::server()->match_request_to_handler($wpRequest);
         if ($matched instanceof \WP_Error) {
             return self::error(RestError::noRoute(), []);
         }
@@ -114,7 +114,7 @@ final readonly class BatchController
             }
         }
         $wpRequest = RuntimeRoutes::wpRequest($sub);
-        $matched = \rest_get_server()->match_request_to_handler($wpRequest);
+        $matched = RuntimeRoutes::server()->match_request_to_handler($wpRequest);
         if ($matched instanceof \WP_Error) {
             return null;
         }
@@ -124,7 +124,7 @@ final readonly class BatchController
             return null;
         }
         $response = \rest_convert_error_to_response($valid);
-        return ['body' => \rest_get_server()->response_to_data($response, false), 'status' => $response->get_status(), 'headers' => []];
+        return ['body' => RuntimeRoutes::server()->response_to_data($response, false), 'status' => $response->get_status(), 'headers' => []];
     }
 
     /** A {base} route answers only for a type an extension declared, as the gate's Access::Type has it. @param array<string, string> $captures */

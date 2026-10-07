@@ -344,7 +344,15 @@ class WP_REST_Server
         foreach ($links as $rel => $items) {
             $data[$rel] = [];
             foreach ($items as $item) {
-                $data[$rel][] = Links::item((string) $rel, (string) $item['href'], (array) $item['attributes']);
+                $attributes = (array) $item['attributes'];
+                // A self link says which methods its caller may use there, as the reference's do.
+                if ($rel === 'self' && !isset($attributes['targetHints'])) {
+                    $allow = Minn\Rest\RuntimeRoutes::targetHints((string) $item['href']);
+                    if ($allow !== null && $allow !== []) {
+                        $attributes['targetHints'] = ['allow' => $allow];
+                    }
+                }
+                $data[$rel][] = Links::item((string) $rel, (string) $item['href'], $attributes);
             }
         }
         return $data;
