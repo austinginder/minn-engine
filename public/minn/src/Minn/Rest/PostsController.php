@@ -44,14 +44,18 @@ final readonly class PostsController
      * parameters sanitized, the query arguments through rest_{type}_query
      * and rest_query_var-*, a WP_Query (so pre_get_posts and every query
      * filter run), then each post the caller may read (or edit, in the edit
-     * context) shaped. The totals are the query's, counted again without
-     * the page when a later page came back empty.
+     * context) shaped (by $shape when the type has its own object, as
+     * media does). The totals are the query's, counted again without the
+     * page when a later page came back empty. A media search also matches
+     * file names, as the reference's does.
+     *
+     * @param (\Closure(PostRecord, Context): array<string, mixed>)|null $shape
      */
-    public function serveList(Request $request, string $type): Response
+    public function serveList(Request $request, string $type, ?\Closure $shape = null): Response
     {
         $context = Context::of($request);
         $this->visibleStatuses($request, $type, $context);
-        $registered = PostCollectionParams::ofType($type);
+        $registered = PostCollectionParams::listed($type);
         $wp = RuntimeRoutes::sanitized($request, $registered);
         if ($wp['orderby'] === 'relevance' && empty($wp['search'])) {
             throw new RestError('rest_no_search_term_defined', 'You need to define a search term to order by relevance.', 400);
@@ -61,6 +65,9 @@ final readonly class PostsController
         }
         $args = (array) \apply_filters("rest_{$type}_query", PostListArgs::of($wp, $registered, $type), $wp);
         $vars = PostListArgs::queryVars($args, $wp);
+        if ($type === 'attachment' && !empty($vars['s'])) {
+            \add_filter('wp_allow_query_attachment_by_filename', '__return_true');
+        }
         $query = new \WP_Query();
         $posts = $query->query($vars);
         [$total, $pages] = $this->totals($query, $vars);
@@ -73,7 +80,11 @@ final readonly class PostsController
                 continue;
             }
             $record = PostRecord::fromRow(get_object_vars($post));
-            $objects[] = $context->isEdit() ? $this->object->edit($record, $this->caller->id()) : $this->object->view($record);
+            $objects[] = match (true) {
+                $shape !== null => $shape($record, $context),
+                $context->isEdit() => $this->object->edit($record, $this->caller->id()),
+                default => $this->object->view($record),
+            };
         }
         return Reply::list($objects, $total, $pages, Fields::fromQuery($request->query));
     }
@@ -130,7 +141,8 @@ final readonly class PostsController
      */
     private function visibleStatuses(Request $request, string $type, Context $context): void
     {
-        $publicOnly = ['publish'];
+        // An attachment's public status is inherit (it shows as its parent does).
+        $publicOnly = [$type === 'attachment' ? 'inherit' : 'publish'];
         $requested = $request->has('status')
             ? array_values(array_filter(array_map(trim(...), explode(',', (string) $request->query('status')))))
             : $publicOnly;

@@ -12,7 +12,6 @@ use Minn\Http\Subject;
 use Minn\Http\Access;
 use Minn\Content\PostRecord;
 use Minn\Content\Posts;
-use Minn\Db;
 use Minn\Http\Method;
 use Minn\Http\Request;
 use Minn\Http\Response;
@@ -30,71 +29,19 @@ use Minn\Support\Kses;
 final readonly class MediaController
 {
     public function __construct(
-        private Db $db,
         private Posts $posts,
         private Writer $library,
         private MediaObject $object,
         private Caller $caller,
+        private PostsController $reads,
     ) {
     }
 
-    /** The media library list. */
-    #[Route(Method::Get, '/wp/v2/media', policy: new Policy(Access::Public), args: [Args::CONTEXT, Args::MEDIA])]
-    public function list(Request $request): Response
+    /** The media list: the post lists' own path for attachments (probe rest-media-lists), each item in the media shape. */
+    #[Route(Method::Get, '/wp/v2/{base:media}', policy: new Policy(Access::Public), params: PostCollectionParams::class)]
+    public function list(Request $request, string $base): Response
     {
-        $context = Context::of($request);
-        $edit = $context->isEdit();
-        if ($edit && !$this->caller->can('edit_posts')) {
-            throw $this->caller->refuse('rest_forbidden_context', 'Sorry, you are not allowed to edit posts in this post type.');
-        }
-        $query = ListQuery::fromRequest($request);
-        [$narrowing, $params] = $query->clauses();
-        [$library, $libraryParams] = self::libraryClauses($request);
-        $where = "post_type = 'attachment' AND post_status = 'inherit'" . $narrowing . $library;
-        $params = [...$params, ...$libraryParams];
-        $table = $this->db->table('posts');
-        $total = (int) $this->db->value("SELECT COUNT(*) FROM {$table} WHERE {$where}", $params);
-        $rows = $this->db->rows(
-            "SELECT * FROM {$table} WHERE {$where} ORDER BY post_date {$query->order}, ID {$query->order} LIMIT ? OFFSET ?",
-            [...$params, $query->perPage, $query->offset()],
-        );
-        return Reply::list(
-            array_map(fn (PostRecord $p) => $this->object->build($p, $context), PostRecord::fromRows($rows)),
-            $total,
-            $query->totalPages($total),
-            Fields::fromQuery($request->query),
-        );
-    }
-
-    /**
-     * The library's own narrowing, captured from the oracle: media_type as a
-     * mime prefix from a fixed set, mime_type exact, after/before exclusive
-     * on site-local post_date.
-     *
-     * @return array{string, list<mixed>}
-     */
-    private static function libraryClauses(Request $request): array
-    {
-        $where = '';
-        $params = [];
-        $mediaType = (string) $request->query('media_type', '');
-        if ($mediaType !== '') {
-            $where .= ' AND post_mime_type LIKE ?';
-            $params[] = $mediaType . '/%';
-        }
-        $mime = (string) $request->query('mime_type', '');
-        if ($mime !== '') {
-            $where .= ' AND post_mime_type = ?';
-            $params[] = $mime;
-        }
-        foreach (['after' => '>', 'before' => '<'] as $param => $operator) {
-            $value = (string) $request->query($param, '');
-            if ($value !== '') {
-                $where .= " AND post_date {$operator} ?";
-                $params[] = self::restDate($value, $param);
-            }
-        }
-        return [$where, $params];
+        return $this->reads->serveList($request, 'attachment', fn (PostRecord $p, Context $c) => $this->object->build($p, $c));
     }
 
     private static function restDate(string $value, string $param): string

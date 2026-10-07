@@ -41,26 +41,6 @@ final class Args
         'force' => ['description' => 'Whether to bypass Trash and force deletion.', 'type' => 'boolean', 'default' => false, 'required' => false],
     ];
 
-    /** Read by Rest\ListQuery::fromRequest() and Rest\MediaController::libraryClauses(): the media library. */
-    public const MEDIA = [
-        'page' => ['description' => 'Current page of the collection.', 'type' => 'integer', 'default' => 1, 'minimum' => 1, 'required' => false],
-        'per_page' => ['description' => 'Maximum number of items to be returned in result set.', 'type' => 'integer', 'default' => 10, 'minimum' => 1, 'maximum' => 100, 'required' => false],
-        'search' => ['description' => 'Limit results to those matching a string.', 'type' => 'string', 'required' => false],
-        'after' => ['description' => 'Limit response to posts published after a given ISO8601 compliant date.', 'type' => 'string', 'format' => 'date-time', 'required' => false],
-        'author' => ['description' => 'Limit result set to posts assigned to specific authors.', 'type' => 'array', 'items' => ['type' => 'integer'], 'default' => [], 'required' => false],
-        'author_exclude' => ['description' => 'Ensure result set excludes posts assigned to specific authors.', 'type' => 'array', 'items' => ['type' => 'integer'], 'default' => [], 'required' => false],
-        'before' => ['description' => 'Limit response to posts published before a given ISO8601 compliant date.', 'type' => 'string', 'format' => 'date-time', 'required' => false],
-        'exclude' => ['description' => 'Ensure result set excludes specific IDs.', 'type' => 'array', 'items' => ['type' => 'integer'], 'default' => [], 'required' => false],
-        'include' => ['description' => 'Limit result set to specific IDs.', 'type' => 'array', 'items' => ['type' => 'integer'], 'default' => [], 'required' => false],
-        'order' => ['description' => 'Order sort attribute ascending or descending.', 'type' => 'string', 'default' => 'desc', 'enum' => ['asc', 'desc'], 'required' => false],
-        'orderby' => ['description' => 'Sort collection by post attribute.', 'type' => 'string', 'default' => 'date', 'enum' => ['author', 'date', 'id', 'include', 'modified', 'parent', 'relevance', 'slug', 'include_slugs', 'title'], 'required' => false],
-        'parent' => ['description' => 'Limit result set to items with particular parent IDs.', 'type' => 'array', 'items' => ['type' => 'integer'], 'default' => [], 'required' => false],
-        'parent_exclude' => ['description' => 'Limit result set to all items except those of a particular parent ID.', 'type' => 'array', 'items' => ['type' => 'integer'], 'default' => [], 'required' => false],
-        'slug' => ['description' => 'Limit result set to posts with one or more specific slugs.', 'type' => 'array', 'items' => ['type' => 'string'], 'required' => false],
-        'media_type' => ['default' => null, 'description' => 'Limit result set to attachments of a particular media type or media types.', 'type' => 'array', 'items' => ['type' => 'string', 'enum' => ['image', 'video', 'text', 'application', 'audio']], 'required' => false],
-        'mime_type' => ['default' => null, 'description' => 'Limit result set to attachments of a particular MIME type or MIME types.', 'type' => 'array', 'items' => ['type' => 'string'], 'required' => false],
-    ];
-
     /** Read by Rest\UserCollectionParams: the user collection. */
     public const USERS = [
         'page' => ['description' => 'Current page of the collection.', 'type' => 'integer', 'default' => 1, 'minimum' => 1, 'required' => false],

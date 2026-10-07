@@ -39,6 +39,21 @@ final class PostCollectionParams implements RouteParams
         return self::forType(self::type($base));
     }
 
+    /**
+     * A post type's list parameters asked afresh, as the reference's list
+     * asks for them each time it runs: rest_{type}_collection_params runs
+     * again.
+     *
+     * @return array<string, array<string, mixed>>
+     */
+    public static function listed(string $name): array
+    {
+        $object = Runtime::booted() ? \get_post_type_object($name) : null;
+        $base = $object instanceof \WP_Post_Type ? (string) ($object->rest_base ?: $name) : ['post' => 'posts', 'page' => 'pages'][$name] ?? '';
+        $type = self::type($base);
+        return $type === null ? [] : self::filtered($type);
+    }
+
     /** @param array{name: string, object: ?\WP_Post_Type, author: bool, attributes: bool, hierarchical: bool, formats: bool, taxonomies: array<string, bool>}|null $type @return array<string, array<string, mixed>> */
     private static function forType(?array $type): array
     {
@@ -50,6 +65,16 @@ final class PostCollectionParams implements RouteParams
         if (is_array($cached)) {
             return $cached;
         }
+        $params = self::filtered($type);
+        if (Runtime::booted()) {
+            Runtime::current()->set($key, $params);
+        }
+        return $params;
+    }
+
+    /** The parameters built, through rest_{type}_collection_params, each marked optional. @param array{name: string, object: ?\WP_Post_Type, author: bool, attributes: bool, hierarchical: bool, formats: bool, taxonomies: array<string, bool>} $type @return array<string, array<string, mixed>> */
+    private static function filtered(array $type): array
+    {
         $params = self::build($type);
         if (Runtime::booted()) {
             $params = (array) \apply_filters("rest_{$type['name']}_collection_params", $params, $type['object']);
@@ -57,9 +82,6 @@ final class PostCollectionParams implements RouteParams
         $params = array_map(static fn ($arg): array => (array) $arg + ['required' => false], $params);
         if (isset($params['status'])) {
             $params['status'][Args::HANDLER_VALIDATES] = true;
-        }
-        if (Runtime::booted()) {
-            Runtime::current()->set($key, $params);
         }
         return $params;
     }
@@ -133,9 +155,15 @@ final class PostCollectionParams implements RouteParams
         $params += [
             'search_columns' => ['default' => [], 'description' => 'Array of column names to be searched.', 'type' => 'array', 'items' => ['enum' => ['post_title', 'post_content', 'post_excerpt'], 'type' => 'string']],
             'slug' => ['description' => 'Limit result set to posts with one or more specific slugs.', 'type' => 'array', 'items' => ['type' => 'string']],
-            'status' => ['default' => 'publish', 'description' => 'Limit result set to posts assigned one or more statuses.', 'type' => 'array', 'items' => ['enum' => [...self::statuses(), 'any'], 'type' => 'string']],
+            'status' => $type['name'] === 'attachment'
+                ? ['default' => 'inherit', 'description' => 'Limit result set to posts assigned one or more statuses.', 'type' => 'array', 'items' => ['enum' => ['inherit', 'private', 'trash'], 'type' => 'string']]
+                : ['default' => 'publish', 'description' => 'Limit result set to posts assigned one or more statuses.', 'type' => 'array', 'items' => ['enum' => [...self::statuses(), 'any'], 'type' => 'string']],
         ];
         $params += self::taxonomies($type['taxonomies']);
+        if ($type['name'] === 'attachment') {
+            $params['media_type'] = ['default' => null, 'description' => 'Limit result set to attachments of a particular media type or media types.', 'type' => 'array', 'items' => ['type' => 'string', 'enum' => array_keys(self::mediaTypes())]];
+            $params['mime_type'] = ['default' => null, 'description' => 'Limit result set to attachments of a particular MIME type or MIME types.', 'type' => 'array', 'items' => ['type' => 'string']];
+        }
         if ($type['name'] === 'post') {
             $params['sticky'] = ['description' => 'Limit result set to items that are sticky.', 'type' => 'boolean'];
             $params['ignore_sticky'] = ['description' => 'Whether to ignore sticky posts or not.', 'type' => 'boolean', 'default' => true];
@@ -144,6 +172,22 @@ final class PostCollectionParams implements RouteParams
             $params['format'] = ['description' => 'Limit result set to items assigned one or more given formats.', 'type' => 'array', 'uniqueItems' => true, 'items' => ['enum' => self::FORMATS, 'type' => 'string']];
         }
         return $params;
+    }
+
+    /**
+     * The allowed MIME types by media type (the part before the slash), in
+     * the order the site allows them, each once.
+     *
+     * @return array<string, list<string>>
+     */
+    public static function mediaTypes(): array
+    {
+        $types = [];
+        foreach (Runtime::booted() ? \get_allowed_mime_types() : ['jpg|jpeg|jpe' => 'image/jpeg'] as $mime) {
+            $types[strtok((string) $mime, '/')][(string) $mime] = (string) $mime;
+        }
+        // Each MIME type once, where it first appears (two extensions can share one).
+        return array_map('array_values', $types);
     }
 
     /** @return list<string> */

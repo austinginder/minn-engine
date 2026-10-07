@@ -34204,7 +34204,6 @@
                 "Minn\\Mail\\Mailer",
                 "Minn\\Ops\\Diagnostics",
                 "Minn\\Rest\\Api",
-                "Minn\\Rest\\MediaController",
                 "Minn\\Rest\\PostObject",
                 "Minn\\Rest\\PostsController",
                 "Minn\\Rest\\SearchController",
@@ -54773,7 +54772,7 @@
             "namespace": "Minn\\Http",
             "kind": "final class",
             "file": "public/minn/src/Minn/Http/Args.php",
-            "lines": 168,
+            "lines": 148,
             "doc": "The parameters a route accepts, as the reference describes them in the\nREST index: name => {description, type, ...}. The descriptions, types,\nenums and bounds were captured from the reference, so a client that\nreads either index is told the same thing, and the router refuses a\nvalue the way the reference refuses it, before it judges the caller.\n\nA route declares only what it really reads. An argument published here\nthat the handler ignores would be worse than none at all, because a\nclient reading the index would build a request around it, so each set\nbelow names the code that consumes it. The sets keep the reference's\norder, because a refusal lists the invalid parameters in that order.\n`_fields` and `_embed` are read everywhere and declared nowhere, as the\nreference lists neither and validates neither.",
             "implements": [],
             "extends": null,
@@ -54831,12 +54830,6 @@
                     "name": "FORCE",
                     "value": "array (   'force' =>    array (     'description' => 'Whether to bypass Trash and force deletion.',     'type' => 'boolean',     'default' => false,     'required' => false,   ), )",
                     "doc": "Read by Content\\PostWriter: whether a delete bypasses the trash.",
-                    "visibility": "public"
-                },
-                {
-                    "name": "MEDIA",
-                    "value": "array (   'page' =>    array (     'description' => 'Current page of the collection.',     'type' => 'integer',     'default' => 1,     'minimum' => 1,     'required' => false,   ),   'per_page' =>    array (     'description' => 'Maximum number of items to be returned in result set.',     'type' => 'integer',     'default' => 10,     'minimum' => 1,     'maximum' => 100,     'required' => false,   ),   'search' =>    array (     'description' => 'Limit results to those matching a string.',     'type' => 'string',     'required' => false,   ),   'after' =>    array (     'description' => 'Limit response to posts published after a given ISO8601 compliant date.',     'type' => 'string',     'format' => 'date-time',     'required' => false,   ),   'author' =>    array (     'description' => 'Limit result set to posts assigned to specific authors.',     'type' => 'array',     'items' =>      array (       'type' => 'integer',     ),     'default' =>      array (     ),     'required' => false,   ),   'author_exclude' =>    array (     'description' => 'Ensure result set excludes posts assigned to specific authors.',     'type' => 'array',     'items' =>      array (       'type' => 'integer',     ),     'default' =>      array (     ),     'required' => false,   ),   'before' =>    array (     'description' => 'Limit response to posts published before a given ISO8601 compliant date.',     'type' => 'string',     'format' => 'date-time',     'required' => false,   ),   'exclude' =>    array (     'description' => 'Ensure result set excludes specific IDs.',     'type' => 'array',     'items' =>      array (       'type' => 'integer',     ),     'default' =>      array (     ),     'required' => false,   ),   'include' =>    array (     'description' => 'Limit result set to specific IDs.',     'type' => 'array',     'items' =>      array (       'type' => 'integer',     ),     'default' =>      array (     ),     'required' => false,   ),   'order' =>    array (     'description' => 'Order sort attribute ascending or descending.',     'type' => 'string',     'default' => 'desc',     'enum' =>      array (       0 => 'asc',       1 => 'desc',     ),     'required' => false,   ),   'orderby' =>    array (     'description' => 'Sort collection by post attribute.',     'type' => 'string',     'default' => 'date',     'enum' =>      array (       0 => 'author',       1 => 'date',       2 => 'id',       3 => 'include',       4 => 'modified',       5 => 'parent',       6 => 'relevance',       7 => 'slug',       8 => 'include_slugs',       9 => 'title',     ),     'required' => false,   ),   'parent' =>    array (     'description' => 'Limit result set to items with particular parent IDs.',     'type' => 'array',     'items' =>      array (       'type' => 'integer',     ),     'default' =>      array (     ),     'required' => false,   ),   'parent_exclude' =>    array (     'description' => 'Limit result set to all items except those of a particular parent ID.',     'type' => 'array',     'items' =>      array (       'type' => 'integer',     ),     'default' =>      array (     ),     'required' => false,   ),   'slug' =>    array (     'description' => 'Limit result set to posts with one or more specific slugs.',     'type' => 'array',     'items' =>      array (       'type' => 'string',     ),     'required' => false,   ),   'media_type' =>    array (     'default' => NULL,     'description' => 'Limit result set to attachments of a particular media type or media types.',     'type' => 'array',     'items' =>      array (       'type' => 'string',       'enum' =>        array (         0 => 'image',         1 => 'video',         2 => 'text',         3 => 'application',         4 => 'audio',       ),     ),     'required' => false,   ),   'mime_type' =>    array (     'default' => NULL,     'description' => 'Limit result set to attachments of a particular MIME type or MIME types.',     'type' => 'array',     'items' =>      array (       'type' => 'string',     ),     'required' => false,   ), )",
-                    "doc": "Read by Rest\\ListQuery::fromRequest() and Rest\\MediaController::libraryClauses(): the media library.",
                     "visibility": "public"
                 },
                 {
@@ -54910,8 +54903,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 185,
-                    "end": 188
+                    "line": 165,
+                    "end": 168
                 }
             ]
         },
@@ -58385,7 +58378,6 @@
                 "Minn\\Rest\\GlobalStylesController",
                 "Minn\\Rest\\IndexController",
                 "Minn\\Rest\\InstalledThemesController",
-                "Minn\\Rest\\ListQuery",
                 "Minn\\Rest\\MediaController",
                 "Minn\\Rest\\MenusController",
                 "Minn\\Rest\\NavigationController",
@@ -60003,7 +59995,7 @@
             "namespace": "Minn\\Http",
             "kind": "final class",
             "file": "public/minn/src/Minn/Http/Router.php",
-            "lines": 233,
+            "lines": 240,
             "doc": "Matches a request to a #[Route] on one of the registered handler\nobjects, has the check refuse a bad argument, has the gate judge the\nroute's policy, and invokes the method with the request plus the named\npattern captures. That order is the reference's: an invalid parameter is\nanswered before the caller is looked at. The gate is the one\nthing a router cannot be built without: a policy nobody judges is a\nroute nobody may call.",
             "implements": [],
             "extends": null,
@@ -60404,6 +60396,26 @@
                     ],
                     "line": 242,
                     "end": 252
+                },
+                {
+                    "routes": [],
+                    "name": "literal",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "literal(Minn\\Http\\Route $route): ?string",
+                    "doc": "The one path a route spells, a capture it fixes ({base:media}) read as its word; null for a route with a real capture.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "route",
+                            "type": "Minn\\Http\\Route",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 255,
+                    "end": 259
                 }
             ]
         },
@@ -82873,526 +82885,6 @@
             ]
         },
         {
-            "name": "Minn\\Rest\\ListQuery",
-            "short": "ListQuery",
-            "namespace": "Minn\\Rest",
-            "kind": "final readonly class",
-            "file": "public/minn/src/Minn/Rest/ListQuery.php",
-            "lines": 170,
-            "doc": "The collection parameters a wp/v2 list accepts, read once from the\nrequest into typed fields: the page, the id lists, the slugs, the search\nwords, and the ordering. clauses() turns the narrowing ones into the SQL\nfragments and parameters a controller appends to its own visibility\nclause, so posts, pages, and media build their lists the same way.",
-            "implements": [],
-            "extends": null,
-            "uses": [
-                "Minn\\Http\\Request"
-            ],
-            "usedBy": [
-                "Minn\\Rest\\MediaController"
-            ],
-            "constructor": {
-                "signature": "__construct(int $page = 1, int $perPage = 10, array $include = array ( ), array $exclude = array ( ), array $author = array ( ), array $authorExclude = array ( ), array $parent = array ( ), array $parentExclude = array ( ), array $slugs = array ( ), array $words = array ( ), ?int $menuOrder = NULL, string $orderBy = 'date', string $order = 'DESC', array $terms = array ( ), array $termsExclude = array ( ))",
-                "doc": "",
-                "shapes": [
-                    "@param list<int> $include",
-                    "@param list<int> $exclude",
-                    "@param list<int> $author",
-                    "@param list<int> $authorExclude",
-                    "@param list<int> $parent",
-                    "@param list<int> $parentExclude",
-                    "@param list<string> $slugs",
-                    "@param list<string> $words"
-                ],
-                "params": [
-                    {
-                        "name": "page",
-                        "type": "int",
-                        "shape": "",
-                        "default": "1",
-                        "doc": ""
-                    },
-                    {
-                        "name": "perPage",
-                        "type": "int",
-                        "shape": "",
-                        "default": "10",
-                        "doc": ""
-                    },
-                    {
-                        "name": "include",
-                        "type": "array",
-                        "shape": "list<int>",
-                        "default": "array ( )",
-                        "doc": ""
-                    },
-                    {
-                        "name": "exclude",
-                        "type": "array",
-                        "shape": "list<int>",
-                        "default": "array ( )",
-                        "doc": ""
-                    },
-                    {
-                        "name": "author",
-                        "type": "array",
-                        "shape": "list<int>",
-                        "default": "array ( )",
-                        "doc": ""
-                    },
-                    {
-                        "name": "authorExclude",
-                        "type": "array",
-                        "shape": "list<int>",
-                        "default": "array ( )",
-                        "doc": ""
-                    },
-                    {
-                        "name": "parent",
-                        "type": "array",
-                        "shape": "list<int>",
-                        "default": "array ( )",
-                        "doc": ""
-                    },
-                    {
-                        "name": "parentExclude",
-                        "type": "array",
-                        "shape": "list<int>",
-                        "default": "array ( )",
-                        "doc": ""
-                    },
-                    {
-                        "name": "slugs",
-                        "type": "array",
-                        "shape": "list<string>",
-                        "default": "array ( )",
-                        "doc": ""
-                    },
-                    {
-                        "name": "words",
-                        "type": "array",
-                        "shape": "list<string>",
-                        "default": "array ( )",
-                        "doc": ""
-                    },
-                    {
-                        "name": "menuOrder",
-                        "type": "?int",
-                        "shape": "",
-                        "default": "NULL",
-                        "doc": ""
-                    },
-                    {
-                        "name": "orderBy",
-                        "type": "string",
-                        "shape": "",
-                        "default": "'date'",
-                        "doc": ""
-                    },
-                    {
-                        "name": "order",
-                        "type": "string",
-                        "shape": "",
-                        "default": "'DESC'",
-                        "doc": ""
-                    },
-                    {
-                        "name": "terms",
-                        "type": "array",
-                        "shape": "",
-                        "default": "array ( )",
-                        "doc": ""
-                    },
-                    {
-                        "name": "termsExclude",
-                        "type": "array",
-                        "shape": "",
-                        "default": "array ( )",
-                        "doc": ""
-                    }
-                ],
-                "visibility": "public",
-                "line": 28,
-                "end": 47
-            },
-            "cases": [],
-            "constants": [
-                {
-                    "name": "TERM_ARGS",
-                    "value": "array (   'categories' => 'category',   'tags' => 'post_tag',   'wp_pattern_category' => 'wp_pattern_category', )",
-                    "doc": "The list parameters that name terms, by the taxonomy they filter on.",
-                    "visibility": "private"
-                }
-            ],
-            "properties": [
-                {
-                    "name": "page",
-                    "type": "int",
-                    "readonly": true,
-                    "static": false,
-                    "doc": "",
-                    "visibility": "public",
-                    "promoted": true
-                },
-                {
-                    "name": "perPage",
-                    "type": "int",
-                    "readonly": true,
-                    "static": false,
-                    "doc": "",
-                    "visibility": "public",
-                    "promoted": true
-                },
-                {
-                    "name": "include",
-                    "type": "array",
-                    "readonly": true,
-                    "static": false,
-                    "doc": "",
-                    "visibility": "public",
-                    "promoted": true
-                },
-                {
-                    "name": "exclude",
-                    "type": "array",
-                    "readonly": true,
-                    "static": false,
-                    "doc": "",
-                    "visibility": "public",
-                    "promoted": true
-                },
-                {
-                    "name": "author",
-                    "type": "array",
-                    "readonly": true,
-                    "static": false,
-                    "doc": "",
-                    "visibility": "public",
-                    "promoted": true
-                },
-                {
-                    "name": "authorExclude",
-                    "type": "array",
-                    "readonly": true,
-                    "static": false,
-                    "doc": "",
-                    "visibility": "public",
-                    "promoted": true
-                },
-                {
-                    "name": "parent",
-                    "type": "array",
-                    "readonly": true,
-                    "static": false,
-                    "doc": "",
-                    "visibility": "public",
-                    "promoted": true
-                },
-                {
-                    "name": "parentExclude",
-                    "type": "array",
-                    "readonly": true,
-                    "static": false,
-                    "doc": "",
-                    "visibility": "public",
-                    "promoted": true
-                },
-                {
-                    "name": "slugs",
-                    "type": "array",
-                    "readonly": true,
-                    "static": false,
-                    "doc": "",
-                    "visibility": "public",
-                    "promoted": true
-                },
-                {
-                    "name": "words",
-                    "type": "array",
-                    "readonly": true,
-                    "static": false,
-                    "doc": "",
-                    "visibility": "public",
-                    "promoted": true
-                },
-                {
-                    "name": "menuOrder",
-                    "type": "?int",
-                    "readonly": true,
-                    "static": false,
-                    "doc": "",
-                    "visibility": "public",
-                    "promoted": true
-                },
-                {
-                    "name": "orderBy",
-                    "type": "string",
-                    "readonly": true,
-                    "static": false,
-                    "doc": "",
-                    "visibility": "public",
-                    "promoted": true
-                },
-                {
-                    "name": "order",
-                    "type": "string",
-                    "readonly": true,
-                    "static": false,
-                    "doc": "",
-                    "visibility": "public",
-                    "promoted": true
-                },
-                {
-                    "name": "terms",
-                    "type": "array",
-                    "readonly": true,
-                    "static": false,
-                    "doc": "",
-                    "visibility": "public",
-                    "promoted": true
-                },
-                {
-                    "name": "termsExclude",
-                    "type": "array",
-                    "readonly": true,
-                    "static": false,
-                    "doc": "",
-                    "visibility": "public",
-                    "promoted": true
-                }
-            ],
-            "methods": [
-                {
-                    "routes": [],
-                    "name": "fromRequest",
-                    "static": true,
-                    "visibility": "public",
-                    "signature": "fromRequest(Minn\\Http\\Request $request, ?array $taxonomies = NULL): self",
-                    "doc": "The list parameters read from the request; a plugin's type names the taxonomies it filters on. @param array<string, string>|null $taxonomies",
-                    "shapes": [
-                        "@param array<string, string>|null $taxonomies"
-                    ],
-                    "params": [
-                        {
-                            "name": "request",
-                            "type": "Minn\\Http\\Request",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "taxonomies",
-                            "type": "?array",
-                            "shape": "array<string, string>|null",
-                            "default": "NULL",
-                            "doc": ""
-                        }
-                    ],
-                    "line": 53,
-                    "end": 73
-                },
-                {
-                    "routes": [],
-                    "name": "clauses",
-                    "static": false,
-                    "visibility": "public",
-                    "signature": "clauses(): array",
-                    "doc": "The narrowing clauses, each starting with \" AND\", and their parameters\nin the same order. Every search word must appear in the title, the\nexcerpt, or the content.",
-                    "shapes": [
-                        "@return array{string, list<mixed>}"
-                    ],
-                    "params": [],
-                    "line": 95,
-                    "end": 119
-                },
-                {
-                    "routes": [],
-                    "name": "isSearch",
-                    "static": false,
-                    "visibility": "public",
-                    "signature": "isSearch(): bool",
-                    "doc": "Whether a search narrows the list.",
-                    "shapes": [],
-                    "params": [],
-                    "line": 122,
-                    "end": 125
-                },
-                {
-                    "routes": [],
-                    "name": "offset",
-                    "static": false,
-                    "visibility": "public",
-                    "signature": "offset(): int",
-                    "doc": "The first row of the requested page.",
-                    "shapes": [],
-                    "params": [],
-                    "line": 128,
-                    "end": 131
-                },
-                {
-                    "routes": [],
-                    "name": "totalPages",
-                    "static": false,
-                    "visibility": "public",
-                    "signature": "totalPages(int $total): int",
-                    "doc": "How many pages a total makes at this page size.",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "total",
-                            "type": "int",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 134,
-                    "end": 137
-                },
-                {
-                    "routes": [],
-                    "name": "isPastTheEnd",
-                    "static": false,
-                    "visibility": "public",
-                    "signature": "isPastTheEnd(int $total): bool",
-                    "doc": "A page past the last one is a parameter error, except page one of nothing.",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "total",
-                            "type": "int",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 140,
-                    "end": 143
-                },
-                {
-                    "routes": [],
-                    "name": "ids",
-                    "static": true,
-                    "visibility": "public",
-                    "signature": "ids(string $csv): array",
-                    "doc": "A comma-separated id list as distinct integers, zero dropped: author=0\nmeans nothing.",
-                    "shapes": [
-                        "@return list<int>"
-                    ],
-                    "params": [
-                        {
-                            "name": "csv",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 151,
-                    "end": 154
-                },
-                {
-                    "routes": [],
-                    "name": "idsWithZero",
-                    "static": true,
-                    "visibility": "public",
-                    "signature": "idsWithZero(string $csv): array",
-                    "doc": "The same list with zero kept: parent=0 means \"top level\", and a comment's\npost=0 means \"no post\".",
-                    "shapes": [
-                        "@return list<int>"
-                    ],
-                    "params": [
-                        {
-                            "name": "csv",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 162,
-                    "end": 172
-                },
-                {
-                    "routes": [],
-                    "name": "termFilters",
-                    "static": true,
-                    "visibility": "private",
-                    "signature": "termFilters(Minn\\Http\\Request $request, string $suffix, array $taxonomies): array",
-                    "doc": "",
-                    "shapes": [
-                        "@param array<string, string> $taxonomies list parameter => the taxonomy it filters on @return array<string, list<int>>"
-                    ],
-                    "params": [
-                        {
-                            "name": "request",
-                            "type": "Minn\\Http\\Request",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "suffix",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "taxonomies",
-                            "type": "array",
-                            "shape": "array<string, string>",
-                            "default": null,
-                            "doc": "list parameter => the taxonomy it filters on @return array<string, list<int>>"
-                        }
-                    ],
-                    "line": 76,
-                    "end": 86
-                },
-                {
-                    "routes": [],
-                    "name": "list",
-                    "static": true,
-                    "visibility": "private",
-                    "signature": "list(string $csv): array",
-                    "doc": "",
-                    "shapes": [
-                        "@return list<string>"
-                    ],
-                    "params": [
-                        {
-                            "name": "csv",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 175,
-                    "end": 178
-                },
-                {
-                    "routes": [],
-                    "name": "words",
-                    "static": true,
-                    "visibility": "private",
-                    "signature": "words(string $search): array",
-                    "doc": "",
-                    "shapes": [
-                        "@return list<string>"
-                    ],
-                    "params": [
-                        {
-                            "name": "search",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 181,
-                    "end": 184
-                }
-            ]
-        },
-        {
             "name": "Minn\\Rest\\LiveSettings",
             "short": "LiveSettings",
             "namespace": "Minn\\Rest",
@@ -83526,14 +83018,13 @@
             "namespace": "Minn\\Rest",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Rest/MediaController.php",
-            "lines": 357,
+            "lines": 305,
             "doc": "wp/v2/media: list, single, upload on both transports (multipart field\n\"file\", or a raw body with Content-Disposition), field edits, and force\ndelete with the files.",
             "implements": [],
             "extends": null,
             "uses": [
                 "Minn\\Content\\PostRecord",
                 "Minn\\Content\\Posts",
-                "Minn\\Db",
                 "Minn\\Http\\Access",
                 "Minn\\Http\\Args",
                 "Minn\\Http\\Method",
@@ -83549,8 +83040,8 @@
                 "Minn\\Rest\\Caller",
                 "Minn\\Rest\\Context",
                 "Minn\\Rest\\Fields",
-                "Minn\\Rest\\ListQuery",
                 "Minn\\Rest\\MediaObject",
+                "Minn\\Rest\\PostCollectionParams",
                 "Minn\\Rest\\PostsController",
                 "Minn\\Rest\\PostsWriteController",
                 "Minn\\Rest\\Reply",
@@ -83563,17 +83054,10 @@
                 "Minn\\Rest\\Api"
             ],
             "constructor": {
-                "signature": "__construct(Minn\\Db $db, Minn\\Content\\Posts $posts, Minn\\Media\\Writer $library, Minn\\Rest\\MediaObject $object, Minn\\Rest\\Caller $caller)",
+                "signature": "__construct(Minn\\Content\\Posts $posts, Minn\\Media\\Writer $library, Minn\\Rest\\MediaObject $object, Minn\\Rest\\Caller $caller, Minn\\Rest\\PostsController $reads)",
                 "doc": "",
                 "shapes": [],
                 "params": [
-                    {
-                        "name": "db",
-                        "type": "Minn\\Db",
-                        "shape": "",
-                        "default": null,
-                        "doc": ""
-                    },
                     {
                         "name": "posts",
                         "type": "Minn\\Content\\Posts",
@@ -83601,24 +83085,22 @@
                         "shape": "",
                         "default": null,
                         "doc": ""
+                    },
+                    {
+                        "name": "reads",
+                        "type": "Minn\\Rest\\PostsController",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
                     }
                 ],
                 "visibility": "public",
-                "line": 32,
-                "end": 39
+                "line": 31,
+                "end": 38
             },
             "cases": [],
             "constants": [],
             "properties": [
-                {
-                    "name": "db",
-                    "type": "Minn\\Db",
-                    "readonly": true,
-                    "static": false,
-                    "doc": "",
-                    "visibility": "private",
-                    "promoted": true
-                },
                 {
                     "name": "posts",
                     "type": "Minn\\Content\\Posts",
@@ -83654,18 +83136,27 @@
                     "doc": "",
                     "visibility": "private",
                     "promoted": true
+                },
+                {
+                    "name": "reads",
+                    "type": "Minn\\Rest\\PostsController",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
                 }
             ],
             "methods": [
                 {
                     "routes": [
-                        "GET /wp/v2/media (public)"
+                        "GET /wp/v2/{base:media} (public)"
                     ],
                     "name": "list",
                     "static": false,
                     "visibility": "public",
-                    "signature": "list(Minn\\Http\\Request $request): Minn\\Http\\Response",
-                    "doc": "The media library list.",
+                    "signature": "list(Minn\\Http\\Request $request, string $base): Minn\\Http\\Response",
+                    "doc": "The media list: the post lists' own path for attachments (probe rest-media-lists), each item in the media shape.",
                     "shapes": [],
                     "params": [
                         {
@@ -83674,10 +83165,17 @@
                             "shape": "",
                             "default": null,
                             "doc": ""
+                        },
+                        {
+                            "name": "base",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
                         }
                     ],
-                    "line": 43,
-                    "end": 67
+                    "line": 42,
+                    "end": 45
                 },
                 {
                     "routes": [
@@ -83705,8 +83203,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 113,
-                    "end": 122
+                    "line": 60,
+                    "end": 69
                 },
                 {
                     "routes": [
@@ -83727,8 +83225,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 126,
-                    "end": 162
+                    "line": 73,
+                    "end": 109
                 },
                 {
                     "routes": [
@@ -83758,8 +83256,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 308,
-                    "end": 357
+                    "line": 255,
+                    "end": 304
                 },
                 {
                     "routes": [
@@ -83787,30 +83285,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 361,
-                    "end": 376
-                },
-                {
-                    "routes": [],
-                    "name": "libraryClauses",
-                    "static": true,
-                    "visibility": "private",
-                    "signature": "libraryClauses(Minn\\Http\\Request $request): array",
-                    "doc": "The library's own narrowing, captured from the oracle: media_type as a\nmime prefix from a fixed set, mime_type exact, after/before exclusive\non site-local post_date.",
-                    "shapes": [
-                        "@return array{string, list<mixed>}"
-                    ],
-                    "params": [
-                        {
-                            "name": "request",
-                            "type": "Minn\\Http\\Request",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 76,
-                    "end": 98
+                    "line": 308,
+                    "end": 323
                 },
                 {
                     "routes": [],
@@ -83836,8 +83312,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 100,
-                    "end": 109
+                    "line": 47,
+                    "end": 56
                 },
                 {
                     "routes": [],
@@ -83873,8 +83349,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 175,
-                    "end": 192
+                    "line": 122,
+                    "end": 139
                 },
                 {
                     "routes": [],
@@ -83914,8 +83390,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 202,
-                    "end": 231
+                    "line": 149,
+                    "end": 178
                 },
                 {
                     "routes": [],
@@ -83951,8 +83427,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 240,
-                    "end": 254
+                    "line": 187,
+                    "end": 201
                 },
                 {
                     "routes": [],
@@ -83994,8 +83470,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 262,
-                    "end": 270
+                    "line": 209,
+                    "end": 217
                 },
                 {
                     "routes": [],
@@ -84016,8 +83492,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 278,
-                    "end": 281
+                    "line": 225,
+                    "end": 228
                 },
                 {
                     "routes": [],
@@ -84043,8 +83519,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 284,
-                    "end": 302
+                    "line": 231,
+                    "end": 249
                 },
                 {
                     "routes": [],
@@ -84063,8 +83539,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 378,
-                    "end": 385
+                    "line": 325,
+                    "end": 332
                 }
             ]
         },
@@ -86372,7 +85848,7 @@
             "namespace": "Minn\\Rest",
             "kind": "final class",
             "file": "public/minn/src/Minn/Rest/PostCollectionParams.php",
-            "lines": 167,
+            "lines": 211,
             "doc": "A post type's collection parameters as the reference builds them for its\nlist (probe rest-post-lists): the shared four, dates, authors when the\ntype supports them, ids, menu order and its orderby for page attributes,\nparents for a hierarchical type, search columns and semantics, slugs,\nstatuses (every registered one, and any), each REST taxonomy's term\nfilter (a list, or a query with children for a hierarchical one and an\noperator for the include side) under a relation, stickies for posts, and\nformats for a type with post formats. Plugins change them through\nrest_{type}_collection_params, asked once a request.",
             "implements": [
                 "Minn\\Http\\RouteParams"
@@ -86385,6 +85861,8 @@
             ],
             "usedBy": [
                 "Minn\\Rest\\DeclaredPostsController",
+                "Minn\\Rest\\MediaController",
+                "Minn\\Rest\\PostListArgs",
                 "Minn\\Rest\\PostsController"
             ],
             "constructor": null,
@@ -86455,6 +85933,42 @@
                 },
                 {
                     "routes": [],
+                    "name": "listed",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "listed(string $name): array",
+                    "doc": "A post type's list parameters asked afresh, as the reference's list\nasks for them each time it runs: rest_{type}_collection_params runs\nagain.",
+                    "shapes": [
+                        "@return array<string, array<string, mixed>>"
+                    ],
+                    "params": [
+                        {
+                            "name": "name",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 49,
+                    "end": 55
+                },
+                {
+                    "routes": [],
+                    "name": "mediaTypes",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "mediaTypes(): array",
+                    "doc": "The allowed MIME types by media type (the part before the slash), in\nthe order the site allows them, each once.",
+                    "shapes": [
+                        "@return array<string, list<string>>"
+                    ],
+                    "params": [],
+                    "line": 183,
+                    "end": 191
+                },
+                {
+                    "routes": [],
                     "name": "forType",
                     "static": true,
                     "visibility": "private",
@@ -86472,8 +85986,30 @@
                             "doc": "@return array<string, array<string, mixed>>"
                         }
                     ],
-                    "line": 43,
-                    "end": 65
+                    "line": 58,
+                    "end": 73
+                },
+                {
+                    "routes": [],
+                    "name": "filtered",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "filtered(array $type): array",
+                    "doc": "The parameters built, through rest_{type}_collection_params, each marked optional. @param array{name: string, object: ?\\WP_Post_Type, author: bool, attributes: bool, hierarchical: bool, formats: bool, taxonomies: array<string, bool>} $type @return array<string, array<string, mixed>>",
+                    "shapes": [
+                        "@param array{name: string, object: ?\\WP_Post_Type, author: bool, attributes: bool, hierarchical: bool, formats: bool, taxonomies: array<string, bool>} $type @return array<string, array<string, mixed>>"
+                    ],
+                    "params": [
+                        {
+                            "name": "type",
+                            "type": "array",
+                            "shape": "array{name: string, object: ?\\WP_Post_Type, author: bool, attributes: bool, hierarchical: bool, formats: bool, taxonomies: array<string, bool>}",
+                            "default": null,
+                            "doc": "@return array<string, array<string, mixed>>"
+                        }
+                    ],
+                    "line": 76,
+                    "end": 87
                 },
                 {
                     "routes": [],
@@ -86494,8 +86030,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 73,
-                    "end": 94
+                    "line": 95,
+                    "end": 116
                 },
                 {
                     "routes": [],
@@ -86516,8 +86052,8 @@
                             "doc": "@return array<string, array<string, mixed>>"
                         }
                     ],
-                    "line": 97,
-                    "end": 147
+                    "line": 119,
+                    "end": 175
                 },
                 {
                     "routes": [],
@@ -86530,8 +86066,8 @@
                         "@return list<string>"
                     ],
                     "params": [],
-                    "line": 150,
-                    "end": 153
+                    "line": 194,
+                    "end": 197
                 },
                 {
                     "routes": [],
@@ -86553,8 +86089,8 @@
                             "doc": "REST base => hierarchical"
                         }
                     ],
-                    "line": 161,
-                    "end": 174
+                    "line": 205,
+                    "end": 218
                 },
                 {
                     "routes": [],
@@ -86582,8 +86118,8 @@
                             "doc": "@return array<string, mixed>"
                         }
                     ],
-                    "line": 177,
-                    "end": 187
+                    "line": 221,
+                    "end": 231
                 }
             ]
         },
@@ -86593,11 +86129,13 @@
             "namespace": "Minn\\Rest",
             "kind": "final class",
             "file": "public/minn/src/Minn/Rest/PostListArgs.php",
-            "lines": 152,
+            "lines": 174,
             "doc": "The WP_Query arguments a post list request makes, as the reference makes\nthem before rest_{type}_query (probe rest-post-lists): each registered\nparameter the request carries under its query name, the date bounds,\nper_page, stickies (only them, or none of them), an exact search, each\ntaxonomy's include and exclude under the request's relation, formats\n(standard as no format at all), the type, and ids alone for a HEAD\nrequest. Then each through rest_query_var-{name}, the orderby names\nmapped to the query's, and stickies left where they fall unless asked.",
             "implements": [],
             "extends": null,
-            "uses": [],
+            "uses": [
+                "Minn\\Rest\\PostCollectionParams"
+            ],
             "usedBy": [
                 "Minn\\Rest\\PostsController"
             ],
@@ -86702,7 +86240,37 @@
                         }
                     ],
                     "line": 76,
-                    "end": 88
+                    "end": 91
+                },
+                {
+                    "routes": [],
+                    "name": "mimeTypes",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "mimeTypes(array $vars, WP_REST_Request $request): array",
+                    "doc": "A media list's MIME types, set after plugins have seen the query: the\nMIME types asked for (those the site allows), else every one of the\nmedia types asked for.",
+                    "shapes": [
+                        "@param array<string, mixed> $vars",
+                        "@return array<string, mixed>"
+                    ],
+                    "params": [
+                        {
+                            "name": "vars",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "request",
+                            "type": "WP_REST_Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 101,
+                    "end": 110
                 },
                 {
                     "routes": [],
@@ -86730,8 +86298,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 91,
-                    "end": 102
+                    "line": 113,
+                    "end": 124
                 },
                 {
                     "routes": [],
@@ -86766,8 +86334,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 105,
-                    "end": 123
+                    "line": 127,
+                    "end": 145
                 },
                 {
                     "routes": [],
@@ -86795,8 +86363,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 126,
-                    "end": 140
+                    "line": 148,
+                    "end": 162
                 },
                 {
                     "routes": [],
@@ -86826,8 +86394,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 150,
-                    "end": 167
+                    "line": 172,
+                    "end": 189
                 }
             ]
         },
@@ -87548,7 +87116,7 @@
             "namespace": "Minn\\Rest",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Rest/PostsController.php",
-            "lines": 179,
+            "lines": 191,
             "doc": "wp/v2 posts and pages, read side.",
             "implements": [],
             "extends": null,
@@ -87697,9 +87265,11 @@
                     "name": "serveList",
                     "static": false,
                     "visibility": "public",
-                    "signature": "serveList(Minn\\Http\\Request $request, string $type): Minn\\Http\\Response",
-                    "doc": "The list for any post type as the reference serves it (probe\nrest-post-lists): the caller and the statuses judged, the request's\nparameters sanitized, the query arguments through rest_{type}_query\nand rest_query_var-*, a WP_Query (so pre_get_posts and every query\nfilter run), then each post the caller may read (or edit, in the edit\ncontext) shaped. The totals are the query's, counted again without\nthe page when a later page came back empty.",
-                    "shapes": [],
+                    "signature": "serveList(Minn\\Http\\Request $request, string $type, ?Closure $shape = NULL): Minn\\Http\\Response",
+                    "doc": "The list for any post type as the reference serves it (probe\nrest-post-lists): the caller and the statuses judged, the request's\nparameters sanitized, the query arguments through rest_{type}_query\nand rest_query_var-*, a WP_Query (so pre_get_posts and every query\nfilter run), then each post the caller may read (or edit, in the edit\ncontext) shaped (by $shape when the type has its own object, as\nmedia does). The totals are the query's, counted again without the\npage when a later page came back empty. A media search also matches\nfile names, as the reference's does.",
+                    "shapes": [
+                        "@param (\\Closure(PostRecord, Context): array<string, mixed>)|null $shape"
+                    ],
                     "params": [
                         {
                             "name": "request",
@@ -87714,10 +87284,17 @@
                             "shape": "",
                             "default": null,
                             "doc": ""
+                        },
+                        {
+                            "name": "shape",
+                            "type": "?Closure",
+                            "shape": "(\\Closure(PostRecord, Context): array<string, mixed>)|null",
+                            "default": "NULL",
+                            "doc": ""
                         }
                     ],
-                    "line": 50,
-                    "end": 79
+                    "line": 54,
+                    "end": 90
                 },
                 {
                     "routes": [
@@ -87752,8 +87329,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 162,
-                    "end": 165
+                    "line": 174,
+                    "end": 177
                 },
                 {
                     "routes": [],
@@ -87786,8 +87363,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 168,
-                    "end": 191
+                    "line": 180,
+                    "end": 203
                 },
                 {
                     "routes": [],
@@ -87813,8 +87390,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 194,
-                    "end": 200
+                    "line": 206,
+                    "end": 212
                 },
                 {
                     "routes": [],
@@ -87843,8 +87420,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 89,
-                    "end": 105
+                    "line": 100,
+                    "end": 116
                 },
                 {
                     "routes": [],
@@ -87863,8 +87440,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 108,
-                    "end": 124
+                    "line": 119,
+                    "end": 135
                 },
                 {
                     "routes": [],
@@ -87897,8 +87474,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 131,
-                    "end": 158
+                    "line": 142,
+                    "end": 170
                 }
             ]
         },

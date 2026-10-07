@@ -83,8 +83,30 @@ final class PostListArgs
         if (isset($vars['orderby'], $orderby) && is_string($orderby) && isset(self::ORDERBY[$orderby])) {
             $vars['orderby'] = self::ORDERBY[$orderby];
         }
+        if (($vars['post_type'] ?? '') === 'attachment') {
+            $vars = self::mimeTypes($vars, $request);
+        }
         // A list puts no stickies on top unless it asks for them (and an id list never does).
         return $vars + ['ignore_sticky_posts' => true];
+    }
+
+    /**
+     * A media list's MIME types, set after plugins have seen the query: the
+     * MIME types asked for (those the site allows), else every one of the
+     * media types asked for.
+     *
+     * @param array<string, mixed> $vars
+     * @return array<string, mixed>
+     */
+    private static function mimeTypes(array $vars, \WP_REST_Request $request): array
+    {
+        $byType = PostCollectionParams::mediaTypes();
+        $allowed = array_merge(...array_values($byType));
+        $asked = array_values(array_intersect(array_map('strval', (array) $request['mime_type']), $allowed));
+        if ($asked === []) {
+            $asked = array_merge(...array_map(static fn ($type) => $byType[(string) $type] ?? [], array_values((array) $request['media_type'])));
+        }
+        return $asked === [] ? $vars : ['post_mime_type' => $asked] + $vars;
     }
 
     /** Only sticky posts (those among the ids asked for), or none of them. @param array<string, mixed> $args @return array<string, mixed> */

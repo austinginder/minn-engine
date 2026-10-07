@@ -29,9 +29,8 @@ the wp/v2 surface: shapes and controllers
 | [`IndexController`](#indexcontroller) | final readonly class | 56 | The API index at /wp-json/: the site facts monitors read (name, url, |
 | [`InstalledThemesController`](#installedthemescontroller) | final readonly class | 128 | wp/v2/themes as the reference answers it (probe rest-themes): the |
 | [`Links`](#links) | final class | 52 | Response link relations compacted through CURIEs: a rel that matches a CURIE's template becomes `name:suffix`, and the used CURIEs ride along. |
-| [`ListQuery`](#listquery) | final readonly class | 170 | The collection parameters a wp/v2 list accepts, read once from the |
 | [`LiveSettings`](#livesettings) | final readonly class | 77 | wp/v2/settings with plugins loaded, served from the registered settings |
-| [`MediaController`](#mediacontroller) | final readonly class | 357 | wp/v2/media: list, single, upload on both transports (multipart field |
+| [`MediaController`](#mediacontroller) | final readonly class | 305 | wp/v2/media: list, single, upload on both transports (multipart field |
 | [`MediaObject`](#mediaobject) | final readonly class | 164 | The wp/v2 media object, view and edit context. |
 | [`MenuItemObject`](#menuitemobject) | final readonly class | 74 | The wp/v2/menu-items resource. |
 | [`MenuObject`](#menuobject) | final readonly class | 37 | The wp/v2/menus resource: a nav_menu term plus locations and auto_add. |
@@ -41,10 +40,10 @@ the wp/v2 surface: shapes and controllers
 | [`ParamCheck`](#paramcheck) | final class | 76 | The required / validate / sanitize pass over a request's declared arguments. |
 | [`PluginsController`](#pluginscontroller) | final readonly class | 236 | wp/v2 plugins: what sits in wp-content/plugins, in the reference's |
 | [`PolicyGate`](#policygate) | final readonly class | 147 | Judges a route's policy against the caller, with the reference's |
-| [`PostCollectionParams`](#postcollectionparams) | final class | 167 | A post type's collection parameters as the reference builds them for its |
-| [`PostListArgs`](#postlistargs) | final class | 152 | The WP_Query arguments a post list request makes, as the reference makes |
+| [`PostCollectionParams`](#postcollectionparams) | final class | 211 | A post type's collection parameters as the reference builds them for its |
+| [`PostListArgs`](#postlistargs) | final class | 174 | The WP_Query arguments a post list request makes, as the reference makes |
 | [`PostObject`](#postobject) | final readonly class | 530 | Builds the wp/v2 post and page objects in the reference's shape: the |
-| [`PostsController`](#postscontroller) | final readonly class | 179 | wp/v2 posts and pages, read side. |
+| [`PostsController`](#postscontroller) | final readonly class | 191 | wp/v2 posts and pages, read side. |
 | [`PostsWriteController`](#postswritecontroller) | final readonly class | 459 | wp/v2 posts and pages, write side: create, update, trash, and force |
 | [`RegisteredFields`](#registeredfields) | final class | 105 | The fields plugin code adds to an object type with register_rest_field, |
 | [`RegisteredPostFields`](#registeredpostfields) | final readonly class | 89 | The REST object of a post whose type plugin code registered (probe rest-plugin-types), built by what the type supports. |
@@ -1134,95 +1133,6 @@ Links with their curies applied, as the reference compacts them.
 - `@return array<string, mixed>`
 
 
-## ListQuery
-
-`final readonly class Minn\Rest\ListQuery` · `public/minn/src/Minn/Rest/ListQuery.php`
-
-The collection parameters a wp/v2 list accepts, read once from the
-request into typed fields: the page, the id lists, the slugs, the search
-words, and the ordering. clauses() turns the narrowing ones into the SQL
-fragments and parameters a controller appends to its own visibility
-clause, so posts, pages, and media build their lists the same way.
-
-- const `TERM_ARGS` = `array (   'categories' => 'category',   'tags' => 'post_tag',   'wp_pattern_category' => 'wp_pattern_category', )` — The list parameters that name terms, by the taxonomy they filter on.
-
-Used by: `Minn\Rest\MediaController`
-
-```php
-__construct(int $page = 1, int $perPage = 10, array $include = array ( ), array $exclude = array ( ), array $author = array ( ), array $authorExclude = array ( ), array $parent = array ( ), array $parentExclude = array ( ), array $slugs = array ( ), array $words = array ( ), ?int $menuOrder = NULL, string $orderBy = 'date', string $order = 'DESC', array $terms = array ( ), array $termsExclude = array ( ))
-```
-- `@param list<int> $include`
-- `@param list<int> $exclude`
-- `@param list<int> $author`
-- `@param list<int> $authorExclude`
-- `@param list<int> $parent`
-- `@param list<int> $parentExclude`
-- `@param list<string> $slugs`
-- `@param list<string> $words`
-
-- readonly `int $page`
-- readonly `int $perPage`
-- readonly `array $include`
-- readonly `array $exclude`
-- readonly `array $author`
-- readonly `array $authorExclude`
-- readonly `array $parent`
-- readonly `array $parentExclude`
-- readonly `array $slugs`
-- readonly `array $words`
-- readonly `?int $menuOrder`
-- readonly `string $orderBy`
-- readonly `string $order`
-- readonly `array $terms`
-- readonly `array $termsExclude`
-
-### static `fromRequest(Minn\Http\Request $request, ?array $taxonomies = NULL): self`
-
-The list parameters read from the request; a plugin's type names the taxonomies it filters on. @param array<string, string>|null $taxonomies
-
-- `@param array<string, string>|null $taxonomies`
-
-### `clauses(): array`
-
-The narrowing clauses, each starting with " AND", and their parameters
-in the same order. Every search word must appear in the title, the
-excerpt, or the content.
-
-- `@return array{string, list<mixed>}`
-
-### `isSearch(): bool`
-
-Whether a search narrows the list.
-
-### `offset(): int`
-
-The first row of the requested page.
-
-### `totalPages(int $total): int`
-
-How many pages a total makes at this page size.
-
-### `isPastTheEnd(int $total): bool`
-
-A page past the last one is a parameter error, except page one of nothing.
-
-### static `ids(string $csv): array`
-
-A comma-separated id list as distinct integers, zero dropped: author=0
-means nothing.
-
-- `@return list<int>`
-
-### static `idsWithZero(string $csv): array`
-
-The same list with zero kept: parent=0 means "top level", and a comment's
-post=0 means "no post".
-
-- `@return list<int>`
-
-Internals: `termFilters()` (private, line 76), `list()` (private, line 175), `words()` (private, line 181)
-
-
 ## LiveSettings
 
 `final readonly class Minn\Rest\LiveSettings` · `public/minn/src/Minn/Rest/LiveSettings.php`
@@ -1274,15 +1184,15 @@ delete with the files.
 Used by: `Minn\Rest\Api`
 
 ```php
-__construct(Minn\Db $db, Minn\Content\Posts $posts, Minn\Media\Writer $library, Minn\Rest\MediaObject $object, Minn\Rest\Caller $caller)
+__construct(Minn\Content\Posts $posts, Minn\Media\Writer $library, Minn\Rest\MediaObject $object, Minn\Rest\Caller $caller, Minn\Rest\PostsController $reads)
 ```
 
 
-### `list(Minn\Http\Request $request): Minn\Http\Response`
+### `list(Minn\Http\Request $request, string $base): Minn\Http\Response`
 
-Route: `GET /wp/v2/media (public)`
+Route: `GET /wp/v2/{base:media} (public)`
 
-The media library list.
+The media list: the post lists' own path for attachments (probe rest-media-lists), each item in the media shape.
 
 ### `single(Minn\Http\Request $request, string $id): Minn\Http\Response`
 
@@ -1312,7 +1222,7 @@ Route: `DELETE /wp/v2/media/{id:[\d]+} (cap delete_post on {id}; attachment {id}
 
 Attachments cannot be trashed; force removes the row, its meta, and its files.
 
-Internals: `libraryClauses()` (private, line 76), `restDate()` (private, line 100), `storeWithPlugins()` (private, line 175), `insertedWithPlugins()` (private, line 202), `preparedAttachment()` (private, line 240), `finishedWithPlugins()` (private, line 262), `params()` (private, line 278), `inserted()` (private, line 284), `attachment()` (private, line 378)
+Internals: `restDate()` (private, line 47), `storeWithPlugins()` (private, line 122), `insertedWithPlugins()` (private, line 149), `preparedAttachment()` (private, line 187), `finishedWithPlugins()` (private, line 209), `params()` (private, line 225), `inserted()` (private, line 231), `attachment()` (private, line 325)
 
 
 ## MediaObject
@@ -1702,7 +1612,7 @@ rest_{type}_collection_params, asked once a request.
 - const `STATUSES` = `array (   0 => 'publish',   1 => 'future',   2 => 'draft',   3 => 'pending',   4 => 'private',   5 => 'trash',   6 => 'auto-draft',   7 => 'inherit',   8 => 'request-pending',   9 => 'request-confirmed',   10 => 'request-failed',   11 => 'request-completed', )`
 - const `IDS` = `array (   'type' => 'array',   'items' =>    array (     'type' => 'integer',   ),   'default' =>    array (   ), )`
 
-Used by: `Minn\Rest\DeclaredPostsController`, `Minn\Rest\PostsController`
+Used by: `Minn\Rest\DeclaredPostsController`, `Minn\Rest\MediaController`, `Minn\Rest\PostListArgs`, `Minn\Rest\PostsController`
 
 ### static `for(array $captures): array`
 
@@ -1714,7 +1624,22 @@ The parameters of a post type's list, by the type's name. @return array<string, 
 
 - `@return array<string, array<string, mixed>>`
 
-Internals: `forType()` (private, line 43), `type()` (private, line 73), `build()` (private, line 97), `statuses()` (private, line 150), `taxonomies()` (private, line 161), `termFilter()` (private, line 177)
+### static `listed(string $name): array`
+
+A post type's list parameters asked afresh, as the reference's list
+asks for them each time it runs: rest_{type}_collection_params runs
+again.
+
+- `@return array<string, array<string, mixed>>`
+
+### static `mediaTypes(): array`
+
+The allowed MIME types by media type (the part before the slash), in
+the order the site allows them, each once.
+
+- `@return array<string, list<string>>`
+
+Internals: `forType()` (private, line 58), `filtered()` (private, line 76), `type()` (private, line 95), `build()` (private, line 119), `statuses()` (private, line 194), `taxonomies()` (private, line 205), `termFilter()` (private, line 221)
 
 
 ## PostListArgs
@@ -1753,7 +1678,7 @@ rest_query_var-{name}, and the list's orderby names as the query's.
 - `@param array<string, mixed> $args`
 - `@return array<string, mixed>`
 
-Internals: `sticky()` (private, line 91), `taxonomies()` (private, line 105), `termClause()` (private, line 126), `formats()` (private, line 150)
+Internals: `mimeTypes()` (private, line 101), `sticky()` (private, line 113), `taxonomies()` (private, line 127), `termClause()` (private, line 148), `formats()` (private, line 172)
 
 
 ## PostObject
@@ -1840,15 +1765,19 @@ Route: `GET /wp/v2/{base:pages} (public)`
 
 The posts or pages list.
 
-### `serveList(Minn\Http\Request $request, string $type): Minn\Http\Response`
+### `serveList(Minn\Http\Request $request, string $type, ?Closure $shape = NULL): Minn\Http\Response`
 
 The list for any post type as the reference serves it (probe
 rest-post-lists): the caller and the statuses judged, the request's
 parameters sanitized, the query arguments through rest_{type}_query
 and rest_query_var-*, a WP_Query (so pre_get_posts and every query
 filter run), then each post the caller may read (or edit, in the edit
-context) shaped. The totals are the query's, counted again without
-the page when a later page came back empty.
+context) shaped (by $shape when the type has its own object, as
+media does). The totals are the query's, counted again without the
+page when a later page came back empty. A media search also matches
+file names, as the reference's does.
+
+- `@param (\Closure(PostRecord, Context): array<string, mixed>)|null $shape`
 
 ### `single(Minn\Http\Request $request, string $base, string $id): Minn\Http\Response`
 
@@ -1864,7 +1793,7 @@ One post of any type, with the reference's read rules.
 
 A viewable type's single post points at its page on the site.
 
-Internals: `totals()` (private, line 89), `readable()` (private, line 108), `visibleStatuses()` (private, line 131)
+Internals: `totals()` (private, line 100), `readable()` (private, line 119), `visibleStatuses()` (private, line 142)
 
 
 ## PostsWriteController

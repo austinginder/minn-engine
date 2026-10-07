@@ -93,14 +93,14 @@ final class Router
         // A route spelled without captures claims its own path: /templates/lookup is not also a template id.
         $literal = null;
         foreach ($this->routes as ['route' => $route]) {
-            if (!str_contains($route->pattern, '{') && $route->pattern === $request->path) {
-                $literal = $route->pattern;
+            if (self::literal($route) === $request->path) {
+                $literal = $request->path;
                 break;
             }
         }
         foreach ($this->routes as ['route' => $route]) {
             $method = $route->method;
-            if ($method === Method::Any || $method === Method::Head || !preg_match($route->regex(), $request->path, $captures) || ($literal !== null && $route->pattern !== $literal)) {
+            if ($method === Method::Any || $method === Method::Head || !preg_match($route->regex(), $request->path, $captures) || ($literal !== null && self::literal($route) !== $literal)) {
                 continue;
             }
             $captures = array_filter($captures, is_string(...), ARRAY_FILTER_USE_KEY);
@@ -249,5 +249,12 @@ final class Router
             }
         }
         return array_values(array_unique($methods));
+    }
+
+    /** The one path a route spells, a capture it fixes ({base:media}) read as its word; null for a route with a real capture. */
+    private static function literal(Route $route): ?string
+    {
+        $path = (string) preg_replace('/\{\w+:(\w+)\}/', '$1', $route->pattern);
+        return str_contains($path, '{') ? null : $path;
     }
 }
