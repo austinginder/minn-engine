@@ -117,6 +117,7 @@ final readonly class LoginHooks
         $parts['form'] = match ($action) {
             'lostpassword', 'retrievepassword' => $printed('lostpassword_form'),
             'rp', 'resetpass' => $printed('resetpass_form', $user === null ? null : new \WP_User($user->id)),
+            'register' => $printed('register_form'),
             default => $printed('login_form'),
         };
         $parts['footer'] = $printed('login_footer');

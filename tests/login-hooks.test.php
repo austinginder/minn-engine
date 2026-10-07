@@ -11,7 +11,10 @@
  * sign-in without its field refused in its words, one with it landing
  * where login_redirect says; a sign-out landing where logout_redirect
  * says; and the lost-password form's own field, a reset asked for
- * without it refused in the plugin's words and one with it sent on. The fixture, the run and the suite's user live only while it runs.
+ * without it refused in the plugin's words and one with it sent on; and
+ * registration (switched on for the run): the form's own field, a sign-up
+ * refused without it and one landing where registration_redirect says,
+ * and the form closed when registration is off. The fixture, the run and the suite's user live only while it runs.
  *
  *   php tests/login-hooks.test.php
  */
@@ -164,6 +167,46 @@ $lostSent = $both(static function (string $stack) use ($ask): array {
 });
 $same('a reset asked for with the field: on to check the email', $lostSent);
 $same('a reset asked for with the field: the actions heard', $both($heard));
+
+// Registration, switched on for the run (each stack registers its own account: they share a database).
+$registering = trim((string) shell_exec("{$WP} option get users_can_register 2>/dev/null"));
+register_shutdown_function(static function () use ($WP, $registering): void {
+    shell_exec("{$WP} option update users_can_register " . escapeshellarg($registering === '' ? '0' : $registering) . ' >/dev/null 2>&1');
+    foreach (['reference', 'engine'] as $stack) {
+        $id = trim((string) shell_exec("{$WP} user get zz-reg-{$stack} --field=ID 2>/dev/null"));
+        $email = trim((string) shell_exec("{$WP} user get zz-reg-{$stack} --field=user_email 2>/dev/null"));
+        if ($id !== '' && $email === "zz-reg-{$stack}@minn-engine.localhost") {
+            shell_exec("{$WP} user delete {$id} --reassign=1 --yes >/dev/null 2>&1");
+        }
+    }
+});
+shell_exec("{$WP} option update users_can_register 1 >/dev/null 2>&1");
+$registerPages = $both(static function (string $stack) use ($ask, $stacks): array {
+    preg_match('/<form[^>]*>(.*?)<\/form>/s', $ask($stack, '/wp-login.php?action=register')[2], $form);
+    preg_match('/name="redirect_to" value="([^"]*)"/', $form[1] ?? '', $landing);
+    return [str_contains($form[1] ?? '', 'name="zz_human_reg"'), str_replace($stacks[$stack][0], '{site}', html_entity_decode($landing[1] ?? ''))];
+});
+$same('the registration page: the field in the form, and where it lands', $registerPages);
+$same('the registration page: the actions heard', $both($heard));
+$registerRefused = $both(static fn (string $stack) => str_contains($ask($stack, '/wp-login.php?action=register', ['user_login' => "zz-reg-{$stack}", 'user_email' => "zz-reg-{$stack}@minn-engine.localhost"])[2], 'Zz: prove it to register.'));
+$same('a registration without the field: refused in the plugin\'s words', $registerRefused);
+$same('a registration without the field: the actions heard', $both($heard));
+$registered = $both(static function (string $stack) use ($ask, $stacks, $WP): array {
+    [$status, $location] = $ask($stack, '/wp-login.php?action=register', ['user_login' => "zz-reg-{$stack}", 'user_email' => "zz-reg-{$stack}@minn-engine.localhost", 'zz_human_reg' => 'yes']);
+    // A relative and an absolute Location land on the same page; the path and query are compared.
+    $landed = (string) parse_url($location, PHP_URL_PATH) . '?' . (string) parse_url($location, PHP_URL_QUERY);
+    return [$status, '/' . ltrim($landed, '/'), trim((string) shell_exec("{$WP} user get zz-reg-{$stack} --field=roles 2>/dev/null"))];
+});
+$same('a registration with the field (and no landing posted): where it lands, and the account', $registered);
+$same('a registration with the field: the actions heard', $both($heard));
+shell_exec("{$WP} option update users_can_register 0 >/dev/null 2>&1");
+$closed = $both(static function (string $stack) use ($ask): array {
+    [$status, $location] = $ask($stack, '/wp-login.php?action=register');
+    return [$status, str_contains($location, 'registration=disabled')];
+});
+$same('registration switched off: sent back saying so', $closed);
+$heard('reference');
+$heard('engine');
 
 echo "\n{$pass} passed, {$fail} failed\n";
 exit($fail === 0 ? 0 : 1);

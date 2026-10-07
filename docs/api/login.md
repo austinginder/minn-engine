@@ -4,9 +4,9 @@
 
 | Class | Kind | Lines | Summary |
 |---|---|---|---|
-| [`LoginController`](#logincontroller) | final readonly class | 395 | Signing in. The page people see is /minn-admin/login: the form, the |
-| [`LoginForm`](#loginform) | final class | 164 | The sign-in page markup. |
-| [`LoginHooks`](#loginhooks) | final readonly class | 126 | The sign-in as plugins see it, when they are loaded. The credentials go |
+| [`LoginController`](#logincontroller) | final readonly class | 434 | Signing in. The page people see is /minn-admin/login: the form, the |
+| [`LoginForm`](#loginform) | final class | 188 | The sign-in page markup. |
+| [`LoginHooks`](#loginhooks) | final readonly class | 127 | The sign-in as plugins see it, when they are loaded. The credentials go |
 | [`ServeLogin`](#servelogin) | final class | 3 | Thrown by the wp-login.php shape file when plugin code require's it |
 
 ## LoginController
@@ -22,7 +22,7 @@ and cookies validate on the engine AND on WordPress either way.
 
 - const `DAY` = `86400`
 - const `PATH` = `'/minn-admin/login'`
-- const `SEGMENTS` = `array (   'lost-password' => 'lostpassword',   'reset' => 'rp',   'logout' => 'logout', )` — Clean path segment => the action wp-login.php spells with ?action=.
+- const `SEGMENTS` = `array (   'lost-password' => 'lostpassword',   'reset' => 'rp',   'logout' => 'logout',   'register' => 'register', )` — Clean path segment => the action wp-login.php spells with ?action=.
 
 Used by: `Minn\Engine`
 
@@ -35,7 +35,7 @@ __construct(Minn\Content\Site $site, Minn\Front\Permalinks $permalinks, Minn\Aut
 
 Route: `GET /minn-admin/login`
 
-Route: `GET /minn-admin/login/{segment:lost-password|reset|logout}`
+Route: `GET /minn-admin/login/{segment:lost-password|reset|logout|register}`
 
 Route: `GET /wp-login.php (public)`
 
@@ -51,7 +51,7 @@ Route: `POST /wp-login.php (public)`
 
 Handles the posted form for each of those pages.
 
-Internals: `lostPassword()` (private, line 102), `retrieve()` (private, line 148), `openResetLink()` (private, line 166), `resetSession()` (private, line 183), `savePassword()` (private, line 198), `validateReset()` (private, line 236), `parts()` (private, line 247), `tokenLogin()` (private, line 258), `safeRedirect()` (private, line 334), `logout()` (private, line 353), `action()` (private, line 383), `actionUrl()` (private, line 394), `base()` (private, line 404), `tooManyAttempts()` (private, line 410), `render()` (private, line 417)
+Internals: `lostPassword()` (private, line 109), `retrieve()` (private, line 155), `openResetLink()` (private, line 173), `resetSession()` (private, line 190), `savePassword()` (private, line 205), `register()` (private, line 245), `validateReset()` (private, line 272), `parts()` (private, line 283), `tokenLogin()` (private, line 294), `safeRedirect()` (private, line 373), `logout()` (private, line 392), `action()` (private, line 422), `actionUrl()` (private, line 433), `base()` (private, line 443), `tooManyAttempts()` (private, line 449), `render()` (private, line 456)
 
 
 ## LoginForm
@@ -87,6 +87,14 @@ The lost-password form.
 
 - `@param array{title?: string, head?: string, bodyClass?: string, headerUrl?: string, headerText?: string, message?: string, form?: string, footer?: string} $parts what plugins put on the page (LoginHooks::page())`
 
+### static `register(string $siteName, string $action, string $error, string $login, string $email, string $redirect, array $parts = array ( )): string`
+
+The registration form: a username and an email, what plugins add,
+where a sign-up lands (registration_redirect's answer), and word that
+the confirmation comes by email.
+
+- `@param array{title?: string, head?: string, bodyClass?: string, headerUrl?: string, headerText?: string, message?: string, form?: string, footer?: string} $parts`
+
 ### static `resetPassword(string $siteName, string $action, string $key, string $login, string $error, array $parts = array ( )): string`
 
 The new-password form; the key rides in a hidden field as on the reference.
@@ -97,7 +105,7 @@ The new-password form; the key rides in a hidden field as on the reference.
 
 A message with a link back to sign-in.
 
-Internals: `page()` (private, line 135)
+Internals: `page()` (private, line 159)
 
 
 ## LoginHooks

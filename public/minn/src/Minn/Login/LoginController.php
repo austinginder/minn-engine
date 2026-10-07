@@ -51,11 +51,11 @@ final readonly class LoginController
     }
 
     /** Clean path segment => the action wp-login.php spells with ?action=. */
-    private const SEGMENTS = ['lost-password' => 'lostpassword', 'reset' => 'rp', 'logout' => 'logout'];
+    private const SEGMENTS = ['lost-password' => 'lostpassword', 'reset' => 'rp', 'logout' => 'logout', 'register' => 'register'];
 
     /** The sign-in, lost-password, reset, and logout pages. */
     #[Route(Method::Get, self::PATH)]
-    #[Route(Method::Get, self::PATH . '/{segment:lost-password|reset|logout}')]
+    #[Route(Method::Get, self::PATH . '/{segment:lost-password|reset|logout|register}')]
     #[Route(Method::Get, '/wp-login.php', policy: new Policy(Access::Public))]
     public function form(Request $request): Response
     {
@@ -70,6 +70,9 @@ final readonly class LoginController
             return $this->tokenLogin($request);
         }
         $siteName = (string) ($this->site->option('blogname') ?? 'Site');
+        if ($this->action($request) === 'register') {
+            return $this->register($request, $siteName);
+        }
         switch ($this->action($request)) {
             case 'lostpassword':
             case 'retrievepassword':
@@ -90,8 +93,12 @@ final readonly class LoginController
         }
         $message = match ((string) $request->query('checkemail', '')) {
             'confirm' => 'Check your email for the confirmation link, then visit the login page.',
+            'registered' => 'Registration complete. Please check your email, then visit the login page.',
             default => '',
         };
+        if ($request->query('registration') === 'disabled') {
+            $message = 'User registration is currently not allowed.';
+        }
         if ($request->query('password') === 'changed') {
             $message = 'Your password has been changed.';
         }
@@ -229,6 +236,35 @@ final readonly class LoginController
     }
 
     /**
+     * Registration, when the site allows it (else off to the sign-in page
+     * saying so): the form (its landing as registration_redirect says), or
+     * a POST through register_new_user, landing where the form said (else
+     * on the sign-in page, to check the email), or back on the form with
+     * every refusal in its words.
+     */
+    private function register(Request $request, string $siteName): Response
+    {
+        if (!Runtime::booted() || !\get_option('users_can_register')) {
+            return Response::redirect($this->permalinks->url($this->base($request) . '?registration=disabled'), 302);
+        }
+        $action = $this->actionUrl($request, 'register');
+        // Only the two fields, each as text: a plugin's own fields (lists among them) stay out of it.
+        $fields = array_intersect_key($request->form, ['user_login' => true, 'user_email' => true]) + ['user_login' => '', 'user_email' => ''];
+        ['user_login' => $login, 'user_email' => $email] = array_map(static fn ($value) => is_string($value) ? $value : '', $fields);
+        if ($request->method !== Method::Post) {
+            $landing = (string) \apply_filters('registration_redirect', (string) ($request->query('redirect_to') ?? ''), new \WP_Error());
+            return Response::html(LoginForm::register($siteName, $action, '', '', '', $landing, $this->parts('register', 'Registration Form', $siteName)));
+        }
+        $result = \register_new_user($login, $email);
+        $requested = (string) ($request->form['redirect_to'] ?? '');
+        if (!$result instanceof \WP_Error) {
+            return Response::redirect($requested !== '' ? $this->safeRedirect($requested) : $this->permalinks->url($this->base($request) . '?checkemail=registered'), 302);
+        }
+        $words = implode(' ', array_map(static fn ($m) => trim(html_entity_decode(strip_tags((string) $m), ENT_QUOTES | ENT_HTML5, 'UTF-8')), $result->get_error_messages()));
+        return Response::html(LoginForm::register($siteName, $action, $words, $login, $email, $requested, $this->parts('register', 'Registration Form', $siteName)));
+    }
+
+    /**
      * A new password judged as the reference judges it: the mismatch, then
      * whatever validate_password_reset adds; the first refusal as plain
      * words, or ''.
@@ -299,6 +335,9 @@ final readonly class LoginController
         }
         $hooks = new LoginHooks($this->users);
         $hooks->enter($this->action($request) ?: 'login');
+        if ($this->action($request) === 'register') {
+            return $this->register($request, (string) ($this->site->option('blogname') ?? 'Site'));
+        }
         $reset = $this->lostPassword($request);
         if ($reset !== null) {
             return $reset;

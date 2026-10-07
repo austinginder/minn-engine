@@ -103,6 +103,30 @@ final class LoginForm
     }
 
     /**
+     * The registration form: a username and an email, what plugins add,
+     * where a sign-up lands (registration_redirect's answer), and word that
+     * the confirmation comes by email.
+     *
+     * @param array{title?: string, head?: string, bodyClass?: string, headerUrl?: string, headerText?: string, message?: string, form?: string, footer?: string} $parts
+     */
+    public static function register(string $siteName, string $action, string $error, string $login, string $email, string $redirect, array $parts = []): string
+    {
+        return self::page($siteName, 'Registration Form', $error, '',
+            '<form method="post" action="' . Html::attr($action) . '" novalidate="novalidate">'
+            . '<h1>' . Html::esc($siteName) . '</h1>'
+            . '<p class="hint">Register For This Site</p>'
+            . '<label for="user_login">Username</label>'
+            . '<input type="text" name="user_login" id="user_login" value="' . Html::attr($login) . '" autocapitalize="none" autocomplete="username" required>'
+            . '<label for="user_email">Email</label>'
+            . '<input type="email" name="user_email" id="user_email" value="' . Html::attr($email) . '" autocomplete="email" required>'
+            . ($parts['form'] ?? '')
+            . '<p class="hint">Registration confirmation will be emailed to you.</p>'
+            . '<input type="hidden" name="redirect_to" value="' . Html::attr($redirect) . '">'
+            . '<button type="submit" name="wp-submit">Register</button>'
+            . '</form>', $parts);
+    }
+
+    /**
      * The new-password form; the key rides in a hidden field as on the reference.
      *
      * @param array{title?: string, head?: string, bodyClass?: string, headerUrl?: string, headerText?: string, message?: string, form?: string, footer?: string} $parts

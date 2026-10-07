@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name: Minn test login
- * Description: Fixture for the login-hooks suite, loaded by the engine and the reference alike. A request that carries X-Minn-Login naming a run the suite opened (wp-content/minn-login/<run>.open exists) gets a plugin on the sign-in page as captcha, branding and redirect plugins are: a style, a head tag, a message, a hidden field inside the form that sign-in then requires (a captcha's check, through authenticate), a footer mark, a body class, a title, a header link and text, its own landing after signing in and out, and a field the lost-password form then requires; the login actions it hears are appended to <run>.log. Without such a run the header does nothing.
+ * Description: Fixture for the login-hooks suite, loaded by the engine and the reference alike. A request that carries X-Minn-Login naming a run the suite opened (wp-content/minn-login/<run>.open exists) gets a plugin on the sign-in page as captcha, branding and redirect plugins are: a style, a head tag, a message, a hidden field inside the form that sign-in then requires (a captcha's check, through authenticate), a footer mark, a body class, a title, a header link and text, its own landing after signing in and out, a field the lost-password form then requires, and the registration form's own field and landing; the login actions it hears are appended to <run>.log. Without such a run the header does nothing.
  * License: MIT
  */
 
@@ -13,7 +13,7 @@ if (preg_match('/^[a-z0-9-]{1,64}$/', $minnLoginRun) !== 1 || !is_file("{$minnLo
 $minnLoginHeard = static function (string $what) use ($minnLoginDir, $minnLoginRun): void {
     file_put_contents("{$minnLoginDir}/{$minnLoginRun}.log", $what . "\n", FILE_APPEND);
 };
-foreach (['login_init', 'login_form_login', 'login_form_logout', 'login_form_lostpassword', 'wp_login', 'wp_logout', 'wp_login_failed', 'lostpassword_post', 'retrieve_password'] as $minnLoginAction) {
+foreach (['login_init', 'login_form_login', 'login_form_logout', 'login_form_lostpassword', 'wp_login', 'wp_logout', 'wp_login_failed', 'lostpassword_post', 'retrieve_password', 'login_form_register', 'register_post', 'register_new_user'] as $minnLoginAction) {
     add_action($minnLoginAction, static fn () => $minnLoginHeard($minnLoginAction));
 }
 add_action('login_enqueue_scripts', static function () use ($minnLoginHeard): void {
@@ -52,3 +52,14 @@ add_action('lostpassword_post', static function ($errors): void {
         $errors->add('zz_lost', 'Zz: prove it to reset.');
     }
 });
+// The registration form's own captcha, and its own landing.
+add_action('register_form', static function (): void {
+    echo '<input type="hidden" name="zz_human_reg" value="yes">';
+});
+add_filter('registration_errors', static function ($errors) {
+    if (($_POST['zz_human_reg'] ?? '') !== 'yes') {
+        $errors->add('zz_reg', 'Zz: prove it to register.');
+    }
+    return $errors;
+});
+add_filter('registration_redirect', static fn () => home_url('/zz-registered/'));
