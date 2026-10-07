@@ -281,7 +281,7 @@ final class Runtime
     /** A fresh post query over the runtime's registry. */
     public static function postQuery(): PostQuery
     {
-        return new PostQuery(self::current()->db, self::registry());
+        return new PostQuery(self::current()->db);
     }
 
     /** A per-request state value. */

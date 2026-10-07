@@ -2210,3 +2210,8 @@ function get_post_timestamp($post = null, $field = 'date')
     $datetime = get_post_datetime($post, $field);
     return $datetime === false ? false : $datetime->getTimestamp();
 }
+
+function wp_post_mime_type_where($post_mime_types, $table_alias = '')
+{
+    return \Minn\Query\MimeWhere::sql(is_array($post_mime_types) ? array_values($post_mime_types) : (string) $post_mime_types, (string) $table_alias);
+}

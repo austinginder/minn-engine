@@ -30,8 +30,7 @@ the WordPress runtime plugins load against
 | [`Hooks`](#hooks) | final class | 330 | The hook registry plugin code registers into and the engine fires. |
 | [`Interactivity`](#interactivity) | final class | 509 | Server-side directive processing for the Interactivity API: the state and |
 | [`MainQuery`](#mainquery) | final class | 34 | The query variables the reference's main query would carry for a URL the |
-| [`Meta`](#meta) | final readonly class | 209 | The four meta tables behind get_metadata and friends: reads by object, and the row-level writes the update and delete rules need. |
-| [`MetaClause`](#metaclause) | final class | 120 | The meta side of a post query: meta_key and its friends as one clause, |
+| [`Meta`](#meta) | final readonly class | 210 | The four meta tables behind get_metadata and friends: reads by object, and the row-level writes the update and delete rules need. |
 | [`MetaKeys`](#metakeys) | final class | 183 | The meta keys code registers, kept where the reference keeps them |
 | [`MetaTypes`](#metatypes) | final class | 21 | Meta types a plugin brought, by the table it named on $wpdb as |
 | [`NavMenu`](#navmenu) | final class | 303 | Nav-menu item decoration for wp_nav_menu(): the reference's class tokens |
@@ -52,11 +51,16 @@ the WordPress runtime plugins load against
 | [`PostInsert`](#postinsert) | final readonly class | 167 | The decisions behind wp_insert_post: which columns a postarr fills, when |
 | [`PostLinks`](#postlinks) | final class | 151 | Post addresses as the reference's link functions build them (probe |
 | [`PostLookup`](#postlookup) | final readonly class | 85 | The post reads plugin code asks for by shape: a page by title, revisions, counts. |
-| [`PostQuery`](#postquery) | final class | 383 | The query WP_Query runs: its variables become one SELECT over the posts |
+| [`PostQuery`](#postquery) | final class | 371 | WP_Query::get_posts as the reference runs it (probe wp-query-sql): the |
+| [`PostQueryParts`](#postqueryparts) | final class | 56 | The pieces of one WP_Query run as the reference builds them and hands |
+| [`PostQueryResults`](#postqueryresults) | final class | 111 | What WP_Query does with its posts once it has them, as the reference does |
+| [`PostQueryStatus`](#postquerystatus) | final class | 165 | WP_Query's post type and status clause as the reference writes it (probe |
+| [`PostQueryTax`](#postquerytax) | final class | 193 | The taxonomy side of WP_Query as the reference runs it (probe |
+| [`PostQueryWhere`](#postquerywhere) | final class | 263 | The WHERE fragments WP_Query writes from its variables, in the reference's |
 | [`PostRevisions`](#postrevisions) | final class | 63 | A post's revisions as the reference's wp_save_post_revision keeps them |
 | [`PostSave`](#postsave) | final class | 210 | A REST save's columns through the filters the reference's save runs |
 | [`QueriedObject`](#queriedobject) | final readonly class | 70 | Which object a query is "about", read from its flags and variables: a term |
-| [`QueryFlags`](#queryflags) | final readonly class | 101 | The conditional flags a set of query variables implies (is_single, is_archive, |
+| [`QueryFlags`](#queryflags) | final readonly class | 160 | The conditional flags a set of query variables implies (is_single, is_archive, |
 | [`Recovery`](#recovery) | final readonly class | 214 | Recovery from a fatal in someone else's code. When a plugin or theme |
 | [`Refusal`](#refusal) | final readonly class | 6 | A refused operation, the way plugin code expects to read it: a code, a message, optional data. The facade turns it into WP_Error. |
 | [`RegisteredSettings`](#registeredsettings) | final class | 104 | Settings as register_setting keeps them (probe rest-settings): the |
@@ -70,7 +74,6 @@ the WordPress runtime plugins load against
 | [`SymbolTable`](#symboltable) | final class | 69 | What a folder's PHP names, collected while its tokens are read: the |
 | [`Symbols`](#symbols) | final class | 275 | A static read of what a plugin's PHP calls: global functions and classes |
 | [`TagEditor`](#tageditor) | final class | 149 | Edits one start tag's attributes in place the way the reference's tag |
-| [`TaxonomyClause`](#taxonomyclause) | final class | 178 | The taxonomy side of a post query: every query var the reference reads |
 | [`TermEvents`](#termevents) | final readonly class | 114 | What the reference's REST terms controller tells plugins, for the |
 | [`TermFields`](#termfields) | final class | 65 | A term's fields in a context, as the reference's sanitize_term_field |
 | [`TermQuery`](#termquery) | final readonly class | 440 | Term reads in the shapes plugin code asks for: get_terms() arguments to |
@@ -1301,12 +1304,13 @@ Whether an object type has a meta table.
 
 ### static `clausesFromQueryVars(array $queryVars): array`
 
-The meta clauses hidden in flat query vars (meta_key, meta_value, the
-compare and type variants), merged ahead of an explicit meta_query,
-the reference's precedence for WP_Meta_Query::parse_query_vars.
+The meta query in flat query vars (meta_key, meta_value, the compare
+and type variants) as one clause, AND'd ahead of an explicit
+meta_query as its own group, as WP_Meta_Query::parse_query_vars reads
+them. An empty meta_value is no value.
 
 - `@param array<string, mixed> $queryVars`
-- `@return list<mixed>`
+- `@return array<array-key, mixed>`
 
 ### `all(string $type, int $objectId): array`
 
@@ -1381,31 +1385,6 @@ Deletes the given meta rows.
 - `@param list<int> $ids`
 
 Internals: `spec()` (private, line 19)
-
-
-## MetaClause
-
-`final class Minn\Runtime\MetaClause` · `public/minn/src/Minn/Runtime/MetaClause.php`
-
-The meta side of a post query: meta_key and its friends as one clause,
-then an explicit meta_query, each clause an EXISTS on postmeta with the
-reference's compare and type rules, as one WHERE fragment on p.ID.
-
-Used by: `Minn\Runtime\PostQuery`
-
-```php
-__construct(Minn\Db $db)
-```
-
-
-### `where(array $q): ?array`
-
-The WHERE fragment and its parameters for a query's meta conditions,
-or null when the query has none.
-
-- `@return array{string, list<mixed>}|null`
-
-Internals: `metaClauses()` (private, line 45), `metaSql()` (private, line 79)
 
 
 ## MetaKeys
@@ -2303,25 +2282,242 @@ The attachment whose stored file path is the given one.
 
 `final class Minn\Runtime\PostQuery` · `public/minn/src/Minn/Runtime/PostQuery.php`
 
-The query WP_Query runs: its variables become one SELECT over the posts
-table with the joins the taxonomy, meta, and author conditions need.
-Shapes and defaults follow contracts/fixtures/api/content.json.
+WP_Query::get_posts as the reference runs it (probe wp-query-sql): the
+variables parsed and handed to pre_get_posts, the clauses written piece by
+piece, every filter a plugin may change them through in the reference's
+order (suppress_filters keeps the ones it keeps), the request split into
+an id query when that is cheaper, the count, a single post's status check
+and preview, sticky posts on the home listing, and the results filters.
 
 Used by: `Minn\Runtime\Runtime`
 
 ```php
-__construct(Minn\Db $db, Minn\Runtime\Registry $registry)
+__construct(Minn\Db $db)
 ```
 
 
-### `run(array $q, bool $isHome): array`
+### `run(WP_Query $query, object $wpdb, mixed $urlSearch): mixed`
 
-Runs a WP_Query-shaped args array and returns its rows and totals.
+Runs a query object's variables and fills it in: the posts (or ids, or
+id => parent), the request, the counts. Returns what get_posts returns.
+
+### `search(WP_Query $query, array $q, mixed $urlSearch): string`
+
+A search's WHERE fragment, settling the search variables (the terms,
+how many the string split into, the title matches its order ranks by).
 
 - `@param array<string, mixed> $q`
-- `@return array{rows: list<array>, found: int, sticky: list<array>}`
 
-Internals: `perPage()` (private, line 88), `types()` (private, line 100), `statuses()` (private, line 124), `singular()` (private, line 152), `authors()` (private, line 186), `parents()` (private, line 218), `ids()` (private, line 236), `search()` (private, line 269), `dates()` (private, line 284), `order()` (private, line 342)
+### `stopwords(): array`
+
+The search stopwords, translated and filtered. @return list<string>
+
+- `@return list<string>`
+
+Internals: `prepare()` (private, line 50), `defaults()` (private, line 68), `pageSize()` (private, line 110), `clauses()` (private, line 139), `taxonomies()` (private, line 173), `searchOrder()` (private, line 238), `filtered()` (private, line 256), `through()` (private, line 276), `paging()` (private, line 286), `execute()` (private, line 302), `idsOnly()` (private, line 329), `select()` (private, line 351), `foundPosts()` (private, line 372)
+
+
+## PostQueryParts
+
+`final class Minn\Runtime\PostQueryParts` · `public/minn/src/Minn/Runtime/PostQueryParts.php`
+
+The pieces of one WP_Query run as the reference builds them and hands
+them to filters. The seven clause pieces stay untyped: a filter may hand
+back anything, and the request is written from whatever it handed back.
+
+- const `PIECES` = `array (   0 => 'where',   1 => 'groupby',   2 => 'join',   3 => 'orderby',   4 => 'distinct',   5 => 'fields',   6 => 'limits', )` — The pieces posts_clauses and posts_clauses_request see, in their order.
+
+Used by: `Minn\Runtime\PostQuery`, `Minn\Runtime\PostQueryResults`, `Minn\Runtime\PostQueryStatus`, `Minn\Runtime\PostQueryWhere`
+
+```php
+__construct(string $table)
+```
+
+- `mixed $where`
+- `mixed $groupby`
+- `mixed $join`
+- `mixed $orderby`
+- `mixed $distinct`
+- `mixed $fields`
+- `mixed $limits`
+- `mixed $search`
+- `string $whichauthor`
+- `string $whichmimetype`
+- `bool $statusJoin` — Whether an attachment's status follows its parent's (a taxonomy archive's attachments).
+- `int $page`
+- `mixed $postType` — The post type the query settles on: a name, a list, `any`, or empty.
+- `?WP_Post_Type $typeObject`
+- `string $typeCap`
+- `array $statuses` — The statuses asked for by name, which a single post's status check lets through. @var list<string>
+- readonly `string $table`
+
+### `pieces(): array`
+
+The seven pieces by name. @return array<string, mixed>
+
+- `@return array<string, mixed>`
+
+### `take(array $clauses): void`
+
+Takes back the pieces a clauses filter returned; one it dropped becomes empty. @param array<array-key, mixed> $clauses
+
+- `@param array<array-key, mixed> $clauses`
+
+### `request(string $foundRows, mixed $fields): string`
+
+The SELECT as the reference writes it, line breaks and all, for the given field list.
+
+
+## PostQueryResults
+
+`final class Minn\Runtime\PostQueryResults` · `public/minn/src/Minn/Runtime/PostQueryResults.php`
+
+What WP_Query does with its posts once it has them, as the reference does
+it (probe wp-query-sql): a single post whose status is not public is
+dropped unless the reader may see it (a draft its editor may preview, with
+the_preview); sticky posts move to the front of the home listing's first
+page, the ones it did not find fetched by a nested query; the_posts; and
+the post objects, count and current post set.
+
+Used by: `Minn\Runtime\PostQuery`
+
+```php
+__construct(WP_Query $query, Minn\Runtime\PostQueryParts $parts)
+```
+
+
+### `settle(array $q): void`
+
+Settles the posts a query found: status check, stickies, the_posts, then the count and the current post. @param array<string, mixed> $q
+
+- `@param array<string, mixed> $q`
+
+Internals: `singleStatus()` (private, line 44), `visible()` (private, line 66), `stickies()` (private, line 94)
+
+
+## PostQueryStatus
+
+`final class Minn\Runtime\PostQueryStatus` · `public/minn/src/Minn/Runtime/PostQueryStatus.php`
+
+WP_Query's post type and status clause as the reference writes it (probe
+wp-query-sql). Statuses asked for by name: the type clause, then the
+statuses (any, less those excluded from search; private kept apart when
+the query asks for readable posts; the user's own when they may not read
+or edit others'; an attachment's parent's status for a taxonomy archive).
+None asked for, on a listing: each queried type, sorted, with its public
+statuses, the admin list's protected ones in the admin, and private ones
+the signed-in user may read. A single post: the type clause alone.
+
+Used by: `Minn\Runtime\PostQuery`
+
+```php
+__construct(WP_Query $query, Minn\Runtime\PostQueryParts $parts)
+```
+
+
+### `settleType(): void`
+
+Settles the post type the caps come from: a list of several types has
+none (its caps are named for multiple_post_type), any other names one.
+
+### `append(array $q): void`
+
+Appends the type and status clause. @param array<string, mixed> $q
+
+- `@param array<string, mixed> $q`
+
+Internals: `typeWhere()` (private, line 62), `cap()` (private, line 88), `named()` (private, line 95), `listing()` (private, line 139), `privateStatuses()` (private, line 168)
+
+
+## PostQueryTax
+
+`final class Minn\Runtime\PostQueryTax` · `public/minn/src/Minn/Runtime/PostQueryTax.php`
+
+The taxonomy side of WP_Query as the reference runs it (probe
+wp-query-sql): the clauses its variables make (tax_query, taxonomy and
+term, each taxonomy's query var, cat and the category__ lists, tag and the
+tag__ lists), settled back into the variables; the post types a taxonomy
+archive with no type searches; and the cat, category_name, tag_id,
+taxonomy and term variables set from the terms queried.
+
+Used by: `Minn\Runtime\PostQuery`
+
+### static `clauses(WP_Query $query, array $q): array`
+
+The tax query a set of variables makes, settling the variables it reads.
+
+- `@param array<string, mixed> $q`
+- `@return list<array<string, mixed>>|array<string, mixed>`
+
+### static `postTypes(array $taxonomies): array|string`
+
+The post types a taxonomy archive with no type searches: every
+searchable type the queried taxonomies are registered for, one as a
+string, several sorted, none as `any`.
+
+- `@param list<string> $taxonomies`
+- `@return string|list<string>`
+
+### static `compat(WP_Query $query, array $q, array $queried): void`
+
+The compatibility variables the queried terms set: taxonomy and term
+(or term_id) from the first taxonomy other than category and post_tag
+when none is set, and cat, category_name and tag_id from those two.
+
+- `@param array<string, array{terms?: list<mixed>, field?: string}> $queried`
+
+Internals: `queryVar()` (private, line 53), `cat()` (private, line 68), `categoryLists()` (private, line 85), `tag()` (private, line 108), `tagLists()` (private, line 128)
+
+
+## PostQueryWhere
+
+`final class Minn\Runtime\PostQueryWhere` · `public/minn/src/Minn/Runtime/PostQueryWhere.php`
+
+The WHERE fragments WP_Query writes from its variables, in the reference's
+order and spacing (probe wp-query-sql): menu order, the legacy m date and
+the date variables, a slug or a page path, ids, parents, a page id (which
+replaces everything before it), authors, comment counts, mime types,
+passwords, and comment and ping status. Each appends to the parts it is
+handed and settles the variables it reads, as the reference leaves them.
+
+- const `LEGACY_DATE` = `array (   4 => 'MONTH',   6 => 'DAYOFMONTH',   8 => 'HOUR',   10 => 'MINUTE',   12 => 'SECOND', )`
+
+Used by: `Minn\Runtime\PostQuery`
+
+```php
+__construct(WP_Query $query, Minn\Runtime\PostQueryParts $parts, string $table)
+```
+
+
+### `dates(array $q): void`
+
+Menu order, the m date, the date variables and the date_query. @param array<string, mixed> $q
+
+- `@param array<string, mixed> $q`
+
+### `names(array $q): void`
+
+The post a slug, a page path, an attachment slug, a name list, an id or
+an id list names, and the parent; a post type's query var stands for
+the name (the page path, for a hierarchical type).
+
+- `@param array<string, mixed> $q`
+
+### `authors(array $q): void`
+
+Authors (an author list's negatives become author__not_in, which wins
+over author__in), an author slug, a comment count, and mime types. The
+slug and mime clauses wait to follow the search.
+
+- `@param array<string, mixed> $q`
+
+### `access(array $q): void`
+
+A password, or whether there is one, and comment and ping status. @param array<string, mixed> $q
+
+- `@param array<string, mixed> $q`
+
+Internals: `nameList()` (private, line 87), `typeQueryVar()` (private, line 97), `pagename()` (private, line 119), `ids()` (private, line 158), `authorName()` (private, line 232), `commentCount()` (private, line 245)
 
 
 ## PostRevisions
@@ -2476,6 +2672,15 @@ Used by: `Minn\Runtime\QueriedObject`
 - readonly `array $vars`
 - readonly `array $flags`
 
+### static `fill(array $vars, Minn\Runtime\Registry $registry): array`
+
+The variables with every one the reference fills given its empty
+value: the template's keys up to search_columns (the ones after it are
+get_posts' own, settled when the query runs).
+
+- `@param array<string, mixed> $vars`
+- `@return array<string, mixed>`
+
 ### static `derive(array $vars, Minn\Runtime\Registry $registry, callable $option): self`
 
 The is_* flags the query vars amount to.
@@ -2490,7 +2695,7 @@ query variable carries a value, as [taxonomy name, query var].
 
 - `@return array{0: string, 1: string}|null`
 
-Internals: `archiveFlags()` (private, line 73)
+Internals: `sanitize()` (private, line 102), `archiveFlags()` (private, line 132)
 
 
 ## Recovery
@@ -2649,7 +2854,7 @@ them. The built-in set is data/registry.json, captured from the
 reference; registrations derive their defaults the way the content
 probe observed (contracts/fixtures/api/content.json).
 
-Used by: `Minn\Front\Permalinks`, `Minn\Rest\StatusesController`, `Minn\Runtime\PostQuery`, `Minn\Runtime\QueriedObject`, `Minn\Runtime\QueryFlags`, `Minn\Runtime\Runtime`, `Minn\Runtime\TaxonomyClause`
+Used by: `Minn\Front\Permalinks`, `Minn\Rest\StatusesController`, `Minn\Runtime\QueriedObject`, `Minn\Runtime\QueryFlags`, `Minn\Runtime\Runtime`
 
 ```php
 __construct(string $engineDir)
@@ -2758,7 +2963,7 @@ blocks, texturize, paragraphs, shortcodes, block hooks, and the image
 attributes. What it has not (smilies, the capital P, insecure home
 addresses) runs with the plugins' own callbacks.
 
-Used by: `Minn\Admin\BootPayload`, `Minn\Auth\Authenticator`, `Minn\Auth\Capabilities`, `Minn\Auth\RegisteredCaps`, `Minn\Blocks\Dynamic\Theme\Comments`, `Minn\Blocks\Dynamic\Theme\Navigation`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Blocks\ImageTags`, `Minn\Blocks\RenderState`, `Minn\Cli\Runtime`, `Minn\Content\Blocks`, `Minn\Content\PostSlugs`, `Minn\Content\Reader`, `Minn\Content\Site`, `Minn\Content\Terms`, `Minn\Cron\Cron`, `Minn\Db`, `Minn\Engine`, `Minn\Extension\Extensions`, `Minn\Front\CommentPostController`, `Minn\Front\Feeds`, `Minn\Front\Permalinks`, `Minn\Front\PluginRules`, `Minn\Front\Resolver`, `Minn\Login\LoginHooks`, `Minn\Mail\Mailer`, `Minn\Media\Icons`, `Minn\Media\Images`, `Minn\Rest\AbilitiesController`, `Minn\Rest\Api`, `Minn\Rest\BatchController`, `Minn\Rest\BlockRendererController`, `Minn\Rest\BlockTypesController`, `Minn\Rest\Caller`, `Minn\Rest\CommentObject`, `Minn\Rest\Embed`, `Minn\Rest\InstalledThemesController`, `Minn\Rest\MediaController`, `Minn\Rest\MediaObject`, `Minn\Rest\MenusController`, `Minn\Rest\OEmbedController`, `Minn\Rest\PostObject`, `Minn\Rest\RegisteredType`, `Minn\Rest\RenderedFields`, `Minn\Rest\RestMeta`, `Minn\Rest\RuntimeEnvelope`, `Minn\Rest\RuntimePrepare`, `Minn\Rest\RuntimeRoutes`, `Minn\Rest\Services`, `Minn\Rest\SettingsController`, `Minn\Rest\SidebarsController`, `Minn\Rest\StatusesController`, `Minn\Rest\TemplatesController`, `Minn\Rest\TermFilters`, `Minn\Rest\TermObject`, `Minn\Rest\Types`, `Minn\Rest\TypesController`, `Minn\Rest\UserObject`, `Minn\Rest\UsersController`, `Minn\Rest\WidgetsController`, `Minn\Runtime\Abilities`, `Minn\Runtime\AjaxController`, `Minn\Runtime\BlockFilters`, `Minn\Runtime\BlockHooks`, `Minn\Runtime\CommentEvents`, `Minn\Runtime\Constants`, `Minn\Runtime\Deferrals`, `Minn\Runtime\FileUpload`, `Minn\Runtime\Interactivity`, `Minn\Runtime\NavMenu`, `Minn\Runtime\PackageDownload`, `Minn\Runtime\Patterns`, `Minn\Runtime\PlaceholderTrace`, `Minn\Runtime\PluginUpdates`, `Minn\Runtime\Plugins`, `Minn\Runtime\PostEvents`, `Minn\Runtime\PostQuery`, `Minn\Runtime\PostSave`, `Minn\Runtime\RegisteredSettings`, `Minn\Runtime\Registry`, `Minn\Runtime\ScriptModules`, `Minn\Runtime\TermEvents`, `Minn\Runtime\TermSave`, `Minn\Runtime\TermWriter`, `Minn\Runtime\ThemeSupports`, `Minn\Runtime\UserEvents`, `Minn\Theme\ArchiveTitle`, `Minn\Theme\ClassicContent`, `Minn\Theme\ClassicRenderer`, `Minn\Theme\MainQueryBridge`, `Minn\Theme\PageRenderer`, `Minn\Theme\Templates`
+Used by: `Minn\Admin\BootPayload`, `Minn\Auth\Authenticator`, `Minn\Auth\Capabilities`, `Minn\Auth\RegisteredCaps`, `Minn\Blocks\Dynamic\Theme\Comments`, `Minn\Blocks\Dynamic\Theme\Navigation`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Blocks\ImageTags`, `Minn\Blocks\RenderState`, `Minn\Cli\Runtime`, `Minn\Content\Blocks`, `Minn\Content\PostSlugs`, `Minn\Content\Reader`, `Minn\Content\Site`, `Minn\Content\Terms`, `Minn\Cron\Cron`, `Minn\Db`, `Minn\Engine`, `Minn\Extension\Extensions`, `Minn\Front\CommentPostController`, `Minn\Front\Feeds`, `Minn\Front\Permalinks`, `Minn\Front\PluginRules`, `Minn\Front\Resolver`, `Minn\Login\LoginHooks`, `Minn\Mail\Mailer`, `Minn\Media\Icons`, `Minn\Media\Images`, `Minn\Rest\AbilitiesController`, `Minn\Rest\Api`, `Minn\Rest\BatchController`, `Minn\Rest\BlockRendererController`, `Minn\Rest\BlockTypesController`, `Minn\Rest\Caller`, `Minn\Rest\CommentObject`, `Minn\Rest\Embed`, `Minn\Rest\InstalledThemesController`, `Minn\Rest\MediaController`, `Minn\Rest\MediaObject`, `Minn\Rest\MenusController`, `Minn\Rest\OEmbedController`, `Minn\Rest\PostObject`, `Minn\Rest\RegisteredType`, `Minn\Rest\RenderedFields`, `Minn\Rest\RestMeta`, `Minn\Rest\RuntimeEnvelope`, `Minn\Rest\RuntimePrepare`, `Minn\Rest\RuntimeRoutes`, `Minn\Rest\Services`, `Minn\Rest\SettingsController`, `Minn\Rest\SidebarsController`, `Minn\Rest\StatusesController`, `Minn\Rest\TemplatesController`, `Minn\Rest\TermFilters`, `Minn\Rest\TermObject`, `Minn\Rest\Types`, `Minn\Rest\TypesController`, `Minn\Rest\UserObject`, `Minn\Rest\UsersController`, `Minn\Rest\WidgetsController`, `Minn\Runtime\Abilities`, `Minn\Runtime\AjaxController`, `Minn\Runtime\BlockFilters`, `Minn\Runtime\BlockHooks`, `Minn\Runtime\CommentEvents`, `Minn\Runtime\Constants`, `Minn\Runtime\Deferrals`, `Minn\Runtime\FileUpload`, `Minn\Runtime\Interactivity`, `Minn\Runtime\NavMenu`, `Minn\Runtime\PackageDownload`, `Minn\Runtime\Patterns`, `Minn\Runtime\PlaceholderTrace`, `Minn\Runtime\PluginUpdates`, `Minn\Runtime\Plugins`, `Minn\Runtime\PostEvents`, `Minn\Runtime\PostSave`, `Minn\Runtime\RegisteredSettings`, `Minn\Runtime\Registry`, `Minn\Runtime\ScriptModules`, `Minn\Runtime\TermEvents`, `Minn\Runtime\TermSave`, `Minn\Runtime\TermWriter`, `Minn\Runtime\ThemeSupports`, `Minn\Runtime\UserEvents`, `Minn\Theme\ArchiveTitle`, `Minn\Theme\ClassicContent`, `Minn\Theme\ClassicRenderer`, `Minn\Theme\MainQueryBridge`, `Minn\Theme\PageRenderer`, `Minn\Theme\Templates`
 
 ```php
 __construct(Minn\Context $context, bool $isAdmin = false)
@@ -3344,33 +3549,6 @@ Sets or removes one inline style property.
 The tag as edited.
 
 Internals: `classes()` (private, line 99), `setClasses()` (private, line 106), `splice()` (private, line 147)
-
-
-## TaxonomyClause
-
-`final class Minn\Runtime\TaxonomyClause` · `public/minn/src/Minn/Runtime/TaxonomyClause.php`
-
-The taxonomy side of a post query: every query var the reference reads
-(cat, category_name, tag, the __in and __and pairs, each taxonomy's own
-var) and an explicit tax_query, resolved to term_taxonomy ids with
-children included where the taxonomy is hierarchical, as one WHERE
-fragment on p.ID.
-
-Used by: `Minn\Runtime\PostQuery`
-
-```php
-__construct(Minn\Db $db, Minn\Runtime\Registry $registry)
-```
-
-
-### `where(array $q): ?array`
-
-The WHERE fragment and its parameters for a query's taxonomy conditions,
-or null when the query has none.
-
-- `@return array{string, list<mixed>}|null`
-
-Internals: `taxonomyClauses()` (private, line 50), `taxonomySql()` (private, line 119), `termTaxonomyIds()` (private, line 159)
 
 
 ## TermEvents

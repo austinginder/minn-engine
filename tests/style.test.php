@@ -220,7 +220,7 @@ $commentBracketCeiling = 78;
 $commentBrackets = 0;
 $userBracketCeiling = 73;
 $userBrackets = 0;
-$bracketCeiling = 248;
+$bracketCeiling = 223;
 $unions = 0;
 $brackets = 0;
 foreach (new RecursiveIteratorIterator(new RecursiveDirectoryIterator($root, FilesystemIterator::SKIP_DOTS)) as $file) {
@@ -254,7 +254,7 @@ $check('api docs: docs/api/ is current', is_array($docs) && ($docs['stale'] ?? t
 // or more (take the two or three the class calls; Services makes the rest
 // cheap). Lower a ceiling when a class loses its last offender.
 $undocumentedCeiling = 0;
-$boolParamCeiling = 82;
+$boolParamCeiling = 81;
 $wideConstructorCeiling = 24;
 $model = json_decode((string) file_get_contents(dirname(__DIR__) . '/contracts/api/minn.json'), true);
 $undocumented = 0;

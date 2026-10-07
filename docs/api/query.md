@@ -6,8 +6,11 @@ shared SQL fragments
 |---|---|---|---|
 | [`DateSql`](#datesql) | final class | 248 | The WHERE fragment of a date query in the reference's shape: before and |
 | [`MetaSql`](#metasql) | final class | 252 | The JOIN and WHERE fragments of a meta query in the reference's shape: |
+| [`MimeWhere`](#mimewhere) | final class | 36 | wp_post_mime_type_where as the reference writes it (probe wp-query-sql): |
+| [`PostOrder`](#postorder) | final class | 118 | WP_Query's ORDER BY as the reference writes it (probe wp-query-sql): the |
+| [`PostSearch`](#postsearch) | final class | 118 | WP_Query's search as the reference writes it (probe wp-query-sql): the |
 | [`Sql`](#sql) | final class | 42 | Literal quoting for the SQL fragments the query classes hand to plugins, |
-| [`TaxSql`](#taxsql) | final class | 140 | The JOIN and WHERE fragments of a taxonomy query in the reference's |
+| [`TaxSql`](#taxsql) | final class | 164 | The JOIN and WHERE fragments of a taxonomy query in the reference's |
 
 ## DateSql
 
@@ -114,6 +117,134 @@ The CAST target for a clause type; CHAR means no cast.
 Internals: `normalized()` (private, line 79), `hasOrWithNotExists()` (private, line 120), `group()` (private, line 152), `clause()` (private, line 174), `keyClause()` (private, line 197), `valueClause()` (private, line 209), `values()` (private, line 221), `alias()` (private, line 230)
 
 
+## MimeWhere
+
+`final class Minn\Query\MimeWhere` · `public/minn/src/Minn/Query/MimeWhere.php`
+
+wp_post_mime_type_where as the reference writes it (probe wp-query-sql):
+each mime type (a list or a comma-separated string) cleaned to a pattern,
+a bare group or a star widened with % into a LIKE, an exact type an
+equality, all OR'd; an empty type or a lone wildcard means no clause.
+
+- const `WILDCARDS` = `array (   0 => '',   1 => '%',   2 => '%/%', )`
+
+### static `sql(array|string $types, string $alias = ''): string`
+
+The clause for some mime types, against a table's column when one is named. @param string|list<string> $types
+
+- `@param string|list<string> $types`
+
+Internals: `pattern()` (private, line 37)
+
+
+## PostOrder
+
+`final class Minn\Query\PostOrder` · `public/minn/src/Minn/Query/PostOrder.php`
+
+WP_Query's ORDER BY as the reference writes it (probe wp-query-sql): the
+keys it takes, what each key becomes (a column, a meta value, a FIELD()
+list, a seeded RAND()), and how a list or a map of keys joins with its
+directions. A key it does not know is dropped; none left means post_date.
+
+- const `KEYS` = `array (   0 => 'post_name',   1 => 'post_author',   2 => 'post_date',   3 => 'post_title',   4 => 'post_modified',   5 => 'post_parent',   6 => 'post_type',   7 => 'name',   8 => 'author',   9 => 'date',   10 => 'title',   11 => 'modified',   12 => 'parent',   13 => 'type',   14 => 'ID',   15 => 'menu_order',   16 => 'comment_count',   17 => 'rand',   18 => 'post__in',   19 => 'post_parent__in',   20 => 'post_name__in', )`
+- const `COLUMNS` = `array (   0 => 'post_name',   1 => 'post_author',   2 => 'post_date',   3 => 'post_title',   4 => 'post_modified',   5 => 'post_parent',   6 => 'post_type',   7 => 'ID',   8 => 'menu_order',   9 => 'comment_count', )`
+- const `IN_GIVEN_ORDER` = `array (   0 => 'post__in',   1 => 'post_name__in',   2 => 'post_parent__in', )`
+
+Used by: `Minn\Runtime\PostQuery`
+
+### static `direction(mixed $order): string`
+
+ASC when asked for, DESC for anything else.
+
+### static `build(array $q, string $table, array $metaClauses): string`
+
+The ORDER BY body for the query's orderby and order, settling both in
+$q as the reference leaves them (a random or a given-order sort has no
+direction; a string orderby is url-decoded and slashed).
+
+- `@param array<string, mixed> $q`
+- `@param array<array-key, array<string, mixed>> $metaClauses the meta query's clauses, by name`
+
+### static `clause(string $orderby, string $table, array $metaClauses, array $q): string|false`
+
+One orderby key as SQL, or false when the reference does not take it:
+a column, RAND() (seeded when asked), the primary meta clause's value
+(cast when it has a type), a named meta clause's cast value, or the
+FIELD() list that keeps post__in, post_name__in or post_parent__in in
+the order given.
+
+- `@param array<array-key, array<string, mixed>> $metaClauses`
+- `@param array<string, mixed> $q`
+
+Internals: `map()` (private, line 63), `field()` (private, line 117)
+
+
+## PostSearch
+
+`final class Minn\Query\PostSearch` · `public/minn/src/Minn/Query/PostSearch.php`
+
+WP_Query's search as the reference writes it (probe wp-query-sql): the
+search string split into terms (quoted phrases kept whole, single letters
+and stopwords dropped, ten or more terms or none left searched as one
+sentence), each term a group of LIKEs over the searched columns (NOT LIKE
+and AND for an excluded term), the password clause for a visitor, and the
+relevance order: a CASE ladder for several terms, the title match first
+for one.
+
+- const `COLUMNS` = `array (   0 => 'post_title',   1 => 'post_excerpt',   2 => 'post_content', )`
+- const `STOPWORDS` = `'about,an,are,as,at,be,by,com,for,from,how,in,is,it,of,on,or,that,the,this,to,was,what,when,where,who,will,with,www'`
+- const `TERM` = `'/".*?("|$)|((?<=[\\t ",+])|^)[^\\t ",+]+/'`
+
+Used by: `Minn\Runtime\PostQuery`
+
+### static `terms(string $search, callable $stopwords): array`
+
+The terms a search string becomes and how many it was split into.
+
+- `@param callable(): list<string> $stopwords asked only when the string splits`
+- `@return array{terms: list<string>, count: int}`
+
+### static `checked(array $terms, array $stopwords): array`
+
+The terms worth searching: quotes trimmed (a quoted term keeps its
+inner spaces), and a single letter or dash, or a stopword, dropped.
+
+- `@param list<string> $terms`
+- `@param list<string> $stopwords`
+- `@return list<string>`
+
+### static `stopwords(string $list): array`
+
+The stopword list from its comma-separated (translated) form.
+
+- `@return list<string>`
+
+### static `columns(array $given): array`
+
+The searched columns: those given that the reference searches, or all three.
+
+- `@return list<string>`
+
+### static `where(string $table, array $terms, array $columns, string $exclusionPrefix, string $wild): array`
+
+The search's WHERE fragment (no password clause; a visitor's search
+adds one) and the title matches its order ranks by. An exact search
+passes no wildcard, and asks for no title matches.
+
+- `@param list<string> $terms`
+- `@param list<string> $columns each with its table, as the clause names it`
+- `@return array{where: string, titles: list<string>}`
+
+### static `order(string $table, string $search, int $count, array $titles): string`
+
+The relevance order: for several terms, the whole string in the title,
+then every term, then any term (up to six), then the whole string in the
+excerpt and the content (no sentence match when a term is negated); for
+one term, its title match.
+
+- `@param list<string> $titles`
+
+
 ## Sql
 
 `final class Minn\Query\Sql` · `public/minn/src/Minn/Query/Sql.php`
@@ -121,7 +252,7 @@ Internals: `normalized()` (private, line 79), `hasOrWithNotExists()` (private, l
 Literal quoting for the SQL fragments the query classes hand to plugins,
 which embed them verbatim in their own statements.
 
-Used by: `Minn\Query\DateSql`, `Minn\Query\MetaSql`, `Minn\Query\TaxSql`
+Used by: `Minn\Query\DateSql`, `Minn\Query\MetaSql`, `Minn\Query\PostSearch`, `Minn\Query\TaxSql`, `Minn\Runtime\PostQueryStatus`, `Minn\Runtime\PostQueryWhere`
 
 ### static `quote(string $value): string`
 
@@ -166,7 +297,26 @@ __construct(string $relationships, string $termTaxonomy, string $primaryTable, s
 
 ### static `sanitize(array $queries): array`
 
-The query with every clause in its canonical shape.
+The query as the reference keeps it: each clause merged over the
+defaults (taxonomy, terms as a list, field term_id, operator IN,
+children included), a nested group given relation AND when it has
+none, an empty group dropped. The top level keeps a relation only when
+one was given.
+
+- `@param array<array-key, mixed> $queries`
+- `@return array<array-key, mixed>`
+
+### static `isFirstOrder(mixed $query): bool`
+
+Whether a query part is a clause (it names a clause key, or is empty) rather than a group.
+
+### static `queried(array $queries, array $queried = array ( )): array`
+
+The terms a sanitized query asks for, by taxonomy: the first terms and
+the first field each taxonomy's clauses give, NOT IN clauses aside.
+
+- `@param array<array-key, mixed> $queries`
+- `@return array<string, array{terms?: list<mixed>, field?: string}>`
 
 ### `build(array $queries): array`
 
@@ -174,11 +324,5 @@ The JOIN and WHERE fragments for a taxonomy query.
 
 - `@return array{join: string, where: string}`
 
-### `queriedTerms(): array`
-
-The terms the last build matched, by taxonomy.
-
-- `@return array<string, array{terms: list<mixed>, field: string}> the terms asked for, by taxonomy`
-
-Internals: `group()` (private, line 95), `clause()` (private, line 116), `inClause()` (private, line 142)
+Internals: `group()` (private, line 120), `clause()` (private, line 141), `inClause()` (private, line 166)
 

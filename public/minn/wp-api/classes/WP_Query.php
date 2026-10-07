@@ -1,5 +1,8 @@
 <?php
 
+use Minn\Query\PostOrder;
+use Minn\Query\PostSearch;
+use Minn\Runtime\PostQueryTax;
 use Minn\Runtime\QueriedObject;
 use Minn\Runtime\QueryFlags;
 use Minn\Runtime\Runtime;
@@ -7,7 +10,8 @@ use Minn\Runtime\Runtime;
 /**
  * The query object plugin code builds and loops over. Variables are filled
  * from the reference's own template (data/registry.json), the conditional
- * flags derive from them, and Minn\Runtime\PostQuery runs the SELECT.
+ * flags derive from them, and Minn\Runtime\PostQuery runs get_posts as the
+ * reference does: its clauses, its filters, its request.
  */
 #[AllowDynamicProperties]
 class WP_Query
@@ -63,6 +67,10 @@ class WP_Query
     public $is_sitemap = false;
     public $is_posts_page = false;
     public $is_post_type_archive = false;
+    public $query_vars_hash = false;
+    public $query_vars_changed = true;
+    public $thumbnails_cached = false;
+    public $allow_query_attachment_by_filename = false;
 
     public function __construct($query = '')
     {
@@ -99,20 +107,7 @@ class WP_Query
 
     public function fill_query_vars($query_vars)
     {
-        $template = Runtime::registry()->queryVars;
-        foreach ($template as $key => $default) {
-            if (!isset($query_vars[$key])) {
-                // posts_per_page stays empty until the query runs, so pre_get_posts can tell "unset" from the option's value.
-                $query_vars[$key] = is_array($default) ? [] : ($key === 'p' ? 0 : ($key === 'posts_per_page' ? '' : $default));
-            }
-        }
-        foreach (Runtime::registry()->taxonomies() as $taxonomy) {
-            $var = $taxonomy['query_var'] ?? false;
-            if (is_string($var) && $var !== '' && !isset($query_vars[$var])) {
-                $query_vars[$var] = '';
-            }
-        }
-        return $query_vars;
+        return QueryFlags::fill((array) $query_vars, Runtime::registry());
     }
 
     public function parse_query_vars()
@@ -129,6 +124,7 @@ class WP_Query
         } elseif (!isset($this->query)) {
             $this->query = $this->query_vars;
         }
+        $this->query_vars_changed = true;
         $this->init_query_flags();
         $derived = QueryFlags::derive($this->fill_query_vars($this->query_vars), Runtime::registry(), static fn (string $name) => get_option($name));
         $this->query_vars = $derived->vars;
@@ -136,7 +132,69 @@ class WP_Query
             $this->{$flag} = $on;
         }
         $this->is_admin = is_admin();
+        if (!$this->is_singular) {
+            $this->parse_tax_query($this->query_vars);
+        }
+        if ($this->query_vars['pagename'] !== '') {
+            $this->locate_page_path();
+        }
+        $this->query_vars_hash = md5(serialize($this->query_vars));
+        $this->query_vars_changed = false;
         do_action_ref_array('parse_query', [&$this]);
+    }
+
+    /** A page path's page is the queried object; the posts page makes the query the home listing. */
+    private function locate_page_path()
+    {
+        $page = get_page_by_path($this->query_vars['pagename']);
+        if ($page instanceof WP_Post) {
+            $this->queried_object = $page;
+            $this->queried_object_id = (int) $page->ID;
+        }
+        if ($this->queried_object_id !== null && get_option('show_on_front') === 'page' && (int) get_option('page_for_posts') === $this->queried_object_id) {
+            $this->is_page = false;
+            $this->is_home = true;
+            $this->is_posts_page = true;
+        }
+        if ($this->queried_object_id !== null && (int) get_option('wp_page_for_privacy_policy') === $this->queried_object_id) {
+            $this->is_privacy_policy = true;
+        }
+    }
+
+    public function parse_tax_query(&$q)
+    {
+        $this->tax_query = new WP_Tax_Query(PostQueryTax::clauses($this, $q));
+        do_action('parse_tax_query', $this);
+    }
+
+    protected function parse_search(&$q)
+    {
+        return Runtime::postQuery()->search($this, $q, $_GET['s'] ?? null);
+    }
+
+    protected function parse_search_terms($terms)
+    {
+        return PostSearch::checked((array) $terms, Runtime::postQuery()->stopwords());
+    }
+
+    protected function get_search_stopwords()
+    {
+        return Runtime::postQuery()->stopwords();
+    }
+
+    protected function parse_search_order(&$q)
+    {
+        return PostSearch::order($GLOBALS['wpdb']->posts, (string) $q['s'], (int) ($q['search_terms_count'] ?? 1), (array) ($q['search_orderby_title'] ?? []));
+    }
+
+    protected function parse_orderby($orderby)
+    {
+        return PostOrder::clause((string) $orderby, $GLOBALS['wpdb']->posts, $this->meta_query ? (array) $this->meta_query->get_clauses() : [], $this->query_vars);
+    }
+
+    protected function parse_order($order)
+    {
+        return PostOrder::direction($order);
     }
 
     public function query($query)
@@ -168,40 +226,8 @@ class WP_Query
 
     public function get_posts()
     {
-        $this->parse_query();
-        do_action_ref_array('pre_get_posts', [&$this]);
-        $q = &$this->query_vars;
-        $result = Runtime::postQuery()->run($q, $this->is_home);
-        $rows = $result['rows'];
-        $fields = is_string($q['fields'] ?? null) ? $q['fields'] : 'all';
-        if ($result['sticky'] !== [] && $fields === 'all') {
-            $types = $q['post_type'] === '' || $q['post_type'] === null ? ['post'] : ($q['post_type'] === 'any' ? null : (array) $q['post_type']);
-            $result['sticky'] = $types === null ? $result['sticky'] : array_values(array_filter($result['sticky'], static fn (array $p) => in_array($p['post_type'], $types, true)));
-        }
-        if ($result['sticky'] !== [] && $fields === 'all') {
-            $stickyIds = array_map(static fn (array $p) => (int) $p['ID'], $result['sticky']);
-            $rows = array_values(array_filter($rows, static fn (array $p) => !in_array((int) $p['ID'], $stickyIds, true)));
-            $rows = [...$result['sticky'], ...$rows];
-        }
-        if ($fields === 'ids') {
-            $this->posts = array_map(static fn (array $p) => (int) $p['ID'], $rows);
-        } elseif ($fields === 'id=>parent') {
-            $this->posts = array_map(static fn (array $p) => (object) ['ID' => (int) $p['ID'], 'post_parent' => (int) $p['post_parent']], $rows);
-        } else {
-            $this->posts = array_map(static fn (array $p) => new WP_Post((object) $p), $rows);
-            $this->posts = apply_filters_ref_array('the_posts', [$this->posts, &$this]);
-        }
-        $this->post_count = count($this->posts);
-        $this->found_posts = empty($q['no_found_rows']) ? (int) $result['found'] : 0;
-        if ($this->found_posts > 0 && !empty($result['sticky'])) {
-            // The reference counts only the queried rows; stickies ride on top of the page.
-        }
-        $perPage = !empty($q['nopaging']) ? 0 : (int) (($q['posts_per_page'] ?? '') === '' ? get_option('posts_per_page', 10) : $q['posts_per_page']);
-        $this->max_num_pages = $perPage > 0 && $this->found_posts > 0 ? (int) ceil($this->found_posts / $perPage) : ($this->found_posts > 0 || $this->post_count > 0 ? 1 : 0);
-        if ($this->post_count > 0 && $fields === 'all') {
-            $this->post = $this->posts[0];
-        }
-        return $this->posts;
+        global $wpdb;
+        return Runtime::postQuery()->run($this, $wpdb, $_GET['s'] ?? null);
     }
 
     public function have_posts()

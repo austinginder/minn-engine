@@ -18,6 +18,7 @@ class WP_Tax_Query
     {
         $this->relation = isset($tax_query['relation']) && strtoupper((string) $tax_query['relation']) === 'OR' ? 'OR' : 'AND';
         $this->queries = $this->sanitize_query((array) $tax_query);
+        $this->queried_terms = TaxSql::queried($this->queries);
     }
 
     public function sanitize_query($queries)
@@ -31,9 +32,7 @@ class WP_Tax_Query
         $this->primary_id_column = $primary_id_column;
         $db = Runtime::current()->db;
         $builder = new TaxSql($db->table('term_relationships'), $db->table('term_taxonomy'), (string) $primary_table, (string) $primary_id_column, static fn (string $taxonomy, string $field, array $terms, bool $children): array => _minn_term_taxonomy_ids($taxonomy, $field, $terms, $children));
-        $sql = $builder->build($this->queries);
-        $this->queried_terms = $builder->queriedTerms();
-        return $sql;
+        return $builder->build($this->queries);
     }
 
     public function transform_query(&$query, $resulting_field)

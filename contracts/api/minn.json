@@ -29026,7 +29026,6 @@
                 "Minn\\Rest\\RevisionsController",
                 "Minn\\Rest\\Services",
                 "Minn\\Rest\\TemplateObject",
-                "Minn\\Runtime\\PostQuery",
                 "Minn\\Theme\\ClassicRenderer",
                 "Minn\\Theme\\MainQueryBridge",
                 "Minn\\Theme\\PageRenderer",
@@ -30154,7 +30153,6 @@
                 "Minn\\Extension\\Seams",
                 "Minn\\Front\\CommentPostController",
                 "Minn\\Front\\Resolver",
-                "Minn\\Runtime\\PostQuery",
                 "Minn\\Runtime\\Runtime",
                 "Minn\\Theme\\ClassicRenderer",
                 "Minn\\Theme\\PageRenderer"
@@ -34448,12 +34446,10 @@
                 "Minn\\Runtime\\CommentQuery",
                 "Minn\\Runtime\\DbDelta",
                 "Minn\\Runtime\\Meta",
-                "Minn\\Runtime\\MetaClause",
                 "Minn\\Runtime\\Options",
                 "Minn\\Runtime\\PostLookup",
                 "Minn\\Runtime\\PostQuery",
                 "Minn\\Runtime\\Runtime",
-                "Minn\\Runtime\\TaxonomyClause",
                 "Minn\\Runtime\\TermQuery",
                 "Minn\\Runtime\\TermWriter",
                 "Minn\\Runtime\\UserQuery",
@@ -75262,6 +75258,543 @@
             ]
         },
         {
+            "name": "Minn\\Query\\MimeWhere",
+            "short": "MimeWhere",
+            "namespace": "Minn\\Query",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Query/MimeWhere.php",
+            "lines": 36,
+            "doc": "wp_post_mime_type_where as the reference writes it (probe wp-query-sql):\neach mime type (a list or a comma-separated string) cleaned to a pattern,\na bare group or a star widened with % into a LIKE, an exact type an\nequality, all OR'd; an empty type or a lone wildcard means no clause.",
+            "implements": [],
+            "extends": null,
+            "uses": [],
+            "usedBy": [],
+            "constructor": null,
+            "cases": [],
+            "constants": [
+                {
+                    "name": "WILDCARDS",
+                    "value": "array (   0 => '',   1 => '%',   2 => '%/%', )",
+                    "doc": "",
+                    "visibility": "private"
+                }
+            ],
+            "properties": [],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "sql",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "sql(array|string $types, string $alias = ''): string",
+                    "doc": "The clause for some mime types, against a table's column when one is named. @param string|list<string> $types",
+                    "shapes": [
+                        "@param string|list<string> $types"
+                    ],
+                    "params": [
+                        {
+                            "name": "types",
+                            "type": "array|string",
+                            "shape": "string|list<string>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "alias",
+                            "type": "string",
+                            "shape": "",
+                            "default": "''",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 18,
+                    "end": 34
+                },
+                {
+                    "routes": [],
+                    "name": "pattern",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "pattern(string $type): string",
+                    "doc": "A type cleaned to group/subgroup (an empty subgroup a star), or a bare group widened to group/*.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "type",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 37,
+                    "end": 47
+                }
+            ]
+        },
+        {
+            "name": "Minn\\Query\\PostOrder",
+            "short": "PostOrder",
+            "namespace": "Minn\\Query",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Query/PostOrder.php",
+            "lines": 118,
+            "doc": "WP_Query's ORDER BY as the reference writes it (probe wp-query-sql): the\nkeys it takes, what each key becomes (a column, a meta value, a FIELD()\nlist, a seeded RAND()), and how a list or a map of keys joins with its\ndirections. A key it does not know is dropped; none left means post_date.",
+            "implements": [],
+            "extends": null,
+            "uses": [],
+            "usedBy": [
+                "Minn\\Runtime\\PostQuery"
+            ],
+            "constructor": null,
+            "cases": [],
+            "constants": [
+                {
+                    "name": "KEYS",
+                    "value": "array (   0 => 'post_name',   1 => 'post_author',   2 => 'post_date',   3 => 'post_title',   4 => 'post_modified',   5 => 'post_parent',   6 => 'post_type',   7 => 'name',   8 => 'author',   9 => 'date',   10 => 'title',   11 => 'modified',   12 => 'parent',   13 => 'type',   14 => 'ID',   15 => 'menu_order',   16 => 'comment_count',   17 => 'rand',   18 => 'post__in',   19 => 'post_parent__in',   20 => 'post_name__in', )",
+                    "doc": "",
+                    "visibility": "private"
+                },
+                {
+                    "name": "COLUMNS",
+                    "value": "array (   0 => 'post_name',   1 => 'post_author',   2 => 'post_date',   3 => 'post_title',   4 => 'post_modified',   5 => 'post_parent',   6 => 'post_type',   7 => 'ID',   8 => 'menu_order',   9 => 'comment_count', )",
+                    "doc": "",
+                    "visibility": "private"
+                },
+                {
+                    "name": "IN_GIVEN_ORDER",
+                    "value": "array (   0 => 'post__in',   1 => 'post_name__in',   2 => 'post_parent__in', )",
+                    "doc": "",
+                    "visibility": "private"
+                }
+            ],
+            "properties": [],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "direction",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "direction(mixed $order): string",
+                    "doc": "ASC when asked for, DESC for anything else.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "order",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 20,
+                    "end": 26
+                },
+                {
+                    "routes": [],
+                    "name": "build",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "build(array $q, string $table, array $metaClauses): string",
+                    "doc": "The ORDER BY body for the query's orderby and order, settling both in\n$q as the reference leaves them (a random or a given-order sort has no\ndirection; a string orderby is url-decoded and slashed).",
+                    "shapes": [
+                        "@param array<string, mixed> $q",
+                        "@param array<array-key, array<string, mixed>> $metaClauses the meta query's clauses, by name"
+                    ],
+                    "params": [
+                        {
+                            "name": "q",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "table",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "metaClauses",
+                            "type": "array",
+                            "shape": "array<array-key, array<string, mixed>>",
+                            "default": null,
+                            "doc": "the meta query's clauses, by name"
+                        }
+                    ],
+                    "line": 36,
+                    "end": 60
+                },
+                {
+                    "routes": [],
+                    "name": "clause",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "clause(string $orderby, string $table, array $metaClauses, array $q): string|false",
+                    "doc": "One orderby key as SQL, or false when the reference does not take it:\na column, RAND() (seeded when asked), the primary meta clause's value\n(cast when it has a type), a named meta clause's cast value, or the\nFIELD() list that keeps post__in, post_name__in or post_parent__in in\nthe order given.",
+                    "shapes": [
+                        "@param array<array-key, array<string, mixed>> $metaClauses",
+                        "@param array<string, mixed> $q"
+                    ],
+                    "params": [
+                        {
+                            "name": "orderby",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "table",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "metaClauses",
+                            "type": "array",
+                            "shape": "array<array-key, array<string, mixed>>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "q",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 85,
+                    "end": 114
+                },
+                {
+                    "routes": [],
+                    "name": "map",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "map(array $orderby, string $table, array $metaClauses, array $q): string",
+                    "doc": "",
+                    "shapes": [
+                        "@param array<array-key, mixed> $orderby key => direction @param array<string, mixed> $q"
+                    ],
+                    "params": [
+                        {
+                            "name": "orderby",
+                            "type": "array",
+                            "shape": "array<array-key, mixed>",
+                            "default": null,
+                            "doc": "key => direction @param array<string, mixed> $q"
+                        },
+                        {
+                            "name": "table",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "metaClauses",
+                            "type": "array",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "q",
+                            "type": "array",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 63,
+                    "end": 73
+                },
+                {
+                    "routes": [],
+                    "name": "field",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "field(string $orderby, string $table, array $q): string",
+                    "doc": "A FIELD() list in the order the variable gives, or '' when it gives none. @param array<string, mixed> $q",
+                    "shapes": [
+                        "@param array<string, mixed> $q"
+                    ],
+                    "params": [
+                        {
+                            "name": "orderby",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "table",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "q",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 117,
+                    "end": 129
+                }
+            ]
+        },
+        {
+            "name": "Minn\\Query\\PostSearch",
+            "short": "PostSearch",
+            "namespace": "Minn\\Query",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Query/PostSearch.php",
+            "lines": 118,
+            "doc": "WP_Query's search as the reference writes it (probe wp-query-sql): the\nsearch string split into terms (quoted phrases kept whole, single letters\nand stopwords dropped, ten or more terms or none left searched as one\nsentence), each term a group of LIKEs over the searched columns (NOT LIKE\nand AND for an excluded term), the password clause for a visitor, and the\nrelevance order: a CASE ladder for several terms, the title match first\nfor one.",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\Query\\Sql"
+            ],
+            "usedBy": [
+                "Minn\\Runtime\\PostQuery"
+            ],
+            "constructor": null,
+            "cases": [],
+            "constants": [
+                {
+                    "name": "COLUMNS",
+                    "value": "array (   0 => 'post_title',   1 => 'post_excerpt',   2 => 'post_content', )",
+                    "doc": "",
+                    "visibility": "public"
+                },
+                {
+                    "name": "STOPWORDS",
+                    "value": "'about,an,are,as,at,be,by,com,for,from,how,in,is,it,of,on,or,that,the,this,to,was,what,when,where,who,will,with,www'",
+                    "doc": "",
+                    "visibility": "public"
+                },
+                {
+                    "name": "TERM",
+                    "value": "'/\".*?(\"|$)|((?<=[\\\\t \",+])|^)[^\\\\t \",+]+/'",
+                    "doc": "",
+                    "visibility": "private"
+                }
+            ],
+            "properties": [],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "terms",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "terms(string $search, callable $stopwords): array",
+                    "doc": "The terms a search string becomes and how many it was split into.",
+                    "shapes": [
+                        "@param callable(): list<string> $stopwords asked only when the string splits",
+                        "@return array{terms: list<string>, count: int}"
+                    ],
+                    "params": [
+                        {
+                            "name": "search",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "stopwords",
+                            "type": "callable",
+                            "shape": "callable(): list<string>",
+                            "default": null,
+                            "doc": "asked only when the string splits"
+                        }
+                    ],
+                    "line": 28,
+                    "end": 35
+                },
+                {
+                    "routes": [],
+                    "name": "checked",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "checked(array $terms, array $stopwords): array",
+                    "doc": "The terms worth searching: quotes trimmed (a quoted term keeps its\ninner spaces), and a single letter or dash, or a stopword, dropped.",
+                    "shapes": [
+                        "@param list<string> $terms",
+                        "@param list<string> $stopwords",
+                        "@return list<string>"
+                    ],
+                    "params": [
+                        {
+                            "name": "terms",
+                            "type": "array",
+                            "shape": "list<string>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "stopwords",
+                            "type": "array",
+                            "shape": "list<string>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 45,
+                    "end": 59
+                },
+                {
+                    "routes": [],
+                    "name": "stopwords",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "stopwords(string $list): array",
+                    "doc": "The stopword list from its comma-separated (translated) form.",
+                    "shapes": [
+                        "@return list<string>"
+                    ],
+                    "params": [
+                        {
+                            "name": "list",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 66,
+                    "end": 69
+                },
+                {
+                    "routes": [],
+                    "name": "columns",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "columns(array $given): array",
+                    "doc": "The searched columns: those given that the reference searches, or all three.",
+                    "shapes": [
+                        "@return list<string>"
+                    ],
+                    "params": [
+                        {
+                            "name": "given",
+                            "type": "array",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 76,
+                    "end": 80
+                },
+                {
+                    "routes": [],
+                    "name": "where",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "where(string $table, array $terms, array $columns, string $exclusionPrefix, string $wild): array",
+                    "doc": "The search's WHERE fragment (no password clause; a visitor's search\nadds one) and the title matches its order ranks by. An exact search\npasses no wildcard, and asks for no title matches.",
+                    "shapes": [
+                        "@param list<string> $terms",
+                        "@param list<string> $columns each with its table, as the clause names it",
+                        "@return array{where: string, titles: list<string>}"
+                    ],
+                    "params": [
+                        {
+                            "name": "table",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "terms",
+                            "type": "array",
+                            "shape": "list<string>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "columns",
+                            "type": "array",
+                            "shape": "list<string>",
+                            "default": null,
+                            "doc": "each with its table, as the clause names it"
+                        },
+                        {
+                            "name": "exclusionPrefix",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "wild",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 91,
+                    "end": 107
+                },
+                {
+                    "routes": [],
+                    "name": "order",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "order(string $table, string $search, int $count, array $titles): string",
+                    "doc": "The relevance order: for several terms, the whole string in the title,\nthen every term, then any term (up to six), then the whole string in the\nexcerpt and the content (no sentence match when a term is negated); for\none term, its title match.",
+                    "shapes": [
+                        "@param list<string> $titles"
+                    ],
+                    "params": [
+                        {
+                            "name": "table",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "search",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "count",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "titles",
+                            "type": "array",
+                            "shape": "list<string>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 117,
+                    "end": 132
+                }
+            ]
+        },
+        {
             "name": "Minn\\Query\\Sql",
             "short": "Sql",
             "namespace": "Minn\\Query",
@@ -75275,7 +75808,10 @@
             "usedBy": [
                 "Minn\\Query\\DateSql",
                 "Minn\\Query\\MetaSql",
-                "Minn\\Query\\TaxSql"
+                "Minn\\Query\\PostSearch",
+                "Minn\\Query\\TaxSql",
+                "Minn\\Runtime\\PostQueryStatus",
+                "Minn\\Runtime\\PostQueryWhere"
             ],
             "constructor": null,
             "cases": [],
@@ -75406,7 +75942,7 @@
             "namespace": "Minn\\Query",
             "kind": "final class",
             "file": "public/minn/src/Minn/Query/TaxSql.php",
-            "lines": 140,
+            "lines": 164,
             "doc": "The JOIN and WHERE fragments of a taxonomy query in the reference's\nshape: IN clauses join term_relationships (the first under the table's\nown name, then tt1, tt2, ..., shared between IN siblings under OR),\nNOT IN and AND read subqueries, EXISTS checks the taxonomy, and a term\nnobody has yields \"0 = 1\".",
             "implements": [],
             "extends": null,
@@ -75458,8 +75994,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 29,
-                "end": 36
+                "line": 26,
+                "end": 33
             },
             "cases": [],
             "constants": [],
@@ -75475,15 +76011,6 @@
                 },
                 {
                     "name": "joins",
-                    "type": "array",
-                    "readonly": false,
-                    "static": false,
-                    "doc": "",
-                    "visibility": "private",
-                    "promoted": false
-                },
-                {
-                    "name": "queriedTerms",
                     "type": "array",
                     "readonly": false,
                     "static": false,
@@ -75544,19 +76071,72 @@
                     "static": true,
                     "visibility": "public",
                     "signature": "sanitize(array $queries): array",
-                    "doc": "The query with every clause in its canonical shape.",
-                    "shapes": [],
+                    "doc": "The query as the reference keeps it: each clause merged over the\ndefaults (taxonomy, terms as a list, field term_id, operator IN,\nchildren included), a nested group given relation AND when it has\nnone, an empty group dropped. The top level keeps a relation only when\none was given.",
+                    "shapes": [
+                        "@param array<array-key, mixed> $queries",
+                        "@return array<array-key, mixed>"
+                    ],
                     "params": [
                         {
                             "name": "queries",
                             "type": "array",
+                            "shape": "array<array-key, mixed>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 45,
+                    "end": 63
+                },
+                {
+                    "routes": [],
+                    "name": "isFirstOrder",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "isFirstOrder(mixed $query): bool",
+                    "doc": "Whether a query part is a clause (it names a clause key, or is empty) rather than a group.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "query",
+                            "type": "mixed",
                             "shape": "",
                             "default": null,
                             "doc": ""
                         }
                     ],
-                    "line": 39,
-                    "end": 69
+                    "line": 66,
+                    "end": 72
+                },
+                {
+                    "routes": [],
+                    "name": "queried",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "queried(array $queries, array $queried = array ( )): array",
+                    "doc": "The terms a sanitized query asks for, by taxonomy: the first terms and\nthe first field each taxonomy's clauses give, NOT IN clauses aside.",
+                    "shapes": [
+                        "@param array<array-key, mixed> $queries",
+                        "@return array<string, array{terms?: list<mixed>, field?: string}>"
+                    ],
+                    "params": [
+                        {
+                            "name": "queries",
+                            "type": "array",
+                            "shape": "array<array-key, mixed>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "queried",
+                            "type": "array",
+                            "shape": "",
+                            "default": "array ( )",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 81,
+                    "end": 104
                 },
                 {
                     "routes": [],
@@ -75577,22 +76157,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 76,
-                    "end": 83
-                },
-                {
-                    "routes": [],
-                    "name": "queriedTerms",
-                    "static": false,
-                    "visibility": "public",
-                    "signature": "queriedTerms(): array",
-                    "doc": "The terms the last build matched, by taxonomy.",
-                    "shapes": [
-                        "@return array<string, array{terms: list<mixed>, field: string}> the terms asked for, by taxonomy"
-                    ],
-                    "params": [],
-                    "line": 90,
-                    "end": 93
+                    "line": 111,
+                    "end": 118
                 },
                 {
                     "routes": [],
@@ -75618,8 +76184,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 95,
-                    "end": 114
+                    "line": 120,
+                    "end": 139
                 },
                 {
                     "routes": [],
@@ -75652,8 +76218,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 116,
-                    "end": 140
+                    "line": 141,
+                    "end": 164
                 },
                 {
                     "routes": [],
@@ -75686,8 +76252,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 142,
-                    "end": 154
+                    "line": 166,
+                    "end": 178
                 }
             ]
         },
@@ -103231,7 +103797,7 @@
             "namespace": "Minn\\Runtime",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Runtime/Meta.php",
-            "lines": 209,
+            "lines": 210,
             "doc": "The four meta tables behind get_metadata and friends: reads by object, and the row-level writes the update and delete rules need.",
             "implements": [],
             "extends": null,
@@ -103304,10 +103870,10 @@
                     "static": true,
                     "visibility": "public",
                     "signature": "clausesFromQueryVars(array $queryVars): array",
-                    "doc": "The meta clauses hidden in flat query vars (meta_key, meta_value, the\ncompare and type variants), merged ahead of an explicit meta_query,\nthe reference's precedence for WP_Meta_Query::parse_query_vars.",
+                    "doc": "The meta query in flat query vars (meta_key, meta_value, the compare\nand type variants) as one clause, AND'd ahead of an explicit\nmeta_query as its own group, as WP_Meta_Query::parse_query_vars reads\nthem. An empty meta_value is no value.",
                     "shapes": [
                         "@param array<string, mixed> $queryVars",
-                        "@return list<mixed>"
+                        "@return array<array-key, mixed>"
                     ],
                     "params": [
                         {
@@ -103318,8 +103884,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 42,
-                    "end": 61
+                    "line": 43,
+                    "end": 62
                 },
                 {
                     "routes": [],
@@ -103347,8 +103913,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 64,
-                    "end": 72
+                    "line": 65,
+                    "end": 73
                 },
                 {
                     "routes": [],
@@ -103377,8 +103943,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 82,
-                    "end": 106
+                    "line": 83,
+                    "end": 107
                 },
                 {
                     "routes": [],
@@ -103406,8 +103972,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 109,
-                    "end": 116
+                    "line": 110,
+                    "end": 117
                 },
                 {
                     "routes": [],
@@ -103435,8 +104001,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 119,
-                    "end": 124
+                    "line": 120,
+                    "end": 125
                 },
                 {
                     "routes": [],
@@ -103457,8 +104023,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 127,
-                    "end": 131
+                    "line": 128,
+                    "end": 132
                 },
                 {
                     "routes": [],
@@ -103498,8 +104064,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 134,
-                    "end": 138
+                    "line": 135,
+                    "end": 139
                 },
                 {
                     "routes": [],
@@ -103539,8 +104105,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 141,
-                    "end": 146
+                    "line": 142,
+                    "end": 147
                 },
                 {
                     "routes": [],
@@ -103575,8 +104141,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 149,
-                    "end": 153
+                    "line": 150,
+                    "end": 154
                 },
                 {
                     "routes": [],
@@ -103612,8 +104178,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 164,
-                    "end": 176
+                    "line": 165,
+                    "end": 177
                 },
                 {
                     "routes": [],
@@ -103646,8 +104212,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 179,
-                    "end": 186
+                    "line": 180,
+                    "end": 187
                 },
                 {
                     "routes": [],
@@ -103689,8 +104255,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 189,
-                    "end": 203
+                    "line": 190,
+                    "end": 204
                 },
                 {
                     "routes": [],
@@ -103718,8 +104284,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 210,
-                    "end": 217
+                    "line": 211,
+                    "end": 218
                 },
                 {
                     "routes": [],
@@ -103742,130 +104308,6 @@
                     ],
                     "line": 19,
                     "end": 26
-                }
-            ]
-        },
-        {
-            "name": "Minn\\Runtime\\MetaClause",
-            "short": "MetaClause",
-            "namespace": "Minn\\Runtime",
-            "kind": "final class",
-            "file": "public/minn/src/Minn/Runtime/MetaClause.php",
-            "lines": 120,
-            "doc": "The meta side of a post query: meta_key and its friends as one clause,\nthen an explicit meta_query, each clause an EXISTS on postmeta with the\nreference's compare and type rules, as one WHERE fragment on p.ID.",
-            "implements": [],
-            "extends": null,
-            "uses": [
-                "Minn\\Db"
-            ],
-            "usedBy": [
-                "Minn\\Runtime\\PostQuery"
-            ],
-            "constructor": {
-                "signature": "__construct(Minn\\Db $db)",
-                "doc": "",
-                "shapes": [],
-                "params": [
-                    {
-                        "name": "db",
-                        "type": "Minn\\Db",
-                        "shape": "",
-                        "default": null,
-                        "doc": ""
-                    }
-                ],
-                "visibility": "public",
-                "line": 19,
-                "end": 21
-            },
-            "cases": [],
-            "constants": [],
-            "properties": [
-                {
-                    "name": "params",
-                    "type": "array",
-                    "readonly": false,
-                    "static": false,
-                    "doc": "",
-                    "visibility": "private",
-                    "promoted": false
-                },
-                {
-                    "name": "db",
-                    "type": "Minn\\Db",
-                    "readonly": true,
-                    "static": false,
-                    "doc": "",
-                    "visibility": "private",
-                    "promoted": true
-                }
-            ],
-            "methods": [
-                {
-                    "routes": [],
-                    "name": "where",
-                    "static": false,
-                    "visibility": "public",
-                    "signature": "where(array $q): ?array",
-                    "doc": "The WHERE fragment and its parameters for a query's meta conditions,\nor null when the query has none.",
-                    "shapes": [
-                        "@return array{string, list<mixed>}|null"
-                    ],
-                    "params": [
-                        {
-                            "name": "q",
-                            "type": "array",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 29,
-                    "end": 38
-                },
-                {
-                    "routes": [],
-                    "name": "metaClauses",
-                    "static": true,
-                    "visibility": "private",
-                    "signature": "metaClauses(array $q): array",
-                    "doc": "The meta_query the query vars amount to.",
-                    "shapes": [
-                        "@return array{string, list<array<string, mixed>>} relation, clauses"
-                    ],
-                    "params": [
-                        {
-                            "name": "q",
-                            "type": "array",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 45,
-                    "end": 76
-                },
-                {
-                    "routes": [],
-                    "name": "metaSql",
-                    "static": false,
-                    "visibility": "private",
-                    "signature": "metaSql(array $clause): string",
-                    "doc": "One clause as an EXISTS on postmeta, its parameters pushed. @param array<string, mixed> $clause",
-                    "shapes": [
-                        "@param array<string, mixed> $clause"
-                    ],
-                    "params": [
-                        {
-                            "name": "clause",
-                            "type": "array",
-                            "shape": "array<string, mixed>",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 79,
-                    "end": 132
                 }
             ]
         },
@@ -108518,37 +108960,31 @@
             "namespace": "Minn\\Runtime",
             "kind": "final class",
             "file": "public/minn/src/Minn/Runtime/PostQuery.php",
-            "lines": 383,
-            "doc": "The query WP_Query runs: its variables become one SELECT over the posts\ntable with the joins the taxonomy, meta, and author conditions need.\nShapes and defaults follow contracts/fixtures/api/content.json.",
+            "lines": 371,
+            "doc": "WP_Query::get_posts as the reference runs it (probe wp-query-sql): the\nvariables parsed and handed to pre_get_posts, the clauses written piece by\npiece, every filter a plugin may change them through in the reference's\norder (suppress_filters keeps the ones it keeps), the request split into\nan id query when that is cheaper, the count, a single post's status check\nand preview, sticky posts on the home listing, and the results filters.",
             "implements": [],
             "extends": null,
             "uses": [
-                "Minn\\Content\\Posts",
-                "Minn\\Content\\Reader",
                 "Minn\\Db",
-                "Minn\\Runtime\\MetaClause",
-                "Minn\\Runtime\\Registry",
-                "Minn\\Runtime\\Runtime",
-                "Minn\\Runtime\\TaxonomyClause"
+                "Minn\\Query\\PostOrder",
+                "Minn\\Query\\PostSearch",
+                "Minn\\Runtime\\PostQueryParts",
+                "Minn\\Runtime\\PostQueryResults",
+                "Minn\\Runtime\\PostQueryStatus",
+                "Minn\\Runtime\\PostQueryTax",
+                "Minn\\Runtime\\PostQueryWhere"
             ],
             "usedBy": [
                 "Minn\\Runtime\\Runtime"
             ],
             "constructor": {
-                "signature": "__construct(Minn\\Db $db, Minn\\Runtime\\Registry $registry)",
+                "signature": "__construct(Minn\\Db $db)",
                 "doc": "",
                 "shapes": [],
                 "params": [
                     {
                         "name": "db",
                         "type": "Minn\\Db",
-                        "shape": "",
-                        "default": null,
-                        "doc": ""
-                    },
-                    {
-                        "name": "registry",
-                        "type": "Minn\\Runtime\\Registry",
                         "shape": "",
                         "default": null,
                         "doc": ""
@@ -108562,8 +108998,8 @@
             "constants": [],
             "properties": [
                 {
-                    "name": "where",
-                    "type": "array",
+                    "name": "query",
+                    "type": "WP_Query",
                     "readonly": false,
                     "static": false,
                     "doc": "",
@@ -108571,8 +109007,8 @@
                     "promoted": false
                 },
                 {
-                    "name": "params",
-                    "type": "array",
+                    "name": "wpdb",
+                    "type": "object",
                     "readonly": false,
                     "static": false,
                     "doc": "",
@@ -108580,17 +109016,8 @@
                     "promoted": false
                 },
                 {
-                    "name": "joins",
-                    "type": "array",
-                    "readonly": false,
-                    "static": false,
-                    "doc": "",
-                    "visibility": "private",
-                    "promoted": false
-                },
-                {
-                    "name": "distinct",
-                    "type": "bool",
+                    "name": "parts",
+                    "type": "Minn\\Runtime\\PostQueryParts",
                     "readonly": false,
                     "static": false,
                     "doc": "",
@@ -108605,15 +109032,6 @@
                     "doc": "",
                     "visibility": "private",
                     "promoted": true
-                },
-                {
-                    "name": "registry",
-                    "type": "Minn\\Runtime\\Registry",
-                    "readonly": true,
-                    "static": false,
-                    "doc": "",
-                    "visibility": "private",
-                    "promoted": true
                 }
             ],
             "methods": [
@@ -108622,11 +109040,150 @@
                     "name": "run",
                     "static": false,
                     "visibility": "public",
-                    "signature": "run(array $q, bool $isHome): array",
-                    "doc": "Runs a WP_Query-shaped args array and returns its rows and totals.",
+                    "signature": "run(WP_Query $query, object $wpdb, mixed $urlSearch): mixed",
+                    "doc": "Runs a query object's variables and fills it in: the posts (or ids, or\nid => parent), the request, the counts. Returns what get_posts returns.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "query",
+                            "type": "WP_Query",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "wpdb",
+                            "type": "object",
+                            "shape": "",
+                            "default": null,
+                            "doc": "the database object plugins see, so the request runs where their filters expect it"
+                        },
+                        {
+                            "name": "urlSearch",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": "the search string the URL carries, if any (a search from elsewhere is url-decoded)"
+                        }
+                    ],
+                    "line": 36,
+                    "end": 47
+                },
+                {
+                    "routes": [],
+                    "name": "search",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "search(WP_Query $query, array $q, mixed $urlSearch): string",
+                    "doc": "A search's WHERE fragment, settling the search variables (the terms,\nhow many the string split into, the title matches its order ranks by).",
                     "shapes": [
-                        "@param array<string, mixed> $q",
-                        "@return array{rows: list<array>, found: int, sticky: list<array>}"
+                        "@param array<string, mixed> $q"
+                    ],
+                    "params": [
+                        {
+                            "name": "query",
+                            "type": "WP_Query",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "q",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "urlSearch",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 203,
+                    "end": 228
+                },
+                {
+                    "routes": [],
+                    "name": "stopwords",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "stopwords(): array",
+                    "doc": "The search stopwords, translated and filtered. @return list<string>",
+                    "shapes": [
+                        "@return list<string>"
+                    ],
+                    "params": [],
+                    "line": 231,
+                    "end": 235
+                },
+                {
+                    "routes": [],
+                    "name": "prepare",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "prepare(): void",
+                    "doc": "Parses the variables, hands them to pre_get_posts, and reads the meta query from them.",
+                    "shapes": [],
+                    "params": [],
+                    "line": 50,
+                    "end": 65
+                },
+                {
+                    "routes": [],
+                    "name": "defaults",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "defaults(array $q): void",
+                    "doc": "The defaults get_posts settles before it writes a clause. @param array<string, mixed> $q",
+                    "shapes": [
+                        "@param array<string, mixed> $q"
+                    ],
+                    "params": [
+                        {
+                            "name": "q",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 68,
+                    "end": 107
+                },
+                {
+                    "routes": [],
+                    "name": "pageSize",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "pageSize(array $q): void",
+                    "doc": "posts_per_page from the option, showposts, an archive's own size or the feed's, and nopaging. @param array<string, mixed> $q",
+                    "shapes": [
+                        "@param array<string, mixed> $q"
+                    ],
+                    "params": [
+                        {
+                            "name": "q",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 110,
+                    "end": 136
+                },
+                {
+                    "routes": [],
+                    "name": "clauses",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "clauses(array $q, mixed $urlSearch): void",
+                    "doc": "Writes the clauses, in the reference's order. @param array<string, mixed> $q",
+                    "shapes": [
+                        "@param array<string, mixed> $q"
                     ],
                     "params": [
                         {
@@ -108637,43 +109194,1030 @@
                             "doc": ""
                         },
                         {
-                            "name": "isHome",
-                            "type": "bool",
+                            "name": "urlSearch",
+                            "type": "mixed",
                             "shape": "",
                             "default": null,
                             "doc": ""
                         }
                     ],
-                    "line": 35,
-                    "end": 86
+                    "line": 139,
+                    "end": 170
                 },
                 {
                     "routes": [],
-                    "name": "perPage",
+                    "name": "taxonomies",
                     "static": false,
                     "visibility": "private",
-                    "signature": "perPage(array $q): int",
-                    "doc": "",
-                    "shapes": [],
+                    "signature": "taxonomies(array $q): void",
+                    "doc": "The tax query's clauses (not for a single post), a taxonomy archive's types, and the compatibility variables. @param array<string, mixed> $q",
+                    "shapes": [
+                        "@param array<string, mixed> $q"
+                    ],
                     "params": [
                         {
                             "name": "q",
                             "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 173,
+                    "end": 195
+                },
+                {
+                    "routes": [],
+                    "name": "searchOrder",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "searchOrder(array $q): void",
+                    "doc": "A search's relevance order, ahead of the order asked for, when no other order is asked for. @param array<string, mixed> $q",
+                    "shapes": [
+                        "@param array<string, mixed> $q"
+                    ],
+                    "params": [
+                        {
+                            "name": "q",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 238,
+                    "end": 253
+                },
+                {
+                    "routes": [],
+                    "name": "filtered",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "filtered(array $q): void",
+                    "doc": "The clause filters, paging between the first two and the rest, and posts_selection. @param array<string, mixed> $q",
+                    "shapes": [
+                        "@param array<string, mixed> $q"
+                    ],
+                    "params": [
+                        {
+                            "name": "q",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 256,
+                    "end": 273
+                },
+                {
+                    "routes": [],
+                    "name": "through",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "through(array $hooks, string $clausesHook): void",
+                    "doc": "Each piece through its filter, then all seven through the clauses filter. @param array<string, string> $hooks",
+                    "shapes": [
+                        "@param array<string, string> $hooks"
+                    ],
+                    "params": [
+                        {
+                            "name": "hooks",
+                            "type": "array",
+                            "shape": "array<string, string>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "clausesHook",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 276,
+                    "end": 283
+                },
+                {
+                    "routes": [],
+                    "name": "paging",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "paging(array $q): void",
+                    "doc": "LIMIT for a listing that pages: the offset when one is given, the page's start otherwise. @param array<string, mixed> $q",
+                    "shapes": [
+                        "@param array<string, mixed> $q"
+                    ],
+                    "params": [
+                        {
+                            "name": "q",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 286,
+                    "end": 299
+                },
+                {
+                    "routes": [],
+                    "name": "execute",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "execute(array $q): mixed",
+                    "doc": "Writes the request, runs it (or takes posts_pre_query's answer), and finishes the results. @param array<string, mixed> $q",
+                    "shapes": [
+                        "@param array<string, mixed> $q"
+                    ],
+                    "params": [
+                        {
+                            "name": "q",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 302,
+                    "end": 326
+                },
+                {
+                    "routes": [],
+                    "name": "idsOnly",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "idsOnly(array $q): array",
+                    "doc": "The ids (or id => parent) a query for them returns. @param array<string, mixed> $q",
+                    "shapes": [
+                        "@param array<string, mixed> $q"
+                    ],
+                    "params": [
+                        {
+                            "name": "q",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 329,
+                    "end": 348
+                },
+                {
+                    "routes": [],
+                    "name": "select",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "select(array $q, string $old, string $foundRows): void",
+                    "doc": "Runs the request: ids first, then their posts, when the query can be split that way. @param array<string, mixed> $q",
+                    "shapes": [
+                        "@param array<string, mixed> $q"
+                    ],
+                    "params": [
+                        {
+                            "name": "q",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "old",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "foundRows",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 351,
+                    "end": 369
+                },
+                {
+                    "routes": [],
+                    "name": "foundPosts",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "foundPosts(array $q): void",
+                    "doc": "found_posts (from FOUND_ROWS() when the query paged, else the posts' count) and max_num_pages. @param array<string, mixed> $q",
+                    "shapes": [
+                        "@param array<string, mixed> $q"
+                    ],
+                    "params": [
+                        {
+                            "name": "q",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 372,
+                    "end": 388
+                }
+            ]
+        },
+        {
+            "name": "Minn\\Runtime\\PostQueryParts",
+            "short": "PostQueryParts",
+            "namespace": "Minn\\Runtime",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Runtime/PostQueryParts.php",
+            "lines": 56,
+            "doc": "The pieces of one WP_Query run as the reference builds them and hands\nthem to filters. The seven clause pieces stay untyped: a filter may hand\nback anything, and the request is written from whatever it handed back.",
+            "implements": [],
+            "extends": null,
+            "uses": [],
+            "usedBy": [
+                "Minn\\Runtime\\PostQuery",
+                "Minn\\Runtime\\PostQueryResults",
+                "Minn\\Runtime\\PostQueryStatus",
+                "Minn\\Runtime\\PostQueryWhere"
+            ],
+            "constructor": {
+                "signature": "__construct(string $table)",
+                "doc": "",
+                "shapes": [],
+                "params": [
+                    {
+                        "name": "table",
+                        "type": "string",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    }
+                ],
+                "visibility": "public",
+                "line": 37,
+                "end": 39
+            },
+            "cases": [],
+            "constants": [
+                {
+                    "name": "PIECES",
+                    "value": "array (   0 => 'where',   1 => 'groupby',   2 => 'join',   3 => 'orderby',   4 => 'distinct',   5 => 'fields',   6 => 'limits', )",
+                    "doc": "The pieces posts_clauses and posts_clauses_request see, in their order.",
+                    "visibility": "public"
+                }
+            ],
+            "properties": [
+                {
+                    "name": "where",
+                    "type": "mixed",
+                    "readonly": false,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "public",
+                    "promoted": false
+                },
+                {
+                    "name": "groupby",
+                    "type": "mixed",
+                    "readonly": false,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "public",
+                    "promoted": false
+                },
+                {
+                    "name": "join",
+                    "type": "mixed",
+                    "readonly": false,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "public",
+                    "promoted": false
+                },
+                {
+                    "name": "orderby",
+                    "type": "mixed",
+                    "readonly": false,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "public",
+                    "promoted": false
+                },
+                {
+                    "name": "distinct",
+                    "type": "mixed",
+                    "readonly": false,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "public",
+                    "promoted": false
+                },
+                {
+                    "name": "fields",
+                    "type": "mixed",
+                    "readonly": false,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "public",
+                    "promoted": false
+                },
+                {
+                    "name": "limits",
+                    "type": "mixed",
+                    "readonly": false,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "public",
+                    "promoted": false
+                },
+                {
+                    "name": "search",
+                    "type": "mixed",
+                    "readonly": false,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "public",
+                    "promoted": false
+                },
+                {
+                    "name": "whichauthor",
+                    "type": "string",
+                    "readonly": false,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "public",
+                    "promoted": false
+                },
+                {
+                    "name": "whichmimetype",
+                    "type": "string",
+                    "readonly": false,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "public",
+                    "promoted": false
+                },
+                {
+                    "name": "statusJoin",
+                    "type": "bool",
+                    "readonly": false,
+                    "static": false,
+                    "doc": "Whether an attachment's status follows its parent's (a taxonomy archive's attachments).",
+                    "visibility": "public",
+                    "promoted": false
+                },
+                {
+                    "name": "page",
+                    "type": "int",
+                    "readonly": false,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "public",
+                    "promoted": false
+                },
+                {
+                    "name": "postType",
+                    "type": "mixed",
+                    "readonly": false,
+                    "static": false,
+                    "doc": "The post type the query settles on: a name, a list, `any`, or empty.",
+                    "visibility": "public",
+                    "promoted": false
+                },
+                {
+                    "name": "typeObject",
+                    "type": "?WP_Post_Type",
+                    "readonly": false,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "public",
+                    "promoted": false
+                },
+                {
+                    "name": "typeCap",
+                    "type": "string",
+                    "readonly": false,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "public",
+                    "promoted": false
+                },
+                {
+                    "name": "statuses",
+                    "type": "array",
+                    "readonly": false,
+                    "static": false,
+                    "doc": "The statuses asked for by name, which a single post's status check lets through. @var list<string>",
+                    "visibility": "public",
+                    "promoted": false
+                },
+                {
+                    "name": "table",
+                    "type": "string",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "public",
+                    "promoted": true
+                }
+            ],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "pieces",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "pieces(): array",
+                    "doc": "The seven pieces by name. @return array<string, mixed>",
+                    "shapes": [
+                        "@return array<string, mixed>"
+                    ],
+                    "params": [],
+                    "line": 42,
+                    "end": 49
+                },
+                {
+                    "routes": [],
+                    "name": "take",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "take(array $clauses): void",
+                    "doc": "Takes back the pieces a clauses filter returned; one it dropped becomes empty. @param array<array-key, mixed> $clauses",
+                    "shapes": [
+                        "@param array<array-key, mixed> $clauses"
+                    ],
+                    "params": [
+                        {
+                            "name": "clauses",
+                            "type": "array",
+                            "shape": "array<array-key, mixed>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 52,
+                    "end": 57
+                },
+                {
+                    "routes": [],
+                    "name": "request",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "request(string $foundRows, mixed $fields): string",
+                    "doc": "The SELECT as the reference writes it, line breaks and all, for the given field list.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "foundRows",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "fields",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 60,
+                    "end": 66
+                }
+            ]
+        },
+        {
+            "name": "Minn\\Runtime\\PostQueryResults",
+            "short": "PostQueryResults",
+            "namespace": "Minn\\Runtime",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Runtime/PostQueryResults.php",
+            "lines": 111,
+            "doc": "What WP_Query does with its posts once it has them, as the reference does\nit (probe wp-query-sql): a single post whose status is not public is\ndropped unless the reader may see it (a draft its editor may preview, with\nthe_preview); sticky posts move to the front of the home listing's first\npage, the ones it did not find fetched by a nested query; the_posts; and\nthe post objects, count and current post set.",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\Runtime\\PostQueryParts"
+            ],
+            "usedBy": [
+                "Minn\\Runtime\\PostQuery"
+            ],
+            "constructor": {
+                "signature": "__construct(WP_Query $query, Minn\\Runtime\\PostQueryParts $parts)",
+                "doc": "",
+                "shapes": [],
+                "params": [
+                    {
+                        "name": "query",
+                        "type": "WP_Query",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    },
+                    {
+                        "name": "parts",
+                        "type": "Minn\\Runtime\\PostQueryParts",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    }
+                ],
+                "visibility": "public",
+                "line": 17,
+                "end": 19
+            },
+            "cases": [],
+            "constants": [],
+            "properties": [
+                {
+                    "name": "query",
+                    "type": "WP_Query",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
+                },
+                {
+                    "name": "parts",
+                    "type": "Minn\\Runtime\\PostQueryParts",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
+                }
+            ],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "settle",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "settle(array $q): void",
+                    "doc": "Settles the posts a query found: status check, stickies, the_posts, then the count and the current post. @param array<string, mixed> $q",
+                    "shapes": [
+                        "@param array<string, mixed> $q"
+                    ],
+                    "params": [
+                        {
+                            "name": "q",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 22,
+                    "end": 41
+                },
+                {
+                    "routes": [],
+                    "name": "singleStatus",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "singleStatus(): void",
+                    "doc": "A single post the reader may not see is dropped; a draft its editor may edit is a preview.",
+                    "shapes": [],
+                    "params": [],
+                    "line": 44,
+                    "end": 63
+                },
+                {
+                    "routes": [],
+                    "name": "visible",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "visible(string|false $status): bool",
+                    "doc": "Whether the reader may see the first post in its status (a draft they may edit becomes a preview, dated now).",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "status",
+                            "type": "string|false",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 66,
+                    "end": 91
+                },
+                {
+                    "routes": [],
+                    "name": "stickies",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "stickies(array $q): void",
+                    "doc": "Sticky posts to the front of the home listing's first page; those it did not find, fetched. @param array<string, mixed> $q",
+                    "shapes": [
+                        "@param array<string, mixed> $q"
+                    ],
+                    "params": [
+                        {
+                            "name": "q",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 94,
+                    "end": 124
+                }
+            ]
+        },
+        {
+            "name": "Minn\\Runtime\\PostQueryStatus",
+            "short": "PostQueryStatus",
+            "namespace": "Minn\\Runtime",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Runtime/PostQueryStatus.php",
+            "lines": 165,
+            "doc": "WP_Query's post type and status clause as the reference writes it (probe\nwp-query-sql). Statuses asked for by name: the type clause, then the\nstatuses (any, less those excluded from search; private kept apart when\nthe query asks for readable posts; the user's own when they may not read\nor edit others'; an attachment's parent's status for a taxonomy archive).\nNone asked for, on a listing: each queried type, sorted, with its public\nstatuses, the admin list's protected ones in the admin, and private ones\nthe signed-in user may read. A single post: the type clause alone.",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\Query\\Sql",
+                "Minn\\Runtime\\PostQueryParts"
+            ],
+            "usedBy": [
+                "Minn\\Runtime\\PostQuery"
+            ],
+            "constructor": {
+                "signature": "__construct(WP_Query $query, Minn\\Runtime\\PostQueryParts $parts)",
+                "doc": "",
+                "shapes": [],
+                "params": [
+                    {
+                        "name": "query",
+                        "type": "WP_Query",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    },
+                    {
+                        "name": "parts",
+                        "type": "Minn\\Runtime\\PostQueryParts",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    }
+                ],
+                "visibility": "public",
+                "line": 21,
+                "end": 23
+            },
+            "cases": [],
+            "constants": [],
+            "properties": [
+                {
+                    "name": "query",
+                    "type": "WP_Query",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
+                },
+                {
+                    "name": "parts",
+                    "type": "Minn\\Runtime\\PostQueryParts",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
+                }
+            ],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "settleType",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "settleType(): void",
+                    "doc": "Settles the post type the caps come from: a list of several types has\nnone (its caps are named for multiple_post_type), any other names one.",
+                    "shapes": [],
+                    "params": [],
+                    "line": 29,
+                    "end": 42
+                },
+                {
+                    "routes": [],
+                    "name": "append",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "append(array $q): void",
+                    "doc": "Appends the type and status clause. @param array<string, mixed> $q",
+                    "shapes": [
+                        "@param array<string, mixed> $q"
+                    ],
+                    "params": [
+                        {
+                            "name": "q",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 45,
+                    "end": 59
+                },
+                {
+                    "routes": [],
+                    "name": "typeWhere",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "typeWhere(): array",
+                    "doc": "The type clause, and whether there are no searchable types to give statuses to. @return array{0: string, 1: bool}",
+                    "shapes": [
+                        "@return array{0: string, 1: bool}"
+                    ],
+                    "params": [],
+                    "line": 62,
+                    "end": 85
+                },
+                {
+                    "routes": [],
+                    "name": "cap",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "cap(string $which): string",
+                    "doc": "The cap a type's object names, or the one its name makes.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "which",
+                            "type": "string",
                             "shape": "",
                             "default": null,
                             "doc": ""
                         }
                     ],
                     "line": 88,
-                    "end": 98
+                    "end": 92
                 },
                 {
                     "routes": [],
-                    "name": "types",
+                    "name": "named",
                     "static": false,
                     "visibility": "private",
-                    "signature": "types(array $q): void",
+                    "signature": "named(mixed $asked, mixed $perm): void",
+                    "doc": "Statuses asked for by name (or `any`), under the query's perm.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "asked",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "perm",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 95,
+                    "end": 136
+                },
+                {
+                    "routes": [],
+                    "name": "listing",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "listing(): void",
+                    "doc": "A listing with no statuses asked for: each type with the statuses its reader may see.",
+                    "shapes": [],
+                    "params": [],
+                    "line": 139,
+                    "end": 165
+                },
+                {
+                    "routes": [],
+                    "name": "privateStatuses",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "privateStatuses(string $type): string",
+                    "doc": "The private statuses a signed-in user sees in a type: all of them with the cap to read them, their own otherwise.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "type",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 168,
+                    "end": 182
+                }
+            ]
+        },
+        {
+            "name": "Minn\\Runtime\\PostQueryTax",
+            "short": "PostQueryTax",
+            "namespace": "Minn\\Runtime",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Runtime/PostQueryTax.php",
+            "lines": 193,
+            "doc": "The taxonomy side of WP_Query as the reference runs it (probe\nwp-query-sql): the clauses its variables make (tax_query, taxonomy and\nterm, each taxonomy's query var, cat and the category__ lists, tag and the\ntag__ lists), settled back into the variables; the post types a taxonomy\narchive with no type searches; and the cat, category_name, tag_id,\ntaxonomy and term variables set from the terms queried.",
+            "implements": [],
+            "extends": null,
+            "uses": [],
+            "usedBy": [
+                "Minn\\Runtime\\PostQuery"
+            ],
+            "constructor": null,
+            "cases": [],
+            "constants": [],
+            "properties": [],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "clauses",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "clauses(WP_Query $query, array $q): array",
+                    "doc": "The tax query a set of variables makes, settling the variables it reads.",
+                    "shapes": [
+                        "@param array<string, mixed> $q",
+                        "@return list<array<string, mixed>>|array<string, mixed>"
+                    ],
+                    "params": [
+                        {
+                            "name": "query",
+                            "type": "WP_Query",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "q",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 23,
+                    "end": 50
+                },
+                {
+                    "routes": [],
+                    "name": "postTypes",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "postTypes(array $taxonomies): array|string",
+                    "doc": "The post types a taxonomy archive with no type searches: every\nsearchable type the queried taxonomies are registered for, one as a\nstring, several sorted, none as `any`.",
+                    "shapes": [
+                        "@param list<string> $taxonomies",
+                        "@return string|list<string>"
+                    ],
+                    "params": [
+                        {
+                            "name": "taxonomies",
+                            "type": "array",
+                            "shape": "list<string>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 156,
+                    "end": 173
+                },
+                {
+                    "routes": [],
+                    "name": "compat",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "compat(WP_Query $query, array $q, array $queried): void",
+                    "doc": "The compatibility variables the queried terms set: taxonomy and term\n(or term_id) from the first taxonomy other than category and post_tag\nwhen none is set, and cat, category_name and tag_id from those two.",
+                    "shapes": [
+                        "@param array<string, array{terms?: list<mixed>, field?: string}> $queried"
+                    ],
+                    "params": [
+                        {
+                            "name": "query",
+                            "type": "WP_Query",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "q",
+                            "type": "array",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "queried",
+                            "type": "array",
+                            "shape": "array<string, array{terms?: list<mixed>, field?: string}>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 182,
+                    "end": 206
+                },
+                {
+                    "routes": [],
+                    "name": "queryVar",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "queryVar(array $q, string $name, object $taxonomy): array",
                     "doc": "",
+                    "shapes": [
+                        "@return list<array<string, mixed>>"
+                    ],
+                    "params": [
+                        {
+                            "name": "q",
+                            "type": "array",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "name",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "taxonomy",
+                            "type": "object",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 53,
+                    "end": 65
+                },
+                {
+                    "routes": [],
+                    "name": "cat",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "cat(array $q): array",
+                    "doc": "",
+                    "shapes": [
+                        "@return list<array<string, mixed>>"
+                    ],
+                    "params": [
+                        {
+                            "name": "q",
+                            "type": "array",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 68,
+                    "end": 82
+                },
+                {
+                    "routes": [],
+                    "name": "categoryLists",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "categoryLists(array $q): array",
+                    "doc": "",
+                    "shapes": [
+                        "@return list<array<string, mixed>>"
+                    ],
+                    "params": [
+                        {
+                            "name": "q",
+                            "type": "array",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 85,
+                    "end": 105
+                },
+                {
+                    "routes": [],
+                    "name": "tag",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "tag(array $q): void",
+                    "doc": "The tag variable as tag_slug__in or tag_slug__and.",
                     "shapes": [],
                     "params": [
                         {
@@ -108684,17 +110228,19 @@
                             "doc": ""
                         }
                     ],
-                    "line": 100,
-                    "end": 122
+                    "line": 108,
+                    "end": 125
                 },
                 {
                     "routes": [],
-                    "name": "statuses",
-                    "static": false,
+                    "name": "tagLists",
+                    "static": true,
                     "visibility": "private",
-                    "signature": "statuses(array $q): void",
+                    "signature": "tagLists(array $q): array",
                     "doc": "",
-                    "shapes": [],
+                    "shapes": [
+                        "@return list<array<string, mixed>>"
+                    ],
                     "params": [
                         {
                             "name": "q",
@@ -108704,68 +110250,258 @@
                             "doc": ""
                         }
                     ],
-                    "line": 124,
-                    "end": 150
+                    "line": 128,
+                    "end": 146
+                }
+            ]
+        },
+        {
+            "name": "Minn\\Runtime\\PostQueryWhere",
+            "short": "PostQueryWhere",
+            "namespace": "Minn\\Runtime",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Runtime/PostQueryWhere.php",
+            "lines": 263,
+            "doc": "The WHERE fragments WP_Query writes from its variables, in the reference's\norder and spacing (probe wp-query-sql): menu order, the legacy m date and\nthe date variables, a slug or a page path, ids, parents, a page id (which\nreplaces everything before it), authors, comment counts, mime types,\npasswords, and comment and ping status. Each appends to the parts it is\nhanded and settles the variables it reads, as the reference leaves them.",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\Query\\Sql",
+                "Minn\\Runtime\\PostQueryParts"
+            ],
+            "usedBy": [
+                "Minn\\Runtime\\PostQuery"
+            ],
+            "constructor": {
+                "signature": "__construct(WP_Query $query, Minn\\Runtime\\PostQueryParts $parts, string $table)",
+                "doc": "",
+                "shapes": [],
+                "params": [
+                    {
+                        "name": "query",
+                        "type": "WP_Query",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    },
+                    {
+                        "name": "parts",
+                        "type": "Minn\\Runtime\\PostQueryParts",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    },
+                    {
+                        "name": "table",
+                        "type": "string",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    }
+                ],
+                "visibility": "public",
+                "line": 21,
+                "end": 23
+            },
+            "cases": [],
+            "constants": [
+                {
+                    "name": "LEGACY_DATE",
+                    "value": "array (   4 => 'MONTH',   6 => 'DAYOFMONTH',   8 => 'HOUR',   10 => 'MINUTE',   12 => 'SECOND', )",
+                    "doc": "",
+                    "visibility": "private"
+                }
+            ],
+            "properties": [
+                {
+                    "name": "query",
+                    "type": "WP_Query",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
                 },
                 {
-                    "routes": [],
-                    "name": "singular",
+                    "name": "parts",
+                    "type": "Minn\\Runtime\\PostQueryParts",
+                    "readonly": true,
                     "static": false,
-                    "visibility": "private",
-                    "signature": "singular(array $q): void",
                     "doc": "",
-                    "shapes": [],
+                    "visibility": "private",
+                    "promoted": true
+                },
+                {
+                    "name": "table",
+                    "type": "string",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
+                }
+            ],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "dates",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "dates(array $q): void",
+                    "doc": "Menu order, the m date, the date variables and the date_query. @param array<string, mixed> $q",
+                    "shapes": [
+                        "@param array<string, mixed> $q"
+                    ],
                     "params": [
                         {
                             "name": "q",
                             "type": "array",
-                            "shape": "",
+                            "shape": "array<string, mixed>",
                             "default": null,
                             "doc": ""
                         }
                     ],
-                    "line": 152,
-                    "end": 184
+                    "line": 26,
+                    "end": 52
+                },
+                {
+                    "routes": [],
+                    "name": "names",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "names(array $q): void",
+                    "doc": "The post a slug, a page path, an attachment slug, a name list, an id or\nan id list names, and the parent; a post type's query var stands for\nthe name (the page path, for a hierarchical type).",
+                    "shapes": [
+                        "@param array<string, mixed> $q"
+                    ],
+                    "params": [
+                        {
+                            "name": "q",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 61,
+                    "end": 84
                 },
                 {
                     "routes": [],
                     "name": "authors",
                     "static": false,
-                    "visibility": "private",
+                    "visibility": "public",
                     "signature": "authors(array $q): void",
-                    "doc": "",
-                    "shapes": [],
+                    "doc": "Authors (an author list's negatives become author__not_in, which wins\nover author__in), an author slug, a comment count, and mime types. The\nslug and mime clauses wait to follow the search.",
+                    "shapes": [
+                        "@param array<string, mixed> $q"
+                    ],
                     "params": [
                         {
                             "name": "q",
                             "type": "array",
-                            "shape": "",
+                            "shape": "array<string, mixed>",
                             "default": null,
                             "doc": ""
                         }
                     ],
-                    "line": 186,
-                    "end": 216
+                    "line": 198,
+                    "end": 229
                 },
                 {
                     "routes": [],
-                    "name": "parents",
+                    "name": "access",
                     "static": false,
-                    "visibility": "private",
-                    "signature": "parents(array $q): void",
-                    "doc": "",
-                    "shapes": [],
+                    "visibility": "public",
+                    "signature": "access(array $q): void",
+                    "doc": "A password, or whether there is one, and comment and ping status. @param array<string, mixed> $q",
+                    "shapes": [
+                        "@param array<string, mixed> $q"
+                    ],
                     "params": [
                         {
                             "name": "q",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 261,
+                    "end": 278
+                },
+                {
+                    "routes": [],
+                    "name": "nameList",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "nameList(array $q, array $names): void",
+                    "doc": "A name list, sanitized in place; the clause lists each name once, sorted. @param array<string, mixed> $q @param list<mixed> $names",
+                    "shapes": [
+                        "@param array<string, mixed> $q @param list<mixed> $names"
+                    ],
+                    "params": [
+                        {
+                            "name": "q",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": "@param list<mixed> $names"
+                        },
+                        {
+                            "name": "names",
                             "type": "array",
                             "shape": "",
                             "default": null,
                             "doc": ""
                         }
                     ],
-                    "line": 218,
-                    "end": 234
+                    "line": 87,
+                    "end": 94
+                },
+                {
+                    "routes": [],
+                    "name": "typeQueryVar",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "typeQueryVar(array $q): void",
+                    "doc": "",
+                    "shapes": [
+                        "@param array<string, mixed> $q"
+                    ],
+                    "params": [
+                        {
+                            "name": "q",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 97,
+                    "end": 116
+                },
+                {
+                    "routes": [],
+                    "name": "pagename",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "pagename(array $q): void",
+                    "doc": "A page path: the page it finds (in a hierarchical type queried), unless it is the posts page. @param array<string, mixed> $q",
+                    "shapes": [
+                        "@param array<string, mixed> $q"
+                    ],
+                    "params": [
+                        {
+                            "name": "q",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 119,
+                    "end": 155
                 },
                 {
                     "routes": [],
@@ -108773,81 +110509,65 @@
                     "static": false,
                     "visibility": "private",
                     "signature": "ids(array $q): void",
-                    "doc": "",
-                    "shapes": [],
+                    "doc": "An id or an id list, the parent or a parent list, and a page id that replaces all before it. @param array<string, mixed> $q",
+                    "shapes": [
+                        "@param array<string, mixed> $q"
+                    ],
                     "params": [
                         {
                             "name": "q",
                             "type": "array",
-                            "shape": "",
+                            "shape": "array<string, mixed>",
                             "default": null,
                             "doc": ""
                         }
                     ],
-                    "line": 236,
-                    "end": 267
+                    "line": 158,
+                    "end": 189
                 },
                 {
                     "routes": [],
-                    "name": "search",
+                    "name": "authorName",
                     "static": false,
                     "visibility": "private",
-                    "signature": "search(array $q): void",
-                    "doc": "",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "q",
-                            "type": "array",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 269,
-                    "end": 282
-                },
-                {
-                    "routes": [],
-                    "name": "dates",
-                    "static": false,
-                    "visibility": "private",
-                    "signature": "dates(array $q): void",
-                    "doc": "",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "q",
-                            "type": "array",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 284,
-                    "end": 339
-                },
-                {
-                    "routes": [],
-                    "name": "order",
-                    "static": false,
-                    "visibility": "private",
-                    "signature": "order(array $q): array",
+                    "signature": "authorName(array $q): void",
                     "doc": "",
                     "shapes": [
-                        "@return array{0: string, 1: list<mixed>}"
+                        "@param array<string, mixed> $q"
                     ],
                     "params": [
                         {
                             "name": "q",
                             "type": "array",
-                            "shape": "",
+                            "shape": "array<string, mixed>",
                             "default": null,
                             "doc": ""
                         }
                     ],
-                    "line": 342,
-                    "end": 396
+                    "line": 232,
+                    "end": 242
+                },
+                {
+                    "routes": [],
+                    "name": "commentCount",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "commentCount(array $q): void",
+                    "doc": "",
+                    "shapes": [
+                        "@param array<string, mixed> $q"
+                    ],
+                    "params": [
+                        {
+                            "name": "q",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 245,
+                    "end": 258
                 }
             ]
         },
@@ -109598,7 +111318,7 @@
             "namespace": "Minn\\Runtime",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Runtime/QueryFlags.php",
-            "lines": 101,
+            "lines": 160,
             "doc": "The conditional flags a set of query variables implies (is_single, is_archive,\nis_home, ...), derived the way the reference's parse step derives them, plus\nthe variables after the integer casts that step applies.",
             "implements": [],
             "extends": null,
@@ -109667,6 +111387,36 @@
             "methods": [
                 {
                     "routes": [],
+                    "name": "fill",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "fill(array $vars, Minn\\Runtime\\Registry $registry): array",
+                    "doc": "The variables with every one the reference fills given its empty\nvalue: the template's keys up to search_columns (the ones after it are\nget_posts' own, settled when the query runs).",
+                    "shapes": [
+                        "@param array<string, mixed> $vars",
+                        "@return array<string, mixed>"
+                    ],
+                    "params": [
+                        {
+                            "name": "vars",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "registry",
+                            "type": "Minn\\Runtime\\Registry",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 32,
+                    "end": 43
+                },
+                {
+                    "routes": [],
                     "name": "derive",
                     "static": true,
                     "visibility": "public",
@@ -109699,8 +111449,8 @@
                             "doc": "a filtered option read"
                         }
                     ],
-                    "line": 30,
-                    "end": 70
+                    "line": 51,
+                    "end": 92
                 },
                 {
                     "routes": [],
@@ -109728,8 +111478,31 @@
                             "doc": ""
                         }
                     ],
+                    "line": 161,
+                    "end": 170
+                },
+                {
+                    "routes": [],
+                    "name": "sanitize",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "sanitize(array $vars): array",
+                    "doc": "The reference's clean-up of the free-form variables: m and the time\nparts to digits, cat and author to id lists, names trimmed, an\nover-long or non-scalar search dropped.",
+                    "shapes": [
+                        "@param array<string, mixed> $vars",
+                        "@return array<string, mixed>"
+                    ],
+                    "params": [
+                        {
+                            "name": "vars",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
                     "line": 102,
-                    "end": 111
+                    "end": 129
                 },
                 {
                     "routes": [],
@@ -109757,8 +111530,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 73,
-                    "end": 94
+                    "line": 132,
+                    "end": 153
                 }
             ]
         },
@@ -110411,11 +112184,9 @@
             "usedBy": [
                 "Minn\\Front\\Permalinks",
                 "Minn\\Rest\\StatusesController",
-                "Minn\\Runtime\\PostQuery",
                 "Minn\\Runtime\\QueriedObject",
                 "Minn\\Runtime\\QueryFlags",
-                "Minn\\Runtime\\Runtime",
-                "Minn\\Runtime\\TaxonomyClause"
+                "Minn\\Runtime\\Runtime"
             ],
             "constructor": {
                 "signature": "__construct(string $engineDir)",
@@ -111049,7 +112820,6 @@
                 "Minn\\Runtime\\PluginUpdates",
                 "Minn\\Runtime\\Plugins",
                 "Minn\\Runtime\\PostEvents",
-                "Minn\\Runtime\\PostQuery",
                 "Minn\\Runtime\\PostSave",
                 "Minn\\Runtime\\RegisteredSettings",
                 "Minn\\Runtime\\Registry",
@@ -114019,177 +115789,6 @@
                     ],
                     "line": 147,
                     "end": 160
-                }
-            ]
-        },
-        {
-            "name": "Minn\\Runtime\\TaxonomyClause",
-            "short": "TaxonomyClause",
-            "namespace": "Minn\\Runtime",
-            "kind": "final class",
-            "file": "public/minn/src/Minn/Runtime/TaxonomyClause.php",
-            "lines": 178,
-            "doc": "The taxonomy side of a post query: every query var the reference reads\n(cat, category_name, tag, the __in and __and pairs, each taxonomy's own\nvar) and an explicit tax_query, resolved to term_taxonomy ids with\nchildren included where the taxonomy is hierarchical, as one WHERE\nfragment on p.ID.",
-            "implements": [],
-            "extends": null,
-            "uses": [
-                "Minn\\Db",
-                "Minn\\Runtime\\Registry"
-            ],
-            "usedBy": [
-                "Minn\\Runtime\\PostQuery"
-            ],
-            "constructor": {
-                "signature": "__construct(Minn\\Db $db, Minn\\Runtime\\Registry $registry)",
-                "doc": "",
-                "shapes": [],
-                "params": [
-                    {
-                        "name": "db",
-                        "type": "Minn\\Db",
-                        "shape": "",
-                        "default": null,
-                        "doc": ""
-                    },
-                    {
-                        "name": "registry",
-                        "type": "Minn\\Runtime\\Registry",
-                        "shape": "",
-                        "default": null,
-                        "doc": ""
-                    }
-                ],
-                "visibility": "public",
-                "line": 21,
-                "end": 23
-            },
-            "cases": [],
-            "constants": [],
-            "properties": [
-                {
-                    "name": "params",
-                    "type": "array",
-                    "readonly": false,
-                    "static": false,
-                    "doc": "",
-                    "visibility": "private",
-                    "promoted": false
-                },
-                {
-                    "name": "db",
-                    "type": "Minn\\Db",
-                    "readonly": true,
-                    "static": false,
-                    "doc": "",
-                    "visibility": "private",
-                    "promoted": true
-                },
-                {
-                    "name": "registry",
-                    "type": "Minn\\Runtime\\Registry",
-                    "readonly": true,
-                    "static": false,
-                    "doc": "",
-                    "visibility": "private",
-                    "promoted": true
-                }
-            ],
-            "methods": [
-                {
-                    "routes": [],
-                    "name": "where",
-                    "static": false,
-                    "visibility": "public",
-                    "signature": "where(array $q): ?array",
-                    "doc": "The WHERE fragment and its parameters for a query's taxonomy conditions,\nor null when the query has none.",
-                    "shapes": [
-                        "@return array{string, list<mixed>}|null"
-                    ],
-                    "params": [
-                        {
-                            "name": "q",
-                            "type": "array",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 31,
-                    "end": 40
-                },
-                {
-                    "routes": [],
-                    "name": "taxonomyClauses",
-                    "static": true,
-                    "visibility": "private",
-                    "signature": "taxonomyClauses(array $q, array $taxonomies): array",
-                    "doc": "The tax_query the query vars amount to: cat, category_name, the __in /\n__not_in / __and pairs, tag and its slug forms, every registered\ntaxonomy's own query var, and finally an explicit tax_query.",
-                    "shapes": [
-                        "@param array<string, array<string, mixed>> $taxonomies the registry's taxonomies",
-                        "@return array{string, list<array<string, mixed>>} relation, clauses"
-                    ],
-                    "params": [
-                        {
-                            "name": "q",
-                            "type": "array",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "taxonomies",
-                            "type": "array",
-                            "shape": "array<string, array<string, mixed>>",
-                            "default": null,
-                            "doc": "the registry's taxonomies"
-                        }
-                    ],
-                    "line": 50,
-                    "end": 116
-                },
-                {
-                    "routes": [],
-                    "name": "taxonomySql",
-                    "static": false,
-                    "visibility": "private",
-                    "signature": "taxonomySql(array $clause): string",
-                    "doc": "One clause as SQL on p.ID, its parameters pushed. @param array<string, mixed> $clause",
-                    "shapes": [
-                        "@param array<string, mixed> $clause"
-                    ],
-                    "params": [
-                        {
-                            "name": "clause",
-                            "type": "array",
-                            "shape": "array<string, mixed>",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 119,
-                    "end": 156
-                },
-                {
-                    "routes": [],
-                    "name": "termTaxonomyIds",
-                    "static": false,
-                    "visibility": "private",
-                    "signature": "termTaxonomyIds(array $clause): array",
-                    "doc": "",
-                    "shapes": [
-                        "@return list<int>"
-                    ],
-                    "params": [
-                        {
-                            "name": "clause",
-                            "type": "array",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 159,
-                    "end": 192
                 }
             ]
         },

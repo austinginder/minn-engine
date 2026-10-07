@@ -20,9 +20,6 @@ final class TaxSql
     /** @var list<string> */
     private array $joins = [];
 
-    /** @var array<string, array{terms: list<mixed>, field: string}> */
-    private array $queriedTerms = [];
-
     /**
      * @param Closure(string, string, list<mixed>, bool): list<int> $termTaxonomyIds taxonomy, field, terms, include children
      */
@@ -35,37 +32,75 @@ final class TaxSql
     ) {
     }
 
-    /** The query with every clause in its canonical shape. */
+    /**
+     * The query as the reference keeps it: each clause merged over the
+     * defaults (taxonomy, terms as a list, field term_id, operator IN,
+     * children included), a nested group given relation AND when it has
+     * none, an empty group dropped. The top level keeps a relation only when
+     * one was given.
+     *
+     * @param array<array-key, mixed> $queries
+     * @return array<array-key, mixed>
+     */
     public static function sanitize(array $queries): array
     {
         $clean = [];
         foreach ($queries as $key => $query) {
             if ($key === 'relation') {
                 $clean['relation'] = strtoupper((string) $query) === 'OR' ? 'OR' : 'AND';
-                continue;
-            }
-            if (!is_array($query)) {
-                continue;
-            }
-            if (isset($query['taxonomy']) || isset($query['terms'])) {
-                $clause = $query + ['taxonomy' => '', 'terms' => [], 'field' => 'term_id', 'operator' => 'IN', 'include_children' => true];
-                $clause['terms'] = array_values(array_unique((array) $clause['terms']));
-                $clause['operator'] = strtoupper((string) $clause['operator']);
-                if (!in_array($clause['operator'], ['IN', 'NOT IN', 'AND', 'EXISTS', 'NOT EXISTS'], true)) {
-                    $clause['operator'] = 'IN';
+            } elseif (self::isFirstOrder($query)) {
+                $clause = array_merge(['taxonomy' => '', 'terms' => [], 'field' => 'term_id', 'operator' => 'IN', 'include_children' => true], $query);
+                $clause['terms'] = (array) $clause['terms'];
+                $clean[] = $clause;
+            } elseif (is_array($query)) {
+                $group = self::sanitize($query);
+                if ($group !== []) {
+                    $clean[] = $group + ['relation' => 'AND'];
                 }
-                $clean[$key] = $clause;
-                continue;
             }
-            $group = self::sanitize($query);
-            if ($group !== []) {
-                $clean[$key] = $group;
-            }
-        }
-        if ($clean !== [] && !isset($clean['relation'])) {
-            $clean['relation'] = 'AND';
         }
         return $clean;
+    }
+
+    /** Whether a query part is a clause (it names a clause key, or is empty) rather than a group. */
+    public static function isFirstOrder(mixed $query): bool
+    {
+        if (!is_array($query)) {
+            return false;
+        }
+        return $query === [] || array_intersect(['terms', 'taxonomy', 'include_children', 'field', 'operator'], array_keys($query)) !== [];
+    }
+
+    /**
+     * The terms a sanitized query asks for, by taxonomy: the first terms and
+     * the first field each taxonomy's clauses give, NOT IN clauses aside.
+     *
+     * @param array<array-key, mixed> $queries
+     * @return array<string, array{terms?: list<mixed>, field?: string}>
+     */
+    public static function queried(array $queries, array $queried = []): array
+    {
+        foreach ($queries as $key => $query) {
+            if ($key === 'relation' || !is_array($query)) {
+                continue;
+            }
+            if (!self::isFirstOrder($query)) {
+                $queried = self::queried($query, $queried);
+                continue;
+            }
+            if (empty($query['taxonomy']) || $query['operator'] === 'NOT IN') {
+                continue;
+            }
+            $taxonomy = (string) $query['taxonomy'];
+            $queried[$taxonomy] ??= [];
+            if (!empty($query['terms']) && !isset($queried[$taxonomy]['terms'])) {
+                $queried[$taxonomy]['terms'] = $query['terms'];
+            }
+            if (!empty($query['field']) && !isset($queried[$taxonomy]['field'])) {
+                $queried[$taxonomy]['field'] = $query['field'];
+            }
+        }
+        return $queried;
     }
 
     /**
@@ -82,16 +117,6 @@ final class TaxSql
         return ['join' => implode(' ', $this->joins), 'where' => $where === '' ? '' : ' AND ' . $where];
     }
 
-    /**
-     * The terms the last build matched, by taxonomy.
-     *
-     * @return array<string, array{terms: list<mixed>, field: string}> the terms asked for, by taxonomy
-     */
-    public function queriedTerms(): array
-    {
-        return $this->queriedTerms;
-    }
-
     private function group(array $queries, int $depth): string
     {
         $relation = $queries['relation'] ?? 'AND';
@@ -101,7 +126,7 @@ final class TaxSql
             if ($key === 'relation' || !is_array($query)) {
                 continue;
             }
-            if (isset($query['taxonomy']) || isset($query['terms'])) {
+            if (self::isFirstOrder($query)) {
                 $parts[] = $this->clause($query, $relation, $shared);
             } else {
                 $inner = $this->group($query, $depth + 1);
@@ -115,12 +140,11 @@ final class TaxSql
 
     private function clause(array $clause, string $relation, ?string &$shared): string
     {
+        $clause += ['taxonomy' => '', 'terms' => [], 'field' => 'term_id', 'operator' => 'IN', 'include_children' => true];
         $taxonomy = (string) $clause['taxonomy'];
-        $operator = (string) $clause['operator'];
-        // Every clause but a NOT IN names what it asked for: its terms (when it has any) and its field.
-        if ($taxonomy !== '' && $operator !== 'NOT IN') {
-            $this->queriedTerms[$taxonomy] = ($clause['terms'] === [] ? [] : ['terms' => $clause['terms']]) + ['field' => (string) $clause['field']];
-        }
+        $operator = strtoupper((string) $clause['operator']);
+        $operator = in_array($operator, ['IN', 'NOT IN', 'AND', 'EXISTS', 'NOT EXISTS'], true) ? $operator : 'IN';
+        $clause['terms'] = array_values(array_unique((array) $clause['terms']));
         $object = "{$this->primaryTable}.{$this->primaryId}";
         if ($operator === 'EXISTS' || $operator === 'NOT EXISTS') {
             // The reference's own layout, tabs and all (probe query-clauses).

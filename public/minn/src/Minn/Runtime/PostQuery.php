@@ -4,394 +4,386 @@ declare(strict_types=1);
 
 namespace Minn\Runtime;
 
-use Minn\Content\Reader;
 use Minn\Db;
+use Minn\Query\PostOrder;
+use Minn\Query\PostSearch;
 
 /**
- * The query WP_Query runs: its variables become one SELECT over the posts
- * table with the joins the taxonomy, meta, and author conditions need.
- * Shapes and defaults follow contracts/fixtures/api/content.json.
+ * WP_Query::get_posts as the reference runs it (probe wp-query-sql): the
+ * variables parsed and handed to pre_get_posts, the clauses written piece by
+ * piece, every filter a plugin may change them through in the reference's
+ * order (suppress_filters keeps the ones it keeps), the request split into
+ * an id query when that is cheaper, the count, a single post's status check
+ * and preview, sticky posts on the home listing, and the results filters.
  */
 final class PostQuery
 {
-    /** @var list<string> */
-    private array $where = [];
-    /** @var list<mixed> */
-    private array $params = [];
-    /** @var list<string> */
-    private array $joins = [];
-    private bool $distinct = false;
+    private \WP_Query $query;
+    private object $wpdb;
+    private PostQueryParts $parts;
 
-    public function __construct(private readonly Db $db, private readonly Registry $registry)
+    public function __construct(private readonly Db $db)
     {
     }
 
     /**
-     * Runs a WP_Query-shaped args array and returns its rows and totals.
+     * Runs a query object's variables and fills it in: the posts (or ids, or
+     * id => parent), the request, the counts. Returns what get_posts returns.
+     *
+     * @param object $wpdb the database object plugins see, so the request runs where their filters expect it
+     * @param mixed $urlSearch the search string the URL carries, if any (a search from elsewhere is url-decoded)
+     */
+    public function run(\WP_Query $query, object $wpdb, mixed $urlSearch): mixed
+    {
+        $this->query = $query;
+        $this->wpdb = $wpdb;
+        $this->parts = new PostQueryParts($this->db->table('posts'));
+        $this->prepare();
+        $q = &$query->query_vars;
+        $this->defaults($q);
+        $this->clauses($q, $urlSearch);
+        $this->filtered($q);
+        return $this->execute($q);
+    }
+
+    /** Parses the variables, hands them to pre_get_posts, and reads the meta query from them. */
+    private function prepare(): void
+    {
+        $query = $this->query;
+        $query->parse_query();
+        \do_action_ref_array('pre_get_posts', [&$query]);
+        $query->query_vars = $query->fill_query_vars($query->query_vars);
+        $query->allow_query_attachment_by_filename = \apply_filters('wp_allow_query_attachment_by_filename', false);
+        \remove_all_filters('wp_allow_query_attachment_by_filename');
+        $query->meta_query = new \WP_Meta_Query();
+        $query->meta_query->parse_query_vars($query->query_vars);
+        $hash = md5(serialize($query->query_vars));
+        if ($hash !== $query->query_vars_hash) {
+            $query->query_vars_changed = true;
+            $query->query_vars_hash = $hash;
+        }
+    }
+
+    /** The defaults get_posts settles before it writes a clause. @param array<string, mixed> $q */
+    private function defaults(array &$q): void
+    {
+        $query = $this->query;
+        if (isset($q['caller_get_posts'])) {
+            \_deprecated_argument('WP_Query', '3.1.0', sprintf('%1$s is deprecated. Use %2$s instead.', '<code>caller_get_posts</code>', '<code>ignore_sticky_posts</code>'));
+            $q['ignore_sticky_posts'] ??= $q['caller_get_posts'];
+        }
+        $q += ['ignore_sticky_posts' => false, 'suppress_filters' => false, 'cache_results' => true, 'update_post_term_cache' => true, 'update_menu_item_cache' => false];
+        if (!isset($q['lazy_load_term_meta'])) {
+            $q['lazy_load_term_meta'] = $q['update_post_term_cache'];
+        } elseif ($q['lazy_load_term_meta']) {
+            $q['update_post_term_cache'] = true;
+        }
+        $q += ['update_post_meta_cache' => true, 'post_type' => $query->is_search ? 'any' : ''];
+        ['post_type' => $type] = $q;
+        if (is_array($type)) {
+            sort($type);
+            $q = array_replace($q, ['post_type' => $type]);
+        }
+        $this->parts->postType = $type;
+        $this->pageSize($q);
+        if (!isset($q['comments_per_page']) || $q['comments_per_page'] == 0) {
+            $q['comments_per_page'] = \get_option('comments_per_page');
+        }
+        if ($query->is_home && (empty($query->query) || ($q['preview'] ?? '') === 'true') && \get_option('show_on_front') === 'page' && \get_option('page_on_front')) {
+            $query->is_page = true;
+            $query->is_home = false;
+            $q['page_id'] = \get_option('page_on_front');
+        }
+        if (isset($q['page'])) {
+            $q['page'] = is_scalar($q['page']) ? \absint(trim((string) $q['page'], '/')) : 0;
+        }
+        $q['no_found_rows'] = isset($q['no_found_rows']) && $q['no_found_rows'];
+        $t = $this->parts->table;
+        $this->parts->fields = match ($q['fields']) {
+            'ids' => "{$t}.ID",
+            'id=>parent' => "{$t}.ID, {$t}.post_parent",
+            default => "{$t}.*",
+        };
+    }
+
+    /** posts_per_page from the option, showposts, an archive's own size or the feed's, and nopaging. @param array<string, mixed> $q */
+    private function pageSize(array &$q): void
+    {
+        $query = $this->query;
+        if (empty($q['posts_per_page'])) {
+            $q['posts_per_page'] = \get_option('posts_per_page');
+        }
+        if (!empty($q['showposts'])) {
+            $q['showposts'] = (int) $q['showposts'];
+            $q['posts_per_page'] = $q['showposts'];
+        }
+        if (isset($q['posts_per_archive_page']) && $q['posts_per_archive_page'] != 0 && ($query->is_archive || $query->is_search)) {
+            $q['posts_per_page'] = $q['posts_per_archive_page'];
+        }
+        if (!isset($q['nopaging'])) {
+            $q['nopaging'] = $q['posts_per_page'] == -1;
+        }
+        if ($query->is_feed) {
+            $q['posts_per_page'] = !empty($q['posts_per_rss']) ? $q['posts_per_rss'] : \get_option('posts_per_rss');
+            $q['nopaging'] = false;
+        }
+        $q['posts_per_page'] = (int) $q['posts_per_page'];
+        if ($q['posts_per_page'] < -1) {
+            $q['posts_per_page'] = abs($q['posts_per_page']);
+        } elseif ($q['posts_per_page'] === 0) {
+            $q['posts_per_page'] = 1;
+        }
+    }
+
+    /** Writes the clauses, in the reference's order. @param array<string, mixed> $q */
+    private function clauses(array &$q, mixed $urlSearch): void
+    {
+        $query = $this->query;
+        $parts = $this->parts;
+        $t = $parts->table;
+        $where = new PostQueryWhere($query, $parts, $t);
+        $where->dates($q);
+        $where->names($q);
+        if (strlen((string) $q['s'])) {
+            $parts->search = $this->search($query, $q, $urlSearch);
+        }
+        if (!$q['suppress_filters']) {
+            $parts->search = \apply_filters_ref_array('posts_search', [$parts->search, &$query]);
+        }
+        $this->taxonomies($q);
+        $where->authors($q);
+        $parts->where .= $parts->search . $parts->whichauthor . $parts->whichmimetype;
+        if (!empty($query->allow_query_attachment_by_filename)) {
+            $parts->join .= " LEFT JOIN {$this->db->table('postmeta')} AS sq1 ON ( {$t}.ID = sq1.post_id AND sq1.meta_key = '_wp_attached_file' )";
+        }
+        if (!empty($query->meta_query->queries)) {
+            $sql = $query->meta_query->get_sql('post', $t, 'ID', $query);
+            $parts->join .= $sql['join'] ?? '';
+            $parts->where .= $sql['where'] ?? '';
+        }
+        $parts->orderby = PostOrder::build($q, $t, (array) $query->meta_query->get_clauses());
+        $this->searchOrder($q);
+        $status = new PostQueryStatus($query, $parts);
+        $status->settleType();
+        $where->access($q);
+        $status->append($q);
+    }
+
+    /** The tax query's clauses (not for a single post), a taxonomy archive's types, and the compatibility variables. @param array<string, mixed> $q */
+    private function taxonomies(array &$q): void
+    {
+        $query = $this->query;
+        $parts = $this->parts;
+        if (!$query->is_singular) {
+            $query->parse_tax_query($q);
+            $sql = $query->tax_query->get_sql($parts->table, 'ID');
+            $parts->join .= $sql['join'];
+            $parts->where .= $sql['where'];
+        }
+        if ($query->is_tax && empty($parts->postType)) {
+            $parts->postType = PostQueryTax::postTypes(array_keys((array) $query->tax_query->queried_terms));
+            $parts->statusJoin = true;
+        } elseif ($query->is_tax && in_array('attachment', (array) $parts->postType, true)) {
+            $parts->statusJoin = true;
+        }
+        if (!empty($query->tax_query->queried_terms)) {
+            PostQueryTax::compat($query, $q, $query->tax_query->queried_terms);
+        }
+        if (!empty($query->tax_query->queries) || !empty($query->meta_query->queries) || !empty($query->allow_query_attachment_by_filename)) {
+            $parts->groupby = "{$parts->table}.ID";
+        }
+    }
+
+    /**
+     * A search's WHERE fragment, settling the search variables (the terms,
+     * how many the string split into, the title matches its order ranks by).
      *
      * @param array<string, mixed> $q
-     * @return array{rows: list<array>, found: int, sticky: list<array>}
      */
-    public function run(array $q, bool $isHome): array
+    public function search(\WP_Query $query, array &$q, mixed $urlSearch): string
     {
-        $posts = $this->db->table('posts');
-        $this->where = [];
-        $this->params = [];
-        $this->joins = [];
-        $this->distinct = false;
-
-        $this->types($q);
-        $this->statuses($q);
-        $this->singular($q);
-        $this->authors($q);
-        $this->parents($q);
-        $this->ids($q);
-        $this->search($q);
-        $this->dates($q);
-        foreach ([new TaxonomyClause($this->db, $this->registry), new MetaClause($this->db)] as $clause) {
-            $built = $clause->where($q);
-            if ($built !== null) {
-                $this->where[] = $built[0];
-                array_push($this->params, ...$built[1]);
-            }
+        $this->query = $query;
+        if (!isset($this->parts)) {
+            $this->parts = new PostQueryParts($this->db->table('posts'));
         }
-
-        $clause = $this->where === [] ? '1=1' : implode(' AND ', $this->where);
-        $join = implode(' ', $this->joins);
-        $select = $this->distinct ? 'DISTINCT p.*' : 'p.*';
-
-        $perPage = $this->perPage($q);
-        $limit = '';
-        $limitParams = [];
-        if ($perPage > 0) {
-            $offset = isset($q['offset']) && $q['offset'] !== '' ? max(0, (int) $q['offset']) : (max(1, (int) ($q['paged'] ?? 1)) - 1) * $perPage;
-            $limit = ' LIMIT ? OFFSET ?';
-            $limitParams = [$perPage, $offset];
+        $q['s'] = stripslashes((string) $q['s']);
+        if (empty($urlSearch) && $this->query->is_main_query()) {
+            $q['s'] = urldecode($q['s']);
         }
-        [$order, $orderParams] = $this->order($q);
-        $rows = $this->db->rows("SELECT {$select} FROM {$posts} p {$join} WHERE {$clause}{$order}{$limit}", [...$this->params, ...$orderParams, ...$limitParams]);
-        $found = 0;
-        if (empty($q['no_found_rows'])) {
-            $found = $limit === '' ? count($rows) : (int) $this->db->value("SELECT COUNT(DISTINCT p.ID) FROM {$posts} p {$join} WHERE {$clause}", $this->params);
+        $q['s'] = str_replace(["\r", "\n"], '', $q['s']);
+        $split = !empty($q['sentence']) ? ['terms' => [$q['s']], 'count' => 1] : PostSearch::terms($q['s'], fn (): array => $this->stopwords());
+        $q['search_terms_count'] = $split['count'];
+        $q['search_terms'] = $split['terms'];
+        $given = !empty($q['search_columns']) ? (array) $q['search_columns'] : PostSearch::COLUMNS;
+        $t = $this->parts->table;
+        $columns = array_map(static fn (string $column) => "{$t}.{$column}", PostSearch::columns((array) \apply_filters('post_search_columns', $given, $q['s'], $this->query)));
+        if (!empty($this->query->allow_query_attachment_by_filename)) {
+            $columns[] = 'sq1.meta_value';
         }
-
-        $sticky = [];
-        if ($isHome && empty($q['ignore_sticky_posts']) && (int) ($q['paged'] ?? 0) <= 1) {
-            $ids = array_map('intval', array_filter((array) Runtime::options()->get('sticky_posts') ?: []));
-            if ($ids !== []) {
-                $sticky = $this->db->rows("SELECT * FROM {$posts} WHERE ID IN (?) AND post_status = 'publish' ORDER BY post_date DESC", [$ids]);
-            }
-        }
-        return ['rows' => $rows, 'found' => $found, 'sticky' => $sticky];
+        $prefix = \apply_filters('wp_query_search_exclusion_prefix', '-');
+        $built = PostSearch::where($t, $q['search_terms'], $columns, is_scalar($prefix) && $prefix ? (string) $prefix : '', !empty($q['exact']) ? '' : '%');
+        $q['search_orderby_title'] = $built['titles'];
+        // A visitor's search leaves out password-protected posts.
+        return $built['where'] !== '' && !\is_user_logged_in() ? $built['where'] . " AND ({$t}.post_password = '') " : $built['where'];
     }
 
-    private function perPage(array $q): int
+    /** The search stopwords, translated and filtered. @return list<string> */
+    public function stopwords(): array
     {
-        if (!empty($q['nopaging'])) {
-            return 0;
-        }
-        $perPage = $q['posts_per_page'] ?? '';
-        if ($perPage === '' || $perPage === null) {
-            $perPage = (int) ($this->db->option('posts_per_page') ?? 10);
-        }
-        return (int) $perPage < 0 ? 0 : (int) $perPage;
+        $list = \_x(PostSearch::STOPWORDS, 'Comma-separated list of search stopwords in your language');
+        return (array) \apply_filters('wp_search_stopwords', PostSearch::stopwords((string) $list));
     }
 
-    private function types(array $q): void
+    /** A search's relevance order, ahead of the order asked for, when no other order is asked for. @param array<string, mixed> $q */
+    private function searchOrder(array $q): void
     {
-        $type = $q['post_type'] ?? '';
-        if ($type === '' || $type === null) {
-            $type = !empty($q['attachment']) || !empty($q['attachment_id']) ? 'attachment' : ((!empty($q['pagename']) || !empty($q['page_id'])) ? 'page' : (!empty($q['s']) ? 'any' : 'post'));
-        }
-        if ($type === 'any') {
-            $types = [];
-            foreach ($this->registry->postTypes() as $name => $row) {
-                if (empty($row['exclude_from_search'])) {
-                    $types[] = $name;
-                }
-            }
-        } else {
-            $types = array_values(array_map('strval', (array) $type));
-        }
-        if ($types === []) {
-            $this->where[] = '1=0';
+        if (empty($q['s'])) {
             return;
         }
-        $this->where[] = 'p.post_type IN (?)';
-        $this->params[] = $types;
-    }
-
-    private function statuses(array $q): void
-    {
-        $status = $q['post_status'] ?? '';
-        if ($status === '' || $status === null) {
-            $type = (string) (is_array($q['post_type'] ?? null) ? '' : ($q['post_type'] ?? ''));
-            if ($type === 'attachment' || !empty($q['attachment']) || !empty($q['attachment_id'])) {
-                $statuses = ['inherit'];
-            } else {
-                $statuses = ['publish'];
-                $reader = Reader::current();
-                if ($reader->readsPrivatePosts && $type !== 'page' || $reader->readsPrivatePages && $type === 'page') {
-                    $statuses[] = 'private';
-                }
-            }
-        } elseif ($status === 'any' || (is_array($status) && in_array('any', $status, true))) {
-            $statuses = [];
-            foreach ($this->registry->statuses() as $name => $row) {
-                if (empty($row['exclude_from_search'])) {
-                    $statuses[] = $name;
-                }
-            }
-        } else {
-            $statuses = is_array($status) ? array_values(array_map('strval', $status)) : preg_split('/[\s,]+/', (string) $status, -1, PREG_SPLIT_NO_EMPTY);
+        $order = '';
+        if ((!empty($q['search_orderby_title']) && empty($q['orderby']) && !$this->query->is_feed) || (isset($q['orderby']) && $q['orderby'] === 'relevance')) {
+            $order = PostSearch::order($this->parts->table, (string) $q['s'], (int) $q['search_terms_count'], (array) ($q['search_orderby_title'] ?? []));
         }
-        $this->where[] = 'p.post_status IN (?)';
-        $this->params[] = $statuses;
-    }
-
-    private function singular(array $q): void
-    {
-        if (!empty($q['p'])) {
-            $this->where[] = 'p.ID = ?';
-            $this->params[] = (int) $q['p'];
+        if (!$q['suppress_filters']) {
+            $order = \apply_filters('posts_search_orderby', $order, $this->query);
         }
-        if (!empty($q['page_id'])) {
-            $this->where[] = 'p.ID = ?';
-            $this->params[] = (int) $q['page_id'];
-        }
-        if (!empty($q['attachment_id'])) {
-            $this->where[] = 'p.ID = ?';
-            $this->params[] = (int) $q['attachment_id'];
-        }
-        if (!empty($q['name'])) {
-            $this->where[] = 'p.post_name = ?';
-            $this->params[] = (string) $q['name'];
-        }
-        if (!empty($q['attachment'])) {
-            $this->where[] = 'p.post_name = ?';
-            $this->params[] = (string) $q['attachment'];
-        }
-        if (!empty($q['pagename'])) {
-            $segments = array_values(array_filter(explode('/', trim((string) $q['pagename'], '/')), static fn ($s) => $s !== ''));
-            $page = (new \Minn\Content\Posts($this->db))->pageByPathAnyStatus($segments);
-            $this->where[] = 'p.ID = ?';
-            $this->params[] = $page === null ? 0 : (int) $page['ID'];
-        }
-        if (!empty($q['title'])) {
-            $this->where[] = 'p.post_title = ?';
-            $this->params[] = (string) $q['title'];
+        if ($order) {
+            $this->parts->orderby = $this->parts->orderby ? $order . ', ' . $this->parts->orderby : $order;
         }
     }
 
-    private function authors(array $q): void
+    /** The clause filters, paging between the first two and the rest, and posts_selection. @param array<string, mixed> $q */
+    private function filtered(array &$q): void
     {
-        if (isset($q['author']) && $q['author'] !== '' && $q['author'] !== null) {
-            $ids = array_map('intval', preg_split('/[\s,]+/', (string) $q['author'], -1, PREG_SPLIT_NO_EMPTY));
-            $in = array_values(array_filter($ids, static fn (int $id) => $id > 0));
-            $out = array_map('abs', array_filter($ids, static fn (int $id) => $id < 0));
-            if ($in !== []) {
-                $this->where[] = 'p.post_author IN (?)';
-                $this->params[] = $in;
-            }
-            if ($out !== []) {
-                $this->where[] = 'p.post_author NOT IN (?)';
-                $this->params[] = $out;
-            }
+        $query = $this->query;
+        $parts = $this->parts;
+        $filter = !$q['suppress_filters'];
+        if ($filter) {
+            $parts->where = \apply_filters_ref_array('posts_where', [$parts->where, &$query]);
+            $parts->join = \apply_filters_ref_array('posts_join', [$parts->join, &$query]);
         }
-        if (!empty($q['author__in'])) {
-            $ids = array_map('intval', (array) $q['author__in']);
-            $this->where[] = 'p.post_author IN (?)';
-            $this->params[] = $ids;
+        $this->paging($q);
+        if ($filter) {
+            $this->through(['posts_where_paged' => 'where', 'posts_groupby' => 'groupby', 'posts_join_paged' => 'join', 'posts_orderby' => 'orderby', 'posts_distinct' => 'distinct', 'post_limits' => 'limits', 'posts_fields' => 'fields'], 'posts_clauses');
         }
-        if (!empty($q['author__not_in'])) {
-            $ids = array_map('intval', (array) $q['author__not_in']);
-            $this->where[] = 'p.post_author NOT IN (?)';
-            $this->params[] = $ids;
-        }
-        if (!empty($q['author_name'])) {
-            $id = $this->db->value("SELECT ID FROM {$this->db->table('users')} WHERE user_nicename = ? LIMIT 1", [(string) $q['author_name']]);
-            $this->where[] = 'p.post_author = ?';
-            $this->params[] = (int) ($id ?? 0);
+        \do_action('posts_selection', $parts->where . $parts->groupby . $parts->orderby . $parts->limits . $parts->join);
+        if ($filter) {
+            $this->through(['posts_where_request' => 'where', 'posts_groupby_request' => 'groupby', 'posts_join_request' => 'join', 'posts_orderby_request' => 'orderby', 'posts_distinct_request' => 'distinct', 'posts_fields_request' => 'fields', 'post_limits_request' => 'limits'], 'posts_clauses_request');
         }
     }
 
-    private function parents(array $q): void
+    /** Each piece through its filter, then all seven through the clauses filter. @param array<string, string> $hooks */
+    private function through(array $hooks, string $clausesHook): void
     {
-        if (isset($q['post_parent']) && $q['post_parent'] !== '' && $q['post_parent'] !== null) {
-            $this->where[] = 'p.post_parent = ?';
-            $this->params[] = (int) $q['post_parent'];
+        $query = $this->query;
+        foreach ($hooks as $hook => $piece) {
+            $this->parts->{$piece} = \apply_filters_ref_array($hook, [$this->parts->{$piece}, &$query]);
         }
-        if (!empty($q['post_parent__in'])) {
-            $ids = array_map('intval', (array) $q['post_parent__in']);
-            $this->where[] = 'p.post_parent IN (?)';
-            $this->params[] = $ids;
-        }
-        if (!empty($q['post_parent__not_in'])) {
-            $ids = array_map('intval', (array) $q['post_parent__not_in']);
-            $this->where[] = 'p.post_parent NOT IN (?)';
-            $this->params[] = $ids;
-        }
+        $this->parts->take((array) \apply_filters_ref_array($clausesHook, [$this->parts->pieces(), &$query]));
     }
 
-    private function ids(array $q): void
+    /** LIMIT for a listing that pages: the offset when one is given, the page's start otherwise. @param array<string, mixed> $q */
+    private function paging(array &$q): void
     {
-        if (!empty($q['post__in'])) {
-            $ids = array_map('intval', (array) $q['post__in']);
-            $this->where[] = 'p.ID IN (?)';
-            $this->params[] = $ids;
-        }
-        if (!empty($q['post__not_in'])) {
-            $ids = array_map('intval', (array) $q['post__not_in']);
-            $this->where[] = 'p.ID NOT IN (?)';
-            $this->params[] = $ids;
-        }
-        if (!empty($q['post_name__in'])) {
-            $names = array_map('strval', (array) $q['post_name__in']);
-            $this->where[] = 'p.post_name IN (?)';
-            $this->params[] = $names;
-        }
-        if (!empty($q['post_mime_type'])) {
-            $parts = [];
-            foreach ((array) $q['post_mime_type'] as $mime) {
-                $mime = (string) $mime;
-                if (str_contains($mime, '/')) {
-                    $parts[] = 'p.post_mime_type = ?';
-                    $this->params[] = $mime;
-                } else {
-                    $parts[] = 'p.post_mime_type LIKE ?';
-                    $this->params[] = $mime . '/%';
-                }
-            }
-            $this->where[] = '(' . implode(' OR ', $parts) . ')';
-        }
-    }
-
-    private function search(array $q): void
-    {
-        $s = trim((string) ($q['s'] ?? ''));
-        if ($s === '') {
+        if (!empty($q['nopaging']) || $this->query->is_singular) {
             return;
         }
-        $terms = !empty($q['sentence']) ? [$s] : preg_split('/[\s,]+/', $s, -1, PREG_SPLIT_NO_EMPTY);
-        foreach ($terms as $term) {
-            $needle = '%' . addcslashes($term, '%_\\') . '%';
-            $this->where[] = '(p.post_title LIKE ? OR p.post_excerpt LIKE ? OR p.post_content LIKE ?)';
-            array_push($this->params, $needle, $needle, $needle);
-        }
-        $this->where[] = "p.post_password = ''";
-    }
-
-    private function dates(array $q): void
-    {
-        $year = (int) ($q['year'] ?? 0);
-        $month = (int) ($q['monthnum'] ?? 0);
-        $day = (int) ($q['day'] ?? 0);
-        if (!empty($q['m'])) {
-            $m = preg_replace('/[^0-9]/', '', (string) $q['m']);
-            $year = (int) substr($m, 0, 4);
-            $month = strlen($m) >= 6 ? (int) substr($m, 4, 2) : 0;
-            $day = strlen($m) >= 8 ? (int) substr($m, 6, 2) : 0;
-        }
-        if ($year > 0) {
-            $this->where[] = 'YEAR(p.post_date) = ?';
-            $this->params[] = $year;
-        }
-        if ($month > 0) {
-            $this->where[] = 'MONTH(p.post_date) = ?';
-            $this->params[] = $month;
-        }
-        if ($day > 0) {
-            $this->where[] = 'DAYOFMONTH(p.post_date) = ?';
-            $this->params[] = $day;
-        }
-        foreach ((array) ($q['date_query'] ?? []) as $clause) {
-            if (!is_array($clause)) {
-                continue;
-            }
-            $column = in_array($clause['column'] ?? '', ['post_date', 'post_date_gmt', 'post_modified', 'post_modified_gmt'], true) ? $clause['column'] : 'post_date';
-            if (isset($clause['year'])) {
-                $this->where[] = "YEAR(p.{$column}) = ?";
-                $this->params[] = (int) $clause['year'];
-            }
-            if (isset($clause['month'])) {
-                $this->where[] = "MONTH(p.{$column}) = ?";
-                $this->params[] = (int) $clause['month'];
-            }
-            if (isset($clause['day'])) {
-                $this->where[] = "DAYOFMONTH(p.{$column}) = ?";
-                $this->params[] = (int) $clause['day'];
-            }
-            foreach (['after' => '>', 'before' => '<'] as $key => $operator) {
-                if (!isset($clause[$key])) {
-                    continue;
-                }
-                $bound = $clause[$key];
-                if (is_array($bound)) {
-                    $bound = sprintf('%04d-%02d-%02d %02d:%02d:%02d', (int) ($bound['year'] ?? date('Y')), (int) ($bound['month'] ?? ($key === 'after' ? 1 : 12)), (int) ($bound['day'] ?? ($key === 'after' ? 1 : 31)), (int) ($bound['hour'] ?? ($key === 'after' ? 0 : 23)), (int) ($bound['minute'] ?? ($key === 'after' ? 0 : 59)), (int) ($bound['second'] ?? ($key === 'after' ? 0 : 59)));
-                } else {
-                    $bound = date('Y-m-d H:i:s', (int) strtotime((string) $bound));
-                }
-                $operator .= !empty($clause['inclusive']) ? '=' : '';
-                $this->where[] = "p.{$column} {$operator} ?";
-                $this->params[] = $bound;
-            }
-        }
-    }
-
-    /** @return array{0: string, 1: list<mixed>} */
-    private function order(array $q): array
-    {
-        $orderby = $q['orderby'] ?? 'date';
-        $direction = strtoupper((string) ($q['order'] ?? 'DESC')) === 'ASC' ? 'ASC' : 'DESC';
-        $params = [];
-        if ($orderby === 'none') {
-            return ['', []];
-        }
-        $pairs = [];
-        if (is_array($orderby)) {
-            foreach ($orderby as $key => $value) {
-                $pairs[] = [(string) $key, strtoupper((string) $value) === 'ASC' ? 'ASC' : 'DESC'];
-            }
+        $this->parts->page = \absint($q['paged']) ?: 1;
+        if (isset($q['offset']) && is_numeric($q['offset'])) {
+            $q['offset'] = \absint($q['offset']);
+            $start = $q['offset'] . ', ';
         } else {
-            foreach (preg_split('/\s+/', trim((string) $orderby), -1, PREG_SPLIT_NO_EMPTY) as $key) {
-                $pairs[] = [$key, $direction];
-            }
+            $start = \absint(($this->parts->page - 1) * $q['posts_per_page']) . ', ';
         }
-        $parts = [];
-        foreach ($pairs as [$key, $dir]) {
-            $column = match ($key) {
-                'date', 'post_date' => 'p.post_date',
-                'modified', 'post_modified' => 'p.post_modified',
-                'title', 'post_title' => 'p.post_title',
-                'name', 'post_name' => 'p.post_name',
-                'ID', 'id' => 'p.ID',
-                'author', 'post_author' => 'p.post_author',
-                'type', 'post_type' => 'p.post_type',
-                'parent', 'post_parent' => 'p.post_parent',
-                'menu_order' => 'p.menu_order',
-                'comment_count' => 'p.comment_count',
-                'rand' => 'RAND()',
-                'post__in' => !empty($q['post__in']) ? 'FIELD(p.ID,' . implode(',', array_map('intval', (array) $q['post__in'])) . ')' : null,
-                'post_name__in' => !empty($q['post_name__in']) ? 'FIELD(p.post_name,' . implode(',', array_map(fn ($n) => "'" . $this->db->connection()->real_escape_string((string) $n) . "'", (array) $q['post_name__in'])) . ')' : null,
-                'post_parent__in' => !empty($q['post_parent__in']) ? 'FIELD(p.post_parent,' . implode(',', array_map('intval', (array) $q['post_parent__in'])) . ')' : null,
-                'meta_value' => !empty($q['meta_key']) ? '(SELECT meta_value FROM ' . $this->db->table('postmeta') . " WHERE post_id = p.ID AND meta_key = '" . $this->db->connection()->real_escape_string((string) $q['meta_key']) . "' LIMIT 1)" : null,
-                'meta_value_num' => !empty($q['meta_key']) ? '(SELECT CAST(meta_value AS SIGNED) FROM ' . $this->db->table('postmeta') . " WHERE post_id = p.ID AND meta_key = '" . $this->db->connection()->real_escape_string((string) $q['meta_key']) . "' LIMIT 1)" : null,
-                'relevance' => null,
-                default => null,
-            };
-            if ($column === null) {
-                continue;
-            }
-            $parts[] = in_array($key, ['rand', 'post__in', 'post_name__in', 'post_parent__in'], true) ? $column : "{$column} {$dir}";
+        $this->parts->limits = 'LIMIT ' . $start . $q['posts_per_page'];
+    }
+
+    /** Writes the request, runs it (or takes posts_pre_query's answer), and finishes the results. @param array<string, mixed> $q */
+    private function execute(array &$q): mixed
+    {
+        $query = $this->query;
+        $foundRows = !$q['no_found_rows'] && !empty($this->parts->limits) ? 'SQL_CALC_FOUND_ROWS' : '';
+        $old = $this->parts->request($foundRows, $this->parts->fields);
+        $query->request = $old;
+        if (!$q['suppress_filters']) {
+            $query->request = \apply_filters_ref_array('posts_request', [$query->request, &$query]);
         }
-        if (!empty($q['s']) && (is_string($orderby) && in_array($orderby, ['date', 'relevance', ''], true))) {
-            $needle = '%' . addcslashes(trim((string) $q['s']), '%_\\') . '%';
-            $params[] = $needle;
-            array_unshift($parts, '(p.post_title LIKE ?) DESC');
+        $query->posts = \apply_filters_ref_array('posts_pre_query', [null, &$query]);
+        if ($q['fields'] === 'ids' || $q['fields'] === 'id=>parent') {
+            return $this->idsOnly($q);
         }
-        if ($parts === []) {
-            $parts[] = "p.post_date {$direction}";
+        if ($query->posts === null) {
+            $this->select($q, $old, $foundRows);
         }
-        return [' ORDER BY ' . implode(', ', $parts), $params];
+        if ($query->posts) {
+            $query->posts = array_map('get_post', $query->posts);
+        }
+        if (!$q['suppress_filters']) {
+            $query->posts = \apply_filters_ref_array('posts_results', [$query->posts, &$query]);
+        }
+        (new PostQueryResults($query, $this->parts))->settle($q);
+        return $query->posts;
+    }
+
+    /** The ids (or id => parent) a query for them returns. @param array<string, mixed> $q */
+    private function idsOnly(array $q): array
+    {
+        $query = $this->query;
+        if ($q['fields'] === 'ids') {
+            $query->posts = array_map('intval', $query->posts ?? $this->wpdb->get_col($query->request));
+            $query->post_count = count($query->posts);
+            $this->foundPosts($q);
+            return $query->posts;
+        }
+        $query->posts ??= $this->wpdb->get_results($query->request);
+        $query->post_count = count($query->posts);
+        $this->foundPosts($q);
+        $parents = [];
+        foreach ($query->posts as $key => $post) {
+            $query->posts[$key]->ID = (int) $post->ID;
+            $query->posts[$key]->post_parent = (int) $post->post_parent;
+            $parents[(int) $post->ID] = (int) $post->post_parent;
+        }
+        return $parents;
+    }
+
+    /** Runs the request: ids first, then their posts, when the query can be split that way. @param array<string, mixed> $q */
+    private function select(array $q, string $old, string $foundRows): void
+    {
+        $query = $this->query;
+        $t = $this->parts->table;
+        $split = $old === $query->request && $this->parts->fields === "{$t}.*" && !empty($this->parts->limits) && $q['posts_per_page'] < 500;
+        $split = \apply_filters('split_the_query', $split, $query, $old, $this->parts->pieces());
+        if (!$split) {
+            $query->posts = $this->wpdb->get_results($query->request);
+            $this->foundPosts($q);
+            return;
+        }
+        $query->request = \apply_filters('posts_request_ids', $this->parts->request($foundRows, "{$t}.ID"), $query);
+        $ids = $this->wpdb->get_col($query->request);
+        $query->posts = $ids ?: [];
+        if ($ids) {
+            $this->foundPosts($q);
+            \_prime_post_caches($ids, $q['update_post_term_cache'], $q['update_post_meta_cache']);
+        }
+    }
+
+    /** found_posts (from FOUND_ROWS() when the query paged, else the posts' count) and max_num_pages. @param array<string, mixed> $q */
+    private function foundPosts(array $q): void
+    {
+        $query = $this->query;
+        if ($q['no_found_rows'] || (is_array($query->posts) && !$query->posts)) {
+            return;
+        }
+        $paged = !empty($this->parts->limits);
+        if ($paged) {
+            $query->found_posts = (int) $this->wpdb->get_var(\apply_filters_ref_array('found_posts_query', ['SELECT FOUND_ROWS()', &$query]));
+        } else {
+            $query->found_posts = is_array($query->posts) ? count($query->posts) : ($query->posts === null ? 0 : 1);
+        }
+        $query->found_posts = (int) \apply_filters_ref_array('found_posts', [$query->found_posts, &$query]);
+        if ($paged && (int) $q['posts_per_page'] !== 0) {
+            $query->max_num_pages = (int) ceil($query->found_posts / $q['posts_per_page']);
+        }
     }
 }

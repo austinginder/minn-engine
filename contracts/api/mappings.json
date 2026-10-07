@@ -2,12 +2,12 @@
     "generated": "2026-10-07",
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line)",
     "summary": {
-        "minn": 639,
-        "composes": 919,
-        "leaf": 652,
-        "noop": 1842,
-        "functions": 3982,
-        "minnMethods": 671,
+        "minn": 640,
+        "composes": 921,
+        "leaf": 651,
+        "noop": 1850,
+        "functions": 3992,
+        "minnMethods": 678,
         "leafLinesOver15": 12
     },
     "functions": {
@@ -5141,7 +5141,7 @@
         },
         "WP_Date_Query::__construct": {
             "file": "classes/WP_Date_Query.php",
-            "lines": 8,
+            "lines": 9,
             "kind": "composes",
             "minn": [],
             "composes": [
@@ -8032,9 +8032,10 @@
         },
         "WP_Query::fill_query_vars": {
             "file": "classes/WP_Query.php",
-            "lines": 14,
-            "kind": "minn",
+            "lines": 1,
+            "kind": "noop",
             "minn": [
+                "Minn\\Runtime\\QueryFlags::fill",
                 "Minn\\Runtime\\Runtime::registry"
             ],
             "composes": []
@@ -8055,16 +8056,12 @@
         },
         "WP_Query::get_posts": {
             "file": "classes/WP_Query.php",
-            "lines": 34,
+            "lines": 2,
             "kind": "minn",
             "minn": [
                 "Minn\\Runtime\\Runtime::postQuery"
             ],
-            "composes": [
-                "apply_filters_ref_array",
-                "do_action_ref_array",
-                "get_option"
-            ]
+            "composes": []
         },
         "WP_Query::get_queried_object": {
             "file": "classes/WP_Query.php",
@@ -8089,6 +8086,15 @@
             "lines": 2,
             "kind": "leaf",
             "minn": [],
+            "composes": []
+        },
+        "WP_Query::get_search_stopwords": {
+            "file": "classes/WP_Query.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Runtime\\Runtime::postQuery"
+            ],
             "composes": []
         },
         "WP_Query::have_comments": {
@@ -8356,6 +8362,16 @@
             "minn": [],
             "composes": []
         },
+        "WP_Query::locate_page_path": {
+            "file": "classes/WP_Query.php",
+            "lines": 13,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "get_option",
+                "get_page_by_path"
+            ]
+        },
         "WP_Query::next_post": {
             "file": "classes/WP_Query.php",
             "lines": 4,
@@ -8363,9 +8379,27 @@
             "minn": [],
             "composes": []
         },
+        "WP_Query::parse_order": {
+            "file": "classes/WP_Query.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Query\\PostOrder::direction"
+            ],
+            "composes": []
+        },
+        "WP_Query::parse_orderby": {
+            "file": "classes/WP_Query.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Query\\PostOrder::clause"
+            ],
+            "composes": []
+        },
         "WP_Query::parse_query": {
             "file": "classes/WP_Query.php",
-            "lines": 15,
+            "lines": 24,
             "kind": "minn",
             "minn": [
                 "Minn\\Runtime\\QueryFlags::derive",
@@ -8384,6 +8418,45 @@
             "kind": "noop",
             "minn": [],
             "composes": []
+        },
+        "WP_Query::parse_search": {
+            "file": "classes/WP_Query.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Runtime\\Runtime::postQuery"
+            ],
+            "composes": []
+        },
+        "WP_Query::parse_search_order": {
+            "file": "classes/WP_Query.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Query\\PostSearch::order"
+            ],
+            "composes": []
+        },
+        "WP_Query::parse_search_terms": {
+            "file": "classes/WP_Query.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Query\\PostSearch::checked",
+                "Minn\\Runtime\\Runtime::postQuery"
+            ],
+            "composes": []
+        },
+        "WP_Query::parse_tax_query": {
+            "file": "classes/WP_Query.php",
+            "lines": 2,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Runtime\\PostQueryTax::clauses"
+            ],
+            "composes": [
+                "do_action"
+            ]
         },
         "WP_Query::query": {
             "file": "classes/WP_Query.php",
@@ -11245,19 +11318,20 @@
         },
         "WP_Tax_Query::__construct": {
             "file": "classes/WP_Tax_Query.php",
-            "lines": 2,
-            "kind": "leaf",
-            "minn": [],
+            "lines": 3,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Query\\TaxSql::queried"
+            ],
             "composes": []
         },
         "WP_Tax_Query::get_sql": {
             "file": "classes/WP_Tax_Query.php",
-            "lines": 7,
+            "lines": 5,
             "kind": "minn",
             "minn": [
                 "Minn\\Query\\TaxSql::__construct",
                 "Minn\\Query\\TaxSql::build",
-                "Minn\\Query\\TaxSql::queriedTerms",
                 "Minn\\Runtime\\Runtime::current",
                 "Minn\\Runtime\\Runtime::db",
                 "Minn\\Runtime\\Runtime::table"
@@ -22798,6 +22872,15 @@
                 "wp_filter_object_list"
             ]
         },
+        "get_taxonomies_for_attachments": {
+            "file": "media.php",
+            "lines": 13,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "get_taxonomies"
+            ]
+        },
         "get_taxonomy": {
             "file": "taxonomy.php",
             "lines": 2,
@@ -33442,6 +33525,15 @@
             "lines": 0,
             "kind": "noop",
             "minn": [],
+            "composes": []
+        },
+        "wp_post_mime_type_where": {
+            "file": "post.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Query\\MimeWhere::sql"
+            ],
             "composes": []
         },
         "wp_post_revision_meta_keys": {

@@ -22,6 +22,27 @@ final readonly class QueryFlags
     }
 
     /**
+     * The variables with every one the reference fills given its empty
+     * value: the template's keys up to search_columns (the ones after it are
+     * get_posts' own, settled when the query runs).
+     *
+     * @param array<string, mixed> $vars
+     * @return array<string, mixed>
+     */
+    public static function fill(array $vars, Registry $registry): array
+    {
+        foreach ($registry->queryVars as $key => $default) {
+            if ($key === 'ignore_sticky_posts') {
+                break;
+            }
+            if (!isset($vars[$key])) {
+                $vars[$key] = is_array($default) ? [] : ($key === 'p' ? 0 : $default);
+            }
+        }
+        return $vars;
+    }
+
+    /**
      * The is_* flags the query vars amount to.
      *
      * @param array<string, mixed> $vars the filled query variables
@@ -34,6 +55,7 @@ final readonly class QueryFlags
                 $vars[$key] = (int) $vars[$key];
             }
         }
+        $vars = self::sanitize($vars);
         $on = [];
         if ((int) $vars['p'] < 0 || (int) $vars['page_id'] < 0) {
             $vars['error'] = '404';
@@ -67,6 +89,43 @@ final readonly class QueryFlags
             $on['is_privacy_policy'] = true;
         }
         return new self($vars, array_filter($on));
+    }
+
+    /**
+     * The reference's clean-up of the free-form variables: m and the time
+     * parts to digits, cat and author to id lists, names trimmed, an
+     * over-long or non-scalar search dropped.
+     *
+     * @param array<string, mixed> $vars
+     * @return array<string, mixed>
+     */
+    private static function sanitize(array $vars): array
+    {
+        $vars['m'] = is_scalar($vars['m']) ? preg_replace('|[^0-9]|', '', (string) $vars['m']) : '';
+        $ids = static fn ($value) => preg_replace('|[^0-9,-]|', '', (string) $value);
+        $vars['cat'] = is_array($vars['cat']) ? array_map($ids, $vars['cat']) : $ids($vars['cat']);
+        $vars['author'] = is_scalar($vars['author']) ? preg_replace('|[^0-9,-]|', '', (string) $vars['author']) : '';
+        foreach (['pagename', 'name', 'title'] as $key) {
+            $vars[$key] = is_scalar($vars[$key]) ? trim((string) $vars[$key]) : '';
+        }
+        foreach (['hour', 'minute', 'second', 'menu_order'] as $key) {
+            if ($vars[$key] !== '') {
+                $vars[$key] = abs((int) $vars[$key]);
+            }
+        }
+        if (!is_scalar($vars['s']) || ($vars['s'] !== '' && strlen((string) $vars['s']) > 1600)) {
+            $vars['s'] = '';
+        }
+        // Statuses keep only key characters (a comma list keeps its commas); types become keys.
+        ['post_status' => $statuses, 'post_type' => $types] = $vars + ['post_status' => null, 'post_type' => null];
+        $clean = [];
+        if (!empty($statuses)) {
+            $clean += ['post_status' => is_array($statuses) ? array_map('sanitize_key', $statuses) : preg_replace('|[^a-z0-9_,-]|', '', (string) $statuses)];
+        }
+        if (!empty($types)) {
+            $clean += ['post_type' => is_array($types) ? array_map('sanitize_key', $types) : \sanitize_key((string) $types)];
+        }
+        return array_replace($vars, $clean);
     }
 
     /** @return array<string, bool> */

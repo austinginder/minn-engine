@@ -19,10 +19,11 @@ class WP_Date_Query
             return;
         }
         $this->relation = isset($date_query['relation']) && strtoupper((string) $date_query['relation']) === 'OR' ? 'OR' : 'AND';
-        $this->column = isset($date_query['column']) ? esc_sql((string) $date_query['column']) : (string) $default_column;
+        // The clauses keep the column as given (or the default); the property is the validated default.
+        $date_query['column'] = !empty($date_query['column']) ? esc_sql((string) $date_query['column']) : esc_sql((string) $default_column);
         $this->column = $this->validate_column($this->column);
         $this->compare = $this->get_compare($date_query);
-        $this->queries = $this->sanitize_query($date_query);
+        $this->queries = $this->builder()->sanitize($date_query, ['column' => $date_query['column'], 'compare' => $this->compare, 'relation' => $this->relation]);
     }
 
     private function builder(): DateSql
@@ -33,7 +34,7 @@ class WP_Date_Query
 
     public function sanitize_query($queries, $parent_query = null)
     {
-        $defaults = ['column' => $this->column, 'compare' => $this->compare, 'relation' => $this->relation];
+        $defaults = ['column' => $parent_query['column'] ?? 'post_date', 'compare' => $parent_query['compare'] ?? '=', 'relation' => $parent_query['relation'] ?? 'AND'];
         return $this->builder()->sanitize((array) $queries, $defaults);
     }
 
