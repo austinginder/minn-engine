@@ -81,6 +81,7 @@ the WordPress runtime plugins load against
 | [`Refusal`](#refusal) | final readonly class | 6 | A refused operation, the way plugin code expects to read it: a code, a message, optional data. The facade turns it into WP_Error. |
 | [`RegisteredSettings`](#registeredsettings) | final class | 104 | Settings as register_setting keeps them (probe rest-settings): the |
 | [`Registry`](#registry) | final class | 392 | Post types, taxonomies, and statuses as plugin code registers and reads |
+| [`RewriteRules`](#rewriterules) | final class | 273 | The rewrite rules WordPress makes from its structures, as the reference |
 | [`Runtime`](#runtime) | final class | 369 | The WordPress runtime the engine offers plugin code: the procedural |
 | [`ScriptModules`](#scriptmodules) | final class | 302 | The script modules registry: registrations with typed dependencies, the |
 | [`ScriptPack`](#scriptpack) | final class | 146 | The site-supplied script pack: the `wp-*` JavaScript packages the engine |
@@ -3480,6 +3481,61 @@ Registers a post status.
 - `@param array<string, mixed> $args`
 
 Internals: `supportsFrom()` (private, line 183), `capabilities()` (private, line 197)
+
+
+## RewriteRules
+
+`final class Minn\Runtime\RewriteRules` · `public/minn/src/Minn/Runtime/RewriteRules.php`
+
+The rewrite rules WordPress makes from its structures, as the reference
+makes them (probes rewrite-generate, rewrite-rules), so plugins that
+read, filter or add to them see the same list.
+
+A structure is walked a directory at a time (one at a time only when
+asked), each level that names something getting its rules: its feeds
+and embed, its pages, its comment pages (for posts and pages), a static
+front page's comment pages at the root, the endpoints placed there, and
+the level itself; deepest level first. The level that names a post (a
+name, an id, a page path, or a plugin post type's own tag) is the post's:
+its embed and trackback, its feeds, pages and comment pages, its
+endpoints and its attachments', then the post with its page number,
+between the rules for attachments under it (by /attachment/ and, but for
+a hierarchical type, directly). A tag nobody registered stays as written.
+
+The full list is the plugins' top rules (each permastruct's rules join
+them as they are made, and stay), the fixed files, then root, comments,
+search, author and dates, then pages and posts (posts first unless the
+structure begins ambiguously), then the plugins' bottom rules; each
+section through its filter, the whole through generate_rewrite_rules and
+rewrite_rules_array.
+
+- const `DEFAULTS` = `array (   'ep_mask' => 0,   'paged' => true,   'feed' => true,   'forcomments' => false,   'walk_dirs' => true,   'endpoints' => true, )` — What a permastruct's flags default to (no endpoint places).
+- const `POST_BY_TIME` = `array (   0 => '%year%',   1 => '%monthnum%',   2 => '%day%',   3 => '%hour%',   4 => '%minute%',   5 => '%second%', )` — The six date and time tags that together name a post.
+
+### static `generate(WP_Rewrite $rewrite, array $args): array`
+
+generate_rewrite_rules: the rules for one structure.
+
+- `@param array{struct: string, ep_mask?: int, paged?: bool, feed?: bool, forcomments?: bool, walk_dirs?: bool, endpoints?: bool} $args`
+- `@return array<string, string>`
+
+### static `all(WP_Rewrite $rewrite): array`
+
+rewrite_rules: every rule, assembled and filtered.
+
+- `@return array<string, string>`
+
+### static `builtins(WP_Rewrite $rewrite): void`
+
+The built-in taxonomies' tags and patterns, set once on the site's
+rewrite under the front of the structure then; a structure set later
+leaves them, and a plugin's, as they were (probe registry-rewrites).
+
+### static `verbosePages(string $structure): bool`
+
+Whether a structure begins with a tag that could be a page's path too (use_verbose_page_rules).
+
+Internals: `queries()` (private, line 142), `namesPost()` (private, line 154), `dirMask()` (private, line 170), `plainLevel()` (private, line 187), `postLevel()` (private, line 204), `attachments()` (private, line 230), `feeds()` (private, line 251), `pagesAndComments()` (private, line 266), `endpoints()` (private, line 289)
 
 
 ## Runtime

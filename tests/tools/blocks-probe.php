@@ -127,7 +127,13 @@ $say('registry cleaned', $registry->is_registered('minn-probe/marker'));
 
 // Rewrite rules and the small leftovers.
 $say('rewrite', (static function () use ($rel) { add_rewrite_rule('^probe/([^/]*)/?', 'index.php?probe=$matches[1]', 'top'); add_rewrite_tag('%probe%', '([^&]+)'); add_rewrite_endpoint('probe-ep', EP_PERMALINK); $rules = $GLOBALS['wp_rewrite']->extra_rules_top ?? null; return [$rules, in_array('probe', $GLOBALS['wp']->public_query_vars, true), $GLOBALS['wp_rewrite']->endpoints[0] ?? null, get_class($GLOBALS['wp_rewrite']), $GLOBALS['wp_rewrite']->permalink_structure, $GLOBALS['wp_rewrite']->using_permalinks(), $GLOBALS['wp_rewrite']->using_index_permalinks(), $GLOBALS['wp_rewrite']->get_page_permastruct(), $GLOBALS['wp_rewrite']->get_category_permastruct(), $GLOBALS['wp_rewrite']->get_tag_permastruct(), $GLOBALS['wp_rewrite']->get_author_permastruct(), $GLOBALS['wp_rewrite']->get_date_permastruct(), $GLOBALS['wp_rewrite']->get_search_permastruct(), $GLOBALS['wp_rewrite']->front, $GLOBALS['wp_rewrite']->root, $GLOBALS['wp_rewrite']->index, $GLOBALS['wp_rewrite']->pagination_base, $GLOBALS['wp_rewrite']->feed_base, $GLOBALS['wp_rewrite']->search_base, $GLOBALS['wp_rewrite']->author_base, $rel($GLOBALS['wp_rewrite']->get_extra_permastruct('category')), get_class($GLOBALS['wp'])]; })());
-$say('flush_rewrite_rules', flush_rewrite_rules());
+// The stored rules go back as they were, so the probe's own rule and endpoint leave nothing behind.
+$say('flush_rewrite_rules', (static function () {
+    $stored = get_option('rewrite_rules');
+    $flushed = flush_rewrite_rules();
+    update_option('rewrite_rules', $stored);
+    return $flushed;
+})());
 $say('wp_filesize', [wp_filesize(get_attached_file(607)) > 0, wp_filesize('/nope')]);
 $say('edit_post_link anon', (static function () { ob_start(); edit_post_link('Edit', '<b>', '</b>', 1); return ob_get_clean(); })());
 $say('get_num_queries', is_int(get_num_queries()));

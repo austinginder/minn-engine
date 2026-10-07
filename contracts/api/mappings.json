@@ -2,12 +2,12 @@
     "generated": "2026-10-07",
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line)",
     "summary": {
-        "minn": 663,
-        "composes": 971,
-        "leaf": 662,
+        "minn": 665,
+        "composes": 972,
+        "leaf": 660,
         "noop": 1952,
-        "functions": 4178,
-        "minnMethods": 759,
+        "functions": 4179,
+        "minnMethods": 763,
         "leafLinesOver15": 13
     },
     "functions": {
@@ -9861,8 +9861,8 @@
         },
         "WP_Rewrite::__construct": {
             "file": "classes/WP_Rewrite.php",
-            "lines": 8,
-            "kind": "leaf",
+            "lines": 1,
+            "kind": "noop",
             "minn": [],
             "composes": []
         },
@@ -9907,11 +9907,14 @@
         },
         "WP_Rewrite::flush_rules": {
             "file": "classes/WP_Rewrite.php",
-            "lines": 2,
+            "lines": 14,
             "kind": "composes",
             "minn": [],
             "composes": [
-                "do_action"
+                "add_action",
+                "apply_filters",
+                "delete_option",
+                "did_action"
             ]
         },
         "WP_Rewrite::generate_rewrite_rule": {
@@ -9925,7 +9928,9 @@
             "file": "classes/WP_Rewrite.php",
             "lines": 1,
             "kind": "noop",
-            "minn": [],
+            "minn": [
+                "Minn\\Runtime\\RewriteRules::generate"
+            ],
             "composes": []
         },
         "WP_Rewrite::get_author_permastruct": {
@@ -10021,9 +10026,11 @@
         },
         "WP_Rewrite::init": {
             "file": "classes/WP_Rewrite.php",
-            "lines": 20,
-            "kind": "composes",
-            "minn": [],
+            "lines": 22,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Runtime\\RewriteRules::verbosePages"
+            ],
             "composes": [
                 "get_option"
             ]
@@ -10037,8 +10044,8 @@
         },
         "WP_Rewrite::page_rewrite_rules": {
             "file": "classes/WP_Rewrite.php",
-            "lines": 1,
-            "kind": "noop",
+            "lines": 2,
+            "kind": "leaf",
             "minn": [],
             "composes": []
         },
@@ -10055,6 +10062,17 @@
             "kind": "leaf",
             "minn": [],
             "composes": []
+        },
+        "WP_Rewrite::refresh_rewrite_rules": {
+            "file": "classes/WP_Rewrite.php",
+            "lines": 8,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "add_action",
+                "did_action",
+                "update_option"
+            ]
         },
         "WP_Rewrite::remove_permastruct": {
             "file": "classes/WP_Rewrite.php",
@@ -10074,7 +10092,9 @@
             "file": "classes/WP_Rewrite.php",
             "lines": 1,
             "kind": "noop",
-            "minn": [],
+            "minn": [
+                "Minn\\Runtime\\RewriteRules::all"
+            ],
             "composes": []
         },
         "WP_Rewrite::set_category_base": {
@@ -10128,10 +10148,12 @@
         },
         "WP_Rewrite::wp_rewrite_rules": {
             "file": "classes/WP_Rewrite.php",
-            "lines": 2,
-            "kind": "leaf",
+            "lines": 5,
+            "kind": "composes",
             "minn": [],
-            "composes": []
+            "composes": [
+                "get_option"
+            ]
         },
         "WP_Role::__construct": {
             "file": "classes/WP_Role.php",
@@ -17171,9 +17193,11 @@
         },
         "_minn_rewrite": {
             "file": "misc.php",
-            "lines": 7,
-            "kind": "leaf",
-            "minn": [],
+            "lines": 8,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Runtime\\RewriteRules::builtins"
+            ],
             "composes": []
         },
         "_minn_rss_block_item": {
@@ -18712,7 +18736,7 @@
         },
         "add_rewrite_tag": {
             "file": "misc.php",
-            "lines": 7,
+            "lines": 10,
             "kind": "composes",
             "minn": [],
             "composes": [
@@ -27588,7 +27612,7 @@
         },
         "register_post_type": {
             "file": "post.php",
-            "lines": 15,
+            "lines": 17,
             "kind": "minn",
             "minn": [
                 "Minn\\Runtime\\Registry::settlesRewrites",
@@ -27597,6 +27621,7 @@
             "composes": [
                 "_doing_it_wrong",
                 "add_permastruct",
+                "add_rewrite_tag",
                 "apply_filters",
                 "do_action",
                 "sanitize_key"
@@ -27656,7 +27681,7 @@
         },
         "register_taxonomy": {
             "file": "taxonomy.php",
-            "lines": 14,
+            "lines": 16,
             "kind": "minn",
             "minn": [
                 "Minn\\Runtime\\Registry::settlesRewrites",
@@ -27665,6 +27690,7 @@
             "composes": [
                 "_doing_it_wrong",
                 "add_permastruct",
+                "add_rewrite_tag",
                 "apply_filters",
                 "do_action"
             ]

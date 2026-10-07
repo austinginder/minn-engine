@@ -120409,6 +120409,427 @@
             ]
         },
         {
+            "name": "Minn\\Runtime\\RewriteRules",
+            "short": "RewriteRules",
+            "namespace": "Minn\\Runtime",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Runtime/RewriteRules.php",
+            "lines": 273,
+            "doc": "The rewrite rules WordPress makes from its structures, as the reference\nmakes them (probes rewrite-generate, rewrite-rules), so plugins that\nread, filter or add to them see the same list.\n\nA structure is walked a directory at a time (one at a time only when\nasked), each level that names something getting its rules: its feeds\nand embed, its pages, its comment pages (for posts and pages), a static\nfront page's comment pages at the root, the endpoints placed there, and\nthe level itself; deepest level first. The level that names a post (a\nname, an id, a page path, or a plugin post type's own tag) is the post's:\nits embed and trackback, its feeds, pages and comment pages, its\nendpoints and its attachments', then the post with its page number,\nbetween the rules for attachments under it (by /attachment/ and, but for\na hierarchical type, directly). A tag nobody registered stays as written.\n\nThe full list is the plugins' top rules (each permastruct's rules join\nthem as they are made, and stay), the fixed files, then root, comments,\nsearch, author and dates, then pages and posts (posts first unless the\nstructure begins ambiguously), then the plugins' bottom rules; each\nsection through its filter, the whole through generate_rewrite_rules and\nrewrite_rules_array.",
+            "implements": [],
+            "extends": null,
+            "uses": [],
+            "usedBy": [],
+            "constructor": null,
+            "cases": [],
+            "constants": [
+                {
+                    "name": "DEFAULTS",
+                    "value": "array (   'ep_mask' => 0,   'paged' => true,   'feed' => true,   'forcomments' => false,   'walk_dirs' => true,   'endpoints' => true, )",
+                    "doc": "What a permastruct's flags default to (no endpoint places).",
+                    "visibility": "private"
+                },
+                {
+                    "name": "POST_BY_TIME",
+                    "value": "array (   0 => '%year%',   1 => '%monthnum%',   2 => '%day%',   3 => '%hour%',   4 => '%minute%',   5 => '%second%', )",
+                    "doc": "The six date and time tags that together name a post.",
+                    "visibility": "private"
+                }
+            ],
+            "properties": [],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "generate",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "generate(WP_Rewrite $rewrite, array $args): array",
+                    "doc": "generate_rewrite_rules: the rules for one structure.",
+                    "shapes": [
+                        "@param array{struct: string, ep_mask?: int, paged?: bool, feed?: bool, forcomments?: bool, walk_dirs?: bool, endpoints?: bool} $args",
+                        "@return array<string, string>"
+                    ],
+                    "params": [
+                        {
+                            "name": "rewrite",
+                            "type": "WP_Rewrite",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "args",
+                            "type": "array",
+                            "shape": "array{struct: string, ep_mask?: int, paged?: bool, feed?: bool, forcomments?: bool, walk_dirs?: bool, endpoints?: bool}",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 44,
+                    "end": 71
+                },
+                {
+                    "routes": [],
+                    "name": "all",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "all(WP_Rewrite $rewrite): array",
+                    "doc": "rewrite_rules: every rule, assembled and filtered.",
+                    "shapes": [
+                        "@return array<string, string>"
+                    ],
+                    "params": [
+                        {
+                            "name": "rewrite",
+                            "type": "WP_Rewrite",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 78,
+                    "end": 113
+                },
+                {
+                    "routes": [],
+                    "name": "builtins",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "builtins(WP_Rewrite $rewrite): void",
+                    "doc": "The built-in taxonomies' tags and patterns, set once on the site's\nrewrite under the front of the structure then; a structure set later\nleaves them, and a plugin's, as they were (probe registry-rewrites).",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "rewrite",
+                            "type": "WP_Rewrite",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 120,
+                    "end": 128
+                },
+                {
+                    "routes": [],
+                    "name": "verbosePages",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "verbosePages(string $structure): bool",
+                    "doc": "Whether a structure begins with a tag that could be a page's path too (use_verbose_page_rules).",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "structure",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 131,
+                    "end": 134
+                },
+                {
+                    "routes": [],
+                    "name": "queries",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "queries(WP_Rewrite $rewrite, string $struct): array",
+                    "doc": "Each level's query: the index, then each tag's var and its match, one\nmore at a time.",
+                    "shapes": [
+                        "@return list<string>"
+                    ],
+                    "params": [
+                        {
+                            "name": "rewrite",
+                            "type": "WP_Rewrite",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "struct",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 142,
+                    "end": 151
+                },
+                {
+                    "routes": [],
+                    "name": "namesPost",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "namesPost(string $struct): array",
+                    "doc": "Whether the structure names a post, and whether that post is hierarchical. @return array{0: bool, 1: bool}",
+                    "shapes": [
+                        "@return array{0: bool, 1: bool}"
+                    ],
+                    "params": [
+                        {
+                            "name": "struct",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 154,
+                    "end": 167
+                },
+                {
+                    "routes": [],
+                    "name": "dirMask",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "dirMask(string $dir): int",
+                    "doc": "The endpoint place a date directory is besides the structure's own.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "dir",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 170,
+                    "end": 178
+                },
+                {
+                    "routes": [],
+                    "name": "plainLevel",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "plainLevel(WP_Rewrite $rewrite, array $level, array $args): array",
+                    "doc": "A level that is not a post's.",
+                    "shapes": [
+                        "@param array{match: string, query: string, tokens: int, mask: int} $level",
+                        "@param array<string, mixed> $args",
+                        "@return array<string, string>"
+                    ],
+                    "params": [
+                        {
+                            "name": "rewrite",
+                            "type": "WP_Rewrite",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "level",
+                            "type": "array",
+                            "shape": "array{match: string, query: string, tokens: int, mask: int}",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "args",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 187,
+                    "end": 195
+                },
+                {
+                    "routes": [],
+                    "name": "postLevel",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "postLevel(WP_Rewrite $rewrite, array $level, array $args, bool $hierarchical): array",
+                    "doc": "The post's level, between its attachments' rules.",
+                    "shapes": [
+                        "@param array{match: string, query: string, tokens: int, mask: int} $level",
+                        "@param array<string, mixed> $args",
+                        "@return array<string, string>"
+                    ],
+                    "params": [
+                        {
+                            "name": "rewrite",
+                            "type": "WP_Rewrite",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "level",
+                            "type": "array",
+                            "shape": "array{match: string, query: string, tokens: int, mask: int}",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "args",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "hierarchical",
+                            "type": "bool",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 204,
+                    "end": 222
+                },
+                {
+                    "routes": [],
+                    "name": "attachments",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "attachments(WP_Rewrite $rewrite, string $base): array",
+                    "doc": "An attachment's rules under a base: itself, its trackback, feeds,\ncomment pages and embed.",
+                    "shapes": [
+                        "@return array<string, string>"
+                    ],
+                    "params": [
+                        {
+                            "name": "rewrite",
+                            "type": "WP_Rewrite",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "base",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 230,
+                    "end": 242
+                },
+                {
+                    "routes": [],
+                    "name": "feeds",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "feeds(WP_Rewrite $rewrite, array $level, array $args): array",
+                    "doc": "A level's two feed rules (with comments when asked).",
+                    "shapes": [
+                        "@param array{match: string, query: string, tokens: int, mask: int} $level",
+                        "@param array<string, mixed> $args",
+                        "@return array<string, string>"
+                    ],
+                    "params": [
+                        {
+                            "name": "rewrite",
+                            "type": "WP_Rewrite",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "level",
+                            "type": "array",
+                            "shape": "array{match: string, query: string, tokens: int, mask: int}",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "args",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 251,
+                    "end": 256
+                },
+                {
+                    "routes": [],
+                    "name": "pagesAndComments",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "pagesAndComments(WP_Rewrite $rewrite, array $level, array $args): array",
+                    "doc": "A level's page rule, its comment pages (posts' and pages' places\nonly), and a static front page's comment pages at the root.",
+                    "shapes": [
+                        "@param array{match: string, query: string, tokens: int, mask: int} $level",
+                        "@param array<string, mixed> $args",
+                        "@return array<string, string>"
+                    ],
+                    "params": [
+                        {
+                            "name": "rewrite",
+                            "type": "WP_Rewrite",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "level",
+                            "type": "array",
+                            "shape": "array{match: string, query: string, tokens: int, mask: int}",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "args",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 266,
+                    "end": 279
+                },
+                {
+                    "routes": [],
+                    "name": "endpoints",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "endpoints(WP_Rewrite $rewrite, array $level, array $args): array",
+                    "doc": "The endpoints placed at a level (by the structure's place or the\ndirectory's own).",
+                    "shapes": [
+                        "@param array{match: string, query: string, tokens: int, mask: int} $level",
+                        "@param array<string, mixed> $args",
+                        "@return array<string, string>"
+                    ],
+                    "params": [
+                        {
+                            "name": "rewrite",
+                            "type": "WP_Rewrite",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "level",
+                            "type": "array",
+                            "shape": "array{match: string, query: string, tokens: int, mask: int}",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "args",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 289,
+                    "end": 301
+                }
+            ]
+        },
+        {
             "name": "Minn\\Runtime\\Runtime",
             "short": "Runtime",
             "namespace": "Minn\\Runtime",

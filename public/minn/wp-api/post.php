@@ -1557,7 +1557,9 @@ function register_post_type($post_type, $args = [])
     $args = apply_filters('register_post_type_args', (array) $args, $post_type);
     $row = Runtime::registry()->registerPostType($post_type, $args);
     if (is_array($row['rewrite']) && Registry::settlesRewrites()) {
-        // Its address pattern, under the front of the structure at the time unless it opts out (probe registry-rewrites).
+        // Its tag and address pattern, under the front of the structure at the time unless it opts out (probes registry-rewrites, rewrite-generate).
+        $var = $row['query_var'] ?? false;
+        add_rewrite_tag("%{$post_type}%", empty($row['hierarchical']) ? '([^/]+)' : '(.+?)', is_string($var) && $var !== '' ? "{$var}=" : "post_type={$post_type}&" . (empty($row['hierarchical']) ? 'name=' : 'pagename='));
         add_permastruct($post_type, "{$row['rewrite']['slug']}/%{$post_type}%", ['with_front' => $row['rewrite']['with_front'], 'ep_mask' => $row['rewrite']['ep_mask'], 'feed' => $row['rewrite']['feeds']]);
     }
     $object = new WP_Post_Type($post_type, $row);

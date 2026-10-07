@@ -103,6 +103,8 @@ function register_taxonomy($taxonomy, $object_type, $args = [])
     $args = apply_filters('register_taxonomy_args', (array) $args, $taxonomy, (array) $object_type);
     $row = Runtime::registry()->registerTaxonomy($taxonomy, array_values(array_map('strval', (array) $object_type)), $args);
     if (is_array($row['rewrite']) && Registry::settlesRewrites()) {
+        $var = $row['query_var'] ?? false;
+        add_rewrite_tag("%{$taxonomy}%", empty($row['rewrite']['hierarchical']) ? '([^/]+)' : '(.+?)', is_string($var) && $var !== '' ? "{$var}=" : "taxonomy={$taxonomy}&term=");
         add_permastruct($taxonomy, "{$row['rewrite']['slug']}/%{$taxonomy}%", ['with_front' => $row['rewrite']['with_front'], 'ep_mask' => $row['rewrite']['ep_mask']]);
     }
     $object = new WP_Taxonomy($taxonomy, [], $row);

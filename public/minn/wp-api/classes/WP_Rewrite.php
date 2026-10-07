@@ -3,9 +3,10 @@
 use Minn\Runtime\Runtime;
 
 /**
- * The rewrite registry plugin code adds rules and tags to. The engine
- * resolves URLs from its own structure, so these are recorded for the
- * plugins that read them back; flushing writes nothing.
+ * The rewrite registry plugin code adds rules and tags to, and the rules
+ * WordPress makes from it (Runtime\RewriteRules), which plugins read,
+ * filter and add to. The engine resolves URLs from its own structure and
+ * the rules plugins change; flushing writes nothing.
  */
 #[AllowDynamicProperties]
 class WP_Rewrite
@@ -38,13 +39,6 @@ class WP_Rewrite
     public function __construct()
     {
         $this->init();
-        // The built-in taxonomies' patterns are set once, under the front of the structure then; a structure set
-        // later leaves them, and a plugin's, as they were (probe registry-rewrites).
-        $this->extra_permastructs = [
-            'category' => ['with_front' => true, 'ep_mask' => EP_CATEGORIES, 'paged' => true, 'feed' => true, 'forcomments' => false, 'walk_dirs' => true, 'endpoints' => true, 'struct' => $this->front . 'category/%category%'],
-            'post_tag' => ['with_front' => true, 'ep_mask' => EP_TAGS, 'paged' => true, 'feed' => true, 'forcomments' => false, 'walk_dirs' => true, 'endpoints' => true, 'struct' => $this->front . 'tag/%post_tag%'],
-            'post_format' => ['with_front' => true, 'ep_mask' => EP_NONE, 'paged' => true, 'feed' => true, 'forcomments' => false, 'walk_dirs' => true, 'endpoints' => true, 'struct' => $this->front . 'type/%post_format%'],
-        ];
     }
 
     public function init()
@@ -69,6 +63,8 @@ class WP_Rewrite
         }
         unset($this->author_structure, $this->date_structure, $this->page_structure, $this->search_structure, $this->feed_structure, $this->comment_feed_structure);
         $this->use_trailing_slashes = str_ends_with($this->permalink_structure, '/');
+        $this->use_verbose_rules = false;
+        $this->use_verbose_page_rules = Minn\Runtime\RewriteRules::verbosePages($this->permalink_structure);
     }
 
     public function using_permalinks()
@@ -107,7 +103,8 @@ class WP_Rewrite
 
     public function page_rewrite_rules()
     {
-        return [];
+        $this->add_rewrite_tag('%pagename%', '(.?.+?)', 'pagename=');
+        return $this->generate_rewrite_rules($this->get_page_permastruct(), EP_PAGES, true, true, false, false);
     }
 
     public function get_date_permastruct()
@@ -116,17 +113,17 @@ class WP_Rewrite
             return false;
         }
         $endians = ['%year%/%monthnum%/%day%', '%day%/%monthnum%/%year%', '%monthnum%/%day%/%year%'];
-        $date_structure = '';
+        $date = '%year%/%monthnum%/%day%';
         foreach ($endians as $endian) {
             if (str_contains($this->permalink_structure, $endian)) {
-                $date_structure = $this->front . $endian;
+                $date = $endian;
                 break;
             }
         }
-        if ($date_structure === '') {
-            $date_structure = $this->front . '%year%/%monthnum%/%day%';
-        }
-        return $date_structure;
+        // A post id among the structure's first three tags would read as a date, so dates move under date/ (probe rewrite-generate).
+        preg_match_all('/%.+?%/', $this->permalink_structure, $tokens);
+        $front = in_array('%post_id%', array_slice($tokens[0], 0, 3), true) ? $this->front . 'date/' : $this->front;
+        return $front . $date;
     }
 
     public function get_year_permastruct()
@@ -233,23 +230,40 @@ class WP_Rewrite
 
     public function generate_rewrite_rules($permalink_structure, $ep_mask = EP_NONE, $paged = true, $feed = true, $forcomments = false, $walk_dirs = true, $endpoints = true)
     {
-        return [];
+        return Minn\Runtime\RewriteRules::generate($this, ['struct' => (string) $permalink_structure, 'ep_mask' => (int) $ep_mask, 'paged' => (bool) $paged, 'feed' => (bool) $feed, 'forcomments' => (bool) $forcomments, 'walk_dirs' => (bool) $walk_dirs, 'endpoints' => (bool) $endpoints]);
     }
 
     public function generate_rewrite_rule($permalink_structure, $walk_dirs = false)
     {
-        return [];
+        return $this->generate_rewrite_rules($permalink_structure, EP_NONE, false, false, false, $walk_dirs);
     }
 
     public function rewrite_rules()
     {
-        return array_merge($this->extra_rules_top, $this->extra_rules);
+        return Minn\Runtime\RewriteRules::all($this);
     }
 
+    /** The stored rules; made and stored when there are none (probe rewrite-flush). */
     public function wp_rewrite_rules()
     {
-        $this->rules = $this->rewrite_rules();
+        $this->rules = get_option('rewrite_rules');
+        if (empty($this->rules)) {
+            $this->refresh_rewrite_rules();
+        }
         return $this->rules;
+    }
+
+    /** The rules made in their stored form ($matches[N]) and stored, once everything has registered. */
+    private function refresh_rewrite_rules()
+    {
+        $this->rules = '';
+        $this->matches = 'matches';
+        $this->rewrite_rules();
+        if (!did_action('wp_loaded')) {
+            add_action('wp_loaded', [$this, 'flush_rules']);
+            return;
+        }
+        update_option('rewrite_rules', $this->rules);
     }
 
     public function mod_rewrite_rules()
@@ -319,10 +333,27 @@ class WP_Rewrite
         unset($this->extra_permastructs[$name]);
     }
 
+    /**
+     * The stored rules made again (once everything has registered); a hard
+     * flush asks flush_rewrite_rules_hard, and the server's own files are
+     * the host's, so none is written (probe rewrite-flush).
+     */
     public function flush_rules($hard = true)
     {
-        $this->rules = $this->rewrite_rules();
-        do_action('flush_rewrite_rules');
+        static $hardLater = null;
+        if (!did_action('wp_loaded')) {
+            add_action('wp_loaded', [$this, 'flush_rules']);
+            $hardLater = isset($hardLater) ? $hardLater || $hard : $hard;
+            return;
+        }
+        if (isset($hardLater)) {
+            [$hard, $hardLater] = [$hardLater, null];
+        }
+        delete_option('rewrite_rules');
+        $this->wp_rewrite_rules();
+        if ($hard) {
+            apply_filters('flush_rewrite_rules_hard', true);
+        }
     }
 
     public function set_permalink_structure($permalink_structure)

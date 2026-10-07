@@ -12,6 +12,7 @@ function _minn_rewrite(): WP_Rewrite
 {
     if (!isset($GLOBALS['wp_rewrite']) || !$GLOBALS['wp_rewrite'] instanceof WP_Rewrite) {
         $GLOBALS['wp_rewrite'] = new WP_Rewrite();
+        Minn\Runtime\RewriteRules::builtins($GLOBALS['wp_rewrite']);
     }
     if (!isset($GLOBALS['wp']) || !$GLOBALS['wp'] instanceof WP) {
         $GLOBALS['wp'] = new WP();
@@ -31,7 +32,10 @@ function add_rewrite_tag($tag, $regex, $query = '')
     }
     $qv = trim((string) $tag, '%');
     _minn_rewrite();
-    $GLOBALS['wp']->add_query_var($qv);
+    // A tag given no query of its own is a public query var of its name; one given a query adds none.
+    if ($query === '') {
+        $GLOBALS['wp']->add_query_var($qv);
+    }
     _minn_rewrite()->add_rewrite_tag($tag, $regex, $query === '' ? $qv . '=' : $query);
 }
 
