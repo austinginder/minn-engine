@@ -222,7 +222,7 @@ form-encoded, or a string sent as it is; one of the three, and the first
 two set the Content-Type
 - `timeout`: seconds for the whole exchange, 5 by default
 - `redirects`: how many to follow, 5 by default; 0 hands back the 3xx
-- `hosts`: URL prefixes every hop must start with (`['https://api.wordpress.org/']`)
+- `hosts`: URL prefixes every hop must start with (`['https://api.github.com/']`)
 - `private`: hosts allowed to reach a private address. Loopback, LAN,
 link-local and cloud-metadata addresses are refused otherwise, at every
 hop and after DNS, so a URL someone typed is safe to fetch

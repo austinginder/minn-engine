@@ -298,6 +298,28 @@ arsort($callersByFile);
 $check("engine: Runtime::booted() branches stay at or under {$bootedCeiling}", $booted <= $bootedCeiling, (string) $booted);
 $check("engine: calls into WordPress-named functions (the hook API aside) stay at or under {$wordpressCallCeiling}", $wordpressCalls <= $wordpressCallCeiling, $wordpressCalls . ', most in ' . implode(', ', array_map(static fn ($file, $n) => "{$file} {$n}", array_keys(array_slice($callersByFile, 0, 5, true)), array_slice($callersByFile, 0, 5, true))));
 
+// Track H: Minn talks to Minn, never to wordpress.org. Every address that has
+// a site, its visitors' browsers or its mail readers fetch from wordpress.org's
+// servers (the update and directory APIs, package downloads, the emoji images)
+// is counted across src/ and wp-api/. Links to wordpress.org pages and the
+// api.w.org relation names are text, not requests, and are not counted. The
+// ceiling only falls; 0.1.0 is cut at 0, with the Minn update service answering.
+$wporgRequestCeiling = 13;
+$wporgRequests = [];
+foreach ([$root, dirname($root) . '/wp-api'] as $tree) {
+    foreach (new RecursiveIteratorIterator(new RecursiveDirectoryIterator($tree, FilesystemIterator::SKIP_DOTS)) as $file) {
+        if ($file->getExtension() !== 'php') {
+            continue;
+        }
+        $found = preg_match_all('/(?<![a-z0-9.-])(?:api\.wordpress\.org|downloads\.wordpress\.org|planet\.wordpress\.org|s\.w\.org|ps\.w\.org|ts\.w\.org)/i', (string) file_get_contents($file->getPathname()));
+        if ($found > 0) {
+            $wporgRequests[substr($file->getPathname(), strlen(dirname($root)) + 1)] = $found;
+        }
+    }
+}
+arsort($wporgRequests);
+$check("engine: wordpress.org request addresses stay at or under {$wporgRequestCeiling} (0 to release)", array_sum($wporgRequests) <= $wporgRequestCeiling, array_sum($wporgRequests) . ': ' . implode(', ', array_map(static fn ($file, $n) => "{$file} {$n}", array_keys($wporgRequests), $wporgRequests)));
+
 // The API docs are generated from the classes (tests/tools/api-docs.php) and
 // must be current: an agent or a person reading docs/api/ is reading the code.
 $docs = json_decode((string) shell_exec('php ' . escapeshellarg(dirname(__DIR__) . '/tests/tools/api-docs.php') . ' --check 2>/dev/null'), true);
