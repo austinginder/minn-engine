@@ -27247,7 +27247,6 @@
                 "Minn\\Front\\RuleRoutes",
                 "Minn\\Front\\SingleAddresses",
                 "Minn\\Front\\SingleQueries",
-                "Minn\\Front\\Sitemaps",
                 "Minn\\Media\\Writer",
                 "Minn\\Rest\\CommentsController",
                 "Minn\\Rest\\GlobalStylesController",
@@ -31018,7 +31017,6 @@
                 "Minn\\Front\\CommentPostController",
                 "Minn\\Front\\FeedController",
                 "Minn\\Front\\ProbeController",
-                "Minn\\Front\\Sitemaps",
                 "Minn\\Login\\LoginController",
                 "Minn\\Mail\\MailSettings",
                 "Minn\\Mail\\Mailer",
@@ -31816,7 +31814,6 @@
                 "Minn\\Front\\ArchiveAddresses",
                 "Minn\\Front\\Permalinks",
                 "Minn\\Front\\Resolution",
-                "Minn\\Front\\Sitemaps",
                 "Minn\\Rest\\MenuObject",
                 "Minn\\Rest\\MenusController",
                 "Minn\\Rest\\TermFilters",
@@ -33129,7 +33126,6 @@
                 "Minn\\Front\\Permalinks",
                 "Minn\\Front\\Resolution",
                 "Minn\\Front\\Resolver",
-                "Minn\\Front\\Sitemaps",
                 "Minn\\Login\\LoginController",
                 "Minn\\Login\\LoginHooks",
                 "Minn\\Rest\\ApplicationPasswordsController",
@@ -34756,7 +34752,6 @@
                 "Minn\\Front\\Renderer",
                 "Minn\\Front\\Resolver",
                 "Minn\\Front\\SingleAddresses",
-                "Minn\\Front\\Sitemaps",
                 "Minn\\Mail\\Mailer",
                 "Minn\\Ops\\Diagnostics",
                 "Minn\\Rest\\Api",
@@ -35237,7 +35232,6 @@
                 "Minn\\Front\\Resolution",
                 "Minn\\Front\\Resolver",
                 "Minn\\Front\\SitemapController",
-                "Minn\\Front\\Sitemaps",
                 "Minn\\Http\\Failure",
                 "Minn\\Http\\Kernel",
                 "Minn\\Http\\Method",
@@ -35291,8 +35285,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 70,
-                "end": 75
+                "line": 69,
+                "end": 74
             },
             "cases": [],
             "constants": [
@@ -35333,8 +35327,8 @@
                     "doc": "The front door: answer the request that arrived and send it. This is\nthe only place the engine touches the world, so everything under it\nis a function of a request, callable more than once in a process.",
                     "shapes": [],
                     "params": [],
-                    "line": 82,
-                    "end": 86
+                    "line": 81,
+                    "end": 85
                 },
                 {
                     "routes": [],
@@ -35353,8 +35347,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 93,
-                    "end": 112
+                    "line": 92,
+                    "end": 111
                 },
                 {
                     "routes": [],
@@ -35373,8 +35367,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 115,
-                    "end": 122
+                    "line": 114,
+                    "end": 121
                 },
                 {
                     "routes": [],
@@ -35407,8 +35401,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 129,
-                    "end": 160
+                    "line": 128,
+                    "end": 159
                 },
                 {
                     "routes": [],
@@ -35434,8 +35428,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 169,
-                    "end": 185
+                    "line": 168,
+                    "end": 184
                 },
                 {
                     "routes": [],
@@ -35461,8 +35455,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 188,
-                    "end": 264
+                    "line": 187,
+                    "end": 263
                 },
                 {
                     "routes": [],
@@ -35565,8 +35559,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 267,
-                    "end": 334
+                    "line": 266,
+                    "end": 333
                 }
             ]
         },
@@ -43505,7 +43499,6 @@
                 "Minn\\Front\\Resolver",
                 "Minn\\Front\\SingleAddresses",
                 "Minn\\Front\\SingleQueries",
-                "Minn\\Front\\Sitemaps",
                 "Minn\\Login\\LoginController",
                 "Minn\\Media\\Uploads",
                 "Minn\\Ops\\Diagnostics",
@@ -47471,22 +47464,20 @@
             "namespace": "Minn\\Front",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Front/SitemapController.php",
-            "lines": 79,
-            "doc": "The sitemap index, its pages, and the two stylesheets. With plugins\nloaded they are the reference's: the request's sitemap variables stand\nin the main query and the sitemaps server answers at template_redirect\n(SitemapRequest), through every filter a plugin hooks, any provider it\nregisters among them; what it does not print, the theme renders (a 404,\nor the page a stray address amounts to). Without, the engine's own.",
+            "lines": 65,
+            "doc": "The sitemap index, its pages, and the two stylesheets, as the\nreference serves them: the request's sitemap variables stand\nin the main query and the sitemaps server answers at template_redirect\n(SitemapRequest), through every filter a plugin hooks, any provider it\nregisters among them; what it does not print, the theme renders (a 404,\nor the page a stray address amounts to).",
             "implements": [],
             "extends": null,
             "uses": [
                 "Minn\\Front\\PrintedResponse",
                 "Minn\\Front\\Resolution",
                 "Minn\\Front\\SitemapRequest",
-                "Minn\\Front\\Sitemaps",
                 "Minn\\Http\\Access",
                 "Minn\\Http\\Method",
                 "Minn\\Http\\Policy",
                 "Minn\\Http\\Request",
                 "Minn\\Http\\Response",
                 "Minn\\Http\\Route",
-                "Minn\\Runtime\\Runtime",
                 "Minn\\Theme\\MainQueryBridge"
             ],
             "usedBy": [
@@ -47494,17 +47485,10 @@
                 "Minn\\Front\\FrontController"
             ],
             "constructor": {
-                "signature": "__construct(Minn\\Front\\Sitemaps $sitemaps, Closure $notFound, ?Minn\\Theme\\MainQueryBridge $bridge = NULL, ?Closure $themed = NULL)",
+                "signature": "__construct(Closure $notFound, Minn\\Theme\\MainQueryBridge $bridge, Closure $themed)",
                 "doc": "",
                 "shapes": [],
                 "params": [
-                    {
-                        "name": "sitemaps",
-                        "type": "Minn\\Front\\Sitemaps",
-                        "shape": "",
-                        "default": null,
-                        "doc": ""
-                    },
                     {
                         "name": "notFound",
                         "type": "Closure",
@@ -47514,35 +47498,26 @@
                     },
                     {
                         "name": "bridge",
-                        "type": "?Minn\\Theme\\MainQueryBridge",
+                        "type": "Minn\\Theme\\MainQueryBridge",
                         "shape": "",
-                        "default": "NULL",
+                        "default": null,
                         "doc": ""
                     },
                     {
                         "name": "themed",
-                        "type": "?Closure",
+                        "type": "Closure",
                         "shape": "",
-                        "default": "NULL",
+                        "default": null,
                         "doc": ""
                     }
                 ],
                 "visibility": "public",
-                "line": 27,
-                "end": 35
+                "line": 26,
+                "end": 33
             },
             "cases": [],
             "constants": [],
             "properties": [
-                {
-                    "name": "sitemaps",
-                    "type": "Minn\\Front\\Sitemaps",
-                    "readonly": true,
-                    "static": false,
-                    "doc": "",
-                    "visibility": "private",
-                    "promoted": true
-                },
                 {
                     "name": "notFound",
                     "type": "Closure",
@@ -47554,7 +47529,7 @@
                 },
                 {
                     "name": "bridge",
-                    "type": "?Minn\\Theme\\MainQueryBridge",
+                    "type": "Minn\\Theme\\MainQueryBridge",
                     "readonly": true,
                     "static": false,
                     "doc": "",
@@ -47563,7 +47538,7 @@
                 },
                 {
                     "name": "themed",
-                    "type": "?Closure",
+                    "type": "Closure",
                     "readonly": true,
                     "static": false,
                     "doc": "",
@@ -47591,8 +47566,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 39,
-                    "end": 42
+                    "line": 37,
+                    "end": 40
                 },
                 {
                     "routes": [
@@ -47627,8 +47602,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 46,
-                    "end": 57
+                    "line": 44,
+                    "end": 50
                 },
                 {
                     "routes": [
@@ -47649,8 +47624,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 61,
-                    "end": 64
+                    "line": 54,
+                    "end": 57
                 },
                 {
                     "routes": [
@@ -47671,8 +47646,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 68,
-                    "end": 71
+                    "line": 61,
+                    "end": 64
                 },
                 {
                     "routes": [],
@@ -47691,16 +47666,16 @@
                             "doc": ""
                         }
                     ],
-                    "line": 74,
-                    "end": 78
+                    "line": 67,
+                    "end": 71
                 },
                 {
                     "routes": [],
                     "name": "served",
                     "static": false,
                     "visibility": "private",
-                    "signature": "served(array $vars): ?Minn\\Http\\Response",
-                    "doc": "The reference's answer, with plugins loaded: what the sitemaps server\nprinted, else the theme's page on the query as it stands (a 404 when\nthe server made it one). Null without plugins.",
+                    "signature": "served(array $vars): Minn\\Http\\Response",
+                    "doc": "The reference's answer: what the sitemaps server printed, else the\ntheme's page on the query as it stands (a 404 when the server made it\none).",
                     "shapes": [
                         "@param array<string, mixed> $vars"
                     ],
@@ -47713,28 +47688,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 87,
-                    "end": 97
-                },
-                {
-                    "routes": [],
-                    "name": "xml",
-                    "static": true,
-                    "visibility": "private",
-                    "signature": "xml(string $body): Minn\\Http\\Response",
-                    "doc": "",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "body",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 99,
-                    "end": 102
+                    "line": 80,
+                    "end": 87
                 }
             ]
         },
@@ -47853,9 +47808,7 @@
             "uses": [
                 "Minn\\Support\\Html"
             ],
-            "usedBy": [
-                "Minn\\Front\\Sitemaps"
-            ],
+            "usedBy": [],
             "constructor": null,
             "cases": [],
             "constants": [],
@@ -47979,64 +47932,17 @@
             "name": "Minn\\Front\\Sitemaps",
             "short": "Sitemaps",
             "namespace": "Minn\\Front",
-            "kind": "final readonly class",
+            "kind": "final class",
             "file": "public/minn/src/Minn/Front/Sitemaps.php",
-            "lines": 151,
-            "doc": "The sitemap index and its providers (posts, pages, categories, tags,\nauthors), in the reference's shape: one file per provider and page, 2000\nURLs a page, lastmod on content only.",
+            "lines": 34,
+            "doc": "What the sitemaps share with WP_Sitemaps, which serves them: the two\nstylesheets browsers get when they open a sitemap, their CSS\n(wp_sitemaps_stylesheet_css filters it), and the date form an entry's\nlastmod takes.",
             "implements": [],
             "extends": null,
-            "uses": [
-                "Minn\\Content\\PostRecord",
-                "Minn\\Content\\Site",
-                "Minn\\Content\\TermRecord",
-                "Minn\\Content\\UserRecord",
-                "Minn\\Db",
-                "Minn\\Front\\Permalinks",
-                "Minn\\Front\\SitemapXml"
-            ],
-            "usedBy": [
-                "Minn\\Engine",
-                "Minn\\Front\\SitemapController"
-            ],
-            "constructor": {
-                "signature": "__construct(Minn\\Db $db, Minn\\Content\\Site $site, Minn\\Front\\Permalinks $permalinks)",
-                "doc": "",
-                "shapes": [],
-                "params": [
-                    {
-                        "name": "db",
-                        "type": "Minn\\Db",
-                        "shape": "",
-                        "default": null,
-                        "doc": ""
-                    },
-                    {
-                        "name": "site",
-                        "type": "Minn\\Content\\Site",
-                        "shape": "",
-                        "default": null,
-                        "doc": ""
-                    },
-                    {
-                        "name": "permalinks",
-                        "type": "Minn\\Front\\Permalinks",
-                        "shape": "",
-                        "default": null,
-                        "doc": ""
-                    }
-                ],
-                "visibility": "public",
-                "line": 25,
-                "end": 30
-            },
+            "uses": [],
+            "usedBy": [],
+            "constructor": null,
             "cases": [],
             "constants": [
-                {
-                    "name": "PER_PAGE",
-                    "value": "2000",
-                    "doc": "",
-                    "visibility": "private"
-                },
                 {
                     "name": "CSS",
                     "value": "'body{font:15px/1.5 sans-serif;margin:2em}table{border-collapse:collapse}td{padding:.35em 1em .35em 0;border-bottom:1px solid #ddd}'",
@@ -48044,82 +47950,8 @@
                     "visibility": "public"
                 }
             ],
-            "properties": [
-                {
-                    "name": "db",
-                    "type": "Minn\\Db",
-                    "readonly": true,
-                    "static": false,
-                    "doc": "",
-                    "visibility": "private",
-                    "promoted": true
-                },
-                {
-                    "name": "site",
-                    "type": "Minn\\Content\\Site",
-                    "readonly": true,
-                    "static": false,
-                    "doc": "",
-                    "visibility": "private",
-                    "promoted": true
-                },
-                {
-                    "name": "permalinks",
-                    "type": "Minn\\Front\\Permalinks",
-                    "readonly": true,
-                    "static": false,
-                    "doc": "",
-                    "visibility": "private",
-                    "promoted": true
-                }
-            ],
+            "properties": [],
             "methods": [
-                {
-                    "routes": [],
-                    "name": "index",
-                    "static": false,
-                    "visibility": "public",
-                    "signature": "index(): string",
-                    "doc": "The sitemap index's XML.",
-                    "shapes": [],
-                    "params": [],
-                    "line": 33,
-                    "end": 42
-                },
-                {
-                    "routes": [],
-                    "name": "page",
-                    "static": false,
-                    "visibility": "public",
-                    "signature": "page(string $type, string $subtype, int $page): ?string",
-                    "doc": "One provider page, or null when the name or page does not exist.",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "type",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "subtype",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "page",
-                            "type": "int",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 45,
-                    "end": 57
-                },
                 {
                     "routes": [],
                     "name": "stylesheet",
@@ -48137,8 +47969,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 141,
-                    "end": 144
+                    "line": 19,
+                    "end": 22
                 },
                 {
                     "routes": [],
@@ -48157,8 +47989,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 147,
-                    "end": 150
+                    "line": 25,
+                    "end": 28
                 },
                 {
                     "routes": [],
@@ -48177,116 +48009,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 164,
-                    "end": 167
-                },
-                {
-                    "routes": [],
-                    "name": "providers",
-                    "static": false,
-                    "visibility": "private",
-                    "signature": "providers(): array",
-                    "doc": "",
-                    "shapes": [
-                        "@return list<array{slug: string, pages: int}>"
-                    ],
-                    "params": [],
-                    "line": 60,
-                    "end": 83
-                },
-                {
-                    "routes": [],
-                    "name": "contentUrls",
-                    "static": false,
-                    "visibility": "private",
-                    "signature": "contentUrls(string $type, int $page): ?array",
-                    "doc": "",
-                    "shapes": [
-                        "@return list<array{0: string, 1: ?string}>|null"
-                    ],
-                    "params": [
-                        {
-                            "name": "type",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "page",
-                            "type": "int",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 86,
-                    "end": 106
-                },
-                {
-                    "routes": [],
-                    "name": "termUrls",
-                    "static": false,
-                    "visibility": "private",
-                    "signature": "termUrls(string $taxonomy, int $page): ?array",
-                    "doc": "",
-                    "shapes": [
-                        "@return list<array{0: string, 1: ?string}>|null"
-                    ],
-                    "params": [
-                        {
-                            "name": "taxonomy",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "page",
-                            "type": "int",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 109,
-                    "end": 121
-                },
-                {
-                    "routes": [],
-                    "name": "userUrls",
-                    "static": false,
-                    "visibility": "private",
-                    "signature": "userUrls(int $page): array",
-                    "doc": "",
-                    "shapes": [
-                        "@return list<array{0: string, 1: ?string}>"
-                    ],
-                    "params": [
-                        {
-                            "name": "page",
-                            "type": "int",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 124,
-                    "end": 128
-                },
-                {
-                    "routes": [],
-                    "name": "authors",
-                    "static": false,
-                    "visibility": "private",
-                    "signature": "authors(): array",
-                    "doc": "Users with published posts, by id. @return list<array>",
-                    "shapes": [
-                        "@return list<array>"
-                    ],
-                    "params": [],
-                    "line": 131,
-                    "end": 138
+                    "line": 42,
+                    "end": 45
                 },
                 {
                     "routes": [],
@@ -48312,8 +48036,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 152,
-                    "end": 161
+                    "line": 30,
+                    "end": 39
                 }
             ]
         },
@@ -120776,7 +120500,6 @@
                 "Minn\\Front\\RequestParse",
                 "Minn\\Front\\Resolver",
                 "Minn\\Front\\RuleRoutes",
-                "Minn\\Front\\SitemapController",
                 "Minn\\Front\\SitemapRequest",
                 "Minn\\Front\\StoredRules",
                 "Minn\\Front\\ToolbarMenus",

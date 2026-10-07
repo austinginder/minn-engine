@@ -44,10 +44,10 @@ URL resolution, permalinks, feeds, sitemaps and the public page
 | [`RuleRoutes`](#ruleroutes) | final readonly class | 121 | What a rewrite rule's query vars stand for, when a plugin's rule (its |
 | [`SingleAddresses`](#singleaddresses) | final readonly class | 61 | The addresses a single answers to besides its own, as the reference |
 | [`SingleQueries`](#singlequeries) | final readonly class | 79 | The single a query string asks for, as the reference's request parse and |
-| [`SitemapController`](#sitemapcontroller) | final readonly class | 79 | The sitemap index, its pages, and the two stylesheets. With plugins |
+| [`SitemapController`](#sitemapcontroller) | final readonly class | 65 | The sitemap index, its pages, and the two stylesheets, as the |
 | [`SitemapRequest`](#sitemaprequest) | final class | 70 | A sitemap request at template_redirect, as the reference's sitemaps |
 | [`SitemapXml`](#sitemapxml) | final class | 43 | The two sitemap documents, index and URL set, from entry maps; one builder for the engine's routes and the facade's renderer. |
-| [`Sitemaps`](#sitemaps) | final readonly class | 151 | The sitemap index and its providers (posts, pages, categories, tags, |
+| [`Sitemaps`](#sitemaps) | final class | 34 | What the sitemaps share with WP_Sitemaps, which serves them: the two |
 | [`StoredRules`](#storedrules) | final class | 79 | Addresses a plugin's change to the rewrite rules decides (suite |
 | [`TermLists`](#termlists) | final class | 178 | The two term listings themes print: the nested category list and the |
 | [`ToolbarMarkup`](#toolbarmarkup) | final class | 57 | WP_Admin_Bar's markup, piece by piece, as the reference prints it (probe |
@@ -870,7 +870,7 @@ other status keeps the query form, which is what the reference emits.
 
 - const `QUERY_ONLY` = `array (   0 => 'wp_pattern_category',   1 => 'wp_theme',   2 => 'wp_template_part_area', )` — Core taxonomies with no front-end archive: their terms link by query only.
 
-Used by: `Minn\Admin\AppController`, `Minn\Admin\BootPayload`, `Minn\Admin\RenderController`, `Minn\Admin\SiteController`, `Minn\Admin\ThemesController`, `Minn\Blocks\Dynamic\Archives`, `Minn\Blocks\Dynamic\Categories`, `Minn\Blocks\Dynamic\LatestComments`, `Minn\Blocks\Dynamic\LatestPosts`, `Minn\Blocks\Dynamic\Search`, `Minn\Blocks\Dynamic\TagCloud`, `Minn\Blocks\Dynamic\Theme\Comments`, `Minn\Blocks\Dynamic\Theme\Navigation`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Blocks\Dynamic\Theme\Structure`, `Minn\Blocks\Renderer`, `Minn\Cli\Runtime`, `Minn\Content\Menus`, `Minn\Content\SiteIcon`, `Minn\Engine`, `Minn\Front\AdminBar`, `Minn\Front\ArchiveAddresses`, `Minn\Front\AttachmentAddresses`, `Minn\Front\CommentPostController`, `Minn\Front\FeedController`, `Minn\Front\ProbeController`, `Minn\Front\Renderer`, `Minn\Front\Resolver`, `Minn\Front\SingleAddresses`, `Minn\Front\SingleQueries`, `Minn\Front\Sitemaps`, `Minn\Login\LoginController`, `Minn\Media\Uploads`, `Minn\Ops\Diagnostics`, `Minn\Rest\CommentObject`, `Minn\Rest\IndexController`, `Minn\Rest\MediaObject`, `Minn\Rest\PostObject`, `Minn\Rest\RegisteredPostFields`, `Minn\Rest\RestUrl`, `Minn\Rest\SearchController`, `Minn\Rest\Services`, `Minn\Rest\TermObject`, `Minn\Rest\UserObject`, `Minn\Theme\ClassicContent`, `Minn\Theme\ClassicRenderer`, `Minn\Theme\HeadLinks`, `Minn\Theme\PageRenderer`, `Minn\Theme\Theme`, `Minn\Theme\ThemeStyles`
+Used by: `Minn\Admin\AppController`, `Minn\Admin\BootPayload`, `Minn\Admin\RenderController`, `Minn\Admin\SiteController`, `Minn\Admin\ThemesController`, `Minn\Blocks\Dynamic\Archives`, `Minn\Blocks\Dynamic\Categories`, `Minn\Blocks\Dynamic\LatestComments`, `Minn\Blocks\Dynamic\LatestPosts`, `Minn\Blocks\Dynamic\Search`, `Minn\Blocks\Dynamic\TagCloud`, `Minn\Blocks\Dynamic\Theme\Comments`, `Minn\Blocks\Dynamic\Theme\Navigation`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Blocks\Dynamic\Theme\Structure`, `Minn\Blocks\Renderer`, `Minn\Cli\Runtime`, `Minn\Content\Menus`, `Minn\Content\SiteIcon`, `Minn\Engine`, `Minn\Front\AdminBar`, `Minn\Front\ArchiveAddresses`, `Minn\Front\AttachmentAddresses`, `Minn\Front\CommentPostController`, `Minn\Front\FeedController`, `Minn\Front\ProbeController`, `Minn\Front\Renderer`, `Minn\Front\Resolver`, `Minn\Front\SingleAddresses`, `Minn\Front\SingleQueries`, `Minn\Login\LoginController`, `Minn\Media\Uploads`, `Minn\Ops\Diagnostics`, `Minn\Rest\CommentObject`, `Minn\Rest\IndexController`, `Minn\Rest\MediaObject`, `Minn\Rest\PostObject`, `Minn\Rest\RegisteredPostFields`, `Minn\Rest\RestUrl`, `Minn\Rest\SearchController`, `Minn\Rest\Services`, `Minn\Rest\TermObject`, `Minn\Rest\UserObject`, `Minn\Theme\ClassicContent`, `Minn\Theme\ClassicRenderer`, `Minn\Theme\HeadLinks`, `Minn\Theme\PageRenderer`, `Minn\Theme\Theme`, `Minn\Theme\ThemeStyles`
 
 ```php
 __construct(Minn\Content\Posts $posts, Minn\Content\Terms $terms, string $home, string $structure, int $frontPageId = 0, int $postsPageId = 0, ?Closure $registry = NULL)
@@ -1470,17 +1470,17 @@ Internals: `byId()` (private, line 53), `byPath()` (private, line 76), `singleOr
 
 `final readonly class Minn\Front\SitemapController` · `public/minn/src/Minn/Front/SitemapController.php`
 
-The sitemap index, its pages, and the two stylesheets. With plugins
-loaded they are the reference's: the request's sitemap variables stand
+The sitemap index, its pages, and the two stylesheets, as the
+reference serves them: the request's sitemap variables stand
 in the main query and the sitemaps server answers at template_redirect
 (SitemapRequest), through every filter a plugin hooks, any provider it
 registers among them; what it does not print, the theme renders (a 404,
-or the page a stray address amounts to). Without, the engine's own.
+or the page a stray address amounts to).
 
 Used by: `Minn\Engine`, `Minn\Front\FrontController`
 
 ```php
-__construct(Minn\Front\Sitemaps $sitemaps, Closure $notFound, ?Minn\Theme\MainQueryBridge $bridge = NULL, ?Closure $themed = NULL)
+__construct(Closure $notFound, Minn\Theme\MainQueryBridge $bridge, Closure $themed)
 ```
 
 
@@ -1512,7 +1512,7 @@ The sitemap index stylesheet.
 
 The query form (?sitemap=, ?sitemap-stylesheet=) on the front page, with plugins loaded.
 
-Internals: `served()` (private, line 87), `xml()` (private, line 99)
+Internals: `served()` (private, line 80)
 
 
 ## SitemapRequest
@@ -1545,8 +1545,6 @@ Internals: `page()` (private, line 62), `notFound()` (private, line 82)
 
 The two sitemap documents, index and URL set, from entry maps; one builder for the engine's routes and the facade's renderer.
 
-Used by: `Minn\Front\Sitemaps`
-
 ### static `index(array $entries, ?string $stylesheet): string`
 
 A sitemap index document.
@@ -1564,29 +1562,14 @@ Internals: `elements()` (private, line 32), `document()` (private, line 47)
 
 ## Sitemaps
 
-`final readonly class Minn\Front\Sitemaps` · `public/minn/src/Minn/Front/Sitemaps.php`
+`final class Minn\Front\Sitemaps` · `public/minn/src/Minn/Front/Sitemaps.php`
 
-The sitemap index and its providers (posts, pages, categories, tags,
-authors), in the reference's shape: one file per provider and page, 2000
-URLs a page, lastmod on content only.
+What the sitemaps share with WP_Sitemaps, which serves them: the two
+stylesheets browsers get when they open a sitemap, their CSS
+(wp_sitemaps_stylesheet_css filters it), and the date form an entry's
+lastmod takes.
 
-- const `PER_PAGE` = `2000`
 - const `CSS` = `'body{font:15px/1.5 sans-serif;margin:2em}table{border-collapse:collapse}td{padding:.35em 1em .35em 0;border-bottom:1px solid #ddd}'` — The stylesheets' own CSS (wp_sitemaps_stylesheet_css filters it when plugins are loaded).
-
-Used by: `Minn\Engine`, `Minn\Front\SitemapController`
-
-```php
-__construct(Minn\Db $db, Minn\Content\Site $site, Minn\Front\Permalinks $permalinks)
-```
-
-
-### `index(): string`
-
-The sitemap index's XML.
-
-### `page(string $type, string $subtype, int $page): ?string`
-
-One provider page, or null when the name or page does not exist.
 
 ### static `stylesheet(string $css = self::CSS): string`
 
@@ -1600,7 +1583,7 @@ The stylesheet the sitemap index links: one column, the sitemaps.
 
 A GMT date as a sitemap dates it (W3C, UTC).
 
-Internals: `providers()` (private, line 60), `contentUrls()` (private, line 86), `termUrls()` (private, line 109), `userUrls()` (private, line 124), `authors()` (private, line 131), `xsl()` (private, line 152)
+Internals: `xsl()` (private, line 30)
 
 
 ## StoredRules

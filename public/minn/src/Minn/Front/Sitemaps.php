@@ -4,138 +4,16 @@ declare(strict_types=1);
 
 namespace Minn\Front;
 
-use Minn\Content\TermRecord;
-use Minn\Content\UserRecord;
-use Minn\Content\PostRecord;
-use Minn\Content\Site;
-use Minn\Db;
-
 /**
- * The sitemap index and its providers (posts, pages, categories, tags,
- * authors), in the reference's shape: one file per provider and page, 2000
- * URLs a page, lastmod on content only.
+ * What the sitemaps share with WP_Sitemaps, which serves them: the two
+ * stylesheets browsers get when they open a sitemap, their CSS
+ * (wp_sitemaps_stylesheet_css filters it), and the date form an entry's
+ * lastmod takes.
  */
-final readonly class Sitemaps
+final class Sitemaps
 {
-    private const PER_PAGE = 2000;
-
     /** The stylesheets' own CSS (wp_sitemaps_stylesheet_css filters it when plugins are loaded). */
     public const CSS = 'body{font:15px/1.5 sans-serif;margin:2em}table{border-collapse:collapse}td{padding:.35em 1em .35em 0;border-bottom:1px solid #ddd}';
-
-    public function __construct(
-        private Db $db,
-        private Site $site,
-        private Permalinks $permalinks,
-    ) {
-    }
-
-    /** The sitemap index's XML. */
-    public function index(): string
-    {
-        $entries = [];
-        foreach ($this->providers() as $provider) {
-            for ($page = 1; $page <= $provider['pages']; $page++) {
-                $entries[] = ['loc' => $this->permalinks->url("/wp-sitemap-{$provider['slug']}-{$page}.xml")];
-            }
-        }
-        return SitemapXml::index($entries, $this->permalinks->url('/wp-sitemap-index.xsl'));
-    }
-
-    /** One provider page, or null when the name or page does not exist. */
-    public function page(string $type, string $subtype, int $page): ?string
-    {
-        $urls = match ($type) {
-            'posts' => $this->contentUrls($subtype, $page),
-            'taxonomies' => $this->termUrls($subtype, $page),
-            'users' => $subtype === '' ? $this->userUrls($page) : null,
-            default => null,
-        };
-        if ($urls === null || $urls === []) {
-            return null;
-        }
-        return SitemapXml::urlset(array_map(static fn (array $url) => ['loc' => $url[0], 'lastmod' => $url[1]], $urls), $this->permalinks->url('/wp-sitemap.xsl'));
-    }
-
-    /** @return list<array{slug: string, pages: int}> */
-    private function providers(): array
-    {
-        $providers = [];
-        foreach (['post', 'page'] as $type) {
-            $count = (int) $this->db->value("SELECT COUNT(*) FROM {$this->db->table('posts')} WHERE post_type = ? AND post_status = 'publish'", [$type]);
-            if ($type === 'page') {
-                $count++;
-            }
-            if ($count > 0) {
-                $providers[] = ['slug' => "posts-{$type}", 'pages' => (int) ceil($count / self::PER_PAGE)];
-            }
-        }
-        foreach (['category', 'post_tag'] as $taxonomy) {
-            $count = (int) $this->db->value("SELECT COUNT(*) FROM {$this->db->table('term_taxonomy')} WHERE taxonomy = ? AND count > 0", [$taxonomy]);
-            if ($count > 0) {
-                $providers[] = ['slug' => "taxonomies-{$taxonomy}", 'pages' => (int) ceil($count / self::PER_PAGE)];
-            }
-        }
-        $authors = count($this->authors());
-        if ($authors > 0) {
-            $providers[] = ['slug' => 'users', 'pages' => (int) ceil($authors / self::PER_PAGE)];
-        }
-        return $providers;
-    }
-
-    /** @return list<array{0: string, 1: ?string}>|null */
-    private function contentUrls(string $type, int $page): ?array
-    {
-        if (!in_array($type, ['post', 'page'], true)) {
-            return null;
-        }
-        $rows = $this->db->rows(
-            "SELECT * FROM {$this->db->table('posts')} WHERE post_type = ? AND post_status = 'publish'
-             ORDER BY post_date ASC, ID ASC LIMIT ? OFFSET ?",
-            [$type, self::PER_PAGE, ($page - 1) * self::PER_PAGE],
-        );
-        $urls = [];
-        if ($type === 'page' && $page === 1 && ($this->site->option('show_on_front') ?? 'posts') === 'posts') {
-            // The blog front page leads the pages provider, dated by its newest post.
-            $latest = (string) ($this->db->value("SELECT MAX(post_modified_gmt) FROM {$this->db->table('posts')} WHERE post_type = 'post' AND post_status = 'publish'") ?? '');
-            $urls[] = [$this->permalinks->url('/'), $latest === '' ? null : self::w3c($latest)];
-        }
-        foreach (PostRecord::fromRows($rows) as $post) {
-            $urls[] = [$this->permalinks->forPost($post), self::w3c($post->modifiedGmt)];
-        }
-        return $urls;
-    }
-
-    /** @return list<array{0: string, 1: ?string}>|null */
-    private function termUrls(string $taxonomy, int $page): ?array
-    {
-        if (!in_array($taxonomy, ['category', 'post_tag'], true)) {
-            return null;
-        }
-        $rows = $this->db->rows(
-            "SELECT t.term_id, t.name, t.slug, tt.taxonomy, tt.parent, tt.count
-             FROM {$this->db->table('terms')} t JOIN {$this->db->table('term_taxonomy')} tt ON tt.term_id = t.term_id
-             WHERE tt.taxonomy = ? AND tt.count > 0 ORDER BY t.term_id ASC LIMIT ? OFFSET ?",
-            [$taxonomy, self::PER_PAGE, ($page - 1) * self::PER_PAGE],
-        );
-        return array_map(fn (TermRecord $term) => [$this->permalinks->forTerm($term), null], TermRecord::fromRows($rows));
-    }
-
-    /** @return list<array{0: string, 1: ?string}> */
-    private function userUrls(int $page): array
-    {
-        $authors = array_slice($this->authors(), ($page - 1) * self::PER_PAGE, self::PER_PAGE);
-        return array_map(fn (UserRecord $user) => [$this->permalinks->forAuthor($user), null], UserRecord::fromRows($authors));
-    }
-
-    /** Users with published posts, by id. @return list<array> */
-    private function authors(): array
-    {
-        return $this->db->rows(
-            "SELECT u.ID, u.user_nicename FROM {$this->db->table('users')} u
-             WHERE u.ID IN (SELECT post_author FROM {$this->db->table('posts')} WHERE post_type = 'post' AND post_status = 'publish')
-             ORDER BY u.ID ASC",
-        );
-    }
 
     /** The engine's own stylesheet for browsers that open a sitemap. */
     public static function stylesheet(string $css = self::CSS): string

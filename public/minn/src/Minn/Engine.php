@@ -28,7 +28,6 @@ use Minn\Content\Comments;
 use Minn\Front\AdminBar;
 use Minn\Front\AssetsController;
 use Minn\Front\ProbeController;
-use Minn\Front\Sitemaps;
 use Minn\Front\FrontController;
 use Minn\Front\Renderer;
 use Minn\Front\Resolver;
@@ -300,7 +299,7 @@ final readonly class Engine
         $themed = static function (\Minn\Front\Resolution $resolution) use (&$front): Response { return $front->themed($resolution); };
         $feedController = new \Minn\Front\FeedController($site, $posts, $permalinks, $resolver, $notFound);
         $bridge = new \Minn\Theme\MainQueryBridge($site, $posts, $resolver->perPage());
-        $sitemapController = new \Minn\Front\SitemapController(new Sitemaps($db, $site, $permalinks), $notFound, $bridge, $themed);
+        $sitemapController = new \Minn\Front\SitemapController($notFound, $bridge, $themed);
         $front = new FrontController($resolver, new Renderer($db, $posts, $permalinks, $resolver->perPage()), $pages, $feedController, $cron, $classic, $sitemapController, new \Minn\Theme\EmbedRenderer($bridge));
 
         // The front's routes are public or judge their own session; a policy that asks
