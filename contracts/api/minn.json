@@ -70536,7 +70536,7 @@
             "namespace": "Minn\\Media",
             "kind": "final class",
             "file": "public/minn/src/Minn/Media/Sizing.php",
-            "lines": 207,
+            "lines": 224,
             "doc": "The image size arithmetic the media functions share: the crop or scale a\nresize needs, the registered size a requested box picks, and the srcset\ncandidates an image's sizes yield. Behaviour pinned by contracts/fixtures/api/media.json.",
             "implements": [],
             "extends": null,
@@ -70810,6 +70810,35 @@
                     ],
                     "line": 194,
                     "end": 214
+                },
+                {
+                    "routes": [],
+                    "name": "oldThumbnail",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "oldThumbnail(string $imagefile, string $thumb): ?array",
+                    "doc": "The old thumbnail an image's metadata names (its `thumb`), as a file\nbeside the image with its size, while it is still there (probe\nimage-downsize).",
+                    "shapes": [
+                        "@return array{0: string, 1: int, 2: int}|null the file's name, width and height"
+                    ],
+                    "params": [
+                        {
+                            "name": "imagefile",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "thumb",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 228,
+                    "end": 236
                 },
                 {
                     "routes": [],

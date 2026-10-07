@@ -4562,3 +4562,16 @@ The abilities API works as the reference's does (probe `abilities-registry`):
 - **Over REST.** Only abilities shown in REST are listed or run. No input
   is null, not an empty object. Errors keep their status, invalid input
   is a 400, and the update method message is the reference's.
+
+An image's thumbnail, when no thumbnail size was made, is found as the
+reference finds it (probe `image-downsize`).
+- **image_downsize.** It falls back to the old `thumb` file beside the
+  image, while that file is there, and otherwise to the image itself. The
+  image's dimensions are fitted to the thumbnail box, and it is marked not
+  intermediate.
+- **wp_get_attachment_thumb_url** answers through
+  `wp_get_attachment_image_url`.
+- **The bug this fixes.** The two had called each other without end for
+  any image lacking a thumbnail size. A REST read that touched one, such as
+  minn-admin's ACF field on a page linking such images, grew until it hit
+  the memory limit.

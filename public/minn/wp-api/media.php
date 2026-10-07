@@ -187,22 +187,12 @@ function wp_get_attachment_url($attachment_id = 0)
     return $url === '' ? false : $url;
 }
 
+/** The thumbnail's address: the thumbnail size, the old thumbnail, or the image itself (probe image-downsize). */
 function wp_get_attachment_thumb_url($post_id = 0)
 {
-    $post_id = (int) $post_id ?: get_the_ID();
-    $post = get_post($post_id);
-    if ($post === null) {
-        return false;
-    }
-    $url = wp_get_attachment_url($post->ID);
-    if (!$url) {
-        return false;
-    }
-    $sized = image_downsize($post->ID, 'thumbnail');
-    if ($sized) {
-        $url = $sized[0];
-    }
-    return apply_filters('wp_get_attachment_thumb_url', $url, $post->ID);
+    $post_id = (int) $post_id;
+    $url = wp_get_attachment_image_url($post_id, 'thumbnail');
+    return empty($url) ? false : apply_filters('wp_get_attachment_thumb_url', $url, $post_id);
 }
 
 function wp_attachment_is($type, $post = null)
@@ -264,14 +254,11 @@ function image_downsize($id, $size = 'medium')
         $width = (int) $intermediate['width'];
         $height = (int) $intermediate['height'];
         $is_intermediate = true;
-    } elseif ($size === 'thumbnail') {
-        $thumb = wp_get_attachment_thumb_url($post->ID);
-        if ($thumb && ($info = @getimagesize(get_attached_file($post->ID)))) {
-            $img_url = $thumb;
-            $width = $info[0];
-            $height = $info[1];
-            $is_intermediate = true;
-        }
+    } elseif ($size === 'thumbnail' && ($old = Sizing::oldThumbnail((string) get_attached_file($post->ID), is_array($meta) && is_string($meta['thumb'] ?? null) ? $meta['thumb'] : '')) !== null) {
+        // The old thumbnail beside the file, while it is still there (probe image-downsize).
+        [$name, $width, $height] = $old;
+        $img_url = str_replace($img_url_basename, $name, (string) $img_url);
+        $is_intermediate = true;
     }
     if (!$width && !$height && is_array($meta) && isset($meta['width'], $meta['height'])) {
         $width = (int) $meta['width'];

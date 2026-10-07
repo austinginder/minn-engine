@@ -217,4 +217,21 @@ final class Sizing
     {
         return rtrim($base, '/') . '/' . $path;
     }
+
+    /**
+     * The old thumbnail an image's metadata names (its `thumb`), as a file
+     * beside the image with its size, while it is still there (probe
+     * image-downsize).
+     *
+     * @return array{0: string, 1: int, 2: int}|null the file's name, width and height
+     */
+    public static function oldThumbnail(string $imagefile, string $thumb): ?array
+    {
+        if ($thumb === '') {
+            return null;
+        }
+        $thumbfile = str_replace(basename($imagefile), basename($thumb), $imagefile);
+        $info = is_file($thumbfile) ? @getimagesize($thumbfile) : false;
+        return $info ? [basename($thumbfile), (int) $info[0], (int) $info[1]] : null;
+    }
 }

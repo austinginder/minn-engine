@@ -12,7 +12,7 @@ uploads, image sizes and attachment metadata
 | [`Metadata`](#metadata) | final class | 111 | The _wp_attachment_metadata blob: parsed by scanning for the shapes it |
 | [`PhotoMeta`](#photometa) | final class | 165 | A photo's own description, read as the reference's wp_read_image_metadata |
 | [`PreparedUpload`](#preparedupload) | final readonly class | 13 | An upload made ready for its attachment: the file stored, its sizes cut, |
-| [`Sizing`](#sizing) | final class | 207 | The image size arithmetic the media functions share: the crop or scale a |
+| [`Sizing`](#sizing) | final class | 224 | The image size arithmetic the media functions share: the crop or scale a |
 | [`Upload`](#upload) | final readonly class | 76 | One file arriving for the library, on either transport: a multipart |
 | [`Uploads`](#uploads) | final readonly class | 179 | The uploads directory: paths, URLs, the allowed types, and landing a file. |
 | [`Writer`](#writer) | final readonly class | 181 | The writes the media library makes. An Upload becomes an attachment: the |
@@ -335,6 +335,14 @@ The srcset attribute for at least two sources; null for fewer.
 The image sizes an attachment offers the editor, each with orientation. @param Closure(string): (array|false) $downsize
 
 - `@param Closure(string): (array|false) $downsize`
+
+### static `oldThumbnail(string $imagefile, string $thumb): ?array`
+
+The old thumbnail an image's metadata names (its `thumb`), as a file
+beside the image with its size, while it is still there (probe
+image-downsize).
+
+- `@return array{0: string, 1: int, 2: int}|null the file's name, width and height`
 
 Internals: `join()` (private, line 216)
 
