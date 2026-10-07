@@ -2,12 +2,12 @@
     "generated": "2026-10-07",
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line)",
     "summary": {
-        "minn": 664,
+        "minn": 661,
         "composes": 972,
-        "leaf": 660,
-        "noop": 1953,
-        "functions": 4179,
-        "minnMethods": 765,
+        "leaf": 665,
+        "noop": 1956,
+        "functions": 4180,
+        "minnMethods": 764,
         "leafLinesOver15": 13
     },
     "functions": {
@@ -16783,19 +16783,16 @@
         },
         "_minn_page_list": {
             "file": "template.php",
-            "lines": 11,
+            "lines": 6,
             "kind": "minn",
             "minn": [
-                "Minn\\Content\\Posts::__construct",
-                "Minn\\Front\\PageList::__construct",
-                "Minn\\Runtime\\Runtime::current",
-                "Minn\\Runtime\\Runtime::db"
+                "Minn\\Front\\PageList::__construct"
             ],
             "composes": [
                 "_minn_current_page_trail",
                 "apply_filters",
-                "get_permalink",
-                "wp_parse_id_list"
+                "get_pages",
+                "get_permalink"
             ]
         },
         "_minn_pattern_markup": {
@@ -19856,15 +19853,6 @@
             "minn": [],
             "composes": []
         },
-        "curl_prepare": {
-            "file": "classes/WP_Http.php",
-            "lines": 6,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "do_action_ref_array"
-            ]
-        },
         "current": {
             "file": "requests/Utility.php",
             "lines": 2,
@@ -21993,6 +21981,13 @@
                 "wp_parse_args"
             ]
         },
+        "get_cookies": {
+            "file": "classes/WP_Http.php",
+            "lines": 5,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
         "get_core_updates": {
             "file": "admin.php",
             "lines": 14,
@@ -22375,8 +22370,8 @@
         },
         "get_headers": {
             "file": "classes/WP_Http.php",
-            "lines": 1,
-            "kind": "noop",
+            "lines": 5,
+            "kind": "leaf",
             "minn": [],
             "composes": []
         },
@@ -22965,16 +22960,13 @@
         },
         "get_pages": {
             "file": "post.php",
-            "lines": 4,
-            "kind": "minn",
+            "lines": 1,
+            "kind": "noop",
             "minn": [
-                "Minn\\Runtime\\Pages::arrange",
-                "Minn\\Runtime\\Pages::queryArgs"
+                "Minn\\Runtime\\Pages::get"
             ],
             "composes": [
-                "apply_filters",
-                "wp_parse_args",
-                "wp_parse_id_list"
+                "wp_parse_args"
             ]
         },
         "get_parent_theme_file_path": {
@@ -24278,7 +24270,6 @@
             "minn": [],
             "composes": [
                 "apply_filters",
-                "shape",
                 "taxonomy_exists",
                 "wp_parse_args"
             ]
@@ -25181,7 +25172,7 @@
         },
         "header": {
             "file": "classes/WP_Http.php",
-            "lines": 5,
+            "lines": 4,
             "kind": "leaf",
             "minn": [],
             "composes": []
@@ -26673,7 +26664,7 @@
         },
         "minn_outbound": {
             "file": "requests/Core.php",
-            "lines": 17,
+            "lines": 19,
             "kind": "minn",
             "minn": [
                 "Minn\\Http\\Outbound::__construct"
@@ -26907,17 +26898,6 @@
             "kind": "noop",
             "minn": [],
             "composes": []
-        },
-        "outbound": {
-            "file": "classes/WP_Http.php",
-            "lines": 39,
-            "kind": "minn",
-            "minn": [
-                "Minn\\Http\\Outbound::__construct"
-            ],
-            "composes": [
-                "apply_filters"
-            ]
         },
         "paginate_comments_links": {
             "file": "comment.php",
@@ -28017,6 +27997,13 @@
             "minn": [],
             "composes": []
         },
+        "request_cookies": {
+            "file": "classes/WP_Http.php",
+            "lines": 9,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
         "request_filesystem_credentials": {
             "file": "admin.php",
             "lines": 5,
@@ -28026,12 +28013,28 @@
                 "apply_filters"
             ]
         },
+        "request_headers": {
+            "file": "classes/WP_Http.php",
+            "lines": 11,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
         "request_multiple": {
             "file": "requests/Core.php",
             "lines": 1,
             "kind": "noop",
             "minn": [],
             "composes": []
+        },
+        "request_options": {
+            "file": "classes/WP_Http.php",
+            "lines": 33,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "apply_filters"
+            ]
         },
         "reset": {
             "file": "classes/WP_Object_Cache.php",
@@ -29245,19 +29248,6 @@
             "composes": [
                 "_minn_postdata_globals",
                 "get_post"
-            ]
-        },
-        "shape": {
-            "file": "classes/WP_Http.php",
-            "lines": 12,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "get_status_header_desc",
-                "get_temp_dir",
-                "parse_url",
-                "wp_basename",
-                "wp_tempnam"
             ]
         },
         "shortcode_atts": {

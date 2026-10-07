@@ -596,7 +596,7 @@ The body-class tokens before plugins filter them (bodyClasses()). @return list<s
 
 The page for a resolution, or null when the theme has no template for it.
 
-Internals: `pluginTemplate()` (private, line 169), `skipLinkTarget()` (private, line 190), `documentTitle()` (private, line 199), `head()` (private, line 221)
+Internals: `pluginTemplate()` (private, line 168), `skipLinkTarget()` (private, line 189), `documentTitle()` (private, line 198), `head()` (private, line 220)
 
 
 ## PatternText

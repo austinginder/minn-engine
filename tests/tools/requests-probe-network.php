@@ -134,3 +134,65 @@ $say('wp_remote_post', is_wp_error($wp) ? ['error', $wp->get_error_message()] : 
     unset($data['headers']['host'], $data['headers']['user-agent']);
     return $data;
 })(wp_remote_retrieve_body($wp))]);
+
+// The rest of WordPress's HTTP API: it sends through the Requests library,
+// so the library's hooks fire as requests-{hook} actions, and the answer
+// carries the library's response object.
+$fired = [];
+foreach (['requests.before_request', 'requests.before_parse', 'requests.before_redirect_check', 'requests.before_redirect', 'requests.after_request', 'curl.before_request', 'curl.before_send', 'curl.after_send', 'curl.after_request'] as $hook) {
+    add_action("requests-{$hook}", static function () use (&$fired, $hook) {
+        $fired[] = $hook;
+    });
+}
+$debug = [];
+add_action('http_api_debug', static function ($response, $context, $class, $args, $url) use (&$debug, $plain) {
+    $debug[] = [get_debug_type($response), $context, $class, $plain($url), func_num_args()];
+}, 10, 5);
+$shape = static function ($response) use ($plain) {
+    if (is_wp_error($response)) {
+        return ['error', $response->get_error_code(), (string) preg_replace('/after \d+ ms/', 'after N ms', $response->get_error_message())];
+    }
+    $object = $response['http_response'] ?? null;
+    $inner = is_object($object) && method_exists($object, 'get_response_object') ? $object->get_response_object() : null;
+    return [
+        'keys' => array_keys($response),
+        'headers' => get_debug_type($response['headers']),
+        'type' => wp_remote_retrieve_header($response, 'content-type'),
+        'multi' => wp_remote_retrieve_header($response, 'x-multi'),
+        'response' => $response['response'],
+        'cookies' => array_map(static fn ($c) => [get_debug_type($c), $c->name, $c->value, $c->path ?? null], $response['cookies']),
+        'filename' => $response['filename'] === null ? null : (string) preg_replace('/\d+/', 'N', basename((string) $response['filename'])),
+        'body length' => strlen((string) $response['body']),
+        'http_response' => get_debug_type($object),
+        'inner' => get_debug_type($inner),
+        'inner redirects' => $inner->redirects ?? null,
+        'inner url' => $plain($inner->url ?? null),
+        'inner history' => is_object($inner) ? count($inner->history) : null,
+        'status' => is_object($object) ? $object->get_status() : null,
+    ];
+};
+$fired = [];
+$say('wp_remote_get', [$shape(wp_remote_get("{$echo}?wp=2")), $fired]);
+$fired = [];
+$say('wp_remote_get following redirects', [$shape(wp_remote_get("{$echo}?redirect=2")), $fired]);
+$say('wp_remote_get with redirection 0', $shape(wp_remote_get("{$echo}?redirect=1", ['redirection' => 0])));
+$say('wp_remote_get past its redirection', $shape(wp_remote_get("{$echo}?redirect=3", ['redirection' => 1])));
+$say('wp_remote_get cookies', $shape(wp_remote_get("{$echo}?cookies=1")));
+$sent = wp_remote_get("{$echo}?send=1", ['cookies' => ['a' => 'b', new WP_Http_Cookie(['name' => 'c', 'value' => 'd'])], 'headers' => ['X-Probe' => 'yes']]);
+$say('wp_remote_get sends cookies and headers', is_wp_error($sent) ? 'error' : [json_decode(wp_remote_retrieve_body($sent), true)['cookies'] ?? null, json_decode(wp_remote_retrieve_body($sent), true)['headers']['x-probe'] ?? null]);
+$say('wp_remote_get limited', $shape(wp_remote_get($echo, ['limit_response_size' => 10])));
+$file = sys_get_temp_dir() . '/minn-wp-http-' . getmypid() . '.json';
+$streamed = wp_remote_get($echo, ['stream' => true, 'filename' => $file]);
+$say('wp_remote_get streamed', [$shape($streamed), is_file($file) ? strlen((string) file_get_contents($file)) > 0 : false]);
+@unlink($file);
+$say('wp_remote_head', $shape(wp_remote_head("{$echo}?head=1")));
+$say('wp_remote_get a 404', $shape(wp_remote_get("{$echo}?status=404")));
+$say('wp_remote_get nowhere', $shape(wp_remote_get('http://127.0.0.1:1/', ['timeout' => 2])));
+$say('wp_remote_get not blocking', $shape(wp_remote_get($echo, ['blocking' => false])));
+$say('http_api_debug', $debug);
+$method = static fn ($body) => json_decode((string) $body, true)['method'] ?? null;
+$posted = wp_remote_post("{$echo}?redirect=1", ['body' => ['k' => 'v']]);
+$say('wp_remote_post through a 302', is_wp_error($posted) ? 'error' : $method(wp_remote_retrieve_body($posted)));
+$say('Requests::post through a 302 and a 303', [$method(Requests::post("{$echo}?redirect=1", [], ['k' => 'v'])->body), $method(Requests::post("{$echo}?redirect=1&code=303", [], ['k' => 'v'])->body)]);
+$deleted = wp_remote_request("{$echo}?d=1", ['method' => 'DELETE', 'body' => ['k' => 'v']]);
+$say('wp_remote_request DELETE with a body', is_wp_error($deleted) ? 'error' : [json_decode(wp_remote_retrieve_body($deleted), true)['query'] ?? null, json_decode(wp_remote_retrieve_body($deleted), true)['body'] ?? null]);

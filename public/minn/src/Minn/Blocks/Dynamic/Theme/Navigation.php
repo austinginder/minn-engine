@@ -15,6 +15,7 @@ use Minn\Content\Menus;
 use Minn\Content\Posts;
 use Minn\Content\Terms;
 use Minn\Db;
+use Minn\Runtime\Pages;
 use Minn\Runtime\Runtime;
 use Minn\Front\Kind;
 use Minn\Front\Permalinks;
@@ -226,7 +227,11 @@ final readonly class Navigation
 
     private function pageList(Block $block, Renderer $renderer): string
     {
-        $tree = $this->posts->pageTree();
+        // The reference's pages for the list: get_pages in menu order, then title.
+        $tree = [];
+        foreach (Pages::get(['sort_column' => 'menu_order,post_title', 'sort_order' => 'ASC']) as $page) {
+            $tree[(int) $page->post_parent][] = $page->to_array();
+        }
         // The reference compares the queried object's id to page ids without
         // regard to type, so a term or author archive can light up a page too.
         $currentId = $renderer->context()->resolution->id();

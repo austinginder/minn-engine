@@ -4,8 +4,8 @@ the template blocks a block theme composes with
 
 | Class | Kind | Lines | Summary |
 |---|---|---|---|
-| [`Comments`](#comments) | final readonly class | 245 | comments, comments-title, comment-template, the comment-* blocks, and the comment form. |
-| [`Navigation`](#navigation) | final readonly class | 287 | navigation, navigation-link, page-list. A navigation block's items come |
+| [`Comments`](#comments) | final readonly class | 223 | comments, comments-title, comment-template, the comment-* blocks, and the comment form. |
+| [`Navigation`](#navigation) | final readonly class | 291 | navigation, navigation-link, page-list. A navigation block's items come |
 | [`PostBlocks`](#postblocks) | final readonly class | 255 | The post-* blocks: they render the context's current post. |
 | [`QueryBlocks`](#queryblocks) | final class | 262 | query, post-template, query-title, query-no-results, query-pagination, term-description. |
 | [`Structure`](#structure) | final readonly class | 105 | template-part, pattern, site-title, site-tagline, site-logo. |
@@ -19,7 +19,7 @@ comments, comments-title, comment-template, the comment-* blocks, and the commen
 Used by: `Minn\Theme\PageRenderer`
 
 ```php
-__construct(Minn\Db $db, Minn\Content\Comments $comments, Minn\Content\Site $site, Minn\Front\Permalinks $permalinks)
+__construct(Minn\Content\Site $site, Minn\Front\Permalinks $permalinks)
 ```
 
 
@@ -27,7 +27,7 @@ __construct(Minn\Db $db, Minn\Content\Comments $comments, Minn\Content\Site $sit
 
 Registers this family's blocks with the renderer.
 
-Internals: `comments()` (private, line 53), `title()` (private, line 67), `template()` (private, line 84), `list()` (private, line 99), `avatar()` (private, line 129), `date()` (private, line 141), `authorName()` (private, line 153), `content()` (private, line 167), `replyLink()` (private, line 178), `form()` (private, line 191), `commentForm()` (private, line 206), `visible()` (private, line 230), `linkedEmail()` (private, line 248), `approved()` (private, line 262)
+Internals: `comments()` (private, line 47), `title()` (private, line 61), `template()` (private, line 78), `records()` (private, line 102), `count()` (private, line 115), `list()` (private, line 121), `avatar()` (private, line 151), `date()` (private, line 163), `authorName()` (private, line 175), `content()` (private, line 189), `replyLink()` (private, line 200), `form()` (private, line 213), `commentForm()` (private, line 228)
 
 
 ## Navigation
@@ -51,7 +51,7 @@ __construct(Minn\Db $db, Minn\Content\Posts $posts, Minn\Front\Permalinks $perma
 
 Registers this family's blocks with the renderer.
 
-Internals: `navigation()` (private, line 49), `responsive()` (private, line 117), `items()` (private, line 151), `presetClasses()` (private, line 164), `overlayColors()` (private, line 186), `link()` (private, line 198), `classicItems()` (private, line 221), `pageList()` (private, line 227), `ancestorsOf()` (private, line 237), `pageItems()` (private, line 261), `navParent()` (private, line 292), `menuPost()` (private, line 301), `enqueueView()` (private, line 311)
+Internals: `navigation()` (private, line 50), `responsive()` (private, line 118), `items()` (private, line 152), `presetClasses()` (private, line 165), `overlayColors()` (private, line 187), `link()` (private, line 199), `classicItems()` (private, line 222), `pageList()` (private, line 228), `ancestorsOf()` (private, line 242), `pageItems()` (private, line 266), `navParent()` (private, line 297), `menuPost()` (private, line 306), `enqueueView()` (private, line 316)
 
 
 ## PostBlocks

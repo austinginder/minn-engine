@@ -1140,7 +1140,7 @@ moved this time:
 | Facade | Minn class | What it holds |
 |---|---|---|
 | `WP_Query` | `Runtime\QueryFlags`, `Runtime\QueriedObject` | the is_* flags a set of query variables implies; which object a query is about (term by id or slug, post type, posts page, post, author) |
-| `WP_Http` | `Minn\Http::send`, `Http\Transport`, `Http\Outbound`, `Http\Exchange` | the curl transport: request value in, status + last-hop headers + Set-Cookie values + body out; `Minn\Http::send` is the door, so a test's `Minn\Http::fake()` answers `wp_remote_*()` too |
+| `WP_Http` | `WpOrg\Requests\Requests` (the facade), `Minn\Http::send` | `WP_Http` maps its arguments onto the Requests library, whose curl transport sends through `Minn\Http::send`, so a test's `Minn\Http::fake()` answers `wp_remote_*()` too |
 | `WP_REST_Server` | `Rest\RouteMatch`, `Rest\RouteIndex`, `Rest\AdditionalFields` | handler lookup by method and path with captured params and defaults; the index description of one route; which object type a wp/v2 route serves |
 | `WP_REST_Request` | `Rest\ParamCheck` | the required / validate / sanitize pass over declared arguments |
 | `WP_Block_Supports` | `Blocks\Supports` | wrapper class, style, and id from a block's supports and attributes |
@@ -1991,7 +1991,11 @@ options, and the template functions behind them; fixture
 `contracts/fixtures/api/widgets.json` (55 rows), diffed by the api suite.
 The classes live in `wp-api/classes/`; the list, dropdown and archive
 markup they print comes from `Front\PageList`, `Front\ListSpacing` and
-`Front\Archives` over `Content\Posts`.
+`Front\Archives`. The pages are `get_pages()`'s (`Runtime\Pages`, a
+WP_Query and the `get_pages` filter), with the list's own arguments, as on
+the reference: a page whose parent is not published is left out, and
+`child_of` narrows the query rather than the walk. The navigation's
+`core/page-list` block takes its pages from the same place.
 
 **Facts the widgets settled.**
 
@@ -2344,14 +2348,21 @@ both stacks, and the engine adds only `Requests` and
   time one is used. `Requests::get_certificate_path()` is
   `wp-includes/certificates/ca-bundle.crt`; the engine verifies against the
   system's certificates when that file is absent.
-- `wp_remote_*` (the engine's own `WP_Http`) now sends the same
-  `Accept-Encoding` and `Connection: close`, fires `http_api_curl` with the
-  curl handle, the parsed arguments and the URL, and adds no Content-Type
-  of its own to a form body (it had added `; charset=UTF-8`). Not done: the
-  `requests-{$hook}` actions `wp_remote_*` fires on the reference (it goes
-  through Requests there; the engine's `WP_Http` does not), the
-  `_redirection` key in the arguments `http_api_curl` sees, and
-  `curl_multi` (`request_multiple` sends one after another; the answers
+- `wp_remote_*` sends through the Requests library, as on the reference
+  (since 2026-10-07; before, `WP_Http` had a curl path of its own beside
+  it): the library's hooks fire as `requests-{$hook}` actions in the
+  reference's order, `http_api_curl` gets the curl handle, the parsed
+  arguments and the URL, `$response['http_response']->get_response_object()`
+  is the library's `Response` (redirect count, history, final URL), cookie
+  values come back decoded, a header sent twice comes back as a list, a
+  transport failure reads `cURL error N: ...`, past the redirection limit
+  `Too many redirects`, `redirection` 0 returns the 3xx, a 302 answering a
+  POST is followed with a GET (the library alone keeps the POST and turns
+  only a 303 into a GET), a body goes in the body for anything but GET and
+  HEAD (`data_format`), and a request that does not wait still reaches
+  `http_api_debug`. Probe rows in `tests/tools/requests-probe-network.php`.
+  Not done: the `_redirection` key in the arguments `http_api_curl` sees,
+  and `curl_multi` (`request_multiple` sends one after another; the answers
   come back in input order, the reference's in completion order).
 
 ## The kses tag pass (2026-10-05)

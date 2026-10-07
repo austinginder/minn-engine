@@ -9,7 +9,7 @@ reference's behaviour (`contracts/runtime.md`) and reach the same transport.
 | Layer | What it does |
 |---|---|
 | `Minn\Http` | The front door. Six verbs with named arguments, the destination rules, redirects followed hop by hop, the fake |
-| `Minn\Http::send(Outbound)` | Sends exactly what the request says with none of the verbs' rules. `WP_Http` and `WpOrg\Requests\Transport\Curl` arrive here after applying WordPress's own rules, so a fake answers them too |
+| `Minn\Http::send(Outbound)` | Sends exactly what the request says with none of the verbs' rules. `WpOrg\Requests\Transport\Curl` arrives here after applying the library's rules, and `WP_Http` through it after WordPress's, so a fake answers them too |
 | `Http\Transport` | curl. Never called directly outside `Minn\Http` |
 | `Http\Download` | Packages and language packs: https at every hop, optional host prefixes, a size cap, messages written for the person who asked |
 

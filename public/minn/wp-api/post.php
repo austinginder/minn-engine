@@ -968,10 +968,7 @@ function get_posts($args = null)
 
 function get_pages($args = [])
 {
-    $parsed = wp_parse_args($args, Pages::DEFAULTS);
-    $query = Pages::queryArgs($parsed, empty($parsed['include']) ? [] : wp_parse_id_list($parsed['include']), empty($parsed['exclude']) ? [] : wp_parse_id_list($parsed['exclude']));
-    $pages = Pages::arrange((new WP_Query())->query($query), $parsed);
-    return apply_filters('get_pages', $pages, $parsed);
+    return Pages::get(wp_parse_args($args));
 }
 
 /** @internal every page under one ancestor, in list order */

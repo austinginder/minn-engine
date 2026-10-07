@@ -4,12 +4,30 @@ declare(strict_types=1);
 
 namespace Minn\Runtime;
 
-/** get_pages() as the reference shapes it: its arguments as a post query, and the tree order of the result. */
+/**
+ * get_pages() as the reference shapes it: its arguments as a post query
+ * (WP_Query, so its filters shape it), the tree order of the result, then
+ * the get_pages filter. wp_list_pages, wp_dropdown_pages and the
+ * navigation's page list take their pages from here.
+ */
 final class Pages
 {
     public const DEFAULTS = ['child_of' => 0, 'sort_order' => 'ASC', 'sort_column' => 'post_title', 'hierarchical' => 1, 'exclude' => [], 'include' => [], 'meta_key' => '', 'meta_value' => '', 'authors' => '', 'parent' => -1, 'exclude_tree' => [], 'number' => '', 'offset' => 0, 'post_type' => 'page', 'post_status' => 'publish'];
 
     private const COLUMNS = ['post_title' => 'title', 'menu_order' => 'menu_order', 'post_date' => 'date', 'post_modified' => 'modified', 'ID' => 'ID', 'post_author' => 'author', 'post_name' => 'name', 'post_parent' => 'parent'];
+
+    /**
+     * The pages get_pages() answers for parsed arguments.
+     *
+     * @param array<string, mixed> $args
+     * @return array<int, \WP_Post>
+     */
+    public static function get(array $args): array
+    {
+        $parsed = array_merge(self::DEFAULTS, $args);
+        $query = self::queryArgs($parsed, self::ids($parsed['include']), self::ids($parsed['exclude']));
+        return (array) \apply_filters('get_pages', self::arrange((new \WP_Query())->query($query), $parsed), $parsed);
+    }
 
     /** The post query arguments the get_pages() arguments amount to. @param list<int> $include @param list<int> $exclude */
     public static function queryArgs(array $parsed, array $include, array $exclude): array
@@ -68,7 +86,7 @@ final class Pages
             $pages = self::children($pages, $childOf);
         }
         $pages = array_values($pages);
-        foreach (\wp_parse_id_list($parsed['exclude_tree']) as $tree) {
+        foreach (self::ids($parsed['exclude_tree']) as $tree) {
             $excluded = array_map(static fn (object $p) => (int) $p->ID, self::children($pages, $tree));
             $excluded[] = $tree;
             $pages = array_filter($pages, static fn (object $p) => !in_array((int) $p->ID, $excluded, true));
@@ -100,6 +118,13 @@ final class Pages
             }
         }
         return $out;
+    }
+
+    /** Ids as an argument gives them: a list, or a comma or space separated string. @return list<int> */
+    private static function ids(mixed $list): array
+    {
+        $items = is_array($list) ? $list : (preg_split('/[\s,]+/', (string) $list, -1, PREG_SPLIT_NO_EMPTY) ?: []);
+        return array_values(array_unique(array_map(static fn ($id): int => abs((int) $id), $items)));
     }
 
     /** Every page under one ancestor, in list order. @param list<object> $pages @return list<object> */

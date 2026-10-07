@@ -76,7 +76,11 @@ newline right after a closing tag is swallowed. Anything else renders as nothing
   label is always "Menu"). `page-list` marks `current-menu-item` (+`aria-current`) and
   `current-menu-ancestor` by comparing the QUERIED OBJECT'S ID to page ids with no regard
   to type, so a tag archive with term id 2 lights up the page with id 2. Reproduced.
-- `comments` family: nothing unless the post has comments or takes them;
+- `comments` family: nothing unless the post has comments or takes them (its
+  count as `get_comments_number` filters it); the template lists through
+  `WP_Comment_Query` with `build_comment_query_vars_from_block`'s vars
+  (approved plus the reader's own held ones, oldest first, threaded and paged
+  as the site says, newest first reversing only the top level);
   `comments-title` `One response to &#8220;…&#8221;`; comment list items `comment
   even|odd thread-even|odd depth-{n}` with the FIRST comment `even`; avatars at
   `size`/`2x`; the reply link with the `?replytocom=` href and data attributes; the

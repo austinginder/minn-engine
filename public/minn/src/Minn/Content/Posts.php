@@ -263,20 +263,6 @@ final readonly class Posts
         ));
     }
 
-    /** Published pages as a parent => children map, ordered by menu_order then title. */
-    public function pageTree(): array
-    {
-        $tree = [];
-        $rows = $this->db->rows(
-            "SELECT ID, post_title, post_name, post_parent FROM {$this->db->table('posts')}
-             WHERE post_type = 'page' AND post_status = 'publish' ORDER BY menu_order ASC, post_title ASC",
-        );
-        foreach ($rows as $row) {
-            $tree[(int) $row['post_parent']][] = $row;
-        }
-        return $tree;
-    }
-
     /**
      * The newest modification time among published posts, for
      * get_lastpostmodified: one type or all of them, blog or GMT column.
@@ -305,26 +291,6 @@ final readonly class Posts
             [$type, $first->format('Y-m-d 00:00:00'), $first->format('Y-m-t 23:59:59')],
         );
         return array_map(static fn (array $row): int => (int) $row['d'], $rows);
-    }
-
-    /**
-     * The published pages in a sort order, for a page list: id, parent, title.
-     *
-     * @return list<array{id: int, parent: int, name: string, title: string}>
-     */
-    public function pages(string $sortColumn, string $order): array
-    {
-        $columns = [];
-        foreach (explode(',', $sortColumn) as $column) {
-            $column = trim($column);
-            $columns[] = in_array($column, ['post_title', 'menu_order', 'ID', 'post_date', 'post_modified', 'post_author', 'post_name', 'comment_count'], true) ? $column : 'post_title';
-        }
-        $direction = strtoupper($order) === 'DESC' ? 'DESC' : 'ASC';
-        $rows = $this->db->rows(
-            "SELECT ID, post_parent, post_name, post_title FROM {$this->db->table('posts')} WHERE post_type = 'page' AND post_status = 'publish'
-             ORDER BY " . implode(' ' . $direction . ', ', array_unique($columns)) . ' ' . $direction,
-        );
-        return array_map(static fn (array $row): array => ['id' => (int) $row['ID'], 'parent' => (int) $row['post_parent'], 'name' => (string) $row['post_name'], 'title' => (string) $row['post_title']], $rows);
     }
 
     /**

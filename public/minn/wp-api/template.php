@@ -840,7 +840,7 @@ function wp_list_pages($args = '')
     $spacing = $r['item_spacing'] === 'discard'
         ? ListSpacing::discarded((string) $r['link_before'], (string) $r['link_after'])
         : ListSpacing::preserved((string) $r['link_before'], (string) $r['link_after']);
-    $items = _minn_page_list($r)->items((int) $r['child_of'], (int) $r['depth'], $spacing);
+    $items = _minn_page_list($r)->items(0, (int) $r['depth'], $spacing);
     $output = '';
     if ($items !== '') {
         $output = $r['title_li'] ? '<li class="pagenav">' . $r['title_li'] . '<ul>' . $items . '</ul></li>' : $items;
@@ -858,7 +858,7 @@ function wp_dropdown_pages($args = '')
     $r = wp_parse_args($args, ['depth' => 0, 'child_of' => 0, 'selected' => 0, 'echo' => 1, 'name' => 'page_id', 'id' => '', 'class' => '', 'show_option_none' => '', 'show_option_no_change' => '', 'option_none_value' => '', 'value_field' => 'ID', 'sort_column' => 'post_title', 'sort_order' => 'ASC', 'exclude' => '', 'include' => '']);
     $field = (string) $r['value_field'];
     $value = static fn (array $page): string => $field === 'post_name' ? esc_attr($page['name']) : (string) $page['id'];
-    $options = _minn_page_list($r)->options((int) $r['child_of'], (int) $r['depth'], (int) $r['selected'], $value);
+    $options = _minn_page_list($r)->options(0, (int) $r['depth'], (int) $r['selected'], $value);
     $output = '';
     if ($options !== '') {
         $class = $r['class'] !== '' ? " class='" . esc_attr($r['class']) . "'" : '';
@@ -882,15 +882,10 @@ function wp_dropdown_pages($args = '')
 /** @internal the published pages a list or dropdown shows, nested by parent */
 function _minn_page_list(array $r): PageList
 {
-    $include = wp_parse_id_list($r['include'] ?? '');
-    $exclude = wp_parse_id_list($r['exclude'] ?? '');
     $rows = [];
-    foreach ((new Posts(Runtime::current()->db))->pages((string) $r['sort_column'], (string) $r['sort_order']) as $page) {
-        if ($include !== [] ? !in_array($page['id'], $include, true) : in_array($page['id'], $exclude, true)) {
-            continue;
-        }
-        $title = apply_filters('the_title', $page['title'], $page['id']);
-        $rows[] = ['id' => $page['id'], 'parent' => $page['parent'], 'name' => $page['name'], 'title' => $title === '' ? '#' . $page['id'] : $title, 'link' => get_permalink($page['id'])];
+    foreach (get_pages($r) as $page) {
+        $title = apply_filters('the_title', $page->post_title, $page->ID);
+        $rows[] = ['id' => (int) $page->ID, 'parent' => (int) $page->post_parent, 'name' => $page->post_name, 'title' => $title === '' ? '#' . $page->ID : $title, 'link' => get_permalink($page)];
     }
     return new PageList($rows, _minn_current_page_trail());
 }

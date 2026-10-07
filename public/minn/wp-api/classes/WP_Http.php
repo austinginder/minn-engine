@@ -1,8 +1,6 @@
 <?php
 
 namespace {
-    use Minn\Http\Exchange;
-    use Minn\Http\Outbound;
 
     #[AllowDynamicProperties]
     class WP_HTTP_Response
@@ -63,12 +61,13 @@ namespace {
         }
     }
 
+    /** A Requests library response as WordPress hands it to plugins: the library's object inside, the array shape outside. */
     class WP_HTTP_Requests_Response extends WP_HTTP_Response
     {
         protected $response;
         protected $filename;
 
-        public function __construct($response, $filename = '')
+        public function __construct(\WpOrg\Requests\Response $response, $filename = '')
         {
             $this->response = $response;
             $this->filename = $filename;
@@ -79,24 +78,62 @@ namespace {
             return $this->response;
         }
 
+        /** The headers, one value as a string and several as a list. */
         public function get_headers()
         {
-            return $this->response['headers'] ?? new \WpOrg\Requests\Utility\CaseInsensitiveDictionary();
+            $headers = new \WpOrg\Requests\Utility\CaseInsensitiveDictionary();
+            foreach ($this->response->headers->getAll() as $name => $values) {
+                $headers[$name] = count($values) === 1 ? $values[0] : $values;
+            }
+            return $headers;
+        }
+
+        public function set_headers($headers)
+        {
+            $this->response->headers = new \WpOrg\Requests\Response\Headers((array) $headers);
+        }
+
+        public function header($key, $value, $replace = true)
+        {
+            if ($replace) {
+                unset($this->response->headers[$key]);
+            }
+            $this->response->headers[$key] = $value;
         }
 
         public function get_status()
         {
-            return (int) ($this->response['code'] ?? 0);
+            return $this->response->status_code;
+        }
+
+        public function set_status($code)
+        {
+            $this->response->status_code = absint($code);
         }
 
         public function get_data()
         {
-            return $this->response['body'] ?? '';
+            return $this->response->body;
+        }
+
+        public function set_data($data)
+        {
+            $this->response->body = $data;
+        }
+
+        /** The cookies the response set, as WordPress's cookie objects (values decoded). */
+        public function get_cookies()
+        {
+            $cookies = [];
+            foreach ($this->response->cookies as $cookie) {
+                $cookies[] = new WP_Http_Cookie(['name' => $cookie->name, 'value' => urldecode($cookie->value), 'expires' => $cookie->attributes['expires'] ?? null, 'path' => $cookie->attributes['path'] ?? null, 'domain' => $cookie->attributes['domain'] ?? null, 'host_only' => $cookie->flags['host-only'] ?? null]);
+            }
+            return $cookies;
         }
 
         public function to_array()
         {
-            return ['headers' => $this->get_headers(), 'body' => $this->get_data(), 'response' => ['code' => $this->get_status(), 'message' => get_status_header_desc($this->get_status())], 'cookies' => [], 'filename' => $this->filename];
+            return ['headers' => $this->get_headers(), 'body' => $this->get_data(), 'response' => ['code' => $this->get_status(), 'message' => get_status_header_desc($this->get_status())], 'cookies' => $this->get_cookies(), 'filename' => $this->filename];
         }
     }
 
@@ -176,18 +213,101 @@ namespace {
             if ($url instanceof WP_Error) {
                 return $url;
             }
-            $exchange = \Minn\Http::send($this->outbound($url, $parsed_args));
+            if ($parsed_args['stream'] && empty($parsed_args['filename'])) {
+                $parsed_args['filename'] = get_temp_dir() . wp_basename((string) parse_url($url, PHP_URL_PATH));
+            }
+            try {
+                $sent = \WpOrg\Requests\Requests::request($url, self::request_headers($parsed_args['headers']), $parsed_args['body'], strtoupper((string) $parsed_args['method']), $this->request_options($url, $parsed_args));
+                $http = new WP_HTTP_Requests_Response($sent, $parsed_args['stream'] ? (string) $parsed_args['filename'] : '');
+                $response = $http->to_array();
+                $response['filename'] = $parsed_args['stream'] ? $parsed_args['filename'] : null;
+                $response['http_response'] = $http;
+            } catch (\WpOrg\Requests\Exception $failure) {
+                $response = new WP_Error('http_request_failed', $failure->getMessage());
+            }
+            do_action('http_api_debug', $response, 'response', 'WpOrg\\Requests\\Requests', $parsed_args, $url);
+            if ($response instanceof WP_Error) {
+                return $response;
+            }
             if (!$parsed_args['blocking']) {
                 return ['headers' => [], 'body' => '', 'response' => ['code' => false, 'message' => false], 'cookies' => [], 'http_response' => null];
             }
-            if ($exchange->failed()) {
-                $response = new WP_Error('http_request_failed', (string) $exchange->error);
-                do_action('http_api_debug', $response, 'response', 'WpOrg\\Requests\\Requests', $parsed_args, $url);
-                return $response;
-            }
-            $response = $this->shape($exchange, $url, $parsed_args);
-            do_action('http_api_debug', $response, 'response', 'WpOrg\\Requests\\Requests', $parsed_args, $url);
             return apply_filters('http_response', $response, $parsed_args, $url);
+        }
+
+        /** The headers a request was given, as a list of name => value (a raw header block is split into lines). */
+        private static function request_headers($headers): array
+        {
+            if (!is_string($headers)) {
+                return (array) $headers;
+            }
+            $out = [];
+            foreach (preg_split('/\r?\n/', $headers) ?: [] as $line) {
+                if (str_contains($line, ':')) {
+                    [$name, $value] = explode(':', $line, 2);
+                    $out[trim($name)] = trim($value);
+                }
+            }
+            return $out;
+        }
+
+        /**
+         * What the Requests library is told: the time it may take, who asks,
+         * whether it waits, the hooks WordPress forwards as requests-{hook}
+         * actions, where a streamed body goes, how many redirects it follows
+         * (none at 0), the byte limit, the cookies, certificate checking
+         * (through https_ssl_verify), a body for anything but GET and HEAD,
+         * and the proxy WordPress is configured with.
+         */
+        private function request_options(string $url, array $args): array
+        {
+            $hooks = new WP_HTTP_Requests_Hooks($url, $args);
+            // A 302 answering a POST is followed with a GET, as browsers do.
+            $hooks->register('requests.before_redirect', static function (&$location, &$headers, &$data, &$options, $original): void {
+                if ($original->status_code === 302 && $options['type'] === \WpOrg\Requests\Requests::POST) {
+                    $options['type'] = \WpOrg\Requests\Requests::GET;
+                }
+            });
+            $options = ['timeout' => (float) $args['timeout'], 'useragent' => (string) $args['user-agent'], 'blocking' => (bool) $args['blocking'], 'hooks' => $hooks];
+            if ($args['stream']) {
+                $options['filename'] = $args['filename'];
+            }
+            if (empty($args['redirection'])) {
+                $options['follow_redirects'] = false;
+            } else {
+                $options['redirects'] = (int) $args['redirection'];
+            }
+            if ($args['limit_response_size'] !== null) {
+                $options['max_bytes'] = (int) $args['limit_response_size'];
+            }
+            if (!empty($args['cookies'])) {
+                $options['cookies'] = self::request_cookies((array) $args['cookies']);
+            }
+            // Verification as plugins leave it: off, the certificate bundle given, or on.
+            $verify = !$args['sslverify'] ? false : (!empty($args['sslcertificates']) ? (string) $args['sslcertificates'] : true);
+            $options['verify'] = apply_filters('https_ssl_verify', $verify, $url);
+            if (!in_array(strtoupper((string) $args['method']), ['GET', 'HEAD'], true)) {
+                $options['data_format'] = 'body';
+            }
+            $proxy = new WP_HTTP_Proxy();
+            if ($proxy->is_enabled() && $proxy->send_through_proxy($url)) {
+                $options['proxy'] = $proxy->use_authentication() ? [$proxy->host() . ':' . $proxy->port(), $proxy->username(), $proxy->password()] : $proxy->host() . ':' . $proxy->port();
+            }
+            return $options;
+        }
+
+        /** The cookies a request carries, as the library's jar: WordPress cookie objects and name => value pairs alike. */
+        private static function request_cookies(array $cookies): \WpOrg\Requests\Cookie\Jar
+        {
+            $jar = new \WpOrg\Requests\Cookie\Jar();
+            foreach ($cookies as $name => $cookie) {
+                if ($cookie instanceof WP_Http_Cookie) {
+                    $jar[(string) $cookie->name] = new \WpOrg\Requests\Cookie((string) $cookie->name, (string) $cookie->value, array_filter($cookie->get_attributes(), static fn ($value) => $value !== null));
+                } elseif (is_scalar($cookie)) {
+                    $jar[(string) $name] = new \WpOrg\Requests\Cookie((string) $name, (string) $cookie);
+                }
+            }
+            return $jar;
         }
 
         private function validated_url($url, bool $rejectUnsafe)
@@ -207,77 +327,6 @@ namespace {
             }
             return $url ?: new WP_Error('http_request_failed', 'A valid URL was not provided.');
         }
-
-        private function outbound(string $url, array $args): Outbound
-        {
-            $headers = [];
-            foreach ((array) $args['headers'] as $name => $value) {
-                $headers[] = is_int($name) ? (string) $value : "{$name}: {$value}";
-            }
-            $cookieHeader = [];
-            foreach ((array) $args['cookies'] as $name => $cookie) {
-                if ($cookie instanceof WP_Http_Cookie) {
-                    $cookieHeader[] = $cookie->getHeaderValue();
-                } elseif (is_string($name)) {
-                    $cookieHeader[] = $name . '=' . $cookie;
-                }
-            }
-            if ($cookieHeader !== []) {
-                $headers[] = 'Cookie: ' . implode('; ', $cookieHeader);
-            }
-            $body = $args['body'];
-            if (is_array($body) || is_object($body)) {
-                // curl labels a form body application/x-www-form-urlencoded, as on the reference; nothing is added here.
-                $body = http_build_query((array) $body, '', '&');
-            }
-            if (!array_filter($headers, static fn ($h) => stripos($h, 'connection:') === 0)) {
-                $headers[] = 'Connection: close';
-            }
-            // Verification as plugins leave it: off, the certificate bundle given, or on (https_ssl_verify).
-            $verify = !$args['sslverify'] ? false : (!empty($args['sslcertificates']) ? (string) $args['sslcertificates'] : true);
-            $verify = apply_filters('https_ssl_verify', $verify, $url);
-            return new Outbound(
-                method: strtoupper((string) $args['method']),
-                url: $url,
-                headers: $headers,
-                body: $body === null ? null : (string) $body,
-                timeout: (float) $args['timeout'],
-                redirects: (int) $args['redirection'],
-                verifySsl: $verify !== false,
-                userAgent: (string) $args['user-agent'],
-                caInfo: is_string($verify) && $verify !== '' ? $verify : null,
-                blocking: (bool) $args['blocking'],
-                prepare: self::curl_prepare($args, $url),
-            );
-        }
-
-        /** As the reference's transport does: curl negotiates compression, and plugins tune the handle through http_api_curl. */
-        private static function curl_prepare(array $args, string $url): \Closure
-        {
-            return static function (\CurlHandle $handle) use ($args, $url): void {
-                if (!empty($args['decompress'])) {
-                    curl_setopt($handle, CURLOPT_ENCODING, '');
-                }
-                do_action_ref_array('http_api_curl', [&$handle, $args, $url]);
-            };
-        }
-
-        private function shape(Exchange $exchange, string $url, array $args): array
-        {
-            $dictionary = new \WpOrg\Requests\Utility\CaseInsensitiveDictionary($exchange->headers);
-            $cookies = array_map(static fn (string $value) => new WP_Http_Cookie($value, $url), $exchange->cookies);
-            $bodyText = $args['limit_response_size'] !== null ? substr($exchange->body, 0, (int) $args['limit_response_size']) : $exchange->body;
-            $filename = null;
-            if ($args['stream']) {
-                $filename = $args['filename'] ?: get_temp_dir() . wp_basename((string) parse_url($url, PHP_URL_PATH)) ?: wp_tempnam();
-                file_put_contents($filename, $bodyText);
-                $bodyText = '';
-            }
-            $response = ['headers' => $dictionary, 'body' => $bodyText, 'response' => ['code' => $exchange->code, 'message' => get_status_header_desc($exchange->code)], 'cookies' => $cookies, 'filename' => $filename];
-            $response['http_response'] = new WP_HTTP_Requests_Response(['headers' => $dictionary, 'body' => $bodyText, 'code' => $exchange->code], (string) $filename);
-            return $response;
-        }
-
         public function post($url, $args = [])
         {
             return $this->request($url, wp_parse_args($args, ['method' => 'POST']));

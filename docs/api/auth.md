@@ -602,7 +602,7 @@ defines, so the engine keys off exactly what the install used.
 
 - const `SCHEMES` = `array (   'logged_in' =>    array (     0 => 'LOGGED_IN_KEY',     1 => 'LOGGED_IN_SALT',   ),   'nonce' =>    array (     0 => 'NONCE_KEY',     1 => 'NONCE_SALT',   ),   'auth' =>    array (     0 => 'AUTH_KEY',     1 => 'AUTH_SALT',   ),   'secure_auth' =>    array (     0 => 'SECURE_AUTH_KEY',     1 => 'SECURE_AUTH_SALT',   ), )`
 
-Used by: `Minn\Auth\AuthCookies`, `Minn\Auth\Cookie`, `Minn\Auth\Nonce`, `Minn\Auth\PasswordReset`, `Minn\Blocks\Dynamic\Theme\Comments`, `Minn\Engine`
+Used by: `Minn\Auth\AuthCookies`, `Minn\Auth\Cookie`, `Minn\Auth\Nonce`, `Minn\Auth\PasswordReset`, `Minn\Engine`
 
 ### static `configured(): bool`
 

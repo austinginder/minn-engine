@@ -5,29 +5,23 @@ declare(strict_types=1);
 namespace Minn\Blocks\Dynamic\Theme;
 
 use Minn\Content\CommentRecord;
+use Minn\Content\PostRecord;
 use Minn\Blocks\Block;
 use Minn\Blocks\Dynamic\Dates;
 use Minn\Blocks\Renderer;
 use Minn\Blocks\Styles;
 use Minn\Content\Blocks;
-use Minn\Content\Comments as CommentStore;
 use Minn\Content\Site;
 use Minn\Content\Texturize;
-use Minn\Db;
 use Minn\Front\Permalinks;
 use Minn\Support\Html;
 use Minn\Support\Kses;
 use Minn\Content\PasswordGate;
-use Minn\Content\Reader;
-use Minn\Auth\Salts;
-use Minn\Runtime\Runtime;
 
 /** comments, comments-title, comment-template, the comment-* blocks, and the comment form. */
 final readonly class Comments
 {
     public function __construct(
-        private Db $db,
-        private CommentStore $comments,
         private Site $site,
         private Permalinks $permalinks,
     ) {
@@ -53,7 +47,7 @@ final readonly class Comments
     private function comments(Block $block, Renderer $renderer): string
     {
         $post = $renderer->context()->post();
-        if ($post === null || PasswordGate::is($post) || ($post->commentStatus !== 'open' && $this->approved($post->id) === [])) {
+        if ($post === null || PasswordGate::is($post) || ($post->commentStatus !== 'open' && self::count($post) === 0)) {
             return '';
         }
         $out = '';
@@ -70,7 +64,7 @@ final readonly class Comments
         if ($post === null) {
             return '';
         }
-        $count = count($this->approved($post->id));
+        $count = self::count($post);
         if ($count === 0) {
             return '';
         }
@@ -88,11 +82,39 @@ final readonly class Comments
         if ($post === null) {
             return '';
         }
-        $all = $this->visible($post->id);
-        if ($all === []) {
-            return '';
+        // The reference's comment query for a template (build_comment_query_vars_from_block): approved ones and
+        // the reader's own held ones, oldest first, threaded and paged as the site says.
+        $vars = \build_comment_query_vars_from_block((object) ['context' => ['postId' => $post->id]]);
+        $comments = (array) (new \WP_Comment_Query())->query($vars);
+        // Newest first, when the site lists them so, is the top level reversed; replies keep their order.
+        $comments = $this->site->option('comment_order') === 'desc' ? array_reverse($comments) : $comments;
+        $all = self::records($comments, ($vars['hierarchical'] ?? false) === 'threaded');
+        return $all === [] ? '' : $this->list($all, 0, 1, $block, $renderer);
+    }
+
+    /**
+     * The query's comments as records, each followed by its replies when
+     * they are threaded; unthreaded, every one stands at the top level.
+     *
+     * @param list<\WP_Comment> $comments
+     * @return list<CommentRecord>
+     */
+    private static function records(array $comments, bool $threaded): array
+    {
+        $out = [];
+        foreach ($comments as $comment) {
+            $out[] = CommentRecord::fromRow(($threaded ? [] : ['comment_parent' => 0]) + get_object_vars($comment));
+            if ($threaded) {
+                array_push($out, ...self::records(array_values($comment->get_children()), true));
+            }
         }
-        return $this->list($all, 0, 1, $block, $renderer);
+        return $out;
+    }
+
+    /** How many comments a post shows: its count, as get_comments_number filters it. */
+    private static function count(PostRecord $post): int
+    {
+        return (int) \apply_filters('get_comments_number', $post->commentCount, $post->id);
     }
 
     /** @param list<array> $all */
@@ -219,52 +241,4 @@ final readonly class Comments
         return str_replace('class="comment-respond"', 'class="' . Html::attr($classes) . '"', $form);
     }
 
-    /**
-     * The approved plain comments and the reader's own held ones, oldest
-     * first: held comments by the signed-in account, by the email the
-     * commenter cookie remembers, or by the email of the held comment a
-     * link names with its moderation hash (wp_hash of its GMT date).
-     *
-     * @return list<CommentRecord>
-     */
-    private function visible(int $postId): array
-    {
-        $reader = Reader::current();
-        $request = Runtime::current()->request;
-        $emails = array_filter([$reader->userId > 0 ? '' : (string) ($request?->cookies['comment_author_email_' . md5((string) $this->site->option('siteurl'))] ?? ''), $this->linkedEmail($request?->query ?? [])]);
-        $own = $reader->userId > 0 ? ['user_id = ?'] : [];
-        foreach ($emails as $ignored) {
-            $own[] = 'comment_author_email = ?';
-        }
-        $held = $own === [] ? '' : " OR (comment_approved = '0' AND (" . implode(' OR ', $own) . '))';
-        return CommentRecord::fromRows($this->db->rows(
-            "SELECT * FROM {$this->db->table('comments')} WHERE comment_post_ID = ? AND comment_type IN ('', 'comment') AND (comment_approved = '1'{$held})
-             ORDER BY comment_date_gmt ASC, comment_ID ASC",
-            [$postId, ...($reader->userId > 0 ? [$reader->userId] : []), ...array_values($emails)],
-        ));
-    }
-
-    /** The author email of the held comment ?unapproved= names, when ?moderation-hash= proves the link came from posting it in the last ten minutes. @param array<string, mixed> $query */
-    private function linkedEmail(array $query): string
-    {
-        $id = (int) ($query['unapproved'] ?? 0);
-        $hash = (string) ($query['moderation-hash'] ?? '');
-        if ($id <= 0 || $hash === '') {
-            return '';
-        }
-        $row = $this->db->row("SELECT * FROM {$this->db->table('comments')} WHERE comment_ID = ? AND comment_approved = '0'", [$id]);
-        $held = $row === null ? null : CommentRecord::fromRow($row);
-        $fresh = $held !== null && (int) strtotime($held->dateGmt . ' UTC') + 600 > time();
-        return $fresh && hash_equals(Salts::hash($held->dateGmt, 'auth'), $hash) ? $held->authorEmail : '';
-    }
-
-    /** @return list<CommentRecord> approved plain comments, oldest first */
-    private function approved(int $postId): array
-    {
-        return CommentRecord::fromRows($this->db->rows(
-            "SELECT * FROM {$this->db->table('comments')} WHERE comment_post_ID = ? AND comment_approved = '1' AND comment_type IN ('', 'comment')
-             ORDER BY comment_date_gmt ASC, comment_ID ASC",
-            [$postId],
-        ));
-    }
 }

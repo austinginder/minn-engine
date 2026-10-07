@@ -605,7 +605,9 @@ namespace WpOrg\Requests\Transport {
         {
             $method = strtoupper((string) ($options['type'] ?? Requests::GET));
             $body = null;
-            if (in_array($method, [Requests::GET, Requests::HEAD, Requests::DELETE], true)) {
+            // The data rides in the query for GET, HEAD and DELETE unless the caller asks for a body (data_format).
+            $format = $options['data_format'] ?? (in_array($method, [Requests::GET, Requests::HEAD, Requests::DELETE], true) ? 'query' : 'body');
+            if ($format === 'query') {
                 if (!empty($data)) {
                     $url .= (str_contains($url, '?') ? '&' : '?') . (is_array($data) ? http_build_query($data, '', '&') : $data);
                 }
