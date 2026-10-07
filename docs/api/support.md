@@ -23,6 +23,7 @@ escaping, serialized readers, small helpers
 | [`Locale`](#locale) | final class | 31 | The locale's calendar and number vocabulary as data: the names a site |
 | [`Markers`](#markers) | final class | 59 | The BEGIN/END marker blocks insert_with_markers() maintains in files like |
 | [`Paths`](#paths) | final class | 64 | File-system path and permission spellings. |
+| [`ScriptTag`](#scripttag) | final class | 69 | Script elements as the reference builds them (probe script-tags): the |
 | [`SearchReplace`](#searchreplace) | final class | 38 | String replace that walks serialized-PHP arrays of scalars without |
 | [`Serialized`](#serialized) | final class | 311 | Tolerant readers for the serialized-PHP blobs WordPress stores. Nothing |
 | [`Time`](#time) | final class | 21 | Human-scale spans: a number of seconds as the largest whole unit it fills, rounded, never below one. |
@@ -634,6 +635,37 @@ Forward slashes only, runs collapsed, a stream wrapper kept, a Windows drive let
 ### static `symbolicMode(int $mode): string`
 
 The `ls -l` spelling of a mode: type letter, then rwx for owner, group and world with the setuid, setgid and sticky bits folded in.
+
+
+## ScriptTag
+
+`final class Minn\Support\ScriptTag` · `public/minn/src/Minn/Support/ScriptTag.php`
+
+Script elements as the reference builds them (probe script-tags): the
+attributes sorted by name, a src or href through esc_url and every other
+value escaped (true or null printed bare, false left out); inline code
+between newlines, with any "<script" or "</script" that would end or
+open an element written with its "s" as a \u escape. Only JavaScript and
+JSON can carry that escape: a script of another type whose code holds
+such a sequence is not printed at all.
+
+- const `ESCAPABLE` = `array (   0 => '',   1 => 'module',   2 => 'application/json',   3 => 'importmap',   4 => 'speculationrules',   5 => 'application/ecmascript',   6 => 'application/javascript',   7 => 'application/x-ecmascript',   8 => 'application/x-javascript',   9 => 'text/ecmascript',   10 => 'text/javascript',   11 => 'text/javascript1.0',   12 => 'text/javascript1.1',   13 => 'text/javascript1.2',   14 => 'text/javascript1.3',   15 => 'text/javascript1.4',   16 => 'text/javascript1.5',   17 => 'text/jscript',   18 => 'text/livescript',   19 => 'text/x-ecmascript',   20 => 'text/x-javascript', )` — The script types inline code is JavaScript or JSON in (lowercase, trimmed; no type at all counts as JavaScript).
+- const `TAG` = `'#<(/?)(s)(cript[\\t\\n\\f\\r />])#i'` — A sequence that would open or close a script element inside one.
+
+### static `element(array $attributes): string`
+
+The empty element for a script file.
+
+- `@param array<string, mixed> $attributes`
+
+### static `inline(string $code, array $attributes): string`
+
+The element for inline code (already between its newlines), or '' when
+its type cannot hold the code safely.
+
+- `@param array<string, mixed> $attributes`
+
+Internals: `attributes()` (private, line 64)
 
 
 ## SearchReplace

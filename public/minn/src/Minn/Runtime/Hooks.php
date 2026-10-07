@@ -162,10 +162,12 @@ final class Hooks
      * Runs a filter without the callbacks a caller has already done the work
      * of, named function => priority: the engine renders post content through
      * its own pipeline, then runs the_content for everything else hooked
-     * there. A callback a plugin removed is simply not there to skip.
+     * there. A callback a plugin removed is simply not there to skip. A
+     * skipped callback can name a stand-in, [priority, function], that runs
+     * in its place: what of its work the engine has left to do.
      *
      * @param list<mixed> $args the value first
-     * @param array<string, int> $done
+     * @param array<string, int|array{0: int, 1: string}> $done
      */
     public function filterWithout(string $hook, array $args, array $done): mixed
     {
@@ -288,8 +290,14 @@ final class Hooks
                     continue;
                 }
                 $callback = $entry['function'];
-                if ($skip !== [] && is_string($callback) && ($skip[$callback] ?? null) === $priority) {
-                    continue;
+                if ($skip !== [] && is_string($callback) && isset($skip[$callback])) {
+                    $rule = $skip[$callback];
+                    if ((is_array($rule) ? $rule[0] : $rule) === $priority) {
+                        if (!is_array($rule)) {
+                            continue;
+                        }
+                        $callback = $rule[1];
+                    }
                 }
                 $accepted = (int) ($entry['accepted_args'] ?? 1);
                 if ($isFilter) {

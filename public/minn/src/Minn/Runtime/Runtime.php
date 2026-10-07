@@ -225,7 +225,8 @@ final class Runtime
         'shortcode_unautop' => 10,
         'prepend_attachment' => 10,
         'do_shortcode' => 11,
-        'wp_filter_content_tags' => 12,
+        // The images are fitted out already; what is left of its work is each one through wp_content_img_tag.
+        'wp_filter_content_tags' => [12, '_minn_content_img_tag'],
     ];
 
     /** Content the engine rendered itself, through the_content for everything else hooked there. */

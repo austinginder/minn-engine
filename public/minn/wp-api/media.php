@@ -1479,7 +1479,13 @@ function img_caption_shortcode($attr, $content = '')
 /** Every image and iframe of content as the reference fits them out: sizes, srcset, decoding, and loading by the page's budget. */
 function wp_filter_content_tags($content, $context = null)
 {
-    return Minn\Content\Blocks::renderer()->images()->content((string) $content);
+    return Minn\Content\Blocks::renderer()->images()->content((string) $content, $context ?? current_filter());
+}
+
+/** @internal content whose images the engine fitted out itself, each image then through wp_content_img_tag (in wp_filter_content_tags's place on the_content) */
+function _minn_content_img_tag($content)
+{
+    return Minn\Content\Blocks::renderer()->images()->offered((string) $content, 'the_content');
 }
 
 function get_taxonomies_for_attachments($output = 'names')

@@ -11,7 +11,7 @@ the WordPress runtime plugins load against
 | [`AllowedOptions`](#allowedoptions) | final class | 26 | The settings-page allowlist plugins extend: option group => the option |
 | [`ApplicationPasswordEvents`](#applicationpasswordevents) | final class | 46 | Application password changes made over REST, as the reference makes them |
 | [`ApplicationPasswordSignIn`](#applicationpasswordsignin) | final class | 80 | wp_authenticate_application_password as the reference answers it (probe |
-| [`Assets`](#assets) | final class | 384 | The registry behind wp_register_/wp_enqueue_ for scripts and styles: |
+| [`Assets`](#assets) | final class | 400 | The registry behind wp_register_/wp_enqueue_ for scripts and styles: |
 | [`Avatar`](#avatar) | final class | 62 | Avatars the way get_avatar_data and get_avatar decide them: the argument |
 | [`BlockFilters`](#blockfilters) | final class | 82 | The block-level filters plugin code hooks (pre_render_block, |
 | [`BlockHooks`](#blockhooks) | final class | 69 | The Block Hooks API on the engine's own front end: a plugin asks for its |
@@ -35,7 +35,7 @@ the WordPress runtime plugins load against
 | [`FileTypeCheck`](#filetypecheck) | final class | 78 | A file's type from its content as much as its name, as the reference's |
 | [`FileUpload`](#fileupload) | final class | 105 | A file a plugin hands to wp_handle_upload or wp_handle_sideload, taken in |
 | [`Heartbeat`](#heartbeat) | final class | 30 | The heartbeat a signed-in page beats through admin-ajax.php, answered as |
-| [`Hooks`](#hooks) | final class | 330 | The hook registry plugin code registers into and the engine fires. |
+| [`Hooks`](#hooks) | final class | 338 | The hook registry plugin code registers into and the engine fires. |
 | [`Interactivity`](#interactivity) | final class | 509 | Server-side directive processing for the Interactivity API: the state and |
 | [`MainQuery`](#mainquery) | final class | 34 | The query variables the reference's main query would carry for a URL the |
 | [`Meta`](#meta) | final readonly class | 210 | The four meta tables behind get_metadata and friends: reads by object, and the row-level writes the update and delete rules need. |
@@ -74,8 +74,8 @@ the WordPress runtime plugins load against
 | [`Refusal`](#refusal) | final readonly class | 6 | A refused operation, the way plugin code expects to read it: a code, a message, optional data. The facade turns it into WP_Error. |
 | [`RegisteredSettings`](#registeredsettings) | final class | 104 | Settings as register_setting keeps them (probe rest-settings): the |
 | [`Registry`](#registry) | final class | 392 | Post types, taxonomies, and statuses as plugin code registers and reads |
-| [`Runtime`](#runtime) | final class | 368 | The WordPress runtime the engine offers plugin code: the procedural |
-| [`ScriptModules`](#scriptmodules) | final class | 308 | The script modules registry: registrations with typed dependencies, the |
+| [`Runtime`](#runtime) | final class | 369 | The WordPress runtime the engine offers plugin code: the procedural |
+| [`ScriptModules`](#scriptmodules) | final class | 302 | The script modules registry: registrations with typed dependencies, the |
 | [`ScriptPack`](#scriptpack) | final class | 146 | The site-supplied script pack: the `wp-*` JavaScript packages the engine |
 | [`Shortcodes`](#shortcodes) | final class | 143 | The shortcode registry plugin code fills with add_shortcode, and the |
 | [`StoredObjects`](#storedobjects) | final class | 64 | The classes a stored blob may name and come back as. The serialized |
@@ -429,6 +429,16 @@ leans on it: WooCommerce only attaches its settings blob when it
 finds `wc-settings` "enqueued", and nothing queues that handle by
 name, it only ever rides in as a dependency.
 
+### `doneList(): array`
+
+The handles printed so far.
+
+- `@return list<string>`
+
+### `setDone(array $done): void`
+
+The printed handles as a plugin left them after editing the view directly.
+
 ### `done(string $handle): bool`
 
 Whether a handle has been printed.
@@ -501,7 +511,7 @@ The handles queued.
 
 Whether these are scripts or styles.
 
-Internals: `changed()` (private, line 45), `depsOf()` (private, line 135), `defaults()` (private, line 141), `held()` (private, line 196), `ordered()` (private, line 298)
+Internals: `changed()` (private, line 45), `depsOf()` (private, line 135), `defaults()` (private, line 141), `held()` (private, line 212), `ordered()` (private, line 314)
 
 
 ## Avatar
@@ -1378,10 +1388,12 @@ Runs a filter and returns the value.
 Runs a filter without the callbacks a caller has already done the work
 of, named function => priority: the engine renders post content through
 its own pipeline, then runs the_content for everything else hooked
-there. A callback a plugin removed is simply not there to skip.
+there. A callback a plugin removed is simply not there to skip. A
+skipped callback can name a stand-in, [priority, function], that runs
+in its place: what of its work the engine has left to do.
 
 - `@param list<mixed> $args the value first`
-- `@param array<string, int> $done`
+- `@param array<string, int|array{0: int, 1: string}> $done`
 
 ### `action(string $hook, array $args): void`
 
@@ -1435,7 +1447,7 @@ Every hook with callbacks, by name.
 
 - `@return array<string, array<int, list<callable>>> a read-only view for diagnostics`
 
-Internals: `run()` (private, line 271), `nextPriority()` (private, line 310), `fireAll()` (private, line 322), `id()` (private, line 336)
+Internals: `run()` (private, line 273), `nextPriority()` (private, line 318), `fireAll()` (private, line 330), `id()` (private, line 344)
 
 
 ## Interactivity
@@ -3209,7 +3221,7 @@ The WordPress runtime the engine offers plugin code: the procedural
 facade under minn/wp-api/ plus the services it delegates to. One per
 request; the facade reaches it through these statics.
 
-- const `CONTENT_DONE` = `array (   'apply_block_hooks_to_content_from_post_object' => 8,   'do_blocks' => 9,   'wptexturize' => 10,   'wpautop' => 10,   'shortcode_unautop' => 10,   'prepend_attachment' => 10,   'do_shortcode' => 11,   'wp_filter_content_tags' => 12, )` — The the_content defaults the engine's own rendering has already done:
+- const `CONTENT_DONE` = `array (   'apply_block_hooks_to_content_from_post_object' => 8,   'do_blocks' => 9,   'wptexturize' => 10,   'wpautop' => 10,   'shortcode_unautop' => 10,   'prepend_attachment' => 10,   'do_shortcode' => 11,   'wp_filter_content_tags' =>    array (     0 => 12,     1 => '_minn_content_img_tag',   ), )` — The the_content defaults the engine's own rendering has already done:
 blocks, texturize, paragraphs, shortcodes, block hooks, and the image
 attributes. What it has not (smilies, the capital P, insecure home
 addresses) runs with the plugins' own callbacks.
@@ -3367,7 +3379,7 @@ calls it straight away.
 
 Fresh per-request state, for suites.
 
-Internals: `loadObjectCacheDropin()` (private, line 349)
+Internals: `loadObjectCacheDropin()` (private, line 350)
 
 
 ## ScriptModules
@@ -3456,7 +3468,7 @@ The script-module-data tags.
 
 The a11y module's tag, once.
 
-Internals: `placeIn()` (private, line 127), `printTags()` (private, line 226), `marked()` (private, line 256), `complete()` (private, line 268), `dependencies()` (private, line 290), `urlOf()` (private, line 308), `attr()` (private, line 313), `wrong()` (private, line 318)
+Internals: `placeIn()` (private, line 127), `printTags()` (private, line 226), `marked()` (private, line 250), `complete()` (private, line 262), `dependencies()` (private, line 284), `urlOf()` (private, line 302), `attr()` (private, line 307), `wrong()` (private, line 312)
 
 
 ## ScriptPack

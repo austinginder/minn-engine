@@ -9,7 +9,7 @@ the block parser and renderer
 | [`BlockName`](#blockname) | final class | 17 | The block name rules: a string, lower-case, `namespace/name`. |
 | [`Context`](#context) | final class | 76 | What the template blocks render against: the resolution, the main |
 | [`Elements`](#elements) | final class | 79 | Per-block element styles (style.elements in a block's attributes, the |
-| [`ImageTags`](#imagetags) | final readonly class | 239 | The attributes the reference adds to an <img> that carries a |
+| [`ImageTags`](#imagetags) | final readonly class | 254 | The attributes the reference adds to an <img> that carries a |
 | [`Layout`](#layout) | final class | 124 | The layout-support classes the reference adds at render time. Every |
 | [`Parser`](#parser) | final class | 91 | Parses block markup into a tree. The grammar is the delimiter comment: |
 | [`QueryVars`](#queryvars) | final class | 122 | The query variables a Query Loop block's context asks for, the way the |
@@ -192,7 +192,7 @@ The same for a gallery: every image also carries its data-id.
 
 The same for a plugin block's output, where the reference adds no sizes="auto".
 
-### `content(string $html): string`
+### `content(string $html, mixed $context = NULL): string`
 
 Every <img> and <iframe> of a content fragment as the reference's
 wp_filter_content_tags leaves it: an attachment's image is enriched as
@@ -201,13 +201,18 @@ fetched first); any other image is decoded asynchronously and, when its
 size is known, loaded lazily or by the page's budget; an iframe with a
 size is loaded lazily.
 
+### `offered(string $html, string $context): string`
+
+Content whose images are fitted out already, each image offered to
+wp_content_img_tag in a context, as wp_filter_content_tags offers them.
+
 ### `featured(int $attachmentId, string $alt, string $style): string`
 
 A post's featured image at full size, in the reference's attribute
 order (dimensions, source, class, alt, style, then the loading
 attributes and the srcset). Empty when the attachment has no file.
 
-Internals: `plainImage()` (private, line 75), `lazyFrame()` (private, line 86), `rewrite()` (private, line 94), `loadingPrefix()` (private, line 109), `givenLoading()` (private, line 127), `minimumPriorityPixels()` (private, line 136), `enrichTag()` (private, line 142), `srcsetAttributes()` (private, line 200)
+Internals: `attachmentOf()` (private, line 84), `plainImage()` (private, line 90), `lazyFrame()` (private, line 101), `rewrite()` (private, line 109), `loadingPrefix()` (private, line 124), `givenLoading()` (private, line 142), `minimumPriorityPixels()` (private, line 151), `enrichTag()` (private, line 157), `srcsetAttributes()` (private, line 215)
 
 
 ## Layout

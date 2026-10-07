@@ -55,20 +55,35 @@ final readonly class ImageTags
      * size is known, loaded lazily or by the page's budget; an iframe with a
      * size is loaded lazily.
      */
-    public function content(string $html): string
+    public function content(string $html, mixed $context = null): string
     {
-        return (string) preg_replace_callback('/<(img|iframe)\s[^>]*>/i', function (array $m): string {
+        return (string) preg_replace_callback('/<(img|iframe)\s[^>]*>/i', function (array $m) use ($context): string {
             if (strtolower($m[1]) === 'iframe') {
                 return self::lazyFrame($m[0]);
             }
-            if (preg_match('/\sclass="[^"]*\bwp-image-(\d+)\b/', $m[0], $id) === 1) {
-                $enriched = $this->enrichTag($m[0], (int) $id[1], false, true);
-                if ($enriched !== $m[0]) {
-                    return $enriched;
-                }
-            }
-            return $this->plainImage($m[0]);
+            $id = self::attachmentOf($m[0]);
+            $enriched = $id > 0 && preg_match('/\sclass="[^"]*\bwp-image-\d+\b/', $m[0]) === 1 ? $this->enrichTag($m[0], $id, false, true) : $m[0];
+            $fitted = $enriched !== $m[0] ? $enriched : $this->plainImage($m[0]);
+            return (string) \apply_filters('wp_content_img_tag', $fitted, $context, $id);
         }, $html);
+    }
+
+    /**
+     * Content whose images are fitted out already, each image offered to
+     * wp_content_img_tag in a context, as wp_filter_content_tags offers them.
+     */
+    public function offered(string $html, string $context): string
+    {
+        if (!\has_filter('wp_content_img_tag')) {
+            return $html;
+        }
+        return (string) preg_replace_callback('/<img\s[^>]*>/i', static fn (array $m): string => (string) \apply_filters('wp_content_img_tag', $m[0], $context, self::attachmentOf($m[0])), $html);
+    }
+
+    /** The attachment an image names in its wp-image-{id} class, or 0. */
+    private static function attachmentOf(string $tag): int
+    {
+        return preg_match('/wp-image-(\d+)/i', $tag, $id) === 1 ? (int) $id[1] : 0;
     }
 
     /** An image that is not an attachment's: decoding always, loading when its size is known and it has none. */
