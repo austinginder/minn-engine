@@ -57,6 +57,7 @@ The name lists:
 
 - Speak names the symbol gate counts: `public/minn/data/api-names.json`
 - Hear names that exist as stubs: `public/minn/data/placeholder-symbols.json`
+  (the generator skips any name `wp-api/` now writes by hand)
 - Mute names must not leave that stub file without passing the three tests
   above
 
@@ -76,16 +77,16 @@ not here.
 |---|---|---|---|
 | Portable site unit | `wp_*` tables, `wp-content/`, dumps | Read and write the live schema. Tolerate serialized blobs forever. Extra plugin tables unread (preflight AMBER). | (planned `schema/`; used via `Minn\Db`) |
 | Boot / file layout | `index.php`, `wp-config.php`, `wp-settings.php`, `wp-includes/version.php` | Shape files only. `wp-config.php` untouched. Engine boots from `wp-settings.php` → `minn/bootstrap.php`. No `wp-load.php` on disk. | `layout.md` |
-| REST `wp/v2` | posts, pages, types, terms, users, comments, media, search, settings, plugins, menus, revisions, autosaves, application-passwords | Core routes Minn Admin and tooling call. Plugin routes via `register_rest_route`. | `rest/*.md` |
+| REST `wp/v2` | posts, pages, types, statuses, taxonomies, terms, users, comments, media, search, settings, plugins, themes, menus, menu items and locations, navigation, templates, template parts, global styles, blocks, block types, widgets, sidebars, revisions, autosaves, application-passwords; `batch/v1`; `wp-abilities/v1` | Core routes Minn Admin and tooling call. Plugin routes via `register_rest_route`. | `rest/*.md` |
 | Auth | cookies, `session_tokens`, `wp_rest` nonce, `$wp$` hashes, capabilities | Cross-accepted both directions. | `rest/auth.md`, `rest/caps.md` |
-| Login endpoint | `wp-login.php` | Probe and session surface. Human page is `/minn-admin/login`. Bare GET 302s there. | `rest/auth.md` |
+| Login endpoint | `wp-login.php` | Probe, session, registration and password-reset surface, with plugins' login hooks. Human page is `/minn-admin/login`. Bare GET 302s there. | `rest/auth.md` |
 | Permalinks | `permalink_structure`, `?p=`, archives, `_wp_old_slug` | Resolver plus every `link` field. | `front/permalinks.md` |
 | Feeds / sitemaps / probes | `/feed/`, `/wp-sitemap.xml`, `robots.txt`, `wp-cron.php` | Byte-level where the contract says so. | `front/probes.md` |
-| Block render | `post_content` block markup, `content.rendered` | Engine parser + renderer. Theme.php is never executed. | `blocks.md`, `front/theme.md` |
+| Block render | `post_content` block markup, `content.rendered` | Engine parser and renderer. Block templates are read as data. | `blocks.md`, `front/theme.md` |
 | Block themes | `theme.json`, `templates/`, `parts/`, `wp_template*` | Read as data. | `front/theme.md` |
 | Classic PHP themes | `get_header()`, PHP template hierarchy | Hierarchy, `wp_head` defaults, live body parity. | `front/classic.md` |
-| WP-CLI ops | `option`, `user`, `plugin list/install/update/activate/delete/search`, `theme list/install/update/activate/delete/search`, `rewrite flush/structure`, `maintenance-mode`, `db`, `search-replace`, `wp minn *` | `before_wp_load` verbs plus WP-CLI's own `config`/`db`. | `cli.md` |
-| Cron / mail | due `future` posts, `wp-cron.php`, `wp_mail`, password reset | Engine runner; `cron` option events are a later slice. | `cron-mail.md` |
+| WP-CLI ops | `option`, `user`, `plugin list/install/update/activate/delete/search`, `theme list/install/update/activate/delete/search`, `rewrite flush/structure`, `maintenance-mode`, `db`, `search-replace`, `wp minn *` | `before_wp_load` verbs plus WP-CLI's own `config`/`db`. Every other command, a plugin's own included, runs on the engine's runtime. | `cli.md` |
+| Cron / mail | due `future` posts, `wp-cron.php`, `wp_mail`, password reset | Engine runner. Due `cron` option events fire on every trigger. `wp_mail` runs on the engine's own PHPMailer. | `cron-mail.md` |
 | Install / eject | five-minute install, core files on disk | `minn install` / `eject`. Not `install.php`. | `docs/install.md` |
 
 ### Runtime, plugin PHP (Tier 2)
@@ -100,9 +101,12 @@ not here.
 | Media API | `wp_get_attachment_image_src`, subsizes, srcset | GD. Imagick is not used. | `runtime.md`, `rest/media.md` |
 | REST registration | `register_rest_route`, `WP_REST_Server`, `rest_do_request` | Plugin routes after the engine's. In-process `wp/v2` hits the engine. | `runtime.md` |
 | Blocks API | `register_block_type`, `parse_blocks`, `block.json`, `render_block` | Two-way bridge with the engine renderer. | `runtime.md`, `blocks.md` |
-| Shortcodes / assets / i18n | `add_shortcode`, `wp_enqueue_script`, `__()` | Shortcodes after the engine pipeline. jQuery is MIT, ours. | `runtime.md` |
-| HTTP / cron API | `wp_remote_get`, `wp_schedule_event` | curl; option-shaped cron. | `runtime.md` |
-| HTML API | `WP_HTML_Tag_Processor` | Maps to `Minn\Html\Tags`. `WP_HTML_Processor` not yet (Hear until then). | `runtime.md` |
+| Shortcodes / assets / i18n | `add_shortcode`, `wp_enqueue_script`, `__()` | Shortcodes after the engine pipeline. jQuery is MIT, ours. Text domains load from `.mo` and `.l10n.php` files. | `runtime.md` |
+| HTTP / cron API | `wp_remote_get`, `wp_schedule_event`, `WpOrg\Requests` | The engine's own HTTP client, the Requests library included; option-shaped cron. | `runtime.md` |
+| HTML API | `WP_HTML_Tag_Processor`, `WP_HTML_Processor` | Maps to `Minn\Html\Tags`. `WP_HTML_Processor` builds the reference's tree. | `runtime.md` |
+| `admin-ajax.php` | `wp_ajax_{action}`, `wp_ajax_nopriv_{action}`, heartbeat | Runs plugins' handlers as WordPress does. `is_admin()` is true there. | `runtime.md` |
+| Widgets | `WP_Widget`, `register_widget`, the default widgets | Render in classic sidebars at the reference's output. | `runtime.md` |
+| Rewrite rules | `add_rewrite_rule`, `add_rewrite_endpoint`, `$wp->query_vars` | Plugin rules and endpoints resolve requests. `$wp` holds the reference's request parse. | `runtime.md` |
 | Interactivity | directives, script modules | Engine's own JS at `/minn/assets/*.js`. Editor packages are not provided. | `runtime.md` |
 
 ### Minn Admin (the human UI)
@@ -123,13 +127,11 @@ Recognized so plugins boot. Never a screen.
 | Admin menu registration | `add_menu_page`, `add_submenu_page`, `add_*_page`, `$menu` | Records the row. Returns the reference's hook name. | Does not render a menu or host `admin.php?page=`. |
 | Settings API (registration) | `register_setting`, `add_settings_section`, `add_settings_field` | Records. Markup helpers are pinned so a callback that builds HTML does not fatal. | Does not serve `options-general.php`. Minn Admin Settings is the UI. |
 | Meta boxes / dashboard widgets | `add_meta_box`, `wp_add_dashboard_widget` | Stores `{id, title, callback}`. | Does not paint meta boxes or the dashboard. |
-| `is_admin()` | `is_admin()`, `WP_Screen` | A request flag. False on public pages and on `/minn-admin/`. | Does not become true just so plugin admin-only code runs. |
-| `admin-ajax.php` | `admin-ajax.php?action=` | `action=rest-nonce` only (Minn Admin refresh). | Not a general RPC host. Other actions 400 / empty. |
+| `is_admin()` | `is_admin()`, `WP_Screen` | A request flag. False on public pages and on `/minn-admin/`; true on `admin-ajax.php`, as on WordPress. | Does not become true just so plugin admin-only code runs. |
 | `admin-post.php` | form POST sink | Named stub. | Not a form host. |
 | File skeleton | `wp-includes/*.php`, `wp-admin/includes/*.php` | One-line placeholders so `require ABSPATH . 'wp-admin/includes/…'` does not fatal. Gitignored. | Not WordPress source. Not a load path. |
 | `admin_url()` | URL builder | Returns `/wp-admin/…` strings plugins write into data. | Those URLs 302 to Minn Admin. They are not screens. |
-| Widgets / Customizer classes | `WP_Widget`, `WP_Customize_Manager` | Exist so plugins construct them. | Nothing is served. |
-| Rewrite recorded state | `WP_Rewrite`, `WP` | Recorded. The engine resolves URLs itself. | Not the PHP template hierarchy. |
+| Customizer classes | `WP_Customize_Manager` and its controls | Exist so plugins construct them. | Nothing is served. |
 | `IXR_Client` | Jetpack connection plumbing | Inert placeholder. | Out of scope (2026-08-30). |
 
 ---
@@ -175,7 +177,7 @@ coming.
 | Gutenberg editor JS | `edit-post`, `block-editor`, `block-library` JS, `@wordpress/*` editor packages | Minn Admin's own editor. Do not ship those packages. |
 | Classic editor / TinyMCE / Quicktags | `wp_editor()`, `js/tinymce/` | `wp_editor` stays a placeholder. |
 | Dashicons + wp-admin CSS | `dashicons`, color schemes | No GPL assets. A REST `dashicons-*` *string* on a type is interface, not the font. |
-| Heartbeat / pointers / WP admin bar | `heartbeat.js`, `wp-pointer`, default admin bar | Minn bar only. |
+| Heartbeat / pointers / WP admin bar | `heartbeat.js`, `wp-pointer`, default admin bar | People see only the Minn bar. `WP_Admin_Bar` and heartbeat are real for plugins. Pointers are mute. |
 | CodeMirror file editors | theme-editor, plugin-editor | Mute. |
 | wordpress.org directory / upgrader | `themes_api`, `WP_Upgrader*`, language-pack download UI | Mute as product. Themes search on the engine is a deliberate exception (themes are data the front renders). |
 | Filesystem credentials modal | FTP/SSH prompt | `direct` only. No modal. |
@@ -189,33 +191,35 @@ Do not implement these in `wp-api/` to shrink `Plugins::skipped()`. They are
 WordPress product chrome.
 
 **List tables / screen chrome:** `WP_List_Table`, `_get_list_table`,
-`get_column_headers`, `get_inline_data`, `_post_states`, `list_meta`,
-`post_tags_meta_box`, `postbox_classes`, `get_hidden_meta_boxes`.
+`list_meta`, `post_tags_meta_box`.
 
 **Media upload chrome (not `wp/v2/media`):** `media_upload_header`,
 `media_send_to_editor`.
 
 **Classic / iframe editor:** `wp_editor`, `_wp_get_iframed_editor_assets`,
-`get_block_editor_server_block_settings`, `get_default_block_editor_settings`,
-`WP_Block_Editor_Context`, `enqueue_comment_hotkeys_js`.
+`get_block_editor_server_block_settings`, `get_default_block_editor_settings`.
 
-**Admin CSS / bar / color schemes:** `wp_admin_css`, `wp_admin_css_color`,
-`_wp_admin_bar_init`.
-
-**Importers:** `get_importers`, `register_importer`.
+**Admin CSS / color schemes:** `wp_admin_css`, `wp_admin_css_color`.
 
 **Upgrader / zip / file-mod UI:** `WP_Upgrader`, `WP_Upgrader_Skin`,
 `File_Upload_Upgrader`, `PclZip`, `themes_api`, `find_core_update`,
-`wp_version_check`, `wp_update_plugins`, `wp_update_themes`, `delete_plugins`,
-`unzip_file`.
+`wp_version_check`, `wp_update_plugins`, `wp_update_themes`, `unzip_file`.
 
 **XML-RPC client:** `IXR_Client`, `IXR_Error`, `IXR_Message`, `IXR_Request`.
 
 **Theme file editor:** `wp_get_theme_file_editable_extensions`.
 
-Placeholders that are *data* (REST controllers plugins subclass,
-`WP_User_Query`, meta-by-mid, `WP_Theme_JSON`, POMO, `WP_HTML_Processor`)
-may graduate later under the three tests. They are not mute chrome.
+Some admin helpers plugins call for data were made real once probes captured
+what WordPress returns: post states, hidden meta boxes, postbox classes,
+column headers, quick-edit data, comment hotkeys, the importer registry,
+`delete_plugins`, the admin bar's init and `WP_Block_Editor_Context`. They
+return what WordPress returns and still paint no screen.
+
+Most of the placeholders that were *data* have graduated: `WP_User_Query`,
+meta-by-mid, `WP_Theme_JSON`, the POMO `Translations` and `MO` classes, and
+`WP_HTML_Processor`. The REST controllers plugins subclass and the
+`POMO_*Reader` classes are still placeholders and may graduate under the
+three tests. They are not mute chrome.
 
 ---
 

@@ -1,5 +1,5 @@
 {
-    "measured": "2026-08-30",
+    "measured": "2026-10-07",
     "method": {
         "languages": "PHP, JavaScript and CSS files",
         "lines": "newline counts, blank lines and comments included",
@@ -226,7 +226,7 @@
             "id": "minn",
             "label": "Minn",
             "version": "0.0.1",
-            "adminVersion": "0.36.0",
+            "adminVersion": "0.43.0",
             "source": "minn-run/minn-engine public/minn and the minn-admin plugin",
             "describe": "The engine deploy unit (public/minn) and the Minn Admin plugin as it ships",
             "components": [
@@ -251,14 +251,14 @@
                     "label": "The engine",
                     "note": "src/Minn: request handling, content, REST, auth, blocks, theme, media, the runtime",
                     "thirdParty": false,
-                    "files": 246,
-                    "lines": 34475,
-                    "bytes": 1416410,
+                    "files": 565,
+                    "lines": 77259,
+                    "bytes": 3275324,
                     "languages": {
                         "php": {
-                            "files": 246,
-                            "lines": 34475,
-                            "bytes": 1416410
+                            "files": 565,
+                            "lines": 77259,
+                            "bytes": 3275324
                         }
                     }
                 },
@@ -267,14 +267,14 @@
                     "label": "The WordPress facade",
                     "note": "wp-api: the functions and classes plugin code calls, mapped onto the engine",
                     "thirdParty": false,
-                    "files": 79,
-                    "lines": 27535,
-                    "bytes": 916319,
+                    "files": 165,
+                    "lines": 47369,
+                    "bytes": 1663773,
                     "languages": {
                         "php": {
-                            "files": 79,
-                            "lines": 27535,
-                            "bytes": 916319
+                            "files": 165,
+                            "lines": 47369,
+                            "bytes": 1663773
                         }
                     }
                 },
@@ -283,19 +283,19 @@
                     "label": "Front-end runtime",
                     "note": "assets: the interactivity runtime, block view scripts, the block stylesheet",
                     "thirdParty": false,
-                    "files": 22,
-                    "lines": 1534,
-                    "bytes": 81860,
+                    "files": 25,
+                    "lines": 1610,
+                    "bytes": 95970,
                     "languages": {
                         "css": {
-                            "files": 1,
-                            "lines": 366,
-                            "bytes": 38279
+                            "files": 2,
+                            "lines": 367,
+                            "bytes": 45242
                         },
                         "js": {
-                            "files": 21,
-                            "lines": 1168,
-                            "bytes": 43581
+                            "files": 23,
+                            "lines": 1243,
+                            "bytes": 50728
                         }
                     }
                 },
@@ -304,14 +304,14 @@
                     "label": "Boot, CLI, layout",
                     "note": "bootstrap.php, cli.php, bin/, layout/",
                     "thirdParty": false,
-                    "files": 5,
-                    "lines": 89,
-                    "bytes": 2950,
+                    "files": 7,
+                    "lines": 153,
+                    "bytes": 5197,
                     "languages": {
                         "php": {
-                            "files": 5,
-                            "lines": 89,
-                            "bytes": 2950
+                            "files": 7,
+                            "lines": 153,
+                            "bytes": 5197
                         }
                     }
                 },
@@ -320,14 +320,14 @@
                     "label": "Minn Admin: adapters and REST",
                     "note": "includes: the WordPress adapters and the minn-admin/v1 routes",
                     "thirdParty": false,
-                    "files": 116,
-                    "lines": 73022,
-                    "bytes": 2872457,
+                    "files": 154,
+                    "lines": 105916,
+                    "bytes": 4280768,
                     "languages": {
                         "php": {
-                            "files": 116,
-                            "lines": 73022,
-                            "bytes": 2872457
+                            "files": 154,
+                            "lines": 105916,
+                            "bytes": 4280768
                         }
                     }
                 },
@@ -337,18 +337,18 @@
                     "note": "assets: the admin SPA, its stylesheet",
                     "thirdParty": false,
                     "files": 4,
-                    "lines": 50885,
-                    "bytes": 2500010,
+                    "lines": 64065,
+                    "bytes": 3187441,
                     "languages": {
                         "css": {
                             "files": 2,
-                            "lines": 5548,
-                            "bytes": 325991
+                            "lines": 6549,
+                            "bytes": 391038
                         },
                         "js": {
                             "files": 2,
-                            "lines": 45337,
-                            "bytes": 2174019
+                            "lines": 57516,
+                            "bytes": 2796403
                         }
                     }
                 },
@@ -357,59 +357,59 @@
                     "label": "Minn Admin: plugin file and docs",
                     "note": "minn-admin.php, docs",
                     "thirdParty": false,
-                    "files": 3,
-                    "lines": 587,
-                    "bytes": 27091,
+                    "files": 4,
+                    "lines": 725,
+                    "bytes": 34756,
                     "languages": {
                         "php": {
-                            "files": 3,
-                            "lines": 587,
-                            "bytes": 27091
+                            "files": 4,
+                            "lines": 725,
+                            "bytes": 34756
                         }
                     }
                 }
             ],
             "totals": {
-                "files": 477,
-                "lines": 188131,
-                "bytes": 7918227,
+                "files": 926,
+                "lines": 297101,
+                "bytes": 12644359,
                 "languages": {
                     "css": {
-                        "files": 3,
-                        "lines": 5914,
-                        "bytes": 364270
+                        "files": 4,
+                        "lines": 6916,
+                        "bytes": 436280
                     },
                     "js": {
-                        "files": 25,
-                        "lines": 46509,
-                        "bytes": 2318730
+                        "files": 27,
+                        "lines": 58763,
+                        "bytes": 2948261
                     },
                     "php": {
-                        "files": 449,
-                        "lines": 135708,
-                        "bytes": 5235227
+                        "files": 895,
+                        "lines": 231422,
+                        "bytes": 9259818
                     }
                 }
             },
             "own": {
-                "files": 475,
-                "lines": 188127,
-                "bytes": 7817097,
+                "files": 924,
+                "lines": 297097,
+                "bytes": 12543229,
                 "languages": {
                     "css": {
-                        "files": 3,
-                        "lines": 5914,
-                        "bytes": 364270
+                        "files": 4,
+                        "lines": 6916,
+                        "bytes": 436280
                     },
                     "js": {
-                        "files": 23,
-                        "lines": 46505,
-                        "bytes": 2217600
+                        "files": 25,
+                        "lines": 58759,
+                        "bytes": 2847131
                     },
                     "php": {
-                        "files": 449,
-                        "lines": 135708,
-                        "bytes": 5235227
+                        "files": 895,
+                        "lines": 231422,
+                        "bytes": 9259818
                     }
                 }
             },
