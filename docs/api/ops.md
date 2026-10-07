@@ -11,7 +11,7 @@
 | [`Logs`](#logs) | final readonly class | 150 | The log files the System view can read and clear: the debug log the |
 | [`Packages`](#packages) | final readonly class | 489 | Putting themes and extensions on disk. Themes come from wordpress.org |
 | [`Unzip`](#unzip) | final readonly class | 101 | An archive unpacked as unzip_file() unpacks it (probe unzip-file): into |
-| [`Updates`](#updates) | final class | 396 | Update offers from wordpress.org for the site's plugins and themes: the |
+| [`Updates`](#updates) | final class | 401 | Update offers from wordpress.org for the site's plugins and themes: the |
 
 ## AutoUpdates
 
@@ -438,5 +438,5 @@ Stylesheet => style.css headers. @return array<string, array<string, string>>
 
 - `@return array<string, array<string, string>>`
 
-Internals: `supplied()` (private, line 132), `saveAuto()` (private, line 267), `install()` (private, line 353), `vouched()` (private, line 376), `consume()` (private, line 394), `post()` (private, line 406), `map()` (private, line 416), `safeUrl()` (private, line 424)
+Internals: `supplied()` (private, line 137), `saveAuto()` (private, line 272), `install()` (private, line 358), `vouched()` (private, line 381), `consume()` (private, line 399), `post()` (private, line 411), `map()` (private, line 421), `safeUrl()` (private, line 429)
 

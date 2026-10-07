@@ -18154,7 +18154,7 @@
             "namespace": "Minn\\Cli",
             "kind": "final class",
             "file": "public/minn/src/Minn/Cli/AssetUpdate.php",
-            "lines": 326,
+            "lines": 330,
             "doc": "Shared wording for `wp plugin update` and `wp theme update`. Captured\nfrom the reference: missing plugins warn and count as failed; a missing\ntheme is a fatal Error and stops. json/csv print only the rows (empty\nstdout when nothing changed). `--exclude` always prints the skipped\nline in table/summary, even when the list is empty.",
             "implements": [],
             "extends": null,
@@ -18280,7 +18280,7 @@
                         }
                     ],
                     "line": 48,
-                    "end": 98
+                    "end": 102
                 },
                 {
                     "routes": [],
@@ -18301,8 +18301,8 @@
                             "doc": "@return array<string, array<string, string>>"
                         }
                     ],
-                    "line": 101,
-                    "end": 146
+                    "line": 105,
+                    "end": 150
                 },
                 {
                     "routes": [],
@@ -18323,8 +18323,8 @@
                             "doc": "@return array<string, string>"
                         }
                     ],
-                    "line": 149,
-                    "end": 158
+                    "line": 153,
+                    "end": 162
                 },
                 {
                     "routes": [],
@@ -18352,8 +18352,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 161,
-                    "end": 187
+                    "line": 165,
+                    "end": 191
                 },
                 {
                     "routes": [],
@@ -18432,8 +18432,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 194,
-                    "end": 241
+                    "line": 198,
+                    "end": 245
                 },
                 {
                     "routes": [],
@@ -18475,8 +18475,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 244,
-                    "end": 262
+                    "line": 248,
+                    "end": 266
                 },
                 {
                     "routes": [],
@@ -18504,8 +18504,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 265,
-                    "end": 271
+                    "line": 269,
+                    "end": 275
                 },
                 {
                     "routes": [],
@@ -18524,8 +18524,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 273,
-                    "end": 280
+                    "line": 277,
+                    "end": 284
                 },
                 {
                     "routes": [],
@@ -18544,8 +18544,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 282,
-                    "end": 293
+                    "line": 286,
+                    "end": 297
                 },
                 {
                     "routes": [],
@@ -18564,8 +18564,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 295,
-                    "end": 306
+                    "line": 299,
+                    "end": 310
                 },
                 {
                     "routes": [],
@@ -18578,8 +18578,8 @@
                         "@return array<string, string>"
                     ],
                     "params": [],
-                    "line": 309,
-                    "end": 317
+                    "line": 313,
+                    "end": 321
                 },
                 {
                     "routes": [],
@@ -18614,8 +18614,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 320,
-                    "end": 329
+                    "line": 324,
+                    "end": 333
                 },
                 {
                     "routes": [],
@@ -18648,8 +18648,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 331,
-                    "end": 341
+                    "line": 335,
+                    "end": 345
                 },
                 {
                     "routes": [],
@@ -18668,8 +18668,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 343,
-                    "end": 346
+                    "line": 347,
+                    "end": 350
                 }
             ]
         },
@@ -76693,7 +76693,7 @@
             "namespace": "Minn\\Ops",
             "kind": "final class",
             "file": "public/minn/src/Minn/Ops/Updates.php",
-            "lines": 396,
+            "lines": 401,
             "doc": "Update offers from wordpress.org for the site's plugins and themes: the\ndirectory's update-check endpoints asked with the installed headers, the\nanswer kept in the minn_updates option (JSON) for twelve hours, and the\noffers applied by downloading the release archive through the one\npackage unpacker. A plugin or theme the directory does not know keeps\nits folder untouched and is never offered anything. The per-item\nauto-update lists are the site's own auto_update_plugins and\nauto_update_themes options, in the shape the app already reads.\n\nThe directory is not the only source. A plugin that hosts itself answers\nfor its own version through the update transient's filter, which is where\nWordPress reads it too, so Runtime\\PluginUpdates asks the runtime the same\nquestion and its answer is merged in. Applying such an offer goes through\nthe publisher: a package outside the directory is unpacked only when\n`upgrader_pre_download` hands back a copy it verified.",
             "implements": [],
             "extends": null,
@@ -76879,7 +76879,7 @@
                     "shapes": [],
                     "params": [],
                     "line": 55,
-                    "end": 65
+                    "end": 70
                 },
                 {
                     "routes": [],
@@ -76890,8 +76890,8 @@
                     "doc": "Asks wordpress.org now, whatever the cache says, and keeps the answer.",
                     "shapes": [],
                     "params": [],
-                    "line": 68,
-                    "end": 71
+                    "line": 73,
+                    "end": 76
                 },
                 {
                     "routes": [],
@@ -76902,8 +76902,8 @@
                     "doc": "Asks the directory now and stores the answer.",
                     "shapes": [],
                     "params": [],
-                    "line": 74,
-                    "end": 121
+                    "line": 79,
+                    "end": 126
                 },
                 {
                     "routes": [],
@@ -76916,8 +76916,8 @@
                         "@return array<string, string>"
                     ],
                     "params": [],
-                    "line": 154,
-                    "end": 165
+                    "line": 159,
+                    "end": 170
                 },
                 {
                     "routes": [],
@@ -76930,8 +76930,8 @@
                         "@return array<string, string>"
                     ],
                     "params": [],
-                    "line": 168,
-                    "end": 179
+                    "line": 173,
+                    "end": 184
                 },
                 {
                     "routes": [],
@@ -76944,8 +76944,8 @@
                         "@return array<string, array{slug: string, icon: string, url: string}>"
                     ],
                     "params": [],
-                    "line": 182,
-                    "end": 200
+                    "line": 187,
+                    "end": 205
                 },
                 {
                     "routes": [],
@@ -76964,8 +76964,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 203,
-                    "end": 207
+                    "line": 208,
+                    "end": 212
                 },
                 {
                     "routes": [],
@@ -76984,8 +76984,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 210,
-                    "end": 221
+                    "line": 215,
+                    "end": 226
                 },
                 {
                     "routes": [],
@@ -77004,8 +77004,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 224,
-                    "end": 235
+                    "line": 229,
+                    "end": 240
                 },
                 {
                     "routes": [],
@@ -77026,8 +77026,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 238,
-                    "end": 242
+                    "line": 243,
+                    "end": 247
                 },
                 {
                     "routes": [],
@@ -77055,8 +77055,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 249,
-                    "end": 252
+                    "line": 254,
+                    "end": 257
                 },
                 {
                     "routes": [],
@@ -77082,8 +77082,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 255,
-                    "end": 258
+                    "line": 260,
+                    "end": 263
                 },
                 {
                     "routes": [],
@@ -77104,8 +77104,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 284,
-                    "end": 307
+                    "line": 289,
+                    "end": 312
                 },
                 {
                     "routes": [],
@@ -77118,8 +77118,8 @@
                         "@return array<string, string>"
                     ],
                     "params": [],
-                    "line": 310,
-                    "end": 317
+                    "line": 315,
+                    "end": 322
                 },
                 {
                     "routes": [],
@@ -77132,8 +77132,8 @@
                         "@return array<string, string>"
                     ],
                     "params": [],
-                    "line": 320,
-                    "end": 327
+                    "line": 325,
+                    "end": 332
                 },
                 {
                     "routes": [],
@@ -77146,8 +77146,8 @@
                         "@return array<string, array<string, string>>"
                     ],
                     "params": [],
-                    "line": 330,
-                    "end": 344
+                    "line": 335,
+                    "end": 349
                 },
                 {
                     "routes": [],
@@ -77169,8 +77169,8 @@
                             "doc": "the previous state"
                         }
                     ],
-                    "line": 132,
-                    "end": 151
+                    "line": 137,
+                    "end": 156
                 },
                 {
                     "routes": [],
@@ -77206,8 +77206,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 267,
-                    "end": 276
+                    "line": 272,
+                    "end": 281
                 },
                 {
                     "routes": [],
@@ -77247,8 +77247,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 353,
-                    "end": 366
+                    "line": 358,
+                    "end": 371
                 },
                 {
                     "routes": [],
@@ -77281,8 +77281,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 376,
-                    "end": 391
+                    "line": 381,
+                    "end": 396
                 },
                 {
                     "routes": [],
@@ -77315,8 +77315,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 394,
-                    "end": 403
+                    "line": 399,
+                    "end": 408
                 },
                 {
                     "routes": [],
@@ -77344,8 +77344,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 406,
-                    "end": 413
+                    "line": 411,
+                    "end": 418
                 },
                 {
                     "routes": [],
@@ -77364,8 +77364,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 416,
-                    "end": 422
+                    "line": 421,
+                    "end": 427
                 },
                 {
                     "routes": [],
@@ -77384,8 +77384,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 424,
-                    "end": 427
+                    "line": 429,
+                    "end": 432
                 }
             ]
         },

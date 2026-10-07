@@ -4,7 +4,7 @@ the wp verbs the engine answers itself
 
 | Class | Kind | Lines | Summary |
 |---|---|---|---|
-| [`AssetUpdate`](#assetupdate) | final class | 326 | Shared wording for `wp plugin update` and `wp theme update`. Captured |
+| [`AssetUpdate`](#assetupdate) | final class | 330 | Shared wording for `wp plugin update` and `wp theme update`. Captured |
 | [`CacheCommand`](#cachecommand) | final class | 15 | `wp cache flush`: the engine has no object cache, so this is a no-op success. |
 | [`Commands`](#commands) | final class | 94 | The verbs the engine answers to. Every one is registered for the |
 | [`CronCommand`](#croncommand) | final class | 277 | `wp cron`: the events, schedules, and spawn test a host and a fleet ask |
@@ -49,7 +49,7 @@ Updates the named assets, or all of them.
 
 - `@param list<string> $names`
 
-Internals: `offers()` (private, line 101), `previewRow()` (private, line 149), `apply()` (private, line 161), `render()` (private, line 194), `emit()` (private, line 244), `skipped()` (private, line 265), `missing()` (private, line 273), `installed()` (private, line 282), `titleFor()` (private, line 295), `statusByName()` (private, line 309), `channel()` (private, line 320), `samePrefix()` (private, line 331), `pluginSlug()` (private, line 343)
+Internals: `offers()` (private, line 105), `previewRow()` (private, line 153), `apply()` (private, line 165), `render()` (private, line 198), `emit()` (private, line 248), `skipped()` (private, line 269), `missing()` (private, line 277), `installed()` (private, line 286), `titleFor()` (private, line 299), `statusByName()` (private, line 313), `channel()` (private, line 324), `samePrefix()` (private, line 335), `pluginSlug()` (private, line 347)
 
 
 ## CacheCommand

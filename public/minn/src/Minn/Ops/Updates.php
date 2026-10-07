@@ -61,7 +61,12 @@ final class Updates
         if (is_array($stored) && (int) ($stored['checked'] ?? 0) > time() - self::TTL) {
             return $this->state = $stored;
         }
-        return $this->refresh();
+        try {
+            return $this->refresh();
+        } catch (RestError) {
+            // wordpress.org did not answer: the last answer stands, as the reference's check keeps its own.
+            return $this->state = is_array($stored) ? $stored : ['checked' => 0, 'plugins' => [], 'no_update' => [], 'themes' => [], 'themes_current' => [], 'archives' => [], 'supplied' => []];
+        }
     }
 
     /** Asks wordpress.org now, whatever the cache says, and keeps the answer. */

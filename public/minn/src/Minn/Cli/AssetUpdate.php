@@ -51,7 +51,11 @@ final class AssetUpdate
         if ($names === [] && !$all) {
             WP_CLI::error("Please specify one or more {$this->kind}s, or use --all.");
         }
-        $this->updates->refresh();
+        try {
+            $this->updates->refresh();
+        } catch (RestError) {
+            // wordpress.org did not answer; the update goes on with the last answer, as WP-CLI's does.
+        }
         $excluded = array_key_exists('exclude', $assocArgs)
             ? array_map(trim(...), explode(',', (string) $assocArgs['exclude']))
             : null;
