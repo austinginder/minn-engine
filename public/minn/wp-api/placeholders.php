@@ -115,12 +115,6 @@ function get_all_page_ids()
     return null;
 }
 
-function get_attached_media($type, $post = 0)
-{
-    \Minn\Runtime\PlaceholderTrace::hit('get_attached_media');
-    return null;
-}
-
 function get_block_editor_server_block_settings()
 {
     \Minn\Runtime\PlaceholderTrace::hit('get_block_editor_server_block_settings');

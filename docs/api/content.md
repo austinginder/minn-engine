@@ -14,6 +14,7 @@ the repositories and records: posts, users, terms, comments, and the render pipe
 | [`Emoji`](#emoji) | final class | 68 | Emoji as the reference's mail and feeds carry them, from the list the |
 | [`Excerpt`](#excerpt) | final class | 101 | The reference's generated excerpt, as captured from probe posts: |
 | [`Inventory`](#inventory) | final readonly class | 253 | Plugins, themes, must-use plugins, and drop-ins as they sit on disk. |
+| [`MediaShortcodes`](#mediashortcodes) | final class | 187 | The [video] and [audio] shortcodes as the reference prints them: a |
 | [`MenuItem`](#menuitem) | final readonly class | 22 | One classic nav_menu_item, fields resolved from the post, its |
 | [`Menus`](#menus) | final readonly class | 513 | Classic nav_menu terms and nav_menu_item posts. The front uses these |
 | [`MoreTag`](#moretag) | final class | 20 | The `<!--more-->` marker that splits a post into the part a listing shows |
@@ -512,6 +513,42 @@ Every regular plugin's main file: relative "dir/file.php" (or
 - `@return array<string, string>`
 
 Internals: `regularPlugins()` (private, line 161), `mainPluginFile()` (private, line 236), `item()` (private, line 256)
+
+
+## MediaShortcodes
+
+`final class Minn\Content\MediaShortcodes` · `public/minn/src/Minn/Content/MediaShortcodes.php`
+
+The [video] and [audio] shortcodes as the reference prints them: a
+plugin may take either over first (wp_*_shortcode_override, handed the
+shortcode's own attributes and its instance number), then the source by
+src or by each format's attribute (a file of another kind is only a
+link; YouTube and Vimeo addresses are video of their own; with none,
+the post's first attached video or audio), the player's attributes (a
+video no wider than the content, its height in proportion; the flags
+bare), each source numbered by the instance, a fallback link, and the
+class, library and final HTML through their filters.
+
+- const `YOUTUBE` = `'#^https?://(?:www\\.)?(?:youtube\\.com/watch|youtu\\.be/)#'`
+- const `VIMEO` = `'#^https?://(.+\\.)?vimeo\\.com/.*#'`
+
+### static `video(array|string $attr, string $content): ?string`
+
+[video]. @param array<string, mixed>|string $attr
+
+- `@param array<string, mixed>|string $attr`
+
+### static `audio(array|string $attr, string $content): ?string`
+
+[audio]. @param array<string, mixed>|string $attr
+
+- `@param array<string, mixed>|string $attr`
+
+### static `attached(string $type, mixed $post): array`
+
+get_attached_media: the post's attachments of a kind ("video", "audio", a MIME type), as the reference's children query finds them.
+
+Internals: `sources()` (private, line 104), `anyOwnFormat()` (private, line 132), `sourceTags()` (private, line 143), `attributes()` (private, line 157), `fitted()` (private, line 170), `library()` (private, line 177), `fallback()` (private, line 188), `postId()` (private, line 193), `instance()` (private, line 199)
 
 
 ## MenuItem

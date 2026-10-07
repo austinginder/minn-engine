@@ -1232,68 +1232,16 @@ function _minn_av_instance(string $kind): int
     return $n;
 }
 
-/** @internal a truthy shortcode flag (on, true, 1, or a real true) prints as a bare boolean attribute */
-function _minn_av_flags(array $attr, array $names): string
-{
-    $out = '';
-    foreach ($names as $name) {
-        $value = $attr[$name] ?? '';
-        if ($value === true || in_array(strtolower((string) $value), ['on', 'true', '1'], true)) {
-            $out .= ' ' . $name;
-        }
-    }
-    return $out;
-}
-
-/** @internal the post an av player belongs to, 0 outside a post */
-function _minn_av_post_id(): int
-{
-    $post = get_post();
-    return $post instanceof WP_Post ? (int) $post->ID : 0;
-}
-
-/** @internal the source type of an av URL: a hosted video's provider, else its file type */
-function _minn_av_source_type(string $src, string $fallback): string
-{
-    if (preg_match('#^https?://(?:www\.)?(?:youtube\.com/watch|youtu\.be/)#', $src)) {
-        return 'video/youtube';
-    }
-    if (preg_match('#^https?://(.+\.)?vimeo\.com/#', $src)) {
-        return 'video/vimeo';
-    }
-    return wp_check_filetype($src)['type'] ?: $fallback;
-}
-
-/** The captured player markup: source with a cache-busting query, the bare link as fallback. */
+/** [audio] as the reference prints it (Content\MediaShortcodes). */
 function wp_audio_shortcode($attr, $content = '')
 {
-    $attr = shortcode_atts(['src' => '', 'loop' => '', 'autoplay' => '', 'preload' => 'none', 'class' => 'wp-audio-shortcode', 'style' => 'width: 100%;'], (array) $attr, 'audio');
-    $src = (string) $attr['src'];
-    if ($src === '') {
-        return null;
-    }
-    $n = _minn_av_instance('audio');
-    $html = '<audio class="' . esc_attr($attr['class']) . '" id="audio-' . _minn_av_post_id() . '-' . $n . '"' . _minn_av_flags($attr, ['loop', 'autoplay']) . ' preload="' . esc_attr($attr['preload']) . '" style="' . esc_attr($attr['style']) . '" controls="controls">'
-        . '<source type="' . esc_attr(_minn_av_source_type($src, 'audio/mpeg')) . '" src="' . esc_url(add_query_arg('_', $n, $src)) . '" />'
-        . '<a href="' . esc_url($src) . '">' . esc_html($src) . '</a></audio>';
-    return apply_filters('wp_audio_shortcode', $html, $attr, '', $n, '');
+    return Minn\Content\MediaShortcodes::audio(is_array($attr) ? $attr : (string) $attr, (string) $content);
 }
 
-/** The captured video markup: sized wrapper div, source with the cache buster, link fallback. */
+/** [video] as the reference prints it (Content\MediaShortcodes). */
 function wp_video_shortcode($attr, $content = '')
 {
-    $attr = shortcode_atts(['src' => '', 'poster' => '', 'width' => 640, 'height' => 360, 'loop' => '', 'autoplay' => '', 'muted' => '', 'preload' => 'metadata', 'class' => 'wp-video-shortcode'], (array) $attr, 'video');
-    $src = (string) $attr['src'];
-    if ($src === '') {
-        return null;
-    }
-    $n = _minn_av_instance('video');
-    $poster = $attr['poster'] !== '' ? ' poster="' . esc_url((string) $attr['poster']) . '"' : '';
-    $html = '<div style="width: ' . (int) $attr['width'] . 'px;" class="wp-video">'
-        . '<video class="' . esc_attr($attr['class']) . '" id="video-' . _minn_av_post_id() . '-' . $n . '" width="' . (int) $attr['width'] . '" height="' . (int) $attr['height'] . '"' . $poster . _minn_av_flags($attr, ['loop', 'autoplay', 'muted']) . ' preload="' . esc_attr($attr['preload']) . '" controls="controls">'
-        . '<source type="' . esc_attr(_minn_av_source_type($src, 'video/mp4')) . '" src="' . esc_url(add_query_arg('_', $n, $src)) . '" />'
-        . '<a href="' . esc_url($src) . '">' . esc_html($src) . '</a></video></div>';
-    return apply_filters('wp_video_shortcode', $html, $attr, '', $n, '');
+    return Minn\Content\MediaShortcodes::video(is_array($attr) ? $attr : (string) $attr, (string) $content);
 }
 
 /** Registered sizes the attachment's metadata lacks and its dimensions can fit (empty for the battery attachment, probed). */
@@ -1504,4 +1452,9 @@ function get_taxonomies_for_attachments($output = 'names')
         }
     }
     return $taxonomies;
+}
+
+function get_attached_media($type, $post = 0)
+{
+    return Minn\Content\MediaShortcodes::attached((string) $type, $post);
 }

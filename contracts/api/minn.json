@@ -24937,6 +24937,379 @@
             ]
         },
         {
+            "name": "Minn\\Content\\MediaShortcodes",
+            "short": "MediaShortcodes",
+            "namespace": "Minn\\Content",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Content/MediaShortcodes.php",
+            "lines": 187,
+            "doc": "The [video] and [audio] shortcodes as the reference prints them: a\nplugin may take either over first (wp_*_shortcode_override, handed the\nshortcode's own attributes and its instance number), then the source by\nsrc or by each format's attribute (a file of another kind is only a\nlink; YouTube and Vimeo addresses are video of their own; with none,\nthe post's first attached video or audio), the player's attributes (a\nvideo no wider than the content, its height in proportion; the flags\nbare), each source numbered by the instance, a fallback link, and the\nclass, library and final HTML through their filters.",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\Runtime\\Runtime"
+            ],
+            "usedBy": [],
+            "constructor": null,
+            "cases": [],
+            "constants": [
+                {
+                    "name": "YOUTUBE",
+                    "value": "'#^https?://(?:www\\\\.)?(?:youtube\\\\.com/watch|youtu\\\\.be/)#'",
+                    "doc": "",
+                    "visibility": "private"
+                },
+                {
+                    "name": "VIMEO",
+                    "value": "'#^https?://(.+\\\\.)?vimeo\\\\.com/.*#'",
+                    "doc": "",
+                    "visibility": "private"
+                }
+            ],
+            "properties": [],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "video",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "video(array|string $attr, string $content): ?string",
+                    "doc": "[video]. @param array<string, mixed>|string $attr",
+                    "shapes": [
+                        "@param array<string, mixed>|string $attr"
+                    ],
+                    "params": [
+                        {
+                            "name": "attr",
+                            "type": "array|string",
+                            "shape": "array<string, mixed>|string",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "content",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 26,
+                    "end": 59
+                },
+                {
+                    "routes": [],
+                    "name": "audio",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "audio(array|string $attr, string $content): ?string",
+                    "doc": "[audio]. @param array<string, mixed>|string $attr",
+                    "shapes": [
+                        "@param array<string, mixed>|string $attr"
+                    ],
+                    "params": [
+                        {
+                            "name": "attr",
+                            "type": "array|string",
+                            "shape": "array<string, mixed>|string",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "content",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 62,
+                    "end": 82
+                },
+                {
+                    "routes": [],
+                    "name": "attached",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "attached(string $type, mixed $post): array",
+                    "doc": "get_attached_media: the post's attachments of a kind (\"video\", \"audio\", a MIME type), as the reference's children query finds them.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "type",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "post",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 85,
+                    "end": 93
+                },
+                {
+                    "routes": [],
+                    "name": "sources",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "sources(array $atts, array $types, ?string $hosted, string $kind): array|string|null",
+                    "doc": "The sources a shortcode names: the order they print in, the first\nfile, and the attachment when the post's own media stands in. A\nsrc of another kind answers as a link; nothing at all as null.",
+                    "shapes": [
+                        "@param array<string, mixed> $atts",
+                        "@param list<string> $types",
+                        "@return array{order: list<string>, file: string, attachment: ?\\WP_Post, atts: array<string, mixed>}|string|null"
+                    ],
+                    "params": [
+                        {
+                            "name": "atts",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "types",
+                            "type": "array",
+                            "shape": "list<string>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "hosted",
+                            "type": "?string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "kind",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 104,
+                    "end": 129
+                },
+                {
+                    "routes": [],
+                    "name": "anyOwnFormat",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "anyOwnFormat(array $atts, array $types): bool",
+                    "doc": "Whether any format attribute names a file of its own kind. @param array<string, mixed> $atts @param list<string> $types",
+                    "shapes": [
+                        "@param array<string, mixed> $atts @param list<string> $types"
+                    ],
+                    "params": [
+                        {
+                            "name": "atts",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": "@param list<string> $types"
+                        },
+                        {
+                            "name": "types",
+                            "type": "array",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 132,
+                    "end": 140
+                },
+                {
+                    "routes": [],
+                    "name": "sourceTags",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "sourceTags(array $atts, array $order, int $instance, ?string $hosted): string",
+                    "doc": "Each source as a source tag, numbered by the instance (src a hosted video's own type when it is one). @param array<string, mixed> $atts @param list<string> $order",
+                    "shapes": [
+                        "@param array<string, mixed> $atts @param list<string> $order"
+                    ],
+                    "params": [
+                        {
+                            "name": "atts",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": "@param list<string> $order"
+                        },
+                        {
+                            "name": "order",
+                            "type": "array",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "instance",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "hosted",
+                            "type": "?string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 143,
+                    "end": 154
+                },
+                {
+                    "routes": [],
+                    "name": "attributes",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "attributes(array $attributes, array $omitEmpty): string",
+                    "doc": "The attributes as written: the flags bare when on, the empty ones left out. @param array<string, mixed> $attributes @param list<string> $omitEmpty",
+                    "shapes": [
+                        "@param array<string, mixed> $attributes @param list<string> $omitEmpty"
+                    ],
+                    "params": [
+                        {
+                            "name": "attributes",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": "@param list<string> $omitEmpty"
+                        },
+                        {
+                            "name": "omitEmpty",
+                            "type": "array",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 157,
+                    "end": 167
+                },
+                {
+                    "routes": [],
+                    "name": "fitted",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "fitted(int $width, int $height): array",
+                    "doc": "A video no wider than the content: wider, it takes the content's width and keeps its proportion. @return array{0: int, 1: int}",
+                    "shapes": [
+                        "@return array{0: int, 1: int}"
+                    ],
+                    "params": [
+                        {
+                            "name": "width",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "height",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 170,
+                    "end": 174
+                },
+                {
+                    "routes": [],
+                    "name": "library",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "library(string $kind): string",
+                    "doc": "The player library (wp_*_shortcode_library), its scripts and styles queued when it is the reference's own.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "kind",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 177,
+                    "end": 185
+                },
+                {
+                    "routes": [],
+                    "name": "fallback",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "fallback(string $file, string $library): string",
+                    "doc": "The link a player without the library falls back to (wp_mediaelement_fallback).",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "file",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "library",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 188,
+                    "end": 191
+                },
+                {
+                    "routes": [],
+                    "name": "postId",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "postId(): int",
+                    "doc": "",
+                    "shapes": [],
+                    "params": [],
+                    "line": 193,
+                    "end": 196
+                },
+                {
+                    "routes": [],
+                    "name": "instance",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "instance(string $kind): int",
+                    "doc": "The shortcode's instance number this request, counted whether or not a plugin takes it over.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "kind",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 199,
+                    "end": 205
+                }
+            ]
+        },
+        {
             "name": "Minn\\Content\\MenuItem",
             "short": "MenuItem",
             "namespace": "Minn\\Content",
@@ -119230,6 +119603,7 @@
                 "Minn\\Blocks\\RenderState",
                 "Minn\\Cli\\Runtime",
                 "Minn\\Content\\Blocks",
+                "Minn\\Content\\MediaShortcodes",
                 "Minn\\Content\\PostSlugs",
                 "Minn\\Content\\Reader",
                 "Minn\\Content\\Site",
