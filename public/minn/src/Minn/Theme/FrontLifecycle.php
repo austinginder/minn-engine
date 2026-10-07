@@ -50,14 +50,15 @@ final class FrontLifecycle
     /**
      * The 404 decision: a plugin's pre_handle_404 may make it; otherwise a
      * request the engine could not resolve is a 404 (the query says so, the
-     * status and no-cache headers follow), anything else is a 200.
+     * status and no-cache headers follow), as is a page past the end of a
+     * listing (the query found nothing on it); anything else is a 200.
      */
     public static function handle404(\WP_Query $query, bool $notFound): void
     {
         if (\apply_filters('pre_handle_404', false, $query) !== false || $query->is_404()) {
             return;
         }
-        if ($notFound) {
+        if ($notFound || ($query->is_paged() && empty($query->posts) && !$query->is_robots() && !$query->is_favicon())) {
             $query->set_404();
             \status_header(404);
             \nocache_headers();

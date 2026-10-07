@@ -13,6 +13,8 @@ use Minn\Http\Response;
 use Minn\Http\Access;
 use Minn\Http\Policy;
 use Minn\Http\Route;
+use Minn\Runtime\Runtime;
+use Minn\Theme\MainQueryBridge;
 
 /**
  * The surface monitors, crawlers, and hosting checks hit that is not a
@@ -26,17 +28,26 @@ final readonly class ProbeController
         private Permalinks $permalinks,
         private SiteIcon $icon,
         private ?Cron $cron = null,
+        private ?MainQueryBridge $bridge = null,
     ) {
     }
 
-    /** robots.txt. */
+    /**
+     * robots.txt: with plugins loaded, the reference's (the main query a
+     * robots request, then do_robots, under do_robotstxt and robots_txt);
+     * otherwise the same lines, the sitemap's only on a public site.
+     */
     #[Route(Method::Get, '/robots.txt', policy: new Policy(Access::Public))]
     public function robots(Request $request): Response
     {
+        if (Runtime::booted() && $this->bridge !== null) {
+            $printed = PrintedResponse::stand($this->bridge, ['robots' => 1], static fn () => \do_action('do_robots'));
+            if ($printed !== null) {
+                return $printed;
+            }
+        }
         $public = ($this->site->option('blog_public') ?? '1') !== '0';
-        $body = $public
-            ? "User-agent: *\nDisallow: /wp-admin/\nAllow: /wp-admin/admin-ajax.php\n\nSitemap: " . $this->permalinks->url('/wp-sitemap.xml') . "\n"
-            : "User-agent: *\nDisallow: /\n";
+        $body = "User-agent: *\nDisallow: /wp-admin/\nAllow: /wp-admin/admin-ajax.php\n" . ($public ? "\nSitemap: " . $this->permalinks->url('/wp-sitemap.xml') . "\n" : '');
         return new Response(200, ['Content-Type' => 'text/plain; charset=utf-8'], $body);
     }
 

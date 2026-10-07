@@ -487,6 +487,17 @@ function get_status_header_desc($code)
     return $codes[(int) $code] ?? '';
 }
 
+/** robots.txt: the admin kept out (its AJAX endpoint let in), under do_robotstxt and robots_txt, whether or not the site is public. */
+function do_robots()
+{
+    header('Content-Type: text/plain; charset=utf-8');
+    do_action('do_robotstxt');
+    $public = (bool) get_option('blog_public');
+    $path = (string) parse_url(site_url(), PHP_URL_PATH);
+    $output = "User-agent: *\nDisallow: {$path}/wp-admin/\nAllow: {$path}/wp-admin/admin-ajax.php\n";
+    echo apply_filters('robots_txt', $output, $public);
+}
+
 function status_header($code, $description = '')
 {
     $description = $description ?: get_status_header_desc($code);

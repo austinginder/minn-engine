@@ -19,6 +19,9 @@ final readonly class Sitemaps
 {
     private const PER_PAGE = 2000;
 
+    /** The stylesheets' own CSS (wp_sitemaps_stylesheet_css filters it when plugins are loaded). */
+    public const CSS = 'body{font:15px/1.5 sans-serif;margin:2em}table{border-collapse:collapse}td{padding:.35em 1em .35em 0;border-bottom:1px solid #ddd}';
+
     public function __construct(
         private Db $db,
         private Site $site,
@@ -58,7 +61,7 @@ final readonly class Sitemaps
     {
         $providers = [];
         foreach (['post', 'page'] as $type) {
-            $count = (int) $this->db->value("SELECT COUNT(*) FROM {$this->db->table('posts')} WHERE post_type = ? AND post_status = 'publish' AND post_password = ''", [$type]);
+            $count = (int) $this->db->value("SELECT COUNT(*) FROM {$this->db->table('posts')} WHERE post_type = ? AND post_status = 'publish'", [$type]);
             if ($type === 'page') {
                 $count++;
             }
@@ -86,7 +89,7 @@ final readonly class Sitemaps
             return null;
         }
         $rows = $this->db->rows(
-            "SELECT * FROM {$this->db->table('posts')} WHERE post_type = ? AND post_status = 'publish' AND post_password = ''
+            "SELECT * FROM {$this->db->table('posts')} WHERE post_type = ? AND post_status = 'publish'
              ORDER BY post_date ASC, ID ASC LIMIT ? OFFSET ?",
             [$type, self::PER_PAGE, ($page - 1) * self::PER_PAGE],
         );
@@ -94,10 +97,10 @@ final readonly class Sitemaps
         if ($type === 'page' && $page === 1 && ($this->site->option('show_on_front') ?? 'posts') === 'posts') {
             // The blog front page leads the pages provider, dated by its newest post.
             $latest = (string) ($this->db->value("SELECT MAX(post_modified_gmt) FROM {$this->db->table('posts')} WHERE post_type = 'post' AND post_status = 'publish'") ?? '');
-            $urls[] = [$this->permalinks->url('/'), $latest === '' ? null : self::iso($latest)];
+            $urls[] = [$this->permalinks->url('/'), $latest === '' ? null : self::w3c($latest)];
         }
         foreach (PostRecord::fromRows($rows) as $post) {
-            $urls[] = [$this->permalinks->forPost($post), self::iso($post->modifiedGmt)];
+            $urls[] = [$this->permalinks->forPost($post), self::w3c($post->modifiedGmt)];
         }
         return $urls;
     }
@@ -135,29 +138,30 @@ final readonly class Sitemaps
     }
 
     /** The engine's own stylesheet for browsers that open a sitemap. */
-    public static function stylesheet(): string
+    public static function stylesheet(string $css = self::CSS): string
     {
-        return self::xsl('<xsl:for-each select="sitemap:urlset/sitemap:url"><tr><td><a href="{sitemap:loc}"><xsl:value-of select="sitemap:loc"/></a></td><td><xsl:value-of select="sitemap:lastmod"/></td></tr></xsl:for-each>');
+        return self::xsl($css, '<xsl:for-each select="sitemap:urlset/sitemap:url"><tr><td><a href="{sitemap:loc}"><xsl:value-of select="sitemap:loc"/></a></td><td><xsl:value-of select="sitemap:lastmod"/></td></tr></xsl:for-each>');
     }
 
     /** The stylesheet the sitemap index links: one column, the sitemaps. */
-    public static function indexStylesheet(): string
+    public static function indexStylesheet(string $css = self::CSS): string
     {
-        return self::xsl('<xsl:for-each select="sitemap:sitemapindex/sitemap:sitemap"><tr><td><a href="{sitemap:loc}"><xsl:value-of select="sitemap:loc"/></a></td></tr></xsl:for-each>');
+        return self::xsl($css, '<xsl:for-each select="sitemap:sitemapindex/sitemap:sitemap"><tr><td><a href="{sitemap:loc}"><xsl:value-of select="sitemap:loc"/></a></td></tr></xsl:for-each>');
     }
 
-    private static function xsl(string $rows): string
+    private static function xsl(string $css, string $rows): string
     {
         return '<?xml version="1.0" encoding="UTF-8"?>' . "\n"
             . '<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:sitemap="http://www.sitemaps.org/schemas/sitemap/0.9" exclude-result-prefixes="sitemap">' . "\n"
             . '<xsl:output method="html" encoding="UTF-8" indent="yes"/>' . "\n"
             . '<xsl:template match="/"><html><head><title>XML Sitemap</title>'
-            . '<style>body{font:15px/1.5 sans-serif;margin:2em}table{border-collapse:collapse}td{padding:.35em 1em .35em 0;border-bottom:1px solid #ddd}</style>'
+            . '<style>' . $css . '</style>'
             . '</head><body><h1>XML Sitemap</h1><table>' . $rows . '</table></body></html></xsl:template>' . "\n"
             . '</xsl:stylesheet>' . "\n";
     }
 
-    private static function iso(string $gmt): string
+    /** A GMT date as a sitemap dates it (W3C, UTC). */
+    public static function w3c(string $gmt): string
     {
         return gmdate('Y-m-d\TH:i:s', (int) strtotime($gmt . ' UTC')) . '+00:00';
     }

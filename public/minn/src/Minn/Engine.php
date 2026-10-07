@@ -300,8 +300,11 @@ final readonly class Engine
         };
         $cron = Cron::create($db, $site, ABSPATH . 'wp-content', $permalinks->url('/'), self::WP_VERSION, $fireDueEvents);
         $notFound = static function () use (&$front): Response { return $front->notFound(); };
+        $themed = static function (\Minn\Front\Resolution $resolution) use (&$front): Response { return $front->themed($resolution); };
         $feedController = new \Minn\Front\FeedController($site, $posts, $permalinks, $resolver, $feeds, $notFound);
-        $front = new FrontController($resolver, new Renderer($db, $posts, $permalinks, $resolver->perPage()), $pages, $feedController, $cron, $classic);
+        $bridge = new \Minn\Theme\MainQueryBridge($site, $posts, $resolver->perPage());
+        $sitemapController = new \Minn\Front\SitemapController(new Sitemaps($db, $site, $permalinks), $notFound, $bridge, $themed);
+        $front = new FrontController($resolver, new Renderer($db, $posts, $permalinks, $resolver->perPage()), $pages, $feedController, $cron, $classic, $sitemapController);
 
         // The front's routes are public or judge their own session; a policy that asks
         // for more is refused outright rather than judged half-way.
@@ -323,8 +326,8 @@ final readonly class Engine
             new LoginController($site, $permalinks, $authenticator, new \Minn\Auth\SignIn($sessions, new AuthCookies($db, $cookie), new LoginThrottle($db)), $users, new PasswordReset($users), Mailer::forSite($site)),
             new AppController($app, new BootPayload($site, $permalinks, $capabilities, $app, $this->version, $appearance, new HiddenIntegrations($users, $capabilities), new SiteIcon($site, $posts, $permalinks), $theme !== null, new Translations($users, $site, $app, ABSPATH . 'wp-content')), $authenticator, $capabilities, $permalinks, $this->version, $adminOff),
             new \Minn\Runtime\AjaxController(),
-            new ProbeController($site, $permalinks, new SiteIcon($site, $posts, $permalinks), $cron),
-            new \Minn\Front\SitemapController(new Sitemaps($db, $site, $permalinks), $notFound),
+            new ProbeController($site, $permalinks, new SiteIcon($site, $posts, $permalinks), $cron, $bridge),
+            $sitemapController,
             $feedController,
             new CommentPostController($site, $posts, new Comments($db), $permalinks, $authenticator, $capabilities, new AuthCookies($db, $cookie)),
             $front,

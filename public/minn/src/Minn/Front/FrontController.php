@@ -30,17 +30,23 @@ final readonly class FrontController
         private ?FeedController $feeds = null,
         private ?Cron $cron = null,
         private ?ClassicRenderer $classic = null,
+        private ?SitemapController $sitemaps = null,
     ) {
     }
 
     /** The themed (or interim) 404 page. */
     public function notFound(): Response
     {
-        $resolution = Resolution::notFound();
+        return $this->themed(Resolution::notFound());
+    }
+
+    /** The themed (or interim) page for a resolution, under its status. */
+    public function themed(Resolution $resolution): Response
+    {
         $html = $this->theme?->render($resolution, $this->renderer->bodyClasses($resolution), $this->renderer->title($resolution))
             ?? $this->classic?->render($resolution, $this->renderer->bodyClasses($resolution), $this->renderer->title($resolution))
             ?? $this->renderer->render($resolution);
-        return Response::html($html, 404);
+        return Response::html($html, $resolution->status);
     }
 
     /** The public page for any path; when scheduled work is due, the run follows the response. */
@@ -64,6 +70,9 @@ final readonly class FrontController
         $resolution = $this->resolver->resolve($request);
         if ($resolution->kind === Kind::Redirect) {
             return Response::redirect((string) $resolution->location, $resolution->status);
+        }
+        if ($this->sitemaps !== null && Runtime::booted() && ($request->has('sitemap') || $request->has('sitemap-stylesheet'))) {
+            return $this->sitemaps->queried($request);
         }
         if ($this->feeds !== null && $request->has('feed') && $resolution->kind !== Kind::NotFound) {
             return $this->feeds->queryFeed($request, $resolution, (string) $request->query('feed', 'rss2'));

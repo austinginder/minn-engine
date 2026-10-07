@@ -306,6 +306,10 @@ add_action('plugins_loaded', [WP_Site_Health::class, 'get_instance'], 0);
 add_filter('request', '_post_format_request');
 add_action('template_redirect', 'rest_output_link_header', 11, 0);
 add_action('template_redirect', 'wp_shortlink_header', 11, 0);
+// The sitemaps server, built on every request (its own template_redirect step answers sitemap requests after the canonical one), and robots.txt.
+add_action('init', 'wp_sitemaps_get_server');
+add_action('template_redirect', '_minn_sitemap_canonical');
+add_action('do_robots', 'do_robots');
 
 // The toolbar, set up and printed where the reference does it. On the
 // engine's own pages the Minn bar (or nothing) stands in its place, as the

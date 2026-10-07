@@ -12,14 +12,15 @@ the block-theme reader, templates, global styles and the page renderer
 | [`ClassicTheme`](#classictheme) | final readonly class | 31 | The active classic (PHP-template) theme on disk. A theme is classic when |
 | [`FeedHeaders`](#feedheaders) | final class | 50 | The headers a feed is sent with, as the reference's send_headers sends |
 | [`Folder`](#folder) | final readonly class | 77 | A theme folder read from disk: its style.css headers, which folder its templates come from, its screenshot, whether it is a block theme. |
-| [`FrontLifecycle`](#frontlifecycle) | final class | 93 | WordPress's front-end request steps around the main query, as WP::main |
+| [`FrontLifecycle`](#frontlifecycle) | final class | 94 | WordPress's front-end request steps around the main query, as WP::main |
 | [`GlobalStyles`](#globalstyles) | final readonly class | 555 | theme.json to CSS. Presets become custom properties on :root and their |
 | [`HeadLinks`](#headlinks) | final readonly class | 133 | The links the reference puts in every head: the site and comments |
 | [`Hierarchy`](#hierarchy) | final class | 146 | The classic template hierarchy: the candidate file names each template |
-| [`MainQueryBridge`](#mainquerybridge) | final readonly class | 123 | Stands the main query for a themed page and runs the front-end steps |
+| [`MainQueryBridge`](#mainquerybridge) | final readonly class | 129 | Stands the main query for a themed page and runs the front-end steps |
 | [`NotModified`](#notmodified) | final class | 3 | Raised once a reader's copy of a feed has been found current and the |
 | [`PageRenderer`](#pagerenderer) | final readonly class | 197 | A whole page from the active block theme: the template the resolution |
 | [`PatternText`](#patterntext) | final class | 198 | Block-theme patterns are PHP files whose only code is a handful of |
+| [`Printed`](#printed) | final class | 3 | Raised once a WordPress handler has printed a whole response (a sitemap, |
 | [`StylePresets`](#stylepresets) | final class | 174 | The preset side of theme.json: the colour, gradient, font-size, |
 | [`StyleSettings`](#stylesettings) | final class | 82 | The settings and styles nodes as wp/v2/global-styles reports them: |
 | [`TemplateHierarchy`](#templatehierarchy) | final class | 75 | The templates a block theme falls back through for a template slug, as |
@@ -258,7 +259,8 @@ parse over (the main query then does not run).
 
 The 404 decision: a plugin's pre_handle_404 may make it; otherwise a
 request the engine could not resolve is a 404 (the query says so, the
-status and no-cache headers follow), anything else is a 200.
+status and no-cache headers follow), as is a page past the end of a
+listing (the query found nothing on it); anything else is a 200.
 
 ### static `sendHeaders(WP $wp): void`
 
@@ -471,7 +473,7 @@ engine resolved. Without the runtime, the engine's own listing.
 
 - const `LISTINGS` = `array (   0 =>    \Minn\Front\Kind::Home,   1 =>    \Minn\Front\Kind::Category,   2 =>    \Minn\Front\Kind::Tag,   3 =>    \Minn\Front\Kind::Taxonomy,   4 =>    \Minn\Front\Kind::PostTypeArchive,   5 =>    \Minn\Front\Kind::Author,   6 =>    \Minn\Front\Kind::Date,   7 =>    \Minn\Front\Kind::Search, )`
 
-Used by: `Minn\Front\FeedController`, `Minn\Theme\ClassicRenderer`, `Minn\Theme\PageRenderer`
+Used by: `Minn\Engine`, `Minn\Front\FeedController`, `Minn\Front\PrintedResponse`, `Minn\Front\ProbeController`, `Minn\Front\SitemapController`, `Minn\Theme\ClassicRenderer`, `Minn\Theme\PageRenderer`
 
 ```php
 __construct(Minn\Content\Site $site, Minn\Content\Posts $posts, int $perPage)
@@ -489,7 +491,7 @@ when it is up; the variables a request adds of its own (a feed's) win.
 
 Posts per page.
 
-Internals: `vars()` (private, line 81), `queried()` (private, line 101), `seeded()` (private, line 114), `objectTypes()` (private, line 122), `listing()` (private, line 129)
+Internals: `vars()` (private, line 87), `queried()` (private, line 107), `seeded()` (private, line 120), `objectTypes()` (private, line 128), `listing()` (private, line 135)
 
 
 ## NotModified
@@ -561,6 +563,17 @@ Used by: `Minn\Theme\Theme`
 A pattern file's HTML with its PHP interpreted, never executed.
 
 Internals: `statements()` (private, line 46), `printf()` (private, line 73), `expression()` (private, line 84), `term()` (private, line 100), `escape()` (private, line 128), `arguments()` (private, line 134), `stringLiteral()` (private, line 161), `identifier()` (private, line 184), `skipSpace()` (private, line 194)
+
+
+## Printed
+
+`final class Minn\Theme\Printed` · `public/minn/src/Minn/Theme/Printed.php` · implements `Throwable`, `Stringable`
+
+Raised once a WordPress handler has printed a whole response (a sitemap,
+a stylesheet) or sent a redirect, where the reference exits: the request
+ends there and the engine answers with what was printed.
+
+Used by: `Minn\Front\PrintedResponse`, `Minn\Front\SitemapRequest`
 
 
 ## StylePresets

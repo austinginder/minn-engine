@@ -1774,7 +1774,7 @@
             "pattern": "/robots.txt",
             "name": "Minn\\Front\\ProbeController::robots",
             "handler": "Minn\\Front\\ProbeController::robots",
-            "summary": "robots.txt.",
+            "summary": "robots.txt: with plugins loaded, the reference's (the main query a robots request, then do_robots, under do_robotstxt and robots_txt); otherwise the same lines, the sitemap's only on a public site.",
             "policy": {
                 "access": "Public",
                 "describe": "public"
@@ -1869,10 +1869,10 @@
         },
         {
             "method": "GET",
-            "pattern": "/wp-sitemap-{type:posts|taxonomies|users}-{rest:[a-z_0-9-]+}.xml",
+            "pattern": "/wp-sitemap-{name:[a-z]+}-{rest:[a-z_0-9-]+}.xml",
             "name": "Minn\\Front\\SitemapController::sitemap",
             "handler": "Minn\\Front\\SitemapController::sitemap",
-            "summary": "One sitemap page.",
+            "summary": "One sitemap page: a provider's name, its subtype when it has them, and the page.",
             "policy": {
                 "access": "Public",
                 "describe": "public"

@@ -34808,7 +34808,7 @@
             "namespace": "Minn",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Engine.php",
-            "lines": 270,
+            "lines": 273,
             "doc": "The engine's front door. An unmodified wp-config.php ends by requiring\nwp-settings.php, which is the engine's own boot file; it hands off here.\nREST is dispatched first (from the path or from ?rest_route=), then the\nadmin, the login endpoint, and finally the public site.",
             "implements": [],
             "extends": null,
@@ -34852,6 +34852,7 @@
                 "Minn\\Front\\Permalinks",
                 "Minn\\Front\\ProbeController",
                 "Minn\\Front\\Renderer",
+                "Minn\\Front\\Resolution",
                 "Minn\\Front\\Resolver",
                 "Minn\\Front\\SitemapController",
                 "Minn\\Front\\Sitemaps",
@@ -34876,6 +34877,7 @@
                 "Minn\\Support\\Serialized",
                 "Minn\\Theme\\ClassicRenderer",
                 "Minn\\Theme\\ClassicTheme",
+                "Minn\\Theme\\MainQueryBridge",
                 "Minn\\Theme\\PageRenderer",
                 "Minn\\Theme\\Theme"
             ],
@@ -35182,7 +35184,7 @@
                         }
                     ],
                     "line": 268,
-                    "end": 334
+                    "end": 337
                 }
             ]
         },
@@ -41692,7 +41694,7 @@
             "namespace": "Minn\\Front",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Front/FrontController.php",
-            "lines": 57,
+            "lines": 66,
             "doc": "The public site. One catch-all route: resolve the URL, then either\nredirect or render, through the active block theme when there is one,\nthe classic PHP template runner when the theme is classic, and the\ninterim template otherwise.",
             "implements": [],
             "extends": null,
@@ -41703,6 +41705,7 @@
                 "Minn\\Front\\Renderer",
                 "Minn\\Front\\Resolution",
                 "Minn\\Front\\Resolver",
+                "Minn\\Front\\SitemapController",
                 "Minn\\Http\\Access",
                 "Minn\\Http\\Method",
                 "Minn\\Http\\Policy",
@@ -41717,7 +41720,7 @@
                 "Minn\\Engine"
             ],
             "constructor": {
-                "signature": "__construct(Minn\\Front\\Resolver $resolver, Minn\\Front\\Renderer $renderer, ?Minn\\Theme\\PageRenderer $theme = NULL, ?Minn\\Front\\FeedController $feeds = NULL, ?Minn\\Cron\\Cron $cron = NULL, ?Minn\\Theme\\ClassicRenderer $classic = NULL)",
+                "signature": "__construct(Minn\\Front\\Resolver $resolver, Minn\\Front\\Renderer $renderer, ?Minn\\Theme\\PageRenderer $theme = NULL, ?Minn\\Front\\FeedController $feeds = NULL, ?Minn\\Cron\\Cron $cron = NULL, ?Minn\\Theme\\ClassicRenderer $classic = NULL, ?Minn\\Front\\SitemapController $sitemaps = NULL)",
                 "doc": "",
                 "shapes": [],
                 "params": [
@@ -41762,11 +41765,18 @@
                         "shape": "",
                         "default": "NULL",
                         "doc": ""
+                    },
+                    {
+                        "name": "sitemaps",
+                        "type": "?Minn\\Front\\SitemapController",
+                        "shape": "",
+                        "default": "NULL",
+                        "doc": ""
                     }
                 ],
                 "visibility": "public",
                 "line": 26,
-                "end": 34
+                "end": 35
             },
             "cases": [],
             "constants": [],
@@ -41824,6 +41834,15 @@
                     "doc": "",
                     "visibility": "private",
                     "promoted": true
+                },
+                {
+                    "name": "sitemaps",
+                    "type": "?Minn\\Front\\SitemapController",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
                 }
             ],
             "methods": [
@@ -41836,8 +41855,28 @@
                     "doc": "The themed (or interim) 404 page.",
                     "shapes": [],
                     "params": [],
-                    "line": 37,
-                    "end": 44
+                    "line": 38,
+                    "end": 41
+                },
+                {
+                    "routes": [],
+                    "name": "themed",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "themed(Minn\\Front\\Resolution $resolution): Minn\\Http\\Response",
+                    "doc": "The themed (or interim) page for a resolution, under its status.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "resolution",
+                            "type": "Minn\\Front\\Resolution",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 44,
+                    "end": 50
                 },
                 {
                     "routes": [
@@ -41858,8 +41897,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 48,
-                    "end": 60
+                    "line": 54,
+                    "end": 66
                 },
                 {
                     "routes": [],
@@ -41878,8 +41917,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 62,
-                    "end": 79
+                    "line": 68,
+                    "end": 88
                 }
             ]
         },
@@ -43852,12 +43891,95 @@
             ]
         },
         {
+            "name": "Minn\\Front\\PrintedResponse",
+            "short": "PrintedResponse",
+            "namespace": "Minn\\Front",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Front/PrintedResponse.php",
+            "lines": 39,
+            "doc": "A response WordPress's handlers print themselves (a sitemap, robots.txt),\nas the reference serves them: the main query stood with the request's own\nvariables and the front-end steps around it, then $print; what was\nprinted, under the status and headers the handlers sent. A handler that\nends the request early (Printed, where the reference exits) ends it here\ntoo; when none did and there is nothing to print, null, and the theme\nrenders the page on the query as it stands.",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\Front\\Resolution",
+                "Minn\\Http\\Response",
+                "Minn\\Theme\\MainQueryBridge",
+                "Minn\\Theme\\Printed"
+            ],
+            "usedBy": [
+                "Minn\\Front\\ProbeController",
+                "Minn\\Front\\SitemapController"
+            ],
+            "constructor": null,
+            "cases": [],
+            "constants": [],
+            "properties": [],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "stand",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "stand(Minn\\Theme\\MainQueryBridge $bridge, array $vars, ?Closure $print = NULL): ?Minn\\Http\\Response",
+                    "doc": "The request served this way, or null for the theme to render.",
+                    "shapes": [
+                        "@param array<string, mixed> $vars the request's own query variables"
+                    ],
+                    "params": [
+                        {
+                            "name": "bridge",
+                            "type": "Minn\\Theme\\MainQueryBridge",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "vars",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": "the request's own query variables"
+                        },
+                        {
+                            "name": "print",
+                            "type": "?Closure",
+                            "shape": "",
+                            "default": "NULL",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 28,
+                    "end": 51
+                },
+                {
+                    "routes": [],
+                    "name": "discard",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "discard(int $level): void",
+                    "doc": "",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "level",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 53,
+                    "end": 58
+                }
+            ]
+        },
+        {
             "name": "Minn\\Front\\ProbeController",
             "short": "ProbeController",
             "namespace": "Minn\\Front",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Front/ProbeController.php",
-            "lines": 57,
+            "lines": 66,
             "doc": "The surface monitors, crawlers, and hosting checks hit that is not a\npage: robots.txt, the XML-RPC and cron endpoints, the admin entry point,\nand the favicon. Feeds and sitemaps have controllers of their own.",
             "implements": [],
             "extends": null,
@@ -43866,18 +43988,21 @@
                 "Minn\\Content\\SiteIcon",
                 "Minn\\Cron\\Cron",
                 "Minn\\Front\\Permalinks",
+                "Minn\\Front\\PrintedResponse",
                 "Minn\\Http\\Access",
                 "Minn\\Http\\Method",
                 "Minn\\Http\\Policy",
                 "Minn\\Http\\Request",
                 "Minn\\Http\\Response",
-                "Minn\\Http\\Route"
+                "Minn\\Http\\Route",
+                "Minn\\Runtime\\Runtime",
+                "Minn\\Theme\\MainQueryBridge"
             ],
             "usedBy": [
                 "Minn\\Engine"
             ],
             "constructor": {
-                "signature": "__construct(Minn\\Content\\Site $site, Minn\\Front\\Permalinks $permalinks, Minn\\Content\\SiteIcon $icon, ?Minn\\Cron\\Cron $cron = NULL)",
+                "signature": "__construct(Minn\\Content\\Site $site, Minn\\Front\\Permalinks $permalinks, Minn\\Content\\SiteIcon $icon, ?Minn\\Cron\\Cron $cron = NULL, ?Minn\\Theme\\MainQueryBridge $bridge = NULL)",
                 "doc": "",
                 "shapes": [],
                 "params": [
@@ -43908,11 +44033,18 @@
                         "shape": "",
                         "default": "NULL",
                         "doc": ""
+                    },
+                    {
+                        "name": "bridge",
+                        "type": "?Minn\\Theme\\MainQueryBridge",
+                        "shape": "",
+                        "default": "NULL",
+                        "doc": ""
                     }
                 ],
                 "visibility": "public",
-                "line": 24,
-                "end": 30
+                "line": 26,
+                "end": 33
             },
             "cases": [],
             "constants": [],
@@ -43952,6 +44084,15 @@
                     "doc": "",
                     "visibility": "private",
                     "promoted": true
+                },
+                {
+                    "name": "bridge",
+                    "type": "?Minn\\Theme\\MainQueryBridge",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
                 }
             ],
             "methods": [
@@ -43963,7 +44104,7 @@
                     "static": false,
                     "visibility": "public",
                     "signature": "robots(Minn\\Http\\Request $request): Minn\\Http\\Response",
-                    "doc": "robots.txt.",
+                    "doc": "robots.txt: with plugins loaded, the reference's (the main query a\nrobots request, then do_robots, under do_robotstxt and robots_txt);\notherwise the same lines, the sitemap's only on a public site.",
                     "shapes": [],
                     "params": [
                         {
@@ -43974,8 +44115,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 34,
-                    "end": 41
+                    "line": 41,
+                    "end": 52
                 },
                 {
                     "routes": [
@@ -43996,8 +44137,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 45,
-                    "end": 51
+                    "line": 56,
+                    "end": 62
                 },
                 {
                     "routes": [
@@ -44018,8 +44159,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 55,
-                    "end": 61
+                    "line": 66,
+                    "end": 72
                 },
                 {
                     "routes": [
@@ -44041,8 +44182,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 66,
-                    "end": 69
+                    "line": 77,
+                    "end": 80
                 },
                 {
                     "routes": [
@@ -44063,8 +44204,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 73,
-                    "end": 77
+                    "line": 84,
+                    "end": 88
                 }
             ]
         },
@@ -44416,13 +44557,16 @@
             "usedBy": [
                 "Minn\\Blocks\\Context",
                 "Minn\\Blocks\\Dynamic\\Theme\\PostBlocks",
+                "Minn\\Engine",
                 "Minn\\Front\\AdminBar",
                 "Minn\\Front\\DocumentTitle",
                 "Minn\\Front\\FeedController",
                 "Minn\\Front\\FrontController",
+                "Minn\\Front\\PrintedResponse",
                 "Minn\\Front\\Renderer",
                 "Minn\\Front\\Resolver",
                 "Minn\\Front\\SingleAddresses",
+                "Minn\\Front\\SitemapController",
                 "Minn\\Runtime\\MainQuery",
                 "Minn\\Theme\\ArchiveTitle",
                 "Minn\\Theme\\BodyClasses",
@@ -45932,24 +46076,30 @@
             "namespace": "Minn\\Front",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Front/SitemapController.php",
-            "lines": 46,
-            "doc": "The sitemap index, its pages, and the two stylesheets.",
+            "lines": 79,
+            "doc": "The sitemap index, its pages, and the two stylesheets. With plugins\nloaded they are the reference's: the request's sitemap variables stand\nin the main query and the sitemaps server answers at template_redirect\n(SitemapRequest), through every filter a plugin hooks, any provider it\nregisters among them; what it does not print, the theme renders (a 404,\nor the page a stray address amounts to). Without, the engine's own.",
             "implements": [],
             "extends": null,
             "uses": [
+                "Minn\\Front\\PrintedResponse",
+                "Minn\\Front\\Resolution",
+                "Minn\\Front\\SitemapRequest",
                 "Minn\\Front\\Sitemaps",
                 "Minn\\Http\\Access",
                 "Minn\\Http\\Method",
                 "Minn\\Http\\Policy",
                 "Minn\\Http\\Request",
                 "Minn\\Http\\Response",
-                "Minn\\Http\\Route"
+                "Minn\\Http\\Route",
+                "Minn\\Runtime\\Runtime",
+                "Minn\\Theme\\MainQueryBridge"
             ],
             "usedBy": [
-                "Minn\\Engine"
+                "Minn\\Engine",
+                "Minn\\Front\\FrontController"
             ],
             "constructor": {
-                "signature": "__construct(Minn\\Front\\Sitemaps $sitemaps, Closure $notFound)",
+                "signature": "__construct(Minn\\Front\\Sitemaps $sitemaps, Closure $notFound, ?Minn\\Theme\\MainQueryBridge $bridge = NULL, ?Closure $themed = NULL)",
                 "doc": "",
                 "shapes": [],
                 "params": [
@@ -45966,11 +46116,25 @@
                         "shape": "",
                         "default": null,
                         "doc": ""
+                    },
+                    {
+                        "name": "bridge",
+                        "type": "?Minn\\Theme\\MainQueryBridge",
+                        "shape": "",
+                        "default": "NULL",
+                        "doc": ""
+                    },
+                    {
+                        "name": "themed",
+                        "type": "?Closure",
+                        "shape": "",
+                        "default": "NULL",
+                        "doc": ""
                     }
                 ],
                 "visibility": "public",
-                "line": 20,
-                "end": 25
+                "line": 27,
+                "end": 35
             },
             "cases": [],
             "constants": [],
@@ -45987,6 +46151,24 @@
                 {
                     "name": "notFound",
                     "type": "Closure",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
+                },
+                {
+                    "name": "bridge",
+                    "type": "?Minn\\Theme\\MainQueryBridge",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
+                },
+                {
+                    "name": "themed",
+                    "type": "?Closure",
                     "readonly": true,
                     "static": false,
                     "doc": "",
@@ -46014,18 +46196,18 @@
                             "doc": ""
                         }
                     ],
-                    "line": 29,
-                    "end": 32
+                    "line": 39,
+                    "end": 42
                 },
                 {
                     "routes": [
-                        "GET /wp-sitemap-{type:posts|taxonomies|users}-{rest:[a-z_0-9-]+}.xml (public)"
+                        "GET /wp-sitemap-{name:[a-z]+}-{rest:[a-z_0-9-]+}.xml (public)"
                     ],
                     "name": "sitemap",
                     "static": false,
                     "visibility": "public",
-                    "signature": "sitemap(Minn\\Http\\Request $request, string $type, string $rest): Minn\\Http\\Response",
-                    "doc": "One sitemap page.",
+                    "signature": "sitemap(Minn\\Http\\Request $request, string $name, string $rest): Minn\\Http\\Response",
+                    "doc": "One sitemap page: a provider's name, its subtype when it has them, and the page.",
                     "shapes": [],
                     "params": [
                         {
@@ -46036,7 +46218,7 @@
                             "doc": ""
                         },
                         {
-                            "name": "type",
+                            "name": "name",
                             "type": "string",
                             "shape": "",
                             "default": null,
@@ -46050,8 +46232,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 36,
-                    "end": 43
+                    "line": 46,
+                    "end": 57
                 },
                 {
                     "routes": [
@@ -46072,8 +46254,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 47,
-                    "end": 50
+                    "line": 61,
+                    "end": 64
                 },
                 {
                     "routes": [
@@ -46094,8 +46276,50 @@
                             "doc": ""
                         }
                     ],
-                    "line": 54,
-                    "end": 57
+                    "line": 68,
+                    "end": 71
+                },
+                {
+                    "routes": [],
+                    "name": "queried",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "queried(Minn\\Http\\Request $request): Minn\\Http\\Response",
+                    "doc": "The query form (?sitemap=, ?sitemap-stylesheet=) on the front page, with plugins loaded.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "request",
+                            "type": "Minn\\Http\\Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 74,
+                    "end": 78
+                },
+                {
+                    "routes": [],
+                    "name": "served",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "served(array $vars): ?Minn\\Http\\Response",
+                    "doc": "The reference's answer, with plugins loaded: what the sitemaps server\nprinted, else the theme's page on the query as it stands (a 404 when\nthe server made it one). Null without plugins.",
+                    "shapes": [
+                        "@param array<string, mixed> $vars"
+                    ],
+                    "params": [
+                        {
+                            "name": "vars",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 87,
+                    "end": 97
                 },
                 {
                     "routes": [],
@@ -46114,8 +46338,110 @@
                             "doc": ""
                         }
                     ],
-                    "line": 59,
-                    "end": 62
+                    "line": 99,
+                    "end": 102
+                }
+            ]
+        },
+        {
+            "name": "Minn\\Front\\SitemapRequest",
+            "short": "SitemapRequest",
+            "namespace": "Minn\\Front",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Front/SitemapRequest.php",
+            "lines": 70,
+            "doc": "A sitemap request at template_redirect, as the reference's sitemaps\nserver answers it: a sitemap address asked for another way (the query\nform, page 0) moves to its own; with the sitemaps off, or a subtype or\npage that has nothing, the request is a 404 the theme renders; otherwise\nthe stylesheet, the index or the provider's page is printed and the\nrequest ends. A provider nobody registered leaves the request alone.",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\Runtime\\Runtime",
+                "Minn\\Theme\\Printed"
+            ],
+            "usedBy": [
+                "Minn\\Front\\SitemapController"
+            ],
+            "constructor": null,
+            "cases": [],
+            "constants": [],
+            "properties": [],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "canonical",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "canonical(): void",
+                    "doc": "The canonical step: a sitemap asked for by another address is sent to its own.",
+                    "shapes": [],
+                    "params": [],
+                    "line": 21,
+                    "end": 36
+                },
+                {
+                    "routes": [],
+                    "name": "serve",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "serve(WP_Sitemaps $server): void",
+                    "doc": "What the sitemaps server does with the request (render_sitemaps).",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "server",
+                            "type": "WP_Sitemaps",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 39,
+                    "end": 59
+                },
+                {
+                    "routes": [],
+                    "name": "page",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "page(WP_Sitemaps $server, string $sitemap, string $subtype): void",
+                    "doc": "One provider's page: printed, or a 404 when the subtype is not the provider's or the page has nothing.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "server",
+                            "type": "WP_Sitemaps",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "sitemap",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "subtype",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 62,
+                    "end": 79
+                },
+                {
+                    "routes": [],
+                    "name": "notFound",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "notFound(): void",
+                    "doc": "The main query made a 404, which the theme renders.",
+                    "shapes": [],
+                    "params": [],
+                    "line": 82,
+                    "end": 86
                 }
             ]
         },
@@ -46260,7 +46586,7 @@
             "namespace": "Minn\\Front",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Front/Sitemaps.php",
-            "lines": 147,
+            "lines": 151,
             "doc": "The sitemap index and its providers (posts, pages, categories, tags,\nauthors), in the reference's shape: one file per provider and page, 2000\nURLs a page, lastmod on content only.",
             "implements": [],
             "extends": null,
@@ -46305,8 +46631,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 22,
-                "end": 27
+                "line": 25,
+                "end": 30
             },
             "cases": [],
             "constants": [
@@ -46315,6 +46641,12 @@
                     "value": "2000",
                     "doc": "",
                     "visibility": "private"
+                },
+                {
+                    "name": "CSS",
+                    "value": "'body{font:15px/1.5 sans-serif;margin:2em}table{border-collapse:collapse}td{padding:.35em 1em .35em 0;border-bottom:1px solid #ddd}'",
+                    "doc": "The stylesheets' own CSS (wp_sitemaps_stylesheet_css filters it when plugins are loaded).",
+                    "visibility": "public"
                 }
             ],
             "properties": [
@@ -46356,8 +46688,8 @@
                     "doc": "The sitemap index's XML.",
                     "shapes": [],
                     "params": [],
-                    "line": 30,
-                    "end": 39
+                    "line": 33,
+                    "end": 42
                 },
                 {
                     "routes": [],
@@ -46390,32 +46722,68 @@
                             "doc": ""
                         }
                     ],
-                    "line": 42,
-                    "end": 54
+                    "line": 45,
+                    "end": 57
                 },
                 {
                     "routes": [],
                     "name": "stylesheet",
                     "static": true,
                     "visibility": "public",
-                    "signature": "stylesheet(): string",
+                    "signature": "stylesheet(string $css = self::CSS): string",
                     "doc": "The engine's own stylesheet for browsers that open a sitemap.",
                     "shapes": [],
-                    "params": [],
-                    "line": 138,
-                    "end": 141
+                    "params": [
+                        {
+                            "name": "css",
+                            "type": "string",
+                            "shape": "",
+                            "default": "self::CSS",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 141,
+                    "end": 144
                 },
                 {
                     "routes": [],
                     "name": "indexStylesheet",
                     "static": true,
                     "visibility": "public",
-                    "signature": "indexStylesheet(): string",
+                    "signature": "indexStylesheet(string $css = self::CSS): string",
                     "doc": "The stylesheet the sitemap index links: one column, the sitemaps.",
                     "shapes": [],
-                    "params": [],
-                    "line": 144,
-                    "end": 147
+                    "params": [
+                        {
+                            "name": "css",
+                            "type": "string",
+                            "shape": "",
+                            "default": "self::CSS",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 147,
+                    "end": 150
+                },
+                {
+                    "routes": [],
+                    "name": "w3c",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "w3c(string $gmt): string",
+                    "doc": "A GMT date as a sitemap dates it (W3C, UTC).",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "gmt",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 164,
+                    "end": 167
                 },
                 {
                     "routes": [],
@@ -46428,8 +46796,8 @@
                         "@return list<array{slug: string, pages: int}>"
                     ],
                     "params": [],
-                    "line": 57,
-                    "end": 80
+                    "line": 60,
+                    "end": 83
                 },
                 {
                     "routes": [],
@@ -46457,8 +46825,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 83,
-                    "end": 103
+                    "line": 86,
+                    "end": 106
                 },
                 {
                     "routes": [],
@@ -46486,8 +46854,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 106,
-                    "end": 118
+                    "line": 109,
+                    "end": 121
                 },
                 {
                     "routes": [],
@@ -46508,8 +46876,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 121,
-                    "end": 125
+                    "line": 124,
+                    "end": 128
                 },
                 {
                     "routes": [],
@@ -46522,18 +46890,25 @@
                         "@return list<array>"
                     ],
                     "params": [],
-                    "line": 128,
-                    "end": 135
+                    "line": 131,
+                    "end": 138
                 },
                 {
                     "routes": [],
                     "name": "xsl",
                     "static": true,
                     "visibility": "private",
-                    "signature": "xsl(string $rows): string",
+                    "signature": "xsl(string $css, string $rows): string",
                     "doc": "",
                     "shapes": [],
                     "params": [
+                        {
+                            "name": "css",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
                         {
                             "name": "rows",
                             "type": "string",
@@ -46542,28 +46917,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 149,
-                    "end": 158
-                },
-                {
-                    "routes": [],
-                    "name": "iso",
-                    "static": true,
-                    "visibility": "private",
-                    "signature": "iso(string $gmt): string",
-                    "doc": "",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "gmt",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 160,
-                    "end": 163
+                    "line": 152,
+                    "end": 161
                 }
             ]
         },
@@ -60600,6 +60955,7 @@
                 "Minn\\Front\\FeedController",
                 "Minn\\Front\\FrontController",
                 "Minn\\Front\\Maintenance",
+                "Minn\\Front\\PrintedResponse",
                 "Minn\\Front\\ProbeController",
                 "Minn\\Front\\SitemapController",
                 "Minn\\Http\\Envelope",
@@ -115944,7 +116300,7 @@
             "namespace": "Minn\\Runtime",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Runtime/QueryFlags.php",
-            "lines": 166,
+            "lines": 168,
             "doc": "The conditional flags a set of query variables implies (is_single, is_archive,\nis_home, ...), derived the way the reference's parse step derives them, plus\nthe variables after the integer casts that step applies.",
             "implements": [],
             "extends": null,
@@ -116076,7 +116432,7 @@
                         }
                     ],
                     "line": 51,
-                    "end": 98
+                    "end": 100
                 },
                 {
                     "routes": [],
@@ -116104,8 +116460,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 167,
-                    "end": 176
+                    "line": 169,
+                    "end": 178
                 },
                 {
                     "routes": [],
@@ -116127,8 +116483,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 108,
-                    "end": 135
+                    "line": 110,
+                    "end": 137
                 },
                 {
                     "routes": [],
@@ -116156,8 +116512,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 138,
-                    "end": 159
+                    "line": 140,
+                    "end": 161
                 }
             ]
         },
@@ -117397,7 +117753,10 @@
                 "Minn\\Front\\FrontController",
                 "Minn\\Front\\Permalinks",
                 "Minn\\Front\\PluginRules",
+                "Minn\\Front\\ProbeController",
                 "Minn\\Front\\Resolver",
+                "Minn\\Front\\SitemapController",
+                "Minn\\Front\\SitemapRequest",
                 "Minn\\Front\\ToolbarMenus",
                 "Minn\\Login\\LoginController",
                 "Minn\\Login\\LoginHooks",
@@ -129648,7 +130007,7 @@
             "namespace": "Minn\\Theme",
             "kind": "final class",
             "file": "public/minn/src/Minn/Theme/FrontLifecycle.php",
-            "lines": 93,
+            "lines": 94,
             "doc": "WordPress's front-end request steps around the main query, as WP::main\nruns them (front lifecycle trace): parse the request (do_parse_request\nmay take it over; query_vars names the public variables, a plugin's own\nread from the query string; request filters the result; parse_request\nfollows), the main query, the 404 decision (pre_handle_404 first), the\nglobals, and the headers (wp_headers, the status, send_headers). The\nengine has already resolved the URL; these steps tell plugins about it\nin the reference's order and let them change what the query asks.",
             "implements": [],
             "extends": null,
@@ -129709,7 +130068,7 @@
                     "static": true,
                     "visibility": "public",
                     "signature": "handle404(WP_Query $query, bool $notFound): void",
-                    "doc": "The 404 decision: a plugin's pre_handle_404 may make it; otherwise a\nrequest the engine could not resolve is a 404 (the query says so, the\nstatus and no-cache headers follow), anything else is a 200.",
+                    "doc": "The 404 decision: a plugin's pre_handle_404 may make it; otherwise a\nrequest the engine could not resolve is a 404 (the query says so, the\nstatus and no-cache headers follow), as is a page past the end of a\nlisting (the query found nothing on it); anything else is a 200.",
                     "shapes": [],
                     "params": [
                         {
@@ -129727,8 +130086,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 55,
-                    "end": 67
+                    "line": 56,
+                    "end": 68
                 },
                 {
                     "routes": [],
@@ -129747,8 +130106,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 75,
-                    "end": 111
+                    "line": 76,
+                    "end": 112
                 }
             ]
         },
@@ -130811,7 +131170,7 @@
             "namespace": "Minn\\Theme",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Theme/MainQueryBridge.php",
-            "lines": 123,
+            "lines": 129,
             "doc": "Stands the main query for a themed page and runs the front-end steps\naround it as WP::main does (FrontLifecycle): the request parsed, the main\nquery through WP_Query (so pre_get_posts and every posts_* filter shape\nit), the 404 decision, the globals, the headers, then \"wp\" and\ntemplate_redirect. A listing's posts are the query's; a single post the\nquery does not find (a preview, a draft its author reads) is the one the\nengine resolved. Without the runtime, the engine's own listing.",
             "implements": [],
             "extends": null,
@@ -130830,7 +131189,11 @@
                 "Minn\\Theme\\FrontLifecycle"
             ],
             "usedBy": [
+                "Minn\\Engine",
                 "Minn\\Front\\FeedController",
+                "Minn\\Front\\PrintedResponse",
+                "Minn\\Front\\ProbeController",
+                "Minn\\Front\\SitemapController",
                 "Minn\\Theme\\ClassicRenderer",
                 "Minn\\Theme\\PageRenderer"
             ],
@@ -130931,7 +131294,7 @@
                         }
                     ],
                     "line": 45,
-                    "end": 66
+                    "end": 72
                 },
                 {
                     "routes": [],
@@ -130942,8 +131305,8 @@
                     "doc": "Posts per page.",
                     "shapes": [],
                     "params": [],
-                    "line": 69,
-                    "end": 72
+                    "line": 75,
+                    "end": 78
                 },
                 {
                     "routes": [],
@@ -130964,8 +131327,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 81,
-                    "end": 93
+                    "line": 87,
+                    "end": 99
                 },
                 {
                     "routes": [],
@@ -130993,8 +131356,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 101,
-                    "end": 111
+                    "line": 107,
+                    "end": 117
                 },
                 {
                     "routes": [],
@@ -131022,8 +131385,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 114,
-                    "end": 119
+                    "line": 120,
+                    "end": 125
                 },
                 {
                     "routes": [],
@@ -131044,8 +131407,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 122,
-                    "end": 127
+                    "line": 128,
+                    "end": 133
                 },
                 {
                     "routes": [],
@@ -131064,8 +131427,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 129,
-                    "end": 149
+                    "line": 135,
+                    "end": 155
                 }
             ]
         },
@@ -131730,6 +132093,30 @@
                     "end": 211
                 }
             ]
+        },
+        {
+            "name": "Minn\\Theme\\Printed",
+            "short": "Printed",
+            "namespace": "Minn\\Theme",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Theme/Printed.php",
+            "lines": 3,
+            "doc": "Raised once a WordPress handler has printed a whole response (a sitemap,\na stylesheet) or sent a redirect, where the reference exits: the request\nends there and the engine answers with what was printed.",
+            "implements": [
+                "Throwable",
+                "Stringable"
+            ],
+            "extends": "Exception",
+            "uses": [],
+            "usedBy": [
+                "Minn\\Front\\PrintedResponse",
+                "Minn\\Front\\SitemapRequest"
+            ],
+            "constructor": null,
+            "cases": [],
+            "constants": [],
+            "properties": [],
+            "methods": []
         },
         {
             "name": "Minn\\Theme\\StylePresets",

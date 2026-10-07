@@ -19,7 +19,7 @@ URL resolution, permalinks, feeds, sitemaps and the public page
 | [`FeedTemplates`](#feedtemplates) | final class | 295 | The feed templates do_feed_* loads, written from the reference's output |
 | [`FeedWriter`](#feedwriter) | final class | 35 | A feed as it is written: text as given, and what each template tag and |
 | [`Feeds`](#feeds) | final readonly class | 316 | The syndication feeds, byte for byte in the reference's shape: RSS 2.0 |
-| [`FrontController`](#frontcontroller) | final readonly class | 57 | The public site. One catch-all route: resolve the URL, then either |
+| [`FrontController`](#frontcontroller) | final readonly class | 66 | The public site. One catch-all route: resolve the URL, then either |
 | [`Kind`](#kind) | enum | 17 | What a public URL resolved to. |
 | [`ListSpacing`](#listspacing) | final readonly class | 30 | How a page list is spaced: the reference's "preserve" keeps newlines and |
 | [`ListingLinks`](#listinglinks) | final class | 53 | The prev/next links a paged listing prints: which page sits either side of |
@@ -31,15 +31,17 @@ URL resolution, permalinks, feeds, sitemaps and the public page
 | [`PluginRules`](#pluginrules) | final class | 71 | Rewrite rules a plugin registered through add_rewrite_rule(): the |
 | [`PostEmbed`](#postembed) | final class | 104 | A post as other sites embed it, the oEmbed provider side, as the |
 | [`PostNavigation`](#postnavigation) | final class | 36 | The links to the posts either side of this one, and the nav block that |
-| [`ProbeController`](#probecontroller) | final readonly class | 57 | The surface monitors, crawlers, and hosting checks hit that is not a |
+| [`PrintedResponse`](#printedresponse) | final class | 39 | A response WordPress's handlers print themselves (a sitemap, robots.txt), |
+| [`ProbeController`](#probecontroller) | final readonly class | 66 | The surface monitors, crawlers, and hosting checks hit that is not a |
 | [`Redirects`](#redirects) | enum | 23 | Whether a resolution may answer with a canonical redirect. A GET or HEAD |
 | [`Renderer`](#renderer) | final readonly class | 156 | The interim public theme: one clean template until the block-theme |
 | [`Resolution`](#resolution) | final readonly class | 108 | The outcome of resolving a public URL: which kind of thing it names, |
 | [`Resolver`](#resolver) | final readonly class | 554 | Turns a public URL into a Resolution, following the reference's observed |
 | [`SingleAddresses`](#singleaddresses) | final readonly class | 61 | The addresses a single answers to besides its own, as the reference |
-| [`SitemapController`](#sitemapcontroller) | final readonly class | 46 | The sitemap index, its pages, and the two stylesheets. |
+| [`SitemapController`](#sitemapcontroller) | final readonly class | 79 | The sitemap index, its pages, and the two stylesheets. With plugins |
+| [`SitemapRequest`](#sitemaprequest) | final class | 70 | A sitemap request at template_redirect, as the reference's sitemaps |
 | [`SitemapXml`](#sitemapxml) | final class | 43 | The two sitemap documents, index and URL set, from entry maps; one builder for the engine's routes and the facade's renderer. |
-| [`Sitemaps`](#sitemaps) | final readonly class | 147 | The sitemap index and its providers (posts, pages, categories, tags, |
+| [`Sitemaps`](#sitemaps) | final readonly class | 151 | The sitemap index and its providers (posts, pages, categories, tags, |
 | [`TermLists`](#termlists) | final class | 178 | The two term listings themes print: the nested category list and the |
 | [`ToolbarMarkup`](#toolbarmarkup) | final class | 57 | WP_Admin_Bar's markup, piece by piece, as the reference prints it (probe |
 | [`ToolbarMenus`](#toolbarmenus) | final class | 338 | The nodes WordPress puts on the toolbar itself, as the reference adds |
@@ -521,7 +523,7 @@ interim template otherwise.
 Used by: `Minn\Engine`
 
 ```php
-__construct(Minn\Front\Resolver $resolver, Minn\Front\Renderer $renderer, ?Minn\Theme\PageRenderer $theme = NULL, ?Minn\Front\FeedController $feeds = NULL, ?Minn\Cron\Cron $cron = NULL, ?Minn\Theme\ClassicRenderer $classic = NULL)
+__construct(Minn\Front\Resolver $resolver, Minn\Front\Renderer $renderer, ?Minn\Theme\PageRenderer $theme = NULL, ?Minn\Front\FeedController $feeds = NULL, ?Minn\Cron\Cron $cron = NULL, ?Minn\Theme\ClassicRenderer $classic = NULL, ?Minn\Front\SitemapController $sitemaps = NULL)
 ```
 
 
@@ -529,13 +531,17 @@ __construct(Minn\Front\Resolver $resolver, Minn\Front\Renderer $renderer, ?Minn\
 
 The themed (or interim) 404 page.
 
+### `themed(Minn\Front\Resolution $resolution): Minn\Http\Response`
+
+The themed (or interim) page for a resolution, under its status.
+
 ### `show(Minn\Http\Request $request): Minn\Http\Response`
 
 Route: `* /{path*} (public)`
 
 The public page for any path; when scheduled work is due, the run follows the response.
 
-Internals: `page()` (private, line 62)
+Internals: `page()` (private, line 68)
 
 
 ## Kind
@@ -911,6 +917,29 @@ only with neither does the default apply.
 Internals: `link()` (private, line 31)
 
 
+## PrintedResponse
+
+`final class Minn\Front\PrintedResponse` · `public/minn/src/Minn/Front/PrintedResponse.php`
+
+A response WordPress's handlers print themselves (a sitemap, robots.txt),
+as the reference serves them: the main query stood with the request's own
+variables and the front-end steps around it, then $print; what was
+printed, under the status and headers the handlers sent. A handler that
+ends the request early (Printed, where the reference exits) ends it here
+too; when none did and there is nothing to print, null, and the theme
+renders the page on the query as it stands.
+
+Used by: `Minn\Front\ProbeController`, `Minn\Front\SitemapController`
+
+### static `stand(Minn\Theme\MainQueryBridge $bridge, array $vars, ?Closure $print = NULL): ?Minn\Http\Response`
+
+The request served this way, or null for the theme to render.
+
+- `@param array<string, mixed> $vars the request's own query variables`
+
+Internals: `discard()` (private, line 53)
+
+
 ## ProbeController
 
 `final readonly class Minn\Front\ProbeController` · `public/minn/src/Minn/Front/ProbeController.php`
@@ -922,7 +951,7 @@ and the favicon. Feeds and sitemaps have controllers of their own.
 Used by: `Minn\Engine`
 
 ```php
-__construct(Minn\Content\Site $site, Minn\Front\Permalinks $permalinks, Minn\Content\SiteIcon $icon, ?Minn\Cron\Cron $cron = NULL)
+__construct(Minn\Content\Site $site, Minn\Front\Permalinks $permalinks, Minn\Content\SiteIcon $icon, ?Minn\Cron\Cron $cron = NULL, ?Minn\Theme\MainQueryBridge $bridge = NULL)
 ```
 
 
@@ -930,7 +959,9 @@ __construct(Minn\Content\Site $site, Minn\Front\Permalinks $permalinks, Minn\Con
 
 Route: `GET /robots.txt (public)`
 
-robots.txt.
+robots.txt: with plugins loaded, the reference's (the main query a
+robots request, then do_robots, under do_robotstxt and robots_txt);
+otherwise the same lines, the sitemap's only on a public site.
 
 ### `xmlrpc(Minn\Http\Request $request): Minn\Http\Response`
 
@@ -1027,7 +1058,7 @@ The outcome of resolving a public URL: which kind of thing it names,
 the record behind it, and the page number for paginated views. Redirects
 carry their target instead.
 
-Used by: `Minn\Blocks\Context`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Front\AdminBar`, `Minn\Front\DocumentTitle`, `Minn\Front\FeedController`, `Minn\Front\FrontController`, `Minn\Front\Renderer`, `Minn\Front\Resolver`, `Minn\Front\SingleAddresses`, `Minn\Runtime\MainQuery`, `Minn\Theme\ArchiveTitle`, `Minn\Theme\BodyClasses`, `Minn\Theme\ClassicRenderer`, `Minn\Theme\HeadLinks`, `Minn\Theme\MainQueryBridge`, `Minn\Theme\PageRenderer`, `Minn\Theme\Templates`
+Used by: `Minn\Blocks\Context`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Engine`, `Minn\Front\AdminBar`, `Minn\Front\DocumentTitle`, `Minn\Front\FeedController`, `Minn\Front\FrontController`, `Minn\Front\PrintedResponse`, `Minn\Front\Renderer`, `Minn\Front\Resolver`, `Minn\Front\SingleAddresses`, `Minn\Front\SitemapController`, `Minn\Runtime\MainQuery`, `Minn\Theme\ArchiveTitle`, `Minn\Theme\BodyClasses`, `Minn\Theme\ClassicRenderer`, `Minn\Theme\HeadLinks`, `Minn\Theme\MainQueryBridge`, `Minn\Theme\PageRenderer`, `Minn\Theme\Templates`
 
 - readonly `Minn\Front\Kind $kind`
 - readonly `Minn\Content\PostRecord|Minn\Content\UserRecord|Minn\Content\TermRecord|array|null $record`
@@ -1194,12 +1225,17 @@ page's redirect to the root keeps its own handling.
 
 `final readonly class Minn\Front\SitemapController` · `public/minn/src/Minn/Front/SitemapController.php`
 
-The sitemap index, its pages, and the two stylesheets.
+The sitemap index, its pages, and the two stylesheets. With plugins
+loaded they are the reference's: the request's sitemap variables stand
+in the main query and the sitemaps server answers at template_redirect
+(SitemapRequest), through every filter a plugin hooks, any provider it
+registers among them; what it does not print, the theme renders (a 404,
+or the page a stray address amounts to). Without, the engine's own.
 
-Used by: `Minn\Engine`
+Used by: `Minn\Engine`, `Minn\Front\FrontController`
 
 ```php
-__construct(Minn\Front\Sitemaps $sitemaps, Closure $notFound)
+__construct(Minn\Front\Sitemaps $sitemaps, Closure $notFound, ?Minn\Theme\MainQueryBridge $bridge = NULL, ?Closure $themed = NULL)
 ```
 
 
@@ -1209,11 +1245,11 @@ Route: `GET /wp-sitemap.xml (public)`
 
 The sitemap index.
 
-### `sitemap(Minn\Http\Request $request, string $type, string $rest): Minn\Http\Response`
+### `sitemap(Minn\Http\Request $request, string $name, string $rest): Minn\Http\Response`
 
-Route: `GET /wp-sitemap-{type:posts|taxonomies|users}-{rest:[a-z_0-9-]+}.xml (public)`
+Route: `GET /wp-sitemap-{name:[a-z]+}-{rest:[a-z_0-9-]+}.xml (public)`
 
-One sitemap page.
+One sitemap page: a provider's name, its subtype when it has them, and the page.
 
 ### `sitemapStylesheet(Minn\Http\Request $request): Minn\Http\Response`
 
@@ -1227,7 +1263,35 @@ Route: `GET /wp-sitemap-index.xsl (public)`
 
 The sitemap index stylesheet.
 
-Internals: `xml()` (private, line 59)
+### `queried(Minn\Http\Request $request): Minn\Http\Response`
+
+The query form (?sitemap=, ?sitemap-stylesheet=) on the front page, with plugins loaded.
+
+Internals: `served()` (private, line 87), `xml()` (private, line 99)
+
+
+## SitemapRequest
+
+`final class Minn\Front\SitemapRequest` · `public/minn/src/Minn/Front/SitemapRequest.php`
+
+A sitemap request at template_redirect, as the reference's sitemaps
+server answers it: a sitemap address asked for another way (the query
+form, page 0) moves to its own; with the sitemaps off, or a subtype or
+page that has nothing, the request is a 404 the theme renders; otherwise
+the stylesheet, the index or the provider's page is printed and the
+request ends. A provider nobody registered leaves the request alone.
+
+Used by: `Minn\Front\SitemapController`
+
+### static `canonical(): void`
+
+The canonical step: a sitemap asked for by another address is sent to its own.
+
+### static `serve(WP_Sitemaps $server): void`
+
+What the sitemaps server does with the request (render_sitemaps).
+
+Internals: `page()` (private, line 62), `notFound()` (private, line 82)
 
 
 ## SitemapXml
@@ -1262,6 +1326,7 @@ authors), in the reference's shape: one file per provider and page, 2000
 URLs a page, lastmod on content only.
 
 - const `PER_PAGE` = `2000`
+- const `CSS` = `'body{font:15px/1.5 sans-serif;margin:2em}table{border-collapse:collapse}td{padding:.35em 1em .35em 0;border-bottom:1px solid #ddd}'` — The stylesheets' own CSS (wp_sitemaps_stylesheet_css filters it when plugins are loaded).
 
 Used by: `Minn\Engine`, `Minn\Front\SitemapController`
 
@@ -1278,15 +1343,19 @@ The sitemap index's XML.
 
 One provider page, or null when the name or page does not exist.
 
-### static `stylesheet(): string`
+### static `stylesheet(string $css = self::CSS): string`
 
 The engine's own stylesheet for browsers that open a sitemap.
 
-### static `indexStylesheet(): string`
+### static `indexStylesheet(string $css = self::CSS): string`
 
 The stylesheet the sitemap index links: one column, the sitemaps.
 
-Internals: `providers()` (private, line 57), `contentUrls()` (private, line 83), `termUrls()` (private, line 106), `userUrls()` (private, line 121), `authors()` (private, line 128), `xsl()` (private, line 149), `iso()` (private, line 160)
+### static `w3c(string $gmt): string`
+
+A GMT date as a sitemap dates it (W3C, UTC).
+
+Internals: `providers()` (private, line 60), `contentUrls()` (private, line 86), `termUrls()` (private, line 109), `userUrls()` (private, line 124), `authors()` (private, line 131), `xsl()` (private, line 152)
 
 
 ## TermLists

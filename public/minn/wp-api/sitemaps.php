@@ -1,15 +1,38 @@
 <?php
-// Sitemap URLs and the server object; the engine serves the XML itself.
+// The sitemaps server (built on init), its providers, and sitemap URLs; requests are answered at template_redirect.
 
 use Minn\Runtime\Runtime;
 
 function wp_sitemaps_get_server()
 {
-    return Runtime::current()->get('sitemaps_server') ?? (static function () {
-        $server = new WP_Sitemaps();
-        Runtime::current()->set('sitemaps_server', $server);
+    $runtime = Runtime::current();
+    $server = $runtime->get('sitemaps_server');
+    if ($server instanceof WP_Sitemaps) {
         return $server;
-    })();
+    }
+    // Held before it starts, so a plugin asking for it while it does gets this one.
+    $server = new WP_Sitemaps();
+    $runtime->set('sitemaps_server', $server);
+    $GLOBALS['wp_sitemaps'] = $server;
+    $server->init();
+    do_action('wp_sitemaps_init', $server);
+    return $server;
+}
+
+function wp_get_sitemap_providers()
+{
+    return wp_sitemaps_get_server()->registry->get_providers();
+}
+
+function wp_register_sitemap_provider($name, WP_Sitemaps_Provider $provider)
+{
+    return wp_sitemaps_get_server()->registry->add_provider($name, $provider);
+}
+
+/** @internal the reference's canonical step for a sitemap address (SitemapRequest::canonical()) */
+function _minn_sitemap_canonical()
+{
+    Minn\Front\SitemapRequest::canonical();
 }
 
 function wp_sitemaps_get_max_urls($object_type)

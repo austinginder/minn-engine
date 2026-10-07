@@ -2,12 +2,12 @@
     "generated": "2026-10-07",
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line)",
     "summary": {
-        "minn": 658,
-        "composes": 968,
+        "minn": 659,
+        "composes": 972,
         "leaf": 661,
-        "noop": 1920,
-        "functions": 4137,
-        "minnMethods": 731,
+        "noop": 1925,
+        "functions": 4147,
+        "minnMethods": 736,
         "leafLinesOver15": 12
     },
     "functions": {
@@ -11161,7 +11161,7 @@
         },
         "WP_Sitemaps::__construct": {
             "file": "classes/WP_Sitemaps.php",
-            "lines": 4,
+            "lines": 3,
             "kind": "leaf",
             "minn": [],
             "composes": []
@@ -11177,10 +11177,13 @@
         },
         "WP_Sitemaps::init": {
             "file": "classes/WP_Sitemaps.php",
-            "lines": 0,
-            "kind": "noop",
+            "lines": 7,
+            "kind": "composes",
             "minn": [],
-            "composes": []
+            "composes": [
+                "add_action",
+                "add_filter"
+            ]
         },
         "WP_Sitemaps::redirect_sitemapxml": {
             "file": "classes/WP_Sitemaps.php",
@@ -11205,9 +11208,11 @@
         },
         "WP_Sitemaps::render_sitemaps": {
             "file": "classes/WP_Sitemaps.php",
-            "lines": 0,
+            "lines": 1,
             "kind": "noop",
-            "minn": [],
+            "minn": [
+                "Minn\\Front\\SitemapRequest::serve"
+            ],
             "composes": []
         },
         "WP_Sitemaps::sitemaps_enabled": {
@@ -11253,13 +11258,12 @@
         },
         "WP_Sitemaps_Posts::get_max_num_pages": {
             "file": "classes/WP_Sitemaps.php",
-            "lines": 13,
+            "lines": 10,
             "kind": "composes",
             "minn": [],
             "composes": [
                 "apply_filters",
-                "get_option",
-                "wp_sitemaps_get_max_urls"
+                "get_option"
             ]
         },
         "WP_Sitemaps_Posts::get_object_subtypes": {
@@ -11272,17 +11276,29 @@
                 "get_post_types"
             ]
         },
-        "WP_Sitemaps_Posts::get_url_list": {
+        "WP_Sitemaps_Posts::get_posts_query_args": {
             "file": "classes/WP_Sitemaps.php",
-            "lines": 14,
+            "lines": 2,
             "kind": "composes",
             "minn": [],
             "composes": [
                 "apply_filters",
+                "wp_sitemaps_get_max_urls"
+            ]
+        },
+        "WP_Sitemaps_Posts::get_url_list": {
+            "file": "classes/WP_Sitemaps.php",
+            "lines": 13,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Front\\Sitemaps::w3c"
+            ],
+            "composes": [
+                "apply_filters",
+                "get_lastpostmodified",
                 "get_option",
                 "get_permalink",
-                "home_url",
-                "wp_sitemaps_get_max_urls"
+                "home_url"
             ]
         },
         "WP_Sitemaps_Provider::get_object_subtypes": {
@@ -11412,6 +11428,46 @@
                 "header"
             ]
         },
+        "WP_Sitemaps_Stylesheet::get_sitemap_index_stylesheet": {
+            "file": "classes/WP_Sitemaps.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Front\\Sitemaps::indexStylesheet"
+            ],
+            "composes": [
+                "apply_filters"
+            ]
+        },
+        "WP_Sitemaps_Stylesheet::get_sitemap_stylesheet": {
+            "file": "classes/WP_Sitemaps.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Front\\Sitemaps::stylesheet"
+            ],
+            "composes": [
+                "apply_filters"
+            ]
+        },
+        "WP_Sitemaps_Stylesheet::get_stylesheet_css": {
+            "file": "classes/WP_Sitemaps.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "apply_filters"
+            ]
+        },
+        "WP_Sitemaps_Stylesheet::render_stylesheet": {
+            "file": "classes/WP_Sitemaps.php",
+            "lines": 7,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "header"
+            ]
+        },
         "WP_Sitemaps_Taxonomies::__construct": {
             "file": "classes/WP_Sitemaps.php",
             "lines": 2,
@@ -11421,7 +11477,7 @@
         },
         "WP_Sitemaps_Taxonomies::get_max_num_pages": {
             "file": "classes/WP_Sitemaps.php",
-            "lines": 9,
+            "lines": 8,
             "kind": "composes",
             "minn": [],
             "composes": [
@@ -11440,16 +11496,25 @@
                 "get_taxonomies"
             ]
         },
+        "WP_Sitemaps_Taxonomies::get_taxonomies_query_args": {
+            "file": "classes/WP_Sitemaps.php",
+            "lines": 2,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "apply_filters",
+                "wp_sitemaps_get_max_urls"
+            ]
+        },
         "WP_Sitemaps_Taxonomies::get_url_list": {
             "file": "classes/WP_Sitemaps.php",
-            "lines": 14,
+            "lines": 13,
             "kind": "composes",
             "minn": [],
             "composes": [
                 "apply_filters",
                 "get_term",
                 "get_term_link",
-                "get_terms",
                 "is_wp_error",
                 "wp_sitemaps_get_max_urls"
             ]
@@ -11481,15 +11546,14 @@
                 "get_author_posts_url"
             ]
         },
-        "WP_Sitemaps_Users::get_users_query": {
+        "WP_Sitemaps_Users::get_users_query_args": {
             "file": "classes/WP_Sitemaps.php",
-            "lines": 4,
+            "lines": 3,
             "kind": "composes",
             "minn": [],
             "composes": [
+                "apply_filters",
                 "get_post_types",
-                "get_users",
-                "post_type_supports",
                 "wp_sitemaps_get_max_urls"
             ]
         },
@@ -17199,6 +17263,15 @@
                 "parse_url"
             ]
         },
+        "_minn_sitemap_canonical": {
+            "file": "sitemaps.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Front\\SitemapRequest::canonical"
+            ],
+            "composes": []
+        },
         "_minn_smilies": {
             "file": "formatting.php",
             "lines": 3,
@@ -20196,6 +20269,20 @@
             "minn": [],
             "composes": [
                 "esc_attr"
+            ]
+        },
+        "do_robots": {
+            "file": "functions.php",
+            "lines": 6,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "apply_filters",
+                "do_action",
+                "get_option",
+                "header",
+                "parse_url",
+                "site_url"
             ]
         },
         "do_settings_fields": {
@@ -33327,6 +33414,15 @@
                 "get_option"
             ]
         },
+        "wp_get_sitemap_providers": {
+            "file": "sitemaps.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "wp_sitemaps_get_server"
+            ]
+        },
         "wp_get_split_term": {
             "file": "taxonomy.php",
             "lines": 2,
@@ -35299,6 +35395,15 @@
                 "wp_parse_args"
             ]
         },
+        "wp_register_sitemap_provider": {
+            "file": "sitemaps.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "wp_sitemaps_get_server"
+            ]
+        },
         "wp_register_style": {
             "file": "script-loader.php",
             "lines": 1,
@@ -36192,14 +36297,16 @@
         },
         "wp_sitemaps_get_server": {
             "file": "sitemaps.php",
-            "lines": 5,
+            "lines": 12,
             "kind": "minn",
             "minn": [
                 "Minn\\Runtime\\Runtime::current",
                 "Minn\\Runtime\\Runtime::get",
                 "Minn\\Runtime\\Runtime::set"
             ],
-            "composes": []
+            "composes": [
+                "do_action"
+            ]
         },
         "wp_slash": {
             "file": "formatting.php",

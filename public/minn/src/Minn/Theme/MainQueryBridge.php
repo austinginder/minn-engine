@@ -47,6 +47,11 @@ final readonly class MainQueryBridge
         if (!Runtime::booted()) {
             return $this->listing($resolution);
         }
+        // The steps run once a request: a page rendered after a handler declined it (a sitemap that is a 404) stands on that query.
+        if (Runtime::current()->get('front_lifecycle') === true) {
+            $stood = Runtime::current()->get('main_query_page');
+            return $stood instanceof Page ? $stood : Page::empty();
+        }
         $vars = $extra + $this->vars($resolution);
         \_minn_seed_wp_request($vars);
         $wp = $GLOBALS['wp'];
@@ -60,6 +65,7 @@ final readonly class MainQueryBridge
         FrontLifecycle::sendHeaders($wp);
         // The page's Link headers are core's own now (rest_output_link_header, wp_shortlink_header).
         Runtime::current()->set('front_lifecycle', true);
+        Runtime::current()->set('main_query_page', $page);
         Runtime::hooks()->action('wp', [$wp]);
         Runtime::hooks()->action('template_redirect', []);
         return $page;

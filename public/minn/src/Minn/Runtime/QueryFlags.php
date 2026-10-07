@@ -70,6 +70,8 @@ final readonly class QueryFlags
         $on['is_paged'] = !empty($vars['paged']) && (int) $vars['paged'] > 1;
         $on['is_search'] = !empty($vars['s']);
         $on['is_feed'] = !empty($vars['feed']);
+        $on['is_robots'] = !empty($vars['robots']);
+        $on['is_favicon'] = !empty($vars['favicon']);
         if (!empty($vars['attachment']) || !empty($vars['attachment_id'])) {
             $on['is_single'] = true;
             $on['is_attachment'] = true;
@@ -81,7 +83,7 @@ final readonly class QueryFlags
             $on += self::archiveFlags($vars, $registry);
         }
         $on['is_singular'] = !empty($on['is_single']) || !empty($on['is_page']);
-        $on['is_home'] = !$on['is_singular'] && empty($on['is_archive']) && !$on['is_search'] && !$on['is_feed'] && !$on['is_trackback'] && !$on['is_404'] && !$on['is_embed'];
+        $on['is_home'] = !$on['is_singular'] && empty($on['is_archive']) && !$on['is_search'] && !$on['is_feed'] && !$on['is_trackback'] && !$on['is_404'] && !$on['is_embed'] && !$on['is_robots'] && !$on['is_favicon'];
         $pageId = (int) $vars['page_id'];
         if (!empty($on['is_page']) && $pageId > 0 && $pageId === (int) $option('page_for_posts')) {
             $on['is_home'] = true;

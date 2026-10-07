@@ -1,8 +1,15 @@
 <?php
 
+use Minn\Front\SitemapRequest;
+use Minn\Front\Sitemaps;
 use Minn\Front\SitemapXml;
 
-/** The sitemaps server: registry, renderer, index. URLs come from the engine's own sitemap routes. */
+/**
+ * The sitemaps server: registry, renderer, index. Built on init (the
+ * stylesheet addresses asked for, then whether sitemaps are on: only then
+ * are the providers registered and robots.txt told), it answers sitemap
+ * requests at template_redirect.
+ */
 #[AllowDynamicProperties]
 class WP_Sitemaps
 {
@@ -15,11 +22,17 @@ class WP_Sitemaps
         $this->registry = new WP_Sitemaps_Registry();
         $this->renderer = new WP_Sitemaps_Renderer();
         $this->index = new WP_Sitemaps_Index($this->registry);
-        $this->register_sitemaps();
     }
 
     public function init()
     {
+        $this->register_rewrites();
+        add_action('template_redirect', [$this, 'render_sitemaps']);
+        if (!$this->sitemaps_enabled()) {
+            return;
+        }
+        $this->register_sitemaps();
+        add_filter('robots_txt', [$this, 'add_robots'], 0, 2);
     }
 
     public function sitemaps_enabled()
@@ -41,6 +54,7 @@ class WP_Sitemaps
 
     public function render_sitemaps()
     {
+        SitemapRequest::serve($this);
     }
 
     public function redirect_sitemapxml($bypass, $query)
@@ -167,6 +181,37 @@ class WP_Sitemaps_Renderer
     }
 }
 
+/** The two stylesheets a browser opening a sitemap is handed: the engine's own, through the reference's filters. */
+#[AllowDynamicProperties]
+class WP_Sitemaps_Stylesheet
+{
+    public function render_stylesheet($type)
+    {
+        header('Content-Type: application/xml; charset=UTF-8');
+        if ($type === 'sitemap') {
+            echo $this->get_sitemap_stylesheet();
+        }
+        if ($type === 'index') {
+            echo $this->get_sitemap_index_stylesheet();
+        }
+    }
+
+    public function get_sitemap_stylesheet()
+    {
+        return apply_filters('wp_sitemaps_stylesheet_content', Sitemaps::stylesheet($this->get_stylesheet_css()));
+    }
+
+    public function get_sitemap_index_stylesheet()
+    {
+        return apply_filters('wp_sitemaps_stylesheet_index_content', Sitemaps::indexStylesheet($this->get_stylesheet_css()));
+    }
+
+    public function get_stylesheet_css()
+    {
+        return apply_filters('wp_sitemaps_stylesheet_css', Sitemaps::CSS);
+    }
+}
+
 #[AllowDynamicProperties]
 abstract class WP_Sitemaps_Provider
 {
@@ -224,6 +269,7 @@ abstract class WP_Sitemaps_Provider
     }
 }
 
+/** Published posts of each public type, by id, each dated; the pages lead with the front page when it lists posts. */
 class WP_Sitemaps_Posts extends WP_Sitemaps_Provider
 {
     public function __construct()
@@ -242,40 +288,43 @@ class WP_Sitemaps_Posts extends WP_Sitemaps_Provider
 
     public function get_url_list($page_num, $object_subtype = '')
     {
-        $post_type = $object_subtype;
-        $urls = apply_filters('wp_sitemaps_posts_pre_url_list', null, $post_type, $page_num);
-        if (is_array($urls)) {
+        $urls = apply_filters('wp_sitemaps_posts_pre_url_list', null, $object_subtype, $page_num);
+        if ($urls !== null) {
             return $urls;
         }
-        $query = new WP_Query(['post_type' => $post_type, 'post_status' => 'publish', 'posts_per_page' => wp_sitemaps_get_max_urls($this->object_type), 'paged' => $page_num, 'orderby' => 'ID', 'order' => 'ASC', 'has_password' => false, 'no_found_rows' => true, 'ignore_sticky_posts' => true]);
-        $urls = [];
-        if ($post_type === 'page' && $page_num === 1 && get_option('show_on_front') === 'posts') {
-            $urls[] = apply_filters('wp_sitemaps_posts_show_on_front_entry', ['loc' => home_url('/')]);
-        }
-        foreach ($query->posts as $post) {
-            $urls[] = apply_filters('wp_sitemaps_posts_entry', ['loc' => get_permalink($post)], $post, $post_type);
+        $args = $this->get_posts_query_args($object_subtype);
+        $args['paged'] = $page_num;
+        $urls = $object_subtype === 'page' && (int) $page_num === 1 && get_option('show_on_front') === 'posts'
+            ? [apply_filters('wp_sitemaps_posts_show_on_front_entry', ['loc' => home_url('/'), 'lastmod' => Sitemaps::w3c((string) get_lastpostmodified('gmt'))])]
+            : [];
+        foreach ((new WP_Query($args))->posts as $post) {
+            $urls[] = apply_filters('wp_sitemaps_posts_entry', ['loc' => get_permalink($post), 'lastmod' => Sitemaps::w3c((string) $post->post_modified_gmt)], $post, $object_subtype);
         }
         return $urls;
     }
 
     public function get_max_num_pages($object_subtype = '')
     {
-        if ($object_subtype === '') {
+        if (empty($object_subtype)) {
             return 0;
         }
         $max = apply_filters('wp_sitemaps_posts_pre_max_num_pages', null, $object_subtype);
         if ($max !== null) {
             return $max;
         }
-        $query = new WP_Query(['fields' => 'ids', 'post_type' => $object_subtype, 'post_status' => 'publish', 'posts_per_page' => wp_sitemaps_get_max_urls($this->object_type), 'paged' => 1, 'has_password' => false, 'ignore_sticky_posts' => true]);
-        $pages = (int) $query->max_num_pages;
-        if ($object_subtype === 'page' && get_option('show_on_front') === 'posts' && $pages === 0) {
-            $pages = 1;
-        }
-        return $pages;
+        $args = ['fields' => 'ids', 'no_found_rows' => false] + $this->get_posts_query_args($object_subtype);
+        $pages = (int) (new WP_Query($args))->max_num_pages;
+        return $object_subtype === 'page' && get_option('show_on_front') === 'posts' ? max(1, $pages) : $pages;
+    }
+
+    protected function get_posts_query_args($post_type)
+    {
+        $args = ['orderby' => 'ID', 'order' => 'ASC', 'post_type' => $post_type, 'posts_per_page' => wp_sitemaps_get_max_urls($this->object_type), 'post_status' => ['publish'], 'no_found_rows' => true, 'update_post_term_cache' => false, 'update_post_meta_cache' => false, 'ignore_sticky_posts' => true];
+        return apply_filters('wp_sitemaps_posts_query_args', $args, $post_type);
     }
 }
 
+/** The terms of each public taxonomy that have posts, a page of them at a time. */
 class WP_Sitemaps_Taxonomies extends WP_Sitemaps_Provider
 {
     public function __construct()
@@ -294,35 +343,40 @@ class WP_Sitemaps_Taxonomies extends WP_Sitemaps_Provider
     public function get_url_list($page_num, $object_subtype = '')
     {
         $urls = apply_filters('wp_sitemaps_taxonomies_pre_url_list', null, $object_subtype, $page_num);
-        if (is_array($urls)) {
+        if ($urls !== null) {
             return $urls;
         }
-        $terms = get_terms(['taxonomy' => $object_subtype, 'hide_empty' => true, 'number' => wp_sitemaps_get_max_urls($this->object_type), 'offset' => ($page_num - 1) * wp_sitemaps_get_max_urls($this->object_type), 'orderby' => 'term_order', 'fields' => 'ids', 'update_term_meta_cache' => false]);
+        $args = ['fields' => 'ids', 'offset' => ((int) $page_num - 1) * wp_sitemaps_get_max_urls($this->object_type)] + $this->get_taxonomies_query_args($object_subtype);
         $urls = [];
-        foreach (is_array($terms) ? $terms : [] as $term_id) {
-            $link = get_term_link((int) $term_id, $object_subtype);
-            if (is_wp_error($link)) {
-                continue;
+        foreach ((array) (new WP_Term_Query($args))->terms as $id) {
+            $link = get_term_link((int) $id, $object_subtype);
+            if (!is_wp_error($link)) {
+                $urls[] = apply_filters('wp_sitemaps_taxonomies_entry', ['loc' => $link], (int) $id, $object_subtype, get_term((int) $id, $object_subtype));
             }
-            $urls[] = apply_filters('wp_sitemaps_taxonomies_entry', ['loc' => $link], $term_id, $object_subtype, get_term($term_id, $object_subtype));
         }
         return $urls;
     }
 
     public function get_max_num_pages($object_subtype = '')
     {
-        if ($object_subtype === '') {
+        if (empty($object_subtype)) {
             return 0;
         }
         $max = apply_filters('wp_sitemaps_taxonomies_pre_max_num_pages', null, $object_subtype);
         if ($max !== null) {
             return $max;
         }
-        $count = wp_count_terms(['taxonomy' => $object_subtype, 'hide_empty' => true]);
-        return (int) ceil((int) $count / wp_sitemaps_get_max_urls($this->object_type));
+        return (int) ceil((int) wp_count_terms($this->get_taxonomies_query_args($object_subtype)) / wp_sitemaps_get_max_urls($this->object_type));
+    }
+
+    protected function get_taxonomies_query_args($taxonomy)
+    {
+        $args = ['taxonomy' => $taxonomy, 'orderby' => 'term_order', 'number' => wp_sitemaps_get_max_urls($this->object_type), 'hide_empty' => true, 'hierarchical' => false, 'update_term_meta_cache' => false];
+        return apply_filters('wp_sitemaps_taxonomies_query_args', $args, $taxonomy);
     }
 }
 
+/** The people with published posts of a public type other than pages, by login. */
 class WP_Sitemaps_Users extends WP_Sitemaps_Provider
 {
     public function __construct()
@@ -334,11 +388,11 @@ class WP_Sitemaps_Users extends WP_Sitemaps_Provider
     public function get_url_list($page_num, $object_subtype = '')
     {
         $urls = apply_filters('wp_sitemaps_users_pre_url_list', null, $page_num);
-        if (is_array($urls)) {
+        if ($urls !== null) {
             return $urls;
         }
         $urls = [];
-        foreach ($this->get_users_query($page_num) as $user) {
+        foreach ((new WP_User_Query(['paged' => $page_num] + $this->get_users_query_args()))->get_results() as $user) {
             $urls[] = apply_filters('wp_sitemaps_users_entry', ['loc' => get_author_posts_url($user->ID)], $user);
         }
         return $urls;
@@ -350,14 +404,13 @@ class WP_Sitemaps_Users extends WP_Sitemaps_Provider
         if ($max !== null) {
             return $max;
         }
-        return (int) ceil(count($this->get_users_query(0)) / wp_sitemaps_get_max_urls($this->object_type));
+        return (int) ceil((new WP_User_Query($this->get_users_query_args()))->get_total() / wp_sitemaps_get_max_urls($this->object_type));
     }
 
-    private function get_users_query($page_num)
+    protected function get_users_query_args()
     {
-        $public_post_types = array_values(get_post_types(['public' => true]));
-        $public_post_types = array_filter($public_post_types, static fn ($t) => $t !== 'attachment' && post_type_supports($t, 'author'));
-        $users = get_users(['has_published_posts' => $public_post_types, 'orderby' => 'ID', 'order' => 'ASC', 'number' => $page_num > 0 ? wp_sitemaps_get_max_urls($this->object_type) : -1, 'paged' => max(1, (int) $page_num)]);
-        return $users;
+        $types = get_post_types(['public' => true]);
+        unset($types['attachment'], $types['page']);
+        return apply_filters('wp_sitemaps_users_query_args', ['has_published_posts' => array_keys($types), 'number' => wp_sitemaps_get_max_urls($this->object_type)]);
     }
 }
