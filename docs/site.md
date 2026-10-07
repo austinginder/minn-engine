@@ -11,7 +11,7 @@ the process. The same theme renders on the parked reference WordPress, and the
 
 | Piece | Path |
 |---|---|
-| The theme | own git repo at `site/minn-site/` (nested, gitignored from the engine; remote https://github.com/minn-run/minn-theme, private). Development only; never ships inside `minn/` |
+| The theme | own git repo at `site/minn-site/` (nested, gitignored from the engine; remote https://github.com/austinginder/minn-site, private). Development only; never ships inside `minn/` |
 | On disk for both stacks | `wp-reference/wp-content/themes/minn-site` is a symlink to `../../../site/minn-site`; `public/wp-content/themes` already points into the reference's themes directory, so the engine and the reference read the same files |
 | Active theme | the shared database's `template` and `stylesheet` options are `minn-site`; `blogname` is `Minn` (the product; the tab and `wp/v2/settings` title). Minn Engine is the developer name for the runtime, like WordPress core |
 | Suite | `tests/site.test.php` (in `run-all.sh`): the theme's assets, the page's own invariants, and every template diffed against the reference |

@@ -19,7 +19,7 @@
 set -euo pipefail
 
 FORCE=false
-ENGINE_URL="https://github.com/minn-run/minn-engine/releases/latest/download/minn.zip"
+ENGINE_URL="https://github.com/austinginder/minn-engine/releases/latest/download/minn.zip"
 PARK=""
 VERSION="0.1.0"
 

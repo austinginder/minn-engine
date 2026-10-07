@@ -227,7 +227,7 @@
             "label": "Minn",
             "version": "0.0.1",
             "adminVersion": "0.43.0",
-            "source": "minn-run/minn-engine public/minn and the minn-admin plugin",
+            "source": "austinginder/minn-engine public/minn and the minn-admin plugin",
             "describe": "The engine deploy unit (public/minn) and the Minn Admin plugin as it ships",
             "components": [
                 {

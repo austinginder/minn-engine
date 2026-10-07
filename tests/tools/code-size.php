@@ -245,7 +245,7 @@ $report = [
     ],
     'stacks' => [
         ['id' => 'wordpress', 'label' => 'WordPress', 'version' => $wpVersion, 'source' => $wpSource, 'describe' => 'The admin screens, the runtime and the root files of the release zip'] + $wordpressStack,
-        ['id' => 'minn', 'label' => 'Minn', 'version' => $minnVersion, 'adminVersion' => $adminVersion, 'source' => 'minn-run/minn-engine public/minn and the minn-admin plugin', 'describe' => 'The engine deploy unit (public/minn) and the Minn Admin plugin as it ships'] + $merge($engine, $admin),
+        ['id' => 'minn', 'label' => 'Minn', 'version' => $minnVersion, 'adminVersion' => $adminVersion, 'source' => 'austinginder/minn-engine public/minn and the minn-admin plugin', 'describe' => 'The engine deploy unit (public/minn) and the Minn Admin plugin as it ships'] + $merge($engine, $admin),
     ],
 ];
 file_put_contents("{$root}/contracts/code-size.json", json_encode($report, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) . "\n");
