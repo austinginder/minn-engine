@@ -31,7 +31,7 @@ final readonly class Response
     /** An HTML response. */
     public static function html(string $body, int $status = 200): self
     {
-        return new self($status, ['Content-Type' => 'text/html; charset=utf-8'], $body);
+        return new self($status, ['Content-Type' => 'text/html; charset=UTF-8'], $body);
     }
 
     /** A JSON response with the payload encoded. */
@@ -82,6 +82,18 @@ final readonly class Response
     public function afterSend(Closure $work): self
     {
         return new self($this->status, $this->headers, $this->body, $this->cookies, [...$this->afterSend, $work]);
+    }
+
+    /**
+     * One header line sent now, as plugin code sends one, ahead of the
+     * response's own (which win on a shared name). Nothing outside a web
+     * request, or once the head is out.
+     */
+    public static function emitHeader(string $line): void
+    {
+        if (!headers_sent() && PHP_SAPI !== 'cli') {
+            header($line);
+        }
     }
 
     /**

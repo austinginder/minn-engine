@@ -273,3 +273,7 @@ add_action('deleted_user', 'wp_maybe_update_user_counts', 10, 0);
 add_action('set_user_role', 'wp_cache_set_users_last_changed');
 // Site Health is built while loading, as on the reference: its hooks, the memory limit plugins read from it, the weekly check.
 add_action('plugins_loaded', [WP_Site_Health::class, 'get_instance'], 0);
+// The front end's request and template steps, as the reference registers them.
+add_filter('request', '_post_format_request');
+add_action('template_redirect', 'rest_output_link_header', 11, 0);
+add_action('template_redirect', 'wp_shortlink_header', 11, 0);

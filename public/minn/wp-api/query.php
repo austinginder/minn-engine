@@ -328,7 +328,8 @@ function _minn_run_main_query(array $vars, int $paged, int $perPage): array
     $GLOBALS['wp_query'] = $query;
     // No posts_per_page in the vars: the page size is the option's until a plugin's pre_get_posts says otherwise.
     $query->query($vars + ($paged > 1 ? ['paged' => $paged] : []));
-    $rows = array_map(static fn ($p) => $p instanceof WP_Post ? $p->to_array() : (array) $p, $query->posts);
+    // The columns as the query left them (a the_posts filter may have changed one), not to_array()'s extras.
+    $rows = array_map(static fn ($p) => $p instanceof WP_Post ? array_diff_key(get_object_vars($p), ['filter' => true]) : (array) $p, $query->posts);
     return ['posts' => $rows, 'total' => (int) $query->found_posts, 'perPage' => max(1, (int) ($query->query_vars['posts_per_page'] ?? $perPage))];
 }
 

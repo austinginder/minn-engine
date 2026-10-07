@@ -217,11 +217,11 @@ class WP_Query
 
     public function set_404()
     {
+        $feed = $this->is_feed;
         $this->init_query_flags();
         $this->is_404 = true;
-        unset($this->posts, $this->post);
-        $this->posts = [];
-        $this->post_count = 0;
+        $this->is_feed = $feed;
+        do_action_ref_array('set_404', [$this]);
     }
 
     public function get_posts()

@@ -490,6 +490,15 @@ function rest_preload_api_request($memo, $path)
 
 function rest_output_link_header()
 {
+    $root = get_rest_url();
+    if (headers_sent() || empty($root) || PHP_SAPI === 'cli') {
+        return;
+    }
+    header(sprintf('Link: <%s>; rel="https://api.w.org/"', sanitize_url($root)), false);
+    $resource = rest_get_queried_resource_route();
+    if ($resource) {
+        header(sprintf('Link: <%s>; rel="alternate"; title="%s"; type="application/json"', sanitize_url(rest_url($resource)), _x('JSON', 'REST API resource link name')), false);
+    }
 }
 
 /** No trailing newline: the reference continues the line with the RSD link. */

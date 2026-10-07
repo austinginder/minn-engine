@@ -438,8 +438,14 @@ function get_status_header_desc($code)
 
 function status_header($code, $description = '')
 {
-    if (!headers_sent()) {
-        http_response_code((int) $code);
+    $description = $description ?: get_status_header_desc($code);
+    if ($description === '') {
+        return;
+    }
+    $protocol = wp_get_server_protocol();
+    $line = (string) apply_filters('status_header', "{$protocol} {$code} {$description}", $code, $description, $protocol);
+    if (!headers_sent() && PHP_SAPI !== 'cli') {
+        header($line, true, (int) $code);
     }
 }
 

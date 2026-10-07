@@ -26976,6 +26976,7 @@
                 "Minn\\Runtime\\PostSave",
                 "Minn\\Theme\\ClassicContent",
                 "Minn\\Theme\\HeadLinks",
+                "Minn\\Theme\\MainQueryBridge",
                 "Minn\\Theme\\UserStyles"
             ],
             "constructor": {
@@ -41015,7 +41016,7 @@
             "namespace": "Minn\\Front",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Front/FrontController.php",
-            "lines": 55,
+            "lines": 57,
             "doc": "The public site. One catch-all route: resolve the URL, then either\nredirect or render, through the active block theme when there is one,\nthe classic PHP template runner when the theme is classic, and the\ninterim template otherwise.",
             "implements": [],
             "extends": null,
@@ -41032,6 +41033,7 @@
                 "Minn\\Http\\Request",
                 "Minn\\Http\\Response",
                 "Minn\\Http\\Route",
+                "Minn\\Runtime\\Runtime",
                 "Minn\\Theme\\ClassicRenderer",
                 "Minn\\Theme\\PageRenderer"
             ],
@@ -41087,8 +41089,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 25,
-                "end": 33
+                "line": 26,
+                "end": 34
             },
             "cases": [],
             "constants": [],
@@ -41158,8 +41160,8 @@
                     "doc": "The themed (or interim) 404 page.",
                     "shapes": [],
                     "params": [],
-                    "line": 36,
-                    "end": 43
+                    "line": 37,
+                    "end": 44
                 },
                 {
                     "routes": [
@@ -41180,8 +41182,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 47,
-                    "end": 59
+                    "line": 48,
+                    "end": 60
                 },
                 {
                     "routes": [],
@@ -41200,8 +41202,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 61,
-                    "end": 76
+                    "line": 62,
+                    "end": 79
                 }
             ]
         },
@@ -59154,7 +59156,7 @@
             "namespace": "Minn\\Http",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Http/Response.php",
-            "lines": 111,
+            "lines": 123,
             "doc": "What a handler returns. Nothing is written to the client until the\nkernel calls send(), so a response can be inspected, wrapped, or\nreplaced on the way out. Work that belongs after the client has its\nanswer (a cron run a page found due) rides along as afterSend closures.",
             "implements": [],
             "extends": null,
@@ -59227,7 +59229,8 @@
                 "Minn\\Rest\\TypesController",
                 "Minn\\Rest\\UsersController",
                 "Minn\\Rest\\WidgetsController",
-                "Minn\\Runtime\\AjaxController"
+                "Minn\\Runtime\\AjaxController",
+                "Minn\\Theme\\FrontLifecycle"
             ],
             "constructor": {
                 "signature": "__construct(int $status = 200, array $headers = array ( ), string $body = '', array $cookies = array ( ), array $afterSend = array ( ))",
@@ -59528,6 +59531,26 @@
                 },
                 {
                     "routes": [],
+                    "name": "emitHeader",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "emitHeader(string $line): void",
+                    "doc": "One header line sent now, as plugin code sends one, ahead of the\nresponse's own (which win on a shared name). Nothing outside a web\nrequest, or once the head is out.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "line",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 92,
+                    "end": 97
+                },
+                {
+                    "routes": [],
                     "name": "sendHead",
                     "static": false,
                     "visibility": "public",
@@ -59535,8 +59558,8 @@
                     "doc": "Writes the status, the headers, and the cookies now, and nothing else:\nfor an answer that code outside the engine may finish on its own (an\najax handler that ends the request), which must find them already said.",
                     "shapes": [],
                     "params": [],
-                    "line": 92,
-                    "end": 101
+                    "line": 104,
+                    "end": 113
                 },
                 {
                     "routes": [],
@@ -59547,8 +59570,8 @@
                     "doc": "Writes the status, the headers, the cookies, and the body, ends the\nrequest for the client, then runs the after-send work in the same\nprocess (the server that can close the connection first does).",
                     "shapes": [],
                     "params": [],
-                    "line": 108,
-                    "end": 124
+                    "line": 120,
+                    "end": 136
                 }
             ]
         },
@@ -113488,6 +113511,7 @@
                 "Minn\\Extension\\Extensions",
                 "Minn\\Front\\CommentPostController",
                 "Minn\\Front\\Feeds",
+                "Minn\\Front\\FrontController",
                 "Minn\\Front\\Permalinks",
                 "Minn\\Front\\PluginRules",
                 "Minn\\Front\\Resolver",
@@ -124308,6 +124332,113 @@
             ]
         },
         {
+            "name": "Minn\\Theme\\FrontLifecycle",
+            "short": "FrontLifecycle",
+            "namespace": "Minn\\Theme",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Theme/FrontLifecycle.php",
+            "lines": 84,
+            "doc": "WordPress's front-end request steps around the main query, as WP::main\nruns them (front lifecycle trace): parse the request (do_parse_request\nmay take it over; query_vars names the public variables, a plugin's own\nread from the query string; request filters the result; parse_request\nfollows), the main query, the 404 decision (pre_handle_404 first), the\nglobals, and the headers (wp_headers, the status, send_headers). The\nengine has already resolved the URL; these steps tell plugins about it\nin the reference's order and let them change what the query asks.",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\Http\\Response"
+            ],
+            "usedBy": [
+                "Minn\\Theme\\MainQueryBridge"
+            ],
+            "constructor": null,
+            "cases": [],
+            "constants": [],
+            "properties": [],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "parseRequest",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "parseRequest(WP $wp, array $vars, array $given): bool",
+                    "doc": "Parses the request: false when a plugin's do_parse_request took the\nparse over (the main query then does not run).",
+                    "shapes": [
+                        "@param array<string, mixed> $vars the variables the engine resolved",
+                        "@param array<string, mixed> $given the query string and form, where a plugin's own variables are read"
+                    ],
+                    "params": [
+                        {
+                            "name": "wp",
+                            "type": "WP",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "vars",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": "the variables the engine resolved"
+                        },
+                        {
+                            "name": "given",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": "the query string and form, where a plugin's own variables are read"
+                        }
+                    ],
+                    "line": 28,
+                    "end": 47
+                },
+                {
+                    "routes": [],
+                    "name": "handle404",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "handle404(WP_Query $query, bool $notFound): void",
+                    "doc": "The 404 decision: a plugin's pre_handle_404 may make it; otherwise a\nrequest the engine could not resolve is a 404 (the query says so, the\nstatus and no-cache headers follow), anything else is a 200.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "query",
+                            "type": "WP_Query",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "notFound",
+                            "type": "bool",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 54,
+                    "end": 66
+                },
+                {
+                    "routes": [],
+                    "name": "sendHeaders",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "sendHeaders(WP $wp): void",
+                    "doc": "The headers the reference sends for the request: no caching for a\nsigned-in reader or a 404, the content type, a pingback address for a\nsingle post that takes pings; then wp_headers, the status an error\nvariable names, and send_headers.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "wp",
+                            "type": "WP",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 74,
+                    "end": 101
+                }
+            ]
+        },
+        {
             "name": "Minn\\Theme\\GlobalStyles",
             "short": "GlobalStyles",
             "namespace": "Minn\\Theme",
@@ -125343,13 +125474,14 @@
             "namespace": "Minn\\Theme",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Theme/MainQueryBridge.php",
-            "lines": 67,
-            "doc": "Stands the main query for a themed page: a plugin's archive runs through\nWP_Query (pre_get_posts shapes it), everything else is the engine's own\nlisting seeded into the query globals. Then the front-end lifecycle\nfires: \"wp\" with the request object, then template_redirect.",
+            "lines": 118,
+            "doc": "Stands the main query for a themed page and runs the front-end steps\naround it as WP::main does (FrontLifecycle): the request parsed, the main\nquery through WP_Query (so pre_get_posts and every posts_* filter shape\nit), the 404 decision, the globals, the headers, then \"wp\" and\ntemplate_redirect. A listing's posts are the query's; a single post the\nquery does not find (a preview, a draft its author reads) is the one the\nengine resolved. Without the runtime, the engine's own listing.",
             "implements": [],
             "extends": null,
             "uses": [
                 "Minn\\Content\\Page",
                 "Minn\\Content\\PostFilter",
+                "Minn\\Content\\PostRecord",
                 "Minn\\Content\\Posts",
                 "Minn\\Content\\Site",
                 "Minn\\Front\\Kind",
@@ -125357,7 +125489,8 @@
                 "Minn\\Front\\Resolver",
                 "Minn\\Runtime\\MainQuery",
                 "Minn\\Runtime\\Runtime",
-                "Minn\\Support\\Serialized"
+                "Minn\\Support\\Serialized",
+                "Minn\\Theme\\FrontLifecycle"
             ],
             "usedBy": [
                 "Minn\\Theme\\ClassicRenderer",
@@ -125391,11 +125524,18 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 26,
-                "end": 31
+                "line": 32,
+                "end": 37
             },
             "cases": [],
-            "constants": [],
+            "constants": [
+                {
+                    "name": "LISTINGS",
+                    "value": "array (   0 =>    \\Minn\\Front\\Kind::Home,   1 =>    \\Minn\\Front\\Kind::Category,   2 =>    \\Minn\\Front\\Kind::Tag,   3 =>    \\Minn\\Front\\Kind::Taxonomy,   4 =>    \\Minn\\Front\\Kind::PostTypeArchive,   5 =>    \\Minn\\Front\\Kind::Author,   6 =>    \\Minn\\Front\\Kind::Date,   7 =>    \\Minn\\Front\\Kind::Search, )",
+                    "doc": "",
+                    "visibility": "private"
+                }
+            ],
             "properties": [
                 {
                     "name": "site",
@@ -125443,8 +125583,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 34,
-                    "end": 47
+                    "line": 40,
+                    "end": 61
                 },
                 {
                     "routes": [],
@@ -125455,20 +125595,88 @@
                     "doc": "Posts per page.",
                     "shapes": [],
                     "params": [],
-                    "line": 50,
-                    "end": 53
+                    "line": 64,
+                    "end": 67
                 },
                 {
                     "routes": [],
-                    "name": "lifecycle",
+                    "name": "vars",
                     "static": false,
                     "visibility": "private",
-                    "signature": "lifecycle(): void",
-                    "doc": "",
-                    "shapes": [],
-                    "params": [],
-                    "line": 55,
-                    "end": 59
+                    "signature": "vars(Minn\\Front\\Resolution $resolution): array",
+                    "doc": "The variables the reference's request parse would arrive at: the\nresolution's, the posts page by its id, and an unresolved pretty path\nas the page path it was taken for.",
+                    "shapes": [
+                        "@return array<string, mixed>"
+                    ],
+                    "params": [
+                        {
+                            "name": "resolution",
+                            "type": "Minn\\Front\\Resolution",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 76,
+                    "end": 88
+                },
+                {
+                    "routes": [],
+                    "name": "queried",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "queried(Minn\\Front\\Resolution $resolution, array $vars): Minn\\Content\\Page",
+                    "doc": "The main query for these variables: a listing is its posts; any other\npage stands on the post the engine resolved when the query has none.",
+                    "shapes": [
+                        "@param array<string, mixed> $vars"
+                    ],
+                    "params": [
+                        {
+                            "name": "resolution",
+                            "type": "Minn\\Front\\Resolution",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "vars",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 96,
+                    "end": 106
+                },
+                {
+                    "routes": [],
+                    "name": "seeded",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "seeded(Minn\\Front\\Resolution $resolution, array $vars): Minn\\Content\\Page",
+                    "doc": "The engine's own page seeded into the query globals, when no query ran or it found nothing to stand on. @param array<string, mixed> $vars",
+                    "shapes": [
+                        "@param array<string, mixed> $vars"
+                    ],
+                    "params": [
+                        {
+                            "name": "resolution",
+                            "type": "Minn\\Front\\Resolution",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "vars",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 109,
+                    "end": 114
                 },
                 {
                     "routes": [],
@@ -125489,8 +125697,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 62,
-                    "end": 67
+                    "line": 117,
+                    "end": 122
                 },
                 {
                     "routes": [],
@@ -125509,8 +125717,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 69,
-                    "end": 89
+                    "line": 124,
+                    "end": 144
                 }
             ]
         },

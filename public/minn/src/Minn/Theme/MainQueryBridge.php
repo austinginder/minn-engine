@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Minn\Theme;
 
+use Minn\Content\PostRecord;
 use Minn\Content\Posts;
 use Minn\Content\Page;
 use Minn\Content\PostFilter;
@@ -16,13 +17,18 @@ use Minn\Runtime\Runtime;
 use Minn\Support\Serialized;
 
 /**
- * Stands the main query for a themed page: a plugin's archive runs through
- * WP_Query (pre_get_posts shapes it), everything else is the engine's own
- * listing seeded into the query globals. Then the front-end lifecycle
- * fires: "wp" with the request object, then template_redirect.
+ * Stands the main query for a themed page and runs the front-end steps
+ * around it as WP::main does (FrontLifecycle): the request parsed, the main
+ * query through WP_Query (so pre_get_posts and every posts_* filter shape
+ * it), the 404 decision, the globals, the headers, then "wp" and
+ * template_redirect. A listing's posts are the query's; a single post the
+ * query does not find (a preview, a draft its author reads) is the one the
+ * engine resolved. Without the runtime, the engine's own listing.
  */
 final readonly class MainQueryBridge
 {
+    private const LISTINGS = [Kind::Home, Kind::Category, Kind::Tag, Kind::Taxonomy, Kind::PostTypeArchive, Kind::Author, Kind::Date, Kind::Search];
+
     public function __construct(
         private Site $site,
         private Posts $posts,
@@ -33,16 +39,24 @@ final readonly class MainQueryBridge
     /** The page of posts a resolution shows, through the runtime's main query when it is up. */
     public function stand(Resolution $resolution): Page
     {
-        if (Runtime::booted() && in_array($resolution->kind, [Kind::PostTypeArchive, Kind::Taxonomy], true)) {
-            $query = \_minn_run_main_query(MainQuery::vars($resolution), $resolution->paged, $this->perPage);
-            $this->lifecycle();
-            return new Page($query['posts'], (int) $query['total']);
+        if (!Runtime::booted()) {
+            return $this->listing($resolution);
         }
-        $page = $this->listing($resolution);
-        if (Runtime::booted()) {
-            \_minn_seed_main_query(MainQuery::vars($resolution), $page->ids(), $page->total, $this->perPage, $resolution->postsPage);
-            $this->lifecycle();
+        $vars = $this->vars($resolution);
+        \_minn_seed_wp_request($vars);
+        $wp = $GLOBALS['wp'];
+        $request = Runtime::current()->request;
+        $parsed = FrontLifecycle::parseRequest($wp, $vars, $request === null ? [] : $request->form + $request->query);
+        $page = $parsed ? $this->queried($resolution, (array) $wp->query_vars) : $this->seeded($resolution, $vars);
+        if ($parsed) {
+            FrontLifecycle::handle404($GLOBALS['wp_query'], $resolution->kind === Kind::NotFound);
+            $wp->register_globals();
         }
+        FrontLifecycle::sendHeaders($wp);
+        // The page's Link headers are core's own now (rest_output_link_header, wp_shortlink_header).
+        Runtime::current()->set('front_lifecycle', true);
+        Runtime::hooks()->action('wp', [$wp]);
+        Runtime::hooks()->action('template_redirect', []);
         return $page;
     }
 
@@ -52,10 +66,51 @@ final readonly class MainQueryBridge
         return $this->perPage;
     }
 
-    private function lifecycle(): void
+    /**
+     * The variables the reference's request parse would arrive at: the
+     * resolution's, the posts page by its id, and an unresolved pretty path
+     * as the page path it was taken for.
+     *
+     * @return array<string, mixed>
+     */
+    private function vars(Resolution $resolution): array
     {
-        Runtime::hooks()->action('wp', [$GLOBALS['wp'] ?? null]);
-        Runtime::hooks()->action('template_redirect', []);
+        $vars = MainQuery::vars($resolution);
+        $record = $resolution->record ?? [];
+        if ($resolution->postsPage && isset($record['ID'])) {
+            return ['page_id' => (int) $record['ID']] + $vars;
+        }
+        $path = trim((string) (Runtime::current()->request?->path ?? ''), '/');
+        if ($resolution->kind === Kind::NotFound && $path !== '' && \get_option('permalink_structure') !== '') {
+            return ['pagename' => $path];
+        }
+        return $vars;
+    }
+
+    /**
+     * The main query for these variables: a listing is its posts; any other
+     * page stands on the post the engine resolved when the query has none.
+     *
+     * @param array<string, mixed> $vars
+     */
+    private function queried(Resolution $resolution, array $vars): Page
+    {
+        $query = \_minn_run_main_query($vars, 0, $this->perPage);
+        if (in_array($resolution->kind, self::LISTINGS, true) || $resolution->postsPage) {
+            return new Page(PostRecord::fromRows($query['posts']), (int) $query['total']);
+        }
+        if ($resolution->kind !== Kind::NotFound && $query['posts'] === [] && isset(($resolution->record ?? [])['ID'])) {
+            return $this->seeded($resolution, MainQuery::vars($resolution));
+        }
+        return Page::empty();
+    }
+
+    /** The engine's own page seeded into the query globals, when no query ran or it found nothing to stand on. @param array<string, mixed> $vars */
+    private function seeded(Resolution $resolution, array $vars): Page
+    {
+        $page = $this->listing($resolution);
+        \_minn_seed_main_query($vars, $page->ids(), $page->total, $this->perPage, $resolution->postsPage);
+        return $page;
     }
 
     /** @return list<string> the post types a plugin's taxonomy attaches to */

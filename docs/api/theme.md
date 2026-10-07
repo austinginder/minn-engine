@@ -11,10 +11,11 @@ the block-theme reader, templates, global styles and the page renderer
 | [`ClassicRenderer`](#classicrenderer) | final readonly class | 139 | A whole page from the active classic theme: the reference's PHP template |
 | [`ClassicTheme`](#classictheme) | final readonly class | 31 | The active classic (PHP-template) theme on disk. A theme is classic when |
 | [`Folder`](#folder) | final readonly class | 77 | A theme folder read from disk: its style.css headers, which folder its templates come from, its screenshot, whether it is a block theme. |
+| [`FrontLifecycle`](#frontlifecycle) | final class | 84 | WordPress's front-end request steps around the main query, as WP::main |
 | [`GlobalStyles`](#globalstyles) | final readonly class | 555 | theme.json to CSS. Presets become custom properties on :root and their |
 | [`HeadLinks`](#headlinks) | final readonly class | 114 | The links the reference puts in every head: the site and comments |
 | [`Hierarchy`](#hierarchy) | final class | 146 | The classic template hierarchy: the candidate file names each template |
-| [`MainQueryBridge`](#mainquerybridge) | final readonly class | 67 | Stands the main query for a themed page: a plugin's archive runs through |
+| [`MainQueryBridge`](#mainquerybridge) | final readonly class | 118 | Stands the main query for a themed page and runs the front-end steps |
 | [`PageRenderer`](#pagerenderer) | final readonly class | 197 | A whole page from the active block theme: the template the resolution |
 | [`PatternText`](#patterntext) | final class | 198 | Block-theme patterns are PHP files whose only code is a handful of |
 | [`StylePresets`](#stylepresets) | final class | 174 | The preset side of theme.json: the colour, gradient, font-size, |
@@ -204,6 +205,43 @@ Whether any of the folders ships a block template index.
 The first of the stylesheet and template directories that holds the file, or the template directory's path.
 
 
+## FrontLifecycle
+
+`final class Minn\Theme\FrontLifecycle` · `public/minn/src/Minn/Theme/FrontLifecycle.php`
+
+WordPress's front-end request steps around the main query, as WP::main
+runs them (front lifecycle trace): parse the request (do_parse_request
+may take it over; query_vars names the public variables, a plugin's own
+read from the query string; request filters the result; parse_request
+follows), the main query, the 404 decision (pre_handle_404 first), the
+globals, and the headers (wp_headers, the status, send_headers). The
+engine has already resolved the URL; these steps tell plugins about it
+in the reference's order and let them change what the query asks.
+
+Used by: `Minn\Theme\MainQueryBridge`
+
+### static `parseRequest(WP $wp, array $vars, array $given): bool`
+
+Parses the request: false when a plugin's do_parse_request took the
+parse over (the main query then does not run).
+
+- `@param array<string, mixed> $vars the variables the engine resolved`
+- `@param array<string, mixed> $given the query string and form, where a plugin's own variables are read`
+
+### static `handle404(WP_Query $query, bool $notFound): void`
+
+The 404 decision: a plugin's pre_handle_404 may make it; otherwise a
+request the engine could not resolve is a 404 (the query says so, the
+status and no-cache headers follow), anything else is a 200.
+
+### static `sendHeaders(WP $wp): void`
+
+The headers the reference sends for the request: no caching for a
+signed-in reader or a 404, the content type, a pingback address for a
+single post that takes pings; then wp_headers, the status an error
+variable names, and send_headers.
+
+
 ## GlobalStyles
 
 `final readonly class Minn\Theme\GlobalStyles` · `public/minn/src/Minn/Theme/GlobalStyles.php`
@@ -389,10 +427,15 @@ The post type archive templates.
 
 `final readonly class Minn\Theme\MainQueryBridge` · `public/minn/src/Minn/Theme/MainQueryBridge.php`
 
-Stands the main query for a themed page: a plugin's archive runs through
-WP_Query (pre_get_posts shapes it), everything else is the engine's own
-listing seeded into the query globals. Then the front-end lifecycle
-fires: "wp" with the request object, then template_redirect.
+Stands the main query for a themed page and runs the front-end steps
+around it as WP::main does (FrontLifecycle): the request parsed, the main
+query through WP_Query (so pre_get_posts and every posts_* filter shape
+it), the 404 decision, the globals, the headers, then "wp" and
+template_redirect. A listing's posts are the query's; a single post the
+query does not find (a preview, a draft its author reads) is the one the
+engine resolved. Without the runtime, the engine's own listing.
+
+- const `LISTINGS` = `array (   0 =>    \Minn\Front\Kind::Home,   1 =>    \Minn\Front\Kind::Category,   2 =>    \Minn\Front\Kind::Tag,   3 =>    \Minn\Front\Kind::Taxonomy,   4 =>    \Minn\Front\Kind::PostTypeArchive,   5 =>    \Minn\Front\Kind::Author,   6 =>    \Minn\Front\Kind::Date,   7 =>    \Minn\Front\Kind::Search, )`
 
 Used by: `Minn\Theme\ClassicRenderer`, `Minn\Theme\PageRenderer`
 
@@ -409,7 +452,7 @@ The page of posts a resolution shows, through the runtime's main query when it i
 
 Posts per page.
 
-Internals: `lifecycle()` (private, line 55), `objectTypes()` (private, line 62), `listing()` (private, line 69)
+Internals: `vars()` (private, line 76), `queried()` (private, line 96), `seeded()` (private, line 109), `objectTypes()` (private, line 117), `listing()` (private, line 124)
 
 
 ## PageRenderer

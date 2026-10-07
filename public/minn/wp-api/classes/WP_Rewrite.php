@@ -399,8 +399,27 @@ class WP
     {
     }
 
+    /** The main query's variables, posts and post as globals, as themes of every age read them. */
     public function register_globals()
     {
+        $query = $GLOBALS['wp_query'] ?? null;
+        if (!$query instanceof WP_Query) {
+            return;
+        }
+        foreach ((array) $query->query_vars as $key => $value) {
+            $GLOBALS[$key] = $value;
+        }
+        $GLOBALS['query_string'] = $this->query_string;
+        $GLOBALS['posts'] = &$query->posts;
+        $GLOBALS['post'] = $query->post ?? null;
+        $GLOBALS['request'] = $query->request;
+        if ($query->is_single() || $query->is_page()) {
+            $GLOBALS['more'] = 1;
+            $GLOBALS['single'] = 1;
+        }
+        if ($query->is_author()) {
+            $GLOBALS['authordata'] = get_userdata(get_queried_object_id());
+        }
     }
 
     public function init()

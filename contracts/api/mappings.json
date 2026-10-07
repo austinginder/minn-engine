@@ -3,10 +3,10 @@
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line)",
     "summary": {
         "minn": 640,
-        "composes": 921,
-        "leaf": 651,
-        "noop": 1850,
-        "functions": 3992,
+        "composes": 927,
+        "leaf": 649,
+        "noop": 1848,
+        "functions": 3994,
         "minnMethods": 679,
         "leafLinesOver15": 12
     },
@@ -3948,10 +3948,13 @@
         },
         "WP::register_globals": {
             "file": "classes/WP_Rewrite.php",
-            "lines": 0,
-            "kind": "noop",
+            "lines": 18,
+            "kind": "composes",
             "minn": [],
-            "composes": []
+            "composes": [
+                "get_queried_object_id",
+                "get_userdata"
+            ]
         },
         "WP::remove_query_var": {
             "file": "classes/WP_Rewrite.php",
@@ -8498,9 +8501,11 @@
         "WP_Query::set_404": {
             "file": "classes/WP_Query.php",
             "lines": 5,
-            "kind": "leaf",
+            "kind": "composes",
             "minn": [],
-            "composes": []
+            "composes": [
+                "do_action_ref_array"
+            ]
         },
         "WP_Query::setup_postdata": {
             "file": "classes/WP_Query.php",
@@ -16392,11 +16397,12 @@
         },
         "_minn_run_main_query": {
             "file": "query.php",
-            "lines": 8,
+            "lines": 9,
             "kind": "composes",
             "minn": [],
             "composes": [
-                "is_main_query"
+                "is_main_query",
+                "to_array"
             ]
         },
         "_minn_sanitize_post_value": {
@@ -16910,6 +16916,17 @@
             "kind": "noop",
             "minn": [],
             "composes": []
+        },
+        "_post_format_request": {
+            "file": "post.php",
+            "lines": 12,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "get_post_format_slugs",
+                "get_taxonomy",
+                "is_admin"
+            ]
         },
         "_post_states": {
             "file": "admin.php",
@@ -27106,10 +27123,17 @@
         },
         "rest_output_link_header": {
             "file": "rest-api.php",
-            "lines": 0,
-            "kind": "noop",
+            "lines": 9,
+            "kind": "composes",
             "minn": [],
-            "composes": []
+            "composes": [
+                "_x",
+                "get_rest_url",
+                "header",
+                "rest_get_queried_resource_route",
+                "rest_url",
+                "sanitize_url"
+            ]
         },
         "rest_output_link_wp_head": {
             "file": "rest-api.php",
@@ -28049,10 +28073,15 @@
         },
         "status_header": {
             "file": "functions.php",
-            "lines": 3,
-            "kind": "leaf",
+            "lines": 9,
+            "kind": "composes",
             "minn": [],
-            "composes": []
+            "composes": [
+                "apply_filters",
+                "get_status_header_desc",
+                "header",
+                "wp_get_server_protocol"
+            ]
         },
         "stick_post": {
             "file": "post.php",
@@ -31955,12 +31984,17 @@
         },
         "wp_get_shortlink": {
             "file": "post.php",
-            "lines": 2,
+            "lines": 9,
             "kind": "composes",
             "minn": [],
             "composes": [
+                "apply_filters",
+                "get_option",
                 "get_post",
-                "home_url"
+                "get_post_type_object",
+                "get_queried_object_id",
+                "home_url",
+                "is_singular"
             ]
         },
         "wp_get_sidebar": {
@@ -34691,6 +34725,16 @@
                 "Minn\\Runtime\\ThemeSupports::editorDefaults"
             ],
             "composes": []
+        },
+        "wp_shortlink_header": {
+            "file": "post.php",
+            "lines": 5,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "header",
+                "wp_get_shortlink"
+            ]
         },
         "wp_shortlink_wp_head": {
             "file": "link-template.php",

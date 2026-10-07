@@ -634,8 +634,24 @@ function get_post_type_archive_link($post_type)
 
 function wp_get_shortlink($id = 0, $context = 'post', $allow_slugs = true)
 {
-    $post = get_post($id);
-    return $post === null ? '' : home_url('?p=' . $post->ID);
+    $shortlink = apply_filters('pre_get_shortlink', false, $id, $context, $allow_slugs);
+    if ($shortlink !== false) {
+        return $shortlink;
+    }
+    $post = $context === 'query' ? (is_singular() ? get_post(get_queried_object_id()) : null) : ($context === 'post' ? get_post($id) : null);
+    $type = $post === null ? null : get_post_type_object($post->post_type);
+    $front = $post !== null && $post->post_type === 'page' && get_option('show_on_front') === 'page' && (int) get_option('page_on_front') === (int) $post->ID;
+    $shortlink = $front ? home_url('/') : ($type !== null && $type->public ? home_url('?p=' . $post->ID) : '');
+    return apply_filters('get_shortlink', $shortlink, $id, $context, $allow_slugs);
+}
+
+function wp_shortlink_header()
+{
+    $shortlink = wp_get_shortlink(0, 'query');
+    if (headers_sent() || empty($shortlink) || PHP_SAPI === 'cli') {
+        return;
+    }
+    header('Link: <' . $shortlink . '>; rel=shortlink', false);
 }
 
 function get_adjacent_post($in_same_term = false, $excluded_terms = '', $previous = true, $taxonomy = 'category')
@@ -2214,4 +2230,21 @@ function get_post_timestamp($post = null, $field = 'date')
 function wp_post_mime_type_where($post_mime_types, $table_alias = '')
 {
     return \Minn\Query\MimeWhere::sql(is_array($post_mime_types) ? array_values($post_mime_types) : (string) $post_mime_types, (string) $table_alias);
+}
+
+/** @internal a post format archive asks for the format's term and the types the format applies to */
+function _post_format_request($qvs)
+{
+    if (!isset($qvs['post_format'])) {
+        return $qvs;
+    }
+    $slugs = get_post_format_slugs();
+    if (isset($slugs[$qvs['post_format']])) {
+        $qvs['post_format'] = 'post-format-' . $slugs[$qvs['post_format']];
+    }
+    $taxonomy = get_taxonomy('post_format');
+    if (!is_admin() && $taxonomy) {
+        $qvs['post_type'] = $taxonomy->object_type;
+    }
+    return $qvs;
 }

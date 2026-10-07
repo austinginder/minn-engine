@@ -13,6 +13,7 @@ use Minn\Http\Route;
 use Minn\Theme\ClassicRenderer;
 use Minn\Theme\PageRenderer;
 use Minn\Cron\Cron;
+use Minn\Runtime\Runtime;
 
 /**
  * The public site. One catch-all route: resolve the URL, then either
@@ -70,8 +71,10 @@ final readonly class FrontController
         $html = $this->theme?->render($resolution, $this->renderer->bodyClasses($resolution), $this->renderer->title($resolution))
             ?? $this->classic?->render($resolution, $this->renderer->bodyClasses($resolution), $this->renderer->title($resolution))
             ?? $this->renderer->render($resolution);
-        return Response::html($html, $resolution->status)
-            ->withHeader('Link', '<' . $this->resolver->permalinks()->url('/wp-json/') . '>; rel="https://api.w.org/"')
-            ->withHeader('X-Powered-By', 'Minn');
+        $response = Response::html($html, $resolution->status)->withHeader('X-Powered-By', 'Minn');
+        // Once the front-end steps ran, the template_redirect actions sent the Link headers (a plugin may have removed them).
+        return Runtime::booted() && Runtime::current()->get('front_lifecycle') === true
+            ? $response
+            : $response->withHeader('Link', '<' . $this->resolver->permalinks()->url('/wp-json/') . '>; rel="https://api.w.org/"');
     }
 }
