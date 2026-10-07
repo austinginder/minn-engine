@@ -395,8 +395,14 @@ class WP
     {
     }
 
+    /** The vars with a value, encoded; a query_string filter (deprecated, still honoured) rewrites both. */
     public function build_query_string()
     {
+        $this->query_string = Minn\Front\RequestParse::queryString((array) $this->query_vars);
+        if (has_filter('query_string')) {
+            $this->query_string = (string) apply_filters('query_string', $this->query_string);
+            parse_str($this->query_string, $this->query_vars);
+        }
     }
 
     /** The main query's variables, posts and post as globals, as themes of every age read them. */

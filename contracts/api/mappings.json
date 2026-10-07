@@ -2,12 +2,12 @@
     "generated": "2026-10-07",
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line)",
     "summary": {
-        "minn": 660,
+        "minn": 661,
         "composes": 976,
         "leaf": 661,
-        "noop": 1942,
+        "noop": 1941,
         "functions": 4169,
-        "minnMethods": 748,
+        "minnMethods": 750,
         "leafLinesOver15": 12
     },
     "functions": {
@@ -3906,10 +3906,15 @@
         },
         "WP::build_query_string": {
             "file": "classes/WP_Rewrite.php",
-            "lines": 0,
-            "kind": "noop",
-            "minn": [],
-            "composes": []
+            "lines": 5,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Front\\RequestParse::queryString"
+            ],
+            "composes": [
+                "apply_filters",
+                "has_filter"
+            ]
         },
         "WP::handle_404": {
             "file": "classes/WP_Rewrite.php",
@@ -8663,7 +8668,7 @@
         },
         "WP_Query::locate_page_path": {
             "file": "classes/WP_Query.php",
-            "lines": 13,
+            "lines": 16,
             "kind": "composes",
             "minn": [],
             "composes": [
@@ -22767,11 +22772,10 @@
         },
         "get_page_by_path": {
             "file": "post.php",
-            "lines": 14,
+            "lines": 8,
             "kind": "minn",
             "minn": [
-                "Minn\\Content\\Posts::findByNameAnyStatus",
-                "Minn\\Content\\Posts::pageByPathAnyStatus"
+                "Minn\\Content\\Posts::byTypedPath"
             ],
             "composes": [
                 "_minn_posts",

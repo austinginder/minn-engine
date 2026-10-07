@@ -152,9 +152,12 @@ class WP_Query
             $this->queried_object_id = (int) $page->ID;
         }
         if ($this->queried_object_id !== null && get_option('show_on_front') === 'page' && (int) get_option('page_for_posts') === $this->queried_object_id) {
+            // The posts page is the blog: no longer singular, so its feed is the posts' unless comments were asked for.
             $this->is_page = false;
             $this->is_home = true;
             $this->is_posts_page = true;
+            $this->is_singular = false;
+            $this->is_comment_feed = $this->is_feed && !empty($this->query_vars['withcomments']);
         }
         if ($this->queried_object_id !== null && (int) get_option('wp_page_for_privacy_policy') === $this->queried_object_id) {
             $this->is_privacy_policy = true;

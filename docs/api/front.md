@@ -31,17 +31,18 @@ URL resolution, permalinks, feeds, sitemaps and the public page
 | [`PageList`](#pagelist) | final readonly class | 96 | The page hierarchy as wp_list_pages and wp_dropdown_pages draw it: nested |
 | [`Pagination`](#pagination) | final class | 62 | Numbered page links in the reference's shape: previous, the end and |
 | [`Permalinks`](#permalinks) | final readonly class | 259 | Builds public URLs from the site's permalink structure. With an empty |
-| [`PluginRules`](#pluginrules) | final class | 71 | Rewrite rules a plugin registered through add_rewrite_rule(): the |
+| [`PluginRules`](#pluginrules) | final class | 74 | Rewrite rules a plugin registered through add_rewrite_rule(): the |
 | [`PostEmbed`](#postembed) | final class | 104 | A post as other sites embed it, the oEmbed provider side, as the |
 | [`PostNavigation`](#postnavigation) | final class | 36 | The links to the posts either side of this one, and the nav block that |
 | [`PrintedResponse`](#printedresponse) | final class | 39 | A response WordPress's handlers print themselves (a sitemap, robots.txt), |
 | [`ProbeController`](#probecontroller) | final readonly class | 66 | The surface monitors, crawlers, and hosting checks hit that is not a |
 | [`Redirects`](#redirects) | enum | 23 | Whether a resolution may answer with a canonical redirect. A GET or HEAD |
 | [`Renderer`](#renderer) | final readonly class | 168 | The interim public theme: one clean template until the block-theme |
+| [`RequestParse`](#requestparse) | final class | 214 | The query vars the reference's request parse sets for an address |
 | [`Resolution`](#resolution) | final readonly class | 108 | The outcome of resolving a public URL: which kind of thing it names, |
-| [`Resolver`](#resolver) | final readonly class | 537 | Turns a public URL into a Resolution, following the reference's observed |
+| [`Resolver`](#resolver) | final readonly class | 544 | Turns a public URL into a Resolution, following the reference's observed |
 | [`SingleAddresses`](#singleaddresses) | final readonly class | 61 | The addresses a single answers to besides its own, as the reference |
-| [`SingleQueries`](#singlequeries) | final readonly class | 77 | The single a query string asks for, as the reference's request parse and |
+| [`SingleQueries`](#singlequeries) | final readonly class | 79 | The single a query string asks for, as the reference's request parse and |
 | [`SitemapController`](#sitemapcontroller) | final readonly class | 79 | The sitemap index, its pages, and the two stylesheets. With plugins |
 | [`SitemapRequest`](#sitemaprequest) | final class | 70 | A sitemap request at template_redirect, as the reference's sitemaps |
 | [`SitemapXml`](#sitemapxml) | final class | 43 | The two sitemap documents, index and URL set, from entry maps; one builder for the engine's routes and the facade's renderer. |
@@ -673,7 +674,7 @@ What a public URL resolved to.
 
 Cases: `Home`, `Single`, `Page`, `Category`, `Tag`, `Author`, `Date`, `Search`, `Taxonomy`, `PostTypeArchive`, `NotFound`, `Redirect`
 
-Used by: `Minn\Blocks\Context`, `Minn\Blocks\Dynamic\Categories`, `Minn\Blocks\Dynamic\Theme\Navigation`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Blocks\Dynamic\Theme\Structure`, `Minn\Front\AdminBar`, `Minn\Front\AttachmentAddresses`, `Minn\Front\Canonical`, `Minn\Front\DocumentTitle`, `Minn\Front\Endpoints`, `Minn\Front\FeedController`, `Minn\Front\FrontController`, `Minn\Front\Renderer`, `Minn\Front\Resolution`, `Minn\Front\Resolver`, `Minn\Front\SingleAddresses`, `Minn\Runtime\MainQuery`, `Minn\Theme\ArchiveTitle`, `Minn\Theme\BodyClasses`, `Minn\Theme\ClassicRenderer`, `Minn\Theme\EmbedRenderer`, `Minn\Theme\HeadLinks`, `Minn\Theme\MainQueryBridge`, `Minn\Theme\PageRenderer`, `Minn\Theme\Templates`
+Used by: `Minn\Blocks\Context`, `Minn\Blocks\Dynamic\Categories`, `Minn\Blocks\Dynamic\Theme\Navigation`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Blocks\Dynamic\Theme\Structure`, `Minn\Front\AdminBar`, `Minn\Front\AttachmentAddresses`, `Minn\Front\Canonical`, `Minn\Front\DocumentTitle`, `Minn\Front\Endpoints`, `Minn\Front\FeedController`, `Minn\Front\FrontController`, `Minn\Front\Renderer`, `Minn\Front\RequestParse`, `Minn\Front\Resolution`, `Minn\Front\Resolver`, `Minn\Front\SingleAddresses`, `Minn\Runtime\MainQuery`, `Minn\Theme\ArchiveTitle`, `Minn\Theme\BodyClasses`, `Minn\Theme\ClassicRenderer`, `Minn\Theme\EmbedRenderer`, `Minn\Theme\HeadLinks`, `Minn\Theme\MainQueryBridge`, `Minn\Theme\PageRenderer`, `Minn\Theme\Templates`
 
 
 ## ListSpacing
@@ -948,9 +949,10 @@ vars plus whatever the query_vars filter admits, which is how a plugin
 registers its own).
 
 - const `STATE` = `'rule_query_vars'`
+- const `MATCHED` = `'rule_matched'` — Set when a plugin's own rule matched the request (not merely an endpoint).
 - const `PUBLIC_VARS` = `array (   0 => 'm',   1 => 'p',   2 => 'posts',   3 => 'w',   4 => 'cat',   5 => 'withcomments',   6 => 'withoutcomments',   7 => 's',   8 => 'search',   9 => 'exact',   10 => 'sentence',   11 => 'calendar',   12 => 'page',   13 => 'paged',   14 => 'more',   15 => 'tb',   16 => 'pb',   17 => 'author',   18 => 'order',   19 => 'orderby',   20 => 'year',   21 => 'monthnum',   22 => 'day',   23 => 'hour',   24 => 'minute',   25 => 'second',   26 => 'name',   27 => 'category_name',   28 => 'tag',   29 => 'feed',   30 => 'author_name',   31 => 'pagename',   32 => 'page_id',   33 => 'error',   34 => 'attachment',   35 => 'attachment_id',   36 => 'subpost',   37 => 'subpost_id',   38 => 'preview',   39 => 'robots',   40 => 'favicon',   41 => 'taxonomy',   42 => 'term',   43 => 'cpage',   44 => 'post_type',   45 => 'embed', )` — The reference's public query vars a rule's query string may set.
 
-Used by: `Minn\Front\Resolver`, `Minn\Runtime\MainQuery`, `Minn\Theme\MainQueryBridge`
+Used by: `Minn\Front\RequestParse`, `Minn\Front\Resolver`, `Minn\Runtime\MainQuery`, `Minn\Theme\MainQueryBridge`
 
 ### static `match(string $path, bool $top): ?array`
 
@@ -1171,6 +1173,38 @@ The interim page for a resolution, without a theme.
 Internals: `attachmentClasses()` (private, line 37), `pageClasses()` (private, line 115), `article()` (private, line 132), `archive()` (private, line 142)
 
 
+## RequestParse
+
+`final class Minn\Front\RequestParse` · `public/minn/src/Minn/Front/RequestParse.php`
+
+The query vars the reference's request parse sets for an address
+(WP::parse_request), which plugins read off $wp->query_vars and
+get_query_var: the vars of the rewrite rule the path matches (a post's
+name and page, a page's full path, an archive's slug, the paged, feed,
+comment-page, embed and trackback suffixes), then each public var the
+query string or form carries, all in the public vars' order (a plugin's
+own after the core ones); a post type's or taxonomy's own var brings
+post_type and name; a path no rule matches is error=404. The engine
+knows what the path resolved to, so the rule is read off that and the
+path's shape rather than matched from a rule list.
+
+Used by: `Minn\Theme\MainQueryBridge`
+
+### static `vars(string $path, Minn\Front\Resolution $resolution, array $publicVars, array $given): array`
+
+The parse's vars, in the reference's order.
+
+- `@param list<string> $publicVars the public query vars, after the query_vars filter`
+- `@param array<string, mixed> $given the query string's and the form's values`
+- `@return array<string, string>`
+
+### static `queryString(array $vars): string`
+
+The reference's query string for parse vars (WP::build_query_string): each one with a value, encoded.
+
+Internals: `segments()` (private, line 67), `ruleVars()` (private, line 79), `kindVars()` (private, line 96), `suffixes()` (private, line 119), `homeVars()` (private, line 147), `singleVars()` (private, line 160), `unmatched()` (private, line 181), `objectVars()` (private, line 200), `categoryBase()` (private, line 216), `taxonomyVar()` (private, line 223), `queryVarOf()` (private, line 230)
+
+
 ## Resolution
 
 `final readonly class Minn\Front\Resolution` · `public/minn/src/Minn/Front/Resolution.php`
@@ -1179,7 +1213,7 @@ The outcome of resolving a public URL: which kind of thing it names,
 the record behind it, and the page number for paginated views. Redirects
 carry their target instead.
 
-Used by: `Minn\Blocks\Context`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Engine`, `Minn\Front\AdminBar`, `Minn\Front\AttachmentAddresses`, `Minn\Front\DocumentTitle`, `Minn\Front\Endpoints`, `Minn\Front\FeedController`, `Minn\Front\FrontController`, `Minn\Front\PrintedResponse`, `Minn\Front\Renderer`, `Minn\Front\Resolver`, `Minn\Front\SingleAddresses`, `Minn\Front\SingleQueries`, `Minn\Front\SitemapController`, `Minn\Runtime\MainQuery`, `Minn\Theme\ArchiveTitle`, `Minn\Theme\BodyClasses`, `Minn\Theme\ClassicRenderer`, `Minn\Theme\EmbedRenderer`, `Minn\Theme\HeadLinks`, `Minn\Theme\MainQueryBridge`, `Minn\Theme\PageRenderer`, `Minn\Theme\Templates`
+Used by: `Minn\Blocks\Context`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Engine`, `Minn\Front\AdminBar`, `Minn\Front\AttachmentAddresses`, `Minn\Front\DocumentTitle`, `Minn\Front\Endpoints`, `Minn\Front\FeedController`, `Minn\Front\FrontController`, `Minn\Front\PrintedResponse`, `Minn\Front\Renderer`, `Minn\Front\RequestParse`, `Minn\Front\Resolver`, `Minn\Front\SingleAddresses`, `Minn\Front\SingleQueries`, `Minn\Front\SitemapController`, `Minn\Runtime\MainQuery`, `Minn\Theme\ArchiveTitle`, `Minn\Theme\BodyClasses`, `Minn\Theme\ClassicRenderer`, `Minn\Theme\EmbedRenderer`, `Minn\Theme\HeadLinks`, `Minn\Theme\MainQueryBridge`, `Minn\Theme\PageRenderer`, `Minn\Theme\Templates`
 
 - readonly `Minn\Front\Kind $kind`
 - readonly `Minn\Content\PostRecord|Minn\Content\UserRecord|Minn\Content\TermRecord|array|null $record`
@@ -1303,7 +1337,7 @@ The site-local bounds of a date archive, or null when the date is invalid.
 
 - `@return array{0: string, 1: string}|null`
 
-Internals: `fromRuleVars()` (private, line 118), `resolvePath()` (private, line 143), `resolveQueryVars()` (private, line 214), `dateRedirect()` (private, line 258), `home()` (private, line 275), `pluginRoute()` (private, line 297), `segmentsOf()` (private, line 332), `taxonomyArchive()` (private, line 341), `termArchive()` (private, line 355), `termResolution()` (private, line 368), `authorArchive()` (private, line 377), `dateArchive()` (private, line 394), `resolveContent()` (private, line 441), `resolveSingle()` (private, line 482), `endpoint()` (private, line 524), `attachments()` (private, line 542), `elsewhere()` (private, line 548), `readable()` (private, line 553), `pages()` (private, line 570)
+Internals: `fromRuleVars()` (private, line 118), `resolvePath()` (private, line 144), `resolveQueryVars()` (private, line 215), `dateRedirect()` (private, line 259), `search()` (private, line 277), `home()` (private, line 282), `pluginRoute()` (private, line 304), `segmentsOf()` (private, line 339), `taxonomyArchive()` (private, line 348), `termArchive()` (private, line 362), `termResolution()` (private, line 375), `authorArchive()` (private, line 384), `dateArchive()` (private, line 401), `resolveContent()` (private, line 448), `resolveSingle()` (private, line 489), `endpoint()` (private, line 531), `attachments()` (private, line 549), `elsewhere()` (private, line 555), `readable()` (private, line 560), `pages()` (private, line 577)
 
 
 ## SingleAddresses
@@ -1365,7 +1399,7 @@ __construct(Minn\Content\Posts $posts, Minn\Front\Permalinks $permalinks, Minn\F
 
 The resolution the query's single vars amount to; null when it has none of them.
 
-Internals: `byId()` (private, line 53), `byPath()` (private, line 74), `singleOrRedirect()` (private, line 89)
+Internals: `byId()` (private, line 53), `byPath()` (private, line 76), `singleOrRedirect()` (private, line 91)
 
 
 ## SitemapController

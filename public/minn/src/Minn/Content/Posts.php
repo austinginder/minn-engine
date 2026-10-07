@@ -92,6 +92,34 @@ final readonly class Posts
         return $this->byPath($segments, "AND post_status <> 'trash'");
     }
 
+    /**
+     * The post at a slug path among the given types (each segment's parent
+     * the one before it), in any status but trash; at the last segment the
+     * first type wins over the others, as the reference prefers the type it
+     * was asked for over the attachment it also looks at.
+     *
+     * @param list<string> $segments
+     * @param list<string> $types
+     */
+    public function byTypedPath(array $segments, array $types): ?PostRecord
+    {
+        $parent = 0;
+        $found = null;
+        foreach ($segments as $segment) {
+            $found = self::record($this->db->row(
+                "SELECT * FROM {$this->db->table('posts')}
+                 WHERE post_name = ? AND post_type IN (?) AND post_parent = ? AND post_status <> 'trash'
+                 ORDER BY post_type = ? DESC LIMIT 1",
+                [$segment, $types, $parent, $types[0] ?? ''],
+            ));
+            if ($found === null) {
+                return null;
+            }
+            $parent = $found->id;
+        }
+        return $found;
+    }
+
     /** @param list<string> $segments */
     private function byPath(array $segments, string $status): ?PostRecord
     {

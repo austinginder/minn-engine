@@ -119,6 +119,7 @@ final readonly class Resolver
     {
         if (Runtime::booted()) {
             Runtime::current()->set(PluginRules::STATE, $vars);
+            Runtime::current()->set(PluginRules::MATCHED, true);
         }
         $paged = max(1, (int) ($vars['paged'] ?? 1));
         $id = (int) ($vars['p'] ?? $vars['page_id'] ?? 0);
@@ -135,7 +136,7 @@ final readonly class Resolver
             return $single ?? Resolution::notFound();
         }
         if (($vars['s'] ?? '') !== '') {
-            return Resolution::search((string) $vars['s'], $paged);
+            return $this->search((string) $vars['s'], $paged);
         }
         return Resolution::home($paged);
     }
@@ -194,7 +195,7 @@ final readonly class Resolver
             $segments[0] === 'category' => $this->termArchive('category', array_slice($segments, 1), $paged),
             $segments[0] === 'tag' => $this->termArchive('post_tag', array_slice($segments, 1), $paged),
             $segments[0] === 'author' => count($segments) === 2 ? $this->authorArchive($segments[1], $paged) : Resolution::notFound(),
-            $segments[0] === 'search' => count($segments) === 2 ? Resolution::search(rawurldecode($segments[1]), $paged) : Resolution::notFound(),
+            $segments[0] === 'search' => count($segments) === 2 ? $this->search(rawurldecode($segments[1]), $paged) : Resolution::notFound(),
             $segments[0] === 'feed' => Resolution::notFound(),
             preg_match('/^\d{4}$/', $segments[0]) === 1 => $this->dateArchive($segments, $paged),
             default => $this->resolveContent($segments, $paged, $redirects),
@@ -250,7 +251,7 @@ final readonly class Resolver
             return $this->dateRedirect((int) $request->query('year', '0'), $month, $day, $redirects);
         }
         if ($request->has('s')) {
-            return Resolution::search((string) $request->query('s'), max(1, (int) $request->query('paged', '1')));
+            return $this->search((string) $request->query('s'), max(1, (int) $request->query('paged', '1')));
         }
         return $this->home(max(1, (int) $request->query('paged', '1')));
     }
@@ -270,6 +271,12 @@ final readonly class Resolver
             return Resolution::notFound();
         }
         return Resolution::redirect($this->permalinks->forDate($year, $month, $day));
+    }
+
+    /** A search's results; a page past the last one is a 404, as the home's and archives' are. */
+    private function search(string $term, int $paged): Resolution
+    {
+        return $paged > 1 && $paged > $this->pages($this->posts->count(PostFilter::all()->matching($term))) ? Resolution::notFound() : Resolution::search($term, $paged);
     }
 
     private function home(int $paged): Resolution

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Minn\Theme;
 
+
 use Minn\Http\Response;
 use Minn\Runtime\Runtime;
 
@@ -25,8 +26,9 @@ final class FrontLifecycle
      *
      * @param array<string, mixed> $vars the variables the engine resolved
      * @param array<string, mixed> $given the query string and form, where a plugin's own variables are read
+     * @param (\Closure(list<string>): array<string, mixed>)|null $parse the reference's parse vars for the public vars, when the request is known
      */
-    public static function parseRequest(\WP $wp, array $vars, array $given): bool
+    public static function parseRequest(\WP $wp, array $vars, array $given, ?\Closure $parse = null): bool
     {
         if (!\apply_filters('do_parse_request', true, $wp, $wp->extra_query_vars)) {
             return false;
@@ -37,13 +39,14 @@ final class FrontLifecycle
             // The reference asks each type whether it is viewable as it maps type query vars.
             \is_post_type_viewable($type);
         }
-        foreach (array_diff($wp->public_query_vars, $known) as $var) {
+        foreach ($parse === null ? array_diff($wp->public_query_vars, $known) : [] as $var) {
             if (!isset($vars[$var]) && isset($given[$var]) && $given[$var] !== '') {
                 $vars[$var] = is_array($given[$var]) ? $given[$var] : (string) $given[$var];
             }
         }
-        $wp->query_vars = (array) \apply_filters('request', $vars);
+        $wp->query_vars = (array) \apply_filters('request', $parse === null ? $vars : $parse($wp->public_query_vars));
         \do_action_ref_array('parse_request', [&$wp]);
+        $wp->build_query_string();
         return true;
     }
 

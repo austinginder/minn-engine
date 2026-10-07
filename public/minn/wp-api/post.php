@@ -428,16 +428,10 @@ function get_page_by_path($page_path, $output = OBJECT, $post_type = 'page')
     if ($segments === []) {
         return null;
     }
-    $types = (array) $post_type;
-    if (!in_array('page', $types, true) || count($types) !== 1) {
-        $row = _minn_posts()->findByNameAnyStatus(end($segments), $types);
-        if ($row === null || count($segments) > 1) {
-            return null;
-        }
-        return get_post((int) $row['ID'], $output);
-    }
-    $row = _minn_posts()->pageByPathAnyStatus($segments);
-    return $row === null ? null : get_post((int) $row['ID'], $output);
+    // One type looks among attachments too, as the reference does; a list looks among exactly its types.
+    $types = is_array($post_type) ? array_values(array_map('strval', $post_type)) : [(string) $post_type, 'attachment'];
+    $found = _minn_posts()->byTypedPath($segments, $types);
+    return $found === null ? null : get_post($found->id, $output);
 }
 
 function get_page_by_title($page_title, $output = OBJECT, $post_type = 'page')

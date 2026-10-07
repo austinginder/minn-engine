@@ -13,11 +13,11 @@ the block-theme reader, templates, global styles and the page renderer
 | [`EmbedRenderer`](#embedrenderer) | final readonly class | 32 | A post's embed page (its /embed/ address, or ?embed= on it), the card |
 | [`FeedHeaders`](#feedheaders) | final class | 50 | The headers a feed is sent with, as the reference's send_headers sends |
 | [`Folder`](#folder) | final readonly class | 77 | A theme folder read from disk: its style.css headers, which folder its templates come from, its screenshot, whether it is a block theme. |
-| [`FrontLifecycle`](#frontlifecycle) | final class | 94 | WordPress's front-end request steps around the main query, as WP::main |
+| [`FrontLifecycle`](#frontlifecycle) | final class | 96 | WordPress's front-end request steps around the main query, as WP::main |
 | [`GlobalStyles`](#globalstyles) | final readonly class | 555 | theme.json to CSS. Presets become custom properties on :root and their |
 | [`HeadLinks`](#headlinks) | final readonly class | 133 | The links the reference puts in every head: the site and comments |
 | [`Hierarchy`](#hierarchy) | final class | 146 | The classic template hierarchy: the candidate file names each template |
-| [`MainQueryBridge`](#mainquerybridge) | final readonly class | 129 | Stands the main query for a themed page and runs the front-end steps |
+| [`MainQueryBridge`](#mainquerybridge) | final readonly class | 138 | Stands the main query for a themed page and runs the front-end steps |
 | [`NotModified`](#notmodified) | final class | 3 | Raised once a reader's copy of a feed has been found current and the |
 | [`PageRenderer`](#pagerenderer) | final readonly class | 205 | A whole page from the active block theme: the template the resolution |
 | [`PatternText`](#patterntext) | final class | 198 | Block-theme patterns are PHP files whose only code is a handful of |
@@ -285,13 +285,14 @@ in the reference's order and let them change what the query asks.
 
 Used by: `Minn\Theme\MainQueryBridge`
 
-### static `parseRequest(WP $wp, array $vars, array $given): bool`
+### static `parseRequest(WP $wp, array $vars, array $given, ?Closure $parse = NULL): bool`
 
 Parses the request: false when a plugin's do_parse_request took the
 parse over (the main query then does not run).
 
 - `@param array<string, mixed> $vars the variables the engine resolved`
 - `@param array<string, mixed> $given the query string and form, where a plugin's own variables are read`
+- `@param (\Closure(list<string>): array<string, mixed>)|null $parse the reference's parse vars for the public vars, when the request is known`
 
 ### static `handle404(WP_Query $query, bool $notFound): void`
 
@@ -529,7 +530,7 @@ when it is up; the variables a request adds of its own (a feed's) win.
 
 Posts per page.
 
-Internals: `vars()` (private, line 88), `queried()` (private, line 108), `seeded()` (private, line 121), `objectTypes()` (private, line 129), `listing()` (private, line 136)
+Internals: `vars()` (private, line 98), `queried()` (private, line 118), `seeded()` (private, line 131), `objectTypes()` (private, line 139), `listing()` (private, line 146)
 
 
 ## NotModified

@@ -26,7 +26,7 @@ the repositories and records: posts, users, terms, comments, and the render pipe
 | [`PostSlugs`](#postslugs) | final readonly class | 75 | Which slug a live post may take beside the others, as the reference |
 | [`PostStatus`](#poststatus) | enum | 42 | The statuses a post row can hold; the value is the column's own spelling. |
 | [`PostWriter`](#postwriter) | final readonly class | 482 | Every write to the posts table and its satellites: rows, meta, term |
-| [`Posts`](#posts) | final readonly class | 502 | Reads over the posts table. A single post comes back as a PostRecord and |
+| [`Posts`](#posts) | final readonly class | 530 | Reads over the posts table. A single post comes back as a PostRecord and |
 | [`Reader`](#reader) | final class | 72 | Who is reading this request: their user id, whether they may read |
 | [`Revisions`](#revisions) | final readonly class | 95 | Revision rows: the plain snapshots and the per-author autosave slots. |
 | [`Site`](#site) | final readonly class | 73 | Site-wide options and the site's clock. |
@@ -882,7 +882,7 @@ Array access is the migration bridge: code that still reads
 $post['post_title'] keeps working while it is moved over. New code
 reads the properties. The style suite counts the bracket reads down.
 
-Used by: `Minn\Auth\Capabilities`, `Minn\Blocks\Context`, `Minn\Blocks\Dynamic\LatestPosts`, `Minn\Blocks\Dynamic\Theme\Navigation`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Content\Excerpt`, `Minn\Content\Page`, `Minn\Content\PasswordGate`, `Minn\Content\PostStatus`, `Minn\Content\PostWriter`, `Minn\Content\Posts`, `Minn\Engine`, `Minn\Extension\SeamRunner`, `Minn\Front\AttachmentAddresses`, `Minn\Front\Canonical`, `Minn\Front\CommentPostController`, `Minn\Front\Endpoints`, `Minn\Front\Feeds`, `Minn\Front\Permalinks`, `Minn\Front\Renderer`, `Minn\Front\Resolution`, `Minn\Front\Resolver`, `Minn\Front\SingleAddresses`, `Minn\Front\SingleQueries`, `Minn\Front\Sitemaps`, `Minn\Media\Writer`, `Minn\Rest\CommentsController`, `Minn\Rest\GlobalStylesController`, `Minn\Rest\GlobalStylesObject`, `Minn\Rest\MediaController`, `Minn\Rest\MediaObject`, `Minn\Rest\PostObject`, `Minn\Rest\PostsController`, `Minn\Rest\PostsWriteController`, `Minn\Rest\RegisteredPostFields`, `Minn\Rest\RenderedFields`, `Minn\Rest\RevisionsController`, `Minn\Rest\SearchController`, `Minn\Runtime\CommentCloser`, `Minn\Runtime\PostEvents`, `Minn\Runtime\PostSave`, `Minn\Theme\ClassicContent`, `Minn\Theme\HeadLinks`, `Minn\Theme\MainQueryBridge`, `Minn\Theme\UserStyles`
+Used by: `Minn\Auth\Capabilities`, `Minn\Blocks\Context`, `Minn\Blocks\Dynamic\LatestPosts`, `Minn\Blocks\Dynamic\Theme\Navigation`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Content\Excerpt`, `Minn\Content\Page`, `Minn\Content\PasswordGate`, `Minn\Content\PostStatus`, `Minn\Content\PostWriter`, `Minn\Content\Posts`, `Minn\Engine`, `Minn\Extension\SeamRunner`, `Minn\Front\AttachmentAddresses`, `Minn\Front\Canonical`, `Minn\Front\CommentPostController`, `Minn\Front\Endpoints`, `Minn\Front\Feeds`, `Minn\Front\Permalinks`, `Minn\Front\Renderer`, `Minn\Front\RequestParse`, `Minn\Front\Resolution`, `Minn\Front\Resolver`, `Minn\Front\SingleAddresses`, `Minn\Front\SingleQueries`, `Minn\Front\Sitemaps`, `Minn\Media\Writer`, `Minn\Rest\CommentsController`, `Minn\Rest\GlobalStylesController`, `Minn\Rest\GlobalStylesObject`, `Minn\Rest\MediaController`, `Minn\Rest\MediaObject`, `Minn\Rest\PostObject`, `Minn\Rest\PostsController`, `Minn\Rest\PostsWriteController`, `Minn\Rest\RegisteredPostFields`, `Minn\Rest\RenderedFields`, `Minn\Rest\RevisionsController`, `Minn\Rest\SearchController`, `Minn\Runtime\CommentCloser`, `Minn\Runtime\PostEvents`, `Minn\Runtime\PostSave`, `Minn\Theme\ClassicContent`, `Minn\Theme\HeadLinks`, `Minn\Theme\MainQueryBridge`, `Minn\Theme\UserStyles`
 
 - readonly `int $id`
 - readonly `int $authorId`
@@ -1270,6 +1270,16 @@ The page at a slug path in any status but trash, or null. @param list<string> $s
 
 - `@param list<string> $segments`
 
+### `byTypedPath(array $segments, array $types): ?Minn\Content\PostRecord`
+
+The post at a slug path among the given types (each segment's parent
+the one before it), in any status but trash; at the last segment the
+first type wins over the others, as the reference prefers the type it
+was asked for over the attachment it also looks at.
+
+- `@param list<string> $segments`
+- `@param list<string> $types`
+
 ### `pathOf(Minn\Content\PostRecord $page): string`
 
 The slash-joined ancestry of a page: "sample-page/docs".
@@ -1391,7 +1401,7 @@ The newest autosave of a post by one author, or null.
 
 The slug of the post's first category, or null.
 
-Internals: `record()` (private, line 21), `byName()` (private, line 49), `byPath()` (private, line 96), `scope()` (private, line 208), `like()` (private, line 234), `neighbour()` (private, line 309), `weekMode()` (private, line 434), `monthBeside()` (private, line 469), `latest()` (private, line 478)
+Internals: `record()` (private, line 21), `byName()` (private, line 49), `byPath()` (private, line 124), `scope()` (private, line 236), `like()` (private, line 262), `neighbour()` (private, line 337), `weekMode()` (private, line 462), `monthBeside()` (private, line 497), `latest()` (private, line 506)
 
 
 ## Reader

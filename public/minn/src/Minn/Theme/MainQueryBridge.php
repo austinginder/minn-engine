@@ -11,6 +11,7 @@ use Minn\Content\PostFilter;
 use Minn\Content\Site;
 use Minn\Front\Kind;
 use Minn\Front\PluginRules;
+use Minn\Front\RequestParse;
 use Minn\Front\Resolution;
 use Minn\Front\Resolver;
 use Minn\Runtime\MainQuery;
@@ -57,7 +58,16 @@ final readonly class MainQueryBridge
         \_minn_seed_wp_request($vars);
         $wp = $GLOBALS['wp'];
         $request = Runtime::current()->request;
-        $parsed = FrontLifecycle::parseRequest($wp, $vars, $request === null ? [] : $request->form + $request->query);
+        $given = $request === null ? [] : $request->form + $request->query;
+        // With the request known, the vars are the reference's parse of it; what the caller adds (a feed's kind, a sitemap's name) takes its place among them.
+        $parse = $request === null ? null : static function (array $public) use ($request, $resolution, $given, $extra): array {
+            $vars = RequestParse::vars($request->path, $resolution, $public, $given);
+            foreach ($extra as $name => $value) {
+                $vars[$name] = is_bool($value) ? ($value ? 'true' : '') : $value;
+            }
+            return $vars;
+        };
+        $parsed = FrontLifecycle::parseRequest($wp, $vars, $given, $parse);
         $page = $parsed ? $this->queried($resolution, (array) $wp->query_vars) : $this->seeded($resolution, $vars);
         if ($parsed) {
             FrontLifecycle::handle404($GLOBALS['wp_query'], $resolution->kind === Kind::NotFound);

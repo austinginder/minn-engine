@@ -26976,6 +26976,7 @@
                 "Minn\\Front\\Feeds",
                 "Minn\\Front\\Permalinks",
                 "Minn\\Front\\Renderer",
+                "Minn\\Front\\RequestParse",
                 "Minn\\Front\\Resolution",
                 "Minn\\Front\\Resolver",
                 "Minn\\Front\\SingleAddresses",
@@ -29004,7 +29005,7 @@
             "namespace": "Minn\\Content",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Content/Posts.php",
-            "lines": 502,
+            "lines": 530,
             "doc": "Reads over the posts table. A single post comes back as a PostRecord and\na listing as a Page of them; rendering and escaping happen elsewhere.",
             "implements": [],
             "extends": null,
@@ -29242,6 +29243,36 @@
                 },
                 {
                     "routes": [],
+                    "name": "byTypedPath",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "byTypedPath(array $segments, array $types): ?Minn\\Content\\PostRecord",
+                    "doc": "The post at a slug path among the given types (each segment's parent\nthe one before it), in any status but trash; at the last segment the\nfirst type wins over the others, as the reference prefers the type it\nwas asked for over the attachment it also looks at.",
+                    "shapes": [
+                        "@param list<string> $segments",
+                        "@param list<string> $types"
+                    ],
+                    "params": [
+                        {
+                            "name": "segments",
+                            "type": "array",
+                            "shape": "list<string>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "types",
+                            "type": "array",
+                            "shape": "list<string>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 104,
+                    "end": 121
+                },
+                {
+                    "routes": [],
                     "name": "pathOf",
                     "static": false,
                     "visibility": "public",
@@ -29257,8 +29288,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 115,
-                    "end": 131
+                    "line": 143,
+                    "end": 159
                 },
                 {
                     "routes": [],
@@ -29277,8 +29308,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 139,
-                    "end": 157
+                    "line": 167,
+                    "end": 185
                 },
                 {
                     "routes": [],
@@ -29311,8 +29342,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 166,
-                    "end": 169
+                    "line": 194,
+                    "end": 197
                 },
                 {
                     "routes": [],
@@ -29331,8 +29362,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 172,
-                    "end": 175
+                    "line": 200,
+                    "end": 203
                 },
                 {
                     "routes": [],
@@ -29351,8 +29382,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 178,
-                    "end": 182
+                    "line": 206,
+                    "end": 210
                 },
                 {
                     "routes": [],
@@ -29385,8 +29416,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 185,
-                    "end": 200
+                    "line": 213,
+                    "end": 228
                 },
                 {
                     "routes": [],
@@ -29412,8 +29443,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 240,
-                    "end": 247
+                    "line": 268,
+                    "end": 275
                 },
                 {
                     "routes": [],
@@ -29441,8 +29472,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 254,
-                    "end": 265
+                    "line": 282,
+                    "end": 293
                 },
                 {
                     "routes": [],
@@ -29461,8 +29492,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 268,
-                    "end": 274
+                    "line": 296,
+                    "end": 302
                 },
                 {
                     "routes": [],
@@ -29481,8 +29512,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 277,
-                    "end": 285
+                    "line": 305,
+                    "end": 313
                 },
                 {
                     "routes": [],
@@ -29508,8 +29539,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 288,
-                    "end": 295
+                    "line": 316,
+                    "end": 323
                 },
                 {
                     "routes": [],
@@ -29528,8 +29559,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 298,
-                    "end": 301
+                    "line": 326,
+                    "end": 329
                 },
                 {
                     "routes": [],
@@ -29548,8 +29579,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 304,
-                    "end": 307
+                    "line": 332,
+                    "end": 335
                 },
                 {
                     "routes": [],
@@ -29560,8 +29591,8 @@
                     "doc": "Published pages as a parent => children map, ordered by menu_order then title.",
                     "shapes": [],
                     "params": [],
-                    "line": 321,
-                    "end": 332
+                    "line": 349,
+                    "end": 360
                 },
                 {
                     "routes": [],
@@ -29604,8 +29635,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 342,
-                    "end": 356
+                    "line": 370,
+                    "end": 384
                 },
                 {
                     "routes": [],
@@ -29624,8 +29655,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 362,
-                    "end": 365
+                    "line": 390,
+                    "end": 393
                 },
                 {
                     "routes": [],
@@ -29644,8 +29675,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 368,
-                    "end": 371
+                    "line": 396,
+                    "end": 399
                 },
                 {
                     "routes": [],
@@ -29680,8 +29711,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 378,
-                    "end": 386
+                    "line": 406,
+                    "end": 414
                 },
                 {
                     "routes": [],
@@ -29709,8 +29740,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 393,
-                    "end": 406
+                    "line": 421,
+                    "end": 434
                 },
                 {
                     "routes": [],
@@ -29752,8 +29783,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 415,
-                    "end": 431
+                    "line": 443,
+                    "end": 459
                 },
                 {
                     "routes": [],
@@ -29795,8 +29826,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 444,
-                    "end": 452
+                    "line": 472,
+                    "end": 480
                 },
                 {
                     "routes": [],
@@ -29829,8 +29860,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 455,
-                    "end": 459
+                    "line": 483,
+                    "end": 487
                 },
                 {
                     "routes": [],
@@ -29863,8 +29894,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 462,
-                    "end": 466
+                    "line": 490,
+                    "end": 494
                 },
                 {
                     "routes": [],
@@ -29890,8 +29921,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 493,
-                    "end": 500
+                    "line": 521,
+                    "end": 528
                 },
                 {
                     "routes": [],
@@ -29910,8 +29941,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 503,
-                    "end": 514
+                    "line": 531,
+                    "end": 542
                 },
                 {
                     "routes": [],
@@ -29997,8 +30028,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 96,
-                    "end": 112
+                    "line": 124,
+                    "end": 140
                 },
                 {
                     "routes": [],
@@ -30019,8 +30050,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 208,
-                    "end": 232
+                    "line": 236,
+                    "end": 260
                 },
                 {
                     "routes": [],
@@ -30039,8 +30070,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 234,
-                    "end": 237
+                    "line": 262,
+                    "end": 265
                 },
                 {
                     "routes": [],
@@ -30073,8 +30104,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 309,
-                    "end": 318
+                    "line": 337,
+                    "end": 346
                 },
                 {
                     "routes": [],
@@ -30085,8 +30116,8 @@
                     "doc": "MySQL's WEEK() mode for the site's first day of the week: 0 for Sunday, 1 for Monday.",
                     "shapes": [],
                     "params": [],
-                    "line": 434,
-                    "end": 437
+                    "line": 462,
+                    "end": 465
                 },
                 {
                     "routes": [],
@@ -30121,8 +30152,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 469,
-                    "end": 476
+                    "line": 497,
+                    "end": 504
                 },
                 {
                     "routes": [],
@@ -30148,8 +30179,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 478,
-                    "end": 490
+                    "line": 506,
+                    "end": 518
                 }
             ]
         },
@@ -42509,6 +42540,7 @@
                 "Minn\\Front\\FeedController",
                 "Minn\\Front\\FrontController",
                 "Minn\\Front\\Renderer",
+                "Minn\\Front\\RequestParse",
                 "Minn\\Front\\Resolution",
                 "Minn\\Front\\Resolver",
                 "Minn\\Front\\SingleAddresses",
@@ -44007,7 +44039,7 @@
             "namespace": "Minn\\Front",
             "kind": "final class",
             "file": "public/minn/src/Minn/Front/PluginRules.php",
-            "lines": 71,
+            "lines": 74,
             "doc": "Rewrite rules a plugin registered through add_rewrite_rule(): the\nrecorded rules match against the request path the way the reference\nmatches them, ahead of the engine's own resolution for 'top' rules and\nbehind it for 'bottom' ones. A match yields the substituted query vars,\nkept only when the reference would recognise them (the built-in public\nvars plus whatever the query_vars filter admits, which is how a plugin\nregisters its own).",
             "implements": [],
             "extends": null,
@@ -44015,6 +44047,7 @@
                 "Minn\\Runtime\\Runtime"
             ],
             "usedBy": [
+                "Minn\\Front\\RequestParse",
                 "Minn\\Front\\Resolver",
                 "Minn\\Runtime\\MainQuery",
                 "Minn\\Theme\\MainQueryBridge"
@@ -44026,6 +44059,12 @@
                     "name": "STATE",
                     "value": "'rule_query_vars'",
                     "doc": "",
+                    "visibility": "public"
+                },
+                {
+                    "name": "MATCHED",
+                    "value": "'rule_matched'",
+                    "doc": "Set when a plugin's own rule matched the request (not merely an endpoint).",
                     "visibility": "public"
                 },
                 {
@@ -44063,8 +44102,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 36,
-                    "end": 76
+                    "line": 39,
+                    "end": 79
                 },
                 {
                     "routes": [],
@@ -44077,8 +44116,8 @@
                         "@return array<string, string> the vars the matched rule stashed for this request"
                     ],
                     "params": [],
-                    "line": 83,
-                    "end": 87
+                    "line": 86,
+                    "end": 90
                 }
             ]
         },
@@ -45139,6 +45178,344 @@
             ]
         },
         {
+            "name": "Minn\\Front\\RequestParse",
+            "short": "RequestParse",
+            "namespace": "Minn\\Front",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Front/RequestParse.php",
+            "lines": 214,
+            "doc": "The query vars the reference's request parse sets for an address\n(WP::parse_request), which plugins read off $wp->query_vars and\nget_query_var: the vars of the rewrite rule the path matches (a post's\nname and page, a page's full path, an archive's slug, the paged, feed,\ncomment-page, embed and trackback suffixes), then each public var the\nquery string or form carries, all in the public vars' order (a plugin's\nown after the core ones); a post type's or taxonomy's own var brings\npost_type and name; a path no rule matches is error=404. The engine\nknows what the path resolved to, so the rule is read off that and the\npath's shape rather than matched from a rule list.",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\Content\\PostRecord",
+                "Minn\\Front\\Kind",
+                "Minn\\Front\\PluginRules",
+                "Minn\\Front\\Resolution",
+                "Minn\\Runtime\\Runtime"
+            ],
+            "usedBy": [
+                "Minn\\Theme\\MainQueryBridge"
+            ],
+            "constructor": null,
+            "cases": [],
+            "constants": [],
+            "properties": [],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "vars",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "vars(string $path, Minn\\Front\\Resolution $resolution, array $publicVars, array $given): array",
+                    "doc": "The parse's vars, in the reference's order.",
+                    "shapes": [
+                        "@param list<string> $publicVars the public query vars, after the query_vars filter",
+                        "@param array<string, mixed> $given the query string's and the form's values",
+                        "@return array<string, string>"
+                    ],
+                    "params": [
+                        {
+                            "name": "path",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "resolution",
+                            "type": "Minn\\Front\\Resolution",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "publicVars",
+                            "type": "array",
+                            "shape": "list<string>",
+                            "default": null,
+                            "doc": "the public query vars, after the query_vars filter"
+                        },
+                        {
+                            "name": "given",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": "the query string's and the form's values"
+                        }
+                    ],
+                    "line": 31,
+                    "end": 52
+                },
+                {
+                    "routes": [],
+                    "name": "queryString",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "queryString(array $vars): string",
+                    "doc": "The reference's query string for parse vars (WP::build_query_string): each one with a value, encoded.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "vars",
+                            "type": "array",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 55,
+                    "end": 64
+                },
+                {
+                    "routes": [],
+                    "name": "segments",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "segments(string $path): array",
+                    "doc": "",
+                    "shapes": [
+                        "@return list<string>"
+                    ],
+                    "params": [
+                        {
+                            "name": "path",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 67,
+                    "end": 70
+                },
+                {
+                    "routes": [],
+                    "name": "ruleVars",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "ruleVars(array $segments, Minn\\Front\\Resolution $resolution): array",
+                    "doc": "The matched rule's vars: the suffixes the path ends in, then what the\nrest names.",
+                    "shapes": [
+                        "@param list<string> $segments",
+                        "@return array<string, string>"
+                    ],
+                    "params": [
+                        {
+                            "name": "segments",
+                            "type": "array",
+                            "shape": "list<string>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "resolution",
+                            "type": "Minn\\Front\\Resolution",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 79,
+                    "end": 88
+                },
+                {
+                    "routes": [],
+                    "name": "kindVars",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "kindVars(array $segments, Minn\\Front\\Resolution $resolution): array",
+                    "doc": "What the rest of the path names, by what it resolved to.",
+                    "shapes": [
+                        "@param list<string> $segments",
+                        "@return array<string, string>"
+                    ],
+                    "params": [
+                        {
+                            "name": "segments",
+                            "type": "array",
+                            "shape": "list<string>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "resolution",
+                            "type": "Minn\\Front\\Resolution",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 96,
+                    "end": 110
+                },
+                {
+                    "routes": [],
+                    "name": "suffixes",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "suffixes(array $segments): array",
+                    "doc": "The suffixes a rule takes off the end of a path: page/N, comment-page-N,\nfeed[/type], embed, trackback.",
+                    "shapes": [
+                        "@param list<string> $segments",
+                        "@return array{0: list<string>, 1: array<string, string>}"
+                    ],
+                    "params": [
+                        {
+                            "name": "segments",
+                            "type": "array",
+                            "shape": "list<string>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 119,
+                    "end": 144
+                },
+                {
+                    "routes": [],
+                    "name": "homeVars",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "homeVars(array $segments): array",
+                    "doc": "",
+                    "shapes": [
+                        "@param list<string> $segments @return array<string, string>"
+                    ],
+                    "params": [
+                        {
+                            "name": "segments",
+                            "type": "array",
+                            "shape": "list<string>",
+                            "default": null,
+                            "doc": "@return array<string, string>"
+                        }
+                    ],
+                    "line": 147,
+                    "end": 150
+                },
+                {
+                    "routes": [],
+                    "name": "singleVars",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "singleVars(array $segments, Minn\\Front\\Resolution $resolution): array",
+                    "doc": "A single's rule: a page by its full path, a post by its name (and its\npage, '' for the first), a post type's own by its var, an attachment\nby the page rule at the top and by its own rule under a post.",
+                    "shapes": [
+                        "@param list<string> $segments",
+                        "@return array<string, string>"
+                    ],
+                    "params": [
+                        {
+                            "name": "segments",
+                            "type": "array",
+                            "shape": "list<string>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "resolution",
+                            "type": "Minn\\Front\\Resolution",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 160,
+                    "end": 172
+                },
+                {
+                    "routes": [],
+                    "name": "unmatched",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "unmatched(array $segments): array",
+                    "doc": "What an address that found nothing matched: a post's rule for one\nsegment, an attachment's for two, an archive's by its base; else none.",
+                    "shapes": [
+                        "@param list<string> $segments",
+                        "@return array<string, string>"
+                    ],
+                    "params": [
+                        {
+                            "name": "segments",
+                            "type": "array",
+                            "shape": "list<string>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 181,
+                    "end": 192
+                },
+                {
+                    "routes": [],
+                    "name": "objectVars",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "objectVars(): array",
+                    "doc": "The vars that name a post type's or taxonomy's object, and what they\nbring along: var => [key, value].",
+                    "shapes": [
+                        "@return array<string, array{0: string, 1: string}>"
+                    ],
+                    "params": [],
+                    "line": 200,
+                    "end": 213
+                },
+                {
+                    "routes": [],
+                    "name": "categoryBase",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "categoryBase(): string",
+                    "doc": "The category archives' base (category_base, \"category\" unless set); a category-first structure's bare path has none.",
+                    "shapes": [],
+                    "params": [],
+                    "line": 216,
+                    "end": 220
+                },
+                {
+                    "routes": [],
+                    "name": "taxonomyVar",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "taxonomyVar(string $taxonomy): string",
+                    "doc": "A taxonomy's query var (its name unless it set one).",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "taxonomy",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 223,
+                    "end": 227
+                },
+                {
+                    "routes": [],
+                    "name": "queryVarOf",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "queryVarOf(string $type): string",
+                    "doc": "A post type's query var (its name unless it set one).",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "type",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 230,
+                    "end": 234
+                }
+            ]
+        },
+        {
             "name": "Minn\\Front\\Resolution",
             "short": "Resolution",
             "namespace": "Minn\\Front",
@@ -45166,6 +45543,7 @@
                 "Minn\\Front\\FrontController",
                 "Minn\\Front\\PrintedResponse",
                 "Minn\\Front\\Renderer",
+                "Minn\\Front\\RequestParse",
                 "Minn\\Front\\Resolver",
                 "Minn\\Front\\SingleAddresses",
                 "Minn\\Front\\SingleQueries",
@@ -45736,7 +46114,7 @@
             "namespace": "Minn\\Front",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Front/Resolver.php",
-            "lines": 537,
+            "lines": 544,
             "doc": "Turns a public URL into a Resolution, following the reference's observed\nrules:\n\n- Unpaged content and archives without a trailing slash redirect to the\nslashed form, as typed (case kept); paged views, search, and 404s do not.\n- Query-var forms (?p=, ?page_id=, ?cat=, ?tag=, ?author=, ?m=, ?name=,\n?pagename=) redirect to the pretty form when the target is public.\n- Archive-shaped paths (category, tag, author, search, a four-digit year)\nare strict: a mismatch is a 404 with no guessing.\n- Plain-segment paths try the page hierarchy, then the post structure,\nthen redirect to the closest published page or post whose name starts\nwith the last segment, pages before posts, newest first.\n- Empty term and date archives are 404; an author archive is 200 for any\nname, even one that belongs to nobody.\n- Non-public posts are 404 to anonymous readers and served to a reader\nwho can edit them.",
             "implements": [],
             "extends": null,
@@ -45988,8 +46366,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 423,
-                    "end": 438
+                    "line": 430,
+                    "end": 445
                 },
                 {
                     "routes": [],
@@ -46011,7 +46389,7 @@
                         }
                     ],
                     "line": 118,
-                    "end": 141
+                    "end": 142
                 },
                 {
                     "routes": [],
@@ -46037,8 +46415,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 143,
-                    "end": 212
+                    "line": 144,
+                    "end": 213
                 },
                 {
                     "routes": [],
@@ -46064,8 +46442,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 214,
-                    "end": 256
+                    "line": 215,
+                    "end": 257
                 },
                 {
                     "routes": [],
@@ -46105,8 +46483,35 @@
                             "doc": ""
                         }
                     ],
-                    "line": 258,
-                    "end": 273
+                    "line": 259,
+                    "end": 274
+                },
+                {
+                    "routes": [],
+                    "name": "search",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "search(string $term, int $paged): Minn\\Front\\Resolution",
+                    "doc": "A search's results; a page past the last one is a 404, as the home's and archives' are.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "term",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "paged",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 277,
+                    "end": 280
                 },
                 {
                     "routes": [],
@@ -46125,8 +46530,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 275,
-                    "end": 287
+                    "line": 282,
+                    "end": 294
                 },
                 {
                     "routes": [],
@@ -46154,8 +46559,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 297,
-                    "end": 329
+                    "line": 304,
+                    "end": 336
                 },
                 {
                     "routes": [],
@@ -46176,8 +46581,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 332,
-                    "end": 335
+                    "line": 339,
+                    "end": 342
                 },
                 {
                     "routes": [],
@@ -46220,8 +46625,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 341,
-                    "end": 352
+                    "line": 348,
+                    "end": 359
                 },
                 {
                     "routes": [],
@@ -46256,8 +46661,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 355,
-                    "end": 365
+                    "line": 362,
+                    "end": 372
                 },
                 {
                     "routes": [],
@@ -46290,8 +46695,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 368,
-                    "end": 375
+                    "line": 375,
+                    "end": 382
                 },
                 {
                     "routes": [],
@@ -46317,8 +46722,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 377,
-                    "end": 391
+                    "line": 384,
+                    "end": 398
                 },
                 {
                     "routes": [],
@@ -46346,8 +46751,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 394,
-                    "end": 416
+                    "line": 401,
+                    "end": 423
                 },
                 {
                     "routes": [],
@@ -46382,8 +46787,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 441,
-                    "end": 479
+                    "line": 448,
+                    "end": 486
                 },
                 {
                     "routes": [],
@@ -46418,8 +46823,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 482,
-                    "end": 517
+                    "line": 489,
+                    "end": 524
                 },
                 {
                     "routes": [],
@@ -46445,8 +46850,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 524,
-                    "end": 539
+                    "line": 531,
+                    "end": 546
                 },
                 {
                     "routes": [],
@@ -46457,8 +46862,8 @@
                     "doc": "The addresses an attachment's page answers to.",
                     "shapes": [],
                     "params": [],
-                    "line": 542,
-                    "end": 545
+                    "line": 549,
+                    "end": 552
                 },
                 {
                     "routes": [],
@@ -46469,8 +46874,8 @@
                     "doc": "The addresses a single answers to besides its own.",
                     "shapes": [],
                     "params": [],
-                    "line": 548,
-                    "end": 551
+                    "line": 555,
+                    "end": 558
                 },
                 {
                     "routes": [],
@@ -46489,8 +46894,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 553,
-                    "end": 568
+                    "line": 560,
+                    "end": 575
                 },
                 {
                     "routes": [],
@@ -46509,8 +46914,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 570,
-                    "end": 573
+                    "line": 577,
+                    "end": 580
                 }
             ]
         },
@@ -46689,7 +47094,7 @@
             "namespace": "Minn\\Front",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Front/SingleQueries.php",
-            "lines": 77,
+            "lines": 79,
             "doc": "The single a query string asks for, as the reference's request parse and\ncanonical redirect answer it: by id (?p=, ?page_id=; an attachment's goes\nto its own page), an attachment by id or slug (?attachment_id=,\n?attachment=), a post by slug (?name=), a page by path (?pagename=).\nWith canonical redirects on, an address that is not the single's own\nmoves there, the other query arguments along; without, each var is\nstrict about the type it finds.",
             "implements": [],
             "extends": null,
@@ -46860,7 +47265,7 @@
                         }
                     ],
                     "line": 53,
-                    "end": 71
+                    "end": 73
                 },
                 {
                     "routes": [],
@@ -46886,8 +47291,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 74,
-                    "end": 87
+                    "line": 76,
+                    "end": 89
                 },
                 {
                     "routes": [],
@@ -46913,8 +47318,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 89,
-                    "end": 96
+                    "line": 91,
+                    "end": 98
                 }
             ]
         },
@@ -118802,6 +119207,7 @@
                 "Minn\\Front\\Permalinks",
                 "Minn\\Front\\PluginRules",
                 "Minn\\Front\\ProbeController",
+                "Minn\\Front\\RequestParse",
                 "Minn\\Front\\Resolver",
                 "Minn\\Front\\SitemapController",
                 "Minn\\Front\\SitemapRequest",
@@ -131407,7 +131813,7 @@
             "namespace": "Minn\\Theme",
             "kind": "final class",
             "file": "public/minn/src/Minn/Theme/FrontLifecycle.php",
-            "lines": 94,
+            "lines": 96,
             "doc": "WordPress's front-end request steps around the main query, as WP::main\nruns them (front lifecycle trace): parse the request (do_parse_request\nmay take it over; query_vars names the public variables, a plugin's own\nread from the query string; request filters the result; parse_request\nfollows), the main query, the 404 decision (pre_handle_404 first), the\nglobals, and the headers (wp_headers, the status, send_headers). The\nengine has already resolved the URL; these steps tell plugins about it\nin the reference's order and let them change what the query asks.",
             "implements": [],
             "extends": null,
@@ -131430,11 +131836,12 @@
                     "name": "parseRequest",
                     "static": true,
                     "visibility": "public",
-                    "signature": "parseRequest(WP $wp, array $vars, array $given): bool",
+                    "signature": "parseRequest(WP $wp, array $vars, array $given, ?Closure $parse = NULL): bool",
                     "doc": "Parses the request: false when a plugin's do_parse_request took the\nparse over (the main query then does not run).",
                     "shapes": [
                         "@param array<string, mixed> $vars the variables the engine resolved",
-                        "@param array<string, mixed> $given the query string and form, where a plugin's own variables are read"
+                        "@param array<string, mixed> $given the query string and form, where a plugin's own variables are read",
+                        "@param (\\Closure(list<string>): array<string, mixed>)|null $parse the reference's parse vars for the public vars, when the request is known"
                     ],
                     "params": [
                         {
@@ -131457,10 +131864,17 @@
                             "shape": "array<string, mixed>",
                             "default": null,
                             "doc": "the query string and form, where a plugin's own variables are read"
+                        },
+                        {
+                            "name": "parse",
+                            "type": "?Closure",
+                            "shape": "(\\Closure(list<string>): array<string, mixed>)|null",
+                            "default": "NULL",
+                            "doc": "the reference's parse vars for the public vars, when the request is known"
                         }
                     ],
-                    "line": 29,
-                    "end": 48
+                    "line": 31,
+                    "end": 51
                 },
                 {
                     "routes": [],
@@ -131486,8 +131900,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 56,
-                    "end": 68
+                    "line": 59,
+                    "end": 71
                 },
                 {
                     "routes": [],
@@ -131506,8 +131920,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 76,
-                    "end": 112
+                    "line": 79,
+                    "end": 115
                 }
             ]
         },
@@ -132570,7 +132984,7 @@
             "namespace": "Minn\\Theme",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Theme/MainQueryBridge.php",
-            "lines": 129,
+            "lines": 138,
             "doc": "Stands the main query for a themed page and runs the front-end steps\naround it as WP::main does (FrontLifecycle): the request parsed, the main\nquery through WP_Query (so pre_get_posts and every posts_* filter shape\nit), the 404 decision, the globals, the headers, then \"wp\" and\ntemplate_redirect. A listing's posts are the query's; a single post the\nquery does not find (a preview, a draft its author reads) is the one the\nengine resolved. Without the runtime, the engine's own listing.",
             "implements": [],
             "extends": null,
@@ -132582,6 +132996,7 @@
                 "Minn\\Content\\Site",
                 "Minn\\Front\\Kind",
                 "Minn\\Front\\PluginRules",
+                "Minn\\Front\\RequestParse",
                 "Minn\\Front\\Resolution",
                 "Minn\\Front\\Resolver",
                 "Minn\\Runtime\\MainQuery",
@@ -132627,8 +133042,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 33,
-                "end": 38
+                "line": 34,
+                "end": 39
             },
             "cases": [],
             "constants": [
@@ -132695,8 +133110,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 46,
-                    "end": 73
+                    "line": 47,
+                    "end": 83
                 },
                 {
                     "routes": [],
@@ -132707,8 +133122,8 @@
                     "doc": "Posts per page.",
                     "shapes": [],
                     "params": [],
-                    "line": 76,
-                    "end": 79
+                    "line": 86,
+                    "end": 89
                 },
                 {
                     "routes": [],
@@ -132729,8 +133144,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 88,
-                    "end": 100
+                    "line": 98,
+                    "end": 110
                 },
                 {
                     "routes": [],
@@ -132758,8 +133173,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 108,
-                    "end": 118
+                    "line": 118,
+                    "end": 128
                 },
                 {
                     "routes": [],
@@ -132787,8 +133202,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 121,
-                    "end": 126
+                    "line": 131,
+                    "end": 136
                 },
                 {
                     "routes": [],
@@ -132809,8 +133224,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 129,
-                    "end": 134
+                    "line": 139,
+                    "end": 144
                 },
                 {
                     "routes": [],
@@ -132829,8 +133244,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 136,
-                    "end": 156
+                    "line": 146,
+                    "end": 166
                 }
             ]
         },

@@ -19,6 +19,9 @@ final class PluginRules
 {
     public const STATE = 'rule_query_vars';
 
+    /** Set when a plugin's own rule matched the request (not merely an endpoint). */
+    public const MATCHED = 'rule_matched';
+
     /** The reference's public query vars a rule's query string may set. */
     private const PUBLIC_VARS = [
         'm', 'p', 'posts', 'w', 'cat', 'withcomments', 'withoutcomments', 's', 'search', 'exact', 'sentence',

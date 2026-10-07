@@ -66,8 +66,10 @@ final readonly class SingleQueries
             return $post->type === ($key === 'p' ? 'post' : 'page') ? Resolution::single($post) : Resolution::notFound();
         }
         $link = $this->permalinks->forPost($post);
-        // The other arguments go along (?embed=true, a campaign's tags), as the reference's canonical redirect keeps them.
-        return $pretty && !str_contains($link, '?') ? Resolution::redirect($link . $request->queryStringWithout($key)) : Resolution::single($post);
+        // A comment page or listing page asked for stays as typed; otherwise the other arguments go along (?embed=true,
+        // a campaign's tags) but for the preview flag and the post's page, as the reference's canonical redirect keeps them.
+        $moves = $pretty && !str_contains($link, '?') && !$request->has('cpage') && !$request->has('paged');
+        return $moves ? Resolution::redirect($link . $request->queryStringWithout($key, 'preview', 'page')) : Resolution::single($post);
     }
 
     /** ?pagename=: the page at that path (the front page moves to the root), else one by the last slug. */
