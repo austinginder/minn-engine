@@ -12,7 +12,8 @@ use Minn\Runtime\Runtime;
  * get_query_var: each public var the query string or form carries, else
  * the one the matched rewrite rule set (Front\RuleTable), all in the
  * public vars' order (a plugin's own after the core ones); a post type's
- * own var brings post_type and name; a path no rule matches is error=404.
+ * own var brings post_type and name; a path no rule matches is error=404
+ * (the query string's error is ignored).
  */
 final class RequestParse
 {
@@ -28,7 +29,8 @@ final class RequestParse
     {
         $vars = [];
         foreach ($publicVars as $var) {
-            $value = $given[$var] ?? $rule[$var] ?? null;
+            // error is the parse's own verdict (no rule matched), never the query string's.
+            $value = ($var === 'error' ? null : $given[$var] ?? null) ?? $rule[$var] ?? null;
             if ($value !== null && is_scalar($value)) {
                 $vars[$var] = (string) $value;
             }

@@ -14,9 +14,9 @@ use Minn\Runtime\Runtime;
  * query reads them (suites permalinks, plugin-rules, request-vars): a post
  * or page by id, an attachment by name, a page (or an attachment) by its
  * path, a post by name (of the type the vars give), a registered type's
- * item by its own var; else a category's, tag's, post format's or
- * registered taxonomy's archive, an author's, a date's, a post type's, a
- * search; else the front. A rule that set error is a 404, as is a single
+ * item by its own var; else a search, a category's, tag's, post
+ * format's or registered taxonomy's archive, an author's, a date's, a
+ * post type's; else the front. A rule that set error is a 404, as is a single
  * the reader may not read. Under a name the date or category the rule also
  * captured does not narrow the find: where the post really lives is the
  * canonical redirect's business.
@@ -70,9 +70,19 @@ final readonly class RuleRoutes
         return null;
     }
 
-    /** The archive the vars name (a post type's when they give one and nothing else), the front when they name none. @param array<string, string> $vars */
+    /**
+     * The archive the vars name, the front when they name none: a search
+     * first (whatever else they name, as the reference's templates
+     * choose), a term's, an author's, a date's, a post type's when they
+     * give one and nothing else.
+     *
+     * @param array<string, string> $vars
+     */
     private function archive(array $vars, string $type, int $paged): Resolution
     {
+        if (isset($vars['s'])) {
+            return $this->archives->search($vars['s'], $paged);
+        }
         if (($vars['category_name'] ?? '') !== '') {
             return $this->archives->term('category', self::segments($vars['category_name']), $paged);
         }
@@ -98,17 +108,14 @@ final readonly class RuleRoutes
         if (($vars['year'] ?? '') !== '') {
             return $this->archives->date(array_values(array_filter([$vars['year'], $vars['monthnum'] ?? '', $vars['day'] ?? ''], static fn ($part) => $part !== '')), $paged);
         }
-        if ($type !== '') {
-            return $this->typeArchive($type, $paged);
-        }
-        return ($vars['s'] ?? '') !== '' ? $this->archives->search($vars['s'], $paged) : $this->archives->home($paged);
+        return $type !== '' ? $this->typeArchive($type, $paged) : $this->archives->home($paged);
     }
 
-    /** A post type's archive, when it has one; a 404 when it has none. */
+    /** A post type's archive, when it has one; the front's listing (of that type) when it has none. */
     private function typeArchive(string $name, int $paged): Resolution
     {
         $type = Runtime::registry()->postType($name);
-        return $type === null || empty($type['has_archive']) ? Resolution::notFound() : Resolution::postTypeArchive(['name' => $name] + $type, $paged);
+        return $type === null || empty($type['has_archive']) ? $this->archives->home($paged) : Resolution::postTypeArchive(['name' => $name] + $type, $paged);
     }
 
     /**

@@ -8,11 +8,12 @@ use Closure;
 use Minn\Content\PostRecord;
 use Minn\Content\Posts;
 use Minn\Http\Request;
+use Minn\Runtime\Runtime;
 
 /**
  * The single a query string asks for, as the reference's request parse and
- * canonical redirect answer it: by id (?p=, ?page_id=; an attachment's goes
- * to its own page), an attachment by id or slug (?attachment_id=,
+ * canonical redirect answer it: by id (?p=, ?page_id=, any viewable type's;
+ * an attachment's goes to its own page), an attachment by id or slug (?attachment_id=,
  * ?attachment=), a post by slug (?name=), a page by path (?pagename=).
  * With canonical redirects on, an address that is not the single's own
  * moves there, the other query arguments along; without, each var is
@@ -43,8 +44,10 @@ final readonly class SingleQueries
             return $attachment;
         }
         if ($request->has('name')) {
-            $post = $this->posts->findByName((string) $request->query('name'), ['post']);
-            return $post === null ? $this->elsewhere->formerSlug((string) $request->query('name')) ?? Resolution::notFound() : $this->singleOrRedirect($post, $redirects);
+            // A name is a post's, or the named type's (the other arguments go along when it moves).
+            $type = is_string($request->query['post_type'] ?? null) && $request->query['post_type'] !== '' ? $request->query['post_type'] : 'post';
+            $post = $this->posts->findByName((string) $request->query('name'), [$type]);
+            return $post === null ? $this->elsewhere->formerSlug((string) $request->query('name')) ?? Resolution::notFound() : $this->singleOrRedirect($post, $request, $redirects);
         }
         return $request->has('pagename') ? $this->byPath((string) $request->query('pagename'), $redirects) : null;
     }
@@ -58,7 +61,8 @@ final readonly class SingleQueries
         if ($attachment !== null) {
             return $attachment;
         }
-        if ($post === null || !in_array($post->type, ['post', 'page'], true) || !($this->readable)($post)) {
+        $viewable = $post !== null && (in_array($post->type, ['post', 'page'], true) || !empty(Runtime::registry()->postType($post->type)['publicly_queryable']));
+        if (!$viewable || !($this->readable)($post)) {
             return Resolution::notFound();
         }
         if (!$canonical) {
@@ -67,9 +71,9 @@ final readonly class SingleQueries
         }
         $link = $this->permalinks->forPost($post);
         // A comment page or listing page asked for stays as typed; otherwise the other arguments go along (?embed=true,
-        // a campaign's tags) but for the preview flag and the post's page, as the reference's canonical redirect keeps them.
+        // a campaign's tags) but for the preview flag, the post's page and type, as the reference's canonical redirect keeps them.
         $moves = $pretty && !str_contains($link, '?') && !$request->has('cpage') && !$request->has('paged');
-        return $moves ? Resolution::redirect($link . $request->queryStringWithout($key, 'preview', 'page')) : Resolution::single($post);
+        return $moves ? Resolution::redirect($link . $request->queryStringWithout($key, 'preview', 'page', 'post_type')) : Resolution::single($post);
     }
 
     /** ?pagename=: the page at that path (the front page moves to the root), else one by the last slug. */
@@ -88,12 +92,12 @@ final readonly class SingleQueries
         return $bySlug === null ? Resolution::notFound() : Resolution::redirect($this->permalinks->forPost($bySlug));
     }
 
-    private function singleOrRedirect(PostRecord $post, Redirects $redirects): Resolution
+    private function singleOrRedirect(PostRecord $post, Request $request, Redirects $redirects): Resolution
     {
         if (!($this->readable)($post)) {
             return Resolution::notFound();
         }
         $link = $this->permalinks->forPost($post);
-        return $redirects->follows() && $this->permalinks->isPretty() && !str_contains($link, '?') ? Resolution::redirect($link) : Resolution::single($post);
+        return $redirects->follows() && $this->permalinks->isPretty() && !str_contains($link, '?') ? Resolution::redirect($link . $request->queryStringWithout('name')) : Resolution::single($post);
     }
 }

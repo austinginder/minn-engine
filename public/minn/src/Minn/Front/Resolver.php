@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Minn\Front;
 
-use Minn\Content\UserRecord;
 use Minn\Content\PostRecord;
 use Closure;
 use Minn\Content\Posts;
@@ -26,8 +25,10 @@ use Minn\Auth\Nonce;
  * - Unpaged content and archives without a trailing slash redirect to the
  *   slashed form, as typed (case kept), as do an embed's and an endpoint's
  *   addresses; paged views, search, and 404s do not.
- * - Query-var forms (?p=, ?page_id=, ?cat=, ?tag=, ?author=, ?m=, ?name=,
- *   ?pagename=) redirect to the pretty form when the target is public.
+ * - Query-var forms redirect to the pretty form when the target is
+ *   public: a single's (?p=, ?page_id=, ?name=, ?pagename=; SingleQueries)
+ *   and an archive's (?m=, ?year=, ?author=, one taxonomy's term;
+ *   QueryMoves), unless a search is asked for.
  * - A single asked for under a category it is not in (where the
  *   structure names one), or with an old-style page number, moves to its
  *   own address; a trackback address goes to the post; the front page
@@ -234,57 +235,61 @@ final readonly class Resolver
         return array_values(array_filter(explode('/', $path), static fn (string $s) => $s !== ''));
     }
 
+    /**
+     * The root by its query string, in the grammar a path's rule vars are
+     * read in (RuleRoutes): a single's vars first (SingleQueries makes
+     * their moves), then the archive forms that move (QueryMoves), then
+     * what the vars name, an id form read as the name it stands for.
+     */
     private function resolveQueryVars(Request $request, Redirects $redirects): Resolution
     {
-        $canonical = $redirects->follows();
-        $pretty = $this->permalinks->isPretty();
         $single = (new SingleQueries($this->posts, $this->permalinks, $this->attachments(), $this->elsewhere(), $this->readable(...)))->find($request, $redirects);
         if ($single !== null) {
             return $single;
         }
-        if ($request->has('cat')) {
-            $term = $this->terms->find('category', (int) $request->query('cat', '0'));
-            if ($term !== null && !$canonical) {
-                return Resolution::term('category', $term, 1);
-            }
-            return $term === null || !$pretty ? Resolution::notFound() : Resolution::redirect($this->permalinks->forTerm($term));
+        $move = $redirects->follows() && $this->permalinks->isPretty() ? (new QueryMoves($this->db, $this->terms, $this->permalinks))->for($request) : null;
+        if ($move !== null) {
+            return $move;
         }
-        if ($request->has('tag')) {
-            $term = $this->terms->findBySlug('post_tag', (string) $request->query('tag'));
-            if ($term !== null && !$canonical) {
-                return Resolution::term('post_tag', $term, 1);
-            }
-            return $term === null || !$pretty ? Resolution::notFound() : Resolution::redirect($this->permalinks->forTerm($term));
+        $vars = $this->rootVars($request);
+        if ($vars === null) {
+            return Resolution::notFound();
         }
-        if ($request->has('author')) {
-            $row = $this->db->row("SELECT ID, user_nicename, display_name FROM {$this->db->table('users')} WHERE ID = ? LIMIT 1", [(int) $request->query('author', '0')]);
-            $user = $row === null ? null : UserRecord::fromRow($row);
-            if ($user !== null && !$canonical) {
-                return $this->archives()->author($user->nicename, 1);
-            }
-            return $user === null || !$pretty ? Resolution::notFound() : Resolution::redirect($this->permalinks->forAuthor($user));
-        }
-        if ($request->has('m') && preg_match('/^(\d{4})(\d{2})?(\d{2})?$/', (string) $request->query('m'), $m)) {
-            return $this->dateQuery((int) $m[1], isset($m[2]) ? (int) $m[2] : null, isset($m[3]) ? (int) $m[3] : null, $redirects);
-        }
-        if ($request->has('year')) {
-            $month = $request->has('monthnum') ? (int) $request->query('monthnum') : null;
-            $day = $request->has('day') ? (int) $request->query('day') : null;
-            return $this->dateQuery((int) $request->query('year', '0'), $month, $day, $redirects);
-        }
-        if ($request->has('s')) {
-            return $this->archives()->search((string) $request->query('s'), max(1, (int) $request->query('paged', '1')));
-        }
-        return $this->archives()->home(max(1, (int) $request->query('paged', '1')));
+        return (new RuleRoutes($this->posts, $this->archives(), $this->permalinks->frontPageId, $this->permalinks->postsPageId, $this->readable(...)))->resolve($vars);
     }
 
-    /** ?m= or ?year=: the pretty date address to move to, or (holding, or under plain permalinks) the date archive as typed. */
-    private function dateQuery(int $year, ?int $month, ?int $day, Redirects $redirects): Resolution
+    /**
+     * The root's query vars as RuleRoutes reads them: the query string's
+     * (error is not the query string's to set), ?cat= as the category's
+     * slug, ?author= as the author's name, ?m= as its year, month and day.
+     * Null when an id names nothing the site has.
+     *
+     * @return array<string, string>|null
+     */
+    private function rootVars(Request $request): ?array
     {
-        if ($redirects->follows() && $this->permalinks->isPretty()) {
-            return Resolution::redirect($this->permalinks->forDate($year, $month, $day));
+        $vars = array_map(strval(...), array_filter($request->query, is_scalar(...)));
+        unset($vars['error']);
+        $cat = (int) ($vars['cat'] ?? 0);
+        if ($cat > 0 && !isset($vars['category_name'])) {
+            $term = $this->terms->find('category', $cat);
+            if ($term === null) {
+                return null;
+            }
+            $vars['category_name'] = $term->slug;
         }
-        return ArchiveAddresses::isDate($year, $month, $day) ? Resolution::date($year, $month, $day, 1) : Resolution::notFound();
+        $author = (int) ($vars['author'] ?? 0);
+        if ($author > 0 && !isset($vars['author_name'])) {
+            $name = $this->db->value("SELECT user_nicename FROM {$this->db->table('users')} WHERE ID = ? LIMIT 1", [$author]);
+            if ($name === null) {
+                return null;
+            }
+            $vars['author_name'] = (string) $name;
+        }
+        if (!isset($vars['year']) && preg_match('/^(\d{4})(\d{2})?(\d{2})?$/', $vars['m'] ?? '', $m)) {
+            $vars += array_filter(['year' => $m[1], 'monthnum' => $m[2] ?? '', 'day' => $m[3] ?? ''], static fn (string $part) => $part !== '');
+        }
+        return $vars;
     }
 
     /** The archives a request may stand for. */

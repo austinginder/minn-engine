@@ -5,23 +5,24 @@ the block-theme reader, templates, global styles and the page renderer
 | Class | Kind | Lines | Summary |
 |---|---|---|---|
 | [`ArchiveTitle`](#archivetitle) | final class | 54 | The label and name an archive titles itself with: `Category:` around the |
-| [`BodyClasses`](#bodyclasses) | final class | 65 | The body-class list a classic theme's body_class() starts from, in the |
-| [`BodyFacts`](#bodyfacts) | final readonly class | 11 | The facts about a page that decide the body classes a classic theme's |
+| [`BodyClasses`](#bodyclasses) | final class | 59 | The body-class list a classic theme's body_class() starts from, in the |
+| [`BodyFacts`](#bodyfacts) | final readonly class | 10 | The facts about a page that decide the body classes a classic theme's |
 | [`ClassicContent`](#classiccontent) | final class | 39 | What a classic theme's the_content() prints: the engine's block pipeline |
-| [`ClassicRenderer`](#classicrenderer) | final readonly class | 145 | A whole page from the active classic theme: the reference's PHP template |
+| [`ClassicRenderer`](#classicrenderer) | final readonly class | 134 | A whole page from the active classic theme: the reference's PHP template |
 | [`ClassicTheme`](#classictheme) | final readonly class | 31 | The active classic (PHP-template) theme on disk. A theme is classic when |
-| [`EmbedRenderer`](#embedrenderer) | final readonly class | 32 | A post's embed page (its /embed/ address, or ?embed= on it), the card |
+| [`EmbedRenderer`](#embedrenderer) | final readonly class | 33 | A post's embed page (its /embed/ address, or ?embed= on it), the card |
 | [`FeedHeaders`](#feedheaders) | final class | 50 | The headers a feed is sent with, as the reference's send_headers sends |
 | [`Folder`](#folder) | final readonly class | 77 | A theme folder read from disk: its style.css headers, which folder its templates come from, its screenshot, whether it is a block theme. |
-| [`FrontLifecycle`](#frontlifecycle) | final class | 100 | WordPress's front-end request steps around the main query, as WP::main |
+| [`FrontLifecycle`](#frontlifecycle) | final class | 102 | WordPress's front-end request steps around the main query, as WP::main |
 | [`GlobalStyles`](#globalstyles) | final readonly class | 571 | theme.json to CSS. Presets become custom properties on :root and their |
 | [`HeadLinks`](#headlinks) | final readonly class | 133 | The links the reference puts in every head: the site and comments |
 | [`Hierarchy`](#hierarchy) | final class | 146 | The classic template hierarchy: the candidate file names each template |
 | [`MainQueryBridge`](#mainquerybridge) | final readonly class | 125 | Stands the main query for a themed page and runs the front-end steps |
 | [`NotModified`](#notmodified) | final class | 3 | Raised once a reader's copy of a feed has been found current and the |
-| [`PageRenderer`](#pagerenderer) | final readonly class | 189 | A whole page from the active block theme: the template the resolution |
+| [`PageRenderer`](#pagerenderer) | final readonly class | 177 | A whole page from the active block theme: the template the resolution |
 | [`PatternText`](#patterntext) | final class | 198 | Block-theme patterns are PHP files whose only code is a handful of |
 | [`Printed`](#printed) | final class | 3 | Raised once a WordPress handler has printed a whole response (a sitemap, |
+| [`QueryClasses`](#queryclasses) | final readonly class | 120 | The body-class tokens the main query stands for, in the reference's |
 | [`StylePresets`](#stylepresets) | final class | 195 | The preset side of theme.json: the colour, gradient, font-size, |
 | [`StyleSettings`](#stylesettings) | final class | 82 | The settings and styles nodes as wp/v2/global-styles reports them: |
 | [`TemplateHierarchy`](#templatehierarchy) | final class | 75 | The templates a block theme falls back through for a template slug, as |
@@ -81,7 +82,7 @@ The body classes a classic theme's page carries.
 - `@param list<string> $coreClasses`
 - `@return list<string>`
 
-Internals: `withSingularTokens()` (private, line 67)
+Internals: `withSingularTokens()` (private, line 61)
 
 
 ## BodyFacts
@@ -89,16 +90,15 @@ Internals: `withSingularTokens()` (private, line 67)
 `final readonly class Minn\Theme\BodyFacts` · `public/minn/src/Minn/Theme/BodyFacts.php`
 
 The facts about a page that decide the body classes a classic theme's
-page carries beyond the view tokens: privacy policy page, a signed-in
-reader, a custom logo, responsive embeds, and the Minn bar.
+page carries beyond the view tokens: a signed-in reader, a custom
+logo, responsive embeds, and the Minn bar.
 
 Used by: `Minn\Theme\BodyClasses`, `Minn\Theme\ClassicRenderer`
 
 ```php
-__construct(bool $privacyPage = false, bool $loggedIn = false, bool $customLogo = false, bool $embedResponsive = true, bool $bar = false)
+__construct(bool $loggedIn = false, bool $customLogo = false, bool $embedResponsive = true, bool $bar = false)
 ```
 
-- readonly `bool $privacyPage`
 - readonly `bool $loggedIn`
 - readonly `bool $customLogo`
 - readonly `bool $embedResponsive`
@@ -142,7 +142,7 @@ __construct(Minn\Content\Site $site, Minn\Content\Posts $posts, Minn\Front\Perma
 
 A classic renderer over the database door.
 
-### `render(Minn\Front\Resolution $resolution, array $coreClasses, string $title): ?string`
+### `render(Minn\Front\Resolution $resolution, array $coreClasses): ?string`
 
 The page for a resolution through the theme's PHP templates.
 
@@ -152,7 +152,7 @@ The body-class tokens before plugins filter them (get_body_class filters them). 
 
 - `@return list<string>`
 
-Internals: `template()` (private, line 87), `bodyClasses()` (private, line 126), `standTitle()` (private, line 143), `registerHead()` (private, line 153), `registerStyles()` (private, line 159)
+Internals: `template()` (private, line 85), `bodyClasses()` (private, line 124), `registerHead()` (private, line 141), `registerStyles()` (private, line 147)
 
 
 ## ClassicTheme
@@ -199,12 +199,13 @@ __construct(Minn\Theme\MainQueryBridge $bridge)
 
 Whether a request for this resolution asks for its embed page.
 
-### `render(Minn\Front\Resolution $resolution, array $bodyClasses): Minn\Http\Response`
+### `render(Minn\Front\Resolution $resolution, Closure $bodyClasses): Minn\Http\Response`
 
 The embed page, under the status the request's main query settled on;
-the body classes the theme's page would carry (the Minn bar's aside).
+the body classes the theme's page would carry (the Minn bar's aside),
+read once its main query stands.
 
-- `@param list<string> $bodyClasses`
+- `@param Closure(): list<string> $bodyClasses`
 
 
 ## FeedHeaders
@@ -300,10 +301,11 @@ parse over (the main query then does not run).
 The 404 decision, the one place it is made: a plugin's
 pre_handle_404 may make it; otherwise a request for something the
 site does not have is a 404, as is an empty page past the first of
-any listing and an empty date archive (an existing term, author or
-type with no posts, an empty search, the front: a 200); the status
-and no-cache headers follow. A feed is never a 404: one of nothing
-is an empty feed.
+any listing and an empty date archive that names nothing else (an
+existing term, author or type with no posts, a date inside one of
+those or inside a search, an empty search, the front: a 200); the
+status and no-cache headers follow. A feed is never a 404: one of
+nothing is an empty feed.
 
 ### static `sendHeaders(WP $wp): void`
 
@@ -592,11 +594,11 @@ The body-class tokens before plugins filter them (bodyClasses()). @return list<s
 
 - `@return list<string>`
 
-### `render(Minn\Front\Resolution $resolution, array $coreClasses, string $title): ?string`
+### `render(Minn\Front\Resolution $resolution, array $coreClasses): ?string`
 
 The page for a resolution, or null when the theme has no template for it.
 
-Internals: `pluginTemplate()` (private, line 163), `skipLinkTarget()` (private, line 181), `documentTitle()` (private, line 190), `head()` (private, line 207)
+Internals: `pluginTemplate()` (private, line 162), `skipLinkTarget()` (private, line 180), `head()` (private, line 194)
 
 
 ## PatternText
@@ -632,6 +634,38 @@ a stylesheet) or sent a redirect, where the reference exits: the request
 ends there and the engine answers with what was printed.
 
 Used by: `Minn\Front\FrontController`, `Minn\Front\PrintedResponse`, `Minn\Front\SitemapRequest`
+
+
+## QueryClasses
+
+`final readonly class Minn\Theme\QueryClasses` · `public/minn/src/Minn/Theme/QueryClasses.php`
+
+The body-class tokens the main query stands for, in the reference's
+order (captured from the oracles): the view tokens (home, blog,
+privacy-policy, archive, date, search with its results token, paged,
+attachment, error404), then the singular's or the archive's own, then
+the numbered paging tokens. Flags combine as the query's do: a search
+inside a category carries both sets. The bare paged token follows the
+listing's page; the numbered ones follow a single's page too, and take
+the view's prefix in one precedence (single, page, category, tag, date,
+author, search, post type; the front and a plain taxonomy have none).
+A 404 carries no paging tokens. The theme renderers seat the numbered
+tokens after the embed token and add the template and theme tokens.
+
+Used by: `Minn\Front\Renderer`
+
+```php
+__construct(Minn\Db $db)
+```
+
+
+### `of(WP_Query $query): array`
+
+The tokens for a main query.
+
+- `@return list<string>`
+
+Internals: `singular()` (private, line 61), `archive()` (private, line 89), `paging()` (private, line 116), `named()` (private, line 137)
 
 
 ## StylePresets

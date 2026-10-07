@@ -16,7 +16,7 @@ $REF = 'http://127.0.0.1:8123';
 $FIXTURE = dirname(__DIR__) . '/contracts/fixtures/front/permalinks.json';
 
 // The tokens that are contract; theme and template tokens are not.
-const CORE_TOKENS = '/^(home|blog|single|single-post|single-format-\w+|postid-\d+|page|page-id-\d+|page-parent|page-child|parent-pageid-\d+|archive|category|category-[\w-]+|tag|tag-[\w-]+|author|author-[\w-]+|date|search|search-results|error404|paged|paged-\d+|single-paged-\d+|page-paged-\d+)$/';
+const CORE_TOKENS = '/^(home|blog|single|single-post|single-format-\w+|postid-\d+|page|page-id-\d+|page-parent|page-child|parent-pageid-\d+|archive|category|category-[\w-]+|tag|tag-[\w-]+|author|author-[\w-]+|date|search|search-results|search-no-results|tax-post_format|term-[\w-]+|error404|paged|paged-\d+|[a-z-]+-paged-\d+)$/';
 
 $cases = [
     '/', '/page/1/', '/page/2/', '/?paged=2',
@@ -32,6 +32,14 @@ $cases = [
     '/?p=1', '/?p=5', '/?p=2', '/?page_id=2', '/?page_id=6', '/?page_id=1', '/?p=10', '/?p=3', '/?p=999',
     '/?name=hello-world', '/?pagename=docs', '/?pagename=sample-page/docs',
     '/?cat=1', '/?tag=engine', '/?author=1', '/?m=202608', '/?year=2026',
+    // The root's archive forms: what moves (one taxonomy's term, a date before an author before a term, the
+    // other arguments along), what never does (a search, an author or format by name), and what is a 404.
+    '/?category_name=uncategorized', '/?category_name=bogus', '/?taxonomy=category&term=uncategorized', '/?taxonomy=post_format&term=post-format-aside',
+    '/?cat=1&foo=bar', '/?cat=1&year=2026', '/?cat=1&author=1', '/?tag=engine&cat=1', '/?author_name=admin&cat=1', '/?cat=99', '/?author=99',
+    '/?author_name=admin', '/?author_name=bogus', '/?post_format=aside', '/?post_format=bogus', '/?post_type=post', '/?post_type=bogus', '/?error=404',
+    '/?s=', '/?s=&category_name=uncategorized', '/?s=x&category_name=uncategorized', '/?s=x&tag=engine', '/?s=x&year=2026', '/?cat=1&s=x',
+    '/?year=2025', '/?year=2025&cat=1', '/?year=2025&s=x', '/?name=hello-world&post_type=post', '/?p=1&post_type=post',
+    '/category/uncategorized/?s=hello', '/2026/?s=x', '/category/bogus/uncategorized/', '/category/uncategorized/bogus/',
     '/category/uncategorized/', '/category/uncategorized', '/category/Uncategorized/', '/category/uncategorized/page/2/',
     '/category/uncategorized/hello-world/', '/category/e',
     '/tag/engine/', '/tag/nope/', '/tag/nope', '/tag/e',

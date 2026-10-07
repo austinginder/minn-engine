@@ -406,6 +406,268 @@
         "location": "/2026/",
         "classes": []
     },
+    "/?category_name=uncategorized": {
+        "status": 301,
+        "location": "/category/uncategorized/",
+        "classes": []
+    },
+    "/?category_name=bogus": {
+        "status": 404,
+        "location": null,
+        "classes": [
+            "error404"
+        ]
+    },
+    "/?taxonomy=category&term=uncategorized": {
+        "status": 301,
+        "location": "/category/uncategorized/",
+        "classes": []
+    },
+    "/?taxonomy=post_format&term=post-format-aside": {
+        "status": 301,
+        "location": "/type/aside/",
+        "classes": []
+    },
+    "/?cat=1&foo=bar": {
+        "status": 301,
+        "location": "/category/uncategorized/?foo=bar",
+        "classes": []
+    },
+    "/?cat=1&year=2026": {
+        "status": 301,
+        "location": "/2026/?cat=1",
+        "classes": []
+    },
+    "/?cat=1&author=1": {
+        "status": 301,
+        "location": "/author/admin/?cat=1",
+        "classes": []
+    },
+    "/?tag=engine&cat=1": {
+        "status": 200,
+        "location": null,
+        "classes": [
+            "archive",
+            "category",
+            "category-1",
+            "category-uncategorized"
+        ]
+    },
+    "/?author_name=admin&cat=1": {
+        "status": 301,
+        "location": "/category/uncategorized/?author_name=admin",
+        "classes": []
+    },
+    "/?cat=99": {
+        "status": 404,
+        "location": null,
+        "classes": [
+            "error404"
+        ]
+    },
+    "/?author=99": {
+        "status": 404,
+        "location": null,
+        "classes": [
+            "error404"
+        ]
+    },
+    "/?author_name=admin": {
+        "status": 200,
+        "location": null,
+        "classes": [
+            "archive",
+            "author",
+            "author-1",
+            "author-admin"
+        ]
+    },
+    "/?author_name=bogus": {
+        "status": 200,
+        "location": null,
+        "classes": [
+            "archive",
+            "author"
+        ]
+    },
+    "/?post_format=aside": {
+        "status": 200,
+        "location": null,
+        "classes": [
+            "archive",
+            "tax-post_format",
+            "term-12",
+            "term-post-format-aside"
+        ]
+    },
+    "/?post_format=bogus": {
+        "status": 404,
+        "location": null,
+        "classes": [
+            "error404"
+        ]
+    },
+    "/?post_type=post": {
+        "status": 200,
+        "location": null,
+        "classes": [
+            "blog",
+            "home"
+        ]
+    },
+    "/?post_type=bogus": {
+        "status": 200,
+        "location": null,
+        "classes": [
+            "blog",
+            "home"
+        ]
+    },
+    "/?error=404": {
+        "status": 200,
+        "location": null,
+        "classes": [
+            "blog",
+            "home"
+        ]
+    },
+    "/?s=": {
+        "status": 200,
+        "location": null,
+        "classes": [
+            "search",
+            "search-results"
+        ]
+    },
+    "/?s=&category_name=uncategorized": {
+        "status": 200,
+        "location": null,
+        "classes": [
+            "archive",
+            "category",
+            "category-1",
+            "category-uncategorized",
+            "search",
+            "search-results"
+        ]
+    },
+    "/?s=x&category_name=uncategorized": {
+        "status": 200,
+        "location": null,
+        "classes": [
+            "archive",
+            "category",
+            "category-1",
+            "category-uncategorized",
+            "search",
+            "search-results"
+        ]
+    },
+    "/?s=x&tag=engine": {
+        "status": 200,
+        "location": null,
+        "classes": [
+            "archive",
+            "search",
+            "search-results",
+            "tag",
+            "tag-2",
+            "tag-engine"
+        ]
+    },
+    "/?s=x&year=2026": {
+        "status": 200,
+        "location": null,
+        "classes": [
+            "archive",
+            "date",
+            "search",
+            "search-results"
+        ]
+    },
+    "/?cat=1&s=x": {
+        "status": 200,
+        "location": null,
+        "classes": [
+            "archive",
+            "category",
+            "category-1",
+            "category-uncategorized",
+            "search",
+            "search-results"
+        ]
+    },
+    "/?year=2025": {
+        "status": 404,
+        "location": null,
+        "classes": [
+            "error404"
+        ]
+    },
+    "/?year=2025&cat=1": {
+        "status": 301,
+        "location": "/2025/?cat=1",
+        "classes": []
+    },
+    "/?year=2025&s=x": {
+        "status": 200,
+        "location": null,
+        "classes": [
+            "archive",
+            "date",
+            "search",
+            "search-no-results"
+        ]
+    },
+    "/?name=hello-world&post_type=post": {
+        "status": 301,
+        "location": "/hello-world/?post_type=post",
+        "classes": []
+    },
+    "/?p=1&post_type=post": {
+        "status": 301,
+        "location": "/hello-world/",
+        "classes": []
+    },
+    "/category/uncategorized/?s=hello": {
+        "status": 200,
+        "location": null,
+        "classes": [
+            "archive",
+            "category",
+            "category-1",
+            "category-uncategorized",
+            "search",
+            "search-results"
+        ]
+    },
+    "/2026/?s=x": {
+        "status": 200,
+        "location": null,
+        "classes": [
+            "archive",
+            "date",
+            "search",
+            "search-results"
+        ]
+    },
+    "/category/bogus/uncategorized/": {
+        "status": 200,
+        "location": null,
+        "classes": [
+            "archive",
+            "category",
+            "category-1",
+            "category-uncategorized"
+        ]
+    },
+    "/category/uncategorized/bogus/": {
+        "status": 404,
+        "location": null,
+        "classes": [
+            "error404"
+        ]
+    },
     "/category/uncategorized/": {
         "status": 200,
         "location": null,

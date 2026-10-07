@@ -16,7 +16,7 @@ use Minn\Db;
  * The archives an address may stand for, as the reference answers them:
  * the front, a search, a term's (a category's, a tag's, a plugin
  * taxonomy's), an author's and a date's. Each is the archive when what it
- * names exists (a term at that path, a valid date; an author's for any
+ * names exists (a term by its path's last slug, a valid date; an author's for any
  * name); whether its page has posts is the main query's to say, and an
  * empty page past the first, or an empty date, is the 404 it decides
  * (Theme\FrontLifecycle::handle404).
@@ -97,11 +97,16 @@ final readonly class ArchiveAddresses
         return self::isDate($year, $month, $day) ? Resolution::date($year, $month, $day, $paged) : Resolution::notFound();
     }
 
-    /** The term at a slug path in a taxonomy, its ancestors' slugs checked whole. @param list<string> $slugs */
+    /**
+     * The term a slug path names: its last slug's, whatever the segments
+     * before it say (the reference serves /category/any/child/ as the
+     * child's archive, unmoved).
+     *
+     * @param list<string> $slugs
+     */
     private function at(string $taxonomy, array $slugs): ?TermRecord
     {
-        $term = $slugs === [] ? null : $this->terms->findBySlug($taxonomy, (string) end($slugs));
-        return $term !== null && strcasecmp($this->terms->pathOf($term), implode('/', $slugs)) === 0 ? $term : null;
+        return $slugs === [] ? null : $this->terms->findBySlug($taxonomy, (string) end($slugs));
     }
 
     /** Whether a year, month and day (the last two optional, a day only with its month) name a date. */

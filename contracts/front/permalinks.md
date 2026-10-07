@@ -123,6 +123,31 @@ pretty paths through `index.php`:
 - Non-public posts are 404 to anonymous readers by every route. A reader
   who can edit the post sees it by slug or by `?p=`; `?p=` on a private post
   redirects to its pretty link, on a draft it renders in place.
+- The root's query string is read in the grammar a path's rule vars are
+  read in (`Front\RuleRoutes`), a search first: `?s=x&category_name=y` is
+  the search (its classes carry both, from the main query). Its archive
+  forms move under pretty permalinks (`Front\QueryMoves`): a date (`?m=`,
+  `?year=`) first, then an author by id, then a term when the query names
+  exactly one taxonomy (`?cat=` or `?category_name=`, `?tag=`,
+  `?taxonomy=&term=`, a plugin taxonomy's own var such as `?product_cat=`;
+  `?post_format=` counts as one but never moves itself). The other
+  arguments go along (`?cat=1&foo=bar` to `/category/uncategorized/?foo=bar`,
+  `?cat=1&year=2026` to `/2026/?cat=1`, `?cat=1&author=1` to
+  `/author/admin/?cat=1`); `?tag=engine&cat=1` names two taxonomies and
+  stays. Nothing moves while `?s=` is given (even empty), past the first
+  page, or to something missing (`?cat=99`, `?author=99` are 404s).
+  `?author_name=`, `?post_format=` and `?post_type=` never move; a type
+  without an archive (`?post_type=post`, `?post_type=bogus`) is the
+  front's listing. `?error=404` from the query string is ignored (home).
+  `?p=`/`?page_id=` move any viewable type to its address and drop
+  `post_type`; `?name=` with `post_type` finds that type's post and keeps
+  the other arguments (`/hello-world/?post_type=post`).
+- A term archive's path is read by its last slug: `/category/any/child/`
+  is the child's archive, unmoved; `/category/child/bogus/` is a 404.
+- The 404 for an empty listing: past the first page, or an empty date that
+  names nothing else. A date inside an existing term's, author's or type's
+  archive, or inside a search, is a 200 (`?year=2025&cat=1` moves to
+  `/2025/?cat=1`, which answers 200).
 - Open, host-dependent: reached under the site's own host, the reference
   also sends an attachment page to its file while attachment pages are
   off, drops `/page/1/` (`/hello-world/page/1/` to `/hello-world/`), and
@@ -130,13 +155,21 @@ pretty paths through `index.php`:
   `/hello-world/atom/` to `/hello-world/feed/atom/`). The suites reach it
   as 127.0.0.1, where it answers all of these 200 as the engine does.
 
-**Body-class tokens** (the contract; the surrounding markup is engine-defined):
-`home blog`; `single single-post postid-N single-format-standard`;
-`page page-id-N` plus `page-parent` / `page-child parent-pageid-N`;
-`archive category category-{slug} category-N`; `archive tag tag-{slug} tag-N`;
-`archive author author-{nicename} author-N`; `archive date`;
-`search search-results`; `error404`; `paged paged-N` with `single-paged-N`
-or `page-paged-N`.
+**Body-class tokens** (the contract; the surrounding markup is engine-defined),
+read from the main query (`Theme\QueryClasses`), so flags combine as the query's
+do: `home`, `blog`, `privacy-policy`, `archive`, `date`, `search` with
+`search-results` or `search-no-results`, `paged` (a listing past its first
+page), `attachment`, `error404`; then the singular's (`single single-{type}
+postid-N single-format-standard`; `page page-id-N` plus `page-parent` /
+`page-child parent-pageid-N`) or the archive's (`post-type-archive
+post-type-archive-{type}`, `author author-{nicename} author-N`, `category
+category-{slug} category-N`, `tag tag-{slug} tag-N`, `tax-{taxonomy}
+term-{slug} term-N`). `/?s=x&category_name=uncategorized` is `archive search
+search-results category category-uncategorized category-1`. After
+`wp-embed-responsive`: `paged-N` and the view's `{prefix}-paged-N` (single,
+page, category, tag, date, author, search, post-type, in that precedence; the
+front and a plain taxonomy have none). A single's page counts (`/multi/2/` is
+`paged-2 single-paged-2`, no bare `paged`); a 404 has no paging tokens.
 
 ## Known gaps
 
@@ -148,6 +181,14 @@ or `page-paged-N`.
   `read_private_posts` distinction is milestone 23.
 - The rendered page is an interim template (title, content through the
   block renderer, archive lists with excerpts). Milestones 19 and 20 replace it.
+- Block themes pick the template by the resolution's kind, so
+  `/category/x/?s=y` (a search on the reference, which picks the search
+  template) renders the category's; its classes and title are right.
+- Not made yet: `?product=x&s=y` (the reference moves it to the product
+  with the arguments along); paged query-form moves
+  (`?post_type=product&paged=2` to `/page/2/?post_type=product`); with
+  `?product_cat=` and `?taxonomy=&term=` together the reference names the
+  second's term.
 
 ## Front-page settings (`tests/front-page.test.php`, live against the oracle)
 

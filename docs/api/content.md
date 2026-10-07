@@ -824,6 +824,8 @@ order: caller extras, identity, type, status, format, password state,
 thumbnail, sticky, hentry, then one class per term of every public
 taxonomy (post_tag reads as "tag-", post_format is the format above).
 
+Used by: `Minn\Theme\QueryClasses`
+
 ### static `build(array $post, array $extra, ?string $format, bool $thumbnail, bool $sticky, bool $passwordRequired, bool $hasPassword, array $terms): array`
 
 The class list a post carries on its article element, in the reference's order.
@@ -1614,7 +1616,7 @@ One term with its taxonomy row, read by name: $term->name, ->slug,
 when the query that built the record did not select them. Array access
 is the migration bridge, read-only.
 
-Used by: `Minn\Blocks\Dynamic\Categories`, `Minn\Blocks\Dynamic\TagCloud`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Content\Menus`, `Minn\Content\Terms`, `Minn\Front\ArchiveAddresses`, `Minn\Front\Permalinks`, `Minn\Front\Resolution`, `Minn\Rest\MenuObject`, `Minn\Rest\MenusController`, `Minn\Rest\TermFilters`, `Minn\Rest\TermObject`, `Minn\Rest\TermsController`, `Minn\Runtime\TermWriter`
+Used by: `Minn\Blocks\Dynamic\Categories`, `Minn\Blocks\Dynamic\TagCloud`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Content\Menus`, `Minn\Content\Terms`, `Minn\Front\ArchiveAddresses`, `Minn\Front\Permalinks`, `Minn\Front\QueryMoves`, `Minn\Front\Resolution`, `Minn\Rest\MenuObject`, `Minn\Rest\MenusController`, `Minn\Rest\TermFilters`, `Minn\Rest\TermObject`, `Minn\Rest\TermsController`, `Minn\Runtime\TermWriter`
 
 - readonly `int $id`
 - readonly `string $name`
@@ -1670,7 +1672,7 @@ Records are read-only; writes go through the repository.
 
 `final readonly class Minn\Content\Terms` · `public/minn/src/Minn/Content/Terms.php`
 
-Used by: `Minn\Blocks\Dynamic\Theme\Navigation`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Content\Menus`, `Minn\Front\ArchiveAddresses`, `Minn\Front\Permalinks`, `Minn\Front\Resolver`, `Minn\Front\SingleAddresses`, `Minn\Rest\Services`, `Minn\Rest\TermsController`, `Minn\Runtime\TermSave`, `Minn\Runtime\TermWriter`, `Minn\Theme\TemplateWriter`, `Minn\Theme\UserStyles`
+Used by: `Minn\Blocks\Dynamic\Theme\Navigation`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Content\Menus`, `Minn\Front\ArchiveAddresses`, `Minn\Front\Permalinks`, `Minn\Front\QueryMoves`, `Minn\Front\Resolver`, `Minn\Front\SingleAddresses`, `Minn\Rest\Services`, `Minn\Rest\TermsController`, `Minn\Runtime\TermSave`, `Minn\Runtime\TermWriter`, `Minn\Theme\TemplateWriter`, `Minn\Theme\UserStyles`
 
 ```php
 __construct(Minn\Db $db)
@@ -1825,7 +1827,7 @@ spelling in row(); here they are $user->login, ->email, ->displayName.
 Array access is the migration bridge, read-only; new code reads the
 properties.
 
-Used by: `Minn\Auth\AuthCookies`, `Minn\Auth\Authenticated`, `Minn\Auth\Authenticator`, `Minn\Auth\Cookie`, `Minn\Auth\PasswordReset`, `Minn\Auth\SignIn`, `Minn\Cli\UserCommand`, `Minn\Content\Users`, `Minn\Front\AdminBar`, `Minn\Front\ArchiveAddresses`, `Minn\Front\Permalinks`, `Minn\Front\Resolution`, `Minn\Front\Resolver`, `Minn\Login\LoginController`, `Minn\Login\LoginHooks`, `Minn\Rest\ApplicationPasswordsController`, `Minn\Rest\UserObject`, `Minn\Rest\UsersController`
+Used by: `Minn\Auth\AuthCookies`, `Minn\Auth\Authenticated`, `Minn\Auth\Authenticator`, `Minn\Auth\Cookie`, `Minn\Auth\PasswordReset`, `Minn\Auth\SignIn`, `Minn\Cli\UserCommand`, `Minn\Content\Users`, `Minn\Front\AdminBar`, `Minn\Front\ArchiveAddresses`, `Minn\Front\Permalinks`, `Minn\Front\QueryMoves`, `Minn\Front\Resolution`, `Minn\Login\LoginController`, `Minn\Login\LoginHooks`, `Minn\Rest\ApplicationPasswordsController`, `Minn\Rest\UserObject`, `Minn\Rest\UsersController`
 
 - readonly `int $id`
 - readonly `string $login`

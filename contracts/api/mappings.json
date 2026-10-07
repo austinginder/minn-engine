@@ -2,12 +2,12 @@
     "generated": "2026-10-07",
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line)",
     "summary": {
-        "minn": 662,
-        "composes": 969,
+        "minn": 661,
+        "composes": 972,
         "leaf": 663,
         "noop": 1967,
-        "functions": 4187,
-        "minnMethods": 778,
+        "functions": 4189,
+        "minnMethods": 779,
         "leafLinesOver15": 13
     },
     "functions": {
@@ -9429,7 +9429,7 @@
         },
         "WP_REST_Response::add_links": {
             "file": "classes/WP_REST_Response.php",
-            "lines": 8,
+            "lines": 9,
             "kind": "leaf",
             "minn": [],
             "composes": []
@@ -9711,10 +9711,11 @@
         },
         "WP_REST_Server::get_response_links": {
             "file": "classes/WP_REST_Server.php",
-            "lines": 12,
+            "lines": 20,
             "kind": "minn",
             "minn": [
-                "Minn\\Rest\\Links::item"
+                "Minn\\Rest\\Links::item",
+                "Minn\\Rest\\RuntimeRoutes::targetHints"
             ],
             "composes": []
         },
@@ -16371,18 +16372,6 @@
             "minn": [],
             "composes": []
         },
-        "_minn_document_title": {
-            "file": "query.php",
-            "lines": 12,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "apply_filters",
-                "convert_chars",
-                "esc_html",
-                "wptexturize"
-            ]
-        },
         "_minn_dropdown_script": {
             "file": "widgets.php",
             "lines": 1,
@@ -17751,6 +17740,25 @@
             ],
             "composes": []
         },
+        "_post_format_get_term": {
+            "file": "post.php",
+            "lines": 4,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "get_post_format_string"
+            ]
+        },
+        "_post_format_get_terms": {
+            "file": "post.php",
+            "lines": 11,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "_post_format_get_term",
+                "get_post_format_string"
+            ]
+        },
         "_post_format_request": {
             "file": "post.php",
             "lines": 12,
@@ -17760,6 +17768,15 @@
                 "get_post_format_slugs",
                 "get_taxonomy",
                 "is_admin"
+            ]
+        },
+        "_post_format_wp_get_object_terms": {
+            "file": "post.php",
+            "lines": 6,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "_post_format_get_term"
             ]
         },
         "_post_states": {
@@ -18683,12 +18700,11 @@
             "lines": 10,
             "kind": "minn",
             "minn": [
-                "Minn\\Runtime\\Runtime::current",
-                "Minn\\Runtime\\Runtime::request",
                 "Minn\\Support\\Url::withQuery"
             ],
             "composes": [
                 "_minn_build_query",
+                "_minn_request_uri",
                 "urlencode_deep"
             ]
         },
@@ -33230,15 +33246,15 @@
         },
         "wp_get_document_title": {
             "file": "query.php",
-            "lines": 2,
-            "kind": "minn",
-            "minn": [
-                "Minn\\Runtime\\Runtime::current",
-                "Minn\\Runtime\\Runtime::get"
-            ],
+            "lines": 12,
+            "kind": "composes",
+            "minn": [],
             "composes": [
-                "_minn_document_title",
-                "_minn_query_title_parts"
+                "_minn_query_title_parts",
+                "apply_filters",
+                "convert_chars",
+                "esc_html",
+                "wptexturize"
             ]
         },
         "wp_get_environment_type": {

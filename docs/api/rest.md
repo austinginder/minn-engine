@@ -60,7 +60,7 @@ the wp/v2 surface: shapes and controllers
 | [`RouteTable`](#routetable) | final class | 38 | The registered endpoints in dispatch shape: one handler list per route, methods as a set, non-numeric keys lifted into the route's options. |
 | [`RuntimeEnvelope`](#runtimeenvelope) | final readonly class | 123 | The REST server's filters around one of Minn's own routes, as the |
 | [`RuntimePrepare`](#runtimeprepare) | final class | 70 | An item a REST response carries, through the filter the reference runs |
-| [`RuntimeRoutes`](#runtimeroutes) | final class | 406 | Routes plugin code registered with register_rest_route(), answered |
+| [`RuntimeRoutes`](#runtimeroutes) | final class | 429 | Routes plugin code registered with register_rest_route(), answered |
 | [`Schema`](#schema) | final readonly class | 473 | JSON-schema handling the way the REST API's argument validation does it: |
 | [`SchemaValues`](#schemavalues) | final class | 206 | The value side of JSON Schema, as the reference applies it: what counts |
 | [`SearchController`](#searchcontroller) | final readonly class | 121 | wp/v2 search over published content: id, title, url, type, and the |
@@ -2382,6 +2382,15 @@ The methods of a plugin's route whose handler lets this request through (a handl
 
 - `@return list<string>`
 
+### static `targetHints(string $href): ?array`
+
+The methods a self link's caller may use there, as the reference
+hints them on every self link it serves (targetHints.allow): the
+route the link names, each of its methods whose handler lets this
+caller through; null when no route of the runtime's takes the link.
+
+- `@return list<string>|null`
+
 ### static `mergeIndex(Minn\Http\Response $response): Minn\Http\Response`
 
 The engine's index plus the namespaces and routes the runtime holds.
@@ -2448,7 +2457,11 @@ nothing hooked, the answer goes out as it is.
 
 A callback's return as a response object, an error converted.
 
-Internals: `allow()` (private, line 83), `oembedXml()` (private, line 321), `look()` (private, line 335), `remember()` (private, line 340), `decode()` (private, line 347), `expand()` (private, line 367), `newWpRequest()` (private, line 393), `toResponse()` (private, line 416)
+### static `server(): WP_REST_Server`
+
+The runtime's REST server, the one door to it (built, with rest_api_init, on first use).
+
+Internals: `allow()` (private, line 83), `oembedXml()` (private, line 339), `look()` (private, line 353), `remember()` (private, line 358), `decode()` (private, line 365), `expand()` (private, line 385), `newWpRequest()` (private, line 410), `toResponse()` (private, line 439)
 
 
 ## Schema
