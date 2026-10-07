@@ -62,7 +62,7 @@ final readonly class ApplicationPasswords
     public function create(int $userId, string $name, string $appId): array
     {
         $plain = self::generate();
-        $record = ['uuid' => self::uuid(), 'app_id' => $appId, 'name' => $name, 'password' => FastHash::available() ? FastHash::hash($plain) : Phpass::hash($plain), 'created' => time(), 'last_used' => null, 'last_ip' => null];
+        $record = ['uuid' => self::uuid(), 'app_id' => $appId, 'name' => $name, 'password' => FastHash::available() ? FastHash::hash($plain) : PortableHash::hash($plain, 11), 'created' => time(), 'last_used' => null, 'last_ip' => null];
         $list = $this->all($userId);
         $list[] = $record;
         $this->save($userId, $list);
@@ -117,7 +117,7 @@ final readonly class ApplicationPasswords
         $password = str_replace(' ', '', $password);
         foreach ($this->all($userId) as $item) {
             $hash = (string) ($item['password'] ?? '');
-            if (FastHash::verify($password, $hash) || Phpass::verify($password, $hash) || (str_starts_with($hash, '$wp$') && Password::verify($password, $hash))) {
+            if (FastHash::verify($password, $hash) || PortableHash::verify($password, $hash) || (str_starts_with($hash, '$wp$') && Password::verify($password, $hash))) {
                 return $item;
             }
         }

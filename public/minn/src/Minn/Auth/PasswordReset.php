@@ -73,7 +73,7 @@ final readonly class PasswordReset
     /** The stored hash for a new key: the reference's own, or phpass (which it also reads) without sodium. */
     private static function hash(string $key): string
     {
-        return FastHash::available() ? FastHash::hash($key) : Phpass::hash($key);
+        return FastHash::available() ? FastHash::hash($key) : PortableHash::hash($key, 11);
     }
 
     private static function matches(string $key, string $hash): bool
@@ -82,6 +82,6 @@ final readonly class PasswordReset
             // Issued by the engine before it wrote the reference's hash.
             return hash_equals($hash, '$minn$' . hash_hmac('sha256', $key, Salts::for('nonce')));
         }
-        return FastHash::verify($key, $hash) || Phpass::verify($key, $hash);
+        return FastHash::verify($key, $hash) || PortableHash::verify($key, $hash);
     }
 }

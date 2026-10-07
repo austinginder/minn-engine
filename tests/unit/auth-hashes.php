@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 use Minn\Auth\FastHash;
-use Minn\Auth\Phpass;
+use Minn\Auth\PortableHash;
 
 /**
  * The hashes secrets are stored under. The $generic$ values are what the
@@ -26,6 +26,6 @@ return [
         }
         return true;
     },
-    'a fast hash verifies its secret and nothing else' => static fn () => FastHash::verify('abc', $captured['abc']) && !FastHash::verify('abd', $captured['abc']) && !FastHash::verify('abc', Phpass::hash('abc')),
-    'phpass still verifies (keys and passwords from before WordPress 6.8)' => static fn () => Phpass::verify('secret', Phpass::hash('secret')) && !Phpass::verify('other', Phpass::hash('secret')),
+    'a fast hash verifies its secret and nothing else' => static fn () => FastHash::verify('abc', $captured['abc']) && !FastHash::verify('abd', $captured['abc']) && !FastHash::verify('abc', PortableHash::hash('abc')),
+    'phpass still verifies (keys and passwords from before WordPress 6.8)' => static fn () => PortableHash::verify('secret', PortableHash::hash('secret')) && !PortableHash::verify('other', PortableHash::hash('secret')),
 ];

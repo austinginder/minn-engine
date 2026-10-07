@@ -5,17 +5,19 @@ declare(strict_types=1);
 namespace Minn\Auth;
 
 /**
- * The portable phpass hash ("$P$"), the shape the reference stores in
- * the post-password cookie: an iteration count character, an eight
- * character salt, and MD5 iterated over salt and password, encoded in
- * phpass's own base64 alphabet. Implemented from the published algorithm
- * so cookies are accepted in both directions.
+ * The portable phpass hash ("$P$"), from the published algorithm: an
+ * iteration count character, an eight character salt, and MD5 iterated
+ * over salt and password, encoded in phpass's own base64 alphabet. The
+ * reference stores it in the post-password cookie (2^13 iterations, and it
+ * accepts nothing weaker there), and still verifies it for application
+ * passwords and reset keys made before its fast hash, which is why both
+ * directions of each are accepted.
  */
 final class PortableHash
 {
     private const ALPHABET = './0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
 
-    /** The reference's cookies carry 2^13 iterations; it accepts nothing weaker. */
+    /** A portable hash of a password, 2^$countLog2 iterations (the reference's cookies carry 2^13). */
     public static function hash(string $password, int $countLog2 = 13): string
     {
         $salt = self::encode(random_bytes(6), 6);

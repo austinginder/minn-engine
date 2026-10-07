@@ -16,8 +16,7 @@ passwords, sessions, cookies, nonces, roles and capabilities
 | [`Nonce`](#nonce) | final class | 34 | The wp_rest nonce: ten characters of HMAC-md5(tick\|wp_rest\|uid\|token) |
 | [`Password`](#password) | final class | 33 | The stored password scheme. A modern "$wp$2y$..." value is bcrypt over |
 | [`PasswordReset`](#passwordreset) | final readonly class | 69 | Password reset keys in the reference's storage shape: user_activation_key |
-| [`Phpass`](#phpass) | final class | 62 | The portable phpass hash ($P$), from Openwall's public description of the |
-| [`PortableHash`](#portablehash) | final class | 61 | The portable phpass hash ("$P$"), the shape the reference stores in |
+| [`PortableHash`](#portablehash) | final class | 61 | The portable phpass hash ("$P$"), from the published algorithm: an |
 | [`RegisteredCaps`](#registeredcaps) | final class | 22 | The capability names a plugin's post type or taxonomy registered, read |
 | [`Roles`](#roles) | final class | 68 | Role definitions from the site's {prefix}user_roles option, parsed by a |
 | [`Salts`](#salts) | final class | 35 | The site's own secret material, read from the constants wp-config.php |
@@ -505,53 +504,31 @@ Forgets a user's reset key.
 Internals: `hash()` (private, line 74), `matches()` (private, line 79)
 
 
-## Phpass
-
-`final class Minn\Auth\Phpass` · `public/minn/src/Minn/Auth/Phpass.php`
-
-The portable phpass hash ($P$), from Openwall's public description of the
-scheme: a log2 iteration count, an eight-character salt, and an iterated
-MD5 in phpass's own base-64 alphabet. The reference still verifies these
-for application passwords, which makes them the portable choice.
-
-- const `ALPHABET` = `'./0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'`
-
-Used by: `Minn\Auth\ApplicationPasswords`, `Minn\Auth\PasswordReset`
-
-### static `hash(string $password, int $log2Rounds = 11): string`
-
-A portable phpass hash of a password.
-
-### static `verify(string $password, string $hash): bool`
-
-Whether a password matches a portable phpass hash.
-
-Internals: `crypt()` (private, line 33), `encode()` (private, line 49)
-
-
 ## PortableHash
 
 `final class Minn\Auth\PortableHash` · `public/minn/src/Minn/Auth/PortableHash.php`
 
-The portable phpass hash ("$P$"), the shape the reference stores in
-the post-password cookie: an iteration count character, an eight
-character salt, and MD5 iterated over salt and password, encoded in
-phpass's own base64 alphabet. Implemented from the published algorithm
-so cookies are accepted in both directions.
+The portable phpass hash ("$P$"), from the published algorithm: an
+iteration count character, an eight character salt, and MD5 iterated
+over salt and password, encoded in phpass's own base64 alphabet. The
+reference stores it in the post-password cookie (2^13 iterations, and it
+accepts nothing weaker there), and still verifies it for application
+passwords and reset keys made before its fast hash, which is why both
+directions of each are accepted.
 
 - const `ALPHABET` = `'./0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'`
 
-Used by: `Minn\Content\PasswordGate`, `Minn\Login\LoginController`
+Used by: `Minn\Auth\ApplicationPasswords`, `Minn\Auth\PasswordReset`, `Minn\Content\PasswordGate`, `Minn\Login\LoginController`
 
 ### static `hash(string $password, int $countLog2 = 13): string`
 
-The reference's cookies carry 2^13 iterations; it accepts nothing weaker.
+A portable hash of a password, 2^$countLog2 iterations (the reference's cookies carry 2^13).
 
 ### static `verify(string $password, string $hash): bool`
 
 Whether a password matches a portable hash from the published algorithm.
 
-Internals: `crypt()` (private, line 34), `encode()` (private, line 49)
+Internals: `crypt()` (private, line 36), `encode()` (private, line 51)
 
 
 ## RegisteredCaps

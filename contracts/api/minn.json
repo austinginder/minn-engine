@@ -7137,7 +7137,7 @@
             "uses": [
                 "Minn\\Auth\\FastHash",
                 "Minn\\Auth\\Password",
-                "Minn\\Auth\\Phpass",
+                "Minn\\Auth\\PortableHash",
                 "Minn\\Content\\Users",
                 "Minn\\Support\\Serialized"
             ],
@@ -9472,7 +9472,7 @@
             "extends": null,
             "uses": [
                 "Minn\\Auth\\FastHash",
-                "Minn\\Auth\\Phpass",
+                "Minn\\Auth\\PortableHash",
                 "Minn\\Auth\\Salts",
                 "Minn\\Content\\UserRecord",
                 "Minn\\Content\\Users"
@@ -9685,154 +9685,19 @@
             ]
         },
         {
-            "name": "Minn\\Auth\\Phpass",
-            "short": "Phpass",
-            "namespace": "Minn\\Auth",
-            "kind": "final class",
-            "file": "public/minn/src/Minn/Auth/Phpass.php",
-            "lines": 62,
-            "doc": "The portable phpass hash ($P$), from Openwall's public description of the\nscheme: a log2 iteration count, an eight-character salt, and an iterated\nMD5 in phpass's own base-64 alphabet. The reference still verifies these\nfor application passwords, which makes them the portable choice.",
-            "implements": [],
-            "extends": null,
-            "uses": [],
-            "usedBy": [
-                "Minn\\Auth\\ApplicationPasswords",
-                "Minn\\Auth\\PasswordReset"
-            ],
-            "constructor": null,
-            "cases": [],
-            "constants": [
-                {
-                    "name": "ALPHABET",
-                    "value": "'./0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'",
-                    "doc": "",
-                    "visibility": "private"
-                }
-            ],
-            "properties": [],
-            "methods": [
-                {
-                    "routes": [],
-                    "name": "hash",
-                    "static": true,
-                    "visibility": "public",
-                    "signature": "hash(string $password, int $log2Rounds = 11): string",
-                    "doc": "A portable phpass hash of a password.",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "password",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "log2Rounds",
-                            "type": "int",
-                            "shape": "",
-                            "default": "11",
-                            "doc": ""
-                        }
-                    ],
-                    "line": 18,
-                    "end": 22
-                },
-                {
-                    "routes": [],
-                    "name": "verify",
-                    "static": true,
-                    "visibility": "public",
-                    "signature": "verify(string $password, string $hash): bool",
-                    "doc": "Whether a password matches a portable phpass hash.",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "password",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "hash",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 25,
-                    "end": 31
-                },
-                {
-                    "routes": [],
-                    "name": "crypt",
-                    "static": true,
-                    "visibility": "private",
-                    "signature": "crypt(string $password, string $setting): string",
-                    "doc": "",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "password",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "setting",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 33,
-                    "end": 46
-                },
-                {
-                    "routes": [],
-                    "name": "encode",
-                    "static": true,
-                    "visibility": "private",
-                    "signature": "encode(string $input, int $count): string",
-                    "doc": "phpass's base-64: 6 bits at a time, low bits first, no padding.",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "input",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "count",
-                            "type": "int",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 49,
-                    "end": 73
-                }
-            ]
-        },
-        {
             "name": "Minn\\Auth\\PortableHash",
             "short": "PortableHash",
             "namespace": "Minn\\Auth",
             "kind": "final class",
             "file": "public/minn/src/Minn/Auth/PortableHash.php",
             "lines": 61,
-            "doc": "The portable phpass hash (\"$P$\"), the shape the reference stores in\nthe post-password cookie: an iteration count character, an eight\ncharacter salt, and MD5 iterated over salt and password, encoded in\nphpass's own base64 alphabet. Implemented from the published algorithm\nso cookies are accepted in both directions.",
+            "doc": "The portable phpass hash (\"$P$\"), from the published algorithm: an\niteration count character, an eight character salt, and MD5 iterated\nover salt and password, encoded in phpass's own base64 alphabet. The\nreference stores it in the post-password cookie (2^13 iterations, and it\naccepts nothing weaker there), and still verifies it for application\npasswords and reset keys made before its fast hash, which is why both\ndirections of each are accepted.",
             "implements": [],
             "extends": null,
             "uses": [],
             "usedBy": [
+                "Minn\\Auth\\ApplicationPasswords",
+                "Minn\\Auth\\PasswordReset",
                 "Minn\\Content\\PasswordGate",
                 "Minn\\Login\\LoginController"
             ],
@@ -9854,7 +9719,7 @@
                     "static": true,
                     "visibility": "public",
                     "signature": "hash(string $password, int $countLog2 = 13): string",
-                    "doc": "The reference's cookies carry 2^13 iterations; it accepts nothing weaker.",
+                    "doc": "A portable hash of a password, 2^$countLog2 iterations (the reference's cookies carry 2^13).",
                     "shapes": [],
                     "params": [
                         {
@@ -9872,8 +9737,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 19,
-                    "end": 23
+                    "line": 21,
+                    "end": 25
                 },
                 {
                     "routes": [],
@@ -9899,8 +9764,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 26,
-                    "end": 32
+                    "line": 28,
+                    "end": 34
                 },
                 {
                     "routes": [],
@@ -9926,8 +9791,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 34,
-                    "end": 47
+                    "line": 36,
+                    "end": 49
                 },
                 {
                     "routes": [],
@@ -9953,8 +9818,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 49,
-                    "end": 73
+                    "line": 51,
+                    "end": 75
                 }
             ]
         },
