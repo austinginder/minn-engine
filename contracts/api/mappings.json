@@ -2,11 +2,11 @@
     "generated": "2026-10-07",
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line)",
     "summary": {
-        "minn": 659,
-        "composes": 966,
+        "minn": 660,
+        "composes": 969,
         "leaf": 663,
-        "noop": 1964,
-        "functions": 4178,
+        "noop": 1967,
+        "functions": 4185,
         "minnMethods": 775,
         "leafLinesOver15": 13
     },
@@ -10108,9 +10108,15 @@
         },
         "WP_Rewrite::set_permalink_structure": {
             "file": "classes/WP_Rewrite.php",
-            "lines": 6,
-            "kind": "composes",
-            "minn": [],
+            "lines": 10,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Front\\Permalinks::fromDb",
+                "Minn\\Runtime\\Runtime::current",
+                "Minn\\Runtime\\Runtime::db",
+                "Minn\\Runtime\\Runtime::get",
+                "Minn\\Runtime\\Runtime::set"
+            ],
             "composes": [
                 "do_action",
                 "update_option"
@@ -16415,6 +16421,17 @@
                 "render_block"
             ]
         },
+        "_minn_feed_suffix": {
+            "file": "link-template.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "get_default_feed",
+                "trailingslashit",
+                "user_trailingslashit"
+            ]
+        },
         "_minn_feed_template": {
             "file": "feed.php",
             "lines": 3,
@@ -21288,6 +21305,20 @@
             "minn": [],
             "composes": []
         },
+        "get_author_feed_link": {
+            "file": "link-template.php",
+            "lines": 4,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "_minn_feed_suffix",
+                "apply_filters",
+                "get_author_posts_url",
+                "get_default_feed",
+                "get_option",
+                "home_url"
+            ]
+        },
         "get_author_posts_url": {
             "file": "post.php",
             "lines": 8,
@@ -21581,6 +21612,15 @@
             "composes": [
                 "_make_cat_compat",
                 "get_term_by"
+            ]
+        },
+        "get_category_feed_link": {
+            "file": "link-template.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "get_term_feed_link"
             ]
         },
         "get_category_link": {
@@ -23717,6 +23757,34 @@
                 "get_post"
             ]
         },
+        "get_search_comments_feed_link": {
+            "file": "link-template.php",
+            "lines": 4,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "add_query_arg",
+                "apply_filters",
+                "get_default_feed",
+                "get_option",
+                "get_search_feed_link"
+            ]
+        },
+        "get_search_feed_link": {
+            "file": "link-template.php",
+            "lines": 5,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "add_query_arg",
+                "apply_filters",
+                "get_default_feed",
+                "get_option",
+                "get_search_link",
+                "trailingslashit",
+                "user_trailingslashit"
+            ]
+        },
         "get_search_form": {
             "file": "template.php",
             "lines": 26,
@@ -23976,6 +24044,15 @@
                 "get_term"
             ]
         },
+        "get_tag_feed_link": {
+            "file": "link-template.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "get_term_feed_link"
+            ]
+        },
         "get_tag_link": {
             "file": "taxonomy.php",
             "lines": 2,
@@ -24166,6 +24243,22 @@
             "composes": [
                 "_minn_term_query",
                 "taxonomy_exists"
+            ]
+        },
+        "get_term_feed_link": {
+            "file": "link-template.php",
+            "lines": 20,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "_minn_feed_suffix",
+                "apply_filters",
+                "get_default_feed",
+                "get_option",
+                "get_taxonomy",
+                "get_term",
+                "get_term_link",
+                "home_url"
             ]
         },
         "get_term_field": {

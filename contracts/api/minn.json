@@ -42339,7 +42339,7 @@
             "namespace": "Minn\\Front",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Front/Permalinks.php",
-            "lines": 233,
+            "lines": 237,
             "doc": "Builds public URLs from the site's permalink structure. With an empty\nstructure every link is a query-string form (?p=, ?cat=); with a\nstructure, published and private posts get their pretty form and every\nother status keeps the query form, which is what the reference emits.",
             "implements": [],
             "extends": null,
@@ -42779,7 +42779,7 @@
                         }
                     ],
                     "line": 163,
-                    "end": 185
+                    "end": 189
                 },
                 {
                     "routes": [],
@@ -42798,8 +42798,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 188,
-                    "end": 193
+                    "line": 192,
+                    "end": 197
                 },
                 {
                     "routes": [],
@@ -42832,8 +42832,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 196,
-                    "end": 209
+                    "line": 200,
+                    "end": 213
                 },
                 {
                     "routes": [],
@@ -42852,8 +42852,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 212,
-                    "end": 215
+                    "line": 216,
+                    "end": 219
                 },
                 {
                     "routes": [],
@@ -42879,8 +42879,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 218,
-                    "end": 221
+                    "line": 222,
+                    "end": 225
                 },
                 {
                     "routes": [],
@@ -42899,8 +42899,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 223,
-                    "end": 226
+                    "line": 227,
+                    "end": 230
                 },
                 {
                     "routes": [],
@@ -42919,8 +42919,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 228,
-                    "end": 254
+                    "line": 232,
+                    "end": 258
                 }
             ]
         },

@@ -167,10 +167,14 @@ final readonly class Permalinks
             // No rewrite rule serves these, pretty permalinks or not.
             return $this->url('/?taxonomy=' . $taxonomy . '&term=' . $term['slug']);
         }
+        // A post format's address names the format alone, without its term slug's prefix (probe feed-links).
+        $slug = $taxonomy === 'post_format' ? (string) preg_replace('/^post-format-/', '', (string) $term['slug']) : (string) $term['slug'];
         if (!$this->isPretty()) {
-            return $taxonomy === 'category'
-                ? $this->url('/?cat=' . (int) $term['term_id'])
-                : $this->url('/?tag=' . $term['slug']);
+            return match ($taxonomy) {
+                'category' => $this->url('/?cat=' . (int) $term['term_id']),
+                'post_format' => $this->url('/?post_format=' . $slug),
+                default => $this->url('/?tag=' . $slug),
+            };
         }
         $base = match ($taxonomy) {
             'category' => 'category',
@@ -181,7 +185,7 @@ final readonly class Permalinks
         // taxonomy does when it says so), probe rest-plugin-types.
         $row = $this->registry === null ? null : ($this->registry)()?->taxonomy($taxonomy);
         $nested = in_array($taxonomy, ['category', 'post_tag'], true) || $row === null || !empty($row['rewrite']['hierarchical']);
-        return $this->url("/{$base}/" . ($nested ? $this->terms->pathOf($term) : (string) $term['slug']) . '/');
+        return $this->url("/{$base}/" . ($nested ? $this->terms->pathOf($term) : $slug) . '/');
     }
 
     /** An author's archive URL. */

@@ -193,12 +193,6 @@ function get_sample_permalink_html($post, $new_title = NULL, $new_slug = NULL)
     return null;
 }
 
-function get_term_feed_link($term, $taxonomy = '', $feed = '')
-{
-    \Minn\Runtime\PlaceholderTrace::hit('get_term_feed_link');
-    return null;
-}
-
 function get_the_block_template_html()
 {
     \Minn\Runtime\PlaceholderTrace::hit('get_the_block_template_html');

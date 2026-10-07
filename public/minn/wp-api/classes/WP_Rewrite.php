@@ -362,6 +362,10 @@ class WP_Rewrite
             $old = $this->permalink_structure;
             update_option('permalink_structure', $permalink_structure);
             $this->init();
+            // Links made after the change take the new structure, as the reference's read the option each time.
+            if (Runtime::current()->get('permalinks') !== null) {
+                Runtime::current()->set('permalinks', Minn\Front\Permalinks::fromDb(Runtime::current()->db));
+            }
             do_action('permalink_structure_changed', $old, $permalink_structure);
         }
     }

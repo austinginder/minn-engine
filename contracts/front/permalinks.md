@@ -21,6 +21,20 @@ pretty paths through `index.php`:
 - Pages carry their full ancestry: `/sample-page/docs/`.
 - Categories: `/category/{path}/` with parent slugs; tags `/tag/{slug}/`;
   authors `/author/{user_nicename}/`; dates `/YYYY/`, `/YYYY/MM/`, `/YYYY/MM/DD/`.
+  A post format names the format without its term slug's prefix:
+  `/type/aside/`, `?post_format=aside` under plain permalinks.
+- Feed links (probe feed-links): a term's, an author's or a search's
+  address with `feed/` after it, the type named unless it is the default
+  (a search's always names it); a search's comments feed adds
+  `?withcomments=1`. Plain: `?feed={type}&amp;cat={id}` (`tag={slug}`, a
+  taxonomy's own var with the full term slug, `author={id}`, escaped `&amp;`),
+  searches `?s={query}&feed={type}` and `feed=comments-{type}`. A term
+  asked for by id is found in any taxonomy unless one is named; a missing
+  one is false. The links pass `category_feed_link`, `tag_feed_link`,
+  `taxonomy_feed_link` (with the taxonomy), `author_feed_link`, and
+  `search_feed_link` (with `posts` or `comments`; the comments link is the
+  posts link through the filter first). A structure changed mid-request
+  (`set_permalink_structure`) makes the links built after it.
 - Attachments: `/{slug}/` when unattached, `{parent permalink}{slug}/` when
   attached, `/?attachment_id=ID` under plain permalinks.
 - `permalink_template` (edit context) keeps the token: `/%postname%/` for

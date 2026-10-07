@@ -308,6 +308,71 @@ function get_feed_link($feed = '')
     return apply_filters('feed_link', home_url(user_trailingslashit(rtrim((string) $path, '/'), 'feed')), $feed);
 }
 
+/** @internal a pretty feed address under a page's address: feed/, the type named unless it is the default */
+function _minn_feed_suffix(string $link, string $feed): string
+{
+    return trailingslashit($link) . user_trailingslashit($feed === get_default_feed() ? 'feed' : "feed/{$feed}", 'feed');
+}
+
+function get_term_feed_link($term, $taxonomy = '', $feed = '')
+{
+    $term = get_term(is_object($term) ? $term : (int) $term, (string) $taxonomy);
+    if (!$term instanceof WP_Term) {
+        return false;
+    }
+    $feed = $feed !== '' ? (string) $feed : get_default_feed();
+    if (!get_option('permalink_structure')) {
+        $var = match ($term->taxonomy) {
+            'category' => 'cat=' . $term->term_id,
+            'post_tag' => 'tag=' . $term->slug,
+            default => get_taxonomy($term->taxonomy)->query_var . '=' . $term->slug,
+        };
+        $link = home_url("?feed={$feed}&amp;{$var}");
+    } else {
+        $link = _minn_feed_suffix((string) get_term_link($term), $feed);
+    }
+    return match ($term->taxonomy) {
+        'category' => apply_filters('category_feed_link', $link, $feed),
+        'post_tag' => apply_filters('tag_feed_link', $link, $feed),
+        default => apply_filters('taxonomy_feed_link', $link, $feed, $term->taxonomy),
+    };
+}
+
+function get_category_feed_link($cat, $feed = '')
+{
+    return get_term_feed_link($cat, 'category', $feed);
+}
+
+function get_tag_feed_link($tag, $feed = '')
+{
+    return get_term_feed_link($tag, 'post_tag', $feed);
+}
+
+function get_author_feed_link($author_id, $feed = '')
+{
+    $author_id = (int) $author_id;
+    $feed = $feed !== '' ? (string) $feed : get_default_feed();
+    $link = get_option('permalink_structure') ? _minn_feed_suffix((string) get_author_posts_url($author_id), $feed) : home_url("?feed={$feed}&amp;author={$author_id}");
+    return apply_filters('author_feed_link', $link, $feed);
+}
+
+function get_search_feed_link($search_query = '', $feed = '')
+{
+    $feed = $feed !== '' ? (string) $feed : get_default_feed();
+    $link = get_search_link($search_query);
+    // A search's feed names its type even when it is the default.
+    $link = get_option('permalink_structure') ? trailingslashit($link) . user_trailingslashit("feed/{$feed}", 'feed') : add_query_arg('feed', $feed, $link);
+    return apply_filters('search_feed_link', $link, $feed, 'posts');
+}
+
+function get_search_comments_feed_link($search_query = '', $feed = '')
+{
+    $feed = $feed !== '' ? (string) $feed : get_default_feed();
+    $link = get_search_feed_link($search_query, $feed);
+    $link = get_option('permalink_structure') ? add_query_arg('withcomments', 1, $link) : add_query_arg('feed', 'comments-' . $feed, $link);
+    return apply_filters('search_feed_link', $link, $feed, 'comments');
+}
+
 function get_default_feed()
 {
     $feed = apply_filters('default_feed', 'rss2');

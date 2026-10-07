@@ -29,7 +29,7 @@ URL resolution, permalinks, feeds, sitemaps and the public page
 | [`PageLinks`](#pagelinks) | final class | 40 | The links between the pages of a post split with <!--nextpage-->, as |
 | [`PageList`](#pagelist) | final readonly class | 96 | The page hierarchy as wp_list_pages and wp_dropdown_pages draw it: nested |
 | [`Pagination`](#pagination) | final class | 62 | Numbered page links in the reference's shape: previous, the end and |
-| [`Permalinks`](#permalinks) | final readonly class | 233 | Builds public URLs from the site's permalink structure. With an empty |
+| [`Permalinks`](#permalinks) | final readonly class | 237 | Builds public URLs from the site's permalink structure. With an empty |
 | [`PostEmbed`](#postembed) | final class | 104 | A post as other sites embed it, the oEmbed provider side, as the |
 | [`PostNavigation`](#postnavigation) | final class | 36 | The links to the posts either side of this one, and the nav block that |
 | [`PrintedResponse`](#printedresponse) | final class | 39 | A response WordPress's handlers print themselves (a sitemap, robots.txt), |
@@ -883,7 +883,7 @@ A search's URL.
 
 A listing URL for a page number.
 
-Internals: `hasPrettyLink()` (private, line 223), `fill()` (private, line 228)
+Internals: `hasPrettyLink()` (private, line 227), `fill()` (private, line 232)
 
 
 ## PostEmbed
