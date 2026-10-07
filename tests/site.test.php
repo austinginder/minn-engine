@@ -63,6 +63,9 @@ $check(str_contains($home, '/wp-content/themes/minn-site/style.css'), 'the theme
 $check(str_contains($home, 'rel="icon"') && str_contains($home, '/assets/img/favicon.webp'), 'the homepage links the theme favicon');
 $check(str_contains($home, 'rel="preload"') && str_contains($home, '/assets/fonts/hanken-grotesk.woff2'), 'the homepage preloads the body font');
 $check(!str_contains($home, 'CHECKS_COUNT'), 'no unfilled placeholders on the page');
+$apiClasses = count(json_decode((string) file_get_contents(dirname(__DIR__) . '/site/minn-site/content/api.json'), true)['classes'] ?? []);
+$check(str_contains($home, 'data-minn-stat="classes">' . number_format($apiClasses) . '<'), 'the class count comes from the API model', (string) $apiClasses);
+$check(str_contains($home, '<meta name="description"') && str_contains($home, '<meta property="og:image"') && str_contains($home, 'twitter:card'), 'the front page carries a description and a link-preview card');
 $check(str_contains($home, 'href="#content">Skip to content'), 'skip link targets the template\'s own main id');
 $check(!preg_match('/class="[^"]*has-global-padding/', $home), 'no global padding class without useRootPaddingAwareAlignments');
 [, $texturizePage] = minn_test_fetch($ENGINE . '/texturize-battery-its-quoted-fine/');
@@ -85,6 +88,7 @@ $check(str_contains($lex, '<title>The lexicon · Minn'), 'lexicon title');
 $check(str_contains($lex, '/assets/img/favicon.webp'), 'lexicon links the theme favicon');
 $check(str_contains($lex, 'data-lex-filter="speak"'), 'lexicon Speak chip');
 $check(str_contains($lex, 'aria-current="page"'), 'lexicon nav is current');
+$check(str_contains($lex, '<meta property="og:title" content="The lexicon · Minn"'), 'lexicon carries its own link-preview title');
 [$eh, $errors] = minn_test_fetch($ENGINE . '/errors/');
 $check($eh['status'] === 200, 'theme /errors/ answers 200', (string) $eh['status']);
 $check(str_contains($errors, '<title>When something breaks'), 'errors page title');
@@ -143,7 +147,7 @@ $check(str_contains($php, '/api/minn/http/"'), 'the Minn pane links a class to i
 $check(str_contains($php, '<code>PostFilter</code>') && str_contains($php, '<code>Minn\\Http</code>'), 'php page names the post filter and HTTP client');
 [$pmd] = minn_test_fetch($ENGINE . '/php.md');
 $check($pmd['status'] === 200, 'theme /php.md answers 200', (string) $pmd['status']);
-foreach (['/wp-content/themes/minn-site/style.css', '/wp-content/themes/minn-site/assets/fonts/hanken-grotesk.woff2', '/wp-content/themes/minn-site/assets/fonts/jetbrains-mono.woff2', '/wp-content/themes/minn-site/assets/img/favicon.webp'] as $asset) {
+foreach (['/wp-content/themes/minn-site/style.css', '/wp-content/themes/minn-site/assets/fonts/hanken-grotesk.woff2', '/wp-content/themes/minn-site/assets/fonts/jetbrains-mono.woff2', '/wp-content/themes/minn-site/assets/img/favicon.webp', '/wp-content/themes/minn-site/assets/img/social-card.png'] as $asset) {
     [$ah] = minn_test_fetch($ENGINE . $asset);
     $check($ah['status'] === 200, "asset served: $asset");
 }
