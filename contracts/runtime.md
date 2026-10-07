@@ -820,8 +820,8 @@ What loading all 25 dogfood plugins then taught the front end:
   the page from `template_redirect`): `Runtime::capture` keeps a sentinel
   under its buffer, flushes buffers a callback opened through their
   handlers, and takes from the sentinel what a callback closed early.
-- **The main query is seeded from the engine's resolution** before
-  `template_redirect` (`Runtime\MainQuery::vars` to `_minn_seed_main_query`):
+- **The main query stands on the matched rule's vars** before
+  `template_redirect` (the Resolution carries them to the request parse and `_minn_seed_main_query`):
   `is_front_page`, `is_singular`, `get_queried_object_id`, `get_search_query`
   answer for the page being rendered, which is what an SEO plugin reads.
 - **The document title runs through the reference's filters**
@@ -891,20 +891,22 @@ on plain HTTP.
 
 ## A plugin's rewrite rules route the front end
 
-A plugin that registers its own URLs the reference way now works end to
-end (2026-08-30 evening; CaptainCore Manager's `/account/` SPA was the
-proving ground): `add_rewrite_rule()` records into the WP_Rewrite globals,
-and `Minn\Front\PluginRules` matches those recorded rules against the
-request path during resolution. 'top' rules outrank everything the engine
-would resolve (so `/account/` routes to the plugin even though a page
-named account exists, exactly as the reference orders its rule array);
-'bottom' rules catch what the engine resolved to a 404. A matched rule's
-query string substitutes `$matches[N]`, parses to vars, and keeps only
-vars the reference would recognise: the built-in public list plus whatever
-the `query_vars` filter admits, which is how a plugin registers its own.
-Content vars (p, page_id, pagename, s, paged) resolve to that content;
-anything else runs the home query under the rule, the reference's shape.
-The kept vars ride into the main query so `get_query_var()` answers them.
+A plugin that registers its own URLs the reference way works end to end
+(CaptainCore Manager's `/account/` SPA was the proving ground): every
+request path is matched against the site's rewrite rules as WordPress's
+request parse matches them (`Front\RuleTable`, since 2026-10-07 the only
+reading of a path; `contracts/front/permalinks.md`). `add_rewrite_rule()`
+'top' rules come first in that list (so `/account/` routes to the plugin
+even though a page named account exists), 'bottom' ones last, and a rule
+a plugin changed through `rewrite_rules_array`, `generate_rewrite_rules`
+or a section filter is matched as changed. A matched rule's query string
+substitutes `$matches[N]` and parses to vars; the request parse keeps
+those that are public (the registry's list plus whatever the `query_vars`
+filter admits, which is how a plugin registers its own), and a registered
+type's or taxonomy's own var is public as the reference makes it (probe
+cpt-rules, which also pins a type's archive rules). Content vars resolve
+to that content; anything else runs the home query under the rule, the
+reference's shape. Endpoints are the rules their places generate.
 
 The takeover half is `template_include`: the classic runner always applied
 it; `PageRenderer` now applies it under block themes too (the engine's
@@ -913,8 +915,7 @@ real PHP file is loaded as the whole response. Pinned by the fixture
 plugin's routed page in `tests/runtime.test.php` (byte-identical on both
 stacks; the reference side needs `wp rewrite flush` because it matches
 from the flushed option while the engine matches the live registrations).
-Not carried: external (non-index.php) rules and `add_rewrite_endpoint`
-masks. A plugin template that calls wp_head() under a BLOCK theme gets
+Not carried: external (non-index.php) rules. A plugin template that calls wp_head() under a BLOCK theme gets
 only runtime-registered hooks (the classic head state is not stood); the
 classic path sets the full head state, which is where CaptainCore runs.
 
@@ -936,8 +937,8 @@ the engine. Probed facts worth keeping:
   browser). wp_match_mime_types re-orders its result keys in a pattern the
   probes could not explain ([n..4 desc, 2, 3, 1] by position); the engine
   keeps natural pattern order, membership and value order match.
-- WP_MatchesMapRegex urlencodes every substitution; `Front\PluginRules`
-  now does the same, so a captured '&x=1' cannot split into extra query
+- WP_MatchesMapRegex urlencodes every substitution; `Front\RuleTable`
+  does the same, so a captured '&x=1' cannot split into extra query
   vars. WP_Ajax_Response's XML and send() envelope are pinned from
   captures. WP_Textdomain_Registry records paths and scans the language
   dir (`Support\Paths::translationDir`); the boot sets the global.
@@ -1386,12 +1387,13 @@ the oracle taught, by area:
 
 ### A plugin's post types and taxonomies on the front end
 
-The resolver (`Front\Resolver::pluginRoute`) reads the runtime registry
+A type's rules and a taxonomy's are among the site's (`Front\RuleTable`)
 once plugins have registered: a type's archive answers at its `has_archive`
 slug (a string) or its rewrite slug (`true`), and wins over a page of the
-same name (`/shop/` is the product archive on the reference, not the shop
-page); a single answers under the type's rewrite slug; a term under the
-taxonomy's rewrite slug, hierarchical paths checked whole. Two resolution
+same name (its archive rules are top rules: `/shop/` is the product
+archive on the reference, not the shop page); a single answers under the
+type's rewrite slug; a term under the taxonomy's rewrite slug,
+hierarchical paths checked whole. Two resolution
 kinds carry them, `Kind::Taxonomy` (the term row) and `Kind::PostTypeArchive`
 (the registered type), with the reference's body classes (`single
 single-product postid-N` without a format class, `archive tax-product_cat

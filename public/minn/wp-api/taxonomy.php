@@ -102,8 +102,13 @@ function register_taxonomy($taxonomy, $object_type, $args = [])
     }
     $args = apply_filters('register_taxonomy_args', (array) $args, $taxonomy, (array) $object_type);
     $row = Runtime::registry()->registerTaxonomy($taxonomy, array_values(array_map('strval', (array) $object_type)), $args);
+    // A queryable taxonomy's own var is one the request parse reads (probe cpt-rules).
+    $var = $row['query_var'] ?? false;
+    if (is_string($var) && $var !== '') {
+        _minn_rewrite();
+        $GLOBALS['wp']->add_query_var($var);
+    }
     if (is_array($row['rewrite']) && Registry::settlesRewrites()) {
-        $var = $row['query_var'] ?? false;
         add_rewrite_tag("%{$taxonomy}%", empty($row['rewrite']['hierarchical']) ? '([^/]+)' : '(.+?)', is_string($var) && $var !== '' ? "{$var}=" : "taxonomy={$taxonomy}&term=");
         add_permastruct($taxonomy, "{$row['rewrite']['slug']}/%{$taxonomy}%", ['with_front' => $row['rewrite']['with_front'], 'ep_mask' => $row['rewrite']['ep_mask']]);
     }
@@ -121,8 +126,12 @@ function unregister_taxonomy($taxonomy)
     if (!empty(Runtime::registry()->taxonomy((string) $taxonomy)['_builtin'])) {
         return new WP_Error('invalid_taxonomy', 'Unregistering a built-in taxonomy is not allowed.');
     }
+    $var = Runtime::registry()->taxonomy((string) $taxonomy)['query_var'] ?? false;
     Runtime::registry()->unregisterTaxonomy((string) $taxonomy);
     remove_permastruct((string) $taxonomy);
+    if (is_string($var) && $var !== '') {
+        $GLOBALS['wp']->remove_query_var($var);
+    }
     do_action('unregistered_taxonomy', $taxonomy);
     return true;
 }

@@ -7,7 +7,7 @@ the front door, the autoloader, the one database door, the REST error
 | [`Autoloader`](#autoloader) | final class | 16 | PSR-4 for the Minn namespace: Minn\Http\Request lives at src/Minn/Http/Request.php. |
 | [`Context`](#context) | final readonly class | 41 | One request, as a value: the database door, who is asking, what they |
 | [`Db`](#db) | final class | 238 | The one door to the database. Every query is a prepared statement; the |
-| [`Engine`](#engine) | final readonly class | 271 | The engine's front door. An unmodified wp-config.php ends by requiring |
+| [`Engine`](#engine) | final readonly class | 270 | The engine's front door. An unmodified wp-config.php ends by requiring |
 | [`Http`](#http) | final class | 205 | Outgoing HTTP, called straight from anywhere with no import: |
 | [`RestError`](#resterror) | final class | 60 | A WordPress-shaped error, thrown from anywhere and rendered once by the |
 

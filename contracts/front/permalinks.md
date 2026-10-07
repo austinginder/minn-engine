@@ -32,37 +32,62 @@ pretty paths through `index.php`:
 - A post published without a slug is given one from its title at publish
   time (create and status change). Drafts keep an empty `post_name`.
 
-**Resolution** (`Resolver`):
+**Resolution** (`RuleTable`, `RuleRoutes`, `Resolver`):
 
+- One grammar, the reference's: a path is matched against the site's
+  rewrite rules (`Runtime\RewriteRules`, stored in `rewrite_rules`, a
+  plugin's own rules and endpoints among them), the first rule it fits
+  winning, as typed or decoded; under verbose page rules a page's rule fits
+  only when a page (or an attachment) stands at the path it captured. The
+  rule's query vars say what the address names (`RuleRoutes`, the main
+  query's reading of them) and ride into the request parse as they are. A
+  path no rule fits is a 404 with `error=404` (`/a/b/hel` under
+  `/%postname%/`), and is never guessed from. The root reads its query
+  string. What `Resolver` keeps are the canonical answers below.
 - Query forms redirect to the pretty form when the target is public:
   `?p=`, `?page_id=` (either accepts either type), `?name=`, `?pagename=`
   (a partial page name redirects to the full path; the full path answers
   200), `?cat=`, `?tag=`, `?author=`, `?m=YYYYMM`, `?year=`.
 - Trailing slash: unpaged singles, pages, term, author, and date archives
   without a slash redirect to the slashed path as typed (case kept, query
-  string kept). Paged views (`/hello-world/page/2`), search, `/page/1`, and
-  404s answer without redirecting. `/index.php/{path}` redirects to `/{path}/`.
+  string kept), as do embed, endpoint and feed addresses. Paged views
+  (`/hello-world/page/2`), search, `/page/1`, and 404s answer without
+  redirecting. `/index.php/{path}` redirects to `/{path}/`.
 - Matching is case-insensitive everywhere and never canonicalises case:
   `/HELLO-WORLD/` and `/category/Uncategorized/` are 200 as typed.
-- Archive-shaped paths are strict. `category`, `tag`, `author`, `search`,
-  or a four-digit year in the first segment means a mismatch is a 404 with
-  no guessing (`/category/uncategorized/hello-world/`, `/2026/08/28/hello-world/`).
+- Archive addresses are strict: a category, tag, author, search or date
+  rule whose vars find nothing is a 404 with no guessing
+  (`/category/uncategorized/hello-world/` is `category_name` with a path no
+  category has). `/category/{c}/embed/` and `/author/{a}/embed/` answer
+  with the archive itself.
 - Empty term and date archives are 404 (`/tag/nope/`, `/2025/`), as is a
   page number past the end. An author archive is 200 for any name, including
-  one that belongs to nobody (no `author-*` tokens then).
-- Plain-segment paths: the page hierarchy first, then the post structure
-  (single segment for `%postname%`), then the guess: the closest published
-  page or post whose name starts with the last segment, pages before posts,
-  newest first, as a 301 (`/hello` and `/hello-wor` reach `/hello-world/`;
-  `/s` reaches `/sample-page/` over the newer `scribe-published`; `/p` is a
-  404 because `privacy-policy` is a draft). A wrong parent still redirects to
-  the right page (`/hello-world/docs/` to `/sample-page/docs/`).
-- A trailing number: on a real single it redirects to the plain permalink
-  (`/hello-world/2/`); on a guessed path it rides along (`/docs/2/` to
-  `/sample-page/docs/2/`). `page/N` on a guessed path is dropped.
+  one that belongs to nobody (no `author-*` tokens then). Open: an existing
+  term with no posts is 200 on the reference (`/type/aside/`, the post
+  format archive), 404 on the engine until the main query decides the 404.
+- The guess, for a 404 whose rule named a single (`name`, `attachment`, or
+  a `pagename` at which no page stands): a 301 to a published post of a
+  viewable type whose name starts with that slug, `page` riding along
+  (`/docs/2/` to `/sample-page/docs/2/`), `paged` dropped. It is one prefix
+  query with no order of its own, so the database's plan picks the match:
+  alphabetical by name on the test site (`/s` reaches `/sample-page/`, `/e`
+  `/editor-authored-post/`), oldest first on the dogfood site's larger
+  table (`/a/b/c/` reaches `/corporate/`). `/p` is a 404 because
+  `privacy-policy` is a draft; `/hello-world/docs/` (`attachment=docs`)
+  reaches `/sample-page/docs/`.
+- A trailing number (`page`) on a real single redirects to the plain
+  permalink (`/hello-world/2/`, `/hello-world/1/`). The engine does not
+  page a multi-page post yet, so it redirects those too.
 - `/{single}/page/N/` is 200 for any N with `paged-N` and `single-paged-N`
   (or `page-paged-N`) tokens. `/{single}/embed/` renders the single;
   `/{single}/trackback/` is a 302 to it.
+- Under a structure that names the category (`/%category%/%postname%/`, the
+  dogfood site), a post is found by its name whatever category it was
+  asked under, and a category that is none at that path or not one of the
+  post's moves to the post's own address (`/bogus/title-here-like-this/`);
+  a bare `/news/` is the category's archive and never guesses, while
+  `/news/title-here/` guesses from the name. `/news/feed/` is the single
+  named `feed` under `news`, a 404, as the rules order it.
 - `/{single}/comment-page-N/` is a 301 to the single when the site does not
   page its comments (`page_comments` off, the default) and the single
   itself when it does (the engine does not page the comment list yet). The
@@ -74,11 +99,18 @@ pretty paths through `index.php`:
   address), with `page/N` (kept), and with `embed` (to the new embed
   address). A post that is not published (private included) is sent to its
   `?p=` form. The engine writes the rows too (`contracts/rest/writes.md`).
-  Not matched: the reference answers `/{old slug}/feed/` (like any
-  `/{missing}/feed/`) with a 200 comments feed of nothing; the engine 404s.
+  A feed address is served where it was asked for: `/{old slug}/feed/`,
+  `/{missing}/feed/` and `/category/{missing}/feed/` are 200 feeds of
+  nothing, as on the reference.
 - Non-public posts are 404 to anonymous readers by every route. A reader
   who can edit the post sees it by slug or by `?p=`; `?p=` on a private post
   redirects to its pretty link, on a draft it renders in place.
+- Open, host-dependent: reached under the site's own host, the reference
+  also sends an attachment page to its file while attachment pages are
+  off, drops `/page/1/` (`/hello-world/page/1/` to `/hello-world/`), and
+  moves feed aliases to the feed form (`/rss2/` to `/feed/`,
+  `/hello-world/atom/` to `/hello-world/feed/atom/`). The suites reach it
+  as 127.0.0.1, where it answers all of these 200 as the engine does.
 
 **Body-class tokens** (the contract; the surrounding markup is engine-defined):
 `home blog`; `single single-post postid-N single-format-standard`;

@@ -17,7 +17,7 @@ the block-theme reader, templates, global styles and the page renderer
 | [`GlobalStyles`](#globalstyles) | final readonly class | 571 | theme.json to CSS. Presets become custom properties on :root and their |
 | [`HeadLinks`](#headlinks) | final readonly class | 133 | The links the reference puts in every head: the site and comments |
 | [`Hierarchy`](#hierarchy) | final class | 146 | The classic template hierarchy: the candidate file names each template |
-| [`MainQueryBridge`](#mainquerybridge) | final readonly class | 135 | Stands the main query for a themed page and runs the front-end steps |
+| [`MainQueryBridge`](#mainquerybridge) | final readonly class | 147 | Stands the main query for a themed page and runs the front-end steps |
 | [`NotModified`](#notmodified) | final class | 3 | Raised once a reader's copy of a feed has been found current and the |
 | [`PageRenderer`](#pagerenderer) | final readonly class | 205 | A whole page from the active block theme: the template the resolution |
 | [`PatternText`](#patterntext) | final class | 198 | Block-theme patterns are PHP files whose only code is a handful of |
@@ -531,7 +531,7 @@ query; the variables a request adds of its own (a feed's) win.
 
 Posts per page.
 
-Internals: `vars()` (private, line 95), `queried()` (private, line 115), `seeded()` (private, line 128), `objectTypes()` (private, line 136), `listing()` (private, line 143)
+Internals: `vars()` (private, line 94), `postVars()` (private, line 106), `queried()` (private, line 125), `seeded()` (private, line 138), `objectTypes()` (private, line 146), `listing()` (private, line 153)
 
 
 ## NotModified
@@ -585,7 +585,7 @@ The body-class tokens before plugins filter them (bodyClasses()). @return list<s
 
 The page for a resolution, or null when the theme has no template for it.
 
-Internals: `pluginTemplate()` (private, line 170), `skipLinkTarget()` (private, line 191), `documentTitle()` (private, line 200), `head()` (private, line 222)
+Internals: `pluginTemplate()` (private, line 169), `skipLinkTarget()` (private, line 190), `documentTitle()` (private, line 199), `head()` (private, line 221)
 
 
 ## PatternText

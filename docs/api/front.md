@@ -8,7 +8,7 @@ URL resolution, permalinks, feeds, sitemaps and the public page
 | [`ArchiveAddresses`](#archiveaddresses) | final readonly class | 146 | The archives an address may stand for, as the reference answers them: |
 | [`Archives`](#archives) | final readonly class | 62 | The archive periods wp_get_archives lists: months, years, days and weeks |
 | [`AssetsController`](#assetscontroller) | final readonly class | 32 | The engine's own static assets, served under a reserved path. |
-| [`AttachmentAddresses`](#attachmentaddresses) | final readonly class | 88 | The addresses an attachment's page answers to, as the reference's rules |
+| [`AttachmentAddresses`](#attachmentaddresses) | final readonly class | 66 | The addresses an attachment's page answers to besides those its rules |
 | [`Calendar`](#calendar) | final readonly class | 99 | One month as the calendar widget and block draw it: a table whose caption |
 | [`CalendarLabels`](#calendarlabels) | final readonly class | 44 | The words a calendar prints: weekday names Sunday first, the short form |
 | [`Canonical`](#canonical) | final class | 28 | Where a URL should redirect to, by the engine's own resolution: the |
@@ -17,8 +17,7 @@ URL resolution, permalinks, feeds, sitemaps and the public page
 | [`CustomLogo`](#customlogo) | final class | 27 | The site logo a theme prints, as get_custom_logo builds it (probe |
 | [`DocumentTitle`](#documenttitle) | final class | 47 | The document title as parts (title, tagline, page, site) in the order the |
 | [`EmbedCard`](#embedcard) | final class | 95 | The parts of a post's embed card the reference's embed template prints, |
-| [`Endpoints`](#endpoints) | final class | 44 | Rewrite endpoints plugins add (add_rewrite_endpoint: a shop's account |
-| [`FeedController`](#feedcontroller) | final readonly class | 109 | The feeds: the site's, the comments', a post's or an archive's by the |
+| [`FeedController`](#feedcontroller) | final readonly class | 61 | The feeds, wherever a request asks for one: the feed var of the rule its |
 | [`FeedTags`](#feedtags) | final class | 140 | The template tags a feed is written with that take more than a line, as |
 | [`FeedTemplates`](#feedtemplates) | final class | 295 | The feed templates do_feed_* loads, written from the reference's output |
 | [`FeedWriter`](#feedwriter) | final class | 57 | A feed as it is written: text as given, and what each template tag and |
@@ -30,25 +29,24 @@ URL resolution, permalinks, feeds, sitemaps and the public page
 | [`PageLinks`](#pagelinks) | final class | 40 | The links between the pages of a post split with <!--nextpage-->, as |
 | [`PageList`](#pagelist) | final readonly class | 96 | The page hierarchy as wp_list_pages and wp_dropdown_pages draw it: nested |
 | [`Pagination`](#pagination) | final class | 62 | Numbered page links in the reference's shape: previous, the end and |
-| [`Permalinks`](#permalinks) | final readonly class | 259 | Builds public URLs from the site's permalink structure. With an empty |
-| [`PluginRules`](#pluginrules) | final class | 86 | Rewrite rules a plugin registered through add_rewrite_rule(): the |
+| [`Permalinks`](#permalinks) | final readonly class | 233 | Builds public URLs from the site's permalink structure. With an empty |
 | [`PostEmbed`](#postembed) | final class | 104 | A post as other sites embed it, the oEmbed provider side, as the |
 | [`PostNavigation`](#postnavigation) | final class | 36 | The links to the posts either side of this one, and the nav block that |
 | [`PrintedResponse`](#printedresponse) | final class | 39 | A response WordPress's handlers print themselves (a sitemap, robots.txt), |
 | [`ProbeController`](#probecontroller) | final readonly class | 66 | The surface monitors, crawlers, and hosting checks hit that is not a |
 | [`Redirects`](#redirects) | enum | 23 | Whether a resolution may answer with a canonical redirect. A GET or HEAD |
 | [`Renderer`](#renderer) | final readonly class | 168 | The interim public theme: one clean template until the block-theme |
-| [`RequestParse`](#requestparse) | final class | 214 | The query vars the reference's request parse sets for an address |
-| [`Resolution`](#resolution) | final readonly class | 108 | The outcome of resolving a public URL: which kind of thing it names, |
-| [`Resolver`](#resolver) | final readonly class | 426 | Turns a public URL into a Resolution, following the reference's observed |
-| [`RuleRoutes`](#ruleroutes) | final readonly class | 121 | What a rewrite rule's query vars stand for, when a plugin's rule (its |
-| [`SingleAddresses`](#singleaddresses) | final readonly class | 61 | The addresses a single answers to besides its own, as the reference |
+| [`RequestParse`](#requestparse) | final class | 41 | The query vars the reference's request parse sets for an address |
+| [`Resolution`](#resolution) | final readonly class | 116 | The outcome of resolving a public URL: which kind of thing it names, |
+| [`Resolver`](#resolver) | final readonly class | 302 | Turns a public URL into a Resolution the way the reference's request |
+| [`RuleRoutes`](#ruleroutes) | final readonly class | 150 | What a matched rewrite rule's query vars name, as the reference's main |
+| [`RuleTable`](#ruletable) | final class | 86 | An address read as WordPress's request parse reads it (suites |
+| [`SingleAddresses`](#singleaddresses) | final readonly class | 67 | The addresses a single answers to besides its own, as the reference |
 | [`SingleQueries`](#singlequeries) | final readonly class | 79 | The single a query string asks for, as the reference's request parse and |
 | [`SitemapController`](#sitemapcontroller) | final readonly class | 65 | The sitemap index, its pages, and the two stylesheets, as the |
 | [`SitemapRequest`](#sitemaprequest) | final class | 70 | A sitemap request at template_redirect, as the reference's sitemaps |
 | [`SitemapXml`](#sitemapxml) | final class | 43 | The two sitemap documents, index and URL set, from entry maps; one builder for the engine's routes and the facade's renderer. |
 | [`Sitemaps`](#sitemaps) | final class | 34 | What the sitemaps share with WP_Sitemaps, which serves them: the two |
-| [`StoredRules`](#storedrules) | final class | 79 | Addresses a plugin's change to the rewrite rules decides (suite |
 | [`TermLists`](#termlists) | final class | 178 | The two term listings themes print: the nested category list and the |
 | [`ToolbarMarkup`](#toolbarmarkup) | final class | 57 | WP_Admin_Bar's markup, piece by piece, as the reference prints it (probe |
 | [`ToolbarMenus`](#toolbarmenus) | final class | 338 | The nodes WordPress puts on the toolbar itself, as the reference adds |
@@ -218,11 +216,11 @@ The MIT libraries the engine ships, served at the paths the reference registers 
 
 `final readonly class Minn\Front\AttachmentAddresses` · `public/minn/src/Minn/Front/AttachmentAddresses.php`
 
-The addresses an attachment's page answers to, as the reference's rules
-find it: by id or slug in the query (?attachment_id=, ?attachment=); a
-loose attachment (no parent) by its slug at the top; any attachment by
-its slug under a post's or page's address, "attachment/" between or
-not; and as a post (?p=, ?page_id=), which moves to its own page. With
+The addresses an attachment's page answers to besides those its rules
+find (Front\RuleTable: a loose one by its slug at the top, any by its
+slug under another address, "attachment/" between or not): by id or
+slug in the query (?attachment_id=, ?attachment=), and as a post (?p=,
+?page_id=), which moves to its own page. With
 attachment pages off (wp_attachment_pages_enabled, the default) every
 other address answers as typed; with them on, one that is not its own
 moves there. An attachment is readable as its parent is.
@@ -246,20 +244,13 @@ Whether a resolution is an attachment's page.
 
 An attachment asked for as a post (?p=, ?page_id=): it moves to its own page whatever the setting; null for any other post.
 
-### `at(array $segments): ?Minn\Front\Resolution`
-
-The attachment a pretty address names: a loose one by its slug alone,
-any by its slug under a post's or page's address.
-
-- `@param list<string> $segments`
-
 ### `answer(Minn\Front\Resolution $resolution, Minn\Http\Request $request, Minn\Front\Redirects $redirects): Minn\Front\Resolution`
 
 The page as typed, or (attachment pages on, the address not its own)
 a move to its own: the other query arguments along, ?attachment=
 among them; an embed stays where it was asked for.
 
-Internals: `readable()` (private, line 102)
+Internals: `readable()` (private, line 80)
 
 
 ## Calendar
@@ -468,91 +459,34 @@ The button that opens the sharing dialog; none on a 404.
 The sharing dialog: the post's address and its embed code, each a tab; none on a 404.
 
 
-## Endpoints
-
-`final class Minn\Front\Endpoints` · `public/minn/src/Minn/Front/Endpoints.php`
-
-Rewrite endpoints plugins add (add_rewrite_endpoint: a shop's account
-pages, an app's /json/), matched as the reference's endpoint rules match
-them: the first registered endpoint name among the path's segments, what
-follows it (slashes and all) its query var's value, '' when nothing
-does; the address before it resolves as usual and counts only where the
-endpoint was placed (EP_PAGES, EP_PERMALINK, EP_ROOT for the site's root,
-and the archives' and attachments' own masks).
-
-- const `MASKS` = `array (   'permalink' => 1,   'attachment' => 2,   'date' => 60,   'root' => 64,   'search' => 256,   'categories' => 512,   'tags' => 1024,   'authors' => 2048,   'pages' => 4096, )` — The reference's endpoint masks, by what they let an endpoint follow.
-
-Used by: `Minn\Front\Resolver`
-
-### static `split(string $path): ?array`
-
-The endpoint a path names: the address before it, its query var and
-value, and where it may be placed; null for none.
-
-- `@return array{base: string, var: string, value: string, places: int}|null`
-
-### static `allows(int $places, Minn\Front\Resolution $resolution): bool`
-
-Whether an endpoint placed so may follow the address a resolution stands for.
-
-
 ## FeedController
 
 `final readonly class Minn\Front\FeedController` · `public/minn/src/Minn/Front/FeedController.php`
 
-The feeds: the site's, the comments', a post's or an archive's by the
-path in front of /feed/, and the ?feed= query form on any page. Each is
-WordPress's feed lifecycle: the main query with the feed asked for, then
-do_feed, whose handler prints the feed and its content type.
+The feeds, wherever a request asks for one: the feed var of the rule its
+address matched (the site's at /feed/, the comments' at
+/comments/feed/, a post's or an archive's after its address, a plugin's
+own) or ?feed= on any page. Each is WordPress's feed lifecycle: the main
+query with the feed asked for, then do_feed, whose handler prints the
+feed and its content type. A feed of something the address names but
+the site does not have is an empty feed, as the reference serves it.
 
 Used by: `Minn\Engine`, `Minn\Front\FrontController`
 
 ```php
-__construct(Minn\Content\Site $site, Minn\Content\Posts $posts, Minn\Front\Permalinks $permalinks, Minn\Front\Resolver $resolver, Closure $notFound)
+__construct(Minn\Content\Site $site, Minn\Content\Posts $posts)
 ```
 
 
-### `siteFeed(Minn\Http\Request $request, string $kind = 'rss2'): Minn\Http\Response`
+### static `asked(Minn\Http\Request $request, Minn\Front\Resolution $resolution): bool`
 
-Route: `GET /feed (public)`
+Whether a request asks for a feed of what it resolved to (the query form only of something that exists).
 
-Route: `GET /feed/ (public)`
+### `serve(Minn\Http\Request $request, Minn\Front\Resolution $resolution): Minn\Http\Response`
 
-Route: `GET /feed/{kind:rss2|rss|atom|rdf} (public)`
+The feed a request asks for, of what its address resolved to.
 
-Route: `GET /feed/{kind:rss2|rss|atom|rdf}/ (public)`
-
-The site feed in one of its kinds.
-
-### `commentsFeed(Minn\Http\Request $request, string $kind = 'rss2'): Minn\Http\Response`
-
-Route: `GET /comments/feed (public)`
-
-Route: `GET /comments/feed/ (public)`
-
-Route: `GET /comments/feed/{kind:rss2|rss|atom|rdf} (public)`
-
-Route: `GET /comments/feed/{kind:rss2|rss|atom|rdf}/ (public)`
-
-The site's comments feed in one of its kinds.
-
-### `pathFeed(Minn\Http\Request $request, string $path, string $kind = 'rss2'): Minn\Http\Response`
-
-Route: `GET /{path*}/feed (public)`
-
-Route: `GET /{path*}/feed/ (public)`
-
-Route: `GET /{path*}/feed/{kind:rss2|rss|atom|rdf} (public)`
-
-Route: `GET /{path*}/feed/{kind:rss2|rss|atom|rdf}/ (public)`
-
-A post's comment feed, or an archive's feed, by resolving the path in front of /feed/.
-
-### `queryFeed(Minn\Http\Request $request, Minn\Front\Resolution $resolution, string $kind): Minn\Http\Response`
-
-The ?feed= query form on any resolvable path: any feed a handler answers, a plugin's own included.
-
-Internals: `feed()` (private, line 97), `served()` (private, line 109), `perFeed()` (private, line 133)
+Internals: `served()` (private, line 58), `perFeed()` (private, line 82)
 
 
 ## FeedTags
@@ -701,7 +635,7 @@ What a public URL resolved to.
 
 Cases: `Home`, `Single`, `Page`, `Category`, `Tag`, `Author`, `Date`, `Search`, `Taxonomy`, `PostTypeArchive`, `NotFound`, `Redirect`
 
-Used by: `Minn\Blocks\Context`, `Minn\Blocks\Dynamic\Categories`, `Minn\Blocks\Dynamic\Theme\Navigation`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Blocks\Dynamic\Theme\Structure`, `Minn\Front\AdminBar`, `Minn\Front\AttachmentAddresses`, `Minn\Front\Canonical`, `Minn\Front\DocumentTitle`, `Minn\Front\Endpoints`, `Minn\Front\FeedController`, `Minn\Front\FrontController`, `Minn\Front\Renderer`, `Minn\Front\RequestParse`, `Minn\Front\Resolution`, `Minn\Front\Resolver`, `Minn\Front\SingleAddresses`, `Minn\Runtime\MainQuery`, `Minn\Theme\ArchiveTitle`, `Minn\Theme\BodyClasses`, `Minn\Theme\ClassicRenderer`, `Minn\Theme\EmbedRenderer`, `Minn\Theme\HeadLinks`, `Minn\Theme\MainQueryBridge`, `Minn\Theme\PageRenderer`, `Minn\Theme\Templates`
+Used by: `Minn\Blocks\Context`, `Minn\Blocks\Dynamic\Categories`, `Minn\Blocks\Dynamic\Theme\Navigation`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Blocks\Dynamic\Theme\Structure`, `Minn\Front\AdminBar`, `Minn\Front\AttachmentAddresses`, `Minn\Front\Canonical`, `Minn\Front\DocumentTitle`, `Minn\Front\FeedController`, `Minn\Front\FrontController`, `Minn\Front\Renderer`, `Minn\Front\Resolution`, `Minn\Front\Resolver`, `Minn\Theme\ArchiveTitle`, `Minn\Theme\BodyClasses`, `Minn\Theme\ClassicRenderer`, `Minn\Theme\EmbedRenderer`, `Minn\Theme\HeadLinks`, `Minn\Theme\MainQueryBridge`, `Minn\Theme\PageRenderer`, `Minn\Theme\Templates`
 
 
 ## ListSpacing
@@ -873,7 +807,7 @@ other status keeps the query form, which is what the reference emits.
 
 - const `QUERY_ONLY` = `array (   0 => 'wp_pattern_category',   1 => 'wp_theme',   2 => 'wp_template_part_area', )` — Core taxonomies with no front-end archive: their terms link by query only.
 
-Used by: `Minn\Admin\AppController`, `Minn\Admin\BootPayload`, `Minn\Admin\RenderController`, `Minn\Admin\SiteController`, `Minn\Admin\ThemesController`, `Minn\Blocks\Dynamic\Archives`, `Minn\Blocks\Dynamic\Categories`, `Minn\Blocks\Dynamic\LatestComments`, `Minn\Blocks\Dynamic\LatestPosts`, `Minn\Blocks\Dynamic\Search`, `Minn\Blocks\Dynamic\TagCloud`, `Minn\Blocks\Dynamic\Theme\Comments`, `Minn\Blocks\Dynamic\Theme\Navigation`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Blocks\Dynamic\Theme\Structure`, `Minn\Blocks\Renderer`, `Minn\Cli\Runtime`, `Minn\Content\Menus`, `Minn\Content\SiteIcon`, `Minn\Engine`, `Minn\Front\AdminBar`, `Minn\Front\ArchiveAddresses`, `Minn\Front\AttachmentAddresses`, `Minn\Front\FeedController`, `Minn\Front\ProbeController`, `Minn\Front\Renderer`, `Minn\Front\Resolver`, `Minn\Front\SingleAddresses`, `Minn\Front\SingleQueries`, `Minn\Login\LoginController`, `Minn\Media\Uploads`, `Minn\Ops\Diagnostics`, `Minn\Rest\CommentObject`, `Minn\Rest\IndexController`, `Minn\Rest\MediaObject`, `Minn\Rest\PostObject`, `Minn\Rest\RegisteredPostFields`, `Minn\Rest\RestUrl`, `Minn\Rest\SearchController`, `Minn\Rest\Services`, `Minn\Rest\TermObject`, `Minn\Rest\UserObject`, `Minn\Theme\ClassicContent`, `Minn\Theme\ClassicRenderer`, `Minn\Theme\HeadLinks`, `Minn\Theme\PageRenderer`, `Minn\Theme\Theme`, `Minn\Theme\ThemeStyles`
+Used by: `Minn\Admin\AppController`, `Minn\Admin\BootPayload`, `Minn\Admin\RenderController`, `Minn\Admin\SiteController`, `Minn\Admin\ThemesController`, `Minn\Blocks\Dynamic\Archives`, `Minn\Blocks\Dynamic\Categories`, `Minn\Blocks\Dynamic\LatestComments`, `Minn\Blocks\Dynamic\LatestPosts`, `Minn\Blocks\Dynamic\Search`, `Minn\Blocks\Dynamic\TagCloud`, `Minn\Blocks\Dynamic\Theme\Comments`, `Minn\Blocks\Dynamic\Theme\Navigation`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Blocks\Dynamic\Theme\Structure`, `Minn\Blocks\Renderer`, `Minn\Cli\Runtime`, `Minn\Content\Menus`, `Minn\Content\SiteIcon`, `Minn\Engine`, `Minn\Front\AdminBar`, `Minn\Front\ArchiveAddresses`, `Minn\Front\AttachmentAddresses`, `Minn\Front\ProbeController`, `Minn\Front\Renderer`, `Minn\Front\Resolver`, `Minn\Front\SingleAddresses`, `Minn\Front\SingleQueries`, `Minn\Login\LoginController`, `Minn\Media\Uploads`, `Minn\Ops\Diagnostics`, `Minn\Rest\CommentObject`, `Minn\Rest\IndexController`, `Minn\Rest\MediaObject`, `Minn\Rest\PostObject`, `Minn\Rest\RegisteredPostFields`, `Minn\Rest\RestUrl`, `Minn\Rest\SearchController`, `Minn\Rest\Services`, `Minn\Rest\TermObject`, `Minn\Rest\UserObject`, `Minn\Theme\ClassicContent`, `Minn\Theme\ClassicRenderer`, `Minn\Theme\HeadLinks`, `Minn\Theme\PageRenderer`, `Minn\Theme\Theme`, `Minn\Theme\ThemeStyles`
 
 ```php
 __construct(Minn\Content\Posts $posts, Minn\Content\Terms $terms, string $home, string $structure, int $frontPageId = 0, int $postsPageId = 0, ?Closure $registry = NULL)
@@ -954,54 +888,7 @@ A search's URL.
 
 A listing URL for a page number.
 
-### `structureRegex(): ?string`
-
-A regex over the structure's tokens, so an incoming path can be
-matched back to the post it names. Null when the structure has no
-identifying token.
-
-Internals: `hasPrettyLink()` (private, line 249), `fill()` (private, line 254)
-
-
-## PluginRules
-
-`final class Minn\Front\PluginRules` · `public/minn/src/Minn/Front/PluginRules.php`
-
-Rewrite rules a plugin registered through add_rewrite_rule(): the
-recorded rules match against the request path the way the reference
-matches them, ahead of the engine's own resolution for 'top' rules and
-behind it for 'bottom' ones. A match yields the substituted query vars,
-kept only when the reference would recognise them (the built-in public
-vars plus whatever the query_vars filter admits, which is how a plugin
-registers its own).
-
-- const `STATE` = `'rule_query_vars'`
-- const `MATCHED` = `'rule_matched'` — Set when a plugin's own rule matched the request (not merely an endpoint).
-- const `PUBLIC_VARS` = `array (   0 => 'm',   1 => 'p',   2 => 'posts',   3 => 'w',   4 => 'cat',   5 => 'withcomments',   6 => 'withoutcomments',   7 => 's',   8 => 'search',   9 => 'exact',   10 => 'sentence',   11 => 'calendar',   12 => 'page',   13 => 'paged',   14 => 'more',   15 => 'tb',   16 => 'pb',   17 => 'author',   18 => 'order',   19 => 'orderby',   20 => 'year',   21 => 'monthnum',   22 => 'day',   23 => 'hour',   24 => 'minute',   25 => 'second',   26 => 'name',   27 => 'category_name',   28 => 'tag',   29 => 'feed',   30 => 'author_name',   31 => 'pagename',   32 => 'page_id',   33 => 'error',   34 => 'attachment',   35 => 'attachment_id',   36 => 'subpost',   37 => 'subpost_id',   38 => 'preview',   39 => 'robots',   40 => 'favicon',   41 => 'taxonomy',   42 => 'term',   43 => 'cpage',   44 => 'post_type',   45 => 'embed', )` — The reference's public query vars a rule's query string may set.
-
-Used by: `Minn\Front\FeedController`, `Minn\Front\RequestParse`, `Minn\Front\Resolver`, `Minn\Front\StoredRules`, `Minn\Runtime\MainQuery`, `Minn\Theme\MainQueryBridge`
-
-### static `match(string $path, bool $top): ?array`
-
-A plugin's rewrite rule that matches the path, or null.
-
-- `@return array<string, string>|null the query vars of the first matching rule, null with no match`
-
-### static `varsOf(string $query, array $matches): array`
-
-A matched rule's query vars: its query with the matches put in
-(urlencoded like the reference's WP_MatchesMapRegex, so a captured
-'&x=1' cannot split into extra vars), only those the reference would
-recognise (the public vars and the query_vars filter's).
-
-- `@param array<int|string, string> $matches`
-- `@return array<string, string>`
-
-### static `stashed(): array`
-
-The query vars the matched rule stashed.
-
-- `@return array<string, string> the vars the matched rule stashed for this request`
+Internals: `hasPrettyLink()` (private, line 223), `fill()` (private, line 228)
 
 
 ## PostEmbed
@@ -1161,7 +1048,7 @@ typed, as the reference's redirect_canonical bails on a POST.
 
 Cases: `Follow`, `Hold`
 
-Used by: `Minn\Front\AttachmentAddresses`, `Minn\Front\FrontController`, `Minn\Front\Resolver`, `Minn\Front\SingleAddresses`, `Minn\Front\SingleQueries`
+Used by: `Minn\Front\AttachmentAddresses`, `Minn\Front\FrontController`, `Minn\Front\Resolver`, `Minn\Front\SingleQueries`
 
 ### static `forMethod(Minn\Http\Method $method): self`
 
@@ -1216,21 +1103,18 @@ Internals: `attachmentClasses()` (private, line 37), `pageClasses()` (private, l
 
 The query vars the reference's request parse sets for an address
 (WP::parse_request), which plugins read off $wp->query_vars and
-get_query_var: the vars of the rewrite rule the path matches (a post's
-name and page, a page's full path, an archive's slug, the paged, feed,
-comment-page, embed and trackback suffixes), then each public var the
-query string or form carries, all in the public vars' order (a plugin's
-own after the core ones); a post type's or taxonomy's own var brings
-post_type and name; a path no rule matches is error=404. The engine
-knows what the path resolved to, so the rule is read off that and the
-path's shape rather than matched from a rule list.
+get_query_var: each public var the query string or form carries, else
+the one the matched rewrite rule set (Front\RuleTable), all in the
+public vars' order (a plugin's own after the core ones); a post type's
+own var brings post_type and name; a path no rule matches is error=404.
 
 Used by: `Minn\Theme\MainQueryBridge`
 
-### static `vars(string $path, Minn\Front\Resolution $resolution, array $publicVars, array $given): array`
+### static `vars(array $rule, array $publicVars, array $given): array`
 
 The parse's vars, in the reference's order.
 
+- `@param array<string, string> $rule the matched rule's vars`
 - `@param list<string> $publicVars the public query vars, after the query_vars filter`
 - `@param array<string, mixed> $given the query string's and the form's values`
 - `@return array<string, string>`
@@ -1239,18 +1123,17 @@ The parse's vars, in the reference's order.
 
 The reference's query string for parse vars (WP::build_query_string): each one with a value, encoded.
 
-Internals: `segments()` (private, line 67), `ruleVars()` (private, line 79), `kindVars()` (private, line 96), `suffixes()` (private, line 119), `homeVars()` (private, line 147), `singleVars()` (private, line 160), `unmatched()` (private, line 181), `objectVars()` (private, line 200), `categoryBase()` (private, line 216), `taxonomyVar()` (private, line 223), `queryVarOf()` (private, line 230)
-
 
 ## Resolution
 
 `final readonly class Minn\Front\Resolution` · `public/minn/src/Minn/Front/Resolution.php`
 
 The outcome of resolving a public URL: which kind of thing it names,
-the record behind it, and the page number for paginated views. Redirects
-carry their target instead.
+the record behind it, the page number for paginated views, and the query
+vars of the rewrite rule the address matched (what the request parse
+hands plugins). Redirects carry their target instead.
 
-Used by: `Minn\Blocks\Context`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Engine`, `Minn\Front\AdminBar`, `Minn\Front\ArchiveAddresses`, `Minn\Front\AttachmentAddresses`, `Minn\Front\DocumentTitle`, `Minn\Front\Endpoints`, `Minn\Front\FeedController`, `Minn\Front\FrontController`, `Minn\Front\PrintedResponse`, `Minn\Front\Renderer`, `Minn\Front\RequestParse`, `Minn\Front\Resolver`, `Minn\Front\RuleRoutes`, `Minn\Front\SingleAddresses`, `Minn\Front\SingleQueries`, `Minn\Front\SitemapController`, `Minn\Runtime\MainQuery`, `Minn\Theme\ArchiveTitle`, `Minn\Theme\BodyClasses`, `Minn\Theme\ClassicRenderer`, `Minn\Theme\EmbedRenderer`, `Minn\Theme\HeadLinks`, `Minn\Theme\MainQueryBridge`, `Minn\Theme\PageRenderer`, `Minn\Theme\Templates`
+Used by: `Minn\Blocks\Context`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Engine`, `Minn\Front\AdminBar`, `Minn\Front\ArchiveAddresses`, `Minn\Front\AttachmentAddresses`, `Minn\Front\DocumentTitle`, `Minn\Front\FeedController`, `Minn\Front\FrontController`, `Minn\Front\PrintedResponse`, `Minn\Front\Renderer`, `Minn\Front\Resolver`, `Minn\Front\RuleRoutes`, `Minn\Front\SingleAddresses`, `Minn\Front\SingleQueries`, `Minn\Front\SitemapController`, `Minn\Theme\ArchiveTitle`, `Minn\Theme\BodyClasses`, `Minn\Theme\ClassicRenderer`, `Minn\Theme\EmbedRenderer`, `Minn\Theme\HeadLinks`, `Minn\Theme\MainQueryBridge`, `Minn\Theme\PageRenderer`, `Minn\Theme\Templates`
 
 - readonly `Minn\Front\Kind $kind`
 - readonly `Minn\Content\PostRecord|Minn\Content\UserRecord|Minn\Content\TermRecord|array|null $record`
@@ -1263,10 +1146,17 @@ Used by: `Minn\Blocks\Context`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\En
 - readonly `bool $front` — the static front page (show_on_front = page), rendered as a page that is also home
 - readonly `bool $preview` — a preview: the reader's autosave replaces the stored content
 - readonly `bool $postsPage` — the posts page (page_for_posts): the record is the page, the listing is the blog
+- readonly `array $vars`
 
 ### `asPreview(): self`
 
 The same resolution marked as a preview.
+
+### `withVars(array $vars): self`
+
+The same resolution reached through a rule with these query vars. @param array<string, string> $vars
+
+- `@param array<string, string> $vars`
 
 ### static `home(int $paged = 1): self`
 
@@ -1325,29 +1215,34 @@ The record's id, post or term.
 
 `final readonly class Minn\Front\Resolver` · `public/minn/src/Minn/Front/Resolver.php`
 
-Turns a public URL into a Resolution, following the reference's observed
-rules:
+Turns a public URL into a Resolution the way the reference's request
+parse does: the root by its query string, any other path by the first
+of the site's rewrite rules it fits (Front\RuleTable), whose query vars
+name what it is (Front\RuleRoutes). What is left here are the
+reference's canonical answers around that (redirect_canonical,
+wp_old_slug_redirect):
 
 - Unpaged content and archives without a trailing slash redirect to the
-slashed form, as typed (case kept); paged views, search, and 404s do not.
+slashed form, as typed (case kept), as do an embed's and an endpoint's
+addresses; paged views, search, and 404s do not.
 - Query-var forms (?p=, ?page_id=, ?cat=, ?tag=, ?author=, ?m=, ?name=,
 ?pagename=) redirect to the pretty form when the target is public.
-- Archive-shaped paths (category, tag, author, search, a four-digit year)
-are strict: a mismatch is a 404 with no guessing.
-- Plain-segment paths try the page hierarchy, then the post structure,
-then redirect to the closest published page or post whose name starts
-with the last segment, pages before posts, newest first.
-- Empty term and date archives are 404; an author archive is 200 for any
-name, even one that belongs to nobody.
+- A single asked for under a category it is not in (where the
+structure names one), or with an old-style page number, moves to its
+own address; a trackback address goes to the post; the front page
+answers only at the root.
+- A name the site no longer has: the post that used to have it, else the
+closest published page or post whose name starts with it, pages before
+posts, newest first. Archives never guess.
 - Non-public posts are 404 to anonymous readers and served to a reader
 who can edit them.
 
-Used by: `Minn\Engine`, `Minn\Front\Canonical`, `Minn\Front\FeedController`, `Minn\Front\FrontController`, `Minn\Front\Renderer`, `Minn\Theme\MainQueryBridge`, `Minn\Theme\PageRenderer`
+Used by: `Minn\Engine`, `Minn\Front\Canonical`, `Minn\Front\FrontController`, `Minn\Front\Renderer`, `Minn\Theme\MainQueryBridge`, `Minn\Theme\PageRenderer`
 
 ```php
 __construct(Minn\Db $db, Minn\Content\Posts $posts, Minn\Content\Terms $terms, Minn\Front\Permalinks $permalinks, Closure $canReadUnpublished, int $perPage)
 ```
-- `@param Closure(array $post): bool $canReadUnpublished`
+- `@param Closure(PostRecord): bool $canReadUnpublished`
 
 
 ### static `fromDb(Minn\Db $db, Closure $canReadUnpublished): self`
@@ -1374,27 +1269,29 @@ The site-local bounds of a date archive, or null when the date is invalid.
 
 - `@return array{0: string, 1: string}|null`
 
-Internals: `fromRuleVars()` (private, line 126), `resolvePath()` (private, line 136), `resolveQueryVars()` (private, line 207), `dateRedirect()` (private, line 251), `pluginRoute()` (private, line 277), `segmentsOf()` (private, line 312), `resolveContent()` (private, line 318), `resolveSingle()` (private, line 359), `endpoint()` (private, line 401), `archives()` (private, line 419), `attachments()` (private, line 435), `elsewhere()` (private, line 441), `readable()` (private, line 446)
+Internals: `resolvePath()` (private, line 100), `canonical()` (private, line 132), `missing()` (private, line 178), `viewableTypes()` (private, line 208), `endpointIn()` (private, line 221), `segments()` (private, line 233), `resolveQueryVars()` (private, line 238), `dateRedirect()` (private, line 282), `archives()` (private, line 300), `attachments()` (private, line 316), `elsewhere()` (private, line 322), `readable()` (private, line 327)
 
 
 ## RuleRoutes
 
 `final readonly class Minn\Front\RuleRoutes` · `public/minn/src/Minn/Front/RuleRoutes.php`
 
-What a rewrite rule's query vars stand for, when a plugin's rule (its
-own, or one it changed) decided the address rather than the engine's
-reading of the path (suite plugin-rules): a post by id, by name (of a
-type the vars name), an attachment by name, a page by path, a plugin
-type's item by its own var; else a category's, tag's or plugin
-taxonomy's archive, an author's, a date's, a post type's, a search; else
-the front. A rule that set error is a 404.
+What a matched rewrite rule's query vars name, as the reference's main
+query reads them (suites permalinks, plugin-rules, request-vars): a post
+or page by id, an attachment by name, a page (or an attachment) by its
+path, a post by name (of the type the vars give), a registered type's
+item by its own var; else a category's, tag's, post format's or
+registered taxonomy's archive, an author's, a date's, a post type's, a
+search; else the front. A rule that set error is a 404, as is a single
+the reader may not read. Under a name the date or category the rule also
+captured does not narrow the find: where the post really lives is the
+canonical redirect's business.
 
 Used by: `Minn\Front\Resolver`
 
 ```php
-__construct(Minn\Content\Posts $posts, Minn\Front\ArchiveAddresses $archives, Closure $page, Closure $readable)
+__construct(Minn\Content\Posts $posts, Minn\Front\ArchiveAddresses $archives, int $frontPageId, int $postsPageId, Closure $readable)
 ```
-- `@param Closure(list<string>, int): ?Resolution $page a page or post by its path, as the resolver finds one`
 - `@param Closure(PostRecord): bool $readable whether the reader may read a post`
 
 
@@ -1404,7 +1301,32 @@ The resolution the vars stand for. @param array<string, string> $vars
 
 - `@param array<string, string> $vars`
 
-Internals: `single()` (private, line 48), `archive()` (private, line 73), `typeArchive()` (private, line 104), `found()` (private, line 114), `registered()` (private, line 125), `segments()` (private, line 138)
+Internals: `single()` (private, line 49), `archive()` (private, line 75), `typeArchive()` (private, line 110), `found()` (private, line 126), `readable()` (private, line 142), `registered()` (private, line 157), `segments()` (private, line 170)
+
+
+## RuleTable
+
+`final class Minn\Front\RuleTable` · `public/minn/src/Minn/Front/RuleTable.php`
+
+An address read as WordPress's request parse reads it (suites
+permalinks, request-vars, plugin-rules): against the site's rewrite
+rules (made and stored when there are none, a plugin's own among them,
+each place's endpoints too), the first rule the address fits winning, as
+typed or decoded; a page's rule fits only when a page stands at the path
+it captured, under verbose page rules. A match is the rule's query vars
+with the matches put in. Which of them count is the request parse's
+business (the public vars, after the query_vars filter).
+
+Used by: `Minn\Front\Resolver`
+
+### static `vars(string $path): ?array`
+
+The vars the site's rules give a path, or null when no rule fits it
+(or the site has none: plain permalinks).
+
+- `@return array<string, string>|null`
+
+Internals: `subject()` (private, line 42), `first()` (private, line 60), `varsOf()` (private, line 86), `pageAt()` (private, line 99)
 
 
 ## SingleAddresses
@@ -1413,7 +1335,8 @@ Internals: `single()` (private, line 48), `archive()` (private, line 73), `typeA
 
 The addresses a single answers to besides its own, as the reference
 treats them: a slug the post used to have (alone, with a page number, or
-with an embed or trackback suffix), and its comment-page-N addresses.
+with an embed or trackback suffix), and an address that puts it under a
+category it is not in.
 
 Used by: `Minn\Front\Resolver`, `Minn\Front\SingleQueries`
 
@@ -1429,12 +1352,15 @@ keeping the page number and dropping the query string; the lookup
 ignores status because the reference does (unreadable posts land on
 their `?p=` form and answer 404 there).
 
-### `commentPage(?Minn\Front\Resolution $single, Minn\Front\Redirects $redirects): Minn\Front\Resolution`
+### `misplaced(Minn\Content\PostRecord $post, array $vars): bool`
 
-A single's comment-page-N address: served as the single when the site
-pages its comments, sent to the single's own address when it does
-not, as the reference does. (The engine does not page the comment
-list itself yet; contracts/front.)
+Whether a post was asked for under a category it is not in, where
+the structure names the category: the category the address names is
+none at that path, or not one of the post's. The reference finds the
+post by its name whatever the category, then moves to its own
+address (a post in two categories answers under either).
+
+- `@param array<string, string> $vars`
 
 ### `formerSuffix(Minn\Front\Resolution $redirect, string $suffix): Minn\Front\Resolution`
 
@@ -1587,33 +1513,6 @@ The stylesheet the sitemap index links: one column, the sitemaps.
 A GMT date as a sitemap dates it (W3C, UTC).
 
 Internals: `xsl()` (private, line 30)
-
-
-## StoredRules
-
-`final class Minn\Front\StoredRules` · `public/minn/src/Minn/Front/StoredRules.php`
-
-Addresses a plugin's change to the rewrite rules decides (suite
-plugin-rules). WordPress matches a request against its stored rules, the
-first that fits winning (a page's rule only when a page is at that
-path). The engine reads addresses itself, which comes to the same while
-the stored rules are the ones it would make. When a plugin changed them
-(through a filter or action as they were made, taking rules away or
-putting them in), the rule the stored list fits first is set against the
-one the engine's own list would: the same rule, and the engine's reading
-stands; another, and that rule's vars decide (no rule fitting at all is
-a 404).
-
-Used by: `Minn\Front\Resolver`
-
-### static `route(string $path): ?array`
-
-The vars the stored rules give an address, when they are not what the
-engine's own reading follows; null when they are.
-
-- `@return array<string, string>|null`
-
-Internals: `subject()` (private, line 57), `first()` (private, line 74), `pageAt()` (private, line 95)
 
 
 ## TermLists

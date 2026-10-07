@@ -27,7 +27,7 @@ the repositories and records: posts, users, terms, comments, and the render pipe
 | [`PostSlugs`](#postslugs) | final readonly class | 75 | Which slug a live post may take beside the others, as the reference |
 | [`PostStatus`](#poststatus) | enum | 42 | The statuses a post row can hold; the value is the column's own spelling. |
 | [`PostWriter`](#postwriter) | final readonly class | 482 | Every write to the posts table and its satellites: rows, meta, term |
-| [`Posts`](#posts) | final readonly class | 530 | Reads over the posts table. A single post comes back as a PostRecord and |
+| [`Posts`](#posts) | final readonly class | 523 | Reads over the posts table. A single post comes back as a PostRecord and |
 | [`Reader`](#reader) | final class | 72 | Who is reading this request: their user id, whether they may read |
 | [`Revisions`](#revisions) | final readonly class | 95 | Revision rows: the plain snapshots and the per-author autosave slots. |
 | [`Site`](#site) | final readonly class | 73 | Site-wide options and the site's clock. |
@@ -919,7 +919,7 @@ Array access is the migration bridge: code that still reads
 $post['post_title'] keeps working while it is moved over. New code
 reads the properties. The style suite counts the bracket reads down.
 
-Used by: `Minn\Auth\Capabilities`, `Minn\Blocks\Context`, `Minn\Blocks\Dynamic\LatestPosts`, `Minn\Blocks\Dynamic\Theme\Navigation`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Content\Excerpt`, `Minn\Content\Page`, `Minn\Content\PasswordGate`, `Minn\Content\PostStatus`, `Minn\Content\PostWriter`, `Minn\Content\Posts`, `Minn\Engine`, `Minn\Extension\SeamRunner`, `Minn\Front\ArchiveAddresses`, `Minn\Front\AttachmentAddresses`, `Minn\Front\Canonical`, `Minn\Front\Endpoints`, `Minn\Front\Permalinks`, `Minn\Front\Renderer`, `Minn\Front\RequestParse`, `Minn\Front\Resolution`, `Minn\Front\Resolver`, `Minn\Front\RuleRoutes`, `Minn\Front\SingleAddresses`, `Minn\Front\SingleQueries`, `Minn\Media\Writer`, `Minn\Rest\CommentsController`, `Minn\Rest\GlobalStylesController`, `Minn\Rest\GlobalStylesObject`, `Minn\Rest\MediaController`, `Minn\Rest\MediaObject`, `Minn\Rest\PostObject`, `Minn\Rest\PostsController`, `Minn\Rest\PostsWriteController`, `Minn\Rest\RegisteredPostFields`, `Minn\Rest\RenderedFields`, `Minn\Rest\RevisionsController`, `Minn\Rest\SearchController`, `Minn\Runtime\CommentCloser`, `Minn\Runtime\PostEvents`, `Minn\Runtime\PostSave`, `Minn\Theme\ClassicContent`, `Minn\Theme\HeadLinks`, `Minn\Theme\MainQueryBridge`, `Minn\Theme\UserStyles`
+Used by: `Minn\Auth\Capabilities`, `Minn\Blocks\Context`, `Minn\Blocks\Dynamic\LatestPosts`, `Minn\Blocks\Dynamic\Theme\Navigation`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Content\Excerpt`, `Minn\Content\Page`, `Minn\Content\PasswordGate`, `Minn\Content\PostStatus`, `Minn\Content\PostWriter`, `Minn\Content\Posts`, `Minn\Engine`, `Minn\Extension\SeamRunner`, `Minn\Front\ArchiveAddresses`, `Minn\Front\AttachmentAddresses`, `Minn\Front\Canonical`, `Minn\Front\Permalinks`, `Minn\Front\Renderer`, `Minn\Front\Resolution`, `Minn\Front\Resolver`, `Minn\Front\RuleRoutes`, `Minn\Front\SingleAddresses`, `Minn\Front\SingleQueries`, `Minn\Media\Writer`, `Minn\Rest\CommentsController`, `Minn\Rest\GlobalStylesController`, `Minn\Rest\GlobalStylesObject`, `Minn\Rest\MediaController`, `Minn\Rest\MediaObject`, `Minn\Rest\PostObject`, `Minn\Rest\PostsController`, `Minn\Rest\PostsWriteController`, `Minn\Rest\RegisteredPostFields`, `Minn\Rest\RenderedFields`, `Minn\Rest\RevisionsController`, `Minn\Rest\SearchController`, `Minn\Runtime\CommentCloser`, `Minn\Runtime\PostEvents`, `Minn\Runtime\PostSave`, `Minn\Theme\ClassicContent`, `Minn\Theme\HeadLinks`, `Minn\Theme\MainQueryBridge`, `Minn\Theme\UserStyles`
 
 - readonly `int $id`
 - readonly `int $authorId`
@@ -1321,12 +1321,16 @@ was asked for over the attachment it also looks at.
 
 The slash-joined ancestry of a page: "sample-page/docs".
 
-### `guess(string $prefix): ?Minn\Content\PostRecord`
+### `guess(string $prefix, array $types): ?Minn\Content\PostRecord`
 
-The closest published post or page whose name starts with the given
-text: pages first, then posts, newest first within each. This is the
-order the reference follows when it guesses a destination for a
-missing URL.
+The published post whose name starts with the given text, among the
+given types, as the reference guesses a destination for a missing
+URL: one prefix query and no order of its own, so the database's
+plan for it decides which match comes first (on a small table its
+name index, alphabetical; on a large one its type and date index,
+oldest first), the same on both stacks over one database.
+
+- `@param list<string> $types`
 
 ### `published(string $type = 'post', int $page = 1, int $perPage = 10): Minn\Content\Page`
 
@@ -1438,7 +1442,7 @@ The newest autosave of a post by one author, or null.
 
 The slug of the post's first category, or null.
 
-Internals: `record()` (private, line 21), `byName()` (private, line 49), `byPath()` (private, line 124), `scope()` (private, line 236), `like()` (private, line 262), `neighbour()` (private, line 337), `weekMode()` (private, line 462), `monthBeside()` (private, line 497), `latest()` (private, line 506)
+Internals: `record()` (private, line 21), `byName()` (private, line 49), `byPath()` (private, line 124), `scope()` (private, line 229), `like()` (private, line 255), `neighbour()` (private, line 330), `weekMode()` (private, line 455), `monthBeside()` (private, line 490), `latest()` (private, line 499)
 
 
 ## Reader
@@ -1765,7 +1769,7 @@ Records are read-only; writes go through the repository.
 
 `final readonly class Minn\Content\Terms` · `public/minn/src/Minn/Content/Terms.php`
 
-Used by: `Minn\Blocks\Dynamic\Theme\Navigation`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Content\Menus`, `Minn\Front\ArchiveAddresses`, `Minn\Front\Permalinks`, `Minn\Front\Resolver`, `Minn\Rest\Services`, `Minn\Rest\TermsController`, `Minn\Runtime\TermSave`, `Minn\Runtime\TermWriter`, `Minn\Theme\TemplateWriter`, `Minn\Theme\UserStyles`
+Used by: `Minn\Blocks\Dynamic\Theme\Navigation`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Content\Menus`, `Minn\Front\ArchiveAddresses`, `Minn\Front\Permalinks`, `Minn\Front\Resolver`, `Minn\Front\SingleAddresses`, `Minn\Rest\Services`, `Minn\Rest\TermsController`, `Minn\Runtime\TermSave`, `Minn\Runtime\TermWriter`, `Minn\Theme\TemplateWriter`, `Minn\Theme\UserStyles`
 
 ```php
 __construct(Minn\Db $db)

@@ -10,11 +10,9 @@ use Minn\Content\Page;
 use Minn\Content\PostFilter;
 use Minn\Content\Site;
 use Minn\Front\Kind;
-use Minn\Front\PluginRules;
 use Minn\Front\RequestParse;
 use Minn\Front\Resolution;
 use Minn\Front\Resolver;
-use Minn\Runtime\MainQuery;
 use Minn\Runtime\Runtime;
 use Minn\Support\Serialized;
 
@@ -57,8 +55,8 @@ final readonly class MainQueryBridge
         $request = Runtime::current()->request;
         $given = $request === null ? [] : $request->form + $request->query;
         // With the request known, the vars are the reference's parse of it; what the caller adds (a feed's kind, a sitemap's name) takes its place among them.
-        $parse = $request === null ? null : static function (array $public) use ($request, $resolution, $given, $extra): array {
-            $vars = RequestParse::vars($request->path, $resolution, $public, $given);
+        $parse = $request === null ? null : static function (array $public) use ($resolution, $given, $extra): array {
+            $vars = RequestParse::vars($resolution->vars, $public, $given);
             foreach ($extra as $name => $value) {
                 $vars[$name] = is_bool($value) ? ($value ? 'true' : '') : $value;
             }
@@ -67,7 +65,8 @@ final readonly class MainQueryBridge
         $parsed = FrontLifecycle::parseRequest($wp, $vars, $given, $parse);
         $page = $parsed ? $this->queried($resolution, (array) $wp->query_vars) : $this->seeded($resolution, $vars);
         if ($parsed) {
-            FrontLifecycle::handle404($GLOBALS['wp_query'], $resolution->kind === Kind::NotFound);
+            // A feed of something the site does not have is served empty, not as a 404.
+            FrontLifecycle::handle404($GLOBALS['wp_query'], $resolution->kind === Kind::NotFound && !isset($extra['feed']));
             $wp->register_globals();
         }
         FrontLifecycle::sendHeaders($wp);
@@ -86,24 +85,35 @@ final readonly class MainQueryBridge
     }
 
     /**
-     * The variables the reference's request parse would arrive at: the
-     * resolution's, the posts page by its id, and an unresolved pretty path
-     * as the page path it was taken for.
+     * The variables the request stands on before the parse runs (and in
+     * its place, when a plugin takes the parse over): the matched rule's,
+     * the posts page by its id.
      *
      * @return array<string, mixed>
      */
     private function vars(Resolution $resolution): array
     {
-        $vars = MainQuery::vars($resolution);
         $record = $resolution->record ?? [];
-        if ($resolution->postsPage && isset($record['ID'])) {
-            return ['page_id' => (int) $record['ID']] + $vars;
+        return $resolution->postsPage && isset($record['ID']) ? ['page_id' => (int) $record['ID']] + $resolution->vars : $resolution->vars;
+    }
+
+    /**
+     * The variables that name the post the engine resolved, for a page the
+     * query found nothing to stand on (a preview, a draft its author reads).
+     *
+     * @return array<string, mixed>
+     */
+    private function postVars(Resolution $resolution): array
+    {
+        $post = $resolution->record;
+        if (!$post instanceof PostRecord) {
+            return $resolution->vars;
         }
-        $path = trim((string) (Runtime::current()->request?->path ?? ''), '/');
-        if ($resolution->kind === Kind::NotFound && $path !== '' && \get_option('permalink_structure') !== '') {
-            return ['pagename' => $path] + PluginRules::stashed();
-        }
-        return $vars;
+        return match ($post->type) {
+            'page' => ['page_id' => $post->id, 'pagename' => $post->slug],
+            'post' => ['p' => $post->id, 'post_type' => 'post', 'name' => $post->slug],
+            default => [$post->type => $post->slug, 'post_type' => $post->type, 'name' => $post->slug],
+        };
     }
 
     /**
@@ -119,7 +129,7 @@ final readonly class MainQueryBridge
             return new Page(PostRecord::fromRows($query['posts']), (int) $query['total']);
         }
         if ($resolution->kind !== Kind::NotFound && $query['posts'] === [] && isset(($resolution->record ?? [])['ID'])) {
-            return $this->seeded($resolution, MainQuery::vars($resolution));
+            return $this->seeded($resolution, $this->postVars($resolution));
         }
         return Page::empty();
     }

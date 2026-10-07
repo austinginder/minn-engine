@@ -29,7 +29,6 @@ use Minn\Front\Permalinks;
 use Minn\Front\Resolution;
 use Minn\Front\Resolver;
 use Minn\Front\DocumentTitle;
-use Minn\Runtime\MainQuery;
 use Minn\Runtime\Runtime;
 use Minn\Support\Html;
 use Minn\Support\Serialized;

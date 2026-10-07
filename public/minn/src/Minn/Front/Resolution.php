@@ -10,8 +10,9 @@ use Minn\Content\PostRecord;
 
 /**
  * The outcome of resolving a public URL: which kind of thing it names,
- * the record behind it, and the page number for paginated views. Redirects
- * carry their target instead.
+ * the record behind it, the page number for paginated views, and the query
+ * vars of the rewrite rule the address matched (what the request parse
+ * hands plugins). Redirects carry their target instead.
  */
 final readonly class Resolution
 {
@@ -34,13 +35,21 @@ final readonly class Resolution
         public bool $preview = false,
         /** the posts page (page_for_posts): the record is the page, the listing is the blog */
         public bool $postsPage = false,
+        /** @var array<string, string> the matched rewrite rule's query vars */
+        public array $vars = [],
     ) {
     }
 
     /** The same resolution marked as a preview. */
     public function asPreview(): self
     {
-        return new self($this->kind, $this->record, $this->paged, $this->location, $this->status, $this->search, $this->date, $this->authorName, $this->front, true, $this->postsPage);
+        return new self($this->kind, $this->record, $this->paged, $this->location, $this->status, $this->search, $this->date, $this->authorName, $this->front, true, $this->postsPage, $this->vars);
+    }
+
+    /** The same resolution reached through a rule with these query vars. @param array<string, string> $vars */
+    public function withVars(array $vars): self
+    {
+        return new self($this->kind, $this->record, $this->paged, $this->location, $this->status, $this->search, $this->date, $this->authorName, $this->front, $this->preview, $this->postsPage, $vars);
     }
 
     /** The home listing. */

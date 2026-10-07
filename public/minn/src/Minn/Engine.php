@@ -296,7 +296,7 @@ final readonly class Engine
         $cron = Cron::create($db, $site, ABSPATH . 'wp-content', $permalinks->url('/'), self::WP_VERSION, $fireDueEvents);
         $notFound = static function () use (&$front): Response { return $front->notFound(); };
         $themed = static function (\Minn\Front\Resolution $resolution) use (&$front): Response { return $front->themed($resolution); };
-        $feedController = new \Minn\Front\FeedController($site, $posts, $permalinks, $resolver, $notFound);
+        $feedController = new \Minn\Front\FeedController($site, $posts);
         $bridge = new \Minn\Theme\MainQueryBridge($site, $posts, $resolver->perPage());
         $sitemapController = new \Minn\Front\SitemapController($notFound, $bridge, $themed);
         $front = new FrontController($resolver, new Renderer($db, $posts, $permalinks, $resolver->perPage()), $pages, $feedController, $cron, $classic, $sitemapController, new \Minn\Theme\EmbedRenderer($bridge));
@@ -323,7 +323,6 @@ final readonly class Engine
             new \Minn\Runtime\AjaxController(),
             new ProbeController($site, $permalinks, new SiteIcon($site, $posts, $permalinks), $cron, $bridge),
             $sitemapController,
-            $feedController,
             new CommentPostController(),
             $front,
         );

@@ -158,6 +158,38 @@ final class RewriteRules
         }
     }
 
+    /**
+     * A post type's archive rules, which join the top rules as it registers
+     * (probe cpt-rules): its archive slug (the rewrite slug when the archive
+     * is just true) under the front of the structure, or the root when the
+     * type opts out of the front; the archive, its two feed rules when the
+     * type has feeds, its pages when it has those.
+     *
+     * @param array<string, mixed> $type the registered type
+     * @return array<string, string>
+     */
+    public static function typeArchive(\WP_Rewrite $rewrite, string $name, array $type): array
+    {
+        $archive = $type['has_archive'] ?? false;
+        $args = is_array($type['rewrite'] ?? null) ? $type['rewrite'] : [];
+        if ($archive === false || $archive === '' || $args === []) {
+            return [];
+        }
+        $slug = ($archive === true ? (string) ($args['slug'] ?? $name) : (string) $archive);
+        $slug = (empty($args['with_front']) ? (string) $rewrite->root : substr((string) $rewrite->front, 1)) . $slug;
+        $query = $rewrite->index . "?post_type={$name}";
+        $rules = ["{$slug}/?$" => $query];
+        if (!empty($args['feeds'])) {
+            $feeds = '(' . implode('|', $rewrite->feeds) . ')/?$';
+            $rules["{$slug}/{$rewrite->feed_base}/{$feeds}"] = $query . '&feed=$matches[1]';
+            $rules["{$slug}/{$feeds}"] = $query . '&feed=$matches[1]';
+        }
+        if (!empty($args['pages'])) {
+            $rules["{$slug}/{$rewrite->pagination_base}/([0-9]{1,})/?$"] = $query . '&paged=$matches[1]';
+        }
+        return $rules;
+    }
+
     /** Whether a structure begins with a tag that could be a page's path too (use_verbose_page_rules). */
     public static function verbosePages(string $structure): bool
     {

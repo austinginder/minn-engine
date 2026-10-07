@@ -17,26 +17,31 @@ use Minn\Content\Reader;
 use Minn\Auth\Nonce;
 
 /**
- * Turns a public URL into a Resolution, following the reference's observed
- * rules:
+ * Turns a public URL into a Resolution the way the reference's request
+ * parse does: the root by its query string, any other path by the first
+ * of the site's rewrite rules it fits (Front\RuleTable), whose query vars
+ * name what it is (Front\RuleRoutes). What is left here are the
+ * reference's canonical answers around that (redirect_canonical,
+ * wp_old_slug_redirect):
  *
  * - Unpaged content and archives without a trailing slash redirect to the
- *   slashed form, as typed (case kept); paged views, search, and 404s do not.
+ *   slashed form, as typed (case kept), as do an embed's and an endpoint's
+ *   addresses; paged views, search, and 404s do not.
  * - Query-var forms (?p=, ?page_id=, ?cat=, ?tag=, ?author=, ?m=, ?name=,
  *   ?pagename=) redirect to the pretty form when the target is public.
- * - Archive-shaped paths (category, tag, author, search, a four-digit year)
- *   are strict: a mismatch is a 404 with no guessing.
- * - Plain-segment paths try the page hierarchy, then the post structure,
- *   then redirect to the closest published page or post whose name starts
- *   with the last segment, pages before posts, newest first.
- * - Empty term and date archives are 404; an author archive is 200 for any
- *   name, even one that belongs to nobody.
+ * - A single asked for under a category it is not in (where the
+ *   structure names one), or with an old-style page number, moves to its
+ *   own address; a trackback address goes to the post; the front page
+ *   answers only at the root.
+ * - A name the site no longer has: the post that used to have it, else the
+ *   closest published page or post whose name starts with it, pages before
+ *   posts, newest first. Archives never guess.
  * - Non-public posts are 404 to anonymous readers and served to a reader
  *   who can edit them.
  */
 final readonly class Resolver
 {
-    /** @param Closure(array $post): bool $canReadUnpublished */
+    /** @param Closure(PostRecord): bool $canReadUnpublished */
     public function __construct(
         private Db $db,
         private Posts $posts,
@@ -79,29 +84,7 @@ final readonly class Resolver
      */
     public function resolve(Request $request, ?Redirects $mode = null): Resolution
     {
-        $redirects = $mode ?? Redirects::forRequest($request);
-        // A plugin's own rewrite rules: 'top' rules outrank everything the
-        // engine would resolve, 'bottom' rules catch what it could not.
-        $ruleVars = PluginRules::match($request->path, top: true);
-        if ($ruleVars !== null) {
-            return $this->fromRuleVars($ruleVars);
-        }
-        // Rules a plugin changed decide where they part from the engine's own reading.
-        $ruleVars = StoredRules::route($request->path);
-        if ($ruleVars !== null) {
-            $resolution = $this->fromRuleVars($ruleVars);
-            $slashable = in_array($resolution->kind, [Kind::Single, Kind::Page, Kind::Category, Kind::Tag, Kind::Author, Kind::Date, Kind::Taxonomy], true);
-            return $redirects->follows() && $slashable && !isset($ruleVars['paged']) && !str_ends_with($request->path, '/')
-                ? Resolution::redirect($this->permalinks->url($request->path . '/') . $request->queryStringWithout())
-                : $resolution;
-        }
-        $resolution = $this->endpoint($request, $redirects) ?? $this->resolvePath($request, $redirects);
-        if ($resolution->kind === Kind::NotFound) {
-            $ruleVars = PluginRules::match($request->path, top: false);
-            if ($ruleVars !== null) {
-                return $this->fromRuleVars($ruleVars);
-            }
-        }
+        $resolution = $this->resolvePath($request, $mode ?? Redirects::forRequest($request));
         // A preview link names an autosave: preview_id plus the reader's own nonce for that post.
         if ($resolution->kind === Kind::Single || $resolution->kind === Kind::Page) {
             $reader = Reader::current();
@@ -112,25 +95,6 @@ final readonly class Resolver
             }
         }
         return $resolution;
-    }
-
-    /**
-     * The resolution a matched plugin rewrite rule stands for: what its vars
-     * name (Front\RuleRoutes), the home query when they name nothing (the
-     * reference's shape for a rule that only sets a plugin's own flags). The
-     * vars stay on the request state so get_query_var() answers them and the
-     * plugin's template_include callback can take the page over.
-     *
-     * @param array<string, string> $vars
-     */
-    private function fromRuleVars(array $vars): Resolution
-    {
-        if (Runtime::booted()) {
-            Runtime::current()->set(PluginRules::STATE, $vars);
-            Runtime::current()->set(PluginRules::MATCHED, true);
-        }
-        $page = fn (array $segments, int $paged): ?Resolution => $this->resolveSingle($segments, $paged, Redirects::Follow);
-        return (new RuleRoutes($this->posts, $this->archives(), $page, $this->readable(...)))->resolve($vars);
     }
 
     private function resolvePath(Request $request, Redirects $redirects): Resolution
@@ -153,55 +117,122 @@ final readonly class Resolver
         if ($path === '/') {
             return $this->resolveQueryVars($request, $redirects);
         }
-        if (!$this->permalinks->isPretty()) {
-            return Resolution::notFound();
+        $vars = RuleTable::vars($path);
+        if ($vars === null) {
+            return Resolution::notFound()->withVars(['error' => '404']);
         }
-        $segments = array_values(array_filter(explode('/', $path), static fn (string $s) => $s !== ''));
-        $paged = 1;
-        $count = count($segments);
-        if ($count >= 2 && $segments[$count - 2] === 'page' && ctype_digit($segments[$count - 1])) {
-            $paged = max(1, (int) $segments[$count - 1]);
-            array_splice($segments, -2);
-        }
-        if ($segments !== [] && preg_match('/^comment-page-\d+$/', (string) end($segments)) === 1) {
-            array_pop($segments);
-            return $this->elsewhere()->commentPage($this->resolveSingle($segments, 1, $redirects), $redirects);
-        }
-        if ($segments !== [] && in_array(end($segments), ['embed', 'trackback'], true)) {
-            $suffix = array_pop($segments);
-            $single = $this->resolveSingle($segments, 1, $redirects);
-            if ($single !== null && $single->kind === Kind::Redirect) {
-                return $this->elsewhere()->formerSuffix($single, $suffix);
-            }
-            if ($suffix === 'trackback' && $single !== null) {
-                return Resolution::redirect($this->permalinks->forPost($single->record), 302);
-            }
-            if ($single !== null && !str_ends_with($path, '/') && $canonical) {
-                return Resolution::redirect($this->permalinks->url($path . '/') . $request->queryStringWithout());
-            }
-            return $single ?? Resolution::notFound();
-        }
+        $routes = new RuleRoutes($this->posts, $this->archives(), $this->permalinks->frontPageId, $this->permalinks->postsPageId, $this->readable(...));
+        return $this->canonical($routes->resolve($vars)->withVars($vars), $request, $path, $redirects);
+    }
 
-        $resolution = $this->pluginRoute($segments, $paged) ?? match (true) {
-            $segments === [] => $this->archives()->home($paged),
-            $segments[0] === 'category' => $this->archives()->term('category', array_slice($segments, 1), $paged),
-            $segments[0] === 'tag' => $this->archives()->term('post_tag', array_slice($segments, 1), $paged),
-            $segments[0] === 'author' => count($segments) === 2 ? $this->archives()->author($segments[1], $paged) : Resolution::notFound(),
-            $segments[0] === 'search' => count($segments) === 2 ? $this->archives()->search(rawurldecode($segments[1]), $paged) : Resolution::notFound(),
-            $segments[0] === 'feed' => Resolution::notFound(),
-            preg_match('/^\d{4}$/', $segments[0]) === 1 => $this->archives()->date($segments, $paged),
-            default => $this->resolveContent($segments, $paged, $redirects),
-        };
+    /**
+     * The canonical answer for what a path's rule found: the found thing
+     * as typed, or where it should be asked for instead.
+     */
+    private function canonical(Resolution $resolution, Request $request, string $path, Redirects $redirects): Resolution
+    {
+        $vars = $resolution->vars;
+        $follows = $redirects->follows();
+        $slashed = str_ends_with($path, '/');
+        $slash = fn (): Resolution => Resolution::redirect($this->permalinks->url($path . '/') . $request->queryStringWithout());
+        // A feed is served where it was asked for, its trailing slash aside.
+        if (($vars['feed'] ?? '') !== '') {
+            return $follows && !$slashed ? $slash() : $resolution;
+        }
+        if ($resolution->kind === Kind::NotFound) {
+            return $this->missing($vars, $redirects) ?? $resolution;
+        }
+        $record = $resolution->record instanceof PostRecord ? $resolution->record : null;
+        if ($record !== null && isset($vars['tb'])) {
+            // A trackback address goes to the post, even as typed.
+            return Resolution::redirect($this->permalinks->forPost($record), 302);
+        }
+        if ($record !== null && ($vars['cpage'] ?? '') !== '') {
+            // Comment pages are the single's when the site pages its comments; otherwise the single's own address.
+            return $follows && !(bool) $this->db->option('page_comments') ? Resolution::redirect($this->permalinks->forPost($record)) : $resolution;
+        }
+        if ($record !== null && (($vars['page'] ?? '') !== '' || ($resolution->front && ($vars['pagename'] ?? '') !== '' && !isset($vars['embed'])))) {
+            // An old-style page number (the reference no longer honours one) and the front page at its own path: the plain address.
+            return $follows ? Resolution::redirect($this->permalinks->forPost($record)) : ($resolution->front ? $resolution : Resolution::notFound());
+        }
+        if (isset($vars['embed']) || $this->endpointIn($vars)) {
+            return $follows && !$slashed ? $slash() : $resolution;
+        }
+        if ($follows && $record !== null && !isset($vars['paged']) && $this->elsewhere()->misplaced($record, $vars)) {
+            return Resolution::redirect($this->permalinks->forPost($record) . $request->queryStringWithout());
+        }
         if (AttachmentAddresses::names($resolution)) {
             return $this->attachments()->answer($resolution, $request, $redirects);
         }
-        // The reference adds the trailing slash only for unpaged content
-        // and archives; paged views, search, and 404s answer as typed.
         $slashable = in_array($resolution->kind, [Kind::Single, Kind::Page, Kind::Category, Kind::Tag, Kind::Author, Kind::Date], true);
-        if ($canonical && $slashable && $paged === 1 && !str_ends_with($path, '/')) {
-            return Resolution::redirect($this->permalinks->url($path . '/') . $request->queryStringWithout());
+        return $follows && $slashable && !isset($vars['paged']) && !$slashed ? $slash() : $resolution;
+    }
+
+    /**
+     * A name the site does not have: where the post that used to have it
+     * lives now (as typed too, where wp_old_slug_redirect makes the move),
+     * else, on a single's rule, the closest match. Null when there is none.
+     *
+     * @param array<string, string> $vars
+     */
+    private function missing(array $vars, Redirects $redirects): ?Resolution
+    {
+        $name = (string) ($vars['name'] ?? '');
+        $former = $name !== '' && in_array($vars['post_type'] ?? 'post', ['post'], true)
+            ? $this->elsewhere()->formerSlug($name, max(1, (int) ($vars['paged'] ?? 1)))
+            : null;
+        if ($former !== null) {
+            if (($vars['page'] ?? '') !== '') {
+                return $redirects->follows() ? $this->elsewhere()->formerSlug($name) : null;
+            }
+            return isset($vars['embed']) ? $this->elsewhere()->formerSuffix($former, 'embed') : $former;
         }
-        return $resolution;
+        // A page path guesses only when no page stands there (a page past its last listing page is just a 404).
+        $pagename = self::segments((string) ($vars['pagename'] ?? ''));
+        $pagename = $pagename !== [] && $this->posts->byTypedPath($pagename, ['page', 'attachment']) === null ? $pagename : [];
+        $slug = $name !== '' ? $name : (string) ($vars['attachment'] ?? end($pagename));
+        $guess = $redirects->follows() && $slug !== '' ? $this->posts->guess($slug, self::viewableTypes()) : null;
+        if ($guess === null) {
+            return null;
+        }
+        // A guessed destination keeps the page number the reader typed.
+        return Resolution::redirect($this->permalinks->forPost($guess) . (($vars['page'] ?? '') !== '' ? $vars['page'] . '/' : ''));
+    }
+
+    /**
+     * The post types a guess looks among: those a reader can view that
+     * searches include.
+     *
+     * @return list<string>
+     */
+    private static function viewableTypes(): array
+    {
+        $types = [];
+        foreach (Runtime::registry()->postTypes() as $name => $type) {
+            $viewable = !empty($type['publicly_queryable']) || (!empty($type['_builtin']) && !empty($type['public']));
+            if ($viewable && empty($type['exclude_from_search'])) {
+                $types[] = (string) $name;
+            }
+        }
+        return $types;
+    }
+
+    /** Whether the vars carry a rewrite endpoint's var. @param array<string, string> $vars */
+    private function endpointIn(array $vars): bool
+    {
+        foreach ((array) ($GLOBALS['wp_rewrite']->endpoints ?? []) as $endpoint) {
+            $var = (string) (array_values((array) $endpoint)[2] ?? '');
+            if ($var !== '' && array_key_exists($var, $vars)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /** @return list<string> */
+    private static function segments(string $path): array
+    {
+        return array_values(array_filter(explode('/', $path), static fn (string $s) => $s !== ''));
     }
 
     private function resolveQueryVars(Request $request, Redirects $redirects): Resolution
@@ -263,156 +294,6 @@ final readonly class Resolver
             return Resolution::notFound();
         }
         return Resolution::redirect($this->permalinks->forDate($year, $month, $day));
-    }
-
-    /** A search's results; a page past the last one is a 404, as the home's and archives' are. */
-    /**
-     * A plugin's post type or taxonomy behind the path: its archive at the
-     * has_archive slug (which wins over a page of the same name), a single
-     * under the type's rewrite slug, or a term under the taxonomy's. Only
-     * once the runtime has loaded the plugins that register them.
-     *
-     * @param list<string> $segments
-     */
-    private function pluginRoute(array $segments, int $paged): ?Resolution
-    {
-        $registry = Runtime::booted() ? Runtime::registry() : null;
-        if ($registry === null || $segments === []) {
-            return null;
-        }
-        foreach ($registry->postTypes() as $name => $type) {
-            if (!empty($type['_builtin']) || empty($type['publicly_queryable']) || empty($type['rewrite'])) {
-                continue;
-            }
-            $archive = $type['has_archive'] ?? false;
-            $archiveSlug = is_string($archive) && $archive !== '' ? $archive : ($archive === true ? $this->permalinks->typeSlug((string) $name) : null);
-            if ($archiveSlug !== null && $segments === self::segmentsOf($archiveSlug)) {
-                $total = $this->posts->count(PostFilter::types((string) $name));
-                return $paged > 1 && $paged > $this->archives()->pages($total) ? Resolution::notFound() : Resolution::postTypeArchive(['name' => (string) $name] + $type, $paged);
-            }
-            $prefix = self::segmentsOf($this->permalinks->typeSlug((string) $name));
-            if (count($segments) === count($prefix) + 1 && array_slice($segments, 0, count($prefix)) === $prefix) {
-                $post = $this->posts->findByNameAnyStatus(end($segments), [(string) $name]);
-                return $post !== null && $this->readable($post) ? Resolution::single($post, $paged) : Resolution::notFound();
-            }
-        }
-        foreach ($registry->taxonomies() as $name => $taxonomy) {
-            if (!empty($taxonomy['_builtin']) || empty($taxonomy['publicly_queryable']) || empty($taxonomy['rewrite'])) {
-                continue;
-            }
-            $prefix = self::segmentsOf($this->permalinks->taxonomySlug((string) $name) ?? (string) $name);
-            if (count($segments) > count($prefix) && array_slice($segments, 0, count($prefix)) === $prefix) {
-                return $this->archives()->taxonomy((string) $name, (array) ($taxonomy['object_type'] ?? []), array_slice($segments, count($prefix)), $paged);
-            }
-        }
-        return null;
-    }
-
-    /** @return list<string> */
-    private static function segmentsOf(string $slug): array
-    {
-        return array_values(array_filter(explode('/', $slug), static fn (string $s) => $s !== ''));
-    }
-
-    /** @param list<string> $segments */
-    private function resolveContent(array $segments, int $paged, Redirects $redirects): Resolution
-    {
-        $canonical = $redirects->follows();
-        $single = $this->resolveSingle($segments, $paged, $redirects);
-        if ($single !== null) {
-            return $single;
-        }
-        // A trailing number on a single is an old-style page number the
-        // reference no longer honours; it redirects to the plain permalink.
-        $number = '';
-        if (count($segments) >= 2 && ctype_digit(end($segments))) {
-            $parent = $this->resolveSingle(array_slice($segments, 0, -1), 1, $redirects);
-            if ($parent !== null && $parent->kind === Kind::Redirect) {
-                // A former slug with a page number goes to the post's plain address.
-                return $canonical ? $parent : Resolution::notFound();
-            }
-            if ($parent !== null) {
-                return $canonical ? Resolution::redirect($this->permalinks->forPost($parent->record)) : Resolution::notFound();
-            }
-            // A guessed destination keeps the number the reader typed.
-            $number = array_pop($segments) . '/';
-        }
-        // A structure that opens with the category lets a bare category
-        // path stand as the archive.
-        if ($number === '' && str_starts_with($this->permalinks->structure, '/%category%')) {
-            $archive = $this->archives()->term('category', $segments, $paged);
-            if ($archive->kind !== Kind::NotFound) {
-                return $archive;
-            }
-        }
-        // Under a category-first structure an unmatched bare path reads as
-        // a category query on the reference, which never guesses; other
-        // structures read it as a name and guess from it.
-        if (str_starts_with($this->permalinks->structure, '/%category%')) {
-            return Resolution::notFound();
-        }
-        $guess = $canonical ? $this->posts->guess(end($segments)) : null;
-        return $guess === null ? Resolution::notFound() : Resolution::redirect($this->permalinks->forPost($guess) . $number);
-    }
-
-    /** @param list<string> $segments */
-    private function resolveSingle(array $segments, int $paged, Redirects $redirects): ?Resolution
-    {
-        $canonical = $redirects->follows();
-        if ($segments === []) {
-            return null;
-        }
-        $page = $this->posts->pageByPathAnyStatus($segments);
-        if ($page !== null && $this->readable($page)) {
-            // The static front page answers only at the site root.
-            if ($page->id === $this->permalinks->frontPageId) {
-                return $canonical ? Resolution::redirect($this->permalinks->url('/')) : Resolution::frontPage($page, $paged);
-            }
-            // The posts page paginates like the home listing: page/N serves
-            // the blog's page N, and past the last page it is a 404.
-            if ($page->id === $this->permalinks->postsPageId) {
-                $total = (int) $this->db->value(
-                    "SELECT COUNT(*) FROM {$this->db->table('posts')} WHERE post_type = 'post' AND post_status = 'publish'",
-                );
-                return $paged > 1 && $paged > $this->archives()->pages($total) ? Resolution::notFound() : Resolution::postsPage($page, $paged);
-            }
-            return Resolution::single($page, $paged);
-        }
-        $regex = $this->permalinks->structureRegex();
-        if ($regex !== null && preg_match($regex, implode('/', $segments), $m)) {
-            $post = isset($m['post_id'])
-                ? $this->posts->find((int) $m['post_id'])
-                : $this->posts->findByNameAnyStatus($m['postname'], ['post']);
-            if ($post !== null && $post->type === 'post' && $this->readable($post)) {
-                return Resolution::single($post, $paged);
-            }
-            if ($post === null && isset($m['postname'])) {
-                return $this->attachments()->at($segments) ?? $this->elsewhere()->formerSlug($m['postname'], $paged);
-            }
-        }
-        return $this->attachments()->at($segments);
-    }
-
-    /**
-     * An address that ends in a plugin's rewrite endpoint: what the address
-     * before it resolves to (the endpoint's var riding along for
-     * get_query_var), when the endpoint may follow that; null otherwise.
-     */
-    private function endpoint(Request $request, Redirects $redirects): ?Resolution
-    {
-        $endpoint = Endpoints::split($request->path);
-        $base = $endpoint === null ? null : $this->resolvePath($request->withPath($endpoint['base']), $redirects);
-        // An address shaped like a post's that finds none still matched the post's endpoint rule: a 404 with the var set.
-        $regex = $this->permalinks->structureRegex();
-        $shaped = $base !== null && $base->kind === Kind::NotFound && ($endpoint['places'] & 1) !== 0 && $regex !== null && preg_match($regex, trim($endpoint['base'], '/')) === 1;
-        if ($base === null || (!$shaped && !Endpoints::allows($endpoint['places'], $base))) {
-            return null;
-        }
-        if ($redirects->follows() && !str_ends_with($request->path, '/')) {
-            return Resolution::redirect($this->permalinks->url($request->path . '/') . $request->queryStringWithout());
-        }
-        Runtime::current()->set(PluginRules::STATE, [$endpoint['var'] => $endpoint['value']] + PluginRules::stashed());
-        return $base;
     }
 
     /** The archives a request may stand for. */

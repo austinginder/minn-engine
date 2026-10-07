@@ -6,12 +6,14 @@ namespace Minn\Front;
 
 use Minn\Content\PostRecord;
 use Minn\Content\Posts;
+use Minn\Content\Terms;
 use Minn\Db;
 
 /**
  * The addresses a single answers to besides its own, as the reference
  * treats them: a slug the post used to have (alone, with a page number, or
- * with an embed or trackback suffix), and its comment-page-N addresses.
+ * with an embed or trackback suffix), and an address that puts it under a
+ * category it is not in.
  */
 final readonly class SingleAddresses
 {
@@ -44,20 +46,26 @@ final readonly class SingleAddresses
     }
 
     /**
-     * A single's comment-page-N address: served as the single when the site
-     * pages its comments, sent to the single's own address when it does
-     * not, as the reference does. (The engine does not page the comment
-     * list itself yet; contracts/front.)
+     * Whether a post was asked for under a category it is not in, where
+     * the structure names the category: the category the address names is
+     * none at that path, or not one of the post's. The reference finds the
+     * post by its name whatever the category, then moves to its own
+     * address (a post in two categories answers under either).
+     *
+     * @param array<string, string> $vars
      */
-    public function commentPage(?Resolution $single, Redirects $redirects): Resolution
+    public function misplaced(PostRecord $post, array $vars): bool
     {
-        if ($single === null || $single->kind === Kind::Redirect || !$single->record instanceof PostRecord) {
-            return $single ?? Resolution::notFound();
+        $path = array_values(array_filter(explode('/', (string) ($vars['category_name'] ?? '')), static fn (string $s) => $s !== ''));
+        if ($path === [] || $post->type === 'page' || $post->type === 'attachment' || !str_contains($this->permalinks->structure, '%category%')) {
+            return false;
         }
-        if (!(bool) $this->db->option('page_comments') && $redirects->follows()) {
-            return Resolution::redirect($this->permalinks->forPost($single->record));
+        $terms = new Terms($this->db);
+        $category = $terms->findBySlug('category', (string) end($path));
+        if ($category === null || strcasecmp($terms->pathOf($category), implode('/', $path)) !== 0) {
+            return true;
         }
-        return $single;
+        return !in_array($category->id, array_column($this->posts->terms($post->id, 'category'), 0), true);
     }
 
     /**

@@ -92,18 +92,18 @@ if ($referenceUp) {
 }
 
 // The plugin's routed page: a rewrite rule plus template_include take the
-// response over (the CaptainCore Manager shape). The engine matches the
-// registered rules live; the reference matches from its flushed option, so
-// flush around the battery and again after the plugin switches back off.
+// response over (the CaptainCore Manager shape). Both stacks match from the
+// stored rules, as WordPress does, so the rules are flushed with the plugin
+// on before either is asked, and again after it switches back off.
 $flush = static function (): void {
     shell_exec('cd ' . escapeshellarg(minn_test_site_root() . '/wp-reference') . ' && /opt/homebrew/bin/wp rewrite flush 2>/dev/null');
 };
+$flush();
 [$h, $appHtml] = minn_test_fetch($base . '/minn-test-app/orders/');
 $check('rewrite rule routes to the plugin template', ($h['status'] ?? 0) === 200 && str_contains($appHtml, '<body class="minn-test-app">') && str_contains($appHtml, '<p id="route">orders</p>'), substr((string) strstr((string) $appHtml, '<body'), 0, 160));
 [$h, $appRoot] = minn_test_fetch($base . '/minn-test-app/');
 $check('rewrite rule base path routes too', ($h['status'] ?? 0) === 200 && str_contains($appRoot, '<p id="route">(root)</p>'), substr((string) strstr((string) $appRoot, '<body'), 0, 160));
 if ($referenceUp) {
-    $flush();
     [$rh, $refApp] = minn_test_fetch($reference . '/minn-test-app/orders/');
     $check('reference serves the routed page byte for byte', ($rh['status'] ?? 0) === 200 && $refApp === $appHtml, ($rh['status'] ?? 0) . ' ' . substr((string) $refApp, 0, 120));
 } else {
@@ -111,9 +111,7 @@ if ($referenceUp) {
 }
 
 update_option('active_plugins', $before);
-if ($referenceUp) {
-    $flush();
-}
+$flush();
 [, $off] = minn_test_fetch($base . '/hello-world/');
 $check('deactivated: no marks', !str_contains($off, 'minn-test-plugin'));
 

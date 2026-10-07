@@ -220,32 +220,6 @@ final readonly class Permalinks
         return $page <= 1 ? $baseUrl : rtrim($baseUrl, '/') . "/page/{$page}/";
     }
 
-    /**
-     * A regex over the structure's tokens, so an incoming path can be
-     * matched back to the post it names. Null when the structure has no
-     * identifying token.
-     */
-    public function structureRegex(): ?string
-    {
-        if (!$this->isPretty() || !preg_match('/%(postname|post_id)%/', $this->structure)) {
-            return null;
-        }
-        $tokens = [
-            '%year%' => '(?P<year>\d{4})',
-            '%monthnum%' => '(?P<monthnum>\d{2})',
-            '%day%' => '(?P<day>\d{2})',
-            '%hour%' => '(?P<hour>\d{2})',
-            '%minute%' => '(?P<minute>\d{2})',
-            '%second%' => '(?P<second>\d{2})',
-            '%post_id%' => '(?P<post_id>\d+)',
-            '%postname%' => '(?P<postname>[^/]+)',
-            '%category%' => '(?P<category>.+?)',
-            '%author%' => '(?P<author>[^/]+)',
-        ];
-        $regex = strtr(preg_quote(trim($this->structure, '/'), '#'), $tokens);
-        return "#^{$regex}$#";
-    }
-
     private function hasPrettyLink(PostRecord $post): bool
     {
         return in_array($post->status, ['publish', 'private'], true) && $post->slug !== '';

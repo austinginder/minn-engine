@@ -1556,9 +1556,17 @@ function register_post_type($post_type, $args = [])
     }
     $args = apply_filters('register_post_type_args', (array) $args, $post_type);
     $row = Runtime::registry()->registerPostType($post_type, $args);
+    // A viewable type's own var is one the request parse reads (probe cpt-rules).
+    $var = $row['query_var'] ?? false;
+    if (is_string($var) && $var !== '' && !empty($row['publicly_queryable'])) {
+        _minn_rewrite();
+        $GLOBALS['wp']->add_query_var($var);
+    }
     if (is_array($row['rewrite']) && Registry::settlesRewrites()) {
-        // Its tag and address pattern, under the front of the structure at the time unless it opts out (probes registry-rewrites, rewrite-generate).
-        $var = $row['query_var'] ?? false;
+        // Its archive, tag and address pattern, under the front of the structure at the time unless it opts out (probes registry-rewrites, rewrite-generate, cpt-rules).
+        foreach (Minn\Runtime\RewriteRules::typeArchive(_minn_rewrite(), $post_type, $row) as $regex => $query) {
+            add_rewrite_rule($regex, $query, 'top');
+        }
         add_rewrite_tag("%{$post_type}%", empty($row['hierarchical']) ? '([^/]+)' : '(.+?)', is_string($var) && $var !== '' ? "{$var}=" : "post_type={$post_type}&" . (empty($row['hierarchical']) ? 'name=' : 'pagename='));
         add_permastruct($post_type, "{$row['rewrite']['slug']}/%{$post_type}%", ['with_front' => $row['rewrite']['with_front'], 'ep_mask' => $row['rewrite']['ep_mask'], 'feed' => $row['rewrite']['feeds']]);
     }
@@ -1577,8 +1585,15 @@ function unregister_post_type($post_type)
     if ($object->_builtin) {
         return new WP_Error('invalid_post_type', 'Unregistering a built-in post type is not allowed');
     }
+    $row = Runtime::registry()->postType((string) $post_type) ?? [];
     Runtime::registry()->unregisterPostType((string) $post_type);
     remove_permastruct((string) $post_type);
+    foreach (Minn\Runtime\RewriteRules::typeArchive(_minn_rewrite(), (string) $post_type, $row) as $regex => $query) {
+        unset(_minn_rewrite()->extra_rules_top[$regex]);
+    }
+    if (is_string($row['query_var'] ?? false)) {
+        $GLOBALS['wp']->remove_query_var($row['query_var']);
+    }
     do_action('unregistered_post_type', $post_type);
     return true;
 }

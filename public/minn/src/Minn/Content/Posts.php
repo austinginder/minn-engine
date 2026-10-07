@@ -159,29 +159,22 @@ final readonly class Posts
     }
 
     /**
-     * The closest published post or page whose name starts with the given
-     * text: pages first, then posts, newest first within each. This is the
-     * order the reference follows when it guesses a destination for a
-     * missing URL.
+     * The published post whose name starts with the given text, among the
+     * given types, as the reference guesses a destination for a missing
+     * URL: one prefix query and no order of its own, so the database's
+     * plan for it decides which match comes first (on a small table its
+     * name index, alphabetical; on a large one its type and date index,
+     * oldest first), the same on both stacks over one database.
+     *
+     * @param list<string> $types
      */
-    public function guess(string $prefix): ?PostRecord
+    public function guess(string $prefix, array $types): ?PostRecord
     {
-        foreach (['page', 'post'] as $type) {
-            $exact = $this->findByName($prefix, [$type]);
-            if ($exact !== null) {
-                return $exact;
-            }
-            $like = $this->db->row(
-                "SELECT * FROM {$this->db->table('posts')}
-                 WHERE post_name LIKE ? AND post_type = ? AND post_status = 'publish'
-                 ORDER BY post_date DESC LIMIT 1",
-                [addcslashes($prefix, '%_\\') . '%', $type],
-            );
-            if ($like !== null) {
-                return self::record($like);
-            }
-        }
-        return null;
+        $id = $this->db->value(
+            "SELECT ID FROM {$this->db->table('posts')} WHERE post_name LIKE ? AND post_type IN (?) AND post_status IN ('publish')",
+            [addcslashes($prefix, '%_\\') . '%', $types],
+        );
+        return $id === null ? null : $this->find((int) $id);
     }
 
     /**

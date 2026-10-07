@@ -11,11 +11,11 @@ use Minn\Db;
 use Minn\Http\Request;
 
 /**
- * The addresses an attachment's page answers to, as the reference's rules
- * find it: by id or slug in the query (?attachment_id=, ?attachment=); a
- * loose attachment (no parent) by its slug at the top; any attachment by
- * its slug under a post's or page's address, "attachment/" between or
- * not; and as a post (?p=, ?page_id=), which moves to its own page. With
+ * The addresses an attachment's page answers to besides those its rules
+ * find (Front\RuleTable: a loose one by its slug at the top, any by its
+ * slug under another address, "attachment/" between or not): by id or
+ * slug in the query (?attachment_id=, ?attachment=), and as a post (?p=,
+ * ?page_id=), which moves to its own page. With
  * attachment pages off (wp_attachment_pages_enabled, the default) every
  * other address answers as typed; with them on, one that is not its own
  * moves there. An attachment is readable as its parent is.
@@ -59,28 +59,6 @@ final readonly class AttachmentAddresses
         }
         $link = $this->permalinks->forAttachment($post);
         return $redirects->follows() && $this->permalinks->isPretty() && !str_contains($link, '?') ? Resolution::redirect($link . $request->queryStringWithout($key)) : Resolution::single($post);
-    }
-
-    /**
-     * The attachment a pretty address names: a loose one by its slug alone,
-     * any by its slug under a post's or page's address.
-     *
-     * @param list<string> $segments
-     */
-    public function at(array $segments): ?Resolution
-    {
-        $slug = (string) end($segments);
-        $under = array_slice($segments, 0, -1);
-        if ($under !== [] && end($under) === 'attachment') {
-            array_pop($under);
-        }
-        $regex = $this->permalinks->structureRegex();
-        $placed = $under === [] || ($regex !== null && preg_match($regex, implode('/', $under)) === 1) || $this->posts->pageByPathAnyStatus($under) !== null;
-        $attachment = $placed && $slug !== '' ? $this->posts->findByNameAnyStatus($slug, ['attachment']) : null;
-        if ($attachment === null || ($under === [] && $attachment->parentId !== 0) || !$this->readable($attachment)) {
-            return null;
-        }
-        return Resolution::single($attachment);
     }
 
     /**

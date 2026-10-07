@@ -30,7 +30,7 @@ final readonly class EmbedRenderer
     /** Whether a request for this resolution asks for its embed page. */
     public static function asked(Request $request, Resolution $resolution): bool
     {
-        $embed = ($request->query('embed') ?? '') !== '' || preg_match('#^/.+/embed/?$#', $request->path) === 1;
+        $embed = ($request->query('embed') ?? '') !== '' || ($resolution->vars['embed'] ?? '') !== '';
         return $embed && in_array($resolution->kind, [Kind::Single, Kind::Page, Kind::NotFound], true);
     }
 

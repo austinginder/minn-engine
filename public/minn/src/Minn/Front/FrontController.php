@@ -107,8 +107,8 @@ final readonly class FrontController
         if ($this->sitemaps !== null && Runtime::booted() && ($request->has('sitemap') || $request->has('sitemap-stylesheet'))) {
             return $this->sitemaps->queried($request);
         }
-        if ($this->feeds !== null && $request->has('feed') && $resolution->kind !== Kind::NotFound) {
-            return $this->feeds->queryFeed($request, $resolution, (string) $request->query('feed', 'rss2'));
+        if ($this->feeds !== null && FeedController::asked($request, $resolution)) {
+            return $this->feeds->serve($request, $resolution);
         }
         $html = $this->theme?->render($resolution, $this->renderer->bodyClasses($resolution), $this->renderer->title($resolution))
             ?? $this->classic?->render($resolution, $this->renderer->bodyClasses($resolution), $this->renderer->title($resolution))

@@ -7,7 +7,7 @@
         "leaf": 660,
         "noop": 1953,
         "functions": 4179,
-        "minnMethods": 764,
+        "minnMethods": 765,
         "leafLinesOver15": 13
     },
     "functions": {
@@ -27602,15 +27602,18 @@
         },
         "register_post_type": {
             "file": "post.php",
-            "lines": 17,
+            "lines": 25,
             "kind": "minn",
             "minn": [
                 "Minn\\Runtime\\Registry::settlesRewrites",
+                "Minn\\Runtime\\RewriteRules::typeArchive",
                 "Minn\\Runtime\\Runtime::registry"
             ],
             "composes": [
                 "_doing_it_wrong",
+                "_minn_rewrite",
                 "add_permastruct",
+                "add_rewrite_rule",
                 "add_rewrite_tag",
                 "apply_filters",
                 "do_action",
@@ -27671,7 +27674,7 @@
         },
         "register_taxonomy": {
             "file": "taxonomy.php",
-            "lines": 16,
+            "lines": 21,
             "kind": "minn",
             "minn": [
                 "Minn\\Runtime\\Registry::settlesRewrites",
@@ -27679,6 +27682,7 @@
             ],
             "composes": [
                 "_doing_it_wrong",
+                "_minn_rewrite",
                 "add_permastruct",
                 "add_rewrite_tag",
                 "apply_filters",
@@ -30228,12 +30232,14 @@
         },
         "unregister_post_type": {
             "file": "post.php",
-            "lines": 11,
+            "lines": 18,
             "kind": "minn",
             "minn": [
+                "Minn\\Runtime\\RewriteRules::typeArchive",
                 "Minn\\Runtime\\Runtime::registry"
             ],
             "composes": [
+                "_minn_rewrite",
                 "do_action",
                 "get_post_type_object",
                 "post_type_exists",
@@ -30258,7 +30264,7 @@
         },
         "unregister_taxonomy": {
             "file": "taxonomy.php",
-            "lines": 10,
+            "lines": 14,
             "kind": "minn",
             "minn": [
                 "Minn\\Runtime\\Runtime::registry"
