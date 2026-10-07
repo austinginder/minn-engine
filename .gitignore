@@ -44,3 +44,6 @@ site/minn-site/
 
 # Language packs (core and plugin) installed for testing; shared with wp-reference by symlink
 public/wp-content/languages/
+
+# Release archives built by scripts/build-release.php
+dist/

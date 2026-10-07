@@ -11,7 +11,8 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/lib.php';
 $ROOT = dirname(__DIR__);
-$ENGINE_DIR = "$ROOT/public/minn";
+// MINN_TEST_ENGINE_DIR runs the suite from an unpacked release (scripts/build-release.php) instead of the checkout.
+$ENGINE_DIR = getenv( 'MINN_TEST_ENGINE_DIR' ) ?: "$ROOT/public/minn";
 $SCRATCH = sys_get_temp_dir() . '/minn-install-' . getmypid();
 $WEBROOT = "$SCRATCH/public";
 $PARK = "$SCRATCH/wp-parked";
