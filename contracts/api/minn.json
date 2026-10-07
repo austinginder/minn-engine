@@ -1644,7 +1644,7 @@
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Admin/BundleController.php",
             "lines": 44,
-            "doc": "What the app bundle carries: the changelog, the user guide, and the\ntranslation offers (none: the engine polls no translation channel);\nand beside them the engine's own changelog.",
+            "doc": "What the app bundle carries: the changelog, the user guide, and the\ntranslation offers (none: the engine polls no translation channel);\nand beside them the engine's own changelog, read from GitHub.",
             "implements": [],
             "extends": null,
             "uses": [
@@ -1655,6 +1655,7 @@
                 "Minn\\Http\\Request",
                 "Minn\\Http\\Response",
                 "Minn\\Http\\Route",
+                "Minn\\Ops\\Changelog",
                 "Minn\\Rest\\Caller",
                 "Minn\\Rest\\Reply"
             ],
@@ -1662,7 +1663,7 @@
                 "Minn\\Rest\\Api"
             ],
             "constructor": {
-                "signature": "__construct(Minn\\Admin\\App $app, Minn\\Rest\\Caller $caller)",
+                "signature": "__construct(Minn\\Admin\\App $app, Minn\\Rest\\Caller $caller, Minn\\Ops\\Changelog $engineChangelog)",
                 "doc": "",
                 "shapes": [],
                 "params": [
@@ -1679,11 +1680,18 @@
                         "shape": "",
                         "default": null,
                         "doc": ""
+                    },
+                    {
+                        "name": "engineChangelog",
+                        "type": "Minn\\Ops\\Changelog",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
                     }
                 ],
                 "visibility": "public",
-                "line": 23,
-                "end": 27
+                "line": 24,
+                "end": 29
             },
             "cases": [],
             "constants": [],
@@ -1700,6 +1708,15 @@
                 {
                     "name": "caller",
                     "type": "Minn\\Rest\\Caller",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
+                },
+                {
+                    "name": "engineChangelog",
+                    "type": "Minn\\Ops\\Changelog",
                     "readonly": true,
                     "static": false,
                     "doc": "",
@@ -1727,8 +1744,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 31,
-                    "end": 34
+                    "line": 33,
+                    "end": 36
                 },
                 {
                     "routes": [
@@ -1749,8 +1766,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 38,
-                    "end": 41
+                    "line": 40,
+                    "end": 43
                 },
                 {
                     "routes": [
@@ -1760,7 +1777,7 @@
                     "static": false,
                     "visibility": "public",
                     "signature": "engineChangelog(Minn\\Http\\Request $request): Minn\\Http\\Response",
-                    "doc": "The engine's own changelog (changelog.md beside bootstrap.php), shown beside the app's on Minn.",
+                    "doc": "The engine's own changelog, kept in its repository and not in a release, shown beside the app's on Minn.",
                     "shapes": [],
                     "params": [
                         {
@@ -1771,8 +1788,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 45,
-                    "end": 49
+                    "line": 47,
+                    "end": 50
                 },
                 {
                     "routes": [
@@ -1793,8 +1810,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 53,
-                    "end": 56
+                    "line": 54,
+                    "end": 57
                 },
                 {
                     "routes": [],
@@ -1815,8 +1832,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 59,
-                    "end": 63
+                    "line": 60,
+                    "end": 64
                 }
             ]
         },
@@ -30660,6 +30677,7 @@
                 "Minn\\Media\\Images",
                 "Minn\\Media\\Uploads",
                 "Minn\\Media\\Writer",
+                "Minn\\Ops\\Changelog",
                 "Minn\\Ops\\Diagnostics",
                 "Minn\\Ops\\InstalledSoftware",
                 "Minn\\Ops\\Packages",
@@ -55814,6 +55832,7 @@
                 "Minn\\Http\\Subject",
                 "Minn\\Http\\Transport",
                 "Minn\\Http\\TrustedProxies",
+                "Minn\\Ops\\Changelog",
                 "Minn\\Ops\\Releases",
                 "Minn\\Ops\\Updates"
             ],
@@ -75168,6 +75187,164 @@
             ]
         },
         {
+            "name": "Minn\\Ops\\Changelog",
+            "short": "Changelog",
+            "namespace": "Minn\\Ops",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Ops/Changelog.php",
+            "lines": 55,
+            "doc": "Minn's changelog, read from the engine's GitHub repository rather than\nshipped with it: a release carries no notes for anyone to find on the\nsites that run it. The file on the default branch is fetched at most once\na day and kept in the minn_changelog option (JSON) with the time it was\nfetched; sections still marked Unreleased are left out, so a site only\nreads about releases that exist. A fetch GitHub does not answer keeps the\nlast copy; a 404 (no such file, or a private repository) keeps nothing.",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\Content\\Site",
+                "Minn\\Http",
+                "Minn\\Ops\\Releases"
+            ],
+            "usedBy": [
+                "Minn\\Admin\\BundleController",
+                "Minn\\Rest\\Services"
+            ],
+            "constructor": {
+                "signature": "__construct(Closure $load, Closure $save, string $source = self::SOURCE)",
+                "doc": "",
+                "shapes": [
+                    "@param Closure(): ?string $load the stored copy, as JSON",
+                    "@param Closure(string): void $save keeps the copy, as JSON"
+                ],
+                "params": [
+                    {
+                        "name": "load",
+                        "type": "Closure",
+                        "shape": "Closure(): ?string",
+                        "default": null,
+                        "doc": "the stored copy, as JSON"
+                    },
+                    {
+                        "name": "save",
+                        "type": "Closure",
+                        "shape": "Closure(string): void",
+                        "default": null,
+                        "doc": "keeps the copy, as JSON"
+                    },
+                    {
+                        "name": "source",
+                        "type": "string",
+                        "shape": "",
+                        "default": "self::SOURCE",
+                        "doc": ""
+                    }
+                ],
+                "visibility": "public",
+                "line": 30,
+                "end": 35
+            },
+            "cases": [],
+            "constants": [
+                {
+                    "name": "OPTION",
+                    "value": "'minn_changelog'",
+                    "doc": "",
+                    "visibility": "public"
+                },
+                {
+                    "name": "TTL",
+                    "value": "86400",
+                    "doc": "",
+                    "visibility": "public"
+                },
+                {
+                    "name": "SOURCE",
+                    "value": "'https://raw.githubusercontent.com/austinginder/minn-engine/main/changelog.md'",
+                    "doc": "",
+                    "visibility": "public"
+                }
+            ],
+            "properties": [
+                {
+                    "name": "load",
+                    "type": "Closure",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
+                },
+                {
+                    "name": "save",
+                    "type": "Closure",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
+                },
+                {
+                    "name": "source",
+                    "type": "string",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
+                }
+            ],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "forSite",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "forSite(Minn\\Content\\Site $site): self",
+                    "doc": "The changelog for a site, its copy kept in the site's minn_changelog option.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "site",
+                            "type": "Minn\\Content\\Site",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 38,
+                    "end": 46
+                },
+                {
+                    "routes": [],
+                    "name": "markdown",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "markdown(): string",
+                    "doc": "The released sections as Markdown, fetched first when the copy is a day old; '' when there is none.",
+                    "shapes": [],
+                    "params": [],
+                    "line": 49,
+                    "end": 65
+                },
+                {
+                    "routes": [],
+                    "name": "released",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "released(string $markdown): string",
+                    "doc": "The changelog without its Unreleased sections.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "markdown",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 68,
+                    "end": 73
+                }
+            ]
+        },
+        {
             "name": "Minn\\Ops\\CoreStatus",
             "short": "CoreStatus",
             "namespace": "Minn\\Ops",
@@ -77494,6 +77671,7 @@
             "usedBy": [
                 "Minn\\Admin\\Notifications",
                 "Minn\\Cli\\Installer",
+                "Minn\\Ops\\Changelog",
                 "Minn\\Ops\\CoreStatus",
                 "Minn\\Ops\\EngineUpdate",
                 "Minn\\Rest\\Services"
@@ -97430,7 +97608,7 @@
             "namespace": "Minn\\Rest",
             "kind": "final class",
             "file": "public/minn/src/Minn/Rest/Services.php",
-            "lines": 405,
+            "lines": 411,
             "doc": "The objects one REST request shares, each made once, on first use, from\nthe database door and the request. Every getter is typed and names its\ndependencies in plain constructor calls: there is no autowiring, and\nget() knows only the names listed here, so a wrong one fails at the\nfirst call rather than deep in a handler.",
             "implements": [],
             "extends": null,
@@ -97464,6 +97642,7 @@
                 "Minn\\Media\\Images",
                 "Minn\\Media\\Uploads",
                 "Minn\\Media\\Writer",
+                "Minn\\Ops\\Changelog",
                 "Minn\\Ops\\CoreStatus",
                 "Minn\\Ops\\Diagnostics",
                 "Minn\\Ops\\EngineUpdate",
@@ -97528,8 +97707,8 @@
                     }
                 ],
                 "visibility": "private",
-                "line": 109,
-                "end": 115
+                "line": 110,
+                "end": 116
             },
             "cases": [],
             "constants": [
@@ -97612,8 +97791,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 118,
-                    "end": 121
+                    "line": 119,
+                    "end": 122
                 },
                 {
                     "routes": [],
@@ -97632,8 +97811,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 131,
-                    "end": 136
+                    "line": 132,
+                    "end": 137
                 },
                 {
                     "routes": [],
@@ -97644,8 +97823,8 @@
                     "doc": "The record lookups the policy gate asks before it judges a caller.",
                     "shapes": [],
                     "params": [],
-                    "line": 139,
-                    "end": 142
+                    "line": 140,
+                    "end": 143
                 },
                 {
                     "routes": [],
@@ -97656,8 +97835,8 @@
                     "doc": "The database door.",
                     "shapes": [],
                     "params": [],
-                    "line": 145,
-                    "end": 148
+                    "line": 146,
+                    "end": 149
                 },
                 {
                     "routes": [],
@@ -97668,8 +97847,8 @@
                     "doc": "The request being answered.",
                     "shapes": [],
                     "params": [],
-                    "line": 151,
-                    "end": 154
+                    "line": 152,
+                    "end": 155
                 },
                 {
                     "routes": [],
@@ -97680,8 +97859,8 @@
                     "doc": "The site root, no trailing slash.",
                     "shapes": [],
                     "params": [],
-                    "line": 157,
-                    "end": 160
+                    "line": 158,
+                    "end": 161
                 },
                 {
                     "routes": [],
@@ -97692,8 +97871,8 @@
                     "doc": "wp-content under the site root.",
                     "shapes": [],
                     "params": [],
-                    "line": 163,
-                    "end": 166
+                    "line": 164,
+                    "end": 167
                 },
                 {
                     "routes": [],
@@ -97704,8 +97883,8 @@
                     "doc": "The users repository.",
                     "shapes": [],
                     "params": [],
-                    "line": 171,
-                    "end": 174
+                    "line": 172,
+                    "end": 175
                 },
                 {
                     "routes": [],
@@ -97716,8 +97895,8 @@
                     "doc": "The posts repository.",
                     "shapes": [],
                     "params": [],
-                    "line": 177,
-                    "end": 180
+                    "line": 178,
+                    "end": 181
                 },
                 {
                     "routes": [],
@@ -97728,8 +97907,8 @@
                     "doc": "The terms repository.",
                     "shapes": [],
                     "params": [],
-                    "line": 183,
-                    "end": 186
+                    "line": 184,
+                    "end": 187
                 },
                 {
                     "routes": [],
@@ -97740,8 +97919,8 @@
                     "doc": "The comments repository.",
                     "shapes": [],
                     "params": [],
-                    "line": 189,
-                    "end": 192
+                    "line": 190,
+                    "end": 193
                 },
                 {
                     "routes": [],
@@ -97752,8 +97931,8 @@
                     "doc": "The site's options.",
                     "shapes": [],
                     "params": [],
-                    "line": 195,
-                    "end": 198
+                    "line": 196,
+                    "end": 199
                 },
                 {
                     "routes": [],
@@ -97764,8 +97943,8 @@
                     "doc": "The post writer.",
                     "shapes": [],
                     "params": [],
-                    "line": 201,
-                    "end": 204
+                    "line": 202,
+                    "end": 205
                 },
                 {
                     "routes": [],
@@ -97776,8 +97955,8 @@
                     "doc": "Revisions and autosaves.",
                     "shapes": [],
                     "params": [],
-                    "line": 207,
-                    "end": 210
+                    "line": 208,
+                    "end": 211
                 },
                 {
                     "routes": [],
@@ -97788,8 +97967,8 @@
                     "doc": "The site editor's saved global styles.",
                     "shapes": [],
                     "params": [],
-                    "line": 213,
-                    "end": 216
+                    "line": 214,
+                    "end": 217
                 },
                 {
                     "routes": [],
@@ -97800,8 +97979,8 @@
                     "doc": "The active theme's global styles and variations.",
                     "shapes": [],
                     "params": [],
-                    "line": 219,
-                    "end": 222
+                    "line": 220,
+                    "end": 223
                 },
                 {
                     "routes": [],
@@ -97812,8 +97991,8 @@
                     "doc": "Classic menus and their items.",
                     "shapes": [],
                     "params": [],
-                    "line": 225,
-                    "end": 228
+                    "line": 226,
+                    "end": 229
                 },
                 {
                     "routes": [],
@@ -97824,8 +98003,8 @@
                     "doc": "What wp-content holds: plugins, themes, drop-ins.",
                     "shapes": [],
                     "params": [],
-                    "line": 231,
-                    "end": 234
+                    "line": 232,
+                    "end": 235
                 },
                 {
                     "routes": [],
@@ -97836,8 +98015,8 @@
                     "doc": "Link building from the permalink structure.",
                     "shapes": [],
                     "params": [],
-                    "line": 239,
-                    "end": 242
+                    "line": 240,
+                    "end": 243
                 },
                 {
                     "routes": [],
@@ -97848,8 +98027,8 @@
                     "doc": "REST URL building.",
                     "shapes": [],
                     "params": [],
-                    "line": 245,
-                    "end": 248
+                    "line": 246,
+                    "end": 249
                 },
                 {
                     "routes": [],
@@ -97860,8 +98039,8 @@
                     "doc": "The capability engine.",
                     "shapes": [],
                     "params": [],
-                    "line": 251,
-                    "end": 254
+                    "line": 252,
+                    "end": 255
                 },
                 {
                     "routes": [],
@@ -97872,8 +98051,8 @@
                     "doc": "Who is making this call.",
                     "shapes": [],
                     "params": [],
-                    "line": 257,
-                    "end": 260
+                    "line": 258,
+                    "end": 261
                 },
                 {
                     "routes": [],
@@ -97884,8 +98063,8 @@
                     "doc": "The session store.",
                     "shapes": [],
                     "params": [],
-                    "line": 263,
-                    "end": 266
+                    "line": 264,
+                    "end": 267
                 },
                 {
                     "routes": [],
@@ -97896,8 +98075,8 @@
                     "doc": "Application passwords for Basic auth.",
                     "shapes": [],
                     "params": [],
-                    "line": 269,
-                    "end": 272
+                    "line": 270,
+                    "end": 273
                 },
                 {
                     "routes": [],
@@ -97908,8 +98087,8 @@
                     "doc": "The extension loader.",
                     "shapes": [],
                     "params": [],
-                    "line": 277,
-                    "end": 280
+                    "line": 278,
+                    "end": 281
                 },
                 {
                     "routes": [],
@@ -97920,8 +98099,8 @@
                     "doc": "The post types the REST surface knows.",
                     "shapes": [],
                     "params": [],
-                    "line": 283,
-                    "end": 286
+                    "line": 284,
+                    "end": 287
                 },
                 {
                     "routes": [],
@@ -97932,8 +98111,8 @@
                     "doc": "The taxonomies the REST surface knows.",
                     "shapes": [],
                     "params": [],
-                    "line": 289,
-                    "end": 292
+                    "line": 290,
+                    "end": 293
                 },
                 {
                     "routes": [],
@@ -97944,8 +98123,8 @@
                     "doc": "The uploads directory.",
                     "shapes": [],
                     "params": [],
-                    "line": 295,
-                    "end": 298
+                    "line": 296,
+                    "end": 299
                 },
                 {
                     "routes": [],
@@ -97956,8 +98135,8 @@
                     "doc": "Stores an upload as an attachment.",
                     "shapes": [],
                     "params": [],
-                    "line": 301,
-                    "end": 304
+                    "line": 302,
+                    "end": 305
                 },
                 {
                     "routes": [],
@@ -97968,8 +98147,8 @@
                     "doc": "The JSON Schema validator, with the reference's filters passed in.",
                     "shapes": [],
                     "params": [],
-                    "line": 307,
-                    "end": 314
+                    "line": 308,
+                    "end": 315
                 },
                 {
                     "routes": [],
@@ -97980,8 +98159,8 @@
                     "doc": "The Minn Admin bundle on disk.",
                     "shapes": [],
                     "params": [],
-                    "line": 319,
-                    "end": 322
+                    "line": 320,
+                    "end": 323
                 },
                 {
                     "routes": [],
@@ -97992,8 +98171,8 @@
                     "doc": "Installing and removing themes and extensions.",
                     "shapes": [],
                     "params": [],
-                    "line": 325,
-                    "end": 328
+                    "line": 326,
+                    "end": 329
                 },
                 {
                     "routes": [],
@@ -98004,8 +98183,8 @@
                     "doc": "The debug log reader.",
                     "shapes": [],
                     "params": [],
-                    "line": 331,
-                    "end": 334
+                    "line": 332,
+                    "end": 335
                 },
                 {
                     "routes": [],
@@ -98016,8 +98195,8 @@
                     "doc": "Update checks and offers.",
                     "shapes": [],
                     "params": [],
-                    "line": 337,
-                    "end": 340
+                    "line": 338,
+                    "end": 341
                 },
                 {
                     "routes": [],
@@ -98028,8 +98207,8 @@
                     "doc": "Locales and the app's catalogs.",
                     "shapes": [],
                     "params": [],
-                    "line": 343,
-                    "end": 346
+                    "line": 344,
+                    "end": 347
                 },
                 {
                     "routes": [],
@@ -98040,8 +98219,8 @@
                     "doc": "The app's per-user appearance.",
                     "shapes": [],
                     "params": [],
-                    "line": 349,
-                    "end": 352
+                    "line": 350,
+                    "end": 353
                 },
                 {
                     "routes": [],
@@ -98052,8 +98231,8 @@
                     "doc": "The app's per-user hidden views.",
                     "shapes": [],
                     "params": [],
-                    "line": 355,
-                    "end": 358
+                    "line": 356,
+                    "end": 359
                 },
                 {
                     "routes": [],
@@ -98064,8 +98243,8 @@
                     "doc": "What happened lately.",
                     "shapes": [],
                     "params": [],
-                    "line": 361,
-                    "end": 364
+                    "line": 362,
+                    "end": 365
                 },
                 {
                     "routes": [],
@@ -98076,8 +98255,8 @@
                     "doc": "The overview payload.",
                     "shapes": [],
                     "params": [],
-                    "line": 367,
-                    "end": 370
+                    "line": 368,
+                    "end": 371
                 },
                 {
                     "routes": [],
@@ -98088,8 +98267,20 @@
                     "doc": "Minn's own releases, asked of GitHub once a day.",
                     "shapes": [],
                     "params": [],
-                    "line": 373,
-                    "end": 376
+                    "line": 374,
+                    "end": 377
+                },
+                {
+                    "routes": [],
+                    "name": "engineChangelog",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "engineChangelog(): Minn\\Ops\\Changelog",
+                    "doc": "Minn's changelog, read from its repository.",
+                    "shapes": [],
+                    "params": [],
+                    "line": 380,
+                    "end": 383
                 },
                 {
                     "routes": [],
@@ -98100,8 +98291,8 @@
                     "doc": "Minn's version and the release on offer, behind the app's update banner.",
                     "shapes": [],
                     "params": [],
-                    "line": 379,
-                    "end": 382
+                    "line": 386,
+                    "end": 389
                 },
                 {
                     "routes": [],
@@ -98112,8 +98303,8 @@
                     "doc": "The engine replacing itself with a release.",
                     "shapes": [],
                     "params": [],
-                    "line": 385,
-                    "end": 388
+                    "line": 392,
+                    "end": 395
                 },
                 {
                     "routes": [],
@@ -98124,8 +98315,8 @@
                     "doc": "The bell feed.",
                     "shapes": [],
                     "params": [],
-                    "line": 391,
-                    "end": 394
+                    "line": 398,
+                    "end": 401
                 },
                 {
                     "routes": [],
@@ -98136,8 +98327,8 @@
                     "doc": "The System view's payload.",
                     "shapes": [],
                     "params": [],
-                    "line": 397,
-                    "end": 400
+                    "line": 404,
+                    "end": 407
                 },
                 {
                     "routes": [],
@@ -98148,8 +98339,8 @@
                     "doc": "The active block theme's templates; null under a classic theme, where the routes answer as the reference does when it never registered them.",
                     "shapes": [],
                     "params": [],
-                    "line": 405,
-                    "end": 412
+                    "line": 412,
+                    "end": 419
                 },
                 {
                     "routes": [],
@@ -98160,8 +98351,8 @@
                     "doc": "Writes block templates; null under a classic theme.",
                     "shapes": [],
                     "params": [],
-                    "line": 415,
-                    "end": 419
+                    "line": 422,
+                    "end": 426
                 },
                 {
                     "routes": [],
@@ -98172,8 +98363,8 @@
                     "doc": "The wp/v2 post shape.",
                     "shapes": [],
                     "params": [],
-                    "line": 424,
-                    "end": 427
+                    "line": 431,
+                    "end": 434
                 },
                 {
                     "routes": [],
@@ -98184,8 +98375,8 @@
                     "doc": "The wp/v2 term shape.",
                     "shapes": [],
                     "params": [],
-                    "line": 430,
-                    "end": 433
+                    "line": 437,
+                    "end": 440
                 },
                 {
                     "routes": [],
@@ -98196,8 +98387,8 @@
                     "doc": "The wp/v2 user shape.",
                     "shapes": [],
                     "params": [],
-                    "line": 436,
-                    "end": 439
+                    "line": 443,
+                    "end": 446
                 },
                 {
                     "routes": [],
@@ -98208,8 +98399,8 @@
                     "doc": "The wp/v2 media shape.",
                     "shapes": [],
                     "params": [],
-                    "line": 442,
-                    "end": 445
+                    "line": 449,
+                    "end": 452
                 },
                 {
                     "routes": [],
@@ -98220,8 +98411,8 @@
                     "doc": "The wp/v2 comment shape.",
                     "shapes": [],
                     "params": [],
-                    "line": 448,
-                    "end": 451
+                    "line": 455,
+                    "end": 458
                 },
                 {
                     "routes": [],
@@ -98249,8 +98440,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 459,
-                    "end": 463
+                    "line": 466,
+                    "end": 470
                 }
             ]
         },

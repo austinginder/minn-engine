@@ -2,15 +2,17 @@
 
 declare(strict_types=1);
 
+use Minn\Ops\Changelog;
 use Minn\Ops\EngineUpdate;
 use Minn\Ops\Release;
 use Minn\Ops\Releases;
 
 /**
  * Minn's own releases: GitHub's answer read into a release (or not), the
- * once-a-day check kept and offered against the running version, and the
- * engine swapping itself for a release archive in a scratch webroot. No
- * request leaves the process: the GitHub answers are faked.
+ * once-a-day check kept and offered against the running version, the
+ * changelog read from the repository, and the engine swapping itself for a
+ * release archive in a scratch webroot. No request leaves the process: the
+ * GitHub answers are faked.
  */
 $github = static fn (array $over = []): array => $over + [
     'tag_name' => 'v0.2.0',
@@ -111,6 +113,39 @@ return [
         $stored = json_encode(['checked' => time() - Releases::TTL - 1, 'latest' => null]);
         [$load, $save] = $memory($stored);
         return (new Releases($load, $save, '0.1.0'))->due();
+    },
+    'the changelog leaves out Unreleased sections and keeps the rest' => static function () {
+        $md = "# Changelog\n\n## **v0.2.0** - Unreleased\n\nnext\n\n## **v0.1.0** - November 2 2026\n\nfirst\n";
+        $out = Changelog::released($md);
+        return $out === "# Changelog\n\n## **v0.1.0** - November 2 2026\n\nfirst\n" ?: $out;
+    },
+    'the changelog is fetched from the repository once a day, and a failed fetch keeps the last copy' => static function () use ($memory) {
+        $stored = null;
+        [$load, $save] = $memory($stored);
+        $changelog = new Changelog($load, $save);
+        $fake = Minn\Http::fake(['raw.githubusercontent.com/*' => "# Changelog\n\n## **v0.1.0** - November 2 2026\n\nfirst\n"]);
+        try {
+            $first = $changelog->markdown();
+            $again = $changelog->markdown();
+            $fetches = count($fake->sent('raw.githubusercontent.com/*'));
+        } finally {
+            $fake->restore();
+        }
+        $stored = json_encode(['checked' => time() - Changelog::TTL - 1, 'markdown' => $first]);
+        $fake = Minn\Http::fake(['raw.githubusercontent.com/*' => Minn\Http::reply('busy', 503)]);
+        try {
+            $kept = $changelog->markdown();
+        } finally {
+            $fake->restore();
+        }
+        $fake = Minn\Http::fake(['raw.githubusercontent.com/*' => Minn\Http::reply('404: Not Found', 404)]);
+        $stored = json_encode(['checked' => 0, 'markdown' => $first]);
+        try {
+            $gone = $changelog->markdown();
+        } finally {
+            $fake->restore();
+        }
+        return str_contains($first, 'v0.1.0') && $again === $first && $fetches === 1 && $kept === $first && $gone === '' ?: json_encode([$first, $fetches, $kept, $gone]);
     },
     'the engine swaps itself for a release archive and carries the install record' => static function () use ($webroot, $archive, $leftovers, $clean) {
         $root = $webroot('0.1.0');

@@ -6,6 +6,7 @@
 |---|---|---|---|
 | [`Archive`](#archive) | final class | 69 | A zip unpacked the safe way, for the plugin and theme installer and for |
 | [`AutoUpdates`](#autoupdates) | final readonly class | 29 | Whether per-item auto-updates apply to plugins or themes, as the |
+| [`Changelog`](#changelog) | final class | 55 | Minn's changelog, read from the engine's GitHub repository rather than |
 | [`CoreStatus`](#corestatus) | final readonly class | 48 | The core the app's update banner and chip speak of, which on Minn is |
 | [`Diagnostics`](#diagnostics) | final readonly class | 408 | The System view's facts about this install: the engine, PHP, the |
 | [`EngineUpdate`](#engineupdate) | final readonly class | 105 | Replaces the running engine with a published release. The release's |
@@ -74,6 +75,44 @@ The gate as the site's plugins see it: through their filters once the runtime's 
 Whether per-item auto-updates apply to a type ("plugin" or "theme"; anything else is never on).
 
 Internals: `updaterOff()` (private, line 41)
+
+
+## Changelog
+
+`final class Minn\Ops\Changelog` · `public/minn/src/Minn/Ops/Changelog.php`
+
+Minn's changelog, read from the engine's GitHub repository rather than
+shipped with it: a release carries no notes for anyone to find on the
+sites that run it. The file on the default branch is fetched at most once
+a day and kept in the minn_changelog option (JSON) with the time it was
+fetched; sections still marked Unreleased are left out, so a site only
+reads about releases that exist. A fetch GitHub does not answer keeps the
+last copy; a 404 (no such file, or a private repository) keeps nothing.
+
+- const `OPTION` = `'minn_changelog'`
+- const `TTL` = `86400`
+- const `SOURCE` = `'https://raw.githubusercontent.com/austinginder/minn-engine/main/changelog.md'`
+
+Used by: `Minn\Admin\BundleController`, `Minn\Rest\Services`
+
+```php
+__construct(Closure $load, Closure $save, string $source = self::SOURCE)
+```
+- `@param Closure(): ?string $load the stored copy, as JSON`
+- `@param Closure(string): void $save keeps the copy, as JSON`
+
+
+### static `forSite(Minn\Content\Site $site): self`
+
+The changelog for a site, its copy kept in the site's minn_changelog option.
+
+### `markdown(): string`
+
+The released sections as Markdown, fetched first when the copy is a day old; '' when there is none.
+
+### static `released(string $markdown): string`
+
+The changelog without its Unreleased sections.
 
 
 ## CoreStatus
@@ -484,7 +523,7 @@ asking Minn, never wordpress.org.
 - const `SOURCE` = `'https://api.github.com/repos/austinginder/minn-engine/releases/latest'`
 - const `DOWNLOADS` = `'https://github.com/austinginder/minn-engine/releases/download/'` — Where the repository's release assets download from; nothing else is installed.
 
-Used by: `Minn\Admin\Notifications`, `Minn\Cli\Installer`, `Minn\Ops\CoreStatus`, `Minn\Ops\EngineUpdate`, `Minn\Rest\Services`
+Used by: `Minn\Admin\Notifications`, `Minn\Cli\Installer`, `Minn\Ops\Changelog`, `Minn\Ops\CoreStatus`, `Minn\Ops\EngineUpdate`, `Minn\Rest\Services`
 
 ```php
 __construct(Closure $load, Closure $save, string $installed, string $source = self::SOURCE)

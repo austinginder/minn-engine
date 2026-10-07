@@ -10,19 +10,21 @@ use Minn\Http\Response;
 use Minn\Http\Access;
 use Minn\Http\Policy;
 use Minn\Http\Route;
+use Minn\Ops\Changelog;
 use Minn\Rest\Caller;
 use Minn\Rest\Reply;
 
 /**
  * What the app bundle carries: the changelog, the user guide, and the
  * translation offers (none: the engine polls no translation channel);
- * and beside them the engine's own changelog.
+ * and beside them the engine's own changelog, read from GitHub.
  */
 final readonly class BundleController
 {
     public function __construct(
         private App $app,
         private Caller $caller,
+        private Changelog $engineChangelog,
     ) {
     }
 
@@ -40,12 +42,11 @@ final readonly class BundleController
         return Reply::answer($request, $this->bundled('changelog.md'));
     }
 
-    /** The engine's own changelog (changelog.md beside bootstrap.php), shown beside the app's on Minn. */
+    /** The engine's own changelog, kept in its repository and not in a release, shown beside the app's on Minn. */
     #[Route(Method::Get, '/minn-admin/v1/engine-changelog', policy: new Policy(Access::Floor))]
     public function engineChangelog(Request $request): Response
     {
-        $file = MINN_ENGINE_DIR . '/changelog.md';
-        return Reply::answer($request, ['version' => MINN_ENGINE_VERSION, 'markdown' => is_file($file) ? (string) file_get_contents($file) : '']);
+        return Reply::answer($request, ['version' => MINN_ENGINE_VERSION, 'markdown' => $this->engineChangelog->markdown()]);
     }
 
     /** The app's bundled user guide. */

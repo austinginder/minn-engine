@@ -20,6 +20,7 @@ use Minn\Ops\Packages;
 use Minn\Admin\Translations;
 use Minn\Ops\Updates;
 use Minn\Ops\EngineUpdate;
+use Minn\Ops\Changelog;
 use Minn\Ops\CoreStatus;
 use Minn\Ops\Releases;
 use Minn\Auth\ApplicationPasswords;
@@ -373,6 +374,12 @@ final class Services
     public function releases(): Releases
     {
         return $this->share(Releases::class, fn () => Releases::forSite($this->site(), MINN_ENGINE_VERSION));
+    }
+
+    /** Minn's changelog, read from its repository. */
+    public function engineChangelog(): Changelog
+    {
+        return $this->share(Changelog::class, fn () => Changelog::forSite($this->site()));
     }
 
     /** Minn's version and the release on offer, behind the app's update banner. */

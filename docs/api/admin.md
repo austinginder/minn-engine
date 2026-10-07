@@ -318,12 +318,12 @@ Internals: `userSlice()` (private, line 91), `siteSlice()` (private, line 108), 
 
 What the app bundle carries: the changelog, the user guide, and the
 translation offers (none: the engine polls no translation channel);
-and beside them the engine's own changelog.
+and beside them the engine's own changelog, read from GitHub.
 
 Used by: `Minn\Rest\Api`
 
 ```php
-__construct(Minn\Admin\App $app, Minn\Rest\Caller $caller)
+__construct(Minn\Admin\App $app, Minn\Rest\Caller $caller, Minn\Ops\Changelog $engineChangelog)
 ```
 
 
@@ -343,7 +343,7 @@ The app's bundled changelog.
 
 Route: `GET /minn-admin/v1/engine-changelog (floor edit_posts)`
 
-The engine's own changelog (changelog.md beside bootstrap.php), shown beside the app's on Minn.
+The engine's own changelog, kept in its repository and not in a release, shown beside the app's on Minn.
 
 ### `guide(Minn\Http\Request $request): Minn\Http\Response`
 
@@ -351,7 +351,7 @@ Route: `GET /minn-admin/v1/guide (floor edit_posts)`
 
 The app's bundled user guide.
 
-Internals: `bundled()` (private, line 59)
+Internals: `bundled()` (private, line 60)
 
 
 ## Dashboard

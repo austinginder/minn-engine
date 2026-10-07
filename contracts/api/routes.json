@@ -94,7 +94,7 @@
             "pattern": "/minn-admin/v1/engine-changelog",
             "name": "Minn\\Admin\\BundleController::engineChangelog",
             "handler": "Minn\\Admin\\BundleController::engineChangelog",
-            "summary": "The engine's own changelog (changelog.md beside bootstrap.php), shown beside the app's on Minn.",
+            "summary": "The engine's own changelog, kept in its repository and not in a release, shown beside the app's on Minn.",
             "policy": {
                 "access": "Floor",
                 "describe": "floor edit_posts",

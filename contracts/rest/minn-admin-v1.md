@@ -187,6 +187,16 @@ last answer and waits a day. A release counts only when it is published, not a
 pre-release, tagged `v<major>.<minor>.<patch>`, and carries a `minn.zip` asset;
 the asset's `digest` (`sha256:<hex>`) is the checksum the install demands.
 
+## GET /engine-changelog
+
+Gate: the floor (`edit_posts`). `{ version, markdown }`: `MINN_ENGINE_VERSION`
+and Minn's changelog. The changelog is not in a release (nothing on a site
+running Minn names its history); `Ops\Changelog` reads `changelog.md` from the
+repository's default branch on raw.githubusercontent.com at most once a day,
+keeps it in the `minn_changelog` option, and leaves out sections still marked
+Unreleased. A 404 (a private repository) answers `''`; any other failure keeps
+the last copy. Engine only: the oracle has no such route.
+
 ## POST /core/update
 
 Gate `update_core`. Installs the release on offer and answers `{ version }`.
