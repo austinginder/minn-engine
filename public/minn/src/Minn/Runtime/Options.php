@@ -69,7 +69,7 @@ final class Options
     public function filtered(string $name, mixed ...$default): mixed
     {
         $name = trim($name);
-        $fallback = $default[0] ?? false;
+        $fallback = $default === [] ? false : $default[0];
         if ($name === '') {
             return false;
         }
