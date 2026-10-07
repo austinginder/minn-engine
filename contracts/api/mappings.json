@@ -2,12 +2,12 @@
     "generated": "2026-10-07",
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line)",
     "summary": {
-        "minn": 663,
-        "composes": 974,
+        "minn": 665,
+        "composes": 973,
         "leaf": 663,
-        "noop": 1965,
+        "noop": 1964,
         "functions": 4191,
-        "minnMethods": 780,
+        "minnMethods": 782,
         "leafLinesOver15": 13
     },
     "functions": {
@@ -30189,9 +30189,12 @@
         },
         "translations_api": {
             "file": "l10n.php",
-            "lines": 13,
-            "kind": "composes",
-            "minn": [],
+            "lines": 14,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Ops\\Directory::url",
+                "Minn\\Ops\\Directory::userAgent"
+            ],
             "composes": [
                 "apply_filters",
                 "get_locale",
@@ -36800,10 +36803,11 @@
         },
         "wp_staticize_emoji": {
             "file": "formatting.php",
-            "lines": 1,
-            "kind": "noop",
+            "lines": 2,
+            "kind": "minn",
             "minn": [
-                "Minn\\Content\\Emoji::staticize"
+                "Minn\\Content\\Emoji::staticize",
+                "Minn\\Ops\\Directory::url"
             ],
             "composes": [
                 "apply_filters"

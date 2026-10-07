@@ -45,9 +45,9 @@ final readonly class Cron
      *
      * @param ?Closure(): int $fireDueEvents
      */
-    public static function create(Db $db, Site $site, string $contentDir, string $homeUrl, string $version, ?Closure $fireDueEvents): self
+    public static function create(Db $db, Site $site, string $contentDir, ?Closure $fireDueEvents): self
     {
-        $updates = new Updates($site, new Inventory($contentDir, $site), new Packages($site, $contentDir), $contentDir, $homeUrl, $version);
+        $updates = new Updates($site, new Inventory($contentDir, $site), new Packages($site, $contentDir), $contentDir);
         return new self($db, $site, new PostWriter($db, new Posts($db), $site), $updates, $fireDueEvents);
     }
 

@@ -9,16 +9,16 @@
 | [`Changelog`](#changelog) | final class | 67 | A changelog read from its repository rather than shipped: a Minn release |
 | [`CoreStatus`](#corestatus) | final readonly class | 48 | The core the app's update banner and chip speak of, which on Minn is |
 | [`Diagnostics`](#diagnostics) | final readonly class | 408 | The System view's facts about this install: the engine, PHP, the |
-| [`Directory`](#directory) | final class | 11 | The Minn update service, https://updates.minn.run: the one place the |
+| [`Directory`](#directory) | final class | 35 | The Minn update service, https://updates.minn.run: the one place the |
 | [`EngineUpdate`](#engineupdate) | final readonly class | 129 | Replaces the running engine with a published release. The release's |
 | [`InstalledSoftware`](#installedsoftware) | final readonly class | 59 | What is installed, as the System view lists it: every extension and |
 | [`Logs`](#logs) | final readonly class | 150 | The log files the System view can read and clear: the debug log the |
-| [`Packages`](#packages) | final readonly class | 442 | Putting themes and extensions on disk. Themes come from wordpress.org |
+| [`Packages`](#packages) | final readonly class | 450 | Putting themes and extensions on disk. Themes come from the directory |
 | [`PluginsApi`](#pluginsapi) | final readonly class | 35 | plugins_api() as plugins call it and answer it (probe plugins-api): the |
 | [`Release`](#release) | final readonly class | 58 | One published Minn release as the update service describes it (and as |
 | [`Releases`](#releases) | final class | 86 | Whether a newer Minn is out, asked of the Minn update service at most |
 | [`Unzip`](#unzip) | final readonly class | 101 | An archive unpacked as unzip_file() unpacks it (probe unzip-file): into |
-| [`Updates`](#updates) | final class | 401 | Update offers from wordpress.org for the site's plugins and themes: the |
+| [`Updates`](#updates) | final class | 403 | Update offers for the site's plugins and themes from the directory, asked |
 
 ## Archive
 
@@ -200,20 +200,36 @@ Internals: `checks()` (private, line 65), `engineGroup()` (private, line 102), `
 `final class Minn\Ops\Directory` · `public/minn/src/Minn/Ops/Directory.php`
 
 The Minn update service, https://updates.minn.run: the one place the
-engine asks about anything it does not have yet. Minn's own releases and
-changelogs come from here (read from GitHub by the service), and the
-plugin and theme directory will too, so a site running Minn talks to Minn
-and never to wordpress.org. Every address the engine fetches from the
-service is built here, and every download from it is pinned to ORIGIN.
+engine asks about anything it does not have yet, so a site running Minn
+talks to Minn and never to wordpress.org. The service speaks
+wordpress.org's own endpoints under /v1/ (plugin and theme update checks,
+directory search and information, translations) with every address a site
+would fetch pointed back at itself: packages under /v1/download/, icons,
+screenshots and emoji under /v1/assets/. It also serves Minn's own
+releases and changelogs. Every request names the engine and the WordPress
+version it is compatible with (which judges a plugin's "Requires at
+least"), never the site's address.
 
 - const `ORIGIN` = `'https://updates.minn.run/'`
 - const `BASE` = `'https://updates.minn.run/v1/'`
+- const `PACKAGES` = `'https://updates.minn.run/v1/download/'` — Where plugin, theme and translation packages download from.
 
-Used by: `Minn\Ops\Changelog`, `Minn\Ops\EngineUpdate`, `Minn\Ops\Release`, `Minn\Ops\Releases`
+Used by: `Minn\Cli\PackageInstaller`, `Minn\Ops\Changelog`, `Minn\Ops\EngineUpdate`, `Minn\Ops\Packages`, `Minn\Ops\Release`, `Minn\Ops\Releases`, `Minn\Ops\Updates`
 
 ### static `url(string $path): string`
 
-An address on the service: a path under /v1/, such as "minn/releases/latest".
+An address on the service: a path under /v1/, such as "plugins/info/1.2/".
+
+### static `userAgent(): string`
+
+How the engine introduces itself: its version, and nothing about the site.
+
+### static `post(string $path, array $form): array`
+
+A form POST to the service (the update checks), its answer decoded.
+
+- `@param array<string, string> $form`
+- `@return array<string, mixed>`
 
 
 ## EngineUpdate
@@ -351,8 +367,9 @@ A byte count in KB, MB, or GB.
 
 `final readonly class Minn\Ops\Packages` · `public/minn/src/Minn/Ops/Packages.php`
 
-Putting themes and extensions on disk. Themes come from wordpress.org
-(block themes render on the engine) or an uploaded zip; extensions come
+Putting themes and extensions on disk. Themes come from the directory
+(wordpress.org's, asked through the Minn update service, Ops\Directory;
+block themes render on the engine) or an uploaded zip; extensions come
 from an uploaded zip or a URL, and must carry a minn.json: a WordPress
 plugin would install but never run, so it is refused with the reason.
 Every archive is unpacked through one guarded routine: exactly one
@@ -362,8 +379,8 @@ folder's identity checked and its destination proven to be a direct
 child of the kind's directory before it is moved into place. Removal
 proves the same containment before anything is deleted.
 
-- const `WPORG_THEMES` = `'https://api.wordpress.org/themes/info/1.2/'` — The largest archive fetched or unpacked, in bytes.
-- const `WPORG_PLUGINS` = `'https://api.wordpress.org/plugins/info/1.2/'`
+- const `THEMES_INFO` = `'https://updates.minn.run/v1/themes/info/1.2/'` — The largest archive fetched or unpacked, in bytes.
+- const `PLUGINS_INFO` = `'https://updates.minn.run/v1/plugins/info/1.2/'`
 - const `INFO_OPTION` = `'minn_plugin_info'`
 - const `INFO_TTL` = `43200`
 
@@ -376,13 +393,13 @@ __construct(Minn\Content\Site $site, string $contentDir)
 
 ### `searchThemes(string $query): array`
 
-wordpress.org theme search, or the popular list for an empty query. @return list<array>
+Directory theme search, or the popular list for an empty query. @return list<array>
 
 - `@return list<array>`
 
 ### `searchPlugins(string $query, int $page): array`
 
-wordpress.org plugin search: twelve per page with icons, short
+Directory plugin search: twelve per page with icons, short
 descriptions, install counts, and ratings, plus which results are
 already installed (by folder). @return array{plugins: list<array>, page: int, pages: int, total: int}
 
@@ -394,15 +411,15 @@ The slim card for one directory plugin, cached twelve hours per slug.
 
 ### `installPlugin(string $slug, string $version = ''): string`
 
-Installs a wordpress.org plugin by slug; returns its folder.
+Installs a directory plugin by slug; returns its folder.
 
 ### `replacePlugin(string $slug, string $version = ''): string`
 
-Installs a wordpress.org plugin over the folder already there.
+Installs a directory plugin over the folder already there.
 
 ### `directoryPlugin(string $slug): ?array`
 
-One wordpress.org plugin record, or null when the slug is unknown.
+One directory plugin record, or null when the slug is unknown.
 
 - `@return array<string, mixed>|null`
 
@@ -417,29 +434,29 @@ directory calls Track H moves behind the Minn update service.
 
 ### `queryThemes(string $search, int $page, int $perPage): array`
 
-A page of wordpress.org themes for `wp theme search`.
+A page of directory themes for `wp theme search`.
 
 - `@return array{items: list<array<string, mixed>>, total: int}`
 
 ### `queryPlugins(string $search, int $page, int $perPage): array`
 
-A page of wordpress.org plugins for `wp plugin search`.
+A page of directory plugins for `wp plugin search`.
 
 - `@return array{items: list<array<string, mixed>>, total: int}`
 
 ### `directoryTheme(string $slug): ?array`
 
-One wordpress.org theme record, or null when the slug is unknown.
+One directory theme record, or null when the slug is unknown.
 
 - `@return array<string, mixed>|null`
 
 ### `installTheme(string $slug, string $version = ''): string`
 
-Installs a wordpress.org theme by slug; returns its stylesheet folder.
+Installs a directory theme by slug; returns its stylesheet folder.
 
 ### `replaceTheme(string $slug, string $version = ''): string`
 
-Installs a wordpress.org theme over the folder already there.
+Installs a directory theme over the folder already there.
 
 ### `unpack(string $zip, string $kind): array`
 
@@ -460,8 +477,9 @@ Removes a theme or plugin folder that is not in use.
 
 A package over https, every redirect hop included, refusing anything
 else; when host prefixes are given, every hop must start with one.
+The request names the engine, never the site's address.
 
-Internals: `pluginPackage()` (private, line 157), `plain()` (private, line 216), `themePackage()` (private, line 310), `place()` (private, line 359), `contained()` (private, line 406), `identify()` (private, line 421), `describe()` (private, line 435)
+Internals: `pluginPackage()` (private, line 159), `plain()` (private, line 218), `themePackage()` (private, line 312), `place()` (private, line 361), `contained()` (private, line 408), `identify()` (private, line 423), `describe()` (private, line 437), `ask()` (private, line 457)
 
 
 ## PluginsApi
@@ -619,12 +637,16 @@ Internals: `read()` (private, line 70), `safe()` (private, line 93), `write()` (
 
 `final class Minn\Ops\Updates` · `public/minn/src/Minn/Ops/Updates.php`
 
-Update offers from wordpress.org for the site's plugins and themes: the
-directory's update-check endpoints asked with the installed headers, the
-answer kept in the minn_updates option (JSON) for twelve hours, and the
-offers applied by downloading the release archive through the one
-package unpacker. A plugin or theme the directory does not know keeps
-its folder untouched and is never offered anything. The per-item
+Update offers for the site's plugins and themes from the directory, asked
+through the Minn update service (Ops\Directory), which answers with
+wordpress.org's own offers and serves their packages: the update-check
+endpoints asked with the installed headers (each plugin's Name, Version
+and Update URI, so a plugin that updates from elsewhere is never offered
+the directory's plugin of the same folder name), the answer kept in the
+minn_updates option (JSON) for twelve hours, and the offers applied by
+downloading the release archive through the one package unpacker. A
+plugin or theme the directory does not know keeps its folder untouched
+and is never offered anything. The per-item
 auto-update lists are the site's own auto_update_plugins and
 auto_update_themes options, in the shape the app already reads.
 
@@ -637,14 +659,11 @@ the publisher: a package outside the directory is unpacked only when
 
 - const `OPTION` = `'minn_updates'`
 - const `TTL` = `43200`
-- const `PLUGINS_API` = `'https://api.wordpress.org/plugins/update-check/1.1/'`
-- const `THEMES_API` = `'https://api.wordpress.org/themes/update-check/1.1/'`
-- const `PACKAGE_HOST` = `'https://downloads.wordpress.org/'`
 
 Used by: `Minn\Admin\Notifications`, `Minn\Admin\ThemesController`, `Minn\Admin\UpdatesController`, `Minn\Cli\AssetUpdate`, `Minn\Cron\Cron`, `Minn\Rest\Services`
 
 ```php
-__construct(Minn\Content\Site $site, Minn\Content\Inventory $inventory, Minn\Ops\Packages $packages, string $contentDir, string $home, string $wpVersion)
+__construct(Minn\Content\Site $site, Minn\Content\Inventory $inventory, Minn\Ops\Packages $packages, string $contentDir)
 ```
 
 
@@ -654,7 +673,7 @@ The stored answer, refreshed when older than the TTL or absent.
 
 ### `refresh(): array`
 
-Asks wordpress.org now, whatever the cache says, and keeps the answer.
+Asks the directory now, whatever the cache says, and keeps the answer.
 
 ### `check(): array`
 
@@ -680,7 +699,7 @@ Plugin file => slug, icon, directory URL, for every plugin the directory knows. 
 
 ### `themeOnDirectory(string $stylesheet): bool`
 
-Whether wordpress.org knows this theme.
+Whether the directory knows this theme.
 
 ### `updatePlugin(string $file): string`
 
@@ -731,5 +750,5 @@ Stylesheet => style.css headers. @return array<string, array<string, string>>
 
 - `@return array<string, array<string, string>>`
 
-Internals: `supplied()` (private, line 137), `saveAuto()` (private, line 272), `install()` (private, line 358), `vouched()` (private, line 381), `consume()` (private, line 399), `post()` (private, line 411), `map()` (private, line 421), `safeUrl()` (private, line 429)
+Internals: `supplied()` (private, line 138), `saveAuto()` (private, line 273), `pluginHeaders()` (private, line 330), `install()` (private, line 374), `vouched()` (private, line 397), `consume()` (private, line 415), `map()` (private, line 427), `safeUrl()` (private, line 435)
 

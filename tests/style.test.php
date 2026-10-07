@@ -304,7 +304,7 @@ $check("engine: calls into WordPress-named functions (the hook API aside) stay a
 // is counted across src/ and wp-api/. Links to wordpress.org pages and the
 // api.w.org relation names are text, not requests, and are not counted. The
 // ceiling only falls; 0.1.0 is cut at 0, with the Minn update service answering.
-$wporgRequestCeiling = 13;
+$wporgRequestCeiling = 0;
 $wporgRequests = [];
 foreach ([$root, dirname($root) . '/wp-api'] as $tree) {
     foreach (new RecursiveIteratorIterator(new RecursiveDirectoryIterator($tree, FilesystemIterator::SKIP_DOTS)) as $file) {

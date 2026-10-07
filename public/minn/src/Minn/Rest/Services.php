@@ -37,7 +37,6 @@ use Minn\Content\Site;
 use Minn\Content\Terms;
 use Minn\Content\Users;
 use Minn\Db;
-use Minn\Engine;
 use Minn\Extension\Loader;
 use Minn\Front\Permalinks;
 use Minn\Http\Request;
@@ -337,7 +336,7 @@ final class Services
     /** Update checks and offers. */
     public function updates(): Updates
     {
-        return $this->share(Updates::class, fn () => new Updates($this->site(), $this->inventory(), $this->packages(), $this->contentDir(), $this->permalinks()->url('/'), Engine::WP_VERSION));
+        return $this->share(Updates::class, fn () => new Updates($this->site(), $this->inventory(), $this->packages(), $this->contentDir()));
     }
 
     /** Locales and the app's catalogs. */

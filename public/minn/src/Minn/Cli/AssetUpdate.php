@@ -7,7 +7,6 @@ namespace Minn\Cli;
 use Minn\Ops\Packages;
 use Minn\Ops\Updates;
 use Minn\Content\Inventory;
-use Minn\Engine;
 use Minn\RestError;
 use WP_CLI;
 use WP_CLI\Formatter;
@@ -36,7 +35,7 @@ final class AssetUpdate
         $site = $runtime->site;
         $inventory = new Inventory($contentDir, $site);
         $packages = new Packages($site, $contentDir);
-        $updates = new Updates($site, $inventory, $packages, $contentDir, $runtime->permalinks->url('/'), Engine::WP_VERSION);
+        $updates = new Updates($site, $inventory, $packages, $contentDir);
         return new self($kind, $updates, $inventory);
     }
 
@@ -54,7 +53,7 @@ final class AssetUpdate
         try {
             $this->updates->refresh();
         } catch (RestError) {
-            // wordpress.org did not answer; the update goes on with the last answer, as WP-CLI's does.
+            // The update service did not answer; the update goes on with the last answer, as WP-CLI's does.
         }
         $excluded = array_key_exists('exclude', $assocArgs)
             ? array_map(trim(...), explode(',', (string) $assocArgs['exclude']))

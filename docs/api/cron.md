@@ -33,7 +33,7 @@ __construct(Minn\Db $db, Minn\Content\Site $site, Minn\Content\PostWriter $write
 - `@param ?Closure(): int $fireDueEvents fires the cron option's due hooks and returns how many ran`
 
 
-### static `create(Minn\Db $db, Minn\Content\Site $site, string $contentDir, string $homeUrl, string $version, ?Closure $fireDueEvents): self`
+### static `create(Minn\Db $db, Minn\Content\Site $site, string $contentDir, ?Closure $fireDueEvents): self`
 
 The one recipe every trigger builds from: the post writer, the
 updater over the site's wp-content, and the runtime's firing closure.

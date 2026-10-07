@@ -49,7 +49,7 @@ Updates the named assets, or all of them.
 
 - `@param list<string> $names`
 
-Internals: `offers()` (private, line 105), `previewRow()` (private, line 153), `apply()` (private, line 165), `render()` (private, line 198), `emit()` (private, line 248), `skipped()` (private, line 269), `missing()` (private, line 277), `installed()` (private, line 286), `titleFor()` (private, line 299), `statusByName()` (private, line 313), `channel()` (private, line 324), `samePrefix()` (private, line 335), `pluginSlug()` (private, line 347)
+Internals: `offers()` (private, line 104), `previewRow()` (private, line 152), `apply()` (private, line 164), `render()` (private, line 197), `emit()` (private, line 247), `skipped()` (private, line 268), `missing()` (private, line 276), `installed()` (private, line 285), `titleFor()` (private, line 298), `statusByName()` (private, line 312), `channel()` (private, line 323), `samePrefix()` (private, line 334), `pluginSlug()` (private, line 346)
 
 
 ## CacheCommand
@@ -513,7 +513,7 @@ Internals: `readValue()` (private, line 171), `decode()` (private, line 188), `e
 `final readonly class Minn\Cli\PackageInstaller` · `public/minn/src/Minn/Cli/PackageInstaller.php`
 
 Puts a theme or a plugin on disk for `wp theme install` and `wp plugin
-install`: a wordpress.org slug, a local zip, or a zip URL, saying along
+install`: a directory slug, a local zip, or a zip URL, saying along
 the way what WP-CLI says. The two kinds differ only in their words, in
 where they live, and in a plugin being allowed to be a single file.
 
@@ -536,7 +536,7 @@ and whether this call put it there.
 
 - `@return array{0: ?string, 1: bool}`
 
-Internals: `fromDirectory()` (private, line 79), `archive()` (private, line 112), `present()` (private, line 138), `refuse()` (private, line 148)
+Internals: `fromDirectory()` (private, line 80), `archive()` (private, line 113), `present()` (private, line 139), `refuse()` (private, line 149)
 
 
 ## PluginCommand

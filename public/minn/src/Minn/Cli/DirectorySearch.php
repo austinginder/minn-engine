@@ -19,7 +19,7 @@ final class DirectorySearch
     private const FIELDS = ['name', 'slug', 'rating'];
 
     /**
-     * Searches wordpress.org for one kind of asset and prints the page.
+     * Searches the directory (through the Minn update service) for one kind of asset and prints the page.
      *
      * @param array<string, mixed> $assocArgs
      */

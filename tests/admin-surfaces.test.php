@@ -100,7 +100,8 @@ function as_parity( string $label, string $route, ?array $mint, array $drop = ar
 		}
 		return array_map( $strip, $v );
 	};
-	$d = minn_test_diff( as_norm( $strip( $rb ) ), as_norm( $strip( $eb ) ) );
+	// The reference asks wordpress.org itself; the engine, the Minn update service (icon addresses rewritten).
+	$d = minn_test_diff( as_norm( $strip( minn_test_via_service( $rb ) ) ), as_norm( $strip( $eb ) ) );
 	check( null === $d, $label, (string) $d );
 }
 

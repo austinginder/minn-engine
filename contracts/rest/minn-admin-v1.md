@@ -301,10 +301,10 @@ parent). `GET plugin-updates` is the empty shape with `autoAllowed: false`;
 The plugin list itself is `wp/v2/plugins` (contracts/rest/plugins.md).
 
 **Adding themes and extensions** (suite section 6a; `Minn\Admin\Packages`).
-`GET themes/search?q=` asks wordpress.org (the popular list for an empty
-query) and answers in the plugin's item shape with `installed`/`active`
-from disk; `POST themes/install {slug}` downloads that theme's release zip
-from downloads.wordpress.org; `POST themes/upload` (multipart `file`,
+`GET themes/search?q=` asks the directory through the Minn update service
+(the popular list for an empty query) and answers in the plugin's item shape
+with `installed`/`active` from disk; `POST themes/install {slug}` downloads
+that theme's release zip from the update service (`/v1/download/`); `POST themes/upload` (multipart `file`,
 optional `overwrite`) unpacks a zip; `POST themes/delete {stylesheet}`
 removes a folder that is not the active theme or its parent. Extensions:
 `POST plugins/upload` and `POST plugins/install-url {url | github, asset}`
@@ -391,10 +391,17 @@ not fetched: the engine has no core strings to translate with them yet.
 
 ## Updates (2026-08-29)
 
-The engine asks wordpress.org itself (`api.wordpress.org/plugins/update-check/1.1/`
-and `themes/update-check/1.1/`, sent the installed headers and `all=true`) and keeps
-the answer in the `minn_updates` option as JSON for twelve hours; `POST check-updates`
-asks again now. Offers are only listed where the installed version is older
+The engine asks the directory through the Minn update service (`Ops\Directory`:
+`https://updates.minn.run/v1/plugins/update-check/1.1/` and `themes/update-check/1.1/`),
+which answers with wordpress.org's own offers, every package, icon and screenshot address
+pointed at the service. It sends each plugin's `Name`, `Version` and `UpdateURI` (so a plugin
+that updates from elsewhere is never offered the directory's plugin of the same folder name)
+and `all=true`, with `X-Minn-Compat: 7.1` (the service judges `Requires at least` against it,
+as wordpress.org judges a WordPress User-Agent) and a `Minn/<version>` User-Agent that never
+names the site. The answer is kept in the `minn_updates` option as JSON for twelve hours
+(with `source`, so an answer from before the service is asked again); `POST check-updates`
+asks again now. The reference asks wordpress.org itself, so the suites compare it through
+the service's documented rewrite (`minn_test_via_service` in `tests/lib.php`). Offers are only listed where the installed version is older
 (`real_plugin_updates` on the reference). Pinned by `tests/updates.test.php` on the
 dogfood site against its own reference, both freshly checked:
 
@@ -407,7 +414,7 @@ dogfood site against its own reference, both freshly checked:
   translationGroups: [], plugins: n, themes: n}`, plus on the engine `core` (the
   `GET /core` answer after asking the update service again; `update_core` alone may call it).
 - `POST plugins/update {plugin}` (with or without `.php`) downloads the offer's
-  `downloads.wordpress.org` package through the one unpacker, replaces the folder,
+  package from the update service through the one unpacker, replaces the folder,
   and answers `{updated: true, version}`; nothing offered → 400 `no_update`; an
   active plugin stays active (`active_plugins` is untouched by a folder swap).
   `POST plugins/update-all {}` → `{updated: [], failed: [], errors: []}` (`{updated: []}`
@@ -461,8 +468,8 @@ installed with 0.37.0 released and nothing was offered:
 - `pluginMeta` gives a directory URL only to an entry the directory knows (its `id`
   starts `w.org/`); a self-hosted plugin that published no URL of its own gets none,
   rather than a link to a wordpress.org page that does not exist.
-- **Applying a supplied offer goes through its publisher.** A `downloads.wordpress.org`
-  package is downloaded by the engine as before. Anything else is asked of
+- **Applying a supplied offer goes through its publisher.** A package on the update
+  service (`/v1/download/`) is downloaded by the engine as before. Anything else is asked of
   `upgrader_pre_download`, the filter the reference runs before every download, and
   installed only when the publisher hands back a file it fetched and verified
   (`Runtime\PackageDownload`). A refusal is answered with the publisher's own code and
@@ -475,8 +482,8 @@ installed with 0.37.0 released and nothing was offered:
 ## The plugin directory (2026-08-29)
 
 WordPress plugins run on the engine, so the wordpress.org directory answers here too,
-through `api.wordpress.org/plugins/info/1.2/` (parameters bracket-encoded, a
-WordPress-style User-Agent; the API answers nothing otherwise):
+through the update service's `/v1/plugins/info/1.2/` (parameters bracket-encoded, passed
+on as they came; edge-cached six hours for information, one for searches):
 
 - `GET plugins/search?q=&page=` → `{plugins: [{slug, name, description, installs, rating,
   version, icon, installed}], page, pages, total}`, twelve per page, `installed` the plugin

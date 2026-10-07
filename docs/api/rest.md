@@ -2855,7 +2855,7 @@ The wp/v2 media shape.
 
 The wp/v2 comment shape.
 
-Internals: `share()` (private, line 472)
+Internals: `share()` (private, line 471)
 
 
 ## Settings

@@ -58,7 +58,7 @@ final class ThemeCommand
     }
 
     /**
-     * Installs one or more themes from wordpress.org, a zip, or a URL.
+     * Installs one or more themes from the theme directory, a zip, or a URL.
      *
      * ## OPTIONS
      *
@@ -66,7 +66,7 @@ final class ThemeCommand
      * : A theme slug, a local zip path, or a zip URL.
      *
      * [--version=<version>]
-     * : Install that wordpress.org version instead of the current one.
+     * : Install that version from the directory instead of the current one.
      *
      * [--force]
      * : Overwrite an installed copy of the same folder.
@@ -114,7 +114,7 @@ final class ThemeCommand
     }
 
     /**
-     * Updates one or more themes from wordpress.org.
+     * Updates one or more themes from the theme directory.
      *
      * ## OPTIONS
      *
@@ -305,7 +305,7 @@ final class ThemeCommand
     }
 
     /**
-     * Searches the wordpress.org theme directory.
+     * Searches the theme directory.
      *
      * ## OPTIONS
      *

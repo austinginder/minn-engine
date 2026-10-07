@@ -293,8 +293,10 @@ $run($ENGINE_DIR, 'option delete minn_sr_probe');
 $check('option set is update', $code === 0 && str_contains($out, "Updated 'minn_cli_set' option."), $out);
 $run($ENGINE_DIR, 'option delete minn_cli_set');
 
+// The reference downloads from wordpress.org and the engine through the Minn
+// update service, so package addresses are compared after the service's rewrite.
 $stripCache = static function (string $out): string {
-    return (string) preg_replace("/\nUsing cached file '[^']+'\\.\\.\\.\n/", "\n", $out);
+    return minn_test_via_service((string) preg_replace("/\nUsing cached file '[^']+'\\.\\.\\.\n/", "\n", $out));
 };
 $compareInstall = static function (string $label, string $command) use ($run, $check, $stripCache, $ENGINE_DIR, $REF_DIR): void {
     $cleanup = static function (string $dir) use ($run): void {

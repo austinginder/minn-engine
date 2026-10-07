@@ -738,7 +738,8 @@ function wp_encode_emoji($content)
 
 function wp_staticize_emoji($text)
 {
-    return Minn\Content\Emoji::staticize((string) $text, (string) apply_filters('emoji_url', 'https://s.w.org/images/core/emoji/17.0.2/72x72/'), (string) apply_filters('emoji_ext', '.png'));
+    // WordPress's emoji images, served by the Minn update service (feeds and mail point readers here, never at wordpress.org).
+    return Minn\Content\Emoji::staticize((string) $text, (string) apply_filters('emoji_url', Minn\Ops\Directory::url('assets/s/images/core/emoji/17.0.2/72x72/')), (string) apply_filters('emoji_ext', '.png'));
 }
 
 /** The reference's emoji list: every sequence as entities, longest first, or the single code points they are made of. */

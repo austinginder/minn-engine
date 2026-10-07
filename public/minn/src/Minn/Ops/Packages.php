@@ -14,8 +14,9 @@ use Minn\Support\Files;
 use Minn\Support\FileHeaders;
 
 /**
- * Putting themes and extensions on disk. Themes come from wordpress.org
- * (block themes render on the engine) or an uploaded zip; extensions come
+ * Putting themes and extensions on disk. Themes come from the directory
+ * (wordpress.org's, asked through the Minn update service, Ops\Directory;
+ * block themes render on the engine) or an uploaded zip; extensions come
  * from an uploaded zip or a URL, and must carry a minn.json: a WordPress
  * plugin would install but never run, so it is refused with the reason.
  * Every archive is unpacked through one guarded routine: exactly one
@@ -28,8 +29,8 @@ use Minn\Support\FileHeaders;
 final readonly class Packages
 {
     /** The largest archive fetched or unpacked, in bytes. */
-    private const WPORG_THEMES = 'https://api.wordpress.org/themes/info/1.2/';
-    private const WPORG_PLUGINS = 'https://api.wordpress.org/plugins/info/1.2/';
+    private const THEMES_INFO = Directory::BASE . 'themes/info/1.2/';
+    private const PLUGINS_INFO = Directory::BASE . 'plugins/info/1.2/';
     private const INFO_OPTION = 'minn_plugin_info';
     private const INFO_TTL = 12 * 3600;
 
@@ -37,14 +38,14 @@ final readonly class Packages
     {
     }
 
-    /** wordpress.org theme search, or the popular list for an empty query. @return list<array> */
+    /** Directory theme search, or the popular list for an empty query. @return list<array> */
     public function searchThemes(string $query): array
     {
         $args = $query === '' ? 'request[browse]=popular' : 'request[search]=' . rawurlencode($query);
-        $json = $this->fetch(self::WPORG_THEMES . '?action=query_themes&' . $args . '&request[per_page]=12&request[fields][screenshot_url]=1&request[fields][active_installs]=1');
+        $json = $this->ask(self::THEMES_INFO . '?action=query_themes&' . $args . '&request[per_page]=12&request[fields][screenshot_url]=1&request[fields][active_installs]=1');
         $data = json_decode($json, true);
         if (!is_array($data) || !isset($data['themes'])) {
-            throw new RestError('themes_api_failed', 'wordpress.org did not answer the theme search.', 502);
+            throw new RestError('themes_api_failed', 'The Minn update service did not answer the theme search.', 502);
         }
         $active = (string) ($this->site->option('stylesheet') ?? '');
         $items = [];
@@ -65,14 +66,14 @@ final readonly class Packages
     }
 
     /**
-     * wordpress.org plugin search: twelve per page with icons, short
+     * Directory plugin search: twelve per page with icons, short
      * descriptions, install counts, and ratings, plus which results are
      * already installed (by folder). @return array{plugins: list<array>, page: int, pages: int, total: int}
      */
     public function searchPlugins(string $query, int $page): array
     {
         $page = max(1, $page);
-        $json = $this->fetch(self::WPORG_PLUGINS . '?action=query_plugins&' . http_build_query(['request' => [
+        $json = $this->ask(self::PLUGINS_INFO . '?action=query_plugins&' . http_build_query(['request' => [
             'search' => $query,
             'per_page' => 12,
             'page' => $page,
@@ -80,7 +81,7 @@ final readonly class Packages
         ]]));
         $data = json_decode($json, true);
         if (!is_array($data) || !isset($data['plugins'])) {
-            throw new RestError('plugins_api_failed', 'wordpress.org did not answer the plugin search.', 502);
+            throw new RestError('plugins_api_failed', 'The Minn update service did not answer the plugin search.', 502);
         }
         $installed = [];
         foreach ((new Inventory($this->contentDir, $this->site))->pluginFiles() as $relative => $path) {
@@ -113,7 +114,8 @@ final readonly class Packages
         }
         $cache = json_decode((string) ($this->site->option(self::INFO_OPTION) ?? ''), true);
         $cache = is_array($cache) ? $cache : [];
-        if (isset($cache[$slug]['at']) && (int) $cache[$slug]['at'] > time() - self::INFO_TTL && is_array($cache[$slug]['card'] ?? null)) {
+        // A card from another source (wordpress.org, before the update service) is asked again: its icon points there.
+        if (isset($cache[$slug]['at']) && (int) $cache[$slug]['at'] > time() - self::INFO_TTL && is_array($cache[$slug]['card'] ?? null) && ($cache[$slug]['source'] ?? '') === Directory::BASE) {
             return $cache[$slug]['card'];
         }
         $plugin = $this->directoryPlugin($slug);
@@ -132,7 +134,7 @@ final readonly class Packages
             'icon' => (string) ($icons['2x'] ?? $icons['1x'] ?? $icons['default'] ?? ''),
             'source' => 'wporg',
         ];
-        $cache[$slug] = ['at' => time(), 'card' => $card];
+        $cache[$slug] = ['at' => time(), 'card' => $card, 'source' => Directory::BASE];
         if (count($cache) > 50) {
             uasort($cache, static fn (array $a, array $b): int => $b['at'] <=> $a['at']);
             $cache = array_slice($cache, 0, 50, true);
@@ -141,19 +143,19 @@ final readonly class Packages
         return $card;
     }
 
-    /** Installs a wordpress.org plugin by slug; returns its folder. */
+    /** Installs a directory plugin by slug; returns its folder. */
     public function installPlugin(string $slug, string $version = ''): string
     {
-        return $this->unpack($this->fetch($this->pluginPackage($slug, $version)), 'plugin')['folder'];
+        return $this->unpack($this->fetch($this->pluginPackage($slug, $version), Directory::ORIGIN), 'plugin')['folder'];
     }
 
-    /** Installs a wordpress.org plugin over the folder already there. */
+    /** Installs a directory plugin over the folder already there. */
     public function replacePlugin(string $slug, string $version = ''): string
     {
-        return $this->unpackReplacing($this->fetch($this->pluginPackage($slug, $version)), 'plugin')['folder'];
+        return $this->unpackReplacing($this->fetch($this->pluginPackage($slug, $version), Directory::ORIGIN), 'plugin')['folder'];
     }
 
-    /** The download link of a wordpress.org plugin, at a version when one is asked for. */
+    /** The download link of a directory plugin (on the update service), at a version when one is asked for. */
     private function pluginPackage(string $slug, string $version): string
     {
         if (!preg_match('/^[a-z0-9-]+$/', $slug)) {
@@ -168,22 +170,22 @@ final readonly class Packages
             if (!preg_match('/^[0-9][A-Za-z0-9._-]*$/', $version)) {
                 throw new RestError('rest_invalid_param', 'Invalid parameter(s): version', 400, ['params' => ['version' => 'Invalid parameter.']]);
             }
-            $link = 'https://downloads.wordpress.org/plugin/' . $slug . '.' . $version . '.zip';
+            $link = Directory::PACKAGES . 'plugin/' . $slug . '.' . $version . '.zip';
         }
-        if ($link === '' || !str_starts_with($link, 'https://downloads.wordpress.org/')) {
-            throw new RestError('rest_plugin_install_failed', 'The plugin has no download link on wordpress.org.', 500);
+        if ($link === '' || !str_starts_with($link, Directory::PACKAGES)) {
+            throw new RestError('rest_plugin_install_failed', 'The plugin has no download link in the directory.', 500);
         }
         return $link;
     }
 
     /**
-     * One wordpress.org plugin record, or null when the slug is unknown.
+     * One directory plugin record, or null when the slug is unknown.
      *
      * @return array<string, mixed>|null
      */
     public function directoryPlugin(string $slug): ?array
     {
-        $json = $this->fetch(self::WPORG_PLUGINS . '?action=plugin_information&' . http_build_query(['request' => [
+        $json = $this->ask(self::PLUGINS_INFO . '?action=plugin_information&' . http_build_query(['request' => [
             'slug' => $slug,
             'fields' => ['short_description' => 1, 'icons' => 1, 'active_installs' => 1, 'rating' => 1, 'download_link' => 1, 'sections' => 0, 'description' => 0, 'reviews' => 0, 'ratings' => 0, 'tags' => 0, 'contributors' => 0],
         ]]));
@@ -205,7 +207,7 @@ final readonly class Packages
     public function pluginsAction(string $action, array $request): ?array
     {
         try {
-            $data = json_decode($this->fetch(self::WPORG_PLUGINS . '?' . http_build_query(['action' => $action, 'request' => $request])), true);
+            $data = json_decode($this->ask(self::PLUGINS_INFO . '?' . http_build_query(['action' => $action, 'request' => $request])), true);
         } catch (RestError) {
             return null;
         }
@@ -219,20 +221,20 @@ final readonly class Packages
     }
 
     /**
-     * A page of wordpress.org themes for `wp theme search`.
+     * A page of directory themes for `wp theme search`.
      *
      * @return array{items: list<array<string, mixed>>, total: int}
      */
     public function queryThemes(string $search, int $page, int $perPage): array
     {
-        $json = $this->fetch(self::WPORG_THEMES . '?action=query_themes&' . http_build_query(['request' => [
+        $json = $this->ask(self::THEMES_INFO . '?action=query_themes&' . http_build_query(['request' => [
             'search' => $search,
             'page' => $page,
             'per_page' => $perPage,
         ]]));
         $data = json_decode($json, true);
         if (!is_array($data) || !isset($data['themes'])) {
-            throw new RestError('themes_api_failed', 'wordpress.org did not answer the theme search.', 502);
+            throw new RestError('themes_api_failed', 'The Minn update service did not answer the theme search.', 502);
         }
         $items = [];
         foreach ((array) $data['themes'] as $theme) {
@@ -250,20 +252,20 @@ final readonly class Packages
     }
 
     /**
-     * A page of wordpress.org plugins for `wp plugin search`.
+     * A page of directory plugins for `wp plugin search`.
      *
      * @return array{items: list<array<string, mixed>>, total: int}
      */
     public function queryPlugins(string $search, int $page, int $perPage): array
     {
-        $json = $this->fetch(self::WPORG_PLUGINS . '?action=query_plugins&' . http_build_query(['request' => [
+        $json = $this->ask(self::PLUGINS_INFO . '?action=query_plugins&' . http_build_query(['request' => [
             'search' => $search,
             'page' => $page,
             'per_page' => $perPage,
         ]]));
         $data = json_decode($json, true);
         if (!is_array($data) || !isset($data['plugins'])) {
-            throw new RestError('plugins_api_failed', 'wordpress.org did not answer the plugin search.', 502);
+            throw new RestError('plugins_api_failed', 'The Minn update service did not answer the plugin search.', 502);
         }
         $items = [];
         foreach ((array) $data['plugins'] as $plugin) {
@@ -281,32 +283,32 @@ final readonly class Packages
     }
 
     /**
-     * One wordpress.org theme record, or null when the slug is unknown.
+     * One directory theme record, or null when the slug is unknown.
      *
      * @return array<string, mixed>|null
      */
     public function directoryTheme(string $slug): ?array
     {
-        $data = json_decode($this->fetch(self::WPORG_THEMES . '?action=theme_information&request[slug]=' . rawurlencode($slug) . '&request[fields][download_link]=1'), true);
+        $data = json_decode($this->ask(self::THEMES_INFO . '?action=theme_information&request[slug]=' . rawurlencode($slug) . '&request[fields][download_link]=1'), true);
         if (!is_array($data) || isset($data['error']) || !isset($data['slug'])) {
             return null;
         }
         return $data;
     }
 
-    /** Installs a wordpress.org theme by slug; returns its stylesheet folder. */
+    /** Installs a directory theme by slug; returns its stylesheet folder. */
     public function installTheme(string $slug, string $version = ''): string
     {
-        return $this->unpack($this->fetch($this->themePackage($slug, $version)), 'theme')['folder'];
+        return $this->unpack($this->fetch($this->themePackage($slug, $version), Directory::ORIGIN), 'theme')['folder'];
     }
 
-    /** Installs a wordpress.org theme over the folder already there. */
+    /** Installs a directory theme over the folder already there. */
     public function replaceTheme(string $slug, string $version = ''): string
     {
-        return $this->unpackReplacing($this->fetch($this->themePackage($slug, $version)), 'theme')['folder'];
+        return $this->unpackReplacing($this->fetch($this->themePackage($slug, $version), Directory::ORIGIN), 'theme')['folder'];
     }
 
-    /** The download link of a wordpress.org theme, at a version when one is asked for. */
+    /** The download link of a directory theme (on the update service), at a version when one is asked for. */
     private function themePackage(string $slug, string $version): string
     {
         if (!preg_match('/^[a-z0-9-]+$/', $slug)) {
@@ -318,10 +320,10 @@ final readonly class Packages
             if (!preg_match('/^[0-9][A-Za-z0-9._-]*$/', $version)) {
                 throw new RestError('bad_slug', 'That is not a theme version.', 400);
             }
-            $link = 'https://downloads.wordpress.org/theme/' . $slug . '.' . $version . '.zip';
+            $link = Directory::PACKAGES . 'theme/' . $slug . '.' . $version . '.zip';
         }
-        if ($data === null || $link === '' || !str_starts_with($link, 'https://downloads.wordpress.org/')) {
-            throw new RestError('theme_not_found', 'wordpress.org has no theme by that slug.', 404);
+        if ($data === null || $link === '' || !str_starts_with($link, Directory::PACKAGES)) {
+            throw new RestError('theme_not_found', 'The directory has no theme by that slug.', 404);
         }
         return $link;
     }
@@ -451,9 +453,16 @@ final readonly class Packages
         return ['name' => '', 'version' => '', 'kind' => 'unknown'];
     }
 
+    /** A directory answer from the Minn update service, every redirect hop staying on it. */
+    private function ask(string $url): string
+    {
+        return $this->fetch($url, Directory::ORIGIN);
+    }
+
     /**
      * A package over https, every redirect hop included, refusing anything
      * else; when host prefixes are given, every hop must start with one.
+     * The request names the engine, never the site's address.
      */
     public function fetch(string $url, string ...$hostPrefixes): string
     {
@@ -461,7 +470,7 @@ final readonly class Packages
             throw new RestError('bad_url', 'Packages are fetched over https only.', 400);
         }
         try {
-            return Download::https($url, Archive::MAX_BYTES, array_values($hostPrefixes), 'WordPress/' . \Minn\Engine::WP_VERSION . '; ' . $this->site->option('home'));
+            return Download::https($url, Archive::MAX_BYTES, array_values($hostPrefixes), Directory::userAgent());
         } catch (\RuntimeException $e) {
             throw new RestError('download_failed', $e->getMessage(), 502);
         }

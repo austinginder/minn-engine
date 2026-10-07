@@ -3352,8 +3352,10 @@ when the engine renders block content itself.
   is not encoded; the longest listed sequence wins; images go only into
   text runs outside code and pre; once anything matched, leftover
   `&#xfe0f;` selectors are dropped, while a sequence that lists its
-  selector keeps it in file name and alt. CDN
-  `https://s.w.org/images/core/emoji/17.0.2/72x72/` (`emoji_url`), `.png`
+  selector keeps it in file name and alt. Images come from the Minn update
+  service, `https://updates.minn.run/v1/assets/s/images/core/emoji/17.0.2/72x72/`
+  (`emoji_url`; the reference's are wordpress.org's emoji CDN, and the api suite
+  compares through the service's rewrite, `minn_test_via_service`), `.png`
   (`emoji_ext`).
 - `wp_replace_insecure_home_url` acts only when
   `wp_should_replace_insecure_home_url()` (https in use, the

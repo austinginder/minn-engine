@@ -88,7 +88,7 @@ final class PluginCommand
     }
 
     /**
-     * Installs one or more plugins from wordpress.org, a zip, or a URL.
+     * Installs one or more plugins from the plugin directory, a zip, or a URL.
      *
      * ## OPTIONS
      *
@@ -96,7 +96,7 @@ final class PluginCommand
      * : A plugin slug, a local zip path, or a zip URL.
      *
      * [--version=<version>]
-     * : Install that wordpress.org version instead of the current one.
+     * : Install that version from the directory instead of the current one.
      *
      * [--force]
      * : Overwrite an installed copy of the same folder.
@@ -147,7 +147,7 @@ final class PluginCommand
     }
 
     /**
-     * Updates one or more plugins from wordpress.org.
+     * Updates one or more plugins from the plugin directory.
      *
      * ## OPTIONS
      *
@@ -278,7 +278,7 @@ final class PluginCommand
     }
 
     /**
-     * Searches the wordpress.org plugin directory.
+     * Searches the plugin directory.
      *
      * ## OPTIONS
      *

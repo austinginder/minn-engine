@@ -163,3 +163,31 @@ if ( getenv( 'MINN_TEST_KEEP_THEME' ) === false ) {
 if ( getenv( 'MINN_TEST_KEEP_LOCALE' ) === false ) {
 	minn_test_pin_locale();
 }
+
+/**
+ * A reference answer as a Minn site receives it through the Minn update
+ * service: every address a site would fetch from wordpress.org (packages,
+ * icons, banners, screenshots, emoji) pointed at https://updates.minn.run/v1/,
+ * the one change the service makes (its own parity battery pins it against
+ * wordpress.org). The reference WordPress asks wordpress.org itself, so a suite
+ * comparing it with the engine compares it through this. Plain and
+ * JSON-escaped slashes, absolute and protocol-relative; links people click
+ * (a plugin's directory page) are left alone. Arrays are rewritten value by value.
+ */
+function minn_test_via_service( $value ) {
+	if ( is_array( $value ) ) {
+		return array_map( 'minn_test_via_service', $value );
+	}
+	if ( ! is_string( $value ) ) {
+		return $value;
+	}
+	$hosts = array( 'downloads.wordpress.org' => 'download', 'ps.w.org' => 'assets/ps', 'ts.w.org' => 'assets/ts', 's.w.org' => 'assets/s' );
+	return (string) preg_replace_callback(
+		'#(?:https?:)?(\\\\?/)\\\\?/(downloads\.wordpress\.org|ps\.w\.org|ts\.w\.org|s\.w\.org)\\\\?/#',
+		static function ( array $m ) use ( $hosts ): string {
+			$target = 'https://updates.minn.run/v1/' . $hosts[ $m[2] ] . '/';
+			return '\\/' === $m[1] ? str_replace( '/', '\\/', $target ) : $target;
+		},
+		$value
+	);
+}

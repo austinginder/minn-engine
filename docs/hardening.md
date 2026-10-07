@@ -53,8 +53,8 @@ What the engine does on its own, and what the server in front of it must do.
   removed or replaced. An archive must hold exactly one such folder, no absolute or
   dotted paths, no symbolic-link entries, at most twenty thousand entries, and at most
   512 MB unpacked. Downloads go through `Minn\Http\Download`: https on every redirect
-  hop (at most five), a wordpress.org update must stay on `downloads.wordpress.org`
-  across every hop, bodies over the cap fail rather than truncate. A language pack
+  hop (at most five), a directory update must stay on the Minn update service
+  (`updates.minn.run`) across every hop, bodies over the cap fail rather than truncate. A language pack
   installs only when the bundle manifest names its SHA-256 and the download matches
   it. Every wordpress.org update records the archive's SHA-256, version, and package
   URL under `archives` in the `minn_updates` option, so an audit can ask what code

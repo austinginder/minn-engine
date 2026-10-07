@@ -292,7 +292,7 @@ final readonly class Engine
             \defined('DOING_CRON') || \define('DOING_CRON', true);
             return (int) \wp_cron();
         };
-        $cron = Cron::create($db, $site, ABSPATH . 'wp-content', $permalinks->url('/'), self::WP_VERSION, $fireDueEvents);
+        $cron = Cron::create($db, $site, ABSPATH . 'wp-content', $fireDueEvents);
         $notFound = static function () use (&$front): Response { return $front->notFound(); };
         $themed = static function (\Minn\Front\Resolution $resolution) use (&$front): Response { return $front->themed($resolution); };
         $feedController = new \Minn\Front\FeedController($site);

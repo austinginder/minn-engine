@@ -4,13 +4,14 @@ declare(strict_types=1);
 
 namespace Minn\Cli;
 
+use Minn\Ops\Directory;
 use Minn\Ops\Packages;
 use Minn\RestError;
 use WP_CLI;
 
 /**
  * Puts a theme or a plugin on disk for `wp theme install` and `wp plugin
- * install`: a wordpress.org slug, a local zip, or a zip URL, saying along
+ * install`: a directory slug, a local zip, or a zip URL, saying along
  * the way what WP-CLI says. The two kinds differ only in their words, in
  * where they live, and in a plugin being allowed to be a single file.
  */
@@ -71,7 +72,7 @@ final readonly class PackageInstaller
     }
 
     /**
-     * A wordpress.org release onto disk, replacing an installed copy when forced.
+     * A directory release (from the Minn update service) onto disk, replacing an installed copy when forced.
      *
      * @param array<string, mixed> $info the directory's answer for the slug
      * @return array{0: ?string, 1: bool}
@@ -81,7 +82,7 @@ final readonly class PackageInstaller
         $label = ucfirst($this->kind);
         $name = html_entity_decode(strip_tags((string) ($info['name'] ?? $slug)), ENT_QUOTES | ENT_HTML5, 'UTF-8');
         $link = $version !== ''
-            ? "https://downloads.wordpress.org/{$this->kind}/{$slug}.{$version}.zip"
+            ? Directory::PACKAGES . "{$this->kind}/{$slug}.{$version}.zip"
             : (string) ($info['download_link'] ?? '');
         WP_CLI::log("Installing {$name} (" . ($version !== '' ? $version : (string) ($info['version'] ?? '')) . ')');
         WP_CLI::log("Downloading installation package from {$link}...");

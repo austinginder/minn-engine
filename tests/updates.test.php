@@ -119,7 +119,8 @@ function up_parity( string $label, string $route, ?array $mint, array $drop = ar
 		}
 		return array_map( $strip, $v );
 	};
-	$d = minn_test_diff( up_norm( $strip( $rb ) ), up_norm( $strip( $eb ) ) );
+	// The reference asks wordpress.org itself; the engine, the Minn update service.
+	$d = minn_test_diff( up_norm( $strip( minn_test_via_service( $rb ) ) ), up_norm( $strip( $eb ) ) );
 	check( null === $d, $label, (string) $d );
 }
 
@@ -188,7 +189,7 @@ if ( null === $target ) {
 	up_parity( 'both stacks read the new version', "/wp/v2/plugins/$key", $admin, array( '_links' ) );
 	[ $s, $b ] = up_fetch( $ENGINE, '/minn-admin/v1/plugins/update', $admin, 'POST', json_encode( array( 'plugin' => $file ) ) );
 	check( 400 === $s && 'no_update' === ( $b['code'] ?? '' ), 'a second update finds nothing to do', "status $s " . json_encode( $b ) );
-	up_parity( 'the offers agree after the update', '/minn-admin/v1/check-updates', $admin, array(), 'POST', '{}' );
+	up_parity( 'the offers agree after the update', '/minn-admin/v1/check-updates', $admin, array( 'translations', 'translationGroups', 'core' ), 'POST', '{}' );
 }
 
 echo "\n$pass passed, $fail failed\n";

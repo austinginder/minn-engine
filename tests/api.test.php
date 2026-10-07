@@ -37,6 +37,8 @@ foreach (['functions' => 'api-probe.php', 'admin' => 'admin-probe.php', 'content
     }
     foreach ($expected as $row) {
         [$label, $value] = $row;
+        // Captured from WordPress, which points readers at wordpress.org (emoji images); the engine points them at the Minn update service.
+        $value = minn_test_via_service($value);
         $have = array_key_exists($label, $byLabel);
         $check("{$fixture}: {$label}", $have && json_encode($byLabel[$label]) === json_encode($value), ($have ? json_encode($byLabel[$label], JSON_UNESCAPED_SLASHES) : 'missing') . ' vs ' . json_encode($value, JSON_UNESCAPED_SLASHES));
     }

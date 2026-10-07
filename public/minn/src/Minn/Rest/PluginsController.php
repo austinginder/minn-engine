@@ -53,7 +53,7 @@ final readonly class PluginsController
         return Reply::item($items, Fields::fromQuery($request->query));
     }
 
-    /** Installs a wordpress.org plugin by slug, optionally activating it; answers 201 with the item. */
+    /** Installs a directory plugin by slug, optionally activating it; answers 201 with the item. */
     #[Route(Method::Post, '/wp/v2/plugins', policy: new Policy(Access::Cap, 'activate_plugins', signIn: 'rest_cannot_view_plugins', signInMessage: 'Sorry, you are not allowed to manage plugins for this site.', refuse: 'rest_cannot_view_plugins', message: 'Sorry, you are not allowed to manage plugins for this site.'))]
     public function install(Request $request): Response
     {

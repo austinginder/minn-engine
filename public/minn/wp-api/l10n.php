@@ -429,7 +429,8 @@ function translations_api($type, $args = null)
     if (!in_array($type, ['plugins', 'themes', 'core'], true)) {
         return new WP_Error('invalid_type', 'Invalid translation type.');
     }
-    $response = wp_remote_post('https://api.wordpress.org/translations/' . $type . '/1.0/', ['timeout' => 10, 'body' => ['wp_version' => $GLOBALS['wp_version'] ?? '', 'locale' => get_locale(), 'version' => (string) (((array) $args)['version'] ?? '')]]);
+    // Asked of the Minn update service, which answers with wordpress.org's translations; never the site's address.
+    $response = wp_remote_post(Minn\Ops\Directory::url('translations/' . $type . '/1.0/'), ['timeout' => 10, 'user-agent' => Minn\Ops\Directory::userAgent(), 'body' => ['wp_version' => $GLOBALS['wp_version'] ?? '', 'locale' => get_locale(), 'version' => (string) (((array) $args)['version'] ?? '')]]);
     if (is_wp_error($response)) {
         return new WP_Error('translations_api_failed', 'An unexpected error occurred.', $response->get_error_message());
     }

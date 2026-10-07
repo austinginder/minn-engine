@@ -25,14 +25,14 @@ final readonly class PackagesController
     {
     }
 
-    /** Searches wordpress.org themes. */
+    /** Searches the theme directory. */
     #[Route(Method::Get, '/minn-admin/v1/themes/search', policy: new Policy(Access::Floor, caps: ['install_themes']))]
     public function searchThemes(Request $request): Response
     {
         return Reply::answer($request, ['themes' => $this->packages->searchThemes(trim((string) ($request->query('q') ?? '')))]);
     }
 
-    /** Installs a theme from wordpress.org by slug. */
+    /** Installs a theme from the directory by slug. */
     #[Route(Method::Post, '/minn-admin/v1/themes/install', policy: new Policy(Access::Floor, caps: ['install_themes']))]
     public function installTheme(Request $request): Response
     {
@@ -105,14 +105,14 @@ final readonly class PackagesController
         return Reply::answer($request, ['installed' => true, 'plugin' => $result['folder'] . '/' . $result['folder'], 'url' => $url]);
     }
 
-    /** Searches wordpress.org plugins. */
+    /** Searches the plugin directory. */
     #[Route(Method::Get, '/minn-admin/v1/plugins/search', policy: new Policy(Access::Floor, caps: ['install_plugins']))]
     public function searchPlugins(Request $request): Response
     {
         return Reply::answer($request, $this->packages->searchPlugins(trim((string) ($request->query('q') ?? '')), (int) ($request->query('page') ?? 1)));
     }
 
-    /** One wordpress.org plugin's details. */
+    /** One directory plugin's details. */
     #[Route(Method::Get, '/minn-admin/v1/plugins/info', policy: new Policy(Access::Floor, caps: ['install_plugins']))]
     public function pluginInfo(Request $request): Response
     {

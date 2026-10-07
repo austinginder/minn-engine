@@ -14,12 +14,16 @@ use Minn\Runtime\Refusal;
 use Minn\Support\Serialized;
 
 /**
- * Update offers from wordpress.org for the site's plugins and themes: the
- * directory's update-check endpoints asked with the installed headers, the
- * answer kept in the minn_updates option (JSON) for twelve hours, and the
- * offers applied by downloading the release archive through the one
- * package unpacker. A plugin or theme the directory does not know keeps
- * its folder untouched and is never offered anything. The per-item
+ * Update offers for the site's plugins and themes from the directory, asked
+ * through the Minn update service (Ops\Directory), which answers with
+ * wordpress.org's own offers and serves their packages: the update-check
+ * endpoints asked with the installed headers (each plugin's Name, Version
+ * and Update URI, so a plugin that updates from elsewhere is never offered
+ * the directory's plugin of the same folder name), the answer kept in the
+ * minn_updates option (JSON) for twelve hours, and the offers applied by
+ * downloading the release archive through the one package unpacker. A
+ * plugin or theme the directory does not know keeps its folder untouched
+ * and is never offered anything. The per-item
  * auto-update lists are the site's own auto_update_plugins and
  * auto_update_themes options, in the shape the app already reads.
  *
@@ -35,9 +39,6 @@ final class Updates
     public const OPTION = 'minn_updates';
     public const TTL = 12 * 3600;
 
-    private const PLUGINS_API = 'https://api.wordpress.org/plugins/update-check/1.1/';
-    private const THEMES_API = 'https://api.wordpress.org/themes/update-check/1.1/';
-    private const PACKAGE_HOST = 'https://downloads.wordpress.org/';
 
     private ?array $state = null;
 
@@ -46,8 +47,6 @@ final class Updates
         private readonly Inventory $inventory,
         private readonly Packages $packages,
         private readonly string $contentDir,
-        private readonly string $home,
-        private readonly string $wpVersion,
     ) {
     }
 
@@ -58,18 +57,19 @@ final class Updates
             return $this->state;
         }
         $stored = json_decode((string) ($this->site->option(self::OPTION) ?? ''), true);
-        if (is_array($stored) && (int) ($stored['checked'] ?? 0) > time() - self::TTL) {
+        // An answer from another source (wordpress.org, before the update service) is asked again.
+        if (is_array($stored) && (int) ($stored['checked'] ?? 0) > time() - self::TTL && ($stored['source'] ?? '') === Directory::BASE) {
             return $this->state = $stored;
         }
         try {
             return $this->refresh();
         } catch (RestError) {
-            // wordpress.org did not answer: the last answer stands, as the reference's check keeps its own.
+            // The service did not answer: the last answer stands, as the reference's check keeps its own.
             return $this->state = is_array($stored) ? $stored : ['checked' => 0, 'plugins' => [], 'no_update' => [], 'themes' => [], 'themes_current' => [], 'archives' => [], 'supplied' => []];
         }
     }
 
-    /** Asks wordpress.org now, whatever the cache says, and keeps the answer. */
+    /** Asks the directory now, whatever the cache says, and keeps the answer. */
     public function refresh(): array
     {
         return $this->state = $this->check();
@@ -80,8 +80,8 @@ final class Updates
     {
         $plugins = [];
         $active = Serialized::stringList($this->site->option('active_plugins'));
-        foreach ($this->pluginVersions() as $file => $version) {
-            $plugins[$file] = ['Version' => $version];
+        foreach ($this->pluginHeaders() as $file => $headers) {
+            $plugins[$file] = $headers;
         }
         $themes = [];
         foreach ($this->themeHeaders() as $slug => $h) {
@@ -94,13 +94,13 @@ final class Updates
         $stylesheet = (string) ($this->site->option('stylesheet') ?? '');
         $locale = (string) ($this->site->option('WPLANG') ?: 'en_US');
 
-        $pluginAnswer = $plugins === [] ? [] : $this->post(self::PLUGINS_API, [
+        $pluginAnswer = $plugins === [] ? [] : Directory::post('plugins/update-check/1.1/', [
             'plugins' => json_encode(['plugins' => $plugins, 'active' => array_values($active)]),
             'translations' => '{}',
             'locale' => json_encode([$locale]),
             'all' => 'true',
         ]);
-        $themeAnswer = $themes === [] ? [] : $this->post(self::THEMES_API, [
+        $themeAnswer = $themes === [] ? [] : Directory::post('themes/update-check/1.1/', [
             'themes' => json_encode(['active' => $stylesheet, 'themes' => $themes]),
             'translations' => '{}',
             'locale' => json_encode([$locale]),
@@ -109,6 +109,7 @@ final class Updates
         $supplied = $this->supplied(is_array($stored) ? $stored : []);
         $state = [
             'checked' => time(),
+            'source' => Directory::BASE,
             // A plugin's own answer wins over the directory's, as it does on the
             // reference: the filter runs last there, and a plugin that hosts
             // itself is the only one who knows its versions.
@@ -204,7 +205,7 @@ final class Updates
         return $out;
     }
 
-    /** Whether wordpress.org knows this theme. */
+    /** Whether the directory knows this theme. */
     public function themeOnDirectory(string $stylesheet): bool
     {
         $state = $this->state();
@@ -321,6 +322,21 @@ final class Updates
         return $out;
     }
 
+    /**
+     * Plugin file => the headers the update check sends, in WordPress's keys.
+     *
+     * @return array<string, array{Name: string, Version: string, UpdateURI: string}>
+     */
+    private function pluginHeaders(): array
+    {
+        $out = [];
+        foreach ($this->inventory->pluginFiles() as $relative => $path) {
+            $h = FileHeaders::values($path, ['Plugin Name', 'Version', 'Update URI']);
+            $out[$relative] = ['Name' => $h['Plugin Name'], 'Version' => $h['Version'], 'UpdateURI' => $h['Update URI']];
+        }
+        return $out;
+    }
+
     /** Plugin file => Plugin Name. @return array<string, string> */
     public function pluginNames(): array
     {
@@ -350,15 +366,15 @@ final class Updates
 
     /**
      * Fetches and unpacks an offer's package. A directory package is
-     * downloaded here, every redirect hop staying on the wordpress.org
-     * download host; anything else has to come from its publisher, verified.
+     * downloaded here from the Minn update service, every redirect hop
+     * staying on it; anything else has to come from its publisher, verified.
      * The archive's SHA-256 is kept under "archives" in the state either
      * way, so an audit can ask what code arrived.
      */
     private function install(string $package, string $kind, string $folder, string $asset = ''): void
     {
-        $zip = str_starts_with($package, self::PACKAGE_HOST)
-            ? $this->packages->fetch($package, self::PACKAGE_HOST)
+        $zip = str_starts_with($package, Directory::PACKAGES)
+            ? $this->packages->fetch($package, Directory::ORIGIN)
             : $this->vouched($package, $kind, $asset);
         $result = $this->packages->unpackReplacing($zip, $kind);
         if ($result['folder'] !== $folder) {
@@ -385,7 +401,7 @@ final class Updates
             throw new RestError('update_failed', $verified->message, 500);
         }
         if ($verified === null) {
-            throw new RestError('update_failed', "The offer's package is not on wordpress.org and its publisher did not verify the download.", 500);
+            throw new RestError('update_failed', "The offer's package is not from the Minn update service and its publisher did not verify the download.", 500);
         }
         $zip = (string) file_get_contents($verified);
         unlink($verified);
@@ -405,16 +421,6 @@ final class Updates
         }
         $this->state = $state;
         $this->site->setOption(self::OPTION, (string) json_encode($state, JSON_UNESCAPED_SLASHES));
-    }
-
-    /** @param array<string, string> $fields */
-    private function post(string $url, array $fields): array
-    {
-        $decoded = \Minn\Http::post($url, form: $fields, timeout: 20, hosts: ['https://api.wordpress.org/'], userAgent: "WordPress/{$this->wpVersion}; {$this->home}")->json();
-        if (!is_array($decoded)) {
-            throw new RestError('check_failed', 'Could not check for updates.', 500);
-        }
-        return $decoded;
     }
 
     /** The directory answers an empty bucket as a list; a map either way. */
