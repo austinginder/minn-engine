@@ -39,16 +39,13 @@ final readonly class MainQueryBridge
     }
 
     /**
-     * The page of posts a resolution shows, through the runtime's main query
-     * when it is up; the variables a request adds of its own (a feed's) win.
+     * The page of posts a resolution shows, through the runtime's main
+     * query; the variables a request adds of its own (a feed's) win.
      *
      * @param array<string, mixed> $extra
      */
     public function stand(Resolution $resolution, array $extra = []): Page
     {
-        if (!Runtime::booted()) {
-            return $this->listing($resolution);
-        }
         // The steps run once a request: a page rendered after a handler declined it (a sitemap that is a 404) stands on that query.
         if (Runtime::current()->get('front_lifecycle') === true) {
             $stood = Runtime::current()->get('main_query_page');
@@ -138,7 +135,7 @@ final readonly class MainQueryBridge
     /** @return list<string> the post types a plugin's taxonomy attaches to */
     private function objectTypes(string $taxonomy): array
     {
-        $row = Runtime::booted() ? Runtime::registry()->taxonomy($taxonomy) : null;
+        $row = Runtime::registry()->taxonomy($taxonomy);
         $types = array_values(array_map('strval', (array) ($row['object_type'] ?? [])));
         return $types === [] ? ['post'] : $types;
     }

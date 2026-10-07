@@ -862,7 +862,7 @@ What a listing is narrowed to. Every field is optional and the object is
 immutable, so a filter reads as a sentence: types('post')->inTerm(12).
 Dates are site-local "Y-m-d H:i:s" bounds, from inclusive, to exclusive.
 
-Used by: `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Content\Posts`, `Minn\Front\ArchiveAddresses`, `Minn\Front\Renderer`, `Minn\Front\Resolver`, `Minn\Front\RuleRoutes`, `Minn\Theme\MainQueryBridge`
+Used by: `Minn\Content\Posts`, `Minn\Front\ArchiveAddresses`, `Minn\Front\Renderer`, `Minn\Front\Resolver`, `Minn\Front\RuleRoutes`, `Minn\Theme\MainQueryBridge`
 
 ```php
 __construct(array $types = array (   0 => 'post', ), ?int $term = NULL, ?int $author = NULL, ?string $from = NULL, ?string $to = NULL, ?string $search = NULL)

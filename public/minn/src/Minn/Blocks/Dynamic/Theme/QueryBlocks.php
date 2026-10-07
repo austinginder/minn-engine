@@ -8,12 +8,11 @@ use Minn\Content\TermRecord;
 use Minn\Content\PostRecord;
 use Minn\Blocks\Block;
 use Minn\Content\Page;
-use Minn\Content\PostFilter;
+use Minn\Content\Posts;
 use Minn\Blocks\Layout;
 use Minn\Blocks\Renderer;
 use Minn\Blocks\Styles;
 use Minn\Blocks\Wrapper;
-use Minn\Content\Posts;
 use Minn\Content\Site;
 use Minn\Content\Texturize;
 use Minn\Front\Kind;
@@ -56,20 +55,8 @@ final class QueryBlocks
         $attrs = (array) $block->attr('query', []);
         if (!empty($attrs['inherit'])) {
             $this->queries[] = ['page' => new Page($context->posts, $context->total), 'inherit' => true];
-        } elseif (Runtime::booted()) {
-            $this->queries[] = ['page' => self::queried($block, $attrs), 'inherit' => false];
         } else {
-            $perPage = max(1, min(100, (int) ($attrs['perPage'] ?? 10)));
-            $sticky = ($attrs['sticky'] ?? '') === 'exclude' ? [] : Serialized::intList($this->site->option('sticky_posts'));
-            $filter = PostFilter::all();
-            if (!empty($attrs['author'])) {
-                $filter = $filter->byAuthor((int) $attrs['author']);
-            }
-            if (!empty($attrs['search'])) {
-                $filter = $filter->matching((string) $attrs['search']);
-            }
-            $page = $this->posts->listing($filter, 1, $perPage, $sticky);
-            $this->queries[] = ['page' => $page, 'inherit' => false];
+            $this->queries[] = ['page' => self::queried($block, $attrs), 'inherit' => false];
         }
         $out = '';
         $inner = 0;
@@ -279,7 +266,7 @@ final class QueryBlocks
     private function archiveTitle(array $type): string
     {
         $label = (string) ($type['label'] ?? $type['name'] ?? '');
-        return Runtime::booted() ? (string) \apply_filters('post_type_archive_title', $label, (string) ($type['name'] ?? '')) : $label;
+        return (string) \apply_filters('post_type_archive_title', $label, (string) ($type['name'] ?? ''));
     }
 
     private function termDescription(Block $block, Renderer $renderer): string

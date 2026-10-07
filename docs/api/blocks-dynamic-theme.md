@@ -7,7 +7,7 @@ the template blocks a block theme composes with
 | [`Comments`](#comments) | final readonly class | 245 | comments, comments-title, comment-template, the comment-* blocks, and the comment form. |
 | [`Navigation`](#navigation) | final readonly class | 287 | navigation, navigation-link, page-list. A navigation block's items come |
 | [`PostBlocks`](#postblocks) | final readonly class | 255 | The post-* blocks: they render the context's current post. |
-| [`QueryBlocks`](#queryblocks) | final class | 274 | query, post-template, query-title, query-no-results, query-pagination, term-description. |
+| [`QueryBlocks`](#queryblocks) | final class | 262 | query, post-template, query-title, query-no-results, query-pagination, term-description. |
 | [`Structure`](#structure) | final readonly class | 105 | template-part, pattern, site-title, site-tagline, site-logo. |
 
 ## Comments
@@ -91,7 +91,7 @@ __construct(Minn\Content\Posts $posts, Minn\Content\Site $site, Minn\Front\Perma
 
 Registers this family's blocks with the renderer.
 
-Internals: `query()` (private, line 53), `queried()` (private, line 92), `current()` (private, line 103), `postTemplate()` (private, line 108), `postClasses()` (private, line 142), `queryTitle()` (private, line 172), `noResults()` (private, line 192), `pagination()` (private, line 206), `paginationBase()` (private, line 252), `numbers()` (private, line 267), `archiveTitle()` (private, line 279), `termDescription()` (private, line 285)
+Internals: `query()` (private, line 52), `queried()` (private, line 79), `current()` (private, line 90), `postTemplate()` (private, line 95), `postClasses()` (private, line 129), `queryTitle()` (private, line 159), `noResults()` (private, line 179), `pagination()` (private, line 193), `paginationBase()` (private, line 239), `numbers()` (private, line 254), `archiveTitle()` (private, line 266), `termDescription()` (private, line 272)
 
 
 ## Structure

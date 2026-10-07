@@ -17,7 +17,7 @@ the block-theme reader, templates, global styles and the page renderer
 | [`GlobalStyles`](#globalstyles) | final readonly class | 571 | theme.json to CSS. Presets become custom properties on :root and their |
 | [`HeadLinks`](#headlinks) | final readonly class | 133 | The links the reference puts in every head: the site and comments |
 | [`Hierarchy`](#hierarchy) | final class | 146 | The classic template hierarchy: the candidate file names each template |
-| [`MainQueryBridge`](#mainquerybridge) | final readonly class | 138 | Stands the main query for a themed page and runs the front-end steps |
+| [`MainQueryBridge`](#mainquerybridge) | final readonly class | 135 | Stands the main query for a themed page and runs the front-end steps |
 | [`NotModified`](#notmodified) | final class | 3 | Raised once a reader's copy of a feed has been found current and the |
 | [`PageRenderer`](#pagerenderer) | final readonly class | 205 | A whole page from the active block theme: the template the resolution |
 | [`PatternText`](#patterntext) | final class | 198 | Block-theme patterns are PHP files whose only code is a handful of |
@@ -522,8 +522,8 @@ __construct(Minn\Content\Site $site, Minn\Content\Posts $posts, int $perPage)
 
 ### `stand(Minn\Front\Resolution $resolution, array $extra = array ( )): Minn\Content\Page`
 
-The page of posts a resolution shows, through the runtime's main query
-when it is up; the variables a request adds of its own (a feed's) win.
+The page of posts a resolution shows, through the runtime's main
+query; the variables a request adds of its own (a feed's) win.
 
 - `@param array<string, mixed> $extra`
 
@@ -531,7 +531,7 @@ when it is up; the variables a request adds of its own (a feed's) win.
 
 Posts per page.
 
-Internals: `vars()` (private, line 98), `queried()` (private, line 118), `seeded()` (private, line 131), `objectTypes()` (private, line 139), `listing()` (private, line 146)
+Internals: `vars()` (private, line 95), `queried()` (private, line 115), `seeded()` (private, line 128), `objectTypes()` (private, line 136), `listing()` (private, line 143)
 
 
 ## NotModified

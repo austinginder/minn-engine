@@ -14068,7 +14068,7 @@
             "namespace": "Minn\\Blocks\\Dynamic\\Theme",
             "kind": "final class",
             "file": "public/minn/src/Minn/Blocks/Dynamic/Theme/QueryBlocks.php",
-            "lines": 274,
+            "lines": 262,
             "doc": "query, post-template, query-title, query-no-results, query-pagination, term-description.",
             "implements": [],
             "extends": null,
@@ -14079,7 +14079,6 @@
                 "Minn\\Blocks\\Styles",
                 "Minn\\Blocks\\Wrapper",
                 "Minn\\Content\\Page",
-                "Minn\\Content\\PostFilter",
                 "Minn\\Content\\PostRecord",
                 "Minn\\Content\\Posts",
                 "Minn\\Content\\Site",
@@ -14125,8 +14124,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 31,
-                "end": 36
+                "line": 30,
+                "end": 35
             },
             "cases": [],
             "constants": [],
@@ -14186,8 +14185,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 39,
-                    "end": 50
+                    "line": 38,
+                    "end": 49
                 },
                 {
                     "routes": [],
@@ -14213,8 +14212,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 53,
-                    "end": 81
+                    "line": 52,
+                    "end": 68
                 },
                 {
                     "routes": [],
@@ -14242,8 +14241,8 @@
                             "doc": "the block's query"
                         }
                     ],
-                    "line": 92,
-                    "end": 101
+                    "line": 79,
+                    "end": 88
                 },
                 {
                     "routes": [],
@@ -14254,8 +14253,8 @@
                     "doc": "",
                     "shapes": [],
                     "params": [],
-                    "line": 103,
-                    "end": 106
+                    "line": 90,
+                    "end": 93
                 },
                 {
                     "routes": [],
@@ -14281,8 +14280,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 108,
-                    "end": 139
+                    "line": 95,
+                    "end": 126
                 },
                 {
                     "routes": [],
@@ -14310,8 +14309,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 142,
-                    "end": 170
+                    "line": 129,
+                    "end": 157
                 },
                 {
                     "routes": [],
@@ -14337,8 +14336,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 172,
-                    "end": 190
+                    "line": 159,
+                    "end": 177
                 },
                 {
                     "routes": [],
@@ -14364,8 +14363,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 192,
-                    "end": 203
+                    "line": 179,
+                    "end": 190
                 },
                 {
                     "routes": [],
@@ -14391,8 +14390,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 206,
-                    "end": 249
+                    "line": 193,
+                    "end": 236
                 },
                 {
                     "routes": [],
@@ -14411,8 +14410,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 252,
-                    "end": 264
+                    "line": 239,
+                    "end": 251
                 },
                 {
                     "routes": [],
@@ -14447,8 +14446,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 267,
-                    "end": 276
+                    "line": 254,
+                    "end": 263
                 },
                 {
                     "routes": [],
@@ -14467,8 +14466,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 279,
-                    "end": 283
+                    "line": 266,
+                    "end": 270
                 },
                 {
                     "routes": [],
@@ -14494,8 +14493,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 285,
-                    "end": 298
+                    "line": 272,
+                    "end": 285
                 }
             ]
         },
@@ -26941,7 +26940,6 @@
             "extends": null,
             "uses": [],
             "usedBy": [
-                "Minn\\Blocks\\Dynamic\\Theme\\QueryBlocks",
                 "Minn\\Content\\Posts",
                 "Minn\\Front\\ArchiveAddresses",
                 "Minn\\Front\\Renderer",
@@ -133978,7 +133976,7 @@
             "namespace": "Minn\\Theme",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Theme/MainQueryBridge.php",
-            "lines": 138,
+            "lines": 135,
             "doc": "Stands the main query for a themed page and runs the front-end steps\naround it as WP::main does (FrontLifecycle): the request parsed, the main\nquery through WP_Query (so pre_get_posts and every posts_* filter shape\nit), the 404 decision, the globals, the headers, then \"wp\" and\ntemplate_redirect. A listing's posts are the query's; a single post the\nquery does not find (a preview, a draft its author reads) is the one the\nengine resolved. Without the runtime, the engine's own listing.",
             "implements": [],
             "extends": null,
@@ -134084,7 +134082,7 @@
                     "static": false,
                     "visibility": "public",
                     "signature": "stand(Minn\\Front\\Resolution $resolution, array $extra = array ( )): Minn\\Content\\Page",
-                    "doc": "The page of posts a resolution shows, through the runtime's main query\nwhen it is up; the variables a request adds of its own (a feed's) win.",
+                    "doc": "The page of posts a resolution shows, through the runtime's main\nquery; the variables a request adds of its own (a feed's) win.",
                     "shapes": [
                         "@param array<string, mixed> $extra"
                     ],
@@ -134105,7 +134103,7 @@
                         }
                     ],
                     "line": 47,
-                    "end": 83
+                    "end": 80
                 },
                 {
                     "routes": [],
@@ -134116,8 +134114,8 @@
                     "doc": "Posts per page.",
                     "shapes": [],
                     "params": [],
-                    "line": 86,
-                    "end": 89
+                    "line": 83,
+                    "end": 86
                 },
                 {
                     "routes": [],
@@ -134138,8 +134136,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 98,
-                    "end": 110
+                    "line": 95,
+                    "end": 107
                 },
                 {
                     "routes": [],
@@ -134167,8 +134165,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 118,
-                    "end": 128
+                    "line": 115,
+                    "end": 125
                 },
                 {
                     "routes": [],
@@ -134196,8 +134194,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 131,
-                    "end": 136
+                    "line": 128,
+                    "end": 133
                 },
                 {
                     "routes": [],
@@ -134218,8 +134216,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 139,
-                    "end": 144
+                    "line": 136,
+                    "end": 141
                 },
                 {
                     "routes": [],
@@ -134238,8 +134236,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 146,
-                    "end": 166
+                    "line": 143,
+                    "end": 163
                 }
             ]
         },
