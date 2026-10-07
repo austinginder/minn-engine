@@ -199,7 +199,7 @@ The response for one request, whatever happens: a database that
 cannot be reached, salts that are not set, or a failure anywhere
 underneath, each answered in the language the request asked in.
 
-Internals: `restRoute()` (private, line 113), `bootRuntimeForRest()` (private, line 127), `adoptSettledUser()` (private, line 167), `handle()` (private, line 186), `frontPipeline()` (private, line 265)
+Internals: `restRoute()` (private, line 112), `bootRuntimeForRest()` (private, line 126), `adoptSettledUser()` (private, line 166), `handle()` (private, line 185), `frontPipeline()` (private, line 264)
 
 
 ## Http

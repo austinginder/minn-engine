@@ -4,9 +4,7 @@ declare(strict_types=1);
 
 namespace Minn\Rest;
 
-use Minn\Runtime\Runtime;
 use Minn\Content\CommentRecord;
-use Minn\Content\Blocks;
 use Minn\Content\Comments;
 use Minn\Content\Posts;
 use Minn\Front\Permalinks;
@@ -43,8 +41,8 @@ final readonly class CommentObject
         $id = $c->id;
         $postId = $c->postId;
         $post = $this->posts->find($postId);
-        // With plugins loaded the content passes comment_text, as the reference renders it; without, Minn's own paragraphs.
-        $rendered = Runtime::booted() ? (string) \apply_filters('comment_text', $c->content, \get_comment($c->id), []) : Blocks::paragraphs($c->content);
+        // The content passes comment_text, as the reference renders it.
+        $rendered = (string) \apply_filters('comment_text', $c->content, \get_comment($c->id), []);
 
         $object = [
             'id' => $id,
@@ -68,7 +66,7 @@ final readonly class CommentObject
         $object['status'] = Comments::statusOf($c->approved);
         $object['type'] = $c->type === '' ? 'comment' : $c->type;
         $object['author_avatar_urls'] = UserObject::avatarUrls($c->authorEmail);
-        $object['meta'] = Runtime::booted() ? RestMeta::read('comment', $id, 'comment', $context->value) : ['_wp_note_status' => $this->comments->meta($id, '_wp_note_status')];
+        $object['meta'] = RestMeta::read('comment', $id, 'comment', $context->value);
 
         $links = [
             'self' => [[
@@ -92,7 +90,7 @@ final readonly class CommentObject
             $links['in-reply-to'] = [['embeddable' => true, 'href' => $this->url->to('/wp/v2/comments/' . $c->parentId)]];
         }
         // Replies are counted through the comment query (any approval, any type), as plugins' clauses see it.
-        if (Runtime::booted() && (int) \get_comments(['count' => true, 'orderby' => 'none', 'parent' => $id, 'type' => 'all']) > 0) {
+        if ((int) \get_comments(['count' => true, 'orderby' => 'none', 'parent' => $id, 'type' => 'all']) > 0) {
             $links['children'] = [['embeddable' => true, 'href' => $this->url->to('/wp/v2/comments') . '?parent=' . $id]];
         }
         $object['_links'] = $links;

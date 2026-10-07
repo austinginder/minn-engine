@@ -14,7 +14,6 @@ use Minn\Http\Response;
 use Minn\Http\Policy;
 use Minn\Http\Route;
 use Minn\RestError;
-use Minn\Runtime\Runtime;
 use Minn\Runtime\Refusal;
 use Minn\Support\Kses;
 
@@ -88,10 +87,8 @@ final readonly class MenusController
         $name = $this->plain((string) $body['name']);
         $this->refuse($this->menus->refuseName($name));
         $description = $this->plain((string) ($body['description'] ?? ''));
-        // With plugins loaded, saved as the reference saves it, telling them (Runtime\MenuEvents).
-        $id = Runtime::booted()
-            ? \_minn_menu_events()->restMenu(0, ['name' => $name] + (array_key_exists('description', $body) ? ['description' => $description] : []), $request)
-            : $this->menus->createMenu($name, $description);
+        // Saved as the reference saves it, telling plugins (Runtime\MenuEvents).
+        $id = \_minn_menu_events()->restMenu(0, ['name' => $name] + (array_key_exists('description', $body) ? ['description' => $description] : []), $request);
         $row = $this->menus->find($id);
         return Reply::item($this->menuObject->view($row ?? []), Fields::fromQuery($request->query), 201)
             ->withHeader('Location', $this->url->to("/wp/v2/menus/{$id}"));
@@ -113,11 +110,7 @@ final readonly class MenusController
             $this->refuse($this->menus->refuseName($name, (int) $id));
         }
         $description = array_key_exists('description', $body) ? $this->plain((string) $body['description']) : null;
-        if (Runtime::booted()) {
-            \_minn_menu_events()->restMenu((int) $id, array_filter(['name' => $name, 'description' => $description], static fn ($v) => $v !== null), $request);
-        } else {
-            $this->menus->updateMenu((int) $id, $name, $description);
-        }
+        \_minn_menu_events()->restMenu((int) $id, array_filter(['name' => $name, 'description' => $description], static fn ($v) => $v !== null), $request);
         return Reply::item($this->menuObject->view($this->menus->find((int) $id) ?? $row), Fields::fromQuery($request->query));
     }
 
@@ -134,7 +127,7 @@ final readonly class MenusController
         }
         $previous = $this->menuObject->view($row);
         unset($previous['_links']);
-        Runtime::booted() ? \_minn_menu_events()->restDeleteMenu((int) $id, $previous, $request) : $this->menus->deleteMenu((int) $id);
+        \_minn_menu_events()->restDeleteMenu((int) $id, $previous, $request);
         return Reply::item(['deleted' => true, 'previous' => $previous], Fields::fromQuery($request->query));
     }
 
@@ -181,21 +174,7 @@ final readonly class MenusController
         if ($type === 'custom' && $title === '') {
             throw new RestError('rest_title_required', 'The title is required when using a custom menu item type.', 400);
         }
-        $id = Runtime::booted() ? \_minn_menu_events()->restItem(0, $this->argsFrom($body, self::NEW_ITEM), $request) : $this->menus->createItem([
-            'title' => $title,
-            'url' => $this->urlFrom($body),
-            'type' => $type,
-            'object' => (string) ($body['object'] ?? ($type === 'custom' ? 'custom' : '')),
-            'objectId' => (int) ($body['object_id'] ?? 0),
-            'parent' => (int) ($body['parent'] ?? 0),
-            'menuOrder' => (int) ($body['menu_order'] ?? 1),
-            'target' => (string) ($body['target'] ?? ''),
-            'status' => (string) ($body['status'] ?? 'publish'),
-            'menuId' => (int) ($body['menus'] ?? 0),
-            'attrTitle' => (string) ($body['attr_title'] ?? ''),
-            'description' => (string) ($body['description'] ?? ''),
-            'authorId' => $this->caller->id(),
-        ]);
+        $id = \_minn_menu_events()->restItem(0, $this->argsFrom($body, self::NEW_ITEM), $request);
         $item = $this->menus->findItem($id);
         return Reply::item($this->itemObject->view($item, Context::Edit), Fields::fromQuery($request->query), 201)
             ->withHeader('Location', $this->url->to("/wp/v2/menu-items/{$id}"));
@@ -212,49 +191,8 @@ final readonly class MenusController
             throw new RestError('rest_post_invalid_id', 'Invalid post ID.', 404);
         }
         $body = $request->json();
-        if (Runtime::booted()) {
-            $events = \_minn_menu_events();
-            $events->restItem((int) $id, $this->argsFrom($body, ['menu-id' => $item->menuId] + $events->savedArgs((int) $id)), $request);
-            return Reply::item($this->itemObject->view($this->menus->findItem((int) $id), Context::Edit), Fields::fromQuery($request->query));
-        }
-        $fields = [];
-        if (array_key_exists('title', $body)) {
-            $fields['title'] = $this->titleFrom($body);
-        }
-        if (array_key_exists('url', $body)) {
-            $fields['url'] = $this->urlFrom($body);
-        }
-        if (array_key_exists('type', $body)) {
-            $fields['type'] = (string) $body['type'];
-        }
-        if (array_key_exists('object', $body)) {
-            $fields['object'] = (string) $body['object'];
-        }
-        if (array_key_exists('object_id', $body)) {
-            $fields['objectId'] = (int) $body['object_id'];
-        }
-        if (array_key_exists('parent', $body)) {
-            $fields['parent'] = (int) $body['parent'];
-        }
-        if (array_key_exists('menu_order', $body)) {
-            $fields['menuOrder'] = (int) $body['menu_order'];
-        }
-        if (array_key_exists('target', $body)) {
-            $fields['target'] = (string) $body['target'];
-        }
-        if (array_key_exists('status', $body)) {
-            $fields['status'] = (string) $body['status'];
-        }
-        if (array_key_exists('menus', $body)) {
-            $fields['menuId'] = (int) $body['menus'];
-        }
-        if (array_key_exists('attr_title', $body)) {
-            $fields['attrTitle'] = (string) $body['attr_title'];
-        }
-        if (array_key_exists('description', $body)) {
-            $fields['description'] = (string) $body['description'];
-        }
-        $this->menus->updateItem((int) $id, $fields);
+        $events = \_minn_menu_events();
+        $events->restItem((int) $id, $this->argsFrom($body, ['menu-id' => $item->menuId] + $events->savedArgs((int) $id)), $request);
         return Reply::item($this->itemObject->view($this->menus->findItem((int) $id), Context::Edit), Fields::fromQuery($request->query));
     }
 
@@ -271,7 +209,7 @@ final readonly class MenusController
         }
         $previous = $this->itemObject->view($item, Context::View);
         unset($previous['_links']);
-        Runtime::booted() ? \_minn_menu_events()->restDeleteItem((int) $id, $previous, $request) : $this->menus->deleteItem((int) $id);
+        \_minn_menu_events()->restDeleteItem((int) $id, $previous, $request);
         return Reply::item(['deleted' => true, 'previous' => $previous], Fields::fromQuery($request->query));
     }
 
@@ -280,7 +218,7 @@ final readonly class MenusController
     public function locations(Request $request): Response
     {
         $out = [];
-        foreach (Runtime::booted() ? \get_registered_nav_menus() : [] as $name => $description) {
+        foreach (\get_registered_nav_menus() as $name => $description) {
             $out[$name] = $this->locationItem((string) $name, (string) $description);
         }
         // Keyed by name, so _fields over the whole of it keeps nothing, as on the reference.
@@ -291,7 +229,7 @@ final readonly class MenusController
     #[Route(Method::Get, '/wp/v2/menu-locations/{location:[\w-]+}', policy: new Policy(Access::Cap, 'edit_theme_options', signIn: 'rest_cannot_view', signInMessage: 'Sorry, you are not allowed to view menu locations.', refuse: 'rest_cannot_view', message: 'Sorry, you are not allowed to view menu locations.'))]
     public function oneLocation(Request $request, string $location): Response
     {
-        $registered = Runtime::booted() ? \get_registered_nav_menus() : [];
+        $registered = \get_registered_nav_menus();
         if (!array_key_exists($location, $registered)) {
             throw new RestError('rest_menu_location_invalid', 'Invalid menu location.', 404);
         }

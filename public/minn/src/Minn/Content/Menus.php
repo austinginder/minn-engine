@@ -320,41 +320,6 @@ final readonly class Menus
         );
     }
 
-    /** Creates a nav_menu term and returns its id. */
-    public function createMenu(string $name, string $description = ''): int
-    {
-        $slug = $this->terms->uniqueSlug($name, 'nav_menu');
-        return $this->terms->create($name, $slug, 'nav_menu', $description, 0);
-    }
-
-    /** Renames or re-describes a menu; null keeps the current value. */
-    public function updateMenu(int $id, ?string $name, ?string $description): void
-    {
-        $row = $this->find($id);
-        if ($row === null) {
-            return;
-        }
-        if ($name !== null) {
-            $slug = $this->terms->uniqueSlug($name, 'nav_menu', $id);
-            $this->terms->rename($id, $name, $slug);
-        }
-        if ($description !== null) {
-            $this->terms->describe($id, 'nav_menu', $description, 0);
-        }
-    }
-
-    /** Deletes a menu and every item in it. */
-    public function deleteMenu(int $id): void
-    {
-        foreach ($this->items($id) as $item) {
-            $this->deleteItem($item->id);
-        }
-        $row = $this->find($id);
-        if ($row !== null) {
-            $this->terms->delete(TermRecord::fromRow($row->row() + ['taxonomy' => 'nav_menu']), false);
-        }
-    }
-
     /**
      * @param array{
      *   title: string,
@@ -487,12 +452,6 @@ final readonly class Menus
             'menuOrder' => $last + 1, 'target' => '', 'status' => 'publish', 'menuId' => $menuId, 'attrTitle' => '',
             'description' => '', 'authorId' => $authorId,
         ]);
-    }
-
-    /** Hard-deletes one item. */
-    public function deleteItem(int $id): void
-    {
-        $this->writer()->destroy($id);
     }
 
     /**

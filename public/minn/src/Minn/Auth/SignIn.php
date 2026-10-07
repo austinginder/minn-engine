@@ -7,7 +7,6 @@ namespace Minn\Auth;
 use Minn\Content\UserRecord;
 use Minn\Http\Request;
 use Minn\Http\Response;
-use Minn\Runtime\Runtime;
 
 /**
  * The door itself: what a sign-in surface needs beyond checking a
@@ -20,7 +19,6 @@ final readonly class SignIn
     private const DAY = 86400;
 
     public function __construct(
-        private Sessions $sessions,
         private AuthCookies $cookies,
         private LoginThrottle $throttle,
     ) {
@@ -61,24 +59,22 @@ final readonly class SignIn
     {
         $persistent = $days > 2;
         $expiration = time() + $days * self::DAY;
-        // With plugins loaded the session is made as WordPress makes it, so session_token_manager and attach_session_information have their say.
-        $token = Runtime::booted()
-            ? \WP_Session_Tokens::get_instance($user->id)->create($expiration)
-            : $this->sessions->create($user->id, $expiration, $request->remoteAddress, (string) ($request->header('user-agent') ?? ''));
+        // The session is made as WordPress makes it, so session_token_manager and attach_session_information have their say.
+        $token = \WP_Session_Tokens::get_instance($user->id)->create($expiration);
         return $this->cookies->attach($response, $user, $expiration, $token, $request->secure, $persistent);
     }
 
     /** Ends one session and clears the cookies from the response. */
     public function end(Response $response, Authenticated $session): Response
     {
-        Runtime::booted() ? \WP_Session_Tokens::get_instance($session->id())->destroy($session->token) : $this->sessions->destroy($session->id(), $session->token);
+        \WP_Session_Tokens::get_instance($session->id())->destroy($session->token);
         return $this->cookies->clear($response);
     }
 
     /** Ends every session of a user (a password reset) and clears the cookies from the response. */
     public function endAll(Response $response, int $userId): Response
     {
-        Runtime::booted() ? \WP_Session_Tokens::get_instance($userId)->destroy_all() : $this->sessions->destroyAll($userId);
+        \WP_Session_Tokens::get_instance($userId)->destroy_all();
         return $this->cookies->clear($response);
     }
 

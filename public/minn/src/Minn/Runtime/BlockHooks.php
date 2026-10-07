@@ -16,10 +16,10 @@ namespace Minn\Runtime;
  */
 final class BlockHooks
 {
-    /** Whether block hooks are registered and the runtime is up. */
+    /** Whether block hooks are registered (the runtime's functions are there only once it is up). */
     public static function active(): bool
     {
-        if (!Runtime::booted() || !function_exists('get_hooked_blocks')) {
+        if (!function_exists('get_hooked_blocks')) {
             return false;
         }
         return get_hooked_blocks() !== [] || Runtime::hooks()->has('hooked_block_types');
@@ -52,7 +52,7 @@ final class BlockHooks
      */
     public static function registeredPattern(string $slug): ?string
     {
-        if (!Runtime::booted() || !class_exists(\WP_Block_Patterns_Registry::class, false)) {
+        if (!class_exists(\WP_Block_Patterns_Registry::class, false)) {
             return null;
         }
         $pattern = \WP_Block_Patterns_Registry::get_instance()->get_registered($slug);

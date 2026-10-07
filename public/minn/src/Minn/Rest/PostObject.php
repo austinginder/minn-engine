@@ -4,11 +4,9 @@ declare(strict_types=1);
 
 namespace Minn\Rest;
 
-use Minn\Runtime\Runtime;
 use Minn\Content\PostRecord;
 use Minn\Auth\TypeCapabilities;
 use Minn\Content\Posts;
-use Minn\Content\Slug;
 use Minn\Content\Users;
 use Minn\Db;
 use Minn\Front\Permalinks;
@@ -75,7 +73,7 @@ final readonly class PostObject
      */
     private function meta(PostRecord $p, string $context): array
     {
-        return Runtime::booted() ? RestMeta::read('post', $p->id, $p->type, $context) : ['footnotes' => $this->posts->meta($p->id, 'footnotes') ?? ''];
+        return RestMeta::read('post', $p->id, $p->type, $context);
     }
 
     /**
@@ -359,7 +357,7 @@ final readonly class PostObject
             }
             if ($key === 'class_list') {
                 // With plugins loaded both come from get_sample_permalink, as the reference's controller has them.
-                [$ordered['permalink_template'], $ordered['generated_slug']] = Runtime::booted() ? \get_sample_permalink($p->id, $p->title, '') : [$this->permalinkTemplate($p), Slug::sanitize($p->title)];
+                [$ordered['permalink_template'], $ordered['generated_slug']] = \get_sample_permalink($p->id, $p->title, '');
             }
             $ordered[$key] = $value;
         }
@@ -376,28 +374,6 @@ final readonly class PostObject
         }
         $ordered['_links'] = $this->editLinks($p, $userId, $view['_links'] ?? null);
         return $ordered;
-    }
-
-    /**
-     * The editor's sample permalink: the structure with the name token left
-     * in place (pages: the parent path plus %pagename%), or the query form
-     * when permalinks are plain.
-     */
-    public function permalinkTemplate(PostRecord $p): string
-    {
-        $id = $p->id;
-        if (!$this->permalinks->isPretty()) {
-            return $this->url->home('/?' . ($p->isPage() ? 'page_id' : 'p') . '=' . $id);
-        }
-        if ($p->isPage()) {
-            $parent = $p->parentId > 0 ? $this->posts->find($p->parentId) : null;
-            $prefix = $parent === null ? '' : '/' . $this->posts->pathOf($parent);
-            return $this->url->home($prefix . '/%pagename%/');
-        }
-        if ($p->type !== 'post') {
-            return $this->url->home('/' . $p->type . '/%pagename%/');
-        }
-        return $this->url->home('/' . trim($this->permalinks->structure, '/') . '/');
     }
 
     /** Whether a live post carries an autosave newer than its saved revision. */

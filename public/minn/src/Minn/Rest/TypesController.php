@@ -12,7 +12,6 @@ use Minn\Http\Response;
 use Minn\Http\Policy;
 use Minn\Http\Route;
 use Minn\RestError;
-use Minn\Runtime\Runtime;
 
 /**
  * wp/v2 types. In the edit context (probe rest-types-edit) a type adds its
@@ -33,7 +32,7 @@ final readonly class TypesController
     public function list(Request $request): Response
     {
         $types = $this->types->all();
-        if (Context::of($request)->isEdit() && Runtime::booted()) {
+        if (Context::of($request)->isEdit()) {
             $types = array_filter(array_map(fn (array $type): ?array => self::mayEdit((string) $type['slug']) ? self::withEditFields((string) $type['slug'], $type) : null, $types));
             if ($types === []) {
                 throw new RestError('rest_cannot_view', self::EDIT_REFUSAL, \is_user_logged_in() ? 403 : 401);
@@ -50,7 +49,7 @@ final readonly class TypesController
         if ($found === null) {
             throw new RestError('rest_type_invalid', 'Invalid post type.', 404);
         }
-        if (Context::of($request)->isEdit() && Runtime::booted()) {
+        if (Context::of($request)->isEdit()) {
             if (!self::mayEdit($type)) {
                 throw new RestError('rest_forbidden_context', self::EDIT_REFUSAL, \is_user_logged_in() ? 403 : 401);
             }

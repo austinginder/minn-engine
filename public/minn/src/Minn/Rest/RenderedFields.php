@@ -6,9 +6,7 @@ namespace Minn\Rest;
 
 use Closure;
 use Minn\Content\Blocks;
-use Minn\Content\Excerpt;
 use Minn\Content\PostRecord;
-use Minn\Content\Texturize;
 use Minn\Runtime\Runtime;
 
 /**
@@ -24,22 +22,19 @@ final class RenderedFields
     /** The rendered title. */
     public static function title(PostRecord $p): string
     {
-        return Runtime::booted() ? (string) self::withPost($p, static fn () => \apply_filters('the_title', $p->title, $p->id)) : Texturize::html($p->title);
+        return (string) self::withPost($p, static fn () => \apply_filters('the_title', $p->title, $p->id));
     }
 
     /** The rendered content. */
     public static function content(PostRecord $p): string
     {
         $html = Blocks::render($p->content);
-        return Runtime::booted() ? (string) self::withPost($p, static fn () => Runtime::contentFilter(Runtime::shortcodes()->apply($html))) : $html;
+        return (string) self::withPost($p, static fn () => Runtime::contentFilter(Runtime::shortcodes()->apply($html)));
     }
 
     /** The rendered excerpt. */
     public static function excerpt(PostRecord $p): string
     {
-        if (!Runtime::booted()) {
-            return Excerpt::render($p);
-        }
         return (string) self::withPost($p, static fn (\WP_Post $post) => \apply_filters('the_excerpt', \apply_filters('get_the_excerpt', $post->post_excerpt, $post)));
     }
 
@@ -78,7 +73,7 @@ final class RenderedFields
      */
     public static function classes(array $classes, int $postId): array
     {
-        if (!Runtime::booted() || !Runtime::hooks()->has('post_class')) {
+        if (!Runtime::hooks()->has('post_class')) {
             return $classes;
         }
         return array_values(array_unique(array_map('strval', (array) \apply_filters('post_class', $classes, [], $postId))));

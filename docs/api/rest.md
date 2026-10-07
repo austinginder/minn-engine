@@ -5,8 +5,8 @@ the wp/v2 surface: shapes and controllers
 | Class | Kind | Lines | Summary |
 |---|---|---|---|
 | [`AbilitiesController`](#abilitiescontroller) | final readonly class | 150 | wp-abilities/v1: what this site can be asked to do, and the doing of it. |
-| [`Api`](#api) | final readonly class | 268 | The REST API: wires the controllers for one request and dispatches a |
-| [`ApplicationPasswordsController`](#applicationpasswordscontroller) | final readonly class | 186 | wp/v2/users/{id}/application-passwords: list, create, rename, delete, |
+| [`Api`](#api) | final readonly class | 266 | The REST API: wires the controllers for one request and dispatches a |
+| [`ApplicationPasswordsController`](#applicationpasswordscontroller) | final readonly class | 177 | wp/v2/users/{id}/application-passwords: list, create, rename, delete, |
 | [`ArgCheck`](#argcheck) | final readonly class | 83 | Judges a route's declared arguments against the request before the |
 | [`BatchController`](#batchcontroller) | final readonly class | 159 | batch/v1 as the reference answers it (probe rest-batch): up to 25 |
 | [`BatchRequest`](#batchrequest) | final class | 32 | The requests a batch payload names, normalised into descriptors the |
@@ -34,7 +34,7 @@ the wp/v2 surface: shapes and controllers
 | [`MediaObject`](#mediaobject) | final readonly class | 164 | The wp/v2 media object, view and edit context. |
 | [`MenuItemObject`](#menuitemobject) | final readonly class | 74 | The wp/v2/menu-items resource. |
 | [`MenuObject`](#menuobject) | final readonly class | 37 | The wp/v2/menus resource: a nav_menu term plus locations and auto_add. |
-| [`MenusController`](#menuscontroller) | final readonly class | 358 | wp/v2/menus, menu-items, and menu-locations. Viewing needs edit_posts; |
+| [`MenusController`](#menuscontroller) | final readonly class | 297 | wp/v2/menus, menu-items, and menu-locations. Viewing needs edit_posts; |
 | [`NavigationController`](#navigationcontroller) | final readonly class | 48 | wp/v2/navigation: the block theme's navigation menus, stored as |
 | [`OEmbedController`](#oembedcontroller) | final readonly class | 72 | oembed/1.0 as the reference answers it (probe oembed). embed is the |
 | [`ParamCheck`](#paramcheck) | final class | 76 | The required / validate / sanitize pass over a request's declared arguments. |
@@ -42,13 +42,13 @@ the wp/v2 surface: shapes and controllers
 | [`PolicyGate`](#policygate) | final readonly class | 147 | Judges a route's policy against the caller, with the reference's |
 | [`PostCollectionParams`](#postcollectionparams) | final class | 211 | A post type's collection parameters as the reference builds them for its |
 | [`PostListArgs`](#postlistargs) | final class | 174 | The WP_Query arguments a post list request makes, as the reference makes |
-| [`PostObject`](#postobject) | final readonly class | 530 | Builds the wp/v2 post and page objects in the reference's shape: the |
+| [`PostObject`](#postobject) | final readonly class | 508 | Builds the wp/v2 post and page objects in the reference's shape: the |
 | [`PostsController`](#postscontroller) | final readonly class | 191 | wp/v2 posts and pages, read side. |
 | [`PostsWriteController`](#postswritecontroller) | final readonly class | 421 | wp/v2 posts and pages, write side: create, update, trash, and force |
 | [`RegisteredFields`](#registeredfields) | final class | 105 | The fields plugin code adds to an object type with register_rest_field, |
 | [`RegisteredPostFields`](#registeredpostfields) | final readonly class | 89 | The REST object of a post whose type plugin code registered (probe rest-plugin-types), built by what the type supports. |
 | [`RegisteredType`](#registeredtype) | final readonly class | 46 | A post type plugin code registered, as its REST object follows it |
-| [`RenderedFields`](#renderedfields) | final class | 65 | A post's rendered title, content and excerpt as a REST response carries |
+| [`RenderedFields`](#renderedfields) | final class | 62 | A post's rendered title, content and excerpt as a REST response carries |
 | [`Reply`](#reply) | final class | 53 | JSON responses in the reference's shape: its header set, its json_encode |
 | [`RestMeta`](#restmeta) | final class | 238 | An object's meta field over REST, from the keys registered to show |
 | [`RestUrl`](#resturl) | final readonly class | 38 | REST URLs in the form the reference emits for the site's permalink mode: |
@@ -83,7 +83,7 @@ the wp/v2 surface: shapes and controllers
 | [`TypesController`](#typescontroller) | final readonly class | 70 | wp/v2 types. In the edit context (probe rest-types-edit) a type adds its |
 | [`UserCollectionParams`](#usercollectionparams) | final class | 11 | The users list's parameters as the reference declares them (probe |
 | [`UserListArgs`](#userlistargs) | final class | 47 | The WP_User_Query arguments a user list request makes, as the reference |
-| [`UserObject`](#userobject) | final readonly class | 106 | The wp/v2 user objects: the public view shape and the edit-context shape. |
+| [`UserObject`](#userobject) | final readonly class | 103 | The wp/v2 user objects: the public view shape and the edit-context shape. |
 | [`UsersController`](#userscontroller) | final readonly class | 342 | wp/v2 users: me, list, single, and the create/update/delete-with-reassign the Users view drives. |
 | [`WidgetObject`](#widgetobject) | final readonly class | 55 | A widget as wp/v2/widgets shows it (probe rest-widgets): its id and base, |
 | [`WidgetsController`](#widgetscontroller) | final readonly class | 169 | wp/v2/widgets as the reference answers it (probe rest-widgets), for |
@@ -217,7 +217,7 @@ runtime's server calls for a core route, so a route the engine
 declines cannot bounce between the two. $as is the caller's own
 request object, which the route's parameters are set on.
 
-Internals: `controllers()` (private, line 73), `engineResponse()` (private, line 241), `withPageLinks()` (private, line 255), `options()` (private, line 286), `withAllow()` (private, line 299)
+Internals: `controllers()` (private, line 73), `engineResponse()` (private, line 239), `withPageLinks()` (private, line 253), `options()` (private, line 284), `withAllow()` (private, line 297)
 
 
 ## ApplicationPasswordsController
@@ -286,7 +286,7 @@ Route: `DELETE /wp/v2/users/{user_id:(?:[\d]+|me)}/application-passwords/{uuid:[
 
 Removes one.
 
-Internals: `subject()` (private, line 148), `existing()` (private, line 172), `validate()` (private, line 181), `item()` (private, line 191), `when()` (private, line 208)
+Internals: `subject()` (private, line 138), `existing()` (private, line 162), `validate()` (private, line 171), `item()` (private, line 181), `when()` (private, line 198)
 
 
 ## ArgCheck
@@ -664,7 +664,7 @@ A comment in the context asked for, through rest_prepare_comment when a plugin h
 
 The REST URL builder.
 
-Internals: `buildFields()` (private, line 40)
+Internals: `buildFields()` (private, line 38)
 
 
 ## CommentsController
@@ -1260,7 +1260,7 @@ An attachment in the context asked for, through rest_prepare_attachment when a p
 
 The REST URL builder.
 
-Internals: `buildFields()` (private, line 44), `details()` (private, line 125), `descriptionHtml()` (private, line 159)
+Internals: `buildFields()` (private, line 42), `details()` (private, line 123), `descriptionHtml()` (private, line 157)
 
 
 ## MenuItemObject
@@ -1399,7 +1399,7 @@ Route: `GET /wp/v2/menu-locations/{location:[\w-]+} (cap edit_theme_options)`
 
 One menu location.
 
-Internals: `locationItem()` (private, line 302), `argsFrom()` (private, line 325), `titleFrom()` (private, line 348), `urlFrom()` (private, line 358), `refuse()` (private, line 368), `plain()` (private, line 378)
+Internals: `locationItem()` (private, line 240), `argsFrom()` (private, line 263), `titleFrom()` (private, line 286), `urlFrom()` (private, line 296), `refuse()` (private, line 306), `plain()` (private, line 316)
 
 
 ## NavigationController
@@ -1735,12 +1735,6 @@ The rest_base of a type.
 
 The _links of a post in the view context.
 
-### `permalinkTemplate(Minn\Content\PostRecord $p): string`
-
-The editor's sample permalink: the structure with the name token left
-in place (pages: the parent path plus %pagename%), or the query form
-when permalinks are plain.
-
 ### `modifiedUnsaved(Minn\Content\PostRecord $p, int $userId): bool`
 
 Whether a live post carries an autosave newer than its saved revision.
@@ -1757,7 +1751,7 @@ The view links plus the caller's verbs and cap-gated wp:action-* entries.
 
 A MySQL datetime in the reference's ISO form.
 
-Internals: `meta()` (private, line 76), `navigationView()` (private, line 87), `blockView()` (private, line 117), `viewFields()` (private, line 144), `viewTerms()` (private, line 187), `typeFields()` (private, line 203), `classList()` (private, line 232), `format()` (private, line 254), `termLinks()` (private, line 298), `editFields()` (private, line 317), `allow()` (private, line 518), `gmt()` (private, line 537)
+Internals: `meta()` (private, line 74), `navigationView()` (private, line 85), `blockView()` (private, line 115), `viewFields()` (private, line 142), `viewTerms()` (private, line 185), `typeFields()` (private, line 201), `classList()` (private, line 230), `format()` (private, line 252), `termLinks()` (private, line 296), `editFields()` (private, line 315), `allow()` (private, line 494), `gmt()` (private, line 513)
 
 
 ## PostsController
@@ -2017,7 +2011,7 @@ stock and type): the filter's answer without repeats, in order.
 - `@param list<string> $classes`
 - `@return list<string>`
 
-Internals: `withPost()` (private, line 52)
+Internals: `withPost()` (private, line 47)
 
 
 ## Reply
@@ -3311,7 +3305,7 @@ first type it belongs to.
 
 - `@return array{taxonomy: string, has_parent: bool, post_arg: string, post_base: string}|null`
 
-Internals: `viewFields()` (private, line 80), `allowedVerbs()` (private, line 113)
+Internals: `viewFields()` (private, line 79), `allowedVerbs()` (private, line 112)
 
 
 ## TermsController
@@ -3462,7 +3456,7 @@ Route: `GET /wp/v2/types/{type:[\w-]+} (public)`
 
 One post type.
 
-Internals: `embedded()` (private, line 63), `mayEdit()` (private, line 68), `withEditFields()` (private, line 75)
+Internals: `embedded()` (private, line 62), `mayEdit()` (private, line 67), `withEditFields()` (private, line 74)
 
 
 ## UserCollectionParams
@@ -3536,7 +3530,7 @@ A user as the edit context shows one, through rest_prepare_user when a plugin ho
 
 Gravatar URLs in the sizes the reference emits (sha256 of the email).
 
-Internals: `viewFields()` (private, line 50), `editFields()` (private, line 79)
+Internals: `viewFields()` (private, line 49), `editFields()` (private, line 78)
 
 
 ## UsersController
@@ -3611,7 +3605,7 @@ Route: `DELETE /wp/v2/users/{id:[\d]+} (cap delete_users; user {id} must exist)`
 
 reassign is REQUIRED (checked before the user lookup), and so is force.
 
-Internals: `listAllowed()` (private, line 105), `totals()` (private, line 129), `hasPublishedContent()` (private, line 164), `validRole()` (private, line 173), `validEmail()` (private, line 181), `loginRefusal()` (private, line 359)
+Internals: `listAllowed()` (private, line 104), `totals()` (private, line 128), `hasPublishedContent()` (private, line 163), `validRole()` (private, line 172), `validEmail()` (private, line 180), `loginRefusal()` (private, line 358)
 
 
 ## WidgetObject

@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Minn\Login;
 
-use Minn\Runtime\Runtime;
 use Minn\Support\Html;
 
 /**
@@ -88,18 +87,15 @@ final readonly class LoginNotices
         return $errors;
     }
 
-    /**
-     * The sign-in page's notices after wp_login_errors, which is handed
-     * where a sign-in would land; without plugins, as they are.
-     */
+    /** The sign-in page's notices after wp_login_errors, which is handed where a sign-in would land. */
     public function forSignIn(string $redirect): self
     {
-        return Runtime::booted() ? self::of(\apply_filters('wp_login_errors', $this->wpError(), $redirect)) : $this;
+        return self::of(\apply_filters('wp_login_errors', $this->wpError(), $redirect));
     }
 
     /**
      * The error and message areas' HTML ('' for an area with none),
-     * through login_errors and login_messages with plugins loaded.
+     * through login_errors and login_messages.
      *
      * @return array{errors: string, messages: string}
      */
@@ -121,9 +117,6 @@ final readonly class LoginNotices
             1 => "<p>{$errors[0]}</p>",
             default => '<ul class="login-error-list"><li>' . implode('</li><li>', $errors) . '</li></ul>',
         };
-        if (!Runtime::booted()) {
-            return ['errors' => $errorHtml, 'messages' => $messages];
-        }
         return [
             'errors' => $errorHtml === '' ? '' : (string) \apply_filters('login_errors', $errorHtml),
             'messages' => $messages === '' ? '' : (string) \apply_filters('login_messages', $messages),

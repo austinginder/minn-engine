@@ -6,7 +6,6 @@ namespace Minn\Rest;
 
 use Minn\Http\RouteMiss;
 
-use Minn\Runtime\Runtime;
 
 use Minn\Content\TermRecord;
 use Minn\Db;
@@ -63,7 +62,7 @@ final readonly class TermObject
      */
     public static function registered(string $restBase): ?array
     {
-        if (!Runtime::booted() || $restBase === '') {
+        if ($restBase === '') {
             return null;
         }
         foreach (\get_taxonomies(['show_in_rest' => true], 'objects') as $taxonomy) {
@@ -93,7 +92,7 @@ final readonly class TermObject
         if ($config['has_parent']) {
             $object['parent'] = (int) $term['parent'];
         }
-        $object['meta'] = Runtime::booted() ? RestMeta::read('term', $id, (string) $config['taxonomy']) : [];
+        $object['meta'] = RestMeta::read('term', $id, (string) $config['taxonomy']);
 
         $links = [
             'self' => [['href' => $this->url->to("/wp/v2/{$restBase}/{$id}"), 'targetHints' => ['allow' => $this->allowedVerbs($term, $config)]]],

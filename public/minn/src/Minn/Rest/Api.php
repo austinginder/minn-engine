@@ -185,10 +185,8 @@ final readonly class Api
         try {
             // Plugin code gets the reference's say before the engine's routes: an
             // authentication refusal, a pre-dispatch answer, or a removed endpoint.
-            if (Runtime::booted()) {
-                RuntimePrepare::answering(RuntimeRoutes::wpRequest($request));
-            }
-            $response = Runtime::booted() ? RuntimeRoutes::gate($request) : null;
+            RuntimePrepare::answering(RuntimeRoutes::wpRequest($request));
+            $response = RuntimeRoutes::gate($request);
             if ($response === null) {
                 try {
                     $response = $this->engineResponse($request);
@@ -197,14 +195,14 @@ final readonly class Api
                 }
                 $response = $response === null ? null : $this->withAllow($request, $response);
             }
-            if ($response === null && Runtime::booted()) {
+            if ($response === null) {
                 $response = RuntimeRoutes::dispatch($request);
             }
-            if ($response !== null && Runtime::booted() && ($request->path === '/' || preg_match('#^/[a-z0-9-]+/(?:v\d+|\d+\.\d+)$#', $request->path) === 1)) {
+            if ($response !== null && ($request->path === '/' || preg_match('#^/[a-z0-9-]+/(?:v\d+|\d+\.\d+)$#', $request->path) === 1)) {
                 $response = RuntimeRoutes::mergeIndex($response);
             }
             $response ??= Reply::error(RestError::noRoute());
-            return Runtime::booted() ? RuntimeRoutes::serve($request, $response) : $response;
+            return RuntimeRoutes::serve($request, $response);
         } catch (RestError $error) {
             return Reply::error($error);
         }
@@ -255,7 +253,7 @@ final readonly class Api
     private function withPageLinks(Request $request, Response $response): Response
     {
         $pages = $response->headers['X-WP-TotalPages'] ?? null;
-        if ($pages === null || $response->status !== 200 || !in_array($request->method, [Method::Get, Method::Head], true) || !Runtime::booted()) {
+        if ($pages === null || $response->status !== 200 || !in_array($request->method, [Method::Get, Method::Head], true)) {
             return $response;
         }
         $pages = (int) $pages;
@@ -285,7 +283,7 @@ final readonly class Api
      */
     private function options(Request $request): ?Response
     {
-        if (Runtime::booted() && Runtime::hooks()->has('rest_pre_dispatch', 'rest_handle_options_request') === false) {
+        if (Runtime::hooks()->has('rest_pre_dispatch', 'rest_handle_options_request') === false) {
             return null;
         }
         $entry = (new RouteCatalogue($this->router, $this->services->types(), $this->services->url()))->describing($request->path);

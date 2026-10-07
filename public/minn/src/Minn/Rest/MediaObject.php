@@ -4,11 +4,9 @@ declare(strict_types=1);
 
 namespace Minn\Rest;
 
-use Minn\Runtime\Runtime;
 use Minn\Content\PostRecord;
 use Minn\Content\Blocks;
 use Minn\Content\Posts;
-use Minn\Content\Slug;
 use Minn\Content\Texturize;
 use Minn\Front\Permalinks;
 use Minn\Media\Metadata;
@@ -70,10 +68,10 @@ final readonly class MediaObject
             'comment_status' => $p->commentStatus,
             'ping_status' => $p->pingStatus,
             'template' => '',
-            'meta' => Runtime::booted() ? RestMeta::read('post', $id, 'attachment', $context->value) : [],
+            'meta' => RestMeta::read('post', $id, 'attachment', $context->value),
         ];
         if ($edit) {
-            [$object['permalink_template'], $object['generated_slug']] = Runtime::booted() ? \get_sample_permalink($id, $p->title, '') : [$this->url->home('/?attachment_id=' . $id), Slug::sanitize($p->title)];
+            [$object['permalink_template'], $object['generated_slug']] = \get_sample_permalink($id, $p->title, '');
         }
         $object['class_list'] = RenderedFields::classes(['post-' . $id, 'attachment', 'type-attachment', 'status-' . $p->status, 'hentry'], $id);
         $object['minn_attached_to'] = null;

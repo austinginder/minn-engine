@@ -133,7 +133,7 @@ final readonly class BootPayload
      */
     private static function commerce(?array $plugin): bool
     {
-        return is_bool($plugin['wc'] ?? null) ? $plugin['wc'] : (Runtime::booted() && class_exists('WooCommerce', false));
+        return is_bool($plugin['wc'] ?? null) ? $plugin['wc'] : class_exists('WooCommerce', false);
     }
 
     /**
@@ -193,7 +193,7 @@ final readonly class BootPayload
      */
     private function pluginPayload(): ?array
     {
-        if (!Runtime::booted() || !class_exists('Minn_Admin', false) || !method_exists('Minn_Admin', 'boot_payload')) {
+        if (!class_exists('Minn_Admin', false) || !method_exists('Minn_Admin', 'boot_payload')) {
             return null;
         }
         try {

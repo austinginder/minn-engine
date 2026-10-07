@@ -43,7 +43,6 @@ use Minn\Theme\PageRenderer;
 use Minn\Theme\Theme;
 use Minn\Auth\Salts;
 use Minn\Auth\PasswordReset;
-use Minn\Mail\Mailer;
 use Minn\Cron\Cron;
 use Minn\Content\Reader;
 use Minn\Front\CommentPostController;
@@ -252,17 +251,17 @@ final readonly class Engine
             $runtime->set('classic_theme', $classicTheme->stylesheet);
         }
         try {
-            return $this->frontPipeline($context, $request, $runtime, $users, $sessions, $cookie, $authenticator, $app, $session, $resolver, $permalinks, $theme, $classicTheme);
+            return $this->frontPipeline($context, $request, $runtime, $users, $cookie, $authenticator, $app, $session, $resolver, $permalinks, $theme, $classicTheme);
         } catch (\Minn\Login\ServeLogin) {
             // A hide-login plugin require'd wp-login.php mid-request: the
             // current request gets the sign-in surface, whatever its path.
-            $login = new LoginController($site, $permalinks, $authenticator, new \Minn\Auth\SignIn($sessions, new AuthCookies($db, $cookie), new LoginThrottle($db)), $users, new PasswordReset($users), Mailer::forSite($site));
+            $login = new LoginController($site, $permalinks, $authenticator, new \Minn\Auth\SignIn(new AuthCookies($db, $cookie), new LoginThrottle($db)), $users, new PasswordReset($users));
             return $request->method === Method::Post ? $login->signIn($request) : $login->form($request);
         }
     }
 
     /** The themed front, admin app, and probe pipeline; split out so a mid-request ServeLogin signal can unwind it cleanly. */
-    private function frontPipeline(Context $context, Request $request, Runtime $runtime, Users $users, Sessions $sessions, Cookie $cookie, Authenticator $authenticator, App $app, mixed $session, Resolver $resolver, \Minn\Front\Permalinks $permalinks, ?Theme $theme, ?\Minn\Theme\ClassicTheme $classicTheme): Response
+    private function frontPipeline(Context $context, Request $request, Runtime $runtime, Users $users, Cookie $cookie, Authenticator $authenticator, App $app, mixed $session, Resolver $resolver, \Minn\Front\Permalinks $permalinks, ?Theme $theme, ?\Minn\Theme\ClassicTheme $classicTheme): Response
     {
         $db = $context->db;
         $site = $context->site;
@@ -318,7 +317,7 @@ final readonly class Engine
         $router = (new Router($gate))->register(
             new AssetsController($this->engineDir . '/assets'),
             // The sign-in page sits under /minn-admin/, so it registers ahead of the shell's catch-all.
-            new LoginController($site, $permalinks, $authenticator, new \Minn\Auth\SignIn($sessions, new AuthCookies($db, $cookie), new LoginThrottle($db)), $users, new PasswordReset($users), Mailer::forSite($site)),
+            new LoginController($site, $permalinks, $authenticator, new \Minn\Auth\SignIn(new AuthCookies($db, $cookie), new LoginThrottle($db)), $users, new PasswordReset($users)),
             new AppController($app, new BootPayload($site, $permalinks, $capabilities, $app, $this->version, $appearance, new HiddenIntegrations($users, $capabilities), new SiteIcon($site, $posts, $permalinks), $theme !== null, new Translations($users, $site, $app, ABSPATH . 'wp-content')), $authenticator, $capabilities, $permalinks, $this->version, $adminOff),
             new \Minn\Runtime\AjaxController(),
             new ProbeController($site, $permalinks, new SiteIcon($site, $posts, $permalinks), $cron, $bridge),

@@ -20,9 +20,7 @@ use Minn\Auth\Authenticated;
 use Minn\Auth\Nonce;
 use Minn\Runtime\Runtime;
 use Minn\Support\Html;
-use Minn\Auth\Password;
 use Minn\Auth\PasswordReset;
-use Minn\Mail\Mailer;
 use Minn\Auth\PortableHash;
 
 /**
@@ -46,7 +44,6 @@ final readonly class LoginController
         private SignIn $signIn,
         private Users $users,
         private PasswordReset $reset,
-        private Mailer $mailer,
     ) {
     }
 
@@ -121,9 +118,6 @@ final readonly class LoginController
     /** A sign-in page's notices after wp_login_errors, handed where a sign-in would land (the admin, unless the page names a landing). */
     private function signInNotices(Request $request, LoginNotices $notices): LoginNotices
     {
-        if (!Runtime::booted()) {
-            return $notices;
-        }
         $requested = (string) ($request->query('redirect_to') ?? $request->form['redirect_to'] ?? '');
         return $notices->forSignIn($requested !== '' ? $requested : \admin_url());
     }
@@ -150,23 +144,7 @@ final readonly class LoginController
         }
         $login = trim((string) ($request->form['user_login'] ?? ''));
         $siteName = (string) ($this->site->option('blogname') ?? 'Site');
-        if (Runtime::booted()) {
-            return $this->retrieve($request, $login, $siteName);
-        }
-        if ($login === '') {
-            return Response::html(LoginForm::lostPassword($siteName, $this->actionUrl($request, 'lostpassword'), 'Error: Please enter a username or email address.', ''));
-        }
-        $user = $this->users->findByLogin($login) ?? (str_contains($login, '@') ? $this->users->findByEmail($login) : null);
-        if ($user === null) {
-            $this->signIn->recordFailure($request->remoteAddress);
-            return Response::html(LoginForm::lostPassword($siteName, $this->actionUrl($request, 'lostpassword'), 'Error: There is no account with that username or email address.', ''));
-        }
-        $key = $this->reset->issue($user);
-        $link = $this->actionUrl($request, 'rp', 'key=' . rawurlencode($key) . '&login=' . rawurlencode($user->login));
-        $this->mailer->send(
-            Mailer::noticesFor($this->site)->passwordReset($user->login, $user->email, $link, $request->remoteAddress),
-        );
-        return Response::redirect($this->permalinks->url($this->base($request) . '?checkemail=confirm'), 302);
+        return $this->retrieve($request, $login, $siteName);
     }
 
     /**
@@ -243,16 +221,11 @@ final readonly class LoginController
             return Response::html(LoginForm::resetPassword($siteName, $action, $key, $user->login, 'Error: The password cannot be empty.'));
         }
         $mismatch = $pass1 !== $pass2 ? 'Error: The passwords do not match.' : '';
-        $refusal = Runtime::booted() ? $this->validateReset($user, $mismatch) : LoginNotices::plain('password_reset_mismatch', $mismatch);
+        $refusal = $this->validateReset($user, $mismatch);
         if (!$refusal->isEmpty()) {
             return Response::html(LoginForm::resetPassword($siteName, $action, $key, $user->login, '', $this->parts('resetpass', 'Reset Password', $siteName, $user, $refusal)));
         }
-        if (Runtime::booted()) {
-            \reset_password(new \WP_User($user->id), $pass1);
-        } else {
-            $this->users->update($user->id, ['user_pass' => Password::hash($pass1)]);
-            $this->reset->clear($user);
-        }
+        \reset_password(new \WP_User($user->id), $pass1);
         return $this->signIn->endAll(Response::html(LoginForm::notice($siteName, 'Password Reset', 'Your password has been reset.', $this->permalinks->url($this->base($request)))), $user->id)
             ->withCookie('wp-resetpass-' . $this->signIn->hash(), ' ', ['expires' => time() - 31536000, 'path' => $this->base($request), 'httponly' => true, 'secure' => $request->secure, 'samesite' => 'Lax']);
     }
@@ -266,7 +239,7 @@ final readonly class LoginController
      */
     private function register(Request $request, string $siteName): Response
     {
-        if (!Runtime::booted() || !Runtime::options()->filtered('users_can_register')) {
+        if (!Runtime::options()->filtered('users_can_register')) {
             return Response::redirect($this->permalinks->url($this->base($request) . '?registration=disabled'), 302);
         }
         $action = $this->actionUrl($request, 'register');
@@ -373,7 +346,7 @@ final readonly class LoginController
         }
         $login = (string) ($request->form['log'] ?? '');
         $password = (string) ($request->form['pwd'] ?? '');
-        $user = $hooks->available() ? $hooks->authenticate($login, $password) : $this->authenticator->login($login, $password);
+        $user = $hooks->authenticate($login, $password);
         if (!$user instanceof UserRecord) {
             $this->signIn->recordFailure($request->remoteAddress);
             return Response::html($this->render($request, LoginNotices::refused($user)));

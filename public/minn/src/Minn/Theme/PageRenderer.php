@@ -57,7 +57,7 @@ final readonly class PageRenderer
         $site = new Site($db);
         $posts = new Posts($db);
         $users = new Users($db);
-        $templates = new Templates($db, $posts, $theme, Runtime::booted() ? Runtime::blockTemplates() : null);
+        $templates = new Templates($db, $posts, $theme, Runtime::blockTemplates());
         $renderer = Blocks::renderer();
         (new Structure($theme, $templates, $site, $permalinks))->register($renderer);
         (new PostBlocks($posts, $users, $site, $permalinks))->register($renderer);
@@ -79,11 +79,8 @@ final readonly class PageRenderer
     public function bodyClasses(Resolution $resolution, array $coreClasses): array
     {
         $classes = $this->themeClasses($resolution, $coreClasses);
-        if (Runtime::booted()) {
-            $filtered = Runtime::hooks()->filter('body_class', [$classes, []]);
-            $classes = is_array($filtered) ? array_values(array_map('strval', $filtered)) : $classes;
-        }
-        return $classes;
+        $filtered = Runtime::hooks()->filter('body_class', [$classes, []]);
+        return is_array($filtered) ? array_values(array_map('strval', $filtered)) : $classes;
     }
 
     /** The body-class tokens before plugins filter them (bodyClasses()). @return list<string> */
@@ -146,7 +143,7 @@ final readonly class PageRenderer
         // The stylesheet comes after the body: it lists the containers and
         // variations that rendering discovered.
         $styles = new GlobalStyles($this->theme, $this->templates->userStyles());
-        $title = $this->documentTitle($resolution, $title);
+        $title = $this->documentTitle($resolution);
         $bar = $resolution->preview ? null : $this->bar;
         $document = '<!DOCTYPE html>' . "\n" . '<html lang="en">' . "\n"
             . $this->head($resolution, $title, $styles, $bar)
@@ -154,7 +151,7 @@ final readonly class PageRenderer
             . '<a class="skip-link screen-reader-text" id="wp-skip-link" href="#' . Html::attr($skipTarget) . '">Skip to content</a>'
             . '<div class="wp-site-blocks">' . $body . '</div>' . "\n"
             . (Extensions::runner()?->footer() ?? '')
-            . (Runtime::booted() ? Runtime::capture('wp_footer') : '')
+            . Runtime::capture('wp_footer')
             . ($bar === null ? '' : $bar->render($resolution))
             . '</body>' . "\n" . '</html>' . "\n";
         return Extensions::runner()?->filterDocument($document) ?? $document;
@@ -167,9 +164,6 @@ final readonly class PageRenderer
      */
     private function pluginTemplate(): ?string
     {
-        if (!Runtime::booted()) {
-            return null;
-        }
         $canvas = MINN_ENGINE_DIR . '/wp-api/template-canvas.php';
         $swapped = (string) \apply_filters('template_include', $canvas);
         if ($swapped === $canvas || $swapped === '' || !is_file($swapped)) {
@@ -194,48 +188,38 @@ final readonly class PageRenderer
         return [(string) preg_replace('/<main(\s|>)/', '<main id="wp--skip-link--target"$1', $body, 1), 'wp--skip-link--target'];
     }
 
-    /** The title after the extensions and, with the runtime up, the reference's document_title filters. */
-    private function documentTitle(Resolution $resolution, string $title): string
+    /** The title through the reference's document_title filters, which plugin code rewrites it with; the engine's parts feed them. */
+    private function documentTitle(Resolution $resolution): string
     {
-        $title = Extensions::runner()?->title($title) ?? $title;
-        if (Runtime::booted()) {
-            // Plugin code rewrites the title through the reference's filters; the engine's parts feed them.
-            $parts = DocumentTitle::parts($resolution, (string) ($this->site->option('blogname') ?? ''), (string) ($this->site->option('blogdescription') ?? ''));
-            if ($resolution->kind === Kind::PostTypeArchive) {
-                // A plugin may rename its archive (WooCommerce titles the product archive after the shop page).
-                $parts['title'] = (string) \apply_filters('post_type_archive_title', $parts['title'], (string) ($resolution->record['name'] ?? ''));
-            }
-            Runtime::current()->set('document_title_parts', $parts);
-            $title = \_minn_document_title($parts);
+        $parts = DocumentTitle::parts($resolution, (string) ($this->site->option('blogname') ?? ''), (string) ($this->site->option('blogdescription') ?? ''));
+        if ($resolution->kind === Kind::PostTypeArchive) {
+            // A plugin may rename its archive (WooCommerce titles the product archive after the shop page).
+            $parts['title'] = (string) \apply_filters('post_type_archive_title', $parts['title'], (string) ($resolution->record['name'] ?? ''));
         }
-        return $title;
+        Runtime::current()->set('document_title_parts', $parts);
+        return \_minn_document_title($parts);
     }
 
     /**
-     * The head: title, the discovery links, the engine's stylesheets (inside
-     * wp_head when the runtime is up, where the reference prints a theme's,
-     * after plugin styles), then the extension head (after the stylesheets
-     * either way, as the seam contract says), the fonts, the bar's own.
+     * The head: title, the discovery links, wp_head (the engine's
+     * stylesheets inside it, where the reference prints a theme's, after
+     * plugin styles), then the extension head (after the stylesheets, as
+     * the seam contract says), the fonts, the bar's own.
      */
     private function head(Resolution $resolution, string $title, GlobalStyles $styles, ?AdminBar $bar): string
     {
         // The theme's own style.css is the theme's to enqueue from its
         // functions.php, which the runtime loads; the reference links it no other way.
-        $stylesheets = $this->headLinks->engineStylesheet()
-            . '<style id="global-styles-inline-css">' . "\n" . $styles->css() . "\n" . '</style>' . "\n";
-        $runtimeHead = '';
-        if (Runtime::booted()) {
-            Runtime::current()->set('engine_head_styles', $stylesheets);
-            $runtimeHead = Runtime::capture('wp_head');
-            $stylesheets = '';
-        }
+        // The engine's stylesheets print inside wp_head, where the reference prints a theme's.
+        Runtime::current()->set('engine_head_styles', $this->headLinks->engineStylesheet()
+            . '<style id="global-styles-inline-css">' . "\n" . $styles->css() . "\n" . '</style>' . "\n");
+        $runtimeHead = Runtime::capture('wp_head');
         $fontFaces = $styles->fontFaces();
         return '<head>' . "\n"
             . '<meta charset="UTF-8" />' . "\n"
             . '<meta name="viewport" content="width=device-width, initial-scale=1" />' . "\n"
             . '<title>' . htmlspecialchars($title, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8', false) . '</title>' . "\n"
             . $this->headLinks->all($resolution)
-            . $stylesheets
             . $runtimeHead
             . (Extensions::runner()?->head() ?? '')
             . ($fontFaces === '' ? '' : '<style class="wp-fonts-local">' . "\n" . $fontFaces . '</style>' . "\n")

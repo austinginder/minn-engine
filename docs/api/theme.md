@@ -19,7 +19,7 @@ the block-theme reader, templates, global styles and the page renderer
 | [`Hierarchy`](#hierarchy) | final class | 146 | The classic template hierarchy: the candidate file names each template |
 | [`MainQueryBridge`](#mainquerybridge) | final readonly class | 125 | Stands the main query for a themed page and runs the front-end steps |
 | [`NotModified`](#notmodified) | final class | 3 | Raised once a reader's copy of a feed has been found current and the |
-| [`PageRenderer`](#pagerenderer) | final readonly class | 205 | A whole page from the active block theme: the template the resolution |
+| [`PageRenderer`](#pagerenderer) | final readonly class | 189 | A whole page from the active block theme: the template the resolution |
 | [`PatternText`](#patterntext) | final class | 198 | Block-theme patterns are PHP files whose only code is a handful of |
 | [`Printed`](#printed) | final class | 3 | Raised once a WordPress handler has printed a whole response (a sitemap, |
 | [`StylePresets`](#stylepresets) | final class | 195 | The preset side of theme.json: the colour, gradient, font-size, |
@@ -596,7 +596,7 @@ The body-class tokens before plugins filter them (bodyClasses()). @return list<s
 
 The page for a resolution, or null when the theme has no template for it.
 
-Internals: `pluginTemplate()` (private, line 168), `skipLinkTarget()` (private, line 189), `documentTitle()` (private, line 198), `head()` (private, line 220)
+Internals: `pluginTemplate()` (private, line 165), `skipLinkTarget()` (private, line 183), `documentTitle()` (private, line 192), `head()` (private, line 209)
 
 
 ## PatternText

@@ -21,7 +21,7 @@ passwords, sessions, cookies, nonces, roles and capabilities
 | [`Roles`](#roles) | final class | 68 | Role definitions from the site's {prefix}user_roles option, parsed by a |
 | [`Salts`](#salts) | final class | 35 | The site's own secret material, read from the constants wp-config.php |
 | [`Sessions`](#sessions) | final readonly class | 166 | The session_tokens usermeta store: {sha256(token): {expiration, ip, ua, |
-| [`SignIn`](#signin) | final readonly class | 73 | The door itself: what a sign-in surface needs beyond checking a |
+| [`SignIn`](#signin) | final readonly class | 70 | The door itself: what a sign-in surface needs beyond checking a |
 | [`TypeCapabilities`](#typecapabilities) | final readonly class | 51 | The capability names a post type's permissions are built from. Posts and |
 
 ## ApplicationPasswords
@@ -439,7 +439,7 @@ The stored password scheme. A modern "$wp$2y$..." value is bcrypt over
 base64(HMAC-sha384(password, "wp-sha384")); a bare "$2y$" value is plain
 bcrypt. Legacy phpass "$P$" hashes are not verified.
 
-Used by: `Minn\Auth\ApplicationPasswords`, `Minn\Auth\AuthCookies`, `Minn\Auth\Authenticator`, `Minn\Auth\Cookie`, `Minn\Cli\UserCommand`, `Minn\Content\Users`, `Minn\Login\LoginController`, `Minn\Rest\UsersController`
+Used by: `Minn\Auth\ApplicationPasswords`, `Minn\Auth\AuthCookies`, `Minn\Auth\Authenticator`, `Minn\Auth\Cookie`, `Minn\Cli\UserCommand`, `Minn\Content\Users`, `Minn\Rest\UsersController`
 
 ### static `verify(string $password, string $hash): bool`
 
@@ -625,7 +625,7 @@ The session_tokens usermeta store: {sha256(token): {expiration, ip, ua,
 login}}. Read by a bounded scan of the serialized blob and written by
 serializing it ourselves, so stored data is never executed.
 
-Used by: `Minn\Admin\SessionsController`, `Minn\Auth\Authenticator`, `Minn\Auth\Cookie`, `Minn\Auth\SignIn`, `Minn\Engine`, `Minn\Rest\Services`
+Used by: `Minn\Admin\SessionsController`, `Minn\Auth\Authenticator`, `Minn\Auth\Cookie`, `Minn\Engine`, `Minn\Rest\Services`
 
 ```php
 __construct(Minn\Content\Users $users)
@@ -690,7 +690,7 @@ place with the session store and the cookie jar it protects.
 Used by: `Minn\Engine`, `Minn\Login\LoginController`
 
 ```php
-__construct(Minn\Auth\Sessions $sessions, Minn\Auth\AuthCookies $cookies, Minn\Auth\LoginThrottle $throttle)
+__construct(Minn\Auth\AuthCookies $cookies, Minn\Auth\LoginThrottle $throttle)
 ```
 
 
@@ -726,7 +726,7 @@ Ends every session of a user (a password reset) and clears the cookies from the 
 
 The response with the sign-in cookies cleared.
 
-Internals: `open()` (private, line 60)
+Internals: `open()` (private, line 58)
 
 
 ## TypeCapabilities

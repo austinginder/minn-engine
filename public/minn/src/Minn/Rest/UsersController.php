@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Minn\Rest;
 
-use Minn\Runtime\Runtime;
 use Minn\Runtime\UserEvents;
 use Minn\Http\Policy;
 use Minn\Http\Args;
@@ -358,11 +357,11 @@ final readonly class UsersController
      */
     private static function loginRefusal(string $login): ?string
     {
-        $valid = Runtime::booted() ? \validate_username($login) : preg_match('/^[a-zA-Z0-9 _.\-@]+$/', $login) === 1 && trim($login) === $login;
+        $valid = \validate_username($login);
         if (!$valid) {
             return 'This username is invalid because it uses illegal characters. Please enter a valid username.';
         }
-        $illegal = Runtime::booted() ? array_map('strtolower', (array) \apply_filters('illegal_user_logins', [])) : [];
+        $illegal = array_map('strtolower', (array) \apply_filters('illegal_user_logins', []));
         return in_array(strtolower($login), $illegal, true) ? 'Sorry, that username is not allowed.' : null;
     }
 }

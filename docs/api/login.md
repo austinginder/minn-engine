@@ -4,10 +4,10 @@
 
 | Class | Kind | Lines | Summary |
 |---|---|---|---|
-| [`LoginController`](#logincontroller) | final readonly class | 460 | Signing in. The page people see is /minn-admin/login: the form, the |
+| [`LoginController`](#logincontroller) | final readonly class | 435 | Signing in. The page people see is /minn-admin/login: the form, the |
 | [`LoginForm`](#loginform) | final class | 213 | The sign-in page markup. |
-| [`LoginHooks`](#loginhooks) | final readonly class | 114 | The sign-in as plugins see it, when they are loaded. The credentials go |
-| [`LoginNotices`](#loginnotices) | final readonly class | 119 | What a sign-in page tells the reader, held as the reference's pages hold |
+| [`LoginHooks`](#loginhooks) | final readonly class | 99 | The sign-in as plugins see it, when they are loaded. The credentials go |
+| [`LoginNotices`](#loginnotices) | final readonly class | 113 | What a sign-in page tells the reader, held as the reference's pages hold |
 | [`ServeLogin`](#servelogin) | final class | 3 | Thrown by the wp-login.php shape file when plugin code require's it |
 
 ## LoginController
@@ -28,7 +28,7 @@ and cookies validate on the engine AND on WordPress either way.
 Used by: `Minn\Engine`
 
 ```php
-__construct(Minn\Content\Site $site, Minn\Front\Permalinks $permalinks, Minn\Auth\Authenticator $authenticator, Minn\Auth\SignIn $signIn, Minn\Content\Users $users, Minn\Auth\PasswordReset $reset, Minn\Mail\Mailer $mailer)
+__construct(Minn\Content\Site $site, Minn\Front\Permalinks $permalinks, Minn\Auth\Authenticator $authenticator, Minn\Auth\SignIn $signIn, Minn\Content\Users $users, Minn\Auth\PasswordReset $reset)
 ```
 
 
@@ -52,7 +52,7 @@ Route: `POST /wp-login.php (public)`
 
 Handles the posted form for each of those pages.
 
-Internals: `checkEmail()` (private, line 111), `signInNotices()` (private, line 122), `lostPassword()` (private, line 132), `retrieve()` (private, line 178), `openResetLink()` (private, line 195), `resetSession()` (private, line 212), `savePassword()` (private, line 227), `register()` (private, line 267), `validateReset()` (private, line 292), `parts()` (private, line 307), `tokenLogin()` (private, line 319), `safeRedirect()` (private, line 397), `logout()` (private, line 416), `action()` (private, line 446), `actionUrl()` (private, line 458), `base()` (private, line 468), `tooManyAttempts()` (private, line 474), `render()` (private, line 482)
+Internals: `checkEmail()` (private, line 108), `signInNotices()` (private, line 119), `lostPassword()` (private, line 126), `retrieve()` (private, line 156), `openResetLink()` (private, line 173), `resetSession()` (private, line 190), `savePassword()` (private, line 205), `register()` (private, line 240), `validateReset()` (private, line 265), `parts()` (private, line 280), `tokenLogin()` (private, line 292), `safeRedirect()` (private, line 370), `logout()` (private, line 389), `action()` (private, line 419), `actionUrl()` (private, line 431), `base()` (private, line 441), `tooManyAttempts()` (private, line 447), `render()` (private, line 455)
 
 
 ## LoginForm
@@ -135,10 +135,6 @@ __construct(Minn\Content\Users $users)
 ```
 
 
-### `available(): bool`
-
-Whether the chain can be asked: only with plugins loaded.
-
 ### `authenticate(string $login, string $password): Minn\Content\UserRecord|WP_Error|null`
 
 The credentials through wp_authenticate and the authenticate filters,
@@ -167,7 +163,7 @@ page's notices (login_errors, login_messages), the fields inside the
 form (login_form, lostpassword_form or resetpass_form, as the page
 is), and the footer (login_footer).
 
-- `@return array{title: string, head: string, bodyClass: string, headerUrl: string, headerText: string, message: string, errors?: string, messages?: string, form: string, footer: string}|array{}`
+- `@return array{title: string, head: string, bodyClass: string, headerUrl: string, headerText: string, message: string, errors?: string, messages?: string, form: string, footer: string}`
 
 ### `landing(string $redirect, string $requested, Minn\Content\UserRecord $user): string`
 
@@ -231,17 +227,16 @@ As the WP_Error plugins are handed.
 
 ### `forSignIn(string $redirect): self`
 
-The sign-in page's notices after wp_login_errors, which is handed
-where a sign-in would land; without plugins, as they are.
+The sign-in page's notices after wp_login_errors, which is handed where a sign-in would land.
 
 ### `areas(): array`
 
 The error and message areas' HTML ('' for an area with none),
-through login_errors and login_messages with plugins loaded.
+through login_errors and login_messages.
 
 - `@return array{errors: string, messages: string}`
 
-Internals: `words()` (private, line 134)
+Internals: `words()` (private, line 127)
 
 
 ## ServeLogin
