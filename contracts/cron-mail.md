@@ -99,7 +99,10 @@ The reference's HTTP shapes, captured and matched:
 - `GET wp-login.php?action=lostpassword` shows the form; `POST` with `user_login`
   (username or email) answers `302 ?checkemail=confirm`. An unknown account is
   refused on the form and counts toward the sign-in throttle.
-- The email link is `wp-login.php?action=rp&key={20 chars}&login={user_login}`.
+- The reset email's link is `wp-login.php?login={user_login}&key={20 chars}&action=rp&wp_lang={locale}`,
+  the locale being the user's own (`get_user_locale`: their `locale` meta, else the site's). The new
+  account email's link is the same without `wp_lang` (re-captured 2026-10-07; the order changed
+  since the first capture).
 - `GET action=rp&key=…&login=…` stores `login:key` in the `wp-resetpass-{COOKIEHASH}`
   cookie (path `/wp-login.php`, HttpOnly) and answers `302 ?action=rp`; the form then
   loads from the cookie with the key in a hidden `rp_key` field. A bad or expired key

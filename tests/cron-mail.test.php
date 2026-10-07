@@ -130,7 +130,7 @@ $latest = mailpit('messages?limit=1');
 $message = $latest['messages'][0] ?? [];
 check(($latest['total'] ?? 0) === $before + 1 && str_contains($message['Subject'] ?? '', 'Password Reset') && ($message['To'][0]['Address'] ?? '') === 'editor@minn-engine.localhost', 'the reset email reaches the mailbox', json_encode([$message['Subject'] ?? null, $message['To'] ?? null]));
 $text = (string) (mailpit('message/' . ($message['ID'] ?? ''))['Text'] ?? '');
-check(preg_match('#(https://minn\.localhost/wp-login\.php\?action=rp&key=([A-Za-z0-9]{20})&login=editor)#', $text, $m) === 1, 'the email carries the reset link in the reference\'s shape', $text);
+check(preg_match('#(https://minn\.localhost/wp-login\.php\?login=editor&key=([A-Za-z0-9]{20})&action=rp&wp_lang=en_US)#', $text, $m) === 1, 'the email carries the reset link in the reference\'s shape (login, key, action, then the user\'s locale)', $text);
 $link = $m[1] ?? '';
 $key = $m[2] ?? '';
 $stored = wp("db query \"SELECT user_activation_key FROM wp_users WHERE ID=2\" --skip-column-names");

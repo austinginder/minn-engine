@@ -25,7 +25,7 @@ final class AccountFlows
     public static function retrievePassword(string $login): bool|\WP_Error
     {
         $errors = new \WP_Error();
-        $login = trim(\wp_unslash($login));
+        $login = trim(stripslashes($login));
         $user = false;
         if ($login === '') {
             $errors->add('empty_username', \__('<strong>Error:</strong> Please enter a username or email address.'));
@@ -53,7 +53,7 @@ final class AccountFlows
         if ($key instanceof \WP_Error) {
             return $key;
         }
-        $notice = Mailer::noticesFor(Runtime::current()->site)->passwordReset($user->user_login, $user->user_email, self::resetLink($user, $key), (string) (Runtime::current()->request?->remoteAddress ?? ''));
+        $notice = Mailer::noticesFor(Runtime::current()->site)->passwordReset($user->user_login, $user->user_email, self::resetLink($user, $key) . '&wp_lang=' . \get_user_locale($user), (string) (Runtime::current()->request?->remoteAddress ?? ''));
         $title = \apply_filters('retrieve_password_title', $notice->subject, $user->user_login, $user);
         $message = \apply_filters('retrieve_password_message', $notice->body, $key, $user->user_login, $user);
         $email = (array) \apply_filters('retrieve_password_notification_email', ['to' => $user->user_email, 'subject' => $title, 'message' => $message, 'headers' => ''], $key, $user->user_login, $user);
