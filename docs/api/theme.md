@@ -13,11 +13,11 @@ the block-theme reader, templates, global styles and the page renderer
 | [`EmbedRenderer`](#embedrenderer) | final readonly class | 32 | A post's embed page (its /embed/ address, or ?embed= on it), the card |
 | [`FeedHeaders`](#feedheaders) | final class | 50 | The headers a feed is sent with, as the reference's send_headers sends |
 | [`Folder`](#folder) | final readonly class | 77 | A theme folder read from disk: its style.css headers, which folder its templates come from, its screenshot, whether it is a block theme. |
-| [`FrontLifecycle`](#frontlifecycle) | final class | 96 | WordPress's front-end request steps around the main query, as WP::main |
+| [`FrontLifecycle`](#frontlifecycle) | final class | 100 | WordPress's front-end request steps around the main query, as WP::main |
 | [`GlobalStyles`](#globalstyles) | final readonly class | 571 | theme.json to CSS. Presets become custom properties on :root and their |
 | [`HeadLinks`](#headlinks) | final readonly class | 133 | The links the reference puts in every head: the site and comments |
 | [`Hierarchy`](#hierarchy) | final class | 146 | The classic template hierarchy: the candidate file names each template |
-| [`MainQueryBridge`](#mainquerybridge) | final readonly class | 147 | Stands the main query for a themed page and runs the front-end steps |
+| [`MainQueryBridge`](#mainquerybridge) | final readonly class | 125 | Stands the main query for a themed page and runs the front-end steps |
 | [`NotModified`](#notmodified) | final class | 3 | Raised once a reader's copy of a feed has been found current and the |
 | [`PageRenderer`](#pagerenderer) | final readonly class | 205 | A whole page from the active block theme: the template the resolution |
 | [`PatternText`](#patterntext) | final class | 198 | Block-theme patterns are PHP files whose only code is a handful of |
@@ -297,10 +297,13 @@ parse over (the main query then does not run).
 
 ### static `handle404(WP_Query $query, bool $notFound): void`
 
-The 404 decision: a plugin's pre_handle_404 may make it; otherwise a
-request the engine could not resolve is a 404 (the query says so, the
-status and no-cache headers follow), as is a page past the end of a
-listing (the query found nothing on it); anything else is a 200.
+The 404 decision, the one place it is made: a plugin's
+pre_handle_404 may make it; otherwise a request for something the
+site does not have is a 404, as is an empty page past the first of
+any listing and an empty date archive (an existing term, author or
+type with no posts, an empty search, the front: a 200); the status
+and no-cache headers follow. A feed is never a 404: one of nothing
+is an empty feed.
 
 ### static `sendHeaders(WP $wp): void`
 
@@ -507,16 +510,18 @@ Stands the main query for a themed page and runs the front-end steps
 around it as WP::main does (FrontLifecycle): the request parsed, the main
 query through WP_Query (so pre_get_posts and every posts_* filter shape
 it), the 404 decision, the globals, the headers, then "wp" and
-template_redirect. A listing's posts are the query's; a single post the
+template_redirect. A listing's posts are the query's, and so is the 404
+for an empty page past the first or an empty date; a single post the
 query does not find (a preview, a draft its author reads) is the one the
-engine resolved. Without the runtime, the engine's own listing.
+engine resolved. When a plugin takes the parse over no query runs, as
+on the reference, and the page stands empty.
 
 - const `LISTINGS` = `array (   0 =>    \Minn\Front\Kind::Home,   1 =>    \Minn\Front\Kind::Category,   2 =>    \Minn\Front\Kind::Tag,   3 =>    \Minn\Front\Kind::Taxonomy,   4 =>    \Minn\Front\Kind::PostTypeArchive,   5 =>    \Minn\Front\Kind::Author,   6 =>    \Minn\Front\Kind::Date,   7 =>    \Minn\Front\Kind::Search, )`
 
-Used by: `Minn\Engine`, `Minn\Front\FeedController`, `Minn\Front\PrintedResponse`, `Minn\Front\ProbeController`, `Minn\Front\SitemapController`, `Minn\Theme\ClassicRenderer`, `Minn\Theme\EmbedRenderer`, `Minn\Theme\PageRenderer`
+Used by: `Minn\Engine`, `Minn\Front\FeedController`, `Minn\Front\FrontController`, `Minn\Front\PrintedResponse`, `Minn\Front\ProbeController`, `Minn\Front\SitemapController`, `Minn\Theme\ClassicRenderer`, `Minn\Theme\EmbedRenderer`, `Minn\Theme\PageRenderer`
 
 ```php
-__construct(Minn\Content\Site $site, Minn\Content\Posts $posts, int $perPage)
+__construct(int $perPage)
 ```
 
 
@@ -527,11 +532,17 @@ query; the variables a request adds of its own (a feed's) win.
 
 - `@param array<string, mixed> $extra`
 
+### static `verdict(Minn\Front\Resolution $resolution): Minn\Front\Resolution`
+
+The resolution as the main query left it: a 404 when the query
+decided one (an empty page past the first, an empty date), with the
+vars it was asked under.
+
 ### `perPage(): int`
 
 Posts per page.
 
-Internals: `vars()` (private, line 94), `postVars()` (private, line 106), `queried()` (private, line 125), `seeded()` (private, line 138), `objectTypes()` (private, line 146), `listing()` (private, line 153)
+Internals: `vars()` (private, line 100), `postVars()` (private, line 112), `queried()` (private, line 131), `seeded()` (private, line 144)
 
 
 ## NotModified

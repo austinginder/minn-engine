@@ -6,9 +6,8 @@ namespace Minn\Front;
 
 use Minn\Content\PostRecord;
 use Minn\Content\Blocks;
-use Minn\Content\PostFilter;
+use Minn\Content\Page;
 use Minn\Content\Excerpt;
-use Minn\Content\Posts;
 use Minn\Db;
 use Minn\Support\Html;
 use Minn\Content\PasswordGate;
@@ -22,9 +21,7 @@ final readonly class Renderer
 {
     public function __construct(
         private Db $db,
-        private Posts $posts,
         private Permalinks $permalinks,
-        private int $perPage,
     ) {
     }
 
@@ -90,14 +87,14 @@ final readonly class Renderer
         return DocumentTitle::compose(DocumentTitle::parts($resolution, (string) ($this->db->option('blogname') ?? ''), (string) ($this->db->option('blogdescription') ?? '')));
     }
 
-    /** The interim page for a resolution, without a theme. */
-    public function render(Resolution $resolution): string
+    /** The interim page for a resolution, without a theme: a listing shows the main query's page of posts. */
+    public function render(Resolution $resolution, Page $page): string
     {
         $site = $this->db->option('blogname') ?? '';
         [$title, $main] = match ($resolution->kind) {
             Kind::Single, Kind::Page => [$resolution->record['post_title'], $this->article($resolution->record)],
             Kind::NotFound => ['Page not found', '<h1>Page not found</h1><p>Nothing lives at this address.</p>'],
-            default => $this->archive($resolution),
+            default => $this->archive($resolution, $page),
         };
         $heading = $title === '' ? $site : $title . ' – ' . $site;
         $classes = implode(' ', $this->bodyClasses($resolution));
@@ -139,24 +136,15 @@ final readonly class Renderer
     }
 
     /** @return array{0: string, 1: string} title and markup */
-    private function archive(Resolution $resolution): array
+    private function archive(Resolution $resolution, Page $page): array
     {
-        $all = PostFilter::all();
-        [$title, $filter] = match ($resolution->kind) {
-            Kind::Home => ['', $all],
-            Kind::Category, Kind::Tag => [$resolution->record['name'], $all->inTerm((int) $resolution->record['term_taxonomy_id'])],
-            Kind::Author => [
-                $resolution->record['display_name'] ?? $resolution->authorName,
-                $all->byAuthor((int) ($resolution->record['ID'] ?? -1)),
-            ],
-            Kind::Date => [
-                implode('/', array_filter($resolution->date, static fn ($v) => $v !== null)),
-                $all->between(...(Resolver::dateRange(...$resolution->date) ?? ['1970-01-01', '1970-01-01'])),
-            ],
-            Kind::Search => ['Search: ' . $resolution->search, $all->matching((string) $resolution->search)],
-            default => ['', $all],
+        $title = match ($resolution->kind) {
+            Kind::Category, Kind::Tag => (string) $resolution->record['name'],
+            Kind::Author => (string) ($resolution->record['display_name'] ?? $resolution->authorName),
+            Kind::Date => implode('/', array_filter($resolution->date, static fn ($v) => $v !== null)),
+            Kind::Search => 'Search: ' . $resolution->search,
+            default => '',
         };
-        $page = $this->posts->archive($filter, $resolution->paged, $this->perPage);
         $items = '';
         foreach ($page->posts as $post) {
             $items .= '<li><a href="' . Html::attr($this->permalinks->forPost($post)) . '">' . Html::esc($post->title) . '</a>'

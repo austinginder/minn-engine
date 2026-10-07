@@ -15,6 +15,7 @@ use Minn\Theme\PageRenderer;
 use Minn\Cron\Cron;
 use Minn\Runtime\Runtime;
 use Minn\Theme\EmbedRenderer;
+use Minn\Theme\MainQueryBridge;
 use Minn\Theme\Printed;
 
 /**
@@ -27,6 +28,7 @@ final readonly class FrontController
 {
     public function __construct(
         private Resolver $resolver,
+        private MainQueryBridge $bridge,
         private Renderer $renderer,
         private ?PageRenderer $theme = null,
         private ?FeedController $feeds = null,
@@ -43,12 +45,18 @@ final readonly class FrontController
         return $this->themed(Resolution::notFound());
     }
 
-    /** The themed (or interim) page for a resolution, under its status. */
+    /**
+     * The themed (or interim) page for a resolution, under its status: the
+     * main query stood first, its 404 (an empty page past the first, an
+     * empty date) taken as the page's.
+     */
     public function themed(Resolution $resolution): Response
     {
+        $page = $this->bridge->stand($resolution);
+        $resolution = MainQueryBridge::verdict($resolution);
         $html = $this->theme?->render($resolution, $this->renderer->bodyClasses($resolution), $this->renderer->title($resolution))
             ?? $this->classic?->render($resolution, $this->renderer->bodyClasses($resolution), $this->renderer->title($resolution))
-            ?? $this->renderer->render($resolution);
+            ?? $this->renderer->render($resolution, $page);
         return Response::html($html, $resolution->status);
     }
 
@@ -72,15 +80,16 @@ final readonly class FrontController
     {
         $resolution = $this->resolver->resolve($request);
         if ($resolution->kind === Kind::Redirect) {
-            // With plugins loaded the move is made at template_redirect on the page as typed, where plugins see it: a
-            // former slug's by wp_old_slug_redirect (on the 404 it is), any other by redirect_canonical, which a plugin
-            // may change or refuse. Without them, or for a move that holds even as typed (a trackback's), it is made here.
-            $typed = Runtime::booted() ? $this->resolver->resolve($request, Redirects::Hold) : null;
-            $formerSlug = $typed !== null && $typed->kind === Kind::Redirect && $typed->status === 301;
-            if ($typed === null || ($typed->kind === Kind::Redirect && !$formerSlug)) {
+            // The move is made at template_redirect on the page as typed, where plugins see it: a former slug's by
+            // wp_old_slug_redirect (on the 404 it is), any other by redirect_canonical, which a plugin may change or
+            // refuse, and which stands down when the main query finds the typed page empty. A move that holds even as
+            // typed (a trackback's) is made here.
+            $typed = $this->resolver->resolve($request, Redirects::Hold);
+            $formerSlug = $typed->kind === Kind::Redirect && $typed->status === 301;
+            if ($typed->kind === Kind::Redirect && !$formerSlug) {
                 return Response::redirect((string) $resolution->location, $resolution->status);
             }
-            Runtime::current()->set($formerSlug ? 'old_slug_location' : 'canonical_location', [(string) $resolution->location, $resolution->status]);
+            Runtime::current()->set($formerSlug ? 'old_slug_location' : 'canonical_location', [(string) $resolution->location, $resolution->status, $typed->kind !== Kind::NotFound]);
             $resolution = $formerSlug ? Resolution::notFound() : $typed;
         }
         $level = ob_get_level();
@@ -99,24 +108,18 @@ final readonly class FrontController
     /** The page for a resolution: an embed, a sitemap's or feed's query form, else the theme's. */
     private function rendered(Request $request, Resolution $resolution): Response
     {
-        if ($this->embeds !== null && Runtime::booted() && EmbedRenderer::asked($request, $resolution)) {
+        if ($this->embeds !== null && EmbedRenderer::asked($request, $resolution)) {
             $core = $this->renderer->bodyClasses($resolution);
             $classes = Runtime::current()->get('block_theme', false) ? $this->theme?->themeClasses($resolution, $core) : $this->classic?->themeClasses($resolution, $core);
             return $this->embeds->render($resolution, $classes ?? $core)->withHeader('X-Powered-By', 'Minn');
         }
-        if ($this->sitemaps !== null && Runtime::booted() && ($request->has('sitemap') || $request->has('sitemap-stylesheet'))) {
+        if ($this->sitemaps !== null && ($request->has('sitemap') || $request->has('sitemap-stylesheet'))) {
             return $this->sitemaps->queried($request);
         }
         if ($this->feeds !== null && FeedController::asked($request, $resolution)) {
             return $this->feeds->serve($request, $resolution);
         }
-        $html = $this->theme?->render($resolution, $this->renderer->bodyClasses($resolution), $this->renderer->title($resolution))
-            ?? $this->classic?->render($resolution, $this->renderer->bodyClasses($resolution), $this->renderer->title($resolution))
-            ?? $this->renderer->render($resolution);
-        $response = Response::html($html, $resolution->status)->withHeader('X-Powered-By', 'Minn');
-        // Once the front-end steps ran, the template_redirect actions sent the Link headers (a plugin may have removed them).
-        return Runtime::booted() && Runtime::current()->get('front_lifecycle') === true
-            ? $response
-            : $response->withHeader('Link', '<' . $this->resolver->permalinks()->url('/wp-json/') . '>; rel="https://api.w.org/"');
+        // The template_redirect actions sent the Link headers (a plugin may have removed them).
+        return $this->themed($resolution)->withHeader('X-Powered-By', 'Minn');
     }
 }

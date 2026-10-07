@@ -7,7 +7,6 @@ namespace Minn\Front;
 use Minn\Blocks\Context;
 use Minn\Blocks\RenderState;
 use Minn\Content\Blocks;
-use Minn\Content\Posts;
 use Minn\Content\Site;
 use Minn\Http\Request;
 use Minn\Http\Response;
@@ -27,7 +26,6 @@ final readonly class FeedController
 {
     public function __construct(
         private Site $site,
-        private Posts $posts,
     ) {
     }
 
@@ -60,7 +58,7 @@ final readonly class FeedController
         $level = ob_get_level();
         ob_start();
         try {
-            $page = (new MainQueryBridge($this->site, $this->posts, $this->perFeed()))->stand($resolution, $vars);
+            $page = (new MainQueryBridge($this->perFeed()))->stand($resolution, $vars);
             // Content renders against the feed's own queried object (a category feed marks its category current), images by the page rules.
             RenderState::current()->reset();
             Blocks::renderer()->withContext(new Context($resolution, $page->posts, count($page->posts), $this->perFeed(), true));

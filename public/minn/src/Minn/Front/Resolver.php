@@ -8,7 +8,6 @@ use Minn\Content\UserRecord;
 use Minn\Content\PostRecord;
 use Closure;
 use Minn\Content\Posts;
-use Minn\Content\PostFilter;
 use Minn\Content\Terms;
 use Minn\Db;
 use Minn\Http\Request;
@@ -246,14 +245,14 @@ final readonly class Resolver
         if ($request->has('cat')) {
             $term = $this->terms->find('category', (int) $request->query('cat', '0'));
             if ($term !== null && !$canonical) {
-                return $this->archives()->termResolution('category', $term, 1);
+                return Resolution::term('category', $term, 1);
             }
             return $term === null || !$pretty ? Resolution::notFound() : Resolution::redirect($this->permalinks->forTerm($term));
         }
         if ($request->has('tag')) {
             $term = $this->terms->findBySlug('post_tag', (string) $request->query('tag'));
             if ($term !== null && !$canonical) {
-                return $this->archives()->termResolution('post_tag', $term, 1);
+                return Resolution::term('post_tag', $term, 1);
             }
             return $term === null || !$pretty ? Resolution::notFound() : Resolution::redirect($this->permalinks->forTerm($term));
         }
@@ -266,12 +265,12 @@ final readonly class Resolver
             return $user === null || !$pretty ? Resolution::notFound() : Resolution::redirect($this->permalinks->forAuthor($user));
         }
         if ($request->has('m') && preg_match('/^(\d{4})(\d{2})?(\d{2})?$/', (string) $request->query('m'), $m)) {
-            return $this->dateRedirect((int) $m[1], isset($m[2]) ? (int) $m[2] : null, isset($m[3]) ? (int) $m[3] : null, $redirects);
+            return $this->dateQuery((int) $m[1], isset($m[2]) ? (int) $m[2] : null, isset($m[3]) ? (int) $m[3] : null, $redirects);
         }
         if ($request->has('year')) {
             $month = $request->has('monthnum') ? (int) $request->query('monthnum') : null;
             $day = $request->has('day') ? (int) $request->query('day') : null;
-            return $this->dateRedirect((int) $request->query('year', '0'), $month, $day, $redirects);
+            return $this->dateQuery((int) $request->query('year', '0'), $month, $day, $redirects);
         }
         if ($request->has('s')) {
             return $this->archives()->search((string) $request->query('s'), max(1, (int) $request->query('paged', '1')));
@@ -279,37 +278,19 @@ final readonly class Resolver
         return $this->archives()->home(max(1, (int) $request->query('paged', '1')));
     }
 
-    private function dateRedirect(int $year, ?int $month, ?int $day, Redirects $redirects): Resolution
+    /** ?m= or ?year=: the pretty date address to move to, or (holding, or under plain permalinks) the date archive as typed. */
+    private function dateQuery(int $year, ?int $month, ?int $day, Redirects $redirects): Resolution
     {
-        $canonical = $redirects->follows();
-        if (!$canonical) {
-            $range = self::dateRange($year, $month, $day);
-            if ($range === null) {
-                return Resolution::notFound();
-            }
-            $total = $this->posts->count(PostFilter::all()->between($range[0], $range[1]));
-            return $total === 0 ? Resolution::notFound() : Resolution::date($year, $month, $day, 1);
+        if ($redirects->follows() && $this->permalinks->isPretty()) {
+            return Resolution::redirect($this->permalinks->forDate($year, $month, $day));
         }
-        if (!$this->permalinks->isPretty()) {
-            return Resolution::notFound();
-        }
-        return Resolution::redirect($this->permalinks->forDate($year, $month, $day));
+        return ArchiveAddresses::isDate($year, $month, $day) ? Resolution::date($year, $month, $day, 1) : Resolution::notFound();
     }
 
     /** The archives a request may stand for. */
     private function archives(): ArchiveAddresses
     {
         return new ArchiveAddresses($this->db, $this->posts, $this->terms, $this->permalinks, $this->readable(...));
-    }
-
-    /**
-     * The site-local bounds of a date archive, or null when the date is invalid.
-     *
-     * @return array{0: string, 1: string}|null
-     */
-    public static function dateRange(int $year, ?int $month, ?int $day): ?array
-    {
-        return ArchiveAddresses::dateRange($year, $month, $day);
     }
 
     /** The addresses an attachment's page answers to. */

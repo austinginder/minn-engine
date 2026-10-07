@@ -44,7 +44,7 @@ final readonly class ClassicRenderer
     {
         $site = new Site($db);
         $posts = new Posts($db);
-        return new self($site, $posts, $permalinks, $theme, $styleTheme, new MainQueryBridge($site, $posts, $perPage), $bar);
+        return new self($site, $posts, $permalinks, $theme, $styleTheme, new MainQueryBridge($perPage), $bar);
     }
 
     /** The page for a resolution through the theme's PHP templates. */

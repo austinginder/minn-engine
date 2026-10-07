@@ -5,11 +5,10 @@ declare(strict_types=1);
 namespace Minn\Content;
 
 use Minn\Db;
-use Minn\Content\Reader;
 
 /**
- * Reads over the posts table. A single post comes back as a PostRecord and
- * a listing as a Page of them; rendering and escaping happen elsewhere.
+ * Reads over the posts table. A post comes back as a PostRecord; a listing
+ * is the main query's (WP_Query); rendering and escaping happen elsewhere.
  */
 final readonly class Posts
 {
@@ -177,84 +176,10 @@ final readonly class Posts
         return $id === null ? null : $this->find((int) $id);
     }
 
-    /**
-     * A page of published posts for an archive.
-     *
-     * @param array{term?: int, author?: int, from?: string, to?: string, search?: string, types?: list<string>} $filter
-     * The sticky posts first, then the page, as the reference fills page one.
-     */
-    /** The published posts of one type, newest first: the everyday listing. */
-    public function published(string $type = 'post', int $page = 1, int $perPage = 10): Page
-    {
-        return $this->archive(PostFilter::types($type), $page, $perPage);
-    }
-
     /** Whether any post of a type is published. */
     public function hasPublished(string $type): bool
     {
         return $this->db->value("SELECT ID FROM {$this->db->table('posts')} WHERE post_type = ? AND post_status = 'publish' LIMIT 1", [$type]) !== null;
-    }
-
-    /** How many posts a filter reaches, without fetching any. */
-    public function count(PostFilter $filter): int
-    {
-        [$from, $params] = $this->scope($filter);
-        return (int) $this->db->value("SELECT COUNT(DISTINCT p.ID) {$from}", $params);
-    }
-
-    /** One page of the posts a filter reaches, newest first, title matches first for a search. */
-    public function archive(PostFilter $filter, int $page, int $perPage): Page
-    {
-        [$from, $params] = $this->scope($filter);
-        $total = (int) $this->db->value("SELECT COUNT(DISTINCT p.ID) {$from}", $params);
-        // Search results rank title matches first, as the reference does.
-        $order = 'p.post_date DESC, p.ID DESC';
-        if ($filter->search !== null) {
-            $order = '(p.post_title LIKE ?) DESC, ' . $order;
-            $params[] = self::like($filter->search);
-        }
-        $rows = $this->db->rows(
-            "SELECT DISTINCT p.* {$from} ORDER BY {$order} LIMIT ? OFFSET ?",
-            [...$params, $perPage, ($page - 1) * $perPage],
-        );
-        return new Page(PostRecord::fromRows($rows), $total);
-    }
-
-    /**
-     * The FROM ... WHERE half of a listing query and its parameters: what
-     * the reader may see, narrowed by the filter.
-     *
-     * @return array{0: string, 1: list<mixed>}
-     */
-    private function scope(PostFilter $filter): array
-    {
-        $where = ['p.post_type IN (?)', 'p.post_status IN (?)'];
-        $params = [$filter->types, Reader::current()->listableStatuses('post')];
-        $join = '';
-        if ($filter->term !== null) {
-            $join = "INNER JOIN {$this->db->table('term_relationships')} tr ON tr.object_id = p.ID";
-            $where[] = 'tr.term_taxonomy_id = ?';
-            $params[] = $filter->term;
-        }
-        if ($filter->author !== null) {
-            $where[] = 'p.post_author = ?';
-            $params[] = $filter->author;
-        }
-        if ($filter->hasDates()) {
-            $where[] = 'p.post_date >= ? AND p.post_date < ?';
-            array_push($params, $filter->from, $filter->to);
-        }
-        if ($filter->search !== null) {
-            $needle = self::like($filter->search);
-            $where[] = '(p.post_title LIKE ? OR p.post_content LIKE ? OR p.post_excerpt LIKE ?)';
-            array_push($params, $needle, $needle, $needle);
-        }
-        return ["FROM {$this->db->table('posts')} p {$join} WHERE " . implode(' AND ', $where), $params];
-    }
-
-    private static function like(string $needle): string
-    {
-        return '%' . addcslashes($needle, '%_\\') . '%';
     }
 
     /** One meta value of a post, or null when it has none. */
@@ -350,30 +275,6 @@ final readonly class Posts
             $tree[(int) $row['post_parent']][] = $row;
         }
         return $tree;
-    }
-
-    /**
-     * The main query for a listing: sticky posts lead the first page of the
-     * blog index, followed by the rest by date, and are excluded from later
-     * pages.
-     *
-     * @param list<int> $stickyIds
-     * @return array{posts: list<array>, total: int}
-     */
-    public function listing(PostFilter $filter, int $page, int $perPage, array $stickyIds = []): Page
-    {
-        if ($stickyIds === [] || $page > 1) {
-            return $this->archive($filter, $page, $perPage);
-        }
-        $sticky = PostRecord::fromRows($this->db->rows(
-            "SELECT * FROM {$this->db->table('posts')} WHERE ID IN (?) AND post_status = 'publish' AND post_type = 'post' ORDER BY post_date DESC",
-            [$stickyIds],
-        ));
-        // The first page keeps its full count of posts and adds the sticky ones on top, as the reference's main query does.
-        $stickySet = array_flip(array_map(static fn (PostRecord $p) => $p->id, $sticky));
-        $others = $this->archive($filter, 1, $perPage + count($sticky));
-        $rest = array_slice(array_values(array_filter($others->posts, static fn (PostRecord $p): bool => !isset($stickySet[$p->id]))), 0, $perPage);
-        return $others->withPosts([...$sticky, ...$rest]);
     }
 
     /**

@@ -296,10 +296,10 @@ final readonly class Engine
         $cron = Cron::create($db, $site, ABSPATH . 'wp-content', $permalinks->url('/'), self::WP_VERSION, $fireDueEvents);
         $notFound = static function () use (&$front): Response { return $front->notFound(); };
         $themed = static function (\Minn\Front\Resolution $resolution) use (&$front): Response { return $front->themed($resolution); };
-        $feedController = new \Minn\Front\FeedController($site, $posts);
-        $bridge = new \Minn\Theme\MainQueryBridge($site, $posts, $resolver->perPage());
+        $feedController = new \Minn\Front\FeedController($site);
+        $bridge = new \Minn\Theme\MainQueryBridge($resolver->perPage());
         $sitemapController = new \Minn\Front\SitemapController($notFound, $bridge, $themed);
-        $front = new FrontController($resolver, new Renderer($db, $posts, $permalinks, $resolver->perPage()), $pages, $feedController, $cron, $classic, $sitemapController, new \Minn\Theme\EmbedRenderer($bridge));
+        $front = new FrontController($resolver, $bridge, new Renderer($db, $permalinks), $pages, $feedController, $cron, $classic, $sitemapController, new \Minn\Theme\EmbedRenderer($bridge));
 
         // The front's routes are public or judge their own session; a policy that asks
         // for more is refused outright rather than judged half-way.

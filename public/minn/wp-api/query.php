@@ -468,7 +468,8 @@ function redirect_canonical($requested_url = null, $do_redirect = true)
     // Hooked to template_redirect it is handed the action's empty argument: that is this request.
     $requested_url = empty($requested_url) ? null : (string) $requested_url;
     $found = $requested_url === null ? $runtime->get('canonical_location') : null;
-    if ($requested_url === null && !is_array($found)) {
+    // On a 404 the reference only guesses: a move for a page that was found as typed stands down when the main query found it empty.
+    if ($requested_url === null && (!is_array($found) || (($found[2] ?? false) && is_404()))) {
         return null;
     }
     $location = is_array($found) ? $found[0] : Canonical::location($runtime->db, $request, (string) $requested_url);

@@ -48,9 +48,11 @@ type-name sanitiser strips underscores, so front_page filters as
 ## The main query and the content pipeline
 
 `Minn\Theme\MainQueryBridge` (shared with the block-theme PageRenderer)
-stands the main query: a plugin's archive runs through WP_Query so
-pre_get_posts applies, everything else seeds the engine's own listing; then
-`wp` and `template_redirect` fire. Loop tags (have_posts/the_post), the
+stands the main query: every page runs it through WP_Query, so
+pre_get_posts and the posts_* filters apply and the 404 for an empty page
+is its own (`handle404`); a single the query does not find (a preview, a
+draft its author reads) is seeded from the engine's resolution; then `wp`
+and `template_redirect` fire. Loop tags (have_posts/the_post), the
 conditionals, body_class and post_class all read that standing query.
 
 `the_content()` under a classic theme runs the engine's whole pipeline

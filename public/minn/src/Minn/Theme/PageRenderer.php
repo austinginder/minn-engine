@@ -65,7 +65,7 @@ final readonly class PageRenderer
         (new QueryBlocks($posts, $site, $permalinks))->register($renderer);
         (new Navigation($db, $posts, $permalinks))->register($renderer);
         (new Comments($db, new CommentStore($db), $site, $permalinks))->register($renderer);
-        return new self($site, $theme, $templates, $renderer, new MainQueryBridge($site, $posts, $perPage), new HeadLinks($site, new SiteIcon($site, $posts, $permalinks), $permalinks), $bar);
+        return new self($site, $theme, $templates, $renderer, new MainQueryBridge($perPage), new HeadLinks($site, new SiteIcon($site, $posts, $permalinks), $permalinks), $bar);
     }
 
     /**

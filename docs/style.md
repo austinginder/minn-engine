@@ -112,7 +112,7 @@ falls.
   `$row['post_title']`. A raw row is only ever a partial `SELECT` on its way
   to a shape.
 - **A request's shape is an object.** What a list is narrowed to
-  (`Rest\ListQuery`, `Content\CommentFilter`, `Content\PostFilter`) is read
+  (`Rest\ListQuery`, `Content\CommentFilter`) is read
   once into typed fields with named-argument construction, then handed on.
 - **Objects are made once.** `Rest\Services` has one memoised getter per
   shared object; a controller takes the two or three it calls. No autowiring;

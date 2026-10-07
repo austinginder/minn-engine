@@ -27365,7 +27365,7 @@
         },
         "redirect_canonical": {
             "file": "query.php",
-            "lines": 24,
+            "lines": 25,
             "kind": "minn",
             "minn": [
                 "Minn\\Front\\Canonical::location",
@@ -27375,6 +27375,7 @@
             ],
             "composes": [
                 "apply_filters",
+                "is_404",
                 "is_ssl",
                 "wp_redirect"
             ]

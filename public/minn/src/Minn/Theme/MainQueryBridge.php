@@ -5,33 +5,28 @@ declare(strict_types=1);
 namespace Minn\Theme;
 
 use Minn\Content\PostRecord;
-use Minn\Content\Posts;
 use Minn\Content\Page;
-use Minn\Content\PostFilter;
-use Minn\Content\Site;
 use Minn\Front\Kind;
 use Minn\Front\RequestParse;
 use Minn\Front\Resolution;
-use Minn\Front\Resolver;
 use Minn\Runtime\Runtime;
-use Minn\Support\Serialized;
 
 /**
  * Stands the main query for a themed page and runs the front-end steps
  * around it as WP::main does (FrontLifecycle): the request parsed, the main
  * query through WP_Query (so pre_get_posts and every posts_* filter shape
  * it), the 404 decision, the globals, the headers, then "wp" and
- * template_redirect. A listing's posts are the query's; a single post the
+ * template_redirect. A listing's posts are the query's, and so is the 404
+ * for an empty page past the first or an empty date; a single post the
  * query does not find (a preview, a draft its author reads) is the one the
- * engine resolved. Without the runtime, the engine's own listing.
+ * engine resolved. When a plugin takes the parse over no query runs, as
+ * on the reference, and the page stands empty.
  */
 final readonly class MainQueryBridge
 {
     private const LISTINGS = [Kind::Home, Kind::Category, Kind::Tag, Kind::Taxonomy, Kind::PostTypeArchive, Kind::Author, Kind::Date, Kind::Search];
 
     public function __construct(
-        private Site $site,
-        private Posts $posts,
         private int $perPage,
     ) {
     }
@@ -65,8 +60,7 @@ final readonly class MainQueryBridge
         $parsed = FrontLifecycle::parseRequest($wp, $vars, $given, $parse);
         $page = $parsed ? $this->queried($resolution, (array) $wp->query_vars) : $this->seeded($resolution, $vars);
         if ($parsed) {
-            // A feed of something the site does not have is served empty, not as a 404.
-            FrontLifecycle::handle404($GLOBALS['wp_query'], $resolution->kind === Kind::NotFound && !isset($extra['feed']));
+            FrontLifecycle::handle404($GLOBALS['wp_query'], $resolution->kind === Kind::NotFound);
             $wp->register_globals();
         }
         FrontLifecycle::sendHeaders($wp);
@@ -76,6 +70,18 @@ final readonly class MainQueryBridge
         Runtime::hooks()->action('wp', [$wp]);
         Runtime::hooks()->action('template_redirect', []);
         return $page;
+    }
+
+    /**
+     * The resolution as the main query left it: a 404 when the query
+     * decided one (an empty page past the first, an empty date), with the
+     * vars it was asked under.
+     */
+    public static function verdict(Resolution $resolution): Resolution
+    {
+        $query = $GLOBALS['wp_query'] ?? null;
+        $decided = $query instanceof \WP_Query && Runtime::current()->get('front_lifecycle') === true && $query->is_404();
+        return $decided && $resolution->kind !== Kind::NotFound ? Resolution::notFound()->withVars($resolution->vars) : $resolution;
     }
 
     /** Posts per page. */
@@ -134,41 +140,10 @@ final readonly class MainQueryBridge
         return Page::empty();
     }
 
-    /** The engine's own page seeded into the query globals, when no query ran or it found nothing to stand on. @param array<string, mixed> $vars */
+    /** The query globals seeded with no posts of their own (a single the query did not find is looked up by its vars), when no query ran or it found nothing to stand on. @param array<string, mixed> $vars */
     private function seeded(Resolution $resolution, array $vars): Page
     {
-        $page = $this->listing($resolution);
-        \_minn_seed_main_query($vars, $page->ids(), $page->total, $this->perPage, $resolution->postsPage);
-        return $page;
-    }
-
-    /** @return list<string> the post types a plugin's taxonomy attaches to */
-    private function objectTypes(string $taxonomy): array
-    {
-        $row = Runtime::registry()->taxonomy($taxonomy);
-        $types = array_values(array_map('strval', (array) ($row['object_type'] ?? [])));
-        return $types === [] ? ['post'] : $types;
-    }
-
-    private function listing(Resolution $resolution): Page
-    {
-        $record = $resolution->record ?? [];
-        $all = PostFilter::all();
-        $filter = match ($resolution->kind) {
-            Kind::Category, Kind::Tag => $all->inTerm((int) $record['term_taxonomy_id']),
-            Kind::Taxonomy => PostFilter::types(...$this->objectTypes((string) $record['taxonomy']))->inTerm((int) $record['term_taxonomy_id']),
-            Kind::PostTypeArchive => PostFilter::types((string) $record['name']),
-            Kind::Author => $all->byAuthor((int) ($record['ID'] ?? -1)),
-            Kind::Date => $all->between(...(Resolver::dateRange(...$resolution->date) ?? ['1970-01-01', '1970-01-01'])),
-            Kind::Search => $all->matching((string) $resolution->search),
-            Kind::Home => $all,
-            default => null,
-        };
-        if ($filter === null) {
-            return Page::empty();
-        }
-        // Sticky posts ride on top of page 1 without consuming its slots, as the reference fills the page.
-        $sticky = $resolution->kind === Kind::Home ? Serialized::intList($this->site->option('sticky_posts')) : [];
-        return $this->posts->listing($filter, $resolution->paged, $this->perPage, $sticky);
+        \_minn_seed_main_query($vars, [], 0, $this->perPage, $resolution->postsPage);
+        return Page::empty();
     }
 }

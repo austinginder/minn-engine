@@ -22,12 +22,11 @@ the repositories and records: posts, users, terms, comments, and the render pipe
 | [`PasswordGate`](#passwordgate) | final class | 34 | A password-protected post on the front end: its body is the password |
 | [`PluginState`](#pluginstate) | final readonly class | 86 | Switching plugins on and off, the way the reference records it: a |
 | [`PostClasses`](#postclasses) | final class | 55 | The class list a post carries on its article element, in the reference's |
-| [`PostFilter`](#postfilter) | final readonly class | 55 | What a listing is narrowed to. Every field is optional and the object is |
 | [`PostRecord`](#postrecord) | final readonly class | 156 | One row of the posts table, read by name. The columns keep their |
 | [`PostSlugs`](#postslugs) | final readonly class | 75 | Which slug a live post may take beside the others, as the reference |
 | [`PostStatus`](#poststatus) | enum | 42 | The statuses a post row can hold; the value is the column's own spelling. |
 | [`PostWriter`](#postwriter) | final readonly class | 482 | Every write to the posts table and its satellites: rows, meta, term |
-| [`Posts`](#posts) | final readonly class | 523 | Reads over the posts table. A single post comes back as a PostRecord and |
+| [`Posts`](#posts) | final readonly class | 425 | Reads over the posts table. A post comes back as a PostRecord; a listing |
 | [`Reader`](#reader) | final class | 72 | Who is reading this request: their user id, whether they may read |
 | [`Revisions`](#revisions) | final readonly class | 95 | Revision rows: the plain snapshots and the per-author autosave slots. |
 | [`Site`](#site) | final readonly class | 73 | Site-wide options and the site's clock. |
@@ -731,7 +730,7 @@ The content on either side of a more tag, with the tag's own text.
 One page of a listing: the rows on it and how many rows the whole
 listing has, which is what pagination is counted from.
 
-Used by: `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Content\Posts`, `Minn\Theme\MainQueryBridge`
+Used by: `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Front\Renderer`, `Minn\Theme\MainQueryBridge`
 
 ```php
 __construct(array $posts, int $total)
@@ -852,57 +851,6 @@ The class list a post carries on its article element, in the reference's order.
 ### static `htmlClass(string $value): string`
 
 The reference keeps letters, digits, hyphens and underscores in a class name.
-
-
-## PostFilter
-
-`final readonly class Minn\Content\PostFilter` · `public/minn/src/Minn/Content/PostFilter.php`
-
-What a listing is narrowed to. Every field is optional and the object is
-immutable, so a filter reads as a sentence: types('post')->inTerm(12).
-Dates are site-local "Y-m-d H:i:s" bounds, from inclusive, to exclusive.
-
-Used by: `Minn\Content\Posts`, `Minn\Front\ArchiveAddresses`, `Minn\Front\Renderer`, `Minn\Front\Resolver`, `Minn\Front\RuleRoutes`, `Minn\Theme\MainQueryBridge`
-
-```php
-__construct(array $types = array (   0 => 'post', ), ?int $term = NULL, ?int $author = NULL, ?string $from = NULL, ?string $to = NULL, ?string $search = NULL)
-```
-- `@param list<string> $types`
-
-- readonly `array $types`
-- readonly `?int $term`
-- readonly `?int $author`
-- readonly `?string $from`
-- readonly `?string $to`
-- readonly `?string $search`
-
-### static `all(): self`
-
-Published posts of type post, nothing narrower.
-
-### static `types(string ...$types): self`
-
-A filter over these post types.
-
-### `inTerm(int $termTaxonomyId): self`
-
-Posts linked to a term, by its term_taxonomy_id.
-
-### `byAuthor(int $userId): self`
-
-The same filter narrowed to one author.
-
-### `between(string $from, string $to): self`
-
-The same filter narrowed to a date window.
-
-### `matching(string $search): self`
-
-The same filter narrowed by a search string.
-
-### `hasDates(): bool`
-
-Whether both ends of the date window are set.
 
 
 ## PostRecord
@@ -1259,10 +1207,10 @@ Internals: `fit()` (private, line 171), `saveSticky()` (private, line 265), `rev
 
 `final readonly class Minn\Content\Posts` · `public/minn/src/Minn/Content/Posts.php`
 
-Reads over the posts table. A single post comes back as a PostRecord and
-a listing as a Page of them; rendering and escaping happen elsewhere.
+Reads over the posts table. A post comes back as a PostRecord; a listing
+is the main query's (WP_Query); rendering and escaping happen elsewhere.
 
-Used by: `Minn\Admin\RenderController`, `Minn\Admin\SiteController`, `Minn\Blocks\Dynamic\LatestComments`, `Minn\Blocks\Dynamic\Theme\Navigation`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Blocks\ImageTags`, `Minn\Blocks\Renderer`, `Minn\Content\Menus`, `Minn\Content\PostWriter`, `Minn\Content\SiteIcon`, `Minn\Cron\Cron`, `Minn\Engine`, `Minn\Front\ArchiveAddresses`, `Minn\Front\Archives`, `Minn\Front\AttachmentAddresses`, `Minn\Front\FeedController`, `Minn\Front\Permalinks`, `Minn\Front\Renderer`, `Minn\Front\Resolver`, `Minn\Front\RuleRoutes`, `Minn\Front\SingleAddresses`, `Minn\Front\SingleQueries`, `Minn\Media\Writer`, `Minn\Rest\BlocksController`, `Minn\Rest\CommentObject`, `Minn\Rest\CommentsController`, `Minn\Rest\MediaController`, `Minn\Rest\MediaObject`, `Minn\Rest\PostObject`, `Minn\Rest\PostsController`, `Minn\Rest\PostsWriteController`, `Minn\Rest\RegisteredPostFields`, `Minn\Rest\RevisionsController`, `Minn\Rest\Services`, `Minn\Rest\TemplateObject`, `Minn\Runtime\MenuEvents`, `Minn\Theme\ClassicRenderer`, `Minn\Theme\MainQueryBridge`, `Minn\Theme\PageRenderer`, `Minn\Theme\Templates`, `Minn\Theme\UserStyles`
+Used by: `Minn\Admin\RenderController`, `Minn\Admin\SiteController`, `Minn\Blocks\Dynamic\LatestComments`, `Minn\Blocks\Dynamic\Theme\Navigation`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Blocks\ImageTags`, `Minn\Blocks\Renderer`, `Minn\Content\Menus`, `Minn\Content\PostWriter`, `Minn\Content\SiteIcon`, `Minn\Cron\Cron`, `Minn\Engine`, `Minn\Front\ArchiveAddresses`, `Minn\Front\Archives`, `Minn\Front\AttachmentAddresses`, `Minn\Front\Permalinks`, `Minn\Front\Resolver`, `Minn\Front\RuleRoutes`, `Minn\Front\SingleAddresses`, `Minn\Front\SingleQueries`, `Minn\Media\Writer`, `Minn\Rest\BlocksController`, `Minn\Rest\CommentObject`, `Minn\Rest\CommentsController`, `Minn\Rest\MediaController`, `Minn\Rest\MediaObject`, `Minn\Rest\PostObject`, `Minn\Rest\PostsController`, `Minn\Rest\PostsWriteController`, `Minn\Rest\RegisteredPostFields`, `Minn\Rest\RevisionsController`, `Minn\Rest\Services`, `Minn\Rest\TemplateObject`, `Minn\Runtime\MenuEvents`, `Minn\Theme\ClassicRenderer`, `Minn\Theme\PageRenderer`, `Minn\Theme\Templates`, `Minn\Theme\UserStyles`
 
 ```php
 __construct(Minn\Db $db)
@@ -1332,21 +1280,9 @@ oldest first), the same on both stacks over one database.
 
 - `@param list<string> $types`
 
-### `published(string $type = 'post', int $page = 1, int $perPage = 10): Minn\Content\Page`
-
-The published posts of one type, newest first: the everyday listing.
-
 ### `hasPublished(string $type): bool`
 
 Whether any post of a type is published.
-
-### `count(Minn\Content\PostFilter $filter): int`
-
-How many posts a filter reaches, without fetching any.
-
-### `archive(Minn\Content\PostFilter $filter, int $page, int $perPage): Minn\Content\Page`
-
-One page of the posts a filter reaches, newest first, title matches first for a search.
 
 ### `meta(int $postId, string $key): ?string`
 
@@ -1381,15 +1317,6 @@ The published post of the same type before this one, by date then id, or null.
 ### `pageTree(): array`
 
 Published pages as a parent => children map, ordered by menu_order then title.
-
-### `listing(Minn\Content\PostFilter $filter, int $page, int $perPage, array $stickyIds = array ( )): Minn\Content\Page`
-
-The main query for a listing: sticky posts lead the first page of the
-blog index, followed by the rest by date, and are excluded from later
-pages.
-
-- `@param list<int> $stickyIds`
-- `@return array{posts: list<array>, total: int}`
 
 ### `lastModified(?string $type): ?string`
 
@@ -1442,7 +1369,7 @@ The newest autosave of a post by one author, or null.
 
 The slug of the post's first category, or null.
 
-Internals: `record()` (private, line 21), `byName()` (private, line 49), `byPath()` (private, line 124), `scope()` (private, line 229), `like()` (private, line 255), `neighbour()` (private, line 330), `weekMode()` (private, line 455), `monthBeside()` (private, line 490), `latest()` (private, line 499)
+Internals: `record()` (private, line 20), `byName()` (private, line 48), `byPath()` (private, line 123), `neighbour()` (private, line 255), `weekMode()` (private, line 356), `monthBeside()` (private, line 391), `latest()` (private, line 400)
 
 
 ## Reader
@@ -1455,7 +1382,7 @@ post-password cookie they carry. Built once per surface by the engine,
 carried by the request's context, and consulted by the resolver, the
 queries, and the renderers.
 
-Used by: `Minn\Blocks\Dynamic\Theme\Comments`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Cli\Runtime`, `Minn\Content\PasswordGate`, `Minn\Content\Posts`, `Minn\Context`, `Minn\Engine`, `Minn\Extension\Seams`, `Minn\Front\Resolver`, `Minn\Runtime\CurrentUser`, `Minn\Runtime\Runtime`, `Minn\Theme\ClassicRenderer`, `Minn\Theme\PageRenderer`
+Used by: `Minn\Blocks\Dynamic\Theme\Comments`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Cli\Runtime`, `Minn\Content\PasswordGate`, `Minn\Context`, `Minn\Engine`, `Minn\Extension\Seams`, `Minn\Front\Resolver`, `Minn\Runtime\CurrentUser`, `Minn\Runtime\Runtime`, `Minn\Theme\ClassicRenderer`, `Minn\Theme\PageRenderer`
 
 ```php
 __construct(int $userId, bool $readsPrivatePosts, bool $readsPrivatePages, Closure $canEditPost, string $postPassword, string $sessionToken = '', array $roles = array ( ))
@@ -1541,7 +1468,7 @@ Internals: `named()` (private, line 44)
 
 Site-wide options and the site's clock.
 
-Used by: `Minn\Admin\ActivityChart`, `Minn\Admin\App`, `Minn\Admin\BootPayload`, `Minn\Admin\Dashboard`, `Minn\Admin\LanguageController`, `Minn\Admin\Notifications`, `Minn\Admin\OverviewController`, `Minn\Admin\PackagesController`, `Minn\Admin\RenderController`, `Minn\Admin\SiteController`, `Minn\Admin\ThemesController`, `Minn\Admin\Translations`, `Minn\Admin\UploadsSize`, `Minn\Blocks\Dynamic\Dates`, `Minn\Blocks\Dynamic\LatestComments`, `Minn\Blocks\Dynamic\LatestPosts`, `Minn\Blocks\Dynamic\Theme\Comments`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Blocks\Dynamic\Theme\Structure`, `Minn\Blocks\Renderer`, `Minn\Cli\MinnCommand`, `Minn\Cli\Runtime`, `Minn\Content\Inventory`, `Minn\Content\Menus`, `Minn\Content\PluginState`, `Minn\Content\PostSlugs`, `Minn\Content\PostWriter`, `Minn\Content\Revisions`, `Minn\Content\SiteIcon`, `Minn\Context`, `Minn\Cron\Cron`, `Minn\Engine`, `Minn\Extension\Loader`, `Minn\Extension\Seams`, `Minn\Front\AdminBar`, `Minn\Front\FeedController`, `Minn\Front\ProbeController`, `Minn\Login\LoginController`, `Minn\Mail\MailSettings`, `Minn\Mail\Mailer`, `Minn\Media\Images`, `Minn\Media\Uploads`, `Minn\Media\Writer`, `Minn\Ops\CoreStatus`, `Minn\Ops\Diagnostics`, `Minn\Ops\InstalledSoftware`, `Minn\Ops\Packages`, `Minn\Ops\Updates`, `Minn\Rest\ApplicationPasswordsController`, `Minn\Rest\IndexController`, `Minn\Rest\PluginsController`, `Minn\Rest\PostsWriteController`, `Minn\Rest\Services`, `Minn\Rest\Settings`, `Minn\Rest\TermsController`, `Minn\Rest\UsersController`, `Minn\Runtime\Plugins`, `Minn\Runtime\Recovery`, `Minn\Runtime\Runtime`, `Minn\Theme\ClassicRenderer`, `Minn\Theme\ClassicTheme`, `Minn\Theme\HeadLinks`, `Minn\Theme\MainQueryBridge`, `Minn\Theme\PageRenderer`, `Minn\Theme\TemplateIndex`, `Minn\Theme\TemplateWriter`, `Minn\Theme\Theme`, `Minn\Theme\ThemeStyles`, `Minn\Theme\UserStyles`
+Used by: `Minn\Admin\ActivityChart`, `Minn\Admin\App`, `Minn\Admin\BootPayload`, `Minn\Admin\Dashboard`, `Minn\Admin\LanguageController`, `Minn\Admin\Notifications`, `Minn\Admin\OverviewController`, `Minn\Admin\PackagesController`, `Minn\Admin\RenderController`, `Minn\Admin\SiteController`, `Minn\Admin\ThemesController`, `Minn\Admin\Translations`, `Minn\Admin\UploadsSize`, `Minn\Blocks\Dynamic\Dates`, `Minn\Blocks\Dynamic\LatestComments`, `Minn\Blocks\Dynamic\LatestPosts`, `Minn\Blocks\Dynamic\Theme\Comments`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Blocks\Dynamic\Theme\Structure`, `Minn\Blocks\Renderer`, `Minn\Cli\MinnCommand`, `Minn\Cli\Runtime`, `Minn\Content\Inventory`, `Minn\Content\Menus`, `Minn\Content\PluginState`, `Minn\Content\PostSlugs`, `Minn\Content\PostWriter`, `Minn\Content\Revisions`, `Minn\Content\SiteIcon`, `Minn\Context`, `Minn\Cron\Cron`, `Minn\Engine`, `Minn\Extension\Loader`, `Minn\Extension\Seams`, `Minn\Front\AdminBar`, `Minn\Front\FeedController`, `Minn\Front\ProbeController`, `Minn\Login\LoginController`, `Minn\Mail\MailSettings`, `Minn\Mail\Mailer`, `Minn\Media\Images`, `Minn\Media\Uploads`, `Minn\Media\Writer`, `Minn\Ops\CoreStatus`, `Minn\Ops\Diagnostics`, `Minn\Ops\InstalledSoftware`, `Minn\Ops\Packages`, `Minn\Ops\Updates`, `Minn\Rest\ApplicationPasswordsController`, `Minn\Rest\IndexController`, `Minn\Rest\PluginsController`, `Minn\Rest\PostsWriteController`, `Minn\Rest\Services`, `Minn\Rest\Settings`, `Minn\Rest\TermsController`, `Minn\Rest\UsersController`, `Minn\Runtime\Plugins`, `Minn\Runtime\Recovery`, `Minn\Runtime\Runtime`, `Minn\Theme\ClassicRenderer`, `Minn\Theme\ClassicTheme`, `Minn\Theme\HeadLinks`, `Minn\Theme\PageRenderer`, `Minn\Theme\TemplateIndex`, `Minn\Theme\TemplateWriter`, `Minn\Theme\Theme`, `Minn\Theme\ThemeStyles`, `Minn\Theme\UserStyles`
 
 ```php
 __construct(Minn\Db $db)

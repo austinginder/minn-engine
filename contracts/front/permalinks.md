@@ -60,11 +60,15 @@ pretty paths through `index.php`:
   (`/category/uncategorized/hello-world/` is `category_name` with a path no
   category has). `/category/{c}/embed/` and `/author/{a}/embed/` answer
   with the archive itself.
-- Empty term and date archives are 404 (`/tag/nope/`, `/2025/`), as is a
-  page number past the end. An author archive is 200 for any name, including
-  one that belongs to nobody (no `author-*` tokens then). Open: an existing
-  term with no posts is 200 on the reference (`/type/aside/`, the post
-  format archive), 404 on the engine until the main query decides the 404.
+- The 404 for a listing is the main query's, decided once
+  (`Theme\FrontLifecycle::handle404`): an empty page past the first of any
+  listing (`/page/2/`, `/author/nobody/page/2/`, `?s=hello&paged=2`) and an
+  empty date archive (`/2025/`, and `?m=202501`, which then does not move to
+  its pretty form) are 404; an existing term, author or post type with no
+  posts (`/type/aside/`, the post format archive), an empty search and the
+  front are 200. A term at no path is a 404 before any query
+  (`/tag/nope/`). An author archive is 200 for any name, including one that
+  belongs to nobody (no `author-*` tokens then). A feed is never a 404.
 - The guess, for a 404 whose rule named a single (`name`, `attachment`, or
   a `pagename` at which no page stands): a 301 to a published post of a
   viewable type whose name starts with that slug, `page` riding along

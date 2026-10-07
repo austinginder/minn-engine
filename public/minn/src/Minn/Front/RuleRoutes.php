@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Minn\Front;
 
 use Closure;
-use Minn\Content\PostFilter;
 use Minn\Content\PostRecord;
 use Minn\Content\Posts;
 use Minn\Runtime\Runtime;
@@ -82,7 +81,7 @@ final readonly class RuleRoutes
         }
         // A format's address names its term without the prefix the term's slug carries.
         if (($vars['post_format'] ?? '') !== '') {
-            return $this->archives->taxonomy('post_format', ['post'], ['post-format-' . $vars['post_format']], $paged);
+            return $this->archives->taxonomy('post_format', ['post-format-' . $vars['post_format']], $paged);
         }
         $taxonomies = self::registered('taxonomies');
         if (($vars['taxonomy'] ?? '') !== '' && ($vars['term'] ?? '') !== '') {
@@ -90,8 +89,7 @@ final readonly class RuleRoutes
         }
         foreach ($taxonomies as $name => $var) {
             if (($vars[$var] ?? '') !== '') {
-                $types = (array) (Runtime::registry()->taxonomy($name)['object_type'] ?? []);
-                return $this->archives->taxonomy($name, array_values(array_map('strval', $types)), self::segments($vars[$var]), $paged);
+                return $this->archives->taxonomy($name, self::segments($vars[$var]), $paged);
             }
         }
         if (($vars['author_name'] ?? '') !== '') {
@@ -106,22 +104,18 @@ final readonly class RuleRoutes
         return ($vars['s'] ?? '') !== '' ? $this->archives->search($vars['s'], $paged) : $this->archives->home($paged);
     }
 
-    /** A post type's archive, when it has one; a 404 when it has none or is paged past its end. */
+    /** A post type's archive, when it has one; a 404 when it has none. */
     private function typeArchive(string $name, int $paged): Resolution
     {
         $type = Runtime::registry()->postType($name);
-        if ($type === null || empty($type['has_archive'])) {
-            return Resolution::notFound();
-        }
-        $total = $this->posts->count(PostFilter::types($name));
-        return $paged > 1 && $paged > $this->archives->pages($total) ? Resolution::notFound() : Resolution::postTypeArchive(['name' => $name] + $type, $paged);
+        return $type === null || empty($type['has_archive']) ? Resolution::notFound() : Resolution::postTypeArchive(['name' => $name] + $type, $paged);
     }
 
     /**
      * A found post as the reader may see it: the static front page, the
-     * posts page (the blog's listing, a 404 past its end), any other post
-     * or page; a 404 when there is none or the reader may not read it (an
-     * attachment as its parent is).
+     * posts page (the blog's listing), any other post or page; a 404 when
+     * there is none or the reader may not read it (an attachment as its
+     * parent is).
      */
     private function found(?PostRecord $post, int $paged): Resolution
     {
@@ -132,8 +126,7 @@ final readonly class RuleRoutes
             return Resolution::frontPage($post, $paged);
         }
         if ($post->id === $this->postsPageId && $post->isPage()) {
-            $total = $this->posts->count(PostFilter::all());
-            return $paged > 1 && $paged > $this->archives->pages($total) ? Resolution::notFound() : Resolution::postsPage($post, $paged);
+            return Resolution::postsPage($post, $paged);
         }
         return Resolution::single($post, $paged);
     }

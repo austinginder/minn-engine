@@ -5,7 +5,7 @@ URL resolution, permalinks, feeds, sitemaps and the public page
 | Class | Kind | Lines | Summary |
 |---|---|---|---|
 | [`AdminBar`](#adminbar) | final readonly class | 318 | The Minn bar on the public site: the same server-rendered chrome the |
-| [`ArchiveAddresses`](#archiveaddresses) | final readonly class | 146 | The archives an address may stand for, as the reference answers them: |
+| [`ArchiveAddresses`](#archiveaddresses) | final readonly class | 92 | The archives an address may stand for, as the reference answers them: |
 | [`Archives`](#archives) | final readonly class | 62 | The archive periods wp_get_archives lists: months, years, days and weeks |
 | [`AssetsController`](#assetscontroller) | final readonly class | 32 | The engine's own static assets, served under a reserved path. |
 | [`AttachmentAddresses`](#attachmentaddresses) | final readonly class | 66 | The addresses an attachment's page answers to besides those its rules |
@@ -17,11 +17,11 @@ URL resolution, permalinks, feeds, sitemaps and the public page
 | [`CustomLogo`](#customlogo) | final class | 27 | The site logo a theme prints, as get_custom_logo builds it (probe |
 | [`DocumentTitle`](#documenttitle) | final class | 47 | The document title as parts (title, tagline, page, site) in the order the |
 | [`EmbedCard`](#embedcard) | final class | 95 | The parts of a post's embed card the reference's embed template prints, |
-| [`FeedController`](#feedcontroller) | final readonly class | 61 | The feeds, wherever a request asks for one: the feed var of the rule its |
+| [`FeedController`](#feedcontroller) | final readonly class | 60 | The feeds, wherever a request asks for one: the feed var of the rule its |
 | [`FeedTags`](#feedtags) | final class | 140 | The template tags a feed is written with that take more than a line, as |
 | [`FeedTemplates`](#feedtemplates) | final class | 295 | The feed templates do_feed_* loads, written from the reference's output |
 | [`FeedWriter`](#feedwriter) | final class | 57 | A feed as it is written: text as given, and what each template tag and |
-| [`FrontController`](#frontcontroller) | final readonly class | 97 | The public site. One catch-all route: resolve the URL, then either |
+| [`FrontController`](#frontcontroller) | final readonly class | 99 | The public site. One catch-all route: resolve the URL, then either |
 | [`Kind`](#kind) | enum | 17 | What a public URL resolved to. |
 | [`ListSpacing`](#listspacing) | final readonly class | 30 | How a page list is spaced: the reference's "preserve" keeps newlines and |
 | [`ListingLinks`](#listinglinks) | final class | 53 | The prev/next links a paged listing prints: which page sits either side of |
@@ -35,11 +35,11 @@ URL resolution, permalinks, feeds, sitemaps and the public page
 | [`PrintedResponse`](#printedresponse) | final class | 39 | A response WordPress's handlers print themselves (a sitemap, robots.txt), |
 | [`ProbeController`](#probecontroller) | final readonly class | 66 | The surface monitors, crawlers, and hosting checks hit that is not a |
 | [`Redirects`](#redirects) | enum | 23 | Whether a resolution may answer with a canonical redirect. A GET or HEAD |
-| [`Renderer`](#renderer) | final readonly class | 168 | The interim public theme: one clean template until the block-theme |
+| [`Renderer`](#renderer) | final readonly class | 157 | The interim public theme: one clean template until the block-theme |
 | [`RequestParse`](#requestparse) | final class | 41 | The query vars the reference's request parse sets for an address |
 | [`Resolution`](#resolution) | final readonly class | 116 | The outcome of resolving a public URL: which kind of thing it names, |
-| [`Resolver`](#resolver) | final readonly class | 302 | Turns a public URL into a Resolution the way the reference's request |
-| [`RuleRoutes`](#ruleroutes) | final readonly class | 150 | What a matched rewrite rule's query vars name, as the reference's main |
+| [`Resolver`](#resolver) | final readonly class | 284 | Turns a public URL into a Resolution the way the reference's request |
+| [`RuleRoutes`](#ruleroutes) | final readonly class | 144 | What a matched rewrite rule's query vars name, as the reference's main |
 | [`RuleTable`](#ruletable) | final class | 86 | An address read as WordPress's request parse reads it (suites |
 | [`SingleAddresses`](#singleaddresses) | final readonly class | 67 | The addresses a single answers to besides its own, as the reference |
 | [`SingleQueries`](#singlequeries) | final readonly class | 79 | The single a query string asks for, as the reference's request parse and |
@@ -90,9 +90,11 @@ Internals: `markup()` (private, line 83), `siteMenu()` (private, line 136), `sta
 
 The archives an address may stand for, as the reference answers them:
 the front, a search, a term's (a category's, a tag's, a plugin
-taxonomy's), an author's and a date's, each a 404 when it is empty or
-paged past its end (an author's only past a real author's end). The
-resolver reads them off the path; a plugin's rule hands their vars.
+taxonomy's), an author's and a date's. Each is the archive when what it
+names exists (a term at that path, a valid date; an author's for any
+name); whether its page has posts is the main query's to say, and an
+empty page past the first, or an empty date, is the 404 it decides
+(Theme\FrontLifecycle::handle404).
 
 Used by: `Minn\Front\Resolver`, `Minn\Front\RuleRoutes`
 
@@ -104,49 +106,40 @@ __construct(Minn\Db $db, Minn\Content\Posts $posts, Minn\Content\Terms $terms, M
 
 ### `search(string $term, int $paged): Minn\Front\Resolution`
 
-A search's results page; past the last page, a 404.
+A search's results page.
 
 ### `home(int $paged): Minn\Front\Resolution`
 
-The front: the static front page when there is one, else the posts listing; past its last page, a 404.
+The front: the static front page when there is one, else the posts listing.
 
-### `taxonomy(string $taxonomy, array $types, array $slugs, int $paged): Minn\Front\Resolution`
+### `taxonomy(string $taxonomy, array $slugs, int $paged): Minn\Front\Resolution`
 
-A plugin taxonomy's term archive by its path; a 404 when the term is
-missing, empty or overpaged.
+A plugin taxonomy's term archive by its path; a 404 when no term is
+at that path.
 
-- `@param list<string> $types the post types the taxonomy attaches to`
 - `@param list<string> $slugs`
 
 ### `term(string $taxonomy, array $slugs, int $paged): Minn\Front\Resolution`
 
-A category's or tag's archive by its path; a 404 when the term is missing. @param list<string> $slugs
+A category's or tag's archive by its path; a 404 when no term is at that path. @param list<string> $slugs
 
 - `@param list<string> $slugs`
 
-### `termResolution(string $taxonomy, Minn\Content\TermRecord $term, int $paged): Minn\Front\Resolution`
-
-The archive a found term stands for, 404 when it is empty or overpaged.
-
 ### `author(string $name, int $paged): Minn\Front\Resolution`
 
-An author's archive by nicename: 200 for any name, a 404 only past a real author's last page.
+An author's archive by nicename: the archive for any name, the author's when one has it.
 
 ### `date(array $segments, int $paged): Minn\Front\Resolution`
 
-A date archive by year, month and day; a 404 when invalid, empty or overpaged. @param list<string> $segments
+A date archive by year, month and day; a 404 when the date is not one. @param list<string> $segments
 
 - `@param list<string> $segments`
 
-### static `dateRange(int $year, ?int $month, ?int $day): ?array`
+### static `isDate(int $year, ?int $month, ?int $day): bool`
 
-The site-local bounds of a date archive, or null when the date is invalid.
+Whether a year, month and day (the last two optional, a day only with its month) name a date.
 
-- `@return array{0: string, 1: string}|null`
-
-### `pages(int $total): int`
-
-How many listing pages a total fills.
+Internals: `at()` (private, line 101)
 
 
 ## Archives
@@ -474,7 +467,7 @@ the site does not have is an empty feed, as the reference serves it.
 Used by: `Minn\Engine`, `Minn\Front\FrontController`
 
 ```php
-__construct(Minn\Content\Site $site, Minn\Content\Posts $posts)
+__construct(Minn\Content\Site $site)
 ```
 
 
@@ -486,7 +479,7 @@ Whether a request asks for a feed of what it resolved to (the query form only of
 
 The feed a request asks for, of what its address resolved to.
 
-Internals: `served()` (private, line 58), `perFeed()` (private, line 82)
+Internals: `served()` (private, line 56), `perFeed()` (private, line 80)
 
 
 ## FeedTags
@@ -606,7 +599,7 @@ interim template otherwise.
 Used by: `Minn\Engine`
 
 ```php
-__construct(Minn\Front\Resolver $resolver, Minn\Front\Renderer $renderer, ?Minn\Theme\PageRenderer $theme = NULL, ?Minn\Front\FeedController $feeds = NULL, ?Minn\Cron\Cron $cron = NULL, ?Minn\Theme\ClassicRenderer $classic = NULL, ?Minn\Front\SitemapController $sitemaps = NULL, ?Minn\Theme\EmbedRenderer $embeds = NULL)
+__construct(Minn\Front\Resolver $resolver, Minn\Theme\MainQueryBridge $bridge, Minn\Front\Renderer $renderer, ?Minn\Theme\PageRenderer $theme = NULL, ?Minn\Front\FeedController $feeds = NULL, ?Minn\Cron\Cron $cron = NULL, ?Minn\Theme\ClassicRenderer $classic = NULL, ?Minn\Front\SitemapController $sitemaps = NULL, ?Minn\Theme\EmbedRenderer $embeds = NULL)
 ```
 
 
@@ -616,7 +609,9 @@ The themed (or interim) 404 page.
 
 ### `themed(Minn\Front\Resolution $resolution): Minn\Http\Response`
 
-The themed (or interim) page for a resolution, under its status.
+The themed (or interim) page for a resolution, under its status: the
+main query stood first, its 404 (an empty page past the first, an
+empty date) taken as the page's.
 
 ### `show(Minn\Http\Request $request): Minn\Http\Response`
 
@@ -624,7 +619,7 @@ Route: `* /{path*} (public)`
 
 The public page for any path; when scheduled work is due, the run follows the response.
 
-Internals: `page()` (private, line 71), `rendered()` (private, line 100)
+Internals: `page()` (private, line 79), `rendered()` (private, line 109)
 
 
 ## Kind
@@ -1076,7 +1071,7 @@ crawlers key off them); the markup around them is engine-defined.
 Used by: `Minn\Engine`, `Minn\Front\FrontController`
 
 ```php
-__construct(Minn\Db $db, Minn\Content\Posts $posts, Minn\Front\Permalinks $permalinks, int $perPage)
+__construct(Minn\Db $db, Minn\Front\Permalinks $permalinks)
 ```
 
 
@@ -1090,11 +1085,11 @@ The body classes a resolution carries.
 
 The document title: the item's title with the site name, or the site name alone.
 
-### `render(Minn\Front\Resolution $resolution): string`
+### `render(Minn\Front\Resolution $resolution, Minn\Content\Page $page): string`
 
-The interim page for a resolution, without a theme.
+The interim page for a resolution, without a theme: a listing shows the main query's page of posts.
 
-Internals: `attachmentClasses()` (private, line 37), `pageClasses()` (private, line 115), `article()` (private, line 132), `archive()` (private, line 142)
+Internals: `attachmentClasses()` (private, line 34), `pageClasses()` (private, line 112), `article()` (private, line 129), `archive()` (private, line 139)
 
 
 ## RequestParse
@@ -1237,7 +1232,7 @@ posts, newest first. Archives never guess.
 - Non-public posts are 404 to anonymous readers and served to a reader
 who can edit them.
 
-Used by: `Minn\Engine`, `Minn\Front\Canonical`, `Minn\Front\FrontController`, `Minn\Front\Renderer`, `Minn\Theme\MainQueryBridge`, `Minn\Theme\PageRenderer`
+Used by: `Minn\Engine`, `Minn\Front\Canonical`, `Minn\Front\FrontController`, `Minn\Theme\PageRenderer`
 
 ```php
 __construct(Minn\Db $db, Minn\Content\Posts $posts, Minn\Content\Terms $terms, Minn\Front\Permalinks $permalinks, Closure $canReadUnpublished, int $perPage)
@@ -1263,13 +1258,7 @@ $canonical mirrors the reference's redirect_canonical rule: only GET
 and HEAD get trailing-slash, pretty-URL, and 404-guess redirects;
 every other method renders what the query alone finds, as typed.
 
-### static `dateRange(int $year, ?int $month, ?int $day): ?array`
-
-The site-local bounds of a date archive, or null when the date is invalid.
-
-- `@return array{0: string, 1: string}|null`
-
-Internals: `resolvePath()` (private, line 100), `canonical()` (private, line 132), `missing()` (private, line 178), `viewableTypes()` (private, line 208), `endpointIn()` (private, line 221), `segments()` (private, line 233), `resolveQueryVars()` (private, line 238), `dateRedirect()` (private, line 282), `archives()` (private, line 300), `attachments()` (private, line 316), `elsewhere()` (private, line 322), `readable()` (private, line 327)
+Internals: `resolvePath()` (private, line 99), `canonical()` (private, line 131), `missing()` (private, line 177), `viewableTypes()` (private, line 207), `endpointIn()` (private, line 220), `segments()` (private, line 232), `resolveQueryVars()` (private, line 237), `dateQuery()` (private, line 282), `archives()` (private, line 291), `attachments()` (private, line 297), `elsewhere()` (private, line 303), `readable()` (private, line 308)
 
 
 ## RuleRoutes
@@ -1301,7 +1290,7 @@ The resolution the vars stand for. @param array<string, string> $vars
 
 - `@param array<string, string> $vars`
 
-Internals: `single()` (private, line 49), `archive()` (private, line 75), `typeArchive()` (private, line 110), `found()` (private, line 126), `readable()` (private, line 142), `registered()` (private, line 157), `segments()` (private, line 170)
+Internals: `single()` (private, line 48), `archive()` (private, line 74), `typeArchive()` (private, line 108), `found()` (private, line 120), `readable()` (private, line 135), `registered()` (private, line 150), `segments()` (private, line 163)
 
 
 ## RuleTable

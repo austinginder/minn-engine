@@ -26439,7 +26439,7 @@
             ],
             "usedBy": [
                 "Minn\\Blocks\\Dynamic\\Theme\\QueryBlocks",
-                "Minn\\Content\\Posts",
+                "Minn\\Front\\Renderer",
                 "Minn\\Theme\\MainQueryBridge"
             ],
             "constructor": {
@@ -27053,271 +27053,6 @@
                     ],
                     "line": 63,
                     "end": 66
-                }
-            ]
-        },
-        {
-            "name": "Minn\\Content\\PostFilter",
-            "short": "PostFilter",
-            "namespace": "Minn\\Content",
-            "kind": "final readonly class",
-            "file": "public/minn/src/Minn/Content/PostFilter.php",
-            "lines": 55,
-            "doc": "What a listing is narrowed to. Every field is optional and the object is\nimmutable, so a filter reads as a sentence: types('post')->inTerm(12).\nDates are site-local \"Y-m-d H:i:s\" bounds, from inclusive, to exclusive.",
-            "implements": [],
-            "extends": null,
-            "uses": [],
-            "usedBy": [
-                "Minn\\Content\\Posts",
-                "Minn\\Front\\ArchiveAddresses",
-                "Minn\\Front\\Renderer",
-                "Minn\\Front\\Resolver",
-                "Minn\\Front\\RuleRoutes",
-                "Minn\\Theme\\MainQueryBridge"
-            ],
-            "constructor": {
-                "signature": "__construct(array $types = array (   0 => 'post', ), ?int $term = NULL, ?int $author = NULL, ?string $from = NULL, ?string $to = NULL, ?string $search = NULL)",
-                "doc": "",
-                "shapes": [
-                    "@param list<string> $types"
-                ],
-                "params": [
-                    {
-                        "name": "types",
-                        "type": "array",
-                        "shape": "list<string>",
-                        "default": "array (   0 => 'post', )",
-                        "doc": ""
-                    },
-                    {
-                        "name": "term",
-                        "type": "?int",
-                        "shape": "",
-                        "default": "NULL",
-                        "doc": ""
-                    },
-                    {
-                        "name": "author",
-                        "type": "?int",
-                        "shape": "",
-                        "default": "NULL",
-                        "doc": ""
-                    },
-                    {
-                        "name": "from",
-                        "type": "?string",
-                        "shape": "",
-                        "default": "NULL",
-                        "doc": ""
-                    },
-                    {
-                        "name": "to",
-                        "type": "?string",
-                        "shape": "",
-                        "default": "NULL",
-                        "doc": ""
-                    },
-                    {
-                        "name": "search",
-                        "type": "?string",
-                        "shape": "",
-                        "default": "NULL",
-                        "doc": ""
-                    }
-                ],
-                "visibility": "public",
-                "line": 15,
-                "end": 23
-            },
-            "cases": [],
-            "constants": [],
-            "properties": [
-                {
-                    "name": "types",
-                    "type": "array",
-                    "readonly": true,
-                    "static": false,
-                    "doc": "",
-                    "visibility": "public",
-                    "promoted": true
-                },
-                {
-                    "name": "term",
-                    "type": "?int",
-                    "readonly": true,
-                    "static": false,
-                    "doc": "",
-                    "visibility": "public",
-                    "promoted": true
-                },
-                {
-                    "name": "author",
-                    "type": "?int",
-                    "readonly": true,
-                    "static": false,
-                    "doc": "",
-                    "visibility": "public",
-                    "promoted": true
-                },
-                {
-                    "name": "from",
-                    "type": "?string",
-                    "readonly": true,
-                    "static": false,
-                    "doc": "",
-                    "visibility": "public",
-                    "promoted": true
-                },
-                {
-                    "name": "to",
-                    "type": "?string",
-                    "readonly": true,
-                    "static": false,
-                    "doc": "",
-                    "visibility": "public",
-                    "promoted": true
-                },
-                {
-                    "name": "search",
-                    "type": "?string",
-                    "readonly": true,
-                    "static": false,
-                    "doc": "",
-                    "visibility": "public",
-                    "promoted": true
-                }
-            ],
-            "methods": [
-                {
-                    "routes": [],
-                    "name": "all",
-                    "static": true,
-                    "visibility": "public",
-                    "signature": "all(): self",
-                    "doc": "Published posts of type post, nothing narrower.",
-                    "shapes": [],
-                    "params": [],
-                    "line": 26,
-                    "end": 29
-                },
-                {
-                    "routes": [],
-                    "name": "types",
-                    "static": true,
-                    "visibility": "public",
-                    "signature": "types(string ...$types): self",
-                    "doc": "A filter over these post types.",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "types",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 32,
-                    "end": 35
-                },
-                {
-                    "routes": [],
-                    "name": "inTerm",
-                    "static": false,
-                    "visibility": "public",
-                    "signature": "inTerm(int $termTaxonomyId): self",
-                    "doc": "Posts linked to a term, by its term_taxonomy_id.",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "termTaxonomyId",
-                            "type": "int",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 38,
-                    "end": 41
-                },
-                {
-                    "routes": [],
-                    "name": "byAuthor",
-                    "static": false,
-                    "visibility": "public",
-                    "signature": "byAuthor(int $userId): self",
-                    "doc": "The same filter narrowed to one author.",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "userId",
-                            "type": "int",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 44,
-                    "end": 47
-                },
-                {
-                    "routes": [],
-                    "name": "between",
-                    "static": false,
-                    "visibility": "public",
-                    "signature": "between(string $from, string $to): self",
-                    "doc": "The same filter narrowed to a date window.",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "from",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "to",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 50,
-                    "end": 53
-                },
-                {
-                    "routes": [],
-                    "name": "matching",
-                    "static": false,
-                    "visibility": "public",
-                    "signature": "matching(string $search): self",
-                    "doc": "The same filter narrowed by a search string.",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "search",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 56,
-                    "end": 59
-                },
-                {
-                    "routes": [],
-                    "name": "hasDates",
-                    "static": false,
-                    "visibility": "public",
-                    "signature": "hasDates(): bool",
-                    "doc": "Whether both ends of the date window are set.",
-                    "shapes": [],
-                    "params": [],
-                    "line": 62,
-                    "end": 65
                 }
             ]
         },
@@ -29384,15 +29119,12 @@
             "namespace": "Minn\\Content",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Content/Posts.php",
-            "lines": 523,
-            "doc": "Reads over the posts table. A single post comes back as a PostRecord and\na listing as a Page of them; rendering and escaping happen elsewhere.",
+            "lines": 425,
+            "doc": "Reads over the posts table. A post comes back as a PostRecord; a listing\nis the main query's (WP_Query); rendering and escaping happen elsewhere.",
             "implements": [],
             "extends": null,
             "uses": [
-                "Minn\\Content\\Page",
-                "Minn\\Content\\PostFilter",
                 "Minn\\Content\\PostRecord",
-                "Minn\\Content\\Reader",
                 "Minn\\Db"
             ],
             "usedBy": [
@@ -29412,9 +29144,7 @@
                 "Minn\\Front\\ArchiveAddresses",
                 "Minn\\Front\\Archives",
                 "Minn\\Front\\AttachmentAddresses",
-                "Minn\\Front\\FeedController",
                 "Minn\\Front\\Permalinks",
-                "Minn\\Front\\Renderer",
                 "Minn\\Front\\Resolver",
                 "Minn\\Front\\RuleRoutes",
                 "Minn\\Front\\SingleAddresses",
@@ -29434,7 +29164,6 @@
                 "Minn\\Rest\\TemplateObject",
                 "Minn\\Runtime\\MenuEvents",
                 "Minn\\Theme\\ClassicRenderer",
-                "Minn\\Theme\\MainQueryBridge",
                 "Minn\\Theme\\PageRenderer",
                 "Minn\\Theme\\Templates",
                 "Minn\\Theme\\UserStyles"
@@ -29453,8 +29182,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 16,
-                "end": 18
+                "line": 15,
+                "end": 17
             },
             "cases": [],
             "constants": [],
@@ -29487,8 +29216,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 27,
-                    "end": 30
+                    "line": 26,
+                    "end": 29
                 },
                 {
                     "routes": [],
@@ -29516,8 +29245,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 37,
-                    "end": 40
+                    "line": 36,
+                    "end": 39
                 },
                 {
                     "routes": [],
@@ -29545,8 +29274,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 43,
-                    "end": 46
+                    "line": 42,
+                    "end": 45
                 },
                 {
                     "routes": [],
@@ -29574,8 +29303,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 67,
-                    "end": 76
+                    "line": 66,
+                    "end": 75
                 },
                 {
                     "routes": [],
@@ -29596,8 +29325,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 84,
-                    "end": 87
+                    "line": 83,
+                    "end": 86
                 },
                 {
                     "routes": [],
@@ -29618,8 +29347,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 90,
-                    "end": 93
+                    "line": 89,
+                    "end": 92
                 },
                 {
                     "routes": [],
@@ -29648,8 +29377,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 104,
-                    "end": 121
+                    "line": 103,
+                    "end": 120
                 },
                 {
                     "routes": [],
@@ -29668,8 +29397,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 143,
-                    "end": 159
+                    "line": 142,
+                    "end": 158
                 },
                 {
                     "routes": [],
@@ -29697,42 +29426,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 171,
-                    "end": 178
-                },
-                {
-                    "routes": [],
-                    "name": "published",
-                    "static": false,
-                    "visibility": "public",
-                    "signature": "published(string $type = 'post', int $page = 1, int $perPage = 10): Minn\\Content\\Page",
-                    "doc": "The published posts of one type, newest first: the everyday listing.",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "type",
-                            "type": "string",
-                            "shape": "",
-                            "default": "'post'",
-                            "doc": ""
-                        },
-                        {
-                            "name": "page",
-                            "type": "int",
-                            "shape": "",
-                            "default": "1",
-                            "doc": ""
-                        },
-                        {
-                            "name": "perPage",
-                            "type": "int",
-                            "shape": "",
-                            "default": "10",
-                            "doc": ""
-                        }
-                    ],
-                    "line": 187,
-                    "end": 190
+                    "line": 170,
+                    "end": 177
                 },
                 {
                     "routes": [],
@@ -29751,62 +29446,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 193,
-                    "end": 196
-                },
-                {
-                    "routes": [],
-                    "name": "count",
-                    "static": false,
-                    "visibility": "public",
-                    "signature": "count(Minn\\Content\\PostFilter $filter): int",
-                    "doc": "How many posts a filter reaches, without fetching any.",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "filter",
-                            "type": "Minn\\Content\\PostFilter",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 199,
-                    "end": 203
-                },
-                {
-                    "routes": [],
-                    "name": "archive",
-                    "static": false,
-                    "visibility": "public",
-                    "signature": "archive(Minn\\Content\\PostFilter $filter, int $page, int $perPage): Minn\\Content\\Page",
-                    "doc": "One page of the posts a filter reaches, newest first, title matches first for a search.",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "filter",
-                            "type": "Minn\\Content\\PostFilter",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "page",
-                            "type": "int",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "perPage",
-                            "type": "int",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 206,
-                    "end": 221
+                    "line": 180,
+                    "end": 183
                 },
                 {
                     "routes": [],
@@ -29832,8 +29473,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 261,
-                    "end": 268
+                    "line": 186,
+                    "end": 193
                 },
                 {
                     "routes": [],
@@ -29861,8 +29502,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 275,
-                    "end": 286
+                    "line": 200,
+                    "end": 211
                 },
                 {
                     "routes": [],
@@ -29881,8 +29522,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 289,
-                    "end": 295
+                    "line": 214,
+                    "end": 220
                 },
                 {
                     "routes": [],
@@ -29901,8 +29542,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 298,
-                    "end": 306
+                    "line": 223,
+                    "end": 231
                 },
                 {
                     "routes": [],
@@ -29928,8 +29569,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 309,
-                    "end": 316
+                    "line": 234,
+                    "end": 241
                 },
                 {
                     "routes": [],
@@ -29948,8 +29589,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 319,
-                    "end": 322
+                    "line": 244,
+                    "end": 247
                 },
                 {
                     "routes": [],
@@ -29968,8 +29609,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 325,
-                    "end": 328
+                    "line": 250,
+                    "end": 253
                 },
                 {
                     "routes": [],
@@ -29980,52 +29621,8 @@
                     "doc": "Published pages as a parent => children map, ordered by menu_order then title.",
                     "shapes": [],
                     "params": [],
-                    "line": 342,
-                    "end": 353
-                },
-                {
-                    "routes": [],
-                    "name": "listing",
-                    "static": false,
-                    "visibility": "public",
-                    "signature": "listing(Minn\\Content\\PostFilter $filter, int $page, int $perPage, array $stickyIds = array ( )): Minn\\Content\\Page",
-                    "doc": "The main query for a listing: sticky posts lead the first page of the\nblog index, followed by the rest by date, and are excluded from later\npages.",
-                    "shapes": [
-                        "@param list<int> $stickyIds",
-                        "@return array{posts: list<array>, total: int}"
-                    ],
-                    "params": [
-                        {
-                            "name": "filter",
-                            "type": "Minn\\Content\\PostFilter",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "page",
-                            "type": "int",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "perPage",
-                            "type": "int",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "stickyIds",
-                            "type": "array",
-                            "shape": "list<int>",
-                            "default": "array ( )",
-                            "doc": ""
-                        }
-                    ],
-                    "line": 363,
-                    "end": 377
+                    "line": 267,
+                    "end": 278
                 },
                 {
                     "routes": [],
@@ -30044,8 +29641,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 383,
-                    "end": 386
+                    "line": 284,
+                    "end": 287
                 },
                 {
                     "routes": [],
@@ -30064,8 +29661,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 389,
-                    "end": 392
+                    "line": 290,
+                    "end": 293
                 },
                 {
                     "routes": [],
@@ -30100,8 +29697,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 399,
-                    "end": 407
+                    "line": 300,
+                    "end": 308
                 },
                 {
                     "routes": [],
@@ -30129,8 +29726,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 414,
-                    "end": 427
+                    "line": 315,
+                    "end": 328
                 },
                 {
                     "routes": [],
@@ -30172,8 +29769,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 436,
-                    "end": 452
+                    "line": 337,
+                    "end": 353
                 },
                 {
                     "routes": [],
@@ -30215,8 +29812,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 465,
-                    "end": 473
+                    "line": 366,
+                    "end": 374
                 },
                 {
                     "routes": [],
@@ -30249,8 +29846,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 476,
-                    "end": 480
+                    "line": 377,
+                    "end": 381
                 },
                 {
                     "routes": [],
@@ -30283,8 +29880,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 483,
-                    "end": 487
+                    "line": 384,
+                    "end": 388
                 },
                 {
                     "routes": [],
@@ -30310,8 +29907,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 514,
-                    "end": 521
+                    "line": 415,
+                    "end": 422
                 },
                 {
                     "routes": [],
@@ -30330,8 +29927,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 524,
-                    "end": 535
+                    "line": 425,
+                    "end": 436
                 },
                 {
                     "routes": [],
@@ -30352,8 +29949,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 21,
-                    "end": 24
+                    "line": 20,
+                    "end": 23
                 },
                 {
                     "routes": [],
@@ -30388,8 +29985,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 49,
-                    "end": 57
+                    "line": 48,
+                    "end": 56
                 },
                 {
                     "routes": [],
@@ -30417,50 +30014,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 124,
-                    "end": 140
-                },
-                {
-                    "routes": [],
-                    "name": "scope",
-                    "static": false,
-                    "visibility": "private",
-                    "signature": "scope(Minn\\Content\\PostFilter $filter): array",
-                    "doc": "The FROM ... WHERE half of a listing query and its parameters: what\nthe reader may see, narrowed by the filter.",
-                    "shapes": [
-                        "@return array{0: string, 1: list<mixed>}"
-                    ],
-                    "params": [
-                        {
-                            "name": "filter",
-                            "type": "Minn\\Content\\PostFilter",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 229,
-                    "end": 253
-                },
-                {
-                    "routes": [],
-                    "name": "like",
-                    "static": true,
-                    "visibility": "private",
-                    "signature": "like(string $needle): string",
-                    "doc": "",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "needle",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 255,
-                    "end": 258
+                    "line": 123,
+                    "end": 139
                 },
                 {
                     "routes": [],
@@ -30493,8 +30048,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 330,
-                    "end": 339
+                    "line": 255,
+                    "end": 264
                 },
                 {
                     "routes": [],
@@ -30505,8 +30060,8 @@
                     "doc": "MySQL's WEEK() mode for the site's first day of the week: 0 for Sunday, 1 for Monday.",
                     "shapes": [],
                     "params": [],
-                    "line": 455,
-                    "end": 458
+                    "line": 356,
+                    "end": 359
                 },
                 {
                     "routes": [],
@@ -30541,8 +30096,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 490,
-                    "end": 497
+                    "line": 391,
+                    "end": 398
                 },
                 {
                     "routes": [],
@@ -30568,8 +30123,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 499,
-                    "end": 511
+                    "line": 400,
+                    "end": 412
                 }
             ]
         },
@@ -30593,7 +30148,6 @@
                 "Minn\\Blocks\\Dynamic\\Theme\\PostBlocks",
                 "Minn\\Cli\\Runtime",
                 "Minn\\Content\\PasswordGate",
-                "Minn\\Content\\Posts",
                 "Minn\\Context",
                 "Minn\\Engine",
                 "Minn\\Extension\\Seams",
@@ -31162,7 +30716,6 @@
                 "Minn\\Theme\\ClassicRenderer",
                 "Minn\\Theme\\ClassicTheme",
                 "Minn\\Theme\\HeadLinks",
-                "Minn\\Theme\\MainQueryBridge",
                 "Minn\\Theme\\PageRenderer",
                 "Minn\\Theme\\TemplateIndex",
                 "Minn\\Theme\\TemplateWriter",
@@ -39012,12 +38565,11 @@
             "namespace": "Minn\\Front",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Front/ArchiveAddresses.php",
-            "lines": 146,
-            "doc": "The archives an address may stand for, as the reference answers them:\nthe front, a search, a term's (a category's, a tag's, a plugin\ntaxonomy's), an author's and a date's, each a 404 when it is empty or\npaged past its end (an author's only past a real author's end). The\nresolver reads them off the path; a plugin's rule hands their vars.",
+            "lines": 92,
+            "doc": "The archives an address may stand for, as the reference answers them:\nthe front, a search, a term's (a category's, a tag's, a plugin\ntaxonomy's), an author's and a date's. Each is the archive when what it\nnames exists (a term at that path, a valid date; an author's for any\nname); whether its page has posts is the main query's to say, and an\nempty page past the first, or an empty date, is the 404 it decides\n(Theme\\FrontLifecycle::handle404).",
             "implements": [],
             "extends": null,
             "uses": [
-                "Minn\\Content\\PostFilter",
                 "Minn\\Content\\PostRecord",
                 "Minn\\Content\\Posts",
                 "Minn\\Content\\TermRecord",
@@ -39075,8 +38627,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 26,
-                "end": 33
+                "line": 27,
+                "end": 34
             },
             "cases": [],
             "constants": [],
@@ -39134,7 +38686,7 @@
                     "static": false,
                     "visibility": "public",
                     "signature": "search(string $term, int $paged): Minn\\Front\\Resolution",
-                    "doc": "A search's results page; past the last page, a 404.",
+                    "doc": "A search's results page.",
                     "shapes": [],
                     "params": [
                         {
@@ -39152,8 +38704,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 36,
-                    "end": 39
+                    "line": 37,
+                    "end": 40
                 },
                 {
                     "routes": [],
@@ -39161,7 +38713,7 @@
                     "static": false,
                     "visibility": "public",
                     "signature": "home(int $paged): Minn\\Front\\Resolution",
-                    "doc": "The front: the static front page when there is one, else the posts listing; past its last page, a 404.",
+                    "doc": "The front: the static front page when there is one, else the posts listing.",
                     "shapes": [],
                     "params": [
                         {
@@ -39172,18 +38724,17 @@
                             "doc": ""
                         }
                     ],
-                    "line": 42,
-                    "end": 54
+                    "line": 43,
+                    "end": 52
                 },
                 {
                     "routes": [],
                     "name": "taxonomy",
                     "static": false,
                     "visibility": "public",
-                    "signature": "taxonomy(string $taxonomy, array $types, array $slugs, int $paged): Minn\\Front\\Resolution",
-                    "doc": "A plugin taxonomy's term archive by its path; a 404 when the term is\nmissing, empty or overpaged.",
+                    "signature": "taxonomy(string $taxonomy, array $slugs, int $paged): Minn\\Front\\Resolution",
+                    "doc": "A plugin taxonomy's term archive by its path; a 404 when no term is\nat that path.",
                     "shapes": [
-                        "@param list<string> $types the post types the taxonomy attaches to",
                         "@param list<string> $slugs"
                     ],
                     "params": [
@@ -39193,13 +38744,6 @@
                             "shape": "",
                             "default": null,
                             "doc": ""
-                        },
-                        {
-                            "name": "types",
-                            "type": "array",
-                            "shape": "list<string>",
-                            "default": null,
-                            "doc": "the post types the taxonomy attaches to"
                         },
                         {
                             "name": "slugs",
@@ -39216,8 +38760,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 63,
-                    "end": 74
+                    "line": 60,
+                    "end": 64
                 },
                 {
                     "routes": [],
@@ -39225,7 +38769,7 @@
                     "static": false,
                     "visibility": "public",
                     "signature": "term(string $taxonomy, array $slugs, int $paged): Minn\\Front\\Resolution",
-                    "doc": "A category's or tag's archive by its path; a 404 when the term is missing. @param list<string> $slugs",
+                    "doc": "A category's or tag's archive by its path; a 404 when no term is at that path. @param list<string> $slugs",
                     "shapes": [
                         "@param list<string> $slugs"
                     ],
@@ -39252,42 +38796,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 77,
-                    "end": 87
-                },
-                {
-                    "routes": [],
-                    "name": "termResolution",
-                    "static": false,
-                    "visibility": "public",
-                    "signature": "termResolution(string $taxonomy, Minn\\Content\\TermRecord $term, int $paged): Minn\\Front\\Resolution",
-                    "doc": "The archive a found term stands for, 404 when it is empty or overpaged.",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "taxonomy",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "term",
-                            "type": "Minn\\Content\\TermRecord",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "paged",
-                            "type": "int",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 90,
-                    "end": 97
+                    "line": 67,
+                    "end": 71
                 },
                 {
                     "routes": [],
@@ -39295,7 +38805,7 @@
                     "static": false,
                     "visibility": "public",
                     "signature": "author(string $name, int $paged): Minn\\Front\\Resolution",
-                    "doc": "An author's archive by nicename: 200 for any name, a 404 only past a real author's last page.",
+                    "doc": "An author's archive by nicename: the archive for any name, the author's when one has it.",
                     "shapes": [],
                     "params": [
                         {
@@ -39313,8 +38823,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 100,
-                    "end": 114
+                    "line": 74,
+                    "end": 81
                 },
                 {
                     "routes": [],
@@ -39322,7 +38832,7 @@
                     "static": false,
                     "visibility": "public",
                     "signature": "date(array $segments, int $paged): Minn\\Front\\Resolution",
-                    "doc": "A date archive by year, month and day; a 404 when invalid, empty or overpaged. @param list<string> $segments",
+                    "doc": "A date archive by year, month and day; a 404 when the date is not one. @param list<string> $segments",
                     "shapes": [
                         "@param list<string> $segments"
                     ],
@@ -39342,19 +38852,17 @@
                             "doc": ""
                         }
                     ],
-                    "line": 117,
-                    "end": 139
+                    "line": 84,
+                    "end": 98
                 },
                 {
                     "routes": [],
-                    "name": "dateRange",
+                    "name": "isDate",
                     "static": true,
                     "visibility": "public",
-                    "signature": "dateRange(int $year, ?int $month, ?int $day): ?array",
-                    "doc": "The site-local bounds of a date archive, or null when the date is invalid.",
-                    "shapes": [
-                        "@return array{0: string, 1: string}|null"
-                    ],
+                    "signature": "isDate(int $year, ?int $month, ?int $day): bool",
+                    "doc": "Whether a year, month and day (the last two optional, a day only with its month) name a date.",
+                    "shapes": [],
                     "params": [
                         {
                             "name": "year",
@@ -39378,28 +38886,37 @@
                             "doc": ""
                         }
                     ],
-                    "line": 146,
-                    "end": 161
+                    "line": 108,
+                    "end": 114
                 },
                 {
                     "routes": [],
-                    "name": "pages",
+                    "name": "at",
                     "static": false,
-                    "visibility": "public",
-                    "signature": "pages(int $total): int",
-                    "doc": "How many listing pages a total fills.",
-                    "shapes": [],
+                    "visibility": "private",
+                    "signature": "at(string $taxonomy, array $slugs): ?Minn\\Content\\TermRecord",
+                    "doc": "The term at a slug path in a taxonomy, its ancestors' slugs checked whole. @param list<string> $slugs",
+                    "shapes": [
+                        "@param list<string> $slugs"
+                    ],
                     "params": [
                         {
-                            "name": "total",
-                            "type": "int",
+                            "name": "taxonomy",
+                            "type": "string",
                             "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "slugs",
+                            "type": "array",
+                            "shape": "list<string>",
                             "default": null,
                             "doc": ""
                         }
                     ],
-                    "line": 164,
-                    "end": 167
+                    "line": 101,
+                    "end": 105
                 }
             ]
         },
@@ -41005,7 +40522,7 @@
             "namespace": "Minn\\Front",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Front/FeedController.php",
-            "lines": 61,
+            "lines": 60,
             "doc": "The feeds, wherever a request asks for one: the feed var of the rule its\naddress matched (the site's at /feed/, the comments' at\n/comments/feed/, a post's or an archive's after its address, a plugin's\nown) or ?feed= on any page. Each is WordPress's feed lifecycle: the main\nquery with the feed asked for, then do_feed, whose handler prints the\nfeed and its content type. A feed of something the address names but\nthe site does not have is an empty feed, as the reference serves it.",
             "implements": [],
             "extends": null,
@@ -41013,7 +40530,6 @@
                 "Minn\\Blocks\\Context",
                 "Minn\\Blocks\\RenderState",
                 "Minn\\Content\\Blocks",
-                "Minn\\Content\\Posts",
                 "Minn\\Content\\Site",
                 "Minn\\Front\\Kind",
                 "Minn\\Front\\Resolution",
@@ -41027,7 +40543,7 @@
                 "Minn\\Front\\FrontController"
             ],
             "constructor": {
-                "signature": "__construct(Minn\\Content\\Site $site, Minn\\Content\\Posts $posts)",
+                "signature": "__construct(Minn\\Content\\Site $site)",
                 "doc": "",
                 "shapes": [],
                 "params": [
@@ -41037,18 +40553,11 @@
                         "shape": "",
                         "default": null,
                         "doc": ""
-                    },
-                    {
-                        "name": "posts",
-                        "type": "Minn\\Content\\Posts",
-                        "shape": "",
-                        "default": null,
-                        "doc": ""
                     }
                 ],
                 "visibility": "public",
-                "line": 28,
-                "end": 32
+                "line": 27,
+                "end": 30
             },
             "cases": [],
             "constants": [],
@@ -41056,15 +40565,6 @@
                 {
                     "name": "site",
                     "type": "Minn\\Content\\Site",
-                    "readonly": true,
-                    "static": false,
-                    "doc": "",
-                    "visibility": "private",
-                    "promoted": true
-                },
-                {
-                    "name": "posts",
-                    "type": "Minn\\Content\\Posts",
                     "readonly": true,
                     "static": false,
                     "doc": "",
@@ -41097,8 +40597,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 35,
-                    "end": 38
+                    "line": 33,
+                    "end": 36
                 },
                 {
                     "routes": [],
@@ -41124,8 +40624,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 41,
-                    "end": 49
+                    "line": 39,
+                    "end": 47
                 },
                 {
                     "routes": [],
@@ -41153,8 +40653,8 @@
                             "doc": "what the request asks of the feed: its type and its comments"
                         }
                     ],
-                    "line": 58,
-                    "end": 79
+                    "line": 56,
+                    "end": 77
                 },
                 {
                     "routes": [],
@@ -41165,8 +40665,8 @@
                     "doc": "How many items a feed carries (posts_per_rss).",
                     "shapes": [],
                     "params": [],
-                    "line": 82,
-                    "end": 85
+                    "line": 80,
+                    "end": 83
                 }
             ]
         },
@@ -41852,7 +41352,7 @@
             "namespace": "Minn\\Front",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Front/FrontController.php",
-            "lines": 97,
+            "lines": 99,
             "doc": "The public site. One catch-all route: resolve the URL, then either\nredirect or render, through the active block theme when there is one,\nthe classic PHP template runner when the theme is classic, and the\ninterim template otherwise.",
             "implements": [],
             "extends": null,
@@ -41874,6 +41374,7 @@
                 "Minn\\Runtime\\Runtime",
                 "Minn\\Theme\\ClassicRenderer",
                 "Minn\\Theme\\EmbedRenderer",
+                "Minn\\Theme\\MainQueryBridge",
                 "Minn\\Theme\\PageRenderer",
                 "Minn\\Theme\\Printed"
             ],
@@ -41881,13 +41382,20 @@
                 "Minn\\Engine"
             ],
             "constructor": {
-                "signature": "__construct(Minn\\Front\\Resolver $resolver, Minn\\Front\\Renderer $renderer, ?Minn\\Theme\\PageRenderer $theme = NULL, ?Minn\\Front\\FeedController $feeds = NULL, ?Minn\\Cron\\Cron $cron = NULL, ?Minn\\Theme\\ClassicRenderer $classic = NULL, ?Minn\\Front\\SitemapController $sitemaps = NULL, ?Minn\\Theme\\EmbedRenderer $embeds = NULL)",
+                "signature": "__construct(Minn\\Front\\Resolver $resolver, Minn\\Theme\\MainQueryBridge $bridge, Minn\\Front\\Renderer $renderer, ?Minn\\Theme\\PageRenderer $theme = NULL, ?Minn\\Front\\FeedController $feeds = NULL, ?Minn\\Cron\\Cron $cron = NULL, ?Minn\\Theme\\ClassicRenderer $classic = NULL, ?Minn\\Front\\SitemapController $sitemaps = NULL, ?Minn\\Theme\\EmbedRenderer $embeds = NULL)",
                 "doc": "",
                 "shapes": [],
                 "params": [
                     {
                         "name": "resolver",
                         "type": "Minn\\Front\\Resolver",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    },
+                    {
+                        "name": "bridge",
+                        "type": "Minn\\Theme\\MainQueryBridge",
                         "shape": "",
                         "default": null,
                         "doc": ""
@@ -41943,8 +41451,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 28,
-                "end": 38
+                "line": 29,
+                "end": 40
             },
             "cases": [],
             "constants": [],
@@ -41952,6 +41460,15 @@
                 {
                     "name": "resolver",
                     "type": "Minn\\Front\\Resolver",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
+                },
+                {
+                    "name": "bridge",
+                    "type": "Minn\\Theme\\MainQueryBridge",
                     "readonly": true,
                     "static": false,
                     "doc": "",
@@ -42032,8 +41549,8 @@
                     "doc": "The themed (or interim) 404 page.",
                     "shapes": [],
                     "params": [],
-                    "line": 41,
-                    "end": 44
+                    "line": 43,
+                    "end": 46
                 },
                 {
                     "routes": [],
@@ -42041,7 +41558,7 @@
                     "static": false,
                     "visibility": "public",
                     "signature": "themed(Minn\\Front\\Resolution $resolution): Minn\\Http\\Response",
-                    "doc": "The themed (or interim) page for a resolution, under its status.",
+                    "doc": "The themed (or interim) page for a resolution, under its status: the\nmain query stood first, its 404 (an empty page past the first, an\nempty date) taken as the page's.",
                     "shapes": [],
                     "params": [
                         {
@@ -42052,8 +41569,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 47,
-                    "end": 53
+                    "line": 53,
+                    "end": 61
                 },
                 {
                     "routes": [
@@ -42074,8 +41591,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 57,
-                    "end": 69
+                    "line": 65,
+                    "end": 77
                 },
                 {
                     "routes": [],
@@ -42094,8 +41611,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 71,
-                    "end": 97
+                    "line": 79,
+                    "end": 106
                 },
                 {
                     "routes": [],
@@ -42121,8 +41638,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 100,
-                    "end": 121
+                    "line": 109,
+                    "end": 124
                 }
             ]
         },
@@ -44424,23 +43941,21 @@
             "namespace": "Minn\\Front",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Front/Renderer.php",
-            "lines": 168,
+            "lines": 157,
             "doc": "The interim public theme: one clean template until the block-theme\nreader lands. The body-class tokens are the contract (stylesheets and\ncrawlers key off them); the markup around them is engine-defined.",
             "implements": [],
             "extends": null,
             "uses": [
                 "Minn\\Content\\Blocks",
                 "Minn\\Content\\Excerpt",
+                "Minn\\Content\\Page",
                 "Minn\\Content\\PasswordGate",
-                "Minn\\Content\\PostFilter",
                 "Minn\\Content\\PostRecord",
-                "Minn\\Content\\Posts",
                 "Minn\\Db",
                 "Minn\\Front\\DocumentTitle",
                 "Minn\\Front\\Kind",
                 "Minn\\Front\\Permalinks",
                 "Minn\\Front\\Resolution",
-                "Minn\\Front\\Resolver",
                 "Minn\\Support\\Html"
             ],
             "usedBy": [
@@ -44448,7 +43963,7 @@
                 "Minn\\Front\\FrontController"
             ],
             "constructor": {
-                "signature": "__construct(Minn\\Db $db, Minn\\Content\\Posts $posts, Minn\\Front\\Permalinks $permalinks, int $perPage)",
+                "signature": "__construct(Minn\\Db $db, Minn\\Front\\Permalinks $permalinks)",
                 "doc": "",
                 "shapes": [],
                 "params": [
@@ -44460,30 +43975,16 @@
                         "doc": ""
                     },
                     {
-                        "name": "posts",
-                        "type": "Minn\\Content\\Posts",
-                        "shape": "",
-                        "default": null,
-                        "doc": ""
-                    },
-                    {
                         "name": "permalinks",
                         "type": "Minn\\Front\\Permalinks",
-                        "shape": "",
-                        "default": null,
-                        "doc": ""
-                    },
-                    {
-                        "name": "perPage",
-                        "type": "int",
                         "shape": "",
                         "default": null,
                         "doc": ""
                     }
                 ],
                 "visibility": "public",
-                "line": 23,
-                "end": 29
+                "line": 22,
+                "end": 26
             },
             "cases": [],
             "constants": [
@@ -44505,26 +44006,8 @@
                     "promoted": true
                 },
                 {
-                    "name": "posts",
-                    "type": "Minn\\Content\\Posts",
-                    "readonly": true,
-                    "static": false,
-                    "doc": "",
-                    "visibility": "private",
-                    "promoted": true
-                },
-                {
                     "name": "permalinks",
                     "type": "Minn\\Front\\Permalinks",
-                    "readonly": true,
-                    "static": false,
-                    "doc": "",
-                    "visibility": "private",
-                    "promoted": true
-                },
-                {
-                    "name": "perPage",
-                    "type": "int",
                     "readonly": true,
                     "static": false,
                     "doc": "",
@@ -44552,8 +44035,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 48,
-                    "end": 85
+                    "line": 45,
+                    "end": 82
                 },
                 {
                     "routes": [],
@@ -44572,16 +44055,16 @@
                             "doc": ""
                         }
                     ],
-                    "line": 88,
-                    "end": 91
+                    "line": 85,
+                    "end": 88
                 },
                 {
                     "routes": [],
                     "name": "render",
                     "static": false,
                     "visibility": "public",
-                    "signature": "render(Minn\\Front\\Resolution $resolution): string",
-                    "doc": "The interim page for a resolution, without a theme.",
+                    "signature": "render(Minn\\Front\\Resolution $resolution, Minn\\Content\\Page $page): string",
+                    "doc": "The interim page for a resolution, without a theme: a listing shows the main query's page of posts.",
                     "shapes": [],
                     "params": [
                         {
@@ -44590,10 +44073,17 @@
                             "shape": "",
                             "default": null,
                             "doc": ""
+                        },
+                        {
+                            "name": "page",
+                            "type": "Minn\\Content\\Page",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
                         }
                     ],
-                    "line": 94,
-                    "end": 113
+                    "line": 91,
+                    "end": 110
                 },
                 {
                     "routes": [],
@@ -44614,8 +44104,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 37,
-                    "end": 41
+                    "line": 34,
+                    "end": 38
                 },
                 {
                     "routes": [],
@@ -44634,8 +44124,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 115,
-                    "end": 130
+                    "line": 112,
+                    "end": 127
                 },
                 {
                     "routes": [],
@@ -44654,15 +44144,15 @@
                             "doc": ""
                         }
                     ],
-                    "line": 132,
-                    "end": 139
+                    "line": 129,
+                    "end": 136
                 },
                 {
                     "routes": [],
                     "name": "archive",
                     "static": false,
                     "visibility": "private",
-                    "signature": "archive(Minn\\Front\\Resolution $resolution): array",
+                    "signature": "archive(Minn\\Front\\Resolution $resolution, Minn\\Content\\Page $page): array",
                     "doc": "",
                     "shapes": [
                         "@return array{0: string, 1: string} title and markup"
@@ -44674,10 +44164,17 @@
                             "shape": "",
                             "default": null,
                             "doc": ""
+                        },
+                        {
+                            "name": "page",
+                            "type": "Minn\\Content\\Page",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
                         }
                     ],
-                    "line": 142,
-                    "end": 169
+                    "line": 139,
+                    "end": 157
                 }
             ]
         },
@@ -45399,13 +44896,12 @@
             "namespace": "Minn\\Front",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Front/Resolver.php",
-            "lines": 302,
+            "lines": 284,
             "doc": "Turns a public URL into a Resolution the way the reference's request\nparse does: the root by its query string, any other path by the first\nof the site's rewrite rules it fits (Front\\RuleTable), whose query vars\nname what it is (Front\\RuleRoutes). What is left here are the\nreference's canonical answers around that (redirect_canonical,\nwp_old_slug_redirect):\n\n- Unpaged content and archives without a trailing slash redirect to the\nslashed form, as typed (case kept), as do an embed's and an endpoint's\naddresses; paged views, search, and 404s do not.\n- Query-var forms (?p=, ?page_id=, ?cat=, ?tag=, ?author=, ?m=, ?name=,\n?pagename=) redirect to the pretty form when the target is public.\n- A single asked for under a category it is not in (where the\nstructure names one), or with an old-style page number, moves to its\nown address; a trackback address goes to the post; the front page\nanswers only at the root.\n- A name the site no longer has: the post that used to have it, else the\nclosest published page or post whose name starts with it, pages before\nposts, newest first. Archives never guess.\n- Non-public posts are 404 to anonymous readers and served to a reader\nwho can edit them.",
             "implements": [],
             "extends": null,
             "uses": [
                 "Minn\\Auth\\Nonce",
-                "Minn\\Content\\PostFilter",
                 "Minn\\Content\\PostRecord",
                 "Minn\\Content\\Posts",
                 "Minn\\Content\\Reader",
@@ -45429,8 +44925,6 @@
                 "Minn\\Engine",
                 "Minn\\Front\\Canonical",
                 "Minn\\Front\\FrontController",
-                "Minn\\Front\\Renderer",
-                "Minn\\Theme\\MainQueryBridge",
                 "Minn\\Theme\\PageRenderer"
             ],
             "constructor": {
@@ -45484,8 +44978,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 45,
-                "end": 53
+                "line": 44,
+                "end": 52
             },
             "cases": [],
             "constants": [],
@@ -45570,8 +45064,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 56,
-                    "end": 66
+                    "line": 55,
+                    "end": 65
                 },
                 {
                     "routes": [],
@@ -45582,8 +45076,8 @@
                     "doc": "The link builder.",
                     "shapes": [],
                     "params": [],
-                    "line": 69,
-                    "end": 72
+                    "line": 68,
+                    "end": 71
                 },
                 {
                     "routes": [],
@@ -45594,8 +45088,8 @@
                     "doc": "Posts per page.",
                     "shapes": [],
                     "params": [],
-                    "line": 75,
-                    "end": 78
+                    "line": 74,
+                    "end": 77
                 },
                 {
                     "routes": [],
@@ -45621,44 +45115,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 85,
-                    "end": 98
-                },
-                {
-                    "routes": [],
-                    "name": "dateRange",
-                    "static": true,
-                    "visibility": "public",
-                    "signature": "dateRange(int $year, ?int $month, ?int $day): ?array",
-                    "doc": "The site-local bounds of a date archive, or null when the date is invalid.",
-                    "shapes": [
-                        "@return array{0: string, 1: string}|null"
-                    ],
-                    "params": [
-                        {
-                            "name": "year",
-                            "type": "int",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "month",
-                            "type": "?int",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "day",
-                            "type": "?int",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 310,
-                    "end": 313
+                    "line": 84,
+                    "end": 97
                 },
                 {
                     "routes": [],
@@ -45684,8 +45142,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 100,
-                    "end": 126
+                    "line": 99,
+                    "end": 125
                 },
                 {
                     "routes": [],
@@ -45725,8 +45183,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 132,
-                    "end": 169
+                    "line": 131,
+                    "end": 168
                 },
                 {
                     "routes": [],
@@ -45754,8 +45212,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 178,
-                    "end": 200
+                    "line": 177,
+                    "end": 199
                 },
                 {
                     "routes": [],
@@ -45768,8 +45226,8 @@
                         "@return list<string>"
                     ],
                     "params": [],
-                    "line": 208,
-                    "end": 218
+                    "line": 207,
+                    "end": 217
                 },
                 {
                     "routes": [],
@@ -45790,8 +45248,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 221,
-                    "end": 230
+                    "line": 220,
+                    "end": 229
                 },
                 {
                     "routes": [],
@@ -45812,8 +45270,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 233,
-                    "end": 236
+                    "line": 232,
+                    "end": 235
                 },
                 {
                     "routes": [],
@@ -45839,16 +45297,16 @@
                             "doc": ""
                         }
                     ],
-                    "line": 238,
-                    "end": 280
+                    "line": 237,
+                    "end": 279
                 },
                 {
                     "routes": [],
-                    "name": "dateRedirect",
+                    "name": "dateQuery",
                     "static": false,
                     "visibility": "private",
-                    "signature": "dateRedirect(int $year, ?int $month, ?int $day, Minn\\Front\\Redirects $redirects): Minn\\Front\\Resolution",
-                    "doc": "",
+                    "signature": "dateQuery(int $year, ?int $month, ?int $day, Minn\\Front\\Redirects $redirects): Minn\\Front\\Resolution",
+                    "doc": "?m= or ?year=: the pretty date address to move to, or (holding, or under plain permalinks) the date archive as typed.",
                     "shapes": [],
                     "params": [
                         {
@@ -45881,7 +45339,7 @@
                         }
                     ],
                     "line": 282,
-                    "end": 297
+                    "end": 288
                 },
                 {
                     "routes": [],
@@ -45892,8 +45350,8 @@
                     "doc": "The archives a request may stand for.",
                     "shapes": [],
                     "params": [],
-                    "line": 300,
-                    "end": 303
+                    "line": 291,
+                    "end": 294
                 },
                 {
                     "routes": [],
@@ -45904,8 +45362,8 @@
                     "doc": "The addresses an attachment's page answers to.",
                     "shapes": [],
                     "params": [],
-                    "line": 316,
-                    "end": 319
+                    "line": 297,
+                    "end": 300
                 },
                 {
                     "routes": [],
@@ -45916,8 +45374,8 @@
                     "doc": "The addresses a single answers to besides its own.",
                     "shapes": [],
                     "params": [],
-                    "line": 322,
-                    "end": 325
+                    "line": 303,
+                    "end": 306
                 },
                 {
                     "routes": [],
@@ -45936,8 +45394,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 327,
-                    "end": 342
+                    "line": 308,
+                    "end": 323
                 }
             ]
         },
@@ -45947,12 +45405,11 @@
             "namespace": "Minn\\Front",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Front/RuleRoutes.php",
-            "lines": 150,
+            "lines": 144,
             "doc": "What a matched rewrite rule's query vars name, as the reference's main\nquery reads them (suites permalinks, plugin-rules, request-vars): a post\nor page by id, an attachment by name, a page (or an attachment) by its\npath, a post by name (of the type the vars give), a registered type's\nitem by its own var; else a category's, tag's, post format's or\nregistered taxonomy's archive, an author's, a date's, a post type's, a\nsearch; else the front. A rule that set error is a 404, as is a single\nthe reader may not read. Under a name the date or category the rule also\ncaptured does not narrow the find: where the post really lives is the\ncanonical redirect's business.",
             "implements": [],
             "extends": null,
             "uses": [
-                "Minn\\Content\\PostFilter",
                 "Minn\\Content\\PostRecord",
                 "Minn\\Content\\Posts",
                 "Minn\\Front\\ArchiveAddresses",
@@ -46006,8 +45463,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 28,
-                "end": 35
+                "line": 27,
+                "end": 34
             },
             "cases": [],
             "constants": [],
@@ -46078,8 +45535,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 38,
-                    "end": 46
+                    "line": 37,
+                    "end": 45
                 },
                 {
                     "routes": [],
@@ -46114,8 +45571,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 49,
-                    "end": 72
+                    "line": 48,
+                    "end": 71
                 },
                 {
                     "routes": [],
@@ -46150,8 +45607,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 75,
-                    "end": 107
+                    "line": 74,
+                    "end": 105
                 },
                 {
                     "routes": [],
@@ -46159,7 +45616,7 @@
                     "static": false,
                     "visibility": "private",
                     "signature": "typeArchive(string $name, int $paged): Minn\\Front\\Resolution",
-                    "doc": "A post type's archive, when it has one; a 404 when it has none or is paged past its end.",
+                    "doc": "A post type's archive, when it has one; a 404 when it has none.",
                     "shapes": [],
                     "params": [
                         {
@@ -46177,8 +45634,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 110,
-                    "end": 118
+                    "line": 108,
+                    "end": 112
                 },
                 {
                     "routes": [],
@@ -46186,7 +45643,7 @@
                     "static": false,
                     "visibility": "private",
                     "signature": "found(?Minn\\Content\\PostRecord $post, int $paged): Minn\\Front\\Resolution",
-                    "doc": "A found post as the reader may see it: the static front page, the\nposts page (the blog's listing, a 404 past its end), any other post\nor page; a 404 when there is none or the reader may not read it (an\nattachment as its parent is).",
+                    "doc": "A found post as the reader may see it: the static front page, the\nposts page (the blog's listing), any other post or page; a 404 when\nthere is none or the reader may not read it (an attachment as its\nparent is).",
                     "shapes": [],
                     "params": [
                         {
@@ -46204,8 +45661,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 126,
-                    "end": 139
+                    "line": 120,
+                    "end": 132
                 },
                 {
                     "routes": [],
@@ -46224,8 +45681,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 142,
-                    "end": 149
+                    "line": 135,
+                    "end": 142
                 },
                 {
                     "routes": [],
@@ -46246,8 +45703,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 157,
-                    "end": 167
+                    "line": 150,
+                    "end": 160
                 },
                 {
                     "routes": [],
@@ -46268,8 +45725,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 170,
-                    "end": 173
+                    "line": 163,
+                    "end": 166
                 }
             ]
         },
@@ -130169,7 +129626,6 @@
                 "Minn\\Runtime\\Options",
                 "Minn\\Runtime\\Recovery",
                 "Minn\\Support\\SearchReplace",
-                "Minn\\Theme\\MainQueryBridge",
                 "Minn\\Theme\\PageRenderer"
             ],
             "constructor": null,
@@ -132370,7 +131826,7 @@
             "namespace": "Minn\\Theme",
             "kind": "final class",
             "file": "public/minn/src/Minn/Theme/FrontLifecycle.php",
-            "lines": 96,
+            "lines": 100,
             "doc": "WordPress's front-end request steps around the main query, as WP::main\nruns them (front lifecycle trace): parse the request (do_parse_request\nmay take it over; query_vars names the public variables, a plugin's own\nread from the query string; request filters the result; parse_request\nfollows), the main query, the 404 decision (pre_handle_404 first), the\nglobals, and the headers (wp_headers, the status, send_headers). The\nengine has already resolved the URL; these steps tell plugins about it\nin the reference's order and let them change what the query asks.",
             "implements": [],
             "extends": null,
@@ -132439,7 +131895,7 @@
                     "static": true,
                     "visibility": "public",
                     "signature": "handle404(WP_Query $query, bool $notFound): void",
-                    "doc": "The 404 decision: a plugin's pre_handle_404 may make it; otherwise a\nrequest the engine could not resolve is a 404 (the query says so, the\nstatus and no-cache headers follow), as is a page past the end of a\nlisting (the query found nothing on it); anything else is a 200.",
+                    "doc": "The 404 decision, the one place it is made: a plugin's\npre_handle_404 may make it; otherwise a request for something the\nsite does not have is a 404, as is an empty page past the first of\nany listing and an empty date archive (an existing term, author or\ntype with no posts, an empty search, the front: a 200); the status\nand no-cache headers follow. A feed is never a 404: one of nothing\nis an empty feed.",
                     "shapes": [],
                     "params": [
                         {
@@ -132457,8 +131913,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 59,
-                    "end": 71
+                    "line": 62,
+                    "end": 75
                 },
                 {
                     "routes": [],
@@ -132477,8 +131933,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 79,
-                    "end": 115
+                    "line": 83,
+                    "end": 119
                 }
             ]
         },
@@ -133563,27 +133019,23 @@
             "namespace": "Minn\\Theme",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Theme/MainQueryBridge.php",
-            "lines": 147,
-            "doc": "Stands the main query for a themed page and runs the front-end steps\naround it as WP::main does (FrontLifecycle): the request parsed, the main\nquery through WP_Query (so pre_get_posts and every posts_* filter shape\nit), the 404 decision, the globals, the headers, then \"wp\" and\ntemplate_redirect. A listing's posts are the query's; a single post the\nquery does not find (a preview, a draft its author reads) is the one the\nengine resolved. Without the runtime, the engine's own listing.",
+            "lines": 125,
+            "doc": "Stands the main query for a themed page and runs the front-end steps\naround it as WP::main does (FrontLifecycle): the request parsed, the main\nquery through WP_Query (so pre_get_posts and every posts_* filter shape\nit), the 404 decision, the globals, the headers, then \"wp\" and\ntemplate_redirect. A listing's posts are the query's, and so is the 404\nfor an empty page past the first or an empty date; a single post the\nquery does not find (a preview, a draft its author reads) is the one the\nengine resolved. When a plugin takes the parse over no query runs, as\non the reference, and the page stands empty.",
             "implements": [],
             "extends": null,
             "uses": [
                 "Minn\\Content\\Page",
-                "Minn\\Content\\PostFilter",
                 "Minn\\Content\\PostRecord",
-                "Minn\\Content\\Posts",
-                "Minn\\Content\\Site",
                 "Minn\\Front\\Kind",
                 "Minn\\Front\\RequestParse",
                 "Minn\\Front\\Resolution",
-                "Minn\\Front\\Resolver",
                 "Minn\\Runtime\\Runtime",
-                "Minn\\Support\\Serialized",
                 "Minn\\Theme\\FrontLifecycle"
             ],
             "usedBy": [
                 "Minn\\Engine",
                 "Minn\\Front\\FeedController",
+                "Minn\\Front\\FrontController",
                 "Minn\\Front\\PrintedResponse",
                 "Minn\\Front\\ProbeController",
                 "Minn\\Front\\SitemapController",
@@ -133592,24 +133044,10 @@
                 "Minn\\Theme\\PageRenderer"
             ],
             "constructor": {
-                "signature": "__construct(Minn\\Content\\Site $site, Minn\\Content\\Posts $posts, int $perPage)",
+                "signature": "__construct(int $perPage)",
                 "doc": "",
                 "shapes": [],
                 "params": [
-                    {
-                        "name": "site",
-                        "type": "Minn\\Content\\Site",
-                        "shape": "",
-                        "default": null,
-                        "doc": ""
-                    },
-                    {
-                        "name": "posts",
-                        "type": "Minn\\Content\\Posts",
-                        "shape": "",
-                        "default": null,
-                        "doc": ""
-                    },
                     {
                         "name": "perPage",
                         "type": "int",
@@ -133619,8 +133057,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 32,
-                "end": 37
+                "line": 29,
+                "end": 32
             },
             "cases": [],
             "constants": [
@@ -133632,24 +133070,6 @@
                 }
             ],
             "properties": [
-                {
-                    "name": "site",
-                    "type": "Minn\\Content\\Site",
-                    "readonly": true,
-                    "static": false,
-                    "doc": "",
-                    "visibility": "private",
-                    "promoted": true
-                },
-                {
-                    "name": "posts",
-                    "type": "Minn\\Content\\Posts",
-                    "readonly": true,
-                    "static": false,
-                    "doc": "",
-                    "visibility": "private",
-                    "promoted": true
-                },
                 {
                     "name": "perPage",
                     "type": "int",
@@ -133687,8 +133107,28 @@
                             "doc": ""
                         }
                     ],
-                    "line": 45,
-                    "end": 79
+                    "line": 40,
+                    "end": 73
+                },
+                {
+                    "routes": [],
+                    "name": "verdict",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "verdict(Minn\\Front\\Resolution $resolution): Minn\\Front\\Resolution",
+                    "doc": "The resolution as the main query left it: a 404 when the query\ndecided one (an empty page past the first, an empty date), with the\nvars it was asked under.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "resolution",
+                            "type": "Minn\\Front\\Resolution",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 80,
+                    "end": 85
                 },
                 {
                     "routes": [],
@@ -133699,8 +133139,8 @@
                     "doc": "Posts per page.",
                     "shapes": [],
                     "params": [],
-                    "line": 82,
-                    "end": 85
+                    "line": 88,
+                    "end": 91
                 },
                 {
                     "routes": [],
@@ -133721,8 +133161,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 94,
-                    "end": 98
+                    "line": 100,
+                    "end": 104
                 },
                 {
                     "routes": [],
@@ -133743,8 +133183,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 106,
-                    "end": 117
+                    "line": 112,
+                    "end": 123
                 },
                 {
                     "routes": [],
@@ -133772,8 +133212,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 125,
-                    "end": 135
+                    "line": 131,
+                    "end": 141
                 },
                 {
                     "routes": [],
@@ -133781,7 +133221,7 @@
                     "static": false,
                     "visibility": "private",
                     "signature": "seeded(Minn\\Front\\Resolution $resolution, array $vars): Minn\\Content\\Page",
-                    "doc": "The engine's own page seeded into the query globals, when no query ran or it found nothing to stand on. @param array<string, mixed> $vars",
+                    "doc": "The query globals seeded with no posts of their own (a single the query did not find is looked up by its vars), when no query ran or it found nothing to stand on. @param array<string, mixed> $vars",
                     "shapes": [
                         "@param array<string, mixed> $vars"
                     ],
@@ -133801,50 +133241,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 138,
-                    "end": 143
-                },
-                {
-                    "routes": [],
-                    "name": "objectTypes",
-                    "static": false,
-                    "visibility": "private",
-                    "signature": "objectTypes(string $taxonomy): array",
-                    "doc": "",
-                    "shapes": [
-                        "@return list<string> the post types a plugin's taxonomy attaches to"
-                    ],
-                    "params": [
-                        {
-                            "name": "taxonomy",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 146,
-                    "end": 151
-                },
-                {
-                    "routes": [],
-                    "name": "listing",
-                    "static": false,
-                    "visibility": "private",
-                    "signature": "listing(Minn\\Front\\Resolution $resolution): Minn\\Content\\Page",
-                    "doc": "",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "resolution",
-                            "type": "Minn\\Front\\Resolution",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 153,
-                    "end": 173
+                    "line": 144,
+                    "end": 148
                 }
             ]
         },
