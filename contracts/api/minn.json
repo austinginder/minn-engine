@@ -64180,7 +64180,7 @@
             "namespace": "Minn\\Login",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Login/LoginController.php",
-            "lines": 434,
+            "lines": 460,
             "doc": "Signing in. The page people see is /minn-admin/login: the form, the\nlost-password and reset flows, and logout all live there and link there.\n/wp-login.php stays as the address tooling knows (one-time login links,\nuptime probes, scripted sign-ins) and answers in place with the same\nshapes; a bare GET of it sends a browser to the clean page. Sessions\nand cookies validate on the engine AND on WordPress either way.",
             "implements": [],
             "extends": null,
@@ -64204,6 +64204,7 @@
                 "Minn\\Http\\Route",
                 "Minn\\Login\\LoginForm",
                 "Minn\\Login\\LoginHooks",
+                "Minn\\Login\\LoginNotices",
                 "Minn\\Mail\\Mailer",
                 "Minn\\Runtime\\Runtime",
                 "Minn\\Support\\Html"
@@ -64379,7 +64380,7 @@
                         }
                     ],
                     "line": 60,
-                    "end": 106
+                    "end": 108
                 },
                 {
                     "routes": [
@@ -64402,8 +64403,55 @@
                             "doc": ""
                         }
                     ],
-                    "line": 331,
-                    "end": 367
+                    "line": 356,
+                    "end": 391
+                },
+                {
+                    "routes": [],
+                    "name": "checkEmail",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "checkEmail(Minn\\Http\\Request $request): Minn\\Login\\LoginNotices",
+                    "doc": "The check-your-email page's word, as the reference's: the confirmation link is on its way, or the registration is done.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "request",
+                            "type": "Minn\\Http\\Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 111,
+                    "end": 119
+                },
+                {
+                    "routes": [],
+                    "name": "signInNotices",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "signInNotices(Minn\\Http\\Request $request, Minn\\Login\\LoginNotices $notices): Minn\\Login\\LoginNotices",
+                    "doc": "A sign-in page's notices after wp_login_errors, handed where a sign-in would land (the admin, unless the page names a landing).",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "request",
+                            "type": "Minn\\Http\\Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "notices",
+                            "type": "Minn\\Login\\LoginNotices",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 122,
+                    "end": 129
                 },
                 {
                     "routes": [],
@@ -64422,8 +64470,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 109,
-                    "end": 147
+                    "line": 132,
+                    "end": 170
                 },
                 {
                     "routes": [],
@@ -64456,8 +64504,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 155,
-                    "end": 166
+                    "line": 178,
+                    "end": 188
                 },
                 {
                     "routes": [],
@@ -64476,8 +64524,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 173,
-                    "end": 187
+                    "line": 195,
+                    "end": 209
                 },
                 {
                     "routes": [],
@@ -64498,8 +64546,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 190,
-                    "end": 203
+                    "line": 212,
+                    "end": 225
                 },
                 {
                     "routes": [],
@@ -64518,8 +64566,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 205,
-                    "end": 236
+                    "line": 227,
+                    "end": 258
                 },
                 {
                     "routes": [],
@@ -64545,16 +64593,16 @@
                             "doc": ""
                         }
                     ],
-                    "line": 245,
-                    "end": 265
+                    "line": 267,
+                    "end": 286
                 },
                 {
                     "routes": [],
                     "name": "validateReset",
                     "static": false,
                     "visibility": "private",
-                    "signature": "validateReset(Minn\\Content\\UserRecord $user, string $mismatch): string",
-                    "doc": "A new password judged as the reference judges it: the mismatch, then\nwhatever validate_password_reset adds; the first refusal as plain\nwords, or ''.",
+                    "signature": "validateReset(Minn\\Content\\UserRecord $user, string $mismatch): Minn\\Login\\LoginNotices",
+                    "doc": "A new password judged as the reference judges it: the mismatch, then\nwhatever validate_password_reset adds.",
                     "shapes": [],
                     "params": [
                         {
@@ -64572,16 +64620,16 @@
                             "doc": ""
                         }
                     ],
-                    "line": 272,
-                    "end": 280
+                    "line": 292,
+                    "end": 300
                 },
                 {
                     "routes": [],
                     "name": "parts",
                     "static": false,
                     "visibility": "private",
-                    "signature": "parts(string $action, string $title, string $siteName, ?Minn\\Content\\UserRecord $user = NULL): array",
-                    "doc": "What plugins put on one of the sign-in pages (LoginHooks::page()), for a page titled $title. @return array<string, string>",
+                    "signature": "parts(string $action, string $title, string $siteName, ?Minn\\Content\\UserRecord $user = NULL, ?Minn\\Login\\LoginNotices $notices = NULL): array",
+                    "doc": "What plugins put on one of the sign-in pages (LoginHooks::page()), for\na page titled $title, with its notices printed; without plugins, the\nnotices alone. @return array<string, string>",
                     "shapes": [
                         "@return array<string, string>"
                     ],
@@ -64613,10 +64661,17 @@
                             "shape": "",
                             "default": "NULL",
                             "doc": ""
+                        },
+                        {
+                            "name": "notices",
+                            "type": "?Minn\\Login\\LoginNotices",
+                            "shape": "",
+                            "default": "NULL",
+                            "doc": ""
                         }
                     ],
-                    "line": 283,
-                    "end": 286
+                    "line": 307,
+                    "end": 311
                 },
                 {
                     "routes": [],
@@ -64635,8 +64690,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 294,
-                    "end": 325
+                    "line": 319,
+                    "end": 350
                 },
                 {
                     "routes": [],
@@ -64655,8 +64710,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 373,
-                    "end": 385
+                    "line": 397,
+                    "end": 409
                 },
                 {
                     "routes": [],
@@ -64675,8 +64730,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 392,
-                    "end": 415
+                    "line": 416,
+                    "end": 439
                 },
                 {
                     "routes": [],
@@ -64695,8 +64750,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 422,
-                    "end": 430
+                    "line": 446,
+                    "end": 455
                 },
                 {
                     "routes": [],
@@ -64729,8 +64784,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 433,
-                    "end": 440
+                    "line": 458,
+                    "end": 465
                 },
                 {
                     "routes": [],
@@ -64749,8 +64804,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 443,
-                    "end": 446
+                    "line": 468,
+                    "end": 471
                 },
                 {
                     "routes": [],
@@ -64776,16 +64831,16 @@
                             "doc": ""
                         }
                     ],
-                    "line": 449,
-                    "end": 454
+                    "line": 474,
+                    "end": 479
                 },
                 {
                     "routes": [],
                     "name": "render",
                     "static": false,
                     "visibility": "private",
-                    "signature": "render(Minn\\Http\\Request $request, string $error, string $message = ''): string",
-                    "doc": "",
+                    "signature": "render(Minn\\Http\\Request $request, Minn\\Login\\LoginNotices $notices): string",
+                    "doc": "The sign-in page, its notices through wp_login_errors first.",
                     "shapes": [],
                     "params": [
                         {
@@ -64796,22 +64851,15 @@
                             "doc": ""
                         },
                         {
-                            "name": "error",
-                            "type": "string",
+                            "name": "notices",
+                            "type": "Minn\\Login\\LoginNotices",
                             "shape": "",
                             "default": null,
                             "doc": ""
-                        },
-                        {
-                            "name": "message",
-                            "type": "string",
-                            "shape": "",
-                            "default": "''",
-                            "doc": ""
                         }
                     ],
-                    "line": 456,
-                    "end": 468
+                    "line": 482,
+                    "end": 494
                 }
             ]
         },
@@ -64821,12 +64869,13 @@
             "namespace": "Minn\\Login",
             "kind": "final class",
             "file": "public/minn/src/Minn/Login/LoginForm.php",
-            "lines": 188,
+            "lines": 213,
             "doc": "The sign-in page markup.",
             "implements": [],
             "extends": null,
             "uses": [
                 "Minn\\Login\\LoginHooks",
+                "Minn\\Login\\LoginNotices",
                 "Minn\\Support\\Html"
             ],
             "usedBy": [
@@ -64837,7 +64886,7 @@
             "constants": [
                 {
                     "name": "CSS",
-                    "value": "'body { margin:0; min-height:100vh; display:flex; align-items:center; justify-content:center;        background:#0b0b0d; color:#ececed; font:15px/1.5 \"Hanken Grotesk\",\"Helvetica Neue\",sans-serif; } form { width:320px; background:#151518; border:1px solid #242429; border-radius:14px; padding:28px; } h1 { font-size:19px; font-weight:700; margin:0 0 18px; } .hint { font-size:13px; color:#9d9da7; margin:0 0 12px; } .hint a { color:#ececed; } .msg { background:#14291c; border:1px solid #1f4a2c; border-radius:8px; padding:9px 12px; font-size:13px; margin-bottom:12px; } label { display:block; font-size:12px; color:#9d9da7; margin:14px 0 5px; } input[type=text],input[type=password] { width:100%; box-sizing:border-box; padding:9px 11px;        background:#0b0b0d; border:1px solid #31313a; border-radius:8px; color:#ececed; font-size:14px; } .switch { display:flex; align-items:center; gap:10px; margin-top:16px; font-size:13px; color:#9d9da7; cursor:pointer; } .switch input { position:absolute; opacity:0; width:0; height:0; } .switch .knob { position:relative; flex:0 0 34px; width:34px; height:20px; border-radius:999px; background:#31313a;        border:1px solid #3a3a44; transition:background .15s, border-color .15s; } .switch .knob::after { content:\"\"; position:absolute; top:2px; left:2px; width:14px; height:14px; border-radius:50%;        background:#ececed; transition:transform .15s; } .switch input:checked + .knob { background:#6459f0; border-color:#6459f0; } .switch input:checked + .knob::after { transform:translateX(14px); background:#fff; } .switch input:focus-visible + .knob { outline:2px solid #8a80f8; outline-offset:2px; } button { margin-top:18px; width:100%; padding:10px; background:#6459f0; color:#fff; border:0;        border-radius:8px; font-size:14px; font-weight:600; cursor:pointer; } .err { background:rgba(228,107,107,.12); border:1px solid rgba(228,107,107,.4); color:#e46b6b;        padding:9px 11px; border-radius:8px; font-size:13px; margin-bottom:14px; }'",
+                    "value": "'body { margin:0; min-height:100vh; display:flex; align-items:center; justify-content:center;        background:#0b0b0d; color:#ececed; font:15px/1.5 \"Hanken Grotesk\",\"Helvetica Neue\",sans-serif; } form { width:320px; background:#151518; border:1px solid #242429; border-radius:14px; padding:28px; } h1 { font-size:19px; font-weight:700; margin:0 0 18px; } .hint { font-size:13px; color:#9d9da7; margin:0 0 12px; } .hint a { color:#ececed; } .msg { background:#14291c; border:1px solid #1f4a2c; border-radius:8px; padding:9px 12px; font-size:13px; margin-bottom:12px; } label { display:block; font-size:12px; color:#9d9da7; margin:14px 0 5px; } input[type=text],input[type=password] { width:100%; box-sizing:border-box; padding:9px 11px;        background:#0b0b0d; border:1px solid #31313a; border-radius:8px; color:#ececed; font-size:14px; } .switch { display:flex; align-items:center; gap:10px; margin-top:16px; font-size:13px; color:#9d9da7; cursor:pointer; } .switch input { position:absolute; opacity:0; width:0; height:0; } .switch .knob { position:relative; flex:0 0 34px; width:34px; height:20px; border-radius:999px; background:#31313a;        border:1px solid #3a3a44; transition:background .15s, border-color .15s; } .switch .knob::after { content:\"\"; position:absolute; top:2px; left:2px; width:14px; height:14px; border-radius:50%;        background:#ececed; transition:transform .15s; } .switch input:checked + .knob { background:#6459f0; border-color:#6459f0; } .switch input:checked + .knob::after { transform:translateX(14px); background:#fff; } .switch input:focus-visible + .knob { outline:2px solid #8a80f8; outline-offset:2px; } button { margin-top:18px; width:100%; padding:10px; background:#6459f0; color:#fff; border:0;        border-radius:8px; font-size:14px; font-weight:600; cursor:pointer; } .err { background:rgba(228,107,107,.12); border:1px solid rgba(228,107,107,.4); color:#e46b6b;        padding:9px 11px; border-radius:8px; font-size:13px; margin-bottom:14px; } .err p, .msg p { margin:0; } .err p + p, .msg p + p { margin-top:6px; } .err ul { margin:0; padding-left:18px; } .err a, .msg a { color:inherit; }'",
                     "doc": "",
                     "visibility": "private"
                 }
@@ -64852,7 +64901,7 @@
                     "signature": "render(string $siteName, string $action, string $redirectTo, string $error, string $message = '', string $lostPasswordUrl = '', array $parts = array ( )): string",
                     "doc": "The sign-in page's HTML. With plugins loaded, $parts carries what they\nput on the page (LoginHooks::page()): the title, head, body classes,\nthe header's link and words, a message above the form, fields inside\nit, and the footer, each where the reference's page puts it.",
                     "shapes": [
-                        "@param array{title?: string, head?: string, bodyClass?: string, headerUrl?: string, headerText?: string, message?: string, form?: string, footer?: string} $parts"
+                        "@param array{title?: string, head?: string, bodyClass?: string, headerUrl?: string, headerText?: string, message?: string, errors?: string, messages?: string, form?: string, footer?: string} $parts"
                     ],
                     "params": [
                         {
@@ -64900,13 +64949,13 @@
                         {
                             "name": "parts",
                             "type": "array",
-                            "shape": "array{title?: string, head?: string, bodyClass?: string, headerUrl?: string, headerText?: string, message?: string, form?: string, footer?: string}",
+                            "shape": "array{title?: string, head?: string, bodyClass?: string, headerUrl?: string, headerText?: string, message?: string, errors?: string, messages?: string, form?: string, footer?: string}",
                             "default": "array ( )",
                             "doc": ""
                         }
                     ],
                     "line": 20,
-                    "end": 49
+                    "end": 48
                 },
                 {
                     "routes": [],
@@ -64948,8 +64997,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 58,
-                    "end": 84
+                    "line": 57,
+                    "end": 83
                 },
                 {
                     "routes": [],
@@ -64998,8 +65047,8 @@
                             "doc": "what plugins put on the page (LoginHooks::page())"
                         }
                     ],
-                    "line": 92,
-                    "end": 103
+                    "line": 91,
+                    "end": 102
                 },
                 {
                     "routes": [],
@@ -65062,8 +65111,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 112,
-                    "end": 127
+                    "line": 111,
+                    "end": 126
                 },
                 {
                     "routes": [],
@@ -65119,8 +65168,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 134,
-                    "end": 148
+                    "line": 133,
+                    "end": 147
                 },
                 {
                     "routes": [],
@@ -65160,8 +65209,80 @@
                             "doc": ""
                         }
                     ],
-                    "line": 151,
-                    "end": 156
+                    "line": 150,
+                    "end": 155
+                },
+                {
+                    "routes": [],
+                    "name": "checkEmail",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "checkEmail(string $siteName, string $loginUrl, array $parts = array ( )): string",
+                    "doc": "The check-your-email page: no form, only its word (in the message\narea) and the way back to sign in.",
+                    "shapes": [
+                        "@param array{title?: string, head?: string, bodyClass?: string, message?: string, errors?: string, messages?: string, footer?: string} $parts"
+                    ],
+                    "params": [
+                        {
+                            "name": "siteName",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "loginUrl",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "parts",
+                            "type": "array",
+                            "shape": "array{title?: string, head?: string, bodyClass?: string, message?: string, errors?: string, messages?: string, footer?: string}",
+                            "default": "array ( )",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 163,
+                    "end": 167
+                },
+                {
+                    "routes": [],
+                    "name": "notices",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "notices(string $error, string $message, array $parts): string",
+                    "doc": "The error and message areas: the notices as printed (LoginNotices,\nthrough the plugins' filters) when the page has them, else the plain\nwords.",
+                    "shapes": [
+                        "@param array{errors?: string, messages?: string} $parts"
+                    ],
+                    "params": [
+                        {
+                            "name": "error",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "message",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "parts",
+                            "type": "array",
+                            "shape": "array{errors?: string, messages?: string}",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 176,
+                    "end": 181
                 },
                 {
                     "routes": [],
@@ -65171,7 +65292,7 @@
                     "signature": "page(string $siteName, string $title, string $error, string $message, string $form, array $parts = array ( )): string",
                     "doc": "",
                     "shapes": [
-                        "@param array{title?: string, head?: string, bodyClass?: string, message?: string, footer?: string} $parts"
+                        "@param array{title?: string, head?: string, bodyClass?: string, message?: string, errors?: string, messages?: string, footer?: string} $parts"
                     ],
                     "params": [
                         {
@@ -65212,13 +65333,13 @@
                         {
                             "name": "parts",
                             "type": "array",
-                            "shape": "array{title?: string, head?: string, bodyClass?: string, message?: string, footer?: string}",
+                            "shape": "array{title?: string, head?: string, bodyClass?: string, message?: string, errors?: string, messages?: string, footer?: string}",
                             "default": "array ( )",
                             "doc": ""
                         }
                     ],
-                    "line": 159,
-                    "end": 171
+                    "line": 184,
+                    "end": 194
                 }
             ]
         },
@@ -65228,13 +65349,14 @@
             "namespace": "Minn\\Login",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Login/LoginHooks.php",
-            "lines": 127,
-            "doc": "The sign-in as plugins see it, when they are loaded. The credentials go\nthrough the reference's authenticate chain, so a plugin may refuse a\nsign-in (a breached password, a second factor, a locked account) or\naccept one the password alone would not; wp_login_failed is the chain's\nown report. wp_login follows a good sign-in and wp_logout a sign-out.\nThe engine's default refusals stay one vague sentence; a plugin's is\nshown in its own words, through login_errors.",
+            "lines": 114,
+            "doc": "The sign-in as plugins see it, when they are loaded. The credentials go\nthrough the reference's authenticate chain, so a plugin may refuse a\nsign-in (a breached password, a second factor, a locked account) or\naccept one the password alone would not; wp_login_failed is the chain's\nown report. wp_login follows a good sign-in and wp_logout a sign-out.\nThe refusal is shown as the page's notices (LoginNotices): the chain's\nown as one vague sentence, a plugin's in its own words.",
             "implements": [],
             "extends": null,
             "uses": [
                 "Minn\\Content\\UserRecord",
                 "Minn\\Content\\Users",
+                "Minn\\Login\\LoginNotices",
                 "Minn\\Runtime\\Runtime"
             ],
             "usedBy": [
@@ -65255,18 +65377,11 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 25,
-                "end": 28
+                "line": 22,
+                "end": 25
             },
             "cases": [],
-            "constants": [
-                {
-                    "name": "DEFAULT_REFUSALS",
-                    "value": "array (   0 => 'empty_username',   1 => 'empty_password',   2 => 'invalid_username',   3 => 'invalid_email',   4 => 'incorrect_password',   5 => 'authentication_failed', )",
-                    "doc": "The chain's own refusals, which the sign-in page words as one.",
-                    "visibility": "private"
-                }
-            ],
+            "constants": [],
             "properties": [
                 {
                     "name": "users",
@@ -65288,19 +65403,17 @@
                     "doc": "Whether the chain can be asked: only with plugins loaded.",
                     "shapes": [],
                     "params": [],
-                    "line": 31,
-                    "end": 34
+                    "line": 28,
+                    "end": 31
                 },
                 {
                     "routes": [],
                     "name": "authenticate",
                     "static": false,
                     "visibility": "public",
-                    "signature": "authenticate(string $login, string $password): Minn\\Content\\UserRecord|array",
-                    "doc": "The credentials through wp_authenticate and the authenticate filters,\nas the reference's sign-in runs them: the user, or the refusal as\n[code, message].",
-                    "shapes": [
-                        "@return UserRecord|array{0: string, 1: string}"
-                    ],
+                    "signature": "authenticate(string $login, string $password): Minn\\Content\\UserRecord|WP_Error|null",
+                    "doc": "The credentials through wp_authenticate and the authenticate filters,\nas the reference's sign-in runs them: the user, or the refusal (a\nWP_Error, or null when the chain gave none).",
+                    "shapes": [],
                     "params": [
                         {
                             "name": "login",
@@ -65317,35 +65430,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 43,
-                    "end": 53
-                },
-                {
-                    "routes": [],
-                    "name": "refusal",
-                    "static": false,
-                    "visibility": "public",
-                    "signature": "refusal(string $code, string $message): ?string",
-                    "doc": "The sentence the sign-in page shows for a refusal, as plain text; null for the engine's own wording.",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "code",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "message",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 56,
-                    "end": 63
+                    "line": 38,
+                    "end": 46
                 },
                 {
                     "routes": [],
@@ -65364,8 +65450,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 71,
-                    "end": 77
+                    "line": 54,
+                    "end": 60
                 },
                 {
                     "routes": [],
@@ -65384,18 +65470,18 @@
                             "doc": ""
                         }
                     ],
-                    "line": 80,
-                    "end": 86
+                    "line": 63,
+                    "end": 69
                 },
                 {
                     "routes": [],
                     "name": "page",
                     "static": false,
                     "visibility": "public",
-                    "signature": "page(string $action, string $title, string $siteName, string $homeUrl, ?Minn\\Content\\UserRecord $user = NULL): array",
-                    "doc": "What plugins put on the sign-in page, where the reference's page puts\nit: the title (login_title), the head (login_enqueue_scripts, then\nlogin_head, which prints the styles and scripts), the body classes\n(login_body_class), the header's link and words (login_headerurl,\nlogin_headertext), the message above the form (login_message), the\nfields inside it (login_form, lostpassword_form or resetpass_form, as\nthe page is), and the footer (login_footer).",
+                    "signature": "page(string $action, string $title, string $siteName, string $homeUrl, ?Minn\\Content\\UserRecord $user = NULL, ?Minn\\Login\\LoginNotices $notices = NULL): array",
+                    "doc": "What plugins put on the sign-in page, where the reference's page puts\nit: the title (login_title), the head (login_enqueue_scripts, then\nlogin_head, which prints the styles and scripts), the body classes\n(login_body_class), the header's link and words (login_headerurl,\nlogin_headertext), the message above the form (login_message), the\npage's notices (login_errors, login_messages), the fields inside the\nform (login_form, lostpassword_form or resetpass_form, as the page\nis), and the footer (login_footer).",
                     "shapes": [
-                        "@return array{title: string, head: string, bodyClass: string, headerUrl: string, headerText: string, message: string, form: string, footer: string}|array{}"
+                        "@return array{title: string, head: string, bodyClass: string, headerUrl: string, headerText: string, message: string, errors?: string, messages?: string, form: string, footer: string}|array{}"
                     ],
                     "params": [
                         {
@@ -65432,10 +65518,17 @@
                             "shape": "",
                             "default": "NULL",
                             "doc": ""
+                        },
+                        {
+                            "name": "notices",
+                            "type": "?Minn\\Login\\LoginNotices",
+                            "shape": "",
+                            "default": "NULL",
+                            "doc": ""
                         }
                     ],
-                    "line": 99,
-                    "end": 125
+                    "line": 83,
+                    "end": 112
                 },
                 {
                     "routes": [],
@@ -65468,8 +65561,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 128,
-                    "end": 131
+                    "line": 115,
+                    "end": 118
                 },
                 {
                     "routes": [],
@@ -65502,8 +65595,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 134,
-                    "end": 137
+                    "line": 121,
+                    "end": 124
                 },
                 {
                     "routes": [],
@@ -65522,8 +65615,273 @@
                             "doc": ""
                         }
                     ],
-                    "line": 140,
-                    "end": 145
+                    "line": 127,
+                    "end": 132
+                }
+            ]
+        },
+        {
+            "name": "Minn\\Login\\LoginNotices",
+            "short": "LoginNotices",
+            "namespace": "Minn\\Login",
+            "kind": "final readonly class",
+            "file": "public/minn/src/Minn/Login/LoginNotices.php",
+            "lines": 119,
+            "doc": "What a sign-in page tells the reader, held as the reference's pages hold\nit: notices by code, each an error or (severity \"message\") a message,\ntheir words as HTML. Printed, the errors are one paragraph, or a list\nwhen there are several, and the messages a paragraph each; with plugins\nloaded the sign-in page hands them through wp_login_errors first, and\nevery page prints them through login_errors and login_messages. The\nauthenticate chain's own refusals read as the engine's one sentence, so\na page never says which half of a sign-in was wrong.",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\Runtime\\Runtime",
+                "Minn\\Support\\Html"
+            ],
+            "usedBy": [
+                "Minn\\Login\\LoginController",
+                "Minn\\Login\\LoginForm",
+                "Minn\\Login\\LoginHooks"
+            ],
+            "constructor": {
+                "signature": "__construct(array $notices = array ( ))",
+                "doc": "",
+                "shapes": [
+                    "@param list<array{0: string, 1: string, 2: string}> $notices code, HTML, severity ('' or 'message')"
+                ],
+                "params": [
+                    {
+                        "name": "notices",
+                        "type": "array",
+                        "shape": "list<array{0: string, 1: string, 2: string}>",
+                        "default": "array ( )",
+                        "doc": "code, HTML, severity ('' or 'message')"
+                    }
+                ],
+                "visibility": "private",
+                "line": 29,
+                "end": 32
+            },
+            "cases": [],
+            "constants": [
+                {
+                    "name": "REFUSALS",
+                    "value": "array (   0 => 'empty_username',   1 => 'empty_password',   2 => 'invalid_username',   3 => 'invalid_email',   4 => 'incorrect_password',   5 => 'authentication_failed', )",
+                    "doc": "The chain's own refusals, which the page words as one.",
+                    "visibility": "private"
+                },
+                {
+                    "name": "REFUSED",
+                    "value": "'<strong>Error:</strong> The username or password you entered is incorrect.'",
+                    "doc": "The one sentence for any of them.",
+                    "visibility": "private"
+                }
+            ],
+            "properties": [
+                {
+                    "name": "notices",
+                    "type": "array",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
+                }
+            ],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "none",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "none(): self",
+                    "doc": "No notices.",
+                    "shapes": [],
+                    "params": [],
+                    "line": 35,
+                    "end": 38
+                },
+                {
+                    "routes": [],
+                    "name": "plain",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "plain(string $code, string $text, string $severity = ''): self",
+                    "doc": "The engine's own plain words as one notice; an \"Error:\" lead takes the reference's strong label.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "code",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "text",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "severity",
+                            "type": "string",
+                            "shape": "",
+                            "default": "''",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 41,
+                    "end": 44
+                },
+                {
+                    "routes": [],
+                    "name": "refused",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "refused(mixed $refusal): self",
+                    "doc": "A sign-in refused: the chain's refusal, or (none given, or not one) the engine's one sentence.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "refusal",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 47,
+                    "end": 51
+                },
+                {
+                    "routes": [],
+                    "name": "of",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "of(mixed $errors): self",
+                    "doc": "The notices a WP_Error holds (a plugin may have handed back something else: then none).",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "errors",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 54,
+                    "end": 67
+                },
+                {
+                    "routes": [],
+                    "name": "with",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "with(string $code, string $html, string $severity = ''): self",
+                    "doc": "These notices and one more.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "code",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "html",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "severity",
+                            "type": "string",
+                            "shape": "",
+                            "default": "''",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 70,
+                    "end": 73
+                },
+                {
+                    "routes": [],
+                    "name": "isEmpty",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "isEmpty(): bool",
+                    "doc": "Whether there are none.",
+                    "shapes": [],
+                    "params": [],
+                    "line": 76,
+                    "end": 79
+                },
+                {
+                    "routes": [],
+                    "name": "wpError",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "wpError(): WP_Error",
+                    "doc": "As the WP_Error plugins are handed.",
+                    "shapes": [],
+                    "params": [],
+                    "line": 82,
+                    "end": 89
+                },
+                {
+                    "routes": [],
+                    "name": "forSignIn",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "forSignIn(string $redirect): self",
+                    "doc": "The sign-in page's notices after wp_login_errors, which is handed\nwhere a sign-in would land; without plugins, as they are.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "redirect",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 95,
+                    "end": 98
+                },
+                {
+                    "routes": [],
+                    "name": "areas",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "areas(): array",
+                    "doc": "The error and message areas' HTML ('' for an area with none),\nthrough login_errors and login_messages with plugins loaded.",
+                    "shapes": [
+                        "@return array{errors: string, messages: string}"
+                    ],
+                    "params": [],
+                    "line": 106,
+                    "end": 131
+                },
+                {
+                    "routes": [],
+                    "name": "words",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "words(string $text): string",
+                    "doc": "Plain words as notice HTML.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "text",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 134,
+                    "end": 137
                 }
             ]
         },
@@ -117043,6 +117401,7 @@
                 "Minn\\Front\\ToolbarMenus",
                 "Minn\\Login\\LoginController",
                 "Minn\\Login\\LoginHooks",
+                "Minn\\Login\\LoginNotices",
                 "Minn\\Mail\\Mailer",
                 "Minn\\Media\\Icons",
                 "Minn\\Media\\Images",
@@ -124962,6 +125321,7 @@
                 "Minn\\Http\\Failure",
                 "Minn\\Login\\LoginController",
                 "Minn\\Login\\LoginForm",
+                "Minn\\Login\\LoginNotices",
                 "Minn\\Rest\\MediaObject",
                 "Minn\\Rest\\PluginsController",
                 "Minn\\Runtime\\PageMenu",

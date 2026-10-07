@@ -14,14 +14,11 @@ use Minn\Runtime\Runtime;
  * sign-in (a breached password, a second factor, a locked account) or
  * accept one the password alone would not; wp_login_failed is the chain's
  * own report. wp_login follows a good sign-in and wp_logout a sign-out.
- * The engine's default refusals stay one vague sentence; a plugin's is
- * shown in its own words, through login_errors.
+ * The refusal is shown as the page's notices (LoginNotices): the chain's
+ * own as one vague sentence, a plugin's in its own words.
  */
 final readonly class LoginHooks
 {
-    /** The chain's own refusals, which the sign-in page words as one. */
-    private const DEFAULT_REFUSALS = ['empty_username', 'empty_password', 'invalid_username', 'invalid_email', 'incorrect_password', 'authentication_failed'];
-
     public function __construct(
         private Users $users,
     ) {
@@ -35,31 +32,17 @@ final readonly class LoginHooks
 
     /**
      * The credentials through wp_authenticate and the authenticate filters,
-     * as the reference's sign-in runs them: the user, or the refusal as
-     * [code, message].
-     *
-     * @return UserRecord|array{0: string, 1: string}
+     * as the reference's sign-in runs them: the user, or the refusal (a
+     * WP_Error, or null when the chain gave none).
      */
-    public function authenticate(string $login, string $password): UserRecord|array
+    public function authenticate(string $login, string $password): UserRecord|\WP_Error|null
     {
         \do_action_ref_array('wp_authenticate', [&$login, &$password]);
         $result = \wp_authenticate($login, $password);
         if ($result instanceof \WP_User) {
-            return $this->users->find((int) $result->ID) ?? ['authentication_failed', ''];
+            return $this->users->find((int) $result->ID);
         }
-        return $result instanceof \WP_Error
-            ? [(string) $result->get_error_code(), (string) $result->get_error_message()]
-            : ['authentication_failed', ''];
-    }
-
-    /** The sentence the sign-in page shows for a refusal, as plain text; null for the engine's own wording. */
-    public function refusal(string $code, string $message): ?string
-    {
-        if (in_array($code, self::DEFAULT_REFUSALS, true) || trim($message) === '') {
-            return null;
-        }
-        $shown = (string) \apply_filters('login_errors', $message);
-        return trim(html_entity_decode(strip_tags($shown), ENT_QUOTES | ENT_HTML5, 'UTF-8')) ?: null;
+        return $result instanceof \WP_Error ? $result : null;
     }
 
     /**
@@ -91,12 +74,13 @@ final readonly class LoginHooks
      * login_head, which prints the styles and scripts), the body classes
      * (login_body_class), the header's link and words (login_headerurl,
      * login_headertext), the message above the form (login_message), the
-     * fields inside it (login_form, lostpassword_form or resetpass_form, as
-     * the page is), and the footer (login_footer).
+     * page's notices (login_errors, login_messages), the fields inside the
+     * form (login_form, lostpassword_form or resetpass_form, as the page
+     * is), and the footer (login_footer).
      *
-     * @return array{title: string, head: string, bodyClass: string, headerUrl: string, headerText: string, message: string, form: string, footer: string}|array{}
+     * @return array{title: string, head: string, bodyClass: string, headerUrl: string, headerText: string, message: string, errors?: string, messages?: string, form: string, footer: string}|array{}
      */
-    public function page(string $action, string $title, string $siteName, string $homeUrl, ?UserRecord $user = null): array
+    public function page(string $action, string $title, string $siteName, string $homeUrl, ?UserRecord $user = null, ?LoginNotices $notices = null): array
     {
         if (!Runtime::booted()) {
             return [];
@@ -114,6 +98,9 @@ final readonly class LoginHooks
         $parts['headerUrl'] = (string) \apply_filters('login_headerurl', $homeUrl);
         $parts['headerText'] = (string) \apply_filters('login_headertext', $siteName);
         $parts['message'] = (string) \apply_filters('login_message', '');
+        if ($notices !== null) {
+            $parts += $notices->areas();
+        }
         $parts['form'] = match ($action) {
             'lostpassword', 'retrievepassword' => $printed('lostpassword_form'),
             'rp', 'resetpass' => $printed('resetpass_form', $user === null ? null : new \WP_User($user->id)),

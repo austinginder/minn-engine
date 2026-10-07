@@ -76,12 +76,15 @@ final readonly class LoginController
         switch ($this->action($request)) {
             case 'lostpassword':
             case 'retrievepassword':
-                $error = match ((string) $request->query('error', '')) {
-                    'invalidkey' => 'Your password reset link appears to be invalid. Please request a new link below.',
-                    'expiredkey' => 'Your password reset link has expired. Please request a new link below.',
+                $code = (string) $request->query('error', '');
+                $error = match ($code) {
+                    'invalidkey' => 'Error: Your password reset link appears to be invalid. Please request a new link below.',
+                    'expiredkey' => 'Error: Your password reset link has expired. Please request a new link below.',
                     default => '',
                 };
-                return Response::html(LoginForm::lostPassword($siteName, $this->actionUrl($request, 'lostpassword'), $error, '', $this->parts('lostpassword', 'Lost Password', $siteName)));
+                return Response::html(LoginForm::lostPassword($siteName, $this->actionUrl($request, 'lostpassword'), $error, '', $this->parts('lostpassword', 'Lost Password', $siteName, null, LoginNotices::plain($code, $error))));
+            case 'checkemail':
+                return Response::html(LoginForm::checkEmail($siteName, $this->permalinks->url($this->base($request)), $this->parts('checkemail', 'Check your email', $siteName, null, $this->signInNotices($request, $this->checkEmail($request)))));
             case 'rp':
                 return $this->openResetLink($request);
             case 'resetpass':
@@ -91,18 +94,38 @@ final readonly class LoginController
                 }
                 return Response::html(LoginForm::resetPassword($siteName, $this->actionUrl($request, 'resetpass'), $key, $user->login, '', $this->parts('resetpass', 'Reset Password', $siteName, $user)));
         }
-        $message = match ((string) $request->query('checkemail', '')) {
-            'confirm' => 'Check your email for the confirmation link, then visit the login page.',
-            'registered' => 'Registration complete. Please check your email, then visit the login page.',
-            default => '',
-        };
-        if ($request->query('registration') === 'disabled') {
-            $message = 'User registration is currently not allowed.';
+        // The page's own word, by the reference's codes: signed out, or registration closed.
+        $notices = LoginNotices::none();
+        if (!empty($request->query('loggedout'))) {
+            $notices = $notices->with('loggedout', 'You are now logged out.', 'message');
+        } elseif ($request->query('registration') === 'disabled') {
+            $notices = $notices->with('registerdisabled', '<strong>Error:</strong> User registration is currently not allowed.');
         }
         if ($request->query('password') === 'changed') {
-            $message = 'Your password has been changed.';
+            $notices = $notices->with('password_changed', 'Your password has been changed.', 'message');
         }
-        return Response::html($this->render($request, '', $message));
+        return Response::html($this->render($request, $notices));
+    }
+
+    /** The check-your-email page's word, as the reference's: the confirmation link is on its way, or the registration is done. */
+    private function checkEmail(Request $request): LoginNotices
+    {
+        $login = '<a href="' . Html::attr($this->permalinks->url($this->base($request))) . '">login page</a>';
+        return match ((string) $request->query('checkemail', '')) {
+            'confirm' => LoginNotices::none()->with('confirm', "Check your email for the confirmation link, then visit the {$login}.", 'message'),
+            'registered' => LoginNotices::none()->with('registered', "Registration complete. Please check your email, then visit the {$login}.", 'message'),
+            default => LoginNotices::none(),
+        };
+    }
+
+    /** A sign-in page's notices after wp_login_errors, handed where a sign-in would land (the admin, unless the page names a landing). */
+    private function signInNotices(Request $request, LoginNotices $notices): LoginNotices
+    {
+        if (!Runtime::booted()) {
+            return $notices;
+        }
+        $requested = (string) ($request->query('redirect_to') ?? $request->form['redirect_to'] ?? '');
+        return $notices->forSignIn($requested !== '' ? $requested : \admin_url());
     }
 
     /** POST lostpassword mints a key and mails the link; POST resetpass saves the new password. Null for other actions. */
@@ -161,8 +184,7 @@ final readonly class LoginController
         if (in_array($result->get_error_code(), ['invalidcombo', 'invalid_email'], true)) {
             $this->signIn->recordFailure($request->remoteAddress);
         }
-        $words = trim(html_entity_decode(strip_tags((string) $result->get_error_message()), ENT_QUOTES | ENT_HTML5, 'UTF-8'));
-        return Response::html(LoginForm::lostPassword($siteName, $this->actionUrl($request, 'lostpassword'), $words, '', $this->parts('lostpassword', 'Lost Password', $siteName)));
+        return Response::html(LoginForm::lostPassword($siteName, $this->actionUrl($request, 'lostpassword'), '', '', $this->parts('lostpassword', 'Lost Password', $siteName, null, LoginNotices::of($result))));
     }
 
     /**
@@ -221,9 +243,9 @@ final readonly class LoginController
             return Response::html(LoginForm::resetPassword($siteName, $action, $key, $user->login, 'Error: The password cannot be empty.'));
         }
         $mismatch = $pass1 !== $pass2 ? 'Error: The passwords do not match.' : '';
-        $refusal = Runtime::booted() ? $this->validateReset($user, $mismatch) : $mismatch;
-        if ($refusal !== '') {
-            return Response::html(LoginForm::resetPassword($siteName, $action, $key, $user->login, $refusal, $this->parts('resetpass', 'Reset Password', $siteName, $user)));
+        $refusal = Runtime::booted() ? $this->validateReset($user, $mismatch) : LoginNotices::plain('password_reset_mismatch', $mismatch);
+        if (!$refusal->isEmpty()) {
+            return Response::html(LoginForm::resetPassword($siteName, $action, $key, $user->login, '', $this->parts('resetpass', 'Reset Password', $siteName, $user, $refusal)));
         }
         if (Runtime::booted()) {
             \reset_password(new \WP_User($user->id), $pass1);
@@ -260,29 +282,32 @@ final readonly class LoginController
         if (!$result instanceof \WP_Error) {
             return Response::redirect($requested !== '' ? $this->safeRedirect($requested) : $this->permalinks->url($this->base($request) . '?checkemail=registered'), 302);
         }
-        $words = implode(' ', array_map(static fn ($m) => trim(html_entity_decode(strip_tags((string) $m), ENT_QUOTES | ENT_HTML5, 'UTF-8')), $result->get_error_messages()));
-        return Response::html(LoginForm::register($siteName, $action, $words, $login, $email, $requested, $this->parts('register', 'Registration Form', $siteName)));
+        return Response::html(LoginForm::register($siteName, $action, '', $login, $email, $requested, $this->parts('register', 'Registration Form', $siteName, null, LoginNotices::of($result))));
     }
 
     /**
      * A new password judged as the reference judges it: the mismatch, then
-     * whatever validate_password_reset adds; the first refusal as plain
-     * words, or ''.
+     * whatever validate_password_reset adds.
      */
-    private function validateReset(UserRecord $user, string $mismatch): string
+    private function validateReset(UserRecord $user, string $mismatch): LoginNotices
     {
         $errors = new \WP_Error();
         if ($mismatch !== '') {
             $errors->add('password_reset_mismatch', '<strong>Error:</strong> The passwords do not match.');
         }
         \do_action('validate_password_reset', $errors, new \WP_User($user->id));
-        return $errors->has_errors() ? trim(html_entity_decode(strip_tags((string) $errors->get_error_message()), ENT_QUOTES | ENT_HTML5, 'UTF-8')) : '';
+        return LoginNotices::of($errors);
     }
 
-    /** What plugins put on one of the sign-in pages (LoginHooks::page()), for a page titled $title. @return array<string, string> */
-    private function parts(string $action, string $title, string $siteName, ?UserRecord $user = null): array
+    /**
+     * What plugins put on one of the sign-in pages (LoginHooks::page()), for
+     * a page titled $title, with its notices printed; without plugins, the
+     * notices alone. @return array<string, string>
+     */
+    private function parts(string $action, string $title, string $siteName, ?UserRecord $user = null, ?LoginNotices $notices = null): array
     {
-        return (new LoginHooks($this->users))->page($action, Html::esc($title) . ' &lsaquo; ' . Html::esc($siteName), $siteName, $this->permalinks->url('/'), $user);
+        $parts = (new LoginHooks($this->users))->page($action, Html::esc($title) . ' &lsaquo; ' . Html::esc($siteName), $siteName, $this->permalinks->url('/'), $user, $notices);
+        return $parts === [] && $notices !== null ? $notices->areas() : $parts;
     }
 
     /**
@@ -351,8 +376,7 @@ final readonly class LoginController
         $user = $hooks->available() ? $hooks->authenticate($login, $password) : $this->authenticator->login($login, $password);
         if (!$user instanceof UserRecord) {
             $this->signIn->recordFailure($request->remoteAddress);
-            $refusal = is_array($user) ? $hooks->refusal(...$user) : null;
-            return Response::html($this->render($request, $refusal ?? 'Error: The username or password you entered is incorrect.'));
+            return Response::html($this->render($request, LoginNotices::refused($user)));
         }
         // Remember me extends the session from two days to fourteen and keeps
         // the cookie past the browser session; the failure counter is left to
@@ -426,7 +450,8 @@ final readonly class LoginController
             $action = self::SEGMENTS[$segment];
             return $action === 'rp' && $request->method === Method::Post ? 'resetpass' : $action;
         }
-        return (string) $request->query('action', '');
+        // A bare ?checkemail= is the check-your-email page, as on the reference.
+        return (string) $request->query('action', '') ?: ($request->has('checkemail') ? 'checkemail' : '');
     }
 
     /** An action's address on the page this request came in on: a path under the clean page, a query on wp-login.php. */
@@ -449,21 +474,22 @@ final readonly class LoginController
     private function tooManyAttempts(Request $request, int $wait): Response
     {
         $minutes = max(1, (int) ceil($wait / 60));
-        return Response::html($this->render($request, "Error: Too many failed sign-in attempts. Try again in {$minutes} minute" . ($minutes === 1 ? '' : 's') . '.'), 429)
+        return Response::html($this->render($request, LoginNotices::plain('too_many_attempts', "Error: Too many failed sign-in attempts. Try again in {$minutes} minute" . ($minutes === 1 ? '' : 's') . '.')), 429)
             ->withHeader('Retry-After', (string) $wait);
     }
 
-    private function render(Request $request, string $error, string $message = ''): string
+    /** The sign-in page, its notices through wp_login_errors first. */
+    private function render(Request $request, LoginNotices $notices): string
     {
         $siteName = (string) ($this->site->option('blogname') ?? 'Site');
         return LoginForm::render(
             $siteName,
             $this->permalinks->url($this->base($request)),
             (string) ($request->query('redirect_to') ?? ''),
-            $error,
-            $message,
+            '',
+            '',
             $this->actionUrl($request, 'lostpassword'),
-            (new LoginHooks($this->users))->page($this->action($request) ?: 'login', 'Log In &lsaquo; ' . Html::esc($siteName), $siteName, $this->permalinks->url('/')),
+            $this->parts($this->action($request) ?: 'login', 'Log In', $siteName, null, $this->signInNotices($request, $notices)),
         );
     }
 }

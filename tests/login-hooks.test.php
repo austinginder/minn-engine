@@ -7,7 +7,10 @@
  * opened; both stacks then answer the same requests. The page's markup is
  * each stack's own, so what is compared is what the plugin put where: its
  * title, head tag and style, body class, message, the field inside the
- * form, footer mark and header link; the login actions it heard; a
+ * form, footer mark and header link; the page's notices (signed out,
+ * registration closed, check your email) with the plugin's own error and
+ * message beside them, each in its area through the plugins' filters; the
+ * login actions and notice filters it heard; a
  * sign-in without its field refused in its words, one with it landing
  * where login_redirect says; a sign-out landing where logout_redirect
  * says; and the lost-password form's own field, a reset asked for
@@ -126,6 +129,23 @@ foreach (array_keys($pages['reference']) as $feature) {
     $same("the page: {$feature}", ['engine' => $pages['engine'][$feature], 'reference' => $pages['reference'][$feature]]);
 }
 $same('the page: the actions heard', $both($heard));
+
+// The page's own word with a plugin's error and message beside it (wp_login_errors), each in its area through login_errors and login_messages.
+$words = ['signed out' => ['loggedout=true', 'You are now logged out.'], 'registration closed' => ['registration=disabled', 'User registration is currently not allowed.'], 'check your email' => ['checkemail=confirm', 'Check your email for the confirmation link']];
+foreach ($words as $what => [$query, $own]) {
+    $shown = $both(static function (string $stack) use ($ask, $query, $own): array {
+        $html = $ask($stack, "/wp-login.php?{$query}&zz_notice=1")[2];
+        $at = static fn (string $needle): int => ($found = strpos($html, $needle)) === false ? -1 : $found;
+        return [
+            'own word' => $at($own) >= 0,
+            'plugin error, then its area\'s mark' => $at("Zz: an error of the plugin's own.") >= 0 && $at("Zz: an error of the plugin's own.") < $at('class="zz-errors"'),
+            'plugin message, then its area\'s mark' => $at("Zz: a message of the plugin's own.") >= 0 && $at("Zz: a message of the plugin's own.") < $at('class="zz-messages"'),
+            'the sign-in form' => str_contains($html, 'name="log"'),
+        ];
+    });
+    $same("the page, {$what}: the notices", $shown);
+    $same("the page, {$what}: the actions heard", $both($heard));
+}
 
 $refused = $both(static function (string $stack) use ($ask): array {
     [$status, , $body] = $ask($stack, '/wp-login.php', ['log' => 'login-hooks-reader', 'pwd' => 'whatever', 'testcookie' => '1']);

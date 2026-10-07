@@ -15,14 +15,13 @@ final class LoginForm
      * the header's link and words, a message above the form, fields inside
      * it, and the footer, each where the reference's page puts it.
      *
-     * @param array{title?: string, head?: string, bodyClass?: string, headerUrl?: string, headerText?: string, message?: string, form?: string, footer?: string} $parts
+     * @param array{title?: string, head?: string, bodyClass?: string, headerUrl?: string, headerText?: string, message?: string, errors?: string, messages?: string, form?: string, footer?: string} $parts
      */
     public static function render(string $siteName, string $action, string $redirectTo, string $error, string $message = '', string $lostPasswordUrl = '', array $parts = []): string
     {
         $site = Html::esc($siteName);
         $redirect = Html::esc($redirectTo);
-        $errorHtml = ($error === '' ? '' : '<div class="err">' . Html::esc($error) . '</div>')
-            . ($message === '' ? '' : '<div class="msg">' . Html::esc($message) . '</div>');
+        $errorHtml = self::notices($error, $message, $parts);
         $redirectField = $redirect === '' ? '' : '<input type="hidden" name="redirect_to" value="' . $redirect . '">';
         $header = isset($parts['headerUrl'])
             ? '<h1><a href="' . Html::attr($parts['headerUrl']) . '">' . Html::esc($parts['headerText'] ?? $siteName) . '</a></h1>'
@@ -155,18 +154,42 @@ final class LoginForm
             . '<p class="hint"><a href="' . Html::attr($loginUrl) . '">Log in</a></p></form>');
     }
 
-    /** @param array{title?: string, head?: string, bodyClass?: string, message?: string, footer?: string} $parts */
+    /**
+     * The check-your-email page: no form, only its word (in the message
+     * area) and the way back to sign in.
+     *
+     * @param array{title?: string, head?: string, bodyClass?: string, message?: string, errors?: string, messages?: string, footer?: string} $parts
+     */
+    public static function checkEmail(string $siteName, string $loginUrl, array $parts = []): string
+    {
+        return self::page($siteName, 'Check your email', '', '',
+            '<form><h1>' . Html::esc($siteName) . '</h1><p class="hint"><a href="' . Html::attr($loginUrl) . '">Log in</a></p></form>', $parts);
+    }
+
+    /**
+     * The error and message areas: the notices as printed (LoginNotices,
+     * through the plugins' filters) when the page has them, else the plain
+     * words.
+     *
+     * @param array{errors?: string, messages?: string} $parts
+     */
+    private static function notices(string $error, string $message, array $parts): string
+    {
+        $error = $parts['errors'] ?? ($error === '' ? '' : Html::esc($error));
+        $message = $parts['messages'] ?? ($message === '' ? '' : Html::esc($message));
+        return ($error === '' ? '' : '<div class="err">' . $error . '</div>') . ($message === '' ? '' : '<div class="msg">' . $message . '</div>');
+    }
+
+    /** @param array{title?: string, head?: string, bodyClass?: string, message?: string, errors?: string, messages?: string, footer?: string} $parts */
     private static function page(string $siteName, string $title, string $error, string $message, string $form, array $parts = []): string
     {
-        $errorHtml = $error === '' ? '' : '<div class="err">' . Html::esc($error) . '</div>';
-        $messageHtml = $message === '' ? '' : '<div class="msg">' . Html::esc($message) . '</div>';
         return '<!doctype html><html lang="en"><head><meta charset="utf-8">'
             . '<meta name="viewport" content="width=device-width, initial-scale=1">'
             . '<title>' . ($parts['title'] ?? Html::esc($title) . ' &lsaquo; ' . Html::esc($siteName)) . '</title>'
             . '<style>' . self::CSS . '</style>' . ($parts['head'] ?? '') . '</head>'
             . '<body' . (isset($parts['bodyClass']) ? ' class="' . Html::attr($parts['bodyClass']) . '"' : '') . '>'
             . ($parts['message'] ?? '')
-            . preg_replace('/<h1>(.*?)<\/h1>/', '<h1>$1</h1>' . $errorHtml . $messageHtml, $form, 1)
+            . preg_replace_callback('/<h1>(.*?)<\/h1>/', static fn (array $h1): string => $h1[0] . self::notices($error, $message, $parts), $form, 1)
             . ($parts['footer'] ?? '') . '</body></html>';
     }
 
@@ -193,5 +216,7 @@ final class LoginForm
                border-radius:8px; font-size:14px; font-weight:600; cursor:pointer; }
         .err { background:rgba(228,107,107,.12); border:1px solid rgba(228,107,107,.4); color:#e46b6b;
                padding:9px 11px; border-radius:8px; font-size:13px; margin-bottom:14px; }
+        .err p, .msg p { margin:0; } .err p + p, .msg p + p { margin-top:6px; }
+        .err ul { margin:0; padding-left:18px; } .err a, .msg a { color:inherit; }
         CSS;
 }

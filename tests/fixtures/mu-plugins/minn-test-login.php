@@ -13,7 +13,7 @@ if (preg_match('/^[a-z0-9-]{1,64}$/', $minnLoginRun) !== 1 || !is_file("{$minnLo
 $minnLoginHeard = static function (string $what) use ($minnLoginDir, $minnLoginRun): void {
     file_put_contents("{$minnLoginDir}/{$minnLoginRun}.log", $what . "\n", FILE_APPEND);
 };
-foreach (['login_init', 'login_form_login', 'login_form_logout', 'login_form_lostpassword', 'wp_login', 'wp_logout', 'wp_login_failed', 'lostpassword_post', 'retrieve_password', 'login_form_register', 'register_post', 'register_new_user'] as $minnLoginAction) {
+foreach (['login_init', 'login_form_login', 'login_form_logout', 'login_form_lostpassword', 'wp_login', 'wp_logout', 'wp_login_failed', 'lostpassword_post', 'retrieve_password', 'login_form_register', 'register_post', 'register_new_user', 'login_form_checkemail'] as $minnLoginAction) {
     add_action($minnLoginAction, static fn () => $minnLoginHeard($minnLoginAction));
 }
 add_action('login_enqueue_scripts', static function () use ($minnLoginHeard): void {
@@ -63,3 +63,20 @@ add_filter('registration_errors', static function ($errors) {
     return $errors;
 });
 add_filter('registration_redirect', static fn () => home_url('/zz-registered/'));
+// A notice plugin: the notices the page was handed (each code with its severity, and the landing), and, asked
+// for with zz_notice, its own error and message; its marks on the error and message areas as they print.
+add_filter('wp_login_errors', static function ($errors, $redirect) use ($minnLoginHeard) {
+    $codes = array_map(static fn ($code) => $code . '/' . ($errors->get_error_data($code)), $errors->get_error_codes());
+    $minnLoginHeard('wp_login_errors ' . implode(',', $codes) . ' ' . str_replace(home_url(), '{site}', (string) $redirect));
+    if (($_GET['zz_notice'] ?? '') === '1') {
+        $errors->add('zz_login_error', 'Zz: an error of the plugin\'s own.');
+        $errors->add('zz_login_notice', 'Zz: a message of the plugin\'s own.', 'message');
+    }
+    return $errors;
+}, 10, 2);
+foreach (['login_errors' => 'zz-errors', 'login_messages' => 'zz-messages'] as $minnLoginArea => $minnLoginMark) {
+    add_filter($minnLoginArea, static function ($html) use ($minnLoginHeard, $minnLoginArea, $minnLoginMark) {
+        $minnLoginHeard("{$minnLoginArea} " . preg_replace('#https?://[^/"]+#', '{site}', (string) $html));
+        return $html . '<span class="' . $minnLoginMark . '"></span>';
+    });
+}
