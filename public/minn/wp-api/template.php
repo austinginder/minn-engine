@@ -227,15 +227,12 @@ function add_thickbox()
     wp_enqueue_style('thickbox');
 }
 
+/** Inline code's element: the code trimmed between newlines, wp_inline_script_attributes asked, escaped as Minn\Support\ScriptTag says. */
 function wp_get_inline_script_tag($data, $attributes = [])
 {
-    $is_html5 = current_theme_supports('html5', 'script') || is_admin();
-    if (!isset($attributes['type']) && !$is_html5) {
-        $attributes = ['type' => 'text/javascript'] + $attributes;
-    }
+    $data = "\n" . trim((string) $data, "\n\r ") . "\n";
     $attributes = apply_filters('wp_inline_script_attributes', $attributes, $data);
-    $data = str_replace('</script>', '<\/script>', trim((string) $data, "\n\r "));
-    return sprintf("<script%s>\n%s\n</script>\n", wp_sanitize_script_attributes($attributes), $data);
+    return Minn\Support\ScriptTag::inline($data, (array) $attributes);
 }
 
 function wp_print_inline_script_tag($data, $attributes = [])
@@ -243,36 +240,23 @@ function wp_print_inline_script_tag($data, $attributes = [])
     echo wp_get_inline_script_tag($data, $attributes);
 }
 
+/** Attributes as markup, in their order: true printed bare, false left out, every value through esc_attr. */
 function wp_sanitize_script_attributes($attributes)
 {
-    $html5 = current_theme_supports('html5', 'script') || is_admin();
     $out = '';
-    $booleans = [];
-    $others = [];
     foreach ((array) $attributes as $name => $value) {
-        if (is_bool($value)) {
-            if ($value) {
-                $booleans[$name] = $name;
-            }
-        } else {
-            $others[$name] = $value;
-        }
-    }
-    foreach ($booleans as $name) {
-        $out .= ' ' . $name;
-    }
-    foreach ($others as $name => $value) {
-        if ($name === 'type' && $html5 && $value === 'text/javascript') {
+        if ($value === false) {
             continue;
         }
-        $out .= sprintf(' %1$s="%2$s"', esc_attr((string) $name), esc_attr((string) $value));
+        $out .= $value === true ? ' ' . esc_attr((string) $name) : sprintf(' %1$s="%2$s"', esc_attr((string) $name), esc_attr((string) $value));
     }
     return $out;
 }
 
+/** A script file's element, its attributes through wp_script_attributes first. */
 function wp_get_script_tag($attributes)
 {
-    return sprintf("<script%s></script>\n", wp_sanitize_script_attributes($attributes));
+    return Minn\Support\ScriptTag::element((array) apply_filters('wp_script_attributes', $attributes));
 }
 
 function wp_print_script_tag($attributes)
@@ -627,7 +611,7 @@ function wp_print_speculation_rules()
         ]],
         'eagerness' => 'conservative',
     ]]];
-    echo "<script type=\"speculationrules\">\n" . json_encode($rules, JSON_UNESCAPED_SLASHES) . "\n</script>\n";
+    wp_print_inline_script_tag((string) json_encode($rules, JSON_HEX_TAG | JSON_UNESCAPED_SLASHES), ['type' => 'speculationrules']);
 }
 
 /** @internal the reference's auto-sizes containment style, first in the queue */

@@ -42,13 +42,17 @@ class WP_Dependencies
             $this->registered[$handle] = $dep;
         }
         $this->queue = $this->assets->queue();
+        $this->done = $this->assets->doneList();
     }
 
-    /** Hands a queue a plugin edited in place back to the registry before printing. */
+    /** Hands a queue or a done list a plugin edited in place back to the registry before printing. */
     public function push(): void
     {
         if ($this->assets !== null && $this->queue !== $this->assets->queue()) {
             $this->assets->setQueue((array) $this->queue);
+        }
+        if ($this->assets !== null && $this->done !== $this->assets->doneList()) {
+            $this->assets->setDone((array) $this->done);
         }
     }
 

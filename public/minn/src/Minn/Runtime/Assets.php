@@ -180,6 +180,22 @@ final class Assets
         return false;
     }
 
+    /**
+     * The handles printed so far.
+     *
+     * @return list<string>
+     */
+    public function doneList(): array
+    {
+        return array_values(array_unique($this->done));
+    }
+
+    /** The printed handles as a plugin left them after editing the view directly. */
+    public function setDone(array $done): void
+    {
+        $this->done = array_values(array_map('strval', $done));
+    }
+
     /** Whether a handle has been printed. */
     public function done(string $handle): bool
     {

@@ -80,7 +80,7 @@ final class PostEmbed
             \esc_attr($secret),
         );
         $script = (string) file_get_contents(MINN_ENGINE_DIR . '/assets/wp-embed.min.js');
-        $output .= "<script>\n" . $script . "\n//# sourceURL=" . \includes_url('js/wp-embed.min.js') . "\n</script>\n";
+        $output .= \wp_get_inline_script_tag($script . "\n//# sourceURL=" . \includes_url('js/wp-embed.min.js'));
         return (string) \apply_filters('embed_html', $output, $post, $width, $height);
     }
 

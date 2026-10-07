@@ -168,7 +168,7 @@ final class ScriptModules
         if ($imports === []) {
             return '';
         }
-        return '<script id="wp-importmap" type="importmap">' . "\n" . json_encode(['imports' => $imports], JSON_HEX_TAG | JSON_HEX_AMP | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) . "\n" . '</script>' . "\n";
+        return \wp_get_inline_script_tag((string) json_encode(['imports' => $imports], JSON_HEX_TAG | JSON_HEX_AMP | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE), ['type' => 'importmap', 'id' => 'wp-importmap']);
     }
 
     /** The modulepreload links. */
@@ -208,7 +208,7 @@ final class ScriptModules
             if ($data === []) {
                 continue;
             }
-            $out .= '<script id="wp-script-module-data-' . $this->attr($id) . '" type="application/json">' . "\n" . json_encode($data, JSON_HEX_TAG | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) . "\n" . '</script>' . "\n";
+            $out .= \wp_get_inline_script_tag((string) json_encode($data, JSON_HEX_TAG | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE), ['type' => 'application/json', 'id' => 'wp-script-module-data-' . $id]);
         }
         return $out;
     }
@@ -238,16 +238,10 @@ final class ScriptModules
             if ($id === '@wordpress/a11y') {
                 $this->a11yAvailable = true;
             }
-            $attributes = $item['attributes'] + ['id' => $id . '-js-module', 'src' => $this->urlOf($id), 'type' => 'module'];
-            if ($item['fetchpriority'] !== 'auto') {
-                $attributes['fetchpriority'] = $item['fetchpriority'];
-            }
-            ksort($attributes);
-            $tag = '<script';
-            foreach ($attributes as $name => $value) {
-                $tag .= ' ' . $name . '="' . $this->attr($value) . '"';
-            }
-            $out .= $tag . '></script>' . "\n";
+            $attributes = ['type' => 'module', 'src' => $this->urlOf($id), 'id' => $id . '-js-module']
+                + ($item['fetchpriority'] !== 'auto' ? ['fetchpriority' => $item['fetchpriority']] : [])
+                + $item['attributes'];
+            $out .= \wp_get_script_tag($attributes);
         }
         return $out;
     }

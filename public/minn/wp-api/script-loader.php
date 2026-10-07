@@ -213,7 +213,7 @@ function _minn_script_translations_block(string $handle): ?string
         return null;
     }
     $id = $handle . '-js-translations';
-    return '<script id="' . esc_attr($id) . '">' . "\n" . ScriptTranslations::block($item['translations']['domain'], $json) . _minn_source_url($id) . "\n</script>\n";
+    return wp_get_inline_script_tag(ScriptTranslations::block($item['translations']['domain'], $json) . _minn_source_url($id), ['id' => $id]);
 }
 
 /** @internal prints the scripts of one group */
@@ -232,26 +232,33 @@ function _minn_print_script_list(array $list): array
         if ($item === null) {
             continue;
         }
-        if ($item['localized'] !== []) {
-            echo '<script id="' . esc_attr($handle) . '-js-extra">' . "\n" . implode("\n", $item['localized']) . _minn_source_url($handle . '-js-extra') . "\n</script>\n";
-        }
-        echo _minn_script_translations_block($handle) ?? '';
-        foreach ($item['inline']['before'] as $js) {
-            echo '<script id="' . esc_attr($handle) . '-js-before">' . "\n" . $js . _minn_source_url($handle . '-js-before') . "\n</script>\n";
-        }
+        // The blocks are built in the reference's order (before, after, translations, the localized data), printed in the page's.
+        $before = _minn_inline_script_block($handle, 'before', $item['inline']['before']);
+        $after = _minn_inline_script_block($handle, 'after', $item['inline']['after']);
+        $translations = _minn_script_translations_block($handle) ?? '';
+        echo $item['localized'] === [] ? '' : wp_get_inline_script_tag(implode("\n", $item['localized']) . _minn_source_url($handle . '-js-extra'), ['id' => $handle . '-js-extra']);
+        echo $translations . $before;
         if ($item['src'] !== false && $item['src'] !== '') {
             $src = apply_filters('script_loader_src', _minn_asset_url($item['src'], $item['ver']), $handle);
-            $strategy = $item['data']['strategy'] ?? '';
-            $attr = $strategy === 'defer' ? 'data-wp-strategy="defer" defer ' : ($strategy === 'async' ? 'async data-wp-strategy="async" ' : '');
-            $tag = '<script ' . $attr . 'id="' . esc_attr($handle) . '-js" src="' . esc_url($src) . '"></script>' . "\n";
-            echo apply_filters('script_loader_tag', $tag, $handle, $src);
+            $strategy = (string) ($item['data']['strategy'] ?? '');
+            $attributes = ['src' => $src, 'id' => $handle . '-js'] + (in_array($strategy, ['defer', 'async'], true) ? [$strategy => true, 'data-wp-strategy' => $strategy] : []);
+            echo apply_filters('script_loader_tag', wp_get_script_tag($attributes), $handle, $src);
         }
-        foreach ($item['inline']['after'] as $js) {
-            echo '<script id="' . esc_attr($handle) . '-js-after">' . "\n" . $js . _minn_source_url($handle . '-js-after') . "\n</script>\n";
-        }
+        echo $after;
         $assets->markDone($handle);
     }
     return $list;
+}
+
+/** @internal a script's inline code at one position as its one element (each piece trimmed, joined by lines), or '' when it has none */
+function _minn_inline_script_block(string $handle, string $position, array $code): string
+{
+    if ($code === []) {
+        return '';
+    }
+    $id = "{$handle}-js-{$position}";
+    $joined = implode("\n", array_map(static fn ($piece): string => trim((string) $piece, "\n\r "), $code));
+    return wp_get_inline_script_tag($joined . _minn_source_url($id), ['id' => $id]);
 }
 
 /** @internal the engine's own stylesheets, printed where a theme's would be */
