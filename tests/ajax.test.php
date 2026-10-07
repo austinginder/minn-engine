@@ -124,6 +124,17 @@ if (!is_array($mint) || empty($mint['cookie'])) {
         $r = $ask($REF, 'GET', $query, null, [$cookie]);
         $check("GET ?{$query}", $e['status'] === $r['status'] && $e['body'] === $r['body'], "engine {$e['status']} {$e['body']} | reference {$r['status']} {$r['body']}");
     }
+    // The heartbeat a signed-in page beats: its nonce checked (or refreshed), what plugins hear and add, the tick.
+    $beat = substr(trim($ask($REF, 'GET', 'action=minn_mint_heartbeat', null, [$cookie])['body']), 0, -1);
+    $check('the reference mints a heartbeat nonce for the session', preg_match('/^[0-9a-f]{10}$/', $beat) === 1, $beat);
+    $form = ['Content-Type: application/x-www-form-urlencoded', $cookie];
+    $mask = static fn (string $s): string => preg_replace('/"server_time":\d+/', '"server_time":0', $s);
+    foreach (['action=heartbeat', "action=heartbeat&_nonce={$beat}&screen_id=front&data[minn_test]=1", "action=heartbeat&_nonce={$beat}&screen_id=Edit-Post!", "action=heartbeat&_nonce={$beat}", 'action=heartbeat&_nonce=bad&screen_id=front&data[minn_test]=1', 'action=heartbeat&_nonce=bad', "action=heartbeat&_nonce={$beat}&data[wp-check-locked-posts][]=post-1"] as $body) {
+        $e = $ask($ENGINE, 'POST', '', $body, $form);
+        $r = $ask($REF, 'POST', '', $body, $form);
+        $same = $e['status'] === $r['status'] && ($e['headers']['x-minn-test'] ?? null) === ($r['headers']['x-minn-test'] ?? null) && $mask($e['body']) === $mask($r['body']);
+        $check('POST ' . str_replace($beat, '{nonce}', $body), $same, json_encode(['engine' => [$e['status'], $e['headers']['x-minn-test'] ?? null, $e['body']], 'reference' => [$r['status'], $r['headers']['x-minn-test'] ?? null, $r['body']]], JSON_UNESCAPED_SLASHES));
+    }
 }
 
 echo "admin-ajax.php, origins (engine)\n";

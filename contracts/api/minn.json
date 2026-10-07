@@ -100543,7 +100543,7 @@
             "namespace": "Minn\\Runtime",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Runtime/AjaxController.php",
-            "lines": 72,
+            "lines": 80,
             "doc": "admin-ajax.php, the endpoint plugins post their front-end work to: a form\nsubmitted without a reload, a spam check, a background job. The action a\nrequest names runs the handlers registered as wp_ajax_{action} for a\nsigned-in visitor and wp_ajax_nopriv_{action} for anyone else, answered as\nthe reference answers them (contracts/runtime.md \"admin-ajax.php\").\n\nIt is an admin request: is_admin() is true while the plugins load and\nadmin_init fires before the handler. A handler usually ends the request\nitself (wp_send_json, wp_die, exit), so the endpoint's headers go out\nbefore it runs; one that returns is followed by the reference's \"0\".",
             "implements": [],
             "extends": null,
@@ -100572,8 +100572,14 @@
                 },
                 {
                     "name": "CORE",
-                    "value": "array (   'wp_ajax_nopriv_' =>    array (     'heartbeat' => 'wp_ajax_nopriv_heartbeat',   ),   'wp_ajax_' =>    array (     'rest-nonce' => 'wp_ajax_rest_nonce',   ), )",
+                    "value": "array (   'wp_ajax_nopriv_' =>    array (     'heartbeat' => 'wp_ajax_nopriv_heartbeat',   ),   'wp_ajax_' =>    array (     'rest-nonce' => 'wp_ajax_rest_nonce',     'heartbeat' => 'wp_ajax_heartbeat',   ), )",
                     "doc": "The core actions the endpoint answers itself, under the prefix for who is asking: the action => the handler.",
+                    "visibility": "private"
+                },
+                {
+                    "name": "ADMIN_FILTERS",
+                    "value": "array (   0 =>    array (     0 => 'wp_refresh_nonces',     1 => 'wp_refresh_heartbeat_nonces',   ), )",
+                    "doc": "The filters the reference's admin includes add once plugins have loaded: the hook, the callback.",
                     "visibility": "private"
                 }
             ],
@@ -100596,8 +100602,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 37,
-                    "end": 40
+                    "line": 42,
+                    "end": 45
                 },
                 {
                     "routes": [
@@ -100618,8 +100624,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 44,
-                    "end": 71
+                    "line": 49,
+                    "end": 79
                 },
                 {
                     "routes": [],
@@ -100638,8 +100644,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 74,
-                    "end": 78
+                    "line": 82,
+                    "end": 86
                 },
                 {
                     "routes": [],
@@ -100650,8 +100656,8 @@
                     "doc": "The two cross-origin headers, for an Origin that is this site's own address; empty for any other.",
                     "shapes": [],
                     "params": [],
-                    "line": 81,
-                    "end": 88
+                    "line": 89,
+                    "end": 96
                 },
                 {
                     "routes": [],
@@ -100670,8 +100676,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 91,
-                    "end": 96
+                    "line": 99,
+                    "end": 104
                 }
             ]
         },
@@ -105364,6 +105370,48 @@
                     ],
                     "line": 106,
                     "end": 122
+                }
+            ]
+        },
+        {
+            "name": "Minn\\Runtime\\Heartbeat",
+            "short": "Heartbeat",
+            "namespace": "Minn\\Runtime",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Runtime/Heartbeat.php",
+            "lines": 30,
+            "doc": "The heartbeat a signed-in page beats through admin-ajax.php, answered as\nthe reference answers it (suite ajax): the heartbeat nonce checked, and\nwhen it is stale or wrong, wp_refresh_nonces asked for fresh ones (a\nwrong one ends the beat there, marked expired); otherwise what the page\nsent goes through heartbeat_received, the answer through heartbeat_send,\nand heartbeat_tick hears it before the server's time is added.",
+            "implements": [],
+            "extends": null,
+            "uses": [],
+            "usedBy": [],
+            "constructor": null,
+            "cases": [],
+            "constants": [],
+            "properties": [],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "answer",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "answer(array $post): array",
+                    "doc": "The answer for a beat, from the posted fields (unslashed).",
+                    "shapes": [
+                        "@param array<string, mixed> $post",
+                        "@return array<string, mixed>"
+                    ],
+                    "params": [
+                        {
+                            "name": "post",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 23,
+                    "end": 43
                 }
             ]
         },

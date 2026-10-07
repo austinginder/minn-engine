@@ -7,7 +7,7 @@ the WordPress runtime plugins load against
 | [`Abilities`](#abilities) | final class | 207 | The abilities registry behind the wp_*_ability facade, as the reference |
 | [`AbilityRun`](#abilityrun) | final class | 41 | Running an ability as the reference runs one (probe abilities-registry): |
 | [`AccountFlows`](#accountflows) | final class | 140 | The account functions a sign-in page and plugins call, with the |
-| [`AjaxController`](#ajaxcontroller) | final readonly class | 72 | admin-ajax.php, the endpoint plugins post their front-end work to: a form |
+| [`AjaxController`](#ajaxcontroller) | final readonly class | 80 | admin-ajax.php, the endpoint plugins post their front-end work to: a form |
 | [`AllowedOptions`](#allowedoptions) | final class | 26 | The settings-page allowlist plugins extend: option group => the option |
 | [`ApplicationPasswordEvents`](#applicationpasswordevents) | final class | 46 | Application password changes made over REST, as the reference makes them |
 | [`ApplicationPasswordSignIn`](#applicationpasswordsignin) | final class | 80 | wp_authenticate_application_password as the reference answers it (probe |
@@ -34,6 +34,7 @@ the WordPress runtime plugins load against
 | [`EarlyFilters`](#earlyfilters) | final class | 20 | Filters that run before the runtime exists, over the hooks added that |
 | [`FileTypeCheck`](#filetypecheck) | final class | 78 | A file's type from its content as much as its name, as the reference's |
 | [`FileUpload`](#fileupload) | final class | 105 | A file a plugin hands to wp_handle_upload or wp_handle_sideload, taken in |
+| [`Heartbeat`](#heartbeat) | final class | 30 | The heartbeat a signed-in page beats through admin-ajax.php, answered as |
 | [`Hooks`](#hooks) | final class | 330 | The hook registry plugin code registers into and the engine fires. |
 | [`Interactivity`](#interactivity) | final class | 509 | Server-side directive processing for the Interactivity API: the state and |
 | [`MainQuery`](#mainquery) | final class | 34 | The query variables the reference's main query would carry for a URL the |
@@ -272,7 +273,8 @@ itself (wp_send_json, wp_die, exit), so the endpoint's headers go out
 before it runs; one that returns is followed by the reference's "0".
 
 - const `PATH` = `'/wp-admin/admin-ajax.php'`
-- const `CORE` = `array (   'wp_ajax_nopriv_' =>    array (     'heartbeat' => 'wp_ajax_nopriv_heartbeat',   ),   'wp_ajax_' =>    array (     'rest-nonce' => 'wp_ajax_rest_nonce',   ), )` — The core actions the endpoint answers itself, under the prefix for who is asking: the action => the handler.
+- const `CORE` = `array (   'wp_ajax_nopriv_' =>    array (     'heartbeat' => 'wp_ajax_nopriv_heartbeat',   ),   'wp_ajax_' =>    array (     'rest-nonce' => 'wp_ajax_rest_nonce',     'heartbeat' => 'wp_ajax_heartbeat',   ), )` — The core actions the endpoint answers itself, under the prefix for who is asking: the action => the handler.
+- const `ADMIN_FILTERS` = `array (   0 =>    array (     0 => 'wp_refresh_nonces',     1 => 'wp_refresh_heartbeat_nonces',   ), )` — The filters the reference's admin includes add once plugins have loaded: the hook, the callback.
 
 Used by: `Minn\Engine`, `Minn\Runtime\Constants`
 
@@ -286,7 +288,7 @@ Route: `* /wp-admin/admin-ajax.php (public)`
 
 Runs the handlers registered for the action the request names.
 
-Internals: `action()` (private, line 74), `allowedOrigin()` (private, line 81), `registerCore()` (private, line 91)
+Internals: `action()` (private, line 82), `allowedOrigin()` (private, line 89), `registerCore()` (private, line 99)
 
 
 ## AllowedOptions
@@ -1282,6 +1284,25 @@ The stored file (file, url, type) or ['error' => message].
 - `@return array<string, mixed>`
 
 Internals: `refusal()` (private, line 76), `move()` (private, line 106)
+
+
+## Heartbeat
+
+`final class Minn\Runtime\Heartbeat` · `public/minn/src/Minn/Runtime/Heartbeat.php`
+
+The heartbeat a signed-in page beats through admin-ajax.php, answered as
+the reference answers it (suite ajax): the heartbeat nonce checked, and
+when it is stale or wrong, wp_refresh_nonces asked for fresh ones (a
+wrong one ends the beat there, marked expired); otherwise what the page
+sent goes through heartbeat_received, the answer through heartbeat_send,
+and heartbeat_tick hears it before the server's time is added.
+
+### static `answer(array $post): array`
+
+The answer for a beat, from the posted fields (unslashed).
+
+- `@param array<string, mixed> $post`
+- `@return array<string, mixed>`
 
 
 ## Hooks

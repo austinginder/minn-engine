@@ -20,6 +20,23 @@ function wp_ajax_nopriv_heartbeat()
     wp_send_json($response);
 }
 
+/** The heartbeat of a signed-in page: refused without its nonce, otherwise answered as Minn\Runtime\Heartbeat describes. */
+function wp_ajax_heartbeat()
+{
+    if (empty($_POST['_nonce'])) {
+        wp_send_json_error();
+    }
+    wp_send_json(Minn\Runtime\Heartbeat::answer((array) wp_unslash($_POST)));
+}
+
+/** Fresh REST and heartbeat nonces, for a page whose heartbeat nonce has gone stale. */
+function wp_refresh_heartbeat_nonces($response)
+{
+    $response['rest_nonce'] = wp_create_nonce('wp_rest');
+    $response['heartbeat_nonce'] = wp_create_nonce('heartbeat-nonce');
+    return $response;
+}
+
 /** A fresh nonce for the REST API, for the signed-in visitor whose page asked. */
 function wp_ajax_rest_nonce()
 {

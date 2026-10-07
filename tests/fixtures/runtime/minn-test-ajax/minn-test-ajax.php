@@ -140,3 +140,26 @@ add_action('wp_login_failed', static function ($login, $error = null): void {
 add_action('wp_authenticate', static function ($login): void {
     update_option('minn_test_ajax_authenticate', (string) $login, false);
 });
+
+// A plugin on the signed-in heartbeat: a nonce for it, what it is handed and
+// what it adds (only for the suite's own data key), and the tick it hears.
+add_action('wp_ajax_minn_mint_heartbeat', static function (): void {
+    echo wp_create_nonce('heartbeat-nonce');
+});
+add_filter('heartbeat_received', static function ($response, $data, $screen) {
+    if (isset($data['minn_test'])) {
+        $response['minn_received'] = [$data['minn_test'], $screen, array_keys($response)];
+    }
+    return $response;
+}, 10, 3);
+add_filter('heartbeat_send', static function ($response, $screen) {
+    $response['minn_send'] = [$screen, array_keys($response)];
+    return $response;
+}, 10, 2);
+add_action('heartbeat_tick', static function ($response, $screen): void {
+    header('X-Minn-Test: tick ' . $screen . ' ' . implode(',', array_keys($response)));
+}, 10, 2);
+add_filter('wp_refresh_nonces', static function ($response, $data, $screen) {
+    $response['minn_refresh'] = [$screen, array_keys($response), isset($data['minn_test'])];
+    return $response;
+}, 10, 3);

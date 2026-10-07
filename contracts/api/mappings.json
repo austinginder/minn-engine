@@ -2,12 +2,12 @@
     "generated": "2026-10-07",
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line)",
     "summary": {
-        "minn": 653,
-        "composes": 957,
+        "minn": 654,
+        "composes": 958,
         "leaf": 655,
         "noop": 1883,
-        "functions": 4078,
-        "minnMethods": 718,
+        "functions": 4080,
+        "minnMethods": 719,
         "leafLinesOver15": 12
     },
     "functions": {
@@ -30178,6 +30178,19 @@
                 "get_post"
             ]
         },
+        "wp_ajax_heartbeat": {
+            "file": "ajax-actions.php",
+            "lines": 4,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Runtime\\Heartbeat::answer"
+            ],
+            "composes": [
+                "wp_send_json",
+                "wp_send_json_error",
+                "wp_unslash"
+            ]
+        },
         "wp_ajax_nopriv_heartbeat": {
             "file": "ajax-actions.php",
             "lines": 10,
@@ -34625,6 +34638,15 @@
                 "_minn_request_uri",
                 "esc_attr",
                 "wp_unslash"
+            ]
+        },
+        "wp_refresh_heartbeat_nonces": {
+            "file": "ajax-actions.php",
+            "lines": 3,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "wp_create_nonce"
             ]
         },
         "wp_register": {

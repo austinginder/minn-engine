@@ -30,7 +30,12 @@ final readonly class AjaxController
     /** The core actions the endpoint answers itself, under the prefix for who is asking: the action => the handler. */
     private const CORE = [
         'wp_ajax_nopriv_' => ['heartbeat' => 'wp_ajax_nopriv_heartbeat'],
-        'wp_ajax_' => ['rest-nonce' => 'wp_ajax_rest_nonce'],
+        'wp_ajax_' => ['rest-nonce' => 'wp_ajax_rest_nonce', 'heartbeat' => 'wp_ajax_heartbeat'],
+    ];
+
+    /** The filters the reference's admin includes add once plugins have loaded: the hook, the callback. */
+    private const ADMIN_FILTERS = [
+        ['wp_refresh_nonces', 'wp_refresh_heartbeat_nonces'],
     ];
 
     /** Whether a request is for the endpoint, which the runtime boots as an admin request. */
@@ -60,6 +65,9 @@ final readonly class AjaxController
         // From here a callback may end the request itself, so what the
         // endpoint says about the response is said before any of them runs.
         (new Response(200, $headers + ['X-Content-Type-Options' => 'nosniff']))->sendHead();
+        foreach (self::ADMIN_FILTERS as [$hook, $callback]) {
+            \add_filter($hook, $callback);
+        }
         $output = Runtime::capture('admin_init');
         $prefix = \is_user_logged_in() ? 'wp_ajax_' : 'wp_ajax_nopriv_';
         $this->registerCore($prefix);
