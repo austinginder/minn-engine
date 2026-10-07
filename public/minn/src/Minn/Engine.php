@@ -188,7 +188,7 @@ final readonly class Engine
         if ($route !== null) {
             $api = Api::forRequest($db, $request);
             $this->bootRuntimeForRest($context, $api, '/' . ltrim($route, '/'));
-            return $api->handle($route);
+            return $api->withDiscovery($api->handle($route));
         }
 
         $users = new Users($db);

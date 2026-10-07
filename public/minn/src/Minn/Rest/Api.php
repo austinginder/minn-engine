@@ -207,6 +207,13 @@ final readonly class Api
         }
     }
 
+    /** A REST answer as it leaves over HTTP: pointing at the API's root, unless it carries a Link header of its own (a batch's parts do not). */
+    public function withDiscovery(Response $response): Response
+    {
+        $links = array_change_key_case($response->headers);
+        return isset($links['link']) ? $response : $response->withHeader('Link', '<' . $this->services->url()->to('/') . '>; rel="https://api.w.org/"');
+    }
+
     /**
      * The engine's own answer to a route, or null when no engine route
      * takes it; the runtime's table is never consulted. This is what the
@@ -234,7 +241,32 @@ final readonly class Api
             return $this->options($request);
         }
         $response = $this->router->dispatch($request);
-        return $response === null ? null : $this->embed->decorate($request, $response);
+        return $response === null ? null : $this->withPageLinks($request, $this->embed->decorate($request, $response));
+    }
+
+    /**
+     * A collection's Link header as the reference sends it: the previous page
+     * (no further than the last) and the next, each the collection's URL
+     * with the request's own parameters and the page swapped in.
+     */
+    private function withPageLinks(Request $request, Response $response): Response
+    {
+        $pages = $response->headers['X-WP-TotalPages'] ?? null;
+        if ($pages === null || $response->status !== 200 || !in_array($request->method, [Method::Get, Method::Head], true) || !Runtime::booted()) {
+            return $response;
+        }
+        $pages = (int) $pages;
+        $page = max(1, (int) ($request->query['page'] ?? 1));
+        // The parameters as the request object holds them (in process, as the caller set them).
+        $base = \add_query_arg(\urlencode_deep(RuntimeRoutes::wpRequest($request)->get_query_params()), $this->services->url()->to($request->path));
+        $links = [];
+        if ($page > 1) {
+            $links[] = '<' . \add_query_arg('page', min($page - 1, $pages), $base) . '>; rel="prev"';
+        }
+        if ($pages > $page) {
+            $links[] = '<' . \add_query_arg('page', $page + 1, $base) . '>; rel="next"';
+        }
+        return $links === [] ? $response : $response->withHeader('Link', implode(', ', $links));
     }
 
     /**

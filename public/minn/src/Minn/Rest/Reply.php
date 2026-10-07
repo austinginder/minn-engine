@@ -37,6 +37,12 @@ final class Reply
         return new Response($status, self::HEADERS, (string) json_encode($data));
     }
 
+    /** A post's answer pointing at its page on the site, as a viewable type's single item does. */
+    public static function alternate(Response $response, string $permalink): Response
+    {
+        return $response->withHeader('Link', '<' . $permalink . '>; rel="alternate"; type=text/html');
+    }
+
     /**
      * A list response with the total and page-count headers.
      *

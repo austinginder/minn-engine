@@ -5,7 +5,7 @@ the wp/v2 surface: shapes and controllers
 | Class | Kind | Lines | Summary |
 |---|---|---|---|
 | [`AbilitiesController`](#abilitiescontroller) | final readonly class | 150 | wp-abilities/v1: what this site can be asked to do, and the doing of it. |
-| [`Api`](#api) | final readonly class | 229 | The REST API: wires the controllers for one request and dispatches a |
+| [`Api`](#api) | final readonly class | 261 | The REST API: wires the controllers for one request and dispatches a |
 | [`ApplicationPasswordsController`](#applicationpasswordscontroller) | final readonly class | 170 | wp/v2/users/{id}/application-passwords: list, create, rename, delete, |
 | [`ArgCheck`](#argcheck) | final readonly class | 83 | Judges a route's declared arguments against the request before the |
 | [`BatchController`](#batchcontroller) | final readonly class | 159 | batch/v1 as the reference answers it (probe rest-batch): up to 25 |
@@ -43,13 +43,13 @@ the wp/v2 surface: shapes and controllers
 | [`PostCollectionParams`](#postcollectionparams) | final class | 167 | A post type's collection parameters as the reference builds them for its |
 | [`PostListArgs`](#postlistargs) | final class | 152 | The WP_Query arguments a post list request makes, as the reference makes |
 | [`PostObject`](#postobject) | final readonly class | 530 | Builds the wp/v2 post and page objects in the reference's shape: the |
-| [`PostsController`](#postscontroller) | final readonly class | 186 | wp/v2 posts and pages, read side. |
+| [`PostsController`](#postscontroller) | final readonly class | 195 | wp/v2 posts and pages, read side. |
 | [`PostsWriteController`](#postswritecontroller) | final readonly class | 459 | wp/v2 posts and pages, write side: create, update, trash, and force |
 | [`RegisteredFields`](#registeredfields) | final class | 105 | The fields plugin code adds to an object type with register_rest_field, |
 | [`RegisteredPostFields`](#registeredpostfields) | final readonly class | 89 | The REST object of a post whose type plugin code registered (probe rest-plugin-types), built by what the type supports. |
 | [`RegisteredType`](#registeredtype) | final readonly class | 46 | A post type plugin code registered, as its REST object follows it |
 | [`RenderedFields`](#renderedfields) | final class | 65 | A post's rendered title, content and excerpt as a REST response carries |
-| [`Reply`](#reply) | final class | 47 | JSON responses in the reference's shape: its header set, its json_encode |
+| [`Reply`](#reply) | final class | 53 | JSON responses in the reference's shape: its header set, its json_encode |
 | [`RestMeta`](#restmeta) | final class | 238 | An object's meta field over REST, from the keys registered to show |
 | [`RestUrl`](#resturl) | final readonly class | 38 | REST URLs in the form the reference emits for the site's permalink mode: |
 | [`RevisionsController`](#revisionscontroller) | final readonly class | 142 | wp/v2 revisions and autosaves under posts, pages, and blocks. |
@@ -200,6 +200,10 @@ leaves the caller as the request itself resolves it.
 
 Resolves a REST route (from the path or from ?rest_route=) to a response.
 
+### `withDiscovery(Minn\Http\Response $response): Minn\Http\Response`
+
+A REST answer as it leaves over HTTP: pointing at the API's root, unless it carries a Link header of its own (a batch's parts do not).
+
 ### `handleEngineOnly(string $route, ?WP_REST_Request $as = NULL): ?Minn\Http\Response`
 
 The engine's own answer to a route, or null when no engine route
@@ -208,7 +212,7 @@ runtime's server calls for a core route, so a route the engine
 declines cannot bounce between the two. $as is the caller's own
 request object, which the route's parameters are set on.
 
-Internals: `controllers()` (private, line 73), `engineResponse()` (private, line 231), `options()` (private, line 247), `withAllow()` (private, line 260)
+Internals: `controllers()` (private, line 73), `engineResponse()` (private, line 238), `withPageLinks()` (private, line 252), `options()` (private, line 279), `withAllow()` (private, line 292)
 
 
 ## ApplicationPasswordsController
@@ -1788,7 +1792,7 @@ Internals: `meta()` (private, line 76), `navigationView()` (private, line 87), `
 
 wp/v2 posts and pages, read side.
 
-Used by: `Minn\Rest\Api`, `Minn\Rest\BlocksController`, `Minn\Rest\DeclaredPostsController`, `Minn\Rest\NavigationController`
+Used by: `Minn\Rest\Api`, `Minn\Rest\BlocksController`, `Minn\Rest\DeclaredPostsController`, `Minn\Rest\MediaController`, `Minn\Rest\NavigationController`
 
 ```php
 __construct(Minn\Db $db, Minn\Content\Posts $posts, Minn\Rest\PostObject $object, Minn\Rest\Caller $caller)
@@ -1823,7 +1827,11 @@ One post or page.
 
 One post of any type, with the reference's read rules.
 
-Internals: `sanitized()` (private, line 86), `totals()` (private, line 104), `readable()` (private, line 123), `visibleStatuses()` (private, line 146)
+### static `withAlternate(Minn\Http\Response $response, Minn\Content\PostRecord $post): Minn\Http\Response`
+
+A viewable type's single post points at its page on the site.
+
+Internals: `sanitized()` (private, line 87), `totals()` (private, line 105), `readable()` (private, line 124), `visibleStatuses()` (private, line 147)
 
 
 ## PostsWriteController
@@ -2053,6 +2061,10 @@ One item, shaped by the request's own _fields: what nearly every handler ends wi
 ### static `item(mixed $data, ?Minn\Rest\Fields $fields, int $status = 200): Minn\Http\Response`
 
 One object as a response, the selected fields applied.
+
+### static `alternate(Minn\Http\Response $response, string $permalink): Minn\Http\Response`
+
+A post's answer pointing at its page on the site, as a viewable type's single item does.
 
 ### static `list(array $rows, int $total, int $totalPages, ?Minn\Rest\Fields $fields): Minn\Http\Response`
 

@@ -108,5 +108,32 @@ parity( 'types single wp_navigation', '/wp/v2/types/wp_navigation' );
 parity( 'types invalid', '/wp/v2/types/bogus' );
 parity( 'types _fields quirk strips to []', '/wp/v2/types&_fields=name,slug' );
 
+// The Link header: a collection's previous and next pages, a viewable post's page on the
+// site, and the API root on everything else, with the reference's origin read as the engine's.
+function link_parity( string $label, string $path ): void {
+	global $ENGINE, $REF, $pass, $fail;
+	[ $rh ] = minn_test_fetch( $REF . $path );
+	[ $eh ] = minn_test_fetch( $ENGINE . $path );
+	$want = str_replace( $REF, $ENGINE, (string) ( $rh['link'] ?? '' ) );
+	$got  = (string) ( $eh['link'] ?? '' );
+	if ( $want === $got ) {
+		$pass++;
+		echo "  ok   link: $label\n";
+	} else {
+		$fail++;
+		echo "  FAIL link: $label ($want vs $got)\n";
+	}
+}
+link_parity( 'posts, a middle page', '/wp-json/wp/v2/posts?per_page=2&page=2' );
+link_parity( 'posts by rest_route, a middle page', '/?rest_route=/wp/v2/posts&per_page=2&page=2' );
+link_parity( 'users, the first page', '/wp-json/wp/v2/users?per_page=1' );
+link_parity( 'comments, a last page', '/wp-json/wp/v2/comments?per_page=1&page=2' );
+link_parity( 'categories, one page', '/wp-json/wp/v2/categories?per_page=1' );
+link_parity( 'a post', '/wp-json/wp/v2/posts/1' );
+link_parity( 'a page', '/wp-json/wp/v2/pages/2' );
+link_parity( 'the index', '/wp-json/' );
+link_parity( 'no such route', '/wp-json/wp/v2/nope' );
+link_parity( 'a refusal', '/wp-json/wp/v2/settings' );
+
 echo "\n$pass passed, $fail failed\n";
 exit( $fail > 0 ? 1 : 0 );

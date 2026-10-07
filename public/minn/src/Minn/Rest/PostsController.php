@@ -17,6 +17,7 @@ use Minn\Http\Request;
 use Minn\Http\Response;
 use Minn\Http\Route;
 use Minn\RestError;
+use Minn\Runtime\Runtime;
 
 /** wp/v2 posts and pages, read side. */
 final readonly class PostsController
@@ -196,12 +197,21 @@ final readonly class PostsController
             if (!$this->caller->can('edit_post', $postId)) {
                 throw $this->caller->refuse('rest_forbidden_context', 'Sorry, you are not allowed to edit this post.');
             }
-            return Reply::item($this->object->edit($row, $this->caller->id()), $fields);
+            return self::withAlternate(Reply::item($this->object->edit($row, $this->caller->id()), $fields), $row);
         }
         // A non-published post is visible only to a reader who can edit it.
-        if ($row['post_status'] !== 'publish' && !$this->caller->can('read_post', $postId)) {
+        if ($row->status !== 'publish' && !$this->caller->can('read_post', $postId)) {
             throw $this->caller->refuse('rest_forbidden', 'Sorry, you are not allowed to do that.');
         }
-        return Reply::item($this->object->view($row), $fields);
+        return self::withAlternate(Reply::item($this->object->view($row), $fields), $row);
+    }
+
+    /** A viewable type's single post points at its page on the site. */
+    public static function withAlternate(Response $response, PostRecord $post): Response
+    {
+        if (!Runtime::booted() || !\is_post_type_viewable($post->type)) {
+            return $response;
+        }
+        return Reply::alternate($response, (string) \get_permalink($post->id));
     }
 }

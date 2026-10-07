@@ -124,6 +124,7 @@ $send = static function (string $route, array $query = [], string $method = 'GET
         'ids' => is_array($data) && array_is_list($data) ? array_map(static fn ($item) => $item['id'] ?? $item, $data) : ($data['code'] ?? $data),
         'total' => [$headers['X-WP-Total'] ?? null, $headers['X-WP-TotalPages'] ?? null],
         'ignore sticky' => $sticky,
+        'link' => $headers['Link'] ?? null,
     ]);
 };
 
@@ -160,7 +161,7 @@ $cases = [
     'by id' => ['orderby' => 'id', 'order' => 'asc'],
     'by slug order' => ['orderby' => 'slug'],
     'by modified' => ['orderby' => 'modified'],
-    'by parent' => ['orderby' => 'parent'],
+    'by parent' => ['orderby' => 'parent', 'include' => [$ids['one'], $ids['child']]],
     'by menu order' => ['orderby' => 'menu_order', 'order' => 'asc'],
     'children of one' => ['parent' => [$ids['one']]],
     'top level only' => ['parent' => [0]],

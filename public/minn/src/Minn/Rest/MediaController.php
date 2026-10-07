@@ -118,7 +118,7 @@ final readonly class MediaController
         if ($edit && !$this->caller->can('edit_post', (int) $id)) {
             throw $this->caller->refuse('rest_forbidden_context', 'Sorry, you are not allowed to edit this post.');
         }
-        return Reply::item($this->object->build($attachment, $context), Fields::fromQuery($request->query));
+        return PostsController::withAlternate(Reply::item($this->object->build($attachment, $context), Fields::fromQuery($request->query)), $attachment);
     }
 
     /** Uploads a file and creates its attachment. */
