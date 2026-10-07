@@ -7,7 +7,7 @@
         "leaf": 660,
         "noop": 1952,
         "functions": 4179,
-        "minnMethods": 763,
+        "minnMethods": 762,
         "leafLinesOver15": 13
     },
     "functions": {
@@ -27153,7 +27153,7 @@
             "lines": 7,
             "kind": "minn",
             "minn": [
-                "Minn\\Auth\\PortableHash::check",
+                "Minn\\Auth\\PortableHash::verify",
                 "Minn\\Runtime\\Runtime::current",
                 "Minn\\Runtime\\Runtime::reader->postPassword"
             ],

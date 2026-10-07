@@ -260,7 +260,7 @@ function post_password_required($post = null)
         return apply_filters('post_password_required', false, $post);
     }
     $cookie = Runtime::current()->reader->postPassword;
-    $required = $cookie === '' || !Minn\Auth\PortableHash::check($post->post_password, $cookie);
+    $required = $cookie === '' || !Minn\Auth\PortableHash::verify($post->post_password, $cookie);
     return apply_filters('post_password_required', $required, $post);
 }
 
