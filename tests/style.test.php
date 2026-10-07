@@ -242,6 +242,62 @@ $check("engine: bracket reads of comment columns stay at or under {$commentBrack
 $check("engine: methods over eighty lines stay at or under {$longMethodCeiling}", count($longMethods) <= $longMethodCeiling, count($longMethods) . ': ' . implode(', ', $longMethods));
 $check("engine: classes over six hundred lines stay at or under {$bigClassCeiling}", count($bigClasses) <= $bigClassCeiling, count($bigClasses) . ': ' . implode(', ', $bigClasses));
 
+// One path, not two. Every request boots the runtime, so a branch on
+// Runtime::booted() keeps a second way of doing the job that no request
+// takes: when the WordPress-shaped path lands, the engine's own goes, it
+// does not wait beside it. And src/Minn speaks to plugins through hooks,
+// which it may fire, but does its work in Minn classes: each call into a
+// WordPress-named function (the hook API aside) is the facade reached from
+// underneath. Both counts only fall; lower a ceiling when you remove some,
+// never raise one.
+$bootedCeiling = 160;
+$wordpressCallCeiling = 1406;
+$apiNames = json_decode((string) file_get_contents(dirname(__DIR__) . '/public/minn/data/api-names.json'), true);
+$wordpressFunctions = array_fill_keys(array_map('strtolower', (array) ($apiNames['functions'] ?? [])), true);
+$hookApi = ['apply_filters' => true, 'apply_filters_ref_array' => true, 'apply_filters_deprecated' => true, 'do_action' => true, 'do_action_ref_array' => true, 'do_action_deprecated' => true];
+$booted = 0;
+$wordpressCalls = 0;
+$callersByFile = [];
+foreach (new RecursiveIteratorIterator(new RecursiveDirectoryIterator($root, FilesystemIterator::SKIP_DOTS)) as $file) {
+    if ($file->getExtension() !== 'php') {
+        continue;
+    }
+    $tokens = token_get_all((string) file_get_contents($file->getPathname()));
+    $count = count($tokens);
+    foreach ($tokens as $i => $token) {
+        if (!is_array($token) || !in_array($token[0], [T_STRING, T_NAME_FULLY_QUALIFIED], true)) {
+            continue;
+        }
+        $name = strtolower(ltrim($token[1], '\\'));
+        $previous = $i - 1;
+        while ($previous >= 0 && is_array($tokens[$previous]) && $tokens[$previous][0] === T_WHITESPACE) {
+            $previous--;
+        }
+        $before = $previous >= 0 ? $tokens[$previous] : null;
+        $next = $i + 1;
+        while ($next < $count && is_array($tokens[$next]) && $tokens[$next][0] === T_WHITESPACE) {
+            $next++;
+        }
+        if (($tokens[$next] ?? null) !== '(') {
+            continue;
+        }
+        if ($name === 'booted' && is_array($before) && $before[0] === T_DOUBLE_COLON) {
+            $booted++;
+            continue;
+        }
+        if (is_array($before) && in_array($before[0], [T_OBJECT_OPERATOR, T_NULLSAFE_OBJECT_OPERATOR, T_DOUBLE_COLON, T_FUNCTION, T_NEW], true)) {
+            continue;
+        }
+        if (isset($wordpressFunctions[$name]) && !isset($hookApi[$name])) {
+            $wordpressCalls++;
+            $callersByFile[basename($file->getPathname(), '.php')] = ($callersByFile[basename($file->getPathname(), '.php')] ?? 0) + 1;
+        }
+    }
+}
+arsort($callersByFile);
+$check("engine: Runtime::booted() branches stay at or under {$bootedCeiling}", $booted <= $bootedCeiling, (string) $booted);
+$check("engine: calls into WordPress-named functions (the hook API aside) stay at or under {$wordpressCallCeiling}", $wordpressCalls <= $wordpressCallCeiling, $wordpressCalls . ', most in ' . implode(', ', array_map(static fn ($file, $n) => "{$file} {$n}", array_keys(array_slice($callersByFile, 0, 5, true)), array_slice($callersByFile, 0, 5, true))));
+
 // The API docs are generated from the classes (tests/tools/api-docs.php) and
 // must be current: an agent or a person reading docs/api/ is reading the code.
 $docs = json_decode((string) shell_exec('php ' . escapeshellarg(dirname(__DIR__) . '/tests/tools/api-docs.php') . ' --check 2>/dev/null'), true);

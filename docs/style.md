@@ -56,6 +56,17 @@ prose, is the rule.
   others' once the record is loaded, publish, author reassignment), asked of the
   caller once and clearly. A route with no policy is counted by the style suite's
   ratchet, and that count only falls.
+- **One path, not two.** Every request boots the WordPress runtime, so a branch on
+  `Runtime::booted()` keeps a second way of doing a job that no request takes. When a
+  WordPress-shaped path lands, the engine's own path for the same job goes in the same
+  change; it does not wait beside it. The style suite counts the branches, and that
+  count only falls.
+- **The engine does its work in Minn classes.** `src/Minn` tells plugins what happened
+  through hooks, which it may fire, but it does not call the facade's WordPress
+  functions to get its work done: that is the facade reached from underneath. Behaviour
+  plugins filter takes the filter as a closure (`docs/writing-minn.md`). The style suite
+  counts calls from `src/Minn` into WordPress-named functions, the hook API aside, and
+  that count only falls.
 
 ## Naming
 
