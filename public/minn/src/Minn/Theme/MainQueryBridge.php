@@ -10,6 +10,7 @@ use Minn\Content\Page;
 use Minn\Content\PostFilter;
 use Minn\Content\Site;
 use Minn\Front\Kind;
+use Minn\Front\PluginRules;
 use Minn\Front\Resolution;
 use Minn\Front\Resolver;
 use Minn\Runtime\MainQuery;
@@ -93,7 +94,7 @@ final readonly class MainQueryBridge
         }
         $path = trim((string) (Runtime::current()->request?->path ?? ''), '/');
         if ($resolution->kind === Kind::NotFound && $path !== '' && \get_option('permalink_structure') !== '') {
-            return ['pagename' => $path];
+            return ['pagename' => $path] + PluginRules::stashed();
         }
         return $vars;
     }

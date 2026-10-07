@@ -26972,6 +26972,7 @@
                 "Minn\\Front\\AttachmentAddresses",
                 "Minn\\Front\\Canonical",
                 "Minn\\Front\\CommentPostController",
+                "Minn\\Front\\Endpoints",
                 "Minn\\Front\\Feeds",
                 "Minn\\Front\\Permalinks",
                 "Minn\\Front\\Renderer",
@@ -40517,6 +40518,88 @@
             ]
         },
         {
+            "name": "Minn\\Front\\Endpoints",
+            "short": "Endpoints",
+            "namespace": "Minn\\Front",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Front/Endpoints.php",
+            "lines": 44,
+            "doc": "Rewrite endpoints plugins add (add_rewrite_endpoint: a shop's account\npages, an app's /json/), matched as the reference's endpoint rules match\nthem: the first registered endpoint name among the path's segments, what\nfollows it (slashes and all) its query var's value, '' when nothing\ndoes; the address before it resolves as usual and counts only where the\nendpoint was placed (EP_PAGES, EP_PERMALINK, EP_ROOT for the site's root,\nand the archives' and attachments' own masks).",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\Content\\PostRecord",
+                "Minn\\Front\\Kind",
+                "Minn\\Front\\Resolution",
+                "Minn\\Runtime\\Runtime"
+            ],
+            "usedBy": [
+                "Minn\\Front\\Resolver"
+            ],
+            "constructor": null,
+            "cases": [],
+            "constants": [
+                {
+                    "name": "MASKS",
+                    "value": "array (   'permalink' => 1,   'attachment' => 2,   'date' => 60,   'root' => 64,   'search' => 256,   'categories' => 512,   'tags' => 1024,   'authors' => 2048,   'pages' => 4096, )",
+                    "doc": "The reference's endpoint masks, by what they let an endpoint follow.",
+                    "visibility": "private"
+                }
+            ],
+            "properties": [],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "split",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "split(string $path): ?array",
+                    "doc": "The endpoint a path names: the address before it, its query var and\nvalue, and where it may be placed; null for none.",
+                    "shapes": [
+                        "@return array{base: string, var: string, value: string, places: int}|null"
+                    ],
+                    "params": [
+                        {
+                            "name": "path",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 30,
+                    "end": 44
+                },
+                {
+                    "routes": [],
+                    "name": "allows",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "allows(int $places, Minn\\Front\\Resolution $resolution): bool",
+                    "doc": "Whether an endpoint placed so may follow the address a resolution stands for.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "places",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "resolution",
+                            "type": "Minn\\Front\\Resolution",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 47,
+                    "end": 61
+                }
+            ]
+        },
+        {
             "name": "Minn\\Front\\FeedController",
             "short": "FeedController",
             "namespace": "Minn\\Front",
@@ -42422,6 +42505,7 @@
                 "Minn\\Front\\AttachmentAddresses",
                 "Minn\\Front\\Canonical",
                 "Minn\\Front\\DocumentTitle",
+                "Minn\\Front\\Endpoints",
                 "Minn\\Front\\FeedController",
                 "Minn\\Front\\FrontController",
                 "Minn\\Front\\Renderer",
@@ -43932,7 +44016,8 @@
             ],
             "usedBy": [
                 "Minn\\Front\\Resolver",
-                "Minn\\Runtime\\MainQuery"
+                "Minn\\Runtime\\MainQuery",
+                "Minn\\Theme\\MainQueryBridge"
             ],
             "constructor": null,
             "cases": [],
@@ -45076,6 +45161,7 @@
                 "Minn\\Front\\AdminBar",
                 "Minn\\Front\\AttachmentAddresses",
                 "Minn\\Front\\DocumentTitle",
+                "Minn\\Front\\Endpoints",
                 "Minn\\Front\\FeedController",
                 "Minn\\Front\\FrontController",
                 "Minn\\Front\\PrintedResponse",
@@ -45650,7 +45736,7 @@
             "namespace": "Minn\\Front",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Front/Resolver.php",
-            "lines": 515,
+            "lines": 537,
             "doc": "Turns a public URL into a Resolution, following the reference's observed\nrules:\n\n- Unpaged content and archives without a trailing slash redirect to the\nslashed form, as typed (case kept); paged views, search, and 404s do not.\n- Query-var forms (?p=, ?page_id=, ?cat=, ?tag=, ?author=, ?m=, ?name=,\n?pagename=) redirect to the pretty form when the target is public.\n- Archive-shaped paths (category, tag, author, search, a four-digit year)\nare strict: a mismatch is a 404 with no guessing.\n- Plain-segment paths try the page hierarchy, then the post structure,\nthen redirect to the closest published page or post whose name starts\nwith the last segment, pages before posts, newest first.\n- Empty term and date archives are 404; an author archive is 200 for any\nname, even one that belongs to nobody.\n- Non-public posts are 404 to anonymous readers and served to a reader\nwho can edit them.",
             "implements": [],
             "extends": null,
@@ -45665,6 +45751,7 @@
                 "Minn\\Content\\UserRecord",
                 "Minn\\Db",
                 "Minn\\Front\\AttachmentAddresses",
+                "Minn\\Front\\Endpoints",
                 "Minn\\Front\\Kind",
                 "Minn\\Front\\Permalinks",
                 "Minn\\Front\\PluginRules",
@@ -46336,6 +46423,33 @@
                 },
                 {
                     "routes": [],
+                    "name": "endpoint",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "endpoint(Minn\\Http\\Request $request, Minn\\Front\\Redirects $redirects): ?Minn\\Front\\Resolution",
+                    "doc": "An address that ends in a plugin's rewrite endpoint: what the address\nbefore it resolves to (the endpoint's var riding along for\nget_query_var), when the endpoint may follow that; null otherwise.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "request",
+                            "type": "Minn\\Http\\Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "redirects",
+                            "type": "Minn\\Front\\Redirects",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 524,
+                    "end": 539
+                },
+                {
+                    "routes": [],
                     "name": "attachments",
                     "static": false,
                     "visibility": "private",
@@ -46343,8 +46457,8 @@
                     "doc": "The addresses an attachment's page answers to.",
                     "shapes": [],
                     "params": [],
-                    "line": 520,
-                    "end": 523
+                    "line": 542,
+                    "end": 545
                 },
                 {
                     "routes": [],
@@ -46355,8 +46469,8 @@
                     "doc": "The addresses a single answers to besides its own.",
                     "shapes": [],
                     "params": [],
-                    "line": 526,
-                    "end": 529
+                    "line": 548,
+                    "end": 551
                 },
                 {
                     "routes": [],
@@ -46375,8 +46489,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 531,
-                    "end": 546
+                    "line": 553,
+                    "end": 568
                 },
                 {
                     "routes": [],
@@ -46395,8 +46509,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 548,
-                    "end": 551
+                    "line": 570,
+                    "end": 573
                 }
             ]
         },
@@ -118681,6 +118795,7 @@
                 "Minn\\Engine",
                 "Minn\\Extension\\Extensions",
                 "Minn\\Front\\CommentPostController",
+                "Minn\\Front\\Endpoints",
                 "Minn\\Front\\FeedController",
                 "Minn\\Front\\Feeds",
                 "Minn\\Front\\FrontController",
@@ -132466,6 +132581,7 @@
                 "Minn\\Content\\Posts",
                 "Minn\\Content\\Site",
                 "Minn\\Front\\Kind",
+                "Minn\\Front\\PluginRules",
                 "Minn\\Front\\Resolution",
                 "Minn\\Front\\Resolver",
                 "Minn\\Runtime\\MainQuery",
@@ -132511,8 +132627,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 32,
-                "end": 37
+                "line": 33,
+                "end": 38
             },
             "cases": [],
             "constants": [
@@ -132579,8 +132695,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 45,
-                    "end": 72
+                    "line": 46,
+                    "end": 73
                 },
                 {
                     "routes": [],
@@ -132591,8 +132707,8 @@
                     "doc": "Posts per page.",
                     "shapes": [],
                     "params": [],
-                    "line": 75,
-                    "end": 78
+                    "line": 76,
+                    "end": 79
                 },
                 {
                     "routes": [],
@@ -132613,8 +132729,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 87,
-                    "end": 99
+                    "line": 88,
+                    "end": 100
                 },
                 {
                     "routes": [],
@@ -132642,8 +132758,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 107,
-                    "end": 117
+                    "line": 108,
+                    "end": 118
                 },
                 {
                     "routes": [],
@@ -132671,8 +132787,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 120,
-                    "end": 125
+                    "line": 121,
+                    "end": 126
                 },
                 {
                     "routes": [],
@@ -132693,8 +132809,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 128,
-                    "end": 133
+                    "line": 129,
+                    "end": 134
                 },
                 {
                     "routes": [],
@@ -132713,8 +132829,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 135,
-                    "end": 155
+                    "line": 136,
+                    "end": 156
                 }
             ]
         },

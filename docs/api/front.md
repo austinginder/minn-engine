@@ -16,6 +16,7 @@ URL resolution, permalinks, feeds, sitemaps and the public page
 | [`CustomLogo`](#customlogo) | final class | 27 | The site logo a theme prints, as get_custom_logo builds it (probe |
 | [`DocumentTitle`](#documenttitle) | final class | 47 | The document title as parts (title, tagline, page, site) in the order the |
 | [`EmbedCard`](#embedcard) | final class | 95 | The parts of a post's embed card the reference's embed template prints, |
+| [`Endpoints`](#endpoints) | final class | 44 | Rewrite endpoints plugins add (add_rewrite_endpoint: a shop's account |
 | [`FeedController`](#feedcontroller) | final readonly class | 143 | The feeds: the site's, the comments', a post's or an archive's by the |
 | [`FeedTags`](#feedtags) | final class | 140 | The template tags a feed is written with that take more than a line, as |
 | [`FeedTemplates`](#feedtemplates) | final class | 295 | The feed templates do_feed_* loads, written from the reference's output |
@@ -38,7 +39,7 @@ URL resolution, permalinks, feeds, sitemaps and the public page
 | [`Redirects`](#redirects) | enum | 23 | Whether a resolution may answer with a canonical redirect. A GET or HEAD |
 | [`Renderer`](#renderer) | final readonly class | 168 | The interim public theme: one clean template until the block-theme |
 | [`Resolution`](#resolution) | final readonly class | 108 | The outcome of resolving a public URL: which kind of thing it names, |
-| [`Resolver`](#resolver) | final readonly class | 515 | Turns a public URL into a Resolution, following the reference's observed |
+| [`Resolver`](#resolver) | final readonly class | 537 | Turns a public URL into a Resolution, following the reference's observed |
 | [`SingleAddresses`](#singleaddresses) | final readonly class | 61 | The addresses a single answers to besides its own, as the reference |
 | [`SingleQueries`](#singlequeries) | final readonly class | 77 | The single a query string asks for, as the reference's request parse and |
 | [`SitemapController`](#sitemapcontroller) | final readonly class | 79 | The sitemap index, its pages, and the two stylesheets. With plugins |
@@ -406,6 +407,34 @@ The button that opens the sharing dialog; none on a 404.
 The sharing dialog: the post's address and its embed code, each a tab; none on a 404.
 
 
+## Endpoints
+
+`final class Minn\Front\Endpoints` · `public/minn/src/Minn/Front/Endpoints.php`
+
+Rewrite endpoints plugins add (add_rewrite_endpoint: a shop's account
+pages, an app's /json/), matched as the reference's endpoint rules match
+them: the first registered endpoint name among the path's segments, what
+follows it (slashes and all) its query var's value, '' when nothing
+does; the address before it resolves as usual and counts only where the
+endpoint was placed (EP_PAGES, EP_PERMALINK, EP_ROOT for the site's root,
+and the archives' and attachments' own masks).
+
+- const `MASKS` = `array (   'permalink' => 1,   'attachment' => 2,   'date' => 60,   'root' => 64,   'search' => 256,   'categories' => 512,   'tags' => 1024,   'authors' => 2048,   'pages' => 4096, )` — The reference's endpoint masks, by what they let an endpoint follow.
+
+Used by: `Minn\Front\Resolver`
+
+### static `split(string $path): ?array`
+
+The endpoint a path names: the address before it, its query var and
+value, and where it may be placed; null for none.
+
+- `@return array{base: string, var: string, value: string, places: int}|null`
+
+### static `allows(int $places, Minn\Front\Resolution $resolution): bool`
+
+Whether an endpoint placed so may follow the address a resolution stands for.
+
+
 ## FeedController
 
 `final readonly class Minn\Front\FeedController` · `public/minn/src/Minn/Front/FeedController.php`
@@ -644,7 +673,7 @@ What a public URL resolved to.
 
 Cases: `Home`, `Single`, `Page`, `Category`, `Tag`, `Author`, `Date`, `Search`, `Taxonomy`, `PostTypeArchive`, `NotFound`, `Redirect`
 
-Used by: `Minn\Blocks\Context`, `Minn\Blocks\Dynamic\Categories`, `Minn\Blocks\Dynamic\Theme\Navigation`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Blocks\Dynamic\Theme\Structure`, `Minn\Front\AdminBar`, `Minn\Front\AttachmentAddresses`, `Minn\Front\Canonical`, `Minn\Front\DocumentTitle`, `Minn\Front\FeedController`, `Minn\Front\FrontController`, `Minn\Front\Renderer`, `Minn\Front\Resolution`, `Minn\Front\Resolver`, `Minn\Front\SingleAddresses`, `Minn\Runtime\MainQuery`, `Minn\Theme\ArchiveTitle`, `Minn\Theme\BodyClasses`, `Minn\Theme\ClassicRenderer`, `Minn\Theme\EmbedRenderer`, `Minn\Theme\HeadLinks`, `Minn\Theme\MainQueryBridge`, `Minn\Theme\PageRenderer`, `Minn\Theme\Templates`
+Used by: `Minn\Blocks\Context`, `Minn\Blocks\Dynamic\Categories`, `Minn\Blocks\Dynamic\Theme\Navigation`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Blocks\Dynamic\Theme\Structure`, `Minn\Front\AdminBar`, `Minn\Front\AttachmentAddresses`, `Minn\Front\Canonical`, `Minn\Front\DocumentTitle`, `Minn\Front\Endpoints`, `Minn\Front\FeedController`, `Minn\Front\FrontController`, `Minn\Front\Renderer`, `Minn\Front\Resolution`, `Minn\Front\Resolver`, `Minn\Front\SingleAddresses`, `Minn\Runtime\MainQuery`, `Minn\Theme\ArchiveTitle`, `Minn\Theme\BodyClasses`, `Minn\Theme\ClassicRenderer`, `Minn\Theme\EmbedRenderer`, `Minn\Theme\HeadLinks`, `Minn\Theme\MainQueryBridge`, `Minn\Theme\PageRenderer`, `Minn\Theme\Templates`
 
 
 ## ListSpacing
@@ -921,7 +950,7 @@ registers its own).
 - const `STATE` = `'rule_query_vars'`
 - const `PUBLIC_VARS` = `array (   0 => 'm',   1 => 'p',   2 => 'posts',   3 => 'w',   4 => 'cat',   5 => 'withcomments',   6 => 'withoutcomments',   7 => 's',   8 => 'search',   9 => 'exact',   10 => 'sentence',   11 => 'calendar',   12 => 'page',   13 => 'paged',   14 => 'more',   15 => 'tb',   16 => 'pb',   17 => 'author',   18 => 'order',   19 => 'orderby',   20 => 'year',   21 => 'monthnum',   22 => 'day',   23 => 'hour',   24 => 'minute',   25 => 'second',   26 => 'name',   27 => 'category_name',   28 => 'tag',   29 => 'feed',   30 => 'author_name',   31 => 'pagename',   32 => 'page_id',   33 => 'error',   34 => 'attachment',   35 => 'attachment_id',   36 => 'subpost',   37 => 'subpost_id',   38 => 'preview',   39 => 'robots',   40 => 'favicon',   41 => 'taxonomy',   42 => 'term',   43 => 'cpage',   44 => 'post_type',   45 => 'embed', )` — The reference's public query vars a rule's query string may set.
 
-Used by: `Minn\Front\Resolver`, `Minn\Runtime\MainQuery`
+Used by: `Minn\Front\Resolver`, `Minn\Runtime\MainQuery`, `Minn\Theme\MainQueryBridge`
 
 ### static `match(string $path, bool $top): ?array`
 
@@ -1150,7 +1179,7 @@ The outcome of resolving a public URL: which kind of thing it names,
 the record behind it, and the page number for paginated views. Redirects
 carry their target instead.
 
-Used by: `Minn\Blocks\Context`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Engine`, `Minn\Front\AdminBar`, `Minn\Front\AttachmentAddresses`, `Minn\Front\DocumentTitle`, `Minn\Front\FeedController`, `Minn\Front\FrontController`, `Minn\Front\PrintedResponse`, `Minn\Front\Renderer`, `Minn\Front\Resolver`, `Minn\Front\SingleAddresses`, `Minn\Front\SingleQueries`, `Minn\Front\SitemapController`, `Minn\Runtime\MainQuery`, `Minn\Theme\ArchiveTitle`, `Minn\Theme\BodyClasses`, `Minn\Theme\ClassicRenderer`, `Minn\Theme\EmbedRenderer`, `Minn\Theme\HeadLinks`, `Minn\Theme\MainQueryBridge`, `Minn\Theme\PageRenderer`, `Minn\Theme\Templates`
+Used by: `Minn\Blocks\Context`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Engine`, `Minn\Front\AdminBar`, `Minn\Front\AttachmentAddresses`, `Minn\Front\DocumentTitle`, `Minn\Front\Endpoints`, `Minn\Front\FeedController`, `Minn\Front\FrontController`, `Minn\Front\PrintedResponse`, `Minn\Front\Renderer`, `Minn\Front\Resolver`, `Minn\Front\SingleAddresses`, `Minn\Front\SingleQueries`, `Minn\Front\SitemapController`, `Minn\Runtime\MainQuery`, `Minn\Theme\ArchiveTitle`, `Minn\Theme\BodyClasses`, `Minn\Theme\ClassicRenderer`, `Minn\Theme\EmbedRenderer`, `Minn\Theme\HeadLinks`, `Minn\Theme\MainQueryBridge`, `Minn\Theme\PageRenderer`, `Minn\Theme\Templates`
 
 - readonly `Minn\Front\Kind $kind`
 - readonly `Minn\Content\PostRecord|Minn\Content\UserRecord|Minn\Content\TermRecord|array|null $record`
@@ -1274,7 +1303,7 @@ The site-local bounds of a date archive, or null when the date is invalid.
 
 - `@return array{0: string, 1: string}|null`
 
-Internals: `fromRuleVars()` (private, line 118), `resolvePath()` (private, line 143), `resolveQueryVars()` (private, line 214), `dateRedirect()` (private, line 258), `home()` (private, line 275), `pluginRoute()` (private, line 297), `segmentsOf()` (private, line 332), `taxonomyArchive()` (private, line 341), `termArchive()` (private, line 355), `termResolution()` (private, line 368), `authorArchive()` (private, line 377), `dateArchive()` (private, line 394), `resolveContent()` (private, line 441), `resolveSingle()` (private, line 482), `attachments()` (private, line 520), `elsewhere()` (private, line 526), `readable()` (private, line 531), `pages()` (private, line 548)
+Internals: `fromRuleVars()` (private, line 118), `resolvePath()` (private, line 143), `resolveQueryVars()` (private, line 214), `dateRedirect()` (private, line 258), `home()` (private, line 275), `pluginRoute()` (private, line 297), `segmentsOf()` (private, line 332), `taxonomyArchive()` (private, line 341), `termArchive()` (private, line 355), `termResolution()` (private, line 368), `authorArchive()` (private, line 377), `dateArchive()` (private, line 394), `resolveContent()` (private, line 441), `resolveSingle()` (private, line 482), `endpoint()` (private, line 524), `attachments()` (private, line 542), `elsewhere()` (private, line 548), `readable()` (private, line 553), `pages()` (private, line 570)
 
 
 ## SingleAddresses

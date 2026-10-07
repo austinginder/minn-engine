@@ -87,7 +87,7 @@ final readonly class Resolver
         if ($ruleVars !== null) {
             return $this->fromRuleVars($ruleVars);
         }
-        $resolution = $this->resolvePath($request, $redirects);
+        $resolution = $this->endpoint($request, $redirects) ?? $this->resolvePath($request, $redirects);
         if ($resolution->kind === Kind::NotFound) {
             $ruleVars = PluginRules::match($request->path, top: false);
             if ($ruleVars !== null) {
@@ -514,6 +514,28 @@ final readonly class Resolver
             }
         }
         return $this->attachments()->at($segments);
+    }
+
+    /**
+     * An address that ends in a plugin's rewrite endpoint: what the address
+     * before it resolves to (the endpoint's var riding along for
+     * get_query_var), when the endpoint may follow that; null otherwise.
+     */
+    private function endpoint(Request $request, Redirects $redirects): ?Resolution
+    {
+        $endpoint = Endpoints::split($request->path);
+        $base = $endpoint === null ? null : $this->resolvePath($request->withPath($endpoint['base']), $redirects);
+        // An address shaped like a post's that finds none still matched the post's endpoint rule: a 404 with the var set.
+        $regex = $this->permalinks->structureRegex();
+        $shaped = $base !== null && $base->kind === Kind::NotFound && ($endpoint['places'] & 1) !== 0 && $regex !== null && preg_match($regex, trim($endpoint['base'], '/')) === 1;
+        if ($base === null || (!$shaped && !Endpoints::allows($endpoint['places'], $base))) {
+            return null;
+        }
+        if ($redirects->follows() && !str_ends_with($request->path, '/')) {
+            return Resolution::redirect($this->permalinks->url($request->path . '/') . $request->queryStringWithout());
+        }
+        Runtime::current()->set(PluginRules::STATE, [$endpoint['var'] => $endpoint['value']] + PluginRules::stashed());
+        return $base;
     }
 
     /** The addresses an attachment's page answers to. */

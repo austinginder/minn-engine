@@ -529,7 +529,7 @@ when it is up; the variables a request adds of its own (a feed's) win.
 
 Posts per page.
 
-Internals: `vars()` (private, line 87), `queried()` (private, line 107), `seeded()` (private, line 120), `objectTypes()` (private, line 128), `listing()` (private, line 135)
+Internals: `vars()` (private, line 88), `queried()` (private, line 108), `seeded()` (private, line 121), `objectTypes()` (private, line 129), `listing()` (private, line 136)
 
 
 ## NotModified
