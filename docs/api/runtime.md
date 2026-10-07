@@ -22,6 +22,7 @@ the WordPress runtime plugins load against
 | [`CommentEvents`](#commentevents) | final readonly class | 253 | What the reference's REST comments controller tells plugins, for the |
 | [`CommentFeedQuery`](#commentfeedquery) | final class | 50 | The comments a comments feed's main query carries, as the reference |
 | [`CommentForm`](#commentform) | final class | 107 | The comment form's submission with plugins loaded |
+| [`CommentPages`](#commentpages) | final class | 100 | Which page of a post's comments a comment falls on, and the link that |
 | [`CommentQuery`](#commentquery) | final readonly class | 28 | The approval breakdown wp_count_comments reports (comment lists run through WP_Comment_Query and Minn\Runtime\CommentQueryRunner). |
 | [`CommentQueryRunner`](#commentqueryrunner) | final class | 105 | WP_Comment_Query as the reference runs it (probe wp-comment-query-sql): |
 | [`CommentQueryWhere`](#commentquerywhere) | final class | 190 | WP_Comment_Query's WHERE pieces and the posts join, in the reference's |
@@ -876,6 +877,43 @@ The stored comment, or the refusal the form answers with.
 - `@param array<string, mixed> $form the posted fields, unslashed`
 
 Internals: `store()` (private, line 71), `postRefusal()` (private, line 89), `fieldRefusal()` (private, line 118)
+
+
+## CommentPages
+
+`final class Minn\Runtime\CommentPages` · `public/minn/src/Minn/Runtime/CommentPages.php`
+
+Which page of a post's comments a comment falls on, and the link that
+opens it there, as the reference works them out (probe comment-pages):
+the page size from the arguments, the comments_per_page query variable
+or the option (no pages at all when comments are not paged); a reply
+takes its top-level comment's page while comments are threaded; a page
+is the count of older top-level comments over the page size. The
+default page loses its number when the oldest comments come first.
+
+- const `DEFAULTS` = `array (   'type' => 'all',   'page' => '',   'per_page' => '',   'max_depth' => '', )`
+
+### static `pageOf(mixed $commentId, array $args): ?int`
+
+The page a comment is on, through get_page_of_comment (handed the
+arguments as settled and as given); a threaded reply answers with
+its top-level comment's page. Null for a comment that is not there.
+
+- `@param array<string, mixed> $args`
+
+### static `linkPage(?WP_Comment $comment, array $args): mixed`
+
+The page a comment's link names (before get_comment_link): the one
+asked for, the loop's, or the comment's own; '' for the default page
+when the oldest comments come first.
+
+- `@param array<string, mixed> $args`
+
+### static `link(string $permalink, mixed $page): string`
+
+A post's link opened at a page of its comments, as pretty or plain links write it.
+
+Internals: `olderQuery()` (private, line 58)
 
 
 ## CommentQuery

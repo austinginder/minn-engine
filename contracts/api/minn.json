@@ -104239,6 +104239,146 @@
             ]
         },
         {
+            "name": "Minn\\Runtime\\CommentPages",
+            "short": "CommentPages",
+            "namespace": "Minn\\Runtime",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Runtime/CommentPages.php",
+            "lines": 100,
+            "doc": "Which page of a post's comments a comment falls on, and the link that\nopens it there, as the reference works them out (probe comment-pages):\nthe page size from the arguments, the comments_per_page query variable\nor the option (no pages at all when comments are not paged); a reply\ntakes its top-level comment's page while comments are threaded; a page\nis the count of older top-level comments over the page size. The\ndefault page loses its number when the oldest comments come first.",
+            "implements": [],
+            "extends": null,
+            "uses": [],
+            "usedBy": [],
+            "constructor": null,
+            "cases": [],
+            "constants": [
+                {
+                    "name": "DEFAULTS",
+                    "value": "array (   'type' => 'all',   'page' => '',   'per_page' => '',   'max_depth' => '', )",
+                    "doc": "",
+                    "visibility": "private"
+                }
+            ],
+            "properties": [],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "pageOf",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "pageOf(mixed $commentId, array $args): ?int",
+                    "doc": "The page a comment is on, through get_page_of_comment (handed the\narguments as settled and as given); a threaded reply answers with\nits top-level comment's page. Null for a comment that is not there.",
+                    "shapes": [
+                        "@param array<string, mixed> $args"
+                    ],
+                    "params": [
+                        {
+                            "name": "commentId",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "args",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 27,
+                    "end": 55
+                },
+                {
+                    "routes": [],
+                    "name": "linkPage",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "linkPage(?WP_Comment $comment, array $args): mixed",
+                    "doc": "The page a comment's link names (before get_comment_link): the one\nasked for, the loop's, or the comment's own; '' for the default page\nwhen the oldest comments come first.",
+                    "shapes": [
+                        "@param array<string, mixed> $args"
+                    ],
+                    "params": [
+                        {
+                            "name": "comment",
+                            "type": "?WP_Comment",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "args",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 84,
+                    "end": 101
+                },
+                {
+                    "routes": [],
+                    "name": "link",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "link(string $permalink, mixed $page): string",
+                    "doc": "A post's link opened at a page of its comments, as pretty or plain links write it.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "permalink",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "page",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 104,
+                    "end": 114
+                },
+                {
+                    "routes": [],
+                    "name": "olderQuery",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "olderQuery(WP_Comment $comment, array $args): array",
+                    "doc": "",
+                    "shapes": [
+                        "@param array<string, mixed> $args the count of the top-level comments older than this one, through get_page_of_comment_query_args"
+                    ],
+                    "params": [
+                        {
+                            "name": "comment",
+                            "type": "WP_Comment",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "args",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": "the count of the top-level comments older than this one, through get_page_of_comment_query_args"
+                        }
+                    ],
+                    "line": 58,
+                    "end": 75
+                }
+            ]
+        },
+        {
             "name": "Minn\\Runtime\\CommentQuery",
             "short": "CommentQuery",
             "namespace": "Minn\\Runtime",

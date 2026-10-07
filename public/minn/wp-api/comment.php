@@ -420,13 +420,19 @@ function get_lastcommentmodified($timezone = 'server')
     return apply_filters('get_lastcommentmodified', $value === null ? false : $value, $timezone);
 }
 
+/** A comment's link, at the page of comments it is on (Minn\Runtime\CommentPages), through get_comment_link. */
 function get_comment_link($comment = null, $args = [])
 {
     $comment = get_comment($comment);
-    if ($comment === null) {
-        return '';
-    }
-    return apply_filters('get_comment_link', get_permalink((int) $comment->comment_post_ID) . '#comment-' . $comment->comment_ID, $comment, $args, get_post((int) $comment->comment_post_ID));
+    $args = wp_parse_args(is_array($args) ? $args : ['page' => $args], ['type' => 'all', 'page' => '', 'per_page' => '', 'max_depth' => '', 'cpage' => null]);
+    $page = Minn\Runtime\CommentPages::linkPage($comment, $args);
+    $link = Minn\Runtime\CommentPages::link((string) get_permalink($comment?->comment_post_ID), $page) . '#comment-' . $comment?->comment_ID;
+    return apply_filters('get_comment_link', $link, $comment, $args, $page);
+}
+
+function get_page_of_comment($comment_id, $args = [])
+{
+    return Minn\Runtime\CommentPages::pageOf($comment_id, (array) $args);
 }
 
 function comments_open($post = null)

@@ -49,10 +49,12 @@ function language_attributes($doctype = 'html')
     echo get_language_attributes($doctype);
 }
 
+/** A URL with the trailing slash the permalinks use, as the rewrite object read them when it was set up (the option itself otherwise). */
 function user_trailingslashit($url, $type_of_url = '')
 {
-    $structure = (string) get_option('permalink_structure');
-    $url = str_ends_with($structure, '/') ? trailingslashit($url) : untrailingslashit($url);
+    $rewrite = $GLOBALS['wp_rewrite'] ?? null;
+    $slashes = $rewrite instanceof WP_Rewrite && $rewrite->use_trailing_slashes !== null ? (bool) $rewrite->use_trailing_slashes : str_ends_with((string) get_option('permalink_structure'), '/');
+    $url = $slashes ? trailingslashit($url) : untrailingslashit($url);
     return apply_filters('user_trailingslashit', $url, $type_of_url);
 }
 

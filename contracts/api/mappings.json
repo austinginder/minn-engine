@@ -2,12 +2,12 @@
     "generated": "2026-10-07",
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line)",
     "summary": {
-        "minn": 657,
-        "composes": 964,
+        "minn": 658,
+        "composes": 963,
         "leaf": 658,
-        "noop": 1905,
-        "functions": 4114,
-        "minnMethods": 729,
+        "noop": 1906,
+        "functions": 4115,
+        "minnMethods": 732,
         "leafLinesOver15": 12
     },
     "functions": {
@@ -21461,13 +21461,16 @@
         "get_comment_link": {
             "file": "comment.php",
             "lines": 5,
-            "kind": "composes",
-            "minn": [],
+            "kind": "minn",
+            "minn": [
+                "Minn\\Runtime\\CommentPages::link",
+                "Minn\\Runtime\\CommentPages::linkPage"
+            ],
             "composes": [
                 "apply_filters",
                 "get_comment",
                 "get_permalink",
-                "get_post"
+                "wp_parse_args"
             ]
         },
         "get_comment_meta": {
@@ -22476,6 +22479,15 @@
                 "get_post",
                 "home_url"
             ]
+        },
+        "get_page_of_comment": {
+            "file": "comment.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Runtime\\CommentPages::pageOf"
+            ],
+            "composes": []
         },
         "get_page_statuses": {
             "file": "post.php",
@@ -30129,7 +30141,7 @@
         },
         "user_trailingslashit": {
             "file": "template.php",
-            "lines": 3,
+            "lines": 4,
             "kind": "composes",
             "minn": [],
             "composes": [
