@@ -66,6 +66,16 @@ $check(!str_contains($home, 'CHECKS_COUNT'), 'no unfilled placeholders on the pa
 $apiClasses = count(json_decode((string) file_get_contents(dirname(__DIR__) . '/site/minn-site/content/api.json'), true)['classes'] ?? []);
 $check(str_contains($home, 'data-minn-stat="classes">' . number_format($apiClasses) . '<'), 'the class count comes from the API model', (string) $apiClasses);
 $check(str_contains($home, '<meta name="description"') && str_contains($home, '<meta property="og:image"') && str_contains($home, 'twitter:card'), 'the front page carries a description and a link-preview card');
+[$pj, $parityJson] = minn_test_fetch($ENGINE . '/parity.json');
+$parity = json_decode($parityJson, true);
+$check($pj['status'] === 200 && count($parity['rows'] ?? []) === 6, 'theme /parity.json answers with the six captured pairs', (string) $pj['status']);
+$pairsAgree = array_filter($parity['rows'] ?? [], static fn (array $r): bool => $r['engine']['sha'] === $r['reference']['sha']);
+$check(count($pairsAgree) === 6, 'every captured pair hashes the same on both stacks');
+preg_match_all('#data-pair="\d" style="--i:\d"><span class="m">[A-Z]+</span><span class="p">([^<]+)</span>#', $home, $shownPaths);
+$capturedPaths = array_map(static fn (array $r): string => html_entity_decode($r['path']), $parity['rows'] ?? []);
+$check(array_slice(array_map('html_entity_decode', $shownPaths[1]), 0, 6) === $capturedPaths, 'the hero panel shows exactly the captured pairs, in order', implode(', ', $shownPaths[1] ?? []));
+$check(str_contains($home, '/wp-content/themes/minn-site/assets/front.js'), 'the front page loads its script');
+$check(substr_count($home, '<details id="faq-') === 8, 'every FAQ answer has its own address');
 $check(str_contains($home, 'href="#content">Skip to content'), 'skip link targets the template\'s own main id');
 $check(!preg_match('/class="[^"]*has-global-padding/', $home), 'no global padding class without useRootPaddingAwareAlignments');
 [, $texturizePage] = minn_test_fetch($ENGINE . '/texturize-battery-its-quoted-fine/');
@@ -147,7 +157,7 @@ $check(str_contains($php, '/api/minn/http/"'), 'the Minn pane links a class to i
 $check(str_contains($php, '<code>PostFilter</code>') && str_contains($php, '<code>Minn\\Http</code>'), 'php page names the post filter and HTTP client');
 [$pmd] = minn_test_fetch($ENGINE . '/php.md');
 $check($pmd['status'] === 200, 'theme /php.md answers 200', (string) $pmd['status']);
-foreach (['/wp-content/themes/minn-site/style.css', '/wp-content/themes/minn-site/assets/fonts/hanken-grotesk.woff2', '/wp-content/themes/minn-site/assets/fonts/jetbrains-mono.woff2', '/wp-content/themes/minn-site/assets/img/favicon.webp', '/wp-content/themes/minn-site/assets/img/social-card.png'] as $asset) {
+foreach (['/wp-content/themes/minn-site/style.css', '/wp-content/themes/minn-site/assets/fonts/hanken-grotesk.woff2', '/wp-content/themes/minn-site/assets/fonts/jetbrains-mono.woff2', '/wp-content/themes/minn-site/assets/img/favicon.webp', '/wp-content/themes/minn-site/assets/img/social-card.png', '/wp-content/themes/minn-site/assets/front.js'] as $asset) {
     [$ah] = minn_test_fetch($ENGINE . $asset);
     $check($ah['status'] === 200, "asset served: $asset");
 }
