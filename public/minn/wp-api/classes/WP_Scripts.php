@@ -14,6 +14,9 @@ class WP_Dependencies
     public $groups = [];
     public $group = 0;
     protected $assets;
+    /** @var array<string, array{0: mixed, 1: list<string>, 2: mixed, 3: mixed}> each handle as the view last showed it */
+    private $synced = [];
+    private $reconciling = false;
 
     public function __construct(?Assets $assets = null)
     {
@@ -26,12 +29,13 @@ class WP_Dependencies
         });
     }
 
-    /** Refreshes the public arrays from the registry; the registry calls this after every change. */
+    /** Refreshes the public arrays from the registry (after handing back what a plugin edited in them); the registry calls this after every change. */
     public function sync(): void
     {
         if ($this->assets === null) {
             return;
         }
+        $this->reconcile();
         $this->registered = [];
         foreach ($this->assets->items() as $handle => $item) {
             $dep = new _WP_Dependency($handle, $item['src'], $item['deps'], $item['ver'], $item['extra']);
@@ -43,11 +47,27 @@ class WP_Dependencies
         }
         $this->queue = $this->assets->queue();
         $this->done = $this->assets->doneList();
+        $this->synced = array_map(static fn (_WP_Dependency $dep): array => [$dep->src, array_values((array) $dep->deps), $dep->ver, $dep->args], $this->registered);
+    }
+
+    /** What a plugin did to $registered directly, handed to the registry (Runtime\AssetEdits). */
+    private function reconcile(): void
+    {
+        if ($this->reconciling || $this->assets === null) {
+            return;
+        }
+        $this->reconciling = true;
+        try {
+            Minn\Runtime\AssetEdits::apply($this->assets, $this->registered, $this->synced);
+        } finally {
+            $this->reconciling = false;
+        }
     }
 
     /** Hands a queue or a done list a plugin edited in place back to the registry before printing. */
     public function push(): void
     {
+        $this->reconcile();
         if ($this->assets !== null && $this->queue !== $this->assets->queue()) {
             $this->assets->setQueue((array) $this->queue);
         }

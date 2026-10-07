@@ -65,6 +65,17 @@ final class Assets
         return true;
     }
 
+    /** An existing handle's source, dependencies, version and arguments replaced, its data, inline code and place in the queue kept. */
+    public function revise(string $handle, string|false $src, array $deps, string|bool|null $ver, mixed $extra): bool
+    {
+        if (!isset($this->items[$handle])) {
+            return false;
+        }
+        $this->items[$handle] = ['src' => $src, 'deps' => array_values(array_map('strval', $deps)), 'ver' => $ver, 'extra' => $extra] + $this->items[$handle];
+        $this->changed();
+        return true;
+    }
+
     /**
      * The hosts the queued assets load from, other than the site's own.
      *

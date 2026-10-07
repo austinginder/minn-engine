@@ -347,28 +347,67 @@ function wp_enqueue_editor()
 {
 }
 
+/**
+ * The handles the reference registers itself and plugin code depends on: the MIT libraries the engine ships under
+ * minn/assets (served from that folder so hosts can read the files off disk), the wp.* packages it reimplements with
+ * the reference's dependency graph, then the site's own script pack (wp-content/minn-packages/wp-scripts: the GPL
+ * packages the engine does not reimplement, installed by the site owner) for what is left.
+ */
 function wp_default_scripts($scripts)
 {
+    if (!$scripts instanceof WP_Scripts) {
+        return;
+    }
+    $scripts->add('jquery-core', '/minn/assets/vendor/jquery/jquery.min.js', [], '3.7.1');
+    $scripts->add('jquery-migrate', '/minn/assets/vendor/jquery/jquery-migrate.min.js', [], '3.4.1');
+    $scripts->add('jquery', false, ['jquery-core', 'jquery-migrate'], '3.7.1');
+    $wp = static fn (string $file) => '/minn/assets/wp/' . $file . '.js';
+    foreach (['wp-polyfill' => [], 'wp-hooks' => [], 'wp-i18n' => ['wp-hooks'], 'wp-dom-ready' => [], 'wp-escape-html' => [], 'wp-url' => ['wp-polyfill'], 'wp-html-entities' => [], 'wp-a11y' => ['wp-dom-ready', 'wp-i18n', 'wp-polyfill'], 'wp-api-fetch' => ['wp-i18n', 'wp-url']] as $handle => $deps) {
+        $scripts->add($handle, $wp(substr($handle, 3)), $deps, MINN_ENGINE_VERSION);
+    }
+    $contentDir = defined('WP_CONTENT_DIR') ? WP_CONTENT_DIR : ABSPATH . 'wp-content';
+    foreach (Minn\Runtime\ScriptPack::handles($contentDir) as $handle => $row) {
+        if (!wp_script_is($handle, 'registered')) {
+            $scripts->add($handle, content_url(Minn\Runtime\ScriptPack::RELATIVE_DIR . '/' . $row['file']), $row['deps'], $row['ver']);
+        }
+    }
 }
 
 function wp_default_styles($styles)
 {
 }
 
+/** The scripts registry; made, it tells wp_default_scripts (again on init, as the reference's constructor does). */
 function wp_scripts()
 {
     if (!isset($GLOBALS['wp_scripts']) || !$GLOBALS['wp_scripts'] instanceof WP_Scripts) {
         $GLOBALS['wp_scripts'] = new WP_Scripts(_minn_assets('script'));
+        _minn_default_dependencies('wp_default_scripts', $GLOBALS['wp_scripts']);
     }
     return $GLOBALS['wp_scripts'];
 }
 
+/** The styles registry; made, it tells wp_default_styles (again on init). */
 function wp_styles()
 {
     if (!isset($GLOBALS['wp_styles']) || !$GLOBALS['wp_styles'] instanceof WP_Styles) {
         $GLOBALS['wp_styles'] = new WP_Styles(_minn_assets('style'));
+        _minn_default_dependencies('wp_default_styles', $GLOBALS['wp_styles']);
     }
     return $GLOBALS['wp_styles'];
+}
+
+/** @internal a registry's defaults action, now and at init 0 (the engine registered the defaults themselves), its edits handed back */
+function _minn_default_dependencies(string $action, WP_Dependencies $registry): void
+{
+    $tell = static function () use ($action, $registry): void {
+        do_action_ref_array($action, [&$registry]);
+        $registry->push();
+    };
+    $tell();
+    if (!did_action('init')) {
+        add_action('init', $tell, 0);
+    }
 }
 
 /**

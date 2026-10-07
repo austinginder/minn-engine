@@ -11,7 +11,8 @@ the WordPress runtime plugins load against
 | [`AllowedOptions`](#allowedoptions) | final class | 26 | The settings-page allowlist plugins extend: option group => the option |
 | [`ApplicationPasswordEvents`](#applicationpasswordevents) | final class | 46 | Application password changes made over REST, as the reference makes them |
 | [`ApplicationPasswordSignIn`](#applicationpasswordsignin) | final class | 80 | wp_authenticate_application_password as the reference answers it (probe |
-| [`Assets`](#assets) | final class | 400 | The registry behind wp_register_/wp_enqueue_ for scripts and styles: |
+| [`AssetEdits`](#assetedits) | final class | 29 | What a plugin did to $wp_scripts->registered or $wp_styles->registered |
+| [`Assets`](#assets) | final class | 411 | The registry behind wp_register_/wp_enqueue_ for scripts and styles: |
 | [`Avatar`](#avatar) | final class | 62 | Avatars the way get_avatar_data and get_avatar decide them: the argument |
 | [`BlockFilters`](#blockfilters) | final class | 82 | The block-level filters plugin code hooks (pre_render_block, |
 | [`BlockHooks`](#blockhooks) | final class | 69 | The Block Hooks API on the engine's own front end: a plugin asks for its |
@@ -374,6 +375,25 @@ leaves the request signed out.
 Internals: `refusal()` (private, line 86)
 
 
+## AssetEdits
+
+`final class Minn\Runtime\AssetEdits` · `public/minn/src/Minn/Runtime/AssetEdits.php`
+
+What a plugin did to $wp_scripts->registered or $wp_styles->registered
+directly, as wp_default_scripts callbacks do (a dependency dropped, a
+source swapped, an entry unset or added), handed to the registry: each
+handle as the view showed it last against the view as the plugin left
+it.
+
+### static `apply(Minn\Runtime\Assets $assets, array $edited, array $synced): void`
+
+The edits applied. The view is rebuilt by every change the registry
+takes, so the edited view is read from the copy handed in.
+
+- `@param array<string, mixed> $edited the view as the plugin left it`
+- `@param array<string, array{0: mixed, 1: list<string>, 2: mixed, 3: mixed}> $synced each handle as the view last showed it`
+
+
 ## Assets
 
 `final class Minn\Runtime\Assets` · `public/minn/src/Minn/Runtime/Assets.php`
@@ -382,6 +402,8 @@ The registry behind wp_register_/wp_enqueue_ for scripts and styles:
 handles, sources, dependencies, versions, inline additions, localized
 data, and the head/footer split. Printing follows the reference's tag
 shapes as far as captured; see contracts/runtime.md.
+
+Used by: `Minn\Runtime\AssetEdits`
 
 ```php
 __construct(string $kind)
@@ -399,6 +421,10 @@ The queue as a plugin left it after editing the view directly.
 ### `register(string $handle, string|false $src, array $deps, string|bool|null $ver, mixed $extra): bool`
 
 Registers an asset under a handle.
+
+### `revise(string $handle, string|false $src, array $deps, string|bool|null $ver, mixed $extra): bool`
+
+An existing handle's source, dependencies, version and arguments replaced, its data, inline code and place in the queue kept.
 
 ### `externalHosts(string $ownHost): array`
 
@@ -515,7 +541,7 @@ The handles queued.
 
 Whether these are scripts or styles.
 
-Internals: `changed()` (private, line 45), `depsOf()` (private, line 135), `defaults()` (private, line 141), `held()` (private, line 212), `ordered()` (private, line 314)
+Internals: `changed()` (private, line 45), `depsOf()` (private, line 146), `defaults()` (private, line 152), `held()` (private, line 223), `ordered()` (private, line 325)
 
 
 ## Avatar
