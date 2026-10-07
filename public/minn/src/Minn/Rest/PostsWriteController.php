@@ -231,11 +231,6 @@ final readonly class PostsWriteController
         if ($type === 'post') {
             $events->ensureCategory($this->writer, $postId);
         }
-        // A publish/unpublish transition changes the terms' published counts;
-        // with plugins loaded the reference's transition default recounts them.
-        if (!$events->live() && array_key_exists('status', $body) && $body['status'] !== $post->status) {
-            $this->writer->recountTaxonomiesOf($postId);
-        }
         $events->saved($postId, $post);
         $events->restInserted($postId, $request, $post);
         $events->applyTerms($this->writer, $postId, $body, $type);
@@ -243,9 +238,6 @@ final readonly class PostsWriteController
         $events->applyMeta($this->writer, $postId, $body, $type);
         $events->restAfterInsert($postId, $request, $post);
         $this->rememberOld($post, $this->posts->find($postId));
-        if (!$events->live()) {
-            $this->writer->maybeSaveRevision($postId, $userId);
-        }
         // The revision of the update is saved from wp_after_insert_post, as on the reference.
         $events->afterInsert($postId, $post);
 
@@ -278,7 +270,7 @@ final readonly class PostsWriteController
             if ($post->isTrashed()) {
                 throw new RestError('rest_already_trashed', 'The post has already been deleted.', 410);
             }
-            $this->trash($post, $userId);
+            \wp_trash_post($post->id);
             $trashed = $this->posts->find($postId);
             $data = $this->object->edit($trashed, $userId);
             $events->restDeleted($trashed, $data, $request);
@@ -287,51 +279,21 @@ final readonly class PostsWriteController
 
         // The deleted post as data, without its links, as the reference's previous carries it.
         $previous = array_diff_key($this->object->edit($post, $userId), ['_links' => true]);
-        $events->live() ? \wp_delete_post($postId, true) : $this->writer->destroy($postId);
+        \wp_delete_post($postId, true);
         $data = ['deleted' => true, 'previous' => $previous];
         $events->restDeleted($post, $data, $request);
         return Reply::item($data, $fields);
     }
 
     /**
-     * Moves a post to the trash through the runtime's wp_trash_post, which
-     * tells plugins and keeps what the way back needs; without plugins
-     * loaded, the same rows by hand.
-     */
-    private function trash(PostRecord $post, int $userId): void
-    {
-        if ($this->events()->live()) {
-            \wp_trash_post($post->id);
-            return;
-        }
-        $this->writer->trash($post);
-        $this->writer->setMeta($post->id, '_wp_trash_meta_status', $post->status);
-        $this->writer->setMeta($post->id, '_wp_trash_meta_time', (string) time());
-        $this->writer->setMeta($post->id, '_wp_desired_post_slug', $post->slug);
-        $this->writer->maybeSaveRevision($post->id, $userId);
-    }
-
-    /**
-     * After a save: a published post (not a page) that moved keeps its old
-     * slug on record, and one that stayed published keeps its old date; one
-     * brought back from the trash has its wanted slug back and stops waiting
-     * for it.
+     * After a save: a post brought back from the trash under a new slug has
+     * its wanted slug back and stops waiting for it. The old slug and date a
+     * published post keeps are the reference's post_updated hooks'.
      */
     private function rememberOld(PostRecord $before, ?PostRecord $after): void
     {
-        if ($after === null) {
-            return;
-        }
-        if ($before->isTrashed() && !$after->isTrashed() && $after->slug !== $before->slug) {
+        if ($after !== null && $before->isTrashed() && !$after->isTrashed() && $after->slug !== $before->slug) {
             $this->writer->deleteMeta($after->id, '_wp_desired_post_slug');
-        }
-        // With plugins loaded the reference's own post_updated hooks keep the old slug and date, and a site may unhook them.
-        if ($this->events()->live() || $after->status !== PostStatus::Publish->value || $after->type === 'page') {
-            return;
-        }
-        $this->writer->rememberOld($after->id, '_wp_old_slug', $before->slug, $after->slug);
-        if ($before->status === PostStatus::Publish->value) {
-            $this->writer->rememberOld($after->id, '_wp_old_date', substr($before->date, 0, 10), substr($after->date, 0, 10));
         }
     }
 

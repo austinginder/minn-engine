@@ -113,27 +113,7 @@ final readonly class TermsController
         }
         $this->requireParent($config['has_parent'] ? (int) ($body['parent'] ?? 0) : 0, $taxonomy);
         $events = new TermEvents();
-        if ($events->live()) {
-            $termId = $events->restCreate($taxonomy, $body, $request);
-            $events->restSaved($termId, $taxonomy, $request, 'create');
-            return Reply::item($this->object->view($this->terms->row($termId, $taxonomy), $base), Fields::fromQuery($request->query), 201)
-                ->withHeader('Location', $this->object->url()->to("/wp/v2/{$base}/{$termId}"));
-        }
-        // A same-name term is the reference's term_exists refusal, which hands
-        // the existing id back in data AND in an additional_data list.
-        $existing = $this->terms->idByName($name, $taxonomy);
-        if ($existing !== null) {
-            throw new RestError(
-                'term_exists',
-                'A term with the name provided already exists in this taxonomy.',
-                400,
-                ['term_id' => $existing],
-                ['additional_data' => [$existing, $existing]],
-            );
-        }
-        $slug = $this->terms->uniqueSlug((string) ($body['slug'] ?? '') !== '' ? (string) $body['slug'] : $name, $taxonomy);
-        $args = ['slug' => $slug, 'description' => Kses::comment((string) ($body['description'] ?? '')), 'parent' => $config['has_parent'] ? (int) ($body['parent'] ?? 0) : 0];
-        $termId = $this->terms->create($name, $slug, $taxonomy, $args['description'], $args['parent']);
+        $termId = $events->restCreate($taxonomy, $body, $request);
         $events->restSaved($termId, $taxonomy, $request, 'create');
         return Reply::item($this->object->view($this->terms->row($termId, $taxonomy), $base), Fields::fromQuery($request->query), 201)
             ->withHeader('Location', $this->object->url()->to("/wp/v2/{$base}/{$termId}"));
@@ -158,23 +138,8 @@ final readonly class TermsController
         $body = $request->json();
         $this->requireParent($config['has_parent'] ? (int) ($body['parent'] ?? 0) : 0, $taxonomy);
         $events = new TermEvents();
-        if ($events->live()) {
-            $events->restUpdate($termId, $taxonomy, $body, $request);
-            $events->restSaved($termId, $taxonomy, $request, 'update');
-            return Reply::item($this->object->view($this->terms->row($termId, $taxonomy), $base), Fields::fromQuery($request->query));
-        }
-        $args = array_filter([
-            'name' => isset($body['name']) ? Kses::text((string) $body['name']) : null,
-            'slug' => isset($body['slug']) ? $this->terms->uniqueSlug((string) $body['slug'], $taxonomy, $termId) : null,
-            'description' => isset($body['description']) ? Kses::comment((string) $body['description']) : null,
-            'parent' => $config['has_parent'] && isset($body['parent']) ? (int) $body['parent'] : null,
-        ], static fn ($v) => $v !== null);
-        if (isset($args['name']) || isset($args['slug'])) {
-            $this->terms->rename($termId, (string) ($args['name'] ?? $term['name']), (string) ($args['slug'] ?? $term['slug']));
-        }
-        if (isset($args['description']) || isset($args['parent'])) {
-            $this->terms->describe($termId, $taxonomy, (string) ($args['description'] ?? $term['description']), (int) ($args['parent'] ?? $term['parent']));
-        }
+        $events->restUpdate($termId, $taxonomy, $body, $request);
+        $events->restSaved($termId, $taxonomy, $request, 'update');
         return Reply::item($this->object->view($this->terms->row($termId, $taxonomy), $base), Fields::fromQuery($request->query));
     }
 

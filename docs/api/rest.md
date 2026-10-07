@@ -17,7 +17,7 @@ the wp/v2 surface: shapes and controllers
 | [`Catalogue`](#catalogue) | final class | 70 | The route table read from the classes alone: every #[Route] under |
 | [`CommentListArgs`](#commentlistargs) | final class | 35 | The WP_Comment_Query arguments a comment list request makes, as the |
 | [`CommentObject`](#commentobject) | final readonly class | 87 | The wp/v2 comment object; edit context adds the moderation-desk fields. |
-| [`CommentsController`](#commentscontroller) | final readonly class | 336 | wp/v2/comments: the status tabs with pagination headers, single, |
+| [`CommentsController`](#commentscontroller) | final readonly class | 271 | wp/v2/comments: the status tabs with pagination headers, single, |
 | [`Context`](#context) | enum | 18 | The view a REST caller asked for. View is the public shape, edit adds the |
 | [`DeclaredPostsController`](#declaredpostscontroller) | final readonly class | 56 | wp/v2/{rest_base} for extra post types declared by an active extension. |
 | [`DeclaredTermsController`](#declaredtermscontroller) | final readonly class | 43 | wp/v2/{rest_base} for the taxonomies plugin code registers to show in |
@@ -30,7 +30,7 @@ the wp/v2 surface: shapes and controllers
 | [`InstalledThemesController`](#installedthemescontroller) | final readonly class | 128 | wp/v2/themes as the reference answers it (probe rest-themes): the |
 | [`Links`](#links) | final class | 52 | Response link relations compacted through CURIEs: a rel that matches a CURIE's template becomes `name:suffix`, and the used CURIEs ride along. |
 | [`LiveSettings`](#livesettings) | final readonly class | 77 | wp/v2/settings with plugins loaded, served from the registered settings |
-| [`MediaController`](#mediacontroller) | final readonly class | 305 | wp/v2/media: list, single, upload on both transports (multipart field |
+| [`MediaController`](#mediacontroller) | final readonly class | 252 | wp/v2/media: list, single, upload on both transports (multipart field |
 | [`MediaObject`](#mediaobject) | final readonly class | 164 | The wp/v2 media object, view and edit context. |
 | [`MenuItemObject`](#menuitemobject) | final readonly class | 74 | The wp/v2/menu-items resource. |
 | [`MenuObject`](#menuobject) | final readonly class | 37 | The wp/v2/menus resource: a nav_menu term plus locations and auto_add. |
@@ -44,7 +44,7 @@ the wp/v2 surface: shapes and controllers
 | [`PostListArgs`](#postlistargs) | final class | 174 | The WP_Query arguments a post list request makes, as the reference makes |
 | [`PostObject`](#postobject) | final readonly class | 530 | Builds the wp/v2 post and page objects in the reference's shape: the |
 | [`PostsController`](#postscontroller) | final readonly class | 191 | wp/v2 posts and pages, read side. |
-| [`PostsWriteController`](#postswritecontroller) | final readonly class | 459 | wp/v2 posts and pages, write side: create, update, trash, and force |
+| [`PostsWriteController`](#postswritecontroller) | final readonly class | 421 | wp/v2 posts and pages, write side: create, update, trash, and force |
 | [`RegisteredFields`](#registeredfields) | final class | 105 | The fields plugin code adds to an object type with register_rest_field, |
 | [`RegisteredPostFields`](#registeredpostfields) | final readonly class | 89 | The REST object of a post whose type plugin code registered (probe rest-plugin-types), built by what the type supports. |
 | [`RegisteredType`](#registeredtype) | final readonly class | 46 | A post type plugin code registered, as its REST object follows it |
@@ -78,7 +78,7 @@ the wp/v2 surface: shapes and controllers
 | [`TermFilters`](#termfilters) | final class | 25 | A term a REST read answers with, as plugin code filters it on the |
 | [`TermListArgs`](#termlistargs) | final class | 28 | The get_terms arguments a term list request makes, as the reference |
 | [`TermObject`](#termobject) | final readonly class | 107 | The wp/v2 category and tag objects. |
-| [`TermsController`](#termscontroller) | final readonly class | 203 | wp/v2 categories, tags, and pattern categories: list, single, and the create/update/delete the taxonomy admin drives. |
+| [`TermsController`](#termscontroller) | final readonly class | 168 | wp/v2 categories, tags, and pattern categories: list, single, and the create/update/delete the taxonomy admin drives. |
 | [`Types`](#types) | final class | 179 | The engine's registry of built-in post types, seeded from the observed |
 | [`TypesController`](#typescontroller) | final readonly class | 70 | wp/v2 types. In the edit context (probe rest-types-edit) a type adds its |
 | [`UserCollectionParams`](#usercollectionparams) | final class | 11 | The users list's parameters as the reference declares them (probe |
@@ -677,7 +677,7 @@ signed-in replies, moderation updates, trash, and force delete.
 Used by: `Minn\Rest\Api`
 
 ```php
-__construct(Minn\Content\Comments $comments, Minn\Content\Posts $posts, Minn\Content\Site $site, Minn\Rest\CommentObject $object, Minn\Rest\Caller $caller)
+__construct(Minn\Content\Comments $comments, Minn\Content\Posts $posts, Minn\Rest\CommentObject $object, Minn\Rest\Caller $caller)
 ```
 
 
@@ -717,7 +717,7 @@ Route: `DELETE /wp/v2/comments/{id:[\d]+} (cap moderate_comments; comment {id} m
 
 Trash remembers where the comment came from; force removes it outright.
 
-Internals: `totals()` (private, line 76), `events()` (private, line 174), `allowed()` (private, line 256), `readablePost()` (private, line 293), `readable()` (private, line 302), `plainComment()` (private, line 312), `prepared()` (private, line 334), `cleanComment()` (private, line 354)
+Internals: `totals()` (private, line 73), `events()` (private, line 136), `allowed()` (private, line 200), `readablePost()` (private, line 237), `readable()` (private, line 246), `plainComment()` (private, line 256), `prepared()` (private, line 278)
 
 
 ## Context
@@ -1236,7 +1236,7 @@ Route: `DELETE /wp/v2/media/{id:[\d]+} (cap delete_post on {id}; attachment {id}
 
 Attachments cannot be trashed; force removes the row, its meta, and its files.
 
-Internals: `restDate()` (private, line 47), `storeWithPlugins()` (private, line 122), `insertedWithPlugins()` (private, line 149), `preparedAttachment()` (private, line 187), `finishedWithPlugins()` (private, line 209), `params()` (private, line 225), `inserted()` (private, line 231), `attachment()` (private, line 325)
+Internals: `restDate()` (private, line 46), `storeWithPlugins()` (private, line 104), `insertedWithPlugins()` (private, line 131), `preparedAttachment()` (private, line 169), `finishedWithPlugins()` (private, line 191), `params()` (private, line 207), `attachment()` (private, line 271)
 
 
 ## MediaObject
@@ -1875,7 +1875,7 @@ A body's meta must be an object of keys (probe rest-meta). @param array<string, 
 
 A field that may arrive as a scalar or as {raw: ...}.
 
-Internals: `hasParent()` (private, line 130), `hasOrder()` (private, line 136), `events()` (private, line 142), `newColumns()` (private, line 153), `writeNewPost()` (private, line 187), `trash()` (private, line 301), `rememberOld()` (private, line 320), `floatingDate()` (private, line 345), `scheduledIfFuture()` (private, line 355), `fieldColumns()` (private, line 374), `statusColumns()` (private, line 417), `checkStickyPasswordConflict()` (private, line 447), `validStatus()` (private, line 467), `clean()` (private, line 476)
+Internals: `hasParent()` (private, line 130), `hasOrder()` (private, line 136), `events()` (private, line 142), `newColumns()` (private, line 153), `writeNewPost()` (private, line 187), `rememberOld()` (private, line 293), `floatingDate()` (private, line 307), `scheduledIfFuture()` (private, line 317), `fieldColumns()` (private, line 336), `statusColumns()` (private, line 379), `checkStickyPasswordConflict()` (private, line 409), `validStatus()` (private, line 429), `clean()` (private, line 438)
 
 
 ## RegisteredFields
@@ -3372,7 +3372,7 @@ What creating a term needs (probe rest-plugin-caps): a plugin's
 taxonomy, its edit_terms when hierarchical and its assign_terms when
 flat; categories, manage_categories; the others, edit_posts.
 
-Internals: `requireParent()` (private, line 182)
+Internals: `requireParent()` (private, line 147)
 
 
 ## Types

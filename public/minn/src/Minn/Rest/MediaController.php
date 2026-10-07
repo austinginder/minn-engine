@@ -19,7 +19,6 @@ use Minn\Http\Route;
 use Minn\Media\Upload;
 use Minn\Media\Writer;
 use Minn\RestError;
-use Minn\Support\Kses;
 
 /**
  * wp/v2/media: list, single, upload on both transports (multipart field
@@ -72,7 +71,7 @@ final readonly class MediaController
     #[Route(Method::Post, '/wp/v2/media', policy: new Policy(Access::Cap, 'upload_files', signIn: 'rest_cannot_create', signInMessage: 'Sorry, you are not allowed to create posts as this user.', refuse: 'rest_cannot_create', message: 'Sorry, you are not allowed to upload media on this site.'))]
     public function create(Request $request): Response
     {
-        $userId = $this->caller->require('rest_cannot_create', 'Sorry, you are not allowed to create posts as this user.')->id();
+        $this->caller->require('rest_cannot_create', 'Sorry, you are not allowed to create posts as this user.');
         if (!$this->caller->can('upload_files')) {
             throw new RestError('rest_cannot_create', 'Sorry, you are not allowed to upload media on this site.', 403);
         }
@@ -87,25 +86,8 @@ final readonly class MediaController
         // The refusal code names the transport: a multipart field is an "unknown
         // error", a raw body a "sideload error"; the message and status are one.
         $refused = static fn (string $message = 'Sorry, you are not allowed to upload this file type.'): RestError => new RestError($upload->movedFrom === null ? 'rest_upload_sideload_error' : 'rest_upload_unknown_error', $message, 500);
-        if (Runtime::booted()) {
-            [$relative, $type] = $this->storeWithPlugins($upload, $request, $refused);
-            return $this->insertedWithPlugins($relative, $type, $upload, $request);
-        }
-        if ($upload->mime() === null) {
-            throw $refused();
-        }
-        if ($upload->isImage()) {
-            // The bytes decide: non-image bytes under an image name are refused, and a
-            // GIF named .png is stored as .gif, both as the reference answers.
-            $sniffed = $upload->sniffedMime();
-            if ($sniffed === null) {
-                throw $refused();
-            }
-            if ($sniffed !== $upload->mime()) {
-                $upload = $upload->renamedFor($sniffed);
-            }
-        }
-        return $this->inserted($this->library->prepare($upload, $userId), $request);
+        [$relative, $type] = $this->storeWithPlugins($upload, $request, $refused);
+        return $this->insertedWithPlugins($relative, $type, $upload, $request);
     }
 
     /**
@@ -227,27 +209,6 @@ final readonly class MediaController
         return $request->query + $request->form + (str_starts_with(trim($request->body), '{') ? $request->json() : []);
     }
 
-    /** The attachment's row written and the reference's actions told, for a file already stored. */
-    private function inserted(\Minn\Media\PreparedUpload $prepared, Request $request): Response
-    {
-        $events = new PostEvents();
-        $events->beforeSave($prepared->columns, null);
-        $id = $this->library->insert($prepared);
-        $events->attachedFile($this->library, $id, $prepared->relative);
-        $events->attachmentAdded($id);
-        $events->restInserted($id, $request, null);
-        $events->restAfterInsert($id, $request, null);
-        $events->afterInsert($id, null);
-        // The reference cuts the sizes after the insert, storing the metadata as it goes; without plugins the engine cut them first.
-        if ($events->live()) {
-            $events->attachmentGenerated($id, $this->library->pathOf($prepared->relative), (string) $prepared->columns['post_mime_type']);
-        } elseif ($prepared->metadata !== null) {
-            $this->library->setMetadata($id, $prepared->metadata);
-        }
-        return Reply::item($this->object->build($this->posts->find($id), Context::Edit), Fields::fromQuery($request->query), 201)
-            ->withHeader('Location', $this->object->url()->to('/wp/v2/media/' . $id));
-    }
-
     /** The editable fields the app uses. */
     #[Route(Method::Post, '/wp/v2/media/{id:[\d]+}', policy: new Policy(Access::Own, 'edit_post', param: 'id', subject: Subject::Attachment, signIn: 'rest_cannot_edit', signInMessage: 'Sorry, you are not allowed to edit this post.', refuse: 'rest_cannot_edit', message: 'Sorry, you are not allowed to edit this post.'))]
     #[Route(Method::Put, '/wp/v2/media/{id:[\d]+}', policy: new Policy(Access::Own, 'edit_post', param: 'id', subject: Subject::Attachment, signIn: 'rest_cannot_edit', signInMessage: 'Sorry, you are not allowed to edit this post.', refuse: 'rest_cannot_edit', message: 'Sorry, you are not allowed to edit this post.'))]
@@ -260,30 +221,16 @@ final readonly class MediaController
             throw $this->caller->refuse('rest_cannot_edit', 'Sorry, you are not allowed to edit this post.');
         }
         $body = $request->json();
-        $columns = [];
-        foreach (['title' => 'post_title', 'caption' => 'post_excerpt', 'description' => 'post_content'] as $field => $column) {
-            if (isset($body[$field])) {
-                $markup = PostsWriteController::field($body[$field]);
-                $columns[$column] = $this->caller->can('unfiltered_html') ? $markup : Kses::post($markup);
-            }
-        }
+        $parentArgs = [];
         if (array_key_exists('post', $body)) {
             $parent = (int) $body['post'];
             if ($parent > 0 && !$this->caller->can('edit_post', $parent)) {
                 throw new RestError('rest_cannot_edit', 'Sorry, you are not allowed to edit this post.', 403);
             }
-            $columns['post_parent'] = $parent;
+            $parentArgs['post_parent'] = $parent;
         }
-        $events = new PostEvents();
-        if (!$events->live()) {
-            if (isset($body['alt_text'])) {
-                $this->library->setAlt($attachmentId, (string) $body['alt_text']);
-            }
-            $this->library->edit($attachmentId, $columns);
-            return Reply::answer($request, $this->object->build($this->posts->find($attachmentId), Context::Edit));
-        }
-        // With plugins loaded, the reference's update: rest_pre_insert_attachment over the
-        // prepared attachment, wp_update_post, then the REST actions with the alt text between.
+        // The reference's update: rest_pre_insert_attachment over the prepared
+        // attachment, wp_update_post, then the REST actions with the alt text between.
         $attachment = new \stdClass();
         $attachment->ID = $attachmentId;
         if (isset($body['title'])) {
@@ -291,7 +238,7 @@ final readonly class MediaController
         }
         $attachment->post_type = 'attachment';
         $attachment->page_template = null;
-        $args = $this->preparedAttachment($attachment, $body, $request) + array_intersect_key($columns, ['post_parent' => true]);
+        $args = $this->preparedAttachment($attachment, $body, $request) + $parentArgs;
         $saved = \wp_update_post(\wp_slash($args), true, false);
         if ($saved instanceof \WP_Error) {
             throw new RestError($saved->get_error_code(), $saved->get_error_message(), 500);
@@ -316,9 +263,8 @@ final readonly class MediaController
             throw new RestError('rest_trash_not_supported', "The post does not support trashing. Set 'force=true' to delete.", 501);
         }
         $data = ['deleted' => true, 'previous' => array_diff_key($this->object->build($attachment, Context::Edit), ['_links' => true])];
-        $events = new PostEvents();
-        $events->live() ? \wp_delete_attachment($attachmentId, true) : $this->library->remove($attachment);
-        $events->restDeleted($attachment, $data, $request);
+        \wp_delete_attachment($attachmentId, true);
+        (new PostEvents())->restDeleted($attachment, $data, $request);
         return Reply::answer($request, $data);
     }
 

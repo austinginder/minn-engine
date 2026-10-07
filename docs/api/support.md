@@ -306,7 +306,7 @@ block delimiters are written back with their attribute values filtered.
 - const `STRAY_AMPERSAND` = `'/&(?!(?:#[0-9]+|#[xX][0-9a-fA-F]+|[a-zA-Z][a-zA-Z0-9]{0,31});)/'`
 - const `MARKUP` = `array (   '&' => '&amp;',   '<' => '&lt;',   '>' => '&gt;',   '"' => '&quot;',   '\'' => '&apos;', )`
 
-Used by: `Minn\Blocks\Dynamic\LatestComments`, `Minn\Blocks\Dynamic\SocialLinks`, `Minn\Blocks\Dynamic\Theme\Comments`, `Minn\Blocks\Dynamic\Theme\Navigation`, `Minn\Content\Users`, `Minn\Media\Writer`, `Minn\Rest\CommentsController`, `Minn\Rest\MediaController`, `Minn\Rest\MenusController`, `Minn\Rest\PostsWriteController`, `Minn\Rest\RevisionsController`, `Minn\Rest\TermsController`, `Minn\Rest\UsersController`, `Minn\Support\KsesPolicy`
+Used by: `Minn\Blocks\Dynamic\LatestComments`, `Minn\Blocks\Dynamic\SocialLinks`, `Minn\Blocks\Dynamic\Theme\Comments`, `Minn\Blocks\Dynamic\Theme\Navigation`, `Minn\Content\Users`, `Minn\Media\Writer`, `Minn\Rest\MenusController`, `Minn\Rest\PostsWriteController`, `Minn\Rest\RevisionsController`, `Minn\Rest\TermsController`, `Minn\Rest\UsersController`, `Minn\Support\KsesPolicy`
 
 
 ### static `post(string $html): string`

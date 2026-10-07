@@ -266,7 +266,7 @@ An upload made ready for its attachment: the file stored, its sizes cut,
 the row it will be. The row is written apart, so what plugins hear
 before it (pre_post_insert) comes between.
 
-Used by: `Minn\Media\Writer`, `Minn\Rest\MediaController`
+Used by: `Minn\Media\Writer`
 
 ```php
 __construct(array $columns, string $relative, ?array $metadata)

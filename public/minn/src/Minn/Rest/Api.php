@@ -117,7 +117,7 @@ final readonly class Api
             new RenderController($s->db(), $s->site(), $s->posts(), $s->permalinks(), $caller, $s->contentDir() . '/themes'),
             new SystemController($s->diagnostics(), $s->logs(), $caller),
             new SettingsController(new Settings($s->site()), $caller, new LiveSettings($s->schema())),
-            new CommentsController($s->comments(), $s->posts(), $s->site(), $s->commentObject(), $caller),
+            new CommentsController($s->comments(), $s->posts(), $s->commentObject(), $caller),
             new GlobalStylesController($s->userStyles(), $s->themeStyles(), new GlobalStylesObject($s->revisions(), $s->url(), $caller), $s->revisions(), $caller),
             new RevisionsController($s->posts(), $s->revisions(), $s->url(), $caller),
             new MediaController($s->posts(), $s->mediaWriter(), $s->mediaObject(), $caller, $postsController),

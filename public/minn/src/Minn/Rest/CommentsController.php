@@ -13,14 +13,12 @@ use Minn\Content\PostRecord;
 use Minn\Content\CommentRecord;
 use Minn\Content\Comments;
 use Minn\Content\Posts;
-use Minn\Content\Site;
 use Minn\Http\Method;
 use Minn\Http\Request;
 use Minn\Http\Response;
 use Minn\Http\Route;
 use Minn\RestError;
 use Minn\Support\Email;
-use Minn\Support\Kses;
 
 /**
  * wp/v2/comments: the status tabs with pagination headers, single,
@@ -31,7 +29,6 @@ final readonly class CommentsController
     public function __construct(
         private Comments $comments,
         private Posts $posts,
-        private Site $site,
         private CommentObject $object,
         private Caller $caller,
     ) {
@@ -109,11 +106,9 @@ final readonly class CommentsController
     #[Route(Method::Post, '/wp/v2/comments', policy: new Policy(Access::SignedIn, signIn: 'rest_comment_login_required', signInMessage: 'Sorry, you must be logged in to comment.'))]
     public function create(Request $request): Response
     {
-        $session = $this->caller->require('rest_comment_login_required', 'Sorry, you must be logged in to comment.');
-        $user = $session->user;
+        $this->caller->require('rest_comment_login_required', 'Sorry, you must be logged in to comment.');
         $body = $request->json();
         $postId = (int) ($body['post'] ?? 0);
-        $content = is_array($body['content'] ?? null) ? (string) ($body['content']['raw'] ?? '') : (string) ($body['content'] ?? '');
         $post = $this->posts->find($postId);
         if ($post === null) {
             throw new RestError('rest_comment_invalid_post_id', 'Sorry, you are not allowed to create this comment without a post.', 403);
@@ -128,43 +123,10 @@ final readonly class CommentsController
             throw new RestError('rest_comment_closed', 'Sorry, comments are closed for this item.', 403);
         }
         $events = $this->events();
-        if ($events->live()) {
-            $id = $events->restCreate(['comment_post_ID' => $postId, 'comment_parent' => (int) ($body['parent'] ?? 0)] + $this->prepared($body, $request), $request);
-            if (isset($body['status']) && $this->caller->can('moderate_comments')) {
-                CommentEvents::changeStatus($id, (string) $body['status']);
-            }
-            $events->restSaved($id, $request, null);
-            return Reply::item($this->object->build($this->comments->find($id), Context::Edit), Fields::fromQuery($request->query), 201)
-                ->withHeader('Location', $this->object->url()->to('/wp/v2/comments/' . $id));
+        $id = $events->restCreate(['comment_post_ID' => $postId, 'comment_parent' => (int) ($body['parent'] ?? 0)] + $this->prepared($body, $request), $request);
+        if (isset($body['status']) && $this->caller->can('moderate_comments')) {
+            CommentEvents::changeStatus($id, (string) $body['status']);
         }
-        if (trim($content) === '') {
-            throw new RestError('rest_comment_content_invalid', 'Invalid comment content.', 400);
-        }
-        $content = $this->cleanComment($content);
-        // A moderator self-approves; everyone else lands in the queue (the
-        // previously-approved shortcut is a recorded gap).
-        $approved = $this->caller->can('moderate_comments') ? '1' : '0';
-        $now = gmdate('Y-m-d H:i:s');
-        $columns = [
-            'comment_post_ID' => $postId,
-            'comment_author' => $user->displayName,
-            'comment_author_email' => $user->email,
-            'comment_author_url' => $user->url,
-            'comment_author_IP' => $request->remoteAddress,
-            'comment_date' => $this->site->localNow(),
-            'comment_date_gmt' => $now,
-            'comment_content' => $content,
-            'comment_karma' => 0,
-            'comment_approved' => $approved,
-            'comment_agent' => substr((string) ($request->header('user-agent') ?? ''), 0, 254),
-            'comment_type' => 'comment',
-            'comment_parent' => (int) ($body['parent'] ?? 0),
-            'user_id' => $session->id(),
-        ];
-        // Through REST the reference writes the comment with wp_insert_comment,
-        // which sends no notice: a held comment waits in the queue unannounced.
-        $events->allow($request->remoteAddress, $user->email, $now);
-        $id = $events->insert($columns);
         $events->restSaved($id, $request, null);
         return Reply::item($this->object->build($this->comments->find($id), Context::Edit), Fields::fromQuery($request->query), 201)
             ->withHeader('Location', $this->object->url()->to('/wp/v2/comments/' . $id));
@@ -188,32 +150,14 @@ final readonly class CommentsController
             throw $this->caller->refuse('rest_cannot_edit', 'Sorry, you are not allowed to edit this comment.');
         }
         $body = $request->json();
-        $status = null;
         if (isset($body['status'])) {
             $tokens = Comments::tokensFor((string) $body['status']);
             if ($tokens === null || count($tokens) > 1) {
                 throw new RestError('rest_invalid_param', 'Invalid parameter(s): status', 400);
             }
-            $status = $tokens[0];
         }
         $events = $this->events();
-        if ($events->live()) {
-            $events->restUpdate($comment, $this->prepared($body, $request), isset($body['status']) ? (string) $body['status'] : null, $request);
-            $events->restSaved($commentId, $request, $comment);
-            return Reply::item($this->object->build($this->comments->find($commentId), Context::Edit), Fields::fromQuery($request->query));
-        }
-        $columns = [];
-        $fields = ['author_name' => 'comment_author', 'author_email' => 'comment_author_email', 'author_url' => 'comment_author_url'];
-        if (isset($body['content'])) {
-            $content = is_array($body['content']) ? (string) ($body['content']['raw'] ?? '') : (string) $body['content'];
-            $columns += ['comment_content' => $this->cleanComment($content)];
-        }
-        foreach ($fields as $field => $column) {
-            if (isset($body[$field])) {
-                $columns[$column] = $column === 'comment_author_url' ? Kses::url((string) $body[$field]) : Kses::text((string) $body[$field]);
-            }
-        }
-        $events->update($comment, $columns, $status);
+        $events->restUpdate($comment, $this->prepared($body, $request), isset($body['status']) ? (string) $body['status'] : null, $request);
         $events->restSaved($commentId, $request, $comment);
         return Reply::item($this->object->build($this->comments->find($commentId), Context::Edit), Fields::fromQuery($request->query));
     }
@@ -349,16 +293,5 @@ final readonly class CommentsController
         $prepared += ['comment_author_IP' => filter_var($address, FILTER_VALIDATE_IP) !== false ? $address : '127.0.0.1'];
         $agent = (string) ($body['author_user_agent'] ?? '') !== '' ? (string) $body['author_user_agent'] : (string) ($request->header('user-agent') ?? '');
         return $agent === '' ? $prepared : $prepared + ['comment_agent' => $agent];
-    }
-
-    private function cleanComment(string $content): string
-    {
-        if (!$this->caller->can('unfiltered_html')) {
-            $content = Kses::comment($content);
-        }
-        return (string) preg_replace_callback('/<a\s([^>]*)>/i', static function (array $m): string {
-            $attributes = preg_replace('/\s*\brel\s*=\s*("[^"]*"|\'[^\']*\'|[^\s>]+)/i', '', $m[1]);
-            return '<a ' . trim((string) $attributes) . ' rel="nofollow ugc">';
-        }, $content);
     }
 }
