@@ -2,7 +2,8 @@
 
 Status: implemented for `GET /minn-admin/v1/overview`, `GET
 .../overview/activity`, `GET .../notifications`, `POST
-.../notifications/read`, `GET .../core` and `GET .../boot-status`.
+.../notifications/read`, `GET .../core`, `POST .../core/update` and `GET
+.../boot-status`.
 Suite: `tests/minn-v1.test.php` (31 checks, live parity against the reference
 running the real Minn Admin plugin on the same database, three capability
 views, plus a two-directional read-marker round trip).
@@ -109,11 +110,16 @@ Sections, in capture order (rows only when their gate and data allow):
    arrays across the update_plugins / update_themes / update_core
    transients.
 5. Theme update rows — same gap as plugins; empty here.
-6. Core upgrade row (`update_core` cap) — only when the first offer in the
-   `update_core` transient has `response == "upgrade"` (this database says
-   "latest"); id `core-{version}`, time = transient `last_checked`.
+6. Core upgrade row (`update_core` cap) — on the oracle only when the first
+   offer in the `update_core` transient has `response == "upgrade"`; id
+   `core-{version}`, time = transient `last_checked`. The engine offers Minn
+   instead (see `GET /core`): id `minn-{version}`, title "Minn {version} is
+   available", `update: { type: "core", version, name: "Minn" }`, time = when
+   GitHub was last asked. The suite drops `core`-type rows from both sides
+   before the diff.
 7. Core auto-update notice — from the `auto_core_update_notified` option,
-   `type == success` within 14 days.
+   `type == success` within 14 days. Oracle only: WordPress's auto-updates
+   never run under the engine.
 8. Captured admin notices (Minn_Admin_Notices) — GAP: engine has no notice
    capture store; empty on a fresh activation.
 9. New users (`list_users` only): 2 newest with `user_registered` in the
@@ -159,13 +165,45 @@ the comment-row visibility gate).
 
 ## GET /core
 
-Gate `update_core` (403 rest_forbidden below it). `{ version, dbUpgrade,
-update }`. The oracle reads its version from core's version.php and phones
-home via `wp_version_check()`; the engine reads `version_checked` from the
-`update_core` transient blob and never phones home. `update` is
-`{ version, locale }` when the first offer says `upgrade`, else null.
-`dbUpgrade` is false on the engine by definition (no newer core code on
-disk for the database to lag behind).
+Gate `update_core` (403 rest_forbidden below it). On the oracle `{ version,
+dbUpgrade, update }` describes WordPress: its version from core's
+version.php, an offer from `wp_version_check()`, `update` `{ version,
+locale }` when the first offer says `upgrade`. On the engine core is Minn
+itself, a deliberate divergence (2026-10-07): `{ product: "minn", version,
+dbUpgrade: false, checked, update }`, where `version` is
+`MINN_ENGINE_VERSION`, `checked` the time GitHub was last asked, and
+`update` `{ version, url, published }` when the latest published release of
+`austinginder/minn-engine` is newer, else null. WordPress's own offer (the
+`update_core` transient a parked copy may write) is never shown: it is not
+Minn's to install. The app keys its "Update Minn" wording off the boot
+payload's `engine`, not off `product`.
+
+`Ops\Releases` asks `api.github.com/repos/austinginder/minn-engine/releases/latest`
+at most once a day and keeps the answer in the `minn_release` option (JSON
+`{ checked, latest }`). A request to `/core` or `/boot-status` that finds the
+answer a day old asks again after its response is sent. A 404 (no published
+release, or a private repository) offers nothing; any other failure keeps the
+last answer and waits a day. A release counts only when it is published, not a
+pre-release, tagged `v<major>.<minor>.<patch>`, and carries a `minn.zip` asset;
+the asset's `digest` (`sha256:<hex>`) is the checksum the install demands.
+
+## POST /core/update
+
+Gate `update_core`. Installs the release on offer and answers `{ version }`.
+Nothing newer on offer: 400 `minn_current`. A failed install: 500
+`minn_update_failed` with the reason. `Ops\EngineUpdate` downloads `minn.zip`
+only from `https://github.com/austinginder/minn-engine/releases/download/`
+(every redirect hop judged; objects.githubusercontent.com and
+release-assets.githubusercontent.com are the allowed CDN hosts), refuses
+an asset without a published sha256 or one that does not match it, unpacks it
+through `Ops\Archive` beside the engine, checks that its bootstrap names the
+offered version and `bin/minn` is there, then swaps the folder in two renames
+(the running engine aside, the new one in; the first is undone when the second
+fails) and removes the old copy. A legacy `.install.json` inside the engine
+comes along. One update runs at a time (a lock in the temp folder keyed by
+the engine's path). A development checkout (a link, or a folder under git at
+any depth) is refused. The same install runs from the command line as
+`php minn/bin/minn update` (`--check` only asks GitHub).
 
 ## GET /boot-status
 
@@ -334,7 +372,8 @@ dogfood site against its own reference, both freshly checked:
 - `GET plugin-meta` → `{file: {slug, icon, url}}` for every plugin the directory knows
   (offers and current alike; the svg, 2x, or 1x icon; the directory URL).
 - `POST check-updates {}` → `{ok, pluginUpdates, themeUpdates, translations: 0,
-  translationGroups: [], plugins: n, themes: n}`.
+  translationGroups: [], plugins: n, themes: n}`, plus on the engine `core` (the
+  `GET /core` answer after asking GitHub again; `update_core` alone may call it).
 - `POST plugins/update {plugin}` (with or without `.php`) downloads the offer's
   `downloads.wordpress.org` package through the one unpacker, replaces the folder,
   and answers `{updated: true, version}`; nothing offered → 400 `no_update`; an

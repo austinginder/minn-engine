@@ -90,7 +90,8 @@ function ok( cond, label, detail ) {
 		await page.waitForSelector( '#minn-ver-btn', { timeout: 15000 } );
 		page.once( 'dialog', ( d ) => { errors.push( 'alert: ' + d.message() ); d.dismiss(); } );
 		await page.click( '#minn-ver-btn' );
-		await page.waitForTimeout( 2500 );
+		// The engine's changelog answers in a second or two on this site; wait for it, not a fixed time.
+		await page.waitForFunction( () => /v\d+\.\d+/.test( ( document.querySelector( '.minn-changelog' ) || {} ).innerText || '' ), null, { timeout: 15000 } ).catch( () => {} );
 		const modal = await page.evaluate( () => { const m = document.querySelector( '.minn-changelog' ); return m ? m.innerText.slice( 0, 120 ) : ''; } );
 		ok( /v\d+\.\d+/.test( modal ), 'the version button opens the changelog', modal );
 		await page.goto( `${ BASE }/`, { waitUntil: 'load', timeout: 20000 } );

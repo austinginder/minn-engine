@@ -23,6 +23,7 @@ php minn/bin/minn preflight /path/to/public
 php minn/bin/minn install   /path/to/public [--park=/path/to/wp-parked] [--force]
 php minn/bin/minn status    /path/to/public
 php minn/bin/minn eject     /path/to/public
+php minn/bin/minn update    [--check]
 ```
 
 The four verbs also run through WP-CLI once `minn/cli.php` is loaded: on a
@@ -118,6 +119,29 @@ found, byte for byte (`tests/install.test.php` proves it on a scratch webroot).
 The engine's only footprint in the database is its sign-in throttle rows
 (`wp_options`, `minn_login_throttle_*`); everything else it writes is in the shapes
 WordPress writes.
+
+## Update
+
+Minn updates itself from its own GitHub releases, never from wordpress.org.
+Once a day the site asks GitHub for the latest published release of
+`austinginder/minn-engine` (kept in the `minn_release` option), and Minn Admin
+offers a newer one as Update Minn. From the command line, in the webroot:
+
+```
+php minn/bin/minn update --check   # ask GitHub, install nothing
+php minn/bin/minn update           # install the newer release
+```
+
+The release's `minn.zip` is downloaded from the repository's own release
+downloads only, checked against the sha256 GitHub publishes for the asset,
+unpacked beside the engine, checked again (its bootstrap must name the version
+on offer), and swapped in with two renames: the running `minn/` moves aside,
+the new one moves in, and the old one is removed. If the second rename fails
+the first is undone. `wp-config.php`, `wp-content/` and the database are not
+touched. A `minn/` that is a symbolic link or sits inside a git checkout is
+refused (update it with git), and the web server must be able to write to the
+webroot for the Minn Admin button to work; the command line works either way
+when run as the files' owner.
 
 ## Proven on a real site
 

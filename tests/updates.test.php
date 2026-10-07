@@ -127,7 +127,9 @@ echo "updates suite: $ENGINE (engine) / $REF (reference)\n";
 $admin = up_mint( 1 );
 
 // 1. Both stacks ask wordpress.org now; the offers agree.
-up_parity( 'check-updates agrees (translation offers are wordpress.org state the engine does not carry)', '/minn-admin/v1/check-updates', $admin, array( 'translations', 'translationGroups' ), 'POST', '{}' );
+up_parity( 'check-updates agrees (translation offers are wordpress.org state the engine does not carry; core is Minn on the engine)', '/minn-admin/v1/check-updates', $admin, array( 'translations', 'translationGroups', 'core' ), 'POST', '{}' );
+[ , $eb ] = up_fetch( $ENGINE, '/minn-admin/v1/check-updates', $admin, 'POST', '{}' );
+check( 'minn' === ( $eb['core']['product'] ?? null ), 'check-updates also asks after Minn itself', json_encode( $eb['core'] ?? null ) );
 up_parity( 'plugin-updates agrees (translations are wordpress.org state the engine does not carry)', '/minn-admin/v1/plugin-updates', $admin, array( 'translations', 'translationGroups', 'autoAllowed' ) );
 up_parity( 'plugin-meta agrees', '/minn-admin/v1/plugin-meta', $admin );
 up_parity( 'themes carry the offers and directory flags', '/minn-admin/v1/themes', $admin, array( 'screenshot' ) );

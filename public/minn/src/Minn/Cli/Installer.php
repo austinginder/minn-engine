@@ -4,7 +4,11 @@ declare(strict_types=1);
 
 namespace Minn\Cli;
 
+use Minn\Ops\EngineUpdate;
+use Minn\Ops\Releases;
+use Minn\Support\Files;
 use Throwable;
+
 
 /**
  * The swap, both ways. Install parks WordPress's own files beside the
@@ -72,6 +76,7 @@ final class Installer
                 'install' => $self->install($root, $options),
                 'eject' => $self->eject($root),
                 'status' => $self->status($root),
+                'update' => $self->update($options),
                 default => $self->help(),
             };
         } catch (Throwable $e) {
@@ -96,6 +101,34 @@ final class Installer
     private function help(): int
     {
         $this->say("Usage: minn <preflight|install|eject|status> <webroot> [--park=<dir>] [--force]");
+        $this->say("       minn update [--check]   replace this engine with the latest release on GitHub");
+        return 0;
+    }
+
+    /** Replaces this engine with the latest release on GitHub; --check only says whether there is one. */
+    public function update(array $options): int
+    {
+        $installed = EngineUpdate::versionOf($this->engineDir);
+        $state = null;
+        $releases = new Releases(static function () use (&$state): ?string {
+            return $state;
+        }, static function (string $json) use (&$state): void {
+            $state = $json;
+        }, $installed);
+        if (!$releases->refresh()['answered']) {
+            $this->say("GitHub did not answer, so it is not known whether a newer Minn than {$installed} is out. Try again later.");
+            return 1;
+        }
+        $offer = $releases->offer();
+        if ($offer === null) {
+            $this->say("No newer Minn than {$installed} is published.");
+            return 0;
+        }
+        $this->say("Minn {$offer->version} is available (this is {$installed}): {$offer->url}");
+        if (isset($options['check'])) {
+            return 0;
+        }
+        $this->say('Installed Minn ' . (new EngineUpdate($this->engineDir))->apply($offer) . '.');
         return 0;
     }
 
@@ -194,16 +227,16 @@ final class Installer
             @unlink("{$root}/{$file}");
         }
         foreach (self::WRITTEN_TREES as $tree) {
-            self::removeTree("{$root}/{$tree}");
+            Files::deleteTree("{$root}/{$tree}");
         }
         foreach ((array) ($manifest['published'] ?? self::LEGACY_PUBLISHED) as $path) {
-            self::removeTree("{$root}/{$path}");
+            Files::deleteTree("{$root}/{$path}");
         }
         $engine = "{$root}/minn";
         if (is_link($engine)) {
             unlink($engine);
         } else {
-            self::removeTree($engine);
+            Files::deleteTree($engine);
         }
         $restored = 0;
         foreach ((array) ($manifest['moved'] ?? []) as $entry) {
@@ -292,7 +325,7 @@ final class Installer
             return;
         }
         self::copyTree($from, $to);
-        self::removeTree($from);
+        Files::deleteTree($from);
     }
 
     private static function copyTree(string $from, string $to): void
@@ -314,27 +347,9 @@ final class Installer
         }
     }
 
-    private static function removeTree(string $path): void
-    {
-        if (!file_exists($path) && !is_link($path)) {
-            return;
-        }
-        if (is_link($path) || !is_dir($path)) {
-            unlink($path);
-            return;
-        }
-        foreach (scandir($path) ?: [] as $entry) {
-            if ($entry !== '.' && $entry !== '..') {
-                self::removeTree("{$path}/{$entry}");
-            }
-        }
-        rmdir($path);
-    }
-
     private static function version(): string
     {
-        $bootstrap = (string) file_get_contents(dirname(__DIR__, 3) . '/bootstrap.php');
-        return preg_match("/MINN_ENGINE_VERSION', '([^']+)'/", $bootstrap, $m) ? $m[1] : '0.0.0';
+        return EngineUpdate::versionOf(dirname(__DIR__, 3));
     }
 
     private function say(string $line): void

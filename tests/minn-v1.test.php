@@ -81,6 +81,18 @@ function v1_norm( $x ) {
 	return $x;
 }
 
+/**
+ * Core is WordPress on the oracle and Minn on the engine (contracts/rest/minn-admin-v1.md,
+ * GET /core): each side's core offer row is its own, so neither is diffed.
+ */
+function v1_without_core( $notifications ) {
+	if ( ! is_array( $notifications ) || ! isset( $notifications['items'] ) ) {
+		return $notifications;
+	}
+	$notifications['items'] = array_values( array_filter( $notifications['items'], static fn ( $i ) => 'core' !== ( $i['update']['type'] ?? '' ) ) );
+	return $notifications;
+}
+
 function v1_parity( string $label, string $route, ?array $mint, string $method = 'GET', ?string $body = null ): void {
 	global $ENGINE, $REF;
 	[ $rs, $rb ] = v1_fetch( $REF, $route, $mint, $method, $body );
@@ -88,6 +100,10 @@ function v1_parity( string $label, string $route, ?array $mint, string $method =
 	if ( $rs !== $es ) {
 		check( false, $label, "status $rs vs $es" );
 		return;
+	}
+	if ( str_starts_with( $route, '/minn-admin/v1/notifications' ) ) {
+		$rb = v1_without_core( $rb );
+		$eb = v1_without_core( $eb );
 	}
 	$d = minn_test_diff( v1_norm( $rb ), v1_norm( $eb ) );
 	check( null === $d, $label, (string) $d );
@@ -214,8 +230,17 @@ foreach ( $engine_view['items'] ?? array() as $item ) {
 check( $all_read, 'engine reads the WordPress-written read_at' );
 v1_parity( 'notifications parity after mark-all (admin)', '/minn-admin/v1/notifications', $admin );
 
-// 7. /core: payload parity for the admin, the capability refusal for the editor.
-v1_parity( 'core status (admin)', '/minn-admin/v1/core', $admin );
+// 7. /core: on the engine core is Minn (its version and its GitHub releases),
+// so the admin's answer is pinned by shape; the editor's refusal is parity.
+[ $st, $core ] = v1_fetch( $ENGINE, '/minn-admin/v1/core', $admin );
+preg_match( "/MINN_ENGINE_VERSION', '([^']+)'/", (string) file_get_contents( "$ROOT/public/minn/bootstrap.php" ), $engine_version );
+check(
+	200 === $st && 'minn' === ( $core['product'] ?? null ) && ( $engine_version[1] ?? '' ) === ( $core['version'] ?? null )
+		&& false === ( $core['dbUpgrade'] ?? null ) && is_int( $core['checked'] ?? null )
+		&& ( null === $core['update'] || version_compare( (string) ( $core['update']['version'] ?? '' ), $core['version'], '>' ) ),
+	'core status is Minn (admin)',
+	(string) json_encode( $core )
+);
 v1_parity( 'core status refused below update_core (editor)', '/minn-admin/v1/core', $editor );
 
 // 8. /overview/activity: a live day window per role, plus the validation shapes.
@@ -266,8 +291,15 @@ foreach ( array( 'admin' => $admin, 'editor' => $editor, 'author' => $author ) a
 		$problems[] = "missing section $k";
 	}
 	foreach ( array_diff( array_keys( $ob ?? array() ), $skip ) as $k ) {
+		if ( 'core' === $k ) {
+			// Minn's core on the engine (section 7); the section must still be there.
+			if ( 'minn' !== ( $eb['core']['product'] ?? null ) ) {
+				$problems[] = 'core: not Minn';
+			}
+			continue;
+		}
 		if ( isset( $eb[ $k ] ) ) {
-			$d = minn_test_diff( v1_norm( $ob[ $k ] ), v1_norm( $eb[ $k ] ) );
+			$d = minn_test_diff( v1_norm( 'notifications' === $k ? v1_without_core( $ob[ $k ] ) : $ob[ $k ] ), v1_norm( 'notifications' === $k ? v1_without_core( $eb[ $k ] ) : $eb[ $k ] ) );
 			if ( null !== $d ) {
 				$problems[] = "$k: $d";
 			}

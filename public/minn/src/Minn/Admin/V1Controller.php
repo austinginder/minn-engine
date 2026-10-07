@@ -49,12 +49,20 @@ final readonly class V1Controller
         return Reply::answer($request, ['ok' => true]);
     }
 
-    /** The core status. */
+    /** Minn's version and any newer release; a day-old check of GitHub runs once the answer is sent. */
     #[Route(Method::Get, '/minn-admin/v1/core', policy: new Policy(Access::Floor))]
     public function core(Request $request): Response
     {
         $this->caller->requireCap('update_core');
-        return Reply::answer($request, $this->core->data());
+        return $this->checkingReleases(Reply::answer($request, $this->core->data()));
+    }
+
+    /** Replaces the running engine with the release on offer. */
+    #[Route(Method::Post, '/minn-admin/v1/core/update', policy: new Policy(Access::Floor))]
+    public function coreUpdate(Request $request): Response
+    {
+        $this->caller->requireCap('update_core');
+        return Reply::answer($request, ['version' => $this->core->update()]);
     }
 
     /**
@@ -68,7 +76,8 @@ final readonly class V1Controller
     {
         $userId = $this->caller->requireFloor();
         $out = ['notifications' => $this->notifications->items($userId)];
-        if ($this->caller->can('update_core')) {
+        $checks = $this->caller->can('update_core');
+        if ($checks) {
             $out['core'] = $this->core->data();
         }
         $out['types'] = $this->types->section($userId);
@@ -77,6 +86,19 @@ final readonly class V1Controller
                 "SELECT COUNT(*) FROM {$this->db->table('comments')} WHERE comment_approved = '0' AND comment_type IN ( '', 'comment' )",
             );
         }
-        return Reply::answer($request, $out);
+        $response = Reply::answer($request, $out);
+        return $checks ? $this->checkingReleases($response) : $response;
+    }
+
+    /** The answer, with GitHub asked about Minn's releases after it is sent when the last check is a day old. */
+    private function checkingReleases(Response $response): Response
+    {
+        if (!$this->core->due()) {
+            return $response;
+        }
+        $core = $this->core;
+        return $response->afterSend(static function () use ($core): void {
+            $core->refresh();
+        });
     }
 }

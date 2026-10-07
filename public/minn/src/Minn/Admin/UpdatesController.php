@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Minn\Admin;
 
 use Minn\Ops\AutoUpdates;
+use Minn\Ops\CoreStatus;
 use Minn\Ops\Updates;
 use Minn\Http\Method;
 use Minn\Http\Request;
@@ -19,7 +20,7 @@ use Minn\RestError;
 /** The minn-admin/v1 update routes: offers, directory meta, the check, the installs, the auto-update lists. */
 final readonly class UpdatesController
 {
-    public function __construct(private Updates $updates, private Caller $caller)
+    public function __construct(private Updates $updates, private CoreStatus $core, private Caller $caller)
     {
     }
 
@@ -46,12 +47,20 @@ final readonly class UpdatesController
         return Reply::answer($request, (object) $this->updates->pluginMeta());
     }
 
-    /** Asks wordpress.org again, now. */
+    /** Asks again, now: wordpress.org for plugins and themes, and GitHub for Minn itself (its status answered as core). */
     #[Route(Method::Post, '/minn-admin/v1/check-updates', policy: new Policy(Access::SignedIn))]
     public function check(Request $request): Response
     {
-        if (!$this->caller->can('update_plugins') && !$this->caller->can('update_themes')) {
+        if (!$this->caller->can('update_plugins') && !$this->caller->can('update_themes') && !$this->caller->can('update_core')) {
             throw $this->caller->refuse('rest_forbidden', 'Sorry, you are not allowed to do that.');
+        }
+        $core = null;
+        if ($this->caller->can('update_core')) {
+            $this->core->refresh();
+            $core = $this->core->data();
+        }
+        if (!$this->caller->can('update_plugins') && !$this->caller->can('update_themes')) {
+            return Reply::answer($request, ['ok' => true, 'pluginUpdates' => (object) [], 'themeUpdates' => (object) [], 'translations' => 0, 'translationGroups' => [], 'plugins' => 0, 'themes' => 0, 'core' => $core]);
         }
         $this->updates->refresh();
         $plugins = $this->caller->can('update_plugins') ? $this->updates->pluginOffers() : [];
@@ -64,6 +73,7 @@ final readonly class UpdatesController
             'translationGroups' => [],
             'plugins' => count($plugins),
             'themes' => count($themes),
+            'core' => $core,
         ]);
     }
 

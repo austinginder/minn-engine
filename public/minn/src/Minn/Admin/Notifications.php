@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Minn\Admin;
 
+use Minn\Ops\Releases;
 use Minn\Ops\Updates;
 use Minn\Content\CommentRecord;
 use Minn\Auth\Capabilities;
@@ -14,9 +15,9 @@ use Minn\Db;
 use Minn\Support\Serialized;
 
 /**
- * The bell feed: pending and recent comments, translation and core update
- * offers, the core auto-update notice, and new registrations. Plugin and
- * theme update rows need an extension inventory the engine does not have
+ * The bell feed: pending and recent comments, translation offers and a
+ * newer Minn, and new registrations. Plugin and theme update rows need an
+ * extension inventory the engine does not have
  * (a recorded gap); on the reference database those sections are empty,
  * so parity holds by construction.
  */
@@ -29,6 +30,7 @@ final readonly class Notifications
         private Capabilities $capabilities,
         private ActivityFeed $feed,
         private Updates $updates,
+        private Releases $releases,
     ) {
     }
 
@@ -128,38 +130,26 @@ final readonly class Notifications
     }
 
     /**
-     * A core offer from the update transient, and the auto-update notice
-     * while it is under two weeks old.
+     * A newer Minn on offer (Ops\Releases). WordPress's own core offer and
+     * its auto-update notice are not shown: on Minn they could only speak
+     * of a parked copy, which is not what serves the site.
      *
      * @return list<array>
      */
     private function coreItems(int $userId, int $now): array
     {
-        if (!$this->capabilities->can($userId, 'update_core')) {
+        $offer = $this->capabilities->can($userId, 'update_core') ? $this->releases->offer() : null;
+        if ($offer === null) {
             return [];
         }
-        $items = [];
-        $core = $this->site->option('_site_transient_update_core');
-        if ($core !== null && Serialized::field($core, 'response') === 'upgrade') {
-            $version = (string) Serialized::field($core, 'version');
-            $items[] = [
-                'id' => 'core-' . $version,
-                'kind' => 'system',
-                'icon' => '🛡',
-                'title' => sprintf('WordPress %s is available', $version),
-                'time' => (int) Serialized::field($core, 'last_checked'),
-                'update' => ['type' => 'core', 'version' => $version, 'name' => 'WordPress'],
-            ];
-        }
-        $auto = $this->site->option('auto_core_update_notified');
-        if ($auto !== null && Serialized::field($auto, 'type') === 'success') {
-            $version = (string) Serialized::field($auto, 'version');
-            $stamp = (int) Serialized::field($auto, 'timestamp');
-            if ($version !== '' && ($now - $stamp) < 14 * 86400) {
-                $items[] = ['id' => 'core-auto-' . $version, 'kind' => 'system', 'icon' => '🛡', 'title' => sprintf('WordPress updated itself to %s', $version), 'time' => $stamp];
-            }
-        }
-        return $items;
+        return [[
+            'id' => 'minn-' . $offer->version,
+            'kind' => 'system',
+            'icon' => '🛡',
+            'title' => sprintf('Minn %s is available', $offer->version),
+            'time' => (int) (strtotime($offer->published) ?: $now),
+            'update' => ['type' => 'core', 'version' => $offer->version, 'name' => 'Minn'],
+        ]];
     }
 
     /**

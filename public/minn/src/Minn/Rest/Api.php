@@ -19,7 +19,6 @@ use Minn\Admin\ThemesController;
 use Minn\Admin\PackagesController;
 use Minn\Admin\RenderController;
 use Minn\Admin\SessionsController;
-use Minn\Ops\CoreStatus;
 use Minn\Admin\V1Controller;
 use Minn\Db;
 use Minn\Http\Method;
@@ -79,7 +78,7 @@ final readonly class Api
         $controllers = [
             new IndexController($s->site(), $s->permalinks(), $s->url(), new RouteCatalogue($router, $s->types(), $s->url())),
             new AbilitiesController($s->url(), $caller),
-            new V1Controller($s->db(), $s->notifications(), new CoreStatus($s->site()), new AdminTypes($s->types(), $s->capabilities()), $caller),
+            new V1Controller($s->db(), $s->notifications(), $s->coreStatus(), new AdminTypes($s->types(), $s->capabilities()), $caller),
             new OverviewController($s->db(), $s->site(), $s->dashboard(), $s->users(), $caller),
             new EditorController($s->writer(), $caller),
             new SiteController($s->db(), $s->site(), $s->posts(), $s->permalinks(), $caller),
@@ -113,7 +112,7 @@ final readonly class Api
             new BundleController($s->app(), $caller),
             new LanguageController($s->translations(), $s->users(), $s->site(), $s->capabilities(), $caller),
             new PackagesController($s->packages(), $s->site(), $caller),
-            new UpdatesController($s->updates(), $caller),
+            new UpdatesController($s->updates(), $s->coreStatus(), $caller),
             new RenderController($s->db(), $s->site(), $s->posts(), $s->permalinks(), $caller, $s->contentDir() . '/themes'),
             new SystemController($s->diagnostics(), $s->logs(), $caller),
             new SettingsController(new Settings($s->site()), $caller, new LiveSettings($s->schema())),

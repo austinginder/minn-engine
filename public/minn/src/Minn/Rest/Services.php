@@ -19,6 +19,9 @@ use Minn\Admin\Notifications;
 use Minn\Ops\Packages;
 use Minn\Admin\Translations;
 use Minn\Ops\Updates;
+use Minn\Ops\EngineUpdate;
+use Minn\Ops\CoreStatus;
+use Minn\Ops\Releases;
 use Minn\Auth\ApplicationPasswords;
 use Minn\Auth\Authenticator;
 use Minn\Auth\Capabilities;
@@ -366,10 +369,28 @@ final class Services
         return $this->share(Dashboard::class, fn () => new Dashboard($this->db, $this->site(), $this->users(), $this->capabilities(), new ActivityChart($this->db, $this->site()), $this->activityFeed(), $this->contentDir() . '/uploads'));
     }
 
+    /** Minn's own releases, asked of GitHub once a day. */
+    public function releases(): Releases
+    {
+        return $this->share(Releases::class, fn () => Releases::forSite($this->site(), MINN_ENGINE_VERSION));
+    }
+
+    /** Minn's version and the release on offer, behind the app's update banner. */
+    public function coreStatus(): CoreStatus
+    {
+        return $this->share(CoreStatus::class, fn () => new CoreStatus($this->releases(), $this->engineUpdate(), MINN_ENGINE_VERSION));
+    }
+
+    /** The engine replacing itself with a release. */
+    public function engineUpdate(): EngineUpdate
+    {
+        return $this->share(EngineUpdate::class, fn () => new EngineUpdate(MINN_ENGINE_DIR));
+    }
+
     /** The bell feed. */
     public function notifications(): Notifications
     {
-        return $this->share(Notifications::class, fn () => new Notifications($this->db, $this->site(), $this->users(), $this->capabilities(), $this->activityFeed(), $this->updates()));
+        return $this->share(Notifications::class, fn () => new Notifications($this->db, $this->site(), $this->users(), $this->capabilities(), $this->activityFeed(), $this->updates(), $this->releases()));
     }
 
     /** The System view's payload. */

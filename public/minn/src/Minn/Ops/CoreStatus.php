@@ -4,37 +4,63 @@ declare(strict_types=1);
 
 namespace Minn\Ops;
 
-use Minn\Content\Site;
-use Minn\Support\Serialized;
+use Minn\RestError;
+use RuntimeException;
 
 /**
- * The installed version comes from the update_core transient's
- * version_checked (the database's own record of what last phoned home);
- * the engine never reads WordPress code files and never phones home
- * itself. dbUpgrade is false by definition: there is no newer core code
- * on disk for the database to lag behind.
+ * The core the app's update banner and chip speak of, which on Minn is
+ * Minn: the running engine's version, a newer release on offer
+ * (Ops\Releases, asked of GitHub once a day), and installing it
+ * (Ops\EngineUpdate). WordPress's own offer (the update_core transient a
+ * parked copy may write) is not Minn's to act on and is not shown.
+ * dbUpgrade is false: the database is WordPress's, and a Minn release
+ * never migrates it.
  */
 final readonly class CoreStatus
 {
-    public function __construct(private Site $site)
-    {
+    public function __construct(
+        private Releases $releases,
+        private EngineUpdate $engine,
+        private string $version,
+    ) {
     }
 
-    /** The core version and any offer from the update transient. */
+    /** Minn's version, any offer, and when GitHub was last asked. */
     public function data(): array
     {
-        $blob = $this->site->option('_site_transient_update_core');
-        $offer = null;
-        if ($blob !== null && Serialized::field($blob, 'response') === 'upgrade') {
-            $offer = [
-                'version' => (string) Serialized::field($blob, 'current'),
-                'locale' => (string) Serialized::field($blob, 'locale'),
-            ];
-        }
+        $offer = $this->releases->offer();
         return [
-            'version' => (string) (Serialized::field($blob, 'version_checked') ?? ''),
+            'product' => 'minn',
+            'version' => $this->version,
             'dbUpgrade' => false,
-            'update' => $offer,
+            'checked' => $this->releases->stored()['checked'],
+            'update' => $offer === null ? null : ['version' => $offer->version, 'url' => $offer->url, 'published' => $offer->published],
         ];
+    }
+
+    /** Whether GitHub was last asked a day ago or more. */
+    public function due(): bool
+    {
+        return $this->releases->due();
+    }
+
+    /** Asks GitHub now. */
+    public function refresh(): void
+    {
+        $this->releases->refresh();
+    }
+
+    /** Installs the release on offer; the version now in place. */
+    public function update(): string
+    {
+        $offer = $this->releases->offer();
+        if ($offer === null) {
+            throw new RestError('minn_current', "This Minn ({$this->version}) is the latest release.", 400);
+        }
+        try {
+            return $this->engine->apply($offer);
+        } catch (RuntimeException $e) {
+            throw new RestError('minn_update_failed', $e->getMessage(), 500);
+        }
     }
 }
