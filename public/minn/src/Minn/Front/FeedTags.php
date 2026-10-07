@@ -25,9 +25,9 @@ final class FeedTags
         $out = '';
         foreach (array_unique($names) as $name) {
             $out .= match ($type) {
-                'rdf' => "\t\t<dc:subject><![CDATA[" . html_entity_decode($name, ENT_COMPAT, (string) \get_option('blog_charset')) . "]]></dc:subject>\n",
+                'rdf' => "\t\t<dc:subject><![CDATA[" . FeedWriter::insideCdata(html_entity_decode($name, ENT_COMPAT, (string) \get_option('blog_charset'))) . "]]></dc:subject>\n",
                 'atom' => sprintf('<category scheme="%1$s" term="%2$s" />', \esc_attr(\get_bloginfo_rss('url')), \esc_attr($name)),
-                default => "\t\t<category><![CDATA[" . html_entity_decode($name, ENT_COMPAT, (string) \get_option('blog_charset')) . "]]></category>\n",
+                default => "\t\t<category><![CDATA[" . FeedWriter::insideCdata(html_entity_decode($name, ENT_COMPAT, (string) \get_option('blog_charset'))) . "]]></category>\n",
             };
         }
         return (string) \apply_filters('the_category_rss', $out, $type);

@@ -41449,7 +41449,9 @@
             "doc": "The template tags a feed is written with that take more than a line, as\nthe reference answers them in a feed's loop (probe feed-tags): a post's\ncategories and tags in each feed's markup, its enclosures for RSS and\nAtom, the link to its comments feed, the feed's build date, and the site\nicon a feed carries.",
             "implements": [],
             "extends": null,
-            "uses": [],
+            "uses": [
+                "Minn\\Front\\FeedWriter"
+            ],
             "usedBy": [],
             "constructor": null,
             "cases": [],
@@ -41954,12 +41956,13 @@
             "namespace": "Minn\\Front",
             "kind": "final class",
             "file": "public/minn/src/Minn/Front/FeedWriter.php",
-            "lines": 35,
+            "lines": 57,
             "doc": "A feed as it is written: text as given, and what each template tag and\naction prints, in the order the template asks for them.",
             "implements": [],
             "extends": null,
             "uses": [],
             "usedBy": [
+                "Minn\\Front\\FeedTags",
                 "Minn\\Front\\FeedTemplates"
             ],
             "constructor": null,
@@ -42026,6 +42029,53 @@
                 },
                 {
                     "routes": [],
+                    "name": "cdata",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "cdata(string $function, mixed ...$args): self",
+                    "doc": "What a template tag prints, for inside a CDATA section: a \"]]>\" in it\nis split so it cannot close the section (a hardening rule; the\nreference lets a stored name break out, contracts/front/probes.md).",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "function",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "args",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 39,
+                    "end": 48
+                },
+                {
+                    "routes": [],
+                    "name": "insideCdata",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "insideCdata(string $text): string",
+                    "doc": "Text made safe inside a CDATA section: \"]]>\" becomes \"]]]]><![CDATA[>\", which a reader joins back into the same characters.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "text",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 51,
+                    "end": 54
+                },
+                {
+                    "routes": [],
                     "name": "act",
                     "static": false,
                     "visibility": "public",
@@ -42048,8 +42098,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 35,
-                    "end": 38
+                    "line": 57,
+                    "end": 60
                 },
                 {
                     "routes": [],
@@ -42060,8 +42110,8 @@
                     "doc": "Everything written so far.",
                     "shapes": [],
                     "params": [],
-                    "line": 41,
-                    "end": 44
+                    "line": 63,
+                    "end": 66
                 }
             ]
         },

@@ -31,6 +31,28 @@ final class FeedWriter
         return $this;
     }
 
+    /**
+     * What a template tag prints, for inside a CDATA section: a "]]>" in it
+     * is split so it cannot close the section (a hardening rule; the
+     * reference lets a stored name break out, contracts/front/probes.md).
+     */
+    public function cdata(string $function, mixed ...$args): self
+    {
+        ob_start();
+        try {
+            $function(...$args);
+        } finally {
+            $this->out .= self::insideCdata((string) ob_get_clean());
+        }
+        return $this;
+    }
+
+    /** Text made safe inside a CDATA section: "]]>" becomes "]]]]><![CDATA[>", which a reader joins back into the same characters. */
+    public static function insideCdata(string $text): string
+    {
+        return str_replace(']]>', ']]]]><![CDATA[>', $text);
+    }
+
     /** What an action's callbacks print. */
     public function act(string $hook, mixed ...$args): self
     {

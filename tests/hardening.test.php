@@ -109,5 +109,29 @@ $check('internal failure page is a 500 with no detail', str_starts_with($interna
 $db = $render('databaseUnavailable');
 $check('database page is a 503 with the connection message', str_starts_with($db, '503|no-store|') && str_contains($db, 'Error establishing a database connection'));
 
+// A stored name that holds "]]>" cannot close a feed's CDATA. The reference
+// lets it (a display name or term written raw by an import, a plugin or SQL
+// breaks out into the feed's XML); the engine splits it, which changes no byte
+// unless one is there (contracts/front/probes.md "Hardening").
+$wp = static fn (string $args): string => trim((string) shell_exec('cd ' . escapeshellarg($REF_DIR) . ' && wp ' . $args . ' 2>/dev/null'));
+$wp('user delete $(wp user get zzcdatahard --field=ID 2>/dev/null) --yes');
+$user = $wp('user create zzcdatahard zzcdatahard@example.com --role=author --porcelain');
+$term = $wp("term create category 'Zz CDATA hardening' --slug=zz-cdata-hardening --porcelain");
+$post = $wp("post create --post_title='Zz CDATA hardening' --post_status=publish --post_author={$user} --post_category={$term} --post_content=probe --porcelain");
+register_shutdown_function(static function () use ($wp, $user, $term, $post): void {
+    $wp("post delete {$post} --force");
+    $wp("term delete category {$term}");
+    $wp("user delete {$user} --yes");
+});
+$wp("db query \"UPDATE wp_users SET display_name='Zz ]]><evil>a</evil>' WHERE ID={$user}\"");
+$wp("db query \"UPDATE wp_terms SET name='Zz ]]><evil>c</evil>' WHERE term_id={$term}\"");
+$wp('cache flush');
+// Atom carries the name as text and the term in an attribute, as the reference does; the rule is about CDATA.
+foreach (['rss2' => '/feed/', 'rdf' => '/feed/rdf/'] as $kind => $path) {
+    $body = $request($ENGINE . $path)['body'];
+    $check("{$kind} feed: a stored ]]> cannot close CDATA", str_contains($body, 'Zz CDATA hardening') && !str_contains($body, ']]><evil>'), $kind);
+}
+$check('rss2 feed: the split keeps the name readable', str_contains($request($ENGINE . '/feed/')['body'], '<dc:creator><![CDATA[Zz ]]]]><![CDATA[><evil>a</evil>]]></dc:creator>'));
+
 echo "\n{$pass} passed, {$fail} failed\n";
 exit($fail === 0 ? 0 : 1);

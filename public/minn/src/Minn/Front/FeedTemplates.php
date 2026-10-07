@@ -86,17 +86,17 @@ final class FeedTemplates
         if ($discussed) {
             $w->put("\t\t\t\t\t<comments>")->tag('comments_link_feed')->put("</comments>\n");
         }
-        $w->put("\t\t\n\t\t<dc:creator><![CDATA[")->tag('the_author')
+        $w->put("\t\t\n\t\t<dc:creator><![CDATA[")->cdata('the_author')
             ->put("]]></dc:creator>\n\t\t<pubDate>", (string) \mysql2date('D, d M Y H:i:s +0000', \get_post_time('Y-m-d H:i:s', true), false), "</pubDate>\n\t\t")
             ->tag('the_category_rss', 'rss2')
             ->put("\t\t<guid isPermaLink=\"false\">")->tag('the_guid')->put("</guid>\n\n")
-            ->put("\t\t\t\t\t<description><![CDATA[")->tag('the_excerpt_rss')->put("]]></description>\n");
+            ->put("\t\t\t\t\t<description><![CDATA[")->cdata('the_excerpt_rss')->put("]]></description>\n");
         if (\get_option('rss_use_excerpt')) {
             $w->put("\t\t\n");
         } else {
             $content = \get_the_content_feed('rss2');
             $w->put("\t\t\t\t\t\t\t\t\t\t<content:encoded><![CDATA[");
-            strlen($content) > 0 ? $w->put($content) : $w->tag('the_excerpt_rss');
+            strlen($content) > 0 ? $w->put($content) : $w->cdata('the_excerpt_rss');
             $w->put("]]></content:encoded>\n\t\t\t\t\t\n");
         }
         if ($discussed) {
@@ -131,16 +131,16 @@ final class FeedTemplates
             $w->put("\t\t\t\t<uri>")->tag('the_author_meta', 'url')->put("</uri>\n\t\t\t\t");
         }
         $w->act('atom_author')
-            ->put("\t\t</author>\n\n\t\t<title type=\"html\"><![CDATA[")->tag('the_title_rss')
+            ->put("\t\t</author>\n\n\t\t<title type=\"html\"><![CDATA[")->cdata('the_title_rss')
             ->put("]]></title>\n\t\t<link rel=\"alternate\" type=\"")->tag('bloginfo_rss', 'html_type')
             ->put('" href="')->tag('the_permalink_rss')
             ->put("\" />\n\n\t\t<id>")->tag('the_guid')
             ->put("</id>\n\t\t<updated>", (string) \get_post_modified_time('Y-m-d\TH:i:s\Z', true), "</updated>\n\t\t<published>", (string) \get_post_time('Y-m-d\TH:i:s\Z', true), "</published>\n\t\t")
             ->tag('the_category_rss', 'atom')
-            ->put("\n\t\t<summary type=\"")->tag('html_type_rss')->put('"><![CDATA[')->tag('the_excerpt_rss')->put("]]></summary>\n\n");
+            ->put("\n\t\t<summary type=\"")->tag('html_type_rss')->put('"><![CDATA[')->cdata('the_excerpt_rss')->put("]]></summary>\n\n");
         if (!\get_option('rss_use_excerpt')) {
             $w->put("\t\t\t\t\t<content type=\"")->tag('html_type_rss')->put('" xml:base="')->tag('the_permalink_rss')
-                ->put('"><![CDATA[')->tag('the_content_feed', 'atom')->put("]]></content>\n");
+                ->put('"><![CDATA[')->cdata('the_content_feed', 'atom')->put("]]></content>\n");
         }
         $w->put("\t\t\n\t\t")->tag('atom_enclosure')->act('atom_entry');
         if (\get_comments_number() || \comments_open()) {
@@ -180,12 +180,12 @@ final class FeedTemplates
         $w->put('<item rdf:about="')->tag('the_permalink_rss')
             ->put("\">\n\t<title>")->tag('the_title_rss')
             ->put("</title>\n\t<link>")->tag('the_permalink_rss')
-            ->put("</link>\n\n\t<dc:creator><![CDATA[")->tag('the_author')
+            ->put("</link>\n\n\t<dc:creator><![CDATA[")->cdata('the_author')
             ->put("]]></dc:creator>\n\t<dc:date>", (string) \mysql2date('Y-m-d\TH:i:s\Z', (string) \get_post()->post_date_gmt, false), "</dc:date>\n\t")
             ->tag('the_category_rss', 'rdf')
-            ->put("\n\t\t\t<description><![CDATA[")->tag('the_excerpt_rss')->put("]]></description>\n");
+            ->put("\n\t\t\t<description><![CDATA[")->cdata('the_excerpt_rss')->put("]]></description>\n");
         if (!\get_option('rss_use_excerpt')) {
-            $w->put("\t\t<content:encoded><![CDATA[")->tag('the_content_feed', 'rdf')->put("]]></content:encoded>\n");
+            $w->put("\t\t<content:encoded><![CDATA[")->cdata('the_content_feed', 'rdf')->put("]]></content:encoded>\n");
         }
         $w->put("\t\n\t")->act('rdf_item')->put("</item>\n");
     }
@@ -200,7 +200,7 @@ final class FeedTemplates
         while (\have_posts()) {
             \the_post();
             $w->put("\t<item>\n\t\t<title>")->tag('the_title_rss')
-                ->put("</title>\n\t\t<description><![CDATA[")->tag('the_excerpt_rss')
+                ->put("</title>\n\t\t<description><![CDATA[")->cdata('the_excerpt_rss')
                 ->put("]]></description>\n\t\t<link>")->tag('the_permalink_rss')
                 ->put("</link>\n\t\t")->act('rss_item')->put("\t</item>\n");
         }
@@ -258,12 +258,12 @@ final class FeedTemplates
     {
         [$comment, $post] = self::current();
         $w->put("\t<item>\n\t\t<title>\n\t\t", self::commentTitle($post), "\t\t</title>\n\t\t<link>")->tag('comment_link')
-            ->put("</link>\n\n\t\t<dc:creator><![CDATA[", (string) \get_comment_author_rss(), "]]></dc:creator>\n\t\t<pubDate>", (string) \mysql2date('D, d M Y H:i:s +0000', \get_comment_time('Y-m-d H:i:s', true, false), false), "</pubDate>\n\t\t<guid isPermaLink=\"false\">")->tag('comment_guid')
+            ->put("</link>\n\n\t\t<dc:creator><![CDATA[", FeedWriter::insideCdata((string) \get_comment_author_rss()), "]]></dc:creator>\n\t\t<pubDate>", (string) \mysql2date('D, d M Y H:i:s +0000', \get_comment_time('Y-m-d H:i:s', true, false), false), "</pubDate>\n\t\t<guid isPermaLink=\"false\">")->tag('comment_guid')
             ->put("</guid>\n\n");
         if (\post_password_required($post)) {
             $w->put("\t\t\t\t\t<description>", \ent2ncr(\__('Protected Comments: Please enter your password to view comments.')), "</description>\n\t\t\t<content:encoded><![CDATA[", \get_the_password_form(), "]]></content:encoded>\n");
         } else {
-            $w->put("\t\t\t\t\t<description><![CDATA[")->tag('comment_text_rss')->put("]]></description>\n\t\t\t<content:encoded><![CDATA[")->tag('comment_text')->put("]]></content:encoded>\n");
+            $w->put("\t\t\t\t\t<description><![CDATA[")->cdata('comment_text_rss')->put("]]></description>\n\t\t\t<content:encoded><![CDATA[")->cdata('comment_text')->put("]]></content:encoded>\n");
         }
         $w->put("\t\t\n\t\t")->act('commentrss2_item', $comment->comment_ID, $post->ID)->put("\t</item>\n\t");
     }
@@ -300,7 +300,7 @@ final class FeedTemplates
             ->put("\" />\n\n\t\t<author>\n\t\t\t<name>")->tag('comment_author_rss')
             ->put("</name>\n\t\t\t", $url ? '<uri>' . \esc_url($url) . '</uri>' : '', "\n\t\t</author>\n\n\t\t<id>")->tag('comment_guid')
             ->put("</id>\n\t\t<updated>{$when}</updated>\n\t\t<published>{$when}</published>\n\n\t\t\t\t\t<content type=\"html\" xml:base=\"")->tag('comment_link')->put('"><![CDATA[');
-        \post_password_required($post) ? $w->put(\get_the_password_form()) : $w->tag('comment_text');
+        \post_password_required($post) ? $w->put(FeedWriter::insideCdata(\get_the_password_form())) : $w->cdata('comment_text');
         $w->put("]]></content>\n\t\t\n\t\t\t\t\t<thr:in-reply-to ref=\"");
         if ((int) $comment->comment_parent === 0) {
             $w->tag('the_guid')->put('" href="')->tag('the_permalink_rss');

@@ -21,7 +21,7 @@ URL resolution, permalinks, feeds, sitemaps and the public page
 | [`FeedController`](#feedcontroller) | final readonly class | 109 | The feeds: the site's, the comments', a post's or an archive's by the |
 | [`FeedTags`](#feedtags) | final class | 140 | The template tags a feed is written with that take more than a line, as |
 | [`FeedTemplates`](#feedtemplates) | final class | 295 | The feed templates do_feed_* loads, written from the reference's output |
-| [`FeedWriter`](#feedwriter) | final class | 35 | A feed as it is written: text as given, and what each template tag and |
+| [`FeedWriter`](#feedwriter) | final class | 57 | A feed as it is written: text as given, and what each template tag and |
 | [`FrontController`](#frontcontroller) | final readonly class | 97 | The public site. One catch-all route: resolve the URL, then either |
 | [`Kind`](#kind) | enum | 17 | What a public URL resolved to. |
 | [`ListSpacing`](#listspacing) | final readonly class | 30 | How a page list is spaced: the reference's "preserve" keeps newlines and |
@@ -630,7 +630,7 @@ Internals: `syndication()` (private, line 58), `rss2()` (private, line 63), `rss
 A feed as it is written: text as given, and what each template tag and
 action prints, in the order the template asks for them.
 
-Used by: `Minn\Front\FeedTemplates`
+Used by: `Minn\Front\FeedTags`, `Minn\Front\FeedTemplates`
 
 
 ### `put(string ...$text): self`
@@ -640,6 +640,16 @@ Text as written.
 ### `tag(string $function, mixed ...$args): self`
 
 What a function that prints (a template tag) prints, called with its arguments.
+
+### `cdata(string $function, mixed ...$args): self`
+
+What a template tag prints, for inside a CDATA section: a "]]>" in it
+is split so it cannot close the section (a hardening rule; the
+reference lets a stored name break out, contracts/front/probes.md).
+
+### static `insideCdata(string $text): string`
+
+Text made safe inside a CDATA section: "]]>" becomes "]]]]><![CDATA[>", which a reader joins back into the same characters.
 
 ### `act(string $hook, mixed ...$args): self`
 

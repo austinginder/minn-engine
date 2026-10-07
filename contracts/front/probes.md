@@ -36,6 +36,21 @@ shapes are in the feed templates. Facts worth knowing:
   items `Comment on {title} by {author}` / `By: {author}`, the description as
   the escaped raw comment and the content as its paragraphs.
 
+### Hardening: a stored "]]>" cannot close CDATA
+
+Observed on the reference (2026-10-07): WordPress's input paths store a display
+name or term name with `>` as `&gt;`, but a value written raw (an import, a
+plugin, SQL) holding `]]>` closes the CDATA section it is printed in, and
+whatever follows lands in the feed's XML (`<dc:creator>`, `<category>`,
+`<dc:subject>` seen). The engine diverges on purpose: every template tag printed
+inside CDATA goes through `FeedWriter::cdata()`, which writes `]]>` as
+`]]]]><![CDATA[>` (a reader joins it back into the same characters). Nothing
+changes unless a `]]>` is present, so feeds stay byte for byte with the
+reference for ordinary data. Content was already safe on both (`]]&gt;`).
+Not changed: Atom prints the author's name as text and the term in an
+attribute, as the reference does; escaping the name would double-encode the
+entities a normally stored name carries. Pinned by the `hardening` suite.
+
 ## Sitemaps (`Sitemaps`)
 
 `/wp-sitemap.xml` lists one file per provider and page (2000 URLs a page):
