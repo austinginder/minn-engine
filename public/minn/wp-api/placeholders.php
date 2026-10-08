@@ -205,12 +205,6 @@ function register_and_do_post_meta_boxes($post)
     return null;
 }
 
-function resolve_block_template($template_type, $template_hierarchy, $fallback_template)
-{
-    \Minn\Runtime\PlaceholderTrace::hit('resolve_block_template');
-    return null;
-}
-
 function screen_icon()
 {
     \Minn\Runtime\PlaceholderTrace::hit('screen_icon');

@@ -1049,17 +1049,197 @@ function _minn_block_template_from(Minn\Theme\TemplateRecord $record, Minn\Theme
     $template->origin = $record->origin;
     $template->status = $record->status;
     $template->has_theme_file = $record->hasThemeFile;
-    $template->wp_id = $record->wpId > 0 ? $record->wpId : null;
-    $template->author = $record->author > 0 ? $record->author : null;
-    $template->modified = $record->modified;
+    $saved = $record->wpId > 0;
+    $template->wp_id = $saved ? $record->wpId : null;
+    // A saved row's author, as stored, and its dates as the post keeps them (the record carries the REST form).
+    $template->author = $saved ? (string) $record->author : null;
+    $template->modified = $saved ? str_replace('T', ' ', (string) $record->modified) : null;
+    $template->date = $saved ? str_replace('T', ' ', (string) $record->date) : null;
     $template->description = $record->description;
     $template->title = $record->title;
-    $template->is_custom = $record->isPart() ? false : Minn\Theme\TemplateIndex::isCustom($record->slug);
+    $template->is_custom = $record->isPart() || Minn\Theme\TemplateIndex::isCustom($record->slug);
     $template->area = $record->area;
     $template->plugin = $record->plugin;
-    $template->author_text = $index->authorText($record);
-    $template->original_source = $index->originalSource($record);
+    if ($record->source === 'theme') {
+        $template->content = Minn\Theme\TemplatePartTheme::apply($record->content, $record->theme);
+        $template->post_types = $index->fileInfo($record->type, $record->slug)['postTypes'] ?? null;
+    }
     return $template;
+}
+
+/** One theme template file, described (Theme\TemplateIndex::fileInfo); null when the theme has none or the type is neither. */
+function _get_block_template_file($template_type, $slug)
+{
+    if ($template_type !== 'wp_template' && $template_type !== 'wp_template_part') {
+        return null;
+    }
+    return _minn_template_index()?->fileInfo((string) $template_type, (string) $slug);
+}
+
+/** The theme's template files of a type, in the directory's order, that match slug__in, slug__not_in, area and post_type; null for neither type. */
+function _get_block_templates_files($template_type, $query = [])
+{
+    if ($template_type !== 'wp_template' && $template_type !== 'wp_template_part') {
+        return null;
+    }
+    $query = (array) $query;
+    $files = [];
+    foreach (_minn_template_index()?->files((string) $template_type) ?? [] as $file) {
+        if ((!empty($query['slug__in']) && !in_array($file['slug'], (array) $query['slug__in'], true))
+            || (!empty($query['slug__not_in']) && in_array($file['slug'], (array) $query['slug__not_in'], true))
+            || (!empty($query['area']) && ($file['area'] ?? null) !== $query['area'])
+            || (!empty($query['post_type']) && !in_array($query['post_type'], (array) ($file['postTypes'] ?? []), true))) {
+            continue;
+        }
+        $files[] = $file;
+    }
+    return $files;
+}
+
+/**
+ * A template built from a file as _get_block_template_file describes one:
+ * its markup with the theme named on every template part; the default
+ * template types' title and description for the slugs they name (which
+ * are not custom); a part's area; a custom template's post types.
+ */
+function _build_block_template_result_from_file($template_file, $template_type)
+{
+    $file = (array) $template_file;
+    $known = $template_type === 'wp_template' ? (get_default_block_template_types()[$file['slug']] ?? null) : null;
+    $template = new WP_Block_Template();
+    $template->id = $file['theme'] . '//' . $file['slug'];
+    $template->theme = $file['theme'];
+    $template->content = Minn\Theme\TemplatePartTheme::apply((string) file_get_contents((string) $file['path']), (string) $file['theme']);
+    $template->slug = $file['slug'];
+    $template->source = 'theme';
+    $template->type = $template_type;
+    $template->title = $known['title'] ?? ($file['title'] ?? $file['slug']);
+    $template->description = $known['description'] ?? '';
+    $template->status = 'publish';
+    $template->has_theme_file = true;
+    $template->is_custom = $known === null;
+    $template->post_types = $file['postTypes'] ?? null;
+    $template->area = $template_type === 'wp_template_part' ? ($file['area'] ?? null) : null;
+    return $template;
+}
+
+/** A saved template or part as a template, under the theme its wp_theme term names; an error when it names none. */
+function _build_block_template_result_from_post($post)
+{
+    $post = get_post($post);
+    $terms = $post ? get_the_terms($post, 'wp_theme') : false;
+    if (is_wp_error($terms)) {
+        return $terms;
+    }
+    $index = _minn_template_index();
+    if (!$post || !$terms || $index === null) {
+        return new WP_Error('template_missing_theme', __('No theme is defined for this template.'));
+    }
+    $template = _minn_block_template_from($index->postRecord(get_object_vars($post)), $index);
+    $template->theme = $terms[0]->name;
+    $template->id = $template->theme . '//' . $post->post_name;
+    return $template;
+}
+
+/** A theme file's own template by id, past whatever the site saved over it; pre_get_block_file_template may answer first. */
+function get_block_file_template($id, $template_type = 'wp_template')
+{
+    $template = apply_filters('pre_get_block_file_template', null, $id, $template_type);
+    if ($template !== null) {
+        return $template;
+    }
+    $parts = explode('//', (string) $id, 2);
+    $file = count($parts) === 2 && $parts[0] === get_stylesheet() ? _get_block_template_file($template_type, $parts[1]) : null;
+    $template = $file === null ? null : _build_block_template_result_from_file($file, $template_type);
+    return apply_filters('get_block_file_template', $template, $id, $template_type);
+}
+
+/** The first template the hierarchy names (file extensions dropped) that the site has, saved or the theme's; null for none. */
+function resolve_block_template($template_type, $template_hierarchy, $fallback_template)
+{
+    if (!$template_type) {
+        return null;
+    }
+    $slugs = array_map('_strip_template_file_suffix', $template_hierarchy === [] ? [$template_type] : (array) $template_hierarchy);
+    $templates = array_values(get_block_templates(['slug__in' => $slugs]));
+    $priority = array_flip($slugs);
+    usort($templates, static fn ($a, $b) => $priority[$a->slug] <=> $priority[$b->slug]);
+    return $templates[0] ?? null;
+}
+
+/** A template file name without its .php or .html. */
+function _strip_template_file_suffix($template_file)
+{
+    return preg_replace('/\.(php|html)$/', '', (string) $template_file);
+}
+
+/**
+ * The block template for a request under a theme with block templates: no
+ * less specific than a PHP template already found (one outside the theme
+ * keeps only the first candidate). Its id and markup go to the globals
+ * the canvas renders (a signed-in visitor sees the empty-template warning
+ * for an empty one) and the canvas is the template; with none, the
+ * template given.
+ */
+function locate_block_template($template, $type, array $templates)
+{
+    global $_wp_current_template_id, $_wp_current_template_content;
+    if (!current_theme_supports('block-templates')) {
+        return $template;
+    }
+    if ($template) {
+        $relative = str_replace([get_stylesheet_directory() . '/', get_template_directory() . '/'], '', (string) $template);
+        $templates = array_slice($templates, 0, (int) array_search($relative, $templates, true) + 1);
+    }
+    $block_template = resolve_block_template($type, $templates, $template);
+    if (!$block_template) {
+        return $template;
+    }
+    $_wp_current_template_id = $block_template->id;
+    $_wp_current_template_content = empty($block_template->content) && is_user_logged_in() ? wp_render_empty_block_template_warning($block_template) : $block_template->content;
+    return MINN_ENGINE_DIR . '/wp-api/template-canvas.php';
+}
+
+/** Deprecated since 6.4: the active theme named on every template part that names none. */
+function _inject_theme_attribute_in_block_template_content($template_content)
+{
+    _deprecated_function(__FUNCTION__, '6.4.0', 'traverse_and_serialize_blocks( parse_blocks( $template_content ), "_inject_theme_attribute_in_template_part_block" )');
+    return traverse_and_serialize_blocks(parse_blocks($template_content), '_inject_theme_attribute_in_template_part_block');
+}
+
+/** Deprecated since 6.4: the theme attribute taken off every template part. */
+function _remove_theme_attribute_in_block_template_content($template_content)
+{
+    _deprecated_function(__FUNCTION__, '6.4.0', 'traverse_and_serialize_blocks( parse_blocks( $template_content ), "_remove_theme_attribute_from_template_part_block" )');
+    return traverse_and_serialize_blocks(parse_blocks($template_content), '_remove_theme_attribute_from_template_part_block');
+}
+
+/** A template part block given the active theme when it names none. */
+function _inject_theme_attribute_in_template_part_block(&$block)
+{
+    if (($block['blockName'] ?? '') === 'core/template-part' && !isset($block['attrs']['theme'])) {
+        $block['attrs']['theme'] = get_stylesheet();
+    }
+}
+
+/** A template part block's theme attribute taken off. */
+function _remove_theme_attribute_from_template_part_block(&$block)
+{
+    if (($block['blockName'] ?? '') === 'core/template-part' && isset($block['attrs']['theme'])) {
+        unset($block['attrs']['theme']);
+    }
+}
+
+/** What a signed-in visitor sees for an empty template: its title and a note, with a link to edit it. */
+function wp_render_empty_block_template_warning($block_template)
+{
+    return sprintf(
+        "<div id=\"wp-empty-template-alert\">\n\t\t\t<h2>%s</h2>\n\t\t\t<p>%s</p>\n\t\t\t<a href=\"%s\" class=\"wp-element-button\">\n\t\t\t\t%s\n\t\t\t</a>\n\t\t</div>",
+        esc_html($block_template->title),
+        __('This page is blank because the template is empty. You can reset or customize it in the Site Editor.'),
+        esc_url((string) get_edit_post_link($block_template->wp_id)),
+        __('Edit template'),
+    );
 }
 
 /** Registers a plugin's template; a WP_Error names the reference's refusal. */
@@ -1405,4 +1585,110 @@ function wp_should_load_block_assets_on_demand()
         return false;
     }
     return (bool) apply_filters('should_load_block_assets_on_demand', wp_is_block_theme());
+}
+
+/** Whether a block type skips serializing a support set, or one feature of it. */
+function wp_should_skip_block_supports_serialization($block_type, $feature_set, $feature = null)
+{
+    if (!is_object($block_type) || !$feature_set) {
+        return false;
+    }
+    $skip = _wp_array_get((array) $block_type->supports, [$feature_set, '__experimentalSkipSerialization'], false);
+    return is_array($skip) ? in_array($feature, $skip, true) : $skip;
+}
+
+/** Whether a block type supports a border feature (all of them when it declares border support as true); the default when it declares nothing. */
+function wp_has_border_feature_support($block_type, $feature, $default_value = false)
+{
+    $support = is_object($block_type) ? ($block_type->supports['__experimentalBorder'] ?? $default_value) : $default_value;
+    return $support === true || (bool) _wp_array_get((array) (is_object($block_type) ? $block_type->supports : []), ['__experimentalBorder', $feature], $default_value);
+}
+
+/** The class a block's own settings presets hang on: wp-settings- and the MD5 of the serialized block. */
+function _wp_get_presets_class_name($block)
+{
+    return 'wp-settings-' . md5(serialize($block));
+}
+
+/** The arrow a comments pagination link shows for its context's style (arrow or chevron); null for none. */
+function get_comments_pagination_arrow($block, $pagination_type = 'next')
+{
+    return _minn_pagination_arrow((string) ($block->context['comments/paginationArrow'] ?? ''), 'comments', (string) $pagination_type);
+}
+
+/** The arrow a query pagination link shows for its context's style (arrow or chevron); null for none. */
+function get_query_pagination_arrow($block, $is_next)
+{
+    return _minn_pagination_arrow((string) ($block->context['paginationArrow'] ?? ''), 'query', $is_next ? 'next' : 'previous');
+}
+
+/** @internal a pagination arrow: its span with the direction and style classes, or null for a style without arrows */
+function _minn_pagination_arrow(string $style, string $kind, string $direction): ?string
+{
+    $arrow = ['arrow' => ['next' => '→', 'previous' => '←'], 'chevron' => ['next' => '»', 'previous' => '«']][$style][$direction] ?? null;
+    return $arrow === null ? null : "<span class='wp-block-{$kind}-pagination-{$direction}-arrow is-arrow-{$style}' aria-hidden='true'>{$arrow}</span>";
+}
+
+/** The block a theme.json path is about: the name after styles and blocks, else the first core/ block named anywhere in it, else "". */
+function wp_get_block_name_from_theme_json_path($path)
+{
+    $path = (array) $path;
+    if (count($path) >= 3 && $path[0] === 'styles' && $path[1] === 'blocks' && str_contains((string) $path[2], '/')) {
+        return $path[2];
+    }
+    foreach ($path as $item) {
+        if (is_string($item) && str_starts_with($item, 'core/')) {
+            return $item;
+        }
+    }
+    return '';
+}
+
+/** The address of a block asset by its path: under wp-includes, the theme (or its parent), else a plugin's; false for no path. */
+function get_block_asset_url($path)
+{
+    if (empty($path)) {
+        return false;
+    }
+    $path = wp_normalize_path((string) $path);
+    $includes = wp_normalize_path((string) realpath(ABSPATH . WPINC));
+    if ($includes !== '' && str_starts_with($path, $includes)) {
+        return includes_url(str_replace($includes, '', $path));
+    }
+    // The theme's folder as given or resolved (the themes folder may be a link).
+    foreach ([get_stylesheet_directory(), get_template_directory()] as $dir) {
+        foreach (array_unique([wp_normalize_path($dir), wp_normalize_path((string) realpath($dir))]) as $form) {
+            if ($form !== '' && str_starts_with($path, trailingslashit($form))) {
+                return get_theme_file_uri(str_replace($form, '', $path));
+            }
+        }
+    }
+    return plugins_url(basename($path), $path);
+}
+
+/** The navigation's parsed blocks without the freeform ones between them. */
+function block_core_navigation_filter_out_empty_blocks($parsed_blocks)
+{
+    return array_filter((array) $parsed_blocks, static fn ($block) => isset($block['blockName']));
+}
+
+/** The editor settings a classic theme's supports amount to: the custom-value switches, and its palettes and sizes when it declares them. */
+function get_classic_theme_supports_block_editor_settings()
+{
+    $settings = ['disableCustomColors' => get_theme_support('disable-custom-colors'), 'disableCustomFontSizes' => get_theme_support('disable-custom-font-sizes'), 'disableCustomGradients' => get_theme_support('disable-custom-gradients'), 'disableLayoutStyles' => get_theme_support('disable-layout-styles'), 'enableCustomLineHeight' => get_theme_support('custom-line-height'), 'enableCustomSpacing' => get_theme_support('custom-spacing'), 'enableCustomUnits' => get_theme_support('custom-units')];
+    foreach (['colors' => 'editor-color-palette', 'fontSizes' => 'editor-font-sizes', 'gradients' => 'editor-gradient-presets'] as $key => $feature) {
+        $declared = current((array) get_theme_support($feature));
+        if ($declared !== false) {
+            $settings[$key] = $declared;
+        }
+    }
+    return $settings;
+}
+
+/** A block support's style printed in a style tag: in the head under a block theme, else in the footer, at the priority given. */
+function wp_enqueue_block_support_styles($style, $priority = 10)
+{
+    add_action(wp_is_block_theme() ? 'wp_head' : 'wp_footer', static function () use ($style): void {
+        echo "<style>{$style}</style>\n";
+    }, $priority);
 }

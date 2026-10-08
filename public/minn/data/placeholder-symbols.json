@@ -68,7 +68,6 @@
         "redirect_canonical",
         "register_and_do_post_meta_boxes",
         "register_importer",
-        "resolve_block_template",
         "retrieve_password",
         "sanitize_post",
         "sanitize_sql_orderby",

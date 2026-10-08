@@ -170,11 +170,18 @@ final class Theme
     /** A template file's markup, or null. */
     public function templateFile(string $slug): ?string
     {
+        $path = $this->templatePath($slug);
+        return $path === null ? null : (string) file_get_contents($path);
+    }
+
+    /** The file a template is read from: this theme's, else its parent's; null when neither has one. */
+    public function templatePath(string $slug): ?string
+    {
         if (!self::safe($slug)) {
             return null;
         }
         $file = "{$this->dir}/templates/{$slug}.html";
-        return is_file($file) ? (string) file_get_contents($file) : $this->parent?->templateFile($slug);
+        return is_file($file) ? $file : $this->parent?->templatePath($slug);
     }
 
     /** A template part file's markup, or null. */

@@ -26,13 +26,13 @@ the block-theme reader, templates, global styles and the page renderer
 | [`StylePresets`](#stylepresets) | final class | 174 | The preset side of theme.json: the colour, gradient, font-size, |
 | [`StyleSettings`](#stylesettings) | final class | 82 | The settings and styles nodes as wp/v2/global-styles reports them: |
 | [`TemplateHierarchy`](#templatehierarchy) | final class | 75 | The templates a block theme falls back through for a template slug, as |
-| [`TemplateIndex`](#templateindex) | final class | 250 | Every block template and template part the site offers, in the order the |
+| [`TemplateIndex`](#templateindex) | final class | 303 | Every block template and template part the site offers, in the order the |
 | [`TemplatePartTheme`](#templateparttheme) | final readonly class | 45 | A template-part block inside a template says which theme's part it means. |
 | [`TemplatePatterns`](#templatepatterns) | final readonly class | 88 | A template can name a pattern instead of carrying its blocks, and the |
 | [`TemplateRecord`](#templaterecord) | final readonly class | 34 | One block template or template part, whatever it came from: a theme |
 | [`TemplateWriter`](#templatewriter) | final readonly class | 92 | Saving and removing block templates. A template the theme ships is never |
 | [`Templates`](#templates) | final readonly class | 175 | Which template renders a resolution, and where its markup comes from: |
-| [`Theme`](#theme) | final class | 340 | The active block theme on disk, read as data: theme.json, the templates |
+| [`Theme`](#theme) | final class | 347 | The active block theme on disk, read as data: theme.json, the templates |
 | [`ThemeJsonData`](#themejsondata) | final class | 20 | The theme's theme.json as plugins and the theme's own functions may |
 | [`ThemeStyles`](#themestyles) | final readonly class | 115 | The active theme's global styles as wp/v2/global-styles/themes/{stylesheet} |
 | [`Typography`](#typography) | final class | 105 | Font sizes as the reference writes them (probe plugin-queue3): a size in |
@@ -825,6 +825,32 @@ Every template of a type: the theme's files with the saved rows over them.
 
 Null when the id names another theme, or a slug nothing provides.
 
+### `fileRecord(string $type, string $slug): ?Minn\Theme\TemplateRecord`
+
+A theme file as a template, whatever the site saved over it; null when the theme has none.
+
+### `postRecord(array $row): Minn\Theme\TemplateRecord`
+
+A saved wp_template or wp_template_part row as a template. @param array<string, mixed> $row
+
+- `@param array<string, mixed> $row`
+
+### `files(string $type): array`
+
+The theme's files of a type, in the directory's order, each as
+_get_block_templates_files describes it (fileInfo).
+
+- `@return list<array<string, mixed>>`
+
+### `fileInfo(string $type, string $slug): ?array`
+
+One theme file: its slug, path, theme (the parent's for a file the
+child does not have) and type; a part's title (when theme.json gives
+one) and area; a custom template's title and post types. Null when
+the theme has no such file.
+
+- `@return array<string, mixed>|null`
+
 ### `themeSlug(): string`
 
 The theme the index reads.
@@ -861,7 +887,7 @@ where the template only named them, then every template-part block
 told which theme it belongs to. A record carries the markup as
 stored, because that is what get_block_templates() hands a plugin.
 
-Internals: `savedRows()` (private, line 151), `pluginRows()` (private, line 166), `fromRow()` (private, line 175), `fromFile()` (private, line 201), `fromPlugin()` (private, line 223), `fileTitle()` (private, line 248), `savedArea()` (private, line 257)
+Internals: `savedRows()` (private, line 204), `pluginRows()` (private, line 219), `fromRow()` (private, line 228), `fromFile()` (private, line 254), `fromPlugin()` (private, line 276), `fileTitle()` (private, line 301), `savedArea()` (private, line 310)
 
 
 ## TemplatePartTheme
@@ -1091,6 +1117,10 @@ sizes, template parts) replace as a whole.
 
 A template file's markup, or null.
 
+### `templatePath(string $slug): ?string`
+
+The file a template is read from: this theme's, else its parent's; null when neither has one.
+
 ### `partFile(string $slug): ?string`
 
 A template part file's markup, or null.
@@ -1149,7 +1179,7 @@ pattern into a template. A field the header omits is omitted here.
 
 The theme's stylesheet URL when it ships one; a child's own, else nothing (the parent's is not enqueued for it).
 
-Internals: `at()` (private, line 61), `rawJson()` (private, line 82), `withStylePartials()` (private, line 98), `partialFiles()` (private, line 134), `safe()` (private, line 165), `htmlFiles()` (private, line 235), `patternIndex()` (private, line 347)
+Internals: `at()` (private, line 61), `rawJson()` (private, line 82), `withStylePartials()` (private, line 98), `partialFiles()` (private, line 134), `safe()` (private, line 165), `htmlFiles()` (private, line 242), `patternIndex()` (private, line 354)
 
 
 ## ThemeJsonData

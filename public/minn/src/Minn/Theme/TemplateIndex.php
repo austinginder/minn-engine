@@ -74,6 +74,59 @@ final class TemplateIndex
         return null;
     }
 
+    /** A theme file as a template, whatever the site saved over it; null when the theme has none. */
+    public function fileRecord(string $type, string $slug): ?TemplateRecord
+    {
+        return $this->hasFile($type, $slug) ? $this->fromFile($slug, $type) : null;
+    }
+
+    /** A saved wp_template or wp_template_part row as a template. @param array<string, mixed> $row */
+    public function postRecord(array $row): TemplateRecord
+    {
+        return $this->fromRow($row, (string) $row['post_type']);
+    }
+
+    /**
+     * The theme's files of a type, in the directory's order, each as
+     * _get_block_templates_files describes it (fileInfo).
+     *
+     * @return list<array<string, mixed>>
+     */
+    public function files(string $type): array
+    {
+        return array_values(array_filter(array_map(fn (string $slug): ?array => $this->fileInfo($type, $slug), $this->theme->fileSlugs($type === self::PART ? 'parts' : 'templates'))));
+    }
+
+    /**
+     * One theme file: its slug, path, theme (the parent's for a file the
+     * child does not have) and type; a part's title (when theme.json gives
+     * one) and area; a custom template's title and post types. Null when
+     * the theme has no such file.
+     *
+     * @return array<string, mixed>|null
+     */
+    public function fileInfo(string $type, string $slug): ?array
+    {
+        $path = $type === self::PART ? $this->theme->partPath($slug) : $this->theme->templatePath($slug);
+        if ($path === null) {
+            return null;
+        }
+        $owner = str_starts_with($path, $this->theme->dir . '/') ? $this->theme->slug : (string) $this->theme->parent?->slug;
+        $info = ['slug' => $slug, 'path' => $path, 'theme' => $owner, 'type' => $type];
+        if ($type === self::PART) {
+            $title = $this->theme->partTitle($slug);
+            return ($title === null ? $info : $info + ['title' => $title]) + ['area' => $this->theme->partArea($slug)];
+        }
+        $declared = $this->theme->customTemplate($slug);
+        if ($declared !== null) {
+            $info['title'] = (string) ($declared['title'] ?? '');
+            if (isset($declared['postTypes'])) {
+                $info['postTypes'] = (array) $declared['postTypes'];
+            }
+        }
+        return $info;
+    }
+
     /** The theme the index reads. */
     public function themeSlug(): string
     {

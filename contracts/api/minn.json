@@ -138983,7 +138983,7 @@
             "namespace": "Minn\\Theme",
             "kind": "final class",
             "file": "public/minn/src/Minn/Theme/TemplateIndex.php",
-            "lines": 250,
+            "lines": 303,
             "doc": "Every block template and template part the site offers, in the order the\nreference lists them: the rows the site editor saved first (newest post\ndate first), then the theme's own files in the order the directory hands\nthem back, then whatever a plugin registered. A saved row shadows the\ntheme file of the same slug and reports has_theme_file so the file can\nbe restored by deleting the row.",
             "implements": [],
             "extends": null,
@@ -139154,6 +139154,106 @@
                 },
                 {
                     "routes": [],
+                    "name": "fileRecord",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "fileRecord(string $type, string $slug): ?Minn\\Theme\\TemplateRecord",
+                    "doc": "A theme file as a template, whatever the site saved over it; null when the theme has none.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "type",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "slug",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 78,
+                    "end": 81
+                },
+                {
+                    "routes": [],
+                    "name": "postRecord",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "postRecord(array $row): Minn\\Theme\\TemplateRecord",
+                    "doc": "A saved wp_template or wp_template_part row as a template. @param array<string, mixed> $row",
+                    "shapes": [
+                        "@param array<string, mixed> $row"
+                    ],
+                    "params": [
+                        {
+                            "name": "row",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 84,
+                    "end": 87
+                },
+                {
+                    "routes": [],
+                    "name": "files",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "files(string $type): array",
+                    "doc": "The theme's files of a type, in the directory's order, each as\n_get_block_templates_files describes it (fileInfo).",
+                    "shapes": [
+                        "@return list<array<string, mixed>>"
+                    ],
+                    "params": [
+                        {
+                            "name": "type",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 95,
+                    "end": 98
+                },
+                {
+                    "routes": [],
+                    "name": "fileInfo",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "fileInfo(string $type, string $slug): ?array",
+                    "doc": "One theme file: its slug, path, theme (the parent's for a file the\nchild does not have) and type; a part's title (when theme.json gives\none) and area; a custom template's title and post types. Null when\nthe theme has no such file.",
+                    "shapes": [
+                        "@return array<string, mixed>|null"
+                    ],
+                    "params": [
+                        {
+                            "name": "type",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "slug",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 108,
+                    "end": 128
+                },
+                {
+                    "routes": [],
                     "name": "themeSlug",
                     "static": false,
                     "visibility": "public",
@@ -139161,8 +139261,8 @@
                     "doc": "The theme the index reads.",
                     "shapes": [],
                     "params": [],
-                    "line": 78,
-                    "end": 81
+                    "line": 131,
+                    "end": 134
                 },
                 {
                     "routes": [],
@@ -139188,8 +139288,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 84,
-                    "end": 87
+                    "line": 137,
+                    "end": 140
                 },
                 {
                     "routes": [],
@@ -139208,8 +139308,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 95,
-                    "end": 106
+                    "line": 148,
+                    "end": 159
                 },
                 {
                     "routes": [],
@@ -139228,8 +139328,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 109,
-                    "end": 118
+                    "line": 162,
+                    "end": 171
                 },
                 {
                     "routes": [],
@@ -139248,8 +139348,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 121,
-                    "end": 124
+                    "line": 174,
+                    "end": 177
                 },
                 {
                     "routes": [],
@@ -139262,8 +139362,8 @@
                         "@return array<string, array{title: string, description: string}>"
                     ],
                     "params": [],
-                    "line": 131,
-                    "end": 137
+                    "line": 184,
+                    "end": 190
                 },
                 {
                     "routes": [],
@@ -139282,8 +139382,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 145,
-                    "end": 148
+                    "line": 198,
+                    "end": 201
                 },
                 {
                     "routes": [],
@@ -139304,8 +139404,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 151,
-                    "end": 163
+                    "line": 204,
+                    "end": 216
                 },
                 {
                     "routes": [],
@@ -139326,8 +139426,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 166,
-                    "end": 172
+                    "line": 219,
+                    "end": 225
                 },
                 {
                     "routes": [],
@@ -139355,8 +139455,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 175,
-                    "end": 199
+                    "line": 228,
+                    "end": 252
                 },
                 {
                     "routes": [],
@@ -139382,8 +139482,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 201,
-                    "end": 220
+                    "line": 254,
+                    "end": 273
                 },
                 {
                     "routes": [],
@@ -139411,8 +139511,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 223,
-                    "end": 241
+                    "line": 276,
+                    "end": 294
                 },
                 {
                     "routes": [],
@@ -139438,8 +139538,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 248,
-                    "end": 255
+                    "line": 301,
+                    "end": 308
                 },
                 {
                     "routes": [],
@@ -139465,8 +139565,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 257,
-                    "end": 267
+                    "line": 310,
+                    "end": 320
                 }
             ]
         },
@@ -140682,7 +140782,7 @@
             "namespace": "Minn\\Theme",
             "kind": "final class",
             "file": "public/minn/src/Minn/Theme/Theme.php",
-            "lines": 340,
+            "lines": 347,
             "doc": "The active block theme on disk, read as data: theme.json, the templates\nand parts directories, and the patterns index. A child theme's files\nwin and its parent fills in what the child does not define; theme.json\nmerges the same way, with the child's preset lists replacing the\nparent's whole. The engine reads the site's installed theme the way it\nreads the site's database; it never runs the theme's PHP.",
             "implements": [],
             "extends": null,
@@ -140957,7 +141057,27 @@
                         }
                     ],
                     "line": 171,
-                    "end": 178
+                    "end": 175
+                },
+                {
+                    "routes": [],
+                    "name": "templatePath",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "templatePath(string $slug): ?string",
+                    "doc": "The file a template is read from: this theme's, else its parent's; null when neither has one.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "slug",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 178,
+                    "end": 185
                 },
                 {
                     "routes": [],
@@ -140976,8 +141096,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 181,
-                    "end": 185
+                    "line": 188,
+                    "end": 192
                 },
                 {
                     "routes": [],
@@ -140996,8 +141116,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 188,
-                    "end": 195
+                    "line": 195,
+                    "end": 202
                 },
                 {
                     "routes": [],
@@ -141008,8 +141128,8 @@
                     "doc": "The theme's display name, as the stylesheet header states it; a child\ntheme answers with its own. Falls back to theme.json's title, then the\nfolder name.",
                     "shapes": [],
                     "params": [],
-                    "line": 202,
-                    "end": 211
+                    "line": 209,
+                    "end": 218
                 },
                 {
                     "routes": [],
@@ -141030,8 +141150,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 221,
-                    "end": 232
+                    "line": 228,
+                    "end": 239
                 },
                 {
                     "routes": [],
@@ -141050,8 +141170,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 247,
-                    "end": 255
+                    "line": 254,
+                    "end": 262
                 },
                 {
                     "routes": [],
@@ -141070,8 +141190,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 258,
-                    "end": 266
+                    "line": 265,
+                    "end": 273
                 },
                 {
                     "routes": [],
@@ -141090,8 +141210,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 269,
-                    "end": 277
+                    "line": 276,
+                    "end": 284
                 },
                 {
                     "routes": [],
@@ -141110,8 +141230,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 280,
-                    "end": 287
+                    "line": 287,
+                    "end": 294
                 },
                 {
                     "routes": [],
@@ -141132,8 +141252,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 295,
-                    "end": 309
+                    "line": 302,
+                    "end": 316
                 },
                 {
                     "routes": [],
@@ -141154,8 +141274,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 318,
-                    "end": 338
+                    "line": 325,
+                    "end": 345
                 },
                 {
                     "routes": [],
@@ -141166,8 +141286,8 @@
                     "doc": "The theme's stylesheet URL when it ships one; a child's own, else nothing (the parent's is not enqueued for it).",
                     "shapes": [],
                     "params": [],
-                    "line": 341,
-                    "end": 344
+                    "line": 348,
+                    "end": 351
                 },
                 {
                     "routes": [],
@@ -141303,8 +141423,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 235,
-                    "end": 244
+                    "line": 242,
+                    "end": 251
                 },
                 {
                     "routes": [],
@@ -141317,8 +141437,8 @@
                         "@return array<string, string>"
                     ],
                     "params": [],
-                    "line": 347,
-                    "end": 359
+                    "line": 354,
+                    "end": 366
                 }
             ]
         },

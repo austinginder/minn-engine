@@ -5345,3 +5345,75 @@ through `Runtime\Meta`).
 The probe masks home and site with one token. WP-CLI runs the reference
 as https (its configured address is), but the engine's CLI runtime counts
 as plain http, so `site_url` differs there and nowhere else.
+
+## Block template files, and small block helpers (2026-10-08)
+
+The sixth slice of the plugin queue (probe plugin-queue6, 44 cases), the
+template helpers that kubio, superb-blocks, buddypress and event-tickets
+call.
+
+**Template files** (`Theme\TemplateIndex::files`, `fileInfo`,
+`fileRecord`, `postRecord`; `Theme::templatePath` beside `partPath`):
+
+- `_get_block_template_file` and `_get_block_templates_files` describe
+  the theme's files: slug, path, theme (the parent's for a file only the
+  parent has) and type, in the directory's order.
+  - A part adds its title (when theme.json gives one) and its area.
+  - A custom template adds its title and post types.
+  - The query narrows by `slug__in`, `slug__not_in`, `area` and
+    `post_type`; a template with no post types never matches a post type.
+  - A type that is neither gives null.
+- `_build_block_template_result_from_file` builds a template from such a
+  description, its markup read from the path with the theme named on every
+  template part. The default template types give the title and
+  description of the slugs they name, which are the only templates that
+  are not custom (parts always are).
+- `_build_block_template_result_from_post` builds one from a saved row,
+  under the theme its `wp_theme` term names; a row with no theme is
+  `template_missing_theme`.
+- `get_block_file_template` gives the theme file's template past whatever
+  the site saved over it, between its `pre_` and plain filters.
+- `resolve_block_template` gives the first template the hierarchy names
+  (`.php` and `.html` dropped, `_strip_template_file_suffix`), saved or the
+  theme's.
+- `locate_block_template` only considers templates at least as specific as
+  a PHP template already found (one outside the theme keeps only the first
+  candidate). It sets `$_wp_current_template_id` and
+  `$_wp_current_template_content` (the empty-template warning for a
+  signed-in visitor) and answers the canvas.
+- `_inject_theme_attribute_in_block_template_content` and its remover
+  (deprecated since 6.4), with `_inject_theme_attribute_in_template_part_block`
+  and `_remove_theme_attribute_from_template_part_block`.
+
+The templates the engine hands out now have the reference's shape:
+
+- a saved row's author as stored and its dates as the post keeps them
+  (the record still carries the REST form);
+- parts always custom;
+- theme files with the theme on their template parts and the post types
+  their declaration gives;
+- no `author_text` or `original_source`, which are REST fields built from
+  the records, not properties of the object.
+
+**Block helpers**:
+
+- `wp_should_skip_block_supports_serialization`;
+- `wp_has_border_feature_support`;
+- `_wp_get_presets_class_name` (the MD5 of the serialized block);
+- `get_comments_pagination_arrow` and `get_query_pagination_arrow` (arrow
+  or chevron spans, null for any other style);
+- `wp_get_block_name_from_theme_json_path`;
+- `get_block_asset_url` (wp-includes, the theme or its parent, whose folder
+  may be a link, else a plugin's);
+- `block_core_navigation_filter_out_empty_blocks` (every freeform block
+  goes);
+- `get_classic_theme_supports_block_editor_settings`;
+- `wp_enqueue_block_support_styles` (the head under a block theme, else
+  the footer);
+- `wp_render_empty_block_template_warning`.
+
+Not done here: the `wp_apply_*_support` functions and duotone. The
+engine's block renderer applies supports through its own
+`Blocks\Supports`, and it has no duotone. Making the supports one
+registry that both the renderer and those functions use is its own
+change.
