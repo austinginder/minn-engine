@@ -21,11 +21,9 @@ URL resolution, permalinks, feeds, sitemaps and the public page
 | [`FeedWriter`](#feedwriter) | final class | 57 | A feed as it is written: text as given, and what each template tag and |
 | [`FrontController`](#frontcontroller) | final readonly class | 103 | The public site. One catch-all route: resolve the URL, then either |
 | [`Kind`](#kind) | enum | 17 | What a public URL resolved to. |
-| [`ListSpacing`](#listspacing) | final readonly class | 30 | How a page list is spaced: the reference's "preserve" keeps newlines and |
 | [`ListingLinks`](#listinglinks) | final class | 53 | The prev/next links a paged listing prints: which page sits either side of |
 | [`Maintenance`](#maintenance) | final class | 28 | Maintenance mode, as hosting tools and updaters switch it on: a |
 | [`PageLinks`](#pagelinks) | final class | 40 | The links between the pages of a post split with <!--nextpage-->, as |
-| [`PageList`](#pagelist) | final readonly class | 96 | The page hierarchy as wp_list_pages and wp_dropdown_pages draw it: nested |
 | [`Pagination`](#pagination) | final class | 62 | Numbered page links in the reference's shape: previous, the end and |
 | [`Permalinks`](#permalinks) | final readonly class | 248 | Builds public URLs from the site's permalink structure. With an empty |
 | [`PostEmbed`](#postembed) | final class | 104 | A post as other sites embed it, the oEmbed provider side, as the |
@@ -46,7 +44,7 @@ URL resolution, permalinks, feeds, sitemaps and the public page
 | [`SitemapRequest`](#sitemaprequest) | final class | 70 | A sitemap request at template_redirect, as the reference's sitemaps |
 | [`SitemapXml`](#sitemapxml) | final class | 43 | The two sitemap documents, index and URL set, from entry maps; one builder for the engine's routes and the facade's renderer. |
 | [`Sitemaps`](#sitemaps) | final class | 34 | What the sitemaps share with WP_Sitemaps, which serves them: the two |
-| [`TermLists`](#termlists) | final class | 178 | The two term listings themes print: the nested category list and the |
+| [`TermLists`](#termlists) | final class | 71 | A term's parent chain and the tag cloud, built from term rows the caller |
 | [`ToolbarMarkup`](#toolbarmarkup) | final class | 57 | WP_Admin_Bar's markup, piece by piece, as the reference prints it (probe |
 | [`ToolbarMenus`](#toolbarmenus) | final class | 338 | The nodes WordPress puts on the toolbar itself, as the reference adds |
 | [`ToolbarTree`](#toolbartree) | final class | 90 | WP_Admin_Bar's nodes bound into the tree they print as, as the reference |
@@ -594,36 +592,6 @@ Cases: `Home`, `Single`, `Page`, `Category`, `Tag`, `Author`, `Date`, `Search`, 
 Used by: `Minn\Blocks\Context`, `Minn\Blocks\Dynamic\Categories`, `Minn\Blocks\Dynamic\Theme\Navigation`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Blocks\Dynamic\Theme\Structure`, `Minn\Front\AdminBar`, `Minn\Front\AttachmentAddresses`, `Minn\Front\Canonical`, `Minn\Front\FeedController`, `Minn\Front\FrontController`, `Minn\Front\Renderer`, `Minn\Front\Resolution`, `Minn\Front\Resolver`, `Minn\Theme\ArchiveTitle`, `Minn\Theme\BodyClasses`, `Minn\Theme\ClassicRenderer`, `Minn\Theme\EmbedRenderer`, `Minn\Theme\HeadLinks`, `Minn\Theme\MainQueryBridge`, `Minn\Theme\PageRenderer`, `Minn\Theme\Templates`
 
 
-## ListSpacing
-
-`final readonly class Minn\Front\ListSpacing` · `public/minn/src/Minn/Front/ListSpacing.php`
-
-How a page list is spaced: the reference's "preserve" keeps newlines and
-one tab per level, "discard" prints the items on one line. The link
-wrappers ride along so the list has one place to read them.
-
-Used by: `Minn\Front\PageList`
-
-- readonly `string $linkBefore`
-- readonly `string $linkAfter`
-
-### static `preserved(string $linkBefore = '', string $linkAfter = ''): self`
-
-Newlines and tabs kept, the reference's default.
-
-### static `discarded(string $linkBefore = '', string $linkAfter = ''): self`
-
-Everything on one line, the reference's "discard".
-
-### `newline(): string`
-
-A newline, or nothing when spacing is discarded.
-
-### `tab(): string`
-
-One tab of indent, or nothing when spacing is discarded.
-
-
 ## ListingLinks
 
 `final class Minn\Front\ListingLinks` · `public/minn/src/Minn/Front/ListingLinks.php`
@@ -698,37 +666,6 @@ The links for the page being shown of a split post.
 - `@param array<string, mixed> $args wp_link_pages's arguments with their defaults`
 - `@param Closure(int): string $open the opening anchor of page $i`
 - `@param Closure(string, int): string $filter a link through wp_link_pages_link`
-
-
-## PageList
-
-`final readonly class Minn\Front\PageList` · `public/minn/src/Minn/Front/PageList.php`
-
-The page hierarchy as wp_list_pages and wp_dropdown_pages draw it: nested
-list items with the reference's page_item classes (has-children, current,
-ancestor, parent), children indented one tab per level under a
-<ul class='children'>, and the flat dropdown whose options carry a level
-class and three non-breaking spaces per level. A page whose parent is not
-in the set stands at the top, so include, exclude and child_of all nest
-whatever remains.
-
-```php
-__construct(array $pages, array $currentTrail)
-```
-- `@param list<array{id: int, parent: int, title: string, link: string}> $pages in display order`
-- `@param list<int> $currentTrail the queried page and its ancestors, the page first`
-
-
-### `items(int $childOf, int $depth, Minn\Front\ListSpacing $spacing): string`
-
-The list items under a page (0 for the whole tree), to a depth
-(0 unlimited, -1 flat), with whitespace the way the reference keeps it.
-
-### `options(int $childOf, int $depth, int $selected, Closure $value): string`
-
-The dropdown options under a page, to a depth, with one selected.
-
-Internals: `flat()` (private, line 51), `level()` (private, line 60), `item()` (private, line 76), `optionLevel()` (private, line 101)
 
 
 ## Pagination
@@ -1503,9 +1440,9 @@ Internals: `xsl()` (private, line 30)
 
 `final class Minn\Front\TermLists` · `public/minn/src/Minn/Front/TermLists.php`
 
-The two term listings themes print: the nested category list and the
-tag cloud, built from term rows the caller already fetched and links the
-caller resolves.
+A term's parent chain and the tag cloud, built from term rows the caller
+already fetched and links the caller resolves. The category list and
+select are the walkers' (Walker_Category, Walker_CategoryDropdown).
 
 ### static `parentChain(array $line, bool $link, string $separator, bool $bySlug): string`
 
@@ -1515,20 +1452,6 @@ trails the last name too, so a breadcrumb reads "Root/Mid/Leaf/".
 
 - `@param list<array{name: string, slug: string, link: string}> $line outermost first, the term itself last`
 
-### static `categoryList(array $terms, array $args, Closure $link): string`
-
-The category list the reference prints.
-
-- `@param list<array<string, mixed>> $terms rows with term_id, name, slug, count, parent`
-- `@param array<string, mixed> $args wp_list_categories arguments`
-- `@param Closure(array): string $link`
-
-### static `categoryWrapper(array $args): array`
-
-The list's title item and its closer.
-
-- `@return list<string> the categories block wrapper, before and after the items`
-
 ### static `tagCloud(array $tags, array $args): ?string`
 
 The tag cloud the reference prints, or null for none.
@@ -1536,14 +1459,7 @@ The tag cloud the reference prints, or null for none.
 - `@param list<array<string, mixed>> $tags rows with term_id, name, count, plus "link"`
 - `@param array<string, mixed> $args wp_generate_tag_cloud arguments`
 
-### static `dropdownOptions(array $terms, array $args): string`
-
-The option elements of a category dropdown, nested by depth when the
-caller asked for a hierarchy.
-
-- `@param list<array<string, mixed>> $terms`
-
-Internals: `options()` (private, line 127), `sorted()` (private, line 146), `orphans()` (private, line 159), `items()` (private, line 166)
+Internals: `sorted()` (private, line 73)
 
 
 ## ToolbarMarkup

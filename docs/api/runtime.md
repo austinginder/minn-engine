@@ -42,17 +42,17 @@ the WordPress runtime plugins load against
 | [`Hooks`](#hooks) | final class | 340 | The hook registry plugin code registers into and the engine fires. |
 | [`Interactivity`](#interactivity) | final class | 509 | Server-side directive processing for the Interactivity API: the state and |
 | [`MenuEvents`](#menuevents) | final readonly class | 220 | Menus and their items saved as the reference saves them, telling |
+| [`MenuItemMarks`](#menuitemmarks) | final class | 202 | The classes and current flags the reference gives a menu's items for the |
 | [`Meta`](#meta) | final readonly class | 210 | The four meta tables behind get_metadata and friends: reads by object, and the row-level writes the update and delete rules need. |
 | [`MetaKeys`](#metakeys) | final class | 183 | The meta keys code registers, kept where the reference keeps them |
 | [`MetaTypes`](#metatypes) | final class | 21 | Meta types a plugin brought, by the table it named on $wpdb as |
-| [`NavMenu`](#navmenu) | final class | 303 | Nav-menu item decoration for wp_nav_menu(): the reference's class tokens |
+| [`NavMenu`](#navmenu) | final class | 88 | wp_nav_menu()'s menu: the one the arguments name, its items marked for |
 | [`NavMenuItems`](#navmenuitems) | final class | 154 | Classic menu items as the reference serves them to walkers and plugins |
 | [`OEmbed`](#oembed) | final class | 92 | oEmbed as data: provider matching against the wildcard table, response parsing, and the markup an oEmbed payload becomes. |
 | [`ObjectCache`](#objectcache) | final class | 52 | The per-request object cache behind wp_cache_*: groups of keys, nothing persistent. |
 | [`ObjectTerms`](#objectterms) | final class | 30 | wp_get_object_terms's handling of taxonomies registered with their own |
 | [`OptionSanitizer`](#optionsanitizer) | final class | 114 | A core option's value cleaned as the reference's sanitize_option cleans |
 | [`Options`](#options) | final class | 258 | Options as plugin code sees them: PHP values, decoded from the stored |
-| [`PageMenu`](#pagemenu) | final class | 40 | The page-list menu a classic theme falls back to when no menu is |
 | [`Pages`](#pages) | final class | 129 | get_pages() as the reference shapes it: its arguments as a post query |
 | [`Patterns`](#patterns) | final class | 161 | The block pattern, pattern category, and block style registries as data. |
 | [`PlaceholderTrace`](#placeholdertrace) | final class | 27 | Records every call into a generated placeholder while a site opts in by |
@@ -98,7 +98,7 @@ the WordPress runtime plugins load against
 | [`TermQueryRunner`](#termqueryrunner) | final class | 255 | WP_Term_Query::get_terms as the reference runs it (probe |
 | [`TermQueryTree`](#termquerytree) | final class | 146 | What a term query does with its rows, as the reference does it (probe |
 | [`TermSave`](#termsave) | final class | 199 | wp_insert_term and wp_update_term in the reference's order (probe |
-| [`TermWriter`](#termwriter) | final readonly class | 119 | The decisions behind wp_delete_term and the object-term relationships: |
+| [`TermWriter`](#termwriter) | final readonly class | 125 | The decisions behind wp_delete_term and the object-term relationships: |
 | [`ThemeSupports`](#themesupports) | final class | 166 | What a theme supports, as add_theme_support keeps it (probe rest-themes): |
 | [`ThemeSwitch`](#themeswitch) | final class | 145 | Switching the theme as the reference does it, in two halves. The switch |
 | [`TreeWalk`](#treewalk) | final class | 179 | The Walker contract's traversal: elements keyed by the walker's |
@@ -1720,6 +1720,43 @@ argument it isn't handed.
 Internals: `prepared()` (private, line 175), `fields()` (private, line 222)
 
 
+## MenuItemMarks
+
+`final class Minn\Runtime\MenuItemMarks` · `public/minn/src/Minn/Runtime/MenuItemMarks.php`
+
+The classes and current flags the reference gives a menu's items for the
+page in view (_wp_menu_item_classes_by_context, probe plugin-queue4), in
+two passes over the items.
+
+First, each item: its own classes, then menu-item and its type and
+object; menu-item-home and menu-item-privacy-policy for those pages. On a
+single post of a flat type, the items of the post's terms in hierarchical
+taxonomies become its menu parents. Otherwise the current item (the post
+or term in view, the posts page on the blog, the post type archive in
+view, or a custom address equal to the request's) is marked, with the
+page compat tokens; its menu ancestors, its menu parent and its object's
+parent are noted. A custom item pointing home is the home item on every
+view. The posts page reads as a parent on any view but a page.
+
+Then each item again: an item for a post or term above the one in view
+is its ancestor (current-{type}-ancestor), the noted items take
+current-menu-ancestor and current-menu-parent, an item whose object is a
+noted parent object current-{object}-parent, and a page item the compat
+tokens of both.
+
+Used by: `Minn\Runtime\NavMenu`
+
+### static `apply(array $items): array`
+
+The items, each given its classes and its current, current_item_parent
+and current_item_ancestor flags for what the main query has in view.
+
+- `@param list<object> $items`
+- `@return list<object>`
+
+Internals: `own()` (private, line 64), `related()` (private, line 111), `isCurrent()` (private, line 143), `view()` (private, line 161), `postTerms()` (private, line 200), `ancestors()` (private, line 218), `currentUrl()` (private, line 223)
+
+
 ## Meta
 
 `final readonly class Minn\Runtime\Meta` · `public/minn/src/Minn/Runtime/Meta.php`
@@ -1911,11 +1948,8 @@ The full table name of a registered meta type, or null.
 
 `final class Minn\Runtime\NavMenu` · `public/minn/src/Minn/Runtime/NavMenu.php`
 
-Nav-menu item decoration for wp_nav_menu(): the reference's class tokens
-(menu-item, the type and object tokens, menu-item-home) and the current
-markers (current-menu-item with its page compat tokens, the parent and
-ancestor chain). The facade's wp_nav_menu() fetches and sorts the items;
-this marks them against the standing main query.
+wp_nav_menu()'s menu: the one the arguments name, its items marked for
+the page in view (MenuItemMarks), walked, wrapped in the container.
 
 
 ### static `build(object $args): string|false|null`
@@ -1924,14 +1958,7 @@ The whole menu for wp_nav_menu(): resolve, fetch, decorate, walk,
 wrap, filter. Null when there is no menu (the caller's fallback
 runs); false when the items filtered away to nothing.
 
-### static `decorate(array $items): array`
-
-Menu items with the classes and flags the reference adds for the current page.
-
-- `@param list<object> $items`
-- `@return list<object>`
-
-Internals: `menuForArgs()` (private, line 55), `wrapId()` (private, line 73), `container()` (private, line 88), `singularContext()` (private, line 159), `markQueriedAncestry()` (private, line 202), `isCurrent()` (private, line 225), `markAncestors()` (private, line 261), `currentUrl()` (private, line 311)
+Internals: `menuForArgs()` (private, line 51), `wrapId()` (private, line 69), `container()` (private, line 84)
 
 
 ## NavMenuItems
@@ -2189,35 +2216,6 @@ What the reference stores: arrays and objects serialized, scalars as their strin
 A stored option value decoded the way the reference reads it.
 
 Internals: `remember()` (private, line 173), `holdsObject()` (private, line 186), `switchAutoload()` (private, line 204)
-
-
-## PageMenu
-
-`final class Minn\Runtime\PageMenu` · `public/minn/src/Minn/Runtime/PageMenu.php`
-
-The page-list menu a classic theme falls back to when no menu is
-assigned to a location. Storefront's header is one of these, so its
-markup is what the theme's CSS binds to.
-
-Shapes captured from the reference: the optional home item carries no
-class (the attribute is written but left empty), a page item carries
-`page_item page-item-{id}` plus `current_page_item` for the page being
-viewed, and the whole list is wrapped in the caller's before/after.
-
-### static `items(array $pages, ?array $home, string $linkBefore = '', string $linkAfter = ''): string`
-
-The page menu's list items.
-
-- `@param list<array{id: int, title: string, url: string, current: bool}> $pages`
-- `@param array{label: string, url: string, current: bool}|null $home`
-
-### static `home(mixed $showHome, string $url, bool $current, string $defaultLabel = 'Home'): ?array`
-
-The home item a `show_home` argument asks for: true (or 1) means the
-default label, a string is the label itself, anything falsy means no
-item at all.
-
-- `@return array{label: string, url: string, current: bool}|null`
 
 
 ## Pages
@@ -3631,7 +3629,7 @@ attributes. What it has not (an attachment's own link, smilies, the
 capital P, insecure home addresses) runs with the plugins' own
 callbacks.
 
-Used by: `Minn\Admin\BootPayload`, `Minn\Admin\PackagesController`, `Minn\Admin\ThemesController`, `Minn\Auth\Authenticator`, `Minn\Auth\Capabilities`, `Minn\Auth\RegisteredCaps`, `Minn\Blocks\Bindings`, `Minn\Blocks\Dynamic\Theme\Comments`, `Minn\Blocks\Dynamic\Theme\Navigation`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Blocks\Dynamic\Theme\Structure`, `Minn\Blocks\ImageTags`, `Minn\Blocks\RenderState`, `Minn\Cli\Runtime`, `Minn\Content\Blocks`, `Minn\Content\MediaShortcodes`, `Minn\Content\PluginState`, `Minn\Content\PostSlugs`, `Minn\Content\Reader`, `Minn\Content\Site`, `Minn\Content\Terms`, `Minn\Content\Texturize`, `Minn\Cron\Cron`, `Minn\Db`, `Minn\Engine`, `Minn\Extension\Extensions`, `Minn\Front\CommentPostController`, `Minn\Front\FeedTags`, `Minn\Front\FeedTemplates`, `Minn\Front\FrontController`, `Minn\Front\Permalinks`, `Minn\Front\PostEmbed`, `Minn\Front\ProbeController`, `Minn\Front\QueryMoves`, `Minn\Front\RequestParse`, `Minn\Front\Resolver`, `Minn\Front\RuleRoutes`, `Minn\Front\SingleQueries`, `Minn\Front\SitemapRequest`, `Minn\Front\ToolbarMarkup`, `Minn\Front\ToolbarMenus`, `Minn\I18n\Gettext`, `Minn\Login\LoginController`, `Minn\Mail\Mailer`, `Minn\Media\Icons`, `Minn\Media\Images`, `Minn\Ops\UpgraderRun`, `Minn\Rest\AbilitiesController`, `Minn\Rest\Api`, `Minn\Rest\BatchController`, `Minn\Rest\BlockRendererController`, `Minn\Rest\BlockTypesController`, `Minn\Rest\Caller`, `Minn\Rest\Embed`, `Minn\Rest\InstalledThemesController`, `Minn\Rest\LiveSettings`, `Minn\Rest\OEmbedController`, `Minn\Rest\PostCollectionParams`, `Minn\Rest\PostListArgs`, `Minn\Rest\PostsController`, `Minn\Rest\RegisteredType`, `Minn\Rest\RenderedFields`, `Minn\Rest\RestMeta`, `Minn\Rest\RuntimeEnvelope`, `Minn\Rest\RuntimePrepare`, `Minn\Rest\RuntimeRoutes`, `Minn\Rest\Services`, `Minn\Rest\SettingsController`, `Minn\Rest\SidebarsController`, `Minn\Rest\StatusesController`, `Minn\Rest\TemplatesController`, `Minn\Rest\TermFilters`, `Minn\Rest\Types`, `Minn\Rest\UserCollectionParams`, `Minn\Rest\WidgetsController`, `Minn\Runtime\Abilities`, `Minn\Runtime\AccountFlows`, `Minn\Runtime\AjaxController`, `Minn\Runtime\ApplicationPasswordSignIn`, `Minn\Runtime\ArchiveLinks`, `Minn\Runtime\BlockFilters`, `Minn\Runtime\BlockHooks`, `Minn\Runtime\CommentEvents`, `Minn\Runtime\CommentFeedQuery`, `Minn\Runtime\CommentForm`, `Minn\Runtime\CommentPages`, `Minn\Runtime\Constants`, `Minn\Runtime\CurrentUser`, `Minn\Runtime\Deferrals`, `Minn\Runtime\FileUpload`, `Minn\Runtime\Interactivity`, `Minn\Runtime\MetaKeys`, `Minn\Runtime\NavMenu`, `Minn\Runtime\NavMenuItems`, `Minn\Runtime\OptionSanitizer`, `Minn\Runtime\Patterns`, `Minn\Runtime\PlaceholderTrace`, `Minn\Runtime\PluginActivation`, `Minn\Runtime\PluginRemoval`, `Minn\Runtime\PluginRequirements`, `Minn\Runtime\PluginUpdates`, `Minn\Runtime\Plugins`, `Minn\Runtime\PostEvents`, `Minn\Runtime\PostLinks`, `Minn\Runtime\PostQuery`, `Minn\Runtime\PostQueryResults`, `Minn\Runtime\PostQueryWhere`, `Minn\Runtime\PostSave`, `Minn\Runtime\RegisteredSettings`, `Minn\Runtime\Registry`, `Minn\Runtime\RewriteRules`, `Minn\Runtime\ScriptModules`, `Minn\Runtime\Shortcodes`, `Minn\Runtime\TermEvents`, `Minn\Runtime\TermQueryTree`, `Minn\Runtime\TermSave`, `Minn\Runtime\TermWriter`, `Minn\Runtime\ThemeSupports`, `Minn\Runtime\ThemeSwitch`, `Minn\Runtime\Upgrade`, `Minn\Runtime\UserEvents`, `Minn\Theme\ArchiveTitle`, `Minn\Theme\ClassicContent`, `Minn\Theme\ClassicRenderer`, `Minn\Theme\EmbedRenderer`, `Minn\Theme\FeedHeaders`, `Minn\Theme\FrontLifecycle`, `Minn\Theme\HeadLinks`, `Minn\Theme\MainQueryBridge`, `Minn\Theme\PageRenderer`, `Minn\Theme\Templates`, `Minn\Theme\Theme`, `Minn\Theme\ThemeJsonData`
+Used by: `Minn\Admin\BootPayload`, `Minn\Admin\PackagesController`, `Minn\Admin\ThemesController`, `Minn\Auth\Authenticator`, `Minn\Auth\Capabilities`, `Minn\Auth\RegisteredCaps`, `Minn\Blocks\Bindings`, `Minn\Blocks\Dynamic\Theme\Comments`, `Minn\Blocks\Dynamic\Theme\Navigation`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Blocks\Dynamic\Theme\Structure`, `Minn\Blocks\ImageTags`, `Minn\Blocks\RenderState`, `Minn\Cli\Runtime`, `Minn\Content\Blocks`, `Minn\Content\MediaShortcodes`, `Minn\Content\PluginState`, `Minn\Content\PostSlugs`, `Minn\Content\Reader`, `Minn\Content\Site`, `Minn\Content\Terms`, `Minn\Content\Texturize`, `Minn\Cron\Cron`, `Minn\Db`, `Minn\Engine`, `Minn\Extension\Extensions`, `Minn\Front\CommentPostController`, `Minn\Front\FeedTags`, `Minn\Front\FeedTemplates`, `Minn\Front\FrontController`, `Minn\Front\Permalinks`, `Minn\Front\PostEmbed`, `Minn\Front\ProbeController`, `Minn\Front\QueryMoves`, `Minn\Front\RequestParse`, `Minn\Front\Resolver`, `Minn\Front\RuleRoutes`, `Minn\Front\SingleQueries`, `Minn\Front\SitemapRequest`, `Minn\Front\ToolbarMarkup`, `Minn\Front\ToolbarMenus`, `Minn\I18n\Gettext`, `Minn\Login\LoginController`, `Minn\Mail\Mailer`, `Minn\Media\Icons`, `Minn\Media\Images`, `Minn\Ops\UpgraderRun`, `Minn\Rest\AbilitiesController`, `Minn\Rest\Api`, `Minn\Rest\BatchController`, `Minn\Rest\BlockRendererController`, `Minn\Rest\BlockTypesController`, `Minn\Rest\Caller`, `Minn\Rest\Embed`, `Minn\Rest\InstalledThemesController`, `Minn\Rest\LiveSettings`, `Minn\Rest\OEmbedController`, `Minn\Rest\PostCollectionParams`, `Minn\Rest\PostListArgs`, `Minn\Rest\PostsController`, `Minn\Rest\RegisteredType`, `Minn\Rest\RenderedFields`, `Minn\Rest\RestMeta`, `Minn\Rest\RuntimeEnvelope`, `Minn\Rest\RuntimePrepare`, `Minn\Rest\RuntimeRoutes`, `Minn\Rest\Services`, `Minn\Rest\SettingsController`, `Minn\Rest\SidebarsController`, `Minn\Rest\StatusesController`, `Minn\Rest\TemplatesController`, `Minn\Rest\TermFilters`, `Minn\Rest\Types`, `Minn\Rest\UserCollectionParams`, `Minn\Rest\WidgetsController`, `Minn\Runtime\Abilities`, `Minn\Runtime\AccountFlows`, `Minn\Runtime\AjaxController`, `Minn\Runtime\ApplicationPasswordSignIn`, `Minn\Runtime\ArchiveLinks`, `Minn\Runtime\BlockFilters`, `Minn\Runtime\BlockHooks`, `Minn\Runtime\CommentEvents`, `Minn\Runtime\CommentFeedQuery`, `Minn\Runtime\CommentForm`, `Minn\Runtime\CommentPages`, `Minn\Runtime\Constants`, `Minn\Runtime\CurrentUser`, `Minn\Runtime\Deferrals`, `Minn\Runtime\FileUpload`, `Minn\Runtime\Interactivity`, `Minn\Runtime\MenuItemMarks`, `Minn\Runtime\MetaKeys`, `Minn\Runtime\NavMenuItems`, `Minn\Runtime\OptionSanitizer`, `Minn\Runtime\Patterns`, `Minn\Runtime\PlaceholderTrace`, `Minn\Runtime\PluginActivation`, `Minn\Runtime\PluginRemoval`, `Minn\Runtime\PluginRequirements`, `Minn\Runtime\PluginUpdates`, `Minn\Runtime\Plugins`, `Minn\Runtime\PostEvents`, `Minn\Runtime\PostLinks`, `Minn\Runtime\PostQuery`, `Minn\Runtime\PostQueryResults`, `Minn\Runtime\PostQueryWhere`, `Minn\Runtime\PostSave`, `Minn\Runtime\RegisteredSettings`, `Minn\Runtime\Registry`, `Minn\Runtime\RewriteRules`, `Minn\Runtime\ScriptModules`, `Minn\Runtime\Shortcodes`, `Minn\Runtime\TermEvents`, `Minn\Runtime\TermQueryTree`, `Minn\Runtime\TermSave`, `Minn\Runtime\TermWriter`, `Minn\Runtime\ThemeSupports`, `Minn\Runtime\ThemeSwitch`, `Minn\Runtime\Upgrade`, `Minn\Runtime\UserEvents`, `Minn\Theme\ArchiveTitle`, `Minn\Theme\ClassicContent`, `Minn\Theme\ClassicRenderer`, `Minn\Theme\EmbedRenderer`, `Minn\Theme\FeedHeaders`, `Minn\Theme\FrontLifecycle`, `Minn\Theme\HeadLinks`, `Minn\Theme\MainQueryBridge`, `Minn\Theme\PageRenderer`, `Minn\Theme\Templates`, `Minn\Theme\Theme`, `Minn\Theme\ThemeJsonData`
 
 ```php
 __construct(Minn\Context $context, bool $isAdmin = false)
@@ -4625,6 +4623,10 @@ row went.
 
 How many published objects a term holds, as the stored count keeps it.
 
+### `relationshipCount(int $ttId): int`
+
+Every object filed under a term, whatever it is: the count a taxonomy of links or other non-posts keeps.
+
 ### `storeCount(int $ttId, int $count): void`
 
 Stores a term's count.
@@ -4635,7 +4637,7 @@ The term ids behind term_taxonomy ids, as stored (strings), in the order given. 
 
 - `@param list<int> $ttIds @return list<string>`
 
-Internals: `ttIdOf()` (private, line 133)
+Internals: `ttIdOf()` (private, line 139)
 
 
 ## ThemeSupports

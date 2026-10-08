@@ -50,6 +50,30 @@ add_filter('pre_term_name', 'sanitize_text_field');
 add_filter('pre_term_name', 'wp_filter_kses');
 add_filter('pre_term_name', '_wp_specialchars', 30);
 add_filter('pre_term_slug', 'sanitize_title');
+// A link's fields on the way in and on display (probe plugin-queue4).
+foreach (['link_name', 'link_target', 'link_rel'] as $minnLinkField) {
+    add_filter("pre_{$minnLinkField}", 'sanitize_text_field');
+    add_filter("pre_{$minnLinkField}", 'wp_filter_kses');
+    add_filter("pre_{$minnLinkField}", '_wp_specialchars', 30);
+}
+foreach (['link_url', 'link_image', 'link_rss'] as $minnLinkField) {
+    add_filter("pre_{$minnLinkField}", 'wp_strip_all_tags');
+    add_filter("pre_{$minnLinkField}", 'sanitize_url');
+    add_filter("pre_{$minnLinkField}", 'wp_filter_kses');
+    add_filter($minnLinkField, 'esc_url');
+}
+foreach (['link_description', 'link_notes'] as $minnLinkField) {
+    add_filter("pre_{$minnLinkField}", 'wp_filter_kses');
+}
+foreach (['link_name', 'link_description', 'link_notes'] as $minnLinkField) {
+    add_filter($minnLinkField, 'wptexturize');
+    add_filter($minnLinkField, 'convert_chars');
+    add_filter($minnLinkField, 'esc_html');
+}
+foreach (['link_name', 'link_target', 'link_rel'] as $minnLinkField) {
+    add_filter($minnLinkField, '_wp_specialchars', 30);
+}
+unset($minnLinkField);
 add_filter('wp_update_term_parent', 'wp_check_term_hierarchy_for_loops', 10, 3);
 add_filter('term_name', 'wptexturize');
 add_filter('term_name', 'convert_chars');

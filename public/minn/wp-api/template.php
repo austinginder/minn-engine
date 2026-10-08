@@ -5,8 +5,6 @@ use Minn\Content\Posts;
 use Minn\Front\Calendar;
 use Minn\Front\CalendarLabels;
 use Minn\Front\Archives;
-use Minn\Front\ListSpacing;
-use Minn\Front\PageList;
 use Minn\Runtime\Runtime;
 use Minn\Runtime\Avatar;
 use Minn\Auth\Password;
@@ -400,6 +398,17 @@ function maybe_hash_hex_color($color)
 {
     $unhashed = sanitize_hex_color_no_hash($color);
     return $unhashed ? '#' . $unhashed : $color;
+}
+
+/** The role options, lowest role first, the one given selected; printed. */
+function wp_dropdown_roles($selected = '', $editable_roles = null)
+{
+    $out = '';
+    foreach (array_reverse((array) ($editable_roles ?? get_editable_roles())) as $role => $details) {
+        $chosen = $selected === $role ? " selected='selected'" : '';
+        $out .= "\n\t<option{$chosen} value='" . esc_attr($role) . "'>" . translate_user_role($details['name']) . '</option>';
+    }
+    echo $out;
 }
 
 function translate_user_role($name, $domain = 'default')
@@ -843,19 +852,26 @@ function _minn_calendar(int $year, int $month, bool $initial, string $type): str
     );
 }
 
+/**
+ * The page list (probe plugin-queue4): the published pages walked by
+ * walk_page_tree under a titled item, the page being viewed current;
+ * through wp_list_pages with the pages found.
+ */
 function wp_list_pages($args = '')
 {
-    $r = wp_parse_args($args, ['depth' => 0, 'show_date' => '', 'date_format' => get_option('date_format'), 'child_of' => 0, 'exclude' => '', 'title_li' => 'Pages', 'echo' => 1, 'authors' => '', 'sort_column' => 'menu_order, post_title', 'sort_order' => 'ASC', 'link_before' => '', 'link_after' => '', 'item_spacing' => 'preserve', 'walker' => '', 'include' => '', 'post_type' => 'page', 'post_status' => 'publish']);
-    $r['exclude'] = implode(',', apply_filters('wp_list_pages_excludes', wp_parse_id_list($r['exclude'])));
-    $spacing = $r['item_spacing'] === 'discard'
-        ? ListSpacing::discarded((string) $r['link_before'], (string) $r['link_after'])
-        : ListSpacing::preserved((string) $r['link_before'], (string) $r['link_after']);
-    $items = _minn_page_list($r)->items(0, (int) $r['depth'], $spacing);
-    $output = '';
-    if ($items !== '') {
-        $output = $r['title_li'] ? '<li class="pagenav">' . $r['title_li'] . '<ul>' . $items . '</ul></li>' : $items;
+    $r = wp_parse_args($args, ['depth' => 0, 'show_date' => '', 'date_format' => get_option('date_format'), 'child_of' => 0, 'exclude' => '', 'title_li' => __('Pages'), 'echo' => 1, 'authors' => '', 'sort_column' => 'menu_order, post_title', 'link_before' => '', 'link_after' => '', 'item_spacing' => 'preserve', 'walker' => '']);
+    if (!in_array($r['item_spacing'], ['preserve', 'discard'], true)) {
+        $r['item_spacing'] = 'preserve';
     }
-    $html = apply_filters('wp_list_pages', $output, $r, []);
+    $exclude = preg_replace('/[^0-9,]/', '', (string) $r['exclude']);
+    $r['exclude'] = implode(',', (array) apply_filters('wp_list_pages_excludes', $exclude !== '' ? explode(',', $exclude) : []));
+    $r['hierarchical'] = 0;
+    $pages = get_pages($r);
+    $output = '';
+    if (!empty($pages)) {
+        $output = ($r['title_li'] ? '<li class="pagenav">' . $r['title_li'] . '<ul>' : '') . walk_page_tree($pages, $r['depth'], _minn_list_current_page(), $r) . ($r['title_li'] ? '</ul></li>' : '');
+    }
+    $html = apply_filters('wp_list_pages', $output, $r, $pages);
     if ($r['echo']) {
         echo $html;
         return null;
@@ -863,51 +879,34 @@ function wp_list_pages($args = '')
     return $html;
 }
 
+/** @internal the page a page list marks current: the page, attachment or posts page being viewed, or a hierarchical post */
+function _minn_list_current_page(): int
+{
+    if (is_page() || is_attachment() || !empty(_minn_main_query()->is_posts_page)) {
+        return (int) get_queried_object_id();
+    }
+    $viewed = is_singular() ? get_queried_object() : null;
+    return $viewed instanceof WP_Post && is_post_type_hierarchical($viewed->post_type) ? (int) $viewed->ID : 0;
+}
+
+/** The page select (probe plugin-queue4): the no-change and none choices, then the pages walked by walk_page_dropdown_tree; nothing without pages. */
 function wp_dropdown_pages($args = '')
 {
-    $r = wp_parse_args($args, ['depth' => 0, 'child_of' => 0, 'selected' => 0, 'echo' => 1, 'name' => 'page_id', 'id' => '', 'class' => '', 'show_option_none' => '', 'show_option_no_change' => '', 'option_none_value' => '', 'value_field' => 'ID', 'sort_column' => 'post_title', 'sort_order' => 'ASC', 'exclude' => '', 'include' => '']);
-    $field = (string) $r['value_field'];
-    $value = static fn (array $page): string => $field === 'post_name' ? esc_attr($page['name']) : (string) $page['id'];
-    $options = _minn_page_list($r)->options(0, (int) $r['depth'], (int) $r['selected'], $value);
+    $r = wp_parse_args($args, ['depth' => 0, 'child_of' => 0, 'selected' => 0, 'echo' => 1, 'name' => 'page_id', 'id' => '', 'class' => '', 'show_option_none' => '', 'show_option_no_change' => '', 'option_none_value' => '', 'value_field' => 'ID']);
+    $pages = get_pages($r);
     $output = '';
-    if ($options !== '') {
-        $class = $r['class'] !== '' ? " class='" . esc_attr($r['class']) . "'" : '';
-        $output = "<select name='" . esc_attr($r['name']) . "'" . $class . " id='" . esc_attr($r['id'] !== '' ? $r['id'] : $r['name']) . "'>\n";
-        if ($r['show_option_no_change']) {
-            $output .= "\t<option value=\"-1\">" . $r['show_option_no_change'] . "</option>\n";
-        }
-        if ($r['show_option_none']) {
-            $output .= "\t<option value=\"" . esc_attr($r['option_none_value']) . '">' . $r['show_option_none'] . "</option>\n";
-        }
-        $output .= $options . "</select>\n";
+    if (!empty($pages)) {
+        $output = "<select name='" . esc_attr($r['name']) . "'" . ($r['class'] ? " class='" . esc_attr($r['class']) . "'" : '') . " id='" . esc_attr($r['id'] ?: $r['name']) . "'>\n"
+            . ($r['show_option_no_change'] ? "\t<option value=\"-1\">" . $r['show_option_no_change'] . "</option>\n" : '')
+            . ($r['show_option_none'] ? "\t<option value=\"" . esc_attr($r['option_none_value']) . '">' . $r['show_option_none'] . "</option>\n" : '')
+            . walk_page_dropdown_tree($pages, $r['depth'], $r) . "</select>\n";
     }
-    $html = apply_filters('wp_dropdown_pages', $output, $r, []);
+    $html = apply_filters('wp_dropdown_pages', $output, $r, $pages);
     if ($r['echo']) {
         echo $html;
         return null;
     }
     return $html;
-}
-
-/** @internal the published pages a list or dropdown shows, nested by parent */
-function _minn_page_list(array $r): PageList
-{
-    $rows = [];
-    foreach (get_pages($r) as $page) {
-        $title = apply_filters('the_title', $page->post_title, $page->ID);
-        $rows[] = ['id' => (int) $page->ID, 'parent' => (int) $page->post_parent, 'name' => $page->post_name, 'title' => $title === '' ? '#' . $page->ID : $title, 'link' => get_permalink($page)];
-    }
-    return new PageList($rows, _minn_current_page_trail());
-}
-
-/** @internal the queried page and its ancestors, the page first; empty off a page */
-function _minn_current_page_trail(): array
-{
-    $queried = get_queried_object();
-    if (!$queried instanceof WP_Post || $queried->post_type !== 'page') {
-        return [];
-    }
-    return array_merge([$queried->ID], array_map('intval', get_post_ancestors($queried)));
 }
 
 function wp_get_archives($args = '')

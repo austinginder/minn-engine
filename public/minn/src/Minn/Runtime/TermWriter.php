@@ -113,6 +113,12 @@ final readonly class TermWriter
         );
     }
 
+    /** Every object filed under a term, whatever it is: the count a taxonomy of links or other non-posts keeps. */
+    public function relationshipCount(int $ttId): int
+    {
+        return (int) $this->db->value("SELECT COUNT(*) FROM {$this->db->table('term_relationships')} WHERE term_taxonomy_id = ?", [$ttId]);
+    }
+
     /** Stores a term's count. */
     public function storeCount(int $ttId, int $count): void
     {

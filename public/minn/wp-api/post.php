@@ -2279,10 +2279,23 @@ function the_modified_time($format = '')
     echo apply_filters('the_modified_time', get_the_modified_time($format), $format);
 }
 
+/** The pages walked as a list, by the caller's walker or Walker_Page, each parent among them known to have children. */
 function walk_page_tree($pages, $depth, $current_page, $args)
 {
     $walker = empty($args['walker']) ? new Walker_Page() : $args['walker'];
+    foreach ((array) $pages as $page) {
+        if ($page->post_parent) {
+            $args['pages_with_children'][$page->post_parent] = true;
+        }
+    }
     return $walker->walk($pages, $depth, $args, $current_page);
+}
+
+/** The pages walked as options, by the caller's walker or Walker_PageDropdown. */
+function walk_page_dropdown_tree(...$args)
+{
+    $walker = empty($args[2]['walker']) ? new Walker_PageDropdown() : $args[2]['walker'];
+    return $walker->walk(...$args);
 }
 
 function get_post_mime_types()

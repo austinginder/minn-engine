@@ -819,20 +819,17 @@ function get_archives_link($url, $text, $format = 'html', $before = '', $after =
     return apply_filters('get_archives_link', $link, $url, $text, $format, $before, $after, $selected);
 }
 
-function get_bookmark($bookmark, $output = OBJECT, $filter = 'raw')
+/** The privacy policy page's address, or nothing when no published page is set, through privacy_policy_url. */
+/** @internal a link's attributes as written: each scalar that is not empty, an href through esc_url, the rest through esc_attr */
+function _minn_link_attributes(array $atts): string
 {
-    $links = get_bookmarks(['include' => is_object($bookmark) ? (int) $bookmark->link_id : (int) $bookmark, 'limit' => 1, 'hide_invisible' => 0]);
-    $link = $links[0] ?? null;
-    if ($link === null) {
-        return null;
+    $out = '';
+    foreach ($atts as $name => $value) {
+        if (is_scalar($value) && $value !== false && (string) $value !== '') {
+            $out .= ' ' . $name . '="' . ($name === 'href' ? esc_url((string) $value) : esc_attr((string) $value)) . '"';
+        }
     }
-    if ($output === ARRAY_A) {
-        return get_object_vars($link);
-    }
-    if ($output === ARRAY_N) {
-        return array_values(get_object_vars($link));
-    }
-    return $link;
+    return $out;
 }
 
 /** The privacy policy page's address, or nothing when no published page is set, through privacy_policy_url. */

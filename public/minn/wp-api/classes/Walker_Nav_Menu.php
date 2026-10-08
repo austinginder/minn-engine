@@ -45,16 +45,10 @@ class Walker_Nav_Menu extends Walker
             'aria-current' => !empty($item->current) ? 'page' : '',
         ];
         $atts = apply_filters('nav_menu_link_attributes', $atts, $item, $args, $depth);
-        $attributes = '';
-        foreach ((array) $atts as $attr => $value) {
-            if (is_scalar($value) && (string) $value !== '' && $value !== false) {
-                $attributes .= ' ' . $attr . '="' . ($attr === 'href' ? esc_url((string) $value) : esc_attr((string) $value)) . '"';
-            }
-        }
         $title = apply_filters('the_title', (string) ($item->title ?? ''), $item->ID);
         $title = apply_filters('nav_menu_item_title', $title, $item, $args, $depth);
         $item_output = (is_object($args) ? (string) ($args->before ?? '') : '')
-            . '<a' . $attributes . '>'
+            . '<a' . _minn_link_attributes((array) $atts) . '>'
             . (is_object($args) ? (string) ($args->link_before ?? '') : '') . $title . (is_object($args) ? (string) ($args->link_after ?? '') : '')
             . '</a>' . (is_object($args) ? (string) ($args->after ?? '') : '');
         $output .= apply_filters('walker_nav_menu_start_el', $item_output, $item, $depth, $args);

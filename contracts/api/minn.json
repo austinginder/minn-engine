@@ -25439,6 +25439,248 @@
             ]
         },
         {
+            "name": "Minn\\Content\\Links",
+            "short": "Links",
+            "namespace": "Minn\\Content",
+            "kind": "final readonly class",
+            "file": "public/minn/src/Minn/Content/Links.php",
+            "lines": 102,
+            "doc": "The links manager's table, as get_bookmarks and wp_insert_link read and\nwrite it (probe plugin-queue4). A query narrows by the ids included (which\nset aside every other narrowing), the ids excluded, the link categories\n(joined, so a link filed under two of them comes back twice, with the\njoin's columns), visibility and a search over the address, name and\ndescription; it sorts by one or more of the link's columns (name when none\nis known), ascending unless told otherwise.",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\Db"
+            ],
+            "usedBy": [],
+            "constructor": {
+                "signature": "__construct(Minn\\Db $db)",
+                "doc": "",
+                "shapes": [],
+                "params": [
+                    {
+                        "name": "db",
+                        "type": "Minn\\Db",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    }
+                ],
+                "visibility": "public",
+                "line": 25,
+                "end": 27
+            },
+            "cases": [],
+            "constants": [
+                {
+                    "name": "FIELDS",
+                    "value": "array (   0 => 'link_id',   1 => 'link_url',   2 => 'link_name',   3 => 'link_image',   4 => 'link_target',   5 => 'link_description',   6 => 'link_visible',   7 => 'link_owner',   8 => 'link_rating',   9 => 'link_updated',   10 => 'link_rel',   11 => 'link_notes',   12 => 'link_rss', )",
+                    "doc": "The columns a link row holds, in the table's order.",
+                    "visibility": "public"
+                },
+                {
+                    "name": "ORDERS",
+                    "value": "array (   'name' => 'link_name',   'url' => 'link_url',   'rating' => 'link_rating',   'id' => 'link_id',   'owner' => 'link_owner',   'visible' => 'link_visible',   'updated' => 'link_updated',   'notes' => 'link_notes',   'description' => 'link_description',   'rel' => 'link_rel',   'target' => 'link_target',   'image' => 'link_image',   'rss' => 'link_rss',   'length' => 'length',   'rand' => 'RAND()', )",
+                    "doc": "",
+                    "visibility": "private"
+                }
+            ],
+            "properties": [
+                {
+                    "name": "db",
+                    "type": "Minn\\Db",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
+                }
+            ],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "find",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "find(int $id): ?array",
+                    "doc": "A link's row, its values as strings the way the reference reads them. @return array<string, mixed>|null",
+                    "shapes": [
+                        "@return array<string, mixed>|null"
+                    ],
+                    "params": [
+                        {
+                            "name": "id",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 30,
+                    "end": 34
+                },
+                {
+                    "routes": [],
+                    "name": "matching",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "matching(array $args, array $categories, int $recentMinutes): array",
+                    "doc": "The links a get_bookmarks call asks for.",
+                    "shapes": [
+                        "@param array<string, mixed> $args orderby, order, limit, hide_invisible, show_updated, include, exclude, search",
+                        "@param list<int> $categories link category term ids, empty for any",
+                        "@return list<array<string, mixed>>"
+                    ],
+                    "params": [
+                        {
+                            "name": "args",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": "orderby, order, limit, hide_invisible, show_updated, include, exclude, search"
+                        },
+                        {
+                            "name": "categories",
+                            "type": "array",
+                            "shape": "list<int>",
+                            "default": null,
+                            "doc": "link category term ids, empty for any"
+                        },
+                        {
+                            "name": "recentMinutes",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": "how recent an update counts as recent, when show_updated asks"
+                        }
+                    ],
+                    "line": 44,
+                    "end": 57
+                },
+                {
+                    "routes": [],
+                    "name": "save",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "save(int $id, array $fields): int",
+                    "doc": "A link written: a new row when the id is 0, else that row's columns\nset. The id it was written under.",
+                    "shapes": [
+                        "@param array<string, mixed> $fields columns of FIELDS"
+                    ],
+                    "params": [
+                        {
+                            "name": "id",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "fields",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": "columns of FIELDS"
+                        }
+                    ],
+                    "line": 89,
+                    "end": 100
+                },
+                {
+                    "routes": [],
+                    "name": "delete",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "delete(int $id): void",
+                    "doc": "A link's row removed.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "id",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 103,
+                    "end": 106
+                },
+                {
+                    "routes": [],
+                    "name": "narrowing",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "narrowing(array $args, array $categories): array",
+                    "doc": "",
+                    "shapes": [
+                        "@return array{string, list<mixed>} the WHERE and its parameters when no ids are included"
+                    ],
+                    "params": [
+                        {
+                            "name": "args",
+                            "type": "array",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "categories",
+                            "type": "array",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 60,
+                    "end": 81
+                },
+                {
+                    "routes": [],
+                    "name": "strings",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "strings(array $row): array",
+                    "doc": "",
+                    "shapes": [
+                        "@param array<string, mixed> $row @return array<string, string|null>"
+                    ],
+                    "params": [
+                        {
+                            "name": "row",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": "@return array<string, string|null>"
+                        }
+                    ],
+                    "line": 109,
+                    "end": 112
+                },
+                {
+                    "routes": [],
+                    "name": "ids",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "ids(mixed $list): array",
+                    "doc": "",
+                    "shapes": [
+                        "@return list<int>"
+                    ],
+                    "params": [
+                        {
+                            "name": "list",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 115,
+                    "end": 118
+                }
+            ]
+        },
+        {
             "name": "Minn\\Content\\MediaShortcodes",
             "short": "MediaShortcodes",
             "namespace": "Minn\\Content",
@@ -34734,6 +34976,7 @@
                 "Minn\\Cli\\Runtime",
                 "Minn\\Content\\Blocks",
                 "Minn\\Content\\Comments",
+                "Minn\\Content\\Links",
                 "Minn\\Content\\Menus",
                 "Minn\\Content\\PostSlugs",
                 "Minn\\Content\\PostWriter",
@@ -41878,163 +42121,6 @@
             "methods": []
         },
         {
-            "name": "Minn\\Front\\ListSpacing",
-            "short": "ListSpacing",
-            "namespace": "Minn\\Front",
-            "kind": "final readonly class",
-            "file": "public/minn/src/Minn/Front/ListSpacing.php",
-            "lines": 30,
-            "doc": "How a page list is spaced: the reference's \"preserve\" keeps newlines and\none tab per level, \"discard\" prints the items on one line. The link\nwrappers ride along so the list has one place to read them.",
-            "implements": [],
-            "extends": null,
-            "uses": [],
-            "usedBy": [
-                "Minn\\Front\\PageList"
-            ],
-            "constructor": {
-                "signature": "__construct(bool $preserve, string $linkBefore, string $linkAfter)",
-                "doc": "",
-                "shapes": [],
-                "params": [
-                    {
-                        "name": "preserve",
-                        "type": "bool",
-                        "shape": "",
-                        "default": null,
-                        "doc": ""
-                    },
-                    {
-                        "name": "linkBefore",
-                        "type": "string",
-                        "shape": "",
-                        "default": null,
-                        "doc": ""
-                    },
-                    {
-                        "name": "linkAfter",
-                        "type": "string",
-                        "shape": "",
-                        "default": null,
-                        "doc": ""
-                    }
-                ],
-                "visibility": "private",
-                "line": 14,
-                "end": 16
-            },
-            "cases": [],
-            "constants": [],
-            "properties": [
-                {
-                    "name": "preserve",
-                    "type": "bool",
-                    "readonly": true,
-                    "static": false,
-                    "doc": "",
-                    "visibility": "private",
-                    "promoted": true
-                },
-                {
-                    "name": "linkBefore",
-                    "type": "string",
-                    "readonly": true,
-                    "static": false,
-                    "doc": "",
-                    "visibility": "public",
-                    "promoted": true
-                },
-                {
-                    "name": "linkAfter",
-                    "type": "string",
-                    "readonly": true,
-                    "static": false,
-                    "doc": "",
-                    "visibility": "public",
-                    "promoted": true
-                }
-            ],
-            "methods": [
-                {
-                    "routes": [],
-                    "name": "preserved",
-                    "static": true,
-                    "visibility": "public",
-                    "signature": "preserved(string $linkBefore = '', string $linkAfter = ''): self",
-                    "doc": "Newlines and tabs kept, the reference's default.",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "linkBefore",
-                            "type": "string",
-                            "shape": "",
-                            "default": "''",
-                            "doc": ""
-                        },
-                        {
-                            "name": "linkAfter",
-                            "type": "string",
-                            "shape": "",
-                            "default": "''",
-                            "doc": ""
-                        }
-                    ],
-                    "line": 19,
-                    "end": 22
-                },
-                {
-                    "routes": [],
-                    "name": "discarded",
-                    "static": true,
-                    "visibility": "public",
-                    "signature": "discarded(string $linkBefore = '', string $linkAfter = ''): self",
-                    "doc": "Everything on one line, the reference's \"discard\".",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "linkBefore",
-                            "type": "string",
-                            "shape": "",
-                            "default": "''",
-                            "doc": ""
-                        },
-                        {
-                            "name": "linkAfter",
-                            "type": "string",
-                            "shape": "",
-                            "default": "''",
-                            "doc": ""
-                        }
-                    ],
-                    "line": 25,
-                    "end": 28
-                },
-                {
-                    "routes": [],
-                    "name": "newline",
-                    "static": false,
-                    "visibility": "public",
-                    "signature": "newline(): string",
-                    "doc": "A newline, or nothing when spacing is discarded.",
-                    "shapes": [],
-                    "params": [],
-                    "line": 31,
-                    "end": 34
-                },
-                {
-                    "routes": [],
-                    "name": "tab",
-                    "static": false,
-                    "visibility": "public",
-                    "signature": "tab(): string",
-                    "doc": "One tab of indent, or nothing when spacing is discarded.",
-                    "shapes": [],
-                    "params": [],
-                    "line": 37,
-                    "end": 40
-                }
-            ]
-        },
-        {
             "name": "Minn\\Front\\ListingLinks",
             "short": "ListingLinks",
             "namespace": "Minn\\Front",
@@ -42311,299 +42397,6 @@
                     ],
                     "line": 29,
                     "end": 57
-                }
-            ]
-        },
-        {
-            "name": "Minn\\Front\\PageList",
-            "short": "PageList",
-            "namespace": "Minn\\Front",
-            "kind": "final readonly class",
-            "file": "public/minn/src/Minn/Front/PageList.php",
-            "lines": 96,
-            "doc": "The page hierarchy as wp_list_pages and wp_dropdown_pages draw it: nested\nlist items with the reference's page_item classes (has-children, current,\nancestor, parent), children indented one tab per level under a\n<ul class='children'>, and the flat dropdown whose options carry a level\nclass and three non-breaking spaces per level. A page whose parent is not\nin the set stands at the top, so include, exclude and child_of all nest\nwhatever remains.",
-            "implements": [],
-            "extends": null,
-            "uses": [
-                "Minn\\Front\\ListSpacing"
-            ],
-            "usedBy": [],
-            "constructor": {
-                "signature": "__construct(array $pages, array $currentTrail)",
-                "doc": "",
-                "shapes": [
-                    "@param list<array{id: int, parent: int, title: string, link: string}> $pages in display order",
-                    "@param list<int> $currentTrail the queried page and its ancestors, the page first"
-                ],
-                "params": [
-                    {
-                        "name": "pages",
-                        "type": "array",
-                        "shape": "list<array{id: int, parent: int, title: string, link: string}>",
-                        "default": null,
-                        "doc": "in display order"
-                    },
-                    {
-                        "name": "currentTrail",
-                        "type": "array",
-                        "shape": "list<int>",
-                        "default": null,
-                        "doc": "the queried page and its ancestors, the page first"
-                    }
-                ],
-                "visibility": "public",
-                "line": 27,
-                "end": 36
-            },
-            "cases": [],
-            "constants": [],
-            "properties": [
-                {
-                    "name": "byParent",
-                    "type": "array",
-                    "readonly": true,
-                    "static": false,
-                    "doc": "",
-                    "visibility": "private",
-                    "promoted": false
-                },
-                {
-                    "name": "currentTrail",
-                    "type": "array",
-                    "readonly": true,
-                    "static": false,
-                    "doc": "",
-                    "visibility": "private",
-                    "promoted": true
-                }
-            ],
-            "methods": [
-                {
-                    "routes": [],
-                    "name": "items",
-                    "static": false,
-                    "visibility": "public",
-                    "signature": "items(int $childOf, int $depth, Minn\\Front\\ListSpacing $spacing): string",
-                    "doc": "The list items under a page (0 for the whole tree), to a depth\n(0 unlimited, -1 flat), with whitespace the way the reference keeps it.",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "childOf",
-                            "type": "int",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "depth",
-                            "type": "int",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "spacing",
-                            "type": "Minn\\Front\\ListSpacing",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 42,
-                    "end": 48
-                },
-                {
-                    "routes": [],
-                    "name": "options",
-                    "static": false,
-                    "visibility": "public",
-                    "signature": "options(int $childOf, int $depth, int $selected, Closure $value): string",
-                    "doc": "The dropdown options under a page, to a depth, with one selected.",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "childOf",
-                            "type": "int",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "depth",
-                            "type": "int",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "selected",
-                            "type": "int",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "value",
-                            "type": "Closure",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 96,
-                    "end": 99
-                },
-                {
-                    "routes": [],
-                    "name": "flat",
-                    "static": false,
-                    "visibility": "private",
-                    "signature": "flat(int $childOf, Minn\\Front\\ListSpacing $spacing): string",
-                    "doc": "Every page under one, flattened to a single level.",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "childOf",
-                            "type": "int",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "spacing",
-                            "type": "Minn\\Front\\ListSpacing",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 51,
-                    "end": 58
-                },
-                {
-                    "routes": [],
-                    "name": "level",
-                    "static": false,
-                    "visibility": "private",
-                    "signature": "level(int $parent, int $level, int $depth, Minn\\Front\\ListSpacing $spacing): string",
-                    "doc": "",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "parent",
-                            "type": "int",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "level",
-                            "type": "int",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "depth",
-                            "type": "int",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "spacing",
-                            "type": "Minn\\Front\\ListSpacing",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 60,
-                    "end": 73
-                },
-                {
-                    "routes": [],
-                    "name": "item",
-                    "static": false,
-                    "visibility": "private",
-                    "signature": "item(array $page, int $level, Minn\\Front\\ListSpacing $spacing): string",
-                    "doc": "",
-                    "shapes": [
-                        "@param array{id: int, title: string, link: string} $page"
-                    ],
-                    "params": [
-                        {
-                            "name": "page",
-                            "type": "array",
-                            "shape": "array{id: int, title: string, link: string}",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "level",
-                            "type": "int",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "spacing",
-                            "type": "Minn\\Front\\ListSpacing",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 76,
-                    "end": 93
-                },
-                {
-                    "routes": [],
-                    "name": "optionLevel",
-                    "static": false,
-                    "visibility": "private",
-                    "signature": "optionLevel(int $parent, int $level, int $depth, int $selected, Closure $value): string",
-                    "doc": "",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "parent",
-                            "type": "int",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "level",
-                            "type": "int",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "depth",
-                            "type": "int",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "selected",
-                            "type": "int",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "value",
-                            "type": "Closure",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 101,
-                    "end": 112
                 }
             ]
         },
@@ -47230,8 +47023,8 @@
             "namespace": "Minn\\Front",
             "kind": "final class",
             "file": "public/minn/src/Minn/Front/TermLists.php",
-            "lines": 178,
-            "doc": "The two term listings themes print: the nested category list and the\ntag cloud, built from term rows the caller already fetched and links the\ncaller resolves.",
+            "lines": 71,
+            "doc": "A term's parent chain and the tag cloud, built from term rows the caller\nalready fetched and links the caller resolves. The category list and\nselect are the walkers' (Walker_Category, Walker_CategoryDropdown).",
             "implements": [],
             "extends": null,
             "uses": [
@@ -47283,68 +47076,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 24,
-                    "end": 32
-                },
-                {
-                    "routes": [],
-                    "name": "categoryList",
-                    "static": true,
-                    "visibility": "public",
-                    "signature": "categoryList(array $terms, array $args, Closure $link): string",
-                    "doc": "The category list the reference prints.",
-                    "shapes": [
-                        "@param list<array<string, mixed>> $terms rows with term_id, name, slug, count, parent",
-                        "@param array<string, mixed> $args wp_list_categories arguments",
-                        "@param Closure(array): string $link"
-                    ],
-                    "params": [
-                        {
-                            "name": "terms",
-                            "type": "array",
-                            "shape": "list<array<string, mixed>>",
-                            "default": null,
-                            "doc": "rows with term_id, name, slug, count, parent"
-                        },
-                        {
-                            "name": "args",
-                            "type": "array",
-                            "shape": "array<string, mixed>",
-                            "default": null,
-                            "doc": "wp_list_categories arguments"
-                        },
-                        {
-                            "name": "link",
-                            "type": "Closure",
-                            "shape": "Closure(array): string",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 41,
-                    "end": 56
-                },
-                {
-                    "routes": [],
-                    "name": "categoryWrapper",
-                    "static": true,
-                    "visibility": "public",
-                    "signature": "categoryWrapper(array $args): array",
-                    "doc": "The list's title item and its closer.",
-                    "shapes": [
-                        "@return list<string> the categories block wrapper, before and after the items"
-                    ],
-                    "params": [
-                        {
-                            "name": "args",
-                            "type": "array",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 63,
-                    "end": 70
+                    "line": 23,
+                    "end": 31
                 },
                 {
                     "routes": [],
@@ -47373,78 +47106,8 @@
                             "doc": "wp_generate_tag_cloud arguments"
                         }
                     ],
-                    "line": 78,
-                    "end": 109
-                },
-                {
-                    "routes": [],
-                    "name": "dropdownOptions",
-                    "static": true,
-                    "visibility": "public",
-                    "signature": "dropdownOptions(array $terms, array $args): string",
-                    "doc": "The option elements of a category dropdown, nested by depth when the\ncaller asked for a hierarchy.",
-                    "shapes": [
-                        "@param list<array<string, mixed>> $terms"
-                    ],
-                    "params": [
-                        {
-                            "name": "terms",
-                            "type": "array",
-                            "shape": "list<array<string, mixed>>",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "args",
-                            "type": "array",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 117,
-                    "end": 125
-                },
-                {
-                    "routes": [],
-                    "name": "options",
-                    "static": true,
-                    "visibility": "private",
-                    "signature": "options(array $terms, array $byParent, array $args, int $depth): string",
-                    "doc": "",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "terms",
-                            "type": "array",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "byParent",
-                            "type": "array",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "args",
-                            "type": "array",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "depth",
-                            "type": "int",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 127,
-                    "end": 143
+                    "line": 39,
+                    "end": 70
                 },
                 {
                     "routes": [],
@@ -47479,99 +47142,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 146,
-                    "end": 156
-                },
-                {
-                    "routes": [],
-                    "name": "orphans",
-                    "static": true,
-                    "visibility": "private",
-                    "signature": "orphans(array $terms, array $byParent): array",
-                    "doc": "Terms whose parent is not in the list stand as roots.",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "terms",
-                            "type": "array",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "byParent",
-                            "type": "array",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 159,
-                    "end": 163
-                },
-                {
-                    "routes": [],
-                    "name": "items",
-                    "static": true,
-                    "visibility": "private",
-                    "signature": "items(array $terms, array $byParent, array $args, Closure $link, array $current, bool $nested, int $depth): string",
-                    "doc": "",
-                    "shapes": [
-                        "@param list<int> $current"
-                    ],
-                    "params": [
-                        {
-                            "name": "terms",
-                            "type": "array",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "byParent",
-                            "type": "array",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "args",
-                            "type": "array",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "link",
-                            "type": "Closure",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "current",
-                            "type": "array",
-                            "shape": "list<int>",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "nested",
-                            "type": "bool",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "depth",
-                            "type": "int",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 166,
-                    "end": 191
+                    "line": 73,
+                    "end": 83
                 }
             ]
         },
@@ -112049,6 +111621,256 @@
             ]
         },
         {
+            "name": "Minn\\Runtime\\MenuItemMarks",
+            "short": "MenuItemMarks",
+            "namespace": "Minn\\Runtime",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Runtime/MenuItemMarks.php",
+            "lines": 202,
+            "doc": "The classes and current flags the reference gives a menu's items for the\npage in view (_wp_menu_item_classes_by_context, probe plugin-queue4), in\ntwo passes over the items.\n\nFirst, each item: its own classes, then menu-item and its type and\nobject; menu-item-home and menu-item-privacy-policy for those pages. On a\nsingle post of a flat type, the items of the post's terms in hierarchical\ntaxonomies become its menu parents. Otherwise the current item (the post\nor term in view, the posts page on the blog, the post type archive in\nview, or a custom address equal to the request's) is marked, with the\npage compat tokens; its menu ancestors, its menu parent and its object's\nparent are noted. A custom item pointing home is the home item on every\nview. The posts page reads as a parent on any view but a page.\n\nThen each item again: an item for a post or term above the one in view\nis its ancestor (current-{type}-ancestor), the noted items take\ncurrent-menu-ancestor and current-menu-parent, an item whose object is a\nnoted parent object current-{object}-parent, and a page item the compat\ntokens of both.",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\Runtime\\Runtime",
+                "Minn\\Support\\Url"
+            ],
+            "usedBy": [
+                "Minn\\Runtime\\NavMenu"
+            ],
+            "constructor": null,
+            "cases": [],
+            "constants": [],
+            "properties": [],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "apply",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "apply(array $items): array",
+                    "doc": "The items, each given its classes and its current, current_item_parent\nand current_item_ancestor flags for what the main query has in view.",
+                    "shapes": [
+                        "@param list<object> $items",
+                        "@return list<object>"
+                    ],
+                    "params": [
+                        {
+                            "name": "items",
+                            "type": "array",
+                            "shape": "list<object>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 39,
+                    "end": 55
+                },
+                {
+                    "routes": [],
+                    "name": "own",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "own(object $item, array $view, array $noted, array $parents): void",
+                    "doc": "The first pass for one item.",
+                    "shapes": [
+                        "@param array<string, mixed> $view",
+                        "@param array{ancestors: list<int>, parentItems: list<int>, parentObjects: list<int>, object: string} $noted",
+                        "@param array<int, int> $parents menu parent by item id"
+                    ],
+                    "params": [
+                        {
+                            "name": "item",
+                            "type": "object",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "view",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "noted",
+                            "type": "array",
+                            "shape": "array{ancestors: list<int>, parentItems: list<int>, parentObjects: list<int>, object: string}",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "parents",
+                            "type": "array",
+                            "shape": "array<int, int>",
+                            "default": null,
+                            "doc": "menu parent by item id"
+                        }
+                    ],
+                    "line": 64,
+                    "end": 103
+                },
+                {
+                    "routes": [],
+                    "name": "related",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "related(object $item, array $view, array $noted): void",
+                    "doc": "The second pass for one item.",
+                    "shapes": [
+                        "@param array<string, mixed> $view",
+                        "@param array{ancestors: list<int>, parentItems: list<int>, parentObjects: list<int>, object: string} $noted"
+                    ],
+                    "params": [
+                        {
+                            "name": "item",
+                            "type": "object",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "view",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "noted",
+                            "type": "array",
+                            "shape": "array{ancestors: list<int>, parentItems: list<int>, parentObjects: list<int>, object: string}",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 111,
+                    "end": 140
+                },
+                {
+                    "routes": [],
+                    "name": "isCurrent",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "isCurrent(object $item, array $view): bool",
+                    "doc": "",
+                    "shapes": [
+                        "@param array<string, mixed> $view"
+                    ],
+                    "params": [
+                        {
+                            "name": "item",
+                            "type": "object",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "view",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 143,
+                    "end": 154
+                },
+                {
+                    "routes": [],
+                    "name": "view",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "view(WP_Query $query): array",
+                    "doc": "What the main query has in view, as the two passes read it.",
+                    "shapes": [
+                        "@return array<string, mixed>"
+                    ],
+                    "params": [
+                        {
+                            "name": "query",
+                            "type": "WP_Query",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 161,
+                    "end": 192
+                },
+                {
+                    "routes": [],
+                    "name": "postTerms",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "postTerms(WP_Post $post): array",
+                    "doc": "A post's terms in its hierarchical taxonomies (the items that read as\nits menu parents) and, per taxonomy, those terms with their ancestors.",
+                    "shapes": [
+                        "@return array{list<int>, array<string, list<int>>}"
+                    ],
+                    "params": [
+                        {
+                            "name": "post",
+                            "type": "WP_Post",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 200,
+                    "end": 215
+                },
+                {
+                    "routes": [],
+                    "name": "ancestors",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "ancestors(int $id, string $type, string $kind): array",
+                    "doc": "",
+                    "shapes": [
+                        "@return list<int>"
+                    ],
+                    "params": [
+                        {
+                            "name": "id",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "type",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "kind",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 218,
+                    "end": 221
+                },
+                {
+                    "routes": [],
+                    "name": "currentUrl",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "currentUrl(): string",
+                    "doc": "",
+                    "shapes": [],
+                    "params": [],
+                    "line": 223,
+                    "end": 230
+                }
+            ]
+        },
+        {
             "name": "Minn\\Runtime\\Meta",
             "short": "Meta",
             "namespace": "Minn\\Runtime",
@@ -112986,14 +112808,13 @@
             "namespace": "Minn\\Runtime",
             "kind": "final class",
             "file": "public/minn/src/Minn/Runtime/NavMenu.php",
-            "lines": 303,
-            "doc": "Nav-menu item decoration for wp_nav_menu(): the reference's class tokens\n(menu-item, the type and object tokens, menu-item-home) and the current\nmarkers (current-menu-item with its page compat tokens, the parent and\nancestor chain). The facade's wp_nav_menu() fetches and sorts the items;\nthis marks them against the standing main query.",
+            "lines": 88,
+            "doc": "wp_nav_menu()'s menu: the one the arguments name, its items marked for\nthe page in view (MenuItemMarks), walked, wrapped in the container.",
             "implements": [],
             "extends": null,
             "uses": [
-                "Minn\\Runtime\\Runtime",
-                "Minn\\Support\\Escape",
-                "Minn\\Support\\Url"
+                "Minn\\Runtime\\MenuItemMarks",
+                "Minn\\Support\\Escape"
             ],
             "usedBy": [],
             "constructor": null,
@@ -113028,31 +112849,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 27,
-                    "end": 52
-                },
-                {
-                    "routes": [],
-                    "name": "decorate",
-                    "static": true,
-                    "visibility": "public",
-                    "signature": "decorate(array $items): array",
-                    "doc": "Menu items with the classes and flags the reference adds for the current page.",
-                    "shapes": [
-                        "@param list<object> $items",
-                        "@return list<object>"
-                    ],
-                    "params": [
-                        {
-                            "name": "items",
-                            "type": "array",
-                            "shape": "list<object>",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 111,
-                    "end": 149
+                    "line": 23,
+                    "end": 48
                 },
                 {
                     "routes": [],
@@ -113071,8 +112869,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 55,
-                    "end": 70
+                    "line": 51,
+                    "end": 66
                 },
                 {
                     "routes": [],
@@ -113098,8 +112896,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 73,
-                    "end": 85
+                    "line": 69,
+                    "end": 81
                 },
                 {
                     "routes": [],
@@ -113132,190 +112930,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 88,
-                    "end": 103
-                },
-                {
-                    "routes": [],
-                    "name": "singularContext",
-                    "static": true,
-                    "visibility": "private",
-                    "signature": "singularContext(): ?array",
-                    "doc": "What the queried singular object is related to, for the\ncurrent-{object}-parent/-ancestor family: the post's terms (their\nitems read as the post's ancestors in the menu sense) and, on a\nhierarchical type, the post's own ancestor chain.",
-                    "shapes": [
-                        "@return array{type: string, termIds: list<int>, termAncestorIds: list<int>, parentId: int, postAncestorIds: list<int>}|null"
-                    ],
-                    "params": [],
-                    "line": 159,
-                    "end": 189
-                },
-                {
-                    "routes": [],
-                    "name": "markQueriedAncestry",
-                    "static": true,
-                    "visibility": "private",
-                    "signature": "markQueriedAncestry(object $item, array $classes, array $context, array $parentItemIds, array $ancestorItemIds): void",
-                    "doc": "The typed ancestor marks: a taxonomy item holding one of the post's\nterms is an ancestor (its db id feeds the menu-parent pass); a\npost_type item on the queried post's ancestor chain is an ancestor,\nthe direct parent also a parent, with no menu-parent mark.",
-                    "shapes": [
-                        "@param list<string> $classes",
-                        "@param array{type: string, termIds: list<int>, termAncestorIds: list<int>, parentId: int, postAncestorIds: list<int>} $context",
-                        "@param list<int> $parentItemIds",
-                        "@param list<int> $ancestorItemIds"
-                    ],
-                    "params": [
-                        {
-                            "name": "item",
-                            "type": "object",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "classes",
-                            "type": "array",
-                            "shape": "list<string>",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "context",
-                            "type": "array",
-                            "shape": "array{type: string, termIds: list<int>, termAncestorIds: list<int>, parentId: int, postAncestorIds: list<int>}",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "parentItemIds",
-                            "type": "array",
-                            "shape": "list<int>",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "ancestorItemIds",
-                            "type": "array",
-                            "shape": "list<int>",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 202,
-                    "end": 223
-                },
-                {
-                    "routes": [],
-                    "name": "isCurrent",
-                    "static": true,
-                    "visibility": "private",
-                    "signature": "isCurrent(object $item, int $queriedId, int $frontPageId, int $postsPageId): bool",
-                    "doc": "",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "item",
-                            "type": "object",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "queriedId",
-                            "type": "int",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "frontPageId",
-                            "type": "int",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "postsPageId",
-                            "type": "int",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 225,
-                    "end": 247
-                },
-                {
-                    "routes": [],
-                    "name": "markAncestors",
-                    "static": true,
-                    "visibility": "private",
-                    "signature": "markAncestors(array $items, array $currentIds, int $postsPageId, ?array $context, array $parentItemIds, array $ancestorItemIds): array",
-                    "doc": "The menu chain above the current items: the direct parent gets both\nparent and ancestor markers, everything higher gets ancestor. The\nposts-page item is the page parent while a single post is on view.",
-                    "shapes": [
-                        "@param list<object> $items",
-                        "@param list<int> $currentIds",
-                        "@param array{type: string, termIds: list<int>, termAncestorIds: list<int>, parentId: int, postAncestorIds: list<int>}|null $context",
-                        "@param list<int> $parentItemIds",
-                        "@param list<int> $ancestorItemIds",
-                        "@return list<object>"
-                    ],
-                    "params": [
-                        {
-                            "name": "items",
-                            "type": "array",
-                            "shape": "list<object>",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "currentIds",
-                            "type": "array",
-                            "shape": "list<int>",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "postsPageId",
-                            "type": "int",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "context",
-                            "type": "?array",
-                            "shape": "array{type: string, termIds: list<int>, termAncestorIds: list<int>, parentId: int, postAncestorIds: list<int>}|null",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "parentItemIds",
-                            "type": "array",
-                            "shape": "list<int>",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "ancestorItemIds",
-                            "type": "array",
-                            "shape": "list<int>",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 261,
-                    "end": 309
-                },
-                {
-                    "routes": [],
-                    "name": "currentUrl",
-                    "static": true,
-                    "visibility": "private",
-                    "signature": "currentUrl(): string",
-                    "doc": "",
-                    "shapes": [],
-                    "params": [],
-                    "line": 311,
-                    "end": 318
+                    "line": 84,
+                    "end": 99
                 }
             ]
         },
@@ -114765,114 +114381,6 @@
                     ],
                     "line": 204,
                     "end": 212
-                }
-            ]
-        },
-        {
-            "name": "Minn\\Runtime\\PageMenu",
-            "short": "PageMenu",
-            "namespace": "Minn\\Runtime",
-            "kind": "final class",
-            "file": "public/minn/src/Minn/Runtime/PageMenu.php",
-            "lines": 40,
-            "doc": "The page-list menu a classic theme falls back to when no menu is\nassigned to a location. Storefront's header is one of these, so its\nmarkup is what the theme's CSS binds to.\n\nShapes captured from the reference: the optional home item carries no\nclass (the attribute is written but left empty), a page item carries\n`page_item page-item-{id}` plus `current_page_item` for the page being\nviewed, and the whole list is wrapped in the caller's before/after.",
-            "implements": [],
-            "extends": null,
-            "uses": [
-                "Minn\\Support\\Html"
-            ],
-            "usedBy": [],
-            "constructor": null,
-            "cases": [],
-            "constants": [],
-            "properties": [],
-            "methods": [
-                {
-                    "routes": [],
-                    "name": "items",
-                    "static": true,
-                    "visibility": "public",
-                    "signature": "items(array $pages, ?array $home, string $linkBefore = '', string $linkAfter = ''): string",
-                    "doc": "The page menu's list items.",
-                    "shapes": [
-                        "@param list<array{id: int, title: string, url: string, current: bool}> $pages",
-                        "@param array{label: string, url: string, current: bool}|null $home"
-                    ],
-                    "params": [
-                        {
-                            "name": "pages",
-                            "type": "array",
-                            "shape": "list<array{id: int, title: string, url: string, current: bool}>",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "home",
-                            "type": "?array",
-                            "shape": "array{label: string, url: string, current: bool}|null",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "linkBefore",
-                            "type": "string",
-                            "shape": "",
-                            "default": "''",
-                            "doc": ""
-                        },
-                        {
-                            "name": "linkAfter",
-                            "type": "string",
-                            "shape": "",
-                            "default": "''",
-                            "doc": ""
-                        }
-                    ],
-                    "line": 27,
-                    "end": 41
-                },
-                {
-                    "routes": [],
-                    "name": "home",
-                    "static": true,
-                    "visibility": "public",
-                    "signature": "home(mixed $showHome, string $url, bool $current, string $defaultLabel = 'Home'): ?array",
-                    "doc": "The home item a `show_home` argument asks for: true (or 1) means the\ndefault label, a string is the label itself, anything falsy means no\nitem at all.",
-                    "shapes": [
-                        "@return array{label: string, url: string, current: bool}|null"
-                    ],
-                    "params": [
-                        {
-                            "name": "showHome",
-                            "type": "mixed",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "url",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "current",
-                            "type": "bool",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "defaultLabel",
-                            "type": "string",
-                            "shape": "",
-                            "default": "'Home'",
-                            "doc": ""
-                        }
-                    ],
-                    "line": 50,
-                    "end": 57
                 }
             ]
         },
@@ -122374,8 +121882,8 @@
                 "Minn\\Runtime\\Deferrals",
                 "Minn\\Runtime\\FileUpload",
                 "Minn\\Runtime\\Interactivity",
+                "Minn\\Runtime\\MenuItemMarks",
                 "Minn\\Runtime\\MetaKeys",
-                "Minn\\Runtime\\NavMenu",
                 "Minn\\Runtime\\NavMenuItems",
                 "Minn\\Runtime\\OptionSanitizer",
                 "Minn\\Runtime\\Patterns",
@@ -127611,7 +127119,7 @@
             "namespace": "Minn\\Runtime",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Runtime/TermWriter.php",
-            "lines": 119,
+            "lines": 125,
             "doc": "The decisions behind wp_delete_term and the object-term relationships:\nwhich relationships to add and remove (saves are Runtime\\TermSave). The rows themselves come\nfrom Content\\Terms; the lifecycle actions fire from here in the\nreference's order. Behaviour pinned by contracts/fixtures/api/content.json.",
             "implements": [],
             "extends": null,
@@ -127865,6 +127373,26 @@
                 },
                 {
                     "routes": [],
+                    "name": "relationshipCount",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "relationshipCount(int $ttId): int",
+                    "doc": "Every object filed under a term, whatever it is: the count a taxonomy of links or other non-posts keeps.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "ttId",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 117,
+                    "end": 120
+                },
+                {
+                    "routes": [],
                     "name": "storeCount",
                     "static": false,
                     "visibility": "public",
@@ -127887,8 +127415,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 117,
-                    "end": 120
+                    "line": 123,
+                    "end": 126
                 },
                 {
                     "routes": [],
@@ -127909,8 +127437,8 @@
                             "doc": "@return list<string>"
                         }
                     ],
-                    "line": 123,
-                    "end": 131
+                    "line": 129,
+                    "end": 137
                 },
                 {
                     "routes": [],
@@ -127936,8 +127464,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 133,
-                    "end": 136
+                    "line": 139,
+                    "end": 142
                 }
             ]
         },
@@ -131542,7 +131070,6 @@
                 "Minn\\Login\\LoginNotices",
                 "Minn\\Rest\\MediaObject",
                 "Minn\\Rest\\PluginsController",
-                "Minn\\Runtime\\PageMenu",
                 "Minn\\Runtime\\Shortcodes",
                 "Minn\\Theme\\ArchiveTitle",
                 "Minn\\Theme\\ClassicContent",
@@ -134655,7 +134182,7 @@
                 "Minn\\Front\\PostEmbed",
                 "Minn\\Runtime\\ArchiveLinks",
                 "Minn\\Runtime\\CommentPages",
-                "Minn\\Runtime\\NavMenu",
+                "Minn\\Runtime\\MenuItemMarks",
                 "Minn\\Runtime\\PostLinks",
                 "Minn\\Runtime\\Upgrade"
             ],

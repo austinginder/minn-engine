@@ -14,6 +14,7 @@ the repositories and records: posts, users, terms, comments, and the render pipe
 | [`Emoji`](#emoji) | final class | 68 | Emoji as the reference's mail and feeds carry them, from the list the |
 | [`Excerpt`](#excerpt) | final class | 101 | The reference's generated excerpt, as captured from probe posts: |
 | [`Inventory`](#inventory) | final readonly class | 253 | Plugins, themes, must-use plugins, and drop-ins as they sit on disk. |
+| [`Links`](#links) | final readonly class | 102 | The links manager's table, as get_bookmarks and wp_insert_link read and |
 | [`MediaShortcodes`](#mediashortcodes) | final class | 187 | The [video] and [audio] shortcodes as the reference prints them: a |
 | [`MenuItem`](#menuitem) | final readonly class | 22 | One classic nav_menu_item, fields resolved from the post, its |
 | [`Menus`](#menus) | final readonly class | 485 | Classic nav_menu terms and nav_menu_item posts. The front uses these |
@@ -510,6 +511,54 @@ Every regular plugin's main file: relative "dir/file.php" (or
 - `@return array<string, string>`
 
 Internals: `regularPlugins()` (private, line 161), `mainPluginFile()` (private, line 236), `item()` (private, line 256)
+
+
+## Links
+
+`final readonly class Minn\Content\Links` · `public/minn/src/Minn/Content/Links.php`
+
+The links manager's table, as get_bookmarks and wp_insert_link read and
+write it (probe plugin-queue4). A query narrows by the ids included (which
+set aside every other narrowing), the ids excluded, the link categories
+(joined, so a link filed under two of them comes back twice, with the
+join's columns), visibility and a search over the address, name and
+description; it sorts by one or more of the link's columns (name when none
+is known), ascending unless told otherwise.
+
+- const `FIELDS` = `array (   0 => 'link_id',   1 => 'link_url',   2 => 'link_name',   3 => 'link_image',   4 => 'link_target',   5 => 'link_description',   6 => 'link_visible',   7 => 'link_owner',   8 => 'link_rating',   9 => 'link_updated',   10 => 'link_rel',   11 => 'link_notes',   12 => 'link_rss', )` — The columns a link row holds, in the table's order.
+- const `ORDERS` = `array (   'name' => 'link_name',   'url' => 'link_url',   'rating' => 'link_rating',   'id' => 'link_id',   'owner' => 'link_owner',   'visible' => 'link_visible',   'updated' => 'link_updated',   'notes' => 'link_notes',   'description' => 'link_description',   'rel' => 'link_rel',   'target' => 'link_target',   'image' => 'link_image',   'rss' => 'link_rss',   'length' => 'length',   'rand' => 'RAND()', )`
+
+```php
+__construct(Minn\Db $db)
+```
+
+
+### `find(int $id): ?array`
+
+A link's row, its values as strings the way the reference reads them. @return array<string, mixed>|null
+
+- `@return array<string, mixed>|null`
+
+### `matching(array $args, array $categories, int $recentMinutes): array`
+
+The links a get_bookmarks call asks for.
+
+- `@param array<string, mixed> $args orderby, order, limit, hide_invisible, show_updated, include, exclude, search`
+- `@param list<int> $categories link category term ids, empty for any`
+- `@return list<array<string, mixed>>`
+
+### `save(int $id, array $fields): int`
+
+A link written: a new row when the id is 0, else that row's columns
+set. The id it was written under.
+
+- `@param array<string, mixed> $fields columns of FIELDS`
+
+### `delete(int $id): void`
+
+A link's row removed.
+
+Internals: `narrowing()` (private, line 60), `strings()` (private, line 109), `ids()` (private, line 115)
 
 
 ## MediaShortcodes

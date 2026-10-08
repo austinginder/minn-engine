@@ -257,6 +257,10 @@ function term_exists($term, $taxonomy = '', $parent_term = null)
     if ($found === null) {
         return null;
     }
+    if ($tax !== null) {
+        // The reference reads the term it found as a term, so get_term and get_{taxonomy} hear it.
+        get_term((int) $found['term_id'], $tax);
+    }
     return $tax === null ? (string) $found['term_id'] : ['term_id' => (string) $found['term_id'], 'term_taxonomy_id' => (string) $found['term_taxonomy_id']];
 }
 
@@ -787,7 +791,9 @@ function wp_update_term_count_now($terms, $taxonomy)
     if (!$tax) {
         return false;
     }
-    $callback = is_callable($tax->update_count_callback ?? '') ? $tax->update_count_callback : '_update_post_term_count';
+    // With no callback of its own, a taxonomy of post types counts published posts; one of links or other objects counts them all.
+    $callback = is_callable($tax->update_count_callback ?? '') ? $tax->update_count_callback
+        : (array_filter((array) $tax->object_type, static fn ($type) => post_type_exists(explode(':', (string) $type)[0])) !== [] ? '_update_post_term_count' : '_update_generic_term_count');
     call_user_func($callback, $terms, $tax);
     clean_term_cache(_minn_term_writer()->termIdsOf($terms), (string) $taxonomy, false);
     return true;
@@ -886,6 +892,12 @@ function wp_get_nav_menu_items($menu, $args = [])
     return $menu ? Minn\Runtime\NavMenuItems::forMenu($menu, (array) $args) : false;
 }
 
+/** Whether a post is a menu item; an error is not. */
+function is_nav_menu_item($menu_item_id = 0)
+{
+    return !is_wp_error($menu_item_id) && get_post_type($menu_item_id) === 'nav_menu_item';
+}
+
 /** A menu item, post or term dressed with the fields walkers read (Runtime\NavMenuItems). */
 function wp_setup_nav_menu_item($menu_item)
 {
@@ -977,6 +989,18 @@ function _update_post_term_count($terms, $taxonomy)
     return null;
 }
 
+/** Recounts every object behind each term_taxonomy id, posts or not. */
+function _update_generic_term_count($terms, $taxonomy)
+{
+    $name = is_object($taxonomy) ? (string) $taxonomy->name : (string) $taxonomy;
+    foreach (array_map('intval', (array) $terms) as $tt_id) {
+        $count = _minn_term_writer()->relationshipCount($tt_id);
+        do_action('edit_term_taxonomy', $tt_id, $name);
+        _minn_term_writer()->storeCount($tt_id, $count);
+        do_action('edited_term_taxonomy', $tt_id, $name);
+    }
+}
+
 /** The default on transition_post_status: a post that changes status changes its terms' published counts. */
 function _update_term_count_on_transition_post_status($new_status, $old_status, $post)
 {
@@ -1041,29 +1065,74 @@ function single_term_title($prefix = '', $display = true)
     return $title;
 }
 
-/** The nested category list; markup from Minn\Front\TermLists. */
+/**
+ * The category list (probe plugin-queue4): a titled list item around the
+ * categories walked by walk_category_tree, nested when hierarchical; the
+ * "all" link and the none message when asked; the category being viewed
+ * marked current. False for a taxonomy that is not there.
+ */
 function wp_list_categories($args = '')
 {
-    $args = wp_parse_args($args, ['show_option_all' => '', 'show_option_none' => 'No categories', 'orderby' => 'name', 'order' => 'ASC', 'style' => 'list', 'show_count' => 0, 'hide_empty' => 1, 'use_desc_for_title' => 0, 'child_of' => 0, 'feed' => '', 'feed_type' => '', 'feed_image' => '', 'exclude' => '', 'exclude_tree' => '', 'include' => '', 'hierarchical' => true, 'title_li' => 'Categories', 'show_option_none' => 'No categories', 'number' => null, 'echo' => 1, 'depth' => 0, 'current_category' => 0, 'pad_counts' => 0, 'taxonomy' => 'category', 'walker' => null, 'hide_title_if_empty' => false, 'separator' => '<br />']);
-    $query = array_intersect_key($args, array_flip(['orderby', 'order', 'hide_empty', 'child_of', 'exclude', 'exclude_tree', 'include', 'number', 'pad_counts', 'taxonomy', 'hierarchical']));
-    if ($args['depth'] === -1 || !$args['hierarchical']) {
-        $query['hierarchical'] = false;
+    $given = wp_parse_args($args);
+    $r = wp_parse_args($args, ['child_of' => 0, 'current_category' => 0, 'depth' => 0, 'echo' => 1, 'exclude' => '', 'exclude_tree' => '', 'feed' => '', 'feed_image' => '', 'feed_type' => '', 'hide_empty' => 1, 'hide_title_if_empty' => false, 'hierarchical' => true, 'order' => 'ASC', 'orderby' => 'name', 'separator' => '<br />', 'show_count' => 0, 'show_option_all' => '', 'show_option_none' => __('No categories'), 'style' => 'list', 'taxonomy' => 'category', 'title_li' => __('Categories'), 'use_desc_for_title' => 0]);
+    if (!isset($given['pad_counts']) && $r['show_count'] && $r['hierarchical']) {
+        $r['pad_counts'] = true;
     }
-    $terms = get_terms($query);
-    $terms = is_array($terms) ? $terms : [];
-    if (is_object($args['walker']) && method_exists($args['walker'], 'walk')) {
-        $items = $args['walker']->walk($terms, (int) $args['depth'], $args);
-    } else {
-        $rows = array_map(static fn ($t) => (array) $t, $terms);
-        $items = TermLists::categoryList($rows, $args, static fn (array $row) => (string) get_term_link((int) $row['term_id'], (string) $row['taxonomy']));
+    if ($r['hierarchical']) {
+        $r['exclude_tree'] = array_merge(wp_parse_id_list($r['exclude_tree']), wp_parse_id_list($r['exclude']));
+        $r['exclude'] = '';
     }
-    [$before, $after] = $terms === [] && $args['hide_title_if_empty'] ? ['', ''] : TermLists::categoryWrapper($args);
-    $output = apply_filters('wp_list_categories', $before . $items . $after, $args);
-    if ($args['echo']) {
-        echo $output;
-        return null;
+    $r['class'] ??= $r['taxonomy'] === 'category' ? 'categories' : $r['taxonomy'];
+    if (!taxonomy_exists($r['taxonomy'])) {
+        return false;
     }
-    return $output;
+    $categories = get_categories($r);
+    $titled = $r['title_li'] && $r['style'] === 'list' && ($categories !== [] || !$r['hide_title_if_empty']);
+    $output = ($titled ? '<li class="' . esc_attr($r['class']) . '">' . $r['title_li'] . '<ul>' : '') . _minn_category_list_body($categories, $r) . ($titled ? '</ul></li>' : '');
+    $html = apply_filters('wp_list_categories', $output, $args);
+    if (!$r['echo']) {
+        return $html;
+    }
+    echo $html;
+}
+
+/** @internal the list's items: the none message, or the "all" link and the categories walked, the viewed one current */
+function _minn_category_list_body(array $categories, array $r): string
+{
+    $list = $r['style'] === 'list';
+    if ($categories === []) {
+        return empty($r['show_option_none']) ? '' : ($list ? '<li class="cat-item-none">' . $r['show_option_none'] . '</li>' : $r['show_option_none']);
+    }
+    $output = '';
+    if (!empty($r['show_option_all'])) {
+        $all = esc_url(get_option('show_on_front') === 'page' && get_option('page_for_posts') ? get_permalink(get_option('page_for_posts')) : home_url('/'));
+        $output = $list ? "<li class='cat-item-all'><a href='{$all}'>{$r['show_option_all']}</a></li>" : "<a href='{$all}'>{$r['show_option_all']}</a>" . $r['separator'];
+    }
+    if (empty($r['current_category']) && (is_category() || is_tax() || is_tag())) {
+        $viewed = get_queried_object();
+        $r['current_category'] = $viewed && ($viewed->taxonomy ?? null) === $r['taxonomy'] ? get_queried_object_id() : 0;
+    }
+    return $output . walk_category_tree($categories, $r['hierarchical'] ? $r['depth'] : -1, $r);
+}
+
+/** The categories walked as a list, by the caller's walker or Walker_Category. */
+function walk_category_tree(...$args)
+{
+    $walker = ($args[2]['walker'] ?? null) instanceof Walker ? $args[2]['walker'] : new Walker_Category();
+    return $walker->walk(...$args);
+}
+
+/** The categories walked as options, by the caller's walker or Walker_CategoryDropdown. */
+function walk_category_dropdown_tree(...$args)
+{
+    $walker = ($args[2]['walker'] ?? null) instanceof Walker ? $args[2]['walker'] : new Walker_CategoryDropdown();
+    return $walker->walk(...$args);
+}
+
+/** Whether one category is above another. */
+function cat_is_ancestor_of($cat1, $cat2)
+{
+    return term_is_ancestor_of($cat1, $cat2, 'category');
 }
 
 /** The tag cloud for a taxonomy's terms; nothing at all when there are none. */
@@ -1130,32 +1199,37 @@ function _minn_term_taxonomy_ids(string $taxonomy, string $field, array $terms, 
     return array_values(array_unique($ids));
 }
 
-/** The category select: one option per term, nested by depth when hierarchical, in the reference's markup. */
+/**
+ * The category select (probe plugin-queue4): the "all" and none choices
+ * (through list_cats, unescaped), then the categories walked by
+ * walk_category_dropdown_tree, flat unless hierarchical; through
+ * wp_dropdown_cats. Nothing at all when empty and hide_if_empty is set.
+ */
 function wp_dropdown_categories($args = '')
 {
-    $args = wp_parse_args($args, ['show_option_all' => '', 'show_option_none' => '', 'orderby' => 'id', 'order' => 'ASC', 'show_count' => 0, 'hide_empty' => 1, 'child_of' => 0, 'exclude' => '', 'include' => '', 'echo' => 1, 'selected' => 0, 'hierarchical' => 0, 'name' => 'cat', 'id' => '', 'class' => 'postform', 'depth' => 0, 'tab_index' => 0, 'taxonomy' => 'category', 'hide_if_empty' => false, 'option_none_value' => -1, 'value_field' => 'term_id', 'required' => false, 'aria_describedby' => '']);
-    $query = array_intersect_key($args, array_flip(['orderby', 'order', 'hide_empty', 'child_of', 'exclude', 'include', 'taxonomy']));
-    $query['hierarchical'] = (bool) $args['hierarchical'];
-    $terms = get_terms($query);
-    $terms = is_array($terms) ? array_map(static fn ($t) => (array) $t, $terms) : [];
-    if ($terms === [] && $args['hide_if_empty']) {
-        return apply_filters('wp_dropdown_cats', '', $args);
+    $r = wp_parse_args($args, ['show_option_all' => '', 'show_option_none' => '', 'orderby' => 'id', 'order' => 'ASC', 'show_count' => 0, 'hide_empty' => 1, 'child_of' => 0, 'exclude' => '', 'echo' => 1, 'selected' => 0, 'hierarchical' => 0, 'name' => 'cat', 'id' => '', 'class' => 'postform', 'depth' => 0, 'tab_index' => 0, 'taxonomy' => 'category', 'hide_if_empty' => false, 'option_none_value' => -1, 'value_field' => 'term_id', 'required' => false, 'aria_describedby' => '']);
+    $query = $r;
+    unset($query['name']);
+    $categories = get_terms($query);
+    $categories = is_array($categories) ? $categories : [];
+    $shown = !$r['hide_if_empty'] || $categories !== [];
+    $name = esc_attr($r['name']);
+    $output = $shown ? '<select ' . ($r['required'] ? 'required' : '') . " name='{$name}' id='" . ($r['id'] ? esc_attr($r['id']) : $name) . "' class='" . esc_attr($r['class']) . "'"
+        . ((int) $r['tab_index'] > 0 ? " tabindex=\"{$r['tab_index']}\"" : '') . ($r['aria_describedby'] ? ' aria-describedby="' . esc_attr($r['aria_describedby']) . '"' : '') . ">\n" : '';
+    if ($categories === [] && $shown && !empty($r['show_option_none'])) {
+        $output .= "\t<option value='" . esc_attr($r['option_none_value']) . "' selected='selected'>" . apply_filters('list_cats', $r['show_option_none'], null) . "</option>\n";
     }
-    $id = $args['id'] !== '' ? $args['id'] : $args['name'];
-    $output = '<select ' . ($args['required'] ? 'required' : '') . " name='" . esc_attr($args['name']) . "' id='" . esc_attr($id) . "' class='" . esc_attr($args['class']) . "'"
-        . ((int) $args['tab_index'] > 0 ? ' tabindex="' . (int) $args['tab_index'] . '"' : '') . ($args['aria_describedby'] !== '' ? ' aria-describedby="' . esc_attr($args['aria_describedby']) . '"' : '') . ">\n";
-    if ($terms !== []) {
-        if ($args['show_option_all'] !== '') {
-            $output .= "\t<option value='0'" . ((string) $args['selected'] === '0' ? " selected='selected'" : '') . '>' . esc_html($args['show_option_all']) . "</option>\n";
+    if ($categories !== []) {
+        if ($r['show_option_all']) {
+            $output .= "\t<option value='0'" . ((string) $r['selected'] === '0' ? " selected='selected'" : '') . '>' . apply_filters('list_cats', $r['show_option_all'], null) . "</option>\n";
         }
-        if ($args['show_option_none'] !== '') {
-            $output .= "\t<option value='" . esc_attr((string) $args['option_none_value']) . "'" . ((string) $args['selected'] === (string) $args['option_none_value'] ? " selected='selected'" : '') . '>' . esc_html($args['show_option_none']) . "</option>\n";
+        if ($r['show_option_none']) {
+            $output .= "\t<option value='" . esc_attr($r['option_none_value']) . "'" . selected($r['option_none_value'], $r['selected'], false) . '>' . apply_filters('list_cats', $r['show_option_none'], null) . "</option>\n";
         }
-        $output .= TermLists::dropdownOptions($terms, $args);
+        $output .= walk_category_dropdown_tree($categories, $r['hierarchical'] ? $r['depth'] : -1, $r);
     }
-    $output .= "</select>\n";
-    $output = apply_filters('wp_dropdown_cats', $output, $args);
-    if ($args['echo']) {
+    $output = apply_filters('wp_dropdown_cats', $output . ($shown ? "</select>\n" : ''), $r);
+    if ($r['echo']) {
         echo $output;
     }
     return $output;

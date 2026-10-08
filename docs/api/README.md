@@ -11,11 +11,11 @@ The engine's own classes under `public/minn/src/Minn/`, one page per namespace, 
 | [`Minn\Blocks\Dynamic`](blocks-dynamic.md) | 9 | dynamic core blocks that render from data |
 | [`Minn\Blocks\Dynamic\Theme`](blocks-dynamic-theme.md) | 5 | the template blocks a block theme composes with |
 | [`Minn\Cli`](cli.md) | 17 | the wp verbs the engine answers itself |
-| [`Minn\Content`](content.md) | 36 | the repositories and records: posts, users, terms, comments, and the render pipeline |
+| [`Minn\Content`](content.md) | 37 | the repositories and records: posts, users, terms, comments, and the render pipeline |
 | [`Minn\Cron`](cron.md) | 1 | scheduled publishing |
 | [`Minn\Extension`](extension.md) | 8 | the extension contract and its seams |
 | [`Minn\Feed`](feed.md) | 8 |  |
-| [`Minn\Front`](front.md) | 46 | URL resolution, permalinks, feeds, sitemaps and the public page |
+| [`Minn\Front`](front.md) | 44 | URL resolution, permalinks, feeds, sitemaps and the public page |
 | [`Minn\Html`](html.md) | 7 | the HTML tag processor |
 | [`Minn\Html\Tree`](html-tree.md) | 13 |  |
 | [`Minn\Http`](http.md) | 32 | request, response, routing, and the outgoing client |

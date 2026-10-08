@@ -145,12 +145,6 @@ function get_block_editor_theme_styles()
     return null;
 }
 
-function get_bookmarks($args = '')
-{
-    \Minn\Runtime\PlaceholderTrace::hit('get_bookmarks');
-    return null;
-}
-
 function get_comment_to_edit($id)
 {
     \Minn\Runtime\PlaceholderTrace::hit('get_comment_to_edit');
@@ -331,12 +325,6 @@ function verify_file_md5($filename, $expected_md5)
     return null;
 }
 
-function walk_page_dropdown_tree(...$args)
-{
-    \Minn\Runtime\PlaceholderTrace::hit('walk_page_dropdown_tree');
-    return null;
-}
-
 function wp($query_vars = '')
 {
     \Minn\Runtime\PlaceholderTrace::hit('wp');
@@ -436,18 +424,6 @@ function wp_crop_image($src, $src_x, $src_y, $src_w, $src_h, $dst_w, $dst_h, $sr
 function wp_download_language_pack($download)
 {
     \Minn\Runtime\PlaceholderTrace::hit('wp_download_language_pack');
-    return null;
-}
-
-function wp_dropdown_roles($selected = '', $editable_roles = NULL)
-{
-    \Minn\Runtime\PlaceholderTrace::hit('wp_dropdown_roles');
-    return null;
-}
-
-function wp_dropdown_users($args = '')
-{
-    \Minn\Runtime\PlaceholderTrace::hit('wp_dropdown_users');
     return null;
 }
 

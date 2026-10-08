@@ -160,6 +160,57 @@ function wp_roles()
     return $GLOBALS['wp_roles'];
 }
 
+/**
+ * The user select: the users get_users finds for the caller's query (through
+ * wp_dropdown_users_args), each shown by the field asked for, or by display
+ * name and login; nothing when there are none, or only one and the caller
+ * hides a lone author.
+ */
+function wp_dropdown_users($args = '')
+{
+    $r = wp_parse_args($args, ['blog_id' => get_current_blog_id(), 'show_option_all' => '', 'show_option_none' => '', 'hide_if_only_one_author' => '', 'orderby' => 'display_name', 'order' => 'ASC', 'include' => '', 'exclude' => '', 'multi' => 0, 'show' => 'display_name', 'echo' => 1, 'selected' => 0, 'name' => 'user', 'class' => '', 'id' => '', 'who' => '', 'include_selected' => false, 'option_none_value' => -1, 'role' => '', 'role__in' => [], 'role__not_in' => [], 'capability' => '', 'capability__in' => [], 'capability__not_in' => []]);
+    $query = [];
+    foreach (['blog_id', 'include', 'exclude', 'orderby', 'order', 'who', 'role', 'role__in', 'role__not_in', 'capability', 'capability__in', 'capability__not_in'] as $key) {
+        $query[$key] = $r[$key];
+    }
+    $query['fields'] = ['ID', 'user_login', $r['show'] === 'display_name_with_login' ? 'display_name' : $r['show']];
+    $users = get_users(apply_filters('wp_dropdown_users_args', $query, $r));
+    $output = '';
+    if ($users !== [] && (empty($r['hide_if_only_one_author']) || count($users) > 1)) {
+        $name = esc_attr($r['name']);
+        $id = $r['multi'] && !$r['id'] ? '' : " id='" . ($r['id'] ? esc_attr($r['id']) : $name) . "'";
+        $output = "<select name='{$name}'{$id} class='" . $r['class'] . "'>\n" . _minn_user_option_lines($users, $r) . '</select>';
+    }
+    $html = apply_filters('wp_dropdown_users', $output);
+    if ($r['echo']) {
+        echo $html;
+    }
+    return $html;
+}
+
+/** @internal the dropdown's option lines: the all and none choices, then each user (the selected one added when asked) */
+function _minn_user_option_lines(array $users, array $r): string
+{
+    $out = $r['show_option_all'] ? "\t<option value='0'>{$r['show_option_all']}</option>\n" : '';
+    if ($r['show_option_none']) {
+        $out .= "\t<option value='" . esc_attr($r['option_none_value']) . "'" . selected($r['option_none_value'], $r['selected'], false) . ">{$r['show_option_none']}</option>\n";
+    }
+    $selected = (int) $r['selected'];
+    if ($r['include_selected'] && $selected > 0 && !in_array($selected, array_map(static fn ($u) => (int) $u->ID, $users), true) && ($user = get_userdata($selected))) {
+        $users[] = $user;
+    }
+    foreach ($users as $user) {
+        $show = (string) $r['show'];
+        $display = match (true) {
+            $show === 'display_name_with_login' => sprintf(_x('%1$s (%2$s)', 'user dropdown'), $user->display_name, $user->user_login),
+            !empty($user->$show) => $user->$show,
+            default => '(' . $user->user_login . ')',
+        };
+        $out .= "\t<option value='{$user->ID}'" . selected($user->ID, $r['selected'], false) . '>' . esc_html($display) . "</option>\n";
+    }
+    return $out;
+}
+
 function get_editable_roles()
 {
     return apply_filters('editable_roles', wp_roles()->roles);

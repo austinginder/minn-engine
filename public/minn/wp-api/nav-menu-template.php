@@ -1,6 +1,5 @@
 <?php
 
-use Minn\Runtime\PageMenu;
 /** Nav menu rendering: wp_nav_menu() over the reference's walker contract. Assembly lives in Minn\Runtime\NavMenu. */
 
 use Minn\Runtime\NavMenu;
@@ -37,32 +36,36 @@ function walk_nav_menu_tree($items, $depth, $args)
 }
 
 /** The classic fallback when no menu is assigned: a page list. The engine renders the list shape without the reference's page-walker chrome. */
+/** The menu items given the classes and current flags for the page being viewed, in place (Runtime\MenuItemMarks). */
+function _wp_menu_item_classes_by_context(&$menu_items)
+{
+    $menu_items = Minn\Runtime\MenuItemMarks::apply(array_values((array) $menu_items));
+}
+
 function wp_page_menu($args = [])
 {
-    $args = wp_parse_args($args, ['sort_column' => 'menu_order, post_title', 'menu_id' => '', 'menu_class' => 'menu', 'container' => 'div', 'echo' => true, 'link_before' => '', 'link_after' => '', 'before' => '<ul>', 'after' => '</ul>', 'item_spacing' => 'discard', 'show_home' => false, 'walker' => '']);
+    $args = wp_parse_args($args, ['sort_column' => 'menu_order, post_title', 'menu_id' => '', 'menu_class' => 'menu', 'container' => 'div', 'echo' => true, 'link_before' => '', 'link_after' => '', 'before' => '<ul>', 'after' => '</ul>', 'item_spacing' => 'discard', 'walker' => '']);
+    $args['item_spacing'] = in_array($args['item_spacing'], ['preserve', 'discard'], true) ? $args['item_spacing'] : 'discard';
+    $n = $args['item_spacing'] === 'preserve' ? "\n" : '';
     $args = apply_filters('wp_page_menu_args', $args);
-    $pages = [];
-    foreach (get_pages(['sort_column' => $args['sort_column']]) ?: [] as $page) {
-        // The queried object, not is_page(): a plugin can point an archive
-        // at its page (WooCommerce marks the shop page current on a
-        // product archive), and the reference follows that.
-        $pages[] = ['id' => (int) $page->ID, 'title' => (string) $page->post_title, 'url' => (string) get_permalink($page->ID), 'current' => (int) $page->ID === (int) get_queried_object_id()];
+    $list = array_merge($args, ['echo' => false, 'title_li' => '']);
+    $menu = '';
+    if (!empty($args['show_home'])) {
+        $text = in_array($args['show_home'], [true, '1', 1], true) ? __('Home') : $args['show_home'];
+        $menu = '<li ' . (is_front_page() && !is_paged() ? 'class="current_page_item"' : '') . '><a href="' . esc_url(home_url('/')) . '">' . $args['link_before'] . $text . $args['link_after'] . '</a></li>';
+        if (get_option('show_on_front') === 'page') {
+            $list['exclude'] = (empty($list['exclude']) ? '' : $list['exclude'] . ',') . get_option('page_on_front');
+        }
     }
-    $home = PageMenu::home($args['show_home'] ?? false, home_url('/'), is_front_page());
-    $list = PageMenu::items($pages, $home, (string) $args['link_before'], (string) $args['link_after']);
-    // Called as wp_nav_menu's fallback (which is what a non-empty
-    // fallback_cb marks), the list is wrapped in a plain ul and the
-    // caller's before/after are ignored.
-    $menu = match (true) {
-        $list === '' => '',
-        !empty($args['fallback_cb']) => '<ul>' . $list . '</ul>',
-        default => $args['before'] . $list . $args['after'],
-    };
-    if ($menu !== '' && $args['container']) {
-        $attrs = $args['menu_id'] ? ' id="' . esc_attr($args['menu_id']) . '"' : '';
-        $menu = '<' . $args['container'] . $attrs . ' class="' . esc_attr($args['menu_class']) . '">' . $menu . '</' . $args['container'] . '>';
+    $menu .= wp_list_pages($list);
+    $container = sanitize_text_field($args['container']) ?: 'div';
+    if ($menu !== '') {
+        // As wp_nav_menu's fallback, the list is wrapped in a plain ul whatever the caller's before and after.
+        $fallback = ($args['fallback_cb'] ?? null) === 'wp_page_menu' && $container !== 'ul';
+        $menu = ($fallback ? "<ul>{$n}" : $args['before']) . $menu . ($fallback ? '</ul>' : $args['after']);
     }
-    $menu = apply_filters('wp_page_menu', $menu, $args);
+    $attrs = ($args['menu_id'] ? ' id="' . esc_attr($args['menu_id']) . '"' : '') . ($args['menu_class'] ? ' class="' . esc_attr($args['menu_class']) . '"' : '');
+    $menu = apply_filters('wp_page_menu', "<{$container}{$attrs}>{$menu}</{$container}>{$n}", $args);
     if ($args['echo']) {
         echo $menu;
         return null;

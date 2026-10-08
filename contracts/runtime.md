@@ -5144,3 +5144,117 @@ The third slice of the plugin queue (probe plugin-queue3, 88 cases):
 The reference's first capture died in `next_widget_id_number`, which lives in
 wp-admin/includes/widgets.php. The probe loads that file now. The fatal left
 the probe's index test table behind; it was dropped.
+
+## Lists and selects through their walkers, the links manager, and menu marks (2026-10-08)
+
+The fourth slice of the plugin queue (probe plugin-queue4, 142 cases).
+
+**One path for every term and page list.** The engine drew the category
+list and select, the page list and select, and the page menu with its own
+code (TermLists, PageList, PageMenu). A walker a plugin passed was ignored,
+and so were `list_cats`, `list_pages`, `category_css_class`,
+`category_list_link_attributes`, `page_css_class` and
+`page_menu_link_attributes`. Now each goes through its walker, as the
+reference does:
+
+- `wp_list_categories` walks `walk_category_tree` with `Walker_Category`:
+  - the feed link (text in parentheses, or an image);
+  - the count, and the description as the title;
+  - current-cat, current-cat-parent and current-cat-ancestor, with
+    aria-current on the current category's links, its feed link too;
+  - the separator when the style is not a list;
+  - the category in view marked current;
+  - the "all" link and the none message;
+  - the filter gets the caller's own arguments.
+- `wp_dropdown_categories` walks `walk_category_dropdown_tree` with
+  `Walker_CategoryDropdown`. The value comes from `value_field`, or the id
+  when the term has no such field. Names, and the all and none choices,
+  pass through `list_cats` and are not escaped after.
+- `wp_list_pages` walks `walk_page_tree`, which now notes
+  `pages_with_children`, with `Walker_Page`:
+  - current_page_item, and current_page_parent and current_page_ancestor
+    by the current page's ancestry; the posts page is current_page_parent
+    when no page is current;
+  - both filters;
+  - the date when asked;
+  - "preserve" and "discard" spacing.
+- `wp_dropdown_pages` walks `walk_page_dropdown_tree` with
+  `Walker_PageDropdown`:
+  - the option is selected by page id, whatever the value field;
+  - the title runs through `list_pages` and is escaped after;
+  - an untitled page reads "#id (no title)".
+- `wp_page_menu` is the home item plus `wp_list_pages`, so it nests, with
+  the reference's classes; it was flat. With no container it uses a div,
+  and an empty list still gets its container.
+- `cat_is_ancestor_of`.
+- `_minn_link_attributes` writes a link's attributes the same way for the
+  category, page and menu walkers.
+
+**Users and roles**:
+
+- `wp_dropdown_users`, with `wp_dropdown_users_args` in the reference's
+  key order;
+- show by a field or "display name (login)";
+- `multi` (no id), the all and none choices, and the selected user added
+  when asked;
+- empty when there is no one, or only one and the caller hides a lone
+  author.
+
+`wp_dropdown_roles` prints the roles lowest first.
+
+**The links manager** (`Content\Links`):
+
+- `get_bookmarks`:
+  - included ids set aside every other narrowing;
+  - categories are joined, so a link filed under two comes back twice;
+  - an unknown category name gives nothing;
+  - search covers the address, name and description;
+  - order by any column, or by length.
+- `get_bookmark` and `get_bookmark_field`; rows read as strings, as
+  `$wpdb` gives them.
+- `sanitize_bookmark` and `sanitize_bookmark_field`:
+  - integer ids and ratings, categories as ids;
+  - visibility kept to Y and N, a target to `_blank` and `_top`;
+  - then edit_, pre_ or the display filter, with an escape.
+  - The pre_ and display chains are registered as the reference registers
+    them.
+- `wp_insert_link`:
+  - nothing is saved without an address, and the name falls back to it;
+  - the fields go through the database chain and are unslashed;
+  - the default link category is used when none is given;
+  - add_link or edit_link fires after.
+- `wp_update_link` (0 for a link that is not there; the reference dies on
+  one), `wp_delete_link`, `wp_get_link_cats` and `wp_set_link_cats`.
+- `wp_list_bookmarks` and `_walk_bookmarks`; `get_link` (deprecated).
+- A taxonomy with no post types and no count callback (link categories)
+  now counts every relationship (`_update_generic_term_count`), not
+  published posts. `term_exists` reads the term it finds, so `get_term`
+  and `get_{taxonomy}` hear it.
+
+**Menu marks** (`Runtime\MenuItemMarks`, behind both
+`_wp_menu_item_classes_by_context` and `wp_nav_menu`). Two passes, as the
+reference marks them:
+
+- An item's own classes now come before menu-item; they came after.
+- An item whose object is the current page's parent gets
+  current-page-parent, after the menu marks, and a page item the
+  current_page_parent and current_page_ancestor compat tokens.
+- On a page deeper than the menu reaches, the items above it are only
+  current-page-ancestor; they were also marked parent.
+- An item for a category above the one in view is
+  current-category-ancestor.
+- On a single post:
+  - the items of its terms in hierarchical taxonomies are its menu parents
+    (current-post-ancestor, current-menu-parent, current-post-parent);
+  - items for terms above those are current-post-ancestor only; they were
+    also current-menu-ancestor;
+  - tag items are untouched.
+- The posts page is current_page_parent on any view but a page, unless it
+  is the current item.
+- Also: post type archive items, and menu-item-privacy-policy.
+- The view is read from the main query's own flags. The engine's calls into
+  WordPress-named functions fall to 1046.
+
+The probe runs the reference's custom-item rules as a web request would:
+a request host, https when the site is. Under WP-CLI the reference skips
+them, and the home item loses menu-item-home.
