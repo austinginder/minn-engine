@@ -216,6 +216,8 @@ final class LoginForm
                background:#0b0b0d; color:#ececed; font:15px/1.5 "Hanken Grotesk","Helvetica Neue",sans-serif; }
         form { width:320px; background:#151518; border:1px solid #242429; border-radius:14px; padding:28px; }
         h1 { font-size:19px; font-weight:700; margin:0 0 18px; }
+        h1 a { color:inherit; text-decoration:none; }
+        h1 a:focus-visible { outline:2px solid #8a80f8; outline-offset:2px; border-radius:4px; }
         .hint { font-size:13px; color:#9d9da7; margin:0 0 12px; } .hint a { color:#ececed; }
         .msg { background:#14291c; border:1px solid #1f4a2c; border-radius:8px; padding:9px 12px; font-size:13px; margin-bottom:12px; }
         label { display:block; font-size:12px; color:#9d9da7; margin:14px 0 5px; }
