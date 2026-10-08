@@ -123,16 +123,13 @@ function wp_json_file_decode($filename, $options = [])
     return $decoded;
 }
 
+/** Relative URLs in the listed attributes made absolute against a base (probe formatting-callbacks). */
 function links_add_base_url($content, $base, $attrs = ['src', 'href'])
 {
-    $attrs = implode('|', (array) $attrs);
-    return preg_replace_callback("!($attrs)=(['\"])(.+?)\\2!i", static function (array $m) use ($base): string {
-        $url = $m[3];
-        if (!preg_match('#^(https?:)?//#i', $url) && !str_starts_with($url, 'mailto:') && !str_starts_with($url, '#')) {
-            $url = WP_Http::make_absolute_url($url, $base);
-        }
-        return $m[1] . '=' . $m[2] . $url . $m[2];
-    }, (string) $content);
+    global $_links_add_base;
+    $_links_add_base = $base;
+    $attrs = implode('|', array_map(static fn ($attr): string => preg_quote((string) $attr, '!'), (array) $attrs));
+    return preg_replace_callback("!({$attrs})=(['\"])(.+?)\\2!i", '_links_add_base', (string) $content);
 }
 
 function get_comment_type($comment_id = 0)

@@ -79,8 +79,13 @@ function esc_url($url, $protocols = null, $_context = 'display')
         $url = str_replace(['&amp;', "'"], ['&#038;', '&#039;'], wp_kses_normalize_entities($url));
     }
     $url = Url::encodeBrackets($url, (array) wp_parse_url($url));
-    if (str_contains($url, ':') && wp_kses_bad_protocol($url, is_array($protocols) ? $protocols : wp_allowed_protocols()) !== $url) {
-        return '';
+    if (str_contains($url, ':')) {
+        // An allowed scheme comes back lower-cased (HTTPS:// is https://); one that changes otherwise was refused.
+        $checked = wp_kses_bad_protocol($url, is_array($protocols) ? $protocols : wp_allowed_protocols());
+        if (strcasecmp($checked, $url) !== 0) {
+            return '';
+        }
+        $url = $checked;
     }
     return apply_filters('clean_url', $url, $original, $_context);
 }
@@ -432,15 +437,15 @@ function wpautop($text, $br = true)
     return Autop::apply((string) $text, (bool) $br);
 }
 
+/** Bare URLs, www. and ftp. hosts and email addresses in text made links, outside tags and code, pre, script and style (probe formatting-callbacks). */
 function make_clickable($text)
 {
-    $text = (string) $text;
-    // Links in comment text are user-generated content as well as unfollowed.
-    $rel = doing_filter('comment_text') ? 'nofollow ugc' : 'nofollow';
-    $text = preg_replace_callback('#(?<![\w"\'>=])((?:https?|ftp)://[^\s<"\']+?)(?=[.,;:!?)]*(?:\s|$|<))#i', static fn (array $m) => '<a href="' . esc_url($m[1]) . '" rel="' . $rel . '">' . $m[1] . '</a>', $text);
-    $text = preg_replace_callback('#(?<![\w"\'>=/])(www\.[^\s<"\']+?)(?=[.,;:!?)]*(?:\s|$|<))#i', static fn (array $m) => '<a href="' . esc_url('http://' . $m[1]) . '" rel="' . $rel . '">' . $m[1] . '</a>', $text);
-    $text = preg_replace_callback('#(?<![\w"\'>=:/])([a-z0-9._+-]+@[a-z0-9.-]+\.[a-z]{2,})#i', static fn (array $m) => '<a href="mailto:' . $m[1] . '">' . $m[1] . '</a>', $text);
-    return $text;
+    return Minn\Content\Clickable::make(
+        (string) $text,
+        static fn (array $m): string => _make_url_clickable_cb($m),
+        static fn (array $m): string => _make_web_ftp_clickable_cb($m),
+        static fn (array $m): string => _make_email_clickable_cb($m),
+    );
 }
 
 function wp_normalize_path($path)
@@ -643,10 +648,7 @@ function convert_smilies($text)
     if (!get_option('use_smilies') || (string) $text === '') {
         return $text;
     }
-    return Minn\Content\TextFilters::smilies((string) $text, _minn_smilies(), static function (string $file, string $code): string {
-        $src = apply_filters('smilies_src', includes_url("images/smilies/{$file}"), $file, site_url());
-        return sprintf('<img src="%s" alt="%s" class="wp-smiley" style="height: 1em; max-height: 1em;" />', esc_url($src), esc_attr($code));
-    });
+    return Minn\Content\TextFilters::smilies((string) $text, _minn_smilies(), static fn (string $file, string $code): string => translate_smiley([$code]));
 }
 
 /** @internal The smilies table, from the reference's own (data/smilies.json), through the smilies filter. */
@@ -810,9 +812,12 @@ function wp_targeted_link_rel_callback($matches)
     return "<a {$link}>";
 }
 
+/** Every listed tag given a target, replacing any it had (probe formatting-callbacks). */
 function links_add_target($content, $target = '_blank', $tags = ['a'])
 {
-    return preg_replace('|<(' . implode('|', $tags) . ')([^>]*)>|i', '<$1$2 target="' . esc_attr($target) . '">', (string) $content);
+    global $_links_add_target;
+    $_links_add_target = $target;
+    return preg_replace_callback('!<(' . implode('|', array_map(static fn ($tag): string => preg_quote((string) $tag, '!'), (array) $tags)) . ')((\s[^>]*)?)>!i', '_links_add_target', (string) $content);
 }
 
 function get_url_in_content($content)
@@ -1214,4 +1219,175 @@ function sanitize_trackback_urls($to_ping)
 {
     $urls = array_filter(preg_split('/[\r\n\t ]/', trim((string) $to_ping), -1, PREG_SPLIT_NO_EMPTY), static fn (string $url): bool => (bool) preg_match('#^https?://.#i', $url));
     return apply_filters('sanitize_trackback_urls', implode("\n", array_map('sanitize_url', $urls)), $to_ping);
+}
+
+/** A paragraph's newlines kept through autop as <WPPreserveNewline /> markers. */
+function _autop_newline_preservation_helper($matches)
+{
+    return str_replace("\n", '<WPPreserveNewline />', $matches[0]);
+}
+
+/**
+ * The pattern fragment that finds the named shortcodes for texturize.
+ *
+ * @param string[] $tagnames
+ */
+function _get_wptexturize_shortcode_regex($tagnames)
+{
+    return Minn\Content\Texturize::shortcodeTags(array_map('strval', (array) $tagnames));
+}
+
+/** The pattern that cuts markup into texturize's pieces: comments whole, tags, and the given shortcodes. */
+function _get_wptexturize_split_regex($shortcode_regex = '')
+{
+    return Minn\Content\Texturize::splitPattern((string) $shortcode_regex);
+}
+
+/** Pushes or pops one tag or shortcode on the stack of elements texturize leaves alone. */
+function _wptexturize_pushpop_element($text, &$stack, $disabled_elements)
+{
+    Minn\Content\Texturize::pushPop((string) $text, $stack, array_map('strval', (array) $disabled_elements));
+}
+
+/** Each $needle made a prime after a digit, a closing quote where a word ends, and left as it is elsewhere. */
+function wptexturize_primes($haystack, $needle, $prime, $open_quote, $close_quote)
+{
+    return Minn\Content\Texturize::primes((string) $haystack, (string) $needle, (string) $prime, (string) $close_quote);
+}
+
+/** One attribute's URL made absolute against the base links_add_base_url set, unless it already names an allowed protocol. */
+function _links_add_base($m)
+{
+    global $_links_add_base;
+    $url = (string) $m[3];
+    $absolute = preg_match('#^(\w{1,20}):#', $url, $protocol) === 1 && in_array($protocol[1], wp_allowed_protocols(), true);
+    return $m[1] . '=' . $m[2] . ($absolute ? $url : WP_Http::make_absolute_url($url, (string) $_links_add_base)) . $m[2];
+}
+
+/** One tag given the target links_add_target set, any target it had taken out. */
+function _links_add_target($m)
+{
+    global $_links_add_target;
+    $attributes = (string) preg_replace('|( target=([\'"])(.*?)\2)|i', '', (string) $m[2]);
+    return '<' . $m[1] . $attributes . ' target="' . esc_attr((string) $_links_add_target) . '">';
+}
+
+/** The rel a made link carries: nofollow off the site's host for http and https, ugc in a comment; make_clickable_rel has the last word. */
+function _make_clickable_rel_attr($url)
+{
+    $words = [];
+    $scheme = strtolower((string) wp_parse_url((string) $url, PHP_URL_SCHEME));
+    $host = strtolower((string) wp_parse_url((string) $url, PHP_URL_HOST));
+    if (in_array($scheme, ['http', 'https'], true) && $host !== strtolower((string) wp_parse_url(home_url(), PHP_URL_HOST))) {
+        $words[] = 'nofollow';
+    }
+    if (doing_filter('comment_text')) {
+        $words[] = 'ugc';
+    }
+    $rel = apply_filters('make_clickable_rel', implode(' ', $words), $url);
+    return $rel ? ' rel="' . esc_attr($rel) . '"' : '';
+}
+
+/** A bare URL made a link, its address cleaned for both href and text, closers it does not open left after it. */
+function _make_url_clickable_cb($matches)
+{
+    [$url, $after] = Minn\Content\Clickable::unbalancedClosers((string) $matches[2]);
+    $url = esc_url($url);
+    if ($url === '') {
+        return $matches[0];
+    }
+    return $matches[1] . '<a href="' . $url . '"' . _make_clickable_rel_attr($url) . '>' . $url . '</a>' . $after . ($matches[3] ?? '');
+}
+
+/** A www. or ftp. host made an http link, a trailing "." or ")" left after it. */
+function _make_web_ftp_clickable_cb($matches)
+{
+    $dest = 'http://' . $matches[2];
+    $after = '';
+    if (in_array(substr($dest, -1), ['.', ')'], true)) {
+        $after = substr($dest, -1);
+        $dest = substr($dest, 0, -1);
+    }
+    $dest = esc_url($dest);
+    if ($dest === '') {
+        return $matches[0];
+    }
+    return $matches[1] . '<a href="' . $dest . '"' . _make_clickable_rel_attr($dest) . '>' . $dest . '</a>' . $after . ($matches[3] ?? '');
+}
+
+/** An email address made a mailto link. */
+function _make_email_clickable_cb($matches)
+{
+    $email = $matches[2] . '@' . $matches[3];
+    return $matches[1] . '<a href="mailto:' . $email . '">' . $email . '</a>';
+}
+
+/** One smiley's code made its emoji, or its image for the few that have one. */
+function translate_smiley($matches)
+{
+    $smiley = trim((string) reset($matches));
+    $table = _minn_smilies();
+    if (!isset($table[$smiley])) {
+        return '';
+    }
+    $file = (string) $table[$smiley];
+    if (preg_match('/\.(?:png|gif|jpe?g|svg|webp)$/i', $file) !== 1) {
+        return $file;
+    }
+    $src = apply_filters('smilies_src', includes_url("images/smilies/{$file}"), $file, site_url());
+    return sprintf('<img src="%s" alt="%s" class="wp-smiley" style="height: 1em; max-height: 1em;" />', esc_url($src), esc_attr($smiley));
+}
+
+/** A URL shortened for display: no scheme, no "www.", no trailing slash, cut to $length with an ellipsis. */
+function url_shorten($url, $length = 35)
+{
+    $short = untrailingslashit(str_replace(['https://', 'http://', 'www.'], '', (string) $url));
+    return strlen($short) > $length ? substr($short, 0, $length - 3) . '&hellip;' : $short;
+}
+
+/** A "<" run that never reaches a ">" escaped as text; a whole tag left alone. */
+function wp_pre_kses_less_than_callback($matches)
+{
+    return str_contains((string) $matches[0], '>') ? $matches[0] : esc_html($matches[0]);
+}
+
+/**
+ * An ISO 8601 date and time as "Y-m-d H:i:s": in the site's timezone
+ * ("user") or UTC ("gmt"). A time without an offset is read in the site's
+ * timezone. False when the string is not one.
+ */
+function iso8601_to_datetime($date_string, $timezone = 'user')
+{
+    if (preg_match('#^(\d{4})-?(\d\d)-?(\d\d)T(\d\d):?(\d\d):?(\d\d)(?:\.\d+)?(Z|[+-]\d\d(?::?\d\d)?)?$#i', (string) $date_string, $m) !== 1) {
+        return false;
+    }
+    $offset = $m[7] ?? '';
+    $zone = $offset === '' ? wp_timezone() : new DateTimeZone(strtoupper($offset) === 'Z' ? 'UTC' : substr($offset, 0, 3) . ':' . (substr(str_replace(':', '', $offset), 3) ?: '00'));
+    $date = date_create_immutable("{$m[1]}-{$m[2]}-{$m[3]} {$m[4]}:{$m[5]}:{$m[6]}", $zone);
+    if ($date === false) {
+        return false;
+    }
+    return $date->setTimezone(strtolower((string) $timezone) === 'gmt' ? new DateTimeZone('UTC') : wp_timezone())->format('Y-m-d H:i:s');
+}
+
+/** A mail's message with its emoji made images when the mail is HTML (its Content-Type header, through wp_mail_content_type). */
+function wp_staticize_emoji_for_email($mail)
+{
+    if (!isset($mail['message'])) {
+        return $mail;
+    }
+    $type = 'text/plain';
+    $headers = $mail['headers'] ?? [];
+    foreach (is_array($headers) ? $headers : explode("\n", str_replace("\r\n", "\n", (string) $headers)) as $header) {
+        if (str_contains((string) $header, ':')) {
+            [$name, $value] = explode(':', trim((string) $header), 2);
+            if (strtolower(trim($name)) === 'content-type') {
+                $type = trim(explode(';', $value)[0]);
+            }
+        }
+    }
+    if (apply_filters('wp_mail_content_type', $type) === 'text/html') {
+        $mail['message'] = wp_staticize_emoji($mail['message']);
+    }
+    return $mail;
 }

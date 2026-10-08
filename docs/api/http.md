@@ -17,7 +17,7 @@ request, response, routing, and the outgoing client
 | [`Ipv6`](#ipv6) | final class | 62 | IPv6 addresses as text: written out in full (eight groups, or six and an |
 | [`IriParts`](#iriparts) | final readonly class | 138 | An IRI (a URL that may carry non-ASCII text) split into its parts and |
 | [`Kernel`](#kernel) | final readonly class | 36 | The edge. Turns a request into a response through the router and turns |
-| [`Location`](#location) | final class | 32 | Where a redirect leads: a Location header made absolute against the URL that sent it. |
+| [`Location`](#location) | final class | 65 | Where a redirect leads: a Location header made absolute against the URL that sent it. |
 | [`Matched`](#matched) | final readonly class | 15 | A route the router matched to a request and whose policy it judged: the |
 | [`Method`](#method) | enum | 33 |  |
 | [`Outbound`](#outbound) | final readonly class | 46 | One outgoing HTTP request, normalised: the transport needs nothing else. |
@@ -527,11 +527,16 @@ Used by: `Minn\Http`
 
 ### static `resolve(string $base, string $location): string`
 
-The absolute URL $location names, read against $base.
+The absolute URL $location names, read against $base as RFC 3986
+reads a reference: a scheme keeps it as written, "//" takes the
+base's scheme, a fragment or query alone keeps the base's path, and a
+relative path joins the base's directory with "." and ".." resolved.
 
 ### static `sameOrigin(string $one, string $two): bool`
 
 Whether two URLs share scheme, host, and port, so credentials may follow from one to the other.
+
+Internals: `withoutDotSegments()` (private, line 41)
 
 
 ## Matched

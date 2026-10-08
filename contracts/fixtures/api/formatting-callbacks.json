@@ -1,0 +1,605 @@
+[
+    [
+        "autop newlines kept",
+        [
+            "a<WPPreserveNewline />b<WPPreserveNewline />",
+            "none",
+            "\r<WPPreserveNewline />"
+        ]
+    ],
+    [
+        "texturize shortcode pattern",
+        [
+            [
+                "[caption]",
+                "[caption]"
+            ],
+            [
+                "[caption id=\"x\"]",
+                "[caption id=\"x\"]"
+            ],
+            [
+                "[/caption]",
+                "[/caption]"
+            ],
+            [
+                "[[caption]]",
+                "[[caption]]"
+            ],
+            [
+                "[gallery-x a=1]",
+                "[gallery-x a=1]"
+            ],
+            [
+                "[gallery]",
+                null
+            ],
+            [
+                "text [caption] text",
+                "[caption]"
+            ],
+            [
+                "[caption a=\"]\"]",
+                "[caption a=\"]"
+            ],
+            [
+                "[caption]inner[/caption]",
+                "[caption]"
+            ],
+            [
+                "[ caption]",
+                null
+            ],
+            [
+                "[captions]",
+                null
+            ]
+        ]
+    ],
+    [
+        "texturize split pattern",
+        [
+            [
+                "plain",
+                [
+                    "plain"
+                ]
+            ],
+            [
+                "a <b>bold</b> c",
+                [
+                    "a ",
+                    "<b>",
+                    "bold",
+                    "</b>",
+                    " c"
+                ]
+            ],
+            [
+                "x <!-- c --> y",
+                [
+                    "x ",
+                    "<!-- c -->",
+                    " y"
+                ]
+            ],
+            [
+                "x <!-- a > b --> y",
+                [
+                    "x ",
+                    "<!-- a > b -->",
+                    " y"
+                ]
+            ],
+            [
+                "<p>[caption]text[/caption]</p>",
+                [
+                    "",
+                    "<p>",
+                    "[caption]text[/caption]",
+                    "</p>",
+                    ""
+                ]
+            ],
+            [
+                "1 < 2 > 0",
+                [
+                    "1 ",
+                    "< 2 >",
+                    " 0"
+                ]
+            ],
+            [
+                "<a title=\"x>y\">t</a>",
+                [
+                    "",
+                    "<a title=\"x>",
+                    "y\">t",
+                    "</a>",
+                    ""
+                ]
+            ],
+            [
+                "a <!-- un",
+                [
+                    "a ",
+                    "<!-- un",
+                    ""
+                ]
+            ],
+            [
+                "<![CDATA[ x ]]>",
+                [
+                    "",
+                    "<![CDATA[ x ]]>",
+                    ""
+                ]
+            ],
+            [
+                "[[escaped]]",
+                [
+                    "[[escaped]]"
+                ]
+            ]
+        ]
+    ],
+    [
+        "texturize split pattern with shortcodes",
+        [
+            [
+                "plain",
+                [
+                    "plain"
+                ]
+            ],
+            [
+                "a <b>bold</b> c",
+                [
+                    "a ",
+                    "<b>",
+                    "bold",
+                    "</b>",
+                    " c"
+                ]
+            ],
+            [
+                "x <!-- c --> y",
+                [
+                    "x ",
+                    "<!-- c -->",
+                    " y"
+                ]
+            ],
+            [
+                "x <!-- a > b --> y",
+                [
+                    "x ",
+                    "<!-- a > b -->",
+                    " y"
+                ]
+            ],
+            [
+                "<p>[caption]text[/caption]</p>",
+                [
+                    "",
+                    "<p>",
+                    "",
+                    "[caption]",
+                    "text",
+                    "[/caption]",
+                    "",
+                    "</p>",
+                    ""
+                ]
+            ],
+            [
+                "1 < 2 > 0",
+                [
+                    "1 ",
+                    "< 2 >",
+                    " 0"
+                ]
+            ],
+            [
+                "<a title=\"x>y\">t</a>",
+                [
+                    "",
+                    "<a title=\"x>",
+                    "y\">t",
+                    "</a>",
+                    ""
+                ]
+            ],
+            [
+                "a <!-- un",
+                [
+                    "a ",
+                    "<!-- un",
+                    ""
+                ]
+            ],
+            [
+                "<![CDATA[ x ]]>",
+                [
+                    "",
+                    "<![CDATA[ x ]]>",
+                    ""
+                ]
+            ],
+            [
+                "[[escaped]]",
+                [
+                    "[[escaped]]"
+                ]
+            ]
+        ]
+    ],
+    [
+        "texturize element stack",
+        [
+            [
+                "<code>",
+                [
+                    "code"
+                ]
+            ],
+            [
+                "<pre class=\"x\">",
+                [
+                    "code",
+                    "pre"
+                ]
+            ],
+            [
+                "</pre>",
+                [
+                    "code"
+                ]
+            ],
+            [
+                "<b>",
+                [
+                    "code"
+                ]
+            ],
+            [
+                "</code>",
+                []
+            ],
+            [
+                "</code>",
+                []
+            ],
+            [
+                "<code/>",
+                []
+            ],
+            [
+                "<CODE>",
+                []
+            ],
+            [
+                "</p>",
+                []
+            ]
+        ]
+    ],
+    [
+        "texturize primes",
+        [
+            "9&#8242; tall",
+            "'quoted&#8217; here",
+            "1990&#8242;s",
+            "a 'b&#8217; c 'd",
+            "it's 5&#8242; 'x&#8217;",
+            "'&#8217;",
+            "x"
+        ]
+    ],
+    [
+        "texturize double primes",
+        [
+            "6&#8243; wide",
+            "&#8221;said&#8221; 6&#8243;",
+            "&#8221;open",
+            "a &#8221;b&#8221; c"
+        ]
+    ],
+    [
+        "links made absolute",
+        [
+            "src=\"https://base.example/dir/img.png\"",
+            "href='https://base.example/root'",
+            "href=\"https://other.test/x\"",
+            "href=\"mailto:a@b.test\"",
+            "href=\"https://base.example/dir/page#top\"",
+            "href=\"https://cdn.test/x\"",
+            "<a href=\"https://base.example/dir/x/y\">a</a><img src='https://base.example/z.png'> <a href=\"https://k.test/\">k</a>",
+            "<a href=\"https://base.example/dir/page#top\">t</a><img src=\"https://cdn.test/i.png\"><a href=\"mailto:a@b.test\">m</a><a href=\"https://base.example/up\">u</a><a HREF=\"https://base.example/dir/Case\">c</a>"
+        ]
+    ],
+    [
+        "links given a target",
+        [
+            "<a href=\"x\" target=\"_blank\">",
+            "<a href=\"x\" target=\"_blank\">",
+            "<a href=\"x\" target=\"_blank\">",
+            "<area href=\"x\"/ target=\"_blank\">",
+            "<a href=\"x\" target=\"_blank\">a</a> <A HREF=\"y\" target=\"_blank\">b</A>",
+            "<a href=\"x\" target=\"_top\">a</a><area href=\"y\" target=\"_top\">"
+        ]
+    ],
+    [
+        "clickable rel",
+        [
+            " rel=\"nofollow\"",
+            "",
+            "",
+            " rel=\"nofollow\"",
+            "",
+            "",
+            "",
+            " rel=\"nofollow\""
+        ]
+    ],
+    [
+        "clickable rel, filtered",
+        [
+            " rel=\"nofollow ugc\"",
+            " rel=\" ugc\""
+        ]
+    ],
+    [
+        "clickable url",
+        [
+            " <a href=\"https://example.test/a\" rel=\"nofollow\">https://example.test/a</a>",
+            " <a href=\"https://example.test/a.\" rel=\"nofollow\">https://example.test/a.</a>",
+            "(<a href=\"https://example.test/a\" rel=\"nofollow\">https://example.test/a</a>)",
+            " <a href=\"https://example.test/a\" rel=\"nofollow\">https://example.test/a</a>)",
+            " javascript:alert(1)"
+        ]
+    ],
+    [
+        "clickable www and ftp",
+        [
+            " <a href=\"http://www.example.test\" rel=\"nofollow\">http://www.example.test</a>",
+            " <a href=\"http://ftp.example.test/x\" rel=\"nofollow\">http://ftp.example.test/x</a>",
+            " <a href=\"http://www.example.test\" rel=\"nofollow\">http://www.example.test</a>.",
+            " <a href=\"http://www.example.test\" rel=\"nofollow\">http://www.example.test</a>)"
+        ]
+    ],
+    [
+        "clickable email",
+        [
+            " <a href=\"mailto:a@b.test\">a@b.test</a>",
+            "<a href=\"mailto:a.b+c@d-e.test\">a.b+c@d-e.test</a>"
+        ]
+    ],
+    [
+        "whole text made clickable",
+        [
+            "see <a href=\"http://www.example.test\" rel=\"nofollow\">http://www.example.test</a> now",
+            "mail <a href=\"mailto:a@b.test\">a@b.test</a> or <a href=\"mailto:c.d@e-f.test\">c.d@e-f.test</a>.",
+            "url <a href=\"https://x.test/a\" rel=\"nofollow\">https://x.test/a</a>). end",
+            "(<a href=\"https://x.test/a\" rel=\"nofollow\">https://x.test/a</a>)",
+            "<a href=\"http://ftp.example.test/x\" rel=\"nofollow\">http://ftp.example.test/x</a> and <a href=\"ftp://files.test/y\">ftp://files.test/y</a>",
+            "already <a href=\"https://x.test/\">https://x.test/</a> linked",
+            "in <code>https://x.test/code</code> and <pre>www.pre.test</pre>",
+            "<a href=\"https://x.test/a?b=1&#038;c=2#frag\" rel=\"nofollow\">https://x.test/a?b=1&#038;c=2#frag</a>, then",
+            "trailing <a href=\"https://x.test/a\" rel=\"nofollow\">https://x.test/a</a>.",
+            "javascript:alert(1) and http://",
+            "site <a href=\"https://minn.localhost/inside/\">https://minn.localhost/inside/</a> link",
+            "two\nlines <a href=\"https://x.test/\" rel=\"nofollow\">https://x.test/</a>\nnext",
+            "x@y",
+            "wiki <a href=\"https://x.test/wiki/A_(b)\" rel=\"nofollow\">https://x.test/wiki/A_(b)</a> end and (see <a href=\"https://x.test/c_(d)\" rel=\"nofollow\">https://x.test/c_(d)</a>)",
+            "list <a href=\"https://x.test/a,b,c\" rel=\"nofollow\">https://x.test/a,b,c</a> and <a href=\"https://x.test/q?x=1;y=2\" rel=\"nofollow\">https://x.test/q?x=1;y=2</a>",
+            "local <a href=\"http://localhost:8080/x\" rel=\"nofollow\">http://localhost:8080/x</a> and <a href=\"https://X.TEST/UP\" rel=\"nofollow\">https://X.TEST/UP</a>",
+            "<a href=\"http://www.example.test/path?q=1\" rel=\"nofollow\">http://www.example.test/path?q=1</a>. and <a href=\"http://WWW.UPPER.TEST\" rel=\"nofollow\">http://WWW.UPPER.TEST</a>",
+            "<a href=\"mailto:A@B.TEST\">A@B.TEST</a> and mailto:a@b.test",
+            "a<b><a href=\"https://x.test/in\" rel=\"nofollow\">https://x.test/in</a></b>c",
+            "<a href=\"x\">http://www.inside.test</a> <img alt=\"https://x.test/alt\" src=\"y\">",
+            "<a href=\"https://x.test/\" rel=\"nofollow\">https://x.test/</a> <a href=\"https://y.test/\" rel=\"nofollow\">https://y.test/</a>",
+            "<a href=\"https://ünï.test/p\" rel=\"nofollow\">https://ünï.test/p</a>",
+            "<a href=\"https://x.test/a\" rel=\"nofollow\">https://x.test/a</a>\"b",
+            "<a href=\"https://x.test/a&#039;b\" rel=\"nofollow\">https://x.test/a&#039;b</a>",
+            "see <a href=\"https://x.test/a\" rel=\"nofollow\">https://x.test/a</a>!",
+            "<a href=\"https://x.test/a\" rel=\"nofollow\">https://x.test/a</a>?",
+            "<!-- https://x.test/comment --> after",
+            "<a href=\"https://x.test/\" rel=\"nofollow\">https://x.test/</a><b>",
+            "<script>var u = \"https://x.test/s\";</script><style>a{background:url(https://x.test/st)}</style>",
+            "<textarea><a href=\"https://x.test/ta\" rel=\"nofollow\">https://x.test/ta</a></textarea><kbd><a href=\"https://x.test/k\" rel=\"nofollow\">https://x.test/k</a></kbd><tt><a href=\"https://x.test/tt\" rel=\"nofollow\">https://x.test/tt</a></tt>",
+            "<code>in <b>https://x.test/deep</b></code> <a href=\"https://x.test/out\" rel=\"nofollow\">https://x.test/out</a>",
+            "<a href=\"x\">see <a href=\"https://x.test/inner\" rel=\"nofollow\">https://x.test/inner</a> and <a href=\"http://www.inner.test\" rel=\"nofollow\">http://www.inner.test</a></a>",
+            "<CODE>https://x.test/upper</CODE>",
+            "<a href=\"http://www.a.test,www.b.test\" rel=\"nofollow\">http://www.a.test,www.b.test</a>",
+            "<a href=\"https://x.test/a-b_c~d%20e\" rel=\"nofollow\">https://x.test/a-b_c~d%20e</a>",
+            ">https://x.test/gt",
+            "=https://x.test/eq"
+        ]
+    ],
+    [
+        "whole text made clickable in a comment",
+        [
+            "<p>see <a href=\"https://x.test/\" rel=\"nofollow ugc\">https://x.test/</a> and <a href=\"http://www.example.test\" rel=\"nofollow ugc\">http://www.example.test</a></p>\n",
+            "<p>home <a href=\"https://minn.localhost/in/\" rel=\"ugc\">https://minn.localhost/in/</a> and <a href=\"mailto:a@b.test\">a@b.test</a></p>\n"
+        ]
+    ],
+    [
+        "url schemes cleaned",
+        [
+            [
+                "https://X.TEST/UP",
+                "https://X.TEST/UP"
+            ],
+            [
+                "mailto:A@B.TEST",
+                "mailto:A@B.TEST"
+            ],
+            [
+                "",
+                ""
+            ],
+            [
+                "http://x.test/?a=B",
+                "http://x.test/?a=B"
+            ],
+            [
+                "ftp://f.test/",
+                "ftp://f.test/"
+            ],
+            [
+                "https://x.test/",
+                "https://x.test/"
+            ],
+            [
+                "http://x.test/path",
+                "http://x.test/path"
+            ]
+        ]
+    ],
+    [
+        "smileys translated",
+        [
+            "🙂",
+            "🙂",
+            "🙂",
+            "<img src=\"{site}/wp-includes/images/smilies/mrgreen.png\" alt=\":mrgreen:\" class=\"wp-smiley\" style=\"height: 1em; max-height: 1em;\" />",
+            "🙄",
+            "❓",
+            "😎"
+        ]
+    ],
+    [
+        "urls shortened",
+        [
+            "example.test/a/very/long/path/th&hellip;",
+            "example.test",
+            "example&hellip;",
+            "example.test/x",
+            "ex&hellip;",
+            ""
+        ]
+    ],
+    [
+        "less-than callback",
+        [
+            "<b>",
+            "&lt; 6 &amp; &quot;x&quot;",
+            "&lt;a",
+            "&lt;"
+        ]
+    ],
+    [
+        "iso 8601 read",
+        [
+            "2026-01-02 03:04:05",
+            "2026-01-02 03:04:05",
+            "2026-01-01 22:04:05",
+            "2026-01-01 22:04:05",
+            "2026-01-02 03:04:05",
+            "2026-01-02 03:04:05",
+            "2026-01-02 05:34:05",
+            false,
+            false
+        ]
+    ],
+    [
+        "iso 8601 read in a site timezone",
+        [
+            "2026-01-01 22:04:05",
+            "2026-01-02 03:04:05",
+            "2026-07-01 18:04:05",
+            "2026-07-01 22:04:05",
+            "2026-01-02 03:04:05",
+            "2026-01-02 08:04:05"
+        ]
+    ],
+    [
+        "iso 8601 read at a numeric offset",
+        [
+            "2026-01-02 08:34:05",
+            "2026-01-01 21:34:05"
+        ]
+    ],
+    [
+        "emoji in a mail",
+        [
+            {
+                "to": "a@b.test",
+                "subject": "Hi 😀",
+                "message": "<p>Smile <img src=\"{emoji}/1f600.png\" alt=\"😀\" class=\"wp-smiley\" style=\"height: 1em; max-height: 1em;\" /></p>",
+                "headers": "Content-Type: text/html; charset=UTF-8",
+                "attachments": []
+            },
+            {
+                "to": "a@b.test",
+                "subject": "Hi 😀",
+                "message": "Smile 😀",
+                "headers": "",
+                "attachments": []
+            },
+            {
+                "to": "a@b.test",
+                "subject": "Hi 😀",
+                "message": "<p>Smile <img src=\"{emoji}/1f600.png\" alt=\"😀\" class=\"wp-smiley\" style=\"height: 1em; max-height: 1em;\" /></p>",
+                "headers": [
+                    "Content-Type: text/html",
+                    "X-Other: 1"
+                ],
+                "attachments": []
+            },
+            {
+                "to": "a@b.test",
+                "subject": "Hi 😀",
+                "message": "<p>Smile 😀</p>",
+                "headers": "From: a@b.test\r\ncontent-type: TEXT/HTML",
+                "attachments": []
+            },
+            {
+                "to": "a@b.test",
+                "subject": "Hi 😀",
+                "message": "Smile 😀",
+                "headers": "Content-Type: text/plain",
+                "attachments": []
+            },
+            {
+                "to": "a@b.test",
+                "subject": "Hi 😀",
+                "message": "<p>Smile <img src=\"{emoji}/1f600.png\" alt=\"😀\" class=\"wp-smiley\" style=\"height: 1em; max-height: 1em;\" /></p>",
+                "headers": "From: a@b.test\r\ncontent-type: text/html",
+                "attachments": []
+            },
+            {
+                "to": "a@b.test",
+                "subject": "Hi 😀",
+                "message": "<p>Smile 😀</p>",
+                "headers": "Content-Type: TEXT/HTML",
+                "attachments": []
+            },
+            {
+                "to": "a@b.test",
+                "subject": "Hi 😀",
+                "message": "<p>Smile <img src=\"{emoji}/1f600.png\" alt=\"😀\" class=\"wp-smiley\" style=\"height: 1em; max-height: 1em;\" /></p>",
+                "headers": "X-A: 1\nContent-Type: text/html;charset=utf-8",
+                "attachments": []
+            },
+            {
+                "to": "a@b.test",
+                "subject": "Hi 😀",
+                "message": "<p>Smile <img src=\"{emoji}/1f600.png\" alt=\"😀\" class=\"wp-smiley\" style=\"height: 1em; max-height: 1em;\" /></p>",
+                "headers": "Content-Type:text/html",
+                "attachments": []
+            }
+        ]
+    ],
+    [
+        "emoji in a mail made html by filter",
+        {
+            "to": "a@b.test",
+            "subject": "Hi 😀",
+            "message": "Smile <img src=\"{emoji}/1f600.png\" alt=\"😀\" class=\"wp-smiley\" style=\"height: 1em; max-height: 1em;\" />",
+            "headers": "",
+            "attachments": []
+        }
+    ]
+]

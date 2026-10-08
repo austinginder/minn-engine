@@ -6477,3 +6477,65 @@ that has them keeps its own.
   bound when the value passes it (INF to the maximum, a NAN value as it is),
   and throws `ValueError` for a NAN bound or a minimum above the maximum,
   with PHP's own messages.
+
+## formatting.php's callbacks, and make_clickable done properly (2026-10-08)
+
+Probe `formatting-callbacks` (`tests/tools/formatting-callbacks-probe.php`).
+Sixteen functions, and the parents they serve rebuilt on them, so each path is
+the reference's: `make_clickable`, `links_add_target`, `links_add_base_url`,
+`convert_smilies`.
+
+- **make_clickable** (`Content\Clickable`): text only, never tags or comments,
+  nothing inside `code`, `pre`, `script` or `style` (any case; `textarea`, `kbd`
+  and `tt` are linked). An address starts the text or follows whitespace or
+  `(`; `.,;:!?` after it stay outside, and a `)` it does not open goes after
+  it. URLs (http, https, ftp) first, then `www.`/`ftp.` hosts (made `http://`,
+  and the link text says so), then email addresses (no rel). The link text is
+  the cleaned address (`esc_url`: `&` is `&#038;`, the scheme lower-cased). A
+  link that ends up the whole text of an existing link is unwrapped into it.
+  `_make_clickable_rel_attr`: `nofollow` for http(s) off the site's own host,
+  `ugc` while `comment_text` runs (an internal link in a comment gets
+  `rel="ugc"`), then `make_clickable_rel` (rel, url); nothing when empty.
+  **Fixed:** the engine's old version linked inside `code`, left `www.` text as
+  written, gave `ftp://` and the site's own links `nofollow`, and matched
+  after `>` or `=`.
+- **Links.** `links_add_target` sets `$_links_add_target` and gives each listed
+  tag (as a whole name, so `a` is not `abbr`) the target, removing the one it
+  had (`_links_add_target`). `links_add_base_url` sets `$_links_add_base` and
+  makes each listed attribute's URL absolute unless it names an allowed
+  protocol (`_links_add_base`), through `WP_Http::make_absolute_url`, which now
+  resolves as RFC 3986 does (`Http\Location::resolve`, which redirects use
+  too): `#frag` and `?q` keep the base's path, `//host` its scheme, `.` and `..`
+  are resolved. **Fixed:** `#top` against `/dir/page` gave `/dir/#top`, and
+  `//cdn` was joined to the base's host.
+- **Texturize's pieces** (`Content\Texturize`): `_get_wptexturize_split_regex`
+  cuts comments whole (to `-->` or the end) and tags to their first `>`, plus
+  the given shortcodes, and the engine's own texturize uses the same pattern;
+  `_get_wptexturize_shortcode_regex` is the shortcode fragment it already had.
+  Probed by what the patterns match, never by their text.
+  `_wptexturize_pushpop_element` pushes an opening tag or shortcode of a
+  listed name (case counts; a self-closing one is not pushed) and pops the
+  matching closer when it was the last opened. `wptexturize_primes`: after a
+  digit a prime; otherwise a double quote is the closing quote, and a single
+  one only where a word ends (before the end, whitespace, U+00A0 or `.,;:!?)]}-`).
+- **Small ones.** `_autop_newline_preservation_helper` marks newlines
+  `<WPPreserveNewline />`. `translate_smiley` gives the emoji, or the image
+  (`smilies_src`, `includes_url`) for the few with one, and `convert_smilies`
+  builds its images through it. `url_shorten` drops the scheme, `www.` and a
+  trailing slash and cuts to `length - 3` with `&hellip;`.
+  `wp_pre_kses_less_than_callback` escapes a run with no `>`.
+  `iso8601_to_datetime`: basic or extended form, `Z` or an offset; with an
+  offset it is that instant shown in the site's zone (`user`) or UTC (`gmt`),
+  without one it is read in the site's zone; false otherwise.
+  `wp_staticize_emoji_for_email` makes a mail's emoji images when its
+  Content-Type header (name in any case, value exactly `text/html`, through
+  `wp_mail_content_type`) is HTML; the images come from the Minn update
+  service, so the probe masks their address.
+- **Fixed with it:** `esc_url` refused an allowed scheme written in capitals
+  since the kses batch lower-cased schemes (`HTTPS://x` gave nothing); a
+  change of case alone is now accepted and kept lower-cased.
+
+Left in `formatting.php`: `_print_emoji_detection_script`, which prints the
+emoji script Minn leaves out on purpose (an omission candidate for Austin).
+Under WP-CLI the reference's `site_url()` keeps https through WP-CLI's own
+filter; the probe masks the site's address where that shows.

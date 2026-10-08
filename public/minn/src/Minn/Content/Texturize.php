@@ -25,7 +25,7 @@ final class Texturize
     public static function html(string $html): string
     {
         $shortcode = self::shortcodePattern($html);
-        $parts = preg_split('/(<[^>]*>' . ($shortcode === '' ? '' : '|' . $shortcode) . ')/', $html, -1, PREG_SPLIT_DELIM_CAPTURE) ?: [$html];
+        $parts = preg_split(self::splitPattern($shortcode), $html, -1, PREG_SPLIT_DELIM_CAPTURE) ?: [$html];
         $quiet = $shortcode === '' ? [] : (array) Runtime::hooks()->filter('no_texturize_shortcodes', [['code']]);
         $depth = 0;
         $quieted = [];
@@ -65,7 +65,7 @@ final class Texturize
         if ($tags === []) {
             return '';
         }
-        return '\[[\/\[]?(?:' . implode('|', array_map(static fn (string $tag): string => preg_quote($tag, '/'), $tags)) . ')(?=[\s\]\/])(?:[^\[\]<>]+|<[^\[\]>]*>)*+\]\]?';
+        return self::shortcodeTags($tags);
     }
 
     /**
@@ -112,5 +112,85 @@ final class Texturize
         // Opening doubles, then closers.
         $text = preg_replace('/(^|[\s(\[{<])"(?=\S)/', '$1&#8220;', $text);
         return str_replace('"', '&#8221;', $text);
+    }
+
+    /**
+     * The pattern that cuts markup for texturizing (wp_html_split's pieces
+     * with comments whole and, given, shortcodes): comments run to "-->" or
+     * the end, a tag to its first ">", and each piece is captured.
+     */
+    public static function splitPattern(string $shortcodes = ''): string
+    {
+        return '/(<!--.*?(?:-->|$)|<[^>]*>' . ($shortcodes === '' ? '' : '|' . $shortcodes) . ')/s';
+    }
+
+    /**
+     * The pattern fragment for shortcodes with these names: an opening or
+     * closing tag, or an escaped [[one]], its name ended by a space, "/" or
+     * "]", its attributes up to the first "]".
+     *
+     * @param list<string> $tags
+     */
+    public static function shortcodeTags(array $tags): string
+    {
+        return '\[[\/\[]?(?:' . implode('|', array_map(static fn (string $tag): string => preg_quote($tag, '/'), $tags)) . ')(?=[\s\]\/])(?:[^\[\]<>]+|<[^\[\]>]*>)*+\]\]?';
+    }
+
+    /**
+     * Keeps the stack of open elements texturize leaves alone: an opening
+     * tag or shortcode of a listed name is pushed (a self-closing one is
+     * not), its closing one pops it when it is the last opened.
+     *
+     * @param list<string> $stack
+     * @param list<string> $disabled
+     */
+    public static function pushPop(string $text, array &$stack, array $disabled): void
+    {
+        if (preg_match('#^[<\[]/?([^\s>\]/]+)#', $text, $m) !== 1) {
+            return;
+        }
+        $name = $m[1];
+        if (($text[1] ?? '') !== '/') {
+            if (in_array($name, $disabled, true) && !str_ends_with($text, '/>') && !str_ends_with($text, '/]')) {
+                $stack[] = $name;
+            }
+        } elseif (end($stack) === $name) {
+            array_pop($stack);
+        }
+    }
+
+    /**
+     * Each $needle in the text made a prime after a digit; otherwise a
+     * double quote becomes the closing quote, and a single one does only
+     * where a word ends (before the end, whitespace, a no-break space or
+     * . , ; : ! ? ) ] } -), staying an apostrophe or opening quote elsewhere.
+     */
+    public static function primes(string $haystack, string $needle, string $prime, string $closeQuote): string
+    {
+        if ($needle === '') {
+            return $haystack;
+        }
+        $pieces = explode($needle, $haystack);
+        $out = $pieces[0];
+        $count = count($pieces);
+        for ($i = 1; $i < $count; $i++) {
+            $before = substr($pieces[$i - 1], -1);
+            $after = $pieces[$i];
+            if ($before !== '' && ctype_digit($before)) {
+                $out .= $prime;
+            } elseif ($needle !== "'" || self::endsWord($after !== '' ? $after : ($i < $count - 1 ? $needle : ''))) {
+                $out .= $closeQuote;
+            } else {
+                $out .= $needle;
+            }
+            $out .= $after;
+        }
+        return $out;
+    }
+
+    /** Whether what follows a single quote ends a word: nothing, whitespace, a no-break space, or . , ; : ! ? ) ] } -. */
+    private static function endsWord(string $next): bool
+    {
+        return $next === '' || preg_match('/^(?:\s|\xC2\xA0|[.,;:!?)\]}\-])/', $next) === 1;
     }
 }

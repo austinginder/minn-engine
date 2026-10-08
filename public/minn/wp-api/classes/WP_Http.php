@@ -352,19 +352,13 @@ namespace {
             return wp_parse_url($url);
         }
 
+        /** A URL read against a base (RFC 3986, as a redirect is); one with a scheme stays as written. */
         public static function make_absolute_url($maybe_relative_path, $url)
         {
-            if (empty($url) || str_starts_with((string) $maybe_relative_path, 'http')) {
+            if (empty($url) || preg_match('#^[a-z][a-z0-9+.-]*:#i', (string) $maybe_relative_path) === 1) {
                 return $maybe_relative_path;
             }
-            $parts = parse_url((string) $url);
-            $base = ($parts['scheme'] ?? 'http') . '://' . ($parts['host'] ?? '') . (isset($parts['port']) ? ':' . $parts['port'] : '');
-            if (str_starts_with((string) $maybe_relative_path, '/')) {
-                return $base . $maybe_relative_path;
-            }
-            $path = (string) ($parts['path'] ?? '/');
-            $directory = str_ends_with($path, '/') ? $path : (dirname($path) === '/' ? '/' : dirname($path) . '/');
-            return $base . $directory . $maybe_relative_path;
+            return \Minn\Http\Location::resolve((string) $url, (string) $maybe_relative_path);
         }
 
         public function block_request($uri)

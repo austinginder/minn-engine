@@ -6,6 +6,7 @@ the repositories and records: posts, users, terms, comments, and the render pipe
 |---|---|---|---|
 | [`Autop`](#autop) | final class | 34 | Classic-content paragraphing: blank lines become paragraphs, single |
 | [`Blocks`](#blocks) | final class | 46 | The content pipeline's front door: block markup goes through the block |
+| [`Clickable`](#clickable) | final class | 64 | Bare addresses in text made links (make_clickable, probe |
 | [`CommentClasses`](#commentclasses) | final class | 26 | The class tokens a rendered comment carries: its type, its author, odd/even and thread alternation, depth, then the caller's extras. |
 | [`CommentModeration`](#commentmoderation) | final readonly class | 43 | Whether a comment may be stored and in what state: the duplicate and |
 | [`CommentRecord`](#commentrecord) | final readonly class | 114 | One row of the comments table, read by name: $comment->author, ->content, |
@@ -41,7 +42,7 @@ the repositories and records: posts, users, terms, comments, and the render pipe
 | [`TermRecord`](#termrecord) | final readonly class | 88 | One term with its taxonomy row, read by name: $term->name, ->slug, |
 | [`Terms`](#terms) | final readonly class | 221 |  |
 | [`TextFilters`](#textfilters) | final class | 161 | The small text filters the reference runs over content, titles and |
-| [`Texturize`](#texturize) | final class | 102 | The texturize subset the reference applies to rendered text: straight |
+| [`Texturize`](#texturize) | final class | 182 | The texturize subset the reference applies to rendered text: straight |
 | [`UserRecord`](#userrecord) | final readonly class | 96 | One row of the users table, read by name. Columns keep their WordPress |
 | [`Users`](#users) | final readonly class | 291 |  |
 
@@ -85,6 +86,42 @@ stands in.
 
 Plain prose to paragraphs: texturize, split on blank lines, <br /> on
 single newlines. Shared by classic post content and comment text.
+
+
+## Clickable
+
+`final class Minn\Content\Clickable` · `public/minn/src/Minn/Content/Clickable.php`
+
+Bare addresses in text made links (make_clickable, probe
+formatting-callbacks). Only text is read, never tags or comments, and
+nothing inside code, pre, script or style. An address must start the text
+or follow whitespace or "("; trailing . , ; : ! ? stay outside it. URLs
+(http, https, ftp) are found first, then www. and ftp. hosts, then email
+addresses; each is handed to its callback, which builds the link. A link
+made as the whole text of an existing link is unwrapped into it.
+
+- const `SKIP` = `'code|pre|script|style'`
+- const `BEFORE` = `'(^|[\\s(])'`
+- const `TRAILING` = `'([.,;:!?]*)(?=[\\s<>"]|$)'`
+
+### static `make(string $text, Closure $url, Closure $web, Closure $email): string`
+
+The text with its addresses made links: $url gets [whole, before,
+address, trailing], $web the same for a www. or ftp. host, $email
+[whole, before, user, domain].
+
+- `@param Closure(list<string>): string $url`
+- `@param Closure(list<string>): string $web`
+- `@param Closure(list<string>): string $email`
+
+### static `unbalancedClosers(string $url): array`
+
+A URL's trailing ")" taken off while the URL closes more parentheses
+than it opens: [the URL, what was taken off].
+
+- `@return array{0: string, 1: string}`
+
+Internals: `linked()` (private, line 70), `unwrapNested()` (private, line 78)
 
 
 ## CommentClasses
@@ -1972,7 +2009,37 @@ the ones no_texturize_shortcodes names ([code] by default).
 
 The same substitutions on a plain string with no tags.
 
-Internals: `shortcodePattern()` (private, line 58), `quiet()` (private, line 77)
+### static `splitPattern(string $shortcodes = ''): string`
+
+The pattern that cuts markup for texturizing (wp_html_split's pieces
+with comments whole and, given, shortcodes): comments run to "-->" or
+the end, a tag to its first ">", and each piece is captured.
+
+### static `shortcodeTags(array $tags): string`
+
+The pattern fragment for shortcodes with these names: an opening or
+closing tag, or an escaped [[one]], its name ended by a space, "/" or
+"]", its attributes up to the first "]".
+
+- `@param list<string> $tags`
+
+### static `pushPop(string $text, array $stack, array $disabled): void`
+
+Keeps the stack of open elements texturize leaves alone: an opening
+tag or shortcode of a listed name is pushed (a self-closing one is
+not), its closing one pops it when it is the last opened.
+
+- `@param list<string> $stack`
+- `@param list<string> $disabled`
+
+### static `primes(string $haystack, string $needle, string $prime, string $closeQuote): string`
+
+Each $needle in the text made a prime after a digit; otherwise a
+double quote becomes the closing quote, and a single one does only
+where a word ends (before the end, whitespace, a no-break space or
+. , ; : ! ? ) ] } -), staying an apostrophe or opening quote elsewhere.
+
+Internals: `shortcodePattern()` (private, line 58), `quiet()` (private, line 77), `endsWord()` (private, line 192)
 
 
 ## UserRecord

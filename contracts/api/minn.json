@@ -24764,6 +24764,174 @@
             ]
         },
         {
+            "name": "Minn\\Content\\Clickable",
+            "short": "Clickable",
+            "namespace": "Minn\\Content",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Content/Clickable.php",
+            "lines": 64,
+            "doc": "Bare addresses in text made links (make_clickable, probe\nformatting-callbacks). Only text is read, never tags or comments, and\nnothing inside code, pre, script or style. An address must start the text\nor follow whitespace or \"(\"; trailing . , ; : ! ? stay outside it. URLs\n(http, https, ftp) are found first, then www. and ftp. hosts, then email\naddresses; each is handed to its callback, which builds the link. A link\nmade as the whole text of an existing link is unwrapped into it.",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\Html"
+            ],
+            "usedBy": [],
+            "constructor": null,
+            "cases": [],
+            "constants": [
+                {
+                    "name": "SKIP",
+                    "value": "'code|pre|script|style'",
+                    "doc": "",
+                    "visibility": "private"
+                },
+                {
+                    "name": "BEFORE",
+                    "value": "'(^|[\\\\s(])'",
+                    "doc": "",
+                    "visibility": "private"
+                },
+                {
+                    "name": "TRAILING",
+                    "value": "'([.,;:!?]*)(?=[\\\\s<>\"]|$)'",
+                    "doc": "",
+                    "visibility": "private"
+                }
+            ],
+            "properties": [],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "make",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "make(string $text, Closure $url, Closure $web, Closure $email): string",
+                    "doc": "The text with its addresses made links: $url gets [whole, before,\naddress, trailing], $web the same for a www. or ftp. host, $email\n[whole, before, user, domain].",
+                    "shapes": [
+                        "@param Closure(list<string>): string $url",
+                        "@param Closure(list<string>): string $web",
+                        "@param Closure(list<string>): string $email"
+                    ],
+                    "params": [
+                        {
+                            "name": "text",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "url",
+                            "type": "Closure",
+                            "shape": "Closure(list<string>): string",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "web",
+                            "type": "Closure",
+                            "shape": "Closure(list<string>): string",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "email",
+                            "type": "Closure",
+                            "shape": "Closure(list<string>): string",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 34,
+                    "end": 52
+                },
+                {
+                    "routes": [],
+                    "name": "unbalancedClosers",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "unbalancedClosers(string $url): array",
+                    "doc": "A URL's trailing \")\" taken off while the URL closes more parentheses\nthan it opens: [the URL, what was taken off].",
+                    "shapes": [
+                        "@return array{0: string, 1: string}"
+                    ],
+                    "params": [
+                        {
+                            "name": "url",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 60,
+                    "end": 68
+                },
+                {
+                    "routes": [],
+                    "name": "linked",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "linked(string $text, Closure $url, Closure $web, Closure $email): string",
+                    "doc": "",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "text",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "url",
+                            "type": "Closure",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "web",
+                            "type": "Closure",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "email",
+                            "type": "Closure",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 70,
+                    "end": 75
+                },
+                {
+                    "routes": [],
+                    "name": "unwrapNested",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "unwrapNested(string $html): string",
+                    "doc": "A link that is the whole text of another link gives the outer one its text.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "html",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 78,
+                    "end": 81
+                }
+            ]
+        },
+        {
             "name": "Minn\\Content\\CommentClasses",
             "short": "CommentClasses",
             "namespace": "Minn\\Content",
@@ -35088,7 +35256,7 @@
             "namespace": "Minn\\Content",
             "kind": "final class",
             "file": "public/minn/src/Minn/Content/Texturize.php",
-            "lines": 102,
+            "lines": 182,
             "doc": "The texturize subset the reference applies to rendered text: straight\nquotes, apostrophes, ellipses, dashes, and primes become numeric\nentities, outside the skip elements only. Coverage is pinned by the\ntexturize battery post; anything beyond it is a documented gap.",
             "implements": [],
             "extends": null,
@@ -35166,6 +35334,126 @@
                 },
                 {
                     "routes": [],
+                    "name": "splitPattern",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "splitPattern(string $shortcodes = ''): string",
+                    "doc": "The pattern that cuts markup for texturizing (wp_html_split's pieces\nwith comments whole and, given, shortcodes): comments run to \"-->\" or\nthe end, a tag to its first \">\", and each piece is captured.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "shortcodes",
+                            "type": "string",
+                            "shape": "",
+                            "default": "''",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 122,
+                    "end": 125
+                },
+                {
+                    "routes": [],
+                    "name": "shortcodeTags",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "shortcodeTags(array $tags): string",
+                    "doc": "The pattern fragment for shortcodes with these names: an opening or\nclosing tag, or an escaped [[one]], its name ended by a space, \"/\" or\n\"]\", its attributes up to the first \"]\".",
+                    "shapes": [
+                        "@param list<string> $tags"
+                    ],
+                    "params": [
+                        {
+                            "name": "tags",
+                            "type": "array",
+                            "shape": "list<string>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 134,
+                    "end": 137
+                },
+                {
+                    "routes": [],
+                    "name": "pushPop",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "pushPop(string $text, array $stack, array $disabled): void",
+                    "doc": "Keeps the stack of open elements texturize leaves alone: an opening\ntag or shortcode of a listed name is pushed (a self-closing one is\nnot), its closing one pops it when it is the last opened.",
+                    "shapes": [
+                        "@param list<string> $stack",
+                        "@param list<string> $disabled"
+                    ],
+                    "params": [
+                        {
+                            "name": "text",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "stack",
+                            "type": "array",
+                            "shape": "list<string>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "disabled",
+                            "type": "array",
+                            "shape": "list<string>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 147,
+                    "end": 160
+                },
+                {
+                    "routes": [],
+                    "name": "primes",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "primes(string $haystack, string $needle, string $prime, string $closeQuote): string",
+                    "doc": "Each $needle in the text made a prime after a digit; otherwise a\ndouble quote becomes the closing quote, and a single one does only\nwhere a word ends (before the end, whitespace, a no-break space or\n. , ; : ! ? ) ] } -), staying an apostrophe or opening quote elsewhere.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "haystack",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "needle",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "prime",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "closeQuote",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 168,
+                    "end": 189
+                },
+                {
+                    "routes": [],
                     "name": "shortcodePattern",
                     "static": true,
                     "visibility": "private",
@@ -35219,6 +35507,26 @@
                     ],
                     "line": 77,
                     "end": 93
+                },
+                {
+                    "routes": [],
+                    "name": "endsWord",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "endsWord(string $next): bool",
+                    "doc": "Whether what follows a single quote ends a word: nothing, whitespace, a no-break space, or . , ; : ! ? ) ] } -.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "next",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 192,
+                    "end": 195
                 }
             ]
         },
@@ -49919,6 +50227,7 @@
                 "Minn\\Blocks\\ImageTags",
                 "Minn\\Blocks\\Renderer",
                 "Minn\\Blocks\\Wrapper",
+                "Minn\\Content\\Clickable",
                 "Minn\\Content\\Menus",
                 "Minn\\Content\\NoteMarkers",
                 "Minn\\Content\\PasswordGate",
@@ -61263,7 +61572,7 @@
             "namespace": "Minn\\Http",
             "kind": "final class",
             "file": "public/minn/src/Minn/Http/Location.php",
-            "lines": 32,
+            "lines": 65,
             "doc": "Where a redirect leads: a Location header made absolute against the URL that sent it.",
             "implements": [],
             "extends": null,
@@ -61285,7 +61594,7 @@
                     "static": true,
                     "visibility": "public",
                     "signature": "resolve(string $base, string $location): string",
-                    "doc": "The absolute URL $location names, read against $base.",
+                    "doc": "The absolute URL $location names, read against $base as RFC 3986\nreads a reference: a scheme keeps it as written, \"//\" takes the\nbase's scheme, a fragment or query alone keeps the base's path, and a\nrelative path joins the base's directory with \".\" and \"..\" resolved.",
                     "shapes": [],
                     "params": [
                         {
@@ -61303,8 +61612,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 11,
-                    "end": 27
+                    "line": 16,
+                    "end": 38
                 },
                 {
                     "routes": [],
@@ -61330,8 +61639,28 @@
                             "doc": ""
                         }
                     ],
-                    "line": 30,
-                    "end": 38
+                    "line": 63,
+                    "end": 71
+                },
+                {
+                    "routes": [],
+                    "name": "withoutDotSegments",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "withoutDotSegments(string $path): string",
+                    "doc": "A path with its \".\" and \"..\" segments resolved (RFC 3986 remove_dot_segments).",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "path",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 41,
+                    "end": 60
                 }
             ]
         },

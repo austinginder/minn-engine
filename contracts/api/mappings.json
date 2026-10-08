@@ -2,14 +2,14 @@
     "generated": "2026-10-08",
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line), placeholder (generated stub, behaviour still owed), deadend (generated stub for wp-admin, the editors, the Customizer or XML-RPC, inert by design); \"deadend\" on any entry names its dead-end area",
     "summary": {
-        "minn": 738,
-        "composes": 1533,
-        "leaf": 758,
-        "noop": 2430,
+        "minn": 741,
+        "composes": 1539,
+        "leaf": 760,
+        "noop": 2435,
         "placeholder": 281,
         "deadend": 1594,
-        "functions": 7257,
-        "minnMethods": 882,
+        "functions": 7273,
+        "minnMethods": 889,
         "leafLinesOver15": 13
     },
     "functions": {
@@ -25057,6 +25057,13 @@
                 "_wp_die_process_input"
             ]
         },
+        "_autop_newline_preservation_helper": {
+            "file": "formatting.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
         "_block_bindings_pattern_overrides_get_value": {
             "file": "blocks.php",
             "lines": 2,
@@ -25768,6 +25775,24 @@
             "minn": [],
             "composes": []
         },
+        "_get_wptexturize_shortcode_regex": {
+            "file": "formatting.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Content\\Texturize::shortcodeTags"
+            ],
+            "composes": []
+        },
+        "_get_wptexturize_split_regex": {
+            "file": "formatting.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Content\\Texturize::splitPattern"
+            ],
+            "composes": []
+        },
         "_http_build_query": {
             "file": "functions.php",
             "lines": 1,
@@ -25829,6 +25854,24 @@
                 "_wp_die_process_input",
                 "header",
                 "wp_json_encode"
+            ]
+        },
+        "_links_add_base": {
+            "file": "formatting.php",
+            "lines": 4,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "wp_allowed_protocols"
+            ]
+        },
+        "_links_add_target": {
+            "file": "formatting.php",
+            "lines": 3,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "esc_attr"
             ]
         },
         "_list_meta_row": {
@@ -25893,6 +25936,48 @@
             "kind": "leaf",
             "minn": [],
             "composes": []
+        },
+        "_make_clickable_rel_attr": {
+            "file": "formatting.php",
+            "lines": 11,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "apply_filters",
+                "doing_filter",
+                "esc_attr",
+                "home_url",
+                "wp_parse_url"
+            ]
+        },
+        "_make_email_clickable_cb": {
+            "file": "formatting.php",
+            "lines": 2,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "_make_url_clickable_cb": {
+            "file": "formatting.php",
+            "lines": 6,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Content\\Clickable::unbalancedClosers"
+            ],
+            "composes": [
+                "_make_clickable_rel_attr",
+                "esc_url"
+            ]
+        },
+        "_make_web_ftp_clickable_cb": {
+            "file": "formatting.php",
+            "lines": 11,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "_make_clickable_rel_attr",
+                "esc_url"
+            ]
         },
         "_mb_chr": {
             "file": "compat.php",
@@ -30059,6 +30144,15 @@
                 "get_option"
             ]
         },
+        "_wptexturize_pushpop_element": {
+            "file": "formatting.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Content\\Texturize::pushPop"
+            ],
+            "composes": []
+        },
         "_x": {
             "file": "l10n.php",
             "lines": 1,
@@ -32719,19 +32813,15 @@
         },
         "convert_smilies": {
             "file": "formatting.php",
-            "lines": 7,
+            "lines": 4,
             "kind": "minn",
             "minn": [
                 "Minn\\Content\\TextFilters::smilies"
             ],
             "composes": [
                 "_minn_smilies",
-                "apply_filters",
-                "esc_attr",
-                "esc_url",
                 "get_option",
-                "includes_url",
-                "site_url"
+                "translate_smiley"
             ]
         },
         "convert_to_screen": {
@@ -34052,7 +34142,7 @@
         },
         "esc_url": {
             "file": "formatting.php",
-            "lines": 13,
+            "lines": 18,
             "kind": "minn",
             "minn": [
                 "Minn\\Support\\Url::clean",
@@ -42530,6 +42620,15 @@
             "minn": [],
             "composes": []
         },
+        "iso8601_to_datetime": {
+            "file": "formatting.php",
+            "lines": 10,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "wp_timezone"
+            ]
+        },
         "js_escape": {
             "file": "deprecated.php",
             "lines": 2,
@@ -42645,19 +42744,17 @@
         },
         "links_add_base_url": {
             "file": "misc.php",
-            "lines": 8,
+            "lines": 4,
             "kind": "leaf",
             "minn": [],
             "composes": []
         },
         "links_add_target": {
             "file": "formatting.php",
-            "lines": 1,
-            "kind": "noop",
+            "lines": 3,
+            "kind": "leaf",
             "minn": [],
-            "composes": [
-                "esc_attr"
-            ]
+            "composes": []
         },
         "links_popup_script": {
             "file": "deprecated.php",
@@ -42870,12 +42967,12 @@
         },
         "make_absolute_url": {
             "file": "classes/WP_Http.php",
-            "lines": 11,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "parse_url"
-            ]
+            "lines": 4,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Http\\Location::resolve"
+            ],
+            "composes": []
         },
         "make_after_block_visitor": {
             "file": "blocks.php",
@@ -42893,12 +42990,15 @@
         },
         "make_clickable": {
             "file": "formatting.php",
-            "lines": 7,
-            "kind": "composes",
-            "minn": [],
+            "lines": 6,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Content\\Clickable::make"
+            ],
             "composes": [
-                "doing_filter",
-                "esc_url"
+                "_make_email_clickable_cb",
+                "_make_url_clickable_cb",
+                "_make_web_ftp_clickable_cb"
             ]
         },
         "make_db_current": {
@@ -49874,6 +49974,21 @@
             "minn": [],
             "composes": []
         },
+        "translate_smiley": {
+            "file": "formatting.php",
+            "lines": 11,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "_minn_smilies",
+                "apply_filters",
+                "esc_attr",
+                "esc_url",
+                "includes_url",
+                "reset",
+                "site_url"
+            ]
+        },
         "translate_user_role": {
             "file": "template.php",
             "lines": 1,
@@ -50976,6 +51091,15 @@
             "kind": "noop",
             "minn": [],
             "composes": []
+        },
+        "url_shorten": {
+            "file": "formatting.php",
+            "lines": 2,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "untrailingslashit"
+            ]
         },
         "url_to_postid": {
             "file": "post.php",
@@ -59781,6 +59905,15 @@
                 "esc_html"
             ]
         },
+        "wp_pre_kses_less_than_callback": {
+            "file": "formatting.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "esc_html"
+            ]
+        },
         "wp_preload_dialogs": {
             "file": "deadends.php",
             "lines": 2,
@@ -62316,6 +62449,16 @@
                 "apply_filters"
             ]
         },
+        "wp_staticize_emoji_for_email": {
+            "file": "formatting.php",
+            "lines": 17,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "apply_filters",
+                "wp_staticize_emoji"
+            ]
+        },
         "wp_stream_image": {
             "file": "media.php",
             "lines": 5,
@@ -64832,6 +64975,15 @@
             "kind": "minn",
             "minn": [
                 "Minn\\Content\\Texturize::html"
+            ],
+            "composes": []
+        },
+        "wptexturize_primes": {
+            "file": "formatting.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Content\\Texturize::primes"
             ],
             "composes": []
         },
