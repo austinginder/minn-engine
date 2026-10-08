@@ -24,7 +24,7 @@ $classes = json_decode((string) file_get_contents("{$root}/contracts/api/classes
 $omitted = json_decode((string) @file_get_contents("{$root}/contracts/api/omitted.json"), true) ?: [];
 
 // Pingbacks, trackbacks and update pings ride on XML-RPC even where their functions live elsewhere.
-const PINGS = ['pingback', 'do_all_pings', 'do_all_pingbacks', 'do_all_trackbacks', 'do_all_enclosures', 'generic_ping', 'weblog_ping', 'trackback', 'do_trackbacks', 'trackback_url_list', 'pingback_ping_source_uri', 'discover_pingback_server_uri', 'privacy_ping_filter', 'get_pung', 'get_to_ping', 'add_ping'];
+const PINGS = ['pingback', 'do_all_pings', 'do_all_pingbacks', 'do_all_trackbacks', 'do_all_enclosures', 'generic_ping', 'weblog_ping', 'trackback', 'do_trackbacks', 'trackback_url_list', 'pingback_ping_source_uri', 'discover_pingback_server_uri', 'privacy_ping_filter', 'get_pung', 'get_to_ping', 'add_ping', 'wp_should_disable_pings_for_environment', 'wp_maybe_disable_outgoing_pings_for_environment', 'wp_maybe_disable_trackback_for_environment', 'wp_maybe_disable_xmlrpc_pingback_for_environment'];
 
 // The editors' own REST controllers and loaders: what only the block or site editor asks for.
 const EDITOR_FILES = '#wp-includes/(block-editor\.php|class-wp-block-editor-context\.php|rest-api/endpoints/class-wp-rest-(block-directory|pattern-directory|edit-site-export|global-styles(-revisions)?|template-autosaves|template-revisions|navigation-fallback|font-(collections|faces|families))-controller\.php)#';
@@ -33,7 +33,7 @@ const EDITOR_FILES = '#wp-includes/(block-editor\.php|class-wp-block-editor-cont
 // media.php's uploader and editor helpers, hooked only on admin_init, the plupload settings and the
 // editor screens' load-* actions (probe media-tags, 2026-10-08); functions.php's TinyMCE direction
 // (tiny_mce_before_init), the Widgets menu (_admin_menu) and the update-PHP button (probe functions-utils).
-const NAMED = ['_mce_set_direction' => 'editor', 'wp_widgets_add_menu' => 'admin', 'wp_direct_php_update_button' => 'admin', 'wp_set_client_side_media_processing_flag' => 'admin', 'wp_show_heic_upload_error' => 'admin', 'wp_set_up_cross_origin_isolation' => 'editor', 'wp_start_cross_origin_isolation_output_buffer' => 'editor', 'wpview_media_sandbox_styles' => 'editor', 'the_editor' => 'admin', 'wp_ajax_press_this_add_category' => 'admin', 'wp_ajax_press_this_save_post' => 'admin', 'remove_option_whitelist' => 'admin', 'wp_add_editor_classic_theme_styles' => 'editor', 'wp_add_iframed_editor_assets_html' => 'editor'];
+const NAMED = ['_mce_set_direction' => 'editor', 'wp_widgets_add_menu' => 'admin', 'wp_direct_php_update_button' => 'admin', 'wp_set_client_side_media_processing_flag' => 'admin', 'wp_show_heic_upload_error' => 'admin', 'wp_set_up_cross_origin_isolation' => 'editor', 'wp_start_cross_origin_isolation_output_buffer' => 'editor', 'wpview_media_sandbox_styles' => 'editor', 'the_editor' => 'admin', 'wp_ajax_press_this_add_category' => 'admin', 'wp_ajax_press_this_save_post' => 'admin', 'remove_option_whitelist' => 'admin', 'wp_add_editor_classic_theme_styles' => 'editor', 'wp_add_iframed_editor_assets_html' => 'editor', 'wp_get_note_mentioned_user_ids' => 'editor', 'wp_notify_note_mentions' => 'editor'];
 
 /** The dead end a symbol belongs to, or null when it should behave like the reference. */
 function category(string $name, string $file): ?string

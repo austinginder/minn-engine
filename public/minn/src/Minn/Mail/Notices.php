@@ -85,6 +85,23 @@ final readonly class Notices
             TEXT);
     }
 
+    /** A post's author told of a note on it, with where the post is edited (notes live in the editor). */
+    public function newNote(string $authorEmail, string $postTitle, string $author, string $note, string $editLink): Message
+    {
+        $text = strip_tags($note);
+        return Message::to($authorEmail, $this->subject('Note: "' . $postTitle . '"'), <<<TEXT
+            New note on your post "{$postTitle}".
+
+            Author: {$author}
+            Note:
+            {$text}
+
+            See the notes on the post:
+            {$editLink}
+
+            TEXT);
+    }
+
     /** Every notice the reference sends carries the site's name in brackets. */
     private function subject(string $subject): string
     {

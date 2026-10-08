@@ -21,7 +21,7 @@ sending mail and the notices the engine sends
 | [`MailerStrings`](#mailerstrings) | final class | 34 | The mailer's English messages, keyed as plugins look them up |
 | [`Message`](#message) | final readonly class | 18 | One outgoing plain-text email. |
 | [`MimeTypes`](#mimetypes) | final class | 43 | The MIME type a mailer gives an attachment by its file extension (the |
-| [`Notices`](#notices) | final readonly class | 82 | The messages the engine itself sends, worded as the reference words them |
+| [`Notices`](#notices) | final readonly class | 99 | The messages the engine itself sends, worded as the reference words them |
 | [`PathParts`](#pathparts) | final class | 22 | A path's parts the way a mailer names attachments, safe for multibyte |
 | [`Smime`](#smime) | final class | 27 | S/MIME signing of a composed MIME entity with a certificate and key on |
 | [`Smtp`](#smtp) | final readonly class | 33 | Delivery over SMTP for the engine's own mail when WordPress's mail |
@@ -646,7 +646,11 @@ A comment waiting in the queue, announced to the site's address.
 
 An approved comment on a post, announced to the post's author.
 
-Internals: `subject()` (private, line 89)
+### `newNote(string $authorEmail, string $postTitle, string $author, string $note, string $editLink): Minn\Mail\Message`
+
+A post's author told of a note on it, with where the post is edited (notes live in the editor).
+
+Internals: `subject()` (private, line 106)
 
 
 ## PathParts

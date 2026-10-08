@@ -22,16 +22,24 @@ final readonly class CommentCloser
     /** Whether comments stay open on a post under the close-after-days setting. */
     public function open(bool $open, array|PostRecord|null $post, int $now): bool
     {
-        if (!$open || !$this->enabled || $this->days <= 0 || $post === null) {
-            return $open;
+        return $open && ($post === null || !$this->closes((string) ($post['post_type'] ?? ''), (string) ($post['post_date_gmt'] ?? ''), ['post'], $now));
+    }
+
+    /**
+     * Whether the setting closes a post of $postType published at
+     * $postDateGmt: the type is one of $types, the setting is on, and the
+     * post is older than the days allowed. The posts a single query hands
+     * over (_close_comments_for_old_posts) take their types from the
+     * close_comments_for_post_types filter, which is honoured there.
+     *
+     * @param list<string> $types
+     */
+    public function closes(string $postType, string $postDateGmt, array $types, int $now): bool
+    {
+        if (!$this->enabled || $this->days <= 0 || !in_array($postType, $types, true)) {
+            return false;
         }
-        if (($post['post_type'] ?? '') !== 'post') {
-            return $open;
-        }
-        $published = strtotime((string) ($post['post_date_gmt'] ?? '') . ' UTC');
-        if ($published === false) {
-            return $open;
-        }
-        return intdiv(max(0, $now - $published), 86400) <= $this->days;
+        $published = strtotime($postDateGmt . ' UTC');
+        return $published !== false && intdiv(max(0, $now - $published), 86400) > $this->days;
     }
 }

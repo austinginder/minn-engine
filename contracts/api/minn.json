@@ -28607,6 +28607,67 @@
             ]
         },
         {
+            "name": "Minn\\Content\\NoteMarkers",
+            "short": "NoteMarkers",
+            "namespace": "Minn\\Content",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Content/NoteMarkers.php",
+            "lines": 34,
+            "doc": "The markers the block editor's notes leave in content: a mark element\nwhose class list holds \"wp-note\". A rendered block loses the marker and\nkeeps what it wrapped, nested markers too, an unclosed one losing only its\nopening tag; any other mark stays whole (probe comment-helpers).",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\Html"
+            ],
+            "usedBy": [],
+            "constructor": null,
+            "cases": [],
+            "constants": [],
+            "properties": [],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "strip",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "strip(string $html): string",
+                    "doc": "Markup with every note marker's tags taken out.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "html",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 18,
+                    "end": 37
+                },
+                {
+                    "routes": [],
+                    "name": "isNote",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "isNote(string $tag): bool",
+                    "doc": "Whether a mark's opening tag carries the \"wp-note\" class.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "tag",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 40,
+                    "end": 47
+                }
+            ]
+        },
+        {
             "name": "Minn\\Content\\Page",
             "short": "Page",
             "namespace": "Minn\\Content",
@@ -49859,6 +49920,7 @@
                 "Minn\\Blocks\\Renderer",
                 "Minn\\Blocks\\Wrapper",
                 "Minn\\Content\\Menus",
+                "Minn\\Content\\NoteMarkers",
                 "Minn\\Content\\PasswordGate",
                 "Minn\\Content\\TermLinks",
                 "Minn\\Front\\AdminBar",
@@ -72834,7 +72896,7 @@
             "namespace": "Minn\\Mail",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Mail/Notices.php",
-            "lines": 82,
+            "lines": 99,
             "doc": "The messages the engine itself sends, worded as the reference words them\nand built in one place, so a controller and a CLI verb that announce the\nsame thing say the same thing.",
             "implements": [],
             "extends": null,
@@ -73057,6 +73119,54 @@
                 },
                 {
                     "routes": [],
+                    "name": "newNote",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "newNote(string $authorEmail, string $postTitle, string $author, string $note, string $editLink): Minn\\Mail\\Message",
+                    "doc": "A post's author told of a note on it, with where the post is edited (notes live in the editor).",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "authorEmail",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "postTitle",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "author",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "note",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "editLink",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 89,
+                    "end": 103
+                },
+                {
+                    "routes": [],
                     "name": "subject",
                     "static": false,
                     "visibility": "private",
@@ -73072,8 +73182,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 89,
-                    "end": 92
+                    "line": 106,
+                    "end": 109
                 }
             ]
         },
@@ -110015,7 +110125,7 @@
             "namespace": "Minn\\Runtime",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Runtime/CommentCloser.php",
-            "lines": 22,
+            "lines": 30,
             "doc": "The Discussion setting that closes comments on old posts. Observed on the\nreference: only the \"post\" type closes (the types filter changes nothing),\nstatus is not consulted, the age is whole days on post_date_gmt and must\nexceed the setting (a fifteen-day-old post stays open at fifteen), and zero\ndays switches the rule off.",
             "implements": [],
             "extends": null,
@@ -110102,7 +110212,50 @@
                         }
                     ],
                     "line": 23,
-                    "end": 36
+                    "end": 26
+                },
+                {
+                    "routes": [],
+                    "name": "closes",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "closes(string $postType, string $postDateGmt, array $types, int $now): bool",
+                    "doc": "Whether the setting closes a post of $postType published at\n$postDateGmt: the type is one of $types, the setting is on, and the\npost is older than the days allowed. The posts a single query hands\nover (_close_comments_for_old_posts) take their types from the\nclose_comments_for_post_types filter, which is honoured there.",
+                    "shapes": [
+                        "@param list<string> $types"
+                    ],
+                    "params": [
+                        {
+                            "name": "postType",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "postDateGmt",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "types",
+                            "type": "array",
+                            "shape": "list<string>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "now",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 37,
+                    "end": 44
                 }
             ]
         },

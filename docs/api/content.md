@@ -19,6 +19,7 @@ the repositories and records: posts, users, terms, comments, and the render pipe
 | [`MenuItem`](#menuitem) | final readonly class | 22 | One classic nav_menu_item, fields resolved from the post, its |
 | [`Menus`](#menus) | final readonly class | 511 | Classic nav_menu terms and nav_menu_item posts. The front uses these |
 | [`MoreTag`](#moretag) | final class | 20 | The `<!--more-->` marker that splits a post into the part a listing shows |
+| [`NoteMarkers`](#notemarkers) | final class | 34 | The markers the block editor's notes leave in content: a mark element |
 | [`Page`](#page) | final readonly class | 49 | One page of a listing: the rows on it and how many rows the whole |
 | [`PasswordGate`](#passwordgate) | final class | 34 | A password-protected post on the front end: its body is the password |
 | [`PersonalData`](#personaldata) | final class | 36 | Personal data as the privacy tools hand it over (probe privacy): an |
@@ -767,6 +768,22 @@ is, as does the `<!--noteaser-->` flag that follows some of them.
 The content on either side of a more tag, with the tag's own text.
 
 - `@return array{main: string, extended: string, more_text: string}`
+
+
+## NoteMarkers
+
+`final class Minn\Content\NoteMarkers` · `public/minn/src/Minn/Content/NoteMarkers.php`
+
+The markers the block editor's notes leave in content: a mark element
+whose class list holds "wp-note". A rendered block loses the marker and
+keeps what it wrapped, nested markers too, an unclosed one losing only its
+opening tag; any other mark stays whole (probe comment-helpers).
+
+### static `strip(string $html): string`
+
+Markup with every note marker's tags taken out.
+
+Internals: `isNote()` (private, line 40)
 
 
 ## Page

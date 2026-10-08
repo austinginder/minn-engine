@@ -20,7 +20,7 @@ the WordPress runtime plugins load against
 | [`BlockMetadata`](#blockmetadata) | final class | 95 | block.json to the settings a block type registers with: the property |
 | [`BlockTemplates`](#blocktemplates) | final class | 66 | Block templates plugins register at runtime, by their namespaced name |
 | [`BlockWidget`](#blockwidget) | final class | 30 | A block widget's legacy class name. Every widget the block editor saves |
-| [`CommentCloser`](#commentcloser) | final readonly class | 22 | The Discussion setting that closes comments on old posts. Observed on the |
+| [`CommentCloser`](#commentcloser) | final readonly class | 30 | The Discussion setting that closes comments on old posts. Observed on the |
 | [`CommentEvents`](#commentevents) | final readonly class | 253 | What the reference's REST comments controller tells plugins, for the |
 | [`CommentFeedQuery`](#commentfeedquery) | final class | 50 | The comments a comments feed's main query carries, as the reference |
 | [`CommentForm`](#commentform) | final class | 107 | The comment form's submission with plugins loaded |
@@ -819,6 +819,16 @@ __construct(bool $enabled, int $days)
 ### `open(bool $open, Minn\Content\PostRecord|array|null $post, int $now): bool`
 
 Whether comments stay open on a post under the close-after-days setting.
+
+### `closes(string $postType, string $postDateGmt, array $types, int $now): bool`
+
+Whether the setting closes a post of $postType published at
+$postDateGmt: the type is one of $types, the setting is on, and the
+post is older than the days allowed. The posts a single query hands
+over (_close_comments_for_old_posts) take their types from the
+close_comments_for_post_types filter, which is honoured there.
+
+- `@param list<string> $types`
 
 
 ## CommentEvents

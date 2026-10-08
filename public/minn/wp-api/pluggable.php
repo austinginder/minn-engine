@@ -254,9 +254,10 @@ endif;
 
 if (!function_exists('wp_notify_postauthor')) :
 /**
- * Tells a post's author of a comment on it: Minn's notice, the reference's
- * comment_notification_* filters, wp_mail. An author commenting on their own
- * post is not told unless comment_notification_notify_author says so.
+ * Tells a post's author of a comment on it, or of a note: Minn's notice,
+ * the reference's comment_notification_* filters, wp_mail. An author
+ * commenting on their own post is not told unless
+ * comment_notification_notify_author says so.
  */
 function wp_notify_postauthor($comment_id, $deprecated = null)
 {
@@ -272,7 +273,10 @@ function wp_notify_postauthor($comment_id, $deprecated = null)
     if ($post === null || $emails === []) {
         return false;
     }
-    $notice = \Minn\Mail\Mailer::noticesFor(Runtime::current()->site)->newComment($emails[0], (string) $post->post_title, (string) $comment->comment_author, (string) $comment->comment_content, (string) get_permalink($post));
+    $notices = \Minn\Mail\Mailer::noticesFor(Runtime::current()->site);
+    $notice = (string) $comment->comment_type === 'note'
+        ? $notices->newNote($emails[0], (string) $post->post_title, (string) $comment->comment_author, (string) $comment->comment_content, admin_url('post.php?post=' . $post->ID . '&action=edit'))
+        : $notices->newComment($emails[0], (string) $post->post_title, (string) $comment->comment_author, (string) $comment->comment_content, (string) get_permalink($post));
     $text = apply_filters('comment_notification_text', $notice->body, (int) $comment_id);
     $subject = apply_filters('comment_notification_subject', $notice->subject, (int) $comment_id);
     $headers = apply_filters('comment_notification_headers', '', (int) $comment_id);

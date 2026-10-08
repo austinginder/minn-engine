@@ -6347,3 +6347,56 @@ old).
 The admin screens that drive these (`wp_privacy_process_personal_data_*`,
 the export file and its email) were already admin dead ends; the functions
 here are what plugins and cron call.
+
+## comment.php's remaining helpers (2026-10-08)
+
+Probe `comment-helpers` (`tests/tools/comment-helpers-probe.php`). Nine real
+functions, six dead ends; with the privacy batch, `comment.php` owes nothing.
+
+- **`sanitize_comment_cookies`.** Each of `comment_author_`,
+  `comment_author_email_` and `comment_author_url_` + `COOKIEHASH` that the
+  visitor sent goes through its `pre_comment_author_*` filter (whose defaults
+  strip tags, validate the address, clean the link), then `wp_unslash` and
+  `esc_attr`. A cookie not sent stays unset.
+- **`wp_check_comment_data`** is the approval the engine already judged
+  (`_minn_comment_approval` is gone; `wp_allow_comment` and `wp_new_comment`
+  call it): the post's author and a moderator get 1 (disallowed words
+  notwithstanding), anyone else `check_comment` or 0, a disallowed word or
+  address `trash`, and `pre_comment_approved` (approval, data) has the last
+  word. Slashed data is read unslashed.
+- **`wp_cache_set_comments_last_changed`** renews the comment group's
+  `last_changed`.
+- **`_close_comments_for_old_posts`** (on `the_posts`, 2 args): with the
+  setting on and a positive day count, a singular query's first post, of a
+  type `close_comments_for_post_types` lists (`post` by default; this path
+  honours the filter, `comments_open`'s does not), older than the days, gets
+  `comment_status` and `ping_status` `closed` on the object handed over.
+  Listings, other posts and the stored row are untouched.
+  `Runtime\CommentCloser::closes()` is the one age rule for both paths.
+- **The comment-type update.** `_wp_batch_update_comment_type` (on
+  `wp_update_comment_type_batch`) types the newest untyped comments
+  `comment`, `wp_update_comment_type_batch_size` (100) at a time; a batch
+  that changed some schedules the next, one that finds none sets
+  `finished_updating_comment_type`. It does not read that option itself.
+  `_wp_check_for_scheduled_update_comment_type` (on `admin_init`) schedules
+  the batch once while the option is unset.
+- **Note markers.** `wp_strip_inline_note_markers` (on `render_block`) takes out
+  every `mark` whose class list holds `wp-note` (any case of tag and
+  attribute, either quote), nested ones too, keeping the content; an
+  unclosed one loses its opening tag; other marks stay whole.
+  `Content\NoteMarkers` holds it, with a fast path for markup without
+  `wp-note`.
+- **Notes told.** `wp_new_comment_via_rest_notify_postauthor` (on
+  `rest_insert_comment`) passes a note (a `WP_Comment` of type `note`, not an
+  id) to `wp_new_comment_notify_postauthor` while `wp_notes_notify` is on;
+  the post's author writing it is not told. Its subject is the reference's
+  `[{site}] Note: "{title}"`; its body is Minn's own notice (`Notices::newNote`,
+  the editor link where notes are read), as the comment notice already is.
+  `wp_send_note_notification` (user, note, post) mails `[{site}] You were
+  mentioned in a note on "{title}"` with `{author} mentioned you in a note on
+  "{title}".`, the note, and `Edit This: {admin}/post.php?post={id}&action=edit`,
+  plain text, and returns the mail's result.
+- **Dead ends.** `wp_get_note_mentioned_user_ids` and `wp_notify_note_mentions`
+  are editor: the mention markup comes from the block editor's notes, and no
+  content written by hand is read as a mention. The four
+  `wp_*_for_environment` ping switches join the XML-RPC area's pings.

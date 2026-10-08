@@ -230,6 +230,13 @@ add_action('init', 'wp_schedule_personal_data_cleanup_requests');
 add_action('wp_privacy_delete_old_export_files', 'wp_privacy_delete_old_export_files');
 add_action('wp_privacy_personal_data_cleanup_requests', 'wp_privacy_personal_data_cleanup_requests');
 add_action('wp_privacy_personal_data_erased', '_wp_privacy_send_erasure_fulfillment_notification');
+// comment.php's helpers: old posts closed as a single query hands them over, the comment-type update run by cron
+// and scheduled from admin_init, note markers out of rendered blocks, a post's author told of a note (probe comment-helpers).
+add_filter('the_posts', '_close_comments_for_old_posts', 10, 2);
+add_action('wp_update_comment_type_batch', '_wp_batch_update_comment_type');
+add_action('admin_init', '_wp_check_for_scheduled_update_comment_type');
+add_filter('render_block', 'wp_strip_inline_note_markers');
+add_action('rest_insert_comment', 'wp_new_comment_via_rest_notify_postauthor');
 
 // The kses tables as the globals plugin code reads directly.
 if (Minn\Runtime\Runtime::booted()) {

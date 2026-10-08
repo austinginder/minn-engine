@@ -2,14 +2,14 @@
     "generated": "2026-10-08",
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line), placeholder (generated stub, behaviour still owed), deadend (generated stub for wp-admin, the editors, the Customizer or XML-RPC, inert by design); \"deadend\" on any entry names its dead-end area",
     "summary": {
-        "minn": 732,
-        "composes": 1523,
+        "minn": 733,
+        "composes": 1528,
         "leaf": 757,
-        "noop": 2419,
+        "noop": 2421,
         "placeholder": 281,
-        "deadend": 1587,
-        "functions": 7222,
-        "minnMethods": 871,
+        "deadend": 1593,
+        "functions": 7236,
+        "minnMethods": 875,
         "leafLinesOver15": 13
     },
     "functions": {
@@ -25179,6 +25179,19 @@
                 "get_post"
             ]
         },
+        "_close_comments_for_old_posts": {
+            "file": "comment.php",
+            "lines": 9,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Runtime\\CommentCloser::__construct",
+                "Minn\\Runtime\\CommentCloser::closes"
+            ],
+            "composes": [
+                "apply_filters",
+                "get_option"
+            ]
+        },
         "_config_wp_home": {
             "file": "functions.php",
             "lines": 1,
@@ -26500,20 +26513,6 @@
             ],
             "composes": [
                 "add_action"
-            ]
-        },
-        "_minn_comment_approval": {
-            "file": "comment.php",
-            "lines": 12,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "apply_filters",
-                "check_comment",
-                "get_post",
-                "user_can",
-                "wp_check_comment_disallowed_list",
-                "wp_unslash"
             ]
         },
         "_minn_comment_cookies_field": {
@@ -29115,6 +29114,18 @@
                 "is_nav_menu"
             ]
         },
+        "_wp_batch_update_comment_type": {
+            "file": "comment.php",
+            "lines": 9,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "apply_filters",
+                "clean_comment_cache",
+                "update_option",
+                "wp_schedule_single_event"
+            ]
+        },
         "_wp_block_editor_posts_page_notice": {
             "file": "deadends.php",
             "lines": 2,
@@ -29147,6 +29158,17 @@
             "kind": "leaf",
             "minn": [],
             "composes": []
+        },
+        "_wp_check_for_scheduled_update_comment_type": {
+            "file": "comment.php",
+            "lines": 3,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "get_option",
+                "wp_next_scheduled",
+                "wp_schedule_single_event"
+            ]
         },
         "_wp_connectors_get_api_key_source": {
             "file": "connectors.php",
@@ -47817,6 +47839,17 @@
                 "esc_js"
             ]
         },
+        "sanitize_comment_cookies": {
+            "file": "comment.php",
+            "lines": 6,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "apply_filters",
+                "esc_attr",
+                "wp_unslash"
+            ]
+        },
         "sanitize_email": {
             "file": "formatting.php",
             "lines": 2,
@@ -52448,10 +52481,10 @@
                 "Minn\\Content\\Comments::duplicateId"
             ],
             "composes": [
-                "_minn_comment_approval",
                 "_minn_comments",
                 "apply_filters",
                 "do_action",
+                "wp_check_comment_data",
                 "wp_die",
                 "wp_unslash"
             ]
@@ -52934,6 +52967,15 @@
             ],
             "composes": []
         },
+        "wp_cache_set_comments_last_changed": {
+            "file": "comment.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "wp_cache_set_last_changed"
+            ]
+        },
         "wp_cache_set_last_changed": {
             "file": "functions.php",
             "lines": 5,
@@ -53055,6 +53097,20 @@
             "minn": [],
             "composes": [],
             "deadend": "admin"
+        },
+        "wp_check_comment_data": {
+            "file": "comment.php",
+            "lines": 13,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "apply_filters",
+                "check_comment",
+                "get_post",
+                "user_can",
+                "wp_check_comment_disallowed_list",
+                "wp_unslash"
+            ]
         },
         "wp_check_comment_data_max_lengths": {
             "file": "comment.php",
@@ -56219,6 +56275,14 @@
                 "apply_filters"
             ]
         },
+        "wp_get_note_mentioned_user_ids": {
+            "file": "deadends.php",
+            "lines": 2,
+            "kind": "deadend",
+            "minn": [],
+            "composes": [],
+            "deadend": "editor"
+        },
         "wp_get_object_terms": {
             "file": "taxonomy.php",
             "lines": 18,
@@ -58611,6 +58675,30 @@
                 "apply_filters"
             ]
         },
+        "wp_maybe_disable_outgoing_pings_for_environment": {
+            "file": "deadends.php",
+            "lines": 2,
+            "kind": "deadend",
+            "minn": [],
+            "composes": [],
+            "deadend": "xmlrpc"
+        },
+        "wp_maybe_disable_trackback_for_environment": {
+            "file": "deadends.php",
+            "lines": 2,
+            "kind": "deadend",
+            "minn": [],
+            "composes": [],
+            "deadend": "xmlrpc"
+        },
+        "wp_maybe_disable_xmlrpc_pingback_for_environment": {
+            "file": "deadends.php",
+            "lines": 2,
+            "kind": "deadend",
+            "minn": [],
+            "composes": [],
+            "deadend": "xmlrpc"
+        },
         "wp_maybe_enqueue_oembed_host_js": {
             "file": "embed.php",
             "lines": 4,
@@ -58871,12 +58959,12 @@
             "kind": "composes",
             "minn": [],
             "composes": [
-                "_minn_comment_approval",
                 "_minn_comment_defaults",
                 "apply_filters",
                 "do_action",
                 "is_wp_error",
                 "wp_allow_comment",
+                "wp_check_comment_data",
                 "wp_filter_comment",
                 "wp_insert_comment"
             ]
@@ -58902,6 +58990,16 @@
                 "get_comment",
                 "get_option",
                 "wp_notify_postauthor"
+            ]
+        },
+        "wp_new_comment_via_rest_notify_postauthor": {
+            "file": "comment.php",
+            "lines": 3,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "get_option",
+                "wp_new_comment_notify_postauthor"
             ]
         },
         "wp_new_user_notification": {
@@ -59018,16 +59116,27 @@
                 "wp_specialchars_decode"
             ]
         },
+        "wp_notify_note_mentions": {
+            "file": "deadends.php",
+            "lines": 1,
+            "kind": "deadend",
+            "minn": [],
+            "composes": [],
+            "deadend": "editor"
+        },
         "wp_notify_postauthor": {
             "file": "pluggable.php",
-            "lines": 20,
+            "lines": 23,
             "kind": "minn",
             "minn": [
+                "Minn\\Mail\\Mailer::newComment",
+                "Minn\\Mail\\Mailer::newNote",
                 "Minn\\Mail\\Mailer::noticesFor",
                 "Minn\\Runtime\\Runtime::current",
                 "Minn\\Runtime\\Runtime::site"
             ],
             "composes": [
+                "admin_url",
                 "apply_filters",
                 "get_comment",
                 "get_permalink",
@@ -61352,6 +61461,21 @@
                 "wp_new_user_notification"
             ]
         },
+        "wp_send_note_notification": {
+            "file": "comment.php",
+            "lines": 12,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "__",
+                "admin_url",
+                "get_option",
+                "restore_previous_locale",
+                "switch_to_user_locale",
+                "wp_mail",
+                "wp_specialchars_decode"
+            ]
+        },
         "wp_send_user_request": {
             "file": "user.php",
             "lines": 17,
@@ -61673,6 +61797,14 @@
                 "Minn\\Blocks\\Elements::shouldAdd"
             ],
             "composes": []
+        },
+        "wp_should_disable_pings_for_environment": {
+            "file": "deadends.php",
+            "lines": 2,
+            "kind": "deadend",
+            "minn": [],
+            "composes": [],
+            "deadend": "xmlrpc"
         },
         "wp_should_load_block_assets_on_demand": {
             "file": "blocks.php",
@@ -62027,6 +62159,15 @@
                 "wp_slash",
                 "wp_unslash"
             ]
+        },
+        "wp_strip_inline_note_markers": {
+            "file": "comment.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Content\\NoteMarkers::strip"
+            ],
+            "composes": []
         },
         "wp_style_add_data": {
             "file": "script-loader.php",

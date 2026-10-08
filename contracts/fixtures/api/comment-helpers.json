@@ -1,0 +1,334 @@
+[
+    [
+        "hooked",
+        [
+            10,
+            10,
+            10,
+            10
+        ]
+    ],
+    [
+        "comment cookies",
+        [
+            [
+                "Zed &amp; Co",
+                "Zed@Example.TEST",
+                "https://zz.example/a%20b"
+            ],
+            [
+                "O&#039;Brien",
+                "",
+                ""
+            ],
+            [
+                "",
+                "",
+                ""
+            ],
+            [
+                "<unset>",
+                "<unset>",
+                "<unset>"
+            ]
+        ]
+    ],
+    [
+        "comment cookies through the pre_comment filters",
+        [
+            [
+                "Zed+",
+                "zed@example.test+",
+                "https://zz.example/+"
+            ],
+            [
+                [
+                    "pre_comment_author_name",
+                    "Zed"
+                ],
+                [
+                    "pre_comment_author_email",
+                    "zed@example.test"
+                ],
+                [
+                    "pre_comment_author_url",
+                    "https://zz.example/"
+                ]
+            ]
+        ]
+    ],
+    [
+        "comments last changed",
+        [
+            true,
+            true,
+            true
+        ]
+    ],
+    [
+        "comment data checked",
+        {
+            "the post author": 1,
+            "a moderator": 1,
+            "a stranger, never approved before": 0,
+            "too many links": 0,
+            "a stranger, no approval history asked": 1,
+            "a disallowed word": "trash",
+            "a disallowed address": "trash",
+            "a disallowed word from the post author": 1,
+            "pre_comment_approved has the last word": [
+                "spam",
+                [
+                    [
+                        1,
+                        [
+                            "comment_post_ID",
+                            "comment_author",
+                            "comment_author_email",
+                            "comment_author_url",
+                            "comment_author_IP",
+                            "comment_agent",
+                            "comment_content",
+                            "comment_type",
+                            "user_id"
+                        ]
+                    ]
+                ]
+            ],
+            "slashed data": 1
+        }
+    ],
+    [
+        "old posts closed",
+        {
+            "option off": [
+                [
+                    "open",
+                    "open"
+                ]
+            ],
+            "a single old post": [
+                [
+                    "closed",
+                    "closed"
+                ]
+            ],
+            "a single fresh post": [
+                [
+                    "open",
+                    "open"
+                ]
+            ],
+            "an old page": [
+                [
+                    "open",
+                    "open"
+                ]
+            ],
+            "a listing": [
+                [
+                    "open",
+                    "open"
+                ],
+                [
+                    "open",
+                    "open"
+                ]
+            ],
+            "nothing": [],
+            "two posts on a single query": [
+                [
+                    "closed",
+                    "closed"
+                ],
+                [
+                    "open",
+                    "open"
+                ]
+            ],
+            "zero days": [
+                [
+                    "open",
+                    "open"
+                ]
+            ],
+            "pages too, by filter": [
+                [
+                    "closed",
+                    "closed"
+                ]
+            ],
+            "the stored post is untouched": [
+                "open",
+                "open"
+            ]
+        }
+    ],
+    [
+        "comment type batches",
+        {
+            "three typeless, unfinished": [
+                [
+                    "",
+                    "",
+                    ""
+                ],
+                "<unset>",
+                false
+            ],
+            "the check schedules the batch": [
+                [
+                    "",
+                    "",
+                    ""
+                ],
+                "<unset>",
+                true
+            ],
+            "once": 1,
+            "a batch of two": [
+                null,
+                [
+                    [
+                        "",
+                        "comment",
+                        "comment"
+                    ],
+                    "<unset>",
+                    true
+                ]
+            ],
+            "the rest": [
+                null,
+                [
+                    [
+                        "comment",
+                        "comment",
+                        "comment"
+                    ],
+                    "<unset>",
+                    true
+                ]
+            ],
+            "nothing left": [
+                null,
+                [
+                    [
+                        "comment",
+                        "comment",
+                        "comment"
+                    ],
+                    true,
+                    false
+                ]
+            ],
+            "finished: the check schedules nothing": [
+                null,
+                [
+                    [
+                        "comment",
+                        "comment",
+                        "comment"
+                    ],
+                    true,
+                    false
+                ]
+            ],
+            "finished, yet a batch still converts": [
+                null,
+                [
+                    [
+                        "comment",
+                        "comment",
+                        "comment",
+                        "comment"
+                    ],
+                    true,
+                    true
+                ]
+            ]
+        }
+    ],
+    [
+        "notes told",
+        {
+            "a regular comment": [
+                null,
+                []
+            ],
+            "a note": [
+                null,
+                [
+                    [
+                        "zz-comment-author@example.test",
+                        "[Minn] Note: \"zz comment helpers\"",
+                        true
+                    ]
+                ]
+            ],
+            "a note by the post author": [
+                null,
+                []
+            ],
+            "a note by its id": [
+                null,
+                []
+            ],
+            "notes switched off": [
+                null,
+                []
+            ],
+            "a mention": [
+                true,
+                [
+                    {
+                        "to": "zz-comment-author@example.test",
+                        "subject": "[Minn] You were mentioned in a note on \"zz comment helpers\"",
+                        "message": "editor mentioned you in a note on \"zz comment helpers\".\n\nA note on this block.\n\nEdit This: https://minn.localhost/wp-admin/post.php?post={post}&action=edit",
+                        "headers": "Content-Type: text/plain; charset=\"UTF-8\"",
+                        "attachments": [],
+                        "embeds": []
+                    }
+                ]
+            ],
+            "a mention of the note author": [
+                true,
+                [
+                    {
+                        "to": "editor@minn-engine.localhost",
+                        "subject": "[Minn] You were mentioned in a note on \"zz comment helpers\"",
+                        "message": "editor mentioned you in a note on \"zz comment helpers\".\n\nA note on this block.\n\nEdit This: https://minn.localhost/wp-admin/post.php?post={post}&action=edit",
+                        "headers": "Content-Type: text/plain; charset=\"UTF-8\"",
+                        "attachments": [],
+                        "embeds": []
+                    }
+                ]
+            ],
+            "mentions found in a note": [
+                [],
+                null,
+                []
+            ]
+        }
+    ],
+    [
+        "note markers stripped",
+        [
+            "<p>a b c</p>",
+            "b",
+            "<mark data-note-id=\"5\">b</mark>",
+            "b <em>i</em>",
+            "b",
+            "<mark class=\"wp-notes\">b</mark>",
+            "<span class=\"wp-note\" data-note-id=\"5\">b</span>",
+            "x a y b",
+            "a b",
+            "b",
+            "b",
+            "<mark class=\"has-inline-color\" style=\"color:red\">b</mark>",
+            "unclosed",
+            "no markers at all",
+            ""
+        ]
+    ]
+]

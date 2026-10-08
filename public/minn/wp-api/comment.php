@@ -604,18 +604,20 @@ function wp_allow_comment($commentdata, $wp_error = false)
         $message = apply_filters('comment_flood_message', 'You are posting comments too quickly. Slow down.');
         return $wp_error ? new WP_Error('comment_flood', $message, 429) : wp_die($message, 429);
     }
-    return _minn_comment_approval($data);
+    return wp_check_comment_data($data);
 }
 
 /**
- * @internal a comment's approval as the reference judges it, once as it
- * arrives and again once the pre_comment_* filters have had it: the post's
- * author and a moderator are approved; anyone else's comment passes
- * check_comment or is held, and the disallowed words send it to the trash;
- * pre_comment_approved has the last word.
+ * A comment's approval as the reference judges it from its data (probe
+ * comment-helpers), once as it arrives and again once the pre_comment_*
+ * filters have had it: the post's author and a moderator are approved;
+ * anyone else's comment passes check_comment or is held, and the disallowed
+ * words send it to the trash; pre_comment_approved has the last word. The
+ * data may be slashed.
  */
-function _minn_comment_approval(array $data)
+function wp_check_comment_data($comment_data)
 {
+    $data = (array) $comment_data;
     $field = static fn (string $key): string => (string) wp_unslash($data[$key] ?? '');
     $userId = (int) ($data['user_id'] ?? 0);
     $post = get_post((int) ($data['comment_post_ID'] ?? 0));
@@ -647,7 +649,7 @@ function wp_new_comment($commentdata, $wp_error = false)
     }
     $data['comment_approved'] = $approved;
     $data = wp_filter_comment($data);
-    $data['comment_approved'] = _minn_comment_approval($data);
+    $data['comment_approved'] = wp_check_comment_data($data);
     if (is_wp_error($data['comment_approved'])) {
         return $wp_error ? $data['comment_approved'] : false;
     }
@@ -1667,4 +1669,98 @@ function wp_comments_personal_data_eraser($email_address, $page = 1)
     }
     $result['done'] = count($comments) < $number;
     return $result;
+}
+
+/** The commenter cookies a returning visitor sends, made safe in $_COOKIE: each through its pre_comment_author_* filter, unslashed and escaped for an attribute. */
+function sanitize_comment_cookies()
+{
+    foreach (['comment_author_' => 'pre_comment_author_name', 'comment_author_email_' => 'pre_comment_author_email', 'comment_author_url_' => 'pre_comment_author_url'] as $prefix => $hook) {
+        $key = $prefix . COOKIEHASH;
+        if (isset($_COOKIE[$key])) {
+            $_COOKIE[$key] = esc_attr(wp_unslash(apply_filters($hook, $_COOKIE[$key])));
+        }
+    }
+}
+
+/** Marks the comments as changed, so cached comment queries are asked again. */
+function wp_cache_set_comments_last_changed()
+{
+    wp_cache_set_last_changed('comment');
+}
+
+/**
+ * Closes comments and pings on the post a single query found once it is
+ * older than the Discussion setting allows (on the_posts): only the first
+ * post, only a type close_comments_for_post_types lists (posts alone by
+ * default), and only on the objects handed over.
+ */
+function _close_comments_for_old_posts($posts, $query)
+{
+    if (empty($posts) || !$query instanceof WP_Query || !$query->is_singular() || !($posts[0] ?? null) instanceof WP_Post || !get_option('close_comments_for_old_posts')) {
+        return $posts;
+    }
+    $closer = new Minn\Runtime\CommentCloser(true, (int) get_option('close_comments_days_old'));
+    if ($closer->closes((string) $posts[0]->post_type, (string) $posts[0]->post_date_gmt, (array) apply_filters('close_comments_for_post_types', ['post']), time())) {
+        $posts[0]->comment_status = 'closed';
+        $posts[0]->ping_status = 'closed';
+    }
+    return $posts;
+}
+
+/**
+ * Gives comments stored without a type the type "comment", newest first, a
+ * batch at a time (wp_update_comment_type_batch_size, 100; on
+ * wp_update_comment_type_batch). A batch that changed some schedules the
+ * next; one that finds none marks the update finished.
+ */
+function _wp_batch_update_comment_type()
+{
+    global $wpdb;
+    $ids = $wpdb->get_col($wpdb->prepare("SELECT comment_ID FROM {$wpdb->comments} WHERE comment_type = '' ORDER BY comment_ID DESC LIMIT %d", (int) apply_filters('wp_update_comment_type_batch_size', 100)));
+    if (!$ids) {
+        update_option('finished_updating_comment_type', true);
+        return;
+    }
+    $wpdb->query("UPDATE {$wpdb->comments} SET comment_type = 'comment' WHERE comment_ID IN (" . implode(',', array_map('intval', $ids)) . ')');
+    clean_comment_cache(array_map('intval', $ids));
+    wp_schedule_single_event(time() + 2 * MINUTE_IN_SECONDS, 'wp_update_comment_type_batch');
+}
+
+/** Schedules the comment-type update while it is unfinished and not already scheduled (on admin_init). */
+function _wp_check_for_scheduled_update_comment_type()
+{
+    if (!get_option('finished_updating_comment_type') && !wp_next_scheduled('wp_update_comment_type_batch')) {
+        wp_schedule_single_event(time() + MINUTE_IN_SECONDS, 'wp_update_comment_type_batch');
+    }
+}
+
+/** Takes the block editor's note markers out of a rendered block, keeping what they wrapped (on render_block). */
+function wp_strip_inline_note_markers($block_content)
+{
+    return Minn\Content\NoteMarkers::strip((string) $block_content);
+}
+
+/** Tells a post's author of a new note made over the REST API (on rest_insert_comment) while notes notify (wp_notes_notify); other comments are told elsewhere. */
+function wp_new_comment_via_rest_notify_postauthor($comment)
+{
+    if ($comment instanceof WP_Comment && $comment->comment_type === 'note' && get_option('wp_notes_notify')) {
+        wp_new_comment_notify_postauthor((int) $comment->comment_ID);
+    }
+}
+
+/** Mails a user that a note mentions them: who wrote it, on which post, what it says, and where to edit the post. True when the mail went. */
+function wp_send_note_notification($user, $comment, $post)
+{
+    if (!$user instanceof WP_User || !$comment instanceof WP_Comment || !$post instanceof WP_Post) {
+        return false;
+    }
+    $switched = switch_to_user_locale($user->ID);
+    $site = wp_specialchars_decode((string) get_option('blogname'), ENT_QUOTES);
+    $subject = sprintf(__('[%1$s] You were mentioned in a note on "%2$s"'), $site, $post->post_title);
+    $message = sprintf(__('%1$s mentioned you in a note on "%2$s".'), $comment->comment_author, $post->post_title) . "\n\n" . $comment->comment_content . "\n\n" . sprintf(__('Edit This: %s'), admin_url('post.php?post=' . $post->ID . '&action=edit'));
+    $sent = wp_mail($user->user_email, $subject, $message, 'Content-Type: text/plain; charset="UTF-8"');
+    if ($switched) {
+        restore_previous_locale();
+    }
+    return $sent;
 }

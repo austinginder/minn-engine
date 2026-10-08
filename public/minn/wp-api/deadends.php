@@ -3343,6 +3343,12 @@ function wp_get_nav_menu_to_edit($menu_id = 0)
     return null;
 }
 
+function wp_get_note_mentioned_user_ids($content)
+{
+    \Minn\Runtime\PlaceholderTrace::hit('wp_get_note_mentioned_user_ids');
+    return [];
+}
+
 function wp_get_options_connectors_menu_items()
 {
     \Minn\Runtime\PlaceholderTrace::hit('wp_get_options_connectors_menu_items');
@@ -3535,6 +3541,24 @@ function wp_make_theme_file_tree($allowed_files)
     return null;
 }
 
+function wp_maybe_disable_outgoing_pings_for_environment()
+{
+    \Minn\Runtime\PlaceholderTrace::hit('wp_maybe_disable_outgoing_pings_for_environment');
+    return null;
+}
+
+function wp_maybe_disable_trackback_for_environment()
+{
+    \Minn\Runtime\PlaceholderTrace::hit('wp_maybe_disable_trackback_for_environment');
+    return null;
+}
+
+function wp_maybe_disable_xmlrpc_pingback_for_environment($methods)
+{
+    \Minn\Runtime\PlaceholderTrace::hit('wp_maybe_disable_xmlrpc_pingback_for_environment');
+    return null;
+}
+
 function wp_media_attach_action($parent_id, $action = 'attach')
 {
     \Minn\Runtime\PlaceholderTrace::hit('wp_media_attach_action');
@@ -3623,6 +3647,11 @@ function wp_new_blog_notification($blog_title, $blog_url, $user_id, $password)
 {
     \Minn\Runtime\PlaceholderTrace::hit('wp_new_blog_notification');
     return null;
+}
+
+function wp_notify_note_mentions($comment, $request = NULL, $creating = true)
+{
+    \Minn\Runtime\PlaceholderTrace::hit('wp_notify_note_mentions');
 }
 
 function wp_options_connectors_intercept_render()
@@ -3915,6 +3944,12 @@ function wp_set_client_side_media_processing_flag()
 function wp_set_up_cross_origin_isolation()
 {
     \Minn\Runtime\PlaceholderTrace::hit('wp_set_up_cross_origin_isolation');
+}
+
+function wp_should_disable_pings_for_environment()
+{
+    \Minn\Runtime\PlaceholderTrace::hit('wp_should_disable_pings_for_environment');
+    return null;
 }
 
 function wp_should_load_block_editor_scripts_and_styles()
