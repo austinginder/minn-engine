@@ -5,7 +5,7 @@ the template blocks a block theme composes with
 | Class | Kind | Lines | Summary |
 |---|---|---|---|
 | [`Comments`](#comments) | final readonly class | 257 | comments, comments-title, comment-template, the comment-* blocks, and the comment form. |
-| [`Navigation`](#navigation) | final readonly class | 340 | navigation, navigation-link, page-list. A navigation block's items come |
+| [`Navigation`](#navigation) | final readonly class | 368 | navigation, navigation-link, page-list. A navigation block's items come |
 | [`PostBlocks`](#postblocks) | final readonly class | 259 | The post-* blocks: they render the context's current post. |
 | [`QueryBlocks`](#queryblocks) | final class | 283 | query, post-template, query-title, query-no-results, query-pagination, query-total. |
 | [`Structure`](#structure) | final readonly class | 105 | template-part, pattern, site-title, site-tagline, site-logo. |
@@ -41,10 +41,9 @@ published wp_navigation post, or (when none of those exist) the first
 classic nav_menu; a responsive menu wraps them in the overlay markup
 the reference emits.
 
-- const `SUBMENU_WIRING` = `'data-wp-context="{ &quot;submenuOpenedBy&quot;: { &quot;click&quot;: false, &quot;hover&quot;: false, &quot;focus&quot;: false }, &quot;type&quot;: &quot;submenu&quot;, &quot;modal&quot;: null, &quot;previousFocus&quot;: null }" data-wp-interactive="core/navigation" data-wp-on--focusout="actions.handleMenuFocusout" data-wp-on--keydown="actions.handleMenuKeydown"'` — A submenu's interactivity: its context and the focus and key handlers (hover ones are added unless it opens on click).
-- const `SUBMENU_HOVER` = `' data-wp-on--pointerenter="actions.openMenuOnHover" data-wp-on--pointerleave="actions.closeMenuOnHover"'`
+- const `SUBMENU_CONTEXT` = `'{ "submenuOpenedBy": { "click": false, "hover": false, "focus": false }, "type": "submenu", "modal": null, "previousFocus": null }'` — A submenu's interactivity context.
 - const `SUBMENU_TOGGLE` = `'data-wp-bind--aria-expanded="state.isSubmenuOpen" data-wp-on--click="actions.toggleMenuOnClick"'`
-- const `CHEVRON` = `'<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true" focusable="false"><path d="M1.50002 4L6.00002 8L10.5 4" stroke-width="1.5"></path></svg>'`
+- const `CHEVRON` = `'<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true" focusable="false"><path d="M1.50002 4L6.00002 8L10.5 4" stroke-width="1.5"></path></svg>'` — The submenu toggle's chevron (block_core_navigation_link_render_submenu_icon).
 - const `CLOSE_ICON` = `'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" focusable="false"><path d="M13 11.8l6.1-6.3-1.1-1-6.1 6.2-6.1-6.2-1.1 1 6.1 6.3-6.5 6.7 1.1 1 6.5-6.6 6.5 6.6 1.1-1z" /></svg>'`
 
 ```php
@@ -52,11 +51,19 @@ __construct(Minn\Db $db, Minn\Content\Posts $posts, Minn\Front\Permalinks $perma
 ```
 
 
+### static `submenuDirectives(string $visibility): array`
+
+The attributes an item with a submenu takes, in the reference's order:
+its context, the focus and key handlers, the hover ones for a submenu
+that opens on hover, the init watcher, and its tab index.
+
+- `@return array<string, string>`
+
 ### `register(Minn\Blocks\Renderer $renderer): void`
 
 Registers this family's blocks with the renderer.
 
-Internals: `navigation()` (private, line 59), `responsive()` (private, line 129), `items()` (private, line 163), `presetClasses()` (private, line 176), `overlayColors()` (private, line 198), `link()` (private, line 210), `submenu()` (private, line 238), `overlayClose()` (private, line 260), `classicItems()` (private, line 271), `pageList()` (private, line 277), `ancestorsOf()` (private, line 291), `pageItems()` (private, line 315), `navParent()` (private, line 346), `menuPost()` (private, line 355), `enqueueView()` (private, line 365)
+Internals: `wiring()` (private, line 62), `navigation()` (private, line 89), `responsive()` (private, line 159), `items()` (private, line 193), `presetClasses()` (private, line 206), `overlayColors()` (private, line 228), `link()` (private, line 240), `submenu()` (private, line 266), `overlayClose()` (private, line 288), `classicItems()` (private, line 299), `pageList()` (private, line 305), `ancestorsOf()` (private, line 319), `pageItems()` (private, line 343), `navParent()` (private, line 374), `menuPost()` (private, line 383), `enqueueView()` (private, line 393)
 
 
 ## PostBlocks

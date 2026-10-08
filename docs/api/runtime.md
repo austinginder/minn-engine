@@ -42,7 +42,7 @@ the WordPress runtime plugins load against
 | [`Hooks`](#hooks) | final class | 348 | The hook registry plugin code registers into and the engine fires. |
 | [`Interactivity`](#interactivity) | final class | 509 | Server-side directive processing for the Interactivity API: the state and |
 | [`MenuEvents`](#menuevents) | final readonly class | 220 | Menus and their items saved as the reference saves them, telling |
-| [`MenuItemMarks`](#menuitemmarks) | final class | 202 | The classes and current flags the reference gives a menu's items for the |
+| [`MenuItemMarks`](#menuitemmarks) | final class | 203 | The classes and current flags the reference gives a menu's items for the |
 | [`Meta`](#meta) | final readonly class | 230 | The four meta tables behind get_metadata and friends: reads by object, and the row-level writes the update and delete rules need. |
 | [`MetaKeys`](#metakeys) | final class | 184 | The meta keys code registers, kept where the reference keeps them |
 | [`MetaTypes`](#metatypes) | final class | 21 | Meta types a plugin brought, by the table it named on $wpdb as |
@@ -1788,7 +1788,7 @@ and current_item_ancestor flags for what the main query has in view.
 - `@param list<object> $items`
 - `@return list<object>`
 
-Internals: `own()` (private, line 64), `related()` (private, line 111), `isCurrent()` (private, line 143), `view()` (private, line 161), `postTerms()` (private, line 200), `ancestors()` (private, line 218), `currentUrl()` (private, line 223)
+Internals: `own()` (private, line 64), `related()` (private, line 112), `isCurrent()` (private, line 144), `view()` (private, line 162), `postTerms()` (private, line 201), `ancestors()` (private, line 219), `currentUrl()` (private, line 224)
 
 
 ## Meta

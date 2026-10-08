@@ -31,12 +31,42 @@ use Minn\Support\Kses;
  */
 final readonly class Navigation
 {
-    /** A submenu's interactivity: its context and the focus and key handlers (hover ones are added unless it opens on click). */
-    private const SUBMENU_WIRING = 'data-wp-context="{ &quot;submenuOpenedBy&quot;: { &quot;click&quot;: false, &quot;hover&quot;: false, &quot;focus&quot;: false }, &quot;type&quot;: &quot;submenu&quot;, &quot;modal&quot;: null, &quot;previousFocus&quot;: null }" data-wp-interactive="core/navigation" data-wp-on--focusout="actions.handleMenuFocusout" data-wp-on--keydown="actions.handleMenuKeydown"';
-    private const SUBMENU_HOVER = ' data-wp-on--pointerenter="actions.openMenuOnHover" data-wp-on--pointerleave="actions.closeMenuOnHover"';
+    /** A submenu's interactivity context. */
+    private const SUBMENU_CONTEXT = '{ "submenuOpenedBy": { "click": false, "hover": false, "focus": false }, "type": "submenu", "modal": null, "previousFocus": null }';
     private const SUBMENU_TOGGLE = 'data-wp-bind--aria-expanded="state.isSubmenuOpen" data-wp-on--click="actions.toggleMenuOnClick"';
-    private const CHEVRON = '<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true" focusable="false"><path d="M1.50002 4L6.00002 8L10.5 4" stroke-width="1.5"></path></svg>';
+    /** The submenu toggle's chevron (block_core_navigation_link_render_submenu_icon). */
+    public const CHEVRON = '<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true" focusable="false"><path d="M1.50002 4L6.00002 8L10.5 4" stroke-width="1.5"></path></svg>';
     private const CLOSE_ICON = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" focusable="false"><path d="M13 11.8l6.1-6.3-1.1-1-6.1 6.2-6.1-6.2-1.1 1 6.1 6.3-6.5 6.7 1.1 1 6.5-6.6 6.5 6.6 1.1-1z" /></svg>';
+
+    /**
+     * The attributes an item with a submenu takes, in the reference's order:
+     * its context, the focus and key handlers, the hover ones for a submenu
+     * that opens on hover, the init watcher, and its tab index.
+     *
+     * @return array<string, string>
+     */
+    public static function submenuDirectives(string $visibility): array
+    {
+        return [
+            'data-wp-context' => self::SUBMENU_CONTEXT,
+            'data-wp-interactive' => 'core/navigation',
+            'data-wp-on--focusout' => 'actions.handleMenuFocusout',
+            'data-wp-on--keydown' => 'actions.handleMenuKeydown',
+            ...($visibility === 'hover' ? ['data-wp-on--pointerenter' => 'actions.openMenuOnHover', 'data-wp-on--pointerleave' => 'actions.closeMenuOnHover'] : []),
+            'data-wp-watch' => 'callbacks.initMenu',
+            'tabindex' => '-1',
+        ];
+    }
+
+    /** The submenu directives as attribute markup, a space after them. */
+    private static function wiring(string $visibility): string
+    {
+        $out = '';
+        foreach (self::submenuDirectives($visibility) as $name => $value) {
+            $out .= $name . '="' . Html::attr($value) . '" ';
+        }
+        return $out;
+    }
 
     public function __construct(
         private Db $db,
@@ -219,13 +249,11 @@ final readonly class Navigation
             && $id === $resolution->id()
             && $resolution->kind === ($type === 'page' ? Kind::Page : Kind::Single))
             || ($kind === 'taxonomy' && $type === 'category' && $resolution->kind === Kind::Category && $id === $resolution->id());
-        $classic = (bool) $block->attr('fromMenu', false);
         $className = (string) $block->attr('className', '');
         $classes = 'wp-block-navigation-item' . $className . ($current ? ' current-menu-item' : '') . ' wp-block-navigation-link';
         $target = (bool) $block->attr('opensInNewTab', false) ? ' target="_blank"  ' : '';
-        $title = ( $classic || str_contains($className, 'menu-item') )
-            ? ' title="' . Html::attr((string) $block->attr('attrTitle', '')) . '"'
-            : '';
+        // A link made from a menu item carries its attribute title, even an empty one.
+        $title = isset($block->attrs['title']) ? ' title="' . Html::attr((string) $block->attrs['title']) . '"' : '';
         return '<li class="' . $classes . '"><a class="wp-block-navigation-item__content"  href="' . Html::attr($url) . '"' . $target . $title . ($current ? ' aria-current="page"' : '') . '><span class="wp-block-navigation-item__label">' . $label . '</span></a></li>';
     }
 
@@ -252,7 +280,7 @@ final readonly class Navigation
             $this->enqueueView();
         }
         $item = 'class="wp-block-navigation-item has-child' . ($onClick ? ' open-on-click' : ($icon ? ' open-on-hover-click' : '')) . ' wp-block-navigation-submenu"';
-        $open = $wired ? self::SUBMENU_WIRING . ($onClick ? '' : self::SUBMENU_HOVER) . ' data-wp-watch="callbacks.initMenu" tabindex="-1" ' . $item : $item;
+        $open = $wired ? self::wiring($onClick ? 'click' : 'hover') . $item : $item;
         return '<li ' . $open . '>' . $head . '<ul' . ($wired ? ' data-wp-on--focus="actions.openMenuOnFocus"' : '') . ' class="wp-block-navigation__submenu-container wp-block-navigation-submenu">' . $this->items($block->innerBlocks, $renderer) . '</ul></li>';
     }
 
@@ -346,7 +374,7 @@ final readonly class Navigation
     private function navParent(array $page, string $marker, string $home, string $link, string $children): string
     {
         $this->enqueueView();
-        return '<li ' . self::SUBMENU_WIRING . self::SUBMENU_HOVER . ' data-wp-watch="callbacks.initMenu" tabindex="-1" class="wp-block-pages-list__item' . $marker . ' has-child wp-block-navigation-item open-on-hover-click' . $home . '">'
+        return '<li ' . self::wiring('hover') . 'class="wp-block-pages-list__item' . $marker . ' has-child wp-block-navigation-item open-on-hover-click' . $home . '">'
             . $link
             . '<button ' . self::SUBMENU_TOGGLE . ' aria-label="' . Html::attr((string) $page['post_title']) . ' submenu" class="wp-block-navigation__submenu-icon wp-block-navigation-submenu__toggle" >' . self::CHEVRON . '</button>'
             . '<ul data-wp-on--focus="actions.openMenuOnFocus" class="wp-block-navigation__submenu-container">' . $children . '</ul></li>';

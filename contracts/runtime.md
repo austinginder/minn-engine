@@ -5947,3 +5947,58 @@ sections), with a plugin block type that has every support.
 | functions | 649 → 555 | 1,571 → 1,640 |
 | classes | 79 → 78 | 80 → 83 |
 | methods | 800 → 789 | 763 → 842 |
+
+## The navigation family's helpers (2026-10-08)
+
+Batch 4a: the `block_core_navigation*`, page-list, home-link and shared item
+helpers, in `wp-api/core-blocks-navigation.php`. The probe is
+`tests/tools/navigation-blocks-probe.php` (fixture `navigation-blocks`, 33
+sections). The engine's own renderer still renders the blocks; these answer
+plugins that call the helpers.
+
+- **Colours and sizes.** A named colour is a class, a custom one inline; one
+  helper serves the navigation, links, page lists and the home link.
+  - A navigation reads its attributes.
+  - A link reads its navigation's context, the overlay colours inside a submenu.
+  - A page list reads the context alone; its own attributes are ignored, as on
+    the reference.
+  - The home link takes its custom colours from the context's style.
+
+  A navigation's font size helper gives only the preset's class; a link's
+  gives a custom size inline, made fluid.
+- **Submenus.**
+  - A navigation's `submenuVisibility` turns hover into click when it opens
+    submenus on click.
+  - A submenu or page list reads always, else click or hover, from context.
+  - The directives a submenu item takes come from
+    `Navigation::submenuDirectives`, which the engine's renderer prints too.
+- **Trees and ids.** The tree checks match block instances only; parsed arrays
+  never match. Post ids are collected inner first, through nested navigations,
+  from links whose kind is post-type.
+- **Menus as blocks.** `Menus::linkAttributes` maps a menu item to a
+  navigation link in the reference's shape. The engine's own classic-menu
+  fallback uses it too, and the native link reads the `title` attribute (an
+  empty one included).
+  - Menu items keep an empty stored class (`MenuItemMarks`), as the reference
+    does; the walker drops it as it prints.
+  - The fallback functions create a navigation post from a classic menu, as
+    the reference does.
+- **Variations.** A label left at core's default (the label a type starts
+  from: a post's or page's, a tag's or category's) gives "{singular} link"
+  and a blank description. Post formats have their own label.
+  `data/blocks.json` no longer stores the link's variations; the
+  `get_block_type_variations` filter supplies them, as on the reference.
+- **Kept on purpose.**
+  - `block_core_navigation_link_maybe_urldecode` decodes once only when a
+    query value is still encoded after parsing.
+  - `block_core_page_list_nest_pages` keys children by array position.
+  - `block_core_navigation_add_support_classes_to_container` changed nothing
+    in any case tried on the reference, so the engine's passes the markup
+    through.
+- **Owed.** `get_post_type_labels` and `get_taxonomy_labels` return an
+  object's labels as they stand; the reference builds them from core's
+  defaults.
+
+| | missing | verified |
+|---|---|---|
+| functions | 555 → 518 | 1,640 → 1,677 |

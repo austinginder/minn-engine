@@ -17,7 +17,7 @@ the repositories and records: posts, users, terms, comments, and the render pipe
 | [`Links`](#links) | final readonly class | 102 | The links manager's table, as get_bookmarks and wp_insert_link read and |
 | [`MediaShortcodes`](#mediashortcodes) | final class | 187 | The [video] and [audio] shortcodes as the reference prints them: a |
 | [`MenuItem`](#menuitem) | final readonly class | 22 | One classic nav_menu_item, fields resolved from the post, its |
-| [`Menus`](#menus) | final readonly class | 485 | Classic nav_menu terms and nav_menu_item posts. The front uses these |
+| [`Menus`](#menus) | final readonly class | 511 | Classic nav_menu terms and nav_menu_item posts. The front uses these |
 | [`MoreTag`](#moretag) | final class | 20 | The `<!--more-->` marker that splits a post into the part a listing shows |
 | [`Page`](#page) | final readonly class | 49 | One page of a listing: the rows on it and how many rows the whole |
 | [`PasswordGate`](#passwordgate) | final class | 34 | A password-protected post on the front end: its body is the password |
@@ -673,7 +673,18 @@ site has no nav_menu terms with items.
 
 ### `toBlock(Minn\Content\MenuItem $item): Minn\Blocks\Block`
 
-A menu item as the navigation block it renders through.
+A menu item as the navigation block it renders through (its classes: its own, then the menu item ones).
+
+### static `linkAttributes(array $item): array`
+
+A menu item's navigation link attributes, as the reference writes them
+for a menu turned into blocks (probe navigation-blocks): its classes
+joined, its description, the object it links to (none for a custom
+link) and that object's kind, its title as the label, a new tab for a
+_blank target, its XFN as rel, its attribute title, its URL.
+
+- `@param array<string, mixed> $item a menu item's fields, by their WordPress names`
+- `@return array<string, mixed>`
 
 ### `autoAdd(int $menuId): bool`
 
@@ -738,7 +749,7 @@ The ids of the menu items, in any menu or none, that point at an object of a kin
 
 Adds a page to the end of a menu, titled by the page itself, as a menu set to add new pages takes it.
 
-Internals: `hydrate()` (private, line 185), `meta()` (private, line 244), `menuIdOf()` (private, line 257), `classList()` (private, line 269), `xfnList()` (private, line 279), `writeMeta()` (private, line 463), `originalParent()` (private, line 473), `content()` (private, line 483), `writer()` (private, line 488), `site()` (private, line 496)
+Internals: `hydrate()` (private, line 211), `meta()` (private, line 270), `menuIdOf()` (private, line 283), `classList()` (private, line 295), `xfnList()` (private, line 305), `writeMeta()` (private, line 489), `originalParent()` (private, line 499), `content()` (private, line 509), `writer()` (private, line 514), `site()` (private, line 522)
 
 
 ## MoreTag

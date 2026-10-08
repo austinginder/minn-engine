@@ -2,14 +2,14 @@
     "generated": "2026-10-08",
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line), placeholder (generated stub, behaviour still owed), deadend (generated stub for wp-admin, the editors, the Customizer or XML-RPC, inert by design); \"deadend\" on any entry names its dead-end area",
     "summary": {
-        "minn": 720,
-        "composes": 1455,
-        "leaf": 731,
-        "noop": 2364,
+        "minn": 722,
+        "composes": 1474,
+        "leaf": 741,
+        "noop": 2374,
         "placeholder": 281,
         "deadend": 1579,
-        "functions": 7056,
-        "minnMethods": 859,
+        "functions": 7097,
+        "minnMethods": 861,
         "leafLinesOver15": 13
     },
     "functions": {
@@ -26654,6 +26654,13 @@
             ],
             "composes": []
         },
+        "_minn_context_submenu_visibility": {
+            "file": "core-blocks-navigation.php",
+            "lines": 4,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
         "_minn_core_block_rows": {
             "file": "blocks.php",
             "lines": 2,
@@ -27206,6 +27213,22 @@
                 "_x"
             ]
         },
+        "_minn_navigation_colors": {
+            "file": "core-blocks-navigation.php",
+            "lines": 13,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "_minn_navigation_overlay_colors": {
+            "file": "core-blocks-navigation.php",
+            "lines": 2,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "_minn_navigation_colors"
+            ]
+        },
         "_minn_neutralize_inner_extensions": {
             "file": "formatting.php",
             "lines": 12,
@@ -27255,6 +27278,17 @@
                 "Minn\\Runtime\\Pages::descendants"
             ],
             "composes": []
+        },
+        "_minn_page_list_item": {
+            "file": "core-blocks-navigation.php",
+            "lines": 13,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "esc_attr",
+                "esc_html",
+                "esc_url"
+            ]
         },
         "_minn_pagination_arrow": {
             "file": "blocks.php",
@@ -30777,6 +30811,25 @@
                 "_minn_render_core_callback"
             ]
         },
+        "block_core_home_link_build_css_colors": {
+            "file": "core-blocks-navigation.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "_minn_navigation_colors"
+            ]
+        },
+        "block_core_home_link_build_li_wrapper_attributes": {
+            "file": "core-blocks-navigation.php",
+            "lines": 2,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "block_core_home_link_build_css_colors",
+                "get_block_wrapper_attributes"
+            ]
+        },
         "block_core_image_ensure_interactivity_dependency": {
             "file": "deprecated.php",
             "lines": 1,
@@ -30795,10 +30848,234 @@
                 "_minn_render_core_callback"
             ]
         },
+        "block_core_navigation_add_directives_to_overlay_close": {
+            "file": "core-blocks-navigation.php",
+            "lines": 4,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "block_core_navigation_add_directives_to_submenu": {
+            "file": "core-blocks-navigation.php",
+            "lines": 14,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Blocks\\Dynamic\\Theme\\Navigation::submenuDirectives"
+            ],
+            "composes": [
+                "block_core_navigation_get_submenu_visibility"
+            ]
+        },
+        "block_core_navigation_add_support_classes_to_container": {
+            "file": "core-blocks-navigation.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "block_core_navigation_block_contains_core_navigation": {
+            "file": "core-blocks-navigation.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "block_core_navigation_block_tree_has_block_type"
+            ]
+        },
+        "block_core_navigation_block_tree_has_block_type": {
+            "file": "core-blocks-navigation.php",
+            "lines": 12,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "block_core_navigation_build_css_colors": {
+            "file": "core-blocks-navigation.php",
+            "lines": 2,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "_minn_navigation_colors",
+                "_minn_navigation_overlay_colors"
+            ]
+        },
+        "block_core_navigation_build_css_font_sizes": {
+            "file": "core-blocks-navigation.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
         "block_core_navigation_filter_out_empty_blocks": {
             "file": "blocks.php",
             "lines": 1,
             "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "block_core_navigation_from_block_get_post_ids": {
+            "file": "core-blocks-navigation.php",
+            "lines": 5,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "block_core_navigation_get_post_ids"
+            ]
+        },
+        "block_core_navigation_get_classic_menu_fallback": {
+            "file": "core-blocks-navigation.php",
+            "lines": 13,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "get_nav_menu_locations",
+                "wp_get_nav_menu_object",
+                "wp_get_nav_menus"
+            ]
+        },
+        "block_core_navigation_get_classic_menu_fallback_blocks": {
+            "file": "core-blocks-navigation.php",
+            "lines": 7,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "_wp_menu_item_classes_by_context",
+                "block_core_navigation_parse_blocks_from_menu_items",
+                "serialize_blocks",
+                "wp_get_nav_menu_items"
+            ]
+        },
+        "block_core_navigation_get_fallback_blocks": {
+            "file": "core-blocks-navigation.php",
+            "lines": 6,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "apply_filters",
+                "block_core_navigation_filter_out_empty_blocks",
+                "block_core_navigation_get_most_recently_published_navigation",
+                "parse_blocks"
+            ]
+        },
+        "block_core_navigation_get_layout_custom_property_declarations": {
+            "file": "core-blocks-navigation.php",
+            "lines": 9,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "block_core_navigation_get_most_recently_published_navigation": {
+            "file": "core-blocks-navigation.php",
+            "lines": 2,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "get_posts"
+            ]
+        },
+        "block_core_navigation_get_post_ids": {
+            "file": "core-blocks-navigation.php",
+            "lines": 5,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "block_core_navigation_from_block_get_post_ids"
+            ]
+        },
+        "block_core_navigation_get_submenu_visibility": {
+            "file": "core-blocks-navigation.php",
+            "lines": 2,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "block_core_navigation_link_build_css_colors": {
+            "file": "core-blocks-navigation.php",
+            "lines": 3,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "_minn_navigation_colors"
+            ]
+        },
+        "block_core_navigation_link_build_css_font_sizes": {
+            "file": "core-blocks-navigation.php",
+            "lines": 5,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "wp_get_typography_font_size_value"
+            ]
+        },
+        "block_core_navigation_link_build_variations": {
+            "file": "core-blocks-navigation.php",
+            "lines": 8,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "build_variation_for_navigation_link",
+                "get_post_types",
+                "get_taxonomies"
+            ]
+        },
+        "block_core_navigation_link_filter_variations": {
+            "file": "core-blocks-navigation.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "block_core_navigation_link_build_variations"
+            ]
+        },
+        "block_core_navigation_link_maybe_urldecode": {
+            "file": "core-blocks-navigation.php",
+            "lines": 7,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "parse_url"
+            ]
+        },
+        "block_core_navigation_link_render_submenu_icon": {
+            "file": "core-blocks-navigation.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "block_core_navigation_maybe_use_classic_menu_fallback": {
+            "file": "core-blocks-navigation.php",
+            "lines": 6,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "block_core_navigation_get_classic_menu_fallback",
+                "block_core_navigation_get_classic_menu_fallback_blocks",
+                "get_post",
+                "is_wp_error",
+                "wp_insert_post"
+            ]
+        },
+        "block_core_navigation_overlay_html_has_close_block": {
+            "file": "core-blocks-navigation.php",
+            "lines": 2,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "block_core_navigation_parse_blocks_from_menu_items": {
+            "file": "core-blocks-navigation.php",
+            "lines": 12,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Content\\Menus::linkAttributes"
+            ],
+            "composes": []
+        },
+        "block_core_navigation_set_overlay_image_fetch_priority": {
+            "file": "core-blocks-navigation.php",
+            "lines": 5,
+            "kind": "leaf",
             "minn": [],
             "composes": []
         },
@@ -30809,6 +31086,64 @@
             "minn": [],
             "composes": [
                 "_deprecated_function"
+            ]
+        },
+        "block_core_navigation_submenu_get_submenu_visibility": {
+            "file": "core-blocks-navigation.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "_minn_context_submenu_visibility"
+            ]
+        },
+        "block_core_navigation_submenu_render_submenu_icon": {
+            "file": "core-blocks-navigation.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "block_core_navigation_typographic_presets_backcompatibility": {
+            "file": "core-blocks-navigation.php",
+            "lines": 10,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "block_core_page_list_build_css_colors": {
+            "file": "core-blocks-navigation.php",
+            "lines": 2,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "_minn_navigation_colors",
+                "_minn_navigation_overlay_colors"
+            ]
+        },
+        "block_core_page_list_get_submenu_visibility": {
+            "file": "core-blocks-navigation.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "_minn_context_submenu_visibility"
+            ]
+        },
+        "block_core_page_list_nest_pages": {
+            "file": "core-blocks-navigation.php",
+            "lines": 6,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "block_core_page_list_render_nested_page_list": {
+            "file": "core-blocks-navigation.php",
+            "lines": 10,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "_minn_page_list_item"
             ]
         },
         "block_core_post_template_uses_featured_image": {
@@ -30833,6 +31168,22 @@
             "composes": [
                 "_deprecated_function"
             ]
+        },
+        "block_core_shared_navigation_item_should_render": {
+            "file": "core-blocks-navigation.php",
+            "lines": 5,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "get_post"
+            ]
+        },
+        "block_core_shared_navigation_render_submenu_icon": {
+            "file": "core-blocks-navigation.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
         },
         "block_core_social_link_get_name": {
             "file": "blocks.php",
@@ -31039,6 +31390,17 @@
             "composes": [
                 "get_allowed_block_template_part_areas",
                 "get_block_templates"
+            ]
+        },
+        "build_variation_for_navigation_link": {
+            "file": "core-blocks-navigation.php",
+            "lines": 11,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "__",
+                "get_post_type_object",
+                "get_taxonomy"
             ]
         },
         "bulk_edit_posts": {

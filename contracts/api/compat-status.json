@@ -3,12 +3,12 @@
     "summary": {
         "functions": {
             "total": 3913,
-            "real": 2458,
+            "real": 2495,
             "deadend": 874,
             "placeholder": 26,
-            "missing": 555,
-            "verified": 1641,
-            "resolved": 3358
+            "missing": 518,
+            "verified": 1678,
+            "resolved": 3395
         },
         "classes": {
             "total": 380,
@@ -16,7 +16,7 @@
             "deadend": 128,
             "placeholder": 29,
             "missing": 78,
-            "verified": 83,
+            "verified": 84,
             "resolved": 302
         },
         "methods": {
@@ -25,7 +25,7 @@
             "deadend": 1561,
             "placeholder": 384,
             "missing": 789,
-            "verified": 842,
+            "verified": 853,
             "resolved": 3284
         }
     }

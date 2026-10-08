@@ -65,7 +65,8 @@ final class MenuItemMarks
     {
         $type = (string) $item->type;
         $objectId = (int) $item->object_id;
-        $classes = array_values(array_filter(array_map('strval', (array) ($item->classes ?? []))));
+        // An item's own classes stay as stored, an empty one included (the walker drops it as it prints).
+        $classes = array_values(array_map('strval', (array) ($item->classes ?? [])));
         array_push($classes, 'menu-item', 'menu-item-type-' . $type, 'menu-item-object-' . $item->object);
         foreach (['frontPageId' => 'menu-item-home', 'privacyPageId' => 'menu-item-privacy-policy'] as $page => $class) {
             if ($type === 'post_type' && $view[$page] > 0 && $objectId === $view[$page]) {

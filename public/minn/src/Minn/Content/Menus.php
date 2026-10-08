@@ -104,27 +104,53 @@ final readonly class Menus
         );
     }
 
-    /** A menu item as the navigation block it renders through. */
+    /** A menu item as the navigation block it renders through (its classes: its own, then the menu item ones). */
     public function toBlock(MenuItem $item): Block
     {
-        $kind = match ($item->type) {
-            'taxonomy' => 'taxonomy',
-            'post_type' => 'post-type',
-            default => 'custom',
-        };
-        return new Block('core/navigation-link', [
-            'label' => $item->title,
-            'url' => $item->url,
-            'type' => $item->object,
-            'kind' => $kind,
-            'id' => $item->objectId,
-            'opensInNewTab' => $item->target === '_blank',
-            'fromMenu' => true,
-            'menuType' => $item->type,
+        return new Block('core/navigation-link', self::linkAttributes([
+            'classes' => [...$item->classes, 'menu-item', 'menu-item-type-' . $item->type, 'menu-item-object-' . $item->object],
+            'description' => $item->description,
+            'object_id' => $item->objectId,
+            'type' => $item->type,
             'object' => $item->object,
-            'attrTitle' => $item->attrTitle,
-            'className' => ' menu-item menu-item-type-' . $item->type . ' menu-item-object-' . $item->object,
-        ], [], '', []);
+            'title' => $item->title,
+            'target' => $item->target,
+            'xfn' => implode(' ', $item->xfn),
+            'attr_title' => $item->attrTitle,
+            'url' => $item->url,
+        ]), [], '', []);
+    }
+
+    /**
+     * A menu item's navigation link attributes, as the reference writes them
+     * for a menu turned into blocks (probe navigation-blocks): its classes
+     * joined, its description, the object it links to (none for a custom
+     * link) and that object's kind, its title as the label, a new tab for a
+     * _blank target, its XFN as rel, its attribute title, its URL.
+     *
+     * @param array<string, mixed> $item a menu item's fields, by their WordPress names
+     * @return array<string, mixed>
+     */
+    public static function linkAttributes(array $item): array
+    {
+        $type = (string) ($item['type'] ?? '');
+        $xfn = (string) ($item['xfn'] ?? '');
+        return [
+            'className' => implode(' ', (array) ($item['classes'] ?? [])),
+            'description' => (string) ($item['description'] ?? ''),
+            'id' => $type === 'custom' ? null : ($item['object_id'] ?? null),
+            'kind' => match ($type) {
+                'post_type' => 'post-type',
+                'taxonomy' => 'taxonomy',
+                default => 'custom',
+            },
+            'label' => (string) ($item['title'] ?? ''),
+            'opensInNewTab' => ($item['target'] ?? '') === '_blank',
+            'rel' => $xfn === '' ? null : $xfn,
+            'title' => (string) ($item['attr_title'] ?? ''),
+            'type' => (string) ($item['object'] ?? ''),
+            'url' => (string) ($item['url'] ?? ''),
+        ];
     }
 
     /** Whether this menu auto-adds new top-level pages, from the nav_menu_options blob. */
