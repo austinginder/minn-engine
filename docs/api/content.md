@@ -4,6 +4,7 @@ the repositories and records: posts, users, terms, comments, and the render pipe
 
 | Class | Kind | Lines | Summary |
 |---|---|---|---|
+| [`AdjacentScope`](#adjacentscope) | final readonly class | 16 | Which posts count as a post's neighbours (get_adjacent_post, probe |
 | [`Autop`](#autop) | final class | 34 | Classic-content paragraphing: blank lines become paragraphs, single |
 | [`Blocks`](#blocks) | final class | 46 | The content pipeline's front door: block markup goes through the block |
 | [`Clickable`](#clickable) | final class | 64 | Bare addresses in text made links (make_clickable, probe |
@@ -31,7 +32,7 @@ the repositories and records: posts, users, terms, comments, and the render pipe
 | [`PostSlugs`](#postslugs) | final readonly class | 75 | Which slug a live post may take beside the others, as the reference |
 | [`PostStatus`](#poststatus) | enum | 42 | The statuses a post row can hold; the value is the column's own spelling. |
 | [`PostWriter`](#postwriter) | final readonly class | 482 | Every write to the posts table and its satellites: rows, meta, term |
-| [`Posts`](#posts) | final readonly class | 384 | Reads over the posts table. A post comes back as a PostRecord; a listing |
+| [`Posts`](#posts) | final readonly class | 405 | Reads over the posts table. A post comes back as a PostRecord; a listing |
 | [`Reader`](#reader) | final class | 72 | Who is reading this request: their user id, whether they may read |
 | [`Revisions`](#revisions) | final readonly class | 95 | Revision rows: the plain snapshots and the per-author autosave slots. |
 | [`Site`](#site) | final readonly class | 93 | Site-wide options and the site's clock. |
@@ -45,6 +46,30 @@ the repositories and records: posts, users, terms, comments, and the render pipe
 | [`Texturize`](#texturize) | final class | 182 | The texturize subset the reference applies to rendered text: straight |
 | [`UserRecord`](#userrecord) | final readonly class | 96 | One row of the users table, read by name. Columns keep their WordPress |
 | [`Users`](#users) | final readonly class | 291 |  |
+
+## AdjacentScope
+
+`final readonly class Minn\Content\AdjacentScope` · `public/minn/src/Minn/Content/AdjacentScope.php`
+
+Which posts count as a post's neighbours (get_adjacent_post, probe
+link-template-tags): published ones, and private ones the reader may see
+(all of them, or only their own); kept to posts sharing one of $sameTerms
+when given, and away from any post in $excludedTerms, both in $taxonomy.
+
+Used by: `Minn\Content\Posts`
+
+```php
+__construct(string $private = 'none', int $reader = 0, array $sameTerms = array ( ), array $excludedTerms = array ( ), string $taxonomy = 'category')
+```
+- `@param list<int> $sameTerms`
+- `@param list<int> $excludedTerms`
+
+- readonly `string $private`
+- readonly `int $reader`
+- readonly `array $sameTerms`
+- readonly `array $excludedTerms`
+- readonly `string $taxonomy`
+
 
 ## Autop
 
@@ -1464,13 +1489,13 @@ The latest revision id, an autosave counting as one, newest by date then id (pro
 
 Whether a live post carries an autosave newer than its saved state.
 
-### `next(Minn\Content\PostRecord $post): ?Minn\Content\PostRecord`
+### `next(Minn\Content\PostRecord $post, Minn\Content\AdjacentScope $scope = \Minn\Content\AdjacentScope::__set_state(array(    'private' => 'none',    'reader' => 0,    'sameTerms' =>    array (   ),    'excludedTerms' =>    array (   ),    'taxonomy' => 'category', ))): ?Minn\Content\PostRecord`
 
-The adjacent published post by date; previous = older, next = newer.
+The post of the same type after this one, by date then id, among those the scope allows (published only by default), or null.
 
-### `previous(Minn\Content\PostRecord $post): ?Minn\Content\PostRecord`
+### `previous(Minn\Content\PostRecord $post, Minn\Content\AdjacentScope $scope = \Minn\Content\AdjacentScope::__set_state(array(    'private' => 'none',    'reader' => 0,    'sameTerms' =>    array (   ),    'excludedTerms' =>    array (   ),    'taxonomy' => 'category', ))): ?Minn\Content\PostRecord`
 
-The published post of the same type before this one, by date then id, or null.
+The post of the same type before this one, by date then id, among those the scope allows, or null.
 
 ### `newest(array $types, string $column): ?string`
 
@@ -1516,7 +1541,7 @@ The newest autosave of a post by one author, or null.
 
 The slug of the post's first category, or null.
 
-Internals: `record()` (private, line 20), `byName()` (private, line 48), `byPath()` (private, line 123), `neighbour()` (private, line 261), `weekMode()` (private, line 329), `monthBeside()` (private, line 364)
+Internals: `record()` (private, line 20), `byName()` (private, line 48), `byPath()` (private, line 123), `neighbour()` (private, line 261), `weekMode()` (private, line 350), `monthBeside()` (private, line 385)
 
 
 ## Reader

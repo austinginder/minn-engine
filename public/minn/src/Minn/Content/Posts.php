@@ -246,26 +246,47 @@ final readonly class Posts
         ) !== null;
     }
 
-    /** The adjacent published post by date; previous = older, next = newer. */
-    public function next(PostRecord $post): ?PostRecord
+    /** The post of the same type after this one, by date then id, among those the scope allows (published only by default), or null. */
+    public function next(PostRecord $post, AdjacentScope $scope = new AdjacentScope()): ?PostRecord
     {
-        return $this->neighbour($post, '>', 'ASC');
+        return $this->neighbour($post, '>', 'ASC', $scope);
     }
 
-    /** The published post of the same type before this one, by date then id, or null. */
-    public function previous(PostRecord $post): ?PostRecord
+    /** The post of the same type before this one, by date then id, among those the scope allows, or null. */
+    public function previous(PostRecord $post, AdjacentScope $scope = new AdjacentScope()): ?PostRecord
     {
-        return $this->neighbour($post, '<', 'DESC');
+        return $this->neighbour($post, '<', 'DESC', $scope);
     }
 
-    private function neighbour(PostRecord $post, string $operator, string $order): ?PostRecord
+    private function neighbour(PostRecord $post, string $operator, string $order, AdjacentScope $scope): ?PostRecord
     {
+        $where = '';
+        $params = [$post->type, $post->date, $post->date, $post->id];
+        $where .= match ($scope->private) {
+            'all' => " AND p.post_status IN ('publish', 'private')",
+            'own' => " AND (p.post_status = 'publish' OR (p.post_status = 'private' AND p.post_author = ?))",
+            default => " AND p.post_status = 'publish'",
+        };
+        if ($scope->private === 'own') {
+            $params[] = $scope->reader;
+        }
+        $inTerms = "SELECT tr.object_id FROM {$this->db->table('term_relationships')} tr
+            JOIN {$this->db->table('term_taxonomy')} tt ON tt.term_taxonomy_id = tr.term_taxonomy_id
+            WHERE tt.taxonomy = ? AND tt.term_id IN (?)";
+        if ($scope->sameTerms !== []) {
+            $where .= " AND p.ID IN ({$inTerms})";
+            array_push($params, $scope->taxonomy, $scope->sameTerms);
+        }
+        if ($scope->excludedTerms !== []) {
+            $where .= " AND p.ID NOT IN ({$inTerms})";
+            array_push($params, $scope->taxonomy, $scope->excludedTerms);
+        }
         return self::record($this->db->row(
-            "SELECT * FROM {$this->db->table('posts')}
-             WHERE post_type = ? AND post_status = 'publish'
-               AND (post_date {$operator} ? OR (post_date = ? AND ID {$operator} ?))
-             ORDER BY post_date {$order}, ID {$order} LIMIT 1",
-            [$post->type, $post->date, $post->date, $post->id],
+            "SELECT p.* FROM {$this->db->table('posts')} p
+             WHERE p.post_type = ?
+               AND (p.post_date {$operator} ? OR (p.post_date = ? AND p.ID {$operator} ?)){$where}
+             ORDER BY p.post_date {$order}, p.ID {$order} LIMIT 1",
+            $params,
         ));
     }
 

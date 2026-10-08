@@ -24644,6 +24644,119 @@
             ]
         },
         {
+            "name": "Minn\\Content\\AdjacentScope",
+            "short": "AdjacentScope",
+            "namespace": "Minn\\Content",
+            "kind": "final readonly class",
+            "file": "public/minn/src/Minn/Content/AdjacentScope.php",
+            "lines": 16,
+            "doc": "Which posts count as a post's neighbours (get_adjacent_post, probe\nlink-template-tags): published ones, and private ones the reader may see\n(all of them, or only their own); kept to posts sharing one of $sameTerms\nwhen given, and away from any post in $excludedTerms, both in $taxonomy.",
+            "implements": [],
+            "extends": null,
+            "uses": [],
+            "usedBy": [
+                "Minn\\Content\\Posts"
+            ],
+            "constructor": {
+                "signature": "__construct(string $private = 'none', int $reader = 0, array $sameTerms = array ( ), array $excludedTerms = array ( ), string $taxonomy = 'category')",
+                "doc": "",
+                "shapes": [
+                    "@param list<int> $sameTerms",
+                    "@param list<int> $excludedTerms"
+                ],
+                "params": [
+                    {
+                        "name": "private",
+                        "type": "string",
+                        "shape": "'all'|'own'|'none'",
+                        "default": "'none'",
+                        "doc": ""
+                    },
+                    {
+                        "name": "reader",
+                        "type": "int",
+                        "shape": "",
+                        "default": "0",
+                        "doc": ""
+                    },
+                    {
+                        "name": "sameTerms",
+                        "type": "array",
+                        "shape": "list<int>",
+                        "default": "array ( )",
+                        "doc": ""
+                    },
+                    {
+                        "name": "excludedTerms",
+                        "type": "array",
+                        "shape": "list<int>",
+                        "default": "array ( )",
+                        "doc": ""
+                    },
+                    {
+                        "name": "taxonomy",
+                        "type": "string",
+                        "shape": "",
+                        "default": "'category'",
+                        "doc": ""
+                    }
+                ],
+                "visibility": "public",
+                "line": 20,
+                "end": 27
+            },
+            "cases": [],
+            "constants": [],
+            "properties": [
+                {
+                    "name": "private",
+                    "type": "string",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "public",
+                    "promoted": true
+                },
+                {
+                    "name": "reader",
+                    "type": "int",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "public",
+                    "promoted": true
+                },
+                {
+                    "name": "sameTerms",
+                    "type": "array",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "public",
+                    "promoted": true
+                },
+                {
+                    "name": "excludedTerms",
+                    "type": "array",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "public",
+                    "promoted": true
+                },
+                {
+                    "name": "taxonomy",
+                    "type": "string",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "public",
+                    "promoted": true
+                }
+            ],
+            "methods": []
+        },
+        {
             "name": "Minn\\Content\\Autop",
             "short": "Autop",
             "namespace": "Minn\\Content",
@@ -31700,11 +31813,12 @@
             "namespace": "Minn\\Content",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Content/Posts.php",
-            "lines": 384,
+            "lines": 405,
             "doc": "Reads over the posts table. A post comes back as a PostRecord; a listing\nis the main query's (WP_Query); rendering and escaping happen elsewhere.",
             "implements": [],
             "extends": null,
             "uses": [
+                "Minn\\Content\\AdjacentScope",
                 "Minn\\Content\\PostRecord",
                 "Minn\\Db"
             ],
@@ -32181,8 +32295,8 @@
                     "name": "next",
                     "static": false,
                     "visibility": "public",
-                    "signature": "next(Minn\\Content\\PostRecord $post): ?Minn\\Content\\PostRecord",
-                    "doc": "The adjacent published post by date; previous = older, next = newer.",
+                    "signature": "next(Minn\\Content\\PostRecord $post, Minn\\Content\\AdjacentScope $scope = \\Minn\\Content\\AdjacentScope::__set_state(array(    'private' => 'none',    'reader' => 0,    'sameTerms' =>    array (   ),    'excludedTerms' =>    array (   ),    'taxonomy' => 'category', ))): ?Minn\\Content\\PostRecord",
+                    "doc": "The post of the same type after this one, by date then id, among those the scope allows (published only by default), or null.",
                     "shapes": [],
                     "params": [
                         {
@@ -32190,6 +32304,13 @@
                             "type": "Minn\\Content\\PostRecord",
                             "shape": "",
                             "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "scope",
+                            "type": "Minn\\Content\\AdjacentScope",
+                            "shape": "",
+                            "default": "\\Minn\\Content\\AdjacentScope::__set_state(array(    'private' => 'none',    'reader' => 0,    'sameTerms' =>    array (   ),    'excludedTerms' =>    array (   ),    'taxonomy' => 'category', ))",
                             "doc": ""
                         }
                     ],
@@ -32201,8 +32322,8 @@
                     "name": "previous",
                     "static": false,
                     "visibility": "public",
-                    "signature": "previous(Minn\\Content\\PostRecord $post): ?Minn\\Content\\PostRecord",
-                    "doc": "The published post of the same type before this one, by date then id, or null.",
+                    "signature": "previous(Minn\\Content\\PostRecord $post, Minn\\Content\\AdjacentScope $scope = \\Minn\\Content\\AdjacentScope::__set_state(array(    'private' => 'none',    'reader' => 0,    'sameTerms' =>    array (   ),    'excludedTerms' =>    array (   ),    'taxonomy' => 'category', ))): ?Minn\\Content\\PostRecord",
+                    "doc": "The post of the same type before this one, by date then id, among those the scope allows, or null.",
                     "shapes": [],
                     "params": [
                         {
@@ -32210,6 +32331,13 @@
                             "type": "Minn\\Content\\PostRecord",
                             "shape": "",
                             "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "scope",
+                            "type": "Minn\\Content\\AdjacentScope",
+                            "shape": "",
+                            "default": "\\Minn\\Content\\AdjacentScope::__set_state(array(    'private' => 'none',    'reader' => 0,    'sameTerms' =>    array (   ),    'excludedTerms' =>    array (   ),    'taxonomy' => 'category', ))",
                             "doc": ""
                         }
                     ],
@@ -32242,8 +32370,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 279,
-                    "end": 286
+                    "line": 300,
+                    "end": 307
                 },
                 {
                     "routes": [],
@@ -32278,8 +32406,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 293,
-                    "end": 301
+                    "line": 314,
+                    "end": 322
                 },
                 {
                     "routes": [],
@@ -32321,8 +32449,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 310,
-                    "end": 326
+                    "line": 331,
+                    "end": 347
                 },
                 {
                     "routes": [],
@@ -32364,8 +32492,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 339,
-                    "end": 347
+                    "line": 360,
+                    "end": 368
                 },
                 {
                     "routes": [],
@@ -32398,8 +32526,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 350,
-                    "end": 354
+                    "line": 371,
+                    "end": 375
                 },
                 {
                     "routes": [],
@@ -32432,8 +32560,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 357,
-                    "end": 361
+                    "line": 378,
+                    "end": 382
                 },
                 {
                     "routes": [],
@@ -32459,8 +32587,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 374,
-                    "end": 381
+                    "line": 395,
+                    "end": 402
                 },
                 {
                     "routes": [],
@@ -32479,8 +32607,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 384,
-                    "end": 395
+                    "line": 405,
+                    "end": 416
                 },
                 {
                     "routes": [],
@@ -32574,7 +32702,7 @@
                     "name": "neighbour",
                     "static": false,
                     "visibility": "private",
-                    "signature": "neighbour(Minn\\Content\\PostRecord $post, string $operator, string $order): ?Minn\\Content\\PostRecord",
+                    "signature": "neighbour(Minn\\Content\\PostRecord $post, string $operator, string $order, Minn\\Content\\AdjacentScope $scope): ?Minn\\Content\\PostRecord",
                     "doc": "",
                     "shapes": [],
                     "params": [
@@ -32598,10 +32726,17 @@
                             "shape": "",
                             "default": null,
                             "doc": ""
+                        },
+                        {
+                            "name": "scope",
+                            "type": "Minn\\Content\\AdjacentScope",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
                         }
                     ],
                     "line": 261,
-                    "end": 270
+                    "end": 291
                 },
                 {
                     "routes": [],
@@ -32612,8 +32747,8 @@
                     "doc": "MySQL's WEEK() mode for the site's first day of the week: 0 for Sunday, 1 for Monday.",
                     "shapes": [],
                     "params": [],
-                    "line": 329,
-                    "end": 332
+                    "line": 350,
+                    "end": 353
                 },
                 {
                     "routes": [],
@@ -32648,8 +32783,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 364,
-                    "end": 371
+                    "line": 385,
+                    "end": 392
                 }
             ]
         },
@@ -45741,7 +45876,7 @@
             "kind": "final class",
             "file": "public/minn/src/Minn/Front/PostNavigation.php",
             "lines": 36,
-            "doc": "The links to the posts either side of this one, and the nav block that\nwraps them. The caller's format wraps the anchor: `%link` is the whole\nanchor and `%title` the post's title, and the anchor carries rel=\"prev\"\nor rel=\"next\".\n\nTitles arrive already filtered; this only assembles.",
+            "doc": "The links to the posts either side of this one, and the nav block that\nwraps them. The caller's format wraps the anchor: `%link` is the whole\nanchor, `%title` the post's title and `%date` its date, and the anchor carries rel=\"prev\"\nor rel=\"next\".\n\nTitles arrive already filtered; this only assembles.",
             "implements": [],
             "extends": null,
             "uses": [
@@ -45758,7 +45893,7 @@
                     "name": "previous",
                     "static": true,
                     "visibility": "public",
-                    "signature": "previous(string $url, string $title, string $format, string $linkFormat): string",
+                    "signature": "previous(string $url, string $title, string $format, string $linkFormat, string $date = ''): string",
                     "doc": "A previous or next post link in the reference's format.",
                     "shapes": [],
                     "params": [
@@ -45789,6 +45924,13 @@
                             "shape": "",
                             "default": null,
                             "doc": ""
+                        },
+                        {
+                            "name": "date",
+                            "type": "string",
+                            "shape": "",
+                            "default": "''",
+                            "doc": ""
                         }
                     ],
                     "line": 20,
@@ -45799,7 +45941,7 @@
                     "name": "next",
                     "static": true,
                     "visibility": "public",
-                    "signature": "next(string $url, string $title, string $format, string $linkFormat): string",
+                    "signature": "next(string $url, string $title, string $format, string $linkFormat, string $date = ''): string",
                     "doc": "The next-post link in the reference's format.",
                     "shapes": [],
                     "params": [
@@ -45829,6 +45971,13 @@
                             "type": "string",
                             "shape": "",
                             "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "date",
+                            "type": "string",
+                            "shape": "",
+                            "default": "''",
                             "doc": ""
                         }
                     ],
@@ -45869,7 +46018,7 @@
                     "name": "link",
                     "static": true,
                     "visibility": "private",
-                    "signature": "link(string $url, string $title, string $format, string $linkFormat, string $rel): string",
+                    "signature": "link(string $url, string $title, string $format, string $linkFormat, string $rel, string $date): string",
                     "doc": "",
                     "shapes": [],
                     "params": [
@@ -45903,6 +46052,13 @@
                         },
                         {
                             "name": "rel",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "date",
                             "type": "string",
                             "shape": "",
                             "default": null,

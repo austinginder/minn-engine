@@ -6566,3 +6566,44 @@ date stays at -04:00 in New York in winter. **Fixed:** the engine read the raw
 a zone printed `+00:00` (found by the site suite on the marketing site, whose
 stored offset had become 0), and dates across a daylight-saving change were
 off by an hour.
+
+## link-template.php's remaining template tags (2026-10-08)
+
+Probe `link-template-tags` (`tests/tools/link-template-tags-probe.php`),
+run from a single post's query. Thirteen functions; link-template.php owes
+nothing now.
+
+- **Adjacent posts.** `get_adjacent_post` (and so every adjacent link) now
+  reads the scope the reference reads (`Content\AdjacentScope` on
+  `Posts::previous`/`next`): published posts plus private ones a signed-in
+  reader may read (every one with the type's `read_private_posts`, else their
+  own); with `$in_same_term`, only posts sharing one of the current post's
+  terms in `$taxonomy` (none when it has none); never a post in the excluded
+  terms (comma list or array, through `get_{previous|next}_post_excluded_terms`).
+  **Fixed:** the engine ignored all three arguments and every private post.
+  The post navigation block still reads published posts only.
+- `adjacent_post_link` prints `get_adjacent_post_link`, whose link text now
+  takes `%date` (the post date in `date_format`) as well as `%title`.
+- **Rel links.** `get_adjacent_post_rel_link` is
+  `<link rel='prev|next' title='…' href='…' />` plus a newline, the title
+  being `%title` (the title as `the_title_attribute` gives it, "Private: "
+  and texturizing included) and `%date`, escaped; an attachment's previous is
+  its parent; nothing when there is no post; `{previous|next}_post_rel_link`
+  filters it. `adjacent_posts_rel_link`, `next_post_rel_link` and
+  `prev_post_rel_link` print them; `adjacent_posts_rel_link_wp_head` prints
+  both on a single post that is not an attachment (the reference does not
+  hook it to `wp_head` by default, and neither does the engine).
+- `permalink_anchor`: `<a id="post-{id}"></a>`, or for `title` (any case)
+  the title as a slug and the id. `the_feed_link`: the feed's link around the
+  anchor text as given (`the_feed_link`, with the feed). `the_shortlink`:
+  `<a rel="shortlink" href="…">`, "This is the short link." by default, no
+  title attribute whatever `$title` says, between before and after.
+- **Edit links.** `edit_tag_link` is `edit_term_link` for any term, through
+  `edit_tag_link`. `get_edit_bookmark_link`: `{admin}link.php?action=edit&amp;link_id={id}`
+  for someone who may `manage_links` (only while the Links manager is on),
+  through `get_edit_bookmark_link`; `edit_bookmark_link` prints it, "Edit This"
+  by default (`edit_bookmark_link`).
+- `wp_force_plain_post_permalink`: false for a viewable status, for a private
+  post the reader may read, and for a protected status (draft, pending,
+  scheduled) asked for as a sample (`$sample`, or a post whose `filter` is
+  `sample`); true otherwise, and for no post.

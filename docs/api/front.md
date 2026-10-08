@@ -839,16 +839,16 @@ Internals: `append()` (private, line 114)
 
 The links to the posts either side of this one, and the nav block that
 wraps them. The caller's format wraps the anchor: `%link` is the whole
-anchor and `%title` the post's title, and the anchor carries rel="prev"
+anchor, `%title` the post's title and `%date` its date, and the anchor carries rel="prev"
 or rel="next".
 
 Titles arrive already filtered; this only assembles.
 
-### static `previous(string $url, string $title, string $format, string $linkFormat): string`
+### static `previous(string $url, string $title, string $format, string $linkFormat, string $date = ''): string`
 
 A previous or next post link in the reference's format.
 
-### static `next(string $url, string $title, string $format, string $linkFormat): string`
+### static `next(string $url, string $title, string $format, string $linkFormat, string $date = ''): string`
 
 The next-post link in the reference's format.
 

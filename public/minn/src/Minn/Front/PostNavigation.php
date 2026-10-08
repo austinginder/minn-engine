@@ -9,7 +9,7 @@ use Minn\Html;
 /**
  * The links to the posts either side of this one, and the nav block that
  * wraps them. The caller's format wraps the anchor: `%link` is the whole
- * anchor and `%title` the post's title, and the anchor carries rel="prev"
+ * anchor, `%title` the post's title and `%date` its date, and the anchor carries rel="prev"
  * or rel="next".
  *
  * Titles arrive already filtered; this only assembles.
@@ -17,21 +17,21 @@ use Minn\Html;
 final class PostNavigation
 {
     /** A previous or next post link in the reference's format. */
-    public static function previous(string $url, string $title, string $format, string $linkFormat): string
+    public static function previous(string $url, string $title, string $format, string $linkFormat, string $date = ''): string
     {
-        return self::link($url, $title, $format, $linkFormat, 'prev');
+        return self::link($url, $title, $format, $linkFormat, 'prev', $date);
     }
 
     /** The next-post link in the reference's format. */
-    public static function next(string $url, string $title, string $format, string $linkFormat): string
+    public static function next(string $url, string $title, string $format, string $linkFormat, string $date = ''): string
     {
-        return self::link($url, $title, $format, $linkFormat, 'next');
+        return self::link($url, $title, $format, $linkFormat, 'next', $date);
     }
 
-    private static function link(string $url, string $title, string $format, string $linkFormat, string $rel): string
+    private static function link(string $url, string $title, string $format, string $linkFormat, string $rel, string $date): string
     {
         $anchor = '<a href="' . Html::attr($url) . '" rel="' . $rel . '">'
-            . str_replace('%title', $title, $linkFormat) . '</a>';
+            . str_replace(['%title', '%date'], [$title, $date], $linkFormat) . '</a>';
         return str_replace('%link', $anchor, $format);
     }
 

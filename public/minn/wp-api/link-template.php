@@ -634,8 +634,9 @@ function wp_shortlink_wp_head()
 
 /**
  * The link to the post before or after this one, in the reference's
- * captured shape: the format wraps the link, `%link` is the anchor and
- * `%title` the post title, and the anchor carries rel="prev"/"next".
+ * captured shape: the format wraps the link, `%link` is the anchor,
+ * `%title` the post title and `%date` its date, and the anchor carries
+ * rel="prev"/"next".
  * Empty when there is no such post.
  */
 function get_adjacent_post_link($format, $link, $in_same_term = false, $excluded_terms = '', $previous = true, $taxonomy = 'category')
@@ -646,7 +647,8 @@ function get_adjacent_post_link($format, $link, $in_same_term = false, $excluded
     if ($post instanceof WP_Post) {
         $title = get_the_title($post) ?: ($previous ? 'Previous Post' : 'Next Post');
         $title = apply_filters('the_title', $title, $post->ID);
-        $output = $previous ? PostNavigation::previous((string) get_permalink($post), $title, $format, $link) : PostNavigation::next((string) get_permalink($post), $title, $format, $link);
+        $date = (string) mysql2date((string) get_option('date_format'), $post->post_date);
+        $output = $previous ? PostNavigation::previous((string) get_permalink($post), $title, $format, $link, $date) : PostNavigation::next((string) get_permalink($post), $title, $format, $link, $date);
     }
     return apply_filters("{$adjacent}_post_link", $output, $format, $link, $post, $adjacent);
 }
@@ -903,4 +905,133 @@ function edit_term_link($link = '', $before = '', $after = '', $term = null, $di
     }
     echo $link;
     return null;
+}
+
+/** Prints the link to the post before or after this one (get_adjacent_post_link). */
+function adjacent_post_link($format, $link, $in_same_term = false, $excluded_terms = '', $previous = true, $taxonomy = 'category')
+{
+    echo get_adjacent_post_link($format, $link, $in_same_term, $excluded_terms, $previous, $taxonomy);
+}
+
+/**
+ * The <link rel="prev"> or <link rel="next"> for the post before or after
+ * this one (probe link-template-tags): `%title` is its title as a title
+ * attribute shows it, `%date` its date; an attachment's previous is its
+ * parent. Nothing when there is none; {previous|next}_post_rel_link filters it.
+ */
+function get_adjacent_post_rel_link($title = '%title', $in_same_term = false, $excluded_terms = '', $previous = true, $taxonomy = 'category')
+{
+    $current = get_post();
+    $post = $previous && is_attachment() && $current ? get_post($current->post_parent) : get_adjacent_post($in_same_term, $excluded_terms, $previous, $taxonomy);
+    if (empty($post)) {
+        return;
+    }
+    $postTitle = the_title_attribute(['echo' => false, 'post' => $post]) ?: ($previous ? __('Previous Post') : __('Next Post'));
+    $title = str_replace(['%title', '%date'], [$postTitle, mysql2date((string) get_option('date_format'), $post->post_date)], (string) $title);
+    $link = "<link rel='" . ($previous ? 'prev' : 'next') . "' title='" . esc_attr($title) . "' href='" . get_permalink($post) . "' />\n";
+    return apply_filters(($previous ? 'previous' : 'next') . '_post_rel_link', $link);
+}
+
+/** Prints the rel links to the posts before and after this one. */
+function adjacent_posts_rel_link($title = '%title', $in_same_term = false, $excluded_terms = '', $taxonomy = 'category')
+{
+    echo get_adjacent_post_rel_link($title, $in_same_term, $excluded_terms, true, $taxonomy);
+    echo get_adjacent_post_rel_link($title, $in_same_term, $excluded_terms, false, $taxonomy);
+}
+
+/** The adjacent rel links for the head of a single post (not an attachment). */
+function adjacent_posts_rel_link_wp_head()
+{
+    if (!is_single() || is_attachment()) {
+        return;
+    }
+    adjacent_posts_rel_link();
+}
+
+/** Prints the rel link to the next post. */
+function next_post_rel_link($title = '%title', $in_same_term = false, $excluded_terms = '', $taxonomy = 'category')
+{
+    echo get_adjacent_post_rel_link($title, $in_same_term, $excluded_terms, false, $taxonomy);
+}
+
+/** Prints the rel link to the previous post. */
+function prev_post_rel_link($title = '%title', $in_same_term = false, $excluded_terms = '', $taxonomy = 'category')
+{
+    echo get_adjacent_post_rel_link($title, $in_same_term, $excluded_terms, true, $taxonomy);
+}
+
+/** Prints an empty anchor for the current post: "post-{id}", or for "title" its title as a slug with the id. */
+function permalink_anchor($mode = 'id')
+{
+    $post = get_post();
+    echo strtolower((string) $mode) === 'title' ? '<a id="' . sanitize_title($post->post_title) . '-' . $post->ID . '"></a>' : '<a id="post-' . $post->ID . '"></a>';
+}
+
+/** Prints a link to a feed with the given text (the_feed_link filters it). */
+function the_feed_link($anchor, $feed = '')
+{
+    echo apply_filters('the_feed_link', '<a href="' . esc_url(get_feed_link($feed)) . '">' . $anchor . '</a>', $feed);
+}
+
+/** Prints the current post's short link (rel="shortlink"), "This is the short link." by default; the title is not printed. */
+function the_shortlink($text = '', $title = '', $before = '', $after = '')
+{
+    $post = get_post();
+    $text = $text ?: __('This is the short link.');
+    $title = $title ?: the_title_attribute(['echo' => false]);
+    $shortlink = $post ? wp_get_shortlink($post->ID) : '';
+    if ($shortlink !== '' && $shortlink !== false) {
+        echo $before . apply_filters('the_shortlink', '<a rel="shortlink" href="' . esc_url($shortlink) . '">' . $text . '</a>', $shortlink, $text, $title) . $after;
+    }
+}
+
+/** Prints the link to edit a tag (or any term) for someone who may; edit_tag_link filters it. */
+function edit_tag_link($link = '', $before = '', $after = '', $tag = null)
+{
+    $link = edit_term_link($link, '', '', $tag, false);
+    echo $before . apply_filters('edit_tag_link', $link) . $after;
+}
+
+/** The admin address for editing a bookmark, for someone who manages links; nothing otherwise. */
+function get_edit_bookmark_link($link = 0)
+{
+    $link = get_bookmark($link);
+    if (!$link || !current_user_can('manage_links')) {
+        return;
+    }
+    return apply_filters('get_edit_bookmark_link', admin_url('link.php?action=edit&amp;link_id=') . $link->link_id, $link->link_id);
+}
+
+/** Prints the link to edit a bookmark for someone who manages links ("Edit This" by default). */
+function edit_bookmark_link($link = '', $before = '', $after = '', $bookmark = null)
+{
+    $bookmark = get_bookmark($bookmark);
+    if (!$bookmark || !current_user_can('manage_links')) {
+        return;
+    }
+    $link = '<a href="' . esc_url(get_edit_bookmark_link($bookmark)) . '">' . ($link ?: __('Edit This')) . '</a>';
+    echo $before . apply_filters('edit_bookmark_link', $link, $bookmark->link_id) . $after;
+}
+
+/**
+ * Whether a post keeps its plain ?p= permalink: true unless its status is
+ * viewable, it is private and the reader may read it, or it is a protected
+ * status (draft, pending, scheduled) asked for as a sample permalink.
+ */
+function wp_force_plain_post_permalink($post = null, $sample = null)
+{
+    if ($sample === null && is_object($post) && isset($post->filter) && $post->filter === 'sample') {
+        $sample = true;
+    } else {
+        $post = get_post($post);
+        $sample = (bool) $sample;
+    }
+    if (!$post) {
+        return true;
+    }
+    $status = get_post_status_object(get_post_status($post));
+    if (!$status || !get_post_type_object(get_post_type($post))) {
+        return true;
+    }
+    return !(is_post_status_viewable($status) || (!empty($status->private) && current_user_can('read_post', $post->ID)) || (!empty($status->protected) && $sample));
 }

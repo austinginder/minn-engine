@@ -1,0 +1,176 @@
+[
+    [
+        "adjacent post links",
+        [
+            "<a href=\"{home}/zz-adj-other-q-co/\" rel=\"prev\">zz adj other &#8220;q&#8221; &#038; co</a> &raquo;",
+            "&laquo; <a href=\"{home}/zz-adj-last/\" rel=\"next\">Go: zz adj last on March 4, 1990</a>",
+            "<a href=\"{home}/zz-adj-other-q-co/\" rel=\"prev\">zz adj other &#8220;q&#8221; &#038; co</a>",
+            "<a href=\"{home}/zz-adj-last/\" rel=\"next\">zz adj last</a>",
+            "<a href=\"{home}/zz-adj-first/\" rel=\"prev\">zz adj first</a>",
+            ""
+        ]
+    ],
+    [
+        "adjacent rel links",
+        [
+            "<link rel='prev' title='zz adj other &#8220;q&#8221; &#038; co' href='{home}/zz-adj-other-q-co/' />\n",
+            "<link rel='next' title='zz adj last' href='{home}/zz-adj-last/' />\n",
+            "<link rel='prev' title='Back to zz adj other &#8220;q&#8221; &#038; co' href='{home}/zz-adj-other-q-co/' />\n",
+            "<link rel='prev' title='zz adj first' href='{home}/zz-adj-first/' />\n",
+            null,
+            "<link rel='prev' title='zz adj other &#8220;q&#8221; &#038; co' href='{home}/zz-adj-other-q-co/' />\n<link rel='next' title='zz adj last' href='{home}/zz-adj-last/' />\n",
+            "<link rel='prev' title='Post: zz adj other &#8220;q&#8221; &#038; co' href='{home}/zz-adj-other-q-co/' />\n<link rel='next' title='Post: zz adj last' href='{home}/zz-adj-last/' />\n",
+            "<link rel='next' title='zz adj last' href='{home}/zz-adj-last/' />\n",
+            "<link rel='prev' title='zz adj other &#8220;q&#8221; &#038; co (older)' href='{home}/zz-adj-other-q-co/' />\n",
+            "<link rel='prev' title='zz adj other &#8220;q&#8221; &#038; co' href='{home}/zz-adj-other-q-co/' />\n<link rel='next' title='zz adj last' href='{home}/zz-adj-last/' />\n"
+        ]
+    ],
+    [
+        "adjacent rel links, filtered",
+        [
+            "<link rel='prev' title='zz adj other &#8220;q&#8221; &#038; co' href='{home}/zz-adj-other-q-co/' data-x=\"1\" />\n<link rel='next' title='zz adj last' href='{home}/zz-adj-last/' data-x=\"1\" />\n",
+            [
+                "previous_post_rel_link",
+                "next_post_rel_link"
+            ]
+        ]
+    ],
+    [
+        "the last post's next is the private one, and in its category there is none",
+        [
+            "<link rel='next' title='Private: zz adj private' href='{home}/zz-adj-private/' />\n",
+            null
+        ]
+    ],
+    [
+        "the first post has no previous",
+        [
+            null,
+            ""
+        ]
+    ],
+    [
+        "permalink anchors",
+        [
+            "<a id=\"post-{zz-adj-first}\"></a>",
+            "<a id=\"zz-adj-first-{zz-adj-first}\"></a>",
+            "<a id=\"post-{zz-adj-first}\"></a>",
+            "<a id=\"post-{zz-adj-first}\"></a>"
+        ]
+    ],
+    [
+        "short links",
+        [
+            "<a rel=\"shortlink\" href=\"{home}/?p={zz-adj-first}\">This is the short link.</a>",
+            "<p><a rel=\"shortlink\" href=\"{home}/?p={zz-adj-first}\">Short</a></p>",
+            "[<a rel=\"shortlink\" href=\"{home}/?p={zz-adj-first}\">This is the short link.</a>]"
+        ]
+    ],
+    [
+        "feed links",
+        [
+            "<a href=\"{home}/feed/\">RSS</a>",
+            "<a href=\"{home}/feed/atom/\">Atom <b>feed</b></a>",
+            "<a href=\"{home}/feed/\"></a>"
+        ]
+    ],
+    [
+        "feed link, filtered",
+        "<a href=\"{home}/feed/\">RSS</a>#"
+    ],
+    [
+        "a page has no adjacent rel links in the head",
+        ""
+    ],
+    [
+        "a listing has none either",
+        ""
+    ],
+    [
+        "edit tag links",
+        [
+            "<a href=\"{home}/wp-admin/term.php?taxonomy=post_tag&tag_ID={zz-adj-tag}&post_type=post\">Edit This</a>",
+            "<b><a href=\"{home}/wp-admin/term.php?taxonomy=post_tag&tag_ID={zz-adj-tag}&post_type=post\">Change it</a></b>",
+            "[<a href=\"{home}/wp-admin/term.php?taxonomy=category&tag_ID={zz-adj-a}&post_type=post\">Change category</a>]"
+        ]
+    ],
+    [
+        "the database session",
+        [
+            "ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION",
+            "NO_ENGINE_SUBSTITUTION",
+            "STRICT_ALL_TABLES,NO_ENGINE_SUBSTITUTION",
+            "NO_ENGINE_SUBSTITUTION"
+        ]
+    ],
+    [
+        "bookmark edit links",
+        [
+            "{home}/wp-admin/link.php?action=edit&amp;link_id={bookmark}",
+            "{home}/wp-admin/link.php?action=edit&amp;link_id={bookmark}",
+            "<a href=\"{home}/wp-admin/link.php?action=edit&#038;link_id={bookmark}\">Edit This</a>",
+            "<i><a href=\"{home}/wp-admin/link.php?action=edit&#038;link_id={bookmark}\">Fix it</a></i>"
+        ]
+    ],
+    [
+        "bookmark edit link, filtered",
+        "{home}/wp-admin/link.php?action=edit&amp;link_id={bookmark}&from=probe&id={bookmark}"
+    ],
+    [
+        "edit links for a visitor",
+        [
+            null,
+            "",
+            ""
+        ]
+    ],
+    [
+        "plain permalinks kept",
+        [
+            [
+                "zz-adj-middle-\"quoted\"-&-more",
+                false
+            ],
+            [
+                "zz-adj-draft",
+                true
+            ],
+            [
+                "zz-adj-pending",
+                true
+            ],
+            [
+                "zz-adj-future",
+                true
+            ],
+            [
+                "zz-adj-private",
+                false
+            ],
+            [
+                "zz-adj-page",
+                false
+            ],
+            [
+                "zz-adj-draft-page",
+                true
+            ],
+            [
+                "zz-adj-draft",
+                false
+            ],
+            [
+                "zz-adj-draft",
+                true
+            ],
+            [
+                "zz-adj-middle-\"quoted\"-&-more",
+                false
+            ],
+            [
+                "zz-adj-future",
+                false
+            ]
+        ]
+    ]
+]

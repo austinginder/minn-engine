@@ -657,13 +657,40 @@ function wp_shortlink_header()
     header('Link: <' . $shortlink . '>; rel=shortlink', false);
 }
 
+/**
+ * The post before (or after) the current one, by date (probe
+ * link-template-tags): published posts, and private ones a signed-in reader
+ * may read (every one with read_private_posts, else their own); kept to the
+ * current post's terms in $taxonomy when asked, and out of the excluded
+ * terms (get_{previous|next}_post_excluded_terms).
+ */
 function get_adjacent_post($in_same_term = false, $excluded_terms = '', $previous = true, $taxonomy = 'category')
 {
     $post = get_post();
     if ($post === null) {
         return null;
     }
-    $row = $previous ? _minn_posts()->previous(Minn\Content\PostRecord::fromRow($post->to_array())) : _minn_posts()->next(Minn\Content\PostRecord::fromRow($post->to_array()));
+    $adjacent = $previous ? 'previous' : 'next';
+    $excluded = is_array($excluded_terms) ? $excluded_terms : (empty($excluded_terms) ? [] : explode(',', (string) $excluded_terms));
+    $excluded = array_values(array_filter(array_map('intval', (array) apply_filters("get_{$adjacent}_post_excluded_terms", $excluded))));
+    $same = [];
+    if ($in_same_term) {
+        if (!taxonomy_exists($taxonomy) || !is_object_in_taxonomy($post->post_type, $taxonomy)) {
+            return null;
+        }
+        $same = array_values(array_diff(array_map('intval', (array) wp_get_object_terms($post->ID, $taxonomy, ['fields' => 'ids'])), $excluded));
+        if ($same === []) {
+            return null;
+        }
+    }
+    $private = 'none';
+    if (is_user_logged_in()) {
+        $type = get_post_type_object($post->post_type);
+        $private = $type && current_user_can($type->cap->read_private_posts) ? 'all' : 'own';
+    }
+    $scope = new Minn\Content\AdjacentScope($private, get_current_user_id(), $same, $excluded, (string) $taxonomy);
+    $record = Minn\Content\PostRecord::fromRow($post->to_array());
+    $row = $previous ? _minn_posts()->previous($record, $scope) : _minn_posts()->next($record, $scope);
     return $row === null ? null : get_post((int) $row['ID']);
 }
 
