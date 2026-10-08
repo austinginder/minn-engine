@@ -132,7 +132,7 @@ __construct(string $iconsFile)
 
 Registers the block and its links with the renderer.
 
-Internals: `list()` (private, line 41), `link()` (private, line 56), `icons()` (private, line 95)
+Internals: `list()` (private, line 42), `link()` (private, line 57), `icons()` (private, line 96)
 
 
 ## SyncedPattern

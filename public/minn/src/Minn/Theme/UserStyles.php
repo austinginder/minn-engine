@@ -10,6 +10,7 @@ use Minn\Content\PostWriter;
 use Minn\Content\Site;
 use Minn\Content\Terms;
 use Minn\Db;
+use Minn\Json;
 
 /**
  * The site editor's saved global styles: one wp_global_styles post per
@@ -83,7 +84,7 @@ final readonly class UserStyles
      */
     public static function decode(string $json): array
     {
-        $decoded = json_decode($json, true);
+        $decoded = Json::decode($json, or: null);
         $node = static function (string $key) use ($decoded): array {
             $value = is_array($decoded) ? ($decoded[$key] ?? null) : null;
             return is_array($value) && !array_is_list($value) ? $value : [];
@@ -94,7 +95,7 @@ final readonly class UserStyles
     /** True when the body carries nothing at all under settings or styles, malformed or not. */
     public static function isBlank(string $json): bool
     {
-        $decoded = json_decode($json, true);
+        $decoded = Json::decode($json, or: null);
         return !is_array($decoded) || empty($decoded['settings']) && empty($decoded['styles']);
     }
 
@@ -109,14 +110,14 @@ final readonly class UserStyles
             return;
         }
         $current = self::decode($post->content);
-        $body = json_encode([
+        $body = Json::encode([
             'styles' => $styles ?? $current['styles'],
             'settings' => $settings ?? $current['settings'],
             'isGlobalStylesUserThemeJSON' => true,
             'version' => 3,
-        ]);
+        ], Json::ESCAPED);
         $this->writer->update($id, [
-            'post_content' => (string) $body,
+            'post_content' => $body,
             'post_modified' => $this->site->localNow(),
             'post_modified_gmt' => gmdate('Y-m-d H:i:s'),
         ] + ($title === null ? [] : ['post_title' => $title]));

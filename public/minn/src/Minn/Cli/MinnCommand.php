@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Minn\Cli;
 
+use Minn\Json;
 use WP_CLI;
 use Minn\Content\Inventory;
 use Minn\Cron\Cron;
@@ -58,7 +59,7 @@ final class MinnCommand
                 }
                 $rows[] = $row;
             }
-            return (string) json_encode($rows, JSON_UNESCAPED_SLASHES);
+            return Json::encode($rows, JSON_UNESCAPED_SLASHES);
         };
         $core = '';
         $versionFile = ABSPATH . 'wp-includes/version.php';

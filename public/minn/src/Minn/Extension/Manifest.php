@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Minn\Extension;
 
+use Minn\Json;
+
 /**
  * minn.json, read as data. A folder under wp-content/plugins (or
  * mu-plugins) with this file is an extension; the same folder may also be
@@ -61,7 +63,7 @@ final readonly class Manifest
         if (!is_file($file)) {
             return null;
         }
-        $data = json_decode((string) file_get_contents($file), true);
+        $data = Json::file($file, or: null);
         if (!is_array($data) || !is_string($data['extension'] ?? null)) {
             return null;
         }

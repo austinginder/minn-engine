@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Minn\I18n;
 
+use Minn\Json;
+
 /**
  * Where a script's JSON translations are found, and how they reach the
  * page. A script is placed by its URL: inside a plugin or a theme, its path
@@ -62,7 +64,7 @@ final class ScriptTranslations
             . "\tvar localeData = translations.locale_data[ domain ] || translations.locale_data.messages;\n"
             . "\tlocaleData[\"\"].domain = domain;\n"
             . "\twp.i18n.setLocaleData( localeData, domain );\n"
-            . '} )( ' . json_encode($domain, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) . ', ' . $json . ' );';
+            . '} )( ' . Json::encode($domain) . ', ' . $json . ' );';
     }
 
     private static function origin(string $siteUrl): string

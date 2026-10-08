@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Minn\Runtime;
 
 use Minn\Content\Site;
+use Minn\Json;
 use Minn\Support\Serialized;
 
 /**
@@ -153,14 +154,14 @@ final readonly class Recovery
         $key = $blamed['kind'] . ':' . $blamed['name'];
         $second = isset($strikes[$key]);
         $strikes[$key][] = $now;
-        $this->site->setOption(self::STRIKES_OPTION, (string) json_encode($strikes));
+        $this->site->setOption(self::STRIKES_OPTION, Json::encode($strikes));
         return $second;
     }
 
     /** @return array<string, list<int>> */
     private function strikes(): array
     {
-        $decoded = json_decode((string) ($this->site->option(self::STRIKES_OPTION) ?? ''), true);
+        $decoded = Json::decode((string) ($this->site->option(self::STRIKES_OPTION) ?? ''), or: null);
         return is_array($decoded) ? array_map(static fn ($times): array => array_map('intval', (array) $times), $decoded) : [];
     }
 
@@ -173,7 +174,7 @@ final readonly class Recovery
             $this->site->deleteOption(self::STRIKES_OPTION);
             return;
         }
-        $this->site->setOption(self::STRIKES_OPTION, (string) json_encode($strikes));
+        $this->site->setOption(self::STRIKES_OPTION, Json::encode($strikes));
     }
 
     /**

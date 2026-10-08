@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Minn\Runtime;
 
 use Closure;
+use Minn\Json;
 
 /**
  * The script modules registry: registrations with typed dependencies, the
@@ -168,7 +169,7 @@ final class ScriptModules
         if ($imports === []) {
             return '';
         }
-        return \wp_get_inline_script_tag((string) json_encode(['imports' => $imports], JSON_HEX_TAG | JSON_HEX_AMP | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE), ['type' => 'importmap', 'id' => 'wp-importmap']);
+        return \wp_get_inline_script_tag(Json::encode(['imports' => $imports], JSON_HEX_TAG | JSON_HEX_AMP | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE), ['type' => 'importmap', 'id' => 'wp-importmap']);
     }
 
     /** The modulepreload links. */
@@ -208,7 +209,7 @@ final class ScriptModules
             if ($data === []) {
                 continue;
             }
-            $out .= \wp_get_inline_script_tag((string) json_encode($data, JSON_HEX_TAG | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE), ['type' => 'application/json', 'id' => 'wp-script-module-data-' . $id]);
+            $out .= \wp_get_inline_script_tag(Json::encode($data, JSON_HEX_TAG | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE), ['type' => 'application/json', 'id' => 'wp-script-module-data-' . $id]);
         }
         return $out;
     }

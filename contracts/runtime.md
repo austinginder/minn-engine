@@ -1194,7 +1194,7 @@ list sorting). The leaf pass that produced the number moved `wpautop`
 (`Content\Autop`), `remove_accents` (`Support\Accents`), entity decoding and
 tag stripping (`Support\Entities::decode`, `Html::stripAllTags`), path and
 mode spellings (`Support\Paths`), query strings (`Url::buildQuery`), JSON
-sanitising (`Support\Json`), CURIE compaction (`Rest\Links`) and block asset
+sanitising (`Minn\Json::repair`), CURIE compaction (`Rest\Links`) and block asset
 handles (`BlockMetadata::assetHandle`).
 
 The composing functions got the same treatment next: the map's `composes`
@@ -6213,7 +6213,7 @@ which go with the comment and user exporters in a privacy batch.
 
 ## functions.php's utilities (2026-10-08)
 
-Batch 7: twenty-two functions of `functions.php`, over `Support\Json`, the new
+Batch 7: twenty-two functions of `functions.php`, over `Minn\Json`, the new
 `Support\Hierarchy` and `Content\TextFilters`. The probe is
 `tests/tools/functions-utils-probe.php` (fixture `functions-utils`, 21 rows);
 it puts the `dirsize_cache` transient back at shutdown.
@@ -6223,13 +6223,13 @@ it puts the `dirsize_cache` transient back at shutdown.
   on `option_home` and `option_siteurl` as on the reference. The engine's own
   classes still read the stored option; a site whose constant differs from it
   reads the constant only through the facade.
-- **The JSON encoder's fallback.** `Support\Json::convert` replaces only the
+- **The JSON encoder's fallback.** `Minn\Json::repair` replaces only the
   invalid bytes of a string with "?" and keeps its valid characters
   (`mb_convert_encoding`); the engine used to replace every high byte of a
-  string that held one invalid byte. `Json::sanitize` now converts keys too,
+  string that held one invalid byte. It converts keys too,
   reads an object as a plain object of its public properties, and throws
-  "Reached depth limit" past the depth asked for. `wp_json_encode` uses it
-  through `_wp_json_sanity_check` and answers false on that exception;
+  "Reached depth limit" past the depth asked for. `wp_json_encode` maps onto
+  `Minn\Json::encode` and answers false when it throws (`contracts/json.md`);
   `_minn_json_sanitize` is gone. `_wp_json_prepare_data` is deprecated (5.3.0)
   and returns its value.
 - **Cache ids.** `_validate_cache_id` accepts an integer, or a string that

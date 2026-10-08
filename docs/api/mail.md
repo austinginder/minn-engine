@@ -569,7 +569,7 @@ The messages WordPress's mailer subclass loads.
 
 - `@return array<string, string>`
 
-Internals: `set()` (private, line 39)
+Internals: `set()` (private, line 41)
 
 
 ## Message

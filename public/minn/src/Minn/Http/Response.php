@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Minn\Http;
 
 use Closure;
+use Minn\Json;
 
 /**
  * What a handler returns. Nothing is written to the client until the
@@ -40,7 +41,7 @@ final readonly class Response
         return new self(
             $status,
             ['Content-Type' => 'application/json; charset=UTF-8'],
-            (string) json_encode($payload, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE),
+            Json::encode($payload),
         );
     }
 

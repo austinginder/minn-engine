@@ -8,6 +8,7 @@ use Minn\Content\Posts;
 use Minn\Db;
 use Minn\Front\Kind;
 use Minn\Front\Resolution;
+use Minn\Json;
 use Minn\Runtime\BlockTemplates;
 use Minn\Runtime\Runtime;
 
@@ -155,7 +156,7 @@ final readonly class Templates
     public function userStyles(): ?array
     {
         $json = $this->saved('wp_global_styles', null);
-        $decoded = $json === null ? null : json_decode($json, true);
+        $decoded = $json === null ? null : Json::decode($json, or: null);
         if (!is_array($decoded)) {
             return null;
         }

@@ -7,6 +7,7 @@ namespace Minn\Theme;
 use Minn\Blocks\Attributes;
 use Minn\Blocks\Block;
 use Minn\Blocks\Parser;
+use Minn\Json;
 
 /**
  * A template can name a pattern instead of carrying its blocks, and the
@@ -54,7 +55,7 @@ final readonly class TemplatePatterns
 
     private static function pattern(string $attributes, Theme $theme): ?string
     {
-        $slug = (json_decode($attributes, true) ?: [])['slug'] ?? null;
+        $slug = (Json::decode($attributes, or: null) ?: [])['slug'] ?? null;
         if (!is_string($slug) || $slug === '') {
             return null;
         }
@@ -87,9 +88,9 @@ final readonly class TemplatePatterns
         $after = (int) $match[0][1] + strlen((string) $match[0][0]);
         $spaces = strspn($markup, " \t\n\r", $after);
         $attributes = Attributes::objectAt($markup, $after + $spaces);
-        $decoded = $attributes === null ? [] : (array) json_decode($attributes, true);
+        $decoded = $attributes === null ? [] : (array) Json::decode($attributes, or: null);
         $decoded['metadata'] = array_merge((array) ($decoded['metadata'] ?? []), $header);
-        $encoded = (string) json_encode($decoded, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+        $encoded = Json::encode($decoded);
         return substr($markup, 0, $after) . ' ' . $encoded
             . substr($markup, $after + $spaces + strlen((string) $attributes));
     }

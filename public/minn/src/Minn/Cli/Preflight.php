@@ -6,6 +6,7 @@ namespace Minn\Cli;
 
 use Minn\Content\ContentScan;
 use Minn\Extension\Manifest;
+use Minn\Json;
 use Minn\Support\Serialized;
 use mysqli;
 use Throwable;
@@ -185,7 +186,7 @@ final class Preflight
     private function preflightPlugins(string $root, \Closure $option): array
     {
         $plugins = Serialized::stringList($option('active_plugins'));
-        $own = json_decode((string) ($option('minn_active_extensions') ?? '[]'), true);
+        $own = Json::decode((string) ($option('minn_active_extensions') ?? '[]'), or: null);
         $own = is_array($own) ? array_map('strval', $own) : [];
         $provided = [];
         $coveredShortcodes = [];

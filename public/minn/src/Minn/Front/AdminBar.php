@@ -12,6 +12,7 @@ use Minn\Auth\Capabilities;
 use Minn\Auth\Nonce;
 use Minn\Content\Site;
 use Minn\Content\UserRecord;
+use Minn\Json;
 use Minn\Support\Html;
 
 /**
@@ -76,7 +77,7 @@ final readonly class AdminBar
             ],
         ];
         return $this->markup($status, $editUrl, $editLabel)
-            . '<script id="minn-admin-bar-js-before">window.MINN_BAR = ' . json_encode($config, JSON_UNESCAPED_SLASHES | JSON_HEX_TAG | JSON_HEX_AMP) . ';</script>' . "\n"
+            . '<script id="minn-admin-bar-js-before">window.MINN_BAR = ' . Json::encode($config, JSON_UNESCAPED_SLASHES | JSON_HEX_TAG | JSON_HEX_AMP) . ';</script>' . "\n"
             . '<script src="' . Html::attr($this->assetUrl('assets/js/bar.js')) . '" id="minn-admin-bar-js"></script>' . "\n";
     }
 

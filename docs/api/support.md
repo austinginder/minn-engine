@@ -17,7 +17,6 @@ escaping, serialized readers, small helpers
 | [`Hierarchy`](#hierarchy) | final class | 52 | Loops in a parent chain, found with two walkers: a slow one that takes one |
 | [`Html`](#html) | final class | 107 |  |
 | [`Ip`](#ip) | final class | 22 | Addresses with their identifying tail removed, for logs and analytics that |
-| [`Json`](#json) | final class | 44 | Makes a value encodable the way the JSON encoder's fallback does it |
 | [`Kses`](#kses) | final class | 577 | The HTML a user without unfiltered_html may store. Tags outside the |
 | [`KsesAttributes`](#ksesattributes) | final class | 64 | Kses one attribute at a time, for the shortcode pass that runs inside |
 | [`KsesEntities`](#ksesentities) | final class | 30 | The named references kses keeps as written: the list captured from the |
@@ -54,7 +53,7 @@ Used by: `Minn\Content\Slug`
 
 The text with its accented characters spelled plainly, as the locale spells them.
 
-Internals: `data()` (private, line 43)
+Internals: `data()` (private, line 44)
 
 
 ## Backtrace
@@ -357,27 +356,6 @@ so a malformed value can never leak through unchanged.
 An address with its last octet, or its tail, zeroed.
 
 
-## Json
-
-`final class Minn\Support\Json` · `public/minn/src/Minn/Support/Json.php`
-
-Makes a value encodable the way the JSON encoder's fallback does it
-(probe functions-utils): every string and every key made valid UTF-8,
-each invalid byte becoming "?" while the valid characters stay, objects
-read as plain objects of their public properties, no deeper than the
-depth asked for.
-
-### static `convert(string $text): string`
-
-A string made valid UTF-8: each invalid byte becomes "?", the valid characters stay.
-
-### static `sanitize(mixed $value, int $depth = 512): mixed`
-
-A value with every string and key made valid UTF-8, ready to encode.
-
-Internals: `item()` (private, line 53)
-
-
 ## Kses
 
 `final class Minn\Support\Kses` · `public/minn/src/Minn/Support/Kses.php`
@@ -558,7 +536,7 @@ An allowlist the reference ships, by context ("post" or "data").
 
 - `@return array<string, array<string, mixed>>`
 
-Internals: `table()` (private, line 37)
+Internals: `table()` (private, line 39)
 
 
 ## KsesPolicy

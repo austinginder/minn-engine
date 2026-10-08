@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Minn\Rest;
 
+use Minn\Json;
+
 /**
  * The taxonomy registry the wp/v2 surface describes: the core set seeded
  * from the reference (data/taxonomies.json) with the reference's own
@@ -25,7 +27,7 @@ final class Taxonomies
     public function all(): array
     {
         if ($this->taxonomies === null) {
-            $taxonomies = (array) json_decode((string) file_get_contents(MINN_ENGINE_DIR . '/data/taxonomies.json'), true);
+            $taxonomies = (array) Json::file(MINN_ENGINE_DIR . '/data/taxonomies.json');
             foreach ($taxonomies as &$taxonomy) {
                 $taxonomy['_links'] = [
                     'collection' => [['href' => $this->url->to('/wp/v2/taxonomies')]],

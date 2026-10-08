@@ -6,8 +6,10 @@ namespace Minn\Rest;
 
 use Minn\Http\Args;
 use Closure;
+use JsonException;
 use Minn\Http\Request;
 use Minn\Http\Route;
+use Minn\Json;
 use Minn\RestError;
 use Minn\Runtime\Refusal;
 
@@ -61,9 +63,10 @@ final readonly class ArgCheck
         if (!str_starts_with(strtolower((string) $request->header('content-type')), 'application/json') || trim($request->body) === '') {
             return;
         }
-        json_decode($request->body);
-        if (json_last_error() !== JSON_ERROR_NONE) {
-            throw new RestError('rest_invalid_json', 'Invalid JSON body passed.', 400, ['json_error_code' => json_last_error(), 'json_error_message' => json_last_error_msg()]);
+        try {
+            Json::decode($request->body);
+        } catch (JsonException $e) {
+            throw new RestError('rest_invalid_json', 'Invalid JSON body passed.', 400, ['json_error_code' => $e->getCode(), 'json_error_message' => $e->getMessage()]);
         }
     }
 

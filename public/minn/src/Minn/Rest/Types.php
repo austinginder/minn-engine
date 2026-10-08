@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Minn\Rest;
 
+use Minn\Json;
 use Minn\Runtime\Runtime;
 
 /**
@@ -37,7 +38,7 @@ final class Types
     private function core(): array
     {
         if ($this->types === null) {
-            $types = (array) json_decode((string) file_get_contents(MINN_ENGINE_DIR . '/data/types.json'), true);
+            $types = (array) Json::file(MINN_ENGINE_DIR . '/data/types.json');
             foreach ($this->declared as $slug => $row) {
                 if (isset($types[$slug])) {
                     continue;

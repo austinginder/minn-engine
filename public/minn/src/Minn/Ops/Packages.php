@@ -9,6 +9,7 @@ use Minn\Content\Inventory;
 use Minn\Content\Site;
 use Minn\Extension\Manifest;
 use Minn\Http\Download;
+use Minn\Json;
 use Minn\RestError;
 use Minn\Support\Files;
 use Minn\Support\FileHeaders;
@@ -42,7 +43,7 @@ final readonly class Packages
     {
         $args = $query === '' ? 'request[browse]=popular' : 'request[search]=' . rawurlencode($query);
         $json = $this->ask(self::THEMES_INFO . '?action=query_themes&' . $args . '&request[per_page]=12&request[fields][screenshot_url]=1&request[fields][active_installs]=1');
-        $data = json_decode($json, true);
+        $data = Json::decode($json, or: null);
         if (!is_array($data) || !isset($data['themes'])) {
             throw new RestError('themes_api_failed', 'The Minn update service did not answer the theme search.', 502);
         }
@@ -78,7 +79,7 @@ final readonly class Packages
             'page' => $page,
             'fields' => ['icons' => 1, 'short_description' => 1, 'active_installs' => 1, 'rating' => 1],
         ]]));
-        $data = json_decode($json, true);
+        $data = Json::decode($json, or: null);
         if (!is_array($data) || !isset($data['plugins'])) {
             throw new RestError('plugins_api_failed', 'The Minn update service did not answer the plugin search.', 502);
         }
@@ -111,7 +112,7 @@ final readonly class Packages
         if (!preg_match('/^[a-z0-9-]+$/', $slug)) {
             throw new RestError('no_slug', 'Plugin slug is required.', 400);
         }
-        $cache = json_decode((string) ($this->site->option(self::INFO_OPTION) ?? ''), true);
+        $cache = Json::decode((string) ($this->site->option(self::INFO_OPTION) ?? ''), or: null);
         $cache = is_array($cache) ? $cache : [];
         // A card from another source (wordpress.org, before the update service) is asked again: its icon points there.
         if (isset($cache[$slug]['at']) && (int) $cache[$slug]['at'] > time() - self::INFO_TTL && is_array($cache[$slug]['card'] ?? null) && ($cache[$slug]['source'] ?? '') === Directory::BASE) {
@@ -138,7 +139,7 @@ final readonly class Packages
             uasort($cache, static fn (array $a, array $b): int => $b['at'] <=> $a['at']);
             $cache = array_slice($cache, 0, 50, true);
         }
-        $this->site->setOption(self::INFO_OPTION, (string) json_encode($cache, JSON_UNESCAPED_SLASHES));
+        $this->site->setOption(self::INFO_OPTION, Json::encode($cache));
         return $card;
     }
 
@@ -188,7 +189,7 @@ final readonly class Packages
             'slug' => $slug,
             'fields' => ['short_description' => 1, 'icons' => 1, 'active_installs' => 1, 'rating' => 1, 'download_link' => 1, 'sections' => 0, 'description' => 0, 'reviews' => 0, 'ratings' => 0, 'tags' => 0, 'contributors' => 0],
         ]]));
-        $data = json_decode($json, true);
+        $data = Json::decode($json, or: null);
         if (!is_array($data) || isset($data['error']) || !isset($data['slug'])) {
             return null;
         }
@@ -213,7 +214,7 @@ final readonly class Packages
         if ($reply->failed() || $reply->body === '') {
             return null;
         }
-        $data = json_decode($reply->body, true);
+        $data = Json::decode($reply->body, or: null);
         return is_array($data) ? $data : ['unexpected' => $reply->body];
     }
 
@@ -235,7 +236,7 @@ final readonly class Packages
             'page' => $page,
             'per_page' => $perPage,
         ]]));
-        $data = json_decode($json, true);
+        $data = Json::decode($json, or: null);
         if (!is_array($data) || !isset($data['themes'])) {
             throw new RestError('themes_api_failed', 'The Minn update service did not answer the theme search.', 502);
         }
@@ -266,7 +267,7 @@ final readonly class Packages
             'page' => $page,
             'per_page' => $perPage,
         ]]));
-        $data = json_decode($json, true);
+        $data = Json::decode($json, or: null);
         if (!is_array($data) || !isset($data['plugins'])) {
             throw new RestError('plugins_api_failed', 'The Minn update service did not answer the plugin search.', 502);
         }
@@ -292,7 +293,7 @@ final readonly class Packages
      */
     public function directoryTheme(string $slug): ?array
     {
-        $data = json_decode($this->ask(self::THEMES_INFO . '?action=theme_information&request[slug]=' . rawurlencode($slug) . '&request[fields][download_link]=1'), true);
+        $data = Json::decode($this->ask(self::THEMES_INFO . '?action=theme_information&request[slug]=' . rawurlencode($slug) . '&request[fields][download_link]=1'), or: null);
         if (!is_array($data) || isset($data['error']) || !isset($data['slug'])) {
             return null;
         }

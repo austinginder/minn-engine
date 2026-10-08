@@ -8,7 +8,8 @@ the front door, the autoloader, the one database door, the REST error
 | [`Context`](#context) | final readonly class | 41 | One request, as a value: the database door, who is asking, what they |
 | [`Db`](#db) | final class | 261 | The one door to the database. Every query is a prepared statement; the |
 | [`Engine`](#engine) | final readonly class | 270 | The engine's front door. An unmodified wp-config.php ends by requiring |
-| [`Http`](#http) | final class | 205 | Outgoing HTTP, called straight from anywhere with no import: |
+| [`Http`](#http) | final class | 205 | Outgoing HTTP, called from anywhere after one import: |
+| [`Json`](#json) | final class | 115 | JSON in and out, for the engine and for code written for Minn: |
 | [`RestError`](#resterror) | final class | 60 | A WordPress-shaped error, thrown from anywhere and rendered once by the |
 
 ## Autoloader
@@ -214,10 +215,12 @@ Internals: `restRoute()` (private, line 112), `bootRuntimeForRest()` (private, l
 
 `final class Minn\Http` · `public/minn/src/Minn/Http.php`
 
-Outgoing HTTP, called straight from anywhere with no import:
+Outgoing HTTP, called from anywhere after one import:
 
-$data = Minn\Http::get('https://api.example.com/status')->json();
-Minn\Http::post($url, json: ['email' => $email], timeout: 10)->throw();
+use Minn\Http;
+
+$data = Http::get('https://api.example.com/status')->json();
+Http::post($url, json: ['email' => $email], timeout: 10)->throw();
 
 Every verb answers with an Exchange (->ok(), ->failed(), ->json(),
 ->header(), ->cookie(), ->throw(), ->code, ->body) and takes the same
@@ -298,7 +301,50 @@ A response made by hand, for a fake to answer with. An array body is sent as JSO
 
 - `@param array<string, string|list<string>> $headers name => value; Set-Cookie values become cookies`
 
-Internals: `follow()` (private, line 146), `deliver()` (private, line 165), `nextHop()` (private, line 175), `outbound()` (private, line 186), `payload()` (private, line 201), `lines()` (private, line 219), `withQuery()` (private, line 238)
+Internals: `follow()` (private, line 148), `deliver()` (private, line 167), `nextHop()` (private, line 177), `outbound()` (private, line 188), `payload()` (private, line 203), `lines()` (private, line 221), `withQuery()` (private, line 240)
+
+
+## Json
+
+`final class Minn\Json` · `public/minn/src/Minn/Json.php`
+
+JSON in and out, for the engine and for code written for Minn:
+
+use Minn\Json;
+
+Json::encode($rows);              // {"url":"https://example.com/a","name":"Café"}
+Json::decode($text);              // objects as arrays; JsonException when it is not JSON
+Json::decode($stored, or: []);    // the fallback, for text that may be empty or broken
+Json::file($path);                // the same, read from a file; the error names the file
+
+encode() writes slashes and characters as themselves unless flags say
+otherwise (Json::ESCAPED is the form WordPress writes, which REST bodies
+keep). A string cut mid-character still encodes: each invalid byte becomes
+"?", as wp_json_encode() does it (probe functions-utils). What cannot be
+encoded even then (NAN, nesting past the depth) throws a JsonException.
+
+- const `READABLE` = `320` — Slashes and non-ASCII characters written as themselves: encode()'s default.
+- const `ESCAPED` = `0` — Slashes and non-ASCII characters escaped, as wp_json_encode() and the REST API write them.
+
+Used by: `Minn\Admin\AdminTypes`, `Minn\Admin\AppController`, `Minn\Admin\PackagesController`, `Minn\Admin\StructureController`, `Minn\Admin\Translations`, `Minn\Auth\Roles`, `Minn\Blocks\CoreBlocks`, `Minn\Blocks\Dynamic\SocialLinks`, `Minn\Blocks\Parser`, `Minn\Blocks\Serializer`, `Minn\Cli\Installer`, `Minn\Cli\MinnCommand`, `Minn\Cli\OptionCommand`, `Minn\Cli\Preflight`, `Minn\Content\Emoji`, `Minn\Content\PluginState`, `Minn\Extension\Loader`, `Minn\Extension\Manifest`, `Minn\Front\AdminBar`, `Minn\Http`, `Minn\Http\Exchange`, `Minn\Http\Request`, `Minn\Http\Response`, `Minn\I18n\ScriptTranslations`, `Minn\Mail\MailLog`, `Minn\Mail\MailSettings`, `Minn\Mail\MailerStrings`, `Minn\Ops\Changelog`, `Minn\Ops\Packages`, `Minn\Ops\Releases`, `Minn\Ops\Updates`, `Minn\Rest\ArgCheck`, `Minn\Rest\BatchController`, `Minn\Rest\Embed`, `Minn\Rest\Reply`, `Minn\Rest\RuntimeRoutes`, `Minn\Rest\Schema`, `Minn\Rest\Taxonomies`, `Minn\Rest\Types`, `Minn\Runtime\Assets`, `Minn\Runtime\Constants`, `Minn\Runtime\Interactivity`, `Minn\Runtime\OEmbed`, `Minn\Runtime\Recovery`, `Minn\Runtime\Registry`, `Minn\Runtime\ScriptModules`, `Minn\Runtime\SymbolGap`, `Minn\Runtime\ThemeSupports`, `Minn\Support\Accents`, `Minn\Support\KsesEntities`, `Minn\Theme\GlobalStyles`, `Minn\Theme\StylePresets`, `Minn\Theme\TemplateIndex`, `Minn\Theme\TemplatePartTheme`, `Minn\Theme\TemplatePatterns`, `Minn\Theme\Templates`, `Minn\Theme\Theme`, `Minn\Theme\ThemeStyles`, `Minn\Theme\UserStyles`
+
+### static `encode(mixed $value, int $flags = self::READABLE, int $depth = 512): string`
+
+A value as JSON; invalid UTF-8 is repaired, never a reason to fail.
+
+### static `decode(string $text, mixed $or = NULL): mixed`
+
+The value the text holds, objects as arrays; with `or:` given, that comes back instead of an exception.
+
+### static `file(string $path, mixed $or = NULL): mixed`
+
+The value a JSON file holds, objects as arrays; with `or:` given, a missing or broken file gives that instead.
+
+### static `repair(mixed $value, int $depth = 512): mixed`
+
+A value with every string and key made valid UTF-8, each invalid byte becoming "?", objects read as plain objects of their public properties.
+
+Internals: `member()` (private, line 128), `text()` (private, line 137)
 
 
 ## RestError

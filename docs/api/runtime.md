@@ -569,7 +569,7 @@ The handles queued.
 
 Whether these are scripts or styles.
 
-Internals: `changed()` (private, line 45), `depsOf()` (private, line 146), `defaults()` (private, line 152), `held()` (private, line 223), `ordered()` (private, line 329)
+Internals: `changed()` (private, line 47), `depsOf()` (private, line 148), `defaults()` (private, line 154), `held()` (private, line 225), `ordered()` (private, line 331)
 
 
 ## Avatar
@@ -1211,7 +1211,7 @@ Used by: `Minn\Runtime\Runtime`
 
 Defines the constants the reference defines at boot.
 
-Internals: `maxMemoryLimit()` (private, line 82)
+Internals: `maxMemoryLimit()` (private, line 84)
 
 
 ## CronTable
@@ -1669,7 +1669,7 @@ The element whose directives are being evaluated.
 
 HTML with its directives resolved on the server.
 
-Internals: `namespace()` (private, line 133), `tokenize()` (private, line 144), `walk()` (private, line 203), `applyDirectives()` (private, line 265), `bind()` (private, line 323), `interactiveNamespace()` (private, line 349), `pushContext()` (private, line 362), `evaluate()` (private, line 379), `expandEach()` (private, line 429), `markChildren()` (private, line 463), `attributeMap()` (private, line 495), `relative()` (private, line 508), `escape()` (private, line 513), `camel()` (private, line 518)
+Internals: `namespace()` (private, line 135), `tokenize()` (private, line 146), `walk()` (private, line 205), `applyDirectives()` (private, line 267), `bind()` (private, line 325), `interactiveNamespace()` (private, line 351), `pushContext()` (private, line 364), `evaluate()` (private, line 381), `expandEach()` (private, line 431), `markChildren()` (private, line 465), `attributeMap()` (private, line 497), `relative()` (private, line 510), `escape()` (private, line 515), `camel()` (private, line 520)
 
 
 ## MenuEvents
@@ -3433,7 +3433,7 @@ Lets an extension load again. Returns false when it was not paused.
 
 Lets everything load again. Returns how many were released.
 
-Internals: `pluginFile()` (private, line 90), `activePlugins()` (private, line 104), `strikes()` (private, line 161), `forgetStrikes()` (private, line 168), `read()` (private, line 223), `write()` (private, line 231)
+Internals: `pluginFile()` (private, line 91), `activePlugins()` (private, line 105), `strikes()` (private, line 162), `forgetStrikes()` (private, line 169), `read()` (private, line 224), `write()` (private, line 232)
 
 
 ## Refusal
@@ -3596,7 +3596,7 @@ Registers a post status.
 
 - `@param array<string, mixed> $args`
 
-Internals: `supportsFrom()` (private, line 185), `capabilities()` (private, line 199)
+Internals: `supportsFrom()` (private, line 186), `capabilities()` (private, line 200)
 
 
 ## RewriteRules
@@ -3929,7 +3929,7 @@ The script-module-data tags.
 
 The a11y module's tag, once.
 
-Internals: `placeIn()` (private, line 127), `printTags()` (private, line 226), `marked()` (private, line 250), `complete()` (private, line 262), `dependencies()` (private, line 284), `urlOf()` (private, line 302), `attr()` (private, line 307), `wrong()` (private, line 312)
+Internals: `placeIn()` (private, line 128), `printTags()` (private, line 227), `marked()` (private, line 251), `complete()` (private, line 263), `dependencies()` (private, line 285), `urlOf()` (private, line 303), `attr()` (private, line 308), `wrong()` (private, line 313)
 
 
 ## ScriptPack

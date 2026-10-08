@@ -7,6 +7,7 @@ namespace Minn\Blocks\Dynamic;
 use Minn\Blocks\Block;
 use Minn\Blocks\Layout;
 use Minn\Blocks\Renderer;
+use Minn\Json;
 use Minn\Support\Html;
 use Minn\Blocks\Styles;
 use Minn\Support\Kses;
@@ -94,6 +95,6 @@ final class SocialLinks
     /** @return array<string, array{label: string, svg: string}> */
     private function icons(): array
     {
-        return $this->icons ??= (array) json_decode((string) file_get_contents($this->iconsFile), true);
+        return $this->icons ??= (array) Json::file($this->iconsFile, or: null);
     }
 }

@@ -7,6 +7,7 @@ namespace Minn\Ops;
 use Closure;
 use Minn\Content\Site;
 use Minn\Http;
+use Minn\Json;
 
 /**
  * Whether a newer Minn is out, asked of the Minn update service at most
@@ -54,7 +55,7 @@ final class Releases
      */
     public function stored(): array
     {
-        $stored = json_decode((string) (($this->load)() ?? ''), true);
+        $stored = Json::decode((string) (($this->load)() ?? ''), or: null);
         return [
             'checked' => is_array($stored) ? (int) ($stored['checked'] ?? 0) : 0,
             'latest' => is_array($stored) && is_array($stored['latest'] ?? null) ? $stored['latest'] : null,
@@ -85,7 +86,7 @@ final class Releases
             $latest = null;
         }
         $state = ['checked' => time(), 'latest' => $latest];
-        ($this->save)((string) json_encode($state, JSON_UNESCAPED_SLASHES));
+        ($this->save)(Json::encode($state));
         return $state + ['answered' => $answered];
     }
 

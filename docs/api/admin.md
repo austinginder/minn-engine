@@ -238,7 +238,7 @@ Route: `GET /minn/admin/assets/{path*} (public)`
 
 One file of the app bundle, with its content type and caching headers.
 
-Internals: `offPage()` (private, line 63), `render()` (private, line 96)
+Internals: `offPage()` (private, line 64), `render()` (private, line 97)
 
 
 ## Appearance
@@ -708,7 +708,7 @@ Route: `GET /minn-admin/v1/plugins/info (floor edit_posts + install_plugins)`
 
 One directory plugin's details.
 
-Internals: `uploaded()` (private, line 122)
+Internals: `uploaded()` (private, line 123)
 
 
 ## PostListMarkup
@@ -943,7 +943,7 @@ Route: `GET /minn-admin/v1/taxonomies (floor edit_posts)`
 
 Every taxonomy with its counts.
 
-Internals: `publicTypes()` (private, line 136), `termCount()` (private, line 141), `postCount()` (private, line 146)
+Internals: `publicTypes()` (private, line 137), `termCount()` (private, line 142), `postCount()` (private, line 147)
 
 
 ## SystemController
@@ -1109,7 +1109,7 @@ Fetches and unpacks Minn Admin's language pack for a locale from the
 release the bundle's manifest names. True when files were written;
 false when the manifest offers no pack for the locale.
 
-Internals: `languages()` (private, line 118), `catalogFiles()` (private, line 203), `installedCodes()` (private, line 215), `names()` (private, line 236), `download()` (private, line 248)
+Internals: `languages()` (private, line 119), `catalogFiles()` (private, line 204), `installedCodes()` (private, line 216), `names()` (private, line 237), `download()` (private, line 249)
 
 
 ## UpdatesController

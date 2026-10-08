@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Minn\Runtime;
 
+use Minn\Json;
+
 /**
  * What a theme supports, as add_theme_support keeps it (probe rest-themes):
  * a bare feature is true, anything else its arguments. html5 lists add up
@@ -154,7 +156,7 @@ final class ThemeSupports
     public static function features(): array
     {
         static $core = null;
-        $core ??= (array) json_decode((string) file_get_contents(MINN_ENGINE_DIR . '/data/theme-features.json'), true);
+        $core ??= (array) Json::file(MINN_ENGINE_DIR . '/data/theme-features.json');
         return array_merge($core, (array) Runtime::current()->get(self::FEATURES, []));
     }
 

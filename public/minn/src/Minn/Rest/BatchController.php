@@ -12,6 +12,7 @@ use Minn\Http\Request;
 use Minn\Http\Response;
 use Minn\Http\Route;
 use Minn\Http\Router;
+use Minn\Json;
 use Minn\RestError;
 use Minn\Runtime\Runtime;
 
@@ -165,7 +166,7 @@ final readonly class BatchController
         foreach ((array) ($entry['headers'] ?? []) as $name => $value) {
             $headers[strtolower((string) $name)] = is_array($value) ? implode(',', $value) : (string) $value;
         }
-        $body = isset($entry['body']) ? (string) json_encode($entry['body']) : '';
+        $body = isset($entry['body']) ? Json::encode($entry['body'], Json::ESCAPED) : '';
         if ($body !== '') {
             $headers['content-type'] = 'application/json';
         }
@@ -183,6 +184,6 @@ final readonly class BatchController
     private static function envelope(Response $response): array
     {
         $headers = array_diff_key($response->headers, Reply::HEADERS, ['Vary' => true, 'X-Robots-Tag' => true]);
-        return ['body' => json_decode($response->body, true), 'status' => $response->status, 'headers' => $headers];
+        return ['body' => Json::decode($response->body, or: null), 'status' => $response->status, 'headers' => $headers];
     }
 }

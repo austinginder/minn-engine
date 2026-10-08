@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Minn\Theme;
 
 use Minn\Blocks\Attributes;
+use Minn\Json;
 
 /**
  * A template-part block inside a template says which theme's part it means.
@@ -39,7 +40,7 @@ final readonly class TemplatePartTheme
 
     private static function withTheme(string $attributes, string $theme): string
     {
-        $decoded = json_decode($attributes, true);
+        $decoded = Json::decode($attributes, or: null);
         if (is_array($decoded) && array_key_exists('theme', $decoded)) {
             return $attributes;
         }
@@ -54,6 +55,6 @@ final readonly class TemplatePartTheme
 
     private static function pair(string $theme): string
     {
-        return '"theme":' . json_encode($theme, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+        return '"theme":' . Json::encode($theme);
     }
 }

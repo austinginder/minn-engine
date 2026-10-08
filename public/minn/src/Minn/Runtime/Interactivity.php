@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Minn\Runtime;
 
+use Minn\Json;
+
 /**
  * Server-side directive processing for the Interactivity API: the state and
  * config stores, and the pass that resolves data-wp-bind, data-wp-class,
@@ -353,7 +355,7 @@ final class Interactivity
             return null;
         }
         if ($value[0] === '{') {
-            $decoded = json_decode($value, true);
+            $decoded = Json::decode($value, or: null);
             return is_array($decoded) && isset($decoded['namespace']) && is_string($decoded['namespace']) && $decoded['namespace'] !== '' ? $decoded['namespace'] : null;
         }
         return $value;
@@ -368,7 +370,7 @@ final class Interactivity
             $json = $m[2];
         }
         $layer = $this->contexts === [] ? [] : end($this->contexts);
-        $decoded = $json === '' ? null : json_decode($json, true);
+        $decoded = $json === '' ? null : Json::decode($json, or: null);
         if (is_array($decoded) && $namespace !== '') {
             $layer[$namespace] = array_replace_recursive($layer[$namespace] ?? [], $decoded);
         }
@@ -390,7 +392,7 @@ final class Interactivity
             $path = substr($path, 1);
         }
         if ($namespace === '' || $path === '') {
-            Runtime::hooks()->action('doing_it_wrong_run', ['WP_Interactivity_API::evaluate', 'Namespace or reference path cannot be empty. Directive value referenced: ' . json_encode(['namespace' => $namespace === '' ? null : $namespace, 'value' => $reference, 'suffix' => $suffix, 'unique_id' => null]), '6.6.0']);
+            Runtime::hooks()->action('doing_it_wrong_run', ['WP_Interactivity_API::evaluate', 'Namespace or reference path cannot be empty. Directive value referenced: ' . Json::encode(['namespace' => $namespace === '' ? null : $namespace, 'value' => $reference, 'suffix' => $suffix, 'unique_id' => null], Json::ESCAPED), '6.6.0']);
             return self::UNRESOLVED;
         }
         $segments = explode('.', $path);

@@ -191,16 +191,22 @@ must match the same page on the reference with the plugin active.
 
 ## Your first outgoing request
 
-Call `Minn\Http` where you are. It needs no `use` line, no client to build,
-and no options array:
+Import `Minn\Http` and call it where you are. There is no client to build and
+no options array:
 
 ```php
-$status = Minn\Http::get('https://api.example.com/status')->json();
+use Minn\Http;
 
-Minn\Http::post($url, form: ['email' => $email]);
-Minn\Http::post($url, json: ['email' => $email], timeout: 10)->throw();
-Minn\Http::get($url, query: ['page' => 2], headers: ['Accept' => 'application/json']);
+$status = Http::get('https://api.example.com/status')->json();
+
+Http::post($url, form: ['email' => $email]);
+Http::post($url, json: ['email' => $email], timeout: 10)->throw();
+Http::get($url, query: ['page' => 2], headers: ['Accept' => 'application/json']);
 ```
+
+The import matters: in a file with a namespace (every extension and engine
+class has one), PHP reads `Minn\Http` relative to that namespace and fails to
+find it. `use Minn\Http;` or a leading backslash (`\Minn\Http::get()`) fixes it.
 
 Every verb (`get`, `head`, `delete`, `post`, `put`, `patch`) returns an
 `Exchange`. Ask it what you need: `ok()` (a 2xx arrived), `failed()` (nothing
@@ -219,7 +225,7 @@ Test without the network by faking it; plugins' `wp_remote_*()` calls are
 answered by the same fake:
 
 ```php
-$fake = Minn\Http::fake(['api.example.com/*' => ['ok' => true]]);
+$fake = Http::fake(['api.example.com/*' => ['ok' => true]]);
 $result = my_status_check();
 $fake->sent('api.example.com/status');   // the requests that went there
 $fake->restore();
@@ -227,6 +233,31 @@ $fake->restore();
 
 The rules are in `contracts/http.md`. `tests/unit/http.php` proves the
 surface against the fake and `tests/http.test.php` against a local server.
+
+## JSON in and out
+
+`Minn\Json` is the one door for JSON. Import it next to anything else you use
+from the root of the namespace:
+
+```php
+use Minn\{Http, Json};
+
+$body = Json::encode($rows);                    // {"url":"https://example.com/a","name":"Café"}
+$data = Json::decode($text);                    // objects as arrays; JsonException when it is not JSON
+$seen = Json::decode($stored, or: []);          // the fallback, for text that may be empty or broken
+$map  = Json::file(__DIR__ . '/data/map.json'); // the same, read from a file; the error names the file
+```
+
+`encode()` never fails on bad UTF-8: a string cut mid-character encodes with
+`?` for each bad byte, as WordPress's `wp_json_encode()` does. It writes
+slashes and characters as themselves; pass `Json::ESCAPED` for the form
+WordPress writes (every REST body keeps it). What cannot be encoded at all
+(`NAN`, nesting past the depth) throws a `JsonException`, so `encode()`
+always returns a string. There is no object mode: decoded objects are arrays.
+
+Don't call `json_encode()` or `json_decode()` in engine code; the style suite
+counts them. The rules and the reference facts behind them are in
+`contracts/json.md`; `tests/unit/json.php` proves the class.
 
 ## The API, generated
 

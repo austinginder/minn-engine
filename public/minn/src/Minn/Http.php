@@ -14,10 +14,12 @@ use Minn\Http\Outbound;
 use Minn\Http\Transport;
 
 /**
- * Outgoing HTTP, called straight from anywhere with no import:
+ * Outgoing HTTP, called from anywhere after one import:
  *
- *     $data = Minn\Http::get('https://api.example.com/status')->json();
- *     Minn\Http::post($url, json: ['email' => $email], timeout: 10)->throw();
+ *     use Minn\Http;
+ *
+ *     $data = Http::get('https://api.example.com/status')->json();
+ *     Http::post($url, json: ['email' => $email], timeout: 10)->throw();
  *
  * Every verb answers with an Exchange (->ok(), ->failed(), ->json(),
  * ->header(), ->cookie(), ->throw(), ->code, ->body) and takes the same
@@ -137,7 +139,7 @@ final class Http
         }
         if (is_array($body)) {
             $lower['content-type'] ??= 'application/json';
-            $body = (string) json_encode($body, JSON_UNESCAPED_SLASHES);
+            $body = Json::encode($body);
         }
         return new Exchange($status, $lower, $cookies, $body, null, ["HTTP/1.1 {$status}"]);
     }
@@ -205,7 +207,7 @@ final class Http
             throw new InvalidArgumentException("Send one of json:, form: or body:, not {$given} of them.");
         }
         return match (true) {
-            $json !== null => [json_encode($json, JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR), 'application/json'],
+            $json !== null => [Json::encode($json), 'application/json'],
             $form !== null => [http_build_query($form, '', '&'), 'application/x-www-form-urlencoded'],
             default => [$body, null],
         };

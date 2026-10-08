@@ -8,6 +8,7 @@ use Minn\Http\Method;
 use Minn\Http\Request;
 use Minn\Http\Response;
 use Minn\Http\Router;
+use Minn\Json;
 use Minn\RestError;
 use Minn\Runtime\Runtime;
 
@@ -68,7 +69,7 @@ final class Embed
         if (($rels === null && !$embedContext) || $response->status >= 300 || $response->body === '') {
             return $response;
         }
-        $data = json_decode($response->body, true);
+        $data = Json::decode($response->body, or: null);
         if (!is_array($data)) {
             return $response;
         }
@@ -88,7 +89,7 @@ final class Embed
                 $data = $fields->withLinksForEmbedded()->apply($data);
             }
         }
-        return new Response($response->status, $response->headers, (string) json_encode($data), $response->cookies);
+        return new Response($response->status, $response->headers, Json::encode($data, Json::ESCAPED), $response->cookies);
     }
 
     /** @param ?list<string> $rels */
@@ -139,7 +140,7 @@ final class Embed
         } catch (RestError) {
             $response = null;
         }
-        $data = $response === null || $response->status >= 300 ? null : json_decode($response->body, true);
+        $data = $response === null || $response->status >= 300 ? null : Json::decode($response->body, or: null);
         if (is_array($data)) {
             $kind = self::kind($path);
             if (array_is_list($data)) {

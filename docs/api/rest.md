@@ -7,7 +7,7 @@ the wp/v2 surface: shapes and controllers
 | [`AbilitiesController`](#abilitiescontroller) | final readonly class | 150 | wp-abilities/v1: what this site can be asked to do, and the doing of it. |
 | [`Api`](#api) | final readonly class | 281 | The REST API: wires the controllers for one request and dispatches a |
 | [`ApplicationPasswordsController`](#applicationpasswordscontroller) | final readonly class | 177 | wp/v2/users/{id}/application-passwords: list, create, rename, delete, |
-| [`ArgCheck`](#argcheck) | final readonly class | 83 | Judges a route's declared arguments against the request before the |
+| [`ArgCheck`](#argcheck) | final readonly class | 84 | Judges a route's declared arguments against the request before the |
 | [`BatchController`](#batchcontroller) | final readonly class | 159 | batch/v1 as the reference answers it (probe rest-batch): up to 25 |
 | [`BatchRequest`](#batchrequest) | final class | 32 | The requests a batch payload names, normalised into descriptors the |
 | [`BlockRendererController`](#blockrenderercontroller) | final readonly class | 89 | wp/v2/block-renderer as the reference answers it (probe |
@@ -328,7 +328,7 @@ Throws the refusal the declared arguments earn, or returns. @param array<string,
 
 - `@param array<string, string> $captures what the path named, for a route whose parameters depend on it`
 
-Internals: `json()` (private, line 59), `missing()` (private, line 74), `round()` (private, line 88)
+Internals: `json()` (private, line 61), `missing()` (private, line 77), `round()` (private, line 91)
 
 
 ## BatchController
@@ -363,7 +363,7 @@ Route: `POST /batch/v1 (public)`
 
 The requests answered in turn.
 
-Internals: `refusal()` (private, line 86), `invalid()` (private, line 104), `claims()` (private, line 131), `batchablePath()` (private, line 141), `subRequest()` (private, line 159), `error()` (private, line 177), `envelope()` (private, line 183)
+Internals: `refusal()` (private, line 87), `invalid()` (private, line 105), `claims()` (private, line 132), `batchablePath()` (private, line 142), `subRequest()` (private, line 160), `error()` (private, line 178), `envelope()` (private, line 184)
 
 
 ## BatchRequest
@@ -891,7 +891,7 @@ An item cut to the embed shape of its object type (a post type, a taxonomy, atta
 
 - `@param array<string, mixed> $item @return array<string, mixed>`
 
-Internals: `decorateItem()` (private, line 95), `answer()` (private, line 127), `target()` (private, line 157), `kind()` (private, line 175), `taxonomyBase()` (private, line 191), `context()` (private, line 215)
+Internals: `decorateItem()` (private, line 96), `answer()` (private, line 128), `target()` (private, line 158), `kind()` (private, line 176), `taxonomyBase()` (private, line 192), `context()` (private, line 216)
 
 
 ## EngineRoutes
@@ -2468,7 +2468,7 @@ A callback's return as a response object, an error converted.
 
 The runtime's REST server, the one door to it (built, with rest_api_init, on first use).
 
-Internals: `allow()` (private, line 83), `oembedXml()` (private, line 339), `look()` (private, line 353), `remember()` (private, line 358), `decode()` (private, line 365), `expand()` (private, line 385), `newWpRequest()` (private, line 410), `toResponse()` (private, line 439)
+Internals: `allow()` (private, line 84), `oembedXml()` (private, line 340), `look()` (private, line 354), `remember()` (private, line 359), `decode()` (private, line 366), `expand()` (private, line 386), `newWpRequest()` (private, line 411), `toResponse()` (private, line 440)
 
 
 ## Schema
@@ -2535,7 +2535,7 @@ required flags on the create route only, and any arg_options overrides.
 
 The schema with additionalProperties closed on every object.
 
-Internals: `validateInteger()` (private, line 107), `validateComposite()` (private, line 116), `validateString()` (private, line 142), `validateNumber()` (private, line 160), `validateArray()` (private, line 172), `validateObject()` (private, line 198), `validateFormat()` (private, line 241), `validateBounds()` (private, line 253), `enum()` (private, line 290), `wrongType()` (private, line 307)
+Internals: `validateInteger()` (private, line 108), `validateComposite()` (private, line 117), `validateString()` (private, line 143), `validateNumber()` (private, line 161), `validateArray()` (private, line 173), `validateObject()` (private, line 199), `validateFormat()` (private, line 242), `validateBounds()` (private, line 254), `enum()` (private, line 291), `wrongType()` (private, line 308)
 
 
 ## SchemaValues
@@ -3490,7 +3490,7 @@ Whether plugin code registered the type (not a built-in, not an extension's).
 
 The rest_base of a type slug.
 
-Internals: `core()` (private, line 37), `registered()` (private, line 78), `servedRegistered()` (private, line 172)
+Internals: `core()` (private, line 38), `registered()` (private, line 79), `servedRegistered()` (private, line 173)
 
 
 ## TypesController

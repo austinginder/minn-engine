@@ -5,6 +5,7 @@ declare(strict_types=1);
 
 namespace Minn\Theme;
 
+use Minn\Json;
 use Minn\Runtime\Runtime;
 
 use Minn\Content\Site;
@@ -82,7 +83,7 @@ final class Theme
     private function rawJson(): array
     {
         if ($this->json === null) {
-            $own = (array) json_decode((string) file_get_contents("{$this->dir}/theme.json"), true);
+            $own = (array) Json::file("{$this->dir}/theme.json", or: null);
             $this->json = $this->parent === null ? $own : self::merge($this->parent->rawJson(), $own);
             $this->json = $this->withStylePartials($this->json);
         }
@@ -98,7 +99,7 @@ final class Theme
     private function withStylePartials(array $json): array
     {
         foreach ($this->styleFiles() as $file) {
-            $partial = json_decode((string) file_get_contents($file), true);
+            $partial = Json::file($file, or: null);
             if (!is_array($partial) || !is_array($partial['blockTypes'] ?? null)) {
                 continue;
             }

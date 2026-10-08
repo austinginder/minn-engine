@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Minn\Cli;
 
+use Minn\Json;
 use Minn\Runtime\Options;
 use Minn\Support\Serialized;
 use WP_CLI;
@@ -175,7 +176,7 @@ final class OptionCommand
             $raw = rtrim((string) stream_get_contents(STDIN), "\n");
         }
         if (($assocArgs['format'] ?? 'plaintext') === 'json') {
-            $decoded = json_decode($raw, true);
+            $decoded = Json::decode($raw, or: null);
             if ($decoded === null && trim($raw) !== 'null') {
                 WP_CLI::error('Invalid JSON: ' . $raw);
             }

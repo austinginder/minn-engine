@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Minn\Blocks;
 
+use Minn\Json;
+
 /**
  * Parsed blocks back to markup. A core block is written by its short name;
  * attributes are JSON with every character that could end the comment or
@@ -50,7 +52,7 @@ final class Serializer
     /** Block attributes as the delimiter carries them. */
     public static function attributes(array $attrs): string
     {
-        $json = (string) json_encode($attrs, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_QUOT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+        $json = Json::encode($attrs, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_QUOT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
         $json = str_replace(['\\\\', '--'], ['\\u005c', '\\u002d\\u002d'], $json);
         // The escapes are written in lower-case hex.
         return (string) preg_replace_callback('/\\\\u00([0-9A-F]{2})/', static fn (array $m): string => '\\u00' . strtolower($m[1]), $json);

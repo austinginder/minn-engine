@@ -6,6 +6,7 @@ namespace Minn\Rest;
 
 use Closure;
 use JsonSerializable;
+use Minn\Json;
 use Minn\Runtime\Refusal;
 use stdClass;
 
@@ -294,7 +295,7 @@ final readonly class Schema
                 return true;
             }
         }
-        $encoded = array_map(static fn ($v) => is_scalar($v) ? (string) $v : (string) json_encode($v), $enum);
+        $encoded = array_map(static fn ($v) => is_scalar($v) ? (string) $v : Json::encode($v, Json::ESCAPED), $enum);
         if (count($encoded) === 1) {
             return new Refusal('rest_not_in_enum', sprintf('%1$s is not %2$s.', $param, $encoded[0]));
         }

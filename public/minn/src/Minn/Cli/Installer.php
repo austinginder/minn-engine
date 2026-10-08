@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Minn\Cli;
 
+use Minn\Json;
 use Minn\Ops\EngineUpdate;
 use Minn\Ops\Releases;
 use Minn\Support\Files;
@@ -194,7 +195,7 @@ final class Installer
         $this->say('Wrote ' . implode(', ', self::LAYOUT));
         $placeholders = $this->writePlaceholders($root);
         $this->say("Wrote {$placeholders} require placeholders");
-        file_put_contents("{$root}/" . self::RECORD, self::RECORD_HEAD . json_encode([
+        file_put_contents("{$root}/" . self::RECORD, self::RECORD_HEAD . Json::encode([
             'root' => realpath($root) ?: $root,
             'installed' => gmdate('c'),
             'engine_version' => self::version(),
@@ -279,11 +280,11 @@ final class Installer
         $file = "{$root}/" . self::RECORD;
         if (is_file($file)) {
             $text = (string) file_get_contents($file);
-            $record = (array) json_decode(str_starts_with($text, self::RECORD_HEAD) ? substr($text, strlen(self::RECORD_HEAD)) : '', true);
+            $record = (array) Json::decode(str_starts_with($text, self::RECORD_HEAD) ? substr($text, strlen(self::RECORD_HEAD)) : '', or: null);
             return in_array((string) ($record['root'] ?? ''), ['', realpath($root) ?: $root], true) ? $record : [];
         }
         $legacy = "{$root}/minn/" . self::LEGACY_RECORD;
-        return !is_link("{$root}/minn") && is_file($legacy) ? (array) json_decode((string) file_get_contents($legacy), true) : [];
+        return !is_link("{$root}/minn") && is_file($legacy) ? (array) Json::file($legacy, or: null) : [];
     }
 
     /**
@@ -294,7 +295,7 @@ final class Installer
     private function writePlaceholders(string $root): int
     {
         $list = $this->engineDir . '/data/reference-files.json';
-        $files = is_file($list) ? json_decode((string) file_get_contents($list), true) : [];
+        $files = is_file($list) ? Json::file($list, or: null) : [];
         $written = 0;
         foreach (is_array($files) ? $files : [] as $file) {
             if (!is_string($file) || $file === '' || str_contains($file, '..')) {

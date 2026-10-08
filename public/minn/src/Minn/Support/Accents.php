@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Minn\Support;
 
+use Minn\Json;
 use Normalizer;
 
 /**
@@ -43,7 +44,7 @@ final class Accents
     private static function data(): array
     {
         if (self::$data === null) {
-            $decoded = json_decode((string) file_get_contents(dirname(__DIR__, 3) . '/data/accents.json'), true);
+            $decoded = Json::file(dirname(__DIR__, 3) . '/data/accents.json');
             self::$data = (is_array($decoded) ? $decoded : []) + ['table' => [], 'locales' => [], 'latin1' => []];
         }
         return self::$data;

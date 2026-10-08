@@ -7,6 +7,7 @@ namespace Minn\Ops;
 use Closure;
 use Minn\Content\Site;
 use Minn\Http;
+use Minn\Json;
 
 /**
  * A changelog read from its repository rather than shipped: a Minn release
@@ -61,7 +62,7 @@ final class Changelog
     /** The released sections as Markdown, fetched first when the copy is a day old; '' when there is none. */
     public function markdown(): string
     {
-        $stored = json_decode((string) (($this->load)() ?? ''), true);
+        $stored = Json::decode((string) (($this->load)() ?? ''), or: null);
         $checked = is_array($stored) ? (int) ($stored['checked'] ?? 0) : 0;
         $markdown = is_array($stored) ? (string) ($stored['markdown'] ?? '') : '';
         if ($checked > time() - self::TTL) {
@@ -73,7 +74,7 @@ final class Changelog
         } elseif ($reply->code === 404) {
             $markdown = '';
         }
-        ($this->save)((string) json_encode(['checked' => time(), 'markdown' => $markdown], JSON_UNESCAPED_SLASHES));
+        ($this->save)(Json::encode(['checked' => time(), 'markdown' => $markdown]));
         return $markdown;
     }
 

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Minn\Runtime;
 
 use Minn\I18n\Gettext;
+use Minn\Json;
 
 /**
  * Post types, taxonomies, and statuses as plugin code registers and reads
@@ -30,7 +31,7 @@ final class Registry
 
     public function __construct(string $engineDir)
     {
-        $data = json_decode((string) file_get_contents($engineDir . '/data/registry.json'), true) ?: [];
+        $data = Json::file($engineDir . '/data/registry.json') ?: [];
         $this->postTypes = $data['post_types'] ?? [];
         foreach ($this->postTypes as &$type) {
             if (isset($type['supports']) && array_is_list($type['supports'])) {

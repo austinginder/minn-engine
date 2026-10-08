@@ -14,6 +14,7 @@ use Minn\Http\Response;
 use Minn\Http\Access;
 use Minn\Http\Policy;
 use Minn\Http\Route;
+use Minn\Json;
 use Minn\Support\Html;
 
 /**
@@ -98,7 +99,7 @@ final readonly class AppController
         $name = Html::esc((string) ($boot['site']['name'] ?? 'Site'));
         $cssVersion = Html::esc($this->app->assetVersion('assets/css/app.css'));
         $jsVersion = Html::esc($this->app->assetVersion('assets/js/app.js'));
-        $json = json_encode($boot, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);
+        $json = Json::encode($boot, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);
         $lang = Html::attr(str_replace('_', '-', (string) ($boot['locale'] ?? 'en_US')));
         $dir = !empty($boot['rtl']) ? 'rtl' : 'ltr';
 

@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Minn\Blocks;
 
+use Minn\Json;
+
 /**
  * The core block types' metadata as the reference registers them
  * (data/blocks.json): their supports and selectors, read once.
@@ -20,7 +22,7 @@ final class CoreBlocks
      */
     public static function metadata(string $name): array
     {
-        self::$metadata ??= (array) json_decode((string) file_get_contents(MINN_ENGINE_DIR . '/data/blocks.json'), true);
+        self::$metadata ??= (array) Json::file(MINN_ENGINE_DIR . '/data/blocks.json');
         return (array) (self::$metadata[$name] ?? []);
     }
 

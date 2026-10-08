@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Minn\Runtime;
 
+use Minn\Json;
+
 /**
  * The part of the reference's interface the runtime does not answer: names in
  * data/api-names.json that no facade file defines. It is the whole input the
@@ -32,7 +34,7 @@ final readonly class SymbolGap
     {
         static $data = null;
         if ($data === null) {
-            $decoded = json_decode((string) file_get_contents($engineDir . '/data/api-names.json'), true);
+            $decoded = Json::file($engineDir . '/data/api-names.json');
             $data = is_array($decoded) ? $decoded : [];
         }
         $functions = [];
@@ -60,7 +62,7 @@ final readonly class SymbolGap
     /** The gap read from its JSON file. */
     public static function fromFile(string $path): self
     {
-        $data = json_decode((string) file_get_contents($path), true);
+        $data = Json::file($path, or: null);
         $data = is_array($data) ? $data : [];
         return new self(
             array_fill_keys(array_map(strtolower(...), $data['functions'] ?? []), true),
@@ -97,7 +99,7 @@ final readonly class SymbolGap
     /** The gap as JSON. */
     public function json(): string
     {
-        return (string) json_encode([
+        return Json::encode([
             'functions' => array_keys($this->functions),
             'classes' => array_keys($this->classes),
             'known' => array_keys($this->known),

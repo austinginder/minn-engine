@@ -72,6 +72,12 @@ add_action('rest_api_init', static function () {
         'callback' => static fn (WP_REST_Request $request) => rest_ensure_response(['id' => (int) $request['id'], 'exists' => get_post((int) $request['id']) !== null]),
         'permission_callback' => '__return_true',
     ]);
+    // A string cut mid-character: the reference still answers with the data, the bad byte as "?".
+    register_rest_route('minn-test/v1', '/cut', [
+        'methods' => 'GET',
+        'callback' => static fn () => ['title' => substr('Café au lait', 0, 4), 'url' => 'https://example.com/a'],
+        'permission_callback' => '__return_true',
+    ]);
 });
 
 // A routed page of its own, the CaptainCore Manager shape: a rewrite rule

@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Minn\Content;
 
+use Minn\Json;
+
 /**
  * Emoji as the reference's mail and feeds carry them, from the list the
  * reference ships (data/emoji.json, read from it): encode() turns each emoji
@@ -77,6 +79,6 @@ final class Emoji
     /** @return array{entities: list<string>, partials: list<string>} */
     private static function list(): array
     {
-        return self::$list ??= json_decode((string) file_get_contents(MINN_ENGINE_DIR . '/data/emoji.json'), true) ?: ['entities' => [], 'partials' => []];
+        return self::$list ??= Json::file(MINN_ENGINE_DIR . '/data/emoji.json') ?: ['entities' => [], 'partials' => []];
     }
 }

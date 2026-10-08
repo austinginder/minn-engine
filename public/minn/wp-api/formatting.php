@@ -5,13 +5,13 @@ use Minn\Content\Autop;
 use Minn\Content\Blocks;
 use Minn\Content\Slug;
 use Minn\Content\Texturize;
+use Minn\Json;
 use Minn\Runtime\Runtime;
 use Minn\Support\Accents;
 use Minn\Support\Email;
 use Minn\Support\Entities;
 use Minn\Support\Escape;
 use Minn\Support\Html;
-use Minn\Support\Json;
 use Minn\Support\KsesEntities;
 use Minn\Support\Kses;
 use Minn\Support\Lists;
@@ -167,28 +167,27 @@ function wp_parse_slug_list($input_list)
 
 function wp_json_encode($value, $flags = 0, $depth = 512)
 {
-    $json = json_encode($value, $flags, $depth);
-    if ($json !== false) {
-        return $json;
-    }
     try {
-        $clean = _wp_json_sanity_check($value, $depth);
-    } catch (Exception $e) {
+        return Json::encode($value, (int) $flags, (int) $depth);
+    } catch (JsonException $e) {
+        // Asked to throw, the reference lets json_encode's own exception through.
+        if (((int) $flags & JSON_THROW_ON_ERROR) !== 0) {
+            throw $e;
+        }
         return false;
     }
-    return json_encode($clean, $flags, $depth);
 }
 
 /** A string made valid UTF-8 for encoding: each invalid byte becomes "?" (probe functions-utils). */
 function _wp_json_convert_string($input_string)
 {
-    return is_string($input_string) ? Json::convert($input_string) : $input_string;
+    return is_string($input_string) ? Json::repair($input_string) : $input_string;
 }
 
 /** A value with every string and key made valid UTF-8; nesting deeper than $depth throws "Reached depth limit". */
 function _wp_json_sanity_check($value, $depth)
 {
-    return Json::sanitize($value, (int) $depth);
+    return Json::repair($value, (int) $depth);
 }
 
 function _wp_json_prepare_data($value)

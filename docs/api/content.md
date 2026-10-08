@@ -420,7 +420,7 @@ Each emoji character in the text as its hexadecimal entity.
 
 The text with its emoji as images under $baseUrl (each file named for its code points, $extension after).
 
-Internals: `replaceInText()` (private, line 58), `list()` (private, line 78)
+Internals: `replaceInText()` (private, line 60), `list()` (private, line 80)
 
 
 ## Excerpt
@@ -899,7 +899,7 @@ active, as the reference does).
 
 Records a plugin, by file, or a Minn extension as inactive; an extension also deactivates the plugins it replaced.
 
-Internals: `ownWithout()` (private, line 89)
+Internals: `ownWithout()` (private, line 90)
 
 
 ## PostClasses

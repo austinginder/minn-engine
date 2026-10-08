@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Minn\Runtime;
 
+use Minn\Json;
+
 /**
  * The constants plugin code expects: the fixed set from data/constants.json
  * (captured from the reference) and the per-site ones computed here. Nothing
@@ -16,7 +18,7 @@ final class Constants
     {
         $abs = rtrim($runtime->absPath, '/') . '/';
         $siteUrl = rtrim((string) ($runtime->site->option('siteurl') ?? ''), '/');
-        $fixed = json_decode((string) file_get_contents($runtime->engineDir . '/data/constants.json'), true) ?: [];
+        $fixed = Json::file($runtime->engineDir . '/data/constants.json') ?: [];
         $computed = [
             'WP_CONTENT_DIR' => $abs . 'wp-content',
             'WP_CONTENT_URL' => $siteUrl . '/wp-content',

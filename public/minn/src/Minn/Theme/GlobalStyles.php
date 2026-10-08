@@ -7,6 +7,7 @@ namespace Minn\Theme;
 use Minn\Blocks\CoreBlocks;
 use Minn\Blocks\RenderState;
 use Minn\Blocks\Styles;
+use Minn\Json;
 use Minn\Runtime\Runtime;
 
 /**
@@ -67,7 +68,7 @@ final readonly class GlobalStyles
     public function styles(): array
     {
         $json = $this->user === null ? $this->theme->json() : Theme::merge($this->theme->json(), $this->user);
-        $defaults = (array) json_decode((string) file_get_contents(MINN_ENGINE_DIR . '/data/styles.json'), true);
+        $defaults = (array) Json::file(MINN_ENGINE_DIR . '/data/styles.json');
         return Theme::merge($defaults, (array) ($json['styles'] ?? []));
     }
 
@@ -116,7 +117,7 @@ final readonly class GlobalStyles
         if (in_array('styles', $types, true)) {
             $out .= $base;
             // The blocks in the reference's merged order: its own theme.json and the blocks' defaults (data/global-styles.json), then the theme's.
-            $core = (array) json_decode((string) file_get_contents(MINN_ENGINE_DIR . '/data/global-styles.json'), true);
+            $core = (array) Json::file(MINN_ENGINE_DIR . '/data/global-styles.json');
             $blocks = Theme::merge((array) ($core['styles']['blocks'] ?? []), $blocks);
             foreach ($blocks as $name => $blockStyles) {
                 $out .= $this->blockStyles((string) $name, (array) $blockStyles);

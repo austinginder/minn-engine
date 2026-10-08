@@ -78,7 +78,7 @@ The stylesheet link for the head.
 
 The bar markup, its config, and the script, for the end of the body.
 
-Internals: `markup()` (private, line 83), `siteMenu()` (private, line 136), `statusMenu()` (private, line 154), `newMenu()` (private, line 176), `notificationsMenu()` (private, line 190), `userMenu()` (private, line 203), `status()` (private, line 221), `editTarget()` (private, line 238), `commands()` (private, line 254), `searchTypes()` (private, line 279), `customSchemeStyle()` (private, line 288), `appUrl()` (private, line 307), `appPath()` (private, line 312), `assetUrl()` (private, line 317), `icon()` (private, line 322), `gridIcon()` (private, line 327), `menuItem()` (private, line 332)
+Internals: `markup()` (private, line 84), `siteMenu()` (private, line 137), `statusMenu()` (private, line 155), `newMenu()` (private, line 177), `notificationsMenu()` (private, line 191), `userMenu()` (private, line 204), `status()` (private, line 222), `editTarget()` (private, line 239), `commands()` (private, line 255), `searchTypes()` (private, line 280), `customSchemeStyle()` (private, line 289), `appUrl()` (private, line 308), `appPath()` (private, line 313), `assetUrl()` (private, line 318), `icon()` (private, line 323), `gridIcon()` (private, line 328), `menuItem()` (private, line 333)
 
 
 ## ArchiveAddresses

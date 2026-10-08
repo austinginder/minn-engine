@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Minn\Extension;
 
 use Minn\Content\Site;
+use Minn\Json;
 use Minn\Runtime\Plugins;
 use Minn\Support\Serialized;
 use Throwable;
@@ -62,7 +63,7 @@ final class Loader
             return $this->active;
         }
         $plugins = Serialized::stringList($this->site->option('active_plugins'));
-        $own = json_decode((string) ($this->site->option('minn_active_extensions') ?? '[]'), true);
+        $own = Json::decode((string) ($this->site->option('minn_active_extensions') ?? '[]'), or: null);
         $own = is_array($own) ? array_map('strval', $own) : [];
         foreach ($this->found() as $manifest) {
             // A plugin running as code needs no stand-in.

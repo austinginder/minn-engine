@@ -11,6 +11,7 @@ use Minn\Http\Response;
 use Minn\Http\Access;
 use Minn\Http\Policy;
 use Minn\Http\Route;
+use Minn\Json;
 use Minn\Rest\Caller;
 use Minn\Rest\Reply;
 use Minn\Rest\Taxonomies;
@@ -69,7 +70,7 @@ final readonly class StructureController
     public function postTypes(Request $request): Response
     {
         $this->caller->requireCap('manage_options');
-        $admin = (array) json_decode((string) file_get_contents(MINN_ENGINE_DIR . '/data/types-admin.json'), true);
+        $admin = (array) Json::file(MINN_ENGINE_DIR . '/data/types-admin.json');
         $out = [];
         foreach ($this->types->all() as $slug => $type) {
             if (str_starts_with($slug, 'wp_') || in_array($slug, ['attachment', 'nav_menu_item'], true)) {

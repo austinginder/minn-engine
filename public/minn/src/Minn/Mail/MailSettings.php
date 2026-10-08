@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Minn\Mail;
 
 use Minn\Content\Site;
+use Minn\Json;
 use Minn\Support\Serialized;
 
 /**
@@ -43,7 +44,7 @@ final readonly class MailSettings
     {
         // Stored as JSON by the engine's settings, or serialized by `wp option update --format=json`.
         $raw = (string) ($site->option(self::OPTION) ?? '');
-        $stored = json_decode($raw, true);
+        $stored = Json::decode($raw, or: null);
         if (!is_array($stored)) {
             $stored = Serialized::decode($raw);
         }

@@ -4,7 +4,7 @@ The engine's own classes under `public/minn/src/Minn/`, one page per namespace, 
 
 | Namespace | Classes | What lives there |
 |---|---|---|
-| [`Minn`](minn.md) | 6 | the front door, the autoloader, the one database door, the REST error |
+| [`Minn`](minn.md) | 7 | the front door, the autoloader, the one database door, the REST error |
 | [`Minn\Admin`](admin.md) | 29 | the minn-admin/v1 namespace and serving the Minn Admin app |
 | [`Minn\Auth`](auth.md) | 19 | passwords, sessions, cookies, nonces, roles and capabilities |
 | [`Minn\Blocks`](blocks.md) | 22 | the block parser and renderer |
@@ -27,6 +27,6 @@ The engine's own classes under `public/minn/src/Minn/`, one page per namespace, 
 | [`Minn\Query`](query.md) | 9 | shared SQL fragments |
 | [`Minn\Rest`](rest.md) | 83 | the wp/v2 surface: shapes and controllers |
 | [`Minn\Runtime`](runtime.md) | 107 | the WordPress runtime plugins load against |
-| [`Minn\Support`](support.md) | 31 | escaping, serialized readers, small helpers |
+| [`Minn\Support`](support.md) | 30 | escaping, serialized readers, small helpers |
 | [`Minn\Theme`](theme.md) | 34 | the block-theme reader, templates, global styles and the page renderer |
 | [`Minn\Widgets`](widgets.md) | 1 |  |

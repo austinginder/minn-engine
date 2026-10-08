@@ -11,7 +11,7 @@ request, response, routing, and the outgoing client
 | [`Destination`](#destination) | final readonly class | 97 | Where Minn\Http lets a request go. Only http and https; when hosts are |
 | [`Download`](#download) | final class | 32 | A file the engine fetches for itself (a package, a language pack), over |
 | [`Envelope`](#envelope) | interface | 9 | What runs around a matched route once the router knows the route takes |
-| [`Exchange`](#exchange) | final readonly class | 75 | What came back: the final response's status, headers (repeats as lists), Set-Cookie values, and body, or the transport error. |
+| [`Exchange`](#exchange) | final readonly class | 74 | What came back: the final response's status, headers (repeats as lists), Set-Cookie values, and body, or the transport error. |
 | [`Failure`](#failure) | final class | 176 | What the public sees when the engine cannot answer: a plain page with no |
 | [`Fake`](#fake) | final class | 57 | Answers requests in place of the network while a test runs, and keeps |
 | [`Ipv6`](#ipv6) | final class | 62 | IPv6 addresses as text: written out in full (eight groups, or six and an |

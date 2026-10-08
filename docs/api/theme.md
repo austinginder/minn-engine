@@ -27,7 +27,7 @@ the block-theme reader, templates, global styles and the page renderer
 | [`StylePresets`](#stylepresets) | final class | 174 | The preset side of theme.json: the colour, gradient, font-size, |
 | [`StyleSettings`](#stylesettings) | final class | 82 | The settings and styles nodes as wp/v2/global-styles reports them: |
 | [`TemplateHierarchy`](#templatehierarchy) | final class | 75 | The templates a block theme falls back through for a template slug, as |
-| [`TemplateIndex`](#templateindex) | final class | 303 | Every block template and template part the site offers, in the order the |
+| [`TemplateIndex`](#templateindex) | final class | 300 | Every block template and template part the site offers, in the order the |
 | [`TemplatePartTheme`](#templateparttheme) | final readonly class | 45 | A template-part block inside a template says which theme's part it means. |
 | [`TemplatePatterns`](#templatepatterns) | final readonly class | 88 | A template can name a pattern instead of carrying its blocks, and the |
 | [`TemplateRecord`](#templaterecord) | final readonly class | 34 | One block template or template part, whatever it came from: a theme |
@@ -419,7 +419,7 @@ block's root selector (the class riding on the block's own class:
 .wp-block-button.is-style-outline--3 .wp-block-button__link), its own
 CSS, and the blocks styled inside it.
 
-Internals: `parts()` (private, line 129), `fontUrl()` (private, line 186), `structuralRules()` (private, line 204), `gapRules()` (private, line 224), `rootStyles()` (private, line 240), `elementStyles()` (private, line 254), `blockCustomProperties()` (private, line 288), `blockStyles()` (private, line 308), `selectorsOf()` (private, line 344), `byFeature()` (private, line 357), `withoutEmpty()` (private, line 384), `containerStyles()` (private, line 428), `declarations()` (private, line 443), `ordered()` (private, line 520)
+Internals: `parts()` (private, line 130), `fontUrl()` (private, line 187), `structuralRules()` (private, line 205), `gapRules()` (private, line 225), `rootStyles()` (private, line 241), `elementStyles()` (private, line 255), `blockCustomProperties()` (private, line 289), `blockStyles()` (private, line 309), `selectorsOf()` (private, line 345), `byFeature()` (private, line 358), `withoutEmpty()` (private, line 385), `containerStyles()` (private, line 429), `declarations()` (private, line 444), `ordered()` (private, line 521)
 
 
 ## HeadLinks
@@ -930,7 +930,7 @@ where the template only named them, then every template-part block
 told which theme it belongs to. A record carries the markup as
 stored, because that is what get_block_templates() hands a plugin.
 
-Internals: `savedRows()` (private, line 204), `pluginRows()` (private, line 219), `fromRow()` (private, line 228), `fromFile()` (private, line 254), `fromPlugin()` (private, line 276), `fileTitle()` (private, line 301), `savedArea()` (private, line 310)
+Internals: `savedRows()` (private, line 202), `pluginRows()` (private, line 217), `fromRow()` (private, line 226), `fromFile()` (private, line 252), `fromPlugin()` (private, line 274), `fileTitle()` (private, line 299), `savedArea()` (private, line 308)
 
 
 ## TemplatePartTheme
@@ -950,7 +950,7 @@ Used by: `Minn\Theme\TemplateIndex`
 
 Template part blocks with the theme attribute set.
 
-Internals: `withTheme()` (private, line 40), `encode()` (private, line 50), `pair()` (private, line 55)
+Internals: `withTheme()` (private, line 41), `encode()` (private, line 51), `pair()` (private, line 56)
 
 
 ## TemplatePatterns
@@ -972,7 +972,7 @@ Used by: `Minn\Theme\TemplateIndex`
 
 Markup with its pattern blocks replaced by the patterns' content.
 
-Internals: `closerAt()` (private, line 49), `pattern()` (private, line 55), `stamped()` (private, line 79), `isOneBlock()` (private, line 97)
+Internals: `closerAt()` (private, line 50), `pattern()` (private, line 56), `stamped()` (private, line 80), `isOneBlock()` (private, line 98)
 
 
 ## TemplateRecord
@@ -1101,7 +1101,7 @@ reference reads it; a list where a map belongs is dropped the same way.
 
 A page's chosen custom template, from _wp_page_template meta.
 
-Internals: `filtered()` (private, line 93), `hierarchy()` (private, line 117), `saved()` (private, line 175), `savedRow()` (private, line 182)
+Internals: `filtered()` (private, line 94), `hierarchy()` (private, line 118), `saved()` (private, line 176), `savedRow()` (private, line 183)
 
 
 ## Theme
@@ -1222,7 +1222,7 @@ pattern into a template. A field the header omits is omitted here.
 
 The theme's stylesheet URL when it ships one; a child's own, else nothing (the parent's is not enqueued for it).
 
-Internals: `at()` (private, line 61), `rawJson()` (private, line 82), `withStylePartials()` (private, line 98), `partialFiles()` (private, line 134), `safe()` (private, line 165), `htmlFiles()` (private, line 242), `patternIndex()` (private, line 354)
+Internals: `at()` (private, line 62), `rawJson()` (private, line 83), `withStylePartials()` (private, line 99), `partialFiles()` (private, line 135), `safe()` (private, line 166), `htmlFiles()` (private, line 243), `patternIndex()` (private, line 355)
 
 
 ## ThemeJsonData
@@ -1282,7 +1282,7 @@ way the theme's own are.
 
 - `@return list<array>`
 
-Internals: `withSectionStyles()` (private, line 91), `partials()` (private, line 113), `defaults()` (private, line 126)
+Internals: `withSectionStyles()` (private, line 92), `partials()` (private, line 114), `defaults()` (private, line 127)
 
 
 ## Typography

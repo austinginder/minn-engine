@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Minn\Support;
 
+use Minn\Json;
+
 /**
  * The named references kses keeps as written: the list captured from the
  * reference (data/kses.json) plus the five XML ones. Any other name is
@@ -36,6 +38,6 @@ final class KsesEntities
     /** @return array<string, mixed> */
     private static function table(): array
     {
-        return self::$table ??= (array) json_decode((string) file_get_contents(MINN_ENGINE_DIR . '/data/kses.json'), true);
+        return self::$table ??= (array) Json::file(MINN_ENGINE_DIR . '/data/kses.json');
     }
 }

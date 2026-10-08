@@ -6,6 +6,7 @@ namespace Minn\Theme;
 
 use Minn\Content\Site;
 use Minn\Front\Permalinks;
+use Minn\Json;
 
 /**
  * The active theme's global styles as wp/v2/global-styles/themes/{stylesheet}
@@ -64,7 +65,7 @@ final readonly class ThemeStyles
         $out = [];
         $partials = $this->partials();
         foreach ($this->theme?->styleFiles() ?? [] as $file) {
-            $variation = json_decode((string) file_get_contents($file), true);
+            $variation = Json::file($file, or: null);
             if (!is_array($variation) || isset($variation['blockTypes'])) {
                 continue;
             }
@@ -114,7 +115,7 @@ final readonly class ThemeStyles
     {
         $partials = [];
         foreach ($this->theme?->styleFiles() ?? [] as $file) {
-            $partial = json_decode((string) file_get_contents($file), true);
+            $partial = Json::file($file, or: null);
             if (is_array($partial) && is_array($partial['blockTypes'] ?? null)) {
                 $partials[(string) ($partial['slug'] ?? pathinfo($file, PATHINFO_FILENAME))] = array_values(array_filter($partial['blockTypes'], 'is_string'));
             }
@@ -125,6 +126,6 @@ final readonly class ThemeStyles
     /** @return array{settings: array, styles: array} */
     private static function defaults(): array
     {
-        return (array) json_decode((string) file_get_contents(MINN_ENGINE_DIR . '/data/global-styles.json'), true);
+        return (array) Json::file(MINN_ENGINE_DIR . '/data/global-styles.json');
     }
 }

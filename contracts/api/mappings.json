@@ -2,8 +2,8 @@
     "generated": "2026-10-08",
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line), placeholder (generated stub, behaviour still owed), deadend (generated stub for wp-admin, the editors, the Customizer or XML-RPC, inert by design); \"deadend\" on any entry names its dead-end area",
     "summary": {
-        "minn": 726,
-        "composes": 1514,
+        "minn": 727,
+        "composes": 1513,
         "leaf": 757,
         "noop": 2418,
         "placeholder": 281,
@@ -29440,7 +29440,7 @@
             "lines": 1,
             "kind": "noop",
             "minn": [
-                "Minn\\Support\\Json::convert"
+                "Minn\\Json::repair"
             ],
             "composes": []
         },
@@ -29458,7 +29458,7 @@
             "lines": 1,
             "kind": "noop",
             "minn": [
-                "Minn\\Support\\Json::sanitize"
+                "Minn\\Json::repair"
             ],
             "composes": []
         },
@@ -57843,12 +57843,12 @@
         },
         "wp_json_encode": {
             "file": "formatting.php",
-            "lines": 10,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "_wp_json_sanity_check"
-            ]
+            "lines": 9,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Json::encode"
+            ],
+            "composes": []
         },
         "wp_json_file_decode": {
             "file": "misc.php",

@@ -96,7 +96,7 @@ Which active WordPress plugin files an extension stands in for. @return array<st
 
 Registers every active extension's seams.
 
-Internals: `autoload()` (private, line 129)
+Internals: `autoload()` (private, line 130)
 
 
 ## Manifest

@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Minn\Blocks;
 
+use Minn\Json;
+
 /**
  * Parses block markup into a tree. The grammar is the delimiter comment:
  * an opener with optional JSON attributes, a closer, or a self-closing
@@ -55,7 +57,7 @@ final class Parser
             $cursor = $offset + strlen($full);
 
             $name = (($token['namespace'][0] ?? '') !== '' ? $token['namespace'][0] : 'core/') . $token['name'][0];
-            $attrs = ($token['attrs'][0] ?? '') !== '' ? (array) json_decode(trim($token['attrs'][0]), true) : [];
+            $attrs = ($token['attrs'][0] ?? '') !== '' ? (array) Json::decode(trim($token['attrs'][0]), or: null) : [];
             $isCloser = ($token['closer'][0] ?? '') === '/';
             $isVoid = ($token['void'][0] ?? '') === '/';
 

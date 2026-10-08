@@ -6,6 +6,7 @@ namespace Minn\Content;
 
 use Minn\Extension\Loader;
 use Minn\Extension\Manifest;
+use Minn\Json;
 use Minn\Runtime\PluginActivation;
 use Minn\Runtime\Refusal;
 use Minn\Runtime\Runtime;
@@ -65,7 +66,7 @@ final readonly class PluginState
     {
         $refusal = null;
         if ($plugin instanceof Manifest) {
-            $this->site->setOption('minn_active_extensions', (string) json_encode([...$this->ownWithout($plugin), $plugin->slug]));
+            $this->site->setOption('minn_active_extensions', Json::encode([...$this->ownWithout($plugin), $plugin->slug]));
         } else {
             $refusal = PluginActivation::activate($plugin, Runtime::hooks());
         }
@@ -78,7 +79,7 @@ final readonly class PluginState
     {
         if ($plugin instanceof Manifest) {
             PluginActivation::deactivate(array_values($plugin->replaces), null);
-            $this->site->setOption('minn_active_extensions', (string) json_encode($this->ownWithout($plugin)));
+            $this->site->setOption('minn_active_extensions', Json::encode($this->ownWithout($plugin)));
         } else {
             PluginActivation::deactivate([$plugin], Runtime::hooks());
         }
@@ -88,7 +89,7 @@ final readonly class PluginState
     /** The active extensions minus one. @return list<string> */
     private function ownWithout(Manifest $plugin): array
     {
-        $own = json_decode((string) ($this->site->option('minn_active_extensions') ?? '[]'), true);
+        $own = Json::decode((string) ($this->site->option('minn_active_extensions') ?? '[]'), or: null);
         return array_values(array_diff(is_array($own) ? array_map('strval', $own) : [], [$plugin->slug]));
     }
 }

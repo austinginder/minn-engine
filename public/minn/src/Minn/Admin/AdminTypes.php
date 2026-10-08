@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Minn\Admin;
 
 use Minn\Auth\Capabilities;
+use Minn\Json;
 use Minn\Rest\Types;
 
 /**
@@ -28,7 +29,7 @@ final class AdminTypes
         if ($this->extra !== null) {
             return $this->extra;
         }
-        $extra = (array) json_decode((string) file_get_contents(MINN_ENGINE_DIR . '/data/types-admin.json'), true);
+        $extra = (array) Json::file(MINN_ENGINE_DIR . '/data/types-admin.json');
         foreach ($this->types->all() as $slug => $type) {
             if (isset($extra[$slug])) {
                 continue;

@@ -253,7 +253,7 @@ was moved or copied keeps a record its own eject must not act on).
 
 - `@return array<string, mixed>`
 
-Internals: `help()` (private, line 101), `writePlaceholders()` (private, line 294), `move()` (private, line 315), `copyTree()` (private, line 331), `version()` (private, line 350), `say()` (private, line 355)
+Internals: `help()` (private, line 102), `writePlaceholders()` (private, line 295), `move()` (private, line 316), `copyTree()` (private, line 332), `version()` (private, line 351), `say()` (private, line 356)
 
 
 ## MaintenanceCommand
@@ -406,7 +406,7 @@ resumed here.
 [--theme]
 : Treat the name as a theme rather than a plugin.
 
-Internals: `installer()` (private, line 203), `parkedTree()` (private, line 319), `engineVersion()` (private, line 326)
+Internals: `installer()` (private, line 204), `parkedTree()` (private, line 320), `engineVersion()` (private, line 327)
 
 
 ## OptionCommand
@@ -505,7 +505,7 @@ Deletes an option.
 <key>...
 : Key for the option.
 
-Internals: `readValue()` (private, line 171), `decode()` (private, line 188), `encode()` (private, line 194)
+Internals: `readValue()` (private, line 172), `decode()` (private, line 189), `encode()` (private, line 195)
 
 
 ## PackageInstaller
@@ -753,7 +753,7 @@ Same line Theme::active / ClassicTheme::active draw: a block template
 index (child or parent) is a block theme; otherwise a parent index.php
 is a classic theme.
 
-Internals: `readConfig()` (private, line 89), `env()` (private, line 123), `optionReader()` (private, line 134), `preflightTheme()` (private, line 146), `preflightPlugins()` (private, line 185), `surveyContent()` (private, line 248), `surveyMarkup()` (private, line 257), `surveyMenus()` (private, line 298), `surveyTables()` (private, line 325), `surveyTypes()` (private, line 344), `light()` (private, line 366), `say()` (private, line 375)
+Internals: `readConfig()` (private, line 90), `env()` (private, line 124), `optionReader()` (private, line 135), `preflightTheme()` (private, line 147), `preflightPlugins()` (private, line 186), `surveyContent()` (private, line 249), `surveyMarkup()` (private, line 258), `surveyMenus()` (private, line 299), `surveyTables()` (private, line 326), `surveyTypes()` (private, line 345), `light()` (private, line 367), `say()` (private, line 376)
 
 
 ## RewriteCommand

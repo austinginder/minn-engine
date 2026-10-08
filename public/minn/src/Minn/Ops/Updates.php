@@ -6,6 +6,7 @@ namespace Minn\Ops;
 
 use Minn\Content\Inventory;
 use Minn\Content\Site;
+use Minn\Json;
 use Minn\RestError;
 use Minn\Support\FileHeaders;
 use Minn\Runtime\PluginUpdates;
@@ -74,7 +75,7 @@ final class Updates
         if ($this->state !== null) {
             return $this->state;
         }
-        $stored = json_decode((string) ($this->site->option(self::OPTION) ?? ''), true);
+        $stored = Json::decode((string) ($this->site->option(self::OPTION) ?? ''), or: null);
         // An answer from another source (wordpress.org, before the update service) is asked again.
         if (is_array($stored) && (int) ($stored['checked'] ?? 0) > time() - self::TTL && ($stored['source'] ?? '') === Directory::BASE) {
             return $this->state = $stored;
@@ -113,17 +114,17 @@ final class Updates
         $locale = (string) ($this->site->option('WPLANG') ?: 'en_US');
 
         $pluginAnswer = $plugins === [] ? [] : Directory::post('plugins/update-check/1.1/', [
-            'plugins' => json_encode(['plugins' => $plugins, 'active' => array_values($active)]),
+            'plugins' => Json::encode(['plugins' => $plugins, 'active' => array_values($active)], Json::ESCAPED),
             'translations' => '{}',
-            'locale' => json_encode([$locale]),
+            'locale' => Json::encode([$locale], Json::ESCAPED),
             'all' => 'true',
         ]);
         $themeAnswer = $themes === [] ? [] : Directory::post('themes/update-check/1.1/', [
-            'themes' => json_encode(['active' => $stylesheet, 'themes' => $themes]),
+            'themes' => Json::encode(['active' => $stylesheet, 'themes' => $themes], Json::ESCAPED),
             'translations' => '{}',
-            'locale' => json_encode([$locale]),
+            'locale' => Json::encode([$locale], Json::ESCAPED),
         ]);
-        $stored = json_decode((string) ($this->site->option(self::OPTION) ?? ''), true);
+        $stored = Json::decode((string) ($this->site->option(self::OPTION) ?? ''), or: null);
         $supplied = $this->supplied(is_array($stored) ? $stored : []);
         $state = [
             'checked' => time(),
@@ -140,7 +141,7 @@ final class Updates
             // Which files answered for themselves, so a check with no runtime keeps their offers.
             'supplied' => array_values(array_unique([...array_keys($supplied['plugins']), ...array_keys($supplied['no_update'])])),
         ];
-        $this->site->setOption(self::OPTION, (string) json_encode($state, JSON_UNESCAPED_SLASHES));
+        $this->site->setOption(self::OPTION, Json::encode($state));
         $this->state = $state;
         $this->publish();
         return $state;
@@ -432,7 +433,7 @@ final class Updates
         $version = $kind === 'theme' ? ($this->themeHeaders()[$item]['Version'] ?? '') : ($this->pluginVersions()[$item] ?? '');
         $state['archives']["{$kind}/{$folder}"] = ['sha256' => $sha256, 'version' => $version, 'package' => $package, 'installed' => time()];
         $this->state = $state;
-        $this->site->setOption(self::OPTION, (string) json_encode($state, JSON_UNESCAPED_SLASHES));
+        $this->site->setOption(self::OPTION, Json::encode($state));
     }
 
     /**
@@ -449,7 +450,7 @@ final class Updates
             unset($state[$from][$key]);
         }
         $this->state = $state;
-        $this->site->setOption(self::OPTION, (string) json_encode($state, JSON_UNESCAPED_SLASHES));
+        $this->site->setOption(self::OPTION, Json::encode($state));
         $this->publish();
     }
 

@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Minn\Runtime;
 
+use Minn\Json;
+
 /**
  * The registry behind wp_register_/wp_enqueue_ for scripts and styles:
  * handles, sources, dependencies, versions, inline additions, localized
@@ -152,7 +154,7 @@ final class Assets
     private static function defaults(): array
     {
         if (self::$defaults === null) {
-            $data = (array) json_decode((string) file_get_contents(MINN_ENGINE_DIR . '/data/default-assets.json'), true);
+            $data = (array) Json::file(MINN_ENGINE_DIR . '/data/default-assets.json');
             self::$defaults = ['script' => (array) ($data['scripts'] ?? []), 'style' => (array) ($data['styles'] ?? [])];
         }
         return self::$defaults;
@@ -295,7 +297,7 @@ final class Assets
             }
         }
         // The reference prints localized data with slashes unescaped.
-        $this->items[$handle]['localized'][] = 'var ' . $name . ' = ' . json_encode($data, JSON_UNESCAPED_SLASHES) . ';';
+        $this->items[$handle]['localized'][] = 'var ' . $name . ' = ' . Json::encode($data, JSON_UNESCAPED_SLASHES) . ';';
         $this->changed();
         return true;
     }

@@ -6,6 +6,7 @@ namespace Minn\Rest;
 
 use Minn\Http\Request;
 use Minn\Http\Response;
+use Minn\Json;
 use Minn\RestError;
 
 /**
@@ -34,7 +35,7 @@ final class Reply
         if ($fields !== null && !$fields->deferred && is_array($data) && $status < 400) {
             $data = $fields->apply($data);
         }
-        return new Response($status, self::HEADERS, (string) json_encode($data));
+        return new Response($status, self::HEADERS, Json::encode($data, Json::ESCAPED));
     }
 
     /** A post's answer pointing at its page on the site, as a viewable type's single item does. */
@@ -56,13 +57,13 @@ final class Reply
         return new Response(
             200,
             self::HEADERS + ['X-WP-Total' => (string) $total, 'X-WP-TotalPages' => (string) $totalPages],
-            (string) json_encode($rows),
+            Json::encode($rows, Json::ESCAPED),
         );
     }
 
     /** A REST error as the reference's error body. */
     public static function error(RestError $error): Response
     {
-        return new Response($error->status, self::HEADERS, (string) json_encode($error->payload()));
+        return new Response($error->status, self::HEADERS, Json::encode($error->payload(), Json::ESCAPED));
     }
 }

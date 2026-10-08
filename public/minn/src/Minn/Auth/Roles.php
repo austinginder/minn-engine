@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Minn\Auth;
 
 use Minn\Db;
+use Minn\Json;
 
 /**
  * Role definitions from the site's {prefix}user_roles option, parsed by a
@@ -49,7 +50,7 @@ final class Roles
     public function all(): array
     {
         return $this->roles ??= self::parse($this->db->option($this->db->prefix() . 'user_roles'))
-            ?? (array) json_decode((string) file_get_contents(MINN_ENGINE_DIR . '/data/roles.json'), true);
+            ?? (array) Json::file(MINN_ENGINE_DIR . '/data/roles.json');
     }
 
     /**

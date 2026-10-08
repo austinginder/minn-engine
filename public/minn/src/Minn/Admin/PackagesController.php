@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Minn\Admin;
 
+use Minn\Json;
 use Minn\Ops\Packages;
 use Minn\Content\Site;
 use Minn\Http\Method;
@@ -85,7 +86,7 @@ final readonly class PackagesController
             if (!preg_match('#^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$#', $github)) {
                 throw new RestError('bad_github', 'Invalid GitHub repository.', 400);
             }
-            $release = json_decode($this->packages->fetch("https://api.github.com/repos/{$github}/releases/latest"), true);
+            $release = Json::decode($this->packages->fetch("https://api.github.com/repos/{$github}/releases/latest"), or: null);
             $url = '';
             foreach ((array) ($release['assets'] ?? []) as $row) {
                 $name = (string) ($row['name'] ?? '');

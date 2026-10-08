@@ -6,6 +6,7 @@ namespace Minn\Theme;
 
 use Minn\Content\Site;
 use Minn\Db;
+use Minn\Json;
 use Minn\Runtime\BlockTemplates;
 
 /**
@@ -183,10 +184,7 @@ final class TemplateIndex
      */
     public static function defaults(): array
     {
-        return self::$defaults ??= (array) json_decode(
-            (string) file_get_contents(MINN_ENGINE_DIR . '/data/template-types.json'),
-            true,
-        );
+        return self::$defaults ??= (array) Json::file(MINN_ENGINE_DIR . '/data/template-types.json');
     }
 
     /**

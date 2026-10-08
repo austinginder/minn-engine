@@ -66,6 +66,8 @@ $check('plugin route answers on the engine', ($h['status'] ?? 0) === 200 && json
 $check('missing required parameter is refused as the reference refuses it', ($h['status'] ?? 0) === 400 && (json_decode($missing, true)['code'] ?? '') === 'rest_missing_callback_param', substr($missing, 0, 200));
 [$h, $item] = minn_test_fetch($base . '/wp-json/minn-test/v1/items/1');
 $check('url parameter route', ($h['status'] ?? 0) === 200 && json_decode($item, true) === ['id' => 1, 'exists' => true], substr($item, 0, 200));
+[$h, $cut] = minn_test_fetch($base . '/wp-json/minn-test/v1/cut');
+$check('a string cut mid-character still answers, the bad byte as "?"', ($h['status'] ?? 0) === 200 && $cut === '{"title":"Caf?","url":"https:\\/\\/example.com\\/a"}', var_export(substr($cut, 0, 200), true));
 [$h, $denied] = minn_test_fetch($base . '/?rest_route=/minn-test/v1/echo&_method=POST');
 [, $index] = minn_test_fetch($base . '/wp-json/');
 $indexData = json_decode($index, true);
@@ -87,6 +89,9 @@ if ($referenceUp) {
         $diff = minn_test_diff($normalise($eb), $normalise($rb));
         $check("reference agrees on {$path}", ($eh['status'] ?? 0) === ($rh['status'] ?? 1) && $diff === null, ($eh['status'] ?? 0) . ' vs ' . ($rh['status'] ?? 1) . ' ' . ($diff ?? ''));
     }
+    [, $engineCut] = minn_test_fetch($base . '/wp-json/minn-test/v1/cut');
+    [, $referenceCut] = minn_test_fetch($reference . '/?rest_route=' . rawurlencode('/minn-test/v1/cut'));
+    $check('reference agrees byte for byte on a string cut mid-character', $engineCut === $referenceCut, var_export($engineCut, true) . ' vs ' . var_export($referenceCut, true));
 } else {
     echo "  --  reference not running on :8123; REST parity rows skipped\n";
 }

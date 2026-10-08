@@ -338,6 +338,22 @@ foreach ([$root, dirname($root) . '/wp-api'] as $tree) {
 arsort($wporgRequests);
 $check("engine: wordpress.org request addresses stay at or under {$wporgRequestCeiling} (0 to release)", array_sum($wporgRequests) <= $wporgRequestCeiling, array_sum($wporgRequests) . ': ' . implode(', ', array_map(static fn ($file, $n) => "{$file} {$n}", array_keys($wporgRequests), $wporgRequests)));
 
+// JSON goes through Minn\Json, so every encode repairs bad UTF-8 and every
+// decode fails the same way. The one call left is RuntimeRoutes::decode(),
+// which reads objects so an empty one goes back out as {}. The ceiling only falls.
+$rawJsonCeiling = 1;
+$rawJson = [];
+foreach (new RecursiveIteratorIterator(new RecursiveDirectoryIterator($root, FilesystemIterator::SKIP_DOTS)) as $file) {
+    if ($file->getExtension() !== 'php' || $file->getPathname() === $root . '/Minn/Json.php') {
+        continue;
+    }
+    $found = preg_match_all('/(?<![\w>:$\\\\])json_(?:en|de)code\(/', (string) file_get_contents($file->getPathname()));
+    if ($found > 0) {
+        $rawJson[substr($file->getPathname(), strlen($root) + 1)] = $found;
+    }
+}
+$check("engine: raw json_encode/json_decode calls outside Minn\\Json stay at or under {$rawJsonCeiling}", array_sum($rawJson) <= $rawJsonCeiling, array_sum($rawJson) . ': ' . implode(', ', array_map(static fn ($file, $n) => "{$file} {$n}", array_keys($rawJson), $rawJson)));
+
 // The API docs are generated from the classes (tests/tools/api-docs.php) and
 // must be current: an agent or a person reading docs/api/ is reading the code.
 $docs = json_decode((string) shell_exec('php ' . escapeshellarg(dirname(__DIR__) . '/tests/tools/api-docs.php') . ' --check 2>/dev/null'), true);

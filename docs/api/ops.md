@@ -129,7 +129,7 @@ The released sections as Markdown, fetched first when the copy is a day old; '' 
 
 The changelog without its Unreleased sections.
 
-Internals: `kept()` (private, line 50)
+Internals: `kept()` (private, line 51)
 
 
 ## CoreStatus
@@ -525,7 +525,7 @@ A package over https, every redirect hop included, refusing anything
 else; when host prefixes are given, every hop must start with one.
 The request names the engine, never the site's address.
 
-Internals: `pluginPackage()` (private, line 158), `plain()` (private, line 221), `themePackage()` (private, line 315), `upload()` (private, line 368), `place()` (private, line 391), `contained()` (private, line 438), `identify()` (private, line 453), `ask()` (private, line 487)
+Internals: `pluginPackage()` (private, line 159), `plain()` (private, line 222), `themePackage()` (private, line 316), `upload()` (private, line 369), `place()` (private, line 392), `contained()` (private, line 439), `identify()` (private, line 454), `ask()` (private, line 488)
 
 
 ## Release
@@ -623,7 +623,7 @@ did (when it did not, `latest` is the last answer kept).
 
 The release on offer: the latest one, when it is newer than the running engine.
 
-Internals: `origin()` (private, line 100)
+Internals: `origin()` (private, line 101)
 
 
 ## Unzip
@@ -791,7 +791,7 @@ Stylesheet => style.css headers. @return array<string, array<string, string>>
 
 - `@return array<string, array<string, string>>`
 
-Internals: `supplied()` (private, line 187), `saveAuto()` (private, line 322), `pluginHeaders()` (private, line 379), `apply()` (private, line 423), `consume()` (private, line 444), `map()` (private, line 457), `safeUrl()` (private, line 465)
+Internals: `supplied()` (private, line 188), `saveAuto()` (private, line 323), `pluginHeaders()` (private, line 380), `apply()` (private, line 424), `consume()` (private, line 445), `map()` (private, line 458), `safeUrl()` (private, line 466)
 
 
 ## UpgraderRun

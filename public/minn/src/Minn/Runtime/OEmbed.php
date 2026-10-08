@@ -6,6 +6,7 @@ namespace Minn\Runtime;
 
 use Closure;
 use DOMDocument;
+use Minn\Json;
 
 /** oEmbed as data: provider matching against the wildcard table, response parsing, and the markup an oEmbed payload becomes. */
 final class OEmbed
@@ -37,7 +38,7 @@ final class OEmbed
      */
     public static function parseJson(string $body): ?array
     {
-        $data = json_decode(trim($body), true);
+        $data = Json::decode(trim($body), or: null);
         return is_array($data) && $data !== [] && !array_is_list($data) ? $data : null;
     }
 

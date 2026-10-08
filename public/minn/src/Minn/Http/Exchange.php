@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Minn\Http;
 
+use Minn\Json;
+
 /** What came back: the final response's status, headers (repeats as lists), Set-Cookie values, and body, or the transport error. */
 final readonly class Exchange
 {
@@ -39,8 +41,7 @@ final readonly class Exchange
     /** The body decoded as JSON, or null when it is not JSON. */
     public function json(): mixed
     {
-        $decoded = json_decode($this->body, true);
-        return json_last_error() === JSON_ERROR_NONE ? $decoded : null;
+        return Json::decode($this->body, or: null);
     }
 
     /** One header by any spelling of its name; a repeated header's values joined with ", ". */

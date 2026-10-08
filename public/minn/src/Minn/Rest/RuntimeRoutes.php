@@ -7,6 +7,7 @@ namespace Minn\Rest;
 use Minn\Http\Args;
 use Minn\Http\Request;
 use Minn\Http\Response;
+use Minn\Json;
 use Minn\RestError;
 use Minn\Runtime\Runtime;
 
@@ -122,7 +123,7 @@ final class RuntimeRoutes
     /** The engine's index plus the namespaces and routes the runtime holds. */
     public static function mergeIndex(Response $response): Response
     {
-        $data = json_decode($response->body, true);
+        $data = Json::decode($response->body, or: null);
         if (!is_array($data) || !isset($data['routes'])) {
             return $response;
         }
@@ -146,7 +147,7 @@ final class RuntimeRoutes
                 $data['routes'][$route] = $description;
             }
         }
-        return new Response($response->status, $response->headers, (string) json_encode($data));
+        return new Response($response->status, $response->headers, Json::encode($data, Json::ESCAPED));
     }
 
     /** @var \WeakMap<Request, \WP_REST_Request>|null the one request object plugins see for one request, filters and actions alike */
@@ -328,7 +329,7 @@ final class RuntimeRoutes
             $out['_embedded'] = $embedded;
         }
         $out = \apply_filters('rest_pre_echo_response', $out, $server, $wpRequest);
-        return new Response($result->get_status(), $headers, (string) json_encode($out), $response->cookies, $response->afterSend);
+        return new Response($result->get_status(), $headers, Json::encode($out, Json::ESCAPED), $response->cookies, $response->afterSend);
     }
 
     /**
@@ -341,7 +342,7 @@ final class RuntimeRoutes
         if (($request->query['format'] ?? '') !== 'xml' || $response->status !== 200 || !in_array($request->path, ['/oembed/1.0/embed', '/oembed/1.0/proxy'], true)) {
             return null;
         }
-        $data = json_decode($response->body, true);
+        $data = Json::decode($response->body, or: null);
         if (!is_array($data)) {
             return null;
         }
@@ -443,6 +444,6 @@ final class RuntimeRoutes
         foreach ((array) $response->get_headers() as $name => $value) {
             $headers[$name] = (string) $value;
         }
-        return new Response($response->get_status(), $headers, (string) json_encode($data));
+        return new Response($response->get_status(), $headers, Json::encode($data, Json::ESCAPED));
     }
 }

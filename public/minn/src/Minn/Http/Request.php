@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Minn\Http;
 
+use Minn\Json;
+
 /**
  * An immutable picture of the incoming request. Built once from the PHP
  * globals at the edge; handlers only ever see this object.
@@ -82,7 +84,7 @@ final readonly class Request
         if (trim($this->body) === '') {
             return $this->form;
         }
-        $decoded = json_decode($this->body, true);
+        $decoded = Json::decode($this->body, or: null);
         if (is_array($decoded)) {
             return $decoded;
         }

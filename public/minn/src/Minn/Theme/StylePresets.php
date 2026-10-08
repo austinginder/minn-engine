@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Minn\Theme;
 
 use Minn\Blocks\StyleEngine;
+use Minn\Json;
 
 /**
  * The preset side of theme.json: the colour, gradient, font-size,
@@ -18,7 +19,7 @@ final class StylePresets
     /** Every preset list the theme declares, over core's own, keyed by kind. */
     public static function presets(array $settings): array
     {
-        $core = (array) json_decode((string) file_get_contents(MINN_ENGINE_DIR . '/data/presets.json'), true);
+        $core = (array) Json::file(MINN_ENGINE_DIR . '/data/presets.json');
         $merge = static fn (array $defaults, array $own, string $key) => [...$defaults, ...array_map(static fn (array $p) => ['slug' => (string) $p['slug'], 'value' => (string) $p[$key]], $own)];
         $fontSizes = self::presetList($settings['typography']['fontSizes'] ?? []);
         $spacing = self::presetList($settings['spacing']['spacingSizes'] ?? []);

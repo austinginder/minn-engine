@@ -6,6 +6,7 @@ namespace Minn\Admin;
 
 use Minn\Content\Site;
 use Minn\Content\Users;
+use Minn\Json;
 use Minn\RestError;
 
 /**
@@ -68,7 +69,7 @@ final readonly class Translations
         $map = [];
         $rule = '';
         foreach ($this->catalogFiles($locale) as $file) {
-            $jed = json_decode((string) file_get_contents($file), true);
+            $jed = Json::file($file, or: null);
             $messages = (array) ($jed['locale_data']['messages'] ?? []);
             $head = (array) ($messages[''] ?? []);
             $rule = (string) ($head['plural-forms'] ?? $head['plural_forms'] ?? $rule);
@@ -146,7 +147,7 @@ final readonly class Translations
             throw new RestError('minn_language_install', 'That is not a locale code.', 400);
         }
         $manifest = $this->app->file('manifest.json');
-        $entries = $manifest === null ? [] : (array) (json_decode((string) file_get_contents($manifest), true)['translations'] ?? []);
+        $entries = $manifest === null ? [] : (array) (Json::file($manifest, or: null)['translations'] ?? []);
         $entry = null;
         foreach ($entries as $row) {
             if (($row['language'] ?? '') === $locale) {
@@ -235,7 +236,7 @@ final readonly class Translations
     /** Native names for every locale the registry lists, from the captured catalog. @return array<string, string> */
     private function names(): array
     {
-        $data = (array) json_decode((string) file_get_contents(MINN_ENGINE_DIR . '/data/languages.json'), true);
+        $data = (array) Json::file(MINN_ENGINE_DIR . '/data/languages.json');
         $names = [];
         foreach (array_merge((array) ($data['available'] ?? []), (array) ($data['installed'] ?? [])) as $pair) {
             if (is_array($pair) && ($pair[0] ?? '') !== '') {
