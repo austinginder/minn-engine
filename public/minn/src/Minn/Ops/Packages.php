@@ -196,21 +196,25 @@ final readonly class Packages
     }
 
     /**
-     * The directory's answer to a plugins_api() action, its request passed
-     * as given (Ops\PluginsApi); null when it did not answer. One of the
-     * directory calls Track H moves behind the Minn update service.
+     * The directory's answer to a plugins_api() or themes_api() action
+     * ($kind 'plugins' or 'themes'), its request passed as given
+     * (Ops\DirectoryApi), read whatever the status: a refusal is the
+     * directory's own words ({"error": ...}); an answer that is not JSON
+     * comes back as {"unexpected": body}. Null when the service did not
+     * answer.
      *
      * @param array<string, mixed> $request
      * @return array<string, mixed>|null
      */
-    public function pluginsAction(string $action, array $request): ?array
+    public function infoAction(string $kind, string $action, array $request): ?array
     {
-        try {
-            $data = json_decode($this->ask(self::PLUGINS_INFO . '?' . http_build_query(['action' => $action, 'request' => $request])), true);
-        } catch (RestError) {
+        $url = ($kind === 'themes' ? self::THEMES_INFO : self::PLUGINS_INFO) . '?' . http_build_query(['action' => $action, 'request' => $request]);
+        $reply = \Minn\Http::get($url, timeout: 30, hosts: [Directory::ORIGIN], maxBytes: 16 * 1048576, userAgent: Directory::userAgent());
+        if ($reply->failed() || $reply->body === '') {
             return null;
         }
-        return is_array($data) ? $data : null;
+        $data = json_decode($reply->body, true);
+        return is_array($data) ? $data : ['unexpected' => $reply->body];
     }
 
     /** Directory text as the app shows it: tags stripped, entities decoded. */

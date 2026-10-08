@@ -10,11 +10,11 @@
 | [`CoreStatus`](#corestatus) | final readonly class | 48 | The core the app's update banner and chip speak of, which on Minn is |
 | [`Diagnostics`](#diagnostics) | final readonly class | 408 | The System view's facts about this install: the engine, PHP, the |
 | [`Directory`](#directory) | final class | 35 | The Minn update service, https://updates.minn.run: the one place the |
+| [`DirectoryApi`](#directoryapi) | final readonly class | 56 | plugins_api() and themes_api() as plugins call them and answer them |
 | [`EngineUpdate`](#engineupdate) | final readonly class | 129 | Replaces the running engine with a published release. The release's |
 | [`InstalledSoftware`](#installedsoftware) | final readonly class | 59 | What is installed, as the System view lists it: every extension and |
 | [`Logs`](#logs) | final readonly class | 150 | The log files the System view can read and clear: the debug log the |
-| [`Packages`](#packages) | final readonly class | 477 | Putting plugins, themes and extensions on disk. Plugins and themes come |
-| [`PluginsApi`](#pluginsapi) | final readonly class | 35 | plugins_api() as plugins call it and answer it (probe plugins-api): the |
+| [`Packages`](#packages) | final readonly class | 481 | Putting plugins, themes and extensions on disk. Plugins and themes come |
 | [`Release`](#release) | final readonly class | 58 | One published Minn release as the update service describes it (and as |
 | [`Releases`](#releases) | final class | 86 | Whether a newer Minn is out, asked of the Minn update service at most |
 | [`Unzip`](#unzip) | final readonly class | 101 | An archive unpacked as unzip_file() unpacks it (probe unzip-file): into |
@@ -241,6 +241,33 @@ A form POST to the service (the update checks), its answer decoded.
 - `@return array<string, mixed>`
 
 
+## DirectoryApi
+
+`final readonly class Minn\Ops\DirectoryApi` · `public/minn/src/Minn/Ops/DirectoryApi.php`
+
+plugins_api() and themes_api() as plugins call them and answer them
+(probes plugins-api, themes-api), one class for both ($kind 'plugins' or
+'themes'): the arguments as an object with the reader's locale and the
+major.minor version beside them, through <kind>_api_args; then whatever a
+plugin answers through <kind>_api (a seller's own information, or an
+error) stands, and only when nobody answers is the directory asked,
+through Ops\Packages (behind the Minn update service);
+<kind>_api_result is handed what came back either way. A refusal is
+<kind>_api_failed in the directory's own words.
+
+```php
+__construct(string $kind, Closure $filter, Minn\Ops\Packages $packages, string $locale, string $version)
+```
+- `@param Closure(string, mixed...): mixed $filter applies a filter, as apply_filters does`
+
+
+### `ask(string $action, object|array $args): mixed`
+
+The answer for an action (plugin_information, query_themes, ...): an object, a WP_Error, or what a plugin returned.
+
+Internals: `directory()` (private, line 42), `unexpected()` (private, line 68)
+
+
 ## EngineUpdate
 
 `final readonly class Minn\Ops\EngineUpdate` · `public/minn/src/Minn/Ops/EngineUpdate.php`
@@ -392,7 +419,7 @@ deleted.
 - const `INFO_OPTION` = `'minn_plugin_info'`
 - const `INFO_TTL` = `43200`
 
-Used by: `Minn\Admin\PackagesController`, `Minn\Cli\DirectorySearch`, `Minn\Cli\PackageInstaller`, `Minn\Cli\PluginCommand`, `Minn\Cli\ThemeCommand`, `Minn\Ops\PluginsApi`, `Minn\Ops\Updates`, `Minn\Ops\UpgraderRun`, `Minn\Rest\PluginsController`, `Minn\Rest\Services`
+Used by: `Minn\Admin\PackagesController`, `Minn\Cli\DirectorySearch`, `Minn\Cli\PackageInstaller`, `Minn\Cli\PluginCommand`, `Minn\Cli\ThemeCommand`, `Minn\Ops\DirectoryApi`, `Minn\Ops\Updates`, `Minn\Ops\UpgraderRun`, `Minn\Rest\PluginsController`, `Minn\Rest\Services`
 
 ```php
 __construct(Minn\Content\Site $site, string $contentDir)
@@ -431,11 +458,14 @@ One directory plugin record, or null when the slug is unknown.
 
 - `@return array<string, mixed>|null`
 
-### `pluginsAction(string $action, array $request): ?array`
+### `infoAction(string $kind, string $action, array $request): ?array`
 
-The directory's answer to a plugins_api() action, its request passed
-as given (Ops\PluginsApi); null when it did not answer. One of the
-directory calls Track H moves behind the Minn update service.
+The directory's answer to a plugins_api() or themes_api() action
+($kind 'plugins' or 'themes'), its request passed as given
+(Ops\DirectoryApi), read whatever the status: a refusal is the
+directory's own words ({"error": ...}); an answer that is not JSON
+comes back as {"unexpected": body}. Null when the service did not
+answer.
 
 - `@param array<string, mixed> $request`
 - `@return array<string, mixed>|null`
@@ -495,33 +525,7 @@ A package over https, every redirect hop included, refusing anything
 else; when host prefixes are given, every hop must start with one.
 The request names the engine, never the site's address.
 
-Internals: `pluginPackage()` (private, line 158), `plain()` (private, line 217), `themePackage()` (private, line 311), `upload()` (private, line 364), `place()` (private, line 387), `contained()` (private, line 434), `identify()` (private, line 449), `ask()` (private, line 483)
-
-
-## PluginsApi
-
-`final readonly class Minn\Ops\PluginsApi` · `public/minn/src/Minn/Ops/PluginsApi.php`
-
-plugins_api() as plugins call it and answer it (probe plugins-api): the
-arguments as an object with the reader's locale and the major.minor
-version beside them, through plugins_api_args; then whatever a plugin
-answers through plugins_api (a self-hosted plugin's own information, or
-an error) stands, and only when nobody answers is the directory asked,
-through Ops\Packages (the engine's one door to it, which Track H moves
-behind the Minn update service); plugins_api_result is handed what came
-back either way.
-
-```php
-__construct(Closure $filter, Minn\Ops\Packages $packages, string $locale, string $version)
-```
-- `@param Closure(string, mixed...): mixed $filter applies a filter, as apply_filters does`
-
-
-### `ask(string $action, object|array $args): mixed`
-
-The answer for an action (plugin_information, query_plugins, ...): an object, a WP_Error, or what a plugin returned.
-
-Internals: `directory()` (private, line 41)
+Internals: `pluginPackage()` (private, line 158), `plain()` (private, line 221), `themePackage()` (private, line 315), `upload()` (private, line 368), `place()` (private, line 391), `contained()` (private, line 438), `identify()` (private, line 453), `ask()` (private, line 487)
 
 
 ## Release

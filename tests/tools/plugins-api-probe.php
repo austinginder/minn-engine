@@ -44,4 +44,6 @@ $heard = [];
 $real = plugins_api('plugin_information', ['slug' => 'hello-dolly', 'fields' => ['sections' => false]]);
 $say('the directory', $real instanceof WP_Error ? ['error', $real->get_error_code()] : [get_debug_type($real), $real->name ?? null, $real->slug ?? null, $real->author ?? null, isset($real->sections)]);
 $say('the directory, heard', array_map(static fn ($h) => array_slice($h, 0, 3), $heard));
+$say('a plugin the directory does not know', $shape(plugins_api('plugin_information', ['slug' => 'zz-no-such-plugin-anywhere'])));
+$say('an action nobody answers', $shape(plugins_api('zz_no_such_action', ['slug' => 'hello-dolly'])));
 echo json_encode($log, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE), "\n";

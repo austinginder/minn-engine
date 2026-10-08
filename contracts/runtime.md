@@ -2411,7 +2411,7 @@ template choice, the canonical moves and the record.
 
 ## plugins_api (2026-10-07)
 
-`plugins_api($action, $args)` (`Ops\PluginsApi`, probe plugins-api) was
+`plugins_api($action, $args)` (`Ops\DirectoryApi`, probe plugins-api) was
 missing, so the plugins that call it (Blocksy Companion, CaptainCore
 Manager, CleanTalk and Elementor on the anchor site) fatalled, and the
 25 that answer through its filter were never asked. The arguments become
@@ -2419,11 +2419,19 @@ an object with the reader's `locale` and the major.minor `wp_version`
 beside them, through `plugins_api_args`; whatever `plugins_api` answers
 other than false stands (a self-hosted plugin's own information, or a
 `WP_Error`), and only when nobody answers is the directory's info API
-asked, through `Ops\Packages::pluginsAction` (the engine's existing door
+asked, through `Ops\Packages::infoAction` (the engine's existing door
 to it, which Track H moves behind the Minn update service; no new
 wordpress.org call site), the arguments as its `request`, the answer an
 object at the top with arrays inside;
 `plugins_api_result` is handed what came back either way, errors included.
+`themes_api` (probe themes-api, 2026-10-07) is the same class with `themes`
+for `plugins`: a theme search's themes come back as objects. The directory
+is read whatever the status, so a refusal carries its own words ("Theme
+not found", "Plugin not found."). An answer that is not JSON is the
+reference's "An unexpected error occurred" message, the body as its data,
+with one exception: wordpress.org words an unknown theme action as JSON to
+WordPress but as a paragraph to anyone else (the update service), so for
+themes that paragraph is read as the refusal WordPress would have had.
 
 ## unzip_file (2026-10-07)
 

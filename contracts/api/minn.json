@@ -55797,6 +55797,7 @@
                 "Minn\\Http\\TrustedProxies",
                 "Minn\\Ops\\Changelog",
                 "Minn\\Ops\\Directory",
+                "Minn\\Ops\\Packages",
                 "Minn\\Ops\\Releases"
             ],
             "constructor": null,
@@ -76254,6 +76255,195 @@
             ]
         },
         {
+            "name": "Minn\\Ops\\DirectoryApi",
+            "short": "DirectoryApi",
+            "namespace": "Minn\\Ops",
+            "kind": "final readonly class",
+            "file": "public/minn/src/Minn/Ops/DirectoryApi.php",
+            "lines": 56,
+            "doc": "plugins_api() and themes_api() as plugins call them and answer them\n(probes plugins-api, themes-api), one class for both ($kind 'plugins' or\n'themes'): the arguments as an object with the reader's locale and the\nmajor.minor version beside them, through <kind>_api_args; then whatever a\nplugin answers through <kind>_api (a seller's own information, or an\nerror) stands, and only when nobody answers is the directory asked,\nthrough Ops\\Packages (behind the Minn update service);\n<kind>_api_result is handed what came back either way. A refusal is\n<kind>_api_failed in the directory's own words.",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\Ops\\Packages"
+            ],
+            "usedBy": [],
+            "constructor": {
+                "signature": "__construct(string $kind, Closure $filter, Minn\\Ops\\Packages $packages, string $locale, string $version)",
+                "doc": "",
+                "shapes": [
+                    "@param Closure(string, mixed...): mixed $filter applies a filter, as apply_filters does"
+                ],
+                "params": [
+                    {
+                        "name": "kind",
+                        "type": "string",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    },
+                    {
+                        "name": "filter",
+                        "type": "Closure",
+                        "shape": "Closure(string, mixed...): mixed",
+                        "default": null,
+                        "doc": "applies a filter, as apply_filters does"
+                    },
+                    {
+                        "name": "packages",
+                        "type": "Minn\\Ops\\Packages",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    },
+                    {
+                        "name": "locale",
+                        "type": "string",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    },
+                    {
+                        "name": "version",
+                        "type": "string",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    }
+                ],
+                "visibility": "public",
+                "line": 23,
+                "end": 25
+            },
+            "cases": [],
+            "constants": [],
+            "properties": [
+                {
+                    "name": "kind",
+                    "type": "string",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
+                },
+                {
+                    "name": "filter",
+                    "type": "Closure",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
+                },
+                {
+                    "name": "packages",
+                    "type": "Minn\\Ops\\Packages",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
+                },
+                {
+                    "name": "locale",
+                    "type": "string",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
+                },
+                {
+                    "name": "version",
+                    "type": "string",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
+                }
+            ],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "ask",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "ask(string $action, object|array $args): mixed",
+                    "doc": "The answer for an action (plugin_information, query_themes, ...): an object, a WP_Error, or what a plugin returned.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "action",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "args",
+                            "type": "object|array",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 28,
+                    "end": 39
+                },
+                {
+                    "routes": [],
+                    "name": "directory",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "directory(string $action, array $request): object",
+                    "doc": "",
+                    "shapes": [
+                        "@param array<string, mixed> $request"
+                    ],
+                    "params": [
+                        {
+                            "name": "action",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "request",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 42,
+                    "end": 59
+                },
+                {
+                    "routes": [],
+                    "name": "unexpected",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "unexpected(string $body): WP_Error",
+                    "doc": "An answer that is not JSON. wordpress.org words an unknown theme\naction as JSON to WordPress but as a paragraph to anyone else (the\nupdate service), so the paragraph is read as the refusal WordPress\nwould have been given; anything else is the reference's own message\nfor an answer it cannot read, the body kept as its data.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "body",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 68,
+                    "end": 74
+                }
+            ]
+        },
+        {
             "name": "Minn\\Ops\\EngineUpdate",
             "short": "EngineUpdate",
             "namespace": "Minn\\Ops",
@@ -76834,7 +77024,7 @@
             "namespace": "Minn\\Ops",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Ops/Packages.php",
-            "lines": 477,
+            "lines": 481,
             "doc": "Putting plugins, themes and extensions on disk. Plugins and themes come\nfrom the directory (wordpress.org's, asked through the Minn update\nservice, Ops\\Directory) or an uploaded zip, and are installed through\nWordPress's upgraders (UpgraderRun), so plugins hear every upgrader hook;\na Minn extension (a folder with a minn.json) is placed by the engine.\nEvery archive passes Archive's checks first: exactly one top-level\nfolder that is a plain name (never \".\" or \"..\"), no absolute or dotted\npaths, no symbolic links, bounded entry count and size. Removal proves\nthe folder is a direct child of its kind's directory before anything is\ndeleted.",
             "implements": [],
             "extends": null,
@@ -76842,6 +77032,7 @@
                 "Minn\\Content\\Inventory",
                 "Minn\\Content\\Site",
                 "Minn\\Extension\\Manifest",
+                "Minn\\Http",
                 "Minn\\Http\\Download",
                 "Minn\\Ops\\Archive",
                 "Minn\\Ops\\Directory",
@@ -76856,7 +77047,7 @@
                 "Minn\\Cli\\PackageInstaller",
                 "Minn\\Cli\\PluginCommand",
                 "Minn\\Cli\\ThemeCommand",
-                "Minn\\Ops\\PluginsApi",
+                "Minn\\Ops\\DirectoryApi",
                 "Minn\\Ops\\Updates",
                 "Minn\\Ops\\UpgraderRun",
                 "Minn\\Rest\\PluginsController",
@@ -77083,16 +77274,23 @@
                 },
                 {
                     "routes": [],
-                    "name": "pluginsAction",
+                    "name": "infoAction",
                     "static": false,
                     "visibility": "public",
-                    "signature": "pluginsAction(string $action, array $request): ?array",
-                    "doc": "The directory's answer to a plugins_api() action, its request passed\nas given (Ops\\PluginsApi); null when it did not answer. One of the\ndirectory calls Track H moves behind the Minn update service.",
+                    "signature": "infoAction(string $kind, string $action, array $request): ?array",
+                    "doc": "The directory's answer to a plugins_api() or themes_api() action\n($kind 'plugins' or 'themes'), its request passed as given\n(Ops\\DirectoryApi), read whatever the status: a refusal is the\ndirectory's own words ({\"error\": ...}); an answer that is not JSON\ncomes back as {\"unexpected\": body}. Null when the service did not\nanswer.",
                     "shapes": [
                         "@param array<string, mixed> $request",
                         "@return array<string, mixed>|null"
                     ],
                     "params": [
+                        {
+                            "name": "kind",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
                         {
                             "name": "action",
                             "type": "string",
@@ -77108,8 +77306,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 206,
-                    "end": 214
+                    "line": 209,
+                    "end": 218
                 },
                 {
                     "routes": [],
@@ -77144,8 +77342,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 227,
-                    "end": 251
+                    "line": 231,
+                    "end": 255
                 },
                 {
                     "routes": [],
@@ -77180,8 +77378,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 258,
-                    "end": 282
+                    "line": 262,
+                    "end": 286
                 },
                 {
                     "routes": [],
@@ -77202,8 +77400,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 289,
-                    "end": 296
+                    "line": 293,
+                    "end": 300
                 },
                 {
                     "routes": [],
@@ -77229,8 +77427,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 299,
-                    "end": 302
+                    "line": 303,
+                    "end": 306
                 },
                 {
                     "routes": [],
@@ -77256,8 +77454,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 305,
-                    "end": 308
+                    "line": 309,
+                    "end": 312
                 },
                 {
                     "routes": [],
@@ -77285,8 +77483,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 336,
-                    "end": 348
+                    "line": 340,
+                    "end": 352
                 },
                 {
                     "routes": [],
@@ -77312,8 +77510,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 351,
-                    "end": 354
+                    "line": 355,
+                    "end": 358
                 },
                 {
                     "routes": [],
@@ -77339,8 +77537,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 413,
-                    "end": 431
+                    "line": 417,
+                    "end": 435
                 },
                 {
                     "routes": [],
@@ -77368,8 +77566,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 463,
-                    "end": 480
+                    "line": 467,
+                    "end": 484
                 },
                 {
                     "routes": [],
@@ -77395,8 +77593,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 493,
-                    "end": 503
+                    "line": 497,
+                    "end": 507
                 },
                 {
                     "routes": [],
@@ -77442,8 +77640,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 217,
-                    "end": 220
+                    "line": 221,
+                    "end": 224
                 },
                 {
                     "routes": [],
@@ -77469,8 +77667,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 311,
-                    "end": 328
+                    "line": 315,
+                    "end": 332
                 },
                 {
                     "routes": [],
@@ -77506,8 +77704,8 @@
                             "doc": "the upgrader's install arguments"
                         }
                     ],
-                    "line": 364,
-                    "end": 379
+                    "line": 368,
+                    "end": 383
                 },
                 {
                     "routes": [],
@@ -77542,8 +77740,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 387,
-                    "end": 410
+                    "line": 391,
+                    "end": 414
                 },
                 {
                     "routes": [],
@@ -77569,8 +77767,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 434,
-                    "end": 442
+                    "line": 438,
+                    "end": 446
                 },
                 {
                     "routes": [],
@@ -77598,8 +77796,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 449,
-                    "end": 460
+                    "line": 453,
+                    "end": 464
                 },
                 {
                     "routes": [],
@@ -77618,161 +77816,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 483,
-                    "end": 486
-                }
-            ]
-        },
-        {
-            "name": "Minn\\Ops\\PluginsApi",
-            "short": "PluginsApi",
-            "namespace": "Minn\\Ops",
-            "kind": "final readonly class",
-            "file": "public/minn/src/Minn/Ops/PluginsApi.php",
-            "lines": 35,
-            "doc": "plugins_api() as plugins call it and answer it (probe plugins-api): the\narguments as an object with the reader's locale and the major.minor\nversion beside them, through plugins_api_args; then whatever a plugin\nanswers through plugins_api (a self-hosted plugin's own information, or\nan error) stands, and only when nobody answers is the directory asked,\nthrough Ops\\Packages (the engine's one door to it, which Track H moves\nbehind the Minn update service); plugins_api_result is handed what came\nback either way.",
-            "implements": [],
-            "extends": null,
-            "uses": [
-                "Minn\\Ops\\Packages"
-            ],
-            "usedBy": [],
-            "constructor": {
-                "signature": "__construct(Closure $filter, Minn\\Ops\\Packages $packages, string $locale, string $version)",
-                "doc": "",
-                "shapes": [
-                    "@param Closure(string, mixed...): mixed $filter applies a filter, as apply_filters does"
-                ],
-                "params": [
-                    {
-                        "name": "filter",
-                        "type": "Closure",
-                        "shape": "Closure(string, mixed...): mixed",
-                        "default": null,
-                        "doc": "applies a filter, as apply_filters does"
-                    },
-                    {
-                        "name": "packages",
-                        "type": "Minn\\Ops\\Packages",
-                        "shape": "",
-                        "default": null,
-                        "doc": ""
-                    },
-                    {
-                        "name": "locale",
-                        "type": "string",
-                        "shape": "",
-                        "default": null,
-                        "doc": ""
-                    },
-                    {
-                        "name": "version",
-                        "type": "string",
-                        "shape": "",
-                        "default": null,
-                        "doc": ""
-                    }
-                ],
-                "visibility": "public",
-                "line": 22,
-                "end": 24
-            },
-            "cases": [],
-            "constants": [],
-            "properties": [
-                {
-                    "name": "filter",
-                    "type": "Closure",
-                    "readonly": true,
-                    "static": false,
-                    "doc": "",
-                    "visibility": "private",
-                    "promoted": true
-                },
-                {
-                    "name": "packages",
-                    "type": "Minn\\Ops\\Packages",
-                    "readonly": true,
-                    "static": false,
-                    "doc": "",
-                    "visibility": "private",
-                    "promoted": true
-                },
-                {
-                    "name": "locale",
-                    "type": "string",
-                    "readonly": true,
-                    "static": false,
-                    "doc": "",
-                    "visibility": "private",
-                    "promoted": true
-                },
-                {
-                    "name": "version",
-                    "type": "string",
-                    "readonly": true,
-                    "static": false,
-                    "doc": "",
-                    "visibility": "private",
-                    "promoted": true
-                }
-            ],
-            "methods": [
-                {
-                    "routes": [],
-                    "name": "ask",
-                    "static": false,
-                    "visibility": "public",
-                    "signature": "ask(string $action, object|array $args): mixed",
-                    "doc": "The answer for an action (plugin_information, query_plugins, ...): an object, a WP_Error, or what a plugin returned.",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "action",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "args",
-                            "type": "object|array",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 27,
-                    "end": 38
-                },
-                {
-                    "routes": [],
-                    "name": "directory",
-                    "static": false,
-                    "visibility": "private",
-                    "signature": "directory(string $action, array $request): object",
-                    "doc": "",
-                    "shapes": [
-                        "@param array<string, mixed> $request"
-                    ],
-                    "params": [
-                        {
-                            "name": "action",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "request",
-                            "type": "array",
-                            "shape": "array<string, mixed>",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 41,
-                    "end": 52
+                    "line": 487,
+                    "end": 490
                 }
             ]
         },

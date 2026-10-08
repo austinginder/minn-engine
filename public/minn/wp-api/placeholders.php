@@ -289,12 +289,6 @@ function stream_preview_image($post_id)
     return null;
 }
 
-function themes_api($action, $args = [])
-{
-    \Minn\Runtime\PlaceholderTrace::hit('themes_api');
-    return null;
-}
-
 function translate_settings_using_i18n_schema($i18n_schema, $settings, $textdomain)
 {
     \Minn\Runtime\PlaceholderTrace::hit('translate_settings_using_i18n_schema');

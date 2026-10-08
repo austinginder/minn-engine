@@ -2,11 +2,11 @@
     "generated": "2026-10-08",
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line)",
     "summary": {
-        "minn": 674,
+        "minn": 675,
         "composes": 1012,
         "leaf": 675,
         "noop": 2017,
-        "functions": 4304,
+        "functions": 4305,
         "minnMethods": 796,
         "leafLinesOver15": 13
     },
@@ -28118,8 +28118,8 @@
             "lines": 2,
             "kind": "minn",
             "minn": [
+                "Minn\\Ops\\DirectoryApi::__construct",
                 "Minn\\Ops\\Packages::__construct",
-                "Minn\\Ops\\PluginsApi::__construct",
                 "Minn\\Runtime\\Runtime::current",
                 "Minn\\Runtime\\Runtime::site"
             ],
@@ -31049,6 +31049,21 @@
                 "apply_filters",
                 "do_action",
                 "wp_parse_args"
+            ]
+        },
+        "themes_api": {
+            "file": "admin.php",
+            "lines": 2,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Ops\\DirectoryApi::__construct",
+                "Minn\\Ops\\Packages::__construct",
+                "Minn\\Runtime\\Runtime::current",
+                "Minn\\Runtime\\Runtime::site"
+            ],
+            "composes": [
+                "apply_filters",
+                "get_user_locale"
             ]
         },
         "throw_for_status": {
