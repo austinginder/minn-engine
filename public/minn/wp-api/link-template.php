@@ -808,7 +808,7 @@ function the_posts_navigation($args = [])
 function get_archives_link($url, $text, $format = 'html', $before = '', $after = '', $selected = false)
 {
     $url = esc_url($url);
-    $aria = $selected ? " aria-current='page'" : '';
+    $aria = $selected ? ' aria-current="page"' : '';
     $text = wptexturize($text);
     $link = match ($format) {
         'link' => "\t<link rel='archives' title='" . esc_attr($text) . "' href='$url' />\n",

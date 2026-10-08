@@ -667,6 +667,26 @@ function get_adjacent_post($in_same_term = false, $excluded_terms = '', $previou
     return $row === null ? null : get_post((int) $row['ID']);
 }
 
+/**
+ * The first (or last) post, as a one-post list: kept to the current post's
+ * terms, and out of the excluded ones, when asked (probe deprecated); null
+ * off a single post, on an attachment, or for a taxonomy that does not exist.
+ */
+function get_boundary_post($in_same_term = false, $excluded_terms = '', $start = true, $taxonomy = 'category')
+{
+    $post = get_post();
+    if (!$post || !is_single() || is_attachment() || !taxonomy_exists($taxonomy)) {
+        return null;
+    }
+    $args = ['posts_per_page' => 1, 'order' => $start ? 'ASC' : 'DESC', 'update_post_term_cache' => false, 'update_post_meta_cache' => false];
+    $excluded = array_map('intval', is_array($excluded_terms) ? $excluded_terms : (empty($excluded_terms) ? [] : explode(',', (string) $excluded_terms)));
+    if ($in_same_term || $excluded !== []) {
+        $own = $in_same_term ? array_map('intval', (array) wp_get_object_terms($post->ID, $taxonomy, ['fields' => 'ids'])) : [];
+        $args['tax_query'] = [['taxonomy' => $taxonomy, 'terms' => array_merge($own, array_map(static fn (int $id) => -$id, array_diff($excluded, $own)))]];
+    }
+    return get_posts($args);
+}
+
 function get_previous_post($in_same_term = false, $excluded_terms = '', $taxonomy = 'category')
 {
     return get_adjacent_post($in_same_term, $excluded_terms, true, $taxonomy);

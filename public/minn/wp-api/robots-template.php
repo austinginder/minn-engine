@@ -66,3 +66,9 @@ function wp_robots_sensitive_page($robots)
     $robots['noarchive'] = true;
     return $robots;
 }
+
+/** The referrer meta tag that sends only the origin to other sites (probe deprecated). */
+function wp_strict_cross_origin_referrer()
+{
+    echo "\t<meta name='referrer' content='strict-origin-when-cross-origin' />\n\t";
+}

@@ -39875,7 +39875,7 @@
                     "shapes": [
                         "@param Closure(int, string): string $title the post's title as displayed (or its id when empty)",
                         "@param Closure(int): string $link",
-                        "@return list<array{url: string, text: string, count: int}>"
+                        "@return list<array{url: string, text: string, count: int, id: int}>"
                     ],
                     "params": [
                         {
@@ -72878,8 +72878,8 @@
             "namespace": "Minn\\Media",
             "kind": "final class",
             "file": "public/minn/src/Minn/Media/Icons.php",
-            "lines": 72,
-            "doc": "The icon a file type is shown with, as wp_mime_type_icon finds it (probe\nplugin-helpers): the icon folders (core's wp-includes/images/media, and\nany icon_dirs adds) read once a request into a name => address map, an\nicon of the asked kind (.png or .svg) preferred where both exist; then\nthe first name the type answers to: an attachment's file extension and\nthe kind of file it is, the type, its two halves, the type with an\nunderscore for the slash. Nothing answering is the default icon.",
+            "lines": 68,
+            "doc": "The icon a file type is shown with, as wp_mime_type_icon finds it (probe\nplugin-helpers): the icon folders (core's wp-includes/images/media, and\nany icon_dirs adds) read once a request into a name => address map, an\nicon of the asked kind (.png or .svg) preferred where both exist; then\nthe first name the type answers to: an attachment's file extension and\nthe kind of file it is, the type, its two halves, the type with an\nunderscore for the slash. Nothing answering (a post that is not there,\na type that is empty) is the default icon.",
             "implements": [],
             "extends": null,
             "uses": [
@@ -72922,8 +72922,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 24,
-                    "end": 52
+                    "line": 25,
+                    "end": 49
                 },
                 {
                     "routes": [],
@@ -72944,8 +72944,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 55,
-                    "end": 71
+                    "line": 52,
+                    "end": 68
                 },
                 {
                     "routes": [],
@@ -72980,8 +72980,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 74,
-                    "end": 88
+                    "line": 71,
+                    "end": 85
                 }
             ]
         },
@@ -112730,7 +112730,7 @@
             "namespace": "Minn\\Runtime",
             "kind": "final class",
             "file": "public/minn/src/Minn/Runtime/MetaKeys.php",
-            "lines": 183,
+            "lines": 184,
             "doc": "The meta keys code registers, kept where the reference keeps them\n($wp_meta_keys: object type => subtype => key => arguments), with what a\nregistration wires up (probe meta-api). A key's sanitize and auth\ncallbacks hang on their filters (with _for_{subtype} for a subtype's\nkey); a key with no auth callback gets __return_true, or __return_false\nwhen protected. A default is served through filter_default_metadata. A\nregistration is refused (with the reference's notice) for an array shown\nin REST without its items' schema, revisions where the type or subtype\nhas none, and, once its callbacks are hooked, a default its schema does\nnot accept. The old form (callbacks as plain arguments) hooks them and\nreturns false.",
             "implements": [],
             "extends": null,
@@ -112792,7 +112792,7 @@
                         }
                     ],
                     "line": 27,
-                    "end": 69
+                    "end": 70
                 },
                 {
                     "routes": [],
@@ -112825,8 +112825,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 72,
-                    "end": 92
+                    "line": 73,
+                    "end": 93
                 },
                 {
                     "routes": [],
@@ -112854,8 +112854,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 95,
-                    "end": 99
+                    "line": 96,
+                    "end": 100
                 },
                 {
                     "routes": [],
@@ -112883,8 +112883,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 102,
-                    "end": 105
+                    "line": 103,
+                    "end": 106
                 },
                 {
                     "routes": [],
@@ -112931,8 +112931,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 112,
-                    "end": 128
+                    "line": 113,
+                    "end": 129
                 },
                 {
                     "routes": [],
@@ -112958,8 +112958,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 131,
-                    "end": 142
+                    "line": 132,
+                    "end": 143
                 },
                 {
                     "routes": [],
@@ -112995,8 +112995,8 @@
                             "doc": "the object id, then the key"
                         }
                     ],
-                    "line": 154,
-                    "end": 175
+                    "line": 155,
+                    "end": 176
                 },
                 {
                     "routes": [],
@@ -113031,8 +113031,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 178,
-                    "end": 193
+                    "line": 179,
+                    "end": 194
                 },
                 {
                     "routes": [],
@@ -113053,8 +113053,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 196,
-                    "end": 203
+                    "line": 197,
+                    "end": 204
                 }
             ]
         },

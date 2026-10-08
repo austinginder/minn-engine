@@ -169,7 +169,7 @@ The posts themselves, by date or by title.
 
 - `@param Closure(int, string): string $title the post's title as displayed (or its id when empty)`
 - `@param Closure(int): string $link`
-- `@return list<array{url: string, text: string, count: int}>`
+- `@return list<array{url: string, text: string, count: int, id: int}>`
 
 Internals: `weekPeriod()` (private, line 56)
 

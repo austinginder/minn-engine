@@ -65,13 +65,13 @@ final readonly class Archives
      *
      * @param Closure(int, string): string $title the post's title as displayed (or its id when empty)
      * @param Closure(int): string $link
-     * @return list<array{url: string, text: string, count: int}>
+     * @return list<array{url: string, text: string, count: int, id: int}>
      */
     public function posts(string $type, string $orderBy, string $order, int $limit, Closure $title, Closure $link): array
     {
         $out = [];
         foreach ($this->posts->archiveList($type, $orderBy, $order, $limit) as $post) {
-            $out[] = ['url' => $link($post->id), 'text' => $title($post->id, $post->title), 'count' => 0];
+            $out[] = ['url' => $link($post->id), 'text' => $title($post->id, $post->title), 'count' => 0, 'id' => $post->id];
         }
         return $out;
     }

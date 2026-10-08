@@ -185,6 +185,12 @@ function register_meta($object_type, $meta_key, $args, $deprecated = null)
     return MetaKeys::register((string) $object_type, (string) $meta_key, $args, $deprecated);
 }
 
+/** The registration arguments with only the known ones (the defaults' keys) kept; a default register_meta_args filter (probe deprecated). */
+function _wp_register_meta_args_allowed_list($args, $default_args)
+{
+    return array_intersect_key($args, $default_args);
+}
+
 function registered_meta_key_exists($object_type, $meta_key, $object_subtype = '')
 {
     return isset(MetaKeys::of((string) $object_type, (string) $object_subtype)[$meta_key]);

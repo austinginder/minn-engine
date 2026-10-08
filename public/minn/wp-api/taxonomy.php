@@ -305,9 +305,15 @@ function get_terms($args = [], $deprecated = '')
     return apply_filters('get_terms', $terms, $query->query_vars['taxonomy'], $query->query_vars, $query);
 }
 
+/** Categories (or another taxonomy's terms, through get_categories_taxonomy) as get_terms finds them, each given the old category fields. */
 function get_categories($args = '')
 {
     $args = wp_parse_args($args, ['taxonomy' => 'category']);
+    $args['taxonomy'] = apply_filters('get_categories_taxonomy', $args['taxonomy'], $args);
+    if (($args['type'] ?? '') === 'link') {
+        _deprecated_argument(__FUNCTION__, '3.0.0', sprintf(__('%1$s is deprecated. Use %2$s instead.'), '<code>type => link</code>', '<code>taxonomy => link_category</code>'));
+        $args['taxonomy'] = 'link_category';
+    }
     $terms = get_terms($args);
     if (is_wp_error($terms)) {
         return [];
@@ -1599,6 +1605,7 @@ function _pad_term_counts(&$terms, $taxonomy)
     Minn\Runtime\TermQueryTree::pad($terms, (string) $taxonomy);
 }
 
+/** Nothing to queue: term meta loads when it is first read. */
 function wp_lazyload_term_meta(array $term_ids)
 {
 }

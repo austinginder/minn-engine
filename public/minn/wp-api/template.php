@@ -925,7 +925,7 @@ function wp_get_archives($args = '')
     return $output;
 }
 
-/** @internal whether an archive row is the period the query is on */
+/** @internal whether an archive row is the period the query is on, or the post being shown */
 function _minn_archive_is_current(string $type, array $row, array $r): bool
 {
     $period = $row['period'] ?? [];
@@ -934,6 +934,7 @@ function _minn_archive_is_current(string $type, array $row, array $r): bool
         'monthly' => (int) $r['year'] === ($period['year'] ?? -1) && (int) $r['monthnum'] === ($period['month'] ?? -1),
         'daily' => (int) $r['year'] === ($period['year'] ?? -1) && (int) $r['monthnum'] === ($period['month'] ?? -1) && (int) $r['day'] === ($period['day'] ?? -1),
         'weekly' => (int) $r['year'] === ($period['year'] ?? -1) && (int) $r['w'] === ($period['week'] ?? -1),
+        'postbypost', 'alpha' => get_the_ID() === ($row['id'] ?? null),
         default => false,
     };
 }

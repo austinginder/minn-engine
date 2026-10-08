@@ -658,11 +658,6 @@ function wp_embed_defaults($url = '')
     return apply_filters('embed_defaults', ['width' => $width, 'height' => $height], $url);
 }
 
-function wp_no_robots()
-{
-    header('X-Robots-Tag: noindex, noarchive', true);
-}
-
 /** Sets each named global from the request's POST else GET value, empty string when absent. */
 function wp_reset_vars($vars)
 {

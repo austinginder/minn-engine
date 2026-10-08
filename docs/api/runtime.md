@@ -44,7 +44,7 @@ the WordPress runtime plugins load against
 | [`MenuEvents`](#menuevents) | final readonly class | 220 | Menus and their items saved as the reference saves them, telling |
 | [`MenuItemMarks`](#menuitemmarks) | final class | 202 | The classes and current flags the reference gives a menu's items for the |
 | [`Meta`](#meta) | final readonly class | 230 | The four meta tables behind get_metadata and friends: reads by object, and the row-level writes the update and delete rules need. |
-| [`MetaKeys`](#metakeys) | final class | 183 | The meta keys code registers, kept where the reference keeps them |
+| [`MetaKeys`](#metakeys) | final class | 184 | The meta keys code registers, kept where the reference keeps them |
 | [`MetaTypes`](#metatypes) | final class | 21 | Meta types a plugin brought, by the table it named on $wpdb as |
 | [`NavMenu`](#navmenu) | final class | 88 | wp_nav_menu()'s menu: the one the arguments name, its items marked for |
 | [`NavMenuItems`](#navmenuitems) | final class | 154 | Classic menu items as the reference serves them to walkers and plugins |
@@ -1940,7 +1940,7 @@ exist. Null for any other capability.
 - `@param list<mixed> $args the object id, then the key`
 - `@return list<string>|null`
 
-Internals: `refusal()` (private, line 178), `defaultFits()` (private, line 196)
+Internals: `refusal()` (private, line 179), `defaultFits()` (private, line 197)
 
 
 ## MetaTypes

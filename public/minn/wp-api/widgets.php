@@ -82,9 +82,38 @@ function wp_unregister_sidebar_widget($id)
     unset($GLOBALS['wp_registered_widgets'][$id], $GLOBALS['wp_registered_widget_controls'][$id], $GLOBALS['wp_registered_widget_updates'][$id]);
 }
 
+/**
+ * A widget's settings form, and once per id base its update handler (the
+ * instance number made -1); an empty callback takes both away. A second
+ * form for an id before widgets_init leaves the first (probe deprecated).
+ */
 function wp_register_widget_control($id, $name, $control_callback, $options = [], ...$params)
 {
-    $GLOBALS['wp_registered_widget_controls'][$id] = ['name' => $name, 'id' => $id, 'callback' => $control_callback, 'params' => $params] + wp_parse_args($options, ['width' => 250, 'height' => 200]);
+    global $wp_registered_widget_controls, $wp_registered_widget_updates;
+    $id = strtolower((string) $id);
+    $id_base = _get_widget_id_base($id);
+    if (empty($control_callback)) {
+        unset($wp_registered_widget_controls[$id], $wp_registered_widget_updates[$id_base]);
+        return;
+    }
+    if (isset($wp_registered_widget_controls[$id]) && !did_action('widgets_init')) {
+        return;
+    }
+    $options = wp_parse_args($options, ['width' => 250, 'height' => 200]);
+    $widget = array_merge(['name' => $name, 'id' => $id, 'callback' => $control_callback, 'params' => $params], $options, ['width' => (int) $options['width'], 'height' => (int) $options['height']]);
+    $wp_registered_widget_controls[$id] = $widget;
+    if (!isset($wp_registered_widget_updates[$id_base])) {
+        if (isset($widget['params'][0]['number'])) {
+            $widget['params'][0]['number'] = -1;
+        }
+        unset($widget['width'], $widget['height'], $widget['name'], $widget['id']);
+        $wp_registered_widget_updates[$id_base] = $widget;
+    }
+}
+
+function wp_unregister_widget_control($id)
+{
+    wp_register_widget_control($id, '', '');
 }
 
 function wp_get_sidebars_widgets($deprecated = true)

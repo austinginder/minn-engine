@@ -364,7 +364,11 @@ function excerpt_remove_blocks($content)
     return _minn_excerpt_blocks(parse_blocks((string) $content), $allowed, $wrappers, $base);
 }
 
-/** @internal the kept blocks of one level, rendered and run together (the whitespace between them is a block too) */
+/**
+ * @internal the kept top-level blocks, rendered and run together (the
+ * whitespace between them is a block too): a wrapper opened up, any other
+ * block whole when its inner blocks are plain allowed ones
+ */
 function _minn_excerpt_blocks(array $blocks, array $allowed, array $wrappers, array $base): string
 {
     $output = [];
@@ -373,7 +377,7 @@ function _minn_excerpt_blocks(array $blocks, array $allowed, array $wrappers, ar
             continue;
         }
         if (!empty($block['innerBlocks']) && in_array($block['blockName'], $wrappers, true)) {
-            $output[] = _minn_excerpt_blocks($block['innerBlocks'], $allowed, $wrappers, $base);
+            $output[] = _excerpt_render_inner_blocks($block, $allowed);
             continue;
         }
         foreach ($block['innerBlocks'] ?? [] as $inner) {
@@ -384,6 +388,22 @@ function _minn_excerpt_blocks(array $blocks, array $allowed, array $wrappers, ar
         $output[] = render_block($block);
     }
     return implode('', $output);
+}
+
+/**
+ * The allowed blocks inside a block, rendered: one with inner blocks of its
+ * own is opened up the same way, so only the innermost render (probe
+ * deprecated: a quote in a column gives its paragraphs, not the quote).
+ */
+function _excerpt_render_inner_blocks($parsed_block, $allowed_blocks)
+{
+    $output = '';
+    foreach ($parsed_block['innerBlocks'] ?? [] as $inner) {
+        if (in_array($inner['blockName'], $allowed_blocks, true)) {
+            $output .= empty($inner['innerBlocks']) ? render_block($inner) : _excerpt_render_inner_blocks($inner, $allowed_blocks);
+        }
+    }
+    return $output;
 }
 
 /**

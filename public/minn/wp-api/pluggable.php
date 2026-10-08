@@ -559,11 +559,82 @@ function wp_generate_password($length = 12, $special_chars = true, $extra_specia
 }
 endif;
 
+// The deprecated pluggable functions (probe deprecated).
+
 if (!function_exists('get_userdatabylogin')) :
 /** @deprecated 3.3.0 A user by login. */
 function get_userdatabylogin($user_login)
 {
     _deprecated_function(__FUNCTION__, '3.3.0', "get_user_by('login')");
     return get_user_by('login', $user_login);
+}
+endif;
+
+if (!function_exists('get_user_by_email')) :
+/** @deprecated 3.3.0 A user by email. */
+function get_user_by_email($email)
+{
+    _deprecated_function(__FUNCTION__, '3.3.0', "get_user_by('email')");
+    return get_user_by('email', $email);
+}
+endif;
+
+if (!function_exists('get_currentuserinfo')) :
+/** @deprecated 4.5.0 The current user. */
+function get_currentuserinfo()
+{
+    _deprecated_function(__FUNCTION__, '4.5.0', 'wp_get_current_user()');
+    return wp_get_current_user();
+}
+endif;
+
+if (!function_exists('set_current_user')) :
+/** @deprecated 3.0.0 Makes the user current. */
+function set_current_user($id, $name = '')
+{
+    _deprecated_function(__FUNCTION__, '3.0.0', 'wp_set_current_user()');
+    return wp_set_current_user($id, $name);
+}
+endif;
+
+if (!function_exists('wp_setcookie')) :
+/** @deprecated 2.5.0 The login cookies for the user with that login. */
+function wp_setcookie($username, $password = '', $already_md5 = false, $home = '', $siteurl = '', $remember = false)
+{
+    _deprecated_function(__FUNCTION__, '2.5.0', 'wp_set_auth_cookie()');
+    $user = get_user_by('login', $username);
+    wp_set_auth_cookie($user->ID ?? 0, $remember);
+}
+endif;
+
+if (!function_exists('wp_clearcookie')) :
+/** @deprecated 2.5.0 The login cookies cleared. */
+function wp_clearcookie()
+{
+    _deprecated_function(__FUNCTION__, '2.5.0', 'wp_clear_auth_cookie()');
+    wp_clear_auth_cookie();
+}
+endif;
+
+if (!function_exists('wp_get_cookie_login')) :
+/** @deprecated 2.5.0 Never a login from the cookies. */
+function wp_get_cookie_login()
+{
+    _deprecated_function(__FUNCTION__, '2.5.0');
+    return false;
+}
+endif;
+
+if (!function_exists('wp_login')) :
+/** @deprecated 2.5.0 Whether the login and password authenticate; the failure's message left in $error. */
+function wp_login($username, $password, $deprecated = '')
+{
+    _deprecated_function(__FUNCTION__, '2.5.0', 'wp_signon()');
+    $user = wp_authenticate($username, $password);
+    if (!is_wp_error($user)) {
+        return true;
+    }
+    $GLOBALS['error'] = $user->get_error_message();
+    return false;
 }
 endif;

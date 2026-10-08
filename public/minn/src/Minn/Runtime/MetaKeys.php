@@ -32,6 +32,7 @@ final class MetaKeys
             $args['auth_callback'] = $deprecated;
         }
         $defaults = self::DEFAULTS;
+        // Unknown arguments are dropped by a default filter (_wp_register_meta_args_allowed_list) ahead of the plugins' own.
         $args = (array) \apply_filters('register_meta_args', $args, $defaults, $objectType, $key);
         unset($defaults['default']);
         $args = array_merge($defaults, $args);

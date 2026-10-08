@@ -13,7 +13,8 @@ use Minn\Runtime\Runtime;
  * icon of the asked kind (.png or .svg) preferred where both exist; then
  * the first name the type answers to: an attachment's file extension and
  * the kind of file it is, the type, its two halves, the type with an
- * underscore for the slash. Nothing answering is the default icon.
+ * underscore for the slash. Nothing answering (a post that is not there,
+ * a type that is empty) is the default icon.
  */
 final class Icons
 {
@@ -25,21 +26,17 @@ final class Icons
     {
         $postId = 0;
         $names = [];
-        if (is_numeric($mime) && (int) $mime > 0) {
+        if (is_numeric($mime)) {
             $post = \get_post((int) $mime);
-            if (!$post instanceof \WP_Post) {
-                return false;
-            }
-            $postId = $post->ID;
-            $ext = strtolower((string) pathinfo((string) \get_attached_file($postId), PATHINFO_EXTENSION));
+            $postId = $post instanceof \WP_Post ? $post->ID : 0;
+            $ext = $postId > 0 ? strtolower((string) pathinfo((string) \get_attached_file($postId), PATHINFO_EXTENSION)) : '';
             $names = $ext === '' ? [] : array_filter([$ext, \wp_ext2type($ext)]);
-            $mime = (string) $post->post_mime_type;
+            $mime = $post instanceof \WP_Post ? (string) $post->post_mime_type : '';
         }
         $mime = (string) $mime;
-        if ($mime === '' || $mime === '0') {
-            return false;
+        if ($mime !== '') {
+            $names = [...$names, $mime, ...explode('/', $mime, 2), str_replace('/', '_', $mime)];
         }
-        $names = [...$names, $mime, ...explode('/', $mime, 2), str_replace('/', '_', $mime)];
         $icons = self::map($preferred);
         $found = $icons['default'] ?? false;
         foreach ($names as $name) {

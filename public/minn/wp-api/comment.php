@@ -1577,6 +1577,11 @@ function cancel_comment_reply_link($link_text = '')
 }
 
 /** Comments keep no cache here to fill. */
+/** Nothing to queue: comment meta loads when it is first read (probe deprecated). */
+function wp_lazyload_comment_meta(array $comment_ids)
+{
+}
+
 function update_comment_cache($comments, $update_meta_cache = true)
 {
 }

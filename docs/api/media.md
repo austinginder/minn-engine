@@ -6,7 +6,7 @@ uploads, image sizes and attachment metadata
 |---|---|---|---|
 | [`Canvas`](#canvas) | final readonly class | 156 | One GD bitmap and the operations the media layer needs on it. Every |
 | [`Gallery`](#gallery) | final class | 54 | The classic `[gallery]` shortcode's markup. Every gallery on a page is |
-| [`Icons`](#icons) | final class | 72 | The icon a file type is shown with, as wp_mime_type_icon finds it (probe |
+| [`Icons`](#icons) | final class | 68 | The icon a file type is shown with, as wp_mime_type_icon finds it (probe |
 | [`Images`](#images) | final readonly class | 163 | GD sub-size generation for the sizes the site has. |
 | [`Kind`](#kind) | final class | 75 | Whether an attachment is an image, audio, video, or a given extension, judged by its MIME type first and its file extension second. |
 | [`Metadata`](#metadata) | final class | 111 | The _wp_attachment_metadata blob: parsed by scanning for the shapes it |
@@ -116,7 +116,8 @@ any icon_dirs adds) read once a request into a name => address map, an
 icon of the asked kind (.png or .svg) preferred where both exist; then
 the first name the type answers to: an attachment's file extension and
 the kind of file it is, the type, its two halves, the type with an
-underscore for the slash. Nothing answering is the default icon.
+underscore for the slash. Nothing answering (a post that is not there,
+a type that is empty) is the default icon.
 
 - const `CORE` = `array (   0 => 'archive',   1 => 'audio',   2 => 'code',   3 => 'default',   4 => 'document',   5 => 'interactive',   6 => 'spreadsheet',   7 => 'text',   8 => 'video', )` — Core's icons, each kept as .png and .svg.
 
@@ -124,7 +125,7 @@ underscore for the slash. Nothing answering is the default icon.
 
 The icon's address for a type or an attachment id.
 
-Internals: `map()` (private, line 55), `files()` (private, line 74)
+Internals: `map()` (private, line 52), `files()` (private, line 71)
 
 
 ## Images

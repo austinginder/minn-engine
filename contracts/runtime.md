@@ -5600,3 +5600,97 @@ functions do not exist until something requires their file; here they
 exist as dead ends. A plugin's `if (!function_exists('get_plugins'))
 require_once ABSPATH . 'wp-admin/includes/plugin.php';` therefore skips a
 file the engine's sites may not have.
+
+## Deprecated functions (2026-10-08)
+
+The first domain batch toward the whole API: the reference's deprecated
+functions outside block supports, 165 of them, in
+`wp-api/deprecated.php`. The probe is `tests/tools/deprecated-probe.php`
+(fixture `deprecated`, 165 cases). Each case records what a call printed,
+what it returned, and every deprecation it reported (function,
+replacement, version), so nested reports are checked too, in order.
+
+- **The deprecation report.** Each function reports itself the way the
+  reference does, then does what its replacement does. Two functions
+  never report: `default_topic_count_text` and `_save_post_hook`.
+  `funky_javascript_callback` does not report either.
+- **Pluggable.** The deprecated pluggable functions are `set_current_user`,
+  `wp_setcookie`, `wp_clearcookie`, `wp_get_cookie_login` and `wp_login`.
+  `get_user_by_email` and `get_currentuserinfo` moved from user.php to join
+  them. All of them sit in `pluggable.php` behind `function_exists`, so a
+  plugin's own definition wins.
+- **The old links functions.** `get_links` and its variants share the
+  anchor with `_walk_bookmarks` (`_minn_bookmark_anchor`, which now takes
+  the title it is given, and `_minn_bookmark_updated`). Their own markup
+  differs in three ways:
+  - "(Last updated DATE)", without the colon;
+  - the `links_recently_updated_prepend` and `_append` options instead of
+    `<em>`;
+  - the rating through `get_linkrating`.
+
+  `get_links_list` passes `type => link` to `get_categories`, which now
+  reports that deprecated argument and reads `link_category`. It also runs
+  the `get_categories_taxonomy` filter, which the engine lacked.
+- **Quirks kept on purpose:**
+  - `wp_get_links(5)`: the reference appends the bare id to itself as a
+    query string ("5?category=5"), which mangles the key, so every link
+    shows.
+  - `dropdown_cats`: its query string's leading "?" swallows
+    `show_option_all`, so the "all" option never shows.
+  - `wp_list_cats`: any `optionall`, even 0, shows the "all" item.
+  - `the_category_head`: compares a `category_id` that categories no longer
+    have, so it prints nothing.
+  - `get_linkobjects`: its default limit of 0 finds no links.
+- **User levels.** The `user_can_*` checks compare the old numeric levels
+  (`wp_user_level`): drafts at 1, posts at 2, dates above 4, other people's
+  posts at a higher level, everything at 10. They short-circuit the way the
+  reference does, so the nested reports match.
+- **Live functions they lean on:**
+  - `get_boundary_post`;
+  - `wp_strict_cross_origin_referrer`;
+  - `_wp_register_meta_args_allowed_list`;
+  - `wp_lazyload_comment_meta`, a no-op like the term one, since meta loads
+    when it is first read;
+  - `wp_unregister_widget_control`;
+  - `_excerpt_render_inner_blocks`.
+- **The meta argument filter.** `_wp_register_meta_args_allowed_list` is a
+  default `register_meta_args` filter, ahead of any plugin's. Unknown
+  arguments passed to `register_meta` are dropped, but ones a plugin's
+  filter adds stay (probe meta-api).
+- **Excerpts.** A wrapper block in `excerpt_remove_blocks` now opens
+  through `_excerpt_render_inner_blocks`, so only the innermost allowed
+  blocks render. For example, a quote in a column gives its paragraphs, not
+  the quote.
+- **Widget controls.** `wp_register_widget_control` now behaves like the
+  reference:
+  - the id is lowercased;
+  - the update handler is registered once per id base, with the instance
+    number made -1;
+  - an empty callback removes both;
+  - a second registration before `widgets_init` keeps the first.
+- **Fixes found on the way:**
+  - `wp_mime_type_icon` gives the default icon for a post with no type or
+    a post that does not exist; it returned false before.
+  - `wp_get_archives` marks the post being shown as current in
+    `postbypost` and `alpha` lists.
+  - `get_archives_link` double-quotes `aria-current`.
+  - `wp_no_robots` prints the robots meta tag (it sent a header) and
+    reports its deprecation.
+- **Dead ends by name** (`tests/tools/deadends.php` `NAMED`). These
+  deprecated functions live in wp-includes but only ever served the admin
+  or the editors: `the_editor`, the two Press This AJAX handlers,
+  `remove_option_whitelist`, `wp_add_editor_classic_theme_styles` and
+  `wp_add_iframed_editor_assets_html`.
+- **Left for the block-supports batch:** the deprecated duotone,
+  tinycolor, skip-serialization, elements, typography-variable, global
+  styles custom CSS and webfonts handler functions (about 25), plus
+  `wp_update_https_detection_errors`, which waits on the HTTPS detection
+  functions.
+- **One WP-CLI artifact** to know when writing probes: the reference's
+  WP-CLI loads wp-admin's filters. A user inserted in a probe therefore
+  gets a `dismissed_wp_pointers` row that a front-end or REST registration
+  on the reference does not get.
+
+| | missing | verified |
+|---|---|---|
+| functions | 1,007 → 826 | 1,299 → 1,418 |

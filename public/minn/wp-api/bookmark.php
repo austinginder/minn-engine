@@ -194,7 +194,9 @@ function _walk_bookmarks($bookmarks, $args = '')
     foreach ((array) $bookmarks as $bookmark) {
         $recent = !empty($r['show_updated']) && !empty($bookmark->recently_updated);
         $desc = esc_attr(sanitize_bookmark_field('link_description', $bookmark->link_description, $bookmark->link_id, 'display'));
-        $output .= $r['before'] . ($recent ? '<em>' : '') . _minn_bookmark_anchor($bookmark, $r, $desc) . ($recent ? '</em>' : '');
+        $updated = _minn_bookmark_updated($bookmark, $r['show_updated']);
+        $title = $desc . ($updated === null ? '' : ' (' . sprintf(__('Last updated: %s'), $updated) . ')');
+        $output .= $r['before'] . ($recent ? '<em>' : '') . _minn_bookmark_anchor($bookmark, $r, $title) . ($recent ? '</em>' : '');
         if ($r['show_description'] && $desc !== '') {
             $output .= $r['between'] . $desc;
         }
@@ -206,14 +208,19 @@ function _walk_bookmarks($bookmarks, $args = '')
     return $output;
 }
 
-/** @internal one link's anchor: the title its description and last update, then its image or its name */
-function _minn_bookmark_anchor(object $bookmark, array $r, string $desc): string
+/** @internal when a link was last updated, in the links' date format at the site's offset; null when updates are not shown or it has none */
+function _minn_bookmark_updated(object $bookmark, $show_updated): ?string
+{
+    if (!$show_updated || !isset($bookmark->link_updated_f) || str_starts_with((string) $bookmark->link_updated_f, '00')) {
+        return null;
+    }
+    return gmdate(get_option('links_updated_date_format'), (int) $bookmark->link_updated_f + (int) ((float) get_option('gmt_offset') * HOUR_IN_SECONDS));
+}
+
+/** @internal one link's anchor, titled as given (and its image alt too, when descriptions show), then its image or its name */
+function _minn_bookmark_anchor(object $bookmark, array $r, string $title): string
 {
     $name = esc_attr(sanitize_bookmark_field('link_name', $bookmark->link_name, $bookmark->link_id, 'display'));
-    $title = $desc;
-    if ($r['show_updated'] && isset($bookmark->link_updated_f) && !str_starts_with((string) $bookmark->link_updated_f, '00')) {
-        $title .= ' (' . sprintf(__('Last updated: %s'), gmdate(get_option('links_updated_date_format'), (int) $bookmark->link_updated_f + (int) ((float) get_option('gmt_offset') * HOUR_IN_SECONDS))) . ')';
-    }
     $alt = ' alt="' . $name . ($r['show_description'] ? ' ' . $title : '') . '"';
     $title = $title !== '' ? ' title="' . $title . '"' : '';
     $rel = (string) $bookmark->link_rel !== '' ? ' rel="' . esc_attr($bookmark->link_rel) . '"' : '';

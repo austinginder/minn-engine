@@ -159,6 +159,8 @@ add_filter('pre_link_description', 'wp_filter_kses');
 // status, a note's status, the editor's preferences, and at 20 the
 // footnotes of every type that supports them by then.
 add_action('init', 'wp_create_initial_post_meta');
+// Registration arguments are kept to the known ones before a plugin's filter sees them, so what a plugin adds stays (probes deprecated, meta-api).
+add_filter('register_meta_args', '_wp_register_meta_args_allowed_list', 10, 2);
 add_action('init', 'wp_create_initial_comment_meta');
 add_action('init', 'wp_register_persisted_preferences_meta');
 add_action('init', 'register_block_core_footnotes_post_meta', 20);
