@@ -14,14 +14,15 @@ escaping, serialized readers, small helpers
 | [`FileTree`](#filetree) | final class | 70 | Whole-directory reads and copies. The engine's own installer, the update |
 | [`Files`](#files) | final class | 66 | Recursive filesystem work behind WP_Filesystem_Direct: best-effort tree |
 | [`Flag`](#flag) | final class | 11 | A yes or no as WordPress reads one from loose input (wp_validate_boolean). |
-| [`Html`](#html) | final class | 91 |  |
+| [`Html`](#html) | final class | 107 |  |
 | [`Ip`](#ip) | final class | 22 | Addresses with their identifying tail removed, for logs and analytics that |
 | [`Json`](#json) | final class | 19 | Makes a value encodable: strings that are not valid UTF-8 get their high bytes replaced, recursively. |
 | [`Kses`](#kses) | final class | 545 | The HTML a user without unfiltered_html may store. Tags outside the |
+| [`KsesAttributes`](#ksesattributes) | final class | 64 | Kses one attribute at a time, for the shortcode pass that runs inside |
 | [`KsesEntities`](#ksesentities) | final class | 30 | The named references kses keeps as written: the list captured from the |
 | [`KsesPolicy`](#ksespolicy) | final readonly class | 115 | What one kses pass allows: the tags, each tag's attributes (allowed |
 | [`KsesValues`](#ksesvalues) | final class | 38 | The value rules an allowlist attribute may carry, as the reference judges |
-| [`Lists`](#lists) | final class | 135 | List shaping behind the facade's array utilities: arguments over their |
+| [`Lists`](#lists) | final class | 190 | List shaping behind the facade's array utilities: arguments over their |
 | [`Locale`](#locale) | final class | 31 | The locale's calendar and number vocabulary as data: the names a site |
 | [`Markers`](#markers) | final class | 59 | The BEGIN/END marker blocks insert_with_markers() maintains in files like |
 | [`Paths`](#paths) | final class | 64 | File-system path and permission spellings. |
@@ -159,7 +160,7 @@ rather than encoded again, the specials and both quotes encoded, then the
 filter plugins hook (esc_html, attribute_escape) handed the result and the
 original.
 
-Used by: `Minn\Content\MediaShortcodes`, `Minn\Front\EmbedCard`, `Minn\Front\FeedTags`, `Minn\Front\PageLinks`, `Minn\Front\PostEmbed`, `Minn\Front\ToolbarMarkup`, `Minn\Front\ToolbarMenus`, `Minn\Runtime\NavMenu`, `Minn\Runtime\OptionSanitizer`, `Minn\Runtime\UpdateCounts`, `Minn\Theme\HeadLinks`, `Minn\Widgets\WidgetForms`
+Used by: `Minn\Content\MediaShortcodes`, `Minn\Front\EmbedCard`, `Minn\Front\FeedTags`, `Minn\Front\PageLinks`, `Minn\Front\PostEmbed`, `Minn\Front\ToolbarMarkup`, `Minn\Front\ToolbarMenus`, `Minn\Runtime\NavMenu`, `Minn\Runtime\OptionSanitizer`, `Minn\Runtime\UpdateCounts`, `Minn\Support\KsesAttributes`, `Minn\Theme\HeadLinks`, `Minn\Widgets\WidgetForms`
 
 ### static `html(mixed $text): string`
 
@@ -261,7 +262,18 @@ The string "false" in any case is no; anything else is PHP's truth.
 
 `final class Minn\Support\Html` · `public/minn/src/Minn/Support/Html.php`
 
-Used by: `Minn\Admin\AppController`, `Minn\Admin\LanguageChoices`, `Minn\Blocks\Dynamic\Categories`, `Minn\Blocks\Dynamic\LatestComments`, `Minn\Blocks\Dynamic\LatestPosts`, `Minn\Blocks\Dynamic\Search`, `Minn\Blocks\Dynamic\SocialLinks`, `Minn\Blocks\Dynamic\TagCloud`, `Minn\Blocks\Dynamic\Theme\Comments`, `Minn\Blocks\Dynamic\Theme\Navigation`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Blocks\Dynamic\Theme\Structure`, `Minn\Blocks\ImageTags`, `Minn\Blocks\Renderer`, `Minn\Blocks\Wrapper`, `Minn\Content\Menus`, `Minn\Content\PasswordGate`, `Minn\Content\TermLinks`, `Minn\Front\AdminBar`, `Minn\Front\PostNavigation`, `Minn\Front\Renderer`, `Minn\Front\SitemapXml`, `Minn\Front\TermLists`, `Minn\Http\Failure`, `Minn\Login\LoginController`, `Minn\Login\LoginForm`, `Minn\Login\LoginNotices`, `Minn\Rest\MediaObject`, `Minn\Rest\PluginsController`, `Minn\Runtime\PageMenu`, `Minn\Theme\ArchiveTitle`, `Minn\Theme\ClassicContent`, `Minn\Theme\ClassicRenderer`, `Minn\Theme\HeadLinks`, `Minn\Theme\PageRenderer`
+- const `SPLIT` = `'/(<(?:!--.*?(?:-->|$)|!\\[CDATA\\[.*?(?:\\]\\]>|$)|[^>]*>?))/s'` — Markup's pieces of HTML: comments and CDATA whole (to the end when unclosed), else from "<" to the next ">".
+
+Used by: `Minn\Admin\AppController`, `Minn\Admin\LanguageChoices`, `Minn\Blocks\Dynamic\Categories`, `Minn\Blocks\Dynamic\LatestComments`, `Minn\Blocks\Dynamic\LatestPosts`, `Minn\Blocks\Dynamic\Search`, `Minn\Blocks\Dynamic\SocialLinks`, `Minn\Blocks\Dynamic\TagCloud`, `Minn\Blocks\Dynamic\Theme\Comments`, `Minn\Blocks\Dynamic\Theme\Navigation`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Blocks\Dynamic\Theme\Structure`, `Minn\Blocks\ImageTags`, `Minn\Blocks\Renderer`, `Minn\Blocks\Wrapper`, `Minn\Content\Menus`, `Minn\Content\PasswordGate`, `Minn\Content\TermLinks`, `Minn\Front\AdminBar`, `Minn\Front\PostNavigation`, `Minn\Front\Renderer`, `Minn\Front\SitemapXml`, `Minn\Front\TermLists`, `Minn\Http\Failure`, `Minn\Login\LoginController`, `Minn\Login\LoginForm`, `Minn\Login\LoginNotices`, `Minn\Rest\MediaObject`, `Minn\Rest\PluginsController`, `Minn\Runtime\PageMenu`, `Minn\Runtime\Shortcodes`, `Minn\Theme\ArchiveTitle`, `Minn\Theme\ClassicContent`, `Minn\Theme\ClassicRenderer`, `Minn\Theme\HeadLinks`, `Minn\Theme\PageRenderer`
+
+### static `split(string $html): array`
+
+Markup cut into text and HTML pieces, the HTML ones at the odd
+positions (wp_html_split): a comment or CDATA section is one piece
+whatever it holds, and a "<" in text starts a piece that runs to the
+next ">".
+
+- `@return list<string>`
 
 ### static `esc(?string $value): string`
 
@@ -345,7 +357,7 @@ block delimiters are written back with their attribute values filtered.
 - const `STRAY_AMPERSAND` = `'/&(?!(?:#[0-9]+|#[xX][0-9a-fA-F]+|[a-zA-Z][a-zA-Z0-9]{0,31});)/'`
 - const `MARKUP` = `array (   '&' => '&amp;',   '<' => '&lt;',   '>' => '&gt;',   '"' => '&quot;',   '\'' => '&apos;', )`
 
-Used by: `Minn\Blocks\Dynamic\LatestComments`, `Minn\Blocks\Dynamic\SocialLinks`, `Minn\Blocks\Dynamic\Theme\Comments`, `Minn\Blocks\Dynamic\Theme\Navigation`, `Minn\Content\Users`, `Minn\Media\Writer`, `Minn\Rest\MenusController`, `Minn\Rest\PostsWriteController`, `Minn\Rest\RevisionsController`, `Minn\Rest\TermsController`, `Minn\Rest\UsersController`, `Minn\Support\Escape`, `Minn\Support\KsesPolicy`
+Used by: `Minn\Blocks\Dynamic\LatestComments`, `Minn\Blocks\Dynamic\SocialLinks`, `Minn\Blocks\Dynamic\Theme\Comments`, `Minn\Blocks\Dynamic\Theme\Navigation`, `Minn\Content\Users`, `Minn\Media\Writer`, `Minn\Rest\MenusController`, `Minn\Rest\PostsWriteController`, `Minn\Rest\RevisionsController`, `Minn\Rest\TermsController`, `Minn\Rest\UsersController`, `Minn\Support\Escape`, `Minn\Support\KsesAttributes`, `Minn\Support\KsesPolicy`
 
 
 ### static `post(string $html): string`
@@ -452,6 +464,36 @@ The facade sets these as it loads.
 Internals: `cleanValue()` (private, line 169), `run()` (private, line 203), `htmlComment()` (private, line 227), `deepDecode()` (private, line 333), `visible()` (private, line 346), `normalizeText()` (private, line 361), `normalizeAttribute()` (private, line 384), `named()` (private, line 404), `codePoint()` (private, line 411), `attributes()` (private, line 426), `rendered()` (private, line 451), `srcset()` (private, line 489), `css()` (private, line 513), `safeValue()` (private, line 540)
 
 
+## KsesAttributes
+
+`final class Minn\Support\KsesAttributes` · `public/minn/src/Minn/Support/KsesAttributes.php`
+
+Kses one attribute at a time, for the shortcode pass that runs inside
+HTML tags: an opening tag cut into its attributes, and one attribute
+judged as kses judges it on its element. Probe shortcode-run.
+
+Used by: `Minn\Runtime\Shortcodes`
+
+### static `elementParts(string $element): ?array`
+
+An opening tag cut as wp_kses_attr_parse cuts it: the start ("<a "),
+each attribute with the whitespace after it (a shortcode standing as
+a name counts as one), and the end (">" or "/>"). Null for a closing
+tag, a comment, CDATA, or anything between the brackets that is not
+attributes.
+
+- `@return list<string>|null`
+
+### static `oneAttribute(string $attr, string $element, Minn\Support\KsesPolicy $policy): string`
+
+One attribute as written, judged as kses judges it on the element
+(wp_kses_one_attr): the value escaped for an attribute and kept in its
+own quotes (a bare one gains double quotes), a URL's bad scheme cut
+away, style kept to the allowed properties; nothing when the element
+may not carry it or a quoted value never closes. The whitespace
+around it stays.
+
+
 ## KsesEntities
 
 `final class Minn\Support\KsesEntities` · `public/minn/src/Minn/Support/KsesEntities.php`
@@ -484,7 +526,7 @@ What one kses pass allows: the tags, each tag's attributes (allowed
 plainly or with value rules), whether a tag takes data- attributes,
 which attributes hold URIs, and the schemes those URIs may use.
 
-Used by: `Minn\Support\Kses`
+Used by: `Minn\Support\Kses`, `Minn\Support\KsesAttributes`
 
 - readonly `array $schemes`
 
@@ -540,7 +582,7 @@ up to six spaces either side), "valueless" compares the attribute's form,
 the reference does not know passes. Where the reference fatals (a values
 rule that is not a list, a callback that does not exist) the value fails.
 
-Used by: `Minn\Support\Kses`
+Used by: `Minn\Support\Kses`, `Minn\Support\KsesAttributes`
 
 ### static `satisfies(string $value, string $valueless, array $rules): bool`
 
@@ -561,7 +603,7 @@ Internals: `wholeNumber()` (private, line 48)
 `final class Minn\Support\Lists` · `public/minn/src/Minn/Support/Lists.php`
 
 List shaping behind the facade's array utilities: arguments over their
-defaults (wp_parse_args), the multi-field sort
+defaults (wp_parse_args), plucking and filtering (WP_List_Util), the multi-field sort
 wp_list_sort() promises (loose comparison per field, first difference
 wins) and the row-shape conversions wpdb hands back for its OBJECT_K /
 ARRAY_A / ARRAY_N output formats.
@@ -574,6 +616,23 @@ Arguments as WordPress takes them (wp_parse_args): an object's
 properties, an array, or a query string, over the defaults.
 
 - `@param array<array-key, mixed> $defaults`
+- `@return array<array-key, mixed>`
+
+### static `pluck(array $items, string|int $field, string|int|null $indexKey = NULL): array`
+
+One field of each item (wp_list_pluck), keyed as the list was, or by
+another field when one is named (items without it are appended);
+anything not an array or an object is passed over.
+
+- `@param array<array-key, mixed> $items`
+- `@return array<array-key, mixed>`
+
+### static `filter(array $items, array $fields, string $operator): array`
+
+The items matching all the fields given (AND), any of them (OR), or
+none (NOT), compared loosely, keys kept; nothing for another operator.
+
+- `@param array<array-key, mixed> $items @param array<array-key, mixed> $fields`
 - `@return array<array-key, mixed>`
 
 ### static `items(mixed $input): array`
@@ -619,7 +678,7 @@ get_page_children walk. Visited ids guard against a parent cycle.
 - `@param list<int> $visited`
 - `@return list<mixed>`
 
-Internals: `keyedByFirstColumn()` (private, line 136)
+Internals: `keyedByFirstColumn()` (private, line 191)
 
 
 ## Locale

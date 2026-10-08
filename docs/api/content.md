@@ -37,7 +37,7 @@ the repositories and records: posts, users, terms, comments, and the render pipe
 | [`TermRecord`](#termrecord) | final readonly class | 88 | One term with its taxonomy row, read by name: $term->name, ->slug, |
 | [`Terms`](#terms) | final readonly class | 221 |  |
 | [`TextFilters`](#textfilters) | final class | 130 | The small text filters the reference runs over content, titles and |
-| [`Texturize`](#texturize) | final class | 51 | The texturize subset the reference applies to rendered text: straight |
+| [`Texturize`](#texturize) | final class | 102 | The texturize subset the reference applies to rendered text: straight |
 | [`UserRecord`](#userrecord) | final readonly class | 96 | One row of the users table, read by name. Columns keep their WordPress |
 | [`Users`](#users) | final readonly class | 267 |  |
 
@@ -1814,11 +1814,16 @@ Used by: `Minn\Admin\ActivityFeed`, `Minn\Admin\Format`, `Minn\Admin\Notificatio
 
 ### static `html(string $html): string`
 
-Curly quotes, dashes, and ellipses in the text of HTML, leaving tags and pre, code, kbd, style, and script alone.
+Curly quotes, dashes, and ellipses in the text of HTML, leaving tags
+and pre, code, kbd, style, and script alone; registered shortcodes
+stay as written (probe shortcode-run), and so does the text inside
+the ones no_texturize_shortcodes names ([code] by default).
 
 ### static `text(string $text): string`
 
 The same substitutions on a plain string with no tags.
+
+Internals: `shortcodePattern()` (private, line 58), `quiet()` (private, line 77)
 
 
 ## UserRecord

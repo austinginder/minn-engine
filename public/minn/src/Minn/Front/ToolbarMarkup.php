@@ -29,7 +29,7 @@ final class ToolbarMarkup
             ? "\t\t\t\t\t\t\t<a class=\"screen-reader-shortcut\" href=\"#wp-toolbar\" tabindex=\"1\">" . Gettext::text('Skip to toolbar') . "</a>\n"
             : '';
         return "\t\t<div id=\"wpadminbar\" class=\"{$class}\">\n" . $skip
-            . "\t\t\t\t\t\t<div class=\"quicklinks\" id=\"wp-toolbar\" role=\"navigation\" aria-label=\"" . \esc_attr__('Toolbar') . "\">\n\t\t\t\t";
+            . "\t\t\t\t\t\t<div class=\"quicklinks\" id=\"wp-toolbar\" role=\"navigation\" aria-label=\"" . Escape::attr(Gettext::text('Toolbar')) . "\">\n\t\t\t\t";
     }
 
     /** The bar's wrapper after its last group. */

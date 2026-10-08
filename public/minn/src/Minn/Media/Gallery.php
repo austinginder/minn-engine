@@ -40,9 +40,9 @@ final class Gallery
                 . $item['icon'] . "\n\t\t\t"
                 . '</' . $iconTag . '>'
                 . self::caption($item, $captionTag)
-                . '</' . $itemTag . ">\n\t\t";
+                . '</' . $itemTag . '>';
         }
-        return $out . "</div>\n";
+        return $out . "\n\t\t</div>\n";
     }
 
     /** @param array{caption: string, caption_id: string} $item */

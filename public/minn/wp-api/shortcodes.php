@@ -40,7 +40,7 @@ function has_shortcode($content, $tag)
 
 function do_shortcode($content, $ignore_html = false)
 {
-    return Runtime::shortcodes()->apply((string) $content);
+    return Runtime::shortcodes()->apply((string) $content, $ignore_html ? 'escape' : 'run');
 }
 
 function strip_shortcodes($content)
@@ -56,8 +56,31 @@ function get_shortcode_regex($tagnames = null)
 
 function shortcode_parse_atts($text)
 {
-    $atts = Minn\Runtime\Shortcodes::parse((string) $text);
-    return $atts === [] ? [] : $atts;
+    return Minn\Runtime\Shortcodes::parse((string) $text);
+}
+
+/** The pattern shortcode_parse_atts reads attribute text by. */
+function get_shortcode_atts_regex()
+{
+    return Minn\Runtime\Shortcodes::ATTRIBUTES;
+}
+
+/** One matched shortcode run, as do_shortcode runs each (probe shortcode-run). */
+function do_shortcode_tag($m)
+{
+    return Runtime::shortcodes()->run((array) $m);
+}
+
+/** One matched shortcode taken out, as strip_shortcodes takes each. */
+function strip_shortcode_tag($m)
+{
+    return Minn\Runtime\Shortcodes::stripped((array) $m);
+}
+
+/** The context images rendered inside a shortcode see. */
+function _filter_do_shortcode_context()
+{
+    return 'do_shortcode';
 }
 
 function shortcode_atts($pairs, $atts, $shortcode = '')
@@ -73,14 +96,9 @@ function shortcode_atts($pairs, $atts, $shortcode = '')
     return $out;
 }
 
-function do_shortcode_tag($m)
-{
-    return '';
-}
-
 function do_shortcodes_in_html_tags($content, $ignore_html, $tagnames)
 {
-    return $content;
+    return Runtime::shortcodes()->inTags((string) $content, $ignore_html ? 'escape' : 'run', array_values((array) $tagnames));
 }
 
 function unescape_invalid_shortcodes($content)

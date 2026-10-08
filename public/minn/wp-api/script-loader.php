@@ -570,3 +570,12 @@ function wp_remove_surrounding_empty_script_tags($contents)
     _doing_it_wrong(__FUNCTION__, $message, '6.4');
     return 'console.error(' . wp_json_encode(sprintf(__('Function %1$s used incorrectly in PHP.'), __FUNCTION__ . '()') . ' ' . $message) . ')';
 }
+
+/** A stylesheet's source: wp-admin's own relative to the installer while installing; the admin colour scheme has no screen on Minn. */
+function wp_style_loader_src($src, $handle)
+{
+    if (wp_installing()) {
+        return preg_replace('#^wp-admin/#', './', $src);
+    }
+    return $src;
+}

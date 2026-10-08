@@ -2428,3 +2428,28 @@ function _minn_list_author_item(WP_User $author, string $name, int $posts, array
     }
     return $args['style'] === 'list' ? '<li>' . $link . '</li>' : $link;
 }
+
+/** Registers the core post types and statuses again, as WordPress does at init: their objects come out the same, and plugins hear each registered again. */
+function create_initial_post_types()
+{
+    foreach (Runtime::registry()->postTypes() as $name => $row) {
+        if (!empty($row['_builtin'])) {
+            register_post_type($name, $row);
+        }
+    }
+    foreach (Runtime::registry()->statuses() as $name => $row) {
+        if (!empty($row['_builtin'])) {
+            register_post_status($name, $row);
+        }
+    }
+}
+
+/** A post's local date, from the GMT one (or now) when it has none; false for a date that does not exist. */
+function wp_resolve_post_date($post_date = '', $post_date_gmt = '')
+{
+    if (empty($post_date) || $post_date === '0000-00-00 00:00:00') {
+        $post_date = empty($post_date_gmt) || $post_date_gmt === '0000-00-00 00:00:00' ? current_time('mysql') : get_date_from_gmt($post_date_gmt);
+    }
+    $valid = wp_checkdate((int) substr($post_date, 5, 2), (int) substr($post_date, 8, 2), (int) substr($post_date, 0, 4), $post_date);
+    return $valid ? $post_date : false;
+}

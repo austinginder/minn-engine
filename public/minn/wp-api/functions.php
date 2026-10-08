@@ -1132,3 +1132,34 @@ function wp_timezone_override_offset()
     }
     return round(timezone_offset_get($timezone, $now) / HOUR_IN_SECONDS, 2);
 }
+
+/** The hosting provider's own link for updating PHP (WP_DIRECT_UPDATE_PHP_URL), through wp_direct_php_update_url; empty when there is none. */
+function wp_get_direct_php_update_url()
+{
+    $url = getenv('WP_DIRECT_UPDATE_PHP_URL');
+    return apply_filters('wp_direct_php_update_url', $url === false ? '' : $url);
+}
+
+/**
+ * The emoji detection script a plugin asks for. Minn prints none of the
+ * reference's emoji plumbing on any page (see the runtime contract), and
+ * on the reference a second call prints nothing either.
+ */
+function print_emoji_detection_script()
+{
+}
+
+/** The emoji styles, enqueued while print_emoji_styles is hooked; it never is on Minn, which prints no emoji plumbing. */
+function wp_enqueue_emoji_styles()
+{
+    $action = is_admin() ? 'admin_print_styles' : 'wp_print_styles';
+    if (has_action($action, 'print_emoji_styles')) {
+        remove_action($action, 'print_emoji_styles');
+    }
+}
+
+/** @deprecated 6.4.0 The emoji styles; Minn prints none. */
+function print_emoji_styles()
+{
+    _deprecated_function(__FUNCTION__, '6.4.0', 'wp_enqueue_emoji_styles');
+}

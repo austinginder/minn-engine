@@ -492,21 +492,7 @@ function remove_query_arg($key, $query = false)
 
 function wp_list_pluck($input_list, $field, $index_key = null)
 {
-    $out = [];
-    foreach ($input_list as $key => $item) {
-        $value = is_object($item) ? ($item->{$field} ?? null) : ($item[$field] ?? null);
-        if ($index_key === null) {
-            $out[$key] = $value;
-            continue;
-        }
-        $index = is_object($item) ? ($item->{$index_key} ?? null) : ($item[$index_key] ?? null);
-        if ($index === null) {
-            $out[] = $value;
-        } else {
-            $out[$index] = $value;
-        }
-    }
-    return $out;
+    return \Minn\Support\Lists::pluck((array) $input_list, $field, $index_key);
 }
 
 function wp_list_filter($input_list, $args = [], $operator = 'AND')
@@ -519,32 +505,14 @@ function wp_filter_object_list($input_list, $args = [], $operator = 'and', $fiel
     if (!is_array($input_list)) {
         return [];
     }
-    $operator = strtoupper($operator);
-    $out = [];
-    foreach ($input_list as $key => $item) {
-        $matched = 0;
-        foreach ($args as $k => $v) {
-            $value = is_object($item) ? ($item->{$k} ?? null) : ($item[$k] ?? null);
-            if ((is_object($item) ? property_exists($item, $k) : array_key_exists($k, (array) $item)) && $value == $v) {
-                $matched++;
-            }
-        }
-        if (($operator === 'AND' && $matched === count($args)) || ($operator === 'OR' && $matched > 0) || ($operator === 'NOT' && $matched === 0)) {
-            $out[$key] = $item;
-        }
-    }
-    if ($field) {
-        return wp_list_pluck($out, $field);
-    }
-    return $out;
+    $util = new WP_List_Util($input_list);
+    $filtered = $util->filter($args, $operator);
+    return $field ? $util->pluck($field) : $filtered;
 }
 
 function wp_list_sort($input_list, $orderby = [], $order = 'ASC', $preserve_keys = false)
 {
-    if (!is_array($orderby)) {
-        $orderby = [$orderby => $order];
-    }
-    return \Minn\Support\Lists::sort((array) $input_list, $orderby, (bool) $preserve_keys);
+    return is_array($input_list) ? (new WP_List_Util($input_list))->sort($orderby, $order, $preserve_keys) : [];
 }
 
 function wp_array_slice_assoc($input_array, $keys)
@@ -786,7 +754,13 @@ function get_url_in_content($content)
 
 function wp_html_split($input)
 {
-    return preg_split('/(<[^>]*>)/', (string) $input, -1, PREG_SPLIT_DELIM_CAPTURE);
+    return Minn\Support\Html::split((string) $input);
+}
+
+/** The pattern wp_html_split cuts markup by. */
+function get_html_split_regex()
+{
+    return Minn\Support\Html::SPLIT;
 }
 
 function wp_replace_in_html_tags($haystack, $replace_pairs)
@@ -1017,4 +991,23 @@ function wp_rel_ugc($text)
 function _wp_kses_sanitize_note_mention_classes($content)
 {
     return \Minn\Content\TextFilters::noteMentionClasses((string) $content);
+}
+
+/** The pattern for whitespace in content (newlines, tabs, spaces, no-break spaces), settled the first time it is asked for. */
+function wp_spaces_regexp()
+{
+    static $spaces = '';
+    if ($spaces === '') {
+        $spaces = apply_filters('wp_spaces_regexp', '[\r\n\t ]|\xC2\xA0|&nbsp;');
+    }
+    return $spaces;
+}
+
+/** Escapes each letter with a backslash (and doubles one before a leading digit), as a date() format needs. */
+function backslashit($value)
+{
+    if (isset($value[0]) && $value[0] >= '0' && $value[0] <= '9') {
+        $value = '\\\\' . $value;
+    }
+    return addcslashes($value, 'A..Za..z');
 }

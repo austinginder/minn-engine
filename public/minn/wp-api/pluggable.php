@@ -558,3 +558,12 @@ function wp_generate_password($length = 12, $special_chars = true, $extra_specia
     return apply_filters('random_password', $password, $length, $special_chars, $extra_special_chars);
 }
 endif;
+
+if (!function_exists('get_userdatabylogin')) :
+/** @deprecated 3.3.0 A user by login. */
+function get_userdatabylogin($user_login)
+{
+    _deprecated_function(__FUNCTION__, '3.3.0', "get_user_by('login')");
+    return get_user_by('login', $user_login);
+}
+endif;

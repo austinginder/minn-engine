@@ -8,6 +8,22 @@ use Closure;
 
 final class Html
 {
+    /** Markup's pieces of HTML: comments and CDATA whole (to the end when unclosed), else from "<" to the next ">". */
+    public const SPLIT = '/(<(?:!--.*?(?:-->|$)|!\[CDATA\[.*?(?:\]\]>|$)|[^>]*>?))/s';
+
+    /**
+     * Markup cut into text and HTML pieces, the HTML ones at the odd
+     * positions (wp_html_split): a comment or CDATA section is one piece
+     * whatever it holds, and a "<" in text starts a piece that runs to the
+     * next ">".
+     *
+     * @return list<string>
+     */
+    public static function split(string $html): array
+    {
+        return preg_split(self::SPLIT, $html, -1, PREG_SPLIT_DELIM_CAPTURE) ?: [$html];
+    }
+
     /** Text escaped for HTML. */
     public static function esc(?string $value): string
     {

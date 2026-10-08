@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Minn\Content;
 
+use Minn\Runtime\Runtime;
+
 /**
  * The texturize subset the reference applies to rendered text: straight
  * quotes, apostrophes, ellipses, dashes, and primes become numeric
@@ -14,11 +16,19 @@ final class Texturize
 {
     private const SKIP = 'pre|code|kbd|style|script|tt|textarea';
 
-    /** Curly quotes, dashes, and ellipses in the text of HTML, leaving tags and pre, code, kbd, style, and script alone. */
+    /**
+     * Curly quotes, dashes, and ellipses in the text of HTML, leaving tags
+     * and pre, code, kbd, style, and script alone; registered shortcodes
+     * stay as written (probe shortcode-run), and so does the text inside
+     * the ones no_texturize_shortcodes names ([code] by default).
+     */
     public static function html(string $html): string
     {
-        $parts = preg_split('/(<[^>]*>)/', $html, -1, PREG_SPLIT_DELIM_CAPTURE);
+        $shortcode = self::shortcodePattern($html);
+        $parts = preg_split('/(<[^>]*>' . ($shortcode === '' ? '' : '|' . $shortcode) . ')/', $html, -1, PREG_SPLIT_DELIM_CAPTURE) ?: [$html];
+        $quiet = $shortcode === '' ? [] : (array) Runtime::hooks()->filter('no_texturize_shortcodes', [['code']]);
         $depth = 0;
+        $quieted = [];
         foreach ($parts as $index => $part) {
             if ($part === '') {
                 continue;
@@ -31,12 +41,55 @@ final class Texturize
                 }
                 continue;
             }
-            if ($depth > 0) {
+            if ($shortcode !== '' && $part[0] === '[' && preg_match('/^' . $shortcode . '$/', $part)) {
+                if (!str_starts_with($part, '[[')) {
+                    self::quiet($part, $quieted, $quiet);
+                }
                 continue;
             }
-            $parts[$index] = self::text($part);
+            if ($depth === 0 && $quieted === []) {
+                $parts[$index] = self::text($part);
+            }
         }
         return implode('', $parts);
+    }
+
+    /** The pattern for the registered shortcodes the text opens a bracket with, or "" for none. */
+    private static function shortcodePattern(string $html): string
+    {
+        if (!str_contains($html, '[')) {
+            return '';
+        }
+        preg_match_all('@\[/?([^<>&/\[\]\x00-\x20=]++)@', $html, $found);
+        $tags = array_values(array_intersect(Runtime::shortcodes()->names(), $found[1]));
+        if ($tags === []) {
+            return '';
+        }
+        return '\[[\/\[]?(?:' . implode('|', array_map(static fn (string $tag): string => preg_quote($tag, '/'), $tags)) . ')(?=[\s\]\/])(?:[^\[\]<>]+|<[^\[\]>]*>)*+\]\]?';
+    }
+
+    /**
+     * Keeps count of the quiet shortcodes open around the text: an opening
+     * one is pushed, its closing one pops it, others pass.
+     *
+     * @param list<string> $open @param list<string> $quiet
+     */
+    private static function quiet(string $delimiter, array &$open, array $quiet): void
+    {
+        $closing = ($delimiter[1] ?? '') === '/';
+        if ($closing && $open === []) {
+            return;
+        }
+        preg_match('#^\[/?([^\s\]/]+)#', $delimiter, $name);
+        $tag = $name[1] ?? '';
+        if (!in_array($tag, $quiet, true)) {
+            return;
+        }
+        if (!$closing) {
+            $open[] = $tag;
+        } elseif (end($open) === $tag) {
+            array_pop($open);
+        }
     }
 
     /** The same substitutions on a plain string with no tags. */

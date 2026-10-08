@@ -48,7 +48,6 @@
         "get_inline_data",
         "get_page_templates",
         "get_plugin_files",
-        "get_post_galleries",
         "get_post_parent",
         "get_post_timestamp",
         "get_preferred_from_update_core",

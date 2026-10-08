@@ -699,9 +699,22 @@ function wp_plugin_directory_constants()
 }
 
 /** Both the site and home URLs on https (probed true on the dev reference). */
+/** Whether the site and home URLs both use https. */
 function wp_is_using_https()
 {
-    return str_starts_with((string) get_option('siteurl'), 'https://') && str_starts_with((string) get_option('home'), 'https://');
+    return wp_is_home_url_using_https() && wp_is_site_url_using_https();
+}
+
+/** Whether the home URL, as stored and filtered (not as the request reached it), uses https. */
+function wp_is_home_url_using_https()
+{
+    return wp_parse_url(apply_filters('home_url', get_option('home'), '', null, null), PHP_URL_SCHEME) === 'https';
+}
+
+/** Whether the site URL, as stored and filtered (not as the request reached it), uses https. */
+function wp_is_site_url_using_https()
+{
+    return wp_parse_url(apply_filters('site_url', get_option('siteurl'), '', null, null), PHP_URL_SCHEME) === 'https';
 }
 
 /** JSONP callback names: word characters and dots only (probed: my.Fn_2 yes, bad() and a-b no). */

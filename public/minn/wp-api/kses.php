@@ -206,12 +206,12 @@ function wp_kses_hair($attr, $allowed_protocols)
 
 function wp_kses_attr_parse($element)
 {
-    return false;
+    return Minn\Support\KsesAttributes::elementParts((string) $element) ?? false;
 }
 
 function wp_kses_one_attr($attr, $element)
 {
-    return $attr;
+    return Minn\Support\KsesAttributes::oneAttribute((string) $attr, (string) $element, _minn_kses_policy(wp_kses_allowed_html('post'), wp_allowed_protocols()));
 }
 
 function wp_kses_array_lc($inarray)
@@ -284,4 +284,14 @@ function wp_strip_custom_css_from_blocks($content)
         return $blocks;
     };
     return wp_slash(serialize_blocks($strip(parse_blocks($plain))));
+}
+
+/** A tag's allowed attributes with the ones every tag may carry (aria, class, data-*, dir, hidden, id, lang, style, tabindex, title, role, xml:lang); true means none of its own. */
+function _wp_add_global_attributes($value)
+{
+    $global = ['aria-controls' => true, 'aria-current' => true, 'aria-describedby' => true, 'aria-details' => true, 'aria-expanded' => true, 'aria-hidden' => true, 'aria-label' => true, 'aria-labelledby' => true, 'aria-live' => true, 'class' => true, 'data-*' => true, 'dir' => true, 'hidden' => true, 'id' => true, 'lang' => true, 'style' => true, 'tabindex' => true, 'title' => true, 'role' => true, 'xml:lang' => true];
+    if ($value === true) {
+        $value = [];
+    }
+    return is_array($value) ? array_merge($value, $global) : $value;
 }

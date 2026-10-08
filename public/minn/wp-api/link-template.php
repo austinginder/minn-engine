@@ -858,3 +858,9 @@ function the_privacy_policy_link($before = '', $after = '')
 {
     echo get_the_privacy_policy_link($before, $after);
 }
+
+/** The admin link to edit a tag (or a term of another taxonomy), for those who may. */
+function get_edit_tag_link($tag, $taxonomy = 'post_tag')
+{
+    return apply_filters('get_edit_tag_link', get_edit_term_link($tag, $taxonomy));
+}

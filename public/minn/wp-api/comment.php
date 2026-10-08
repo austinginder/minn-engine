@@ -1531,3 +1531,9 @@ function comment_excerpt($comment_id = 0)
     $comment = get_comment($comment_id);
     echo apply_filters('comment_excerpt', get_comment_excerpt($comment), $comment->comment_ID);
 }
+
+/** The comment statuses by name, as the moderation screens label them. */
+function get_comment_statuses()
+{
+    return ['hold' => __('Unapproved'), 'approve' => _x('Approved', 'comment status'), 'spam' => _x('Spam', 'comment status'), 'trash' => _x('Trash', 'comment status')];
+}

@@ -1520,3 +1520,12 @@ function wp_get_term_taxonomy_parent_id($term_id, $taxonomy)
     $term = get_term((int) $term_id, $taxonomy);
     return $term instanceof WP_Term ? (int) $term->parent : false;
 }
+
+/** Whether a term id is shared between taxonomies: never once the site has split its shared terms. */
+function wp_term_is_shared($term_id)
+{
+    if (get_option('finished_splitting_shared_terms')) {
+        return false;
+    }
+    return count(get_terms(['include' => [(int) $term_id], 'hide_empty' => false, 'fields' => 'tt_ids', 'taxonomy' => array_keys(get_taxonomies())])) > 1;
+}

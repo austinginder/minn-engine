@@ -5,7 +5,7 @@ the wp/v2 surface: shapes and controllers
 | Class | Kind | Lines | Summary |
 |---|---|---|---|
 | [`AbilitiesController`](#abilitiescontroller) | final readonly class | 150 | wp-abilities/v1: what this site can be asked to do, and the doing of it. |
-| [`Api`](#api) | final readonly class | 266 | The REST API: wires the controllers for one request and dispatches a |
+| [`Api`](#api) | final readonly class | 281 | The REST API: wires the controllers for one request and dispatches a |
 | [`ApplicationPasswordsController`](#applicationpasswordscontroller) | final readonly class | 177 | wp/v2/users/{id}/application-passwords: list, create, rename, delete, |
 | [`ArgCheck`](#argcheck) | final readonly class | 83 | Judges a route's declared arguments against the request before the |
 | [`BatchController`](#batchcontroller) | final readonly class | 159 | batch/v1 as the reference answers it (probe rest-batch): up to 25 |
@@ -217,7 +217,14 @@ runtime's server calls for a core route, so a route the engine
 declines cannot bounce between the two. $as is the caller's own
 request object, which the route's parameters are set on.
 
-Internals: `controllers()` (private, line 72), `engineResponse()` (private, line 238), `withPageLinks()` (private, line 252), `options()` (private, line 283), `withAllow()` (private, line 296)
+### `allowedOn(string $route, ?WP_REST_Request $as = NULL): array`
+
+The methods this caller may use on one of the engine's routes, as
+its Allow header lists them (rest_send_allow_header asks).
+
+- `@return list<string>`
+
+Internals: `controllers()` (private, line 72), `engineResponse()` (private, line 253), `withPageLinks()` (private, line 267), `options()` (private, line 298), `withAllow()` (private, line 311)
 
 
 ## ApplicationPasswordsController

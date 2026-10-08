@@ -4868,3 +4868,87 @@ plugin-queue, 103 cases) takes that to 1,768.
 
 `wp_parse_args` lives in `Support\Lists::args` now; the engine's own callers
 use it, and the WordPress-call ratchet is 1071.
+
+## Shortcodes as the reference runs them, and the queue's second wave (2026-10-07)
+
+**Shortcodes** (probe shortcode-run, 109 cases). Several facade functions
+were stubs: `do_shortcode_tag` answered "", `wp_kses_attr_parse` false,
+`wp_kses_one_attr` its input, `do_shortcodes_in_html_tags` its input. The
+pass in `Runtime\Shortcodes` now runs like the reference:
+
+- Only the registered names the text holds take part.
+- Inside HTML tags first:
+  - A quoted attribute value's shortcode runs, and the attribute is judged
+    again by kses (`KsesAttributes::oneAttribute`). The output comes back
+    escaped (`&quot;`).
+  - A shortcode standing as an attribute name, or as the tag (`<[name]>`),
+    runs as written.
+  - Comments, CDATA, and every tag under `ignore_html` are left alone.
+  - Brackets left in tags, and the `&#91;` and `&#93;` already in the text
+    (which become `&#091;` and `&#093;`), are set aside and restored after
+    the text pass.
+- Each shortcode goes through `pre_do_shortcode_tag` and `do_shortcode_tag`,
+  with the match array.
+- A self-closing shortcode's content is `""`, not null.
+- Images rendered inside a shortcode see the `do_shortcode` context.
+
+`shortcode_parse_atts`:
+
+- reads no-break and zero-width spaces as spaces;
+- needs whitespace (or the end) after each token;
+- undoes backslash escapes;
+- empties a value holding unbalanced HTML;
+- does not straighten curly quotes; the old parser did, because
+  `wptexturize` curled the quotes inside shortcodes.
+
+`Texturize` now leaves registered shortcodes as written. It also leaves the
+text inside those that `no_texturize_shortcodes` names (`[code]`), on every
+path. `wp_html_split` keeps comments and CDATA whole.
+
+**The queue's second wave** (probe plugin-queue2, 89 cases):
+
+- `get_post_galleries` was a placeholder. It now reads [gallery] shortcodes
+  (run with the post as their default id) and gallery blocks, old and new
+  formats, inside other blocks too. The result is markup or attributes with
+  their image sources. `get_post_gallery_images` and
+  `get_post_galleries_images` build on it.
+- Gallery items join with nothing between them, then `\n\t\t</div>`.
+- `wp_image_add_srcset_and_sizes` (also a stub) adds srcset and sizes to one
+  tag. So does `wp_img_tag_add_srcset_and_sizes_attr`.
+- `rest_send_allow_header` answers from the engine's policies for its own
+  routes (`WP_REST_Server::engine_allowed`, `Api::allowedOn`). For a
+  plugin's route it uses the handlers' permission callbacks.
+- `WP_List_Util` is the stepwise list (filter, pluck and sort on the last
+  output). The `wp_list_*` functions share `Support\Lists`; pluck passes
+  over anything that is not an array or object, and an empty sort leaves
+  the list as it is.
+- `create_initial_post_types` registers the built-in types and statuses
+  again from their own rows (unchanged; the hooks fire).
+- Also:
+  - `wp_revoke_user`
+  - `wp_get_all_sessions`, `wp_destroy_other_sessions`,
+    `wp_destroy_all_sessions`
+  - `wp_spaces_regexp` (settled at first use)
+  - `wp_get_direct_php_update_url`
+  - `_wp_add_global_attributes`
+  - `wp_term_is_shared`
+  - `get_comment_statuses`
+  - `wp_is_site_url_using_https` and `wp_is_home_url_using_https`, behind
+    `wp_is_using_https`
+  - `backslashit`
+  - `get_edit_tag_link`
+  - `__ngettext` and `_c`
+  - `wp_resolve_post_date`
+  - `get_userdatabylogin`
+  - `wp_style_loader_src`
+  - `wp_zip_file_is_valid` (`Ops\Unzip::valid`)
+- The emoji calls (`print_emoji_detection_script`, `wp_enqueue_emoji_styles`,
+  `print_emoji_styles`) print nothing. No engine page prints the
+  reference's emoji plumbing, and the reference's own second call prints
+  nothing either.
+
+Open: the engine reads cookies from the request it received, not from
+`$_COOKIE` at the moment of the call. A plugin that writes `$_COOKIE`
+mid-request (to make a cookie it just set visible) is not seen by
+`wp_get_session_token` or the auth cookie readers. The reference reads
+`$_COOKIE` live.

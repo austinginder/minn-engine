@@ -29,6 +29,17 @@ final readonly class Unzip
     {
     }
 
+    /** Whether a file is a zip archive that opens and passes its consistency check (wp_zip_file_is_valid). */
+    public static function valid(string $file): bool
+    {
+        $archive = new ZipArchive();
+        if (!is_file($file) || $archive->open($file, ZipArchive::CHECKCONS) !== true) {
+            return false;
+        }
+        $archive->close();
+        return true;
+    }
+
     /** The archive's files under the destination: true, a refusal, or what pre_unzip_file answered instead. */
     public function into(string $file, string $to): mixed
     {

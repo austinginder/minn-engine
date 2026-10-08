@@ -169,12 +169,6 @@ function get_plugin_files($plugin)
     return null;
 }
 
-function get_post_galleries($post, $html = true)
-{
-    \Minn\Runtime\PlaceholderTrace::hit('get_post_galleries');
-    return null;
-}
-
 function get_post_parent($post = NULL)
 {
     \Minn\Runtime\PlaceholderTrace::hit('get_post_parent');

@@ -17,7 +17,7 @@
 | [`Packages`](#packages) | final readonly class | 481 | Putting plugins, themes and extensions on disk. Plugins and themes come |
 | [`Release`](#release) | final readonly class | 58 | One published Minn release as the update service describes it (and as |
 | [`Releases`](#releases) | final class | 86 | Whether a newer Minn is out, asked of the Minn update service at most |
-| [`Unzip`](#unzip) | final readonly class | 101 | An archive unpacked as unzip_file() unpacks it (probe unzip-file): into |
+| [`Unzip`](#unzip) | final readonly class | 112 | An archive unpacked as unzip_file() unpacks it (probe unzip-file): into |
 | [`Updates`](#updates) | final class | 435 | Update offers for the site's plugins and themes from the directory, asked |
 | [`UpgraderRun`](#upgraderrun) | final readonly class | 113 | The engine's own installs and updates, run through the reference's |
 
@@ -646,11 +646,15 @@ __construct(object $filesystem, Closure $filter, int $dirMode, int $fileMode)
 - `@param Closure(string, mixed...): mixed $filter applies a filter, as apply_filters does`
 
 
+### static `valid(string $file): bool`
+
+Whether a file is a zip archive that opens and passes its consistency check (wp_zip_file_is_valid).
+
 ### `into(string $file, string $to): mixed`
 
 The archive's files under the destination: true, a refusal, or what pre_unzip_file answered instead.
 
-Internals: `read()` (private, line 70), `safe()` (private, line 93), `write()` (private, line 99)
+Internals: `read()` (private, line 81), `safe()` (private, line 104), `write()` (private, line 110)
 
 
 ## Updates

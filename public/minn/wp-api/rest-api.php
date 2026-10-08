@@ -575,3 +575,16 @@ function rest_parse_embed_param($embed)
     return $rels === [] ? true : $rels;
 }
 
+/** The Allow header for a matched route: the methods this request's caller may use there (the engine's routes by their policies, a plugin's by its handlers' permission callbacks); none, no header. */
+function rest_send_allow_header($response, $server, $request)
+{
+    $route = (string) $response->get_matched_route();
+    if ($route === '') {
+        return $response;
+    }
+    $allowed = $server instanceof WP_REST_Server && $server->engine_route($route) ? $server->engine_allowed($request) : Minn\Rest\RuntimeRoutes::allowedMethods($route, $request);
+    if ($allowed) {
+        $response->header('Allow', implode(', ', $allowed));
+    }
+    return $response;
+}

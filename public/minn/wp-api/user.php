@@ -572,3 +572,30 @@ function wp_is_large_user_count($network_id = null)
     $count = get_user_count($network_id);
     return apply_filters('wp_is_large_user_count', $count > 10000, $count, $network_id);
 }
+
+/** Takes every role and capability from a user. */
+function wp_revoke_user($id)
+{
+    (new WP_User((int) $id))->remove_all_caps();
+}
+
+/** The signed-in user's sessions. */
+function wp_get_all_sessions()
+{
+    return WP_Session_Tokens::get_instance(get_current_user_id())->get_all();
+}
+
+/** Ends the signed-in user's other sessions, keeping this one. */
+function wp_destroy_other_sessions()
+{
+    $token = wp_get_session_token();
+    if ($token) {
+        WP_Session_Tokens::get_instance(get_current_user_id())->destroy_others($token);
+    }
+}
+
+/** Ends every session of the signed-in user. */
+function wp_destroy_all_sessions()
+{
+    WP_Session_Tokens::get_instance(get_current_user_id())->destroy_all();
+}

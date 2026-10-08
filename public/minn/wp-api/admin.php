@@ -742,6 +742,12 @@ function themes_api($action, $args = [])
     return (new Minn\Ops\DirectoryApi('themes', apply_filters(...), $packages, get_user_locale(), (string) $GLOBALS['wp_version']))->ask((string) $action, $args);
 }
 
+/** Whether a file is a zip archive that opens and passes its consistency check. */
+function wp_zip_file_is_valid($file)
+{
+    return Minn\Ops\Unzip::valid((string) $file);
+}
+
 function unzip_file($file, $to)
 {
     global $wp_filesystem;

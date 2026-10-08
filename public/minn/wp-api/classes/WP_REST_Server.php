@@ -116,6 +116,49 @@ class WP_REST_Server
         return isset($this->engine_endpoints()[$route]) && !isset($this->endpoints[$route]);
     }
 
+    /** The methods the engine's policies let this request's caller use on its route, as the engine's Allow header lists them. */
+    public function engine_allowed(WP_REST_Request $request): array
+    {
+        [$route, $api] = self::in_process($request);
+        return $api->allowedOn($route, $request);
+    }
+
+    /**
+     * A request answered in process by the engine: its route, and the
+     * engine's API over a request of the same shape, acting as whoever is
+     * current now (a plugin may have switched with wp_set_current_user),
+     * with the outer request's session when that is the same user.
+     *
+     * @return array{0: string, 1: Api}
+     */
+    private static function in_process(WP_REST_Request $request): array
+    {
+        $runtime = Runtime::current();
+        $route = '/' . ltrim((string) $request->get_route(), '/');
+        $query = self::query_text($request->get_query_params());
+        if (isset($query['_fields'])) {
+            $query['_fields'] = self::top_level_fields($query['_fields']);
+        }
+        $headers = [];
+        foreach ($request->get_headers() as $name => $values) {
+            $headers[str_replace('_', '-', $name)] = implode(',', $values);
+        }
+        $method = Method::tryFrom($request->get_method()) ?? Method::Get;
+        $body = (string) ($request->get_body() ?? '');
+        $form = $request->get_body_params();
+        if ($body === '' && $form !== [] && !$request->is_json_content_type()) {
+            $body = http_build_query($form);
+            $headers['content-type'] = 'application/x-www-form-urlencoded';
+        }
+        $minnRequest = new Request($method, '/wp-json' . $route, $query, $headers, $runtime->request?->cookies ?? [], $body, $runtime->isSecure(), $runtime->request?->host ?? (string) parse_url(home_url(), PHP_URL_HOST), $form);
+        $api = Api::forRequest($runtime->db, $minnRequest);
+        $userId = get_current_user_id();
+        if ($userId > 0) {
+            $api->actingAs($userId, $userId === ($runtime->reader?->userId ?? 0) ? (string) $runtime->reader->sessionToken : '');
+        }
+        return [$route, $api];
+    }
+
     /** The engine's own routes as table entries, so plugin code that reads the table sees the whole site; each answers through the engine. */
     protected function engine_endpoints(): array
     {
@@ -284,32 +327,7 @@ class WP_REST_Server
     /** A core route answered by the engine's own REST layer, as the response object plugin code expects. */
     protected function engine_response(WP_REST_Request $request): ?WP_REST_Response
     {
-        $runtime = Runtime::current();
-        $route = '/' . ltrim((string) $request->get_route(), '/');
-        $query = self::query_text($request->get_query_params());
-        if (isset($query['_fields'])) {
-            $query['_fields'] = self::top_level_fields($query['_fields']);
-        }
-        $headers = [];
-        foreach ($request->get_headers() as $name => $values) {
-            $headers[str_replace('_', '-', $name)] = implode(',', $values);
-        }
-        $method = Method::tryFrom($request->get_method()) ?? Method::Get;
-        $body = (string) ($request->get_body() ?? '');
-        $form = $request->get_body_params();
-        if ($body === '' && $form !== [] && !$request->is_json_content_type()) {
-            $body = http_build_query($form);
-            $headers['content-type'] = 'application/x-www-form-urlencoded';
-        }
-        $minnRequest = new Request($method, '/wp-json' . $route, $query, $headers, $runtime->request?->cookies ?? [], $body, $runtime->isSecure(), $runtime->request?->host ?? (string) parse_url(home_url(), PHP_URL_HOST), $form);
-        $api = Api::forRequest($runtime->db, $minnRequest);
-        // An in-process call carries no nonce; it runs as whoever is current now
-        // (a plugin may have switched with wp_set_current_user), with the outer
-        // request's session when that is the same user.
-        $userId = get_current_user_id();
-        if ($userId > 0) {
-            $api->actingAs($userId, $userId === ($runtime->reader?->userId ?? 0) ? (string) $runtime->reader->sessionToken : '');
-        }
+        [$route, $api] = self::in_process($request);
         $response = RuntimePrepare::during($request, static fn () => $api->handleEngineOnly($route, $request));
         if ($response === null) {
             return null;

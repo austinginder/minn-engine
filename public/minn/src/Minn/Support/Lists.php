@@ -6,7 +6,7 @@ namespace Minn\Support;
 
 /**
  * List shaping behind the facade's array utilities: arguments over their
- * defaults (wp_parse_args), the multi-field sort
+ * defaults (wp_parse_args), plucking and filtering (WP_List_Util), the multi-field sort
  * wp_list_sort() promises (loose comparison per field, first difference
  * wins) and the row-shape conversions wpdb hands back for its OBJECT_K /
  * ARRAY_A / ARRAY_N output formats.
@@ -30,6 +30,61 @@ final class Lists
             parse_str((string) $args, $parsed);
         }
         return is_array($defaults) && $defaults ? array_merge($defaults, $parsed) : $parsed;
+    }
+
+    /**
+     * One field of each item (wp_list_pluck), keyed as the list was, or by
+     * another field when one is named (items without it are appended);
+     * anything not an array or an object is passed over.
+     *
+     * @param array<array-key, mixed> $items
+     * @return array<array-key, mixed>
+     */
+    public static function pluck(array $items, int|string $field, int|string|null $indexKey = null): array
+    {
+        $out = [];
+        foreach ($items as $key => $item) {
+            if (!is_object($item) && !is_array($item)) {
+                continue;
+            }
+            $value = is_object($item) ? ($item->{$field} ?? null) : ($item[$field] ?? null);
+            $index = $indexKey === null ? $key : (is_object($item) ? ($item->{$indexKey} ?? null) : ($item[$indexKey] ?? null));
+            if ($index === null) {
+                $out[] = $value;
+            } else {
+                $out[$index] = $value;
+            }
+        }
+        return $out;
+    }
+
+    /**
+     * The items matching all the fields given (AND), any of them (OR), or
+     * none (NOT), compared loosely, keys kept; nothing for another operator.
+     *
+     * @param array<array-key, mixed> $items @param array<array-key, mixed> $fields
+     * @return array<array-key, mixed>
+     */
+    public static function filter(array $items, array $fields, string $operator): array
+    {
+        $operator = strtoupper($operator);
+        if (!in_array($operator, ['AND', 'OR', 'NOT'], true)) {
+            return [];
+        }
+        $out = [];
+        foreach ($items as $key => $item) {
+            $matched = 0;
+            foreach ($fields as $name => $wanted) {
+                $has = is_object($item) ? isset($item->{$name}) : is_array($item) && array_key_exists($name, $item);
+                if ($has && $wanted == (is_object($item) ? $item->{$name} : $item[$name])) {
+                    $matched++;
+                }
+            }
+            if (($operator === 'AND' && $matched === count($fields)) || ($operator === 'OR' && $matched > 0) || ($operator === 'NOT' && $matched === 0)) {
+                $out[$key] = $item;
+            }
+        }
+        return $out;
     }
 
     /**

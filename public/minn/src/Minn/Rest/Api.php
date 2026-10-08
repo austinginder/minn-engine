@@ -235,6 +235,21 @@ final readonly class Api
         }
     }
 
+    /**
+     * The methods this caller may use on one of the engine's routes, as
+     * its Allow header lists them (rest_send_allow_header asks).
+     *
+     * @return list<string>
+     */
+    public function allowedOn(string $route, ?\WP_REST_Request $as = null): array
+    {
+        $request = $this->request->withPath('/' . trim($route, '/'));
+        if ($as !== null) {
+            RuntimeRoutes::adopt($request, $as);
+        }
+        return $this->router->allowed($request);
+    }
+
     private function engineResponse(Request $request): ?Response
     {
         if ($request->method === Method::Options) {

@@ -456,3 +456,19 @@ function wp_dropdown_languages($args = [])
     echo $output;
     return '';
 }
+
+/** @deprecated 2.8.0 The singular or plural form. */
+function __ngettext(...$args)
+{
+    _deprecated_function(__FUNCTION__, '2.8.0', '_n()');
+    return _n(...$args);
+}
+
+/** @deprecated 2.9.0 A translation with its context after the last bar dropped. */
+function _c($text, $domain = 'default')
+{
+    _deprecated_function(__FUNCTION__, '2.9.0', '_x()');
+    $translated = translate($text, $domain);
+    $bar = strrpos($translated, '|');
+    return $bar === false ? $translated : substr($translated, 0, $bar);
+}

@@ -32611,11 +32611,13 @@
             "namespace": "Minn\\Content",
             "kind": "final class",
             "file": "public/minn/src/Minn/Content/Texturize.php",
-            "lines": 51,
+            "lines": 102,
             "doc": "The texturize subset the reference applies to rendered text: straight\nquotes, apostrophes, ellipses, dashes, and primes become numeric\nentities, outside the skip elements only. Coverage is pinned by the\ntexturize battery post; anything beyond it is a documented gap.",
             "implements": [],
             "extends": null,
-            "uses": [],
+            "uses": [
+                "Minn\\Runtime\\Runtime"
+            ],
             "usedBy": [
                 "Minn\\Admin\\ActivityFeed",
                 "Minn\\Admin\\Format",
@@ -32651,7 +32653,7 @@
                     "static": true,
                     "visibility": "public",
                     "signature": "html(string $html): string",
-                    "doc": "Curly quotes, dashes, and ellipses in the text of HTML, leaving tags and pre, code, kbd, style, and script alone.",
+                    "doc": "Curly quotes, dashes, and ellipses in the text of HTML, leaving tags\nand pre, code, kbd, style, and script alone; registered shortcodes\nstay as written (probe shortcode-run), and so does the text inside\nthe ones no_texturize_shortcodes names ([code] by default).",
                     "shapes": [],
                     "params": [
                         {
@@ -32662,8 +32664,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 18,
-                    "end": 40
+                    "line": 25,
+                    "end": 55
                 },
                 {
                     "routes": [],
@@ -32682,8 +32684,64 @@
                             "doc": ""
                         }
                     ],
-                    "line": 43,
-                    "end": 62
+                    "line": 96,
+                    "end": 115
+                },
+                {
+                    "routes": [],
+                    "name": "shortcodePattern",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "shortcodePattern(string $html): string",
+                    "doc": "The pattern for the registered shortcodes the text opens a bracket with, or \"\" for none.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "html",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 58,
+                    "end": 69
+                },
+                {
+                    "routes": [],
+                    "name": "quiet",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "quiet(string $delimiter, array $open, array $quiet): void",
+                    "doc": "Keeps count of the quiet shortcodes open around the text: an opening\none is pushed, its closing one pops it, others pass.",
+                    "shapes": [
+                        "@param list<string> $open @param list<string> $quiet"
+                    ],
+                    "params": [
+                        {
+                            "name": "delimiter",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "open",
+                            "type": "array",
+                            "shape": "list<string>",
+                            "default": null,
+                            "doc": "@param list<string> $quiet"
+                        },
+                        {
+                            "name": "quiet",
+                            "type": "array",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 77,
+                    "end": 93
                 }
             ]
         },
@@ -78092,7 +78150,7 @@
             "namespace": "Minn\\Ops",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Ops/Unzip.php",
-            "lines": 101,
+            "lines": 112,
             "doc": "An archive unpacked as unzip_file() unpacks it (probe unzip-file): into\nthe destination through the filesystem the site set up, every folder\nmade first (the destination and its missing parents included), resource-fork entries\n(__MACOSX/) and entries whose names climb out or are absolute left out;\nrefused when the disk cannot take twice the unpacked size and a little\nmore. pre_unzip_file may answer first, and unzip_file is handed the\nresult, each with the folders to make and the space needed. An archive\nthe reader cannot open is refused in the words of the library the\nreference falls back to.",
             "implements": [],
             "extends": null,
@@ -78183,6 +78241,26 @@
             "methods": [
                 {
                     "routes": [],
+                    "name": "valid",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "valid(string $file): bool",
+                    "doc": "Whether a file is a zip archive that opens and passes its consistency check (wp_zip_file_is_valid).",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "file",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 33,
+                    "end": 41
+                },
+                {
+                    "routes": [],
                     "name": "into",
                     "static": false,
                     "visibility": "public",
@@ -78205,8 +78283,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 33,
-                    "end": 62
+                    "line": 44,
+                    "end": 73
                 },
                 {
                     "routes": [],
@@ -78227,8 +78305,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 70,
-                    "end": 90
+                    "line": 81,
+                    "end": 101
                 },
                 {
                     "routes": [],
@@ -78247,8 +78325,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 93,
-                    "end": 96
+                    "line": 104,
+                    "end": 107
                 },
                 {
                     "routes": [],
@@ -78290,8 +78368,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 99,
-                    "end": 121
+                    "line": 110,
+                    "end": 132
                 }
             ]
         },
@@ -81966,7 +82044,7 @@
             "namespace": "Minn\\Rest",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Rest/Api.php",
-            "lines": 266,
+            "lines": 281,
             "doc": "The REST API: wires the controllers for one request and dispatches a\nroute. Errors thrown anywhere underneath become the reference's error\npayload under the reference's headers.",
             "implements": [],
             "extends": null,
@@ -82326,6 +82404,35 @@
                 },
                 {
                     "routes": [],
+                    "name": "allowedOn",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "allowedOn(string $route, ?WP_REST_Request $as = NULL): array",
+                    "doc": "The methods this caller may use on one of the engine's routes, as\nits Allow header lists them (rest_send_allow_header asks).",
+                    "shapes": [
+                        "@return list<string>"
+                    ],
+                    "params": [
+                        {
+                            "name": "route",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "as",
+                            "type": "?WP_REST_Request",
+                            "shape": "",
+                            "default": "NULL",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 244,
+                    "end": 251
+                },
+                {
+                    "routes": [],
                     "name": "controllers",
                     "static": true,
                     "visibility": "private",
@@ -82370,8 +82477,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 238,
-                    "end": 245
+                    "line": 253,
+                    "end": 260
                 },
                 {
                     "routes": [],
@@ -82397,8 +82504,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 252,
-                    "end": 274
+                    "line": 267,
+                    "end": 289
                 },
                 {
                     "routes": [],
@@ -82417,8 +82524,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 283,
-                    "end": 290
+                    "line": 298,
+                    "end": 305
                 },
                 {
                     "routes": [],
@@ -82444,8 +82551,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 296,
-                    "end": 300
+                    "line": 311,
+                    "end": 315
                 }
             ]
         },
@@ -121611,6 +121718,7 @@
                 "Minn\\Content\\Reader",
                 "Minn\\Content\\Site",
                 "Minn\\Content\\Terms",
+                "Minn\\Content\\Texturize",
                 "Minn\\Cron\\Cron",
                 "Minn\\Db",
                 "Minn\\Engine",
@@ -121700,6 +121808,7 @@
                 "Minn\\Runtime\\Registry",
                 "Minn\\Runtime\\RewriteRules",
                 "Minn\\Runtime\\ScriptModules",
+                "Minn\\Runtime\\Shortcodes",
                 "Minn\\Runtime\\TermEvents",
                 "Minn\\Runtime\\TermQueryTree",
                 "Minn\\Runtime\\TermSave",
@@ -123257,17 +123366,40 @@
             "namespace": "Minn\\Runtime",
             "kind": "final class",
             "file": "public/minn/src/Minn/Runtime/Shortcodes.php",
-            "lines": 143,
+            "lines": 274,
             "doc": "The shortcode registry plugin code fills with add_shortcode, and the\nexpansion do_shortcode performs: [tag attrs], [tag attrs/], [tag]…[/tag]\n(the first closing tag wins; content is not expanded again), [[tag]] as\nthe literal, unregistered tags left as written.",
             "implements": [],
             "extends": null,
-            "uses": [],
+            "uses": [
+                "Minn\\Runtime\\Runtime",
+                "Minn\\Support\\Html",
+                "Minn\\Support\\KsesAttributes"
+            ],
             "usedBy": [
                 "Minn\\Runtime\\Runtime"
             ],
             "constructor": null,
             "cases": [],
-            "constants": [],
+            "constants": [
+                {
+                    "name": "ATTRIBUTES",
+                    "value": "'/([\\\\w-]+)\\\\s*=\\\\s*\"([^\"]*)\"(?:\\\\s|$)|([\\\\w-]+)\\\\s*=\\\\s*\\'([^\\']*)\\'(?:\\\\s|$)|([\\\\w-]+)\\\\s*=\\\\s*([^\\\\s\\'\"]+)(?:\\\\s|$)|\"([^\"]*)\"(?:\\\\s|$)|\\'([^\\']*)\\'(?:\\\\s|$)|(\\\\S+)(?:\\\\s|$)/'",
+                    "doc": "The attribute pattern shortcode_parse_atts reads by (get_shortcode_atts_regex).",
+                    "visibility": "public"
+                },
+                {
+                    "name": "SET_ASIDE",
+                    "value": "array (   '[' => '&#91;',   ']' => '&#93;', )",
+                    "doc": "",
+                    "visibility": "private"
+                },
+                {
+                    "name": "RESTORE",
+                    "value": "array (   '&#91;' => '[',   '&#93;' => ']', )",
+                    "doc": "",
+                    "visibility": "private"
+                }
+            ],
             "properties": [
                 {
                     "name": "tags",
@@ -123448,8 +123580,8 @@
                     "name": "apply",
                     "static": false,
                     "visibility": "public",
-                    "signature": "apply(string $content): string",
-                    "doc": "Content with the shortcodes run.",
+                    "signature": "apply(string $content, string $tags = 'run'): string",
+                    "doc": "Content with its shortcodes run (do_shortcode, probe shortcode-run):\nonly the registered names the text holds; inside HTML tags first\n(inTags: run, or with 'escape' as with ignore_html, left alone),\nthen in the text, each through run(); the brackets set aside as\nentities come back at the end. Images rendered meanwhile see the\ndo_shortcode context.",
                     "shapes": [],
                     "params": [
                         {
@@ -123458,10 +123590,75 @@
                             "shape": "",
                             "default": null,
                             "doc": ""
+                        },
+                        {
+                            "name": "tags",
+                            "type": "string",
+                            "shape": "",
+                            "default": "'run'",
+                            "doc": ""
                         }
                     ],
-                    "line": 95,
-                    "end": 109
+                    "line": 102,
+                    "end": 119
+                },
+                {
+                    "routes": [],
+                    "name": "run",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "run(array $m): string",
+                    "doc": "One matched shortcode (do_shortcode_tag): [[tag]] gives the tag as\nwritten; otherwise pre_do_shortcode_tag may answer, or the callback\nruns with the attributes, the content (\"\" when it closes itself) and\nthe name, and do_shortcode_tag sees the output in its brackets.",
+                    "shapes": [
+                        "@param array<int, string> $m the pattern's match"
+                    ],
+                    "params": [
+                        {
+                            "name": "m",
+                            "type": "array",
+                            "shape": "array<int, string>",
+                            "default": null,
+                            "doc": "the pattern's match"
+                        }
+                    ],
+                    "line": 129,
+                    "end": 146
+                },
+                {
+                    "routes": [],
+                    "name": "inTags",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "inTags(string $content, string $tags, array $names): string",
+                    "doc": "Shortcodes inside HTML tags (do_shortcodes_in_html_tags), run before\nthe text: a quoted attribute value's shortcode runs and the attribute\nis judged again by kses, kept when anything is left; an unquoted one\n(or one standing as a name or as the tag) runs as written. Comments,\nCDATA and, with 'escape', every tag are left alone. Brackets left in a\ntag (and entities already written for them) are set aside so the text\npass cannot reach them.",
+                    "shapes": [
+                        "@param list<string> $names"
+                    ],
+                    "params": [
+                        {
+                            "name": "content",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "tags",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "names",
+                            "type": "array",
+                            "shape": "list<string>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 159,
+                    "end": 184
                 },
                 {
                     "routes": [],
@@ -123469,7 +123666,7 @@
                     "static": false,
                     "visibility": "public",
                     "signature": "strip(string $content): string",
-                    "doc": "Content with the shortcodes removed.",
+                    "doc": "Content with its shortcodes taken out (strip_shortcodes): the names\nstrip_shortcodes_tagnames leaves, never inside a tag; [[tag]] gives\nthe tag as written.",
                     "shapes": [],
                     "params": [
                         {
@@ -123480,8 +123677,30 @@
                             "doc": ""
                         }
                     ],
-                    "line": 112,
-                    "end": 124
+                    "line": 191,
+                    "end": 200
+                },
+                {
+                    "routes": [],
+                    "name": "stripped",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "stripped(array $m): string",
+                    "doc": "One matched shortcode taken out (strip_shortcode_tag): its outer brackets stay, [[tag]] gives the tag. @param array<int, string> $m",
+                    "shapes": [
+                        "@param array<int, string> $m"
+                    ],
+                    "params": [
+                        {
+                            "name": "m",
+                            "type": "array",
+                            "shape": "array<int, string>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 203,
+                    "end": 206
                 },
                 {
                     "routes": [],
@@ -123489,9 +123708,9 @@
                     "static": true,
                     "visibility": "public",
                     "signature": "parse(string $text): array",
-                    "doc": "Shortcode attribute text as an array.",
+                    "doc": "Shortcode attribute text as an array (shortcode_parse_atts): no-break\nand zero-width spaces read as spaces; name=value pairs (names lower\ncase) and bare values in order, each a token followed by whitespace\nor the end, backslash escapes undone; a value holding \"<\" that is not\nwhole tags becomes \"\".",
                     "shapes": [
-                        "@return array<int|string, string> named attributes; bare words and quoted values keyed by position"
+                        "@return array<int|string, string>"
                     ],
                     "params": [
                         {
@@ -123502,8 +123721,67 @@
                             "doc": ""
                         }
                     ],
-                    "line": 131,
-                    "end": 154
+                    "line": 217,
+                    "end": 236
+                },
+                {
+                    "routes": [],
+                    "name": "present",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "present(string $content, array $names): array",
+                    "doc": "The names among those given that the text opens a bracket with.",
+                    "shapes": [
+                        "@param list<string> $names",
+                        "@return list<string>"
+                    ],
+                    "params": [
+                        {
+                            "name": "content",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "names",
+                            "type": "array",
+                            "shape": "list<string>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 250,
+                    "end": 257
+                },
+                {
+                    "routes": [],
+                    "name": "attributesRun",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "attributesRun(array $parts, Closure $run): string",
+                    "doc": "A tag's attributes with their shortcodes run, from elementParts().",
+                    "shapes": [
+                        "@param list<string> $parts"
+                    ],
+                    "params": [
+                        {
+                            "name": "parts",
+                            "type": "array",
+                            "shape": "list<string>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "run",
+                            "type": "Closure",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 264,
+                    "end": 285
                 }
             ]
         },
@@ -130271,6 +130549,7 @@
                 "Minn\\Runtime\\NavMenu",
                 "Minn\\Runtime\\OptionSanitizer",
                 "Minn\\Runtime\\UpdateCounts",
+                "Minn\\Support\\KsesAttributes",
                 "Minn\\Theme\\HeadLinks",
                 "Minn\\Widgets\\WidgetForms"
             ],
@@ -130640,7 +130919,7 @@
             "namespace": "Minn\\Support",
             "kind": "final class",
             "file": "public/minn/src/Minn/Support/Html.php",
-            "lines": 91,
+            "lines": 107,
             "doc": "",
             "implements": [],
             "extends": null,
@@ -130677,6 +130956,7 @@
                 "Minn\\Rest\\MediaObject",
                 "Minn\\Rest\\PluginsController",
                 "Minn\\Runtime\\PageMenu",
+                "Minn\\Runtime\\Shortcodes",
                 "Minn\\Theme\\ArchiveTitle",
                 "Minn\\Theme\\ClassicContent",
                 "Minn\\Theme\\ClassicRenderer",
@@ -130685,9 +130965,38 @@
             ],
             "constructor": null,
             "cases": [],
-            "constants": [],
+            "constants": [
+                {
+                    "name": "SPLIT",
+                    "value": "'/(<(?:!--.*?(?:-->|$)|!\\\\[CDATA\\\\[.*?(?:\\\\]\\\\]>|$)|[^>]*>?))/s'",
+                    "doc": "Markup's pieces of HTML: comments and CDATA whole (to the end when unclosed), else from \"<\" to the next \">\".",
+                    "visibility": "public"
+                }
+            ],
             "properties": [],
             "methods": [
+                {
+                    "routes": [],
+                    "name": "split",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "split(string $html): array",
+                    "doc": "Markup cut into text and HTML pieces, the HTML ones at the odd\npositions (wp_html_split): a comment or CDATA section is one piece\nwhatever it holds, and a \"<\" in text starts a piece that runs to the\nnext \">\".",
+                    "shapes": [
+                        "@return list<string>"
+                    ],
+                    "params": [
+                        {
+                            "name": "html",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 22,
+                    "end": 25
+                },
                 {
                     "routes": [],
                     "name": "esc",
@@ -130705,8 +131014,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 12,
-                    "end": 15
+                    "line": 28,
+                    "end": 31
                 },
                 {
                     "routes": [],
@@ -130725,8 +131034,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 18,
-                    "end": 21
+                    "line": 34,
+                    "end": 37
                 },
                 {
                     "routes": [],
@@ -130761,8 +131070,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 30,
-                    "end": 52
+                    "line": 46,
+                    "end": 68
                 },
                 {
                     "routes": [],
@@ -130788,8 +131097,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 55,
-                    "end": 62
+                    "line": 71,
+                    "end": 78
                 },
                 {
                     "routes": [],
@@ -130831,8 +131140,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 71,
-                    "end": 87
+                    "line": 87,
+                    "end": 103
                 },
                 {
                     "routes": [],
@@ -130851,8 +131160,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 95,
-                    "end": 98
+                    "line": 111,
+                    "end": 114
                 }
             ]
         },
@@ -130975,6 +131284,7 @@
                 "Minn\\Rest\\TermsController",
                 "Minn\\Rest\\UsersController",
                 "Minn\\Support\\Escape",
+                "Minn\\Support\\KsesAttributes",
                 "Minn\\Support\\KsesPolicy"
             ],
             "constructor": null,
@@ -131749,6 +132059,88 @@
             ]
         },
         {
+            "name": "Minn\\Support\\KsesAttributes",
+            "short": "KsesAttributes",
+            "namespace": "Minn\\Support",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Support/KsesAttributes.php",
+            "lines": 64,
+            "doc": "Kses one attribute at a time, for the shortcode pass that runs inside\nHTML tags: an opening tag cut into its attributes, and one attribute\njudged as kses judges it on its element. Probe shortcode-run.",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\Support\\Escape",
+                "Minn\\Support\\Kses",
+                "Minn\\Support\\KsesPolicy",
+                "Minn\\Support\\KsesValues"
+            ],
+            "usedBy": [
+                "Minn\\Runtime\\Shortcodes"
+            ],
+            "constructor": null,
+            "cases": [],
+            "constants": [],
+            "properties": [],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "elementParts",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "elementParts(string $element): ?array",
+                    "doc": "An opening tag cut as wp_kses_attr_parse cuts it: the start (\"<a \"),\neach attribute with the whitespace after it (a shortcode standing as\na name counts as one), and the end (\">\" or \"/>\"). Null for a closing\ntag, a comment, CDATA, or anything between the brackets that is not\nattributes.",
+                    "shapes": [
+                        "@return list<string>|null"
+                    ],
+                    "params": [
+                        {
+                            "name": "element",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 23,
+                    "end": 34
+                },
+                {
+                    "routes": [],
+                    "name": "oneAttribute",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "oneAttribute(string $attr, string $element, Minn\\Support\\KsesPolicy $policy): string",
+                    "doc": "One attribute as written, judged as kses judges it on the element\n(wp_kses_one_attr): the value escaped for an attribute and kept in its\nown quotes (a bare one gains double quotes), a URL's bad scheme cut\naway, style kept to the allowed properties; nothing when the element\nmay not carry it or a quoted value never closes. The whitespace\naround it stays.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "attr",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "element",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "policy",
+                            "type": "Minn\\Support\\KsesPolicy",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 44,
+                    "end": 74
+                }
+            ]
+        },
+        {
             "name": "Minn\\Support\\KsesEntities",
             "short": "KsesEntities",
             "namespace": "Minn\\Support",
@@ -131862,7 +132254,8 @@
                 "Minn\\Support\\KsesEntities"
             ],
             "usedBy": [
-                "Minn\\Support\\Kses"
+                "Minn\\Support\\Kses",
+                "Minn\\Support\\KsesAttributes"
             ],
             "constructor": {
                 "signature": "__construct(array $tags, array $prefixes, array $uriAttributes, array $schemes)",
@@ -132115,7 +132508,8 @@
             "extends": null,
             "uses": [],
             "usedBy": [
-                "Minn\\Support\\Kses"
+                "Minn\\Support\\Kses",
+                "Minn\\Support\\KsesAttributes"
             ],
             "constructor": null,
             "cases": [],
@@ -132227,8 +132621,8 @@
             "namespace": "Minn\\Support",
             "kind": "final class",
             "file": "public/minn/src/Minn/Support/Lists.php",
-            "lines": 135,
-            "doc": "List shaping behind the facade's array utilities: arguments over their\ndefaults (wp_parse_args), the multi-field sort\nwp_list_sort() promises (loose comparison per field, first difference\nwins) and the row-shape conversions wpdb hands back for its OBJECT_K /\nARRAY_A / ARRAY_N output formats.",
+            "lines": 190,
+            "doc": "List shaping behind the facade's array utilities: arguments over their\ndefaults (wp_parse_args), plucking and filtering (WP_List_Util), the multi-field sort\nwp_list_sort() promises (loose comparison per field, first difference\nwins) and the row-shape conversions wpdb hands back for its OBJECT_K /\nARRAY_A / ARRAY_N output formats.",
             "implements": [],
             "extends": null,
             "uses": [],
@@ -132284,6 +132678,80 @@
                 },
                 {
                     "routes": [],
+                    "name": "pluck",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "pluck(array $items, string|int $field, string|int|null $indexKey = NULL): array",
+                    "doc": "One field of each item (wp_list_pluck), keyed as the list was, or by\nanother field when one is named (items without it are appended);\nanything not an array or an object is passed over.",
+                    "shapes": [
+                        "@param array<array-key, mixed> $items",
+                        "@return array<array-key, mixed>"
+                    ],
+                    "params": [
+                        {
+                            "name": "items",
+                            "type": "array",
+                            "shape": "array<array-key, mixed>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "field",
+                            "type": "string|int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "indexKey",
+                            "type": "string|int|null",
+                            "shape": "",
+                            "default": "NULL",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 43,
+                    "end": 59
+                },
+                {
+                    "routes": [],
+                    "name": "filter",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "filter(array $items, array $fields, string $operator): array",
+                    "doc": "The items matching all the fields given (AND), any of them (OR), or\nnone (NOT), compared loosely, keys kept; nothing for another operator.",
+                    "shapes": [
+                        "@param array<array-key, mixed> $items @param array<array-key, mixed> $fields",
+                        "@return array<array-key, mixed>"
+                    ],
+                    "params": [
+                        {
+                            "name": "items",
+                            "type": "array",
+                            "shape": "array<array-key, mixed>",
+                            "default": null,
+                            "doc": "@param array<array-key, mixed> $fields"
+                        },
+                        {
+                            "name": "fields",
+                            "type": "array",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "operator",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 68,
+                    "end": 88
+                },
+                {
+                    "routes": [],
                     "name": "items",
                     "static": true,
                     "visibility": "public",
@@ -132301,8 +132769,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 42,
-                    "end": 48
+                    "line": 97,
+                    "end": 103
                 },
                 {
                     "routes": [],
@@ -132323,8 +132791,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 56,
-                    "end": 59
+                    "line": 111,
+                    "end": 114
                 },
                 {
                     "routes": [],
@@ -132361,8 +132829,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 68,
-                    "end": 88
+                    "line": 123,
+                    "end": 143
                 },
                 {
                     "routes": [],
@@ -132391,8 +132859,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 97,
-                    "end": 105
+                    "line": 152,
+                    "end": 160
                 },
                 {
                     "routes": [],
@@ -132445,8 +132913,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 118,
-                    "end": 130
+                    "line": 173,
+                    "end": 185
                 },
                 {
                     "routes": [],
@@ -132468,8 +132936,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 136,
-                    "end": 147
+                    "line": 191,
+                    "end": 202
                 }
             ]
         },

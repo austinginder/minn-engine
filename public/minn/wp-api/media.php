@@ -533,9 +533,29 @@ function wp_get_attachment_image_sizes($attachment_id, $size = 'medium', $image_
     return wp_calculate_image_sizes([absint($image[1]), absint($image[2])], $image[0], $image_meta, (int) $attachment_id);
 }
 
+/**
+ * srcset and sizes added to an image tag from its attachment's sizes
+ * (probe plugin-queue2): the tag's source, and its width and height (or
+ * those the source has among the sizes), pick the candidates; a sizes
+ * attribute already there is kept; an image edited since the tag was
+ * written is left alone.
+ */
 function wp_image_add_srcset_and_sizes($image, $image_meta, $attachment_id)
 {
-    return $image;
+    $src = preg_match('/src="([^"]+)"/', (string) $image, $found) ? explode('?', $found[1])[0] : '';
+    if (empty($image_meta['sizes']) || $src === '' || (preg_match('/-e[0-9]{13}/', (string) ($image_meta['file'] ?? ''), $edit) && !str_contains(wp_basename($src), $edit[0]))) {
+        return $image;
+    }
+    $width = preg_match('/ width="([0-9]+)"/', $image, $w) ? (int) $w[1] : 0;
+    $height = preg_match('/ height="([0-9]+)"/', $image, $h) ? (int) $h[1] : 0;
+    $size = $width && $height ? [$width, $height] : wp_image_src_get_dimensions($src, $image_meta, $attachment_id);
+    $srcset = $size ? wp_calculate_image_srcset($size, $src, $image_meta, $attachment_id) : false;
+    $sizes = $srcset ? (str_contains($image, ' sizes=') ?: wp_calculate_image_sizes($size, $src, $image_meta, $attachment_id)) : false;
+    if (!$srcset || !$sizes) {
+        return $image;
+    }
+    $attr = ' srcset="' . esc_attr($srcset) . '"' . (is_string($sizes) ? ' sizes="' . esc_attr($sizes) . '"' : '');
+    return preg_replace('/<img ([^>]+?)[\/ ]*>/', '<img $1' . $attr . ' />', $image);
 }
 
 function wp_get_attachment_caption($post_id = 0)
@@ -1498,4 +1518,112 @@ function get_taxonomies_for_attachments($output = 'names')
 function get_attached_media($type, $post = 0)
 {
     return Minn\Content\MediaShortcodes::attached((string) $type, $post);
+}
+
+/**
+ * A post's galleries (probe plugin-queue2): each [gallery] shortcode, run
+ * with the post as its default id, and each gallery block (inside other
+ * blocks too). As markup: the shortcode's output, an old block's HTML, or a
+ * new block's images in one figure. As data: the shortcode's attributes,
+ * or the block's ids, each with the image sources found.
+ */
+function get_post_galleries($post, $html = true)
+{
+    $post = get_post($post);
+    if (!$post || (!has_shortcode($post->post_content, 'gallery') && !has_block('gallery', $post->post_content))) {
+        return [];
+    }
+    $galleries = _minn_shortcode_galleries($post, (bool) $html);
+    if (has_block('gallery', $post->post_content)) {
+        array_push($galleries, ..._minn_block_galleries(parse_blocks($post->post_content), (bool) $html));
+    }
+    return apply_filters('get_post_galleries', $galleries, $post);
+}
+
+/** @internal a post's [gallery] shortcodes, as markup or as attributes with the sources in their output */
+function _minn_shortcode_galleries(WP_Post $post, bool $html): array
+{
+    $galleries = [];
+    preg_match_all('/' . get_shortcode_regex() . '/s', $post->post_content, $matches, PREG_SET_ORDER);
+    foreach ($matches as $shortcode) {
+        if ($shortcode[2] !== 'gallery') {
+            continue;
+        }
+        $attrs = shortcode_parse_atts($shortcode[3]);
+        $attrs = is_array($attrs) ? $attrs : [];
+        if (!isset($attrs['id'])) {
+            $shortcode[3] .= ' id="' . (int) $post->ID . '"';
+        }
+        $markup = do_shortcode_tag($shortcode);
+        $galleries[] = $html ? $markup : array_merge($attrs, ['src' => _minn_image_sources((string) $markup)]);
+    }
+    return $galleries;
+}
+
+/** @internal the gallery blocks in a tree, breadth first, in the shapes get_post_galleries gives */
+function _minn_block_galleries(array $blocks, bool $html): array
+{
+    $galleries = [];
+    while ($block = array_shift($blocks)) {
+        $inner = $block['innerBlocks'] ?? [];
+        if (($block['blockName'] ?? null) !== 'core/gallery') {
+            array_push($blocks, ...$inner);
+            continue;
+        }
+        if ($inner !== []) {
+            $ids = wp_list_pluck(wp_list_pluck($inner, 'attrs'), 'id');
+            $galleries[] = $html ? '<figure>' . implode(' ', wp_list_pluck($inner, 'innerHTML')) . '</figure>' : ['ids' => implode(',', $ids), 'src' => _minn_attachment_sources($ids)];
+            continue;
+        }
+        $ids = $block['attrs']['ids'] ?? [];
+        $galleries[] = match (true) {
+            $html => $block['innerHTML'],
+            $ids !== [] => ['ids' => implode(',', $ids), 'src' => _minn_attachment_sources($ids)],
+            default => ['src' => _minn_image_sources((string) $block['innerHTML'])],
+        };
+    }
+    return $galleries;
+}
+
+/** @internal each src attribute in markup, once */
+function _minn_image_sources(string $markup): array
+{
+    preg_match_all('#src=([\'"])(.+?)\1#is', $markup, $found, PREG_SET_ORDER);
+    return array_values(array_unique(array_column($found, 2)));
+}
+
+/** @internal the attachments' URLs, once each */
+function _minn_attachment_sources(array $ids): array
+{
+    $sources = [];
+    foreach ($ids as $id) {
+        $url = wp_get_attachment_url($id);
+        if (is_string($url) && !in_array($url, $sources, true)) {
+            $sources[] = $url;
+        }
+    }
+    return $sources;
+}
+
+/** The image sources of a post's first gallery. */
+function get_post_gallery_images($post = 0)
+{
+    $gallery = get_post_gallery($post, false);
+    return empty($gallery['src']) ? [] : $gallery['src'];
+}
+
+/** The image sources of each of a post's galleries. */
+function get_post_galleries_images($post = 0)
+{
+    $post = get_post($post);
+    return $post ? wp_list_pluck(get_post_galleries($post, false), 'src') : [];
+}
+
+/** srcset and sizes added to one image tag from its attachment's sizes, unless wp_img_tag_add_srcset_and_sizes_attr declines. */
+function wp_img_tag_add_srcset_and_sizes_attr($image, $context, $attachment_id)
+{
+    if (apply_filters('wp_img_tag_add_srcset_and_sizes_attr', true, $image, $context, $attachment_id) !== true) {
+        return $image;
+    }
+    return wp_image_add_srcset_and_sizes($image, wp_get_attachment_metadata($attachment_id), $attachment_id);
 }
