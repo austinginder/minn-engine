@@ -10,7 +10,7 @@ the minn-admin/v1 namespace and serving the Minn Admin app
 | [`App`](#app) | final readonly class | 98 | The Minn Admin app on disk: the symlinked dev copy the engine serves the |
 | [`AppController`](#appcontroller) | final readonly class | 118 | Serves Minn Admin from the engine: the path-routed shell (every |
 | [`Appearance`](#appearance) | final readonly class | 82 | A person's Minn Admin appearance: the colour scheme and its custom |
-| [`BootPayload`](#bootpayload) | final readonly class | 234 | The window.MINN boot payload, assembled from the engine: the keys app.js |
+| [`BootPayload`](#bootpayload) | final readonly class | 245 | The window.MINN boot payload, assembled from the engine: the keys app.js |
 | [`BundleController`](#bundlecontroller) | final readonly class | 45 | What the app bundle answers for: the user guide it carries, the |
 | [`Dashboard`](#dashboard) | final readonly class | 273 | The overview payload: stat cards, the activity chart, and the recent |
 | [`EditorController`](#editorcontroller) | final readonly class | 45 | The editor's helpers in minn-admin/v1: the edit lock, and the template |
@@ -309,7 +309,7 @@ The site's name, or Site when it has none.
 
 The window.MINN payload the app boots from, for one signed-in session.
 
-Internals: `userSlice()` (private, line 91), `siteSlice()` (private, line 108), `commerce()` (private, line 134), `caps()` (private, line 146), `pluginPayload()` (private, line 194), `standHomeQuery()` (private, line 216), `adapterSlices()` (private, line 234)
+Internals: `userSlice()` (private, line 91), `siteSlice()` (private, line 108), `commerce()` (private, line 134), `caps()` (private, line 146), `pluginPayload()` (private, line 205), `standHomeQuery()` (private, line 227), `adapterSlices()` (private, line 245)
 
 
 ## BundleController

@@ -147,6 +147,10 @@ final readonly class BootPayload
     {
         $wc = self::commerce($plugin);
         $can = fn (string $capability): bool => $this->capabilities->can($userId, $capability);
+        // A key Minn Admin adds before the engine knows it still arrives (from
+        // the plugin's own boot_caps when it runs as code); the engine's answer
+        // wins wherever it gives one.
+        $fromPlugin = is_array($plugin['caps'] ?? null) ? array_filter($plugin['caps'], 'is_bool') : [];
         return [
 
             'plugins' => $can('activate_plugins'),
@@ -158,6 +162,12 @@ final readonly class BootPayload
             'updateThemes' => $can('update_themes'),
             'updateLanguages' => false,
             'installThemes' => $can('install_themes'),
+            // Uploading a zip, or installing from a URL or GitHub release (the
+            // only installs that run on the engine), is core's separate gate.
+            'uploadPlugins' => $can('upload_plugins'),
+            'uploadThemes' => $can('upload_themes'),
+            // The System page's routes sit behind manage_options here.
+            'system' => $can('manage_options'),
             'licenses' => function_exists('minn_admin_licenses_can_manage') ? (bool) \minn_admin_licenses_can_manage() : false,
             'deleteUsers' => $can('delete_users'),
             'removeUsers' => false,
@@ -168,6 +178,7 @@ final readonly class BootPayload
             'coupons' => $wc && (!function_exists('wc_coupons_enabled') || \wc_coupons_enabled()) && $can('edit_shop_coupons'),
             'customers' => $wc && ($can('manage_woocommerce') || $can('edit_shop_orders')),
             'subscriptions' => $wc && class_exists('WC_Subscriptions', false) && $can('edit_shop_orders'),
+            'storeSettings' => $wc && $can('manage_woocommerce'),
             'settings' => $can('manage_options'),
             'moderate' => $can('moderate_comments'),
             'terms' => $can('manage_categories'),
@@ -181,7 +192,7 @@ final readonly class BootPayload
             'promoteUsers' => $can('promote_users'),
             'themeOptions' => $can('edit_theme_options'),
             'editCss' => $can('edit_css'),
-        ];
+        ] + $fromPlugin;
     }
 
     /**

@@ -1272,7 +1272,7 @@
             "namespace": "Minn\\Admin",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Admin/BootPayload.php",
-            "lines": 234,
+            "lines": 245,
             "doc": "The window.MINN boot payload, assembled from the engine: the keys app.js\nneeds to boot and drive the wp/v2 surface, with capabilities from the\nengine's own model.",
             "implements": [],
             "extends": null,
@@ -1599,7 +1599,7 @@
                         }
                     ],
                     "line": 146,
-                    "end": 185
+                    "end": 196
                 },
                 {
                     "routes": [],
@@ -1610,8 +1610,8 @@
                     "doc": "What Minn Admin's own boot_payload() computes when the plugin runs as\ncode on the runtime, so the app boots with the same keys on both\nstacks (connectors, discussion defaults, roles, post formats, the\nadapter flags). Engine-owned keys win; the withheld ones would send\nthe app to a wp-admin page the engine does not have.",
                     "shapes": [],
                     "params": [],
-                    "line": 194,
-                    "end": 207
+                    "line": 205,
+                    "end": 218
                 },
                 {
                     "routes": [],
@@ -1622,8 +1622,8 @@
                     "doc": "The reference serves the app shell from the home query, so the global\npost is the newest post while the payload is built; the comments\nfeature check reads it through the comments_open filter (a site that\ncloses comments on old posts reports the feature off when its newest\npost is old).",
                     "shapes": [],
                     "params": [],
-                    "line": 216,
-                    "end": 227
+                    "line": 227,
+                    "end": 238
                 },
                 {
                     "routes": [],
@@ -1634,8 +1634,8 @@
                     "doc": "What Minn Admin's own adapters contribute when the plugin runs as code\non the runtime: plugin surfaces (Tools), editor panels, design\nsources, editor commands, block forms. Absent, the app's fallbacks apply.",
                     "shapes": [],
                     "params": [],
-                    "line": 234,
-                    "end": 253
+                    "line": 245,
+                    "end": 264
                 }
             ]
         },

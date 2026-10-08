@@ -165,6 +165,24 @@ $check('route catalogue: contracts/api/routes.json is current', is_array($catalo
 $leafCeiling = 13;
 $check("facade map: leaf functions over fifteen lines stay at or under {$leafCeiling}", is_array($mapping) && ($mapping['leafLinesOver15'] ?? PHP_INT_MAX) <= $leafCeiling, (string) ($mapping['leafLinesOver15'] ?? '?'));
 
+// The app reads each capability flag by name, and a flag the boot payload lacks reads as false (an
+// empty Add plugin dialog once uploadPlugins was new). Where Minn Admin is linked in, every key its
+// boot_caps names must be one the engine computes too.
+$adminCaps = dirname(__DIR__) . '/public/minn/admin/includes/class-minn-admin.php';
+if (is_file($adminCaps)) {
+    $keys = static function (string $source, string $start, string $end): array {
+        $from = strpos($source, $start);
+        $body = $from === false ? '' : substr($source, $from, (strpos($source, $end, $from) ?: strlen($source)) - $from);
+        preg_match_all("/^\\s*'([A-Za-z]+)'\\s*=>/m", $body, $m);
+        return $m[1];
+    };
+    $missingCaps = array_values(array_diff(
+        $keys((string) file_get_contents($adminCaps), 'function boot_caps', "\n\t}"),
+        $keys((string) file_get_contents("{$root}/Minn/Admin/BootPayload.php"), 'private function caps', "\n    }"),
+    ));
+    $check('boot payload: the engine computes every capability flag Minn Admin names', $missingCaps === [], implode(', ', $missingCaps));
+}
+
 // The whole reference API: every function, class and public or protected
 // method resolves (real, a dead end, or a placeholder still owed) or is
 // missing, and fatals when called. public/minn/data/deadend-symbols.json
