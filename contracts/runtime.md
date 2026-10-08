@@ -6607,3 +6607,38 @@ nothing now.
   post the reader may read, and for a protected status (draft, pending,
   scheduled) asked for as a sample (`$sample`, or a post whose `filter` is
   `sample`); true otherwise, and for no post.
+
+## general-template.php's remaining tags (2026-10-08)
+
+Probe `general-template-more` (`tests/tools/general-template-more-probe.php`).
+Twelve functions (in `wp-api/template.php`, with the other general-template
+tags); two admin dead ends.
+
+- `allowed_tags` writes `$allowedtags` as `<tag attr=""> ` runs, escaped with
+  `htmlentities`. `wp_required_field_indicator` is `<span class="required">*</span>`
+  and `wp_required_field_message` wraps "Required fields are marked {mark}" in
+  `required-field-message`, each through its filter.
+- **Tooltips.** `wp_get_tooltip` (and `wp_get_tooltip_helper`, the same markup)
+  is a help button labelled with the text (tags stripped) and a `popover="hint"`
+  bubble holding it escaped; `wp_get_toggletip` a button and a `popover="auto"`
+  dialog labelled `label` ("Help"), with a close button. `icon` follows
+  "dashicons " (`dashicons-editor-help` by default), `class` is added, `id`
+  names the bubble (and `{id}-text`), else `wp-tooltip-{n}`: every tooltip made
+  takes a number, given an id or not, except an empty one, which prints nothing.
+- `get_the_post_type_description` is the queried post type's description
+  through its filter (with the post type object), texturized, `convert_chars`
+  and paragraphed by default; nothing off an archive.
+- `the_date_xml` prints the post date as `Y-m-d`; `the_weekday` its weekday
+  (`the_weekday`); `the_weekday_date` the weekday between before and after only
+  when it differs from the last one printed (`$previousweekday`), through
+  `the_weekday_date` (text, before, after).
+- `wp_dependencies_unique_hosts`: the hosts of the queued scripts, then
+  styles, each once, the request's `SERVER_NAME` left out; registered but
+  unqueued and relative sources add none.
+- `wp_preload_resources` prints `<link rel='preload' … />` for each
+  `wp_preload_resources` entry that has an `href` or an `imagesrcset`, once per
+  value, keeping only `href` (as `esc_url` with http and https), `as`,
+  `crossorigin`, `type`, `media`, `imagesrcset`, `imagesizes` and
+  `fetchpriority` (exact keys), in the order given.
+- **Dead ends.** `register_admin_color_schemes` and `wp_admin_css_uri` are the
+  wp-admin colour schemes and stylesheet: admin.

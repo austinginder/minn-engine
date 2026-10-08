@@ -3,12 +3,12 @@
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line), placeholder (generated stub, behaviour still owed), deadend (generated stub for wp-admin, the editors, the Customizer or XML-RPC, inert by design); \"deadend\" on any entry names its dead-end area",
     "summary": {
         "minn": 742,
-        "composes": 1548,
-        "leaf": 760,
-        "noop": 2438,
+        "composes": 1555,
+        "leaf": 762,
+        "noop": 2442,
         "placeholder": 281,
-        "deadend": 1594,
-        "functions": 7286,
+        "deadend": 1596,
+        "functions": 7301,
         "minnMethods": 892,
         "leafLinesOver15": 13
     },
@@ -28371,6 +28371,13 @@
             ],
             "composes": []
         },
+        "_minn_tooltip_id": {
+            "file": "template.php",
+            "lines": 3,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
         "_minn_traverse_block": {
             "file": "blocks.php",
             "lines": 18,
@@ -30897,6 +30904,13 @@
             "minn": [],
             "composes": [],
             "deadend": "admin"
+        },
+        "allowed_tags": {
+            "file": "template.php",
+            "lines": 10,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
         },
         "antispambot": {
             "file": "formatting.php",
@@ -40381,6 +40395,18 @@
                 "wp_get_attachment_image_url"
             ]
         },
+        "get_the_post_type_description": {
+            "file": "template.php",
+            "lines": 4,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "apply_filters",
+                "get_post_type_object",
+                "get_query_var",
+                "reset"
+            ]
+        },
         "get_the_posts_navigation": {
             "file": "link-template.php",
             "lines": 17,
@@ -45018,6 +45044,14 @@
                 "plugin_basename"
             ]
         },
+        "register_admin_color_schemes": {
+            "file": "deadends.php",
+            "lines": 2,
+            "kind": "deadend",
+            "minn": [],
+            "composes": [],
+            "deadend": "admin"
+        },
         "register_and_do_post_meta_boxes": {
             "file": "deadends.php",
             "lines": 2,
@@ -49626,6 +49660,15 @@
                 "is_new_day"
             ]
         },
+        "the_date_xml": {
+            "file": "template.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "get_post_time"
+            ]
+        },
         "the_editor": {
             "file": "deadends.php",
             "lines": 1,
@@ -49951,6 +49994,28 @@
             "minn": [],
             "composes": [
                 "get_the_title_rss"
+            ]
+        },
+        "the_weekday": {
+            "file": "template.php",
+            "lines": 5,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "apply_filters",
+                "get_post",
+                "get_post_time"
+            ]
+        },
+        "the_weekday_date": {
+            "file": "template.php",
+            "lines": 12,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "apply_filters",
+                "get_post",
+                "get_post_time"
             ]
         },
         "the_widget": {
@@ -52034,6 +52099,14 @@
             "kind": "placeholder",
             "minn": [],
             "composes": []
+        },
+        "wp_admin_css_uri": {
+            "file": "deadends.php",
+            "lines": 2,
+            "kind": "deadend",
+            "minn": [],
+            "composes": [],
+            "deadend": "admin"
         },
         "wp_admin_headers": {
             "file": "functions.php",
@@ -54760,6 +54833,17 @@
             ],
             "deadend": "admin"
         },
+        "wp_dependencies_unique_hosts": {
+            "file": "template.php",
+            "lines": 12,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "wp_parse_url",
+                "wp_scripts",
+                "wp_styles"
+            ]
+        },
         "wp_dequeue_script": {
             "file": "script-loader.php",
             "lines": 1,
@@ -57210,6 +57294,40 @@
             "minn": [],
             "composes": [
                 "get_theme_root"
+            ]
+        },
+        "wp_get_toggletip": {
+            "file": "template.php",
+            "lines": 11,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "__",
+                "_minn_tooltip_id",
+                "esc_attr",
+                "esc_attr__",
+                "esc_html"
+            ]
+        },
+        "wp_get_tooltip": {
+            "file": "template.php",
+            "lines": 9,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "_minn_tooltip_id",
+                "esc_attr",
+                "esc_html",
+                "wp_strip_all_tags"
+            ]
+        },
+        "wp_get_tooltip_helper": {
+            "file": "template.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "wp_get_tooltip"
             ]
         },
         "wp_get_translation_updates": {
@@ -60084,6 +60202,17 @@
             "composes": [],
             "deadend": "admin"
         },
+        "wp_preload_resources": {
+            "file": "template.php",
+            "lines": 17,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "apply_filters",
+                "esc_attr",
+                "esc_url"
+            ]
+        },
         "wp_prepare_attachment_for_js": {
             "file": "media.php",
             "lines": 25,
@@ -61415,6 +61544,27 @@
             "composes": [
                 "home_url",
                 "wp_should_replace_insecure_home_url"
+            ]
+        },
+        "wp_required_field_indicator": {
+            "file": "template.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "apply_filters",
+                "esc_html__"
+            ]
+        },
+        "wp_required_field_message": {
+            "file": "template.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "__",
+                "apply_filters",
+                "wp_required_field_indicator"
             ]
         },
         "wp_reschedule_event": {

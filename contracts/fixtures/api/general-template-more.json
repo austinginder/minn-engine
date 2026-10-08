@@ -1,0 +1,93 @@
+[
+    [
+        "allowed tags",
+        "&lt;a href=&quot;&quot; title=&quot;&quot;&gt; &lt;abbr title=&quot;&quot;&gt; &lt;acronym title=&quot;&quot;&gt; &lt;b&gt; &lt;blockquote cite=&quot;&quot;&gt; &lt;cite&gt; &lt;code&gt; &lt;del datetime=&quot;&quot;&gt; &lt;em&gt; &lt;i&gt; &lt;q cite=&quot;&quot;&gt; &lt;s&gt; &lt;strike&gt; &lt;strong&gt; "
+    ],
+    [
+        "allowed tags, another list",
+        "&lt;b&gt; &lt;a href=&quot;&quot; rel=&quot;&quot;&gt; &lt;span class=&quot;&quot; data-x=&quot;&quot;&gt; "
+    ],
+    [
+        "required fields",
+        [
+            "<span class=\"required\">*</span>",
+            "<span class=\"required-field-message\">Required fields are marked <span class=\"required\">*</span></span>"
+        ]
+    ],
+    [
+        "required fields, filtered",
+        [
+            "<span class=\"required\">(required)</span>",
+            "<p><span class=\"required-field-message\">Required fields are marked <span class=\"required\">(required)</span></span></p>"
+        ]
+    ],
+    [
+        "tooltips",
+        [
+            "<span class=\"wp-tooltip wp-is-tooltip\">\n\t\t\t\t<button class=\"wp-tooltip__toggle\" type=\"button\" aria-label=\"Tip text\"><span class=\"dashicons dashicons-editor-help\" aria-hidden=\"true\"></span></button>\n\t\t\t\t<span popover=\"hint\" id=\"wp-tooltip-1\" class=\"wp-tooltip__bubble\" role=\"tooltip\"><span id=\"wp-tooltip-1-text\" class=\"wp-tooltip__text\">Tip text</span></span></span>",
+            "<span class=\"wp-tooltip wp-is-tooltip extra one\">\n\t\t\t\t<button class=\"wp-tooltip__toggle\" type=\"button\" aria-label=\"Tip bold &amp; &quot;quoted&quot;\"><span class=\"dashicons dashicons dashicons-info\" aria-hidden=\"true\"></span></button>\n\t\t\t\t<span popover=\"hint\" id=\"zz-tip\" class=\"wp-tooltip__bubble\" role=\"tooltip\"><span id=\"zz-tip-text\" class=\"wp-tooltip__text\">Tip &lt;b&gt;bold&lt;/b&gt; &amp; &quot;quoted&quot;</span></span></span>",
+            "<span class=\"wp-tooltip wp-is-toggletip\">\n\t\t\t\t<button aria-haspopup=\"dialog\" class=\"wp-tooltip__toggle\" popovertarget=\"wp-tooltip-3\" type=\"button\" aria-label=\"Help\"><span class=\"dashicons dashicons-editor-help\" aria-hidden=\"true\"></span></button>\n\t\t\t\t<span popover=\"auto\" id=\"wp-tooltip-3\" class=\"wp-tooltip__bubble\" role=\"dialog\" aria-label=\"Help\" tabindex=\"-1\" autofocus><span id=\"wp-tooltip-3-text\" class=\"wp-tooltip__text\">Help text</span><button type=\"button\" class=\"wp-tooltip__close\" popovertarget=\"wp-tooltip-3\" popovertargetaction=\"hide\" aria-label=\"Close\"><span class=\"dashicons dashicons-no-alt\" aria-hidden=\"true\"></span></button></span></span>",
+            "<span class=\"wp-tooltip wp-is-toggletip c\">\n\t\t\t\t<button aria-haspopup=\"dialog\" class=\"wp-tooltip__toggle\" popovertarget=\"zz-toggle\" type=\"button\" aria-label=\"More &quot;info&quot;\"><span class=\"dashicons my-icon\" aria-hidden=\"true\"></span></button>\n\t\t\t\t<span popover=\"auto\" id=\"zz-toggle\" class=\"wp-tooltip__bubble\" role=\"dialog\" aria-label=\"More &quot;info&quot;\" tabindex=\"-1\" autofocus><span id=\"zz-toggle-text\" class=\"wp-tooltip__text\">Help &lt;i&gt;it&lt;/i&gt;</span><button type=\"button\" class=\"wp-tooltip__close\" popovertarget=\"zz-toggle\" popovertargetaction=\"hide\" aria-label=\"Close\"><span class=\"dashicons dashicons-no-alt\" aria-hidden=\"true\"></span></button></span></span>",
+            "<span class=\"wp-tooltip wp-is-tooltip\">\n\t\t\t\t<button class=\"wp-tooltip__toggle\" type=\"button\" aria-label=\"Helper text\"><span class=\"dashicons dashicons-editor-help\" aria-hidden=\"true\"></span></button>\n\t\t\t\t<span popover=\"hint\" id=\"wp-tooltip-5\" class=\"wp-tooltip__bubble\" role=\"tooltip\"><span id=\"wp-tooltip-5-text\" class=\"wp-tooltip__text\">Helper text</span></span></span>",
+            "<span class=\"wp-tooltip wp-is-tooltip y\">\n\t\t\t\t<button class=\"wp-tooltip__toggle\" type=\"button\" aria-label=\"Helper\"><span class=\"dashicons x\" aria-hidden=\"true\"></span></button>\n\t\t\t\t<span popover=\"hint\" id=\"zz-helper\" class=\"wp-tooltip__bubble\" role=\"tooltip\"><span id=\"zz-helper-text\" class=\"wp-tooltip__text\">Helper</span></span></span>",
+            "",
+            "<span class=\"wp-tooltip wp-is-tooltip\">\n\t\t\t\t<button class=\"wp-tooltip__toggle\" type=\"button\" aria-label=\"Unlisted\"><span class=\"dashicons dashicons-editor-help\" aria-hidden=\"true\"></span></button>\n\t\t\t\t<span popover=\"hint\" id=\"wp-tooltip-7\" class=\"wp-tooltip__bubble\" role=\"tooltip\"><span id=\"wp-tooltip-7-text\" class=\"wp-tooltip__text\">Unlisted</span></span></span>"
+        ]
+    ],
+    [
+        "post type descriptions",
+        [
+            "<p>About <b>zz</b> things.</p>\n",
+            "",
+            "",
+            "<p>About <b>zz</b> things.</p>\n [zz_desc]"
+        ]
+    ],
+    [
+        "dates and weekdays",
+        [
+            [
+                "1990-03-07",
+                "Wednesday",
+                "<b>Wednesday</b>"
+            ],
+            [
+                "1990-03-07",
+                "Wednesday",
+                ""
+            ],
+            [
+                "1990-03-08",
+                "Thursday",
+                "<b>Thursday</b>"
+            ]
+        ]
+    ],
+    [
+        "weekdays, filtered",
+        [
+            "THURSDAY",
+            "[THURSDAY]"
+        ]
+    ],
+    [
+        "asset hosts, none external",
+        []
+    ],
+    [
+        "asset hosts",
+        [
+            "cdn-a.example",
+            "cdn-d.example",
+            "cdn-b.example"
+        ]
+    ],
+    [
+        "preload links, none asked for",
+        ""
+    ],
+    [
+        "preload links",
+        "<link rel='preload' href='https://cdn.example/font.woff2' as='font' type='font/woff2' crossorigin='anonymous' />\n<link rel='preload' href='/hero.jpg' as='image' imagesrcset='/hero-640.jpg 640w, /hero.jpg 1280w' imagesizes='100vw' media='(min-width: 600px)' />\n<link rel='preload' href='https://cdn.example/app.js' as='script' fetchpriority='high' />\n<link rel='preload' href='/no-as.css' />\n<link rel='preload' imagesrcset='/only-srcset.jpg 1x' as='image' />\n<link rel='preload' href='/a.js' as='script' />\n<link rel='preload' href='/b.css' as='style' crossorigin='1' />\n<link rel='preload' href='/d.css' />\n<link rel='preload' href='/e.css?x=&#039;y&#039;&#038;z=1' as='style' media='print and (max-width: &quot;x&quot;)' />\n"
+    ]
+]

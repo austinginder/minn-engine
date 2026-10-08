@@ -1789,6 +1789,12 @@ function refresh_user_details($id)
     return null;
 }
 
+function register_admin_color_schemes()
+{
+    \Minn\Runtime\PlaceholderTrace::hit('register_admin_color_schemes');
+    return null;
+}
+
 function register_and_do_post_meta_boxes($post)
 {
     \Minn\Runtime\PlaceholderTrace::hit('register_and_do_post_meta_boxes');
@@ -2362,6 +2368,12 @@ function wp_add_iframed_editor_assets_html()
 function wp_admin_canonical_url()
 {
     \Minn\Runtime\PlaceholderTrace::hit('wp_admin_canonical_url');
+    return null;
+}
+
+function wp_admin_css_uri($file = 'wp-admin')
+{
+    \Minn\Runtime\PlaceholderTrace::hit('wp_admin_css_uri');
     return null;
 }
 

@@ -1039,3 +1039,168 @@ function page_template_dropdown($default_template = '', $post_type = 'page')
         echo "\n\t<option value='" . esc_attr($file) . "' " . selected($default_template, $file, false) . '>' . esc_html($name) . '</option>';
     }
 }
+
+/** The tags and attributes a comment may use ($allowedtags), as the form's hint prints them, escaped for HTML. */
+function allowed_tags()
+{
+    global $allowedtags;
+    $allowed = '';
+    foreach ((array) $allowedtags as $tag => $attributes) {
+        $allowed .= '<' . $tag;
+        foreach (array_keys((array) $attributes) as $attribute) {
+            $allowed .= ' ' . $attribute . '=""';
+        }
+        $allowed .= '> ';
+    }
+    return htmlentities($allowed);
+}
+
+/** The mark of a required form field (wp_required_field_indicator filters it). */
+function wp_required_field_indicator()
+{
+    return apply_filters('wp_required_field_indicator', '<span class="required">' . esc_html__('*') . '</span>');
+}
+
+/** The note that explains the required-field mark (wp_required_field_message filters it). */
+function wp_required_field_message()
+{
+    return apply_filters('wp_required_field_message', '<span class="required-field-message">' . sprintf(__('Required fields are marked %s'), wp_required_field_indicator()) . '</span>');
+}
+
+/** @internal a tooltip's id: the one given, else wp-tooltip-{n}; every tooltip made counts, given an id or not */
+function _minn_tooltip_id(array $args): string
+{
+    static $count = 0;
+    $count++;
+    return isset($args['id']) && $args['id'] !== '' ? (string) $args['id'] : 'wp-tooltip-' . $count;
+}
+
+/**
+ * A hover tooltip (probe general-template-more): a help button labelled with
+ * the text (tags stripped) and a hint popover holding it, escaped. args:
+ * icon (after "dashicons "), class, id. Nothing for no text.
+ */
+function wp_get_tooltip($content, $args = [])
+{
+    $content = (string) $content;
+    if ($content === '') {
+        return '';
+    }
+    $args = (array) $args;
+    $id = _minn_tooltip_id($args);
+    return '<span class="wp-tooltip wp-is-tooltip' . (!empty($args['class']) ? ' ' . esc_attr((string) $args['class']) : '') . '">' . "\n\t\t\t\t"
+        . '<button class="wp-tooltip__toggle" type="button" aria-label="' . esc_attr(wp_strip_all_tags($content)) . '"><span class="' . esc_attr('dashicons ' . ($args['icon'] ?? 'dashicons-editor-help')) . '" aria-hidden="true"></span></button>' . "\n\t\t\t\t"
+        . '<span popover="hint" id="' . esc_attr($id) . '" class="wp-tooltip__bubble" role="tooltip"><span id="' . esc_attr($id . '-text') . '" class="wp-tooltip__text">' . esc_html($content) . '</span></span></span>';
+}
+
+/** A help tooltip; the same markup as wp_get_tooltip. */
+function wp_get_tooltip_helper($content, $args = [])
+{
+    return wp_get_tooltip($content, $args);
+}
+
+/**
+ * A click-to-open toggletip: a button and a dialog popover labelled with
+ * args label ("Help" by default), the text escaped, and a close button.
+ * args: label, icon, class, id. Nothing for no text.
+ */
+function wp_get_toggletip($content, $args = [])
+{
+    $content = (string) $content;
+    if ($content === '') {
+        return '';
+    }
+    $args = (array) $args;
+    $id = esc_attr(_minn_tooltip_id($args));
+    $label = esc_attr((string) ($args['label'] ?? __('Help')));
+    return '<span class="wp-tooltip wp-is-toggletip' . (!empty($args['class']) ? ' ' . esc_attr((string) $args['class']) : '') . '">' . "\n\t\t\t\t"
+        . '<button aria-haspopup="dialog" class="wp-tooltip__toggle" popovertarget="' . $id . '" type="button" aria-label="' . $label . '"><span class="' . esc_attr('dashicons ' . ($args['icon'] ?? 'dashicons-editor-help')) . '" aria-hidden="true"></span></button>' . "\n\t\t\t\t"
+        . '<span popover="auto" id="' . $id . '" class="wp-tooltip__bubble" role="dialog" aria-label="' . $label . '" tabindex="-1" autofocus><span id="' . $id . '-text" class="wp-tooltip__text">' . esc_html($content) . '</span>'
+        . '<button type="button" class="wp-tooltip__close" popovertarget="' . $id . '" popovertargetaction="hide" aria-label="' . esc_attr__('Close') . '"><span class="dashicons dashicons-no-alt" aria-hidden="true"></span></button></span></span>';
+}
+
+/** A post type archive's description (get_the_post_type_description filters it; texturized and paragraphed by default). */
+function get_the_post_type_description()
+{
+    $type = get_query_var('post_type');
+    $type = is_array($type) ? reset($type) : $type;
+    $object = get_post_type_object((string) $type);
+    return apply_filters('get_the_post_type_description', $object->description ?? '', $object);
+}
+
+/** Prints the current post's date as Y-m-d. */
+function the_date_xml()
+{
+    echo get_post_time('Y-m-d');
+}
+
+/** Prints the weekday of the current post's date (the_weekday filters it). */
+function the_weekday()
+{
+    $post = get_post();
+    if (!$post) {
+        return;
+    }
+    echo apply_filters('the_weekday', $GLOBALS['wp_locale']->get_weekday(get_post_time('w', false, $post)));
+}
+
+/** Prints the current post's weekday once per day in a loop ($previousweekday), between before and after; the_weekday_date filters it. */
+function the_weekday_date($before = '', $after = '')
+{
+    global $previousweekday;
+    $post = get_post();
+    if (!$post) {
+        return;
+    }
+    $weekday = $GLOBALS['wp_locale']->get_weekday(get_post_time('w', false, $post));
+    $out = '';
+    if ($previousweekday !== $weekday) {
+        $out = $before . $weekday . $after;
+        $previousweekday = $weekday;
+    }
+    echo apply_filters('the_weekday_date', $out, $before, $after);
+}
+
+/** The external hosts the queued scripts, then styles, load from, each once, the site's own server left out (for resource hints). */
+function wp_dependencies_unique_hosts()
+{
+    $hosts = [];
+    $own = $_SERVER['SERVER_NAME'] ?? '';
+    foreach ([wp_scripts(), wp_styles()] as $registry) {
+        $registry->sync();
+        foreach ((array) $registry->queue as $handle) {
+            $host = isset($registry->registered[$handle]) ? (string) wp_parse_url((string) $registry->registered[$handle]->src, PHP_URL_HOST) : '';
+            if ($host !== '' && $host !== $own && !in_array($host, $hosts, true)) {
+                $hosts[] = $host;
+            }
+        }
+    }
+    return $hosts;
+}
+
+/**
+ * Prints a <link rel='preload'> for each resource wp_preload_resources asks
+ * for: each needs an href or an imagesrcset and is printed once; only href,
+ * as, crossorigin, type, media, imagesrcset, imagesizes and fetchpriority are
+ * kept, in the order given.
+ */
+function wp_preload_resources()
+{
+    $resources = apply_filters('wp_preload_resources', []);
+    $unique = [];
+    foreach (is_array($resources) ? $resources : [] as $resource) {
+        $key = is_array($resource) ? ($resource['href'] ?? $resource['imagesrcset'] ?? null) : null;
+        if (is_string($key) && !isset($unique[$key])) {
+            $unique[$key] = $resource;
+        }
+    }
+    foreach ($unique as $resource) {
+        $html = [];
+        foreach ($resource as $name => $value) {
+            if (is_scalar($value) && in_array($name, ['href', 'as', 'crossorigin', 'type', 'media', 'imagesrcset', 'imagesizes', 'fetchpriority'], true)) {
+                $html[] = $name . "='" . ($name === 'href' ? esc_url((string) $value, ['http', 'https']) : esc_attr((string) $value)) . "'";
+            }
+        }
+        printf("<link rel='preload' %s />\n", implode(' ', $html));
+    }
+}

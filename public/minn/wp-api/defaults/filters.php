@@ -81,6 +81,11 @@ add_filter('term_name', 'esc_html');
 add_filter('term_name', '_wp_specialchars', 30);
 add_filter('term_name_rss', 'convert_chars');
 add_filter('term_description', 'wptexturize');
+// A post type archive's description is dressed as a term's is (probe general-template-more).
+add_filter('get_the_post_type_description', 'wptexturize');
+add_filter('get_the_post_type_description', 'convert_chars');
+add_filter('get_the_post_type_description', 'wpautop');
+add_filter('get_the_post_type_description', 'shortcode_unautop');
 add_filter('term_description', 'convert_chars');
 add_filter('term_description', 'wpautop');
 add_filter('term_description', 'shortcode_unautop');
