@@ -24,6 +24,9 @@ final class TextDomains
     /** @var array<string, true> */
     private array $closed = [];
 
+    /** @var array<string, true> domains named a folder since they were last looked for in vain */
+    private array $lookAgain = [];
+
     /** Adds a loaded file to a domain; a file already loaded there is not added twice. */
     public function add(string $domain, string $file, Catalog $catalog): void
     {
@@ -49,6 +52,18 @@ final class TextDomains
     public function markKnown(string $domain): void
     {
         $this->loaded[$domain] ??= [];
+        unset($this->lookAgain[$domain]);
+    }
+
+    /**
+     * Whether a translation lookup should look for the domain's files: it was
+     * never looked for, or nothing was found and a folder has been named for
+     * it since (the reference looks again after each load_plugin_textdomain;
+     * probe plugin-data).
+     */
+    public function waiting(string $domain): bool
+    {
+        return !$this->known($domain) || isset($this->lookAgain[$domain]);
     }
 
     /** Whether the domain was loaded or looked for. */
@@ -112,12 +127,21 @@ final class TextDomains
     public function rememberFolder(string $domain, string $folder): void
     {
         $this->folders[$domain] = [rtrim($folder, '/'), false];
+        $this->lookAgainUnlessLoaded($domain);
     }
 
     /** Records the active theme's own language folder; files there are named by locale alone. */
     public function rememberThemeFolder(string $domain, string $folder): void
     {
         $this->folders[$domain] = [rtrim($folder, '/'), true];
+        $this->lookAgainUnlessLoaded($domain);
+    }
+
+    private function lookAgainUnlessLoaded(string $domain): void
+    {
+        if ($this->known($domain) && !$this->has($domain)) {
+            $this->lookAgain[$domain] = true;
+        }
     }
 
     /** The .mo path a domain's named folder would hold for a locale, if a folder was named. */

@@ -122,14 +122,64 @@ function is_network_only_plugin($plugin)
     return false;
 }
 
+/** A plugin's headers; a folder plugin naming no text domain uses its folder's name (probe plugin-data). */
 function get_plugin_data($plugin_file, $markup = true, $translate = true)
 {
     $headers = ['Name' => 'Plugin Name', 'PluginURI' => 'Plugin URI', 'Version' => 'Version', 'Description' => 'Description', 'Author' => 'Author', 'AuthorURI' => 'Author URI', 'TextDomain' => 'Text Domain', 'DomainPath' => 'Domain Path', 'Network' => 'Network', 'RequiresWP' => 'Requires at least', 'RequiresPHP' => 'Requires PHP', 'UpdateURI' => 'Update URI', 'RequiresPlugins' => 'Requires Plugins'];
     $data = get_file_data($plugin_file, $headers, 'plugin');
+    $data['Network'] = strtolower($data['Network']) === 'true';
+    $file = plugin_basename((string) $plugin_file);
+    if ($data['TextDomain'] === '' && str_contains($file, '/')) {
+        $data['TextDomain'] = dirname($file);
+    }
     $data['Title'] = $data['Name'];
     $data['AuthorName'] = $data['Author'];
-    $data['Network'] = strtolower($data['Network']) === 'true';
-    return $data;
+    return $markup || $translate ? _get_plugin_data_markup_translate($plugin_file, $data, $markup, $translate) : $data;
+}
+
+/**
+ * The headers as the plugin screens show them (probe plugin-data). Translated:
+ * the plugin's domain loaded from its folder (and Domain Path) unless it is
+ * loaded already, then the name, addresses, version, description and author
+ * through it. Always: the text cut to a, abbr, acronym, code, em and strong,
+ * the addresses escaped. Marked up: the title and author linked, the
+ * description texturized with its "By" line.
+ */
+function _get_plugin_data_markup_translate($plugin_file, $plugin_data, $markup = true, $translate = true)
+{
+    $file = plugin_basename((string) $plugin_file);
+    $domain = (string) ($plugin_data['TextDomain'] ?? '');
+    if ($translate && $domain !== '') {
+        if (!is_textdomain_loaded($domain)) {
+            load_plugin_textdomain($domain, false, dirname($file) . (string) ($plugin_data['DomainPath'] ?? ''));
+        }
+        foreach (['Name', 'PluginURI', 'Description', 'Author', 'AuthorURI', 'Version'] as $field) {
+            if (!empty($plugin_data[$field])) {
+                $plugin_data[$field] = translate($plugin_data[$field], $domain);
+            }
+        }
+    }
+    $allowed = ['a' => ['href' => true, 'title' => true], 'abbr' => ['title' => true], 'acronym' => ['title' => true], 'code' => true, 'em' => true, 'strong' => true];
+    foreach (['Name', 'Description', 'Author', 'Version'] as $field) {
+        $plugin_data[$field] = wp_kses((string) ($plugin_data[$field] ?? ''), $allowed);
+    }
+    $plugin_data['Title'] = $plugin_data['Name'];
+    $plugin_data['AuthorName'] = $plugin_data['Author'];
+    $plugin_data['PluginURI'] = esc_url((string) ($plugin_data['PluginURI'] ?? ''));
+    $plugin_data['AuthorURI'] = esc_url((string) ($plugin_data['AuthorURI'] ?? ''));
+    if ($markup) {
+        if ($plugin_data['PluginURI'] !== '' && $plugin_data['Name'] !== '') {
+            $plugin_data['Title'] = '<a href="' . $plugin_data['PluginURI'] . '">' . $plugin_data['Name'] . '</a>';
+        }
+        if ($plugin_data['AuthorURI'] !== '' && $plugin_data['Author'] !== '') {
+            $plugin_data['Author'] = '<a href="' . $plugin_data['AuthorURI'] . '">' . $plugin_data['Author'] . '</a>';
+        }
+        $plugin_data['Description'] = wptexturize($plugin_data['Description']);
+        if ($plugin_data['Author'] !== '') {
+            $plugin_data['Description'] .= sprintf(' <cite>%s</cite>', sprintf(__('By %s.'), $plugin_data['Author']));
+        }
+    }
+    return $plugin_data;
 }
 
 function get_file_data($file, $default_headers, $context = '')
@@ -173,7 +223,9 @@ function get_plugins($plugin_folder = '')
             $out[plugin_basename($file)] = $data;
         }
     }
+    // By name, as the reference lists them (probe plugin-data); a tie keeps file order.
     ksort($out);
+    uasort($out, static fn (array $a, array $b): int => strnatcasecmp($a['Name'], $b['Name']));
     return $out;
 }
 

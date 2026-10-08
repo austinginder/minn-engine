@@ -71,7 +71,7 @@ final class FeedTemplates
             ->put("</title>\n\t<atom:link href=\"")->tag('self_link')
             ->put("\" rel=\"self\" type=\"application/rss+xml\" />\n\t<link>")->tag('bloginfo_rss', 'url')
             ->put("</link>\n\t<description>")->tag('bloginfo_rss', 'description')
-            ->put("</description>\n\t<lastBuildDate>", (string) \get_feed_build_date('r'), "</lastBuildDate>\n\t<language>")->tag('bloginfo_rss', 'language')
+            ->put("</description>\n\t<lastBuildDate>", FeedTags::buildDate('r'), "</lastBuildDate>\n\t<language>")->tag('bloginfo_rss', 'language')
             ->put("</language>\n");
         self::syndication($w)->act('rss2_head');
         while (\have_posts()) {
@@ -114,7 +114,7 @@ final class FeedTemplates
             ->put("\"\n\t")->act('atom_ns')
             ->put(">\n\t<title type=\"text\">")->tag('wp_title_rss')
             ->put("</title>\n\t<subtitle type=\"text\">")->tag('bloginfo_rss', 'description')
-            ->put("</subtitle>\n\n\t<updated>", (string) \get_feed_build_date('Y-m-d\TH:i:s\Z'), "</updated>\n\n\t<link rel=\"alternate\" type=\"")->tag('bloginfo_rss', 'html_type')
+            ->put("</subtitle>\n\n\t<updated>", FeedTags::buildDate('Y-m-d\TH:i:s\Z'), "</updated>\n\n\t<link rel=\"alternate\" type=\"")->tag('bloginfo_rss', 'html_type')
             ->put('" href="')->tag('bloginfo_rss', 'url')
             ->put("\" />\n\t<id>")->tag('bloginfo', 'atom_url')
             ->put("</id>\n\t<link rel=\"self\" type=\"application/atom+xml\" href=\"")->tag('self_link')
@@ -162,7 +162,7 @@ final class FeedTemplates
             ->put("\">\n\t<title>")->tag('wp_title_rss')
             ->put("</title>\n\t<link>")->tag('bloginfo_rss', 'url')
             ->put("</link>\n\t<description>")->tag('bloginfo_rss', 'description')
-            ->put("</description>\n\t<dc:date>", (string) \get_feed_build_date('Y-m-d\TH:i:s\Z'), "\t</dc:date>\n");
+            ->put("</description>\n\t<dc:date>", FeedTags::buildDate('Y-m-d\TH:i:s\Z'), "\t</dc:date>\n");
         self::syndication($w)->put("<sy:updateBase>2000-01-01T12:00+00:00</sy:updateBase>\n\t")->act('rdf_header')->put("\t<items>\n\t\t<rdf:Seq>\n");
         while (\have_posts()) {
             \the_post();
@@ -197,7 +197,7 @@ final class FeedTemplates
         $w->put("<rss version=\"0.92\">\n<channel>\n\t<title>")->tag('wp_title_rss')
             ->put("</title>\n\t<link>")->tag('bloginfo_rss', 'url')
             ->put("</link>\n\t<description>")->tag('bloginfo_rss', 'description')
-            ->put("</description>\n\t<lastBuildDate>", (string) \get_feed_build_date('D, d M Y H:i:s +0000'), "</lastBuildDate>\n\t<docs>http://backend.userland.com/rss092</docs>\n\t<language>")->tag('bloginfo_rss', 'language')
+            ->put("</description>\n\t<lastBuildDate>", FeedTags::buildDate('D, d M Y H:i:s +0000'), "</lastBuildDate>\n\t<docs>http://backend.userland.com/rss092</docs>\n\t<language>")->tag('bloginfo_rss', 'language')
             ->put("</language>\n\t")->act('rss_head')->put("\n");
         while (\have_posts()) {
             \the_post();
@@ -247,7 +247,7 @@ final class FeedTemplates
             ->put("\" rel=\"self\" type=\"application/rss+xml\" />\n\t<link>");
         \is_singular() ? $w->tag('the_permalink_rss') : $w->tag('bloginfo_rss', 'url');
         $w->put("</link>\n\t<description>")->tag('bloginfo_rss', 'description')
-            ->put("</description>\n\t<lastBuildDate>", (string) \get_feed_build_date('r'), "</lastBuildDate>\n");
+            ->put("</description>\n\t<lastBuildDate>", FeedTags::buildDate('r'), "</lastBuildDate>\n");
         self::syndication($w)->act('commentsrss2_head');
         while (\have_comments()) {
             \the_comment();
@@ -276,7 +276,7 @@ final class FeedTemplates
             ->put("<feed\n\txmlns=\"http://www.w3.org/2005/Atom\"\n\txml:lang=\"")->tag('bloginfo_rss', 'language')
             ->put("\"\n\txmlns:thr=\"http://purl.org/syndication/thread/1.0\"\n\t")->act('atom_ns')->act('atom_comments_ns')
             ->put(">\n\t<title type=\"text\">\n\t", self::commentsTitle('Comments on %s'), "\t</title>\n\t<subtitle type=\"text\">")->tag('bloginfo_rss', 'description')
-            ->put("</subtitle>\n\n\t<updated>", (string) \get_feed_build_date('Y-m-d\TH:i:s\Z'), "</updated>\n\n\t<link rel=\"alternate\" type=\"")->tag('bloginfo_rss', 'html_type')->put('" href="');
+            ->put("</subtitle>\n\n\t<updated>", FeedTags::buildDate('Y-m-d\TH:i:s\Z'), "</updated>\n\n\t<link rel=\"alternate\" type=\"")->tag('bloginfo_rss', 'html_type')->put('" href="');
         if (\is_singular()) {
             $self = \esc_url(\get_post_comments_feed_link('', 'atom'));
             $w->tag('comments_link_feed')->put("\" />\n\t<link rel=\"self\" type=\"application/atom+xml\" href=\"{$self}\" />\n\t<id>{$self}</id>\n");

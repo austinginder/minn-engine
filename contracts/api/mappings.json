@@ -1,12 +1,12 @@
 {
-    "generated": "2026-10-07",
+    "generated": "2026-10-08",
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line)",
     "summary": {
         "minn": 668,
-        "composes": 972,
+        "composes": 973,
         "leaf": 663,
         "noop": 1965,
-        "functions": 4194,
+        "functions": 4195,
         "minnMethods": 787,
         "leafLinesOver15": 13
     },
@@ -15787,6 +15787,22 @@
                 "home_url"
             ]
         },
+        "_get_plugin_data_markup_translate": {
+            "file": "plugin.php",
+            "lines": 33,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "__",
+                "esc_url",
+                "is_textdomain_loaded",
+                "load_plugin_textdomain",
+                "plugin_basename",
+                "translate",
+                "wp_kses",
+                "wptexturize"
+            ]
+        },
         "_get_term_children": {
             "file": "taxonomy.php",
             "lines": 19,
@@ -15846,9 +15862,9 @@
             "kind": "minn",
             "minn": [
                 "Minn\\Runtime\\Runtime::closed",
-                "Minn\\Runtime\\Runtime::known",
                 "Minn\\Runtime\\Runtime::markKnown",
-                "Minn\\Runtime\\Runtime::textDomains"
+                "Minn\\Runtime\\Runtime::textDomains",
+                "Minn\\Runtime\\Runtime::waiting"
             ],
             "composes": [
                 "_minn_textdomain_file",
@@ -16656,7 +16672,7 @@
         },
         "_minn_load_from_folder": {
             "file": "l10n.php",
-            "lines": 7,
+            "lines": 8,
             "kind": "minn",
             "minn": [
                 "Minn\\Runtime\\Runtime::textDomains"
@@ -23074,11 +23090,13 @@
         },
         "get_plugin_data": {
             "file": "plugin.php",
-            "lines": 6,
+            "lines": 10,
             "kind": "composes",
             "minn": [],
             "composes": [
-                "get_file_data"
+                "_get_plugin_data_markup_translate",
+                "get_file_data",
+                "plugin_basename"
             ]
         },
         "get_plugin_page_hook": {
@@ -23112,7 +23130,7 @@
         },
         "get_plugins": {
             "file": "plugin.php",
-            "lines": 10,
+            "lines": 12,
             "kind": "composes",
             "minn": [],
             "composes": [

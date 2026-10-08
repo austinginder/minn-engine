@@ -146,7 +146,8 @@ function _minn_load_from_folder(string $domain, string $folder, string $file, st
 {
     $folder = rtrim($folder, '/');
     $mofile = "{$folder}/{$file}.mo";
-    if (is_readable($mofile) || is_readable("{$folder}/{$file}.l10n.php")) {
+    // A domain unloaded for good stays closed: naming its folder again loads nothing (probe plugin-data).
+    if (!Runtime::textDomains()->closed($domain) && (is_readable($mofile) || is_readable("{$folder}/{$file}.l10n.php"))) {
         return load_textdomain($domain, $mofile, $locale);
     }
     Runtime::textDomains()->rememberFolder($domain, $folder);
@@ -224,7 +225,7 @@ function _load_textdomain_just_in_time($domain)
 {
     $domains = Runtime::textDomains();
     $domain = (string) $domain;
-    if ($domain === 'default' || $domains->known($domain)) {
+    if ($domain === 'default' || !$domains->waiting($domain)) {
         return false;
     }
     $domains->markKnown($domain);

@@ -60,7 +60,7 @@ the WordPress runtime plugins load against
 | [`Placeholders`](#placeholders) | final class | 49 | The printf placeholders plugin code hands wpdb::prepare, filled the way |
 | [`PluginActivation`](#pluginactivation) | final class | 64 | Switching a plugin on and off the way the reference's activate_plugin |
 | [`PluginRemoval`](#pluginremoval) | final class | 124 | Deleting plugins as the reference's delete_plugins does it: each in turn |
-| [`PluginRequirements`](#pluginrequirements) | final class | 65 | Whether a plugin can be switched on here, as the reference's |
+| [`PluginRequirements`](#pluginrequirements) | final class | 66 | Whether a plugin can be switched on here, as the reference's |
 | [`PluginUpdates`](#pluginupdates) | final class | 65 | The update offers the site's own plugins publish. A plugin that hosts |
 | [`Plugins`](#plugins) | final class | 264 | Loads the site's plugins into the runtime the way the reference does: |
 | [`PostData`](#postdata) | final class | 65 | The loop's view of a post, as the reference's generate_postdata and |
@@ -2498,7 +2498,7 @@ Used by: `Minn\Runtime\PluginActivation`
 
 Null when the plugin may be activated, otherwise why not.
 
-Internals: `dependencies()` (private, line 46), `installed()` (private, line 75)
+Internals: `dependencies()` (private, line 47), `installed()` (private, line 76)
 
 
 ## PluginUpdates

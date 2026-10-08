@@ -22,11 +22,12 @@ final class PluginRequirements
     /** Null when the plugin may be activated, otherwise why not. */
     public static function check(string $plugin): ?Refusal
     {
-        $headers = FileHeaders::values(WP_PLUGIN_DIR . '/' . $plugin, ['Plugin Name', 'Requires at least', 'Requires PHP', 'Requires Plugins']);
-        $name = $headers['Plugin Name'];
+        // Read as the plugin screens read it, translated (its text domain loaded), as the reference reads it here.
+        $headers = \get_plugin_data(WP_PLUGIN_DIR . '/' . $plugin);
+        $name = (string) $headers['Name'];
         $wp = (string) ($GLOBALS['wp_version'] ?? '');
-        $needsWp = $headers['Requires at least'];
-        $needsPhp = $headers['Requires PHP'];
+        $needsWp = (string) $headers['RequiresWP'];
+        $needsPhp = (string) $headers['RequiresPHP'];
         $wpOk = \is_wp_version_compatible($needsWp);
         $phpOk = \is_php_version_compatible($needsPhp);
         $updatePhp = '<p>' . sprintf('<a href="%s">Learn more about updating PHP</a>.', \esc_url(\wp_get_update_php_url())) . '</p>';
@@ -39,7 +40,7 @@ final class PluginRequirements
         if (!$wpOk) {
             return new Refusal('plugin_wp_incompatible', '<p>' . sprintf('<strong>Error:</strong> Current WordPress version (%1$s) does not meet minimum requirements for %2$s. The plugin requires WordPress %3$s.', $wp, $name, $needsWp) . '</p>');
         }
-        return self::dependencies($name, $headers['Requires Plugins']);
+        return self::dependencies($name, (string) $headers['RequiresPlugins']);
     }
 
     /** The required plugins that are not installed and active, refused together. */

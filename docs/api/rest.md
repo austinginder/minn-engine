@@ -38,7 +38,7 @@ the wp/v2 surface: shapes and controllers
 | [`NavigationController`](#navigationcontroller) | final readonly class | 48 | wp/v2/navigation: the block theme's navigation menus, stored as |
 | [`OEmbedController`](#oembedcontroller) | final readonly class | 72 | oembed/1.0 as the reference answers it (probe oembed). embed is the |
 | [`ParamCheck`](#paramcheck) | final class | 76 | The required / validate / sanitize pass over a request's declared arguments. |
-| [`PluginsController`](#pluginscontroller) | final readonly class | 251 | wp/v2 plugins: what sits in wp-content/plugins, in the reference's |
+| [`PluginsController`](#pluginscontroller) | final readonly class | 231 | wp/v2 plugins: what sits in wp-content/plugins, in the reference's |
 | [`PolicyGate`](#policygate) | final readonly class | 147 | Judges a route's policy against the caller, with the reference's |
 | [`PostCollectionParams`](#postcollectionparams) | final class | 211 | A post type's collection parameters as the reference builds them for its |
 | [`PostListArgs`](#postlistargs) | final class | 174 | The WP_Query arguments a post list request makes, as the reference makes |
@@ -1575,7 +1575,7 @@ Route: `DELETE /wp/v2/plugins/{plugin:[^.\/]+(?:\/[^.\/]+)?} (cap activate_plugi
 
 Deletes an inactive plugin.
 
-Internals: `items()` (private, line 146), `find()` (private, line 161), `manifestFor()` (private, line 171), `extensionItem()` (private, line 181), `pluginItem()` (private, line 204), `text()` (private, line 236), `description()` (private, line 242), `uri()` (private, line 261), `links()` (private, line 266), `extensionKey()` (private, line 271), `refuse()` (private, line 278)
+Internals: `items()` (private, line 144), `find()` (private, line 158), `statusOf()` (private, line 172), `manifestFor()` (private, line 184), `extensionItem()` (private, line 194), `pluginItem()` (private, line 222), `links()` (private, line 244), `extensionKey()` (private, line 249), `refuse()` (private, line 256)
 
 
 ## PolicyGate

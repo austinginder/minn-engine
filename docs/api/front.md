@@ -471,6 +471,8 @@ categories and tags in each feed's markup, its enclosures for RSS and
 Atom, the link to its comments feed, the feed's build date, and the site
 icon a feed carries.
 
+Used by: `Minn\Front\FeedTemplates`
+
 ### static `categories(string $type): string`
 
 A post's category and tag names (each once) in a feed type's markup, before the_category_rss.

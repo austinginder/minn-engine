@@ -18,8 +18,6 @@ use Minn\Http\Policy;
 use Minn\Http\Route;
 use Minn\Runtime\Refusal;
 use Minn\RestError;
-use Minn\Support\FileHeaders;
-use Minn\Content\Texturize;
 use Minn\Support\Html;
 use Minn\Support\Serialized;
 
@@ -101,12 +99,12 @@ final readonly class PluginsController
     #[Route(Method::Patch, '/wp/v2/plugins/{plugin:[^.\/]+(?:\/[^.\/]+)?}', policy: new Policy(Access::Cap, 'activate_plugins', signIn: 'rest_cannot_view_plugins', signInMessage: 'Sorry, you are not allowed to manage plugins for this site.', refuse: 'rest_cannot_view_plugins', message: 'Sorry, you are not allowed to manage plugins for this site.'))]
     public function update(Request $request, string $plugin): Response
     {
-        $item = $this->find($plugin);
+        $current = $this->statusOf($plugin);
         $status = (string) ($request->json()['status'] ?? $request->form['status'] ?? '');
         if (!in_array($status, ['active', 'inactive'], true)) {
             throw RestError::invalidParam('status', 'status is not one of inactive, active.');
         }
-        if ($status !== $item['status']) {
+        if ($status !== $current) {
             $state = new PluginState($this->site, $this->inventory, $this->extensions);
             $target = $this->manifestFor($plugin) ?? $plugin . '.php';
             if ($status === 'active') {
@@ -145,7 +143,6 @@ final readonly class PluginsController
     /** @return list<array> */
     private function items(): array
     {
-        $active = array_flip($this->extensions->active());
         $items = [];
         foreach ($this->extensions->found() as $manifest) {
             $items[] = $this->extensionItem($manifest, in_array($manifest, $this->extensions->active(), true));
@@ -154,18 +151,34 @@ final readonly class PluginsController
         foreach ($this->inventory->pluginFiles() as $relative => $path) {
             $items[] = $this->pluginItem($relative, $path, isset($stored[$relative]));
         }
-        unset($active);
         return $items;
     }
 
+    /** One plugin's item, built alone: an item reads (and loads the text domain of) only its own plugin. */
     private function find(string $plugin): array
     {
-        foreach ($this->items() as $item) {
-            if ($item['plugin'] === $plugin) {
-                return $item;
-            }
+        $manifest = $this->manifestFor($plugin);
+        if ($manifest !== null) {
+            return $this->extensionItem($manifest, $this->statusOf($plugin) === 'active');
         }
-        throw new RestError('rest_plugin_not_found', 'Plugin not found.', 404);
+        $path = $this->inventory->pluginFiles()[$plugin . '.php'] ?? null;
+        if ($path === null) {
+            throw new RestError('rest_plugin_not_found', 'Plugin not found.', 404);
+        }
+        return $this->pluginItem($plugin . '.php', $path, $this->statusOf($plugin) === 'active');
+    }
+
+    /** Whether a plugin is active, read without building its item (nothing translated, no text domain loaded). */
+    private function statusOf(string $plugin): string
+    {
+        $manifest = $this->manifestFor($plugin);
+        if ($manifest !== null) {
+            return in_array($manifest, $this->extensions->active(), true) ? 'active' : 'inactive';
+        }
+        if (!array_key_exists($plugin . '.php', $this->inventory->pluginFiles())) {
+            throw new RestError('rest_plugin_not_found', 'Plugin not found.', 404);
+        }
+        return in_array($plugin . '.php', Serialized::stringList($this->site->option('active_plugins')), true) ? 'active' : 'inactive';
     }
 
     private function manifestFor(string $plugin): ?Manifest
@@ -201,66 +214,31 @@ final readonly class PluginsController
         ];
     }
 
+    /**
+     * A WordPress plugin as the reference's item shows it: its headers read,
+     * translated and cut to the allowed markup once for the fields and once
+     * more, marked up, for the rendered description (probe plugin-data).
+     */
     private function pluginItem(string $relative, string $path, bool $active): array
     {
-        $h = FileHeaders::values($path, ['Plugin Name', 'Plugin URI', 'Version', 'Description', 'Author', 'Author URI', 'Text Domain', 'Network', 'Requires at least', 'Requires PHP']);
+        $headers = \get_plugin_data($path, false, false);
+        $plain = \_get_plugin_data_markup_translate($path, $headers, false, true);
         $key = preg_replace('/\.php$/', '', $relative);
-        $author = self::text($h['Author']);
-        $authorUri = self::uri($h['Author URI']);
-        // The description keeps the inline markup the reference allows in headers,
-        // raw as filtered, rendered as texturized with the author line appended.
-        $description = self::description($h['Description']);
-        $rendered = Texturize::html($description);
-        if ($author !== '') {
-            $rendered .= ' <cite>By ' . ($authorUri !== '' ? '<a href="' . $authorUri . '">' . $author . '</a>' : $author) . '.</cite>';
-        }
         return [
             'plugin' => $key,
             'status' => $active ? 'active' : 'inactive',
-            'name' => self::text($h['Plugin Name']),
-            'plugin_uri' => self::uri($h['Plugin URI']),
-            'author' => $author,
-            'author_uri' => $authorUri,
-            'description' => ['raw' => $description, 'rendered' => $rendered],
-            'version' => $h['Version'],
-            'network_only' => strtolower($h['Network']) === 'true',
-            'requires_wp' => $h['Requires at least'],
-            'requires_php' => $h['Requires PHP'],
-            // A missing Text Domain header defaults to the folder (or the single file's name).
-            'textdomain' => $h['Text Domain'] !== '' ? $h['Text Domain'] : (str_contains($relative, '/') ? dirname($relative) : basename($relative, '.php')),
+            'name' => $plain['Name'],
+            'plugin_uri' => $plain['PluginURI'],
+            'author' => $plain['AuthorName'],
+            'author_uri' => $plain['AuthorURI'],
+            'description' => ['raw' => $plain['Description'], 'rendered' => \_get_plugin_data_markup_translate($path, $headers, true, true)['Description']],
+            'version' => $plain['Version'],
+            'network_only' => $headers['Network'],
+            'requires_wp' => $headers['RequiresWP'],
+            'requires_php' => $headers['RequiresPHP'],
+            'textdomain' => $headers['TextDomain'],
             '_links' => $this->links($key),
         ];
-    }
-
-    /** A header as the reference serves it: tags stripped (or cut to an allowlist), a bare ampersand entity-encoded. */
-    private static function text(string $value, string $allowed = ''): string
-    {
-        return (string) preg_replace('/&(?!(?:#\d+|#x[0-9a-f]+|[a-z][a-z0-9]*);)/i', '&amp;', strip_tags($value, $allowed));
-    }
-
-    /** The Description header cut to the reference's allowlist: a (href, title), abbr and acronym (title), code, em, strong. */
-    private static function description(string $value): string
-    {
-        $allowed = ['a' => ['href', 'title'], 'abbr' => ['title'], 'acronym' => ['title'], 'code' => [], 'em' => [], 'strong' => []];
-        $text = self::text($value, '<' . implode('><', array_keys($allowed)) . '>');
-        return (string) preg_replace_callback('/<([a-z]+)(\s[^>]*)?>/i', static function (array $m) use ($allowed): string {
-            $tag = strtolower($m[1]);
-            $kept = '';
-            if (preg_match_all('/([a-z-]+)\s*=\s*("[^"]*"|\'[^\']*\')/i', $m[2] ?? '', $attrs, PREG_SET_ORDER)) {
-                foreach ($attrs as $attr) {
-                    if (in_array(strtolower($attr[1]), $allowed[$tag] ?? [], true)) {
-                        $kept .= ' ' . strtolower($attr[1]) . '=' . $attr[2];
-                    }
-                }
-            }
-            return "<{$tag}{$kept}>";
-        }, $text);
-    }
-
-    /** A header URL as the reference serves it: a bare ampersand becomes &#038;. */
-    private static function uri(string $value): string
-    {
-        return (string) preg_replace('/&(?!(?:#\d+|#x[0-9a-f]+|[a-z][a-z0-9]*);)/i', '&#038;', strip_tags($value));
     }
 
     private function links(string $key): array

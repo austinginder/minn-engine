@@ -32667,7 +32667,6 @@
                 "Minn\\Content\\Excerpt",
                 "Minn\\Rest\\GlobalStylesObject",
                 "Minn\\Rest\\MediaObject",
-                "Minn\\Rest\\PluginsController",
                 "Minn\\Rest\\RevisionsController",
                 "Minn\\Rest\\SearchController",
                 "Minn\\Theme\\ClassicContent",
@@ -40536,7 +40535,9 @@
                 "Minn\\Support\\Escape",
                 "Minn\\Support\\Url"
             ],
-            "usedBy": [],
+            "usedBy": [
+                "Minn\\Front\\FeedTemplates"
+            ],
             "constructor": null,
             "cases": [],
             "constants": [],
@@ -40684,6 +40685,7 @@
             "implements": [],
             "extends": null,
             "uses": [
+                "Minn\\Front\\FeedTags",
                 "Minn\\Front\\FeedWriter",
                 "Minn\\I18n\\Gettext",
                 "Minn\\Runtime\\Runtime"
@@ -64397,7 +64399,7 @@
             "namespace": "Minn\\I18n",
             "kind": "final class",
             "file": "public/minn/src/Minn/I18n/TextDomains.php",
-            "lines": 139,
+            "lines": 163,
             "doc": "The text domains this request knows: each domain's files in the order they\nwere loaded, and the domains looked for and not found (known, with no\nfiles), all in the order they first appeared, which is the order a locale\nswitch reloads them in. A lookup asks a domain's files in load order and\nthe first one with a translation answers, each under its own plural rule.\nThe registry also remembers the folder a plugin or theme named for its\ndomain (and how files there are named), and the domains unloaded for good.",
             "implements": [],
             "extends": null,
@@ -64431,6 +64433,15 @@
                 },
                 {
                     "name": "closed",
+                    "type": "array",
+                    "readonly": false,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": false
+                },
+                {
+                    "name": "lookAgain",
                     "type": "array",
                     "readonly": false,
                     "static": false,
@@ -64471,8 +64482,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 28,
-                    "end": 32
+                    "line": 31,
+                    "end": 35
                 },
                 {
                     "routes": [],
@@ -64491,8 +64502,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 35,
-                    "end": 38
+                    "line": 38,
+                    "end": 41
                 },
                 {
                     "routes": [],
@@ -64511,8 +64522,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 41,
-                    "end": 46
+                    "line": 44,
+                    "end": 49
                 },
                 {
                     "routes": [],
@@ -64531,8 +64542,28 @@
                             "doc": ""
                         }
                     ],
-                    "line": 49,
-                    "end": 52
+                    "line": 52,
+                    "end": 56
+                },
+                {
+                    "routes": [],
+                    "name": "waiting",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "waiting(string $domain): bool",
+                    "doc": "Whether a translation lookup should look for the domain's files: it was\nnever looked for, or nothing was found and a folder has been named for\nit since (the reference looks again after each load_plugin_textdomain;\nprobe plugin-data).",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "domain",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 64,
+                    "end": 67
                 },
                 {
                     "routes": [],
@@ -64551,8 +64582,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 55,
-                    "end": 58
+                    "line": 70,
+                    "end": 73
                 },
                 {
                     "routes": [],
@@ -64565,8 +64596,8 @@
                         "@return list<string>"
                     ],
                     "params": [],
-                    "line": 65,
-                    "end": 68
+                    "line": 80,
+                    "end": 83
                 },
                 {
                     "routes": [],
@@ -64592,8 +64623,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 71,
-                    "end": 76
+                    "line": 86,
+                    "end": 91
                 },
                 {
                     "routes": [],
@@ -64614,8 +64645,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 83,
-                    "end": 86
+                    "line": 98,
+                    "end": 101
                 },
                 {
                     "routes": [],
@@ -64641,8 +64672,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 89,
-                    "end": 98
+                    "line": 104,
+                    "end": 113
                 },
                 {
                     "routes": [],
@@ -64675,8 +64706,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 101,
-                    "end": 109
+                    "line": 116,
+                    "end": 124
                 },
                 {
                     "routes": [],
@@ -64702,8 +64733,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 112,
-                    "end": 115
+                    "line": 127,
+                    "end": 131
                 },
                 {
                     "routes": [],
@@ -64729,8 +64760,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 118,
-                    "end": 121
+                    "line": 134,
+                    "end": 138
                 },
                 {
                     "routes": [],
@@ -64756,8 +64787,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 124,
-                    "end": 131
+                    "line": 148,
+                    "end": 155
                 },
                 {
                     "routes": [],
@@ -64776,8 +64807,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 134,
-                    "end": 137
+                    "line": 158,
+                    "end": 161
                 },
                 {
                     "routes": [],
@@ -64796,8 +64827,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 140,
-                    "end": 143
+                    "line": 164,
+                    "end": 167
                 },
                 {
                     "routes": [],
@@ -64810,8 +64841,28 @@
                         "@return list<string>"
                     ],
                     "params": [],
-                    "line": 150,
-                    "end": 153
+                    "line": 174,
+                    "end": 177
+                },
+                {
+                    "routes": [],
+                    "name": "lookAgainUnlessLoaded",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "lookAgainUnlessLoaded(string $domain): void",
+                    "doc": "",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "domain",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 140,
+                    "end": 145
                 }
             ]
         },
@@ -89688,7 +89739,7 @@
             "namespace": "Minn\\Rest",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Rest/PluginsController.php",
-            "lines": 251,
+            "lines": 231,
             "doc": "wp/v2 plugins: what sits in wp-content/plugins, in the reference's\nshape. Minn extensions (a minn.json manifest) are listed alongside the\nWordPress plugins the folder still holds; the engine runs the former\nand only records the latter's stored state. Activation writes the same\noptions the reference and the extension loader read; files are never\ninstalled or deleted from here.",
             "implements": [],
             "extends": null,
@@ -89696,7 +89747,6 @@
                 "Minn\\Content\\Inventory",
                 "Minn\\Content\\PluginState",
                 "Minn\\Content\\Site",
-                "Minn\\Content\\Texturize",
                 "Minn\\Extension\\Loader",
                 "Minn\\Extension\\Manifest",
                 "Minn\\Http\\Access",
@@ -89712,7 +89762,6 @@
                 "Minn\\Rest\\Reply",
                 "Minn\\Rest\\RestUrl",
                 "Minn\\Runtime\\Refusal",
-                "Minn\\Support\\FileHeaders",
                 "Minn\\Support\\Html",
                 "Minn\\Support\\Serialized"
             ],
@@ -89768,8 +89817,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 36,
-                "end": 44
+                "line": 34,
+                "end": 42
             },
             "cases": [],
             "constants": [],
@@ -89849,8 +89898,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 48,
-                    "end": 53
+                    "line": 46,
+                    "end": 51
                 },
                 {
                     "routes": [
@@ -89871,8 +89920,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 57,
-                    "end": 89
+                    "line": 55,
+                    "end": 87
                 },
                 {
                     "routes": [
@@ -89900,8 +89949,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 93,
-                    "end": 96
+                    "line": 91,
+                    "end": 94
                 },
                 {
                     "routes": [
@@ -89931,8 +89980,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 102,
-                    "end": 119
+                    "line": 100,
+                    "end": 117
                 },
                 {
                     "routes": [
@@ -89960,8 +90009,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 123,
-                    "end": 143
+                    "line": 121,
+                    "end": 141
                 },
                 {
                     "routes": [],
@@ -89974,8 +90023,8 @@
                         "@return list<array>"
                     ],
                     "params": [],
-                    "line": 146,
-                    "end": 159
+                    "line": 144,
+                    "end": 155
                 },
                 {
                     "routes": [],
@@ -89983,7 +90032,7 @@
                     "static": false,
                     "visibility": "private",
                     "signature": "find(string $plugin): array",
-                    "doc": "",
+                    "doc": "One plugin's item, built alone: an item reads (and loads the text domain of) only its own plugin.",
                     "shapes": [],
                     "params": [
                         {
@@ -89994,8 +90043,28 @@
                             "doc": ""
                         }
                     ],
-                    "line": 161,
+                    "line": 158,
                     "end": 169
+                },
+                {
+                    "routes": [],
+                    "name": "statusOf",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "statusOf(string $plugin): string",
+                    "doc": "Whether a plugin is active, read without building its item (nothing translated, no text domain loaded).",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "plugin",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 172,
+                    "end": 182
                 },
                 {
                     "routes": [],
@@ -90014,8 +90083,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 171,
-                    "end": 179
+                    "line": 184,
+                    "end": 192
                 },
                 {
                     "routes": [],
@@ -90041,8 +90110,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 181,
-                    "end": 202
+                    "line": 194,
+                    "end": 215
                 },
                 {
                     "routes": [],
@@ -90050,7 +90119,7 @@
                     "static": false,
                     "visibility": "private",
                     "signature": "pluginItem(string $relative, string $path, bool $active): array",
-                    "doc": "",
+                    "doc": "A WordPress plugin as the reference's item shows it: its headers read,\ntranslated and cut to the allowed markup once for the fields and once\nmore, marked up, for the rendered description (probe plugin-data).",
                     "shapes": [],
                     "params": [
                         {
@@ -90075,75 +90144,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 204,
-                    "end": 233
-                },
-                {
-                    "routes": [],
-                    "name": "text",
-                    "static": true,
-                    "visibility": "private",
-                    "signature": "text(string $value, string $allowed = ''): string",
-                    "doc": "A header as the reference serves it: tags stripped (or cut to an allowlist), a bare ampersand entity-encoded.",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "value",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "allowed",
-                            "type": "string",
-                            "shape": "",
-                            "default": "''",
-                            "doc": ""
-                        }
-                    ],
-                    "line": 236,
-                    "end": 239
-                },
-                {
-                    "routes": [],
-                    "name": "description",
-                    "static": true,
-                    "visibility": "private",
-                    "signature": "description(string $value): string",
-                    "doc": "The Description header cut to the reference's allowlist: a (href, title), abbr and acronym (title), code, em, strong.",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "value",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 242,
-                    "end": 258
-                },
-                {
-                    "routes": [],
-                    "name": "uri",
-                    "static": true,
-                    "visibility": "private",
-                    "signature": "uri(string $value): string",
-                    "doc": "A header URL as the reference serves it: a bare ampersand becomes &#038;.",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "value",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 261,
-                    "end": 264
+                    "line": 222,
+                    "end": 242
                 },
                 {
                     "routes": [],
@@ -90162,8 +90164,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 266,
-                    "end": 269
+                    "line": 244,
+                    "end": 247
                 },
                 {
                     "routes": [],
@@ -90182,8 +90184,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 271,
-                    "end": 274
+                    "line": 249,
+                    "end": 252
                 },
                 {
                     "routes": [],
@@ -90202,8 +90204,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 278,
-                    "end": 283
+                    "line": 256,
+                    "end": 261
                 }
             ]
         },
@@ -115060,7 +115062,7 @@
             "namespace": "Minn\\Runtime",
             "kind": "final class",
             "file": "public/minn/src/Minn/Runtime/PluginRequirements.php",
-            "lines": 65,
+            "lines": 66,
             "doc": "Whether a plugin can be switched on here, as the reference's\nvalidate_plugin_requirements answers (probe plugin-activation): the\nplugin header's \"Requires at least\" against the WordPress version the\nsite speaks, its \"Requires PHP\" against the running PHP, and every slug\nin its \"Requires Plugins\" installed and active (a readme.txt is not\nread). A refusal carries the reference's code, its HTML message word for\nword, and for missing plugins the slugs found inactive (slug => name) and\nnot installed (slug => slug). The slugs are taken sorted (one that is not\na lower-case slug is passed over), and named in that order.",
             "implements": [],
             "extends": null,
@@ -115095,7 +115097,7 @@
                         }
                     ],
                     "line": 23,
-                    "end": 43
+                    "end": 44
                 },
                 {
                     "routes": [],
@@ -115121,8 +115123,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 46,
-                    "end": 72
+                    "line": 47,
+                    "end": 73
                 },
                 {
                     "routes": [],
@@ -115141,8 +115143,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 75,
-                    "end": 83
+                    "line": 76,
+                    "end": 84
                 }
             ]
         },
@@ -129416,7 +129418,6 @@
                 "Minn\\Ops\\InstalledSoftware",
                 "Minn\\Ops\\Packages",
                 "Minn\\Ops\\Updates",
-                "Minn\\Rest\\PluginsController",
                 "Minn\\Runtime\\PluginRequirements",
                 "Minn\\Runtime\\Plugins",
                 "Minn\\Theme\\Folder"

@@ -26,10 +26,7 @@ require __DIR__ . '/lib.php';
 
 const DIVERGENT = [
     'plugin-install' => 'the engine installs without the upgrader: no HTTP API hooks, no upgrader_process_complete, the update transient kept',
-    'plugin-activate' => 'the plugin item loads no text domain to translate its headers',
-    'plugin-deactivate' => 'the plugin item loads no text domain to translate its headers',
-    'plugin-delete' => 'the plugin item loads no text domain to translate its headers',
-    'plugin-update' => 'the engine updates without the upgrader, and the plugin item loads no text domain',
+    'plugin-update' => 'the engine updates without the upgrader: no HTTP API hooks, no upgrader_process_complete',
     'theme-install' => 'the engine installs without the upgrader: no HTTP API hooks, no upgrader_process_complete, the update transient kept',
     'theme-delete' => 'the engine keeps no theme roots or pattern-file caches to clear',
     'theme-update' => 'the engine updates without the upgrader: no HTTP API hooks, no upgrader_process_complete',
