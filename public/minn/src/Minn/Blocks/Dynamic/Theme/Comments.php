@@ -10,13 +10,17 @@ use Minn\Blocks\Block;
 use Minn\Blocks\Dynamic\Dates;
 use Minn\Blocks\Renderer;
 use Minn\Blocks\Styles;
+use Minn\Blocks\Wrapper;
 use Minn\Content\Blocks;
+use Minn\Content\Posts;
 use Minn\Content\Site;
+use Minn\Content\Users;
 use Minn\Content\Texturize;
 use Minn\Front\Permalinks;
 use Minn\Support\Html;
 use Minn\Support\Kses;
 use Minn\Content\PasswordGate;
+use Minn\Runtime\Avatar;
 use Minn\Runtime\Runtime;
 
 /** comments, comments-title, comment-template, the comment-* blocks, and the comment form. */
@@ -25,6 +29,8 @@ final readonly class Comments
     public function __construct(
         private Site $site,
         private Permalinks $permalinks,
+        private Posts $posts,
+        private Users $users,
     ) {
     }
 
@@ -69,8 +75,13 @@ final readonly class Comments
         if ($count === 0) {
             return '';
         }
-        $title = Texturize::text('"' . Html::esc($post->title) . '"');
-        $text = $count === 1 ? 'One response to ' . $title : $count . ' responses to ' . $title;
+        // "One response to “Title”", or less of it as showCommentsCount and showPostTitle ask.
+        $text = (bool) $block->attr('showCommentsCount', true)
+            ? ($count === 1 ? 'One response' : $count . ' responses')
+            : ($count === 1 ? 'Response' : 'Responses');
+        if ((bool) $block->attr('showPostTitle', true)) {
+            $text .= ' to ' . Texturize::text('"' . Html::esc($post->title) . '"');
+        }
         $level = (int) $block->attr('level', 2);
         $classes = implode(' ', ['wp-block-comments-title', ...Styles::classes($block->attrs)]);
         return '<h' . $level . ' id="comments" class="' . Html::attr($classes) . '">' . $text . '</h' . $level . '>';
@@ -149,28 +160,55 @@ final readonly class Comments
         return $items === '' ? '' : '<ol class="wp-block-comment-template">' . $items . '</ol>';
     }
 
+    /** The comment author's avatar in a comment loop; elsewhere the post author's, linked to their posts when asked. */
     private function avatar(Block $block, Renderer $renderer): string
     {
         $comment = $renderer->context()->comment();
-        if ($comment === null) {
-            return '';
-        }
         $size = (int) $block->attr('size', 96);
+        if ($comment === null) {
+            return $this->authorAvatar($block, $renderer, $size);
+        }
         $hash = hash('sha256', strtolower(trim($comment->authorEmail)));
         $author = Html::attr($comment->author);
         return '<div class="wp-block-avatar"><img alt=\'' . $author . ' Avatar\' src=\'https://secure.gravatar.com/avatar/' . $hash . '?s=' . $size . '&#038;d=mm&#038;r=g\' srcset=\'https://secure.gravatar.com/avatar/' . $hash . '?s=' . ($size * 2) . '&#038;d=mm&#038;r=g 2x\' class=\'avatar avatar-' . $size . ' photo wp-block-avatar__image\' height=\'' . $size . '\' width=\'' . $size . '\' decoding=\'async\'/></div>';
     }
 
+    private function authorAvatar(Block $block, Renderer $renderer, int $size): string
+    {
+        $post = $renderer->context()->post();
+        $user = $post === null ? null : $this->users->find($post->authorId);
+        if ($user === null) {
+            return '';
+        }
+        $url = 'https://secure.gravatar.com/avatar/' . Avatar::hash($user->email);
+        $img = "<img alt='" . Html::attr($user->displayName . ' Avatar') . "' src='{$url}?s={$size}&#038;d=mm&#038;r=g' srcset='{$url}?s=" . ($size * 2) . "&#038;d=mm&#038;r=g 2x' class='avatar avatar-{$size} photo wp-block-avatar__image' height='{$size}' width='{$size}' loading='lazy' decoding='async'/>";
+        if ((bool) $block->attr('isLink', false)) {
+            $img = '<a href="' . Html::attr($this->permalinks->forAuthor($user)) . '" target="' . Html::attr((string) $block->attr('linkTarget', '_self')) . '"  class="wp-block-avatar__link">' . $img . '</a>';
+        }
+        return Wrapper::open('div', 'wp-block-avatar', $block) . $img . '</div>';
+    }
+
+    /** When the comment was written, in the format asked for (else the site's), linked to the comment unless isLink is off. */
     private function date(Block $block, Renderer $renderer): string
     {
         $comment = $renderer->context()->comment();
-        $post = $renderer->context()->post();
+        $post = $comment === null ? null : $this->commentPost($comment, $renderer);
         if ($comment === null || $post === null) {
             return '';
         }
         $local = $comment->date;
-        $link = $this->permalinks->forPost($post) . '#comment-' . $comment->id;
-        return '<div class="wp-block-comment-date"><time datetime="' . Dates::iso($this->site, $local) . '"><a href="' . Html::attr($link) . '">' . Dates::format($this->site, $local) . '</a></time></div>';
+        $text = Dates::format($this->site, $local, (string) $block->attr('format', ''));
+        if ((bool) $block->attr('isLink', true)) {
+            $text = '<a href="' . Html::attr($this->permalinks->forPost($post) . '#comment-' . $comment->id) . '">' . $text . '</a>';
+        }
+        return '<div class="wp-block-comment-date"><time datetime="' . Dates::iso($this->site, $local) . '">' . $text . '</time></div>';
+    }
+
+    /** The post a comment belongs to: the loop's, or looked up when the comment came by itself (a comment block's render callback). */
+    private function commentPost(CommentRecord $comment, Renderer $renderer): ?PostRecord
+    {
+        $post = $renderer->context()->post();
+        return $post !== null && $post->id === $comment->postId ? $post : $this->posts->find($comment->postId);
     }
 
     private function authorName(Block $block, Renderer $renderer): string
@@ -201,7 +239,7 @@ final readonly class Comments
     private function replyLink(Block $block, Renderer $renderer): string
     {
         $comment = $renderer->context()->comment();
-        $post = $renderer->context()->post();
+        $post = $comment === null ? null : $this->commentPost($comment, $renderer);
         if ($comment === null || $post === null || $post->commentStatus !== 'open') {
             return '';
         }

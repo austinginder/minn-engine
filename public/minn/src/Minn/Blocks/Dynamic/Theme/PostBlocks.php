@@ -23,6 +23,7 @@ use Minn\Support\Html;
 use Minn\Content\PasswordGate;
 use Minn\Content\Reader;
 use Minn\Extension\Extensions;
+use Minn\Front\Kind;
 use Minn\Runtime\Runtime;
 
 /** The post-* blocks: they render the context's current post. */
@@ -116,7 +117,7 @@ final readonly class PostBlocks
             return '';
         }
         $local = $post->date;
-        $time = '<time datetime="' . Dates::iso($this->site, $local) . '">' . Dates::format($this->site, $local) . '</time>';
+        $time = '<time datetime="' . Dates::iso($this->site, $local) . '">' . Dates::format($this->site, $local, (string) $block->attr('format', '')) . '</time>';
         if ((bool) $block->attr('isLink', false)) {
             $time = '<a href="' . Html::attr($this->permalinks->forPost($post)) . '">' . $time . '</a>';
         }
@@ -213,8 +214,12 @@ final readonly class PostBlocks
             . implode($separator, $links) . '</div>';
     }
 
+    /** Off a single post or page there is no neighbour to link: nothing at all. */
     private function navigationLink(Block $block, Renderer $renderer): string
     {
+        if (!in_array($renderer->context()->resolution->kind, [Kind::Single, Kind::Page], true)) {
+            return '';
+        }
         $post = $renderer->context()->post();
         $next = $block->attr('type', 'next') !== 'previous';
         $direction = $next ? 'next' : 'previous';

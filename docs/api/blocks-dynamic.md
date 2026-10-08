@@ -5,12 +5,11 @@ dynamic core blocks that render from data
 | Class | Kind | Lines | Summary |
 |---|---|---|---|
 | [`Archives`](#archives) | final readonly class | 29 | core/archives: the months that have published posts, newest first, with their counts when asked (showPostCounts). |
-| [`Categories`](#categories) | final readonly class | 27 | core/categories: the non-empty categories as a list, by name. |
 | [`Dates`](#dates) | final class | 19 | Site-local dates the way the dynamic blocks print them. |
 | [`LatestComments`](#latestcomments) | final readonly class | 68 | core/latest-comments: the newest approved comments with avatar, meta, and a 20-word excerpt. |
 | [`LatestPosts`](#latestposts) | final readonly class | 34 | core/latest-posts: the newest published posts as a list, optionally dated. |
 | [`Search`](#search) | final readonly class | 48 | core/search: the site search form. The button sits outside or inside |
-| [`SocialLinks`](#sociallinks) | final class | 75 | core/social-links and core/social-link. The list keeps its stored |
+| [`SocialLinks`](#sociallinks) | final class | 79 | core/social-links and core/social-link. The list keeps its stored |
 | [`SyncedPattern`](#syncedpattern) | final readonly class | 26 | core/block: a synced pattern, rendered from the wp_block post it references. |
 | [`TagCloud`](#tagcloud) | final readonly class | 36 | core/tag-cloud: non-empty tags by name, sized from 8pt to 22pt in |
 
@@ -19,24 +18,6 @@ dynamic core blocks that render from data
 `final readonly class Minn\Blocks\Dynamic\Archives` · `public/minn/src/Minn/Blocks/Dynamic/Archives.php`
 
 core/archives: the months that have published posts, newest first, with their counts when asked (showPostCounts).
-
-Used by: `Minn\Blocks\Renderer`
-
-```php
-__construct(Minn\Db $db, Minn\Front\Permalinks $permalinks)
-```
-
-
-### `render(Minn\Blocks\Block $block, Minn\Blocks\Renderer $renderer): string`
-
-The block's HTML.
-
-
-## Categories
-
-`final readonly class Minn\Blocks\Dynamic\Categories` · `public/minn/src/Minn/Blocks/Dynamic/Categories.php`
-
-core/categories: the non-empty categories as a list, by name.
 
 Used by: `Minn\Blocks\Renderer`
 
@@ -62,9 +43,9 @@ Used by: `Minn\Blocks\Dynamic\LatestComments`, `Minn\Blocks\Dynamic\LatestPosts`
 
 ISO 8601 with the site's offset, from a site-local MySQL datetime.
 
-### static `format(Minn\Content\Site $site, string $local): string`
+### static `format(Minn\Content\Site $site, string $local, string $format = ''): string`
 
-The date_format option applied to a site-local MySQL datetime.
+A site-local MySQL datetime in the format given, else the date_format option.
 
 
 ## LatestComments
@@ -138,6 +119,8 @@ parent's icon colours and the service's icon. The icons are the
 reference's rendered output captured as data (src/data/social-icons.json,
 the upstream set is CC0); an unknown service gets the share icon.
 
+- const `PARENT_SETTINGS` = `array (   'openInNewTab' => true,   'showLabels' => true,   'iconColor' => true,   'iconColorValue' => true,   'iconBackgroundColor' => true,   'iconBackgroundColorValue' => true, )` — What a social-links list provides its links as context.
+
 Used by: `Minn\Blocks\Renderer`
 
 ```php
@@ -149,7 +132,7 @@ __construct(string $iconsFile)
 
 Registers the block and its links with the renderer.
 
-Internals: `list()` (private, line 37), `link()` (private, line 52), `icons()` (private, line 91)
+Internals: `list()` (private, line 41), `link()` (private, line 56), `icons()` (private, line 95)
 
 
 ## SyncedPattern

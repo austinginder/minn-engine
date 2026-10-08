@@ -5,22 +5,30 @@ declare(strict_types=1);
 namespace Minn\Blocks;
 
 use Minn\Blocks\Dynamic\Archives;
-use Minn\Blocks\Dynamic\Categories;
 use Minn\Blocks\Dynamic\LatestComments;
 use Minn\Blocks\Dynamic\LatestPosts;
 use Minn\Blocks\Dynamic\Search;
 use Minn\Blocks\Dynamic\SocialLinks;
 use Minn\Blocks\Dynamic\SyncedPattern;
 use Minn\Blocks\Dynamic\TagCloud;
+use Minn\Blocks\Dynamic\Theme\Comments;
+use Minn\Blocks\Dynamic\Theme\PostBlocks;
+use Minn\Blocks\Dynamic\Theme\QueryBlocks;
+use Minn\Blocks\Dynamic\Theme\Structure;
+use Minn\Blocks\Dynamic\Theme\TermBlocks;
 use Minn\Content\Posts;
 use Minn\Content\Site;
+use Minn\Content\Terms;
+use Minn\Content\Users;
 use Minn\Content\Texturize;
 use Minn\Db;
 use Minn\Extension\Extensions;
 use Minn\Front\Permalinks;
 use Minn\Media\Uploads;
 use Minn\Runtime\BlockFilters;
+use Minn\Runtime\Runtime;
 use Minn\Support\Html;
+use Minn\Theme\Templates;
 use Minn\Theme\Theme;
 
 /**
@@ -58,8 +66,10 @@ final class Renderer
         return null;
     }
 
-    /** @var array<string, callable> */
+    /** @var array<string, callable> what renders each dynamic block: the engine's own, or a plugin's callback that took it over */
     private array $dynamic = [];
+    /** @var array<string, callable> the engine's own renderers, kept when a plugin's callback takes a block over */
+    private array $native = [];
     /** @var list<array<string, mixed>> context enclosing blocks provide to those inside */
     private array $provided = [];
     private Context $context;
@@ -111,28 +121,89 @@ final class Renderer
         $theme = Theme::active($site, $permalinks, ABSPATH . 'wp-content/themes');
         $renderer->state()->useRootPadding((bool) ($theme?->json()['settings']['useRootPaddingAwareAlignments'] ?? false));
         $renderer->registerDynamic('core/latest-posts', (new LatestPosts($db, $site, $permalinks))->render(...));
-        $renderer->registerDynamic('core/categories', (new Categories($db, $permalinks))->render(...));
         $renderer->registerDynamic('core/archives', (new Archives($db, $permalinks))->render(...));
         $renderer->registerDynamic('core/search', (new Search($permalinks))->render(...));
         $renderer->registerDynamic('core/tag-cloud', (new TagCloud($db, $permalinks))->render(...));
         $renderer->registerDynamic('core/latest-comments', (new LatestComments($db, $site, $posts, $permalinks))->render(...));
         $renderer->registerDynamic('core/block', (new SyncedPattern($db))->render(...));
-        // Navigation renders wherever block content does, not only inside a
-        // theme's templates: wp/v2/navigation serves a menu's rendered
-        // markup, and a post may hold a navigation block of its own.
+        // Every core block renders wherever block content does, not only
+        // inside a theme's templates: wp/v2/navigation serves a menu's
+        // rendered markup, a post may hold a navigation block of its own, and
+        // a plugin calls render_block() or a core block's render callback
+        // from a shortcode or a REST route (probe core-blocks).
         (new Dynamic\Theme\Navigation($db, $posts, $permalinks))->register($renderer);
         (new SocialLinks(MINN_ENGINE_DIR . '/data/social-icons.json'))->register($renderer);
+        $users = new Users($db);
+        (new PostBlocks($posts, $users, $site, $permalinks))->register($renderer);
+        (new QueryBlocks($posts, $site, $permalinks))->register($renderer);
+        (new TermBlocks(new Terms($db), $permalinks))->register($renderer);
+        (new Comments($site, $permalinks, $posts, $users))->register($renderer);
+        if ($theme !== null) {
+            (new Structure($theme, new Templates($db, $posts, $theme, Runtime::blockTemplates()), $site, $permalinks))->register($renderer);
+        }
+        // The core blocks the facade renders, from the WordPress functions they are made of (get_avatar, comments_open, the login form).
+        if (Runtime::booted()) {
+            Runtime::hooks()->action('minn_block_renderers', [$renderer]);
+        }
         return $renderer;
     }
 
     /**
-     * Registers a dynamic block's render callback.
+     * Registers the engine's own renderer for a dynamic block. A plugin's
+     * callback that already took the block over (bridge()) keeps it, as a
+     * replaced render callback does on the reference.
      *
      * @param callable(Block, Renderer): string $render
      */
     public function registerDynamic(string $name, callable $render): void
     {
+        $bridged = isset($this->dynamic[$name]) && $this->dynamic[$name] !== ($this->native[$name] ?? null);
+        $this->native[$name] = $render;
+        if (!$bridged) {
+            $this->dynamic[$name] = $render;
+        }
+    }
+
+    /**
+     * Hands a block to a plugin's render callback; the engine's own renderer
+     * for it stays for renderNative().
+     *
+     * @param callable(Block, Renderer): string $render
+     */
+    public function bridge(string $name, callable $render): void
+    {
         $this->dynamic[$name] = $render;
+    }
+
+    /**
+     * One block as HTML through the engine's own renderer for its name (its
+     * static markup when it has none), even where a plugin's callback took
+     * the block over: what a core render callback gives, so a plugin's
+     * callback that calls the one it replaced does not call itself.
+     */
+    public function renderNative(Block $block): string
+    {
+        $name = (string) $block->name;
+        $taken = $this->dynamic[$name] ?? null;
+        $own = $this->native[$name] ?? null;
+        if ($taken === $own) {
+            return $this->renderBlock($block);
+        }
+        $this->renderWith($name, $own);
+        try {
+            return $this->renderBlock($block);
+        } finally {
+            $this->renderWith($name, $taken);
+        }
+    }
+
+    private function renderWith(string $name, ?callable $render): void
+    {
+        if ($render === null) {
+            unset($this->dynamic[$name]);
+        } else {
+            $this->dynamic[$name] = $render;
+        }
     }
 
     /** Block markup as HTML, texturized. */

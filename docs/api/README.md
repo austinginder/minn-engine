@@ -8,8 +8,8 @@ The engine's own classes under `public/minn/src/Minn/`, one page per namespace, 
 | [`Minn\Admin`](admin.md) | 29 | the minn-admin/v1 namespace and serving the Minn Admin app |
 | [`Minn\Auth`](auth.md) | 19 | passwords, sessions, cookies, nonces, roles and capabilities |
 | [`Minn\Blocks`](blocks.md) | 19 | the block parser and renderer |
-| [`Minn\Blocks\Dynamic`](blocks-dynamic.md) | 9 | dynamic core blocks that render from data |
-| [`Minn\Blocks\Dynamic\Theme`](blocks-dynamic-theme.md) | 5 | the template blocks a block theme composes with |
+| [`Minn\Blocks\Dynamic`](blocks-dynamic.md) | 8 | dynamic core blocks that render from data |
+| [`Minn\Blocks\Dynamic\Theme`](blocks-dynamic-theme.md) | 6 | the template blocks a block theme composes with |
 | [`Minn\Cli`](cli.md) | 17 | the wp verbs the engine answers itself |
 | [`Minn\Content`](content.md) | 38 | the repositories and records: posts, users, terms, comments, and the render pipeline |
 | [`Minn\Cron`](cron.md) | 1 | scheduled publishing |

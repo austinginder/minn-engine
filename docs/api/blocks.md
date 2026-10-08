@@ -14,8 +14,8 @@ the block parser and renderer
 | [`Layout`](#layout) | final class | 124 | The layout-support classes the reference adds at render time. Every |
 | [`Parser`](#parser) | final class | 91 | Parses block markup into a tree. The grammar is the delimiter comment: |
 | [`QueryVars`](#queryvars) | final class | 122 | The query variables a Query Loop block's context asks for, the way the |
-| [`RenderState`](#renderstate) | final class | 346 | Per-request rendering state, owned by the renderer. The reference numbers |
-| [`Renderer`](#renderer) | final class | 259 | Renders a block tree the way the reference renders post_content: |
+| [`RenderState`](#renderstate) | final class | 352 | Per-request rendering state, owned by the renderer. The reference numbers |
+| [`Renderer`](#renderer) | final class | 322 | Renders a block tree the way the reference renders post_content: |
 | [`Selector`](#selector) | final class | 42 | The CSS selector a block type declares for its root or for one feature, from its `selectors` map or the older per-support keys. |
 | [`Serializer`](#serializer) | final class | 46 | Parsed blocks back to markup. A core block is written by its short name; |
 | [`StyleEngine`](#styleengine) | final class | 148 | What a block's style object comes to, as the reference's style engine |
@@ -93,7 +93,7 @@ One parsed block. A null name is freeform HTML between blocks. The
 innerContent list holds the block's own HTML chunks in order, with a
 null placeholder wherever an inner block sits.
 
-Used by: `Minn\Blocks\Bindings`, `Minn\Blocks\Dynamic\Archives`, `Minn\Blocks\Dynamic\Categories`, `Minn\Blocks\Dynamic\LatestComments`, `Minn\Blocks\Dynamic\LatestPosts`, `Minn\Blocks\Dynamic\Search`, `Minn\Blocks\Dynamic\SocialLinks`, `Minn\Blocks\Dynamic\SyncedPattern`, `Minn\Blocks\Dynamic\TagCloud`, `Minn\Blocks\Dynamic\Theme\Comments`, `Minn\Blocks\Dynamic\Theme\Navigation`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Blocks\Dynamic\Theme\Structure`, `Minn\Blocks\Parser`, `Minn\Blocks\Renderer`, `Minn\Blocks\Serializer`, `Minn\Blocks\Wrapper`, `Minn\Content\ContentScan`, `Minn\Content\Excerpt`, `Minn\Content\Menus`, `Minn\Extension\SeamRunner`, `Minn\Runtime\BlockFilters`, `Minn\Support\Kses`, `Minn\Theme\TemplatePatterns`
+Used by: `Minn\Blocks\Bindings`, `Minn\Blocks\Dynamic\Archives`, `Minn\Blocks\Dynamic\LatestComments`, `Minn\Blocks\Dynamic\LatestPosts`, `Minn\Blocks\Dynamic\Search`, `Minn\Blocks\Dynamic\SocialLinks`, `Minn\Blocks\Dynamic\SyncedPattern`, `Minn\Blocks\Dynamic\TagCloud`, `Minn\Blocks\Dynamic\Theme\Comments`, `Minn\Blocks\Dynamic\Theme\Navigation`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Blocks\Dynamic\Theme\Structure`, `Minn\Blocks\Dynamic\Theme\TermBlocks`, `Minn\Blocks\Parser`, `Minn\Blocks\Renderer`, `Minn\Blocks\Serializer`, `Minn\Blocks\Wrapper`, `Minn\Content\ContentScan`, `Minn\Content\Excerpt`, `Minn\Content\Menus`, `Minn\Extension\SeamRunner`, `Minn\Runtime\BlockFilters`, `Minn\Support\Kses`, `Minn\Theme\TemplatePatterns`
 
 ```php
 __construct(?string $name, array $attrs, array $innerBlocks, string $innerHtml, array $innerContent)
@@ -503,6 +503,10 @@ Marks a nested source as being rendered; false when it is already open (a cycle)
 
 Leaves a cycle-guarded key.
 
+### `inside(string $key): bool`
+
+Whether a key is open: a source being rendered, or the page template ("template").
+
 ### `descend(): bool`
 
 True while the block tree is shallower than the cap; deeper blocks render as nothing.
@@ -513,7 +517,7 @@ Leaves one nesting level.
 
 ### `depth(): int`
 
-How deep the block tree is right now; zero outside a page render.
+How deep the block tree is right now; zero outside any block render.
 
 ### `setPendingElements(?string $class): ?string`
 
@@ -562,7 +566,7 @@ counters), and finally texturize over the whole.
 These come from the active theme's registered block styles; the set
 mirrors the reference's theme until the engine reads theme data.
 
-Used by: `Minn\Blocks\Dynamic\Archives`, `Minn\Blocks\Dynamic\Categories`, `Minn\Blocks\Dynamic\LatestComments`, `Minn\Blocks\Dynamic\Search`, `Minn\Blocks\Dynamic\SocialLinks`, `Minn\Blocks\Dynamic\SyncedPattern`, `Minn\Blocks\Dynamic\Theme\Comments`, `Minn\Blocks\Dynamic\Theme\Navigation`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Blocks\Dynamic\Theme\Structure`, `Minn\Blocks\Wrapper`, `Minn\Content\Blocks`, `Minn\Runtime\Runtime`, `Minn\Theme\PageRenderer`
+Used by: `Minn\Blocks\Dynamic\Archives`, `Minn\Blocks\Dynamic\LatestComments`, `Minn\Blocks\Dynamic\Search`, `Minn\Blocks\Dynamic\SocialLinks`, `Minn\Blocks\Dynamic\SyncedPattern`, `Minn\Blocks\Dynamic\Theme\Comments`, `Minn\Blocks\Dynamic\Theme\Navigation`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Blocks\Dynamic\Theme\Structure`, `Minn\Blocks\Dynamic\Theme\TermBlocks`, `Minn\Blocks\Wrapper`, `Minn\Content\Blocks`, `Minn\Runtime\Runtime`, `Minn\Theme\PageRenderer`
 
 ```php
 __construct(Minn\Blocks\ImageTags $images)
@@ -595,9 +599,25 @@ A renderer with every dynamic block wired over the database door.
 
 ### `registerDynamic(string $name, callable $render): void`
 
-Registers a dynamic block's render callback.
+Registers the engine's own renderer for a dynamic block. A plugin's
+callback that already took the block over (bridge()) keeps it, as a
+replaced render callback does on the reference.
 
 - `@param callable(Block, Renderer): string $render`
+
+### `bridge(string $name, callable $render): void`
+
+Hands a block to a plugin's render callback; the engine's own renderer
+for it stays for renderNative().
+
+- `@param callable(Block, Renderer): string $render`
+
+### `renderNative(Minn\Blocks\Block $block): string`
+
+One block as HTML through the engine's own renderer for its name (its
+static markup when it has none), even where a plugin's callback took
+the block over: what a core render callback gives, so a plugin's
+callback that calls the one it replaced does not call itself.
 
 ### `render(string $markup): string`
 
@@ -627,7 +647,7 @@ Renders with context provided to the blocks inside (render_block_context's job o
 
 - `@param array<string, mixed> $context`
 
-Internals: `renderNamed()` (private, line 226), `decorate()` (private, line 247), `gallery()` (private, line 278), `flexWithoutContainer()` (private, line 286)
+Internals: `renderWith()` (private, line 200), `renderNamed()` (private, line 297), `decorate()` (private, line 318), `gallery()` (private, line 349), `flexWithoutContainer()` (private, line 357)
 
 
 ## Selector
@@ -737,7 +757,7 @@ their own wrapper (static blocks already carry them in stored markup).
 
 - const `SIDES` = `array (   0 => 'top',   1 => 'right',   2 => 'bottom',   3 => 'left', )`
 
-Used by: `Minn\Blocks\Dynamic\Search`, `Minn\Blocks\Dynamic\SocialLinks`, `Minn\Blocks\Dynamic\Theme\Comments`, `Minn\Blocks\Dynamic\Theme\Navigation`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Blocks\Elements`, `Minn\Blocks\Layout`, `Minn\Blocks\Wrapper`, `Minn\Theme\GlobalStyles`
+Used by: `Minn\Blocks\Dynamic\Search`, `Minn\Blocks\Dynamic\SocialLinks`, `Minn\Blocks\Dynamic\Theme\Comments`, `Minn\Blocks\Dynamic\Theme\Navigation`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Blocks\Dynamic\Theme\TermBlocks`, `Minn\Blocks\Elements`, `Minn\Blocks\Layout`, `Minn\Blocks\Wrapper`, `Minn\Theme\GlobalStyles`
 
 ### static `value(string $value): string`
 
@@ -818,7 +838,7 @@ the custom class and its numbered style companion, the element-style
 class, the block's class, colour presets, font size and family, and
 the layout classes last; the style attribute inline.
 
-Used by: `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Blocks\Dynamic\Theme\Structure`
+Used by: `Minn\Blocks\Dynamic\Theme\Comments`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Blocks\Dynamic\Theme\Structure`, `Minn\Blocks\Dynamic\Theme\TermBlocks`
 
 ### static `open(string $tag, string $blockClass, Minn\Blocks\Block $block, bool $styleFirst = false, string $blockName = '', bool $linkColorClass = false, array $extraClasses = array ( ), array $trailingClasses = array ( )): string`
 

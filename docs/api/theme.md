@@ -19,7 +19,7 @@ the block-theme reader, templates, global styles and the page renderer
 | [`Hierarchy`](#hierarchy) | final class | 146 | The classic template hierarchy: the candidate file names each template |
 | [`MainQueryBridge`](#mainquerybridge) | final readonly class | 125 | Stands the main query for a themed page and runs the front-end steps |
 | [`NotModified`](#notmodified) | final class | 3 | Raised once a reader's copy of a feed has been found current and the |
-| [`PageRenderer`](#pagerenderer) | final readonly class | 177 | A whole page from the active block theme: the template the resolution |
+| [`PageRenderer`](#pagerenderer) | final readonly class | 179 | A whole page from the active block theme: the template the resolution |
 | [`PatternText`](#patterntext) | final class | 198 | Block-theme patterns are PHP files whose only code is a handful of |
 | [`Printed`](#printed) | final class | 3 | Raised once a WordPress handler has printed a whole response (a sitemap, |
 | [`QueryClasses`](#queryclasses) | final readonly class | 120 | The body-class tokens the main query stands for, in the reference's |
@@ -599,7 +599,7 @@ The body-class tokens before plugins filter them (bodyClasses()). @return list<s
 
 The page for a resolution, or null when the theme has no template for it.
 
-Internals: `pluginTemplate()` (private, line 162), `skipLinkTarget()` (private, line 180), `head()` (private, line 194)
+Internals: `pluginTemplate()` (private, line 159), `skipLinkTarget()` (private, line 177), `head()` (private, line 191)
 
 
 ## PatternText
@@ -1014,7 +1014,7 @@ a wp_template post saved from the site editor (matched by slug and the
 theme term) wins over the theme's file. Parts resolve the same way
 through wp_template_part.
 
-Used by: `Minn\Admin\RenderController`, `Minn\Blocks\Dynamic\Theme\Structure`, `Minn\Theme\PageRenderer`
+Used by: `Minn\Admin\RenderController`, `Minn\Blocks\Dynamic\Theme\Structure`, `Minn\Blocks\Renderer`, `Minn\Theme\PageRenderer`
 
 ```php
 __construct(Minn\Db $db, Minn\Content\Posts $posts, Minn\Theme\Theme $theme, ?Minn\Runtime\BlockTemplates $registered = NULL)

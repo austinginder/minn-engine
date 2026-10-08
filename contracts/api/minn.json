@@ -11559,7 +11559,6 @@
             "usedBy": [
                 "Minn\\Blocks\\Bindings",
                 "Minn\\Blocks\\Dynamic\\Archives",
-                "Minn\\Blocks\\Dynamic\\Categories",
                 "Minn\\Blocks\\Dynamic\\LatestComments",
                 "Minn\\Blocks\\Dynamic\\LatestPosts",
                 "Minn\\Blocks\\Dynamic\\Search",
@@ -11571,6 +11570,7 @@
                 "Minn\\Blocks\\Dynamic\\Theme\\PostBlocks",
                 "Minn\\Blocks\\Dynamic\\Theme\\QueryBlocks",
                 "Minn\\Blocks\\Dynamic\\Theme\\Structure",
+                "Minn\\Blocks\\Dynamic\\Theme\\TermBlocks",
                 "Minn\\Blocks\\Parser",
                 "Minn\\Blocks\\Renderer",
                 "Minn\\Blocks\\Serializer",
@@ -12196,104 +12196,6 @@
             ]
         },
         {
-            "name": "Minn\\Blocks\\Dynamic\\Categories",
-            "short": "Categories",
-            "namespace": "Minn\\Blocks\\Dynamic",
-            "kind": "final readonly class",
-            "file": "public/minn/src/Minn/Blocks/Dynamic/Categories.php",
-            "lines": 27,
-            "doc": "core/categories: the non-empty categories as a list, by name.",
-            "implements": [],
-            "extends": null,
-            "uses": [
-                "Minn\\Blocks\\Block",
-                "Minn\\Blocks\\Renderer",
-                "Minn\\Content\\TermRecord",
-                "Minn\\Db",
-                "Minn\\Front\\Kind",
-                "Minn\\Front\\Permalinks",
-                "Minn\\Support\\Html"
-            ],
-            "usedBy": [
-                "Minn\\Blocks\\Renderer"
-            ],
-            "constructor": {
-                "signature": "__construct(Minn\\Db $db, Minn\\Front\\Permalinks $permalinks)",
-                "doc": "",
-                "shapes": [],
-                "params": [
-                    {
-                        "name": "db",
-                        "type": "Minn\\Db",
-                        "shape": "",
-                        "default": null,
-                        "doc": ""
-                    },
-                    {
-                        "name": "permalinks",
-                        "type": "Minn\\Front\\Permalinks",
-                        "shape": "",
-                        "default": null,
-                        "doc": ""
-                    }
-                ],
-                "visibility": "public",
-                "line": 16,
-                "end": 20
-            },
-            "cases": [],
-            "constants": [],
-            "properties": [
-                {
-                    "name": "db",
-                    "type": "Minn\\Db",
-                    "readonly": true,
-                    "static": false,
-                    "doc": "",
-                    "visibility": "private",
-                    "promoted": true
-                },
-                {
-                    "name": "permalinks",
-                    "type": "Minn\\Front\\Permalinks",
-                    "readonly": true,
-                    "static": false,
-                    "doc": "",
-                    "visibility": "private",
-                    "promoted": true
-                }
-            ],
-            "methods": [
-                {
-                    "routes": [],
-                    "name": "render",
-                    "static": false,
-                    "visibility": "public",
-                    "signature": "render(Minn\\Blocks\\Block $block, Minn\\Blocks\\Renderer $renderer): string",
-                    "doc": "The block's HTML.",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "block",
-                            "type": "Minn\\Blocks\\Block",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "renderer",
-                            "type": "Minn\\Blocks\\Renderer",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 23,
-                    "end": 39
-                }
-            ]
-        },
-        {
             "name": "Minn\\Blocks\\Dynamic\\Dates",
             "short": "Dates",
             "namespace": "Minn\\Blocks\\Dynamic",
@@ -12349,8 +12251,8 @@
                     "name": "format",
                     "static": true,
                     "visibility": "public",
-                    "signature": "format(Minn\\Content\\Site $site, string $local): string",
-                    "doc": "The date_format option applied to a site-local MySQL datetime.",
+                    "signature": "format(Minn\\Content\\Site $site, string $local, string $format = ''): string",
+                    "doc": "A site-local MySQL datetime in the format given, else the date_format option.",
                     "shapes": [],
                     "params": [
                         {
@@ -12365,6 +12267,13 @@
                             "type": "string",
                             "shape": "",
                             "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "format",
+                            "type": "string",
+                            "shape": "",
+                            "default": "''",
                             "doc": ""
                         }
                     ],
@@ -12729,7 +12638,7 @@
             "namespace": "Minn\\Blocks\\Dynamic",
             "kind": "final class",
             "file": "public/minn/src/Minn/Blocks/Dynamic/SocialLinks.php",
-            "lines": 75,
+            "lines": 79,
             "doc": "core/social-links and core/social-link. The list keeps its stored\nwrapper and gains the flex layout classes; each link renders from its\nparent's icon colours and the service's icon. The icons are the\nreference's rendered output captured as data (src/data/social-icons.json,\nthe upstream set is CC0); an unknown service gets the share icon.",
             "implements": [],
             "extends": null,
@@ -12758,11 +12667,18 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 26,
-                "end": 28
+                "line": 29,
+                "end": 31
             },
             "cases": [],
-            "constants": [],
+            "constants": [
+                {
+                    "name": "PARENT_SETTINGS",
+                    "value": "array (   'openInNewTab' => true,   'showLabels' => true,   'iconColor' => true,   'iconColorValue' => true,   'iconBackgroundColor' => true,   'iconBackgroundColorValue' => true, )",
+                    "doc": "What a social-links list provides its links as context.",
+                    "visibility": "private"
+                }
+            ],
             "properties": [
                 {
                     "name": "icons",
@@ -12801,8 +12717,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 31,
-                    "end": 35
+                    "line": 34,
+                    "end": 39
                 },
                 {
                     "routes": [],
@@ -12828,8 +12744,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 37,
-                    "end": 50
+                    "line": 41,
+                    "end": 54
                 },
                 {
                     "routes": [],
@@ -12855,8 +12771,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 52,
-                    "end": 88
+                    "line": 56,
+                    "end": 92
                 },
                 {
                     "routes": [],
@@ -12869,8 +12785,8 @@
                         "@return array<string, array{label: string, svg: string}>"
                     ],
                     "params": [],
-                    "line": 91,
-                    "end": 94
+                    "line": 95,
+                    "end": 98
                 }
             ]
         },
@@ -13049,7 +12965,7 @@
             "namespace": "Minn\\Blocks\\Dynamic\\Theme",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Blocks/Dynamic/Theme/Comments.php",
-            "lines": 223,
+            "lines": 257,
             "doc": "comments, comments-title, comment-template, the comment-* blocks, and the comment form.",
             "implements": [],
             "extends": null,
@@ -13058,22 +12974,26 @@
                 "Minn\\Blocks\\Dynamic\\Dates",
                 "Minn\\Blocks\\Renderer",
                 "Minn\\Blocks\\Styles",
+                "Minn\\Blocks\\Wrapper",
                 "Minn\\Content\\Blocks",
                 "Minn\\Content\\CommentRecord",
                 "Minn\\Content\\PasswordGate",
                 "Minn\\Content\\PostRecord",
+                "Minn\\Content\\Posts",
                 "Minn\\Content\\Site",
                 "Minn\\Content\\Texturize",
+                "Minn\\Content\\Users",
                 "Minn\\Front\\Permalinks",
+                "Minn\\Runtime\\Avatar",
                 "Minn\\Runtime\\Runtime",
                 "Minn\\Support\\Html",
                 "Minn\\Support\\Kses"
             ],
             "usedBy": [
-                "Minn\\Theme\\PageRenderer"
+                "Minn\\Blocks\\Renderer"
             ],
             "constructor": {
-                "signature": "__construct(Minn\\Content\\Site $site, Minn\\Front\\Permalinks $permalinks)",
+                "signature": "__construct(Minn\\Content\\Site $site, Minn\\Front\\Permalinks $permalinks, Minn\\Content\\Posts $posts, Minn\\Content\\Users $users)",
                 "doc": "",
                 "shapes": [],
                 "params": [
@@ -13090,11 +13010,25 @@
                         "shape": "",
                         "default": null,
                         "doc": ""
+                    },
+                    {
+                        "name": "posts",
+                        "type": "Minn\\Content\\Posts",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    },
+                    {
+                        "name": "users",
+                        "type": "Minn\\Content\\Users",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
                     }
                 ],
                 "visibility": "public",
-                "line": 25,
-                "end": 29
+                "line": 29,
+                "end": 35
             },
             "cases": [],
             "constants": [],
@@ -13111,6 +13045,24 @@
                 {
                     "name": "permalinks",
                     "type": "Minn\\Front\\Permalinks",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
+                },
+                {
+                    "name": "posts",
+                    "type": "Minn\\Content\\Posts",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
+                },
+                {
+                    "name": "users",
+                    "type": "Minn\\Content\\Users",
                     "readonly": true,
                     "static": false,
                     "doc": "",
@@ -13136,8 +13088,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 32,
-                    "end": 45
+                    "line": 38,
+                    "end": 51
                 },
                 {
                     "routes": [],
@@ -13163,8 +13115,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 48,
-                    "end": 60
+                    "line": 54,
+                    "end": 66
                 },
                 {
                     "routes": [],
@@ -13190,8 +13142,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 62,
-                    "end": 77
+                    "line": 68,
+                    "end": 88
                 },
                 {
                     "routes": [],
@@ -13217,8 +13169,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 79,
-                    "end": 94
+                    "line": 90,
+                    "end": 105
                 },
                 {
                     "routes": [],
@@ -13247,8 +13199,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 103,
-                    "end": 113
+                    "line": 114,
+                    "end": 124
                 },
                 {
                     "routes": [],
@@ -13267,8 +13219,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 116,
-                    "end": 119
+                    "line": 127,
+                    "end": 130
                 },
                 {
                     "routes": [],
@@ -13317,8 +13269,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 122,
-                    "end": 150
+                    "line": 133,
+                    "end": 161
                 },
                 {
                     "routes": [],
@@ -13326,34 +13278,7 @@
                     "static": false,
                     "visibility": "private",
                     "signature": "avatar(Minn\\Blocks\\Block $block, Minn\\Blocks\\Renderer $renderer): string",
-                    "doc": "",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "block",
-                            "type": "Minn\\Blocks\\Block",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "renderer",
-                            "type": "Minn\\Blocks\\Renderer",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 152,
-                    "end": 162
-                },
-                {
-                    "routes": [],
-                    "name": "date",
-                    "static": false,
-                    "visibility": "private",
-                    "signature": "date(Minn\\Blocks\\Block $block, Minn\\Blocks\\Renderer $renderer): string",
-                    "doc": "",
+                    "doc": "The comment author's avatar in a comment loop; elsewhere the post author's, linked to their posts when asked.",
                     "shapes": [],
                     "params": [
                         {
@@ -13373,6 +13298,94 @@
                     ],
                     "line": 164,
                     "end": 174
+                },
+                {
+                    "routes": [],
+                    "name": "authorAvatar",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "authorAvatar(Minn\\Blocks\\Block $block, Minn\\Blocks\\Renderer $renderer, int $size): string",
+                    "doc": "",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "block",
+                            "type": "Minn\\Blocks\\Block",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "renderer",
+                            "type": "Minn\\Blocks\\Renderer",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "size",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 176,
+                    "end": 189
+                },
+                {
+                    "routes": [],
+                    "name": "date",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "date(Minn\\Blocks\\Block $block, Minn\\Blocks\\Renderer $renderer): string",
+                    "doc": "When the comment was written, in the format asked for (else the site's), linked to the comment unless isLink is off.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "block",
+                            "type": "Minn\\Blocks\\Block",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "renderer",
+                            "type": "Minn\\Blocks\\Renderer",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 192,
+                    "end": 205
+                },
+                {
+                    "routes": [],
+                    "name": "commentPost",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "commentPost(Minn\\Content\\CommentRecord $comment, Minn\\Blocks\\Renderer $renderer): ?Minn\\Content\\PostRecord",
+                    "doc": "The post a comment belongs to: the loop's, or looked up when the comment came by itself (a comment block's render callback).",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "comment",
+                            "type": "Minn\\Content\\CommentRecord",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "renderer",
+                            "type": "Minn\\Blocks\\Renderer",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 208,
+                    "end": 212
                 },
                 {
                     "routes": [],
@@ -13398,8 +13411,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 176,
-                    "end": 188
+                    "line": 214,
+                    "end": 226
                 },
                 {
                     "routes": [],
@@ -13425,8 +13438,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 190,
-                    "end": 199
+                    "line": 228,
+                    "end": 237
                 },
                 {
                     "routes": [],
@@ -13452,8 +13465,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 201,
-                    "end": 212
+                    "line": 239,
+                    "end": 250
                 },
                 {
                     "routes": [],
@@ -13479,8 +13492,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 214,
-                    "end": 221
+                    "line": 252,
+                    "end": 259
                 },
                 {
                     "routes": [],
@@ -13506,8 +13519,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 229,
-                    "end": 243
+                    "line": 267,
+                    "end": 281
                 }
             ]
         },
@@ -13517,7 +13530,7 @@
             "namespace": "Minn\\Blocks\\Dynamic\\Theme",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Blocks/Dynamic/Theme/Navigation.php",
-            "lines": 291,
+            "lines": 340,
             "doc": "navigation, navigation-link, page-list. A navigation block's items come\nfrom its inner blocks, the wp_navigation post it references, the newest\npublished wp_navigation post, or (when none of those exist) the first\nclassic nav_menu; a responsive menu wraps them in the overlay markup\nthe reference emits.",
             "implements": [],
             "extends": null,
@@ -13540,9 +13553,7 @@
                 "Minn\\Support\\Html",
                 "Minn\\Support\\Kses"
             ],
-            "usedBy": [
-                "Minn\\Theme\\PageRenderer"
-            ],
+            "usedBy": [],
             "constructor": {
                 "signature": "__construct(Minn\\Db $db, Minn\\Content\\Posts $posts, Minn\\Front\\Permalinks $permalinks, ?Minn\\Content\\Menus $menus = NULL)",
                 "doc": "",
@@ -13578,11 +13589,42 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 34,
-                "end": 40
+                "line": 41,
+                "end": 47
             },
             "cases": [],
-            "constants": [],
+            "constants": [
+                {
+                    "name": "SUBMENU_WIRING",
+                    "value": "'data-wp-context=\"{ &quot;submenuOpenedBy&quot;: { &quot;click&quot;: false, &quot;hover&quot;: false, &quot;focus&quot;: false }, &quot;type&quot;: &quot;submenu&quot;, &quot;modal&quot;: null, &quot;previousFocus&quot;: null }\" data-wp-interactive=\"core/navigation\" data-wp-on--focusout=\"actions.handleMenuFocusout\" data-wp-on--keydown=\"actions.handleMenuKeydown\"'",
+                    "doc": "A submenu's interactivity: its context and the focus and key handlers (hover ones are added unless it opens on click).",
+                    "visibility": "private"
+                },
+                {
+                    "name": "SUBMENU_HOVER",
+                    "value": "' data-wp-on--pointerenter=\"actions.openMenuOnHover\" data-wp-on--pointerleave=\"actions.closeMenuOnHover\"'",
+                    "doc": "",
+                    "visibility": "private"
+                },
+                {
+                    "name": "SUBMENU_TOGGLE",
+                    "value": "'data-wp-bind--aria-expanded=\"state.isSubmenuOpen\" data-wp-on--click=\"actions.toggleMenuOnClick\"'",
+                    "doc": "",
+                    "visibility": "private"
+                },
+                {
+                    "name": "CHEVRON",
+                    "value": "'<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"12\" height=\"12\" viewBox=\"0 0 12 12\" fill=\"none\" aria-hidden=\"true\" focusable=\"false\"><path d=\"M1.50002 4L6.00002 8L10.5 4\" stroke-width=\"1.5\"></path></svg>'",
+                    "doc": "",
+                    "visibility": "private"
+                },
+                {
+                    "name": "CLOSE_ICON",
+                    "value": "'<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" width=\"24\" height=\"24\" aria-hidden=\"true\" focusable=\"false\"><path d=\"M13 11.8l6.1-6.3-1.1-1-6.1 6.2-6.1-6.2-1.1 1 6.1 6.3-6.5 6.7 1.1 1 6.5-6.6 6.5 6.6 1.1-1z\" /></svg>'",
+                    "doc": "",
+                    "visibility": "private"
+                }
+            ],
             "properties": [
                 {
                     "name": "db",
@@ -13639,8 +13681,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 43,
-                    "end": 48
+                    "line": 50,
+                    "end": 57
                 },
                 {
                     "routes": [],
@@ -13666,8 +13708,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 50,
-                    "end": 111
+                    "line": 59,
+                    "end": 122
                 },
                 {
                     "routes": [],
@@ -13721,8 +13763,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 118,
-                    "end": 144
+                    "line": 129,
+                    "end": 155
                 },
                 {
                     "routes": [],
@@ -13750,8 +13792,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 152,
-                    "end": 162
+                    "line": 163,
+                    "end": 173
                 },
                 {
                     "routes": [],
@@ -13772,8 +13814,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 165,
-                    "end": 184
+                    "line": 176,
+                    "end": 195
                 },
                 {
                     "routes": [],
@@ -13792,8 +13834,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 187,
-                    "end": 197
+                    "line": 198,
+                    "end": 208
                 },
                 {
                     "routes": [],
@@ -13819,8 +13861,55 @@
                             "doc": ""
                         }
                     ],
-                    "line": 199,
-                    "end": 219
+                    "line": 210,
+                    "end": 230
+                },
+                {
+                    "routes": [],
+                    "name": "submenu",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "submenu(Minn\\Blocks\\Block $block, Minn\\Blocks\\Renderer $renderer): string",
+                    "doc": "A submenu: its link (a button, when the navigation opens submenus on\nclick) and its items. Inside a navigation it carries the toggle and the\nInteractivity API wiring the navigation's settings ask for; on its own\nit is a plain item.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "block",
+                            "type": "Minn\\Blocks\\Block",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "renderer",
+                            "type": "Minn\\Blocks\\Renderer",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 238,
+                    "end": 257
+                },
+                {
+                    "routes": [],
+                    "name": "overlayClose",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "overlayClose(Minn\\Blocks\\Block $block): string",
+                    "doc": "The overlay's close button: an icon (named by aria-label), its text, or both.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "block",
+                            "type": "Minn\\Blocks\\Block",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 260,
+                    "end": 268
                 },
                 {
                     "routes": [],
@@ -13833,8 +13922,8 @@
                         "@return list<Block>"
                     ],
                     "params": [],
-                    "line": 222,
-                    "end": 226
+                    "line": 271,
+                    "end": 275
                 },
                 {
                     "routes": [],
@@ -13860,8 +13949,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 228,
-                    "end": 239
+                    "line": 277,
+                    "end": 288
                 },
                 {
                     "routes": [],
@@ -13889,8 +13978,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 242,
-                    "end": 257
+                    "line": 291,
+                    "end": 306
                 },
                 {
                     "routes": [],
@@ -13937,8 +14026,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 266,
-                    "end": 294
+                    "line": 315,
+                    "end": 343
                 },
                 {
                     "routes": [],
@@ -13987,8 +14076,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 297,
-                    "end": 304
+                    "line": 346,
+                    "end": 353
                 },
                 {
                     "routes": [],
@@ -14007,8 +14096,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 306,
-                    "end": 313
+                    "line": 355,
+                    "end": 362
                 },
                 {
                     "routes": [],
@@ -14019,8 +14108,8 @@
                     "doc": "Interactive navigation markup brings the block's view module with it, as on the reference.",
                     "shapes": [],
                     "params": [],
-                    "line": 316,
-                    "end": 321
+                    "line": 365,
+                    "end": 370
                 }
             ]
         },
@@ -14030,7 +14119,7 @@
             "namespace": "Minn\\Blocks\\Dynamic\\Theme",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Blocks/Dynamic/Theme/PostBlocks.php",
-            "lines": 255,
+            "lines": 259,
             "doc": "The post-* blocks: they render the context's current post.",
             "implements": [],
             "extends": null,
@@ -14054,13 +14143,14 @@
                 "Minn\\Content\\Users",
                 "Minn\\Db",
                 "Minn\\Extension\\Extensions",
+                "Minn\\Front\\Kind",
                 "Minn\\Front\\Permalinks",
                 "Minn\\Front\\Resolution",
                 "Minn\\Runtime\\Runtime",
                 "Minn\\Support\\Html"
             ],
             "usedBy": [
-                "Minn\\Theme\\PageRenderer"
+                "Minn\\Blocks\\Renderer"
             ],
             "constructor": {
                 "signature": "__construct(Minn\\Content\\Posts $posts, Minn\\Content\\Users $users, Minn\\Content\\Site $site, Minn\\Front\\Permalinks $permalinks)",
@@ -14097,8 +14187,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 31,
-                "end": 37
+                "line": 32,
+                "end": 38
             },
             "cases": [],
             "constants": [],
@@ -14158,8 +14248,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 40,
-                    "end": 50
+                    "line": 41,
+                    "end": 51
                 },
                 {
                     "routes": [],
@@ -14185,8 +14275,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 52,
-                    "end": 65
+                    "line": 53,
+                    "end": 66
                 },
                 {
                     "routes": [],
@@ -14212,8 +14302,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 68,
-                    "end": 110
+                    "line": 69,
+                    "end": 111
                 },
                 {
                     "routes": [],
@@ -14239,8 +14329,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 112,
-                    "end": 124
+                    "line": 113,
+                    "end": 125
                 },
                 {
                     "routes": [],
@@ -14266,8 +14356,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 126,
-                    "end": 138
+                    "line": 127,
+                    "end": 139
                 },
                 {
                     "routes": [],
@@ -14293,8 +14383,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 140,
-                    "end": 150
+                    "line": 141,
+                    "end": 151
                 },
                 {
                     "routes": [],
@@ -14320,8 +14410,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 152,
-                    "end": 190
+                    "line": 153,
+                    "end": 191
                 },
                 {
                     "routes": [],
@@ -14347,8 +14437,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 192,
-                    "end": 214
+                    "line": 193,
+                    "end": 215
                 },
                 {
                     "routes": [],
@@ -14356,7 +14446,7 @@
                     "static": false,
                     "visibility": "private",
                     "signature": "navigationLink(Minn\\Blocks\\Block $block, Minn\\Blocks\\Renderer $renderer): string",
-                    "doc": "",
+                    "doc": "Off a single post or page there is no neighbour to link: nothing at all.",
                     "shapes": [],
                     "params": [
                         {
@@ -14374,8 +14464,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 216,
-                    "end": 241
+                    "line": 218,
+                    "end": 246
                 },
                 {
                     "routes": [],
@@ -14401,8 +14491,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 243,
-                    "end": 246
+                    "line": 248,
+                    "end": 251
                 },
                 {
                     "routes": [],
@@ -14428,8 +14518,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 255,
-                    "end": 262
+                    "line": 260,
+                    "end": 267
                 },
                 {
                     "routes": [],
@@ -14448,8 +14538,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 264,
-                    "end": 267
+                    "line": 269,
+                    "end": 272
                 },
                 {
                     "routes": [],
@@ -14503,8 +14593,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 269,
-                    "end": 282
+                    "line": 274,
+                    "end": 287
                 }
             ]
         },
@@ -14514,8 +14604,8 @@
             "namespace": "Minn\\Blocks\\Dynamic\\Theme",
             "kind": "final class",
             "file": "public/minn/src/Minn/Blocks/Dynamic/Theme/QueryBlocks.php",
-            "lines": 262,
-            "doc": "query, post-template, query-title, query-no-results, query-pagination, term-description.",
+            "lines": 283,
+            "doc": "query, post-template, query-title, query-no-results, query-pagination, query-total.",
             "implements": [],
             "extends": null,
             "uses": [
@@ -14529,18 +14619,17 @@
                 "Minn\\Content\\Posts",
                 "Minn\\Content\\Site",
                 "Minn\\Content\\TermRecord",
-                "Minn\\Content\\Terms",
                 "Minn\\Content\\Texturize",
-                "Minn\\Db",
                 "Minn\\Front\\Kind",
                 "Minn\\Front\\Permalinks",
+                "Minn\\I18n\\Gettext",
                 "Minn\\Runtime\\Runtime",
                 "Minn\\Support\\Html",
                 "Minn\\Support\\Serialized",
                 "Minn\\Theme\\ArchiveTitle"
             ],
             "usedBy": [
-                "Minn\\Theme\\PageRenderer"
+                "Minn\\Blocks\\Renderer"
             ],
             "constructor": {
                 "signature": "__construct(Minn\\Content\\Posts $posts, Minn\\Content\\Site $site, Minn\\Front\\Permalinks $permalinks)",
@@ -14570,8 +14659,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 30,
-                "end": 35
+                "line": 31,
+                "end": 36
             },
             "cases": [],
             "constants": [],
@@ -14631,8 +14720,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 38,
-                    "end": 49
+                    "line": 39,
+                    "end": 50
                 },
                 {
                     "routes": [],
@@ -14658,15 +14747,15 @@
                             "doc": ""
                         }
                     ],
-                    "line": 52,
-                    "end": 68
+                    "line": 53,
+                    "end": 63
                 },
                 {
                     "routes": [],
                     "name": "queried",
                     "static": true,
                     "visibility": "private",
-                    "signature": "queried(Minn\\Blocks\\Block $block, array $attrs): Minn\\Content\\Page",
+                    "signature": "queried(Minn\\Blocks\\Block $block, array $attrs, int $page): Minn\\Content\\Page",
                     "doc": "A query loop's posts as the reference finds them: the arguments\nbuild_query_vars_from_query_block makes of the block's query (through\nquery_loop_block_query_vars) for the page its query-{id}-page asks\nfor, run through WP_Query, so pre_get_posts and the posts_* filters\nshape it too.",
                     "shapes": [
                         "@param array<string, mixed> $attrs the block's query"
@@ -14685,22 +14774,101 @@
                             "shape": "array<string, mixed>",
                             "default": null,
                             "doc": "the block's query"
+                        },
+                        {
+                            "name": "page",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
                         }
                     ],
-                    "line": 79,
-                    "end": 88
+                    "line": 74,
+                    "end": 81
+                },
+                {
+                    "routes": [],
+                    "name": "loop",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "loop(Minn\\Blocks\\Block $block, array $attrs, Minn\\Blocks\\Renderer $renderer): array",
+                    "doc": "A loop as the query block sets it: the main query's page when it\ninherits, else its own query for the page its query-{id}-page asks for.",
+                    "shapes": [
+                        "@param array<string, mixed> $attrs the block's query",
+                        "@return array{page: Page, inherit: bool, paged: int, perPage: int}"
+                    ],
+                    "params": [
+                        {
+                            "name": "block",
+                            "type": "Minn\\Blocks\\Block",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "attrs",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": "the block's query"
+                        },
+                        {
+                            "name": "renderer",
+                            "type": "Minn\\Blocks\\Renderer",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 90,
+                    "end": 100
                 },
                 {
                     "routes": [],
                     "name": "current",
                     "static": false,
                     "visibility": "private",
-                    "signature": "current(): array",
-                    "doc": "",
+                    "signature": "current(?Minn\\Blocks\\Renderer $renderer = NULL): array",
+                    "doc": "The innermost loop being rendered; outside one, the loop a block's context provides (a post template called by its render callback).",
                     "shapes": [],
-                    "params": [],
-                    "line": 90,
-                    "end": 93
+                    "params": [
+                        {
+                            "name": "renderer",
+                            "type": "?Minn\\Blocks\\Renderer",
+                            "shape": "",
+                            "default": "NULL",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 103,
+                    "end": 113
+                },
+                {
+                    "routes": [],
+                    "name": "total",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "total(Minn\\Blocks\\Block $block, Minn\\Blocks\\Renderer $renderer): string",
+                    "doc": "How many posts the loop found, or which of them this page shows (displayType range-display).",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "block",
+                            "type": "Minn\\Blocks\\Block",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "renderer",
+                            "type": "Minn\\Blocks\\Renderer",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 116,
+                    "end": 130
                 },
                 {
                     "routes": [],
@@ -14726,8 +14894,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 95,
-                    "end": 126
+                    "line": 132,
+                    "end": 163
                 },
                 {
                     "routes": [],
@@ -14755,8 +14923,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 129,
-                    "end": 157
+                    "line": 166,
+                    "end": 194
                 },
                 {
                     "routes": [],
@@ -14782,8 +14950,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 159,
-                    "end": 177
+                    "line": 196,
+                    "end": 214
                 },
                 {
                     "routes": [],
@@ -14809,8 +14977,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 179,
-                    "end": 190
+                    "line": 216,
+                    "end": 227
                 },
                 {
                     "routes": [],
@@ -14836,8 +15004,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 193,
-                    "end": 236
+                    "line": 230,
+                    "end": 273
                 },
                 {
                     "routes": [],
@@ -14856,8 +15024,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 239,
-                    "end": 251
+                    "line": 276,
+                    "end": 288
                 },
                 {
                     "routes": [],
@@ -14892,8 +15060,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 254,
-                    "end": 263
+                    "line": 291,
+                    "end": 300
                 },
                 {
                     "routes": [],
@@ -14912,35 +15080,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 266,
-                    "end": 270
-                },
-                {
-                    "routes": [],
-                    "name": "termDescription",
-                    "static": false,
-                    "visibility": "private",
-                    "signature": "termDescription(Minn\\Blocks\\Block $block, Minn\\Blocks\\Renderer $renderer): string",
-                    "doc": "",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "block",
-                            "type": "Minn\\Blocks\\Block",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "renderer",
-                            "type": "Minn\\Blocks\\Renderer",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 272,
-                    "end": 285
+                    "line": 303,
+                    "end": 307
                 }
             ]
         },
@@ -14970,6 +15111,7 @@
                 "Minn\\Theme\\Theme"
             ],
             "usedBy": [
+                "Minn\\Blocks\\Renderer",
                 "Minn\\Theme\\PageRenderer"
             ],
             "constructor": {
@@ -15219,6 +15361,209 @@
                     ],
                     "line": 115,
                     "end": 124
+                }
+            ]
+        },
+        {
+            "name": "Minn\\Blocks\\Dynamic\\Theme\\TermBlocks",
+            "short": "TermBlocks",
+            "namespace": "Minn\\Blocks\\Dynamic\\Theme",
+            "kind": "final readonly class",
+            "file": "public/minn/src/Minn/Blocks/Dynamic/Theme/TermBlocks.php",
+            "lines": 71,
+            "doc": "term-name, term-count and term-description: the term a block's context\nnames (termId and taxonomy, as a terms query provides them), else the\nterm archive being viewed; nothing for neither (probe core-blocks).",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\Blocks\\Block",
+                "Minn\\Blocks\\Renderer",
+                "Minn\\Blocks\\Styles",
+                "Minn\\Blocks\\Wrapper",
+                "Minn\\Content\\TermRecord",
+                "Minn\\Content\\Terms",
+                "Minn\\Front\\Kind",
+                "Minn\\Front\\Permalinks",
+                "Minn\\Support\\Html"
+            ],
+            "usedBy": [
+                "Minn\\Blocks\\Renderer"
+            ],
+            "constructor": {
+                "signature": "__construct(Minn\\Content\\Terms $terms, Minn\\Front\\Permalinks $permalinks)",
+                "doc": "",
+                "shapes": [],
+                "params": [
+                    {
+                        "name": "terms",
+                        "type": "Minn\\Content\\Terms",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    },
+                    {
+                        "name": "permalinks",
+                        "type": "Minn\\Front\\Permalinks",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    }
+                ],
+                "visibility": "public",
+                "line": 26,
+                "end": 30
+            },
+            "cases": [],
+            "constants": [
+                {
+                    "name": "BRACKETS",
+                    "value": "array (   'round' =>    array (     0 => '(',     1 => ')',   ),   'square' =>    array (     0 => '[',     1 => ']',   ),   'curly' =>    array (     0 => '{',     1 => '}',   ),   'angle' =>    array (     0 => '<',     1 => '>',   ),   'none' =>    array (     0 => '',     1 => '',   ), )",
+                    "doc": "",
+                    "visibility": "private"
+                }
+            ],
+            "properties": [
+                {
+                    "name": "terms",
+                    "type": "Minn\\Content\\Terms",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
+                },
+                {
+                    "name": "permalinks",
+                    "type": "Minn\\Front\\Permalinks",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
+                }
+            ],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "register",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "register(Minn\\Blocks\\Renderer $renderer): void",
+                    "doc": "Registers this family's blocks with the renderer.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "renderer",
+                            "type": "Minn\\Blocks\\Renderer",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 33,
+                    "end": 38
+                },
+                {
+                    "routes": [],
+                    "name": "name",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "name(Minn\\Blocks\\Block $block, Minn\\Blocks\\Renderer $renderer): string",
+                    "doc": "The name, as a paragraph or the heading level asked for, linked to its archive when asked.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "block",
+                            "type": "Minn\\Blocks\\Block",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "renderer",
+                            "type": "Minn\\Blocks\\Renderer",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 41,
+                    "end": 54
+                },
+                {
+                    "routes": [],
+                    "name": "count",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "count(Minn\\Blocks\\Block $block, Minn\\Blocks\\Renderer $renderer): string",
+                    "doc": "How many posts the term holds, in the brackets asked for (round by default).",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "block",
+                            "type": "Minn\\Blocks\\Block",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "renderer",
+                            "type": "Minn\\Blocks\\Renderer",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 57,
+                    "end": 65
+                },
+                {
+                    "routes": [],
+                    "name": "description",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "description(Minn\\Blocks\\Block $block, Minn\\Blocks\\Renderer $renderer): string",
+                    "doc": "The description as written for a term in context; a term archive's as a paragraph, the way term_description gives it.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "block",
+                            "type": "Minn\\Blocks\\Block",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "renderer",
+                            "type": "Minn\\Blocks\\Renderer",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 68,
+                    "end": 77
+                },
+                {
+                    "routes": [],
+                    "name": "term",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "term(Minn\\Blocks\\Renderer $renderer): array",
+                    "doc": "",
+                    "shapes": [
+                        "@return array{?TermRecord, bool} the term, and whether the block's context named it"
+                    ],
+                    "params": [
+                        {
+                            "name": "renderer",
+                            "type": "Minn\\Blocks\\Renderer",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 80,
+                    "end": 91
                 }
             ]
         },
@@ -16311,7 +16656,7 @@
             "namespace": "Minn\\Blocks",
             "kind": "final class",
             "file": "public/minn/src/Minn/Blocks/RenderState.php",
-            "lines": 346,
+            "lines": 352,
             "doc": "Per-request rendering state, owned by the renderer. The reference numbers\ngalleries, style variations, and search inputs from ONE counter that runs\nacross every block rendered in the request (a list response keeps\ncounting from post to post), so the counter lives here, not on any block.\nLeaf helpers with no renderer in hand reach it through current().",
             "implements": [],
             "extends": null,
@@ -16957,6 +17302,26 @@
                 },
                 {
                     "routes": [],
+                    "name": "inside",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "inside(string $key): bool",
+                    "doc": "Whether a key is open: a source being rendered, or the page template (\"template\").",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "key",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 274,
+                    "end": 277
+                },
+                {
+                    "routes": [],
                     "name": "descend",
                     "static": false,
                     "visibility": "public",
@@ -16964,8 +17329,8 @@
                     "doc": "True while the block tree is shallower than the cap; deeper blocks render as nothing.",
                     "shapes": [],
                     "params": [],
-                    "line": 274,
-                    "end": 281
+                    "line": 280,
+                    "end": 287
                 },
                 {
                     "routes": [],
@@ -16976,8 +17341,8 @@
                     "doc": "Leaves one nesting level.",
                     "shapes": [],
                     "params": [],
-                    "line": 284,
-                    "end": 287
+                    "line": 290,
+                    "end": 293
                 },
                 {
                     "routes": [],
@@ -16985,11 +17350,11 @@
                     "static": false,
                     "visibility": "public",
                     "signature": "depth(): int",
-                    "doc": "How deep the block tree is right now; zero outside a page render.",
+                    "doc": "How deep the block tree is right now; zero outside any block render.",
                     "shapes": [],
                     "params": [],
-                    "line": 290,
-                    "end": 293
+                    "line": 296,
+                    "end": 299
                 },
                 {
                     "routes": [],
@@ -17008,8 +17373,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 296,
-                    "end": 301
+                    "line": 302,
+                    "end": 307
                 },
                 {
                     "routes": [],
@@ -17020,8 +17385,8 @@
                     "doc": "The pending elements class, cleared.",
                     "shapes": [],
                     "params": [],
-                    "line": 304,
-                    "end": 309
+                    "line": 310,
+                    "end": 315
                 },
                 {
                     "routes": [],
@@ -17040,8 +17405,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 312,
-                    "end": 315
+                    "line": 318,
+                    "end": 321
                 },
                 {
                     "routes": [],
@@ -17054,8 +17419,8 @@
                         "@return list<string>"
                     ],
                     "params": [],
-                    "line": 322,
-                    "end": 325
+                    "line": 328,
+                    "end": 331
                 },
                 {
                     "routes": [],
@@ -17074,8 +17439,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 328,
-                    "end": 331
+                    "line": 334,
+                    "end": 337
                 },
                 {
                     "routes": [],
@@ -17088,8 +17453,8 @@
                         "@return list<int>"
                     ],
                     "params": [],
-                    "line": 338,
-                    "end": 341
+                    "line": 344,
+                    "end": 347
                 },
                 {
                     "routes": [],
@@ -17100,8 +17465,8 @@
                     "doc": "Clears every per-request counter.",
                     "shapes": [],
                     "params": [],
-                    "line": 344,
-                    "end": 360
+                    "line": 350,
+                    "end": 366
                 }
             ]
         },
@@ -17111,7 +17476,7 @@
             "namespace": "Minn\\Blocks",
             "kind": "final class",
             "file": "public/minn/src/Minn/Blocks/Renderer.php",
-            "lines": 259,
+            "lines": 322,
             "doc": "Renders a block tree the way the reference renders post_content:\ndelimiters gone, each block's own HTML kept with inner blocks rendered\nin place, then the per-block render-time additions (layout classes, the\nparagraph class, image attributes, gallery ids, style-variation\ncounters), and finally texturize over the whole.",
             "implements": [],
             "extends": null,
@@ -17120,13 +17485,17 @@
                 "Minn\\Blocks\\Block",
                 "Minn\\Blocks\\Context",
                 "Minn\\Blocks\\Dynamic\\Archives",
-                "Minn\\Blocks\\Dynamic\\Categories",
                 "Minn\\Blocks\\Dynamic\\LatestComments",
                 "Minn\\Blocks\\Dynamic\\LatestPosts",
                 "Minn\\Blocks\\Dynamic\\Search",
                 "Minn\\Blocks\\Dynamic\\SocialLinks",
                 "Minn\\Blocks\\Dynamic\\SyncedPattern",
                 "Minn\\Blocks\\Dynamic\\TagCloud",
+                "Minn\\Blocks\\Dynamic\\Theme\\Comments",
+                "Minn\\Blocks\\Dynamic\\Theme\\PostBlocks",
+                "Minn\\Blocks\\Dynamic\\Theme\\QueryBlocks",
+                "Minn\\Blocks\\Dynamic\\Theme\\Structure",
+                "Minn\\Blocks\\Dynamic\\Theme\\TermBlocks",
                 "Minn\\Blocks\\Elements",
                 "Minn\\Blocks\\ImageTags",
                 "Minn\\Blocks\\Layout",
@@ -17134,18 +17503,21 @@
                 "Minn\\Blocks\\RenderState",
                 "Minn\\Content\\Posts",
                 "Minn\\Content\\Site",
+                "Minn\\Content\\Terms",
                 "Minn\\Content\\Texturize",
+                "Minn\\Content\\Users",
                 "Minn\\Db",
                 "Minn\\Extension\\Extensions",
                 "Minn\\Front\\Permalinks",
                 "Minn\\Media\\Uploads",
                 "Minn\\Runtime\\BlockFilters",
+                "Minn\\Runtime\\Runtime",
                 "Minn\\Support\\Html",
+                "Minn\\Theme\\Templates",
                 "Minn\\Theme\\Theme"
             ],
             "usedBy": [
                 "Minn\\Blocks\\Dynamic\\Archives",
-                "Minn\\Blocks\\Dynamic\\Categories",
                 "Minn\\Blocks\\Dynamic\\LatestComments",
                 "Minn\\Blocks\\Dynamic\\Search",
                 "Minn\\Blocks\\Dynamic\\SocialLinks",
@@ -17155,6 +17527,7 @@
                 "Minn\\Blocks\\Dynamic\\Theme\\PostBlocks",
                 "Minn\\Blocks\\Dynamic\\Theme\\QueryBlocks",
                 "Minn\\Blocks\\Dynamic\\Theme\\Structure",
+                "Minn\\Blocks\\Dynamic\\Theme\\TermBlocks",
                 "Minn\\Blocks\\Wrapper",
                 "Minn\\Content\\Blocks",
                 "Minn\\Runtime\\Runtime",
@@ -17174,8 +17547,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 68,
-                "end": 73
+                "line": 78,
+                "end": 83
             },
             "cases": [],
             "constants": [
@@ -17189,6 +17562,15 @@
             "properties": [
                 {
                     "name": "dynamic",
+                    "type": "array",
+                    "readonly": false,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": false
+                },
+                {
+                    "name": "native",
                     "type": "array",
                     "readonly": false,
                     "static": false,
@@ -17258,8 +17640,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 49,
-                    "end": 59
+                    "line": 57,
+                    "end": 67
                 },
                 {
                     "routes": [],
@@ -17270,8 +17652,8 @@
                     "doc": "The per-request rendering state: counters, containers, variations, the images seen.",
                     "shapes": [],
                     "params": [],
-                    "line": 76,
-                    "end": 79
+                    "line": 86,
+                    "end": 89
                 },
                 {
                     "routes": [],
@@ -17282,8 +17664,8 @@
                     "doc": "What is being rendered.",
                     "shapes": [],
                     "params": [],
-                    "line": 82,
-                    "end": 85
+                    "line": 92,
+                    "end": 95
                 },
                 {
                     "routes": [],
@@ -17302,8 +17684,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 88,
-                    "end": 91
+                    "line": 98,
+                    "end": 101
                 },
                 {
                     "routes": [],
@@ -17314,8 +17696,8 @@
                     "doc": "The image tag builder.",
                     "shapes": [],
                     "params": [],
-                    "line": 94,
-                    "end": 97
+                    "line": 104,
+                    "end": 107
                 },
                 {
                     "routes": [],
@@ -17334,8 +17716,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 100,
-                    "end": 126
+                    "line": 110,
+                    "end": 149
                 },
                 {
                     "routes": [],
@@ -17343,7 +17725,7 @@
                     "static": false,
                     "visibility": "public",
                     "signature": "registerDynamic(string $name, callable $render): void",
-                    "doc": "Registers a dynamic block's render callback.",
+                    "doc": "Registers the engine's own renderer for a dynamic block. A plugin's\ncallback that already took the block over (bridge()) keeps it, as a\nreplaced render callback does on the reference.",
                     "shapes": [
                         "@param callable(Block, Renderer): string $render"
                     ],
@@ -17363,8 +17745,57 @@
                             "doc": ""
                         }
                     ],
-                    "line": 133,
-                    "end": 136
+                    "line": 158,
+                    "end": 165
+                },
+                {
+                    "routes": [],
+                    "name": "bridge",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "bridge(string $name, callable $render): void",
+                    "doc": "Hands a block to a plugin's render callback; the engine's own renderer\nfor it stays for renderNative().",
+                    "shapes": [
+                        "@param callable(Block, Renderer): string $render"
+                    ],
+                    "params": [
+                        {
+                            "name": "name",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "render",
+                            "type": "callable",
+                            "shape": "callable(Block, Renderer): string",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 173,
+                    "end": 176
+                },
+                {
+                    "routes": [],
+                    "name": "renderNative",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "renderNative(Minn\\Blocks\\Block $block): string",
+                    "doc": "One block as HTML through the engine's own renderer for its name (its\nstatic markup when it has none), even where a plugin's callback took\nthe block over: what a core render callback gives, so a plugin's\ncallback that calls the one it replaced does not call itself.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "block",
+                            "type": "Minn\\Blocks\\Block",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 184,
+                    "end": 198
                 },
                 {
                     "routes": [],
@@ -17383,8 +17814,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 139,
-                    "end": 142
+                    "line": 210,
+                    "end": 213
                 },
                 {
                     "routes": [],
@@ -17405,8 +17836,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 149,
-                    "end": 156
+                    "line": 220,
+                    "end": 227
                 },
                 {
                     "routes": [],
@@ -17425,8 +17856,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 159,
-                    "end": 199
+                    "line": 230,
+                    "end": 270
                 },
                 {
                     "routes": [],
@@ -17439,8 +17870,8 @@
                         "@return array<string, mixed>"
                     ],
                     "params": [],
-                    "line": 208,
-                    "end": 212
+                    "line": 279,
+                    "end": 283
                 },
                 {
                     "routes": [],
@@ -17468,8 +17899,35 @@
                             "doc": ""
                         }
                     ],
-                    "line": 215,
-                    "end": 223
+                    "line": 286,
+                    "end": 294
+                },
+                {
+                    "routes": [],
+                    "name": "renderWith",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "renderWith(string $name, ?callable $render): void",
+                    "doc": "",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "name",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "render",
+                            "type": "?callable",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 200,
+                    "end": 207
                 },
                 {
                     "routes": [],
@@ -17497,8 +17955,8 @@
                             "doc": "the bound attributes' values, put into a static block's HTML"
                         }
                     ],
-                    "line": 226,
-                    "end": 245
+                    "line": 297,
+                    "end": 316
                 },
                 {
                     "routes": [],
@@ -17531,8 +17989,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 247,
-                    "end": 276
+                    "line": 318,
+                    "end": 347
                 },
                 {
                     "routes": [],
@@ -17543,8 +18001,8 @@
                     "doc": "",
                     "shapes": [],
                     "params": [],
-                    "line": 278,
-                    "end": 283
+                    "line": 349,
+                    "end": 354
                 },
                 {
                     "routes": [],
@@ -17570,8 +18028,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 286,
-                    "end": 292
+                    "line": 357,
+                    "end": 363
                 }
             ]
         },
@@ -18198,6 +18656,7 @@
                 "Minn\\Blocks\\Dynamic\\Theme\\Navigation",
                 "Minn\\Blocks\\Dynamic\\Theme\\PostBlocks",
                 "Minn\\Blocks\\Dynamic\\Theme\\QueryBlocks",
+                "Minn\\Blocks\\Dynamic\\Theme\\TermBlocks",
                 "Minn\\Blocks\\Elements",
                 "Minn\\Blocks\\Layout",
                 "Minn\\Blocks\\Wrapper",
@@ -18645,9 +19104,11 @@
                 "Minn\\Support\\Html"
             ],
             "usedBy": [
+                "Minn\\Blocks\\Dynamic\\Theme\\Comments",
                 "Minn\\Blocks\\Dynamic\\Theme\\PostBlocks",
                 "Minn\\Blocks\\Dynamic\\Theme\\QueryBlocks",
-                "Minn\\Blocks\\Dynamic\\Theme\\Structure"
+                "Minn\\Blocks\\Dynamic\\Theme\\Structure",
+                "Minn\\Blocks\\Dynamic\\Theme\\TermBlocks"
             ],
             "constructor": null,
             "cases": [],
@@ -29837,6 +30298,7 @@
                 "Minn\\Admin\\RenderController",
                 "Minn\\Admin\\SiteController",
                 "Minn\\Blocks\\Dynamic\\LatestComments",
+                "Minn\\Blocks\\Dynamic\\Theme\\Comments",
                 "Minn\\Blocks\\Dynamic\\Theme\\Navigation",
                 "Minn\\Blocks\\Dynamic\\Theme\\PostBlocks",
                 "Minn\\Blocks\\Dynamic\\Theme\\QueryBlocks",
@@ -32124,10 +32586,10 @@
             "extends": null,
             "uses": [],
             "usedBy": [
-                "Minn\\Blocks\\Dynamic\\Categories",
                 "Minn\\Blocks\\Dynamic\\TagCloud",
                 "Minn\\Blocks\\Dynamic\\Theme\\PostBlocks",
                 "Minn\\Blocks\\Dynamic\\Theme\\QueryBlocks",
+                "Minn\\Blocks\\Dynamic\\Theme\\TermBlocks",
                 "Minn\\Content\\Menus",
                 "Minn\\Content\\Terms",
                 "Minn\\Front\\ArchiveAddresses",
@@ -32499,7 +32961,8 @@
             "usedBy": [
                 "Minn\\Blocks\\Dynamic\\Theme\\Navigation",
                 "Minn\\Blocks\\Dynamic\\Theme\\PostBlocks",
-                "Minn\\Blocks\\Dynamic\\Theme\\QueryBlocks",
+                "Minn\\Blocks\\Dynamic\\Theme\\TermBlocks",
+                "Minn\\Blocks\\Renderer",
                 "Minn\\Content\\Menus",
                 "Minn\\Front\\ArchiveAddresses",
                 "Minn\\Front\\Permalinks",
@@ -33958,7 +34421,9 @@
                 "Minn\\Auth\\Cookie",
                 "Minn\\Auth\\PasswordReset",
                 "Minn\\Auth\\Sessions",
+                "Minn\\Blocks\\Dynamic\\Theme\\Comments",
                 "Minn\\Blocks\\Dynamic\\Theme\\PostBlocks",
+                "Minn\\Blocks\\Renderer",
                 "Minn\\Cli\\Runtime",
                 "Minn\\Engine",
                 "Minn\\Login\\LoginController",
@@ -33968,8 +34433,7 @@
                 "Minn\\Rest\\Services",
                 "Minn\\Rest\\UserObject",
                 "Minn\\Rest\\UsersController",
-                "Minn\\Runtime\\ApplicationPasswordSignIn",
-                "Minn\\Theme\\PageRenderer"
+                "Minn\\Runtime\\ApplicationPasswordSignIn"
             ],
             "constructor": {
                 "signature": "__construct(Minn\\Db $db)",
@@ -35178,14 +35642,12 @@
                 "Minn\\Auth\\LoginThrottle",
                 "Minn\\Auth\\Roles",
                 "Minn\\Blocks\\Dynamic\\Archives",
-                "Minn\\Blocks\\Dynamic\\Categories",
                 "Minn\\Blocks\\Dynamic\\LatestComments",
                 "Minn\\Blocks\\Dynamic\\LatestPosts",
                 "Minn\\Blocks\\Dynamic\\SyncedPattern",
                 "Minn\\Blocks\\Dynamic\\TagCloud",
                 "Minn\\Blocks\\Dynamic\\Theme\\Navigation",
                 "Minn\\Blocks\\Dynamic\\Theme\\PostBlocks",
-                "Minn\\Blocks\\Dynamic\\Theme\\QueryBlocks",
                 "Minn\\Blocks\\Renderer",
                 "Minn\\Cli\\Runtime",
                 "Minn\\Content\\Blocks",
@@ -42246,10 +42708,11 @@
             "uses": [],
             "usedBy": [
                 "Minn\\Blocks\\Context",
-                "Minn\\Blocks\\Dynamic\\Categories",
                 "Minn\\Blocks\\Dynamic\\Theme\\Navigation",
+                "Minn\\Blocks\\Dynamic\\Theme\\PostBlocks",
                 "Minn\\Blocks\\Dynamic\\Theme\\QueryBlocks",
                 "Minn\\Blocks\\Dynamic\\Theme\\Structure",
+                "Minn\\Blocks\\Dynamic\\Theme\\TermBlocks",
                 "Minn\\Front\\AdminBar",
                 "Minn\\Front\\AttachmentAddresses",
                 "Minn\\Front\\Canonical",
@@ -42719,7 +43182,6 @@
                 "Minn\\Admin\\SiteController",
                 "Minn\\Admin\\ThemesController",
                 "Minn\\Blocks\\Dynamic\\Archives",
-                "Minn\\Blocks\\Dynamic\\Categories",
                 "Minn\\Blocks\\Dynamic\\LatestComments",
                 "Minn\\Blocks\\Dynamic\\LatestPosts",
                 "Minn\\Blocks\\Dynamic\\Search",
@@ -42729,6 +43191,7 @@
                 "Minn\\Blocks\\Dynamic\\Theme\\PostBlocks",
                 "Minn\\Blocks\\Dynamic\\Theme\\QueryBlocks",
                 "Minn\\Blocks\\Dynamic\\Theme\\Structure",
+                "Minn\\Blocks\\Dynamic\\Theme\\TermBlocks",
                 "Minn\\Blocks\\Renderer",
                 "Minn\\Cli\\Runtime",
                 "Minn\\Content\\Menus",
@@ -63349,6 +63812,7 @@
                 "Minn\\Runtime\\Runtime"
             ],
             "usedBy": [
+                "Minn\\Blocks\\Dynamic\\Theme\\QueryBlocks",
                 "Minn\\Front\\EmbedCard",
                 "Minn\\Front\\FeedTemplates",
                 "Minn\\Front\\ToolbarMarkup",
@@ -106126,7 +106590,9 @@
             "implements": [],
             "extends": null,
             "uses": [],
-            "usedBy": [],
+            "usedBy": [
+                "Minn\\Blocks\\Dynamic\\Theme\\Comments"
+            ],
             "constructor": null,
             "cases": [],
             "constants": [],
@@ -122177,6 +122643,7 @@
                 "Minn\\Blocks\\Dynamic\\Theme\\Structure",
                 "Minn\\Blocks\\ImageTags",
                 "Minn\\Blocks\\RenderState",
+                "Minn\\Blocks\\Renderer",
                 "Minn\\Cli\\Runtime",
                 "Minn\\Content\\Blocks",
                 "Minn\\Content\\MediaShortcodes",
@@ -131416,7 +131883,6 @@
             "usedBy": [
                 "Minn\\Admin\\AppController",
                 "Minn\\Admin\\LanguageChoices",
-                "Minn\\Blocks\\Dynamic\\Categories",
                 "Minn\\Blocks\\Dynamic\\LatestComments",
                 "Minn\\Blocks\\Dynamic\\LatestPosts",
                 "Minn\\Blocks\\Dynamic\\Search",
@@ -131427,6 +131893,7 @@
                 "Minn\\Blocks\\Dynamic\\Theme\\PostBlocks",
                 "Minn\\Blocks\\Dynamic\\Theme\\QueryBlocks",
                 "Minn\\Blocks\\Dynamic\\Theme\\Structure",
+                "Minn\\Blocks\\Dynamic\\Theme\\TermBlocks",
                 "Minn\\Blocks\\ImageTags",
                 "Minn\\Blocks\\Renderer",
                 "Minn\\Blocks\\Wrapper",
@@ -137734,16 +138201,12 @@
             "namespace": "Minn\\Theme",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Theme/PageRenderer.php",
-            "lines": 177,
+            "lines": 179,
             "doc": "A whole page from the active block theme: the template the resolution\nmaps to, rendered against the main query, inside the document shell the\nreference emits (skip link, wp-site-blocks, the skip-link target on the\nfirst main element).",
             "implements": [],
             "extends": null,
             "uses": [
                 "Minn\\Blocks\\Context",
-                "Minn\\Blocks\\Dynamic\\Theme\\Comments",
-                "Minn\\Blocks\\Dynamic\\Theme\\Navigation",
-                "Minn\\Blocks\\Dynamic\\Theme\\PostBlocks",
-                "Minn\\Blocks\\Dynamic\\Theme\\QueryBlocks",
                 "Minn\\Blocks\\Dynamic\\Theme\\Structure",
                 "Minn\\Blocks\\Parser",
                 "Minn\\Blocks\\RenderState",
@@ -137754,7 +138217,6 @@
                 "Minn\\Content\\Site",
                 "Minn\\Content\\SiteIcon",
                 "Minn\\Content\\Texturize",
-                "Minn\\Content\\Users",
                 "Minn\\Db",
                 "Minn\\Extension\\Extensions",
                 "Minn\\Front\\AdminBar",
@@ -137829,8 +138291,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 40,
-                "end": 49
+                "line": 35,
+                "end": 44
             },
             "cases": [],
             "constants": [],
@@ -137945,8 +138407,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 52,
-                    "end": 65
+                    "line": 47,
+                    "end": 56
                 },
                 {
                     "routes": [],
@@ -137974,8 +138436,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 76,
-                    "end": 81
+                    "line": 67,
+                    "end": 72
                 },
                 {
                     "routes": [],
@@ -138003,8 +138465,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 84,
-                    "end": 118
+                    "line": 75,
+                    "end": 109
                 },
                 {
                     "routes": [],
@@ -138030,8 +138492,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 121,
-                    "end": 155
+                    "line": 112,
+                    "end": 152
                 },
                 {
                     "routes": [],
@@ -138042,8 +138504,8 @@
                     "doc": "The reference filters template_include under block themes too (the\ncanvas is the incoming value); a plugin swapping in its own PHP file\ntakes the whole response over, the CaptainCore Manager shape.",
                     "shapes": [],
                     "params": [],
-                    "line": 162,
-                    "end": 172
+                    "line": 159,
+                    "end": 169
                 },
                 {
                     "routes": [],
@@ -138064,8 +138526,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 180,
-                    "end": 186
+                    "line": 177,
+                    "end": 183
                 },
                 {
                     "routes": [],
@@ -138105,8 +138567,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 194,
-                    "end": 213
+                    "line": 191,
+                    "end": 210
                 }
             ]
         },
@@ -140620,6 +141082,7 @@
             "usedBy": [
                 "Minn\\Admin\\RenderController",
                 "Minn\\Blocks\\Dynamic\\Theme\\Structure",
+                "Minn\\Blocks\\Renderer",
                 "Minn\\Theme\\PageRenderer"
             ],
             "constructor": {

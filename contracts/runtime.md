@@ -5694,3 +5694,107 @@ replacement, version), so nested reports are checked too, in order.
 | | missing | verified |
 |---|---|---|
 | functions | 1,007 → 826 | 1,299 → 1,418 |
+
+## Core blocks by name, and every core block rendered anywhere (2026-10-08)
+
+The second whole-API batch: the named functions in `wp-includes/blocks`, in
+`wp-api/core-blocks.php`. The probe is `tests/tools/core-blocks-probe.php`
+(fixture `core-blocks`, 90 cases).
+
+- **Render callbacks by name.** The core block types carry the reference's
+  render callbacks by name (`data/blocks.json` `render_callback`, in place
+  of the `dynamic` flag). Most are `render_block_core_*`; eight are not,
+  for example `block_core_heading_render` and `block_core_gallery_render`.
+  Each callback renders through the engine's own renderer for the block
+  (`_minn_render_core_callback`). It uses the attributes given, and the
+  instance's other parts and context, or the saved markup when there is no
+  instance. A callback the reference declares with fewer parameters still
+  passes on what `WP_Block::render` gives it.
+- **Direct calls differ in one way.** The reference's callback leaves the
+  supports' classes to `render_block`'s filters, and called outside a
+  render it has none. The engine's output has them. The probe records a
+  direct call's tags and text, and whole renders exactly.
+- **Registrations.** Each `register_block_core_*` registers its block type
+  again. The registry refuses that while the type is registered: it calls
+  `_doing_it_wrong` and returns null, as the reference does. The site logo
+  and site icon settings register with the reference's arguments.
+- **A plugin's callback that wraps the core one.** The renderer keeps the
+  engine's own renderer for each block (`Renderer::registerDynamic`), apart
+  from a plugin's callback that took it over (`Renderer::bridge`). A core
+  callback renders natively (`Renderer::renderNative`), so a plugin
+  callback that calls the one it replaced no longer calls itself. A theme
+  family registering later keeps a plugin's bridge in place.
+  `WP_Block::render` skips rendering inner blocks first for a core block
+  the engine renders itself; doing so had run an inner loop's query twice.
+- **Every core block renders wherever block content does.**
+  `Renderer::forDb` now registers the post, query, term and comment
+  families, and the theme's structure blocks when a block theme is
+  active. Before, only theme page renders had them, so a plugin's
+  `render_block()` of a post title returned nothing.
+  `_minn_render_core_block` provides the instance's context:
+  - the post from `postId`, or the global post for a callback given no
+    instance;
+  - the comment from `commentId`;
+  - the rest (a query, a term) as provided context.
+
+  So a post template called by its callback runs the query its context
+  names.
+- **New renderers in src:**
+  - `TermBlocks`: term-name, term-count (bracket types) and
+    term-description, taken from QueryBlocks. A term in context gives its
+    description as written; a term archive gives it as a paragraph.
+  - query-total: results found, or "Displaying a – b of n".
+  - The navigation submenu. Inside a navigation it gets the toggle and the
+    Interactivity API wiring that `openSubmenusOnClick` and
+    `showSubmenuIcon` ask for, read as context the navigation provides.
+    On its own it is a plain item. Before, a submenu rendered as its child
+    links alone. The submenu and page-list wiring now share constants.
+  - The navigation overlay close button.
+  - A social link on its own.
+  - post-date's `format`.
+  - The avatar of the post author.
+  - comment-date's `format` and `isLink`.
+  - The comment date and reply link look up the comment's own post.
+  - comments-title's `showPostTitle` and `showCommentsCount`.
+  - post-navigation-link renders nothing off a single post or page.
+- **New renderers in the facade.** These blocks are built from WordPress
+  functions: get_avatar, comments_open, the login form, get_calendar and
+  wp_list_categories. The src code cannot call those (the
+  WordPress-call ratchet sits at its ceiling), so the facade registers
+  them on the engine's private `minn_block_renderers` action as the
+  renderer is built:
+  - categories, as a list or a dropdown with the reference's script,
+    numbered per block; the src `Categories` class is gone;
+  - post-author and post-author-biography;
+  - post-comments-count and post-comments-link;
+  - post-time-to-read: a range from four fifths to six fifths of
+    words / speed (the high end at least one above the low), or one
+    rounded value, or the word count;
+  - read-more;
+  - loginout;
+  - shortcode (wpautop of the saved text);
+  - widget-group, with the sidebar's title markup through
+    `note_sidebar_being_rendered`;
+  - calendar;
+  - home-link, current when `is_front_page()`.
+
+  Word counts follow `block_core_post_time_to_read_word_count`: HTML and
+  comments out; entities, connecting dashes and punctuation (digits among
+  it) do not count.
+- **Image loading.** An image in a block shares the page's budget of
+  eager images only inside the page template (`RenderState::inside
+  ('template')`, set by `PageRenderer`) or the main loop. A block a
+  plugin renders on its own is lazy, as on the reference.
+- **Left for the next batch.** These blocks are probed only once they have
+  real markup:
+  - the new blocks: accordion, tabs, icon, playlist, breadcrumbs,
+    terms-query and term-template;
+  - footnotes, legacy widgets and the legacy post-comments block;
+  - comment and query pagination;
+  - the site logo and the comment edit link.
+
+  The remaining `block_core_*` helpers come with them.
+
+| | missing | verified |
+|---|---|---|
+| functions | 826 → 649 | 1,418 → 1,571 |

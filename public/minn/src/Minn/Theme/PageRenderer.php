@@ -5,10 +5,6 @@ declare(strict_types=1);
 namespace Minn\Theme;
 
 use Minn\Blocks\Context;
-use Minn\Blocks\Dynamic\Theme\Comments;
-use Minn\Blocks\Dynamic\Theme\Navigation;
-use Minn\Blocks\Dynamic\Theme\PostBlocks;
-use Minn\Blocks\Dynamic\Theme\QueryBlocks;
 use Minn\Blocks\Dynamic\Theme\Structure;
 use Minn\Blocks\Parser;
 use Minn\Blocks\Renderer;
@@ -19,7 +15,6 @@ use Minn\Content\Reader;
 use Minn\Content\Site;
 use Minn\Content\SiteIcon;
 use Minn\Content\Texturize;
-use Minn\Content\Users;
 use Minn\Db;
 use Minn\Extension\Extensions;
 use Minn\Front\AdminBar;
@@ -53,14 +48,10 @@ final readonly class PageRenderer
     {
         $site = new Site($db);
         $posts = new Posts($db);
-        $users = new Users($db);
         $templates = new Templates($db, $posts, $theme, Runtime::blockTemplates());
         $renderer = Blocks::renderer();
+        // The other core blocks render wherever block content does (Renderer::forDb); the template parts are this theme's.
         (new Structure($theme, $templates, $site, $permalinks))->register($renderer);
-        (new PostBlocks($posts, $users, $site, $permalinks))->register($renderer);
-        (new QueryBlocks($posts, $site, $permalinks))->register($renderer);
-        (new Navigation($db, $posts, $permalinks))->register($renderer);
-        (new Comments($site, $permalinks))->register($renderer);
         return new self($site, $theme, $templates, $renderer, new MainQueryBridge($perPage), new HeadLinks($site, new SiteIcon($site, $posts, $permalinks), $permalinks), $bar);
     }
 
@@ -134,7 +125,13 @@ final readonly class PageRenderer
         // The reference texturizes the rendered template as a whole, after the
         // blocks: straight quotes in a theme's own markup curl, content that was
         // texturized on its way in is left alone.
-        $body = Texturize::html($this->renderer->renderBlocks(Parser::parse($template['markup'])));
+        // Images in the template share the page's budget of eager images (wp_get_loading_optimization_attributes).
+        RenderState::current()->enter('template');
+        try {
+            $body = Texturize::html($this->renderer->renderBlocks(Parser::parse($template['markup'])));
+        } finally {
+            RenderState::current()->leave('template');
+        }
         [$body, $skipTarget] = self::skipLinkTarget($body);
         $bodyClass = implode(' ', $this->bodyClasses($resolution, $coreClasses));
         // The stylesheet comes after the body: it lists the containers and

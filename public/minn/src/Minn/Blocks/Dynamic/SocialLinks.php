@@ -20,6 +20,9 @@ use Minn\Support\Kses;
  */
 final class SocialLinks
 {
+    /** What a social-links list provides its links as context. */
+    private const PARENT_SETTINGS = ['openInNewTab' => true, 'showLabels' => true, 'iconColor' => true, 'iconColorValue' => true, 'iconBackgroundColor' => true, 'iconBackgroundColorValue' => true];
+
     /** @var array<string, array{label: string, svg: string}>|null */
     private ?array $icons = null;
 
@@ -31,7 +34,8 @@ final class SocialLinks
     public function register(Renderer $renderer): void
     {
         $renderer->registerDynamic('core/social-links', $this->list(...));
-        $renderer->registerDynamic('core/social-link', static fn () => '');
+        // On its own (its render callback, or outside a list) a link takes the list's settings from its context.
+        $renderer->registerDynamic('core/social-link', fn (Block $block, Renderer $renderer): string => $this->link($block, new Block('core/social-links', array_intersect_key($renderer->blockContext(), self::PARENT_SETTINGS), [], '', [])));
     }
 
     private function list(Block $block, Renderer $renderer): string

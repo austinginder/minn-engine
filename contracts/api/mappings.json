@@ -2,14 +2,14 @@
     "generated": "2026-10-08",
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line), placeholder (generated stub, behaviour still owed), deadend (generated stub for wp-admin, the editors, the Customizer or XML-RPC, inert by design); \"deadend\" on any entry names its dead-end area",
     "summary": {
-        "minn": 695,
-        "composes": 1375,
-        "leaf": 716,
-        "noop": 2156,
+        "minn": 703,
+        "composes": 1385,
+        "leaf": 719,
+        "noop": 2333,
         "placeholder": 286,
         "deadend": 1579,
-        "functions": 6733,
-        "minnMethods": 827,
+        "functions": 6931,
+        "minnMethods": 830,
         "leafLinesOver15": 13
     },
     "functions": {
@@ -6966,13 +6966,14 @@
         },
         "WP_Block::render": {
             "file": "classes/WP_Block.php",
-            "lines": 30,
+            "lines": 32,
             "kind": "minn",
             "minn": [
                 "Minn\\Blocks\\Bindings::html",
                 "Minn\\Content\\Blocks::renderer"
             ],
             "composes": [
+                "_minn_core_renders_natively",
                 "_minn_render_core_block",
                 "apply_filters",
                 "wp_parse_args"
@@ -7634,19 +7635,18 @@
             ],
             "composes": [
                 "_doing_it_wrong",
-                "_minn_bridge_dynamic_block"
+                "_minn_bridge_dynamic_block",
+                "_minn_core_renders_natively"
             ]
         },
         "WP_Block_Type_Registry::seed": {
             "file": "classes/WP_Block_Type.php",
-            "lines": 23,
-            "kind": "minn",
-            "minn": [
-                "Minn\\Runtime\\Runtime::current",
-                "Minn\\Runtime\\Runtime::engineDir"
-            ],
+            "lines": 7,
+            "kind": "composes",
+            "minn": [],
             "composes": [
-                "_minn_render_core_block"
+                "_minn_core_block_rows",
+                "_minn_core_block_type"
             ]
         },
         "WP_Block_Type_Registry::unregister": {
@@ -25945,6 +25945,34 @@
                 "__"
             ]
         },
+        "_minn_block_calendar": {
+            "file": "core-blocks.php",
+            "lines": 9,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Blocks\\Wrapper::open"
+            ],
+            "composes": [
+                "get_calendar",
+                "get_option"
+            ]
+        },
+        "_minn_block_categories": {
+            "file": "core-blocks.php",
+            "lines": 19,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Blocks\\Wrapper::open"
+            ],
+            "composes": [
+                "__",
+                "build_dropdown_script_block_core_categories",
+                "esc_attr",
+                "get_taxonomy",
+                "wp_dropdown_categories",
+                "wp_list_categories"
+            ]
+        },
         "_minn_block_galleries": {
             "file": "media.php",
             "lines": 20,
@@ -25954,6 +25982,120 @@
                 "_minn_attachment_sources",
                 "_minn_image_sources",
                 "wp_list_pluck"
+            ]
+        },
+        "_minn_block_home_link": {
+            "file": "core-blocks.php",
+            "lines": 2,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "__",
+                "esc_url",
+                "home_url",
+                "is_front_page",
+                "wp_kses_post"
+            ]
+        },
+        "_minn_block_loginout": {
+            "file": "core-blocks.php",
+            "lines": 5,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Blocks\\Wrapper::open"
+            ],
+            "composes": [
+                "is_ssl",
+                "is_user_logged_in",
+                "wp_login_form",
+                "wp_loginout"
+            ]
+        },
+        "_minn_block_post_author": {
+            "file": "core-blocks.php",
+            "lines": 19,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Blocks\\Wrapper::open"
+            ],
+            "composes": [
+                "esc_attr",
+                "get_author_posts_url",
+                "get_avatar",
+                "get_the_author_meta",
+                "get_userdata",
+                "wp_kses_post"
+            ]
+        },
+        "_minn_block_post_author_biography": {
+            "file": "core-blocks.php",
+            "lines": 3,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Blocks\\Wrapper::open"
+            ],
+            "composes": [
+                "get_the_author_meta"
+            ]
+        },
+        "_minn_block_post_comments_count": {
+            "file": "core-blocks.php",
+            "lines": 2,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Blocks\\Wrapper::open"
+            ],
+            "composes": [
+                "get_comments_number"
+            ]
+        },
+        "_minn_block_post_comments_link": {
+            "file": "core-blocks.php",
+            "lines": 8,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Blocks\\Wrapper::open"
+            ],
+            "composes": [
+                "__",
+                "_n",
+                "comments_open",
+                "esc_url",
+                "get_comments_link",
+                "get_comments_number",
+                "get_permalink",
+                "get_the_title",
+                "number_format_i18n"
+            ]
+        },
+        "_minn_block_post_time_to_read": {
+            "file": "core-blocks.php",
+            "lines": 11,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Blocks\\Wrapper::open"
+            ],
+            "composes": [
+                "_minn_minutes_to_read",
+                "_n",
+                "block_core_post_time_to_read_word_count",
+                "get_post_field",
+                "number_format_i18n"
+            ]
+        },
+        "_minn_block_read_more": {
+            "file": "core-blocks.php",
+            "lines": 8,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Blocks\\Wrapper::open"
+            ],
+            "composes": [
+                "__",
+                "esc_attr",
+                "esc_url",
+                "get_permalink",
+                "get_the_title"
             ]
         },
         "_minn_block_template_exists": {
@@ -25989,6 +26131,15 @@
             "kind": "noop",
             "minn": [],
             "composes": []
+        },
+        "_minn_block_widget_group": {
+            "file": "core-blocks.php",
+            "lines": 10,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "esc_html"
+            ]
         },
         "_minn_bloginfo_locale": {
             "file": "link-template.php",
@@ -26304,6 +26455,31 @@
                 "Minn\\Content\\Blocks::renderer"
             ],
             "composes": []
+        },
+        "_minn_core_block_rows": {
+            "file": "blocks.php",
+            "lines": 2,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "_minn_core_block_type": {
+            "file": "blocks.php",
+            "lines": 15,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "_minn_core_block_rows"
+            ]
+        },
+        "_minn_core_renders_natively": {
+            "file": "blocks.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "_minn_core_block_rows"
+            ]
         },
         "_minn_cron_refuse": {
             "file": "cron.php",
@@ -26813,6 +26989,16 @@
             ],
             "composes": []
         },
+        "_minn_minutes_to_read": {
+            "file": "core-blocks.php",
+            "lines": 7,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "_n",
+                "_x"
+            ]
+        },
         "_minn_neutralize_inner_extensions": {
             "file": "formatting.php",
             "lines": 12,
@@ -27187,9 +27373,27 @@
                 "register_block_bindings_source"
             ]
         },
+        "_minn_register_block_renderers": {
+            "file": "core-blocks.php",
+            "lines": 17,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "wpautop"
+            ]
+        },
+        "_minn_register_core_block": {
+            "file": "blocks.php",
+            "lines": 4,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "_minn_core_block_type"
+            ]
+        },
         "_minn_register_core_rss_block": {
             "file": "feed.php",
-            "lines": 5,
+            "lines": 3,
             "kind": "composes",
             "minn": [],
             "composes": [
@@ -27253,17 +27457,30 @@
         },
         "_minn_render_core_block": {
             "file": "blocks.php",
-            "lines": 17,
+            "lines": 28,
             "kind": "minn",
             "minn": [
                 "Minn\\Content\\Blocks::context",
-                "Minn\\Content\\Blocks::renderBlock",
+                "Minn\\Content\\Blocks::providing",
+                "Minn\\Content\\Blocks::renderNative",
                 "Minn\\Content\\Blocks::renderer",
+                "Minn\\Content\\CommentRecord::fromRow",
                 "Minn\\Content\\Posts::find"
             ],
             "composes": [
                 "_minn_array_to_block",
-                "_minn_posts"
+                "_minn_posts",
+                "get_comment",
+                "post"
+            ]
+        },
+        "_minn_render_core_callback": {
+            "file": "blocks.php",
+            "lines": 6,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "_minn_render_core_block"
             ]
         },
         "_minn_request_uri": {
@@ -30153,6 +30370,15 @@
             "minn": [],
             "composes": []
         },
+        "block_core_accordion_item_render": {
+            "file": "core-blocks.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "_minn_render_core_callback"
+            ]
+        },
         "block_core_calendar_has_published_posts": {
             "file": "blocks.php",
             "lines": 2,
@@ -30204,6 +30430,24 @@
                 "_deprecated_function"
             ]
         },
+        "block_core_gallery_render": {
+            "file": "core-blocks.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "_minn_render_core_callback"
+            ]
+        },
+        "block_core_heading_render": {
+            "file": "core-blocks.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "_minn_render_core_callback"
+            ]
+        },
         "block_core_image_ensure_interactivity_dependency": {
             "file": "deprecated.php",
             "lines": 1,
@@ -30211,6 +30455,15 @@
             "minn": [],
             "composes": [
                 "_deprecated_function"
+            ]
+        },
+        "block_core_list_render": {
+            "file": "core-blocks.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "_minn_render_core_callback"
             ]
         },
         "block_core_navigation_filter_out_empty_blocks": {
@@ -30223,6 +30476,13 @@
         "block_core_post_template_uses_featured_image": {
             "file": "blocks.php",
             "lines": 11,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "block_core_post_time_to_read_word_count": {
+            "file": "core-blocks.php",
+            "lines": 8,
             "kind": "leaf",
             "minn": [],
             "composes": []
@@ -30252,6 +30512,33 @@
             "kind": "leaf",
             "minn": [],
             "composes": []
+        },
+        "block_core_tab_list_render_callback": {
+            "file": "core-blocks.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "_minn_render_core_callback"
+            ]
+        },
+        "block_core_tab_panel_render": {
+            "file": "core-blocks.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "_minn_render_core_callback"
+            ]
+        },
+        "block_core_tabs_render_block_callback": {
+            "file": "core-blocks.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "_minn_render_core_callback"
+            ]
         },
         "block_editor_rest_api_preload": {
             "file": "deadends.php",
@@ -30364,6 +30651,19 @@
                 "is_user_logged_in",
                 "wp_get_current_commenter",
                 "wp_get_unapproved_comment_author_email"
+            ]
+        },
+        "build_dropdown_script_block_core_categories": {
+            "file": "core-blocks.php",
+            "lines": 32,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "home_url",
+                "selected",
+                "set",
+                "wp_get_inline_script_tag",
+                "wp_json_encode"
             ]
         },
         "build_query": {
@@ -31807,6 +32107,13 @@
             "composes": [
                 "__checked_selected_helper"
             ]
+        },
+        "discard_sidebar_being_rendered": {
+            "file": "core-blocks.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
         },
         "discover_pingback_server_uri": {
             "file": "deadends.php",
@@ -42009,6 +42316,13 @@
             "minn": [],
             "composes": []
         },
+        "note_sidebar_being_rendered": {
+            "file": "core-blocks.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
         "number_format_i18n": {
             "file": "l10n.php",
             "lines": 1,
@@ -42046,6 +42360,30 @@
             "kind": "noop",
             "minn": [],
             "composes": []
+        },
+        "onClick": {
+            "file": "core-blocks.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "onKeyUp": {
+            "file": "core-blocks.php",
+            "lines": 5,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "onSelectChange": {
+            "file": "core-blocks.php",
+            "lines": 11,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "selected",
+                "set"
+            ]
         },
         "option_update_filter": {
             "file": "deadends.php",
@@ -43079,6 +43417,231 @@
             "minn": [],
             "composes": []
         },
+        "register_block_core_accordion": {
+            "file": "core-blocks.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "_minn_register_core_block"
+            ]
+        },
+        "register_block_core_accordion_item": {
+            "file": "core-blocks.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "_minn_register_core_block"
+            ]
+        },
+        "register_block_core_archives": {
+            "file": "core-blocks.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "_minn_register_core_block"
+            ]
+        },
+        "register_block_core_avatar": {
+            "file": "core-blocks.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "_minn_register_core_block"
+            ]
+        },
+        "register_block_core_block": {
+            "file": "core-blocks.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "_minn_register_core_block"
+            ]
+        },
+        "register_block_core_breadcrumbs": {
+            "file": "core-blocks.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "_minn_register_core_block"
+            ]
+        },
+        "register_block_core_button": {
+            "file": "core-blocks.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "_minn_register_core_block"
+            ]
+        },
+        "register_block_core_calendar": {
+            "file": "core-blocks.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "_minn_register_core_block"
+            ]
+        },
+        "register_block_core_categories": {
+            "file": "core-blocks.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "_minn_register_core_block"
+            ]
+        },
+        "register_block_core_comment_author_name": {
+            "file": "core-blocks.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "_minn_register_core_block"
+            ]
+        },
+        "register_block_core_comment_content": {
+            "file": "core-blocks.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "_minn_register_core_block"
+            ]
+        },
+        "register_block_core_comment_date": {
+            "file": "core-blocks.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "_minn_register_core_block"
+            ]
+        },
+        "register_block_core_comment_edit_link": {
+            "file": "core-blocks.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "_minn_register_core_block"
+            ]
+        },
+        "register_block_core_comment_reply_link": {
+            "file": "core-blocks.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "_minn_register_core_block"
+            ]
+        },
+        "register_block_core_comment_template": {
+            "file": "core-blocks.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "_minn_register_core_block"
+            ]
+        },
+        "register_block_core_comments": {
+            "file": "core-blocks.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "_minn_register_core_block"
+            ]
+        },
+        "register_block_core_comments_pagination": {
+            "file": "core-blocks.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "_minn_register_core_block"
+            ]
+        },
+        "register_block_core_comments_pagination_next": {
+            "file": "core-blocks.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "_minn_register_core_block"
+            ]
+        },
+        "register_block_core_comments_pagination_numbers": {
+            "file": "core-blocks.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "_minn_register_core_block"
+            ]
+        },
+        "register_block_core_comments_pagination_previous": {
+            "file": "core-blocks.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "_minn_register_core_block"
+            ]
+        },
+        "register_block_core_comments_title": {
+            "file": "core-blocks.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "_minn_register_core_block"
+            ]
+        },
+        "register_block_core_cover": {
+            "file": "core-blocks.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "_minn_register_core_block"
+            ]
+        },
+        "register_block_core_details": {
+            "file": "core-blocks.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "_minn_register_core_block"
+            ]
+        },
+        "register_block_core_file": {
+            "file": "core-blocks.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "_minn_register_core_block"
+            ]
+        },
+        "register_block_core_footnotes": {
+            "file": "core-blocks.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "_minn_register_core_block"
+            ]
+        },
         "register_block_core_footnotes_post_meta": {
             "file": "blocks.php",
             "lines": 5,
@@ -43088,6 +43651,593 @@
                 "get_post_types",
                 "post_type_supports",
                 "register_post_meta"
+            ]
+        },
+        "register_block_core_gallery": {
+            "file": "core-blocks.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "_minn_register_core_block"
+            ]
+        },
+        "register_block_core_heading": {
+            "file": "core-blocks.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "_minn_register_core_block"
+            ]
+        },
+        "register_block_core_home_link": {
+            "file": "core-blocks.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "_minn_register_core_block"
+            ]
+        },
+        "register_block_core_icon": {
+            "file": "core-blocks.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "_minn_register_core_block"
+            ]
+        },
+        "register_block_core_image": {
+            "file": "core-blocks.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "_minn_register_core_block"
+            ]
+        },
+        "register_block_core_latest_comments": {
+            "file": "core-blocks.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "_minn_register_core_block"
+            ]
+        },
+        "register_block_core_latest_posts": {
+            "file": "core-blocks.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "_minn_register_core_block"
+            ]
+        },
+        "register_block_core_legacy_widget": {
+            "file": "core-blocks.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "_minn_register_core_block"
+            ]
+        },
+        "register_block_core_list": {
+            "file": "core-blocks.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "_minn_register_core_block"
+            ]
+        },
+        "register_block_core_loginout": {
+            "file": "core-blocks.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "_minn_register_core_block"
+            ]
+        },
+        "register_block_core_media_text": {
+            "file": "core-blocks.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "_minn_register_core_block"
+            ]
+        },
+        "register_block_core_navigation": {
+            "file": "core-blocks.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "_minn_register_core_block"
+            ]
+        },
+        "register_block_core_navigation_link": {
+            "file": "core-blocks.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "_minn_register_core_block"
+            ]
+        },
+        "register_block_core_navigation_overlay_close": {
+            "file": "core-blocks.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "_minn_register_core_block"
+            ]
+        },
+        "register_block_core_navigation_submenu": {
+            "file": "core-blocks.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "_minn_register_core_block"
+            ]
+        },
+        "register_block_core_page_list": {
+            "file": "core-blocks.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "_minn_register_core_block"
+            ]
+        },
+        "register_block_core_page_list_item": {
+            "file": "core-blocks.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "_minn_register_core_block"
+            ]
+        },
+        "register_block_core_paragraph": {
+            "file": "core-blocks.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "_minn_register_core_block"
+            ]
+        },
+        "register_block_core_pattern": {
+            "file": "core-blocks.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "_minn_register_core_block"
+            ]
+        },
+        "register_block_core_playlist": {
+            "file": "core-blocks.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "_minn_register_core_block"
+            ]
+        },
+        "register_block_core_playlist_track": {
+            "file": "core-blocks.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "_minn_register_core_block"
+            ]
+        },
+        "register_block_core_post_author": {
+            "file": "core-blocks.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "_minn_register_core_block"
+            ]
+        },
+        "register_block_core_post_author_biography": {
+            "file": "core-blocks.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "_minn_register_core_block"
+            ]
+        },
+        "register_block_core_post_author_name": {
+            "file": "core-blocks.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "_minn_register_core_block"
+            ]
+        },
+        "register_block_core_post_comments_count": {
+            "file": "core-blocks.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "_minn_register_core_block"
+            ]
+        },
+        "register_block_core_post_comments_form": {
+            "file": "core-blocks.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "_minn_register_core_block"
+            ]
+        },
+        "register_block_core_post_comments_link": {
+            "file": "core-blocks.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "_minn_register_core_block"
+            ]
+        },
+        "register_block_core_post_content": {
+            "file": "core-blocks.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "_minn_register_core_block"
+            ]
+        },
+        "register_block_core_post_date": {
+            "file": "core-blocks.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "_minn_register_core_block"
+            ]
+        },
+        "register_block_core_post_excerpt": {
+            "file": "core-blocks.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "_minn_register_core_block"
+            ]
+        },
+        "register_block_core_post_featured_image": {
+            "file": "core-blocks.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "_minn_register_core_block"
+            ]
+        },
+        "register_block_core_post_navigation_link": {
+            "file": "core-blocks.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "_minn_register_core_block"
+            ]
+        },
+        "register_block_core_post_template": {
+            "file": "core-blocks.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "_minn_register_core_block"
+            ]
+        },
+        "register_block_core_post_terms": {
+            "file": "core-blocks.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "_minn_register_core_block"
+            ]
+        },
+        "register_block_core_post_time_to_read": {
+            "file": "core-blocks.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "_minn_register_core_block"
+            ]
+        },
+        "register_block_core_post_title": {
+            "file": "core-blocks.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "_minn_register_core_block"
+            ]
+        },
+        "register_block_core_query": {
+            "file": "core-blocks.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "_minn_register_core_block"
+            ]
+        },
+        "register_block_core_query_no_results": {
+            "file": "core-blocks.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "_minn_register_core_block"
+            ]
+        },
+        "register_block_core_query_pagination": {
+            "file": "core-blocks.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "_minn_register_core_block"
+            ]
+        },
+        "register_block_core_query_pagination_next": {
+            "file": "core-blocks.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "_minn_register_core_block"
+            ]
+        },
+        "register_block_core_query_pagination_numbers": {
+            "file": "core-blocks.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "_minn_register_core_block"
+            ]
+        },
+        "register_block_core_query_pagination_previous": {
+            "file": "core-blocks.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "_minn_register_core_block"
+            ]
+        },
+        "register_block_core_query_title": {
+            "file": "core-blocks.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "_minn_register_core_block"
+            ]
+        },
+        "register_block_core_query_total": {
+            "file": "core-blocks.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "_minn_register_core_block"
+            ]
+        },
+        "register_block_core_read_more": {
+            "file": "core-blocks.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "_minn_register_core_block"
+            ]
+        },
+        "register_block_core_rss": {
+            "file": "core-blocks.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "_minn_register_core_block"
+            ]
+        },
+        "register_block_core_search": {
+            "file": "core-blocks.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "_minn_register_core_block"
+            ]
+        },
+        "register_block_core_shortcode": {
+            "file": "core-blocks.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "_minn_register_core_block"
+            ]
+        },
+        "register_block_core_site_icon_setting": {
+            "file": "core-blocks.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "__",
+                "register_setting"
+            ]
+        },
+        "register_block_core_site_logo": {
+            "file": "core-blocks.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "_minn_register_core_block"
+            ]
+        },
+        "register_block_core_site_logo_setting": {
+            "file": "core-blocks.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "__",
+                "register_setting"
+            ]
+        },
+        "register_block_core_site_tagline": {
+            "file": "core-blocks.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "_minn_register_core_block"
+            ]
+        },
+        "register_block_core_site_title": {
+            "file": "core-blocks.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "_minn_register_core_block"
+            ]
+        },
+        "register_block_core_social_link": {
+            "file": "core-blocks.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "_minn_register_core_block"
+            ]
+        },
+        "register_block_core_tab_list": {
+            "file": "core-blocks.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "_minn_register_core_block"
+            ]
+        },
+        "register_block_core_tab_panel": {
+            "file": "core-blocks.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "_minn_register_core_block"
+            ]
+        },
+        "register_block_core_tabs": {
+            "file": "core-blocks.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "_minn_register_core_block"
+            ]
+        },
+        "register_block_core_tag_cloud": {
+            "file": "core-blocks.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "_minn_register_core_block"
+            ]
+        },
+        "register_block_core_template_part": {
+            "file": "core-blocks.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "_minn_register_core_block"
+            ]
+        },
+        "register_block_core_term_count": {
+            "file": "core-blocks.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "_minn_register_core_block"
+            ]
+        },
+        "register_block_core_term_description": {
+            "file": "core-blocks.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "_minn_register_core_block"
+            ]
+        },
+        "register_block_core_term_name": {
+            "file": "core-blocks.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "_minn_register_core_block"
+            ]
+        },
+        "register_block_core_term_template": {
+            "file": "core-blocks.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "_minn_register_core_block"
+            ]
+        },
+        "register_block_core_video": {
+            "file": "core-blocks.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "_minn_register_core_block"
+            ]
+        },
+        "register_block_core_widget_group": {
+            "file": "core-blocks.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "_minn_register_core_block"
             ]
         },
         "register_block_pattern": {
@@ -43733,6 +44883,573 @@
                 "get_post"
             ]
         },
+        "render_block_core_accordion": {
+            "file": "core-blocks.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "_minn_render_core_callback"
+            ]
+        },
+        "render_block_core_archives": {
+            "file": "core-blocks.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "_minn_render_core_callback"
+            ]
+        },
+        "render_block_core_avatar": {
+            "file": "core-blocks.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "_minn_render_core_callback"
+            ]
+        },
+        "render_block_core_block": {
+            "file": "core-blocks.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "_minn_render_core_callback"
+            ]
+        },
+        "render_block_core_breadcrumbs": {
+            "file": "core-blocks.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "_minn_render_core_callback"
+            ]
+        },
+        "render_block_core_button": {
+            "file": "core-blocks.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "_minn_render_core_callback"
+            ]
+        },
+        "render_block_core_calendar": {
+            "file": "core-blocks.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "_minn_render_core_callback"
+            ]
+        },
+        "render_block_core_categories": {
+            "file": "core-blocks.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "_minn_render_core_callback"
+            ]
+        },
+        "render_block_core_comment_author_name": {
+            "file": "core-blocks.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "_minn_render_core_callback"
+            ]
+        },
+        "render_block_core_comment_content": {
+            "file": "core-blocks.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "_minn_render_core_callback"
+            ]
+        },
+        "render_block_core_comment_date": {
+            "file": "core-blocks.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "_minn_render_core_callback"
+            ]
+        },
+        "render_block_core_comment_edit_link": {
+            "file": "core-blocks.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "_minn_render_core_callback"
+            ]
+        },
+        "render_block_core_comment_reply_link": {
+            "file": "core-blocks.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "_minn_render_core_callback"
+            ]
+        },
+        "render_block_core_comment_template": {
+            "file": "core-blocks.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "_minn_render_core_callback"
+            ]
+        },
+        "render_block_core_comments": {
+            "file": "core-blocks.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "_minn_render_core_callback"
+            ]
+        },
+        "render_block_core_comments_pagination": {
+            "file": "core-blocks.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "_minn_render_core_callback"
+            ]
+        },
+        "render_block_core_comments_pagination_next": {
+            "file": "core-blocks.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "_minn_render_core_callback"
+            ]
+        },
+        "render_block_core_comments_pagination_numbers": {
+            "file": "core-blocks.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "_minn_render_core_callback"
+            ]
+        },
+        "render_block_core_comments_pagination_previous": {
+            "file": "core-blocks.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "_minn_render_core_callback"
+            ]
+        },
+        "render_block_core_comments_title": {
+            "file": "core-blocks.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "_minn_render_core_callback"
+            ]
+        },
+        "render_block_core_cover": {
+            "file": "core-blocks.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "_minn_render_core_callback"
+            ]
+        },
+        "render_block_core_file": {
+            "file": "core-blocks.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "_minn_render_core_callback"
+            ]
+        },
+        "render_block_core_footnotes": {
+            "file": "core-blocks.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "_minn_render_core_callback"
+            ]
+        },
+        "render_block_core_home_link": {
+            "file": "core-blocks.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "_minn_render_core_callback"
+            ]
+        },
+        "render_block_core_icon": {
+            "file": "core-blocks.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "_minn_render_core_callback"
+            ]
+        },
+        "render_block_core_image": {
+            "file": "core-blocks.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "_minn_render_core_callback"
+            ]
+        },
+        "render_block_core_latest_comments": {
+            "file": "core-blocks.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "_minn_render_core_callback"
+            ]
+        },
+        "render_block_core_latest_posts": {
+            "file": "core-blocks.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "_minn_render_core_callback"
+            ]
+        },
+        "render_block_core_legacy_widget": {
+            "file": "core-blocks.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "_minn_render_core_callback"
+            ]
+        },
+        "render_block_core_loginout": {
+            "file": "core-blocks.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "_minn_render_core_callback"
+            ]
+        },
+        "render_block_core_media_text": {
+            "file": "core-blocks.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "_minn_render_core_callback"
+            ]
+        },
+        "render_block_core_navigation": {
+            "file": "core-blocks.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "_minn_render_core_callback"
+            ]
+        },
+        "render_block_core_navigation_link": {
+            "file": "core-blocks.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "_minn_render_core_callback"
+            ]
+        },
+        "render_block_core_navigation_overlay_close": {
+            "file": "core-blocks.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "_minn_render_core_callback"
+            ]
+        },
+        "render_block_core_navigation_submenu": {
+            "file": "core-blocks.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "_minn_render_core_callback"
+            ]
+        },
+        "render_block_core_page_list": {
+            "file": "core-blocks.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "_minn_render_core_callback"
+            ]
+        },
+        "render_block_core_pattern": {
+            "file": "core-blocks.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "_minn_render_core_callback"
+            ]
+        },
+        "render_block_core_playlist": {
+            "file": "core-blocks.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "_minn_render_core_callback"
+            ]
+        },
+        "render_block_core_playlist_track": {
+            "file": "core-blocks.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "_minn_render_core_callback"
+            ]
+        },
+        "render_block_core_post_author": {
+            "file": "core-blocks.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "_minn_render_core_callback"
+            ]
+        },
+        "render_block_core_post_author_biography": {
+            "file": "core-blocks.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "_minn_render_core_callback"
+            ]
+        },
+        "render_block_core_post_author_name": {
+            "file": "core-blocks.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "_minn_render_core_callback"
+            ]
+        },
+        "render_block_core_post_comments_count": {
+            "file": "core-blocks.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "_minn_render_core_callback"
+            ]
+        },
+        "render_block_core_post_comments_form": {
+            "file": "core-blocks.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "_minn_render_core_callback"
+            ]
+        },
+        "render_block_core_post_comments_link": {
+            "file": "core-blocks.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "_minn_render_core_callback"
+            ]
+        },
+        "render_block_core_post_content": {
+            "file": "core-blocks.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "_minn_render_core_callback"
+            ]
+        },
+        "render_block_core_post_date": {
+            "file": "core-blocks.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "_minn_render_core_callback"
+            ]
+        },
+        "render_block_core_post_excerpt": {
+            "file": "core-blocks.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "_minn_render_core_callback"
+            ]
+        },
+        "render_block_core_post_featured_image": {
+            "file": "core-blocks.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "_minn_render_core_callback"
+            ]
+        },
+        "render_block_core_post_navigation_link": {
+            "file": "core-blocks.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "_minn_render_core_callback"
+            ]
+        },
+        "render_block_core_post_template": {
+            "file": "core-blocks.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "_minn_render_core_callback"
+            ]
+        },
+        "render_block_core_post_terms": {
+            "file": "core-blocks.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "_minn_render_core_callback"
+            ]
+        },
+        "render_block_core_post_time_to_read": {
+            "file": "core-blocks.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "_minn_render_core_callback"
+            ]
+        },
+        "render_block_core_post_title": {
+            "file": "core-blocks.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "_minn_render_core_callback"
+            ]
+        },
+        "render_block_core_query": {
+            "file": "core-blocks.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "_minn_render_core_callback"
+            ]
+        },
+        "render_block_core_query_no_results": {
+            "file": "core-blocks.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "_minn_render_core_callback"
+            ]
+        },
+        "render_block_core_query_pagination": {
+            "file": "core-blocks.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "_minn_render_core_callback"
+            ]
+        },
+        "render_block_core_query_pagination_next": {
+            "file": "core-blocks.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "_minn_render_core_callback"
+            ]
+        },
+        "render_block_core_query_pagination_numbers": {
+            "file": "core-blocks.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "_minn_render_core_callback"
+            ]
+        },
+        "render_block_core_query_pagination_previous": {
+            "file": "core-blocks.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "_minn_render_core_callback"
+            ]
+        },
+        "render_block_core_query_title": {
+            "file": "core-blocks.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "_minn_render_core_callback"
+            ]
+        },
+        "render_block_core_query_total": {
+            "file": "core-blocks.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "_minn_render_core_callback"
+            ]
+        },
+        "render_block_core_read_more": {
+            "file": "core-blocks.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "_minn_render_core_callback"
+            ]
+        },
         "render_block_core_rss": {
             "file": "feed.php",
             "lines": 19,
@@ -43747,13 +45464,130 @@
                 "is_wp_error"
             ]
         },
+        "render_block_core_search": {
+            "file": "core-blocks.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "_minn_render_core_callback"
+            ]
+        },
+        "render_block_core_shortcode": {
+            "file": "core-blocks.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "_minn_render_core_callback"
+            ]
+        },
+        "render_block_core_site_logo": {
+            "file": "core-blocks.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "_minn_render_core_callback"
+            ]
+        },
+        "render_block_core_site_tagline": {
+            "file": "core-blocks.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "_minn_render_core_callback"
+            ]
+        },
+        "render_block_core_site_title": {
+            "file": "core-blocks.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "_minn_render_core_callback"
+            ]
+        },
+        "render_block_core_social_link": {
+            "file": "core-blocks.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "_minn_render_core_callback"
+            ]
+        },
+        "render_block_core_tag_cloud": {
+            "file": "core-blocks.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "_minn_render_core_callback"
+            ]
+        },
         "render_block_core_template_part": {
             "file": "blocks.php",
-            "lines": 6,
+            "lines": 9,
             "kind": "composes",
             "minn": [],
             "composes": [
-                "render_block"
+                "_minn_render_core_callback"
+            ]
+        },
+        "render_block_core_term_count": {
+            "file": "core-blocks.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "_minn_render_core_callback"
+            ]
+        },
+        "render_block_core_term_description": {
+            "file": "core-blocks.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "_minn_render_core_callback"
+            ]
+        },
+        "render_block_core_term_name": {
+            "file": "core-blocks.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "_minn_render_core_callback"
+            ]
+        },
+        "render_block_core_term_template": {
+            "file": "core-blocks.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "_minn_render_core_callback"
+            ]
+        },
+        "render_block_core_video": {
+            "file": "core-blocks.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "_minn_render_core_callback"
+            ]
+        },
+        "render_block_core_widget_group": {
+            "file": "core-blocks.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "_minn_render_core_callback"
             ]
         },
         "replace": {

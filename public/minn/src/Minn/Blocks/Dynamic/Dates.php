@@ -20,10 +20,10 @@ final class Dates
         return str_replace(' ', 'T', $local) . $zone;
     }
 
-    /** The date_format option applied to a site-local MySQL datetime. */
-    public static function format(Site $site, string $local): string
+    /** A site-local MySQL datetime in the format given, else the date_format option. */
+    public static function format(Site $site, string $local, string $format = ''): string
     {
-        $format = $site->option('date_format') ?: 'F j, Y';
+        $format = $format !== '' ? $format : ($site->option('date_format') ?: 'F j, Y');
         $time = new DateTimeImmutable($local, new DateTimeZone('UTC'));
         return $time->format($format);
     }

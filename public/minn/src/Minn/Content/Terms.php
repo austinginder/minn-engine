@@ -35,7 +35,7 @@ final readonly class Terms
     public function find(string $taxonomy, int $termId): ?TermRecord
     {
         return self::record($this->db->row(
-            "SELECT t.term_id, t.name, t.slug, tt.term_taxonomy_id, tt.taxonomy, tt.parent, tt.count
+            "SELECT t.term_id, t.name, t.slug, tt.term_taxonomy_id, tt.taxonomy, tt.description, tt.parent, tt.count
              FROM {$this->db->table('terms')} t
              INNER JOIN {$this->db->table('term_taxonomy')} tt ON tt.term_id = t.term_id
              WHERE tt.taxonomy = ? AND t.term_id = ? LIMIT 1",

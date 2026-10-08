@@ -93,7 +93,9 @@ class WP_Block
         if ($bound !== []) {
             $this->attributes = array_merge($this->attributes, $bound);
         }
-        $block_content = !$options['dynamic'] || empty($this->block_type->skip_inner_blocks) ? $this->render_inner_blocks() : '';
+        // A core block the engine renders itself renders its inner blocks too; rendering them first would run their queries twice.
+        $native = $is_dynamic && _minn_core_renders_natively((string) $this->name, $this->block_type->render_callback);
+        $block_content = !$native && (!$options['dynamic'] || empty($this->block_type->skip_inner_blocks)) ? $this->render_inner_blocks() : '';
         if ($is_dynamic) {
             $global_post = $GLOBALS['post'] ?? null;
             $parent = WP_Block_Supports::$block_to_render;

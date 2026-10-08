@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Minn\Blocks\Dynamic\Theme;
 
 use Minn\Content\TermRecord;
+use Minn\I18n\Gettext;
 use Minn\Content\PostRecord;
 use Minn\Blocks\Block;
 use Minn\Content\Page;
@@ -21,10 +22,10 @@ use Minn\Front\Permalinks;
 use Minn\Support\Html;
 use Minn\Support\Serialized;
 
-/** query, post-template, query-title, query-no-results, query-pagination, term-description. */
+/** query, post-template, query-title, query-no-results, query-pagination, query-total. */
 final class QueryBlocks
 {
-    /** @var list<array{posts: list<array>, total: int, inherit: bool}> */
+    /** @var list<array{page: Page, inherit: bool, paged: int, perPage: int}> the loops being rendered, innermost last */
     private array $queries = [];
 
     public function __construct(
@@ -45,19 +46,13 @@ final class QueryBlocks
         $renderer->registerDynamic('core/query-pagination-previous', static fn () => '');
         $renderer->registerDynamic('core/query-pagination-next', static fn () => '');
         $renderer->registerDynamic('core/query-pagination-numbers', static fn () => '');
-        $renderer->registerDynamic('core/term-description', $this->termDescription(...));
+        $renderer->registerDynamic('core/query-total', $this->total(...));
     }
 
     /** The query wrapper is stored markup; the block sets the loop its children read. */
     private function query(Block $block, Renderer $renderer): string
     {
-        $context = $renderer->context();
-        $attrs = (array) $block->attr('query', []);
-        if (!empty($attrs['inherit'])) {
-            $this->queries[] = ['page' => new Page($context->posts, $context->total), 'inherit' => true];
-        } else {
-            $this->queries[] = ['page' => self::queried($block, $attrs), 'inherit' => false];
-        }
+        $this->queries[] = $this->loop($block, (array) $block->attr('query', []), $renderer);
         $out = '';
         $inner = 0;
         foreach ($block->innerContent as $chunk) {
@@ -76,25 +71,67 @@ final class QueryBlocks
      *
      * @param array<string, mixed> $attrs the block's query
      */
-    private static function queried(Block $block, array $attrs): Page
+    private static function queried(Block $block, array $attrs, int $page): Page
     {
         $queryId = $block->attrs['queryId'] ?? null;
-        $key = $queryId === null ? 'query-page' : "query-{$queryId}-page";
-        $page = (int) (Runtime::current()->request?->query[$key] ?? 0) ?: 1;
         $template = new \WP_Block(['blockName' => 'core/post-template', 'attrs' => [], 'innerBlocks' => [], 'innerHTML' => '', 'innerContent' => []], ['queryId' => $queryId, 'query' => $attrs]);
         $query = new \WP_Query(\build_query_vars_from_query_block($template, $page));
         $rows = array_map(static fn ($post) => array_diff_key(get_object_vars($post), ['filter' => true]), array_filter((array) $query->posts, static fn ($post) => $post instanceof \WP_Post));
         return new Page(PostRecord::fromRows(array_values($rows)), (int) $query->found_posts);
     }
 
-    private function current(): array
+    /**
+     * A loop as the query block sets it: the main query's page when it
+     * inherits, else its own query for the page its query-{id}-page asks for.
+     *
+     * @param array<string, mixed> $attrs the block's query
+     * @return array{page: Page, inherit: bool, paged: int, perPage: int}
+     */
+    private function loop(Block $block, array $attrs, Renderer $renderer): array
     {
-        return $this->queries[count($this->queries) - 1] ?? ['page' => Page::empty(), 'inherit' => false];
+        $context = $renderer->context();
+        $perPage = (int) ($this->site->option('posts_per_page') ?? 10) ?: 10;
+        if (!empty($attrs['inherit'])) {
+            return ['page' => new Page($context->posts, $context->total), 'inherit' => true, 'paged' => max(1, $context->paged()), 'perPage' => $perPage];
+        }
+        $queryId = $block->attrs['queryId'] ?? null;
+        $paged = (int) (Runtime::current()->request?->query[$queryId === null ? 'query-page' : "query-{$queryId}-page"] ?? 0) ?: 1;
+        return ['page' => self::queried($block, $attrs, $paged), 'inherit' => false, 'paged' => $paged, 'perPage' => (int) ($attrs['perPage'] ?? 0) ?: $perPage];
+    }
+
+    /** The innermost loop being rendered; outside one, the loop a block's context provides (a post template called by its render callback). */
+    private function current(?Renderer $renderer = null): array
+    {
+        if ($this->queries !== []) {
+            return $this->queries[count($this->queries) - 1];
+        }
+        $provided = $renderer?->blockContext() ?? [];
+        if ($renderer === null || !is_array($provided['query'] ?? null)) {
+            return ['page' => Page::empty(), 'inherit' => false, 'paged' => 1, 'perPage' => 10];
+        }
+        return $this->loop(new Block('core/query', ['queryId' => $provided['queryId'] ?? null], [], '', []), $provided['query'], $renderer);
+    }
+
+    /** How many posts the loop found, or which of them this page shows (displayType range-display). */
+    private function total(Block $block, Renderer $renderer): string
+    {
+        $query = $this->current($renderer);
+        $total = $query['page']->total;
+        if ((string) $block->attr('displayType', 'total-results') === 'range-display') {
+            $start = $total === 0 ? 0 : ($query['paged'] - 1) * $query['perPage'] + 1;
+            $end = $total === 0 ? 0 : $start + $query['page']->count() - 1;
+            $text = $start === $end
+                ? sprintf(Gettext::text('Displaying %1$s of %2$s'), $start, $total)
+                : sprintf(Gettext::text('Displaying %1$s – %2$s of %3$s'), $start, $end, $total);
+        } else {
+            $text = sprintf(Gettext::plural('%d result found', '%d results found', $total), $total);
+        }
+        return Wrapper::open('div', 'wp-block-query-total', $block) . $text . '</div>';
     }
 
     private function postTemplate(Block $block, Renderer $renderer): string
     {
-        $query = $this->current();
+        $query = $this->current($renderer);
         if ($query['page']->isEmpty()) {
             return '';
         }
@@ -178,7 +215,7 @@ final class QueryBlocks
 
     private function noResults(Block $block, Renderer $renderer): string
     {
-        if (!$this->current()['page']->isEmpty()) {
+        if (!$this->current($renderer)['page']->isEmpty()) {
             return '';
         }
         $out = '';
@@ -192,7 +229,7 @@ final class QueryBlocks
     /** Pagination renders only when the loop it belongs to has more than one page. */
     private function pagination(Block $block, Renderer $renderer): string
     {
-        $query = $this->current();
+        $query = $this->current($renderer);
         $context = $renderer->context();
         if (!$query['inherit'] || $context->totalPages() <= 1) {
             return '';
@@ -267,20 +304,5 @@ final class QueryBlocks
     {
         $label = (string) ($type['label'] ?? $type['name'] ?? '');
         return (string) \apply_filters('post_type_archive_title', $label, (string) ($type['name'] ?? ''));
-    }
-
-    private function termDescription(Block $block, Renderer $renderer): string
-    {
-        $resolution = $renderer->context()->resolution;
-        if (!in_array($resolution->kind, [Kind::Category, Kind::Tag, Kind::Taxonomy], true)) {
-            return '';
-        }
-        $term = (new \Minn\Content\Terms(\Minn\Db::current()))->row((int) $resolution->record['term_id'], (string) $resolution->record['taxonomy']);
-        $description = trim((string) ($term['description'] ?? ''));
-        if ($description === '') {
-            return '';
-        }
-        $classes = implode(' ', ['wp-block-term-description', ...Styles::classes($block->attrs)]);
-        return '<div class="' . Html::attr($classes) . '"><p>' . Html::esc($description) . '</p></div>';
     }
 }

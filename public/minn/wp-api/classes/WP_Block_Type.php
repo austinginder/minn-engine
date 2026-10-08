@@ -1,7 +1,6 @@
 <?php
 
 use Minn\Blocks\BlockName;
-use Minn\Runtime\Runtime;
 
 /** A block type as registered; the core set is data/blocks.json. Shapes from contracts/fixtures/api/blocks.json. */
 #[AllowDynamicProperties]
@@ -174,24 +173,8 @@ final class WP_Block_Type_Registry
             return;
         }
         $this->seeded = true;
-        $rows = json_decode((string) file_get_contents(Runtime::current()->engineDir . '/data/blocks.json'), true) ?: [];
-        foreach ($rows as $name => $row) {
-            $dynamic = !empty($row['dynamic']);
-            unset($row['dynamic'], $row['name']);
-            $type = new WP_Block_Type($name);
-            foreach ($row as $key => $value) {
-                $type->{$key} = $value;
-            }
-            if ($dynamic) {
-                // The engine renders its own dynamic core blocks; the callback is the bridge to that renderer.
-                $type->render_callback = static fn ($attributes, $content, $block) => _minn_render_core_block($block);
-            }
-            if ($name === 'core/template-part') {
-                // Its variations are the active theme's areas and parts, built when first asked for.
-                $type->variations = null;
-                $type->variation_callback = 'build_template_part_block_variations';
-            }
-            $this->registered_block_types[$name] = $type;
+        foreach (array_keys(_minn_core_block_rows()) as $name) {
+            $this->registered_block_types[$name] = _minn_core_block_type($name);
         }
     }
 
@@ -211,7 +194,7 @@ final class WP_Block_Type_Registry
         }
         $block_type ??= new WP_Block_Type($name, $args);
         $this->registered_block_types[$name] = $block_type;
-        if ($block_type->is_dynamic() && function_exists('_minn_bridge_dynamic_block')) {
+        if ($block_type->is_dynamic() && function_exists('_minn_bridge_dynamic_block') && !_minn_core_renders_natively($name, $block_type->render_callback)) {
             _minn_bridge_dynamic_block($name);
         }
         return $block_type;

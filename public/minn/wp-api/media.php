@@ -410,8 +410,8 @@ function wp_get_loading_optimization_attributes($tag_name, $attr, $context)
         // A header image, or one in the header template part, is in view (probes custom-header, theme-symbols): never lazy, one of the eager images.
         RenderState::current()->nextImage();
         $optimization += _minn_earned_priority($attr);
-    } elseif ($tag_name === 'img' && (RenderState::current()->depth() > 0 || (in_the_loop() && is_main_query())) && !(defined('REST_REQUEST') && REST_REQUEST) && RenderState::current()->nextImage() <= 3) {
-        // Inside a page render the plugin's image shares the engine's budget:
+    } elseif ($tag_name === 'img' && ((RenderState::current()->inside('template') && RenderState::current()->depth() > 0) || (in_the_loop() && is_main_query())) && !(defined('REST_REQUEST') && REST_REQUEST) && RenderState::current()->nextImage() <= 3) {
+        // Inside a page's template (or its main loop) the image shares the engine's budget:
         // three eager images, and the first one large enough to be worth the
         // network's attention takes high priority. A thumbnail or an avatar is
         // not, so the flag can fall to a later image.

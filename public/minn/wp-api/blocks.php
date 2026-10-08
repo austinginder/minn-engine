@@ -25,22 +25,98 @@ function _minn_array_to_block(array $block): MinnBlock
     return MinnBlock::fromArray($block);
 }
 
-/** @internal a core block rendered by the engine, with the wrapper classes the engine gives it */
+/** @internal the core block types' registration rows (data/blocks.json): the reference's settings, its render callback by name */
+function _minn_core_block_rows(): array
+{
+    static $rows = null;
+    return $rows ??= json_decode((string) file_get_contents(MINN_ENGINE_DIR . '/data/blocks.json'), true) ?: [];
+}
+
+/** @internal a core block type as the engine registers it; null for a name core does not have */
+function _minn_core_block_type(string $name): ?WP_Block_Type
+{
+    $row = _minn_core_block_rows()[$name] ?? null;
+    if ($row === null) {
+        return null;
+    }
+    unset($row['name']);
+    $type = new WP_Block_Type($name);
+    foreach ($row as $key => $value) {
+        $type->{$key} = $value;
+    }
+    if ($name === 'core/template-part') {
+        // Its variations are the active theme's areas and parts, built when first asked for.
+        $type->variations = null;
+        $type->variation_callback = 'build_template_part_block_variations';
+    }
+    return $type;
+}
+
+/**
+ * @internal whether a core block keeps its own render callback, which the
+ * engine's renderer answers natively; core/rss is the exception, its
+ * callback being the renderer (it is bridged on init)
+ */
+function _minn_core_renders_natively(string $name, $callback): bool
+{
+    return $name !== 'core/rss' && is_string($callback) && $callback === (_minn_core_block_rows()[$name]['render_callback'] ?? null);
+}
+
+/**
+ * @internal what a core block's render callback gives when called by name:
+ * the engine renders the block whole, from the attributes given and the
+ * block instance's other parts and context (the saved markup given, when
+ * there is no instance). The reference's callback leaves its supports'
+ * classes to render_block's filters, and called outside a render it has
+ * none; the engine's output has them (probe core-blocks compares the text
+ * and the tags).
+ */
+function _minn_render_core_callback(string $name, $attributes, $content = '', $block = null): string
+{
+    if ($block instanceof WP_Block && $attributes === $block->attributes) {
+        return _minn_render_core_block($block);
+    }
+    $parsed = $block instanceof WP_Block ? $block->parsed_block : ['blockName' => $name, 'attrs' => [], 'innerBlocks' => [], 'innerHTML' => (string) $content, 'innerContent' => [(string) $content]];
+    $parsed['attrs'] = (array) $attributes;
+    return _minn_render_core_block(new WP_Block($parsed, $block instanceof WP_Block ? (array) $block->context : []));
+}
+
+/** @internal registers a core block type again, as its register_block_core_* function does: refused while it is registered */
+function _minn_register_core_block(string $name): void
+{
+    $type = _minn_core_block_type($name);
+    if ($type !== null) {
+        WP_Block_Type_Registry::get_instance()->register($type);
+    }
+}
+
+/** @internal a core block rendered by the engine's own renderer, with the wrapper classes the engine gives it */
 function _minn_render_core_block(WP_Block $block, string $content = ''): string
 {
-    // A plugin's query loop hands the engine its per-item post through the
-    // block context; the engine's own renderer reads its post stack.
+    // A plugin's query loop hands the engine its per-item post (and a
+    // comment loop its comment) through the block context; the engine's own
+    // renderer reads its post stack and comment scope, and the rest of the
+    // context the block uses (a query, a term) as provided context.
     $renderer = MinnBlocks::renderer();
-    $contextPost = null;
-    if (!empty($block->context['postId'])) {
-        $contextPost = _minn_posts()->find((int) $block->context['postId']);
+    $context = (array) $block->context;
+    $contextPost = empty($context['postId']) ? null : _minn_posts()->find((int) $context['postId']);
+    // A callback given no instance reads the post being shown (the global one), as the reference's do.
+    if ($contextPost === null && $renderer->context()->post() === null && ($GLOBALS['post'] ?? null) instanceof WP_Post) {
+        $contextPost = _minn_posts()->find((int) $GLOBALS['post']->ID);
     }
+    $comment = empty($context['commentId']) ? null : get_comment((int) $context['commentId']);
+    $outerComment = $renderer->context()->comment();
     if ($contextPost !== null) {
         $renderer->context()->pushPost($contextPost);
     }
+    if ($comment instanceof WP_Comment) {
+        $renderer->context()->withComment(Minn\Content\CommentRecord::fromRow(get_object_vars($comment)));
+    }
     try {
-        return $renderer->renderBlock(_minn_array_to_block($block->parsed_block));
+        $provided = array_diff_key($context, ['postId' => true, 'postType' => true, 'commentId' => true]);
+        return $renderer->providing($provided, static fn (): string => $renderer->renderNative(_minn_array_to_block($block->parsed_block)));
     } finally {
+        $renderer->context()->withComment($outerComment);
         if ($contextPost !== null) {
             $renderer->context()->popPost();
         }
@@ -50,7 +126,7 @@ function _minn_render_core_block(WP_Block $block, string $content = ''): string
 /** @internal a dynamic block a plugin registered renders through its callback on the engine's front end too */
 function _minn_bridge_dynamic_block(string $name): void
 {
-    MinnBlocks::renderer()->registerDynamic($name, static function (MinnBlock $block): string {
+    MinnBlocks::renderer()->bridge($name, static function (MinnBlock $block): string {
         // The engine's BlockFilters already ran pre_render_block, render_block_data and render_block around this
         // call; the block object gets the context render_block() would build, and renders once.
         $parsed = _minn_block_to_array($block);
@@ -970,7 +1046,10 @@ function apply_block_hooks_to_content($content, $context = null, $callback = 'in
 /** A template part by its attributes, through the engine's template-part block. */
 function render_block_core_template_part($attributes)
 {
-    $html = render_block(['blockName' => 'core/template-part', 'attrs' => (array) $attributes, 'innerBlocks' => [], 'innerHTML' => '', 'innerContent' => []]);
+    $html = _minn_render_core_callback('core/template-part', ...func_get_args());
+    if (WP_Block_Supports::$block_to_render !== null) {
+        return $html;
+    }
     // Outside a block render the reference adds no block-support class to the wrapper (it prints "<header >").
     return preg_replace_callback('/^(<\w+)([^>]*?)\sclass="([^"]*)"/', static function (array $m): string {
         $classes = array_values(array_diff(preg_split('/\s+/', trim($m[3]), -1, PREG_SPLIT_NO_EMPTY) ?: [], ['wp-block-template-part']));

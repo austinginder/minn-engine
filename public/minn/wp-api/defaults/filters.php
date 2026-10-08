@@ -159,6 +159,10 @@ add_filter('pre_link_description', 'wp_filter_kses');
 // status, a note's status, the editor's preferences, and at 20 the
 // footnotes of every type that supports them by then.
 add_action('init', 'wp_create_initial_post_meta');
+// The core blocks the facade renders join the engine's renderer as it is built; widget groups learn the sidebar they sit in.
+add_action('minn_block_renderers', '_minn_register_block_renderers');
+add_action('dynamic_sidebar_before', 'note_sidebar_being_rendered');
+add_action('dynamic_sidebar_after', 'discard_sidebar_being_rendered');
 // Registration arguments are kept to the known ones before a plugin's filter sees them, so what a plugin adds stays (probes deprecated, meta-api).
 add_filter('register_meta_args', '_wp_register_meta_args_allowed_list', 10, 2);
 add_action('init', 'wp_create_initial_comment_meta');

@@ -270,6 +270,12 @@ final class RenderState
         unset($this->active[$key]);
     }
 
+    /** Whether a key is open: a source being rendered, or the page template ("template"). */
+    public function inside(string $key): bool
+    {
+        return isset($this->active[$key]);
+    }
+
     /** True while the block tree is shallower than the cap; deeper blocks render as nothing. */
     public function descend(): bool
     {
@@ -286,7 +292,7 @@ final class RenderState
         $this->depth--;
     }
 
-    /** How deep the block tree is right now; zero outside a page render. */
+    /** How deep the block tree is right now; zero outside any block render. */
     public function depth(): int
     {
         return $this->depth;

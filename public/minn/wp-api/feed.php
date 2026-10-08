@@ -98,12 +98,10 @@ function _minn_rss_block_item($item, array $a): string
     return "<li class='wp-block-rss__item'>{$out}</li>";
 }
 
-/** @internal core/rss renders through its own function, which fetches with the WordPress HTTP API */
+/** @internal core/rss renders through its own function (its registered callback), which fetches with the WordPress HTTP API */
 function _minn_register_core_rss_block(): void
 {
-    $type = WP_Block_Type_Registry::get_instance()->get_registered('core/rss');
-    if ($type !== null) {
-        $type->render_callback = 'render_block_core_rss';
+    if (WP_Block_Type_Registry::get_instance()->is_registered('core/rss')) {
         _minn_bridge_dynamic_block('core/rss');
     }
 }

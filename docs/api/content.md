@@ -1272,7 +1272,7 @@ Internals: `fit()` (private, line 171), `saveSticky()` (private, line 265), `rev
 Reads over the posts table. A post comes back as a PostRecord; a listing
 is the main query's (WP_Query); rendering and escaping happen elsewhere.
 
-Used by: `Minn\Admin\RenderController`, `Minn\Admin\SiteController`, `Minn\Blocks\Dynamic\LatestComments`, `Minn\Blocks\Dynamic\Theme\Navigation`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Blocks\ImageTags`, `Minn\Blocks\Renderer`, `Minn\Content\Menus`, `Minn\Content\PostWriter`, `Minn\Content\SiteIcon`, `Minn\Cron\Cron`, `Minn\Engine`, `Minn\Front\ArchiveAddresses`, `Minn\Front\Archives`, `Minn\Front\AttachmentAddresses`, `Minn\Front\Permalinks`, `Minn\Front\Resolver`, `Minn\Front\RuleRoutes`, `Minn\Front\SingleAddresses`, `Minn\Front\SingleQueries`, `Minn\Media\Writer`, `Minn\Rest\BlocksController`, `Minn\Rest\CommentObject`, `Minn\Rest\CommentsController`, `Minn\Rest\MediaController`, `Minn\Rest\MediaObject`, `Minn\Rest\PostObject`, `Minn\Rest\PostsController`, `Minn\Rest\PostsWriteController`, `Minn\Rest\RegisteredPostFields`, `Minn\Rest\RevisionsController`, `Minn\Rest\Services`, `Minn\Rest\TemplateObject`, `Minn\Runtime\MenuEvents`, `Minn\Theme\ClassicRenderer`, `Minn\Theme\PageRenderer`, `Minn\Theme\Templates`, `Minn\Theme\UserStyles`
+Used by: `Minn\Admin\RenderController`, `Minn\Admin\SiteController`, `Minn\Blocks\Dynamic\LatestComments`, `Minn\Blocks\Dynamic\Theme\Comments`, `Minn\Blocks\Dynamic\Theme\Navigation`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Blocks\ImageTags`, `Minn\Blocks\Renderer`, `Minn\Content\Menus`, `Minn\Content\PostWriter`, `Minn\Content\SiteIcon`, `Minn\Cron\Cron`, `Minn\Engine`, `Minn\Front\ArchiveAddresses`, `Minn\Front\Archives`, `Minn\Front\AttachmentAddresses`, `Minn\Front\Permalinks`, `Minn\Front\Resolver`, `Minn\Front\RuleRoutes`, `Minn\Front\SingleAddresses`, `Minn\Front\SingleQueries`, `Minn\Media\Writer`, `Minn\Rest\BlocksController`, `Minn\Rest\CommentObject`, `Minn\Rest\CommentsController`, `Minn\Rest\MediaController`, `Minn\Rest\MediaObject`, `Minn\Rest\PostObject`, `Minn\Rest\PostsController`, `Minn\Rest\PostsWriteController`, `Minn\Rest\RegisteredPostFields`, `Minn\Rest\RevisionsController`, `Minn\Rest\Services`, `Minn\Rest\TemplateObject`, `Minn\Runtime\MenuEvents`, `Minn\Theme\ClassicRenderer`, `Minn\Theme\PageRenderer`, `Minn\Theme\Templates`, `Minn\Theme\UserStyles`
 
 ```php
 __construct(Minn\Db $db)
@@ -1697,7 +1697,7 @@ One term with its taxonomy row, read by name: $term->name, ->slug,
 when the query that built the record did not select them. Array access
 is the migration bridge, read-only.
 
-Used by: `Minn\Blocks\Dynamic\Categories`, `Minn\Blocks\Dynamic\TagCloud`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Content\Menus`, `Minn\Content\Terms`, `Minn\Front\ArchiveAddresses`, `Minn\Front\Permalinks`, `Minn\Front\QueryMoves`, `Minn\Front\Resolution`, `Minn\Rest\MenuObject`, `Minn\Rest\MenusController`, `Minn\Rest\TermFilters`, `Minn\Rest\TermObject`, `Minn\Rest\TermsController`, `Minn\Runtime\TermWriter`
+Used by: `Minn\Blocks\Dynamic\TagCloud`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Blocks\Dynamic\Theme\TermBlocks`, `Minn\Content\Menus`, `Minn\Content\Terms`, `Minn\Front\ArchiveAddresses`, `Minn\Front\Permalinks`, `Minn\Front\QueryMoves`, `Minn\Front\Resolution`, `Minn\Rest\MenuObject`, `Minn\Rest\MenusController`, `Minn\Rest\TermFilters`, `Minn\Rest\TermObject`, `Minn\Rest\TermsController`, `Minn\Runtime\TermWriter`
 
 - readonly `int $id`
 - readonly `string $name`
@@ -1753,7 +1753,7 @@ Records are read-only; writes go through the repository.
 
 `final readonly class Minn\Content\Terms` · `public/minn/src/Minn/Content/Terms.php`
 
-Used by: `Minn\Blocks\Dynamic\Theme\Navigation`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Content\Menus`, `Minn\Front\ArchiveAddresses`, `Minn\Front\Permalinks`, `Minn\Front\QueryMoves`, `Minn\Front\Resolver`, `Minn\Front\SingleAddresses`, `Minn\Rest\Services`, `Minn\Rest\TermsController`, `Minn\Runtime\TermSave`, `Minn\Runtime\TermWriter`, `Minn\Theme\TemplateWriter`, `Minn\Theme\UserStyles`
+Used by: `Minn\Blocks\Dynamic\Theme\Navigation`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Blocks\Dynamic\Theme\TermBlocks`, `Minn\Blocks\Renderer`, `Minn\Content\Menus`, `Minn\Front\ArchiveAddresses`, `Minn\Front\Permalinks`, `Minn\Front\QueryMoves`, `Minn\Front\Resolver`, `Minn\Front\SingleAddresses`, `Minn\Rest\Services`, `Minn\Rest\TermsController`, `Minn\Runtime\TermSave`, `Minn\Runtime\TermWriter`, `Minn\Theme\TemplateWriter`, `Minn\Theme\UserStyles`
 
 ```php
 __construct(Minn\Db $db)
@@ -1982,7 +1982,7 @@ Records are read-only; writes go through the repository.
 
 `final readonly class Minn\Content\Users` · `public/minn/src/Minn/Content/Users.php`
 
-Used by: `Minn\Admin\ActivityFeed`, `Minn\Admin\Appearance`, `Minn\Admin\Dashboard`, `Minn\Admin\HiddenIntegrations`, `Minn\Admin\LanguageController`, `Minn\Admin\Notifications`, `Minn\Admin\OverviewController`, `Minn\Admin\SessionsController`, `Minn\Admin\Translations`, `Minn\Auth\ApplicationPasswords`, `Minn\Auth\Authenticator`, `Minn\Auth\Capabilities`, `Minn\Auth\Cookie`, `Minn\Auth\PasswordReset`, `Minn\Auth\Sessions`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Cli\Runtime`, `Minn\Engine`, `Minn\Login\LoginController`, `Minn\Login\LoginHooks`, `Minn\Rest\ApplicationPasswordsController`, `Minn\Rest\PostObject`, `Minn\Rest\Services`, `Minn\Rest\UserObject`, `Minn\Rest\UsersController`, `Minn\Runtime\ApplicationPasswordSignIn`, `Minn\Theme\PageRenderer`
+Used by: `Minn\Admin\ActivityFeed`, `Minn\Admin\Appearance`, `Minn\Admin\Dashboard`, `Minn\Admin\HiddenIntegrations`, `Minn\Admin\LanguageController`, `Minn\Admin\Notifications`, `Minn\Admin\OverviewController`, `Minn\Admin\SessionsController`, `Minn\Admin\Translations`, `Minn\Auth\ApplicationPasswords`, `Minn\Auth\Authenticator`, `Minn\Auth\Capabilities`, `Minn\Auth\Cookie`, `Minn\Auth\PasswordReset`, `Minn\Auth\Sessions`, `Minn\Blocks\Dynamic\Theme\Comments`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Blocks\Renderer`, `Minn\Cli\Runtime`, `Minn\Engine`, `Minn\Login\LoginController`, `Minn\Login\LoginHooks`, `Minn\Rest\ApplicationPasswordsController`, `Minn\Rest\PostObject`, `Minn\Rest\Services`, `Minn\Rest\UserObject`, `Minn\Rest\UsersController`, `Minn\Runtime\ApplicationPasswordSignIn`
 
 ```php
 __construct(Minn\Db $db)
