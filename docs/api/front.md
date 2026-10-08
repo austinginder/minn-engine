@@ -12,7 +12,6 @@ URL resolution, permalinks, feeds, sitemaps and the public page
 | [`Calendar`](#calendar) | final readonly class | 99 | One month as the calendar widget and block draw it: a table whose caption |
 | [`CalendarLabels`](#calendarlabels) | final readonly class | 44 | The words a calendar prints: weekday names Sunday first, the short form |
 | [`Canonical`](#canonical) | final class | 28 | Where a URL should redirect to, by the engine's own resolution: the |
-| [`CommentList`](#commentlist) | final class | 52 | The classic threaded comment walk: top-level comments in order (or |
 | [`CommentPostController`](#commentpostcontroller) | final readonly class | 52 | wp-comments-post.php: the comment form's target. The reference's |
 | [`CustomLogo`](#customlogo) | final class | 27 | The site logo a theme prints, as get_custom_logo builds it (probe |
 | [`EmbedCard`](#embedcard) | final class | 95 | The parts of a post's embed card the reference's embed template prints, |
@@ -330,25 +329,6 @@ plugin names.
 The canonical URL of a request, or null when it already is one.
 
 Internals: `requestFor()` (private, line 30)
-
-
-## CommentList
-
-`final class Minn\Front\CommentList` · `public/minn/src/Minn/Front/CommentList.php`
-
-The classic threaded comment walk: top-level comments in order (or
-reversed), replies nested to the depth allowed under a "children" list,
-each item and its close rendered by the caller's closures.
-
-### static `render(array $comments, array $args, Closure $item, Closure $close): string`
-
-A threaded comment list the way the reference walks it.
-
-- `@param list<array<string, mixed>> $comments rows with comment_ID and comment_parent`
-- `@param Closure(array, int): string $item the opening markup for a comment at a depth`
-- `@param Closure(array, int): string $close the closing markup`
-
-Internals: `level()` (private, line 47)
 
 
 ## CommentPostController

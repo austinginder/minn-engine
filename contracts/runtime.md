@@ -4772,3 +4772,49 @@ calls: `pre_site_option_<name>` and `pre_site_option` may answer a read,
 last word; writes are told as `add_`, `update_` and `delete_site_option`.
 Site transients go through it, the update transients reading no timeout.
 Inside an `all` callback the hook is the current one.
+
+## The comment walker (2026-10-07)
+
+`wp_list_comments` now walks the comments with the theme's walker or
+`Walker_Comment` (probe comment-walker, 42 cases), so themes that subclass
+it (Twenty Nineteen, Twenty Twenty) load and print their own markup. This
+closes the gap noted above (html5 only).
+
+**The list.** The arguments settle in the reference's order. A page size
+comes from `per_page`, else the `comments_per_page` query variable while
+comments are paged; with none there is no paging. The page comes from
+`page`, else `cpage`, else the first. A type picks its group from
+`separate_comments`, which files a custom type (a review) under its own
+name. The query's comments are already its page: they are not paged again,
+and their links name the page shown. `max_num_comment_pages` is not
+touched.
+
+**The walker.** `Walker::paged_walk` pages the top-level comments,
+reversed top level and children as asked, and sets `max_pages`. With every
+level flat (-1), each element stands alone. On the last page the replies
+of earlier pages' comments are dropped (`unset_children`); comments whose
+parent is not in the list print at the top level after the page. A list
+with no top-level element is all orphans, unlike `walk`, where the first
+element's siblings are the top.
+
+`Walker_Comment` opens levels as `ol`, `ul` or nothing (div) and sets
+`comment_depth`. At the depth limit a reply follows its parent on the
+parent's level. Each comment is printed by the callback, a short ping line
+(`Pingback:`), or the html5 or xhtml markup, whitespace included.
+
+**Held comments.** A held comment shows as a preview to anyone but its
+commenter (the commenter cookie): the author is unlinked, `comment_text`
+loses its markup at priority 40, and html5 drops the reply link (xhtml
+keeps it). The note reads the same either way.
+
+**Links and avatars.** The reply link opens the comments page being shown
+(`cpage`); the default page drops its number when the oldest comments come
+first. Edit links print for an editor: ` <span class="edit-link">` in
+html5 and pings, ` &nbsp;&nbsp;(Edit)` in xhtml. Pings have no avatar:
+`is_avatar_comment_type` allows `comment` and whatever
+`get_avatar_comment_types` adds, and `get_avatar_data` answers any other
+type with `url` false.
+
+Open: `comments_template` loads all of a post's comments and sets
+`max_num_comment_pages`, so a paged post shows every comment on each page;
+the reference queries one page.

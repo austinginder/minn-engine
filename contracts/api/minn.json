@@ -23128,7 +23128,6 @@
                 "Minn\\Blocks\\Dynamic\\LatestComments",
                 "Minn\\Blocks\\Dynamic\\Theme\\Comments",
                 "Minn\\Content\\Comments",
-                "Minn\\Front\\CommentList",
                 "Minn\\Rest\\CommentObject",
                 "Minn\\Rest\\CommentsController",
                 "Minn\\Runtime\\CommentEvents"
@@ -39977,141 +39976,6 @@
                     ],
                     "line": 30,
                     "end": 45
-                }
-            ]
-        },
-        {
-            "name": "Minn\\Front\\CommentList",
-            "short": "CommentList",
-            "namespace": "Minn\\Front",
-            "kind": "final class",
-            "file": "public/minn/src/Minn/Front/CommentList.php",
-            "lines": 52,
-            "doc": "The classic threaded comment walk: top-level comments in order (or\nreversed), replies nested to the depth allowed under a \"children\" list,\neach item and its close rendered by the caller's closures.",
-            "implements": [],
-            "extends": null,
-            "uses": [
-                "Minn\\Content\\CommentRecord"
-            ],
-            "usedBy": [],
-            "constructor": null,
-            "cases": [],
-            "constants": [],
-            "properties": [],
-            "methods": [
-                {
-                    "routes": [],
-                    "name": "render",
-                    "static": true,
-                    "visibility": "public",
-                    "signature": "render(array $comments, array $args, Closure $item, Closure $close): string",
-                    "doc": "A threaded comment list the way the reference walks it.",
-                    "shapes": [
-                        "@param list<array<string, mixed>> $comments rows with comment_ID and comment_parent",
-                        "@param Closure(array, int): string $item the opening markup for a comment at a depth",
-                        "@param Closure(array, int): string $close the closing markup"
-                    ],
-                    "params": [
-                        {
-                            "name": "comments",
-                            "type": "array",
-                            "shape": "list<array<string, mixed>>",
-                            "default": null,
-                            "doc": "rows with comment_ID and comment_parent"
-                        },
-                        {
-                            "name": "args",
-                            "type": "array",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "item",
-                            "type": "Closure",
-                            "shape": "Closure(array, int): string",
-                            "default": null,
-                            "doc": "the opening markup for a comment at a depth"
-                        },
-                        {
-                            "name": "close",
-                            "type": "Closure",
-                            "shape": "Closure(array, int): string",
-                            "default": null,
-                            "doc": "the closing markup"
-                        }
-                    ],
-                    "line": 24,
-                    "end": 45
-                },
-                {
-                    "routes": [],
-                    "name": "level",
-                    "static": true,
-                    "visibility": "private",
-                    "signature": "level(array $rows, array $byParent, int $depth, int $maxDepth, string $tag, bool $reverseChildren, Closure $item, Closure $close): string",
-                    "doc": "",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "rows",
-                            "type": "array",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "byParent",
-                            "type": "array",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "depth",
-                            "type": "int",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "maxDepth",
-                            "type": "int",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "tag",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "reverseChildren",
-                            "type": "bool",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "item",
-                            "type": "Closure",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "close",
-                            "type": "Closure",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 47,
-                    "end": 65
                 }
             ]
         },
@@ -107490,7 +107354,7 @@
             "namespace": "Minn\\Runtime",
             "kind": "final class",
             "file": "public/minn/src/Minn/Runtime/CommentPages.php",
-            "lines": 100,
+            "lines": 110,
             "doc": "Which page of a post's comments a comment falls on, and the link that\nopens it there, as the reference works them out (probe comment-pages):\nthe page size from the arguments, the comments_per_page query variable\nor the option (no pages at all when comments are not paged); a reply\ntakes its top-level comment's page while comments are threaded; a page\nis the count of older top-level comments over the page size. The\ndefault page loses its number when the oldest comments come first.",
             "implements": [],
             "extends": null,
@@ -107571,6 +107435,26 @@
                 },
                 {
                     "routes": [],
+                    "name": "shown",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "shown(mixed $cpage): mixed",
+                    "doc": "The comments page being shown (the cpage query variable) as the list's\nlinks and reply links name it: '' for the default page when the\noldest comments come first.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "cpage",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 110,
+                    "end": 113
+                },
+                {
+                    "routes": [],
                     "name": "link",
                     "static": true,
                     "visibility": "public",
@@ -107593,8 +107477,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 106,
-                    "end": 116
+                    "line": 116,
+                    "end": 126
                 },
                 {
                     "routes": [],
@@ -127641,8 +127525,8 @@
             "namespace": "Minn\\Runtime",
             "kind": "final class",
             "file": "public/minn/src/Minn/Runtime/TreeWalk.php",
-            "lines": 74,
-            "doc": "The Walker contract's traversal: elements keyed by the walker's\ndb_fields parent/id pair, displayed depth-first through the walker's\nfour element methods. The facade Walker delegates here; subclasses\noverride the element methods (or display_element itself) and the\ndispatch stays virtual.",
+            "lines": 179,
+            "doc": "The Walker contract's traversal: elements keyed by the walker's\ndb_fields parent/id pair, displayed depth-first through the walker's\nfour element methods, whole or a page of top-level elements at a time\n(probe comment-walker). The facade Walker delegates here; subclasses\noverride the element methods (or display_element itself, as\nWalker_Comment does to keep replies past the depth limit at their\nparent's level) and the dispatch stays virtual.",
             "implements": [],
             "extends": null,
             "uses": [],
@@ -127692,8 +127576,130 @@
                             "doc": ""
                         }
                     ],
-                    "line": 21,
-                    "end": 59
+                    "line": 23,
+                    "end": 48
+                },
+                {
+                    "routes": [],
+                    "name": "page",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "page(object $walker, array $elements, int $maxDepth, int $page, int $perPage, array $args): string",
+                    "doc": "One page of top-level elements, each with its children (paged_walk);\nno paging when the page is below one or the size negative. Sets the\nwalker's max_pages. Elements whose parent is not in the list are\norphans, printed at the top level after the last page's elements;\nthe replies of earlier pages' elements are not orphans.",
+                    "shapes": [
+                        "@param list<object> $elements"
+                    ],
+                    "params": [
+                        {
+                            "name": "walker",
+                            "type": "object",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "elements",
+                            "type": "array",
+                            "shape": "list<object>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "maxDepth",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "page",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "perPage",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "args",
+                            "type": "array",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 59,
+                    "end": 100
+                },
+                {
+                    "routes": [],
+                    "name": "roots",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "roots(object $walker, array $elements): int",
+                    "doc": "How many of the elements have no parent. @param list<object> $elements",
+                    "shapes": [
+                        "@param list<object> $elements"
+                    ],
+                    "params": [
+                        {
+                            "name": "walker",
+                            "type": "object",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "elements",
+                            "type": "array",
+                            "shape": "list<object>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 103,
+                    "end": 107
+                },
+                {
+                    "routes": [],
+                    "name": "forget",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "forget(object $walker, mixed $element, array $children): void",
+                    "doc": "An element's children, and theirs through the walker's unset_children,\ntaken out of the children list.",
+                    "shapes": [
+                        "@param array<int|string, list<object>> $children"
+                    ],
+                    "params": [
+                        {
+                            "name": "walker",
+                            "type": "object",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "element",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "children",
+                            "type": "array",
+                            "shape": "array<int|string, list<object>>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 115,
+                    "end": 125
                 },
                 {
                     "routes": [],
@@ -127701,7 +127707,7 @@
                     "static": true,
                     "visibility": "public",
                     "signature": "element(object $walker, mixed $element, array $children, int $maxDepth, int $depth, array $args, string $output): void",
-                    "doc": "Walks one element and its children.",
+                    "doc": "Walks one element and its children; replies past the depth limit stay\nin the list for the walker (or the orphans) to place.",
                     "shapes": [
                         "@param array<int|string, mixed> $children"
                     ],
@@ -127756,8 +127762,129 @@
                             "doc": ""
                         }
                     ],
-                    "line": 66,
-                    "end": 86
+                    "line": 133,
+                    "end": 153
+                },
+                {
+                    "routes": [],
+                    "name": "buckets",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "buckets(object $walker, array $elements, mixed $root = NULL): array",
+                    "doc": "The top-level elements (no parent, or the parent given) and the\nothers by parent.",
+                    "shapes": [
+                        "@param list<object> $elements",
+                        "@return array{0: list<object>, 1: array<int|string, list<object>>}"
+                    ],
+                    "params": [
+                        {
+                            "name": "walker",
+                            "type": "object",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "elements",
+                            "type": "array",
+                            "shape": "list<object>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "root",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "NULL",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 162,
+                    "end": 176
+                },
+                {
+                    "routes": [],
+                    "name": "alone",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "alone(object $walker, mixed $element, array $args, string $output): void",
+                    "doc": "One element on its own at the top level: no children, one level shown.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "walker",
+                            "type": "object",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "element",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "args",
+                            "type": "array",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "output",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 179,
+                    "end": 183
+                },
+                {
+                    "routes": [],
+                    "name": "orphans",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "orphans(object $walker, array $children, array $args, string $output): void",
+                    "doc": "",
+                    "shapes": [
+                        "@param array<int|string, list<object>> $children"
+                    ],
+                    "params": [
+                        {
+                            "name": "walker",
+                            "type": "object",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "children",
+                            "type": "array",
+                            "shape": "array<int|string, list<object>>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "args",
+                            "type": "array",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "output",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 186,
+                    "end": 193
                 }
             ]
         },

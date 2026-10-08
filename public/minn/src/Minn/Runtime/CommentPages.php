@@ -102,6 +102,16 @@ final class CommentPages
         return Runtime::options()->filtered('default_comments_page') === 'oldest' && $page === 1 ? '' : $page;
     }
 
+    /**
+     * The comments page being shown (the cpage query variable) as the list's
+     * links and reply links name it: '' for the default page when the
+     * oldest comments come first.
+     */
+    public static function shown(mixed $cpage): mixed
+    {
+        return Runtime::options()->filtered('default_comments_page') !== 'newest' && (int) $cpage === 1 ? '' : $cpage;
+    }
+
     /** A post's link opened at a page of its comments, as pretty or plain links write it. */
     public static function link(string $permalink, mixed $page): string
     {

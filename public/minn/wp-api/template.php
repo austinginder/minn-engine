@@ -304,6 +304,10 @@ function get_avatar_data($id_or_email, $args = null)
     if (is_object($id_or_email) && isset($id_or_email->comment_ID)) {
         $id_or_email = get_comment($id_or_email);
     }
+    if ($id_or_email instanceof WP_Comment && !is_avatar_comment_type(get_comment_type($id_or_email))) {
+        $args['url'] = false;
+        return apply_filters('get_avatar_data', $args, $id_or_email);
+    }
     [$user, $email, $hash] = _minn_avatar_subject($id_or_email);
     if ($user) {
         $email = $user->user_email;
@@ -316,6 +320,12 @@ function get_avatar_data($id_or_email, $args = null)
     }
     $args['url'] = apply_filters('get_avatar_url', add_query_arg(rawurlencode_deep(Avatar::urlArgs($args)), $url), $id_or_email, $args);
     return apply_filters('get_avatar_data', $args, $id_or_email);
+}
+
+/** Whether comments of a type have avatars: comments, and the types get_avatar_comment_types adds (pings have none). */
+function is_avatar_comment_type($comment_type)
+{
+    return in_array($comment_type, (array) apply_filters('get_avatar_comment_types', ['comment']), true);
 }
 
 /** @internal who an avatar is for: the user, the email, or a hash given outright */

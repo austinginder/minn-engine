@@ -24,7 +24,7 @@ the WordPress runtime plugins load against
 | [`CommentEvents`](#commentevents) | final readonly class | 253 | What the reference's REST comments controller tells plugins, for the |
 | [`CommentFeedQuery`](#commentfeedquery) | final class | 50 | The comments a comments feed's main query carries, as the reference |
 | [`CommentForm`](#commentform) | final class | 107 | The comment form's submission with plugins loaded |
-| [`CommentPages`](#commentpages) | final class | 100 | Which page of a post's comments a comment falls on, and the link that |
+| [`CommentPages`](#commentpages) | final class | 110 | Which page of a post's comments a comment falls on, and the link that |
 | [`CommentQuery`](#commentquery) | final readonly class | 28 | The approval breakdown wp_count_comments reports (comment lists run through WP_Comment_Query and Minn\Runtime\CommentQueryRunner). |
 | [`CommentQueryRunner`](#commentqueryrunner) | final class | 105 | WP_Comment_Query as the reference runs it (probe wp-comment-query-sql): |
 | [`CommentQueryWhere`](#commentquerywhere) | final class | 190 | WP_Comment_Query's WHERE pieces and the posts join, in the reference's |
@@ -101,7 +101,7 @@ the WordPress runtime plugins load against
 | [`TermWriter`](#termwriter) | final readonly class | 119 | The decisions behind wp_delete_term and the object-term relationships: |
 | [`ThemeSupports`](#themesupports) | final class | 166 | What a theme supports, as add_theme_support keeps it (probe rest-themes): |
 | [`ThemeSwitch`](#themeswitch) | final class | 145 | Switching the theme as the reference does it, in two halves. The switch |
-| [`TreeWalk`](#treewalk) | final class | 74 | The Walker contract's traversal: elements keyed by the walker's |
+| [`TreeWalk`](#treewalk) | final class | 179 | The Walker contract's traversal: elements keyed by the walker's |
 | [`UpdateCounts`](#updatecounts) | final class | 31 | The updates waiting, as wp_get_update_data counts them for the user |
 | [`Upgrade`](#upgrade) | final class | 347 | What WP_Upgrader does with a package (probe upgrader), for the facade's |
 | [`UserEvents`](#userevents) | final readonly class | 102 | What the reference's REST users controller tells plugins, for the |
@@ -964,6 +964,12 @@ asked for, the loop's, or the comment's own; '' for the default page
 when the oldest comments come first.
 
 - `@param array<string, mixed> $args`
+
+### static `shown(mixed $cpage): mixed`
+
+The comments page being shown (the cpage query variable) as the list's
+links and reply links name it: '' for the default page when the
+oldest comments come first.
 
 ### static `link(string $permalink, mixed $page): string`
 
@@ -4704,9 +4710,11 @@ Internals: `removeFolder()` (private, line 138), `nextOfGroup()` (private, line 
 
 The Walker contract's traversal: elements keyed by the walker's
 db_fields parent/id pair, displayed depth-first through the walker's
-four element methods. The facade Walker delegates here; subclasses
-override the element methods (or display_element itself) and the
-dispatch stays virtual.
+four element methods, whole or a page of top-level elements at a time
+(probe comment-walker). The facade Walker delegates here; subclasses
+override the element methods (or display_element itself, as
+Walker_Comment does to keep replies past the depth limit at their
+parent's level) and the dispatch stays virtual.
 
 ### static `walk(object $walker, array $elements, int $maxDepth, array $args): string`
 
@@ -4714,11 +4722,37 @@ Walks a tree with a Walker the way the reference does.
 
 - `@param list<object> $elements`
 
+### static `page(object $walker, array $elements, int $maxDepth, int $page, int $perPage, array $args): string`
+
+One page of top-level elements, each with its children (paged_walk);
+no paging when the page is below one or the size negative. Sets the
+walker's max_pages. Elements whose parent is not in the list are
+orphans, printed at the top level after the last page's elements;
+the replies of earlier pages' elements are not orphans.
+
+- `@param list<object> $elements`
+
+### static `roots(object $walker, array $elements): int`
+
+How many of the elements have no parent. @param list<object> $elements
+
+- `@param list<object> $elements`
+
+### static `forget(object $walker, mixed $element, array $children): void`
+
+An element's children, and theirs through the walker's unset_children,
+taken out of the children list.
+
+- `@param array<int|string, list<object>> $children`
+
 ### static `element(object $walker, mixed $element, array $children, int $maxDepth, int $depth, array $args, string $output): void`
 
-Walks one element and its children.
+Walks one element and its children; replies past the depth limit stay
+in the list for the walker (or the orphans) to place.
 
 - `@param array<int|string, mixed> $children`
+
+Internals: `buckets()` (private, line 162), `alone()` (private, line 179), `orphans()` (private, line 186)
 
 
 ## UpdateCounts

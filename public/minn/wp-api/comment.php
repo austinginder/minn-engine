@@ -5,7 +5,6 @@ use Minn\Runtime\Deferrals;
 use Minn\Content\CommentClasses;
 use Minn\Content\CommentModeration;
 use Minn\Content\Comments;
-use Minn\Front\CommentList;
 use Minn\Runtime\CommentQuery;
 use Minn\Runtime\Runtime;
 
@@ -780,12 +779,18 @@ function get_comment_pages_count($comments = null, $per_page = null, $threaded =
     return (int) ceil($count / $per_page);
 }
 
-/** @internal the arguments wp_list_comments resolves */
+/** @internal the arguments wp_list_comments resolves before it picks the comments: no paging unless a page size is given or set */
 function _minn_list_comments_args($args): array
 {
-    $defaults = ['walker' => null, 'max_depth' => '', 'style' => 'ul', 'callback' => null, 'end-callback' => null, 'type' => 'all', 'page' => '', 'per_page' => '', 'avatar_size' => 32, 'reverse_top_level' => null, 'reverse_children' => '', 'format' => 'html5', 'short_ping' => false, 'echo' => true];
-    $args = wp_parse_args($args, $defaults);
-    $args = apply_filters('wp_list_comments_args', $args);
+    $defaults = ['walker' => null, 'max_depth' => '', 'style' => 'ul', 'callback' => null, 'end-callback' => null, 'type' => 'all', 'page' => '', 'per_page' => '', 'avatar_size' => 32, 'reverse_top_level' => null, 'reverse_children' => '', 'format' => current_theme_supports('html5', 'comment-list') ? 'html5' : 'xhtml', 'short_ping' => false, 'echo' => true];
+    $args = apply_filters('wp_list_comments_args', wp_parse_args($args, $defaults));
+    if ($args['per_page'] === '' && get_option('page_comments')) {
+        $args['per_page'] = get_query_var('comments_per_page');
+    }
+    if (empty($args['per_page'])) {
+        $args['per_page'] = 0;
+        $args['page'] = 0;
+    }
     if ($args['max_depth'] === '' || $args['max_depth'] === null) {
         $args['max_depth'] = get_option('thread_comments') ? (int) get_option('thread_comments_depth') : -1;
     }
@@ -795,76 +800,41 @@ function _minn_list_comments_args($args): array
     return $args;
 }
 
-/** The classic comment list: the reference's html5 item markup, threaded by the settings. */
+/**
+ * The classic comment list: the comments given (or the query's), all or
+ * one type, a page of them walked by the theme's walker or Walker_Comment
+ * (probe comment-walker). The query's comments are already its page, so
+ * they are not paged again, and their links name the page shown.
+ */
 function wp_list_comments($args = [], $comments = null)
 {
+    global $wp_query, $comment_alt, $comment_depth, $comment_thread_alt, $in_comment_loop;
     $args = _minn_list_comments_args($args);
-    $comments ??= $GLOBALS['wp_query']->comments ?? [];
-    if (empty($comments)) {
+    $listed = $comments ?? ($wp_query->comments ?? []);
+    if ($comments === null && !empty($wp_query->max_num_comment_pages)) {
+        $args['cpage'] = Minn\Runtime\CommentPages::shown(get_query_var('cpage'));
+        $args['page'] = 0;
+        $args['per_page'] = 0;
+    }
+    if ($args['type'] !== 'all') {
+        $listed = separate_comments($listed)[$args['type']] ?? [];
+    }
+    if (empty($listed)) {
         return null;
     }
-    $GLOBALS['comment_alt'] = 0;
-    $GLOBALS['comment_thread_alt'] = 0;
-    $GLOBALS['comment_depth'] = 1;
-    $rows = array_map(static fn ($c) => (array) get_comment($c), $comments);
-    if ($args['type'] !== 'all') {
-        $wanted = $args['type'] === 'pings' ? ['pingback', 'trackback'] : [$args['type'] === 'comment' ? 'comment' : $args['type']];
-        $rows = array_values(array_filter($rows, static fn (array $r) => in_array($r['comment_type'] === '' ? 'comment' : $r['comment_type'], $wanted, true)));
+    $args['page'] = (int) ($args['page'] === '' ? get_query_var('cpage') : $args['page']);
+    if ($args['page'] === 0 && (int) $args['per_page'] !== 0) {
+        $args['page'] = 1;
     }
-    $item = static function (array $row, int $depth) use ($args): string {
-        $GLOBALS['comment_depth'] = $depth;
-        $GLOBALS['comment'] = get_comment((int) $row['comment_ID']);
-        if ($args['callback'] !== null) {
-            ob_start();
-            $args['callback']($GLOBALS['comment'], $args, $depth);
-            return (string) ob_get_clean();
-        }
-        return _minn_html5_comment($GLOBALS['comment'], $args, $depth);
-    };
-    $close = static function (array $row, int $depth) use ($args): string {
-        if ($args['end-callback'] !== null) {
-            ob_start();
-            $args['end-callback'](get_comment((int) $row['comment_ID']), $args, $depth);
-            return (string) ob_get_clean();
-        }
-        return "\t\t</li><!-- #comment-## -->\n";
-    };
-    $output = CommentList::render($rows, $args, $item, $close);
-    $GLOBALS['comment_depth'] = 1;
+    [$comment_alt, $comment_thread_alt, $comment_depth, $in_comment_loop] = [0, 0, 1, true];
+    $walker = $args['walker'] ?: new Walker_Comment();
+    $output = $walker->paged_walk((array) $listed, $args['max_depth'], $args['page'], $args['per_page'], $args);
+    $in_comment_loop = false;
     if ($args['echo']) {
         echo $output;
         return null;
     }
     return $output;
-}
-
-/** @internal one comment's html5 markup, as the reference's walker prints it */
-function _minn_html5_comment(WP_Comment $comment, array $args, int $depth): string
-{
-    $tag = $args['style'] === 'div' ? 'div' : 'li';
-    $type = $comment->comment_type === '' ? 'comment' : $comment->comment_type;
-    if ($type === 'pingback' || $type === 'trackback') {
-        return "\t\t<{$tag} id=\"comment-{$comment->comment_ID}\" " . comment_class($args['has_children'] ?? false ? 'parent' : '', $comment, null, false) . ">\n"
-            . "\t\t\t<div class=\"comment-body\">\n\t\t\t\t" . ($args['short_ping'] ? 'Pingback:' : 'Pingback:') . ' ' . get_comment_author_link($comment) . "\t\t\t</div>\n";
-    }
-    $avatar = (int) $args['avatar_size'] !== 0 ? (string) get_avatar($comment, $args['avatar_size']) : '';
-    $moderation = $comment->comment_approved === '0' ? "\t\t\t\t\t<em class=\"comment-awaiting-moderation\">Your comment is awaiting moderation.</em>\n" : '';
-    $reply = (string) get_comment_reply_link(array_merge($args, ['add_below' => 'div-comment', 'depth' => $depth, 'max_depth' => $args['max_depth'], 'before' => '<div class="reply">', 'after' => '</div>']), $comment);
-    ob_start();
-    comment_text($comment, $args);
-    $text = (string) ob_get_clean();
-    $metaText = sprintf('%1$s at %2$s', get_comment_date('', $comment), get_comment_time('', false, true, $comment));
-    return "\t\t<{$tag} id=\"comment-{$comment->comment_ID}\" " . comment_class('', $comment, null, false) . ">\n"
-        . "\t\t\t<article id=\"div-comment-{$comment->comment_ID}\" class=\"comment-body\">\n"
-        . "\t\t\t\t<footer class=\"comment-meta\">\n"
-        . "\t\t\t\t\t<div class=\"comment-author vcard\">\n"
-        . "\t\t\t\t\t\t" . $avatar . "\t\t\t\t\t\t" . '<b class="fn">' . get_comment_author_link($comment) . '</b> <span class="says">says:</span>' . "\t\t\t\t\t</div><!-- .comment-author -->\n\n"
-        . "\t\t\t\t\t<div class=\"comment-metadata\">\n"
-        . "\t\t\t\t\t\t" . '<a href="' . esc_url(get_comment_link($comment, $args)) . '"><time datetime="' . get_comment_time('c', false, true, $comment) . '">' . $metaText . '</time></a>' . "\t\t\t\t\t</div><!-- .comment-metadata -->\n\n"
-        . "\t\t\t\t\t" . $moderation . "\t\t\t\t</footer><!-- .comment-meta -->\n\n"
-        . "\t\t\t\t<div class=\"comment-content\">\n"
-        . "\t\t\t\t\t" . $text . "\t\t\t\t</div><!-- .comment-content -->\n\n"
-        . "\t\t\t\t" . $reply . "\t\t\t</article><!-- .comment-body -->\n";
 }
 
 function get_comment_time($format = '', $gmt = false, $translate = true, $comment_id = 0)
@@ -965,7 +935,8 @@ function get_comment_reply_link($args = [], $comment = null, $post = null)
     } else {
         $author = get_comment_author($comment);
         $label = sprintf($args['reply_to_text'], $author);
-        $href = esc_url(add_query_arg(['replytocom' => $comment->comment_ID, 'unapproved' => false, 'moderation-hash' => false], get_permalink($post->ID))) . '#' . $args['respond_id'];
+        $page = Minn\Runtime\CommentPages::link((string) get_permalink($post->ID), Minn\Runtime\CommentPages::shown(get_query_var('cpage')));
+        $href = esc_url(add_query_arg(['replytocom' => $comment->comment_ID, 'unapproved' => false, 'moderation-hash' => false], $page)) . '#' . $args['respond_id'];
         $link = sprintf('<a rel="nofollow" class="comment-reply-link" href="%s" data-commentid="%d" data-postid="%d" data-belowelement="%s" data-respondelement="%s" data-replyto="%s" aria-label="%s">%s</a>', $href, $comment->comment_ID, $post->ID, $args['add_below'] . '-' . $comment->comment_ID, $args['respond_id'], esc_attr($label), esc_attr($label), $args['reply_text']);
     }
     return apply_filters('comment_reply_link', $args['before'] . $link . $args['after'], $args, $comment, $post);
@@ -1087,13 +1058,12 @@ function comments_template($file = '/comments.php', $separate_comments = false)
     require $include;
 }
 
-/** Comments grouped by type: comment, trackback, pingback, pings. */
+/** Comments grouped by type (comment, trackback, pingback, any other type under its own name), pings being trackbacks and pingbacks together. */
 function separate_comments(&$comments)
 {
     $groups = ['comment' => [], 'trackback' => [], 'pingback' => [], 'pings' => []];
     foreach ((array) $comments as $comment) {
-        $type = $comment->comment_type === '' ? 'comment' : $comment->comment_type;
-        $type = isset($groups[$type]) ? $type : 'comment';
+        $type = empty($comment->comment_type) ? 'comment' : $comment->comment_type;
         $groups[$type][] = $comment;
         if ($type === 'trackback' || $type === 'pingback') {
             $groups['pings'][] = $comment;

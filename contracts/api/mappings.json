@@ -2,12 +2,12 @@
     "generated": "2026-10-08",
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line)",
     "summary": {
-        "minn": 677,
-        "composes": 1043,
-        "leaf": 679,
-        "noop": 2039,
-        "functions": 4364,
-        "minnMethods": 796,
+        "minn": 678,
+        "composes": 1045,
+        "leaf": 683,
+        "noop": 2046,
+        "functions": 4378,
+        "minnMethods": 799,
         "leafLinesOver15": 13
     },
     "functions": {
@@ -16140,6 +16140,24 @@
             "minn": [],
             "composes": []
         },
+        "Walker::get_number_of_root_elements": {
+            "file": "classes/Walker.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Runtime\\TreeWalk::roots"
+            ],
+            "composes": []
+        },
+        "Walker::paged_walk": {
+            "file": "classes/Walker.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Runtime\\TreeWalk::page"
+            ],
+            "composes": []
+        },
         "Walker::start_el": {
             "file": "classes/Walker.php",
             "lines": 0,
@@ -16152,6 +16170,15 @@
             "lines": 0,
             "kind": "noop",
             "minn": [],
+            "composes": []
+        },
+        "Walker::unset_children": {
+            "file": "classes/Walker.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Runtime\\TreeWalk::forget"
+            ],
             "composes": []
         },
         "Walker::walk": {
@@ -16192,6 +16219,120 @@
         "Walker_Category::start_lvl": {
             "file": "classes/Walker_Category.php",
             "lines": 4,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "Walker_Comment::comment": {
+            "file": "classes/Walker_Comment.php",
+            "lines": 16,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "comment_class",
+                "comment_reply_link",
+                "comment_text",
+                "edit_comment_link",
+                "esc_url",
+                "get_avatar",
+                "get_comment_author",
+                "get_comment_author_link",
+                "get_comment_date",
+                "get_comment_link",
+                "get_comment_time"
+            ]
+        },
+        "Walker_Comment::display_element": {
+            "file": "classes/Walker_Comment.php",
+            "lines": 11,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "Walker_Comment::end_el": {
+            "file": "classes/Walker_Comment.php",
+            "lines": 7,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "Walker_Comment::end_lvl": {
+            "file": "classes/Walker_Comment.php",
+            "lines": 2,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "Walker_Comment::filter_comment_text": {
+            "file": "classes/Walker_Comment.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "wp_kses"
+            ]
+        },
+        "Walker_Comment::heldNote": {
+            "file": "classes/Walker_Comment.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "__"
+            ]
+        },
+        "Walker_Comment::html5_comment": {
+            "file": "classes/Walker_Comment.php",
+            "lines": 19,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "comment_class",
+                "comment_reply_link",
+                "comment_text",
+                "edit_comment_link",
+                "esc_url",
+                "get_avatar",
+                "get_comment_author",
+                "get_comment_author_link",
+                "get_comment_date",
+                "get_comment_link",
+                "get_comment_time"
+            ]
+        },
+        "Walker_Comment::ping": {
+            "file": "classes/Walker_Comment.php",
+            "lines": 4,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "comment_class",
+                "edit_comment_link",
+                "get_comment_author_link"
+            ]
+        },
+        "Walker_Comment::previewed": {
+            "file": "classes/Walker_Comment.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "wp_get_current_commenter"
+            ]
+        },
+        "Walker_Comment::start_el": {
+            "file": "classes/Walker_Comment.php",
+            "lines": 25,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "add_filter",
+                "remove_filter"
+            ]
+        },
+        "Walker_Comment::start_lvl": {
+            "file": "classes/Walker_Comment.php",
+            "lines": 2,
             "kind": "leaf",
             "minn": [],
             "composes": []
@@ -17529,23 +17670,6 @@
                 "apply_filters"
             ]
         },
-        "_minn_html5_comment": {
-            "file": "comment.php",
-            "lines": 24,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "comment_class",
-                "comment_text",
-                "esc_url",
-                "get_avatar",
-                "get_comment_author_link",
-                "get_comment_date",
-                "get_comment_link",
-                "get_comment_reply_link",
-                "get_comment_time"
-            ]
-        },
         "_minn_image_scaled": {
             "file": "media.php",
             "lines": 21,
@@ -17684,12 +17808,14 @@
         },
         "_minn_list_comments_args": {
             "file": "comment.php",
-            "lines": 10,
+            "lines": 16,
             "kind": "composes",
             "minn": [],
             "composes": [
                 "apply_filters",
+                "current_theme_supports",
                 "get_option",
+                "get_query_var",
                 "wp_parse_args"
             ]
         },
@@ -22547,7 +22673,7 @@
         },
         "get_avatar_data": {
             "file": "template.php",
-            "lines": 20,
+            "lines": 24,
             "kind": "minn",
             "minn": [
                 "Minn\\Runtime\\Avatar::dataArgs",
@@ -22559,7 +22685,9 @@
                 "add_query_arg",
                 "apply_filters",
                 "get_comment",
+                "get_comment_type",
                 "get_option",
+                "is_avatar_comment_type",
                 "rawurlencode_deep",
                 "set_url_scheme",
                 "wp_parse_args"
@@ -23053,9 +23181,12 @@
         },
         "get_comment_reply_link": {
             "file": "comment.php",
-            "lines": 18,
-            "kind": "composes",
-            "minn": [],
+            "lines": 19,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Runtime\\CommentPages::link",
+                "Minn\\Runtime\\CommentPages::shown"
+            ],
             "composes": [
                 "add_query_arg",
                 "apply_filters",
@@ -23067,6 +23198,7 @@
                 "get_option",
                 "get_permalink",
                 "get_post",
+                "get_query_var",
                 "is_user_logged_in",
                 "wp_login_url",
                 "wp_parse_args"
@@ -26947,6 +27079,15 @@
                 "_minn_main_query"
             ]
         },
+        "is_avatar_comment_type": {
+            "file": "template.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "apply_filters"
+            ]
+        },
         "is_blog_admin": {
             "file": "load.php",
             "lines": 2,
@@ -30514,7 +30655,7 @@
         },
         "separate_comments": {
             "file": "comment.php",
-            "lines": 10,
+            "lines": 9,
             "kind": "leaf",
             "minn": [],
             "composes": []
@@ -36359,15 +36500,15 @@
         },
         "wp_list_comments": {
             "file": "comment.php",
-            "lines": 38,
+            "lines": 27,
             "kind": "minn",
             "minn": [
-                "Minn\\Front\\CommentList::render"
+                "Minn\\Runtime\\CommentPages::shown"
             ],
             "composes": [
-                "_minn_html5_comment",
                 "_minn_list_comments_args",
-                "get_comment"
+                "get_query_var",
+                "separate_comments"
             ]
         },
         "wp_list_filter": {

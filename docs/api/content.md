@@ -131,7 +131,7 @@ One row of the comments table, read by name: $comment->author, ->content,
 ->postId, ->parentId, and isApproved() for the status the reference
 stores as '1'. Array access is the migration bridge, read-only.
 
-Used by: `Minn\Admin\Notifications`, `Minn\Blocks\Context`, `Minn\Blocks\Dynamic\LatestComments`, `Minn\Blocks\Dynamic\Theme\Comments`, `Minn\Content\Comments`, `Minn\Front\CommentList`, `Minn\Rest\CommentObject`, `Minn\Rest\CommentsController`, `Minn\Runtime\CommentEvents`
+Used by: `Minn\Admin\Notifications`, `Minn\Blocks\Context`, `Minn\Blocks\Dynamic\LatestComments`, `Minn\Blocks\Dynamic\Theme\Comments`, `Minn\Content\Comments`, `Minn\Rest\CommentObject`, `Minn\Rest\CommentsController`, `Minn\Runtime\CommentEvents`
 
 - readonly `int $id`
 - readonly `int $postId`
