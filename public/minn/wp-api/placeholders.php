@@ -391,12 +391,6 @@ function wp_create_post_autosave($post_data)
     return null;
 }
 
-function wp_create_tag($tag_name)
-{
-    \Minn\Runtime\PlaceholderTrace::hit('wp_create_tag');
-    return null;
-}
-
 function wp_crop_image($src, $src_x, $src_y, $src_w, $src_h, $dst_w, $dst_h, $src_abs = false, $dst_file = false)
 {
     \Minn\Runtime\PlaceholderTrace::hit('wp_crop_image');

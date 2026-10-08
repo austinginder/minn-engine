@@ -458,6 +458,14 @@ function wp_defer_comment_counting($defer = null)
     return Deferrals::comments($defer);
 }
 
+/** The post a comment by this author at this time is on (the site's time, or "gmt"), as a string; null when there is none (probe admin-terms). */
+function comment_exists($comment_author, $comment_date, $timezone = 'blog')
+{
+    global $wpdb;
+    $column = $timezone === 'gmt' ? 'comment_date_gmt' : 'comment_date';
+    return $wpdb->get_var($wpdb->prepare("SELECT comment_post_ID FROM {$wpdb->comments} WHERE comment_author = %s AND {$column} = %s", stripslashes((string) $comment_author), stripslashes((string) $comment_date)));
+}
+
 function get_comment_count($post_id = 0)
 {
     $counts = wp_count_comments($post_id);

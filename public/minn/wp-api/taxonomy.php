@@ -333,6 +333,7 @@ function get_cat_name($cat_id)
     return $term instanceof WP_Term ? $term->name : '';
 }
 
+/** A category's old field names beside its term fields, on a term object or a term array alike (probe admin-terms). */
 function _make_cat_compat(&$category)
 {
     if ($category instanceof WP_Term) {
@@ -342,6 +343,13 @@ function _make_cat_compat(&$category)
         $category->cat_name = $category->name;
         $category->category_nicename = $category->slug;
         $category->category_parent = $category->parent;
+    } elseif (is_array($category) && isset($category['term_id'])) {
+        $category['cat_ID'] = &$category['term_id'];
+        $category['category_count'] = &$category['count'];
+        $category['category_description'] = &$category['description'];
+        $category['cat_name'] = &$category['name'];
+        $category['category_nicename'] = &$category['slug'];
+        $category['category_parent'] = &$category['parent'];
     }
 }
 
@@ -570,6 +578,114 @@ function wp_delete_term($term, $taxonomy, $args = [])
 function wp_delete_category($cat_id)
 {
     return wp_delete_term($cat_id, 'category');
+}
+
+// The term helpers importers call (probe admin-terms).
+
+/** A category's id by name or slug (under a parent when one is given), as a string; null when there is none. */
+function category_exists($cat_name, $category_parent = null)
+{
+    $id = term_exists($cat_name, 'category', $category_parent);
+    return is_array($id) ? $id['term_id'] : $id;
+}
+
+/** A tag's term_id and term_taxonomy_id, or null. */
+function tag_exists($tag_name)
+{
+    return term_exists($tag_name, 'post_tag');
+}
+
+/** A category by name, made when it is not there; its id. */
+function wp_create_category($category_name, $category_parent = 0)
+{
+    $id = category_exists($category_name, $category_parent);
+    return $id ? (int) $id : wp_insert_category(['cat_name' => $category_name, 'category_parent' => $category_parent]);
+}
+
+/** Categories by name, each found or made; given a post, they become its categories. */
+function wp_create_categories($categories, $post_id = 0)
+{
+    $ids = [];
+    foreach ((array) $categories as $category) {
+        $id = category_exists($category) ?: wp_create_category($category);
+        if ($id) {
+            $ids[] = $id;
+        }
+    }
+    if ($post_id) {
+        wp_set_post_categories($post_id, $ids);
+    }
+    return $ids;
+}
+
+/**
+ * A category (or another taxonomy's term) made, or updated when cat_ID
+ * names one: its id, 0 on failure, or the error when asked for. A parent
+ * that is not there, or that is the term itself or below it, becomes none.
+ */
+function wp_insert_category($catarr, $wp_error = false)
+{
+    $catarr = wp_parse_args($catarr, ['cat_ID' => 0, 'taxonomy' => 'category', 'cat_name' => '', 'category_description' => '', 'category_nicename' => '', 'category_parent' => '']);
+    if (trim((string) $catarr['cat_name']) === '') {
+        return $wp_error ? new WP_Error('cat_name', __('You did not enter a category name.')) : 0;
+    }
+    $id = (int) $catarr['cat_ID'];
+    $taxonomy = (string) $catarr['taxonomy'];
+    $parent = max(0, (int) $catarr['category_parent']);
+    if ($parent && (!term_exists($parent, $taxonomy) || ($id && term_is_ancestor_of($id, $parent, $taxonomy)))) {
+        $parent = 0;
+    }
+    $args = ['name' => $catarr['cat_name'], 'slug' => $catarr['category_nicename'], 'parent' => $parent, 'description' => $catarr['category_description']];
+    $saved = $id ? wp_update_term($id, $taxonomy, $args) : wp_insert_term($catarr['cat_name'], $taxonomy, $args);
+    if (is_wp_error($saved)) {
+        return $wp_error ? $saved : 0;
+    }
+    return (int) $saved['term_id'];
+}
+
+/** A category's fields changed, the rest kept; false when it would be its own parent. */
+function wp_update_category($catarr)
+{
+    $id = (int) ($catarr['cat_ID'] ?? 0);
+    if (isset($catarr['category_parent']) && $id === (int) $catarr['category_parent']) {
+        return false;
+    }
+    $category = get_term($id, 'category', ARRAY_A);
+    _make_cat_compat($category);
+    return wp_insert_category(array_merge(wp_slash((array) $category), $catarr));
+}
+
+/** A term by name in a taxonomy, made when it is not there: its term_id and term_taxonomy_id. */
+function wp_create_term($tag_name, $taxonomy = 'post_tag')
+{
+    return term_exists($tag_name, $taxonomy) ?: wp_insert_term($tag_name, $taxonomy);
+}
+
+function wp_create_tag($tag_name)
+{
+    return wp_create_term($tag_name, 'post_tag');
+}
+
+/** A post's terms in one taxonomy as the comma-separated names an edit field shows (through terms_to_edit); false when it has none. */
+function get_terms_to_edit($post_id, $taxonomy = 'post_tag')
+{
+    $terms = get_object_term_cache((int) $post_id, $taxonomy);
+    if ($terms === false) {
+        $terms = wp_get_object_terms((int) $post_id, $taxonomy);
+    }
+    if (!$terms) {
+        return false;
+    }
+    if (is_wp_error($terms)) {
+        return $terms;
+    }
+    $names = esc_attr(implode(',', array_map(static fn ($term) => $term->name, $terms)));
+    return apply_filters('terms_to_edit', $names, $taxonomy);
+}
+
+function get_tags_to_edit($post_id, $taxonomy = 'post_tag')
+{
+    return get_terms_to_edit($post_id, $taxonomy);
 }
 
 function get_term_children($term_id, $taxonomy)

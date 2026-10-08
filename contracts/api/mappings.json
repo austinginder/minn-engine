@@ -3,10 +3,10 @@
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line)",
     "summary": {
         "minn": 675,
-        "composes": 1012,
-        "leaf": 675,
-        "noop": 2017,
-        "functions": 4305,
+        "composes": 1018,
+        "leaf": 676,
+        "noop": 2021,
+        "functions": 4316,
         "minnMethods": 796,
         "leafLinesOver15": 13
     },
@@ -16788,7 +16788,7 @@
         },
         "_make_cat_compat": {
             "file": "taxonomy.php",
-            "lines": 8,
+            "lines": 15,
             "kind": "leaf",
             "minn": [],
             "composes": []
@@ -20276,6 +20276,15 @@
                 "term_description"
             ]
         },
+        "category_exists": {
+            "file": "taxonomy.php",
+            "lines": 2,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "term_exists"
+            ]
+        },
         "change_encoding": {
             "file": "simplepie/Interfaces.php",
             "lines": 5,
@@ -20522,6 +20531,13 @@
             "composes": [
                 "get_comment_date"
             ]
+        },
+        "comment_exists": {
+            "file": "comment.php",
+            "lines": 3,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
         },
         "comment_form": {
             "file": "comment.php",
@@ -25086,6 +25102,15 @@
                 "wp_parse_args"
             ]
         },
+        "get_tags_to_edit": {
+            "file": "taxonomy.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "get_terms_to_edit"
+            ]
+        },
         "get_taxonomies": {
             "file": "taxonomy.php",
             "lines": 5,
@@ -25321,6 +25346,19 @@
                 "apply_filters",
                 "taxonomy_exists",
                 "wp_parse_args"
+            ]
+        },
+        "get_terms_to_edit": {
+            "file": "taxonomy.php",
+            "lines": 12,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "apply_filters",
+                "esc_attr",
+                "get_object_term_cache",
+                "is_wp_error",
+                "wp_get_object_terms"
             ]
         },
         "get_the_ID": {
@@ -30606,6 +30644,15 @@
                 "apply_filters"
             ]
         },
+        "tag_exists": {
+            "file": "taxonomy.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "term_exists"
+            ]
+        },
         "taxonomy_exists": {
             "file": "taxonomy.php",
             "lines": 1,
@@ -33012,6 +33059,27 @@
                 "wp_parse_args"
             ]
         },
+        "wp_create_categories": {
+            "file": "taxonomy.php",
+            "lines": 11,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "category_exists",
+                "wp_create_category",
+                "wp_set_post_categories"
+            ]
+        },
+        "wp_create_category": {
+            "file": "taxonomy.php",
+            "lines": 2,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "category_exists",
+                "wp_insert_category"
+            ]
+        },
         "wp_create_image_subsizes": {
             "file": "media.php",
             "lines": 19,
@@ -33070,6 +33138,25 @@
                 "apply_filters",
                 "wp_get_current_user",
                 "wp_get_session_token"
+            ]
+        },
+        "wp_create_tag": {
+            "file": "taxonomy.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "wp_create_term"
+            ]
+        },
+        "wp_create_term": {
+            "file": "taxonomy.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "term_exists",
+                "wp_insert_term"
             ]
         },
         "wp_create_user": {
@@ -35124,6 +35211,21 @@
             "composes": [
                 "wp_insert_post",
                 "wp_parse_args"
+            ]
+        },
+        "wp_insert_category": {
+            "file": "taxonomy.php",
+            "lines": 16,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "__",
+                "is_wp_error",
+                "term_exists",
+                "term_is_ancestor_of",
+                "wp_insert_term",
+                "wp_parse_args",
+                "wp_update_term"
             ]
         },
         "wp_insert_comment": {
@@ -38306,6 +38408,18 @@
                 "delete_post_meta",
                 "get_post",
                 "update_post_meta"
+            ]
+        },
+        "wp_update_category": {
+            "file": "taxonomy.php",
+            "lines": 7,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "_make_cat_compat",
+                "get_term",
+                "wp_insert_category",
+                "wp_slash"
             ]
         },
         "wp_update_comment": {
