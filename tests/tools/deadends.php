@@ -7,7 +7,9 @@ declare(strict_types=1);
  * inert stubs rather than behaviour: wp-admin (its screens and includes,
  * and the admin pages built into wp-includes/build/pages), the block and
  * site editors, the Customizer, and XML-RPC (with pingback and trackback
- * sending). Everything else is meant to behave like the reference. Writes public/minn/data/deadend-symbols.json, name => category
+ * sending), and whatever contracts/api/omitted.json leaves behind on purpose
+ * (each with its reason). Everything else is meant to behave like the
+ * reference. Writes public/minn/data/deadend-symbols.json, name => category
  * for every function and class of the inventory in a dead end, whether the
  * engine implements it or not; tests/tools/stub-symbols.php --deadends
  * stubs the ones it lacks.
@@ -19,6 +21,7 @@ declare(strict_types=1);
 $root = dirname(__DIR__, 2);
 $functions = json_decode((string) file_get_contents("{$root}/contracts/api/functions.json"), true);
 $classes = json_decode((string) file_get_contents("{$root}/contracts/api/classes.json"), true);
+$omitted = json_decode((string) @file_get_contents("{$root}/contracts/api/omitted.json"), true) ?: [];
 
 // Pingbacks, trackbacks and update pings ride on XML-RPC even where their functions live elsewhere.
 const PINGS = ['pingback', 'do_all_pings', 'do_all_pingbacks', 'do_all_trackbacks', 'do_all_enclosures', 'generic_ping', 'weblog_ping', 'trackback', 'do_trackbacks', 'trackback_url_list', 'pingback_ping_source_uri', 'discover_pingback_server_uri', 'privacy_ping_filter', 'get_pung', 'get_to_ping', 'add_ping'];
@@ -45,14 +48,14 @@ function category(string $name, string $file): ?string
 
 $out = ['functions' => [], 'classes' => []];
 foreach ($functions as $name => $spec) {
-    $category = category($name, (string) ($spec['file'] ?? ''));
+    $category = isset($omitted['functions'][$name]) ? 'omitted' : category($name, (string) ($spec['file'] ?? ''));
     // Pinging is real behaviour the engine keeps (it reads the lists); only sending pings is a dead end.
     if ($category !== null && !in_array($name, ['get_pung', 'get_to_ping'], true)) {
         $out['functions'][$name] = $category;
     }
 }
 foreach ($classes as $name => $spec) {
-    $category = category($name, (string) ($spec['file'] ?? ''));
+    $category = isset($omitted['classes'][$name]) ? 'omitted' : category($name, (string) ($spec['file'] ?? ''));
     if ($category !== null && !str_contains($name, '\\')) {
         $out['classes'][$name] = $category;
     }

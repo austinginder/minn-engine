@@ -1,0 +1,5 @@
+{
+    "about": "Symbols Minn leaves behind on purpose: too old, unneeded, or replaced. Each is a dead end in the mappings (area omitted), answered by an inert stub so a plugin that calls it does not fatal. Austin decides what goes here; every entry names its reason. tests/tools/deadends.php reads this file.",
+    "functions": {},
+    "classes": {}
+}
