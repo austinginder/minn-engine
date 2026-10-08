@@ -122135,7 +122135,7 @@
             "namespace": "Minn\\Runtime",
             "kind": "final class",
             "file": "public/minn/src/Minn/Runtime/Runtime.php",
-            "lines": 369,
+            "lines": 373,
             "doc": "The WordPress runtime the engine offers plugin code: the procedural\nfacade under minn/wp-api/ plus the services it delegates to. One per\nrequest; the facade reaches it through these statics.",
             "implements": [],
             "extends": null,
@@ -122983,7 +122983,7 @@
                         }
                     ],
                     "line": 320,
-                    "end": 343
+                    "end": 347
                 },
                 {
                     "routes": [],
@@ -122994,8 +122994,8 @@
                     "doc": "The pluggable functions, once the plugins have had their chance to\ndefine their own: each is defined only where no plugin did. The plugin\nloader calls this before plugins_loaded; a boot that loads no plugins\ncalls it straight away.",
                     "shapes": [],
                     "params": [],
-                    "line": 369,
-                    "end": 372
+                    "line": 373,
+                    "end": 376
                 },
                 {
                     "routes": [],
@@ -123006,8 +123006,8 @@
                     "doc": "Fresh per-request state, for suites.",
                     "shapes": [],
                     "params": [],
-                    "line": 375,
-                    "end": 391
+                    "line": 379,
+                    "end": 395
                 },
                 {
                     "routes": [],
@@ -123026,8 +123026,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 350,
-                    "end": 361
+                    "line": 354,
+                    "end": 365
                 }
             ]
         },

@@ -165,6 +165,24 @@ $check('route catalogue: contracts/api/routes.json is current', is_array($catalo
 $leafCeiling = 13;
 $check("facade map: leaf functions over fifteen lines stay at or under {$leafCeiling}", is_array($mapping) && ($mapping['leafLinesOver15'] ?? PHP_INT_MAX) <= $leafCeiling, (string) ($mapping['leafLinesOver15'] ?? '?'));
 
+// The whole reference API: every function, class and public or protected
+// method resolves (real, a dead end, or a placeholder still owed) or is
+// missing, and fatals when called. public/minn/data/deadend-symbols.json
+// (tests/tools/deadends.php) names the dead ends; contracts/api/compat-status.json
+// (tests/tools/compat-status.php) counts the rest. Missing only falls and
+// verified only rises: lower or raise a number here when a change moves it.
+exec('php ' . escapeshellarg(dirname(__DIR__) . '/tests/tools/deadends.php') . ' --check', $ignored, $deadEndsStale);
+$check('dead ends: public/minn/data/deadend-symbols.json is current', $deadEndsStale === 0, 'run php tests/tools/deadends.php');
+$status = json_decode((string) shell_exec('php ' . escapeshellarg(dirname(__DIR__) . '/tests/tools/compat-status.php') . ' --check 2>/dev/null'), true);
+exec('php ' . escapeshellarg(dirname(__DIR__) . '/tests/tools/compat-status.php') . ' --check', $ignored, $statusStale);
+$check('compat status: contracts/api/compat-status.json is current', is_array($status) && $statusStale === 0, 'run php tests/tools/compat-status.php');
+$missingCeiling = ['functions' => 1007, 'classes' => 79, 'methods' => 800];
+$verifiedFloor = ['functions' => 1299, 'classes' => 80, 'methods' => 763];
+foreach ($missingCeiling as $group => $ceiling) {
+    $check("compat status: missing {$group} stay at or under {$ceiling}", is_array($status) && ($status[$group]['missing'] ?? PHP_INT_MAX) <= $ceiling, (string) ($status[$group]['missing'] ?? '?'));
+    $check("compat status: verified {$group} stay at or over {$verifiedFloor[$group]}", is_array($status) && ($status[$group]['verified'] ?? 0) >= $verifiedFloor[$group], (string) ($status[$group]['verified'] ?? '?'));
+}
+
 
 // The policy ratchet: every #[Route] states who it is for as a Policy on the
 // attribute, judged by the router before the handler runs. Routes that still

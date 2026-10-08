@@ -14,7 +14,10 @@ declare(strict_types=1);
  *
  * Kinds: minn (calls into src/Minn), composes (calls other facade functions
  * only), leaf (plain PHP, no calls into either), noop (a body of at most one
- * line). Static and best-effort: `X::m(`, `new X(`, `_minn_x()->m(` through
+ * line), and for the generated stubs placeholder (behaviour still owed) and
+ * deadend (wp-admin, the editors, the Customizer, XML-RPC: inert by design).
+ * Any entry in a dead-end area, generated or hand-written, also names its
+ * area under "deadend" (public/minn/data/deadend-symbols.json). Static and best-effort: `X::m(`, `new X(`, `_minn_x()->m(` through
  * the helper's return class, and `$v = new X(` / `$v = X::make(` / `$v = _minn_x()`
  * followed by `$v->m(` inside the same body.
  */
@@ -25,7 +28,11 @@ $leavesOnly = in_array('--leaves', $argv, true);
 $checkOnly = in_array('--check', $argv, true);
 
 $files = [...glob("{$facadeDir}/*.php"), ...glob("{$facadeDir}/classes/*.php"), ...glob("{$facadeDir}/simplepie/*.php"), ...glob("{$facadeDir}/requests/*.php")];
-$files = array_filter($files, static fn (string $f) => !str_contains($f, 'placeholders'));
+$files = [...$files, ...glob("{$facadeDir}/classes/placeholders/*.php"), ...glob("{$facadeDir}/classes/deadends/*.php")];
+$deadEnds = json_decode((string) file_get_contents("{$root}/public/minn/data/deadend-symbols.json"), true) ?: ['functions' => [], 'classes' => []];
+$deadEndArea = static function (string $name, ?string $owner) use ($deadEnds): ?string {
+    return $owner === null ? ($deadEnds['functions'][$name] ?? null) : ($deadEnds['classes'][$owner] ?? null);
+};
 
 /** @return list<array{name: string, owner: ?string, body: string, lines: int, file: string}> */
 function bodies(string $src, string $file): array
@@ -115,7 +122,7 @@ foreach ($parsed as $relative => $unit) {
 }
 
 $functions = [];
-$summary = ['minn' => 0, 'composes' => 0, 'leaf' => 0, 'noop' => 0];
+$summary = ['minn' => 0, 'composes' => 0, 'leaf' => 0, 'noop' => 0, 'placeholder' => 0, 'deadend' => 0];
 $leaves = [];
 foreach ($parsed as $relative => $unit) {
     foreach ($unit['bodies'] as $body) {
@@ -171,10 +178,19 @@ foreach ($parsed as $relative => $unit) {
         preg_match_all('/(?<![\w$>:\\\\])([a-z_][a-z0-9_]*)\s*\(/', $text, $plain);
         $composes = array_values(array_unique(array_filter($plain[1], static fn (string $fn) => isset($facadeFunctions[$fn]) && $fn !== $body['name'])));
         sort($composes);
-        $kind = $body['lines'] <= 1 ? 'noop' : ($minn !== [] ? 'minn' : ($composes !== [] ? 'composes' : 'leaf'));
+        $generated = match (true) {
+            str_contains($relative, 'deadends') => 'deadend',
+            str_contains($relative, 'placeholders') => 'placeholder',
+            default => null,
+        };
+        $kind = $generated ?? ($body['lines'] <= 1 ? 'noop' : ($minn !== [] ? 'minn' : ($composes !== [] ? 'composes' : 'leaf')));
         $summary[$kind]++;
         $key = $body['owner'] === null ? $body['name'] : "{$body['owner']}::{$body['name']}";
-        $functions[$key] = ['file' => $relative, 'lines' => $body['lines'], 'kind' => $kind, 'minn' => $minn, 'composes' => $composes];
+        $functions[$key] = ['file' => $relative, 'lines' => $body['lines'], 'kind' => $kind, 'minn' => $generated === null ? $minn : [], 'composes' => $generated === null ? $composes : []];
+        $area = $deadEndArea($body['name'], $body['owner']);
+        if ($area !== null) {
+            $functions[$key]['deadend'] = $area;
+        }
         if ($kind === 'leaf') {
             $leaves[] = [$key, $body['lines'], $relative];
         }
@@ -198,7 +214,7 @@ foreach ($functions as $entry) {
 }
 $report = [
     'generated' => gmdate('Y-m-d'),
-    'method' => 'static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line)',
+    'method' => 'static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line), placeholder (generated stub, behaviour still owed), deadend (generated stub for wp-admin, the editors, the Customizer or XML-RPC, inert by design); "deadend" on any entry names its dead-end area',
     'summary' => $summary + ['functions' => count($functions), 'minnMethods' => count($minnMethods), 'leafLinesOver15' => count(array_filter($leaves, static fn (array $l) => $l[1] > 15))],
     'functions' => $functions,
 ];
@@ -211,5 +227,5 @@ if ($checkOnly) {
     exit($stale ? 1 : 0);
 }
 file_put_contents("{$root}/contracts/api/mappings.json", $encoded);
-printf("%d functions: %d minn, %d composes, %d leaf, %d noop; %d distinct Minn methods; %d leaves over 15 lines\n", count($functions), $summary['minn'], $summary['composes'], $summary['leaf'], $summary['noop'], count($minnMethods), $report['summary']['leafLinesOver15']);
+printf("%d functions: %d minn, %d composes, %d leaf, %d noop, %d placeholder, %d deadend; %d distinct Minn methods; %d leaves over 15 lines\n", count($functions), $summary['minn'], $summary['composes'], $summary['leaf'], $summary['noop'], $summary['placeholder'], $summary['deadend'], count($minnMethods), $report['summary']['leafLinesOver15']);
 echo "wrote contracts/api/mappings.json\n";

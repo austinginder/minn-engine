@@ -4,6 +4,8 @@
 #[AllowDynamicProperties]
 final class WP_Screen
 {
+    use \Minn\Runtime\DeadEndCalls;
+
     public $action = '';
     public $base = '';
     public $id = '';

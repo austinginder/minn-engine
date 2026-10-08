@@ -4,6 +4,8 @@
 #[AllowDynamicProperties]
 final class WP_Privacy_Policy_Content
 {
+    use \Minn\Runtime\DeadEndCalls;
+
     private static $policy_content = [];
 
     public static function add($plugin_name, $policy_text)

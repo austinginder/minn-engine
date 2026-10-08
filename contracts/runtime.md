@@ -5546,3 +5546,57 @@ its own change) and admin names, which the dead-end pass covers.
 now enforces `minProperties` and `maxProperties`
 (`rest_too_few_properties`, `rest_too_many_properties`), which it had
 listed and ignored.
+
+## The whole API resolves or is counted: dead ends and the compat status (2026-10-08)
+
+Austin's goal: every symbol in the reference's PHP API either behaves like
+the reference or, for wp-admin, the block and site editors, the Customizer
+and XML-RPC, exists as a dead end, so no plugin fatals on it.
+
+**Dead ends**:
+
+- `tests/tools/deadends.php` sorts the reference inventory by source file
+  into four areas, written to `public/minn/data/deadend-symbols.json`:
+  - admin: `wp-admin/*` and the 7.1 admin pages under
+    `wp-includes/build/pages/`;
+  - editor: block-editor.php, the editors' own REST controllers, remote
+    pattern loading;
+  - customizer;
+  - xmlrpc: IXR, the XML-RPC server, and pingback, trackback and
+    update-ping sending.
+- Every name the facade lacks in those areas is stubbed by
+  `tests/tools/stub-symbols.php --deadends` into `wp-api/deadends.php` and
+  `wp-api/classes/deadends/DeadEnds.php`. A stub returns the neutral value
+  of its type and logs the call (`Runtime\PlaceholderTrace`).
+- The dead-end classes load after the facade's own files, so they may
+  extend any class those declare.
+- The Customizer's hand-written classes keep recording what themes
+  register. They, `WP_Screen` and `WP_Privacy_Policy_Content` answer any
+  method they do not define through `Runtime\DeadEndCalls` (`__call` and
+  `__callStatic`, logged, null), about 200 methods in all.
+- The placeholder list keeps only behaviour still owed: 99 functions and
+  38 classes moved from it to the dead ends.
+- `contracts/api/mappings.json` marks every generated stub with kind
+  `deadend` or `placeholder`, and any entry in a dead-end area, hand-written
+  or not, with its area under `deadend`.
+
+**Status** (`tests/tools/compat-status.php`, written to
+`contracts/api/compat-status.json`). Every reference function, class and
+public or protected method is real, dead end, placeholder or missing.
+Verified means real and called by a probe that tests/api.test.php
+compares with the reference. At this commit:
+
+| | total | resolved | real | dead end | placeholder | missing | verified |
+|---|---|---|---|---|---|---|---|
+| functions | 3,913 | 2,906 | 2,007 | 868 | 31 | 1,007 | 1,299 |
+| classes | 380 | 301 | 144 | 128 | 29 | 79 | 80 |
+| methods | 4,073 | 3,273 | 1,328 | 1,561 | 384 | 800 | 763 |
+
+The style suite checks that both files are current, and ratchets the
+missing counts (they only fall) and the verified counts (they only rise).
+
+One divergence to know: on the reference's front end the wp-admin include
+functions do not exist until something requires their file; here they
+exist as dead ends. A plugin's `if (!function_exists('get_plugins'))
+require_once ABSPATH . 'wp-admin/includes/plugin.php';` therefore skips a
+file the engine's sites may not have.

@@ -7,6 +7,8 @@
 
 class WP_Customize_Manager
 {
+    use \Minn\Runtime\DeadEndCalls;
+
     private $settings = [];
     private $sections = [];
     private $panels = [];
@@ -113,6 +115,8 @@ class WP_Customize_Manager
 
 class WP_Customize_Selective_Refresh
 {
+    use \Minn\Runtime\DeadEndCalls;
+
     public function add_partial($id, $args = [])
     {
         return null;
@@ -121,6 +125,8 @@ class WP_Customize_Selective_Refresh
 
 class WP_Customize_Setting
 {
+    use \Minn\Runtime\DeadEndCalls;
+
     public $id;
     public $type = 'theme_mod';
     public $capability = 'edit_theme_options';
@@ -155,6 +161,8 @@ class WP_Customize_Setting
 
 class WP_Customize_Section
 {
+    use \Minn\Runtime\DeadEndCalls;
+
     public $id;
     public $priority = 160;
     public $panel = '';
@@ -182,6 +190,8 @@ class WP_Customize_Panel extends WP_Customize_Section
 
 class WP_Customize_Control
 {
+    use \Minn\Runtime\DeadEndCalls;
+
     public $id;
     public $settings;
     public $setting = 'default';
@@ -279,6 +289,8 @@ class WP_Customize_Filter_Setting extends WP_Customize_Setting
 
 class WP_Customize_Partial
 {
+    use \Minn\Runtime\DeadEndCalls;
+
     public $id = '';
     public $type = 'default';
     public $selector = '';

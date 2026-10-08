@@ -82,7 +82,7 @@ the WordPress runtime plugins load against
 | [`RegisteredSettings`](#registeredsettings) | final class | 104 | Settings as register_setting keeps them (probe rest-settings): the |
 | [`Registry`](#registry) | final class | 392 | Post types, taxonomies, and statuses as plugin code registers and reads |
 | [`RewriteRules`](#rewriterules) | final class | 334 | The rewrite rules WordPress makes from its structures, as the reference |
-| [`Runtime`](#runtime) | final class | 369 | The WordPress runtime the engine offers plugin code: the procedural |
+| [`Runtime`](#runtime) | final class | 373 | The WordPress runtime the engine offers plugin code: the procedural |
 | [`ScriptModules`](#scriptmodules) | final class | 302 | The script modules registry: registrations with typed dependencies, the |
 | [`ScriptPack`](#scriptpack) | final class | 146 | The site-supplied script pack: the `wp-*` JavaScript packages the engine |
 | [`Shortcodes`](#shortcodes) | final class | 274 | The shortcode registry plugin code fills with add_shortcode, and the |
@@ -3812,7 +3812,7 @@ calls it straight away.
 
 Fresh per-request state, for suites.
 
-Internals: `loadObjectCacheDropin()` (private, line 350)
+Internals: `loadObjectCacheDropin()` (private, line 354)
 
 
 ## ScriptModules

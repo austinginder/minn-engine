@@ -336,6 +336,10 @@ final class Runtime
                 require_once $file;
             }
         }
+        // Generated dead ends (wp-admin, the editors, the Customizer, XML-RPC) may extend any facade class, so they come last.
+        foreach (glob($engineDir . '/wp-api/classes/deadends/*.php') ?: [] as $file) {
+            require_once $file;
+        }
         // The reference's own registrations, after every function exists.
         foreach (glob($engineDir . '/wp-api/defaults/*.php') ?: [] as $file) {
             require_once $file;
