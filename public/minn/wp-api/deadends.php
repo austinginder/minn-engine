@@ -4041,6 +4041,12 @@ function wp_update_theme($theme, $feedback = '')
     return null;
 }
 
+function wp_user_settings()
+{
+    \Minn\Runtime\PlaceholderTrace::hit('wp_user_settings');
+    return null;
+}
+
 function wp_welcome_panel()
 {
     \Minn\Runtime\PlaceholderTrace::hit('wp_welcome_panel');

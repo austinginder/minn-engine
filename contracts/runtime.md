@@ -6642,3 +6642,34 @@ tags); two admin dead ends.
   `fetchpriority` (exact keys), in the order given.
 - **Dead ends.** `register_admin_color_schemes` and `wp_admin_css_uri` are the
   wp-admin colour schemes and stylesheet: admin.
+
+## option.php's remaining functions (2026-10-08)
+
+Probe `option-more` (`tests/tools/option-more-probe.php`). Ten functions, one
+placeholder made real (`set_user_setting`), one admin dead end.
+
+- `get_options` reads several options after one priming read, name => value
+  (false for a missing one, a repeated name once). `wp_set_options_autoload`
+  gives several one flag; per option, whether its flag changed.
+- **The autoload flag.** `wp_determine_option_autoload_value`: `on` for `on`,
+  `yes` or `true`, `off` for `off`, `no` or `false` (strictly: 1, 0 and "" are
+  undecided); otherwise `wp_default_autoload_value` (null, option, value,
+  serialized) decides, a true or false becoming `auto-on` or `auto-off`, any
+  other answer leaving `auto`. `wp_filter_default_autoload_value_via_option_size`
+  (on that filter, priority 5) answers false for a stored value longer than
+  `wp_max_autoloaded_option_size` (150000 bytes). **Fixed:** `add_option`
+  without a flag now decides through it, so an option over the size is stored
+  `auto-off`, not `auto`.
+- **Site options on a single site.** `wp_prime_site_option_caches` and
+  `wp_prime_network_option_caches` (any network id) prime the options;
+  `wp_load_core_site_options` has nothing to load. The engine keeps option
+  reads in its own store, not in `wp_cache`'s `options` group, so a plugin that
+  reads that group directly still finds nothing (a known difference).
+- **User settings** (the `user-settings` user option and `user-settings-time`):
+  `wp_set_all_user_settings` writes the pairs as `name=value&…`, each kept to
+  letters, digits, `_` and `-`, a nameless pair dropped, and refreshes the
+  request's copy; false with nobody signed in. `set_user_setting` adds one,
+  `delete_user_setting` removes one or several (false when none was set),
+  `delete_all_user_settings` empties them and expires the `wp-settings-{id}`
+  cookie. **Dead end:** `wp_user_settings`, which keeps that cookie in step
+  inside wp-admin only.

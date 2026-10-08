@@ -19,12 +19,6 @@ function get_the_block_template_html()
     return null;
 }
 
-function set_user_setting($name, $value)
-{
-    \Minn\Runtime\PlaceholderTrace::hit('set_user_setting');
-    return null;
-}
-
 function translate_settings_using_i18n_schema($i18n_schema, $settings, $textdomain)
 {
     \Minn\Runtime\PlaceholderTrace::hit('translate_settings_using_i18n_schema');

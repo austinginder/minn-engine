@@ -83,6 +83,8 @@ add_filter('term_name_rss', 'convert_chars');
 add_filter('term_description', 'wptexturize');
 // A post type archive's description is dressed as a term's is (probe general-template-more).
 add_filter('get_the_post_type_description', 'wptexturize');
+// An option too big to autoload is stored auto-off (probe option-more).
+add_filter('wp_default_autoload_value', 'wp_filter_default_autoload_value_via_option_size', 5, 4);
 add_filter('get_the_post_type_description', 'convert_chars');
 add_filter('get_the_post_type_description', 'wpautop');
 add_filter('get_the_post_type_description', 'shortcode_unautop');

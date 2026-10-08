@@ -876,6 +876,7 @@
         "wp_update_theme": "admin",
         "wp_upgrade": "admin",
         "wp_use_widgets_block_editor": "editor",
+        "wp_user_settings": "admin",
         "wp_welcome_panel": "admin",
         "wp_widget_control": "admin",
         "wp_widgets_access_body_class": "admin",

@@ -1,0 +1,285 @@
+[
+    [
+        "options read together",
+        [
+            {
+                "zz_go_a": {
+                    "x": 1,
+                    "y": [
+                        2,
+                        3
+                    ]
+                },
+                "zz_go_b": "plain",
+                "zz_go_c": "",
+                "zz_go_missing": false
+            },
+            [],
+            {
+                "zz_go_b": "plain"
+            }
+        ]
+    ],
+    [
+        "autoload stored",
+        [
+            "auto",
+            "off",
+            "on"
+        ]
+    ],
+    [
+        "autoload set for several",
+        [
+            {
+                "zz_go_a": true,
+                "zz_go_b": false,
+                "zz_go_missing": false
+            },
+            [
+                "off",
+                "off"
+            ],
+            {
+                "zz_go_a": true,
+                "zz_go_b": true
+            },
+            [
+                "on",
+                "on"
+            ],
+            {
+                "zz_go_a": false
+            },
+            {
+                "zz_go_a": true
+            },
+            "off",
+            []
+        ]
+    ],
+    [
+        "autoload decided",
+        [
+            [
+                "yes",
+                "on"
+            ],
+            [
+                "no",
+                "off"
+            ],
+            [
+                true,
+                "on"
+            ],
+            [
+                false,
+                "off"
+            ],
+            [
+                "on",
+                "on"
+            ],
+            [
+                "off",
+                "off"
+            ],
+            [
+                null,
+                "auto"
+            ],
+            [
+                "auto",
+                "auto"
+            ],
+            [
+                "auto-on",
+                "auto"
+            ],
+            [
+                "auto-off",
+                "auto"
+            ],
+            [
+                "junk",
+                "auto"
+            ],
+            [
+                1,
+                "auto"
+            ],
+            [
+                0,
+                "auto"
+            ],
+            [
+                "",
+                "auto"
+            ]
+        ]
+    ],
+    [
+        "autoload decided by filter",
+        [
+            [
+                [
+                    true,
+                    "auto-on",
+                    "on"
+                ],
+                [
+                    false,
+                    "auto-off",
+                    "on"
+                ],
+                [
+                    null,
+                    "auto",
+                    "on"
+                ],
+                [
+                    "on",
+                    "auto",
+                    "on"
+                ]
+            ],
+            [
+                [
+                    null,
+                    "zz_go_y",
+                    [
+                        "v"
+                    ],
+                    "a:1:{i:0;s:1:\"v\";}"
+                ],
+                [
+                    null,
+                    "zz_go_y",
+                    [
+                        "v"
+                    ],
+                    "a:1:{i:0;s:1:\"v\";}"
+                ],
+                [
+                    null,
+                    "zz_go_y",
+                    [
+                        "v"
+                    ],
+                    "a:1:{i:0;s:1:\"v\";}"
+                ],
+                [
+                    null,
+                    "zz_go_y",
+                    [
+                        "v"
+                    ],
+                    "a:1:{i:0;s:1:\"v\";}"
+                ]
+            ]
+        ]
+    ],
+    [
+        "autoload by size",
+        [
+            null,
+            true,
+            false,
+            false,
+            null,
+            "auto-off",
+            5
+        ]
+    ],
+    [
+        "autoload by size, a smaller limit",
+        [
+            false,
+            null
+        ]
+    ],
+    [
+        "a big option is stored without autoload",
+        "auto-off"
+    ],
+    [
+        "site option caches primed",
+        [
+            null,
+            null,
+            null,
+            null,
+            null,
+            "site value",
+            "fallback"
+        ]
+    ],
+    [
+        "user settings",
+        [
+            [
+                "set",
+                true,
+                "zz_a=one",
+                true
+            ],
+            [
+                "set another",
+                true,
+                "zz_a=one&zz_b=twowords"
+            ],
+            [
+                "read",
+                {
+                    "zz_a": "one",
+                    "zz_b": "twowords"
+                },
+                "one",
+                "fallback"
+            ],
+            [
+                "set a bad name",
+                true,
+                "zz_a=one&zz_b=twowords&badname=v-a_lue"
+            ],
+            [
+                "delete one",
+                true,
+                "zz_b=twowords&badname=v-a_lue"
+            ],
+            [
+                "delete a missing one",
+                false,
+                "zz_b=twowords&badname=v-a_lue"
+            ],
+            [
+                "delete several",
+                true,
+                ""
+            ],
+            [
+                "set all",
+                true,
+                "zz_c=three&MixedKey=vv&7=num"
+            ],
+            [
+                "set all, nothing",
+                true,
+                ""
+            ],
+            [
+                "delete all",
+                null,
+                "",
+                true
+            ],
+            [
+                "a visitor",
+                false,
+                false,
+                false
+            ]
+        ]
+    ]
+]

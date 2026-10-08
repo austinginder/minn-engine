@@ -3,12 +3,12 @@
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line), placeholder (generated stub, behaviour still owed), deadend (generated stub for wp-admin, the editors, the Customizer or XML-RPC, inert by design); \"deadend\" on any entry names its dead-end area",
     "summary": {
         "minn": 742,
-        "composes": 1555,
+        "composes": 1562,
         "leaf": 762,
-        "noop": 2442,
-        "placeholder": 281,
-        "deadend": 1596,
-        "functions": 7301,
+        "noop": 2446,
+        "placeholder": 280,
+        "deadend": 1597,
+        "functions": 7312,
         "minnMethods": 892,
         "leafLinesOver15": 13
     },
@@ -30501,7 +30501,7 @@
         },
         "add_option": {
             "file": "option.php",
-            "lines": 26,
+            "lines": 23,
             "kind": "minn",
             "minn": [
                 "Minn\\Runtime\\Options::guarded",
@@ -30511,7 +30511,9 @@
                 "apply_filters",
                 "do_action",
                 "get_option",
+                "maybe_serialize",
                 "sanitize_option",
+                "wp_determine_option_autoload_value",
                 "wp_protect_special_option"
             ]
         },
@@ -33240,6 +33242,16 @@
             "minn": [],
             "composes": []
         },
+        "delete_all_user_settings": {
+            "file": "option.php",
+            "lines": 6,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "get_current_user_id",
+                "update_user_option"
+            ]
+        },
         "delete_comment_meta": {
             "file": "meta.php",
             "lines": 1,
@@ -33452,6 +33464,16 @@
             ],
             "composes": [
                 "delete_user_meta"
+            ]
+        },
+        "delete_user_setting": {
+            "file": "option.php",
+            "lines": 12,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "get_all_user_settings",
+                "wp_set_all_user_settings"
             ]
         },
         "delete_usermeta": {
@@ -38090,6 +38112,16 @@
                 "Minn\\Runtime\\Runtime::options"
             ],
             "composes": []
+        },
+        "get_options": {
+            "file": "option.php",
+            "lines": 6,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "get_option",
+                "wp_prime_option_caches"
+            ]
         },
         "get_others_drafts": {
             "file": "deadends.php",
@@ -48808,11 +48840,14 @@
             ]
         },
         "set_user_setting": {
-            "file": "placeholders.php",
-            "lines": 2,
-            "kind": "placeholder",
+            "file": "option.php",
+            "lines": 6,
+            "kind": "composes",
             "minn": [],
-            "composes": []
+            "composes": [
+                "get_all_user_settings",
+                "wp_set_all_user_settings"
+            ]
         },
         "settings_errors": {
             "file": "admin.php",
@@ -54932,6 +54967,15 @@
                 "wp_get_session_token"
             ]
         },
+        "wp_determine_option_autoload_value": {
+            "file": "option.php",
+            "lines": 11,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "apply_filters"
+            ]
+        },
         "wp_die": {
             "file": "functions.php",
             "lines": 19,
@@ -55502,6 +55546,15 @@
             ],
             "composes": [
                 "current_filter"
+            ]
+        },
+        "wp_filter_default_autoload_value_via_option_size": {
+            "file": "option.php",
+            "lines": 2,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "apply_filters"
             ]
         },
         "wp_filter_kses": {
@@ -59028,6 +59081,13 @@
             ],
             "composes": []
         },
+        "wp_load_core_site_options": {
+            "file": "option.php",
+            "lines": 0,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
         "wp_load_image": {
             "file": "media.php",
             "lines": 8,
@@ -60249,6 +60309,15 @@
             "composes": [],
             "deadend": "admin"
         },
+        "wp_prime_network_option_caches": {
+            "file": "option.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "wp_prime_option_caches"
+            ]
+        },
         "wp_prime_option_caches": {
             "file": "option.php",
             "lines": 4,
@@ -60264,6 +60333,15 @@
             "kind": "noop",
             "minn": [],
             "composes": []
+        },
+        "wp_prime_site_option_caches": {
+            "file": "option.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "wp_prime_network_option_caches"
+            ]
         },
         "wp_print_admin_notice_templates": {
             "file": "deadends.php",
@@ -62152,6 +62230,16 @@
                 "wp_strict_cross_origin_referrer"
             ]
         },
+        "wp_set_all_user_settings": {
+            "file": "option.php",
+            "lines": 17,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "get_current_user_id",
+                "update_user_option"
+            ]
+        },
         "wp_set_auth_cookie": {
             "file": "pluggable.php",
             "lines": 27,
@@ -62268,6 +62356,15 @@
                 "Minn\\Runtime\\Runtime::options"
             ],
             "composes": []
+        },
+        "wp_set_options_autoload": {
+            "file": "option.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "wp_set_option_autoload_values"
+            ]
         },
         "wp_set_password": {
             "file": "pluggable.php",
@@ -63829,6 +63926,14 @@
                 "__",
                 "apply_filters"
             ]
+        },
+        "wp_user_settings": {
+            "file": "deadends.php",
+            "lines": 2,
+            "kind": "deadend",
+            "minn": [],
+            "composes": [],
+            "deadend": "admin"
         },
         "wp_using_ext_object_cache": {
             "file": "load.php",

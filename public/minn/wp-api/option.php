@@ -115,11 +115,8 @@ function add_option($option, $value = '', $deprecated = '', $autoload = null)
     if (!Runtime::options()->knownMissing($option) && apply_filters("default_option_{$option}", false, $option, false) !== get_option($option)) {
         return false;
     }
-    $flag = match (true) {
-        $autoload === null, $autoload === 'auto' => 'auto',
-        $autoload === 'yes', $autoload === 'on', $autoload === true => 'on',
-        default => 'off',
-    };
+    // Not given, the flag is decided (an option too big to autoload is stored auto-off, probe option-more).
+    $flag = $autoload === 'auto' ? 'auto' : wp_determine_option_autoload_value($option, $value, maybe_serialize($value), $autoload);
     do_action('add_option', $option, $value);
     if (!Runtime::options()->add($option, $value, $flag)) {
         return false;
@@ -609,4 +606,130 @@ function wp_protect_special_option($option)
 /** Options keep no cache here to prime. */
 function wp_prime_option_caches_by_group($option_group)
 {
+}
+
+/** Several options at once, name => value, after one priming read. */
+function get_options($options)
+{
+    wp_prime_option_caches($options);
+    $values = [];
+    foreach ((array) $options as $option) {
+        $values[$option] = get_option($option);
+    }
+    return $values;
+}
+
+/** One autoload flag for several options; per option, whether it changed. */
+function wp_set_options_autoload($options, $autoload)
+{
+    return wp_set_option_autoload_values(array_fill_keys((array) $options, $autoload));
+}
+
+/**
+ * The autoload flag an option is stored with (probe option-more): "on" for
+ * on, yes or true, "off" for off, no or false; anything else is decided by
+ * wp_default_autoload_value (auto-on, auto-off) or left "auto".
+ */
+function wp_determine_option_autoload_value($option, $value, $serialized_value, $autoload)
+{
+    if ($autoload === 'on' || $autoload === 'off') {
+        return $autoload;
+    }
+    if ($autoload === true || $autoload === 'yes') {
+        return 'on';
+    }
+    if ($autoload === false || $autoload === 'no') {
+        return 'off';
+    }
+    $decided = apply_filters('wp_default_autoload_value', null, $option, $value, $serialized_value);
+    return is_bool($decided) ? ($decided ? 'auto-on' : 'auto-off') : 'auto';
+}
+
+/** An option whose stored value is longer than wp_max_autoloaded_option_size (150000 bytes) is not autoloaded (on wp_default_autoload_value). */
+function wp_filter_default_autoload_value_via_option_size($autoload, $option, $value, $serialized_value)
+{
+    $max = (int) apply_filters('wp_max_autoloaded_option_size', 150000);
+    return strlen((string) $serialized_value) > $max ? false : $autoload;
+}
+
+/** Primes the site options' cache; on a single site they are options. */
+function wp_prime_site_option_caches($options)
+{
+    wp_prime_network_option_caches(null, $options);
+}
+
+/** Primes a network's options; on a single site, whatever the network, they are options. */
+function wp_prime_network_option_caches($network_id, $options)
+{
+    wp_prime_option_caches($options);
+}
+
+/** A multisite network's core options, loaded together; a single site has none. */
+function wp_load_core_site_options($network_id = null)
+{
+}
+
+/**
+ * Saves a user's settings (user-settings, with user-settings-time): each
+ * name and value kept to letters, digits, "_" and "-", a pair with no name
+ * left out. False with nobody signed in.
+ */
+function wp_set_all_user_settings($user_settings)
+{
+    global $_updated_user_settings;
+    $user = get_current_user_id();
+    if (!$user) {
+        return false;
+    }
+    $pairs = [];
+    foreach ((array) $user_settings as $name => $value) {
+        $name = (string) preg_replace('/[^A-Za-z0-9_-]+/', '', (string) $name);
+        if ($name !== '') {
+            $pairs[] = $name . '=' . preg_replace('/[^A-Za-z0-9_-]+/', '', (string) $value);
+        }
+    }
+    $settings = implode('&', $pairs);
+    parse_str($settings, $_updated_user_settings);
+    update_user_option($user, 'user-settings', $settings, false);
+    update_user_option($user, 'user-settings-time', time(), false);
+    return true;
+}
+
+/** Sets one of the current user's settings. */
+function set_user_setting($name, $value)
+{
+    if (headers_sent()) {
+        return false;
+    }
+    $all = get_all_user_settings();
+    $all[$name] = $value;
+    return wp_set_all_user_settings($all);
+}
+
+/** Removes one or more of the current user's settings; false when none of them was set. */
+function delete_user_setting($names)
+{
+    if (headers_sent()) {
+        return false;
+    }
+    $all = get_all_user_settings();
+    $deleted = false;
+    foreach ((array) $names as $name) {
+        if (isset($all[$name])) {
+            unset($all[$name]);
+            $deleted = true;
+        }
+    }
+    return $deleted ? wp_set_all_user_settings($all) : false;
+}
+
+/** Empties the current user's settings and expires their settings cookie. */
+function delete_all_user_settings()
+{
+    $user = get_current_user_id();
+    if (!$user) {
+        return;
+    }
+    update_user_option($user, 'user-settings', '', false);
+    setcookie('wp-settings-' . $user, ' ', time() - YEAR_IN_SECONDS, SITECOOKIEPATH);
 }
