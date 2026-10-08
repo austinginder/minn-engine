@@ -283,12 +283,6 @@ function set_user_setting($name, $value)
     return null;
 }
 
-function show_message($message)
-{
-    \Minn\Runtime\PlaceholderTrace::hit('show_message');
-    return null;
-}
-
 function stream_preview_image($post_id)
 {
     \Minn\Runtime\PlaceholderTrace::hit('stream_preview_image');

@@ -273,13 +273,17 @@ final class Hooks
     private function run(string $hook, array $args, bool $isFilter, array $skip = [], ?array $allArgs = null): mixed
     {
         $value = $isFilter ? ($args[0] ?? null) : null;
+        // The hook is current from the moment 'all' hears it, as the
+        // reference has it: inside an 'all' callback current_filter() names
+        // the hook and doing_action() says so (probe upgrader).
+        $this->stack[] = $hook;
         if ($hook !== 'all' && isset($this->hooks['all'])) {
             $this->fireAll($hook, $allArgs ?? $args);
         }
         if (!isset($this->hooks[$hook])) {
+            array_pop($this->stack);
             return $value;
         }
-        $this->stack[] = $hook;
         $current = null;
         while (($priority = $this->nextPriority($hook, $current)) !== null) {
             $current = $priority;
@@ -329,7 +333,6 @@ final class Hooks
     /** @param list<mixed> $args */
     private function fireAll(string $hook, array $args): void
     {
-        $this->stack[] = 'all';
         $byPriority = $this->hooks['all'];
         ksort($byPriority);
         foreach ($byPriority as $entries) {
@@ -337,7 +340,6 @@ final class Hooks
                 ($entry['function'])($hook, ...$args);
             }
         }
-        array_pop($this->stack);
     }
 
     /** One identity per callable: closures and objects by instance, static methods in either spelling as one. */

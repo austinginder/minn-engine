@@ -315,9 +315,10 @@ function wp_max_upload_size()
     return apply_filters('upload_size_limit', min(wp_convert_hr_to_bytes(ini_get('upload_max_filesize')), wp_convert_hr_to_bytes(ini_get('post_max_size'))), 0, 0);
 }
 
+/** Ends as many output buffers as were open, each flushed; one that refuses to end does not loop forever. */
 function wp_ob_end_flush_all()
 {
-    while (ob_get_level() > 0) {
+    for ($levels = ob_get_level(); $levels > 0; $levels--) {
         ob_end_flush();
     }
 }

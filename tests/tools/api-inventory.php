@@ -10,8 +10,25 @@
 
 $root = ABSPATH;
 // The admin half only loads on admin requests, and many classes load on
-// demand; pull them all in so their interface is inventoried. Files whose
-// parent class is not loaded yet are retried until nothing new loads.
+// demand; pull them all in so their interface is inventoried. A class whose
+// parent is not loaded yet finds it through the autoloader below: a file
+// whose class failed to declare is still marked included, so retrying it
+// later would load nothing (that is how the upgraders went missing). Files
+// that still fail are retried until nothing new loads.
+$declares = [];
+foreach (array_merge(glob(ABSPATH . 'wp-admin/includes/*.php'), glob(ABSPATH . 'wp-includes/*.php'), glob(ABSPATH . 'wp-includes/*/*.php')) as $candidate) {
+    if (preg_match_all('/^(?:abstract\s+|final\s+)?(?:class|interface|trait)\s+(\w+)/m', (string) file_get_contents($candidate), $found)) {
+        foreach ($found[1] as $declared) {
+            $declares[strtolower($declared)] ??= $candidate;
+        }
+    }
+}
+spl_autoload_register(static function (string $class) use ($declares): void {
+    $file = $declares[strtolower($class)] ?? null;
+    if ($file !== null && !str_contains($file, 'ms-') && !str_contains($file, 'deprecated')) {
+        require_once $file;
+    }
+});
 require_once ABSPATH . 'wp-admin/includes/admin.php';
 require_once ABSPATH . 'wp-admin/includes/dashboard.php';
 $pending = array_merge(glob(ABSPATH . 'wp-admin/includes/*.php'), glob(ABSPATH . 'wp-includes/class-*.php'), glob(ABSPATH . 'wp-includes/*/class-*.php'));

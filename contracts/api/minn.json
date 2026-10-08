@@ -103864,7 +103864,8 @@
             "uses": [
                 "Minn\\I18n\\Gettext",
                 "Minn\\Mail\\Mailer",
-                "Minn\\Runtime\\Runtime"
+                "Minn\\Runtime\\Runtime",
+                "Minn\\Support\\Entities"
             ],
             "usedBy": [],
             "constructor": null,
@@ -103896,8 +103897,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 26,
-                    "end": 65
+                    "line": 27,
+                    "end": 66
                 },
                 {
                     "routes": [],
@@ -103923,8 +103924,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 68,
-                    "end": 74
+                    "line": 69,
+                    "end": 75
                 },
                 {
                     "routes": [],
@@ -103950,8 +103951,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 82,
-                    "end": 120
+                    "line": 83,
+                    "end": 121
                 },
                 {
                     "routes": [],
@@ -103984,8 +103985,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 127,
-                    "end": 149
+                    "line": 128,
+                    "end": 150
                 },
                 {
                     "routes": [],
@@ -104011,8 +104012,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 152,
-                    "end": 155
+                    "line": 153,
+                    "end": 156
                 }
             ]
         },
@@ -109423,7 +109424,7 @@
             "namespace": "Minn\\Runtime",
             "kind": "final class",
             "file": "public/minn/src/Minn/Runtime/Hooks.php",
-            "lines": 338,
+            "lines": 340,
             "doc": "The hook registry plugin code registers into and the engine fires.\nSemantics come from contracts/fixtures/api/hooks.json: callbacks run\nby ascending priority then insertion order; a callback added at a\nhigher priority during a run takes part in that run, one added at the\ncurrent or a lower priority waits for the next; a callback removed\nbefore its turn is skipped; the \"all\" hook sees every firing with the\nhook name first and every argument regardless of its accepted count.",
             "implements": [],
             "extends": null,
@@ -110056,7 +110057,7 @@
                         }
                     ],
                     "line": 273,
-                    "end": 316
+                    "end": 320
                 },
                 {
                     "routes": [],
@@ -110082,8 +110083,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 318,
-                    "end": 327
+                    "line": 322,
+                    "end": 331
                 },
                 {
                     "routes": [],
@@ -110111,8 +110112,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 330,
-                    "end": 341
+                    "line": 334,
+                    "end": 343
                 },
                 {
                     "routes": [],
@@ -110131,8 +110132,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 344,
-                    "end": 354
+                    "line": 346,
+                    "end": 356
                 }
             ]
         },
@@ -121511,6 +121512,7 @@
                 "Minn\\Runtime\\TermWriter",
                 "Minn\\Runtime\\ThemeSupports",
                 "Minn\\Runtime\\ThemeSwitch",
+                "Minn\\Runtime\\Upgrade",
                 "Minn\\Runtime\\UserEvents",
                 "Minn\\Theme\\ArchiveTitle",
                 "Minn\\Theme\\ClassicContent",
@@ -127482,6 +127484,502 @@
             ]
         },
         {
+            "name": "Minn\\Runtime\\Upgrade",
+            "short": "Upgrade",
+            "namespace": "Minn\\Runtime",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Runtime/Upgrade.php",
+            "lines": 347,
+            "doc": "What WP_Upgrader does with a package (probe upgrader), for the facade's\nupgraders and so for everything that installs or updates a plugin or a\ntheme. run() is the whole pass: the options through\nupgrader_package_options, the package downloaded and unpacked into\nwp-content/upgrade/, put in place by install(), the result through\nupgrader_install_package_result and told to the skin, and, for a single\nitem, upgrader_process_complete. The steps a subclass may replace\n(fs_connect, download_package, unpack_package, install_package,\nclear_destination) are called on the upgrader itself, as the reference\ncalls them, so a plugin's own upgrader class is honoured.\n\nAn update names the folder it replaces (hook_extra temp_backup); that\ncopy is moved to wp-content/upgrade-temp-backup/<dir>/<slug> before the\ndestination is cleared, moved back when the new one fails, and removed\nonce the pass is over. The reference keeps it for a weekly event to\nclear and puts it back at shutdown; Minn keeps nothing and restores at\nonce.",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\Runtime\\Runtime",
+                "Minn\\Support\\Files",
+                "Minn\\Support\\Url"
+            ],
+            "usedBy": [],
+            "constructor": null,
+            "cases": [],
+            "constants": [
+                {
+                    "name": "RUN",
+                    "value": "array (   'package' => '',   'destination' => '',   'clear_destination' => false,   'clear_working' => true,   'abort_if_destination_exists' => true,   'is_multi' => false,   'hook_extra' =>    array (   ), )",
+                    "doc": "The run options in the reference's order, which upgrader_package_options sees.",
+                    "visibility": "private"
+                }
+            ],
+            "properties": [],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "run",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "run(WP_Upgrader $upgrader, array $options): mixed",
+                    "doc": "WP_Upgrader::run; false when the filesystem cannot be reached.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "upgrader",
+                            "type": "WP_Upgrader",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "options",
+                            "type": "array",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 35,
+                    "end": 74
+                },
+                {
+                    "routes": [],
+                    "name": "bulk",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "bulk(WP_Upgrader $upgrader, array $items, array $offers, array $how): array|false",
+                    "doc": "The bulk pass of Plugin_Upgrader and Theme_Upgrader: the skin opened,\nmaintenance mode on when an active item is replaced, each item with an\noffer run as one of many (one without is up to date, answered true),\nthe pass stopped when the filesystem refuses, then maintenance off, the\nupdate cache cleaned, upgrader_process_complete told the whole list,\nand the skin closed. False when the filesystem cannot be reached.",
+                    "shapes": [
+                        "@param list<string> $items plugin files or theme folders",
+                        "@param array<string, mixed> $offers item => the offer (its package)",
+                        "@param array{directories: list<string>, maintenance: bool, prepare: \\Closure(string): array{0: string, 1: array}, clean: \\Closure(): void, complete: array} $how",
+                        "@return array<string, mixed>|false"
+                    ],
+                    "params": [
+                        {
+                            "name": "upgrader",
+                            "type": "WP_Upgrader",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "items",
+                            "type": "array",
+                            "shape": "list<string>",
+                            "default": null,
+                            "doc": "plugin files or theme folders"
+                        },
+                        {
+                            "name": "offers",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": "item => the offer (its package)"
+                        },
+                        {
+                            "name": "how",
+                            "type": "array",
+                            "shape": "array{directories: list<string>, maintenance: bool, prepare: \\Closure(string): array{0: string, 1: array}, clean: \\Closure(): void, complete: array}",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 89,
+                    "end": 126
+                },
+                {
+                    "routes": [],
+                    "name": "install",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "install(WP_Upgrader $upgrader, array $args): WP_Error|array",
+                    "doc": "WP_Upgrader::install_package: the unpacked folder chosen (its one\nfolder, or the working folder when it holds several things), offered\nto upgrader_pre_install and upgrader_source_selection, the destination\ncleared or refused when something is there, the folder moved in, and\nthe result offered to upgrader_post_install.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "upgrader",
+                            "type": "WP_Upgrader",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "args",
+                            "type": "array",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 135,
+                    "end": 184
+                },
+                {
+                    "routes": [],
+                    "name": "unpack",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "unpack(WP_Upgrader $upgrader, string $package): WP_Error|string",
+                    "doc": "WP_Upgrader::unpack_package, without the package's deletion (the\ncaller's): the upgrade folder emptied of what earlier passes left,\nthe package unzipped into a folder named for it, and an archive that\nwill not open refused in the upgrader's words with the reader's reason.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "upgrader",
+                            "type": "WP_Upgrader",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "package",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 192,
+                    "end": 208
+                },
+                {
+                    "routes": [],
+                    "name": "clear",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "clear(WP_Upgrader $upgrader, string $remote): WP_Error|bool",
+                    "doc": "WP_Upgrader::clear_destination: whatever is at the destination removed; true when nothing is left there.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "upgrader",
+                            "type": "WP_Upgrader",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "remote",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 211,
+                    "end": 217
+                },
+                {
+                    "routes": [],
+                    "name": "maintenanceOn",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "maintenanceOn(WP_Upgrader $upgrader): void",
+                    "doc": "Maintenance mode on, as a bulk update of active plugins turns it on: the .maintenance file the front door reads.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "upgrader",
+                            "type": "WP_Upgrader",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 220,
+                    "end": 224
+                },
+                {
+                    "routes": [],
+                    "name": "maintenanceOff",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "maintenanceOff(WP_Upgrader $upgrader): void",
+                    "doc": "Maintenance mode off; said only when it was on.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "upgrader",
+                            "type": "WP_Upgrader",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 227,
+                    "end": 233
+                },
+                {
+                    "routes": [],
+                    "name": "destinationFor",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "destinationFor(string $destination, string $source): string",
+                    "doc": "The folder the item lands in: a folder named for the package inside a known parent, otherwise the destination itself.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "destination",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "source",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 236,
+                    "end": 242
+                },
+                {
+                    "routes": [],
+                    "name": "clearOrRefuse",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "clearOrRefuse(WP_Upgrader $upgrader, string $remote, array $args): WP_Error|bool",
+                    "doc": "Clears the destination (an update's copy set aside first), or refuses when something is there and must not be replaced.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "upgrader",
+                            "type": "WP_Upgrader",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "remote",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "args",
+                            "type": "array",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 245,
+                    "end": 263
+                },
+                {
+                    "routes": [],
+                    "name": "move",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "move(string $source, string $remote, WP_Upgrader $upgrader): WP_Error|bool",
+                    "doc": "The source moved (or, across filesystems, copied) to the destination; an existing destination is merged into.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "source",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "remote",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "upgrader",
+                            "type": "WP_Upgrader",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 266,
+                    "end": 275
+                },
+                {
+                    "routes": [],
+                    "name": "copyInto",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "copyInto(string $from, string $to): bool",
+                    "doc": "",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "from",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "to",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 277,
+                    "end": 288
+                },
+                {
+                    "routes": [],
+                    "name": "report",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "report(WP_Upgrader $upgrader, mixed $result, array $extra): void",
+                    "doc": "The run's outcome told to the skin; an update's set-aside copy put back on failure, removed on success.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "upgrader",
+                            "type": "WP_Upgrader",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "result",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "extra",
+                            "type": "array",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 291,
+                    "end": 306
+                },
+                {
+                    "routes": [],
+                    "name": "setAside",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "setAside(WP_Upgrader $upgrader, array $backup): WP_Error|true",
+                    "doc": "Moves an update's current copy to the backup folder (one left there by an earlier pass is replaced).",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "upgrader",
+                            "type": "WP_Upgrader",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "backup",
+                            "type": "array",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 309,
+                    "end": 320
+                },
+                {
+                    "routes": [],
+                    "name": "putBack",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "putBack(array $backup): void",
+                    "doc": "",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "backup",
+                            "type": "array",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 322,
+                    "end": 332
+                },
+                {
+                    "routes": [],
+                    "name": "forget",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "forget(array $backup): void",
+                    "doc": "",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "backup",
+                            "type": "array",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 334,
+                    "end": 340
+                },
+                {
+                    "routes": [],
+                    "name": "backedUp",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "backedUp(array $backup, string $end): ?string",
+                    "doc": "Where an update's copy lives ('from') and where it is set aside ('to'), or null when the update names none.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "backup",
+                            "type": "array",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "end",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 343,
+                    "end": 352
+                },
+                {
+                    "routes": [],
+                    "name": "listing",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "listing(string $folder): array",
+                    "doc": "A folder's entries in the order the filesystem gives them, as the\nreference's dirlist reads them (no sorting).",
+                    "shapes": [
+                        "@return list<string>"
+                    ],
+                    "params": [
+                        {
+                            "name": "folder",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 360,
+                    "end": 374
+                }
+            ]
+        },
+        {
             "name": "Minn\\Runtime\\UserEvents",
             "short": "UserEvents",
             "namespace": "Minn\\Runtime",
@@ -129151,6 +129649,7 @@
             "extends": null,
             "uses": [],
             "usedBy": [
+                "Minn\\Runtime\\AccountFlows",
                 "Minn\\Support\\Escape",
                 "Minn\\Support\\Kses"
             ],
@@ -129574,7 +130073,8 @@
                 "Minn\\Ops\\EngineUpdate",
                 "Minn\\Ops\\Packages",
                 "Minn\\Runtime\\PluginRemoval",
-                "Minn\\Runtime\\ThemeSwitch"
+                "Minn\\Runtime\\ThemeSwitch",
+                "Minn\\Runtime\\Upgrade"
             ],
             "constructor": null,
             "cases": [],
@@ -132624,7 +133124,8 @@
                 "Minn\\Runtime\\ArchiveLinks",
                 "Minn\\Runtime\\CommentPages",
                 "Minn\\Runtime\\NavMenu",
-                "Minn\\Runtime\\PostLinks"
+                "Minn\\Runtime\\PostLinks",
+                "Minn\\Runtime\\Upgrade"
             ],
             "constructor": null,
             "cases": [],

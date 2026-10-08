@@ -1,4 +1,56 @@
 {
+    "Automatic_Upgrader_Skin": {
+        "file": "wp-admin/includes/class-automatic-upgrader-skin.php",
+        "extends": "WP_Upgrader_Skin",
+        "properties": {
+            "messages": {
+                "visibility": "protected",
+                "default": []
+            }
+        },
+        "methods": {
+            "request_filesystem_credentials": {
+                "params": [
+                    {
+                        "name": "error",
+                        "optional": true,
+                        "default": false
+                    },
+                    {
+                        "name": "context",
+                        "optional": true,
+                        "default": ""
+                    },
+                    {
+                        "name": "allow_relaxed_file_ownership",
+                        "optional": true,
+                        "default": false
+                    }
+                ]
+            },
+            "get_upgrade_messages": {
+                "params": []
+            },
+            "feedback": {
+                "params": [
+                    {
+                        "name": "feedback"
+                    },
+                    {
+                        "name": "args",
+                        "variadic": true,
+                        "optional": true
+                    }
+                ]
+            },
+            "header": {
+                "params": []
+            },
+            "footer": {
+                "params": []
+            }
+        }
+    },
     "Avifinfo\\Box": {
         "file": "wp-includes/class-avif-info.php",
         "properties": {
@@ -203,6 +255,189 @@
             },
             "parent_item_id": {
                 "default": null
+            }
+        }
+    },
+    "Bulk_Plugin_Upgrader_Skin": {
+        "file": "wp-admin/includes/class-bulk-plugin-upgrader-skin.php",
+        "extends": "Bulk_Upgrader_Skin",
+        "properties": {
+            "plugin_info": {
+                "default": []
+            }
+        },
+        "methods": {
+            "add_strings": {
+                "params": []
+            },
+            "before": {
+                "params": [
+                    {
+                        "name": "title",
+                        "optional": true,
+                        "default": ""
+                    }
+                ]
+            },
+            "after": {
+                "params": [
+                    {
+                        "name": "title",
+                        "optional": true,
+                        "default": ""
+                    }
+                ]
+            },
+            "bulk_footer": {
+                "params": []
+            }
+        }
+    },
+    "Bulk_Theme_Upgrader_Skin": {
+        "file": "wp-admin/includes/class-bulk-theme-upgrader-skin.php",
+        "extends": "Bulk_Upgrader_Skin",
+        "properties": {
+            "theme_info": {
+                "default": false
+            }
+        },
+        "methods": {
+            "add_strings": {
+                "params": []
+            },
+            "before": {
+                "params": [
+                    {
+                        "name": "title",
+                        "optional": true,
+                        "default": ""
+                    }
+                ]
+            },
+            "after": {
+                "params": [
+                    {
+                        "name": "title",
+                        "optional": true,
+                        "default": ""
+                    }
+                ]
+            },
+            "bulk_footer": {
+                "params": []
+            }
+        }
+    },
+    "Bulk_Upgrader_Skin": {
+        "file": "wp-admin/includes/class-bulk-upgrader-skin.php",
+        "extends": "WP_Upgrader_Skin",
+        "properties": {
+            "in_loop": {
+                "default": false
+            },
+            "error": {
+                "default": false
+            }
+        },
+        "methods": {
+            "__construct": {
+                "params": [
+                    {
+                        "name": "args",
+                        "optional": true,
+                        "default": []
+                    }
+                ]
+            },
+            "add_strings": {
+                "params": []
+            },
+            "feedback": {
+                "params": [
+                    {
+                        "name": "feedback"
+                    },
+                    {
+                        "name": "args",
+                        "variadic": true,
+                        "optional": true
+                    }
+                ]
+            },
+            "header": {
+                "params": []
+            },
+            "footer": {
+                "params": []
+            },
+            "error": {
+                "params": [
+                    {
+                        "name": "errors"
+                    }
+                ]
+            },
+            "bulk_header": {
+                "params": []
+            },
+            "bulk_footer": {
+                "params": []
+            },
+            "before": {
+                "params": [
+                    {
+                        "name": "title",
+                        "optional": true,
+                        "default": ""
+                    }
+                ]
+            },
+            "after": {
+                "params": [
+                    {
+                        "name": "title",
+                        "optional": true,
+                        "default": ""
+                    }
+                ]
+            },
+            "reset": {
+                "params": []
+            },
+            "flush_output": {
+                "params": []
+            }
+        }
+    },
+    "Core_Upgrader": {
+        "file": "wp-admin/includes/class-core-upgrader.php",
+        "extends": "WP_Upgrader",
+        "methods": {
+            "upgrade_strings": {
+                "params": []
+            },
+            "upgrade": {
+                "params": [
+                    {
+                        "name": "current"
+                    },
+                    {
+                        "name": "args",
+                        "optional": true,
+                        "default": []
+                    }
+                ]
+            },
+            "should_update_to_version": {
+                "static": true,
+                "params": [
+                    {
+                        "name": "offered_ver"
+                    }
+                ]
+            },
+            "check_files": {
+                "params": []
             }
         }
     },
@@ -1205,6 +1440,130 @@
                         "name": "array"
                     }
                 ]
+            }
+        }
+    },
+    "Language_Pack_Upgrader": {
+        "file": "wp-admin/includes/class-language-pack-upgrader.php",
+        "extends": "WP_Upgrader",
+        "properties": {
+            "result": {
+                "default": null
+            },
+            "bulk": {
+                "default": true
+            }
+        },
+        "methods": {
+            "async_upgrade": {
+                "static": true,
+                "params": [
+                    {
+                        "name": "upgrader",
+                        "optional": true,
+                        "default": false
+                    }
+                ]
+            },
+            "upgrade_strings": {
+                "params": []
+            },
+            "upgrade": {
+                "params": [
+                    {
+                        "name": "update",
+                        "optional": true,
+                        "default": false
+                    },
+                    {
+                        "name": "args",
+                        "optional": true,
+                        "default": []
+                    }
+                ]
+            },
+            "bulk_upgrade": {
+                "params": [
+                    {
+                        "name": "language_updates",
+                        "optional": true,
+                        "default": []
+                    },
+                    {
+                        "name": "args",
+                        "optional": true,
+                        "default": []
+                    }
+                ]
+            },
+            "check_package": {
+                "params": [
+                    {
+                        "name": "source"
+                    },
+                    {
+                        "name": "remote_source"
+                    }
+                ]
+            },
+            "get_name_for_update": {
+                "params": [
+                    {
+                        "name": "update"
+                    }
+                ]
+            },
+            "clear_destination": {
+                "params": [
+                    {
+                        "name": "remote_destination"
+                    }
+                ]
+            }
+        }
+    },
+    "Language_Pack_Upgrader_Skin": {
+        "file": "wp-admin/includes/class-language-pack-upgrader-skin.php",
+        "extends": "WP_Upgrader_Skin",
+        "properties": {
+            "language_update": {
+                "default": null
+            },
+            "done_header": {
+                "default": false
+            },
+            "done_footer": {
+                "default": false
+            },
+            "display_footer_actions": {
+                "default": true
+            }
+        },
+        "methods": {
+            "__construct": {
+                "params": [
+                    {
+                        "name": "args",
+                        "optional": true,
+                        "default": []
+                    }
+                ]
+            },
+            "before": {
+                "params": []
+            },
+            "error": {
+                "params": [
+                    {
+                        "name": "errors"
+                    }
+                ]
+            },
+            "after": {
+                "params": []
+            },
+            "bulk_footer": {
+                "params": []
             }
         }
     },
@@ -4369,6 +4728,200 @@
             }
         }
     },
+    "Plugin_Installer_Skin": {
+        "file": "wp-admin/includes/class-plugin-installer-skin.php",
+        "extends": "WP_Upgrader_Skin",
+        "properties": {
+            "api": {
+                "default": null
+            },
+            "type": {
+                "default": null
+            },
+            "url": {
+                "default": null
+            },
+            "overwrite": {
+                "default": null
+            },
+            "is_downgrading": {
+                "visibility": "private",
+                "default": false
+            }
+        },
+        "methods": {
+            "__construct": {
+                "params": [
+                    {
+                        "name": "args",
+                        "optional": true,
+                        "default": []
+                    }
+                ]
+            },
+            "before": {
+                "params": []
+            },
+            "hide_process_failed": {
+                "params": [
+                    {
+                        "name": "wp_error"
+                    }
+                ]
+            },
+            "after": {
+                "params": []
+            },
+            "do_overwrite": {
+                "visibility": "private",
+                "params": []
+            }
+        }
+    },
+    "Plugin_Upgrader": {
+        "file": "wp-admin/includes/class-plugin-upgrader.php",
+        "extends": "WP_Upgrader",
+        "properties": {
+            "result": {
+                "default": null
+            },
+            "bulk": {
+                "default": false
+            },
+            "new_plugin_data": {
+                "default": []
+            }
+        },
+        "methods": {
+            "upgrade_strings": {
+                "params": []
+            },
+            "install_strings": {
+                "params": []
+            },
+            "install": {
+                "params": [
+                    {
+                        "name": "package"
+                    },
+                    {
+                        "name": "args",
+                        "optional": true,
+                        "default": []
+                    }
+                ]
+            },
+            "upgrade": {
+                "params": [
+                    {
+                        "name": "plugin"
+                    },
+                    {
+                        "name": "args",
+                        "optional": true,
+                        "default": []
+                    }
+                ]
+            },
+            "bulk_upgrade": {
+                "params": [
+                    {
+                        "name": "plugins"
+                    },
+                    {
+                        "name": "args",
+                        "optional": true,
+                        "default": []
+                    }
+                ]
+            },
+            "check_package": {
+                "params": [
+                    {
+                        "name": "source"
+                    }
+                ]
+            },
+            "plugin_info": {
+                "params": []
+            },
+            "deactivate_plugin_before_upgrade": {
+                "params": [
+                    {
+                        "name": "response"
+                    },
+                    {
+                        "name": "plugin"
+                    }
+                ]
+            },
+            "active_before": {
+                "params": [
+                    {
+                        "name": "response"
+                    },
+                    {
+                        "name": "plugin"
+                    }
+                ]
+            },
+            "active_after": {
+                "params": [
+                    {
+                        "name": "response"
+                    },
+                    {
+                        "name": "plugin"
+                    }
+                ]
+            },
+            "delete_old_plugin": {
+                "params": [
+                    {
+                        "name": "removed"
+                    },
+                    {
+                        "name": "local_destination"
+                    },
+                    {
+                        "name": "remote_destination"
+                    },
+                    {
+                        "name": "plugin"
+                    }
+                ]
+            }
+        }
+    },
+    "Plugin_Upgrader_Skin": {
+        "file": "wp-admin/includes/class-plugin-upgrader-skin.php",
+        "extends": "WP_Upgrader_Skin",
+        "properties": {
+            "plugin": {
+                "default": ""
+            },
+            "plugin_active": {
+                "default": false
+            },
+            "plugin_network_active": {
+                "default": false
+            }
+        },
+        "methods": {
+            "__construct": {
+                "params": [
+                    {
+                        "name": "args",
+                        "optional": true,
+                        "default": []
+                    }
+                ]
+            },
+            "after": {
+                "params": []
+            }
+        }
+    },
     "Plural_Forms": {
         "file": "wp-includes/pomo/plural-forms.php",
         "constants": {
@@ -7514,6 +8067,210 @@
             }
         }
     },
+    "Theme_Installer_Skin": {
+        "file": "wp-admin/includes/class-theme-installer-skin.php",
+        "extends": "WP_Upgrader_Skin",
+        "properties": {
+            "api": {
+                "default": null
+            },
+            "type": {
+                "default": null
+            },
+            "url": {
+                "default": null
+            },
+            "overwrite": {
+                "default": null
+            },
+            "is_downgrading": {
+                "visibility": "private",
+                "default": false
+            }
+        },
+        "methods": {
+            "__construct": {
+                "params": [
+                    {
+                        "name": "args",
+                        "optional": true,
+                        "default": []
+                    }
+                ]
+            },
+            "before": {
+                "params": []
+            },
+            "hide_process_failed": {
+                "params": [
+                    {
+                        "name": "wp_error"
+                    }
+                ]
+            },
+            "after": {
+                "params": []
+            },
+            "do_overwrite": {
+                "visibility": "private",
+                "params": []
+            }
+        }
+    },
+    "Theme_Upgrader": {
+        "file": "wp-admin/includes/class-theme-upgrader.php",
+        "extends": "WP_Upgrader",
+        "properties": {
+            "result": {
+                "default": null
+            },
+            "bulk": {
+                "default": false
+            },
+            "new_theme_data": {
+                "default": []
+            }
+        },
+        "methods": {
+            "upgrade_strings": {
+                "params": []
+            },
+            "install_strings": {
+                "params": []
+            },
+            "check_parent_theme_filter": {
+                "params": [
+                    {
+                        "name": "install_result"
+                    },
+                    {
+                        "name": "hook_extra"
+                    },
+                    {
+                        "name": "child_result"
+                    }
+                ]
+            },
+            "hide_activate_preview_actions": {
+                "params": [
+                    {
+                        "name": "actions"
+                    }
+                ]
+            },
+            "install": {
+                "params": [
+                    {
+                        "name": "package"
+                    },
+                    {
+                        "name": "args",
+                        "optional": true,
+                        "default": []
+                    }
+                ]
+            },
+            "upgrade": {
+                "params": [
+                    {
+                        "name": "theme"
+                    },
+                    {
+                        "name": "args",
+                        "optional": true,
+                        "default": []
+                    }
+                ]
+            },
+            "bulk_upgrade": {
+                "params": [
+                    {
+                        "name": "themes"
+                    },
+                    {
+                        "name": "args",
+                        "optional": true,
+                        "default": []
+                    }
+                ]
+            },
+            "check_package": {
+                "params": [
+                    {
+                        "name": "source"
+                    }
+                ]
+            },
+            "current_before": {
+                "params": [
+                    {
+                        "name": "response"
+                    },
+                    {
+                        "name": "theme"
+                    }
+                ]
+            },
+            "current_after": {
+                "params": [
+                    {
+                        "name": "response"
+                    },
+                    {
+                        "name": "theme"
+                    }
+                ]
+            },
+            "delete_old_theme": {
+                "params": [
+                    {
+                        "name": "removed"
+                    },
+                    {
+                        "name": "local_destination"
+                    },
+                    {
+                        "name": "remote_destination"
+                    },
+                    {
+                        "name": "theme"
+                    }
+                ]
+            },
+            "theme_info": {
+                "params": [
+                    {
+                        "name": "theme",
+                        "optional": true,
+                        "default": null
+                    }
+                ]
+            }
+        }
+    },
+    "Theme_Upgrader_Skin": {
+        "file": "wp-admin/includes/class-theme-upgrader-skin.php",
+        "extends": "WP_Upgrader_Skin",
+        "properties": {
+            "theme": {
+                "default": ""
+            }
+        },
+        "methods": {
+            "__construct": {
+                "params": [
+                    {
+                        "name": "args",
+                        "optional": true,
+                        "default": []
+                    }
+                ]
+            },
+            "after": {
+                "params": []
+            }
+        }
+    },
     "Translation_Entry": {
         "file": "wp-includes/pomo/entry.php",
         "properties": {
@@ -8937,6 +9694,63 @@
             },
             "send": {
                 "params": []
+            }
+        }
+    },
+    "WP_Ajax_Upgrader_Skin": {
+        "file": "wp-admin/includes/class-wp-ajax-upgrader-skin.php",
+        "extends": "Automatic_Upgrader_Skin",
+        "properties": {
+            "plugin_info": {
+                "default": []
+            },
+            "theme_info": {
+                "default": false
+            },
+            "errors": {
+                "visibility": "protected",
+                "default": null
+            }
+        },
+        "methods": {
+            "__construct": {
+                "params": [
+                    {
+                        "name": "args",
+                        "optional": true,
+                        "default": []
+                    }
+                ]
+            },
+            "get_errors": {
+                "params": []
+            },
+            "get_error_messages": {
+                "params": []
+            },
+            "error": {
+                "params": [
+                    {
+                        "name": "errors"
+                    },
+                    {
+                        "name": "args",
+                        "variadic": true,
+                        "optional": true
+                    }
+                ]
+            },
+            "feedback": {
+                "params": [
+                    {
+                        "name": "feedback"
+                    },
+                    {
+                        "name": "args",
+                        "variadic": true,
+                        "optional": true
+                    }
+                ]
             }
         }
     },
@@ -21391,6 +22205,465 @@
                         "default": null
                     }
                 ]
+            }
+        }
+    },
+    "WP_Image_Editor_GD": {
+        "file": "wp-includes/class-wp-image-editor-gd.php",
+        "extends": "WP_Image_Editor",
+        "properties": {
+            "image": {
+                "visibility": "protected",
+                "default": null
+            }
+        },
+        "methods": {
+            "__destruct": {
+                "params": []
+            },
+            "test": {
+                "static": true,
+                "params": [
+                    {
+                        "name": "args",
+                        "optional": true,
+                        "default": []
+                    }
+                ]
+            },
+            "supports_mime_type": {
+                "static": true,
+                "params": [
+                    {
+                        "name": "mime_type"
+                    }
+                ]
+            },
+            "load": {
+                "params": []
+            },
+            "update_size": {
+                "visibility": "protected",
+                "params": [
+                    {
+                        "name": "width",
+                        "optional": true,
+                        "default": null
+                    },
+                    {
+                        "name": "height",
+                        "optional": true,
+                        "default": null
+                    }
+                ]
+            },
+            "resize": {
+                "params": [
+                    {
+                        "name": "max_w"
+                    },
+                    {
+                        "name": "max_h"
+                    },
+                    {
+                        "name": "crop",
+                        "optional": true,
+                        "default": false
+                    }
+                ]
+            },
+            "_resize": {
+                "visibility": "protected",
+                "params": [
+                    {
+                        "name": "max_w"
+                    },
+                    {
+                        "name": "max_h"
+                    },
+                    {
+                        "name": "crop",
+                        "optional": true,
+                        "default": false
+                    }
+                ]
+            },
+            "multi_resize": {
+                "params": [
+                    {
+                        "name": "sizes"
+                    }
+                ]
+            },
+            "make_subsize": {
+                "params": [
+                    {
+                        "name": "size_data"
+                    }
+                ]
+            },
+            "crop": {
+                "params": [
+                    {
+                        "name": "src_x"
+                    },
+                    {
+                        "name": "src_y"
+                    },
+                    {
+                        "name": "src_w"
+                    },
+                    {
+                        "name": "src_h"
+                    },
+                    {
+                        "name": "dst_w",
+                        "optional": true,
+                        "default": null
+                    },
+                    {
+                        "name": "dst_h",
+                        "optional": true,
+                        "default": null
+                    },
+                    {
+                        "name": "src_abs",
+                        "optional": true,
+                        "default": false
+                    }
+                ]
+            },
+            "rotate": {
+                "params": [
+                    {
+                        "name": "angle"
+                    }
+                ]
+            },
+            "flip": {
+                "params": [
+                    {
+                        "name": "horz"
+                    },
+                    {
+                        "name": "vert"
+                    }
+                ]
+            },
+            "save": {
+                "params": [
+                    {
+                        "name": "destfilename",
+                        "optional": true,
+                        "default": null
+                    },
+                    {
+                        "name": "mime_type",
+                        "optional": true,
+                        "default": null
+                    }
+                ]
+            },
+            "_save": {
+                "visibility": "protected",
+                "params": [
+                    {
+                        "name": "image"
+                    },
+                    {
+                        "name": "filename",
+                        "optional": true,
+                        "default": null
+                    },
+                    {
+                        "name": "mime_type",
+                        "optional": true,
+                        "default": null
+                    }
+                ]
+            },
+            "set_quality": {
+                "params": [
+                    {
+                        "name": "quality",
+                        "optional": true,
+                        "default": null
+                    },
+                    {
+                        "name": "dims",
+                        "optional": true,
+                        "default": []
+                    }
+                ]
+            },
+            "stream": {
+                "params": [
+                    {
+                        "name": "mime_type",
+                        "optional": true,
+                        "default": null
+                    }
+                ]
+            },
+            "make_image": {
+                "visibility": "protected",
+                "params": [
+                    {
+                        "name": "filename"
+                    },
+                    {
+                        "name": "callback"
+                    },
+                    {
+                        "name": "arguments"
+                    }
+                ]
+            }
+        }
+    },
+    "WP_Image_Editor_Imagick": {
+        "file": "wp-includes/class-wp-image-editor-imagick.php",
+        "extends": "WP_Image_Editor",
+        "properties": {
+            "image": {
+                "visibility": "protected",
+                "default": null
+            },
+            "stream_file_data": {
+                "visibility": "private",
+                "default": null
+            },
+            "image_given_name": {
+                "visibility": "private",
+                "default": null
+            }
+        },
+        "methods": {
+            "__destruct": {
+                "params": []
+            },
+            "test": {
+                "static": true,
+                "params": [
+                    {
+                        "name": "args",
+                        "optional": true,
+                        "default": []
+                    }
+                ]
+            },
+            "supports_mime_type": {
+                "static": true,
+                "params": [
+                    {
+                        "name": "mime_type"
+                    }
+                ]
+            },
+            "load": {
+                "params": []
+            },
+            "set_quality": {
+                "params": [
+                    {
+                        "name": "quality",
+                        "optional": true,
+                        "default": null
+                    },
+                    {
+                        "name": "dims",
+                        "optional": true,
+                        "default": []
+                    }
+                ]
+            },
+            "update_size": {
+                "visibility": "protected",
+                "params": [
+                    {
+                        "name": "width",
+                        "optional": true,
+                        "default": null
+                    },
+                    {
+                        "name": "height",
+                        "optional": true,
+                        "default": null
+                    }
+                ]
+            },
+            "set_imagick_time_limit": {
+                "static": true,
+                "params": []
+            },
+            "resize": {
+                "params": [
+                    {
+                        "name": "max_w"
+                    },
+                    {
+                        "name": "max_h"
+                    },
+                    {
+                        "name": "crop",
+                        "optional": true,
+                        "default": false
+                    }
+                ]
+            },
+            "thumbnail_image": {
+                "visibility": "protected",
+                "params": [
+                    {
+                        "name": "dst_w"
+                    },
+                    {
+                        "name": "dst_h"
+                    },
+                    {
+                        "name": "filter_name",
+                        "optional": true,
+                        "default": "FILTER_TRIANGLE"
+                    },
+                    {
+                        "name": "strip_meta",
+                        "optional": true,
+                        "default": true
+                    }
+                ]
+            },
+            "multi_resize": {
+                "params": [
+                    {
+                        "name": "sizes"
+                    }
+                ]
+            },
+            "make_subsize": {
+                "params": [
+                    {
+                        "name": "size_data"
+                    }
+                ]
+            },
+            "crop": {
+                "params": [
+                    {
+                        "name": "src_x"
+                    },
+                    {
+                        "name": "src_y"
+                    },
+                    {
+                        "name": "src_w"
+                    },
+                    {
+                        "name": "src_h"
+                    },
+                    {
+                        "name": "dst_w",
+                        "optional": true,
+                        "default": null
+                    },
+                    {
+                        "name": "dst_h",
+                        "optional": true,
+                        "default": null
+                    },
+                    {
+                        "name": "src_abs",
+                        "optional": true,
+                        "default": false
+                    }
+                ]
+            },
+            "rotate": {
+                "params": [
+                    {
+                        "name": "angle"
+                    }
+                ]
+            },
+            "flip": {
+                "params": [
+                    {
+                        "name": "horz"
+                    },
+                    {
+                        "name": "vert"
+                    }
+                ]
+            },
+            "maybe_exif_rotate": {
+                "params": []
+            },
+            "save": {
+                "params": [
+                    {
+                        "name": "destfilename",
+                        "optional": true,
+                        "default": null
+                    },
+                    {
+                        "name": "mime_type",
+                        "optional": true,
+                        "default": null
+                    }
+                ]
+            },
+            "remove_pdf_alpha_channel": {
+                "visibility": "protected",
+                "params": []
+            },
+            "_save": {
+                "visibility": "protected",
+                "params": [
+                    {
+                        "name": "image"
+                    },
+                    {
+                        "name": "filename",
+                        "optional": true,
+                        "default": null
+                    },
+                    {
+                        "name": "mime_type",
+                        "optional": true,
+                        "default": null
+                    }
+                ]
+            },
+            "write_image": {
+                "visibility": "private",
+                "params": [
+                    {
+                        "name": "image"
+                    },
+                    {
+                        "name": "filename"
+                    }
+                ]
+            },
+            "stream": {
+                "params": [
+                    {
+                        "name": "mime_type",
+                        "optional": true,
+                        "default": null
+                    }
+                ]
+            },
+            "strip_meta": {
+                "visibility": "protected",
+                "params": []
+            },
+            "pdf_setup": {
+                "visibility": "protected",
+                "params": []
+            },
+            "pdf_load_source": {
+                "visibility": "protected",
+                "params": []
             }
         }
     },
@@ -38110,6 +39383,77 @@
             }
         }
     },
+    "WP_Theme_Install_List_Table": {
+        "file": "wp-admin/includes/class-wp-theme-install-list-table.php",
+        "extends": "WP_Themes_List_Table",
+        "properties": {
+            "features": {
+                "default": []
+            }
+        },
+        "methods": {
+            "ajax_user_can": {
+                "params": []
+            },
+            "prepare_items": {
+                "params": []
+            },
+            "no_items": {
+                "params": []
+            },
+            "get_views": {
+                "visibility": "protected",
+                "params": []
+            },
+            "display": {
+                "params": []
+            },
+            "display_rows": {
+                "params": []
+            },
+            "single_row": {
+                "params": [
+                    {
+                        "name": "theme"
+                    }
+                ]
+            },
+            "theme_installer": {
+                "params": []
+            },
+            "theme_installer_single": {
+                "params": [
+                    {
+                        "name": "theme"
+                    }
+                ]
+            },
+            "install_theme_info": {
+                "params": [
+                    {
+                        "name": "theme"
+                    }
+                ]
+            },
+            "_js_vars": {
+                "params": [
+                    {
+                        "name": "extra_args",
+                        "optional": true,
+                        "default": []
+                    }
+                ]
+            },
+            "_get_theme_status": {
+                "visibility": "private",
+                "params": [
+                    {
+                        "name": "theme"
+                    }
+                ]
+            }
+        }
+    },
     "WP_Theme_JSON": {
         "file": "wp-includes/class-wp-theme-json.php",
         "constants": {
@@ -45936,7 +47280,7 @@
             "certificate_path": {
                 "visibility": "protected",
                 "static": true,
-                "default": "~/Cove/Sites/minn-engine.localhost/wp-reference/wp-includes/Requests/src/../certificates/cacert.pem"
+                "default": "~/Cove/Sites/minn.localhost/wp-reference/wp-includes/Requests/src/../certificates/cacert.pem"
             },
             "magic_compression_headers": {
                 "visibility": "private",
@@ -46644,6 +47988,10 @@
             }
         }
     },
+    "ftp": {
+        "file": "wp-admin/includes/class-ftp.php",
+        "extends": "ftp_sockets"
+    },
     "ftp_base": {
         "file": "wp-admin/includes/class-ftp.php",
         "properties": {
@@ -47237,6 +48585,246 @@
                 ]
             },
             "PopError": {
+                "params": []
+            }
+        }
+    },
+    "ftp_pure": {
+        "file": "wp-admin/includes/class-ftp-pure.php",
+        "extends": "ftp_base",
+        "methods": {
+            "__construct": {
+                "params": [
+                    {
+                        "name": "verb",
+                        "optional": true,
+                        "default": false
+                    },
+                    {
+                        "name": "le",
+                        "optional": true,
+                        "default": false
+                    }
+                ]
+            },
+            "_settimeout": {
+                "params": [
+                    {
+                        "name": "sock"
+                    }
+                ]
+            },
+            "_connect": {
+                "params": [
+                    {
+                        "name": "host"
+                    },
+                    {
+                        "name": "port"
+                    }
+                ]
+            },
+            "_readmsg": {
+                "params": [
+                    {
+                        "name": "fnction",
+                        "optional": true,
+                        "default": "_readmsg"
+                    }
+                ]
+            },
+            "_exec": {
+                "params": [
+                    {
+                        "name": "cmd"
+                    },
+                    {
+                        "name": "fnction",
+                        "optional": true,
+                        "default": "_exec"
+                    }
+                ]
+            },
+            "_data_prepare": {
+                "params": [
+                    {
+                        "name": "mode",
+                        "optional": true,
+                        "default": {
+                            "const": "FTP_ASCII"
+                        }
+                    }
+                ]
+            },
+            "_data_read": {
+                "params": [
+                    {
+                        "name": "mode",
+                        "optional": true,
+                        "default": {
+                            "const": "FTP_ASCII"
+                        }
+                    },
+                    {
+                        "name": "fp",
+                        "optional": true,
+                        "default": null
+                    }
+                ]
+            },
+            "_data_write": {
+                "params": [
+                    {
+                        "name": "mode",
+                        "optional": true,
+                        "default": {
+                            "const": "FTP_ASCII"
+                        }
+                    },
+                    {
+                        "name": "fp",
+                        "optional": true,
+                        "default": null
+                    }
+                ]
+            },
+            "_data_write_block": {
+                "params": [
+                    {
+                        "name": "mode"
+                    },
+                    {
+                        "name": "block"
+                    }
+                ]
+            },
+            "_data_close": {
+                "params": []
+            },
+            "_quit": {
+                "params": [
+                    {
+                        "name": "force",
+                        "optional": true,
+                        "default": false
+                    }
+                ]
+            }
+        }
+    },
+    "ftp_sockets": {
+        "file": "wp-admin/includes/class-ftp-sockets.php",
+        "extends": "ftp_base",
+        "methods": {
+            "__construct": {
+                "params": [
+                    {
+                        "name": "verb",
+                        "optional": true,
+                        "default": false
+                    },
+                    {
+                        "name": "le",
+                        "optional": true,
+                        "default": false
+                    }
+                ]
+            },
+            "_settimeout": {
+                "params": [
+                    {
+                        "name": "sock"
+                    }
+                ]
+            },
+            "_connect": {
+                "params": [
+                    {
+                        "name": "host"
+                    },
+                    {
+                        "name": "port"
+                    }
+                ]
+            },
+            "_readmsg": {
+                "params": [
+                    {
+                        "name": "fnction",
+                        "optional": true,
+                        "default": "_readmsg"
+                    }
+                ]
+            },
+            "_exec": {
+                "params": [
+                    {
+                        "name": "cmd"
+                    },
+                    {
+                        "name": "fnction",
+                        "optional": true,
+                        "default": "_exec"
+                    }
+                ]
+            },
+            "_data_prepare": {
+                "params": [
+                    {
+                        "name": "mode",
+                        "optional": true,
+                        "default": {
+                            "const": "FTP_ASCII"
+                        }
+                    }
+                ]
+            },
+            "_data_read": {
+                "params": [
+                    {
+                        "name": "mode",
+                        "optional": true,
+                        "default": {
+                            "const": "FTP_ASCII"
+                        }
+                    },
+                    {
+                        "name": "fp",
+                        "optional": true,
+                        "default": null
+                    }
+                ]
+            },
+            "_data_write": {
+                "params": [
+                    {
+                        "name": "mode",
+                        "optional": true,
+                        "default": {
+                            "const": "FTP_ASCII"
+                        }
+                    },
+                    {
+                        "name": "fp",
+                        "optional": true,
+                        "default": null
+                    }
+                ]
+            },
+            "_data_write_block": {
+                "params": [
+                    {
+                        "name": "mode"
+                    },
+                    {
+                        "name": "block"
+                    }
+                ]
+            },
+            "_data_close": {
+                "params": []
+            },
+            "_quit": {
                 "params": []
             }
         }

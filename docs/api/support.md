@@ -130,7 +130,7 @@ controls Unicode puts there; each becomes the reference to the Unicode
 character it meant, and the five codes Windows-1252 leaves unassigned
 are removed. Only the exact unpadded decimal spelling is touched.
 
-Used by: `Minn\Support\Escape`, `Minn\Support\Kses`
+Used by: `Minn\Runtime\AccountFlows`, `Minn\Support\Escape`, `Minn\Support\Kses`
 
 ### static `specialchars(string $text, string|int|false $quoteStyle, bool $doubleEncode, callable $knownEntity): string`
 
@@ -226,7 +226,7 @@ every step as the result), and the symbolic-to-octal permission string
 conversion. The facade class keeps the reference's argument handling and
 maps each operation here.
 
-Used by: `Minn\Cli\Installer`, `Minn\Ops\EngineUpdate`, `Minn\Ops\Packages`, `Minn\Runtime\PluginRemoval`, `Minn\Runtime\ThemeSwitch`
+Used by: `Minn\Cli\Installer`, `Minn\Ops\EngineUpdate`, `Minn\Ops\Packages`, `Minn\Runtime\PluginRemoval`, `Minn\Runtime\ThemeSwitch`, `Minn\Runtime\Upgrade`
 
 ### static `octalFromSymbolic(string $mode): string`
 
@@ -839,7 +839,7 @@ URL shaping the escaping and query helpers share: the character cleanup
 esc_url applies, bracket encoding outside the authority, and query
 argument merging. Behaviour pinned by contracts/fixtures/api/functions.json.
 
-Used by: `Minn\Front\FeedTags`, `Minn\Front\PostEmbed`, `Minn\Runtime\ArchiveLinks`, `Minn\Runtime\CommentPages`, `Minn\Runtime\NavMenu`, `Minn\Runtime\PostLinks`
+Used by: `Minn\Front\FeedTags`, `Minn\Front\PostEmbed`, `Minn\Runtime\ArchiveLinks`, `Minn\Runtime\CommentPages`, `Minn\Runtime\NavMenu`, `Minn\Runtime\PostLinks`, `Minn\Runtime\Upgrade`
 
 ### static `withTrailingSlash(string $value): string`
 

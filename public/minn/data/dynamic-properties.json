@@ -87,6 +87,8 @@
         "WP_Theme_JSON_Data",
         "WP_Theme_JSON_Resolver",
         "WP_Theme_JSON_Schema",
+        "WP_Upgrader",
+        "WP_Upgrader_Skin",
         "WP_User",
         "WP_User_Query",
         "WP_User_Request",

@@ -229,7 +229,7 @@ abstract class WP_Image_Editor
     }
 }
 
-final class WP_Image_Editor_GD extends WP_Image_Editor
+class WP_Image_Editor_GD extends WP_Image_Editor
 {
     private ?Canvas $canvas = null;
 

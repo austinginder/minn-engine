@@ -122,15 +122,16 @@ function is_network_only_plugin($plugin)
     return false;
 }
 
-/** A plugin's headers; a folder plugin naming no text domain uses its folder's name (probe plugin-data). */
+/** A plugin's headers; a plugin in its own folder that names no text domain uses the folder's name (probe plugin-data). */
 function get_plugin_data($plugin_file, $markup = true, $translate = true)
 {
     $headers = ['Name' => 'Plugin Name', 'PluginURI' => 'Plugin URI', 'Version' => 'Version', 'Description' => 'Description', 'Author' => 'Author', 'AuthorURI' => 'Author URI', 'TextDomain' => 'Text Domain', 'DomainPath' => 'Domain Path', 'Network' => 'Network', 'RequiresWP' => 'Requires at least', 'RequiresPHP' => 'Requires PHP', 'UpdateURI' => 'Update URI', 'RequiresPlugins' => 'Requires Plugins'];
     $data = get_file_data($plugin_file, $headers, 'plugin');
     $data['Network'] = strtolower($data['Network']) === 'true';
-    $file = plugin_basename((string) $plugin_file);
-    if ($data['TextDomain'] === '' && str_contains($file, '/')) {
-        $data['TextDomain'] = dirname($file);
+    // The folder's name, when the file sits in a folder directly inside the plugins folder (probes plugin-data, upgrader).
+    $folder = dirname(plugin_basename((string) $plugin_file));
+    if ($data['TextDomain'] === '' && $folder !== '.' && !str_contains($folder, '/')) {
+        $data['TextDomain'] = $folder;
     }
     $data['Title'] = $data['Name'];
     $data['AuthorName'] = $data['Author'];
@@ -213,6 +214,7 @@ function get_mu_plugins()
     return $out;
 }
 
+/** The plugins in the plugins folder, or in one folder of it, keyed relative to the folder read (probe upgrader). */
 function get_plugins($plugin_folder = '')
 {
     $out = [];
@@ -220,7 +222,7 @@ function get_plugins($plugin_folder = '')
     foreach (array_merge(glob($root . '/*.php') ?: [], glob($root . '/*/*.php') ?: []) as $file) {
         $data = get_plugin_data($file, false, false);
         if ($data['Name'] !== '') {
-            $out[plugin_basename($file)] = $data;
+            $out[substr($file, strlen($root) + 1)] = $data;
         }
     }
     // By name, as the reference lists them (probe plugin-data); a tie keeps file order.

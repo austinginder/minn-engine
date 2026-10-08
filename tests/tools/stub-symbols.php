@@ -31,9 +31,11 @@ foreach (array_merge(glob($root . '/public/minn/wp-api/*.php'), glob($root . '/p
             $declaredParents[strtolower($found[1])] = strtolower($found[2]);
         }
         // The methods a hand-written class declares, so a placeholder child inherits rather than redeclares them.
+        // An abstract method is not inherited: the placeholder must give it a body.
         if (preg_match('/^(?:abstract\s+|final\s+)?(?:class|interface|trait)\s+' . $found[1] . '\b(.*?)^}/ms', $src, $bodyMatch)) {
-            preg_match_all('/function\s+(\w+)\s*\(/', $bodyMatch[1], $fm);
-            $declaredMethods[strtolower($found[1])] = array_fill_keys(array_map('strtolower', $fm[1]), true);
+            preg_match_all('/^([^\n]*)\bfunction\s+(\w+)\s*\(/m', $bodyMatch[1], $fm, PREG_SET_ORDER);
+            $concrete = array_filter($fm, static fn (array $line): bool => !str_contains($line[1], 'abstract'));
+            $declaredMethods[strtolower($found[1])] = array_fill_keys(array_map(static fn (array $line): string => strtolower($line[2]), $concrete), true);
         }
     }
 }

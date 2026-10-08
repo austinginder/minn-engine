@@ -2,12 +2,12 @@
     "generated": "2026-10-08",
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line)",
     "summary": {
-        "minn": 668,
-        "composes": 973,
-        "leaf": 663,
-        "noop": 1965,
-        "functions": 4195,
-        "minnMethods": 787,
+        "minn": 674,
+        "composes": 1012,
+        "leaf": 675,
+        "noop": 2015,
+        "functions": 4302,
+        "minnMethods": 794,
         "leafLinesOver15": 13
     },
     "functions": {
@@ -43,6 +43,192 @@
             "file": "simplepie/Parts.php",
             "lines": 1,
             "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "Automatic_Upgrader_Skin::feedback": {
+            "file": "classes/WP_Upgrader_Skin.php",
+            "lines": 5,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "_minn_upgrader_line",
+                "is_wp_error",
+                "wp_kses"
+            ]
+        },
+        "Automatic_Upgrader_Skin::footer": {
+            "file": "classes/WP_Upgrader_Skin.php",
+            "lines": 4,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "Automatic_Upgrader_Skin::get_upgrade_messages": {
+            "file": "classes/WP_Upgrader_Skin.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "Automatic_Upgrader_Skin::header": {
+            "file": "classes/WP_Upgrader_Skin.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "Automatic_Upgrader_Skin::request_filesystem_credentials": {
+            "file": "classes/WP_Upgrader_Skin.php",
+            "lines": 7,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "Bulk_Plugin_Upgrader_Skin::add_strings": {
+            "file": "classes/WP_Upgrader_Skin.php",
+            "lines": 0,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "Bulk_Plugin_Upgrader_Skin::after": {
+            "file": "classes/WP_Upgrader_Skin.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "Bulk_Plugin_Upgrader_Skin::before": {
+            "file": "classes/WP_Upgrader_Skin.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "Bulk_Plugin_Upgrader_Skin::bulk_footer": {
+            "file": "classes/WP_Upgrader_Skin.php",
+            "lines": 0,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "Bulk_Theme_Upgrader_Skin::add_strings": {
+            "file": "classes/WP_Upgrader_Skin.php",
+            "lines": 0,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "Bulk_Theme_Upgrader_Skin::after": {
+            "file": "classes/WP_Upgrader_Skin.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "Bulk_Theme_Upgrader_Skin::before": {
+            "file": "classes/WP_Upgrader_Skin.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "Bulk_Theme_Upgrader_Skin::bulk_footer": {
+            "file": "classes/WP_Upgrader_Skin.php",
+            "lines": 0,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "Bulk_Upgrader_Skin::__construct": {
+            "file": "classes/WP_Upgrader_Skin.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "wp_parse_args"
+            ]
+        },
+        "Bulk_Upgrader_Skin::add_strings": {
+            "file": "classes/WP_Upgrader_Skin.php",
+            "lines": 0,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "Bulk_Upgrader_Skin::after": {
+            "file": "classes/WP_Upgrader_Skin.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "Bulk_Upgrader_Skin::before": {
+            "file": "classes/WP_Upgrader_Skin.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "Bulk_Upgrader_Skin::bulk_footer": {
+            "file": "classes/WP_Upgrader_Skin.php",
+            "lines": 0,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "Bulk_Upgrader_Skin::bulk_header": {
+            "file": "classes/WP_Upgrader_Skin.php",
+            "lines": 0,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "Bulk_Upgrader_Skin::error": {
+            "file": "classes/WP_Upgrader_Skin.php",
+            "lines": 6,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "is_wp_error"
+            ]
+        },
+        "Bulk_Upgrader_Skin::feedback": {
+            "file": "classes/WP_Upgrader_Skin.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "Bulk_Upgrader_Skin::flush_output": {
+            "file": "classes/WP_Upgrader_Skin.php",
+            "lines": 2,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "flush",
+                "wp_ob_end_flush_all"
+            ]
+        },
+        "Bulk_Upgrader_Skin::footer": {
+            "file": "classes/WP_Upgrader_Skin.php",
+            "lines": 0,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "Bulk_Upgrader_Skin::header": {
+            "file": "classes/WP_Upgrader_Skin.php",
+            "lines": 0,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "Bulk_Upgrader_Skin::reset": {
+            "file": "classes/WP_Upgrader_Skin.php",
+            "lines": 2,
+            "kind": "leaf",
             "minn": [],
             "composes": []
         },
@@ -931,6 +1117,44 @@
         },
         "Item::set_sanitize": {
             "file": "simplepie/Item.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "Language_Pack_Upgrader_Skin::__construct": {
+            "file": "classes/WP_Upgrader_Skin.php",
+            "lines": 7,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "__",
+                "wp_parse_args"
+            ]
+        },
+        "Language_Pack_Upgrader_Skin::after": {
+            "file": "classes/WP_Upgrader_Skin.php",
+            "lines": 0,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "Language_Pack_Upgrader_Skin::before": {
+            "file": "classes/WP_Upgrader_Skin.php",
+            "lines": 0,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "Language_Pack_Upgrader_Skin::bulk_footer": {
+            "file": "classes/WP_Upgrader_Skin.php",
+            "lines": 0,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "Language_Pack_Upgrader_Skin::error": {
+            "file": "classes/WP_Upgrader_Skin.php",
             "lines": 1,
             "kind": "noop",
             "minn": [],
@@ -2215,6 +2439,198 @@
         "PasswordHash::get_random_bytes": {
             "file": "classes/PasswordHash.php",
             "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "Plugin_Installer_Skin::__construct": {
+            "file": "classes/WP_Upgrader_Skin.php",
+            "lines": 6,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "wp_parse_args"
+            ]
+        },
+        "Plugin_Installer_Skin::after": {
+            "file": "classes/WP_Upgrader_Skin.php",
+            "lines": 0,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "Plugin_Installer_Skin::before": {
+            "file": "classes/WP_Upgrader_Skin.php",
+            "lines": 0,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "Plugin_Installer_Skin::do_overwrite": {
+            "file": "classes/WP_Upgrader_Skin.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "Plugin_Installer_Skin::hide_process_failed": {
+            "file": "classes/WP_Upgrader_Skin.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "is_wp_error"
+            ]
+        },
+        "Plugin_Upgrader::active_after": {
+            "file": "classes/WP_Upgrader.php",
+            "lines": 4,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "is_plugin_active",
+                "is_wp_error",
+                "wp_doing_cron"
+            ]
+        },
+        "Plugin_Upgrader::active_before": {
+            "file": "classes/WP_Upgrader.php",
+            "lines": 4,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "is_plugin_active",
+                "is_wp_error",
+                "wp_doing_cron"
+            ]
+        },
+        "Plugin_Upgrader::bulk_upgrade": {
+            "file": "classes/WP_Upgrader.php",
+            "lines": 23,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Runtime\\Upgrade::bulk"
+            ],
+            "composes": [
+                "add_filter",
+                "get_plugin_data",
+                "get_site_transient",
+                "is_plugin_active",
+                "remove_filter",
+                "wp_clean_plugins_cache",
+                "wp_parse_args"
+            ]
+        },
+        "Plugin_Upgrader::check_package": {
+            "file": "classes/WP_Upgrader.php",
+            "lines": 15,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "__",
+                "_minn_package_requirements",
+                "get_plugin_data",
+                "is_wp_error",
+                "trailingslashit"
+            ]
+        },
+        "Plugin_Upgrader::deactivate_plugin_before_upgrade": {
+            "file": "classes/WP_Upgrader.php",
+            "lines": 8,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Runtime\\PluginActivation::deactivate"
+            ],
+            "composes": [
+                "is_plugin_active",
+                "is_wp_error",
+                "wp_doing_cron"
+            ]
+        },
+        "Plugin_Upgrader::delete_old_plugin": {
+            "file": "classes/WP_Upgrader.php",
+            "lines": 12,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Support\\Files::deleteTree"
+            ],
+            "composes": [
+                "is_wp_error"
+            ]
+        },
+        "Plugin_Upgrader::install": {
+            "file": "classes/WP_Upgrader.php",
+            "lines": 18,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "add_action",
+                "add_filter",
+                "do_action",
+                "is_wp_error",
+                "remove_action",
+                "remove_filter",
+                "wp_clean_plugins_cache",
+                "wp_parse_args"
+            ]
+        },
+        "Plugin_Upgrader::install_strings": {
+            "file": "classes/WP_Upgrader.php",
+            "lines": 10,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "__"
+            ]
+        },
+        "Plugin_Upgrader::plugin_info": {
+            "file": "classes/WP_Upgrader.php",
+            "lines": 5,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "get_plugins"
+            ]
+        },
+        "Plugin_Upgrader::upgrade": {
+            "file": "classes/WP_Upgrader.php",
+            "lines": 28,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "add_action",
+                "add_filter",
+                "get_site_transient",
+                "is_wp_error",
+                "remove_action",
+                "remove_filter",
+                "wp_clean_plugins_cache",
+                "wp_parse_args"
+            ]
+        },
+        "Plugin_Upgrader::upgrade_strings": {
+            "file": "classes/WP_Upgrader.php",
+            "lines": 9,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "__"
+            ]
+        },
+        "Plugin_Upgrader_Skin::__construct": {
+            "file": "classes/WP_Upgrader_Skin.php",
+            "lines": 4,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "__",
+                "is_plugin_active",
+                "wp_parse_args"
+            ]
+        },
+        "Plugin_Upgrader_Skin::after": {
+            "file": "classes/WP_Upgrader_Skin.php",
+            "lines": 0,
             "kind": "noop",
             "minn": [],
             "composes": []
@@ -3771,6 +4187,205 @@
             "minn": [],
             "composes": []
         },
+        "Theme_Installer_Skin::__construct": {
+            "file": "classes/WP_Upgrader_Skin.php",
+            "lines": 6,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "wp_parse_args"
+            ]
+        },
+        "Theme_Installer_Skin::after": {
+            "file": "classes/WP_Upgrader_Skin.php",
+            "lines": 0,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "Theme_Installer_Skin::before": {
+            "file": "classes/WP_Upgrader_Skin.php",
+            "lines": 0,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "Theme_Installer_Skin::do_overwrite": {
+            "file": "classes/WP_Upgrader_Skin.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "Theme_Installer_Skin::hide_process_failed": {
+            "file": "classes/WP_Upgrader_Skin.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "is_wp_error"
+            ]
+        },
+        "Theme_Upgrader::bulk_upgrade": {
+            "file": "classes/WP_Upgrader.php",
+            "lines": 25,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Runtime\\Upgrade::bulk"
+            ],
+            "composes": [
+                "add_filter",
+                "get_site_transient",
+                "get_stylesheet",
+                "get_template",
+                "get_theme_root",
+                "remove_filter",
+                "wp_clean_themes_cache",
+                "wp_parse_args"
+            ]
+        },
+        "Theme_Upgrader::check_package": {
+            "file": "classes/WP_Upgrader.php",
+            "lines": 17,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "__",
+                "_minn_package_requirements",
+                "get_file_data",
+                "is_wp_error",
+                "trailingslashit"
+            ]
+        },
+        "Theme_Upgrader::check_parent_theme_filter": {
+            "file": "classes/WP_Upgrader.php",
+            "lines": 17,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "add_filter",
+                "is_wp_error",
+                "wp_get_theme"
+            ]
+        },
+        "Theme_Upgrader::current_after": {
+            "file": "classes/WP_Upgrader.php",
+            "lines": 4,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "get_stylesheet",
+                "is_wp_error"
+            ]
+        },
+        "Theme_Upgrader::current_before": {
+            "file": "classes/WP_Upgrader.php",
+            "lines": 4,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "get_stylesheet",
+                "is_wp_error"
+            ]
+        },
+        "Theme_Upgrader::delete_old_theme": {
+            "file": "classes/WP_Upgrader.php",
+            "lines": 12,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Support\\Files::deleteTree"
+            ],
+            "composes": [
+                "get_theme_root",
+                "is_wp_error",
+                "trailingslashit"
+            ]
+        },
+        "Theme_Upgrader::hide_activate_preview_actions": {
+            "file": "classes/WP_Upgrader.php",
+            "lines": 2,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "Theme_Upgrader::install": {
+            "file": "classes/WP_Upgrader.php",
+            "lines": 20,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "add_action",
+                "add_filter",
+                "do_action",
+                "get_theme_root",
+                "is_wp_error",
+                "remove_action",
+                "remove_filter",
+                "wp_clean_themes_cache",
+                "wp_parse_args"
+            ]
+        },
+        "Theme_Upgrader::install_strings": {
+            "file": "classes/WP_Upgrader.php",
+            "lines": 16,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "__"
+            ]
+        },
+        "Theme_Upgrader::theme_info": {
+            "file": "classes/WP_Upgrader.php",
+            "lines": 7,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "wp_get_theme"
+            ]
+        },
+        "Theme_Upgrader::upgrade": {
+            "file": "classes/WP_Upgrader.php",
+            "lines": 28,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "add_action",
+                "add_filter",
+                "get_site_transient",
+                "get_theme_root",
+                "is_wp_error",
+                "remove_action",
+                "remove_filter",
+                "wp_clean_themes_cache",
+                "wp_parse_args"
+            ]
+        },
+        "Theme_Upgrader::upgrade_strings": {
+            "file": "classes/WP_Upgrader.php",
+            "lines": 8,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "__"
+            ]
+        },
+        "Theme_Upgrader_Skin::__construct": {
+            "file": "classes/WP_Upgrader_Skin.php",
+            "lines": 3,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "__",
+                "wp_parse_args"
+            ]
+        },
+        "Theme_Upgrader_Skin::after": {
+            "file": "classes/WP_Upgrader_Skin.php",
+            "lines": 0,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
         "Translation_Entry::Translation_Entry": {
             "file": "classes/POMO.php",
             "lines": 2,
@@ -4318,6 +4933,48 @@
                 "header",
                 "wp_die"
             ]
+        },
+        "WP_Ajax_Upgrader_Skin::__construct": {
+            "file": "classes/WP_Upgrader_Skin.php",
+            "lines": 2,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Ajax_Upgrader_Skin::error": {
+            "file": "classes/WP_Upgrader_Skin.php",
+            "lines": 9,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "_minn_upgrader_line",
+                "is_wp_error"
+            ]
+        },
+        "WP_Ajax_Upgrader_Skin::feedback": {
+            "file": "classes/WP_Upgrader_Skin.php",
+            "lines": 6,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "is_wp_error"
+            ]
+        },
+        "WP_Ajax_Upgrader_Skin::get_error_messages": {
+            "file": "classes/WP_Upgrader_Skin.php",
+            "lines": 6,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "esc_html"
+            ]
+        },
+        "WP_Ajax_Upgrader_Skin::get_errors": {
+            "file": "classes/WP_Upgrader_Skin.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
         },
         "WP_Application_Passwords::application_name_exists_for_user": {
             "file": "classes/WP_Application_Passwords.php",
@@ -13609,6 +14266,263 @@
             "minn": [],
             "composes": []
         },
+        "WP_Upgrader::__construct": {
+            "file": "classes/WP_Upgrader.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Upgrader::clear_destination": {
+            "file": "classes/WP_Upgrader.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Runtime\\Upgrade::clear"
+            ],
+            "composes": []
+        },
+        "WP_Upgrader::create_lock": {
+            "file": "classes/WP_Upgrader.php",
+            "lines": 10,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "add_option",
+                "get_option",
+                "update_option"
+            ]
+        },
+        "WP_Upgrader::delete_temp_backup": {
+            "file": "classes/WP_Upgrader.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Upgrader::download_package": {
+            "file": "classes/WP_Upgrader.php",
+            "lines": 16,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "apply_filters",
+                "download_url",
+                "is_wp_error"
+            ]
+        },
+        "WP_Upgrader::flatten_dirlist": {
+            "file": "classes/WP_Upgrader.php",
+            "lines": 8,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Upgrader::fs_connect": {
+            "file": "classes/WP_Upgrader.php",
+            "lines": 9,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Upgrader::generic_strings": {
+            "file": "classes/WP_Upgrader.php",
+            "lines": 25,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "__"
+            ]
+        },
+        "WP_Upgrader::init": {
+            "file": "classes/WP_Upgrader.php",
+            "lines": 2,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Upgrader::install_package": {
+            "file": "classes/WP_Upgrader.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Runtime\\Upgrade::install"
+            ],
+            "composes": []
+        },
+        "WP_Upgrader::maintenance_mode": {
+            "file": "classes/WP_Upgrader.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Runtime\\Upgrade::maintenanceOff",
+                "Minn\\Runtime\\Upgrade::maintenanceOn"
+            ],
+            "composes": []
+        },
+        "WP_Upgrader::move_to_temp_backup_dir": {
+            "file": "classes/WP_Upgrader.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Upgrader::release_lock": {
+            "file": "classes/WP_Upgrader.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "delete_option"
+            ]
+        },
+        "WP_Upgrader::restore_temp_backup": {
+            "file": "classes/WP_Upgrader.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Upgrader::run": {
+            "file": "classes/WP_Upgrader.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Runtime\\Upgrade::run"
+            ],
+            "composes": []
+        },
+        "WP_Upgrader::schedule_temp_backup_cleanup": {
+            "file": "classes/WP_Upgrader.php",
+            "lines": 0,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Upgrader::unpack_package": {
+            "file": "classes/WP_Upgrader.php",
+            "lines": 5,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Runtime\\Upgrade::unpack"
+            ],
+            "composes": []
+        },
+        "WP_Upgrader_Skin::__construct": {
+            "file": "classes/WP_Upgrader_Skin.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "wp_parse_args"
+            ]
+        },
+        "WP_Upgrader_Skin::add_strings": {
+            "file": "classes/WP_Upgrader_Skin.php",
+            "lines": 0,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Upgrader_Skin::after": {
+            "file": "classes/WP_Upgrader_Skin.php",
+            "lines": 0,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Upgrader_Skin::before": {
+            "file": "classes/WP_Upgrader_Skin.php",
+            "lines": 0,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Upgrader_Skin::bulk_footer": {
+            "file": "classes/WP_Upgrader_Skin.php",
+            "lines": 0,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Upgrader_Skin::bulk_header": {
+            "file": "classes/WP_Upgrader_Skin.php",
+            "lines": 0,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Upgrader_Skin::decrement_update_count": {
+            "file": "classes/WP_Upgrader_Skin.php",
+            "lines": 0,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Upgrader_Skin::error": {
+            "file": "classes/WP_Upgrader_Skin.php",
+            "lines": 16,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "esc_html",
+                "is_wp_error"
+            ]
+        },
+        "WP_Upgrader_Skin::feedback": {
+            "file": "classes/WP_Upgrader_Skin.php",
+            "lines": 5,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "_minn_upgrader_line",
+                "show_message"
+            ]
+        },
+        "WP_Upgrader_Skin::footer": {
+            "file": "classes/WP_Upgrader_Skin.php",
+            "lines": 5,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Upgrader_Skin::header": {
+            "file": "classes/WP_Upgrader_Skin.php",
+            "lines": 5,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Upgrader_Skin::hide_process_failed": {
+            "file": "classes/WP_Upgrader_Skin.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Upgrader_Skin::request_filesystem_credentials": {
+            "file": "classes/WP_Upgrader_Skin.php",
+            "lines": 8,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "wp_nonce_url"
+            ]
+        },
+        "WP_Upgrader_Skin::set_result": {
+            "file": "classes/WP_Upgrader_Skin.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Upgrader_Skin::set_upgrader": {
+            "file": "classes/WP_Upgrader_Skin.php",
+            "lines": 4,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
         "WP_User::__construct": {
             "file": "classes/WP_User.php",
             "lines": 18,
@@ -16794,6 +17708,18 @@
                 "apply_filters"
             ]
         },
+        "_minn_package_requirements": {
+            "file": "classes/WP_Upgrader.php",
+            "lines": 10,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "__",
+                "is_php_version_compatible",
+                "is_wp_version_compatible",
+                "wp_get_wp_version"
+            ]
+        },
         "_minn_page_descendants": {
             "file": "post.php",
             "lines": 1,
@@ -17559,6 +18485,13 @@
                 "update_user_meta",
                 "wp_hash_password"
             ]
+        },
+        "_minn_upgrader_line": {
+            "file": "classes/WP_Upgrader_Skin.php",
+            "lines": 8,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
         },
         "_minn_user_change_notices": {
             "file": "misc.php",
@@ -18635,11 +19568,13 @@
         },
         "add_network_option": {
             "file": "option.php",
-            "lines": 1,
-            "kind": "noop",
+            "lines": 8,
+            "kind": "composes",
             "minn": [],
             "composes": [
-                "add_option"
+                "add_option",
+                "apply_filters",
+                "do_action"
             ]
         },
         "add_option": {
@@ -18826,7 +19761,7 @@
             "kind": "noop",
             "minn": [],
             "composes": [
-                "add_option"
+                "add_network_option"
             ]
         },
         "add_submenu_page": {
@@ -20125,11 +21060,12 @@
         },
         "delete_network_option": {
             "file": "option.php",
-            "lines": 1,
-            "kind": "noop",
+            "lines": 8,
+            "kind": "composes",
             "minn": [],
             "composes": [
-                "delete_option"
+                "delete_option",
+                "do_action"
             ]
         },
         "delete_option": {
@@ -20187,16 +21123,17 @@
             "kind": "noop",
             "minn": [],
             "composes": [
-                "delete_option"
+                "delete_network_option"
             ]
         },
         "delete_site_transient": {
             "file": "option.php",
-            "lines": 6,
+            "lines": 8,
             "kind": "composes",
             "minn": [],
             "composes": [
-                "delete_option"
+                "delete_site_option",
+                "do_action"
             ]
         },
         "delete_term_meta": {
@@ -22719,10 +23656,11 @@
         },
         "get_network_option": {
             "file": "option.php",
-            "lines": 1,
-            "kind": "noop",
+            "lines": 9,
+            "kind": "composes",
             "minn": [],
             "composes": [
+                "apply_filters",
                 "get_option"
             ]
         },
@@ -23090,7 +24028,7 @@
         },
         "get_plugin_data": {
             "file": "plugin.php",
-            "lines": 10,
+            "lines": 11,
             "kind": "composes",
             "minn": [],
             "composes": [
@@ -23134,8 +24072,7 @@
             "kind": "composes",
             "minn": [],
             "composes": [
-                "get_plugin_data",
-                "plugin_basename"
+                "get_plugin_data"
             ]
         },
         "get_post": {
@@ -23972,18 +24909,18 @@
             "kind": "noop",
             "minn": [],
             "composes": [
-                "get_option"
+                "get_network_option"
             ]
         },
         "get_site_transient": {
             "file": "option.php",
-            "lines": 12,
+            "lines": 16,
             "kind": "composes",
             "minn": [],
             "composes": [
                 "apply_filters",
-                "delete_option",
-                "get_option"
+                "delete_site_option",
+                "get_site_option"
             ]
         },
         "get_site_url": {
@@ -29284,14 +30221,15 @@
         },
         "set_site_transient": {
             "file": "option.php",
-            "lines": 16,
+            "lines": 21,
             "kind": "composes",
             "minn": [],
             "composes": [
-                "add_option",
+                "add_site_option",
                 "apply_filters",
-                "get_option",
-                "update_option"
+                "do_action",
+                "get_site_option",
+                "update_site_option"
             ]
         },
         "set_status": {
@@ -29419,6 +30357,17 @@
             "kind": "leaf",
             "minn": [],
             "composes": []
+        },
+        "show_message": {
+            "file": "admin.php",
+            "lines": 7,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "flush",
+                "is_wp_error",
+                "wp_ob_end_flush_all"
+            ]
         },
         "single_cat_title": {
             "file": "taxonomy.php",
@@ -30544,10 +31493,15 @@
         },
         "update_network_option": {
             "file": "option.php",
-            "lines": 1,
-            "kind": "noop",
+            "lines": 15,
+            "kind": "composes",
             "minn": [],
             "composes": [
+                "add_network_option",
+                "apply_filters",
+                "do_action",
+                "get_network_option",
+                "maybe_serialize",
                 "update_option"
             ]
         },
@@ -30614,13 +31568,11 @@
         },
         "update_site_option": {
             "file": "option.php",
-            "lines": 8,
-            "kind": "composes",
+            "lines": 1,
+            "kind": "noop",
             "minn": [],
             "composes": [
-                "do_action",
-                "get_option",
-                "update_option"
+                "update_network_option"
             ]
         },
         "update_term_meta": {

@@ -18,30 +18,85 @@ function get_option($option, $default_value = false)
 
 function get_site_option($option, $default_value = false, $deprecated = true)
 {
-    return get_option($option, $default_value);
+    return get_network_option(null, $option, $default_value);
 }
+
+// On a single site the network options are options, stored not to autoload,
+// with the network layer's own hooks around the option calls (probe
+// site-options): pre_site_option_<name> and pre_site_option may answer a
+// read, default_site_option_<name> sets its default and site_option_<name>
+// has the last word; writes are told as add_, update_ and delete_site_option.
 
 function get_network_option($network_id, $option, $default_value = false)
 {
-    return get_option($option, $default_value);
+    $option = (string) $option;
+    $network = 1;
+    $pre = apply_filters("pre_site_option_{$option}", false, $option, $network, $default_value);
+    $pre = apply_filters('pre_site_option', $pre, $option, $network, $default_value);
+    if ($pre !== false) {
+        return $pre;
+    }
+    $default_value = apply_filters("default_site_option_{$option}", $default_value, $option, $network);
+    return apply_filters("site_option_{$option}", get_option($option, $default_value), $option, $network);
 }
 
-// On a single site the network options read and write the options table
-// (probed 2026-08-30: the value round-trips through get_option, an
-// unchanged update returns false, delete removes the regular option).
 function add_network_option($network_id, $option, $value)
 {
-    return add_option($option, $value);
+    $option = (string) $option;
+    $value = apply_filters("pre_add_site_option_{$option}", $value, $option, 1);
+    if (!add_option($option, $value, '', false)) {
+        return false;
+    }
+    do_action("add_site_option_{$option}", $option, $value, 1);
+    do_action('add_site_option', $option, $value, 1);
+    return true;
 }
 
+/** An unchanged value is no update; an option not there yet is added. */
 function update_network_option($network_id, $option, $value)
 {
-    return update_option($option, $value);
+    $option = (string) $option;
+    $old = get_network_option($network_id, $option);
+    $value = apply_filters("pre_update_site_option_{$option}", $value, $old, $option, 1);
+    if ($value === $old || maybe_serialize($value) === maybe_serialize($old)) {
+        return false;
+    }
+    if ($old === false) {
+        return add_network_option($network_id, $option, $value);
+    }
+    if (!update_option($option, $value, false)) {
+        return false;
+    }
+    do_action("update_site_option_{$option}", $option, $value, $old, 1);
+    do_action('update_site_option', $option, $value, $old, 1);
+    return true;
 }
 
 function delete_network_option($network_id, $option)
 {
-    return delete_option($option);
+    $option = (string) $option;
+    do_action("pre_delete_site_option_{$option}", $option, 1);
+    if (!delete_option($option)) {
+        return false;
+    }
+    do_action("delete_site_option_{$option}", $option, 1);
+    do_action('delete_site_option', $option, 1);
+    return true;
+}
+
+function add_site_option($option, $value)
+{
+    return add_network_option(null, $option, $value);
+}
+
+function update_site_option($option, $value)
+{
+    return update_network_option(null, $option, $value);
+}
+
+function delete_site_option($option)
+{
+    return delete_network_option(null, $option);
 }
 
 function add_option($option, $value = '', $deprecated = '', $autoload = null)
@@ -70,10 +125,6 @@ function add_option($option, $value = '', $deprecated = '', $autoload = null)
     return true;
 }
 
-function add_site_option($option, $value)
-{
-    return add_option($option, $value);
-}
 
 function update_option($option, $value, $autoload = null)
 {
@@ -101,17 +152,6 @@ function update_option($option, $value, $autoload = null)
     return true;
 }
 
-function update_site_option($option, $value)
-{
-    // A single site keeps its site options as options, and tells plugins as the network layer does.
-    $old = get_option($option);
-    if (!update_option($option, $value)) {
-        return false;
-    }
-    do_action("update_site_option_{$option}", $option, $value, $old, 1);
-    do_action('update_site_option', $option, $value, $old, 1);
-    return true;
-}
 
 function delete_option($option)
 {
@@ -128,10 +168,6 @@ function delete_option($option)
     return true;
 }
 
-function delete_site_option($option)
-{
-    return delete_option($option);
-}
 
 function wp_load_alloptions($force_cache = false)
 {
@@ -376,6 +412,7 @@ function delete_transient($transient)
     return $result;
 }
 
+/** A site transient (probe site-options): the update transients are read with no timeout; an expired one is deleted and reads false. */
 function get_site_transient($transient)
 {
     $transient = (string) $transient;
@@ -383,31 +420,41 @@ function get_site_transient($transient)
     if ($pre !== false) {
         return $pre;
     }
-    $timeout = get_option("_site_transient_timeout_{$transient}");
-    if ($timeout !== false && (int) $timeout < time()) {
-        delete_option("_site_transient_{$transient}");
-        delete_option("_site_transient_timeout_{$transient}");
-        return false;
+    $name = "_site_transient_{$transient}";
+    $expired = false;
+    if (!in_array($transient, ['update_core', 'update_plugins', 'update_themes'], true)) {
+        $timeout = get_site_option("_site_transient_timeout_{$transient}");
+        if ($timeout !== false && (int) $timeout < time()) {
+            delete_site_option($name);
+            delete_site_option("_site_transient_timeout_{$transient}");
+            $expired = true;
+        }
     }
-    return apply_filters("site_transient_{$transient}", get_option("_site_transient_{$transient}"), $transient);
+    return apply_filters("site_transient_{$transient}", $expired ? false : get_site_option($name), $transient);
 }
 
+/** Written as site options, the timeout first; told as set_site_transient_<name> and set_site_transient. */
 function set_site_transient($transient, $value, $expiration = 0)
 {
     $transient = (string) $transient;
-    $expiration = (int) $expiration;
     $value = apply_filters("pre_set_site_transient_{$transient}", $value, $transient);
+    $expiration = (int) apply_filters("expiration_of_site_transient_{$transient}", (int) $expiration, $value, $transient);
     $name = "_site_transient_{$transient}";
-    if (get_option($name) === false) {
-        if ($expiration !== 0) {
-            add_option("_site_transient_timeout_{$transient}", time() + $expiration, '', 'off');
+    $timeout = "_site_transient_timeout_{$transient}";
+    if (get_site_option($name) === false) {
+        if ($expiration) {
+            add_site_option($timeout, time() + $expiration);
         }
-        $result = add_option($name, $value, '', 'off');
+        $result = add_site_option($name, $value);
     } else {
-        if ($expiration !== 0) {
-            update_option("_site_transient_timeout_{$transient}", time() + $expiration);
+        if ($expiration) {
+            update_site_option($timeout, time() + $expiration);
         }
-        $result = update_option($name, $value);
+        $result = update_site_option($name, $value);
+    }
+    if ($result) {
+        do_action("set_site_transient_{$transient}", $value, $expiration, $transient);
+        do_action('set_site_transient', $transient, $value, $expiration);
     }
     return $result;
 }
@@ -415,9 +462,11 @@ function set_site_transient($transient, $value, $expiration = 0)
 function delete_site_transient($transient)
 {
     $transient = (string) $transient;
-    $result = delete_option("_site_transient_{$transient}");
+    do_action("delete_site_transient_{$transient}", $transient);
+    $result = delete_site_option("_site_transient_{$transient}");
     if ($result) {
-        delete_option("_site_transient_timeout_{$transient}");
+        delete_site_option("_site_transient_timeout_{$transient}");
+        do_action('deleted_site_transient', $transient);
     }
     return $result;
 }

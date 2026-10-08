@@ -168,12 +168,14 @@
         "wpmu_delete_user"
     ],
     "classes": [
+        "Core_Upgrader",
         "File_Upload_Upgrader",
         "Gettext_Translations",
         "IXR_Client",
         "IXR_Error",
         "IXR_Message",
         "IXR_Request",
+        "Language_Pack_Upgrader",
         "MO",
         "POMO_CachedFileReader",
         "POMO_CachedIntFileReader",
@@ -192,6 +194,7 @@
         "WP_Comments_List_Table",
         "WP_Font_Face_Resolver",
         "WP_HTML_Processor",
+        "WP_Image_Editor_Imagick",
         "WP_Importer",
         "WP_Links_List_Table",
         "WP_List_Table",
@@ -220,16 +223,18 @@
         "WP_Session_Tokens",
         "WP_Site_Health",
         "WP_Style_Engine",
+        "WP_Theme_Install_List_Table",
         "WP_Theme_JSON",
         "WP_Themes_List_Table",
         "WP_Translation_File",
         "WP_Translations",
-        "WP_Upgrader",
-        "WP_Upgrader_Skin",
         "WP_User_Query",
         "WP_Users_List_Table",
         "Walker_Category_Checklist",
         "Walker_Nav_Menu_Edit",
-        "_WP_Editors"
+        "_WP_Editors",
+        "ftp",
+        "ftp_pure",
+        "ftp_sockets"
     ]
 }

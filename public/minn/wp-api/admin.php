@@ -708,6 +708,18 @@ function get_filesystem_method($args = [], $context = '', $allow_relaxed_file_ow
     return apply_filters('filesystem_method', 'direct', $args, $context, $allow_relaxed_file_ownership);
 }
 
+/** One upgrader line on the page: an error says its message, and its data when that is text; buffers flushed so it shows at once (probe upgrader). */
+function show_message($message)
+{
+    if (is_wp_error($message)) {
+        $data = $message->get_error_data();
+        $message = $message->get_error_message() . (is_string($data) && $data !== '' ? ': ' . $data : '');
+    }
+    echo '<p>' . $message . "</p>\n";
+    wp_ob_end_flush_all();
+    flush();
+}
+
 function request_filesystem_credentials($form_post, $type = '', $error = false, $context = '', $extra_fields = null, $allow_relaxed_file_ownership = false)
 {
     $req_cred = apply_filters('request_filesystem_credentials', '', $form_post, $type, $error, $context, $extra_fields, $allow_relaxed_file_ownership);

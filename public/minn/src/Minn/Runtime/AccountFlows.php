@@ -6,6 +6,7 @@ namespace Minn\Runtime;
 
 use Minn\Mail\Mailer;
 use Minn\I18n\Gettext;
+use Minn\Support\Entities;
 
 /**
  * The account functions a sign-in page and plugins call, with the
@@ -58,7 +59,7 @@ final class AccountFlows
         $title = \apply_filters('retrieve_password_title', $notice->subject, $user->user_login, $user);
         $message = \apply_filters('retrieve_password_message', $notice->body, $key, $user->user_login, $user);
         $email = (array) \apply_filters('retrieve_password_notification_email', ['to' => $user->user_email, 'subject' => $title, 'message' => $message, 'headers' => ''], $key, $user->user_login, $user);
-        if (!\wp_mail($email['to'] ?? $user->user_email, \wp_specialchars_decode((string) ($email['subject'] ?? $title)), (string) ($email['message'] ?? $message), $email['headers'] ?? '')) {
+        if (!\wp_mail($email['to'] ?? $user->user_email, Entities::decode((string) ($email['subject'] ?? $title), ENT_NOQUOTES), (string) ($email['message'] ?? $message), $email['headers'] ?? '')) {
             return new \WP_Error('retrieve_password_email_failure', Gettext::text('<strong>Error:</strong> The email could not be sent. Your site may not be correctly configured to send emails.'));
         }
         return true;
@@ -130,11 +131,11 @@ final class AccountFlows
         if (!in_array($notify, ['user', 'admin', 'both', ''], true) || !$user instanceof \WP_User) {
             return;
         }
-        $site = \wp_specialchars_decode((string) Runtime::options()->filtered('blogname'), ENT_QUOTES);
+        $site = Entities::decode((string) Runtime::options()->filtered('blogname'), ENT_QUOTES);
         if ($notify !== 'user' && \apply_filters('wp_send_new_user_notification_to_admin', true, $user)) {
             $message = sprintf(Gettext::text('New user registration on your site %s:'), $site) . "\r\n\r\n" . sprintf(Gettext::text('Username: %s'), $user->user_login) . "\r\n\r\n" . sprintf(Gettext::text('Email: %s'), $user->user_email) . "\r\n";
             $mail = (array) \apply_filters('wp_new_user_notification_email_admin', ['to' => Runtime::options()->filtered('admin_email'), 'subject' => Gettext::text('[%s] New User Registration'), 'message' => $message, 'headers' => ''], $user, $site);
-            \wp_mail($mail['to'] ?? '', \wp_specialchars_decode(sprintf((string) ($mail['subject'] ?? ''), $site)), (string) ($mail['message'] ?? ''), $mail['headers'] ?? '');
+            \wp_mail($mail['to'] ?? '', Entities::decode(sprintf((string) ($mail['subject'] ?? ''), $site), ENT_NOQUOTES), (string) ($mail['message'] ?? ''), $mail['headers'] ?? '');
         }
         if ($notify === 'admin' || (empty($deprecated) && $notify === '') || !\apply_filters('wp_send_new_user_notification_to_user', true, $user)) {
             return;
@@ -145,7 +146,7 @@ final class AccountFlows
         }
         $message = sprintf(Gettext::text('Username: %s'), $user->user_login) . "\r\n\r\n" . Gettext::text('To set your password, visit the following address:') . "\r\n\r\n" . self::resetLink($user, $key) . "\r\n\r\n" . \wp_login_url() . "\r\n";
         $mail = (array) \apply_filters('wp_new_user_notification_email', ['to' => $user->user_email, 'subject' => Gettext::text('[%s] Login Details'), 'message' => $message, 'headers' => ''], $user, $site);
-        \wp_mail($mail['to'] ?? '', \wp_specialchars_decode(sprintf((string) ($mail['subject'] ?? ''), $site)), (string) ($mail['message'] ?? ''), $mail['headers'] ?? '');
+        \wp_mail($mail['to'] ?? '', Entities::decode(sprintf((string) ($mail['subject'] ?? ''), $site), ENT_NOQUOTES), (string) ($mail['message'] ?? ''), $mail['headers'] ?? '');
     }
 
     /** The link that opens the password form for a user's key. */
