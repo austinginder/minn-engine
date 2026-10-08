@@ -479,8 +479,16 @@ class wpdb
         return $value;
     }
 
+    /**
+     * The session's SQL modes: the given ones, or the session's own when none
+     * are, without the modes WordPress cannot run under
+     * (incompatible_sql_modes filters the list).
+     */
     public function set_sql_mode($modes = [])
     {
+        $current = empty($modes) ? (string) $this->get_var('SELECT @@SESSION.sql_mode') : implode(',', (array) $modes);
+        $incompatible = (array) apply_filters('incompatible_sql_modes', \Minn\Db::INCOMPATIBLE_MODES);
+        \Minn\Db::current()->setModes(\Minn\Db::compatibleModes($current, array_map('strval', $incompatible)));
     }
 
     public function set_charset($dbh, $charset = null, $collate = null)

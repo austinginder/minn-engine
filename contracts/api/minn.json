@@ -37208,7 +37208,7 @@
             "namespace": "Minn",
             "kind": "final class",
             "file": "public/minn/src/Minn/Db.php",
-            "lines": 261,
+            "lines": 287,
             "doc": "The one door to the database. Every query is a prepared statement; the\nplaceholder types are derived from the PHP values, so callers pass plain\narrays and never spell out \"issd\". A parameter that is a list stands for\na list of values: its \"?\" becomes as many placeholders as the list is\nlong, so \"post_type IN (?)\" takes the types themselves.",
             "implements": [],
             "extends": null,
@@ -37317,7 +37317,14 @@
                 "end": 50
             },
             "cases": [],
-            "constants": [],
+            "constants": [
+                {
+                    "name": "INCOMPATIBLE_MODES",
+                    "value": "array (   0 => 'NO_ZERO_DATE',   1 => 'ONLY_FULL_GROUP_BY',   2 => 'STRICT_TRANS_TABLES',   3 => 'STRICT_ALL_TABLES',   4 => 'TRADITIONAL',   5 => 'ANSI', )",
+                    "doc": "The SQL modes WordPress turns off for its session (wpdb's incompatible modes): strictness and the modes that change what queries mean.",
+                    "visibility": "public"
+                }
+            ],
             "properties": [
                 {
                     "name": "shared",
@@ -37397,11 +37404,60 @@
                     "static": true,
                     "visibility": "public",
                     "signature": "shared(): self",
-                    "doc": "The one connection for this process, opened from wp-config's constants on first use.",
+                    "doc": "The one connection for this process, opened from wp-config's constants\non first use, its session without the incompatible modes, as\nWordPress's own connection is (a plugin's insert that leaves out a text\ncolumn then succeeds, as it does there).",
                     "shapes": [],
                     "params": [],
-                    "line": 68,
-                    "end": 76
+                    "line": 76,
+                    "end": 85
+                },
+                {
+                    "routes": [],
+                    "name": "compatibleModes",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "compatibleModes(string $modes, array $incompatible): string",
+                    "doc": "A comma-separated SQL mode list without the incompatible ones (any case).",
+                    "shapes": [
+                        "@param list<string> $incompatible"
+                    ],
+                    "params": [
+                        {
+                            "name": "modes",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "incompatible",
+                            "type": "array",
+                            "shape": "list<string>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 92,
+                    "end": 96
+                },
+                {
+                    "routes": [],
+                    "name": "setModes",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "setModes(string $modes): void",
+                    "doc": "Sets this session's SQL modes.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "modes",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 99,
+                    "end": 102
                 },
                 {
                     "routes": [],
@@ -37412,8 +37468,8 @@
                     "doc": "The underlying mysqli handle, for the facade's wpdb.",
                     "shapes": [],
                     "params": [],
-                    "line": 79,
-                    "end": 82
+                    "line": 105,
+                    "end": 108
                 },
                 {
                     "routes": [],
@@ -37432,8 +37488,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 85,
-                    "end": 88
+                    "line": 111,
+                    "end": 114
                 },
                 {
                     "routes": [],
@@ -37444,8 +37500,8 @@
                     "doc": "The table prefix from wp-config.",
                     "shapes": [],
                     "params": [],
-                    "line": 91,
-                    "end": 94
+                    "line": 117,
+                    "end": 120
                 },
                 {
                     "routes": [],
@@ -37464,8 +37520,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 97,
-                    "end": 100
+                    "line": 123,
+                    "end": 126
                 },
                 {
                     "routes": [],
@@ -37493,8 +37549,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 107,
-                    "end": 110
+                    "line": 133,
+                    "end": 136
                 },
                 {
                     "routes": [],
@@ -37522,8 +37578,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 117,
-                    "end": 120
+                    "line": 143,
+                    "end": 146
                 },
                 {
                     "routes": [],
@@ -37549,8 +37605,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 123,
-                    "end": 127
+                    "line": 149,
+                    "end": 153
                 },
                 {
                     "routes": [],
@@ -37576,8 +37632,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 130,
-                    "end": 133
+                    "line": 156,
+                    "end": 159
                 },
                 {
                     "routes": [],
@@ -37606,8 +37662,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 144,
-                    "end": 169
+                    "line": 170,
+                    "end": 195
                 },
                 {
                     "routes": [],
@@ -37628,8 +37684,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 224,
-                    "end": 241
+                    "line": 250,
+                    "end": 267
                 },
                 {
                     "routes": [],
@@ -37640,8 +37696,8 @@
                     "doc": "The id the last INSERT produced.",
                     "shapes": [],
                     "params": [],
-                    "line": 244,
-                    "end": 247
+                    "line": 270,
+                    "end": 273
                 },
                 {
                     "routes": [],
@@ -37660,8 +37716,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 250,
-                    "end": 257
+                    "line": 276,
+                    "end": 283
                 },
                 {
                     "routes": [],
@@ -37682,8 +37738,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 177,
-                    "end": 208
+                    "line": 203,
+                    "end": 234
                 },
                 {
                     "routes": [],
@@ -37709,8 +37765,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 259,
-                    "end": 276
+                    "line": 285,
+                    "end": 302
                 }
             ]
         },

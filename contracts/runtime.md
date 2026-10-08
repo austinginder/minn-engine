@@ -6539,3 +6539,16 @@ Left in `formatting.php`: `_print_emoji_detection_script`, which prints the
 emoji script Minn leaves out on purpose (an omission candidate for Austin).
 Under WP-CLI the reference's `site_url()` keeps https through WP-CLI's own
 filter; the probe masks the site's address where that shows.
+
+## The database session's SQL modes (2026-10-08)
+
+WordPress opens its session without the modes it cannot run under, and so
+does the engine now (`Db::shared`, `Db::INCOMPATIBLE_MODES`): `NO_ZERO_DATE`,
+`ONLY_FULL_GROUP_BY`, `STRICT_TRANS_TABLES`, `STRICT_ALL_TABLES`, `TRADITIONAL`
+and `ANSI` come off whatever the server sets. `wpdb::set_sql_mode` sets the
+modes given (or keeps the session's own) without those, the list passing
+`incompatible_sql_modes`. **Fixed:** the engine's session kept
+`STRICT_TRANS_TABLES`, so a plugin's `$wpdb->insert` that left out a text
+column with no default (`wp_links.link_notes`, found by probe
+link-template-tags) failed here and succeeded on the reference, and
+`set_sql_mode` did nothing.

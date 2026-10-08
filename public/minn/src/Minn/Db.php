@@ -64,15 +64,41 @@ final class Db
         return \Minn\Runtime\Runtime::booted() ? \Minn\Runtime\Runtime::current()->db : self::shared();
     }
 
-    /** The one connection for this process, opened from wp-config's constants on first use. */
+    /** The SQL modes WordPress turns off for its session (wpdb's incompatible modes): strictness and the modes that change what queries mean. */
+    public const INCOMPATIBLE_MODES = ['NO_ZERO_DATE', 'ONLY_FULL_GROUP_BY', 'STRICT_TRANS_TABLES', 'STRICT_ALL_TABLES', 'TRADITIONAL', 'ANSI'];
+
+    /**
+     * The one connection for this process, opened from wp-config's constants
+     * on first use, its session without the incompatible modes, as
+     * WordPress's own connection is (a plugin's insert that leaves out a text
+     * column then succeeds, as it does there).
+     */
     public static function shared(): self
     {
         if (self::$shared === null) {
             $connection = new mysqli(DB_HOST, DB_USER, DB_PASSWORD, DB_NAME);
             $connection->set_charset('utf8mb4');
             self::$shared = new self($connection, $GLOBALS['table_prefix'] ?? 'wp_');
+            self::$shared->setModes(self::compatibleModes((string) self::$shared->value('SELECT @@SESSION.sql_mode', []), self::INCOMPATIBLE_MODES));
         }
         return self::$shared;
+    }
+
+    /**
+     * A comma-separated SQL mode list without the incompatible ones (any case).
+     *
+     * @param list<string> $incompatible
+     */
+    public static function compatibleModes(string $modes, array $incompatible): string
+    {
+        $off = array_map('strtoupper', $incompatible);
+        return implode(',', array_values(array_filter(array_map('trim', explode(',', $modes)), static fn (string $mode): bool => $mode !== '' && !in_array(strtoupper($mode), $off, true))));
+    }
+
+    /** Sets this session's SQL modes. */
+    public function setModes(string $modes): void
+    {
+        $this->execute('SET SESSION sql_mode = ?', [$modes]);
     }
 
     /** The underlying mysqli handle, for the facade's wpdb. */
