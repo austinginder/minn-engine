@@ -16,7 +16,7 @@ the block-theme reader, templates, global styles and the page renderer
 | [`Folder`](#folder) | final readonly class | 77 | A theme folder read from disk: its style.css headers, which folder its templates come from, its screenshot, whether it is a block theme. |
 | [`FrontLifecycle`](#frontlifecycle) | final class | 103 | WordPress's front-end request steps around the main query, as WP::main |
 | [`GlobalStyles`](#globalstyles) | final readonly class | 519 | theme.json to CSS. Presets become custom properties on :root and their |
-| [`HeadLinks`](#headlinks) | final readonly class | 133 | The links the reference puts in every head: the site and comments |
+| [`HeadLinks`](#headlinks) | final readonly class | 126 | The links the reference puts in every head: the site and comments |
 | [`Hierarchy`](#hierarchy) | final class | 146 | The classic template hierarchy: the candidate file names each template |
 | [`MainQueryBridge`](#mainquerybridge) | final readonly class | 125 | Stands the main query for a themed page and runs the front-end steps |
 | [`NotModified`](#notmodified) | final class | 3 | Raised once a reader's copy of a feed has been found current and the |

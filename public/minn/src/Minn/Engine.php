@@ -318,7 +318,7 @@ final readonly class Engine
             new AssetsController($this->engineDir . '/assets'),
             // The sign-in page sits under /minn-admin/, so it registers ahead of the shell's catch-all.
             new LoginController($site, $permalinks, $authenticator, new \Minn\Auth\SignIn(new AuthCookies($db, $cookie), new LoginThrottle($db)), $users, new PasswordReset($users)),
-            new AppController($app, new BootPayload($site, $permalinks, $capabilities, $app, $this->version, $appearance, new HiddenIntegrations($users, $capabilities), new SiteIcon($site, $posts, $permalinks), $theme !== null, new Translations($users, $site, $app, ABSPATH . 'wp-content')), $authenticator, $capabilities, $permalinks, $this->version, $adminOff),
+            new AppController($app, new BootPayload($site, $permalinks, $capabilities, $app, $this->version, $appearance, new HiddenIntegrations($users, $capabilities), $siteIcon = new SiteIcon($site, $posts, $permalinks), $theme !== null, new Translations($users, $site, $app, ABSPATH . 'wp-content')), $authenticator, $capabilities, $permalinks, $this->version, $siteIcon, $adminOff),
             new \Minn\Runtime\AjaxController(),
             new ProbeController($site, $permalinks, new SiteIcon($site, $posts, $permalinks), $cron, $bridge),
             $sitemapController,

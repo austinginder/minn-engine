@@ -61,4 +61,17 @@ final readonly class SiteIcon
         $file = $this->file();
         return $file === null ? '' : $this->permalinks->url('/wp-content/uploads/' . $file);
     }
+
+    /** The head links a site with an icon prints (wp_site_icon): the 32 and 192 pixel icons, the Apple touch icon, and the tile image; empty without one. */
+    public function links(): string
+    {
+        if ($this->file() === null) {
+            return '';
+        }
+        $url = fn (int $size): string => \Minn\Html::attr($this->urlAt($size));
+        return '<link rel="icon" href="' . $url(32) . '" sizes="32x32" />' . "\n"
+            . '<link rel="icon" href="' . $url(192) . '" sizes="192x192" />' . "\n"
+            . '<link rel="apple-touch-icon" href="' . $url(180) . '" />' . "\n"
+            . '<meta name="msapplication-TileImage" content="' . $url(270) . '" />' . "\n";
+    }
 }

@@ -35,7 +35,7 @@ the repositories and records: posts, users, terms, comments, and the render pipe
 | [`Reader`](#reader) | final class | 72 | Who is reading this request: their user id, whether they may read |
 | [`Revisions`](#revisions) | final readonly class | 95 | Revision rows: the plain snapshots and the per-author autosave slots. |
 | [`Site`](#site) | final readonly class | 73 | Site-wide options and the site's clock. |
-| [`SiteIcon`](#siteicon) | final readonly class | 50 | The site icon: the attachment the site_icon option names, as the file |
+| [`SiteIcon`](#siteicon) | final readonly class | 63 | The site icon: the attachment the site_icon option names, as the file |
 | [`Slug`](#slug) | final class | 81 |  |
 | [`TagBalancer`](#tagbalancer) | final class | 82 | Closes what markup leaves open and drops what it closes without opening, |
 | [`TermLinks`](#termlinks) | final class | 39 | A post's terms rendered as links, in the two shapes the reference |
@@ -1667,7 +1667,7 @@ The site icon: the attachment the site_icon option names, as the file
 under uploads it points at. Read by the favicon route, the head links,
 and the admin app's sidebar.
 
-Used by: `Minn\Admin\BootPayload`, `Minn\Engine`, `Minn\Front\ProbeController`, `Minn\Theme\ClassicRenderer`, `Minn\Theme\HeadLinks`, `Minn\Theme\PageRenderer`
+Used by: `Minn\Admin\AppController`, `Minn\Admin\BootPayload`, `Minn\Engine`, `Minn\Front\ProbeController`, `Minn\Theme\ClassicRenderer`, `Minn\Theme\HeadLinks`, `Minn\Theme\PageRenderer`
 
 ```php
 __construct(Minn\Content\Site $site, Minn\Content\Posts $posts, Minn\Front\Permalinks $permalinks)
@@ -1686,6 +1686,10 @@ $size pixels, or of the original when no size does; empty without an icon.
 ### `url(): string`
 
 The icon's URL, empty when the site has none.
+
+### `links(): string`
+
+The head links a site with an icon prints (wp_site_icon): the 32 and 192 pixel icons, the Apple touch icon, and the tile image; empty without one.
 
 
 ## Slug

@@ -146,13 +146,6 @@ final readonly class HeadLinks
     /** The site icon links: the 32 and 192 pixel icons, the Apple touch icon, and the tile image. */
     public function icons(): string
     {
-        if ($this->icon->file() === null) {
-            return '';
-        }
-        $url = fn (int $size): string => Html::attr($this->icon->urlAt($size));
-        return '<link rel="icon" href="' . $url(32) . '" sizes="32x32" />' . "\n"
-            . '<link rel="icon" href="' . $url(192) . '" sizes="192x192" />' . "\n"
-            . '<link rel="apple-touch-icon" href="' . $url(180) . '" />' . "\n"
-            . '<meta name="msapplication-TileImage" content="' . $url(270) . '" />' . "\n";
+        return $this->icon->links();
     }
 }

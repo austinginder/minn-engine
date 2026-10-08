@@ -7,6 +7,7 @@ namespace Minn\Admin;
 use Minn\Auth\Authenticated;
 use Minn\Auth\Authenticator;
 use Minn\Auth\Capabilities;
+use Minn\Content\SiteIcon;
 use Minn\Front\Permalinks;
 use Minn\Http\Method;
 use Minn\Http\Request;
@@ -16,6 +17,7 @@ use Minn\Http\Policy;
 use Minn\Http\Route;
 use Minn\Json;
 use Minn\Html;
+use Minn\Runtime\Runtime;
 
 /**
  * Serves Minn Admin from the engine: the path-routed shell (every
@@ -32,6 +34,7 @@ final readonly class AppController
         private Capabilities $capabilities,
         private Permalinks $permalinks,
         private string $engineVersion,
+        private SiteIcon $icon,
         /** the site has deactivated the Minn Admin plugin: the engine runs without an admin */
         private bool $off = false,
     ) {
@@ -78,6 +81,35 @@ final readonly class AppController
         HTML;
     }
 
+    /**
+     * The tab's icon, chosen as Minn Admin's own shell chooses it: the site
+     * icon when there is one, else a brand mark a theme or plugin offers on
+     * minn_admin_favicon, else Minn's "m" in the viewer's accent (Minn
+     * Admin's own drawing when it runs as code, its default accent if not).
+     * Without one the browser asks for /favicon.ico.
+     */
+    private function favicon(): string
+    {
+        $icons = trim($this->icon->links());
+        if ($icons !== '') {
+            return $icons;
+        }
+        $mark = 'data:image/svg+xml,' . rawurlencode('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect width="64" height="64" rx="15" fill="#6e62f5"/><text x="32" y="45" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif" font-size="42" font-weight="700" fill="#ffffff">m</text></svg>');
+        // minn_admin_favicon and the accent-coloured drawing are Minn Admin's own, there when it runs as code.
+        if (class_exists('Minn_Admin', false) && method_exists('Minn_Admin', 'default_favicon_uri')) {
+            try {
+                $offered = Runtime::hooks()->filter('minn_admin_favicon', ['']);
+                if (is_string($offered) && preg_match('#^(?:https?:)?//|^/(?!/)#i', $offered) === 1) {
+                    return '<link rel="icon" href="' . Html::attr($offered) . '">';
+                }
+                $mark = (string) \Minn_Admin::default_favicon_uri();
+            } catch (\Throwable) {
+                // The plugin's drawing needs the runtime; the default mark stands in.
+            }
+        }
+        return '<link rel="icon" type="image/svg+xml" href="' . Html::attr($mark) . '">';
+    }
+
     /** One file of the app bundle, with its content type and caching headers. */
     #[Route(Method::Get, '/minn/admin/assets/{path*}', policy: new Policy(Access::Public))]
     public function asset(Request $request, string $path): Response
@@ -111,6 +143,7 @@ final readonly class AppController
         <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
         <meta name="robots" content="noindex, nofollow">
         <title>Minn Admin — {$name}</title>
+        {$this->favicon()}
         <link rel="stylesheet" href="/minn/admin/assets/css/app.css?ver={$cssVersion}">
         <script>
         try {

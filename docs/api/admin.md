@@ -8,7 +8,7 @@ the minn-admin/v1 namespace and serving the Minn Admin app
 | [`ActivityFeed`](#activityfeed) | final readonly class | 212 | What happened lately, as the overview and the bell tell it: the caller's |
 | [`AdminTypes`](#admintypes) | final class | 85 | Admin-facing type facts (viewable, labels, supports, the edit gate) live |
 | [`App`](#app) | final readonly class | 98 | The Minn Admin app on disk: the symlinked dev copy the engine serves the |
-| [`AppController`](#appcontroller) | final readonly class | 118 | Serves Minn Admin from the engine: the path-routed shell (every |
+| [`AppController`](#appcontroller) | final readonly class | 149 | Serves Minn Admin from the engine: the path-routed shell (every |
 | [`Appearance`](#appearance) | final readonly class | 82 | A person's Minn Admin appearance: the colour scheme and its custom |
 | [`BootPayload`](#bootpayload) | final readonly class | 245 | The window.MINN boot payload, assembled from the engine: the keys app.js |
 | [`BundleController`](#bundlecontroller) | final readonly class | 45 | What the app bundle answers for: the user guide it carries, the |
@@ -220,7 +220,7 @@ app.js asks admin-ajax.php for is the reference's own rest-nonce action
 Used by: `Minn\Engine`
 
 ```php
-__construct(Minn\Admin\App $app, Minn\Admin\BootPayload $payload, Minn\Auth\Authenticator $authenticator, Minn\Auth\Capabilities $capabilities, Minn\Front\Permalinks $permalinks, string $engineVersion, bool $off = false)
+__construct(Minn\Admin\App $app, Minn\Admin\BootPayload $payload, Minn\Auth\Authenticator $authenticator, Minn\Auth\Capabilities $capabilities, Minn\Front\Permalinks $permalinks, string $engineVersion, Minn\Content\SiteIcon $icon, bool $off = false)
 ```
 
 
@@ -238,7 +238,7 @@ Route: `GET /minn/admin/assets/{path*} (public)`
 
 One file of the app bundle, with its content type and caching headers.
 
-Internals: `offPage()` (private, line 64), `render()` (private, line 97)
+Internals: `offPage()` (private, line 67), `favicon()` (private, line 91), `render()` (private, line 129)
 
 
 ## Appearance

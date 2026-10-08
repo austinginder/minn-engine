@@ -862,7 +862,7 @@
             "namespace": "Minn\\Admin",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Admin/AppController.php",
-            "lines": 118,
+            "lines": 149,
             "doc": "Serves Minn Admin from the engine: the path-routed shell (every\nsub-path renders the same page) and the app's assets. The nonce refresh\napp.js asks admin-ajax.php for is the reference's own rest-nonce action\n(Runtime\\AjaxController).",
             "implements": [],
             "extends": null,
@@ -872,6 +872,7 @@
                 "Minn\\Auth\\Authenticated",
                 "Minn\\Auth\\Authenticator",
                 "Minn\\Auth\\Capabilities",
+                "Minn\\Content\\SiteIcon",
                 "Minn\\Front\\Permalinks",
                 "Minn\\Html",
                 "Minn\\Http\\Access",
@@ -880,13 +881,14 @@
                 "Minn\\Http\\Request",
                 "Minn\\Http\\Response",
                 "Minn\\Http\\Route",
-                "Minn\\Json"
+                "Minn\\Json",
+                "Minn\\Runtime\\Runtime"
             ],
             "usedBy": [
                 "Minn\\Engine"
             ],
             "constructor": {
-                "signature": "__construct(Minn\\Admin\\App $app, Minn\\Admin\\BootPayload $payload, Minn\\Auth\\Authenticator $authenticator, Minn\\Auth\\Capabilities $capabilities, Minn\\Front\\Permalinks $permalinks, string $engineVersion, bool $off = false)",
+                "signature": "__construct(Minn\\Admin\\App $app, Minn\\Admin\\BootPayload $payload, Minn\\Auth\\Authenticator $authenticator, Minn\\Auth\\Capabilities $capabilities, Minn\\Front\\Permalinks $permalinks, string $engineVersion, Minn\\Content\\SiteIcon $icon, bool $off = false)",
                 "doc": "",
                 "shapes": [],
                 "params": [
@@ -933,6 +935,13 @@
                         "doc": ""
                     },
                     {
+                        "name": "icon",
+                        "type": "Minn\\Content\\SiteIcon",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    },
+                    {
                         "name": "off",
                         "type": "bool",
                         "shape": "",
@@ -941,8 +950,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 28,
-                "end": 38
+                "line": 30,
+                "end": 41
             },
             "cases": [],
             "constants": [],
@@ -1002,6 +1011,15 @@
                     "promoted": true
                 },
                 {
+                    "name": "icon",
+                    "type": "Minn\\Content\\SiteIcon",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
+                },
+                {
                     "name": "off",
                     "type": "bool",
                     "readonly": true,
@@ -1032,8 +1050,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 43,
-                    "end": 61
+                    "line": 46,
+                    "end": 64
                 },
                 {
                     "routes": [
@@ -1061,8 +1079,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 83,
-                    "end": 91
+                    "line": 115,
+                    "end": 123
                 },
                 {
                     "routes": [],
@@ -1073,8 +1091,20 @@
                     "doc": "The engine without an admin: the site keeps serving; the command that brings the admin back is named.",
                     "shapes": [],
                     "params": [],
-                    "line": 64,
-                    "end": 79
+                    "line": 67,
+                    "end": 82
+                },
+                {
+                    "routes": [],
+                    "name": "favicon",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "favicon(): string",
+                    "doc": "The tab's icon, chosen as Minn Admin's own shell chooses it: the site\nicon when there is one, else a brand mark a theme or plugin offers on\nminn_admin_favicon, else Minn's \"m\" in the viewer's accent (Minn\nAdmin's own drawing when it runs as code, its default accent if not).\nWithout one the browser asks for /favicon.ico.",
+                    "shapes": [],
+                    "params": [],
+                    "line": 91,
+                    "end": 111
                 },
                 {
                     "routes": [],
@@ -1093,8 +1123,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 97,
-                    "end": 142
+                    "line": 129,
+                    "end": 175
                 }
             ]
         },
@@ -33397,7 +33427,7 @@
             "namespace": "Minn\\Content",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Content/SiteIcon.php",
-            "lines": 50,
+            "lines": 63,
             "doc": "The site icon: the attachment the site_icon option names, as the file\nunder uploads it points at. Read by the favicon route, the head links,\nand the admin app's sidebar.",
             "implements": [],
             "extends": null,
@@ -33405,9 +33435,11 @@
                 "Minn\\Content\\Posts",
                 "Minn\\Content\\Site",
                 "Minn\\Front\\Permalinks",
+                "Minn\\Html",
                 "Minn\\Media\\Metadata"
             ],
             "usedBy": [
+                "Minn\\Admin\\AppController",
                 "Minn\\Admin\\BootPayload",
                 "Minn\\Engine",
                 "Minn\\Front\\ProbeController",
@@ -33521,6 +33553,18 @@
                     "params": [],
                     "line": 59,
                     "end": 63
+                },
+                {
+                    "routes": [],
+                    "name": "links",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "links(): string",
+                    "doc": "The head links a site with an icon prints (wp_site_icon): the 32 and 192 pixel icons, the Apple touch icon, and the tile image; empty without one.",
+                    "shapes": [],
+                    "params": [],
+                    "line": 66,
+                    "end": 76
                 }
             ]
         },
@@ -50231,6 +50275,7 @@
                 "Minn\\Content\\Menus",
                 "Minn\\Content\\NoteMarkers",
                 "Minn\\Content\\PasswordGate",
+                "Minn\\Content\\SiteIcon",
                 "Minn\\Content\\TermLinks",
                 "Minn\\Front\\AdminBar",
                 "Minn\\Front\\PostNavigation",
@@ -125730,6 +125775,7 @@
                 "Minn\\Runtime\\Shortcodes"
             ],
             "usedBy": [
+                "Minn\\Admin\\AppController",
                 "Minn\\Admin\\BootPayload",
                 "Minn\\Admin\\PackagesController",
                 "Minn\\Admin\\ThemesController",
@@ -140708,7 +140754,7 @@
             "namespace": "Minn\\Theme",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Theme/HeadLinks.php",
-            "lines": 133,
+            "lines": 126,
             "doc": "The links the reference puts in every head: the site and comments\nfeeds (plus the archive's own feed), the REST discovery link, the\nJSON alternate for the queried object, and the site icon set. The\nblock path prints them as one run; the classic path prints the same\npieces from the reference's wp_head hooks.",
             "implements": [],
             "extends": null,
@@ -140952,7 +140998,7 @@
                     "shapes": [],
                     "params": [],
                     "line": 147,
-                    "end": 157
+                    "end": 150
                 }
             ]
         },
