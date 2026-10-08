@@ -223,13 +223,13 @@ $refFeed = page("$REF/feed/");
 check(str_contains($refFeed['body'], 'There is no excerpt because this is a protected post.') && !str_contains($refFeed['body'], 'secret body'), 'reference feed agrees');
 
 // 6. Sign-in: open redirect closed, logout guarded, forwarded scheme ignored.
-$login = page("$ENGINE/wp-login.php", 'log=admin&pwd=password&redirect_to=https://evil.example/');
+$login = page("$ENGINE/wp-login.php", 'log=admin&pwd=' . rawurlencode(minn_test_local('adminPassword')) . '&redirect_to=https://evil.example/');
 check($login['status'] === '302' && str_starts_with($login['headers']['location'] ?? '', $ENGINE), 'redirect_to off-site lands in the admin instead', $login['headers']['location'] ?? '');
-$login = page("$ENGINE/wp-login.php", 'log=admin&pwd=password&redirect_to=//evil.example/');
+$login = page("$ENGINE/wp-login.php", 'log=admin&pwd=' . rawurlencode(minn_test_local('adminPassword')) . '&redirect_to=//evil.example/');
 check(str_starts_with($login['headers']['location'] ?? '', $ENGINE), 'protocol-relative redirect_to is refused too');
-$login = page("$ENGINE/wp-login.php", 'log=admin&pwd=password&redirect_to=/sample-page/');
+$login = page("$ENGINE/wp-login.php", 'log=admin&pwd=' . rawurlencode(minn_test_local('adminPassword')) . '&redirect_to=/sample-page/');
 check(($login['headers']['location'] ?? '') === "$ENGINE/sample-page/", 'a same-site path is honoured');
-$login = page("$ENGINE/wp-login.php", 'log=admin@minn-engine.localhost&pwd=password');
+$login = page("$ENGINE/wp-login.php", 'log=admin@minn-engine.localhost&pwd=' . rawurlencode(minn_test_local('adminPassword')));
 check($login['status'] === '302' && str_contains($login['headers']['set-cookie'] ?? '', 'wordpress_logged_in_'), 'sign-in by email address works');
 preg_match('/wordpress_logged_in_[0-9a-f]+=([^;]+)/', $login['headers']['set-cookie'] ?? '', $m);
 $cookie = 'wordpress_logged_in_' . md5($ENGINE) . '=' . ($m[1] ?? '');
@@ -240,8 +240,8 @@ $out = page("$ENGINE/wp-login.php?action=logout&_wpnonce=" . ($n[1] ?? ''), '', 
 check($out['status'] === '302' && str_contains($out['headers']['location'] ?? '', 'loggedout=true'), 'logout with the nonce signs out');
 $me = page("$ENGINE/?rest_route=" . rawurlencode('/wp/v2/users/me'), '', ["Cookie: $cookie"]);
 check($me['status'] === '401', 'the old cookie is dead after logout (session destroyed server-side)', $me['status']);
-$xfp = page("$ENGINE/wp-login.php", 'log=admin&pwd=password', ['X-Forwarded-Proto: https']);
-check(str_contains($xfp['headers']['set-cookie'] ?? '', 'wordpress_sec_') === str_contains(page("$ENGINE/wp-login.php", 'log=admin&pwd=password')['headers']['set-cookie'] ?? '', 'wordpress_sec_'), 'X-Forwarded-Proto does not change the cookie scheme');
+$xfp = page("$ENGINE/wp-login.php", 'log=admin&pwd=' . rawurlencode(minn_test_local('adminPassword')), ['X-Forwarded-Proto: https']);
+check(str_contains($xfp['headers']['set-cookie'] ?? '', 'wordpress_sec_') === str_contains(page("$ENGINE/wp-login.php", 'log=admin&pwd=' . rawurlencode(minn_test_local('adminPassword')))['headers']['set-cookie'] ?? '', 'wordpress_sec_'), 'X-Forwarded-Proto does not change the cookie scheme');
 
 // 7. Rendering defences (engine only).
 $evil = (int) wp("post create --post_status=publish --post_title='zz sec render' --post_content='" . str_replace("'", "'\\''", '<!-- wp:template-part {"slug":"../../../../etc/passwd","tagName":"script>alert(1)</script"} /--><!-- wp:group {"style":{"elements":{"link":{"color":{"text":"red}</style><script>x</script>"}}}},"layout":{"type":"flex","justifyContent":"center\\" onmouseover=\\"alert(1)"}} --><div class="wp-block-group">g</div><!-- /wp:group --><!-- wp:navigation-link {"label":"j","url":"javascript:alert(1)"} /--><!-- wp:block {"ref":0} /-->') . "' --porcelain");

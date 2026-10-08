@@ -14,7 +14,9 @@
 $ENGINE = rtrim( getenv( 'MINN_TEST_URL' ) ?: 'https://minn.localhost', '/' );
 $REF    = 'https://ref.minn.localhost';
 $ROOT   = dirname( __DIR__ );
-$PASS   = getenv( 'MINN_ADMIN_PASS' ) ?: 'password';
+
+require_once __DIR__ . '/local.php';
+$PASS   = getenv( 'MINN_ADMIN_PASS' ) ?: minn_test_local( 'adminPassword' );
 
 require_once __DIR__ . '/lib.php';
 

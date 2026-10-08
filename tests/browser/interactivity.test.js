@@ -9,7 +9,7 @@ const { chromium } = require( 'playwright-core' );
 require( './pin-theme' ).pinTheme();
 
 const CHROME = '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome';
-const BASE = ( process.env.MINN_INTERACTIVITY_BASE || 'https://dogfood.localhost' ).replace( /\/$/, '' );
+const BASE = ( process.env.MINN_INTERACTIVITY_BASE || `https://${ require( './local' ).local( 'dogfood' ) }.localhost` ).replace( /\/$/, '' );
 
 let pass = 0;
 let fail = 0;

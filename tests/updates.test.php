@@ -5,20 +5,22 @@
  * update of an inactive plugin, engine vs the site's own reference
  * (contracts/rest/minn-admin-v1.md "Updates").
  *
- * Ref: dogfood's parked WordPress at its Cove twin (cove twin dogfood add --as-site=ref.dogfood.localhost) — SKIPs cleanly when down.
+ * Ref: the dogfood site's parked WordPress at its Cove twin (tests/local.json's "dogfood") — SKIPs cleanly when down.
  * Needs the network: wordpress.org answers both stacks.
  */
 
-$ENGINE = 'https://dogfood.localhost';
-$REF    = 'https://ref.dogfood.localhost';
-$SITE   = getenv( 'MINN_DOGFOOD_SITE' ) ?: '~/Cove/Sites/dogfood.localhost';
+require_once __DIR__ . '/local.php';
+
+$ENGINE = 'https://' . minn_test_local( 'dogfood' ) . '.localhost';
+$REF    = 'https://ref.' . minn_test_local( 'dogfood' ) . '.localhost';
+$SITE   = getenv( 'MINN_DOGFOOD_SITE' ) ?: minn_test_site_dir( minn_test_local( 'dogfood' ) );
 $ROOT   = dirname( __DIR__ );
 
 require_once __DIR__ . '/lib.php';
 
 [ $ph ] = minn_test_fetch( "$REF/?rest_route=/wp/v2/posts", 30 );
 if ( 200 !== $ph['status'] || ! is_dir( "$SITE/public" ) ) {
-	echo "SKIP: dogfood reference not running at $REF (its Cove twin: cove twin dogfood add --as-site=ref.dogfood.localhost)\n";
+	echo "SKIP: dogfood reference not running at $REF (its Cove twin: cove twin <site> add --as-site=ref.<site>.localhost)\n";
 	exit( 0 );
 }
 

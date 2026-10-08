@@ -118,7 +118,7 @@ $rows[] = ['method' => 'GET', 'path' => $path, 'claim' => '200 · identical', 'e
     'verdict' => 'The same JSON, key for key, for a signed-in administrator, once the host name is swapped and the per-render layout hash in rendered blocks is masked. The session was minted by WordPress and read by both.'];
 
 // 2. Signing in: each side's logged_in cookie is then sent to the other side's front page.
-$form = http_build_query(['log' => 'admin', 'pwd' => 'password', 'testcookie' => '1']);
+$form = http_build_query(['log' => 'admin', 'pwd' => minn_test_local('adminPassword'), 'testcookie' => '1']);
 $jar = [];
 $pair = [];
 foreach (['engine' => $ENGINE, 'reference' => $REF] as $who => $base) {

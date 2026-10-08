@@ -12,14 +12,16 @@ declare(strict_types=1);
  * check, so the suite normalises the known plugin tokens and reports the
  * first differing line per path.
  *
- *   MINN_DOGFOOD_ENGINE=https://dogfood.localhost \
- *   MINN_DOGFOOD_REF=https://ref.dogfood.localhost php tests/dogfood.test.php [--all]
+ *   php tests/dogfood.test.php [--all]
+ *
+ * The site is tests/local.json's "dogfood"; MINN_DOGFOOD_ENGINE and
+ * MINN_DOGFOOD_REF point it elsewhere.
  */
 
 require __DIR__ . '/lib.php';
 
-$ENGINE = getenv('MINN_DOGFOOD_ENGINE') ?: 'https://dogfood.localhost';
-$REF = getenv('MINN_DOGFOOD_REF') ?: 'https://ref.dogfood.localhost';
+$ENGINE = getenv('MINN_DOGFOOD_ENGINE') ?: 'https://' . minn_test_local('dogfood') . '.localhost';
+$REF = getenv('MINN_DOGFOOD_REF') ?: 'https://ref.' . minn_test_local('dogfood') . '.localhost';
 
 $src = (string) file_get_contents(__DIR__ . '/theme.test.php');
 preg_match('/function theme_body.*?\n}\n/s', $src, $m);
@@ -46,7 +48,7 @@ $fetch = static function (string $base, string $path): string {
 
 $probe = @file_get_contents($REF . '/', false, stream_context_create(['http' => ['ignore_errors' => true, 'timeout' => 30]]));
 if ($probe === false || $probe === '') {
-    echo "dogfood suite: reference not running at $REF (its Cove twin: cove twin dogfood add --as-site=ref.dogfood.localhost); skipping\n";
+    echo "dogfood suite: reference not running at $REF (the dogfood site's Cove twin: cove twin <site> add --as-site=ref.<site>.localhost); skipping\n";
     exit(0);
 }
 

@@ -82,17 +82,17 @@ $blocked = $request("$ENGINE/wp-login.php", 'log=admin&pwd=wrong-21');
 $check('the twenty-first is 429', $statuses[20] === '429' && $blocked['status'] === '429', implode(',', $statuses));
 $check('429 carries Retry-After within the window', (int) ($blocked['headers']['retry-after'] ?? 0) > 0 && (int) $blocked['headers']['retry-after'] <= 900, json_encode($blocked['headers']['retry-after'] ?? null));
 $check('429 page explains the wait', str_contains($blocked['body'], 'Too many failed sign-in attempts'));
-$right = $request("$ENGINE/wp-login.php", 'log=admin&pwd=password');
+$right = $request("$ENGINE/wp-login.php", 'log=admin&pwd=' . rawurlencode(minn_test_local('adminPassword')));
 $check('a correct password is refused while throttled', $right['status'] === '429');
 $token = $request("$ENGINE/wp-login.php?user_id=1&cove_login_token=0000000");
 $check('the one-time link is throttled too', $token['status'] === '429');
 $clearThrottle();
-$after = $request("$ENGINE/wp-login.php", 'log=admin&pwd=password');
+$after = $request("$ENGINE/wp-login.php", 'log=admin&pwd=' . rawurlencode(minn_test_local('adminPassword')));
 $check('after the window clears, sign-in works again', $after['status'] === '302' && str_contains($after['headers']['set-cookie'] ?? '', 'wordpress_logged_in_'), $after['status']);
 // A successful sign-in does not reset the address's counter (one owned account must not
 // launder guesses at another); the window lapses on its own.
 $request("$ENGINE/wp-login.php", 'log=admin&pwd=wrong');
-$ok = $request("$ENGINE/wp-login.php", 'log=admin&pwd=password');
+$ok = $request("$ENGINE/wp-login.php", 'log=admin&pwd=' . rawurlencode(minn_test_local('adminPassword')));
 $rows = trim((string) shell_exec('cd ' . escapeshellarg($REF_DIR) . ' && wp db query "SELECT option_value FROM wp_options WHERE option_name LIKE \'minn_login_throttle_%\'" --skip-column-names 2>/dev/null'));
 $check('a successful sign-in still works under the limit and leaves the counter to lapse', $ok['status'] === '302' && preg_match('/^\d+:1$/', $rows) === 1, $ok['status'] . ' ' . $rows);
 $clearThrottle();

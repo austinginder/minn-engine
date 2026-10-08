@@ -4,16 +4,17 @@
 // app meets is a failure. Signs in through the engine's own token link
 // (`wp user login`), so no password rides the suite.
 //
-// Env: MINN_DOGFOOD_ENGINE (default https://dogfood.localhost)
-//      MINN_DOGFOOD_ROOT   (default ~/Cove/Sites/dogfood.localhost/public)
+// Env: MINN_DOGFOOD_ENGINE (default https://<dogfood>.localhost, tests/local.json)
+//      MINN_DOGFOOD_ROOT   (default the dogfood site's public/)
 //      MINN_DOGFOOD_USER   (default austin)
 const { execSync } = require( 'child_process' );
 const { chromium } = require( 'playwright-core' );
+const { local, siteDir } = require( './local' );
 require( './pin-theme' ).pinTheme();
 
 const CHROME = '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome';
-const BASE = ( process.env.MINN_DOGFOOD_ENGINE || 'https://dogfood.localhost' ).replace( /\/$/, '' );
-const ROOT = process.env.MINN_DOGFOOD_ROOT || '~/Cove/Sites/dogfood.localhost/public';
+const BASE = ( process.env.MINN_DOGFOOD_ENGINE || `https://${ local( 'dogfood' ) }.localhost` ).replace( /\/$/, '' );
+const ROOT = process.env.MINN_DOGFOOD_ROOT || `${ siteDir( local( 'dogfood' ) ) }/public`;
 const USER = process.env.MINN_DOGFOOD_USER || 'austin';
 
 let pass = 0;

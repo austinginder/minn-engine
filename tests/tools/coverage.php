@@ -16,13 +16,14 @@
  *   names built from variables are not counted).
  *
  *   php tests/tools/coverage.php [site root] [--json]
- *   (site root: a Cove site whose plugins to weigh by; default shop-dogfood)
+ *   (site root: a Cove site whose plugins to weigh by; default the shop dogfood site, tests/local.json)
  */
 
+require_once dirname(__DIR__) . '/local.php';
 $root = dirname(__DIR__, 2);
 $args = array_slice($argv, 1);
 $json = in_array('--json', $args, true);
-$site = array_values(array_filter($args, static fn ($a) => $a !== '--json'))[0] ?? '~/Cove/Sites/shop-dogfood.localhost';
+$site = array_values(array_filter($args, static fn ($a) => $a !== '--json'))[0] ?? minn_test_site_dir(minn_test_local('shop'));
 
 $functions = json_decode((string) file_get_contents("{$root}/contracts/api/functions.json"), true);
 $hooks = json_decode((string) file_get_contents("{$root}/contracts/api/hooks.json"), true);

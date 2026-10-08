@@ -4,7 +4,7 @@
 const { execSync } = require( 'child_process' );
 const path = require( 'path' );
 
-const PUBLIC = ( process.env.MINN_TEST_ROOT || '~/Cove/Sites/minn.localhost' ) + '/public';
+const PUBLIC = ( process.env.MINN_TEST_ROOT || require( './local' ).siteDir( 'minn' ) ) + '/public';
 const wp = ( args ) => execSync( `/opt/homebrew/bin/wp ${ args }`, { cwd: PUBLIC, stdio: [ 'ignore', 'pipe', 'ignore' ] } ).toString().trim();
 
 function pinTheme( slug = 'twentytwentyfive' ) {

@@ -15,7 +15,7 @@ require( './pin-theme' ).pinTheme();
 
 const BASE = ( process.env.MINN_ENGINE_URL || 'https://minn.localhost' ).replace( /\/$/, '' );
 const USER = process.env.MINN_ADMIN_USER || 'admin';
-const PASS = process.env.MINN_ADMIN_PASS || 'password';
+const PASS = process.env.MINN_ADMIN_PASS || require( './local' ).local( 'adminPassword' );
 const CHROME = '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome';
 
 let pass = 0, fail = 0;

@@ -39,7 +39,7 @@
 require __DIR__ . '/lib.php';
 require __DIR__ . '/tools/round-trip.php';
 
-$ROOT = rtrim( getenv( 'MINN_ROUNDTRIP_ROOT' ) ?: '~/Cove/Sites/cove-minn.localhost', '/' );
+$ROOT = rtrim( getenv( 'MINN_ROUNDTRIP_ROOT' ) ?: minn_test_site_dir( 'cove-minn' ), '/' );
 $cfg  = json_decode( (string) @file_get_contents( "$ROOT/private/round-trip.json" ), true );
 if ( ! is_array( $cfg ) ) {
 	echo "SKIP: no round-trip site at $ROOT (needs private/round-trip.json)\n";

@@ -8,7 +8,7 @@ declare(strict_types=1);
  * site/minn-site/content/coverage.json for the theme's /coverage/ page.
  *
  *   php tests/tools/coverage-history.php [site root]
- *   (site root: a Cove site whose plugins to weigh by; default shop-dogfood)
+ *   (site root: a Cove site whose plugins to weigh by; default the shop dogfood site, tests/local.json)
  *
  * The yardstick is today's reference inventory (contracts/api/functions.json,
  * classes.json, hooks.json), held fixed so every commit is measured against
@@ -28,7 +28,8 @@ declare(strict_types=1);
  */
 
 $root = dirname(__DIR__, 2);
-$site = $argv[1] ?? '~/Cove/Sites/shop-dogfood.localhost';
+require_once dirname(__DIR__) . '/local.php';
+$site = $argv[1] ?? minn_test_site_dir(minn_test_local('shop'));
 $out = "{$root}/site/minn-site/content/coverage.json";
 
 $git = static function (string ...$args) use ($root): string {

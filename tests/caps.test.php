@@ -104,7 +104,7 @@ check( 0 === $mismatch, 'current_user_can matches the oracle across ' . count( $
 
 // 2. Login: the engine authenticates a password and mints a session.
 $login = json_decode( (string) shell_exec(
-	'php ' . escapeshellarg( "$ROOT/tests/tools/engine-login.php" ) . ' admin ' . escapeshellarg( 'password' )
+	'php ' . escapeshellarg( "$ROOT/tests/tools/engine-login.php" ) . ' admin ' . escapeshellarg( minn_test_local( 'adminPassword' ) )
 ), true );
 check( ! empty( $login['ok'] ), 'engine logs in with a correct password' );
 

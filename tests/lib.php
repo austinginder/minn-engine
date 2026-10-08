@@ -1,6 +1,8 @@
 <?php
 /** Shared helpers for the engine suites. */
 
+require_once __DIR__ . '/local.php';
+
 /**
  * The site the suites drive. It is NOT the marketing site: that one lives at
  * minn-engine.localhost, keeps the Minn site theme, and is never pinned or
@@ -9,7 +11,7 @@
  * twentytwentyfive.
  */
 function minn_test_site_root(): string {
-	return rtrim( getenv( 'MINN_TEST_ROOT' ) ?: '~/Cove/Sites/minn.localhost', '/' );
+	return rtrim( getenv( 'MINN_TEST_ROOT' ) ?: minn_test_site_dir( 'minn' ), '/' );
 }
 
 /** The test site over HTTPS. */

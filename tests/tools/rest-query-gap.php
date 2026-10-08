@@ -13,7 +13,7 @@
  * list. Live ignored is the finding.
  *
  *   php tests/tools/rest-query-gap.php
- *   php tests/tools/rest-query-gap.php --engine=https://dogfood.localhost --ref=https://ref.dogfood.localhost
+ *   php tests/tools/rest-query-gap.php --engine=https://<dogfood>.localhost --ref=https://ref.<dogfood>.localhost
  */
 
 declare(strict_types=1);

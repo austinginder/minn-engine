@@ -22,7 +22,8 @@ declare(strict_types=1);
 
 $root = dirname(__DIR__, 2);
 $options = getopt('', ['wordpress::']);
-$adminDir = getenv('MINN_ADMIN_DIR') ?: '~/Cove/Sites/minnadmin.localhost/public/wp-content/plugins/minn-admin';
+require_once dirname(__DIR__) . '/local.php';
+$adminDir = getenv('MINN_ADMIN_DIR') ?: minn_test_site_dir('minnadmin') . '/public/wp-content/plugins/minn-admin';
 $engineDir = $root . '/public/minn';
 
 /** @return array{0: string, 1: string, 2: string} tree, version, source */

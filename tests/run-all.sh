@@ -19,14 +19,19 @@
 set -u
 cd "$( dirname "$0" )"
 
-TEST_ROOT="${MINN_TEST_ROOT:-~/Cove/Sites/minn.localhost}"
+# Site names, paths and the local password come from tests/local.json (see tests/local.php).
+local_value() { php -r 'require "local.php"; echo $argv[1] === "sites" ? minn_test_sites_dir() : minn_test_local($argv[1]);' "$1"; }
+SITES="$( local_value sites )"
+DOGFOOD="$( local_value dogfood )"
+
+TEST_ROOT="${MINN_TEST_ROOT:-$SITES/minn.localhost}"
 SITE_ROOT="$( cd .. && pwd )"
 
 # The reference's file layout as placeholders, so plugins that require wp-admin/includes files load.
 php tools/site-skeleton.php "$TEST_ROOT" >/dev/null
 php tools/site-skeleton.php "$SITE_ROOT" >/dev/null
-[ -d ~/Cove/Sites/dogfood.localhost/public ] && php tools/site-skeleton.php ~/Cove/Sites/dogfood.localhost >/dev/null
-WOO_ROOT="${MINN_WOO_ROOT:-~/Cove/Sites/minnwoo.localhost}"
+[ -d "$SITES/$DOGFOOD.localhost/public" ] && php tools/site-skeleton.php "$SITES/$DOGFOOD.localhost" >/dev/null
+WOO_ROOT="${MINN_WOO_ROOT:-$SITES/minnwoo.localhost}"
 [ -d "$WOO_ROOT/public" ] && php tools/site-skeleton.php "$WOO_ROOT" >/dev/null
 
 # Each reference is the site's Cove twin; say which are missing up front.
@@ -63,10 +68,10 @@ trap cleanup EXIT
 trap 'cleanup; trap - EXIT; exit 130' INT
 trap 'cleanup; trap - EXIT; exit 143' TERM HUP
 pin_locale
-for twin_site in minn dogfood minn-engine; do check_twin "$twin_site"; done
+for twin_site in minn "$DOGFOOD" minn-engine; do check_twin "$twin_site"; done
 # The WooCommerce lab and the round trip's site are optional; their suites skip without them.
 [ -f "$WOO_ROOT/private/woo-baseline.sql" ] && check_twin minnwoo
-ROUNDTRIP_ROOT="${MINN_ROUNDTRIP_ROOT:-~/Cove/Sites/cove-minn.localhost}"
+ROUNDTRIP_ROOT="${MINN_ROUNDTRIP_ROOT:-$SITES/cove-minn.localhost}"
 [ -f "$ROUNDTRIP_ROOT/private/round-trip.json" ] && check_twin cove-minn
 
 failed=0
@@ -78,7 +83,7 @@ done
 # Browser test (Minn Admin boot). Needs the app symlink + system Chrome.
 if [ -d browser/node_modules ]; then
 	printf "\n=== browser: minn-admin boot ===\n"
-	MINN_ADMIN_PASS="${MINN_ADMIN_PASS:-password}" node browser/boot.test.js || failed=1
+	MINN_ADMIN_PASS="${MINN_ADMIN_PASS:-$( local_value adminPassword )}" node browser/boot.test.js || failed=1
 	printf "\n=== browser: geometry (dev site) ===\n"
 	node browser/geometry.test.js --dev || failed=1
 	printf "\n=== browser: geometry (dogfood) ===\n"

@@ -19,6 +19,8 @@ private/
 public/minn/admin
 
 # Browser test deps
+# Local facts the suites read (site names, paths, the local password); tests/local.example.json shows the keys.
+tests/local.json
 tests/browser/node_modules
 tests/browser/package-lock.json
 

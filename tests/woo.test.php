@@ -21,7 +21,7 @@ declare(strict_types=1);
 
 require __DIR__ . '/lib.php';
 
-$SITE = getenv('MINN_WOO_ROOT') ?: '~/Cove/Sites/minnwoo.localhost';
+$SITE = getenv('MINN_WOO_ROOT') ?: minn_test_site_dir('minnwoo');
 $ENGINE = rtrim(getenv('MINN_WOO_URL') ?: 'https://minnwoo.localhost', '/');
 $REF = rtrim(getenv('MINN_WOO_REF') ?: 'https://ref.minnwoo.localhost', '/');
 $MAILPIT = getenv('MINN_MAILPIT') ?: 'https://cove.localhost/mail-api/v1';
