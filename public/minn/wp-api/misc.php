@@ -957,3 +957,44 @@ function wp_opcache_invalidate_directory($dir)
         wp_opcache_invalidate($file->getPathname());
     }
 }
+
+/** The site's custom CSS (the Customizer's Additional CSS) printed in a style tag, when there is any. */
+function wp_custom_css_cb()
+{
+    $styles = wp_get_custom_css();
+    if ($styles !== '' || is_customize_preview()) {
+        echo '<style' . (current_theme_supports('html5', 'style') ? '' : ' type="text/css"') . " id=\"wp-custom-css\">\n" . strip_tags($styles) . "\n</style>\n";
+    }
+}
+
+/**
+ * Whether a file carries a signature from a trusted key (wp_trusted_keys):
+ * no signature, or none that verifies, is an error naming the file.
+ */
+function verify_file_signature($filename, $signatures, $filename_for_errors = false)
+{
+    $name = $filename_for_errors ?: wp_basename((string) $filename);
+    if (!function_exists('sodium_crypto_sign_verify_detached') || !in_array('sha384', array_map('strtolower', hash_algos()), true)) {
+        return new WP_Error('signature_verification_unsupported', sprintf(__('The authenticity of %s could not be verified as signature verification is unavailable on this system.'), '<span class="code">' . esc_html($name) . '</span>'));
+    }
+    if (!$signatures) {
+        return new WP_Error('signature_verification_no_signature', sprintf(__('The authenticity of %s could not be verified as no signature was found.'), '<span class="code">' . esc_html($name) . '</span>'), ['filename' => $name]);
+    }
+    $hash = hash_file('sha384', (string) $filename, true);
+    foreach ((array) $signatures as $signature) {
+        $raw = base64_decode((string) $signature, true);
+        foreach (strlen((string) $raw) === SODIUM_CRYPTO_SIGN_BYTES ? (array) wp_trusted_keys() : [] as $key) {
+            $key = base64_decode((string) $key, true);
+            if (strlen((string) $key) === SODIUM_CRYPTO_SIGN_PUBLICKEYBYTES && sodium_crypto_sign_verify_detached($raw, (string) $hash, $key)) {
+                return true;
+            }
+        }
+    }
+    return new WP_Error('signature_verification_failed', sprintf(__('The authenticity of %s could not be verified.'), '<span class="code">' . esc_html($name) . '</span>'), ['filename' => $name, 'hash' => bin2hex((string) $hash)]);
+}
+
+/** The keys a signature may be from: none of wordpress.org's (the engine fetches nothing from it), only what wp_trusted_keys adds. */
+function wp_trusted_keys()
+{
+    return apply_filters('wp_trusted_keys', []);
+}

@@ -593,3 +593,9 @@ function rest_send_allow_header($response, $server, $request)
 function rest_api_loaded()
 {
 }
+
+/** A value checked as an object against a schema (rest_validate_value_from_schema with the type object). */
+function rest_validate_object_value_from_schema($value, $args, $param)
+{
+    return rest_validate_value_from_schema($value, array_merge((array) $args, ['type' => 'object']), $param);
+}

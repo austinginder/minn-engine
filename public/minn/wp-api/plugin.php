@@ -332,3 +332,31 @@ function add_option_whitelist($new_options, $options = '')
     _deprecated_function(__FUNCTION__, '5.5.0', 'add_allowed_options()');
     return add_allowed_options($new_options, $options);
 }
+
+/** The 'all' hook's callbacks run with these arguments, the hook's name first (Runtime\Hooks). */
+function _wp_call_all_hook($args)
+{
+    Runtime::hooks()->callAll(array_values((array) $args));
+}
+
+/** The plugin a callback is defined in (its header data), or null for one from anywhere else or nothing callable. */
+function _get_plugin_from_callback($callback)
+{
+    try {
+        $reflection = is_array($callback) ? new ReflectionMethod($callback[0], $callback[1]) : (is_string($callback) && str_contains($callback, '::') ? new ReflectionMethod($callback) : new ReflectionFunction($callback));
+    } catch (ReflectionException|TypeError) {
+        return null;
+    }
+    $file = $reflection->isInternal() ? '' : wp_normalize_path((string) $reflection->getFileName());
+    $plugins = wp_normalize_path(WP_PLUGIN_DIR);
+    if ($file === '' || !str_starts_with($file, $plugins)) {
+        return null;
+    }
+    $folder = (string) preg_replace('|^/([^/]*/).*$|', '\\1', str_replace($plugins, '', $file));
+    foreach (get_plugins() as $name => $plugin) {
+        if (str_starts_with($name, $folder)) {
+            return $plugin;
+        }
+    }
+    return null;
+}

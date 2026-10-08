@@ -1692,3 +1692,43 @@ function wp_enqueue_block_support_styles($style, $priority = 10)
         echo "<style>{$style}</style>\n";
     }, $priority);
 }
+
+/** A template file's description with the title and post types theme.json gives a custom template of that slug. */
+function _add_block_template_info($template_item)
+{
+    $declared = wp_theme_has_theme_json() ? (wp_get_theme_data_custom_templates()[$template_item['slug']] ?? null) : null;
+    return $declared === null ? $template_item : array_merge($template_item, ['title' => $declared['title'], 'postTypes' => $declared['postTypes']]);
+}
+
+/** A template part's description with the title and area theme.json gives it, else the uncategorized area. */
+function _add_block_template_part_area_info($template_info)
+{
+    $declared = wp_theme_has_theme_json() ? (wp_get_theme_data_template_parts()[$template_info['slug']] ?? null) : null;
+    if (isset($declared['area'])) {
+        return array_merge($template_info, ['title' => $declared['title'], 'area' => _filter_block_template_part_area($declared['area'])]);
+    }
+    return array_merge($template_info, ['area' => WP_TEMPLATE_PART_AREA_UNCATEGORIZED]);
+}
+
+/** A template part area that is one of the allowed areas, else uncategorized (with a notice). */
+function _filter_block_template_part_area($type)
+{
+    if (in_array($type, array_column(get_allowed_block_template_part_areas(), 'area'), true)) {
+        return $type;
+    }
+    wp_trigger_error('', sprintf(__('"%1$s" is not a supported wp_template_part area value and has been added as "%2$s".'), $type, WP_TEMPLATE_PART_AREA_UNCATEGORIZED), E_USER_NOTICE);
+    return WP_TEMPLATE_PART_AREA_UNCATEGORIZED;
+}
+
+/** Every .html file under a folder, however deep; none for a folder that is not there. */
+function _get_block_templates_paths($base_directory)
+{
+    if (!is_dir((string) $base_directory)) {
+        return [];
+    }
+    $paths = [];
+    foreach (new RegexIterator(new RecursiveIteratorIterator(new RecursiveDirectoryIterator((string) $base_directory)), '/^.+\.html$/i', RegexIterator::GET_MATCH) as $path => $file) {
+        $paths[] = $path;
+    }
+    return $paths;
+}

@@ -5478,3 +5478,71 @@ The first engine run of this probe died after it had changed
 `date_format` and before it put it back, and its next run "restored" the
 changed value. Thirty-six comment-date checks failed until the option was
 set back to `F j, Y`.
+
+## The catalogue's last real functions (2026-10-08)
+
+The eighth slice of the plugin queue (probe plugin-queue8, 44 cases). This
+finishes the catalogue-driven waves: 1,932 of the 2,000 catalogue plugins
+load, 99.0% of installs. What is left is the AI client (a decision for
+Austin), the block-supports functions (one registry with the renderer is
+its own change) and admin names, which the dead-end pass covers.
+
+**Posts and users**:
+
+- `get_the_modified_author` and `the_modified_author`;
+- `get_pung` and `get_to_ping` (cleaned by `sanitize_trackback_urls`,
+  which keeps only http and https addresses);
+- `_wp_get_post_revision_version`, `has_post_parent`;
+- `get_page_hierarchy` (pages whose parent is not among them are left
+  out);
+- `setup_userdata`, `get_users_of_blog` (deprecated, with its old columns,
+  `Content\Users::withCapabilities`);
+- `count_many_users_posts` (counts as stored, 0 for none,
+  `PostLookup::countsByAuthors`);
+- `wp_is_password_reset_allowed_for_user`;
+- `wp_get_users_with_no_role` (`Users::withoutRole`);
+- `get_currentuserinfo` and `wp_get_user_request_data` (deprecated).
+
+**Text and content**:
+
+- `human_readable_duration` (`[H:]MM:SS`, the hour only when it is not
+  0);
+- `attribute_escape` and `clean_url` (deprecated, the database context
+  reported apart);
+- `get_shortcode_tags_in_content` (nested ones too);
+- `wp_embed_handler_video`;
+- `get_all_category_ids` (deprecated), `get_tax_sql`;
+- `_get_plugin_from_callback`;
+- `_wp_call_all_hook` (`Hooks::callAll`).
+
+**Theme and blocks**:
+
+- `wp_custom_css_cb`, now on `wp_head` at 101 as the reference hooks it.
+  The engine never printed the Additional CSS a classic site stored.
+- `get_theme_starter_content`;
+- `wp_get_theme_data_custom_templates` (post types default to pages) and
+  `wp_get_theme_data_template_parts`;
+- `get_theme_feature_list` (always the static list; nothing is asked of
+  wordpress.org);
+- `_add_block_template_info`, `_add_block_template_part_area_info`,
+  `_filter_block_template_part_area`, `_get_block_templates_paths`.
+
+**Files and the rest**:
+
+- `wp_get_font_dir`;
+- `wp_get_webp_info` (`Media\WebpInfo`): lossy, lossless, or
+  `animated-alpha` for any extended file, unknown under 40 bytes;
+- `verify_file_signature`. `wp_trusted_keys` holds no wordpress.org key
+  (the engine fetches nothing from it), only what its filter adds.
+- `delete_meta`, `get_meta_keys` (`Runtime\Meta::keys`);
+- `register_sidebar_widget` and `register_widget_control` (deprecated;
+  an uncallable widget callback registers nothing, a control registers
+  anyway);
+- `script_concat_settings` (off);
+- `is_sitemap`, `_prime_comment_caches`;
+- `wp_magic_quotes`.
+
+**REST**: `rest_validate_object_value_from_schema`. The schema validator
+now enforces `minProperties` and `maxProperties`
+(`rest_too_few_properties`, `rest_too_many_properties`), which it had
+listed and ignored.

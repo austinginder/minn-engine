@@ -547,3 +547,9 @@ function wp_resolve_numeric_slug_conflicts($query_vars = [])
     $query_vars['name'] = $post->post_name;
     return $query_vars;
 }
+
+/** Whether the request is for a sitemap. */
+function is_sitemap()
+{
+    return (bool) get_query_var('sitemap');
+}

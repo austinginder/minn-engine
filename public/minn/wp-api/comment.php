@@ -1580,3 +1580,8 @@ function cancel_comment_reply_link($link_text = '')
 function update_comment_cache($comments, $update_meta_cache = true)
 {
 }
+
+/** Comments keep no cache here to prime. */
+function _prime_comment_caches($comment_ids, $update_meta_cache = true)
+{
+}

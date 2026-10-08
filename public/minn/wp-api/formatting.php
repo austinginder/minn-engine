@@ -1151,3 +1151,28 @@ function addslashes_gpc($gpc)
     _deprecated_function(__FUNCTION__, '7.0.0', 'wp_slash()');
     return wp_slash($gpc);
 }
+
+/** Deprecated since 2.8: esc_attr. */
+function attribute_escape($text)
+{
+    _deprecated_function(__FUNCTION__, '2.8.0', 'esc_attr()');
+    return esc_attr($text);
+}
+
+/** Deprecated since 3.0: esc_url (sanitize_url for the database context). */
+function clean_url($url, $protocols = null, $context = 'display')
+{
+    if ($context === 'db') {
+        _deprecated_function('clean_url( $context = \'db\' )', '3.0.0', 'sanitize_url()');
+    } else {
+        _deprecated_function(__FUNCTION__, '3.0.0', 'esc_url()');
+    }
+    return esc_url($url, $protocols, $context);
+}
+
+/** A trackback list kept to its http and https addresses, one a line, through sanitize_trackback_urls. */
+function sanitize_trackback_urls($to_ping)
+{
+    $urls = array_filter(preg_split('/[\r\n\t ]/', trim((string) $to_ping), -1, PREG_SPLIT_NO_EMPTY), static fn (string $url): bool => (bool) preg_match('#^https?://.#i', $url));
+    return apply_filters('sanitize_trackback_urls', implode("\n", array_map('sanitize_url', $urls)), $to_ping);
+}

@@ -105,3 +105,10 @@ function wp_maybe_enqueue_oembed_host_js($html)
     }
     return $html;
 }
+
+/** A video address embedded as a [video] shortcode (with the size asked for, when both sides are), through wp_embed_handler_video. */
+function wp_embed_handler_video($matches, $attr, $url, $rawattr)
+{
+    $size = !empty($rawattr['width']) && !empty($rawattr['height']) ? sprintf('width="%d" height="%d" ', (int) $rawattr['width'], (int) $rawattr['height']) : '';
+    return apply_filters('wp_embed_handler_video', sprintf('[video %s src="%s" /]', $size, esc_url($url)), $attr, $url, $rawattr);
+}

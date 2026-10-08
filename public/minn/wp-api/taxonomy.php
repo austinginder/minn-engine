@@ -1633,3 +1633,16 @@ function wp_term_is_shared($term_id)
 function update_term_cache($terms, $taxonomy = '')
 {
 }
+
+/** Deprecated since 4.0: every category's id. */
+function get_all_category_ids()
+{
+    _deprecated_function(__FUNCTION__, '4.0.0', 'get_terms()');
+    return get_terms(['taxonomy' => 'category', 'fields' => 'ids', 'get' => 'all']);
+}
+
+/** The JOIN and WHERE a tax query adds (WP_Tax_Query). */
+function get_tax_sql($tax_query, $primary_table, $primary_id_column)
+{
+    return (new WP_Tax_Query($tax_query))->get_sql($primary_table, $primary_id_column);
+}

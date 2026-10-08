@@ -1314,3 +1314,37 @@ function global_terms_enabled()
     _deprecated_function(__FUNCTION__, '6.1.0');
     return false;
 }
+
+/** A duration as words ("1 hour, 2 minutes, 3 seconds") from [H:]MM:SS (a leading minus ignored); false for anything else. */
+function human_readable_duration($duration = '')
+{
+    if (empty($duration) || !is_string($duration)) {
+        return false;
+    }
+    $duration = ltrim(trim($duration), '-');
+    if (!preg_match('/^(?:(\d+):)?([0-5]?\d):([0-5]?\d)$/', $duration, $m)) {
+        return false;
+    }
+    $parts = (int) $m[1] > 0 ? [sprintf(_n('%s hour', '%s hours', (int) $m[1]), (int) $m[1])] : [];
+    $parts[] = sprintf(_n('%s minute', '%s minutes', (int) $m[2]), (int) $m[2]);
+    $parts[] = sprintf(_n('%s second', '%s seconds', (int) $m[3]), (int) $m[3]);
+    return implode(', ', $parts);
+}
+
+/** A WebP file's width, height and kind (Media\WebpInfo); all false for anything else. */
+function wp_get_webp_info($filename)
+{
+    if (wp_get_image_mime($filename) !== 'image/webp') {
+        return ['width' => false, 'height' => false, 'type' => false];
+    }
+    return Minn\Media\WebpInfo::read((string) @file_get_contents((string) $filename, false, null, 0, 40));
+}
+
+/** The folder fonts upload to (uploads/fonts), through font_dir. */
+function wp_get_font_dir()
+{
+    $uploads = wp_upload_dir(null, false);
+    $path = untrailingslashit((string) $uploads['basedir']) . '/fonts';
+    $url = untrailingslashit((string) $uploads['baseurl']) . '/fonts';
+    return apply_filters('font_dir', ['path' => $path, 'url' => $url, 'subdir' => '', 'basedir' => $path, 'baseurl' => $url, 'error' => false]);
+}

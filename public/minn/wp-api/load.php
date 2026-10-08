@@ -400,3 +400,13 @@ function wp_set_wpdb_vars()
 function wp_start_object_cache()
 {
 }
+
+/** The request globals slashed, and the request rebuilt from GET and POST. */
+function wp_magic_quotes()
+{
+    $_GET = add_magic_quotes($_GET);
+    $_POST = add_magic_quotes($_POST);
+    $_COOKIE = add_magic_quotes($_COOKIE);
+    $_SERVER = add_magic_quotes($_SERVER);
+    $_REQUEST = array_merge($_GET, $_POST);
+}

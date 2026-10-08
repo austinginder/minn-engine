@@ -826,3 +826,66 @@ function get_user_by_email($email)
     _deprecated_function(__FUNCTION__, '3.3.0', "get_user_by('email')");
     return get_user_by('email', $email);
 }
+
+/** The old user globals set for a user (the current one by default), or emptied for nobody. */
+function setup_userdata($for_user_id = 0)
+{
+    global $user_login, $userdata, $user_level, $user_ID, $user_email, $user_url, $user_identity;
+    $user = get_userdata($for_user_id ?: get_current_user_id());
+    $user_ID = $user ? (int) $user->ID : 0;
+    $user_level = $user ? (int) $user->user_level : 0;
+    $userdata = $user ?: null;
+    $user_login = $user ? $user->user_login : '';
+    $user_email = $user ? $user->user_email : '';
+    $user_url = $user ? $user->user_url : '';
+    $user_identity = $user ? $user->display_name : '';
+}
+
+/** Deprecated since 3.1: the site's users with their capabilities row (Content\Users). */
+function get_users_of_blog($id = '')
+{
+    _deprecated_function(__FUNCTION__, '3.1.0', 'get_users()');
+    global $wpdb;
+    return array_map(static fn (array $row): object => (object) $row, (new Users(Runtime::current()->db))->withCapabilities($wpdb->get_blog_prefix($id ?: get_current_blog_id()) . 'capabilities'));
+}
+
+/** Post counts for several users (as stored, 0 for none), published or also private (Runtime\PostLookup). */
+function count_many_users_posts($users, $post_type = 'post', $public_only = false)
+{
+    if (empty($users) || !is_array($users)) {
+        return [];
+    }
+    $counts = _minn_post_lookup()->countsByAuthors(array_map('absint', $users), array_map('strval', (array) $post_type), $public_only ? ['publish'] : ['publish', 'private']);
+    foreach ($users as $id) {
+        $counts[$id] ??= 0;
+    }
+    return $counts;
+}
+
+/** Whether a user may reset their password, through allow_password_reset; false for anything but a user. */
+function wp_is_password_reset_allowed_for_user($user)
+{
+    return $user instanceof WP_User ? apply_filters('allow_password_reset', true, $user->ID) : false;
+}
+
+/** Deprecated since 4.5: wp_get_current_user. */
+function get_currentuserinfo()
+{
+    _deprecated_function(__FUNCTION__, '4.5.0', 'wp_get_current_user()');
+    return wp_get_current_user();
+}
+
+/** The ids of users whose capabilities name none of the site's roles (Content\Users). */
+function wp_get_users_with_no_role($site_id = null)
+{
+    global $wpdb;
+    $pattern = (string) preg_replace('/[^a-zA-Z_\|-]/', '', implode('|', array_keys(wp_roles()->get_names())));
+    return (new Users(Runtime::current()->db))->withoutRole($wpdb->get_blog_prefix($site_id) . 'capabilities', $pattern);
+}
+
+/** Deprecated since 5.4: wp_get_user_request. */
+function wp_get_user_request_data($request_id)
+{
+    _deprecated_function(__FUNCTION__, '5.4.0', 'wp_get_user_request()');
+    return wp_get_user_request($request_id);
+}

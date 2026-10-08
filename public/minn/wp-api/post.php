@@ -2557,3 +2557,80 @@ function the_author_email()
     _deprecated_function(__FUNCTION__, '2.8.0', "the_author_meta('email')");
     the_author_meta('email');
 }
+
+/** Who last edited a post (the one in the loop by default; its _edit_last), by display name through the_modified_author; null when nobody is recorded. */
+function get_the_modified_author($post = null)
+{
+    $last = get_post_meta((int) (get_post($post)->ID ?? 0), '_edit_last', true);
+    if (!$last) {
+        return null;
+    }
+    $user = get_userdata($last);
+    return apply_filters('the_modified_author', $user ? $user->display_name : '');
+}
+
+/** Prints get_the_modified_author. */
+function the_modified_author()
+{
+    echo get_the_modified_author();
+}
+
+/** The addresses a post has pinged, through get_pung; false for no post. */
+function get_pung($post)
+{
+    $post = get_post($post);
+    return $post ? apply_filters('get_pung', preg_split('/\s/', trim((string) $post->pinged))) : false;
+}
+
+/** The addresses a post has still to ping, cleaned, through get_to_ping; false for no post. */
+function get_to_ping($post)
+{
+    $post = get_post($post);
+    return $post ? apply_filters('get_to_ping', preg_split('/\s/', sanitize_trackback_urls($post->to_ping), -1, PREG_SPLIT_NO_EMPTY)) : false;
+}
+
+/** The format version a revision's or autosave's name carries (-v1), or 0; false for something that is not a post. */
+function _wp_get_post_revision_version($revision)
+{
+    $revision = is_object($revision) ? get_object_vars($revision) : $revision;
+    if (!is_array($revision)) {
+        return false;
+    }
+    return preg_match('/^\d+-(?:autosave|revision)-v(\d+)$/', (string) ($revision['post_name'] ?? ''), $m) ? (int) $m[1] : 0;
+}
+
+/** Whether a post has a parent post. */
+function has_post_parent($post = null)
+{
+    return (bool) get_post_parent($post);
+}
+
+/** Pages by id under one (the root by default), each with its slug, parents before children; pages whose parent is not among them are left out. */
+function get_page_hierarchy(&$pages, $page_id = 0)
+{
+    $children = [];
+    foreach ((array) $pages as $page) {
+        $children[(int) $page->post_parent][] = $page;
+    }
+    $result = [];
+    $walk = static function (int $parent) use (&$walk, &$result, $children): void {
+        foreach ($children[$parent] ?? [] as $page) {
+            $result[$page->ID] = $page->post_name;
+            $walk((int) $page->ID);
+        }
+    };
+    $walk((int) $page_id);
+    return $result;
+}
+
+/** A post meta row deleted by its id. */
+function delete_meta($mid)
+{
+    return delete_metadata_by_mid('post', (int) $mid);
+}
+
+/** Every post meta key in use, once each (Runtime\Meta). */
+function get_meta_keys()
+{
+    return _minn_meta()->keys('post');
+}

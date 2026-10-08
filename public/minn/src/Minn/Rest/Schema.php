@@ -215,6 +215,12 @@ final readonly class Schema
                 }
             }
         }
+        if (isset($args['minProperties']) && count($value) < $args['minProperties']) {
+            return new Refusal('rest_too_few_properties', sprintf('%1$s must contain at least %2$s %3$s.', $param, ($this->number)($args['minProperties']), (int) $args['minProperties'] === 1 ? 'property' : 'properties'));
+        }
+        if (isset($args['maxProperties']) && count($value) > $args['maxProperties']) {
+            return new Refusal('rest_too_many_properties', sprintf('%1$s must contain at most %2$s %3$s.', $param, ($this->number)($args['maxProperties']), (int) $args['maxProperties'] === 1 ? 'property' : 'properties'));
+        }
         return null;
     }
 

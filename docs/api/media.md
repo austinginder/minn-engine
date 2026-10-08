@@ -15,6 +15,7 @@ uploads, image sizes and attachment metadata
 | [`Sizing`](#sizing) | final class | 232 | The image size arithmetic the media functions share: the crop or scale a |
 | [`Upload`](#upload) | final readonly class | 76 | One file arriving for the library, on either transport: a multipart |
 | [`Uploads`](#uploads) | final readonly class | 179 | The uploads directory: paths, URLs, the allowed types, and landing a file. |
+| [`WebpInfo`](#webpinfo) | final class | 24 | A WebP file's size and kind from its first 40 bytes, as wp_get_webp_info |
 | [`Writer`](#writer) | final readonly class | 181 | The writes the media library makes. An Upload becomes an attachment: the |
 
 ## Canvas
@@ -465,6 +466,23 @@ wp-content, a relative upload_path under ABSPATH, or an absolute one;
 the URL likewise, with year/month subfolders when the site asks.
 
 - `@return array{path: string, url: string, subdir: string, basedir: string, baseurl: string, error: false}`
+
+
+## WebpInfo
+
+`final class Minn\Media\WebpInfo` · `public/minn/src/Minn/Media/WebpInfo.php`
+
+A WebP file's size and kind from its first 40 bytes, as wp_get_webp_info
+reads them (probe plugin-queue8): a simple lossy frame (VP8), a lossless
+one (VP8L), or the extended form (VP8X), which the reference names
+animated-alpha whatever its flags say. Anything shorter or of another
+chunk is unknown.
+
+### static `read(string $head): array`
+
+The width, height and kind a file's first bytes declare. @return array{width: int|false, height: int|false, type: string|false}
+
+- `@return array{width: int|false, height: int|false, type: string|false}`
 
 
 ## Writer

@@ -382,3 +382,19 @@ function next_widget_id_number($id_base)
     }
     return $number + 1;
 }
+
+/** Deprecated since 2.8: wp_register_sidebar_widget, the name made into the id. */
+function register_sidebar_widget($name, $output_callback, $classname = '', ...$params)
+{
+    _deprecated_function(__FUNCTION__, '2.8.0', 'wp_register_sidebar_widget()');
+    $name = is_array($name) ? (count($name) === 3 ? sprintf($name[0], $name[2]) : $name[0]) : $name;
+    wp_register_sidebar_widget(sanitize_title($name), $name, $output_callback, !empty($classname) && is_string($classname) ? ['classname' => $classname] : [], ...$params);
+}
+
+/** Deprecated since 2.8: wp_register_widget_control, the name made into the id. */
+function register_widget_control($name, $control_callback, $width = '', $height = '', ...$params)
+{
+    _deprecated_function(__FUNCTION__, '2.8.0', 'wp_register_widget_control()');
+    $name = is_array($name) ? (count($name) === 3 ? sprintf($name[0], $name[2]) : $name[0]) : $name;
+    wp_register_widget_control(sanitize_title($name), $name, $control_callback, array_filter(['width' => $width, 'height' => $height]), ...$params);
+}

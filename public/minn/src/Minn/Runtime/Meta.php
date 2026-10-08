@@ -106,6 +106,13 @@ final readonly class Meta
         return $cache;
     }
 
+    /** Every meta key an object type uses, once each, in key order. @return list<string> */
+    public function keys(string $type): array
+    {
+        [$table] = $this->spec($type);
+        return array_map(static fn (array $row): string => (string) $row['meta_key'], $this->db->rows("SELECT meta_key FROM {$table} GROUP BY meta_key ORDER BY meta_key"));
+    }
+
     /**
      * Every row of an object's meta by key, then id, as the post meta box
      * lists them: the key, the value, the row's id and the object's, all as

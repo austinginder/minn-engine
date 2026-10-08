@@ -331,6 +331,14 @@ final class Hooks
     }
 
     /** @param list<mixed> $args */
+    /** The 'all' callbacks run with the arguments given, the hook's name first (_wp_call_all_hook). @param list<mixed> $args */
+    public function callAll(array $args): void
+    {
+        if (isset($this->hooks['all']) && $args !== []) {
+            $this->fireAll((string) $args[0], array_slice($args, 1));
+        }
+    }
+
     private function fireAll(string $hook, array $args): void
     {
         $byPriority = $this->hooks['all'];

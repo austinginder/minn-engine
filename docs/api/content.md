@@ -41,7 +41,7 @@ the repositories and records: posts, users, terms, comments, and the render pipe
 | [`TextFilters`](#textfilters) | final class | 139 | The small text filters the reference runs over content, titles and |
 | [`Texturize`](#texturize) | final class | 102 | The texturize subset the reference applies to rendered text: straight |
 | [`UserRecord`](#userrecord) | final readonly class | 96 | One row of the users table, read by name. Columns keep their WordPress |
-| [`Users`](#users) | final readonly class | 267 |  |
+| [`Users`](#users) | final readonly class | 291 |  |
 
 ## Autop
 
@@ -2100,6 +2100,20 @@ The newest users registered since a site-local time, up to the limit.
 ### `deleteMeta(int $userId, string $key): void`
 
 Removes one meta key from a user.
+
+### `withCapabilities(string $capabilitiesKey): array`
+
+Every user with a capabilities row under the key given, as the old
+get_users_of_blog listed them: id twice, login, display name, email
+and the stored capabilities, in id order.
+
+- `@return list<array<string, string>>`
+
+### `withoutRole(string $capabilitiesKey, string $rolePattern): array`
+
+The ids of users whose capabilities row names none of the roles (a pattern of their names). @return list<string>
+
+- `@return list<string>`
 
 ### `meta(int $userId, string $key): ?string`
 

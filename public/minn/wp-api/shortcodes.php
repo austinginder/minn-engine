@@ -110,3 +110,17 @@ function apply_shortcodes($content, $ignore_html = false)
 {
     return do_shortcode($content, $ignore_html);
 }
+
+/** Every registered shortcode's tag in content, in order, those nested inside included. */
+function get_shortcode_tags_in_content($content)
+{
+    if (!str_contains((string) $content, '[')) {
+        return [];
+    }
+    preg_match_all('/' . get_shortcode_regex() . '/', (string) $content, $matches, PREG_SET_ORDER);
+    $tags = [];
+    foreach ($matches as $shortcode) {
+        $tags = [...$tags, $shortcode[2], ...(empty($shortcode[5]) ? [] : get_shortcode_tags_in_content($shortcode[5]))];
+    }
+    return $tags;
+}

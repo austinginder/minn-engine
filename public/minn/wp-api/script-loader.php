@@ -597,3 +597,12 @@ function wp_localize_jquery_ui_datepicker()
     $defaults = wp_json_encode(['closeText' => __('Close'), 'currentText' => __('Today'), 'monthNames' => array_values($wp_locale->month), 'monthNamesShort' => array_values($wp_locale->month_abbrev), 'nextText' => __('Next'), 'prevText' => __('Previous'), 'dayNames' => array_values($wp_locale->weekday), 'dayNamesShort' => array_values($wp_locale->weekday_abbrev), 'dayNamesMin' => array_values($wp_locale->weekday_initial), 'dateFormat' => $format, 'firstDay' => absint(get_option('start_of_week')), 'isRTL' => $wp_locale->is_rtl()]);
     wp_add_inline_script('jquery-ui-datepicker', "jQuery(function(jQuery){jQuery.datepicker.setDefaults({$defaults});});");
 }
+
+/** The script concatenation and compression globals: off, as the front end always has them. */
+function script_concat_settings()
+{
+    global $concatenate_scripts, $compress_scripts, $compress_css;
+    $concatenate_scripts ??= false;
+    $compress_scripts ??= false;
+    $compress_css ??= false;
+}

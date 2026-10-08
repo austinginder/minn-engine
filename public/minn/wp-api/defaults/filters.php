@@ -139,6 +139,7 @@ add_action('wp_head', 'wp_maybe_inline_styles', 1);
 add_action('wp_head', 'wp_print_styles', 8);
 add_action('wp_head', '_minn_print_engine_styles', 8);
 add_action('wp_head', 'wp_print_head_scripts', 9);
+add_action('wp_head', 'wp_custom_css_cb', 101);
 add_action('wp_head', 'wp_oembed_add_host_js');
 add_filter('embed_oembed_html', 'wp_maybe_enqueue_oembed_host_js');
 add_action('wp_footer', 'wp_print_speculation_rules', 10);

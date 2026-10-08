@@ -554,3 +554,45 @@ function get_theme_data($theme_file)
     }
     return $data;
 }
+
+/** The starter content a theme declares, through get_theme_starter_content; none without it. */
+function get_theme_starter_content()
+{
+    $config = get_theme_support('starter-content');
+    $config = is_array($config) && isset($config[0]) && is_array($config[0]) ? $config[0] : [];
+    return apply_filters('get_theme_starter_content', $config, $config);
+}
+
+/** The custom templates theme.json declares: title and post types (pages when it names none). */
+function wp_get_theme_data_custom_templates()
+{
+    $templates = [];
+    foreach ((array) (Runtime::current()->get('theme')?->json()['customTemplates'] ?? []) as $item) {
+        if (isset($item['name'])) {
+            $templates[$item['name']] = ['title' => $item['title'] ?? '', 'postTypes' => $item['postTypes'] ?? ['page']];
+        }
+    }
+    return $templates;
+}
+
+/** The template parts theme.json declares: title and area. */
+function wp_get_theme_data_template_parts()
+{
+    $parts = [];
+    foreach ((array) (Runtime::current()->get('theme')?->json()['templateParts'] ?? []) as $item) {
+        if (isset($item['name'])) {
+            $parts[$item['name']] = ['title' => $item['title'] ?? '', 'area' => $item['area'] ?? ''];
+        }
+    }
+    return $parts;
+}
+
+/** The theme directory's features by group, as labels; the engine asks wordpress.org for nothing, so always this list. */
+function get_theme_feature_list($api = true)
+{
+    return [
+        __('Subject') => ['blog' => __('Blog'), 'e-commerce' => __('E-Commerce'), 'education' => __('Education'), 'entertainment' => __('Entertainment'), 'food-and-drink' => __('Food & Drink'), 'holiday' => __('Holiday'), 'news' => __('News'), 'photography' => __('Photography'), 'portfolio' => __('Portfolio')],
+        __('Features') => ['accessibility-ready' => __('Accessibility Ready'), 'block-patterns' => __('Block Editor Patterns'), 'block-styles' => __('Block Editor Styles'), 'custom-background' => __('Custom Background'), 'custom-colors' => __('Custom Colors'), 'custom-header' => __('Custom Header'), 'custom-logo' => __('Custom Logo'), 'editor-style' => __('Editor Style'), 'featured-image-header' => __('Featured Image Header'), 'featured-images' => __('Featured Images'), 'footer-widgets' => __('Footer Widgets'), 'full-site-editing' => __('Site Editor'), 'full-width-template' => __('Full Width Template'), 'post-formats' => __('Post Formats'), 'sticky-post' => __('Sticky Post'), 'style-variations' => __('Style Variations'), 'template-editing' => __('Template Editing'), 'theme-options' => __('Theme Options')],
+        __('Layout') => ['grid-layout' => __('Grid Layout'), 'one-column' => __('One Column'), 'two-columns' => __('Two Columns'), 'three-columns' => __('Three Columns'), 'four-columns' => __('Four Columns'), 'left-sidebar' => __('Left Sidebar'), 'right-sidebar' => __('Right Sidebar'), 'wide-blocks' => __('Wide Blocks')],
+    ];
+}

@@ -33930,7 +33930,7 @@
             "namespace": "Minn\\Content",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Content/Users.php",
-            "lines": 267,
+            "lines": 291,
             "doc": "",
             "implements": [],
             "extends": null,
@@ -34452,6 +34452,57 @@
                 },
                 {
                     "routes": [],
+                    "name": "withCapabilities",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "withCapabilities(string $capabilitiesKey): array",
+                    "doc": "Every user with a capabilities row under the key given, as the old\nget_users_of_blog listed them: id twice, login, display name, email\nand the stored capabilities, in id order.",
+                    "shapes": [
+                        "@return list<array<string, string>>"
+                    ],
+                    "params": [
+                        {
+                            "name": "capabilitiesKey",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 264,
+                    "end": 270
+                },
+                {
+                    "routes": [],
+                    "name": "withoutRole",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "withoutRole(string $capabilitiesKey, string $rolePattern): array",
+                    "doc": "The ids of users whose capabilities row names none of the roles (a pattern of their names). @return list<string>",
+                    "shapes": [
+                        "@return list<string>"
+                    ],
+                    "params": [
+                        {
+                            "name": "capabilitiesKey",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "rolePattern",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 273,
+                    "end": 279
+                },
+                {
+                    "routes": [],
                     "name": "meta",
                     "static": false,
                     "visibility": "public",
@@ -34474,8 +34525,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 258,
-                    "end": 265
+                    "line": 282,
+                    "end": 289
                 },
                 {
                     "routes": [],
@@ -34508,8 +34559,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 272,
-                    "end": 277
+                    "line": 296,
+                    "end": 301
                 },
                 {
                     "routes": [],
@@ -74648,6 +74699,47 @@
             ]
         },
         {
+            "name": "Minn\\Media\\WebpInfo",
+            "short": "WebpInfo",
+            "namespace": "Minn\\Media",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Media/WebpInfo.php",
+            "lines": 24,
+            "doc": "A WebP file's size and kind from its first 40 bytes, as wp_get_webp_info\nreads them (probe plugin-queue8): a simple lossy frame (VP8), a lossless\none (VP8L), or the extended form (VP8X), which the reference names\nanimated-alpha whatever its flags say. Anything shorter or of another\nchunk is unknown.",
+            "implements": [],
+            "extends": null,
+            "uses": [],
+            "usedBy": [],
+            "constructor": null,
+            "cases": [],
+            "constants": [],
+            "properties": [],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "read",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "read(string $head): array",
+                    "doc": "The width, height and kind a file's first bytes declare. @return array{width: int|false, height: int|false, type: string|false}",
+                    "shapes": [
+                        "@return array{width: int|false, height: int|false, type: string|false}"
+                    ],
+                    "params": [
+                        {
+                            "name": "head",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 17,
+                    "end": 36
+                }
+            ]
+        },
+        {
             "name": "Minn\\Media\\Writer",
             "short": "Writer",
             "namespace": "Minn\\Media",
@@ -97104,7 +97196,7 @@
             "namespace": "Minn\\Rest",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Rest/Schema.php",
-            "lines": 473,
+            "lines": 479,
             "doc": "JSON-schema handling the way the REST API's argument validation does it:\nvalidate a value against a schema (a Refusal names what failed), sanitise\nit into the schema's type, filter a response by context, and the type\ntests the schema vocabulary needs. Behaviour pinned by contracts/fixtures/api/rest.json.",
             "implements": [],
             "extends": null,
@@ -97271,8 +97363,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 293,
-                    "end": 361
+                    "line": 299,
+                    "end": 367
                 },
                 {
                     "routes": [],
@@ -97305,8 +97397,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 364,
-                    "end": 418
+                    "line": 370,
+                    "end": 424
                 },
                 {
                     "routes": [],
@@ -97339,8 +97431,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 421,
-                    "end": 429
+                    "line": 427,
+                    "end": 435
                 },
                 {
                     "routes": [],
@@ -97366,8 +97458,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 442,
-                    "end": 471
+                    "line": 448,
+                    "end": 477
                 },
                 {
                     "routes": [],
@@ -97386,8 +97478,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 474,
-                    "end": 487
+                    "line": 480,
+                    "end": 493
                 },
                 {
                     "routes": [],
@@ -97557,7 +97649,7 @@
                         }
                     ],
                     "line": 184,
-                    "end": 219
+                    "end": 225
                 },
                 {
                     "routes": [],
@@ -97590,8 +97682,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 221,
-                    "end": 231
+                    "line": 227,
+                    "end": 237
                 },
                 {
                     "routes": [],
@@ -97624,8 +97716,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 233,
-                    "end": 268
+                    "line": 239,
+                    "end": 274
                 },
                 {
                     "routes": [],
@@ -97658,8 +97750,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 270,
-                    "end": 285
+                    "line": 276,
+                    "end": 291
                 },
                 {
                     "routes": [],
@@ -97685,8 +97777,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 287,
-                    "end": 290
+                    "line": 293,
+                    "end": 296
                 }
             ]
         },
@@ -110067,7 +110159,7 @@
             "namespace": "Minn\\Runtime",
             "kind": "final class",
             "file": "public/minn/src/Minn/Runtime/Hooks.php",
-            "lines": 340,
+            "lines": 348,
             "doc": "The hook registry plugin code registers into and the engine fires.\nSemantics come from contracts/fixtures/api/hooks.json: callbacks run\nby ascending priority then insertion order; a callback added at a\nhigher priority during a run takes part in that run, one added at the\ncurrent or a lower priority waits for the next; a callback removed\nbefore its turn is skipped; the \"all\" hook sees every firing with the\nhook name first and every argument regardless of its accepted count.",
             "implements": [],
             "extends": null,
@@ -110652,6 +110744,28 @@
                 },
                 {
                     "routes": [],
+                    "name": "callAll",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "callAll(array $args): void",
+                    "doc": "The 'all' callbacks run with the arguments given, the hook's name first (_wp_call_all_hook). @param list<mixed> $args",
+                    "shapes": [
+                        "@param list<mixed> $args"
+                    ],
+                    "params": [
+                        {
+                            "name": "args",
+                            "type": "array",
+                            "shape": "list<mixed>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 335,
+                    "end": 340
+                },
+                {
+                    "routes": [],
                     "name": "run",
                     "static": false,
                     "visibility": "private",
@@ -110736,9 +110850,7 @@
                     "visibility": "private",
                     "signature": "fireAll(string $hook, array $args): void",
                     "doc": "",
-                    "shapes": [
-                        "@param list<mixed> $args"
-                    ],
+                    "shapes": [],
                     "params": [
                         {
                             "name": "hook",
@@ -110750,13 +110862,13 @@
                         {
                             "name": "args",
                             "type": "array",
-                            "shape": "list<mixed>",
+                            "shape": "",
                             "default": null,
                             "doc": ""
                         }
                     ],
-                    "line": 334,
-                    "end": 343
+                    "line": 342,
+                    "end": 351
                 },
                 {
                     "routes": [],
@@ -110775,8 +110887,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 346,
-                    "end": 356
+                    "line": 354,
+                    "end": 364
                 }
             ]
         },
@@ -112047,7 +112159,7 @@
             "namespace": "Minn\\Runtime",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Runtime/Meta.php",
-            "lines": 223,
+            "lines": 230,
             "doc": "The four meta tables behind get_metadata and friends: reads by object, and the row-level writes the update and delete rules need.",
             "implements": [],
             "extends": null,
@@ -112198,6 +112310,28 @@
                 },
                 {
                     "routes": [],
+                    "name": "keys",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "keys(string $type): array",
+                    "doc": "Every meta key an object type uses, once each, in key order. @return list<string>",
+                    "shapes": [
+                        "@return list<string>"
+                    ],
+                    "params": [
+                        {
+                            "name": "type",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 110,
+                    "end": 114
+                },
+                {
+                    "routes": [],
                     "name": "listing",
                     "static": false,
                     "visibility": "public",
@@ -112222,8 +112356,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 116,
-                    "end": 120
+                    "line": 123,
+                    "end": 127
                 },
                 {
                     "routes": [],
@@ -112251,8 +112385,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 123,
-                    "end": 130
+                    "line": 130,
+                    "end": 137
                 },
                 {
                     "routes": [],
@@ -112280,8 +112414,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 133,
-                    "end": 138
+                    "line": 140,
+                    "end": 145
                 },
                 {
                     "routes": [],
@@ -112302,8 +112436,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 141,
-                    "end": 145
+                    "line": 148,
+                    "end": 152
                 },
                 {
                     "routes": [],
@@ -112343,8 +112477,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 148,
-                    "end": 152
+                    "line": 155,
+                    "end": 159
                 },
                 {
                     "routes": [],
@@ -112384,8 +112518,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 155,
-                    "end": 160
+                    "line": 162,
+                    "end": 167
                 },
                 {
                     "routes": [],
@@ -112420,8 +112554,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 163,
-                    "end": 167
+                    "line": 170,
+                    "end": 174
                 },
                 {
                     "routes": [],
@@ -112457,8 +112591,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 178,
-                    "end": 190
+                    "line": 185,
+                    "end": 197
                 },
                 {
                     "routes": [],
@@ -112491,8 +112625,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 193,
-                    "end": 200
+                    "line": 200,
+                    "end": 207
                 },
                 {
                     "routes": [],
@@ -112534,8 +112668,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 203,
-                    "end": 217
+                    "line": 210,
+                    "end": 224
                 },
                 {
                     "routes": [],
@@ -112563,8 +112697,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 224,
-                    "end": 231
+                    "line": 231,
+                    "end": 238
                 },
                 {
                     "routes": [],
@@ -117396,7 +117530,7 @@
             "namespace": "Minn\\Runtime",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Runtime/PostLookup.php",
-            "lines": 113,
+            "lines": 134,
             "doc": "The post reads plugin code asks for by shape: a page by title, revisions, counts.",
             "implements": [],
             "extends": null,
@@ -117560,6 +117694,45 @@
                 },
                 {
                     "routes": [],
+                    "name": "countsByAuthors",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "countsByAuthors(array $userIds, array $types, array $statuses): array",
+                    "doc": "Post counts for several authors at once, as stored (strings), for\nthose that have any.",
+                    "shapes": [
+                        "@param list<int> $userIds",
+                        "@param list<string> $types",
+                        "@param list<string> $statuses",
+                        "@return array<int, string>"
+                    ],
+                    "params": [
+                        {
+                            "name": "userIds",
+                            "type": "array",
+                            "shape": "list<int>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "types",
+                            "type": "array",
+                            "shape": "list<string>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "statuses",
+                            "type": "array",
+                            "shape": "list<string>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 87,
+                    "end": 97
+                },
+                {
+                    "routes": [],
                     "name": "publishingAuthors",
                     "static": false,
                     "visibility": "public",
@@ -117582,8 +117755,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 79,
-                    "end": 82
+                    "line": 100,
+                    "end": 103
                 },
                 {
                     "routes": [],
@@ -117619,8 +117792,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 92,
-                    "end": 104
+                    "line": 113,
+                    "end": 125
                 },
                 {
                     "routes": [],
@@ -117641,8 +117814,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 111,
-                    "end": 114
+                    "line": 132,
+                    "end": 135
                 },
                 {
                     "routes": [],
@@ -117661,8 +117834,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 117,
-                    "end": 121
+                    "line": 138,
+                    "end": 142
                 }
             ]
         },

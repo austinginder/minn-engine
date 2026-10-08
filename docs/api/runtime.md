@@ -39,11 +39,11 @@ the WordPress runtime plugins load against
 | [`FileTypeCheck`](#filetypecheck) | final class | 78 | A file's type from its content as much as its name, as the reference's |
 | [`FileUpload`](#fileupload) | final class | 105 | A file a plugin hands to wp_handle_upload or wp_handle_sideload, taken in |
 | [`Heartbeat`](#heartbeat) | final class | 30 | The heartbeat a signed-in page beats through admin-ajax.php, answered as |
-| [`Hooks`](#hooks) | final class | 340 | The hook registry plugin code registers into and the engine fires. |
+| [`Hooks`](#hooks) | final class | 348 | The hook registry plugin code registers into and the engine fires. |
 | [`Interactivity`](#interactivity) | final class | 509 | Server-side directive processing for the Interactivity API: the state and |
 | [`MenuEvents`](#menuevents) | final readonly class | 220 | Menus and their items saved as the reference saves them, telling |
 | [`MenuItemMarks`](#menuitemmarks) | final class | 202 | The classes and current flags the reference gives a menu's items for the |
-| [`Meta`](#meta) | final readonly class | 223 | The four meta tables behind get_metadata and friends: reads by object, and the row-level writes the update and delete rules need. |
+| [`Meta`](#meta) | final readonly class | 230 | The four meta tables behind get_metadata and friends: reads by object, and the row-level writes the update and delete rules need. |
 | [`MetaKeys`](#metakeys) | final class | 183 | The meta keys code registers, kept where the reference keeps them |
 | [`MetaTypes`](#metatypes) | final class | 21 | Meta types a plugin brought, by the table it named on $wpdb as |
 | [`NavMenu`](#navmenu) | final class | 88 | wp_nav_menu()'s menu: the one the arguments name, its items marked for |
@@ -66,7 +66,7 @@ the WordPress runtime plugins load against
 | [`PostEvents`](#postevents) | final readonly class | 181 | What the reference's REST controllers tell plugins about a post they |
 | [`PostInsert`](#postinsert) | final readonly class | 168 | The decisions behind wp_insert_post: which columns a postarr fills, when |
 | [`PostLinks`](#postlinks) | final class | 151 | Post addresses as the reference's link functions build them (probe |
-| [`PostLookup`](#postlookup) | final readonly class | 113 | The post reads plugin code asks for by shape: a page by title, revisions, counts. |
+| [`PostLookup`](#postlookup) | final readonly class | 134 | The post reads plugin code asks for by shape: a page by title, revisions, counts. |
 | [`PostQuery`](#postquery) | final class | 388 | WP_Query::get_posts as the reference runs it (probe wp-query-sql): the |
 | [`PostQueryParts`](#postqueryparts) | final class | 56 | The pieces of one WP_Query run as the reference builds them and hands |
 | [`PostQueryResults`](#postqueryresults) | final class | 111 | What WP_Query does with its posts once it has them, as the reference does |
@@ -1573,7 +1573,13 @@ Every hook with callbacks, by name.
 
 - `@return array<string, array<int, list<callable>>> a read-only view for diagnostics`
 
-Internals: `run()` (private, line 273), `nextPriority()` (private, line 322), `fireAll()` (private, line 334), `id()` (private, line 346)
+### `callAll(array $args): void`
+
+The 'all' callbacks run with the arguments given, the hook's name first (_wp_call_all_hook). @param list<mixed> $args
+
+- `@param list<mixed> $args`
+
+Internals: `run()` (private, line 273), `nextPriority()` (private, line 322), `fireAll()` (private, line 342), `id()` (private, line 354)
 
 
 ## Interactivity
@@ -1798,6 +1804,12 @@ an object with none has an empty list.
 
 - `@param list<int> $objectIds`
 - `@return array<int, array<string, list<string>>>`
+
+### `keys(string $type): array`
+
+Every meta key an object type uses, once each, in key order. @return list<string>
+
+- `@return list<string>`
 
 ### `listing(string $type, int $objectId): array`
 
@@ -2851,6 +2863,16 @@ How many attachments there are per mime type.
 How many posts an author has among the types and statuses.
 
 - `@param list<string> $types @param list<string> $statuses`
+
+### `countsByAuthors(array $userIds, array $types, array $statuses): array`
+
+Post counts for several authors at once, as stored (strings), for
+those that have any.
+
+- `@param list<int> $userIds`
+- `@param list<string> $types`
+- `@param list<string> $statuses`
+- `@return array<int, string>`
 
 ### `publishingAuthors(string $type, int $limit): int`
 

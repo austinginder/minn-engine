@@ -254,6 +254,30 @@ final readonly class Users
         $this->db->execute("DELETE FROM {$this->db->table('usermeta')} WHERE user_id = ? AND meta_key = ?", [$userId, $key]);
     }
 
+    /**
+     * Every user with a capabilities row under the key given, as the old
+     * get_users_of_blog listed them: id twice, login, display name, email
+     * and the stored capabilities, in id order.
+     *
+     * @return list<array<string, string>>
+     */
+    public function withCapabilities(string $capabilitiesKey): array
+    {
+        return array_map(static fn (array $row): array => array_map('strval', $row), $this->db->rows(
+            "SELECT m.user_id, m.user_id AS ID, u.user_login, u.display_name, u.user_email, m.meta_value FROM {$this->db->table('users')} u JOIN {$this->db->table('usermeta')} m ON u.ID = m.user_id WHERE m.meta_key = ? ORDER BY m.user_id",
+            [$capabilitiesKey],
+        ));
+    }
+
+    /** The ids of users whose capabilities row names none of the roles (a pattern of their names). @return list<string> */
+    public function withoutRole(string $capabilitiesKey, string $rolePattern): array
+    {
+        return array_map(static fn (array $row): string => (string) $row['user_id'], $this->db->rows(
+            "SELECT user_id FROM {$this->db->table('usermeta')} WHERE meta_key = ? AND meta_value NOT REGEXP ?",
+            [$capabilitiesKey, $rolePattern],
+        ));
+    }
+
     /** One usermeta value, raw. Serialized blobs come back as stored. */
     public function meta(int $userId, string $key): ?string
     {

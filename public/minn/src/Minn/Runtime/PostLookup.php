@@ -75,6 +75,27 @@ final readonly class PostLookup
         return (int) $this->db->value("SELECT COUNT(*) FROM {$this->db->table('posts')} WHERE post_author = ? AND post_type IN (?) AND post_status IN (?)", [$userId, $types, $statuses]);
     }
 
+    /**
+     * Post counts for several authors at once, as stored (strings), for
+     * those that have any.
+     *
+     * @param list<int> $userIds
+     * @param list<string> $types
+     * @param list<string> $statuses
+     * @return array<int, string>
+     */
+    public function countsByAuthors(array $userIds, array $types, array $statuses): array
+    {
+        if ($userIds === [] || $types === [] || $statuses === []) {
+            return [];
+        }
+        $counts = [];
+        foreach ($this->db->rows("SELECT post_author, COUNT(*) AS n FROM {$this->db->table('posts')} WHERE post_author IN (?) AND post_type IN (?) AND post_status IN (?) GROUP BY post_author", [$userIds, $types, $statuses]) as $row) {
+            $counts[(int) $row['post_author']] = (string) $row['n'];
+        }
+        return $counts;
+    }
+
     /** How many authors (up to a limit) have published posts of a type, for is_multi_author. */
     public function publishingAuthors(string $type, int $limit): int
     {
