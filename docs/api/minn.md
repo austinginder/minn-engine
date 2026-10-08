@@ -9,7 +9,7 @@ the front door, the autoloader, the one database door, the REST error
 | [`Db`](#db) | final class | 261 | The one door to the database. Every query is a prepared statement; the |
 | [`Engine`](#engine) | final readonly class | 270 | The engine's front door. An unmodified wp-config.php ends by requiring |
 | [`Html`](#html) | final class | 107 | HTML, the front door for escaping and cutting markup: plain static calls, |
-| [`Http`](#http) | final class | 205 | Outgoing HTTP, called from anywhere after one import: |
+| [`Http`](#http) | final readonly class | 184 | Outgoing HTTP, a client handed to the code that uses it. An extension |
 | [`Json`](#json) | final class | 115 | JSON in and out, for the engine and for code written for Minn: |
 | [`RestError`](#resterror) | final class | 60 | A WordPress-shaped error, thrown from anywhere and rendered once by the |
 
@@ -271,14 +271,15 @@ case and the code is returned as written.
 
 ## Http
 
-`final class Minn\Http` · `public/minn/src/Minn/Http.php`
+`final readonly class Minn\Http` · `public/minn/src/Minn/Http.php`
 
-Outgoing HTTP, called from anywhere after one import:
+Outgoing HTTP, a client handed to the code that uses it. An extension
+finds one on $minn->http, bound to the hosts its minn.json asks for under
+needs.http; an engine class takes one in its constructor, the real network
+unless a test passes a fake's:
 
-use Minn\Http;
-
-$data = Http::get('https://api.example.com/status')->json();
-Http::post($url, json: ['email' => $email], timeout: 10)->throw();
+$data = $minn->http->get('https://api.example.com/status')->json();
+$this->http->post($url, json: ['email' => $email], timeout: 10)->throw();
 
 Every verb answers with an Exchange (->ok(), ->failed(), ->json(),
 ->header(), ->cookie(), ->throw(), ->code, ->body) and takes the same
@@ -300,66 +301,59 @@ hop and after DNS, so a URL someone typed is safe to fetch
 
 A misspelt argument is an error at the line that has it. Credentials
 (Authorization, Cookie) are dropped when a redirect leaves the origin.
+A fake (new Http\Fake([...])->http()) answers only the client it made,
+so a test shares nothing with the rest of the process.
 
 - const `REDIRECTS` = `array (   0 => 301,   1 => 302,   2 => 303,   3 => 307,   4 => 308, )`
 - const `CREDENTIALS` = `array (   0 => 'authorization',   1 => 'cookie',   2 => 'proxy-authorization', )`
 
-Used by: `Minn\Html`, `Minn\Http\Access`, `Minn\Http\Args`, `Minn\Http\CertificateName`, `Minn\Http\CookieText`, `Minn\Http\Destination`, `Minn\Http\Download`, `Minn\Http\Envelope`, `Minn\Http\Exchange`, `Minn\Http\Failure`, `Minn\Http\Fake`, `Minn\Http\Ipv6`, `Minn\Http\IriParts`, `Minn\Http\Kernel`, `Minn\Http\Location`, `Minn\Http\Matched`, `Minn\Http\Method`, `Minn\Http\Outbound`, `Minn\Http\Policy`, `Minn\Http\Punycode`, `Minn\Http\RawResponse`, `Minn\Http\Request`, `Minn\Http\RequestFailed`, `Minn\Http\RequestsNames`, `Minn\Http\Response`, `Minn\Http\Route`, `Minn\Http\RouteMiss`, `Minn\Http\RouteParams`, `Minn\Http\RouteRow`, `Minn\Http\Router`, `Minn\Http\Subject`, `Minn\Http\Transport`, `Minn\Http\TrustedProxies`, `Minn\Ops\Changelog`, `Minn\Ops\Directory`, `Minn\Ops\Packages`, `Minn\Ops\Releases`
+Used by: `Minn\Admin\Translations`, `Minn\Extension\Seams`, `Minn\Html`, `Minn\Http\Access`, `Minn\Http\Args`, `Minn\Http\CertificateName`, `Minn\Http\CookieText`, `Minn\Http\Destination`, `Minn\Http\Download`, `Minn\Http\Envelope`, `Minn\Http\Exchange`, `Minn\Http\Failure`, `Minn\Http\Fake`, `Minn\Http\Ipv6`, `Minn\Http\IriParts`, `Minn\Http\Kernel`, `Minn\Http\Location`, `Minn\Http\Matched`, `Minn\Http\Method`, `Minn\Http\Outbound`, `Minn\Http\Policy`, `Minn\Http\Punycode`, `Minn\Http\RawResponse`, `Minn\Http\Request`, `Minn\Http\RequestFailed`, `Minn\Http\RequestsNames`, `Minn\Http\Response`, `Minn\Http\Route`, `Minn\Http\RouteMiss`, `Minn\Http\RouteParams`, `Minn\Http\RouteRow`, `Minn\Http\Router`, `Minn\Http\Subject`, `Minn\Http\Transport`, `Minn\Http\TrustedProxies`, `Minn\Ops\Changelog`, `Minn\Ops\Directory`, `Minn\Ops\EngineUpdate`, `Minn\Ops\Packages`, `Minn\Ops\Releases`, `Minn\Ops\Updates`
+
+```php
+__construct(array $within = array ( ), ?Minn\Http\Fake $fake = NULL, ?string $refusal = NULL)
+```
+The network, or $fake answering in its place. With $within, every hop
+of every request must also start with one of those URL prefixes,
+whatever a call's own hosts: say (an extension's needs.http).
+- `@param list<string> $within`
 
 
-### static `get(string $url, array $query = array ( ), array $headers = array ( ), float $timeout = 5.0, int $redirects = 5, array $hosts = array ( ), array $private = array ( ), ?int $maxBytes = NULL, ?string $userAgent = NULL): Minn\Http\Exchange`
+### static `refused(string $why): self`
+
+A client that throws $why at every call: what an extension holds when its minn.json did not ask for http.
+
+### `get(string $url, array $query = array ( ), array $headers = array ( ), float $timeout = 5.0, int $redirects = 5, array $hosts = array ( ), array $private = array ( ), ?int $maxBytes = NULL, ?string $userAgent = NULL): Minn\Http\Exchange`
 
 A GET.
 
-### static `head(string $url, array $query = array ( ), array $headers = array ( ), float $timeout = 5.0, int $redirects = 5, array $hosts = array ( ), array $private = array ( ), ?string $userAgent = NULL): Minn\Http\Exchange`
+### `head(string $url, array $query = array ( ), array $headers = array ( ), float $timeout = 5.0, int $redirects = 5, array $hosts = array ( ), array $private = array ( ), ?string $userAgent = NULL): Minn\Http\Exchange`
 
 A HEAD: the status and headers a GET would bring, without the body.
 
-### static `delete(string $url, array $query = array ( ), array $headers = array ( ), float $timeout = 5.0, int $redirects = 5, array $hosts = array ( ), array $private = array ( ), ?int $maxBytes = NULL, ?string $userAgent = NULL): Minn\Http\Exchange`
+### `delete(string $url, array $query = array ( ), array $headers = array ( ), float $timeout = 5.0, int $redirects = 5, array $hosts = array ( ), array $private = array ( ), ?int $maxBytes = NULL, ?string $userAgent = NULL): Minn\Http\Exchange`
 
 A DELETE.
 
-### static `post(string $url, ?array $json = NULL, ?array $form = NULL, ?string $body = NULL, array $query = array ( ), array $headers = array ( ), float $timeout = 5.0, int $redirects = 5, array $hosts = array ( ), array $private = array ( ), ?int $maxBytes = NULL, ?string $userAgent = NULL): Minn\Http\Exchange`
+### `post(string $url, ?array $json = NULL, ?array $form = NULL, ?string $body = NULL, array $query = array ( ), array $headers = array ( ), float $timeout = 5.0, int $redirects = 5, array $hosts = array ( ), array $private = array ( ), ?int $maxBytes = NULL, ?string $userAgent = NULL): Minn\Http\Exchange`
 
 A POST with a json:, form: or body: payload.
 
-### static `put(string $url, ?array $json = NULL, ?array $form = NULL, ?string $body = NULL, array $query = array ( ), array $headers = array ( ), float $timeout = 5.0, int $redirects = 5, array $hosts = array ( ), array $private = array ( ), ?int $maxBytes = NULL, ?string $userAgent = NULL): Minn\Http\Exchange`
+### `put(string $url, ?array $json = NULL, ?array $form = NULL, ?string $body = NULL, array $query = array ( ), array $headers = array ( ), float $timeout = 5.0, int $redirects = 5, array $hosts = array ( ), array $private = array ( ), ?int $maxBytes = NULL, ?string $userAgent = NULL): Minn\Http\Exchange`
 
 A PUT with a json:, form: or body: payload.
 
-### static `patch(string $url, ?array $json = NULL, ?array $form = NULL, ?string $body = NULL, array $query = array ( ), array $headers = array ( ), float $timeout = 5.0, int $redirects = 5, array $hosts = array ( ), array $private = array ( ), ?int $maxBytes = NULL, ?string $userAgent = NULL): Minn\Http\Exchange`
+### `patch(string $url, ?array $json = NULL, ?array $form = NULL, ?string $body = NULL, array $query = array ( ), array $headers = array ( ), float $timeout = 5.0, int $redirects = 5, array $hosts = array ( ), array $private = array ( ), ?int $maxBytes = NULL, ?string $userAgent = NULL): Minn\Http\Exchange`
 
 A PATCH with a json:, form: or body: payload.
 
-### static `send(Minn\Http\Outbound $request): Minn\Http\Exchange`
+### `send(Minn\Http\Outbound $request): Minn\Http\Exchange`
 
 Sends exactly what the Outbound says, with none of the verbs' rules
 about where a request may go: the door WordPress's own HTTP API comes
-through after applying its rules, and the one a fake answers at.
+through after applying its rules. A client bound to hosts refuses it,
+since curl follows a sent request's redirects where no rule can see.
 
-### static `fake(array $answers = array ( )): Minn\Http\Fake`
-
-Answers requests from $answers instead of the network until
-restore(), for tests. Keys are URL patterns (* matches anything; the
-scheme and query may be left off); values are an array (sent as JSON),
-a string (the body), a status code, an Exchange from reply(), or a
-closure taking the Outbound and returning one of those. A request no
-pattern matches fails as if nothing were listening. The fake answers
-wp_remote_*() too, and refuses to start outside the command line.
-
-- `@param array<string, mixed> $answers`
-
-### static `restore(): void`
-
-Puts the network back after fake().
-
-### static `reply(array|string $body = '', int $status = 200, array $headers = array ( )): Minn\Http\Exchange`
-
-A response made by hand, for a fake to answer with. An array body is sent as JSON.
-
-- `@param array<string, string|list<string>> $headers name => value; Set-Cookie values become cookies`
-
-Internals: `follow()` (private, line 148), `deliver()` (private, line 167), `nextHop()` (private, line 177), `outbound()` (private, line 188), `payload()` (private, line 203), `lines()` (private, line 221), `withQuery()` (private, line 240)
+Internals: `follow()` (private, line 122), `deliver()` (private, line 142), `throwIfRefused()` (private, line 151), `nextHop()` (private, line 159), `outbound()` (private, line 170), `payload()` (private, line 185), `lines()` (private, line 203), `withQuery()` (private, line 222)
 
 
 ## Json
@@ -384,7 +378,7 @@ encoded even then (NAN, nesting past the depth) throws a JsonException.
 - const `READABLE` = `320` — Slashes and non-ASCII characters written as themselves: encode()'s default.
 - const `ESCAPED` = `0` — Slashes and non-ASCII characters escaped, as wp_json_encode() and the REST API write them.
 
-Used by: `Minn\Admin\AdminTypes`, `Minn\Admin\AppController`, `Minn\Admin\PackagesController`, `Minn\Admin\StructureController`, `Minn\Admin\Translations`, `Minn\Auth\Roles`, `Minn\Blocks\CoreBlocks`, `Minn\Blocks\Dynamic\SocialLinks`, `Minn\Blocks\Parser`, `Minn\Blocks\Serializer`, `Minn\Cli\Installer`, `Minn\Cli\MinnCommand`, `Minn\Cli\OptionCommand`, `Minn\Cli\Preflight`, `Minn\Content\Emoji`, `Minn\Content\PluginState`, `Minn\Extension\Loader`, `Minn\Extension\Manifest`, `Minn\Front\AdminBar`, `Minn\Html`, `Minn\Http`, `Minn\Http\Exchange`, `Minn\Http\Request`, `Minn\Http\Response`, `Minn\I18n\ScriptTranslations`, `Minn\Mail\MailLog`, `Minn\Mail\MailSettings`, `Minn\Mail\MailerStrings`, `Minn\Ops\Changelog`, `Minn\Ops\Packages`, `Minn\Ops\Releases`, `Minn\Ops\Updates`, `Minn\Rest\ArgCheck`, `Minn\Rest\BatchController`, `Minn\Rest\Embed`, `Minn\Rest\Reply`, `Minn\Rest\RuntimeRoutes`, `Minn\Rest\Schema`, `Minn\Rest\Taxonomies`, `Minn\Rest\Types`, `Minn\Runtime\Assets`, `Minn\Runtime\Constants`, `Minn\Runtime\Interactivity`, `Minn\Runtime\OEmbed`, `Minn\Runtime\Recovery`, `Minn\Runtime\Registry`, `Minn\Runtime\ScriptModules`, `Minn\Runtime\SymbolGap`, `Minn\Runtime\ThemeSupports`, `Minn\Support\Accents`, `Minn\Support\KsesEntities`, `Minn\Theme\GlobalStyles`, `Minn\Theme\StylePresets`, `Minn\Theme\TemplateIndex`, `Minn\Theme\TemplatePartTheme`, `Minn\Theme\TemplatePatterns`, `Minn\Theme\Templates`, `Minn\Theme\Theme`, `Minn\Theme\ThemeStyles`, `Minn\Theme\UserStyles`
+Used by: `Minn\Admin\AdminTypes`, `Minn\Admin\AppController`, `Minn\Admin\PackagesController`, `Minn\Admin\StructureController`, `Minn\Admin\Translations`, `Minn\Auth\Roles`, `Minn\Blocks\CoreBlocks`, `Minn\Blocks\Dynamic\SocialLinks`, `Minn\Blocks\Parser`, `Minn\Blocks\Serializer`, `Minn\Cli\Installer`, `Minn\Cli\MinnCommand`, `Minn\Cli\OptionCommand`, `Minn\Cli\Preflight`, `Minn\Content\Emoji`, `Minn\Content\PluginState`, `Minn\Extension\Loader`, `Minn\Extension\Manifest`, `Minn\Front\AdminBar`, `Minn\Html`, `Minn\Http`, `Minn\Http\Exchange`, `Minn\Http\Fake`, `Minn\Http\Request`, `Minn\Http\Response`, `Minn\I18n\ScriptTranslations`, `Minn\Mail\MailLog`, `Minn\Mail\MailSettings`, `Minn\Mail\MailerStrings`, `Minn\Ops\Changelog`, `Minn\Ops\Packages`, `Minn\Ops\Releases`, `Minn\Ops\Updates`, `Minn\Rest\ArgCheck`, `Minn\Rest\BatchController`, `Minn\Rest\Embed`, `Minn\Rest\Reply`, `Minn\Rest\RuntimeRoutes`, `Minn\Rest\Schema`, `Minn\Rest\Taxonomies`, `Minn\Rest\Types`, `Minn\Runtime\Assets`, `Minn\Runtime\Constants`, `Minn\Runtime\Interactivity`, `Minn\Runtime\OEmbed`, `Minn\Runtime\Recovery`, `Minn\Runtime\Registry`, `Minn\Runtime\ScriptModules`, `Minn\Runtime\SymbolGap`, `Minn\Runtime\ThemeSupports`, `Minn\Support\Accents`, `Minn\Support\KsesEntities`, `Minn\Theme\GlobalStyles`, `Minn\Theme\StylePresets`, `Minn\Theme\TemplateIndex`, `Minn\Theme\TemplatePartTheme`, `Minn\Theme\TemplatePatterns`, `Minn\Theme\Templates`, `Minn\Theme\Theme`, `Minn\Theme\ThemeStyles`, `Minn\Theme\UserStyles`
 
 ### static `encode(mixed $value, int $flags = self::READABLE, int $depth = 512): string`
 

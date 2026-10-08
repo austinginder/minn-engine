@@ -124,16 +124,19 @@ falls.
 - **A boolean parameter is two methods.** Name the branch
   (`install()` / `replace()`), or pass the caller, so the call site says what
   it does.
-- **A front door is one import away.** The few classes a caller reaches for
-  from anywhere (`Minn\Db`, `Minn\Http`, `Minn\Json`) sit at the root of the
-  namespace with plain static methods. In a file with a namespace, PHP reads
-  `Minn\Json` relative to that namespace, so a door takes one grouped line,
-  `use Minn\{Http, Json};`, or a leading backslash (`\Minn\Json::encode()`).
-  Each is a written-out method (no `__callStatic`), and whatever it hands back
-  is used through its methods, never named by the caller. Options are named
-  arguments, so a misspelt one fails at the call. A door that reaches outside
-  the process keeps one swappable seam (`Minn\Http::fake()`) so code that
-  calls it can be tested; a pure one (`Minn\Json`) needs none.
+- **A pure helper is one import away; an effect is handed in.** What is a
+  pure function of its arguments (`Minn\Html`, `Minn\Json`) sits at the root
+  of the namespace with plain static methods. In a file with a namespace, PHP
+  reads `Minn\Json` relative to that namespace, so the helpers take one
+  grouped line, `use Minn\{Html, Json};`, or a leading backslash
+  (`\Minn\Json::encode()`). What reaches outside the process is an instance
+  handed to the code that uses it: an extension finds `Minn\Http` on
+  `$minn->http`, granted by `needs.http` in its `minn.json`, and an engine
+  class takes one in its constructor (the real network by default). A test
+  passes a fake's client (`(new Http\Fake([...]))->http()`), which nothing else
+  sees. Each is a written-out method (no `__callStatic`), and whatever it
+  hands back is used through its methods, never named by the caller. Options
+  are named arguments, so a misspelt one fails at the call.
 - **Regenerate after every change**: `php tests/tools/api-docs.php` for
   `src/Minn/`, `php tests/tools/facade-map.php` for `wp-api/`. The style suite
   fails while either is stale.

@@ -8,12 +8,12 @@ request, response, routing, and the outgoing client
 | [`Args`](#args) | final class | 148 | The parameters a route accepts, as the reference describes them in the |
 | [`CertificateName`](#certificatename) | final class | 56 | Whether a TLS certificate names a host: a wildcard only as a whole first |
 | [`CookieText`](#cookietext) | final class | 94 | Set-Cookie text and the matching rules a cookie jar applies: parsing a |
-| [`Destination`](#destination) | final readonly class | 97 | Where Minn\Http lets a request go. Only http and https; when hosts are |
-| [`Download`](#download) | final class | 32 | A file the engine fetches for itself (a package, a language pack), over |
+| [`Destination`](#destination) | final readonly class | 102 | Where Minn\Http lets a request go. Only http and https; when hosts are |
+| [`Download`](#download) | final readonly class | 36 | A file the engine fetches for itself (a package, a language pack), over |
 | [`Envelope`](#envelope) | interface | 9 | What runs around a matched route once the router knows the route takes |
 | [`Exchange`](#exchange) | final readonly class | 74 | What came back: the final response's status, headers (repeats as lists), Set-Cookie values, and body, or the transport error. |
 | [`Failure`](#failure) | final class | 176 | What the public sees when the engine cannot answer: a plain page with no |
-| [`Fake`](#fake) | final class | 57 | Answers requests in place of the network while a test runs, and keeps |
+| [`Fake`](#fake) | final class | 94 | Answers requests in place of the network, and keeps what was sent. A test |
 | [`Ipv6`](#ipv6) | final class | 62 | IPv6 addresses as text: written out in full (eight groups, or six and an |
 | [`IriParts`](#iriparts) | final readonly class | 138 | An IRI (a URL that may carry non-ASCII text) split into its parts and |
 | [`Kernel`](#kernel) | final readonly class | 36 | The edge. Turns a request into a response through the router and turns |
@@ -159,7 +159,8 @@ The path a cookie without one gets: the request path up to its last slash, or "/
 `final readonly class Minn\Http\Destination` · `public/minn/src/Minn/Http/Destination.php`
 
 Where Minn\Http lets a request go. Only http and https; when hosts are
-named, every hop must start with one of them; and an address outside the
+named, every hop must start with one of them (and with one of the
+client's own, when it is bound); and an address outside the
 public internet (loopback, private and shared ranges, link-local, cloud
 metadata, reserved) is refused unless its host is listed in $private. A
 name is resolved here and curl is pinned to the addresses that were
@@ -169,11 +170,12 @@ connection.
 Used by: `Minn\Http`, `Minn\Http\Download`, `Minn\Http\Location`
 
 ```php
-__construct(array $hosts = array ( ), array $private = array ( ), ?Closure $lookup = NULL)
+__construct(array $hosts = array ( ), array $private = array ( ), ?Closure $lookup = NULL, array $within = array ( ))
 ```
 - `@param list<string> $hosts URL prefixes every hop must start with; none means any public host`
 - `@param list<string> $private host names or addresses allowed to reach a private address`
 - `@param (Closure(string): list<string>)|null $lookup a host's addresses; DNS when null`
+- `@param list<string> $within URL prefixes the client itself is bound to (an extension's needs.http); none means unbound`
 
 
 ### `refusal(string $url): ?string`
@@ -190,22 +192,27 @@ somewhere private it was not allowed.
 
 A URL's host, lower-cased, without the brackets around an IPv6 address.
 
-Internals: `listed()` (private, line 83), `allowed()` (private, line 93), `dns()` (private, line 105)
+Internals: `startsWithOne()` (private, line 89), `allowed()` (private, line 99), `dns()` (private, line 111)
 
 
 ## Download
 
-`final class Minn\Http\Download` · `public/minn/src/Minn/Http/Download.php`
+`final readonly class Minn\Http\Download` · `public/minn/src/Minn/Http/Download.php`
 
 A file the engine fetches for itself (a package, a language pack), over
-Minn\Http with the rules a download needs: https at every hop, one of the
-caller's host prefixes when given, no private address, and a body over
-the cap fails rather than being truncated. The messages are written for
-the person who asked for the download.
+its Minn\Http client with the rules a download needs: https at every hop,
+one of the caller's host prefixes when given, no private address, and a
+body over the cap fails rather than being truncated. The messages are
+written for the person who asked for the download.
 
 Used by: `Minn\Admin\Translations`, `Minn\Ops\EngineUpdate`, `Minn\Ops\Packages`
 
-### static `https(string $url, int $maxBytes, array $hostPrefixes = array ( ), string $userAgent = 'Minn Engine'): string`
+```php
+__construct(Minn\Http $http = \Minn\Http::__set_state(array(    'within' =>    array (   ),    'fake' => NULL,    'refusal' => NULL, )))
+```
+
+
+### `https(string $url, int $maxBytes, array $hostPrefixes = array ( ), string $userAgent = 'Minn Engine'): string`
 
 The body at $url, following at most five redirects.
 
@@ -360,17 +367,35 @@ Internals: `discardOutput()` (private, line 82), `note()` (private, line 111), `
 
 `final class Minn\Http\Fake` · `public/minn/src/Minn/Http/Fake.php`
 
-Answers requests in place of the network while a test runs, and keeps
-what was sent. Made by Minn\Http::fake(); every request through
-Minn\Http, wp_remote_*() and the Requests library reaches it.
+Answers requests in place of the network, and keeps what was sent. A test
+makes one and hands its client to the code it tests:
+
+$fake = new Fake(['api.example.com/*' => ['ok' => true]]);
+$result = (new StatusCheck($fake->http()))->run();
+$fake->sent('api.example.com/status');   // the requests that went there
+
+Only that client is answered, so there is nothing to put back and nothing
+else in the process sees the fake.
 
 Used by: `Minn\Http`
 
 ```php
-__construct(array $answers)
+__construct(array $answers = array ( ))
 ```
-- `@param array<string, mixed> $answers URL pattern => answer, see Minn\Http::fake()`
+Keys are URL patterns (* matches anything; the scheme and query may be
+left off); values are an array (sent as JSON), a string (the body), a
+status code, an Exchange from reply(), or a closure taking the
+Outbound and returning one of those. A request no pattern matches
+fails as if nothing were listening.
+- `@param array<string, mixed> $answers`
 
+
+### `http(array $within = array ( )): Minn\Http`
+
+A client this fake answers, bound to $within as an extension's is by
+its needs.http. The destination rules still run, but names are not resolved.
+
+- `@param list<string> $within`
 
 ### `answer(Minn\Http\Outbound $request): Minn\Http\Exchange`
 
@@ -382,15 +407,17 @@ The requests sent so far, oldest first; with a pattern, only those whose URL mat
 
 - `@return list<Outbound>`
 
-### `restore(): void`
+### static `reply(array|string $body = '', int $status = 200, array $headers = array ( )): Minn\Http\Exchange`
 
-Puts the network back.
+A response made by hand, for a fake to answer with. An array body is sent as JSON.
+
+- `@param array<string, string|list<string>> $headers name => value; Set-Cookie values become cookies`
 
 ### static `matches(string $pattern, string $url): bool`
 
 Whether a URL matches a pattern in which * stands for anything; the scheme and the query string may be left off.
 
-Internals: `exchange()` (private, line 61)
+Internals: `exchange()` (private, line 105)
 
 
 ## Ipv6

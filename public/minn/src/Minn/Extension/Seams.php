@@ -5,16 +5,20 @@ declare(strict_types=1);
 namespace Minn\Extension;
 
 use Closure;
+use Minn\Blocks\Block;
 use Minn\Content\Reader;
 use Minn\Content\Site;
 use Minn\Db;
+use Minn\Http;
 use Minn\Http\Request;
 
 /**
- * Where an extension can take part in a request: eight typed registrations
- * and the request they run in. This is the whole surface an extension sees.
- * The engine calls what was registered through SeamRunner, at the right
- * moment and in registration order.
+ * Where an extension can take part in a request: eight typed registrations,
+ * the request they run in, and the outgoing HTTP its minn.json asks for.
+ * This is the whole surface an extension sees. Each extension registers on
+ * its own (forExtension), and what it registered joins the request's once
+ * its register() returns (adopt). The engine calls what was registered
+ * through SeamRunner, at the right moment and in registration order.
  */
 final class Seams
 {
@@ -37,12 +41,58 @@ final class Seams
     /** @var Closure(string): string|null */
     private ?Closure $title = null;
 
+    /** Outgoing HTTP, bound to the hosts the extension's needs.http lists; a client that throws when it asked for none. */
+    public readonly Http $http;
+
     public function __construct(
         public readonly Db $db,
         public readonly Site $site,
         public readonly Request $request,
         public readonly Reader $reader,
+        ?Http $http = null,
     ) {
+        $this->http = $http ?? Http::refused('Outgoing HTTP belongs to an extension, on the $minn its register() receives, once its minn.json asks for it under "needs": {"http": [...]}.');
+    }
+
+    /**
+     * The seams one extension registers on: this request, and the outgoing
+     * HTTP its manifest grants. A manifest without needs.http gets a client
+     * that throws at its first request, naming the key to add.
+     */
+    public function forExtension(Manifest $manifest): self
+    {
+        $http = $manifest->http === null
+            ? Http::refused("{$manifest->slug} did not ask for http: add \"needs\": {\"http\": [\"https://api.example.com/\"]} to its minn.json.")
+            : new Http(within: $manifest->http);
+        return new self($this->db, $this->site, $this->request, $this->reader, $http);
+    }
+
+    /**
+     * Takes on what one extension registered, after its register() returned,
+     * so an extension that throws half-way adds nothing. A closure the
+     * engine hands seams to is handed that extension's own.
+     */
+    public function adopt(self $extension): void
+    {
+        foreach ($extension->blockGates as $gate) {
+            $this->blockGates[] = static fn (Block $block): mixed => $gate($block, $extension);
+        }
+        foreach ($extension->blockFilters as $filter) {
+            $this->blockFilters[] = static fn (Block $block, string $html): mixed => $filter($block, $html, $extension);
+        }
+        foreach ($extension->shortcodes as $tag => $render) {
+            $this->shortcodes[$tag] = static fn (array $attributes, ?string $content): mixed => $render($attributes, $content, $extension);
+        }
+        foreach ($extension->head as $render) {
+            $this->head[] = static fn (): mixed => $render($extension);
+        }
+        foreach ($extension->footer as $render) {
+            $this->footer[] = static fn (): mixed => $render($extension);
+        }
+        array_push($this->contentFilters, ...$extension->contentFilters);
+        array_push($this->bodyClasses, ...$extension->bodyClasses);
+        array_push($this->documentFilters, ...$extension->documentFilters);
+        $this->title = $extension->title ?? $this->title;
     }
 
     /** Decides whether a block renders at all; the first gate to answer false wins. */

@@ -6,7 +6,7 @@
 |---|---|---|---|
 | [`Archive`](#archive) | final class | 96 | A zip unpacked the safe way, for the plugin and theme installer and for |
 | [`AutoUpdates`](#autoupdates) | final readonly class | 29 | Whether per-item auto-updates apply to plugins or themes, as the |
-| [`Changelog`](#changelog) | final class | 67 | A changelog read from its repository rather than shipped: a Minn release |
+| [`Changelog`](#changelog) | final class | 68 | A changelog read from its repository rather than shipped: a Minn release |
 | [`CoreStatus`](#corestatus) | final readonly class | 48 | The core the app's update banner and chip speak of, which on Minn is |
 | [`Diagnostics`](#diagnostics) | final readonly class | 408 | The System view's facts about this install: the engine, PHP, the |
 | [`Directory`](#directory) | final class | 35 | The Minn update service, https://updates.minn.run: the one place the |
@@ -16,9 +16,9 @@
 | [`Logs`](#logs) | final readonly class | 150 | The log files the System view can read and clear: the debug log the |
 | [`Packages`](#packages) | final readonly class | 481 | Putting plugins, themes and extensions on disk. Plugins and themes come |
 | [`Release`](#release) | final readonly class | 58 | One published Minn release as the update service describes it (and as |
-| [`Releases`](#releases) | final class | 86 | Whether a newer Minn is out, asked of the Minn update service at most |
+| [`Releases`](#releases) | final class | 87 | Whether a newer Minn is out, asked of the Minn update service at most |
 | [`Unzip`](#unzip) | final readonly class | 112 | An archive unpacked as unzip_file() unpacks it (probe unzip-file): into |
-| [`Updates`](#updates) | final class | 435 | Update offers for the site's plugins and themes from the directory, asked |
+| [`Updates`](#updates) | final class | 436 | Update offers for the site's plugins and themes from the directory, asked |
 | [`UpgraderRun`](#upgraderrun) | final readonly class | 113 | The engine's own installs and updates, run through the reference's |
 
 ## Archive
@@ -107,7 +107,7 @@ releases that exist. A fetch GitHub does not answer keeps the last copy; a
 Used by: `Minn\Admin\BundleController`, `Minn\Rest\Services`
 
 ```php
-__construct(Closure $load, Closure $save, string $source)
+__construct(Closure $load, Closure $save, string $source, Minn\Http $http = \Minn\Http::__set_state(array(    'within' =>    array (   ),    'fake' => NULL,    'refusal' => NULL, )))
 ```
 - `@param Closure(): ?string $load the stored copy, as JSON`
 - `@param Closure(string): void $save keeps the copy, as JSON`
@@ -129,7 +129,7 @@ The released sections as Markdown, fetched first when the copy is a day old; '' 
 
 The changelog without its Unreleased sections.
 
-Internals: `kept()` (private, line 51)
+Internals: `kept()` (private, line 52)
 
 
 ## CoreStatus
@@ -233,9 +233,9 @@ An address on the service: a path under /v1/, such as "plugins/info/1.2/".
 
 How the engine introduces itself: its version, and nothing about the site.
 
-### static `post(string $path, array $form): array`
+### static `post(Minn\Http $http, string $path, array $form): array`
 
-A form POST to the service (the update checks), its answer decoded.
+A form POST to the service (the update checks) over the caller's client, its answer decoded.
 
 - `@param array<string, string> $form`
 - `@return array<string, mixed>`
@@ -296,7 +296,7 @@ an old one before it signs anything.
 Used by: `Minn\Cli\Installer`, `Minn\Ops\CoreStatus`, `Minn\Rest\Services`
 
 ```php
-__construct(string $engineDir, array $keys = self::KEYS)
+__construct(string $engineDir, array $keys = self::KEYS, Minn\Http $http = \Minn\Http::__set_state(array(    'within' =>    array (   ),    'fake' => NULL,    'refusal' => NULL, )))
 ```
 - `@param list<string> $keys the release keys to trust (tests pass their own)`
 
@@ -313,7 +313,7 @@ Installs an archive in hand once it matches its checksum and signature and holds
 
 The version a bootstrap.php names; "0.0.0" when it names none.
 
-Internals: `swap()` (private, line 82), `signed()` (private, line 120), `refuseCheckout()` (private, line 146)
+Internals: `swap()` (private, line 83), `signed()` (private, line 121), `refuseCheckout()` (private, line 147)
 
 
 ## InstalledSoftware
@@ -422,7 +422,7 @@ deleted.
 Used by: `Minn\Admin\PackagesController`, `Minn\Cli\DirectorySearch`, `Minn\Cli\PackageInstaller`, `Minn\Cli\PluginCommand`, `Minn\Cli\ThemeCommand`, `Minn\Ops\DirectoryApi`, `Minn\Ops\Updates`, `Minn\Ops\UpgraderRun`, `Minn\Rest\PluginsController`, `Minn\Rest\Services`
 
 ```php
-__construct(Minn\Content\Site $site, string $contentDir)
+__construct(Minn\Content\Site $site, string $contentDir, Minn\Http $http = \Minn\Http::__set_state(array(    'within' =>    array (   ),    'fake' => NULL,    'refusal' => NULL, )))
 ```
 
 
@@ -525,7 +525,7 @@ A package over https, every redirect hop included, refusing anything
 else; when host prefixes are given, every hop must start with one.
 The request names the engine, never the site's address.
 
-Internals: `pluginPackage()` (private, line 159), `plain()` (private, line 222), `themePackage()` (private, line 316), `upload()` (private, line 369), `place()` (private, line 392), `contained()` (private, line 439), `identify()` (private, line 454), `ask()` (private, line 488)
+Internals: `pluginPackage()` (private, line 160), `plain()` (private, line 223), `themePackage()` (private, line 317), `upload()` (private, line 370), `place()` (private, line 393), `contained()` (private, line 440), `identify()` (private, line 455), `ask()` (private, line 489)
 
 
 ## Release
@@ -592,7 +592,7 @@ never wordpress.org, and never GitHub directly.
 Used by: `Minn\Admin\Notifications`, `Minn\Cli\Installer`, `Minn\Ops\CoreStatus`, `Minn\Rest\Services`
 
 ```php
-__construct(Closure $load, Closure $save, string $installed, string $source = self::SOURCE)
+__construct(Closure $load, Closure $save, string $installed, string $source = self::SOURCE, Minn\Http $http = \Minn\Http::__set_state(array(    'within' =>    array (   ),    'fake' => NULL,    'refusal' => NULL, )))
 ```
 - `@param Closure(): ?string $load the stored answer, as JSON`
 - `@param Closure(string): void $save keeps the answer, as JSON`
@@ -623,7 +623,7 @@ did (when it did not, `latest` is the last answer kept).
 
 The release on offer: the latest one, when it is newer than the running engine.
 
-Internals: `origin()` (private, line 101)
+Internals: `origin()` (private, line 102)
 
 
 ## Unzip
@@ -687,7 +687,7 @@ the publisher: a package outside the directory is unpacked only when
 Used by: `Minn\Admin\Notifications`, `Minn\Admin\ThemesController`, `Minn\Admin\UpdatesController`, `Minn\Cli\AssetUpdate`, `Minn\Cron\Cron`, `Minn\Rest\Services`
 
 ```php
-__construct(Minn\Content\Site $site, Minn\Content\Inventory $inventory, Minn\Ops\Packages $packages, string $contentDir)
+__construct(Minn\Content\Site $site, Minn\Content\Inventory $inventory, Minn\Ops\Packages $packages, string $contentDir, Minn\Http $http = \Minn\Http::__set_state(array(    'within' =>    array (   ),    'fake' => NULL,    'refusal' => NULL, )))
 ```
 
 
@@ -791,7 +791,7 @@ Stylesheet => style.css headers. @return array<string, array<string, string>>
 
 - `@return array<string, array<string, string>>`
 
-Internals: `supplied()` (private, line 188), `saveAuto()` (private, line 323), `pluginHeaders()` (private, line 380), `apply()` (private, line 424), `consume()` (private, line 445), `map()` (private, line 458), `safeUrl()` (private, line 466)
+Internals: `supplied()` (private, line 190), `saveAuto()` (private, line 325), `pluginHeaders()` (private, line 382), `apply()` (private, line 426), `consume()` (private, line 447), `map()` (private, line 460), `safeUrl()` (private, line 468)
 
 
 ## UpgraderRun

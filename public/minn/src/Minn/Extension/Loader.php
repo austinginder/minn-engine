@@ -110,7 +110,7 @@ final class Loader
         return $out;
     }
 
-    /** Registers every active extension's seams. */
+    /** Registers every active extension, each on seams of its own; one that throws adds nothing. */
     public function register(Seams $seams): void
     {
         foreach ($this->active() as $manifest) {
@@ -120,7 +120,9 @@ final class Loader
                 if (!class_exists($class) || !is_subclass_of($class, Extension::class)) {
                     throw new \RuntimeException("{$class} is not a Minn\\Extension\\Extension");
                 }
-                (new $class())->register($seams);
+                $own = $seams->forExtension($manifest);
+                (new $class())->register($own);
+                $seams->adopt($own);
             } catch (Throwable $e) {
                 error_log("Minn Engine: extension {$manifest->slug} failed to register: " . $e->getMessage());
             }

@@ -33,6 +33,7 @@ final class Changelog
         private readonly Closure $load,
         private readonly Closure $save,
         private readonly string $source,
+        private readonly Http $http = new Http(),
     ) {
     }
 
@@ -68,7 +69,7 @@ final class Changelog
         if ($checked > time() - self::TTL) {
             return $markdown;
         }
-        $reply = Http::get($this->source, timeout: 5.0, hosts: [Directory::ORIGIN], maxBytes: 4194304);
+        $reply = $this->http->get($this->source, timeout: 5.0, hosts: [Directory::ORIGIN], maxBytes: 4194304);
         if ($reply->ok()) {
             $markdown = self::released($reply->body);
         } elseif ($reply->code === 404) {

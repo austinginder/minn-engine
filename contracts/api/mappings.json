@@ -9,7 +9,7 @@
         "placeholder": 281,
         "deadend": 1587,
         "functions": 7206,
-        "minnMethods": 870,
+        "minnMethods": 869,
         "leafLinesOver15": 13
     },
     "functions": {
@@ -43282,8 +43282,7 @@
             "lines": 17,
             "kind": "minn",
             "minn": [
-                "Minn\\Http::failed",
-                "Minn\\Http::send",
+                "Minn\\Http::__construct",
                 "Minn\\Http\\RawResponse::fromExchange"
             ],
             "composes": []

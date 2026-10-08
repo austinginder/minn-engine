@@ -41,14 +41,14 @@ final class Directory
     }
 
     /**
-     * A form POST to the service (the update checks), its answer decoded.
+     * A form POST to the service (the update checks) over the caller's client, its answer decoded.
      *
      * @param array<string, string> $form
      * @return array<string, mixed>
      */
-    public static function post(string $path, array $form): array
+    public static function post(Http $http, string $path, array $form): array
     {
-        $decoded = Http::post(self::url($path), form: $form, headers: ['X-Minn-Compat: ' . Engine::WP_VERSION], timeout: 20, hosts: [self::ORIGIN], userAgent: self::userAgent())->json();
+        $decoded = $http->post(self::url($path), form: $form, headers: ['X-Minn-Compat: ' . Engine::WP_VERSION], timeout: 20, hosts: [self::ORIGIN], userAgent: self::userAgent())->json();
         if (!is_array($decoded)) {
             throw new RestError('check_failed', 'The Minn update service did not answer the update check.', 502);
         }

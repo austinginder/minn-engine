@@ -33,6 +33,7 @@ final class Releases
         private readonly Closure $save,
         private readonly string $installed,
         private readonly string $source = self::SOURCE,
+        private readonly Http $http = new Http(),
     ) {
     }
 
@@ -77,7 +78,7 @@ final class Releases
     public function refresh(): array
     {
         $latest = $this->stored()['latest'];
-        $reply = Http::get($this->source, headers: ['Accept: application/json'], timeout: 5.0, hosts: [self::origin($this->source)], maxBytes: 1048576);
+        $reply = $this->http->get($this->source, headers: ['Accept: application/json'], timeout: 5.0, hosts: [self::origin($this->source)], maxBytes: 1048576);
         $answered = $reply->ok() || $reply->code === 404;
         if ($reply->ok()) {
             $answer = $reply->json();

@@ -15,7 +15,8 @@ A folder under `wp-content/plugins/` (or `mu-plugins/`) with a `minn.json`:
   "license": "MIT",
   "replaces": ["block-visibility/block-visibility.php"],
   "autoload": {"Minn\\Ext\\BlockVisibility\\": "src/"},
-  "extension": "Minn\\Ext\\BlockVisibility\\Extension"
+  "extension": "Minn\\Ext\\BlockVisibility\\Extension",
+  "needs": {"http": ["https://api.example.com/"]}
 }
 ```
 
@@ -23,7 +24,7 @@ The class implements `Minn\Extension\Extension` (one method, `register(Seams $mi
 in plain modern PHP: PSR-4 from the manifest, typed seams, no globals, no hook
 names to remember. `Seams` is the whole surface an extension sees: the eight
 registrations below plus the request it runs in (`db`, `site`, `request`,
-`reader`). What the engine does with the registrations lives in
+`reader`) and the outgoing HTTP its manifest asks for (`http`). What the engine does with the registrations lives in
 `Minn\Extension\SeamRunner`, which an extension never touches. The same folder may also be a WordPress plugin; nothing in the
 manifest is read by WordPress and nothing in the plugin's PHP is read by the engine.
 
@@ -34,12 +35,26 @@ in `active_plugins` (a plugin that is also an extension), when its slug is in th
 `wp minn info` lists the active set; `minn preflight` reports a replaced plugin as
 "provided by" its extension instead of "will not run".
 
-An extension that throws while registering is logged and skipped; the page renders
-without it.
+Each extension registers on a `Seams` of its own, and what it registered joins
+the request's only once its `register()` returns: an extension that throws while
+registering is logged and skipped whole, and the page renders without it. A
+closure the engine hands seams to (a gate, a block filter, a shortcode, `head`,
+`footer`) is handed its own extension's.
+
+**`needs`** says what the extension reaches outside the process. `"http"` is a
+URL prefix or a list of them, or `true` for any public host. `$minn->http` is a
+`Minn\Http` client bound to those prefixes at every hop, on top of any
+`hosts:` a call names (a prefix naming only a host is closed with `/`). With
+no `needs.http`, every request on `$minn->http` throws a `LogicException`
+naming the key: `acme-footer did not ask for http: add "needs": {"http":
+["https://api.example.com/"]} to its minn.json.` The other keys the 2026-09-02
+review named (`seams`, `options.read`, `content.read`, `meta.write`) come with
+the rest of B5. `tests/unit/extension-grants.php` proves the grant.
 
 ## The seams
 
-`Seams` carries the request (`db`, `site`, `request`, `reader`) and the
+`Seams` carries the request (`db`, `site`, `request`, `reader`), the granted
+`http`, and the
 registrations, each a typed closure, called in registration order:
 
 | Seam | Signature | Fires |

@@ -8,6 +8,7 @@ use Closure;
 use Minn\Content\Inventory;
 use Minn\Content\Site;
 use Minn\Extension\Manifest;
+use Minn\Http;
 use Minn\Http\Download;
 use Minn\Json;
 use Minn\RestError;
@@ -34,7 +35,7 @@ final readonly class Packages
     private const INFO_OPTION = 'minn_plugin_info';
     private const INFO_TTL = 12 * 3600;
 
-    public function __construct(private Site $site, private string $contentDir)
+    public function __construct(private Site $site, private string $contentDir, private Http $http = new Http())
     {
     }
 
@@ -210,7 +211,7 @@ final readonly class Packages
     public function infoAction(string $kind, string $action, array $request): ?array
     {
         $url = ($kind === 'themes' ? self::THEMES_INFO : self::PLUGINS_INFO) . '?' . http_build_query(['action' => $action, 'request' => $request]);
-        $reply = \Minn\Http::get($url, timeout: 30, hosts: [Directory::ORIGIN], maxBytes: 16 * 1048576, userAgent: Directory::userAgent());
+        $reply = $this->http->get($url, timeout: 30, hosts: [Directory::ORIGIN], maxBytes: 16 * 1048576, userAgent: Directory::userAgent());
         if ($reply->failed() || $reply->body === '') {
             return null;
         }
@@ -501,7 +502,7 @@ final readonly class Packages
             throw new RestError('bad_url', 'Packages are fetched over https only.', 400);
         }
         try {
-            return Download::https($url, Archive::MAX_BYTES, array_values($hostPrefixes), Directory::userAgent());
+            return (new Download($this->http))->https($url, Archive::MAX_BYTES, array_values($hostPrefixes), Directory::userAgent());
         } catch (\RuntimeException $e) {
             throw new RestError('download_failed', $e->getMessage(), 502);
         }

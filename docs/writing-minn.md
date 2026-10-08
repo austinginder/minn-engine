@@ -179,8 +179,8 @@ final class Extension implements MinnExtension
 
 `Seams` is everything you can touch: nine registrations (`gateBlocks`,
 `filterBlocks`, `shortcode`, `filterContent`, `head`, `footer`, `bodyClass`,
-`title`, `filterDocument`) and the request you run in (`db`, `site`, `request`,
-`reader`). There are no hook names, no globals, and no priority numbers: seams
+`title`, `filterDocument`), the request you run in (`db`, `site`, `request`,
+`reader`), and the outgoing HTTP your manifest asks for (`http`, below). There are no hook names, no globals, and no priority numbers: seams
 run in registration order.
 
 Prove it the way `tests/extensions.test.php` proves the fixture extension:
@@ -191,22 +191,51 @@ must match the same page on the reference with the plugin active.
 
 ## Your first outgoing request
 
-Import `Minn\Http` and call it where you are. There is no client to build and
-no options array:
+Outgoing HTTP arrives on `$minn`, granted by the manifest. Name the hosts the
+extension talks to in its `minn.json`:
+
+```json
+"needs": {"http": ["https://api.example.com/"]}
+```
+
+Then call the verbs on `$minn->http`. There is no client to build and no
+options array:
+
+```php
+$status = $minn->http->get('https://api.example.com/status')->json();
+
+$minn->http->post($url, form: ['email' => $email]);
+$minn->http->post($url, json: ['email' => $email], timeout: 10)->throw();
+$minn->http->get($url, query: ['page' => 2], headers: ['Accept' => 'application/json']);
+```
+
+Every hop of every request must start with one of the prefixes the manifest
+lists, so a redirect anywhere else fails the exchange; `"http": true` grants
+any public host instead. Without `needs.http`, the first request throws and
+names the key to add.
+
+A class deeper than `register()` takes the client in its constructor, so the
+constructor says the class uses the network:
 
 ```php
 use Minn\Http;
 
-$status = Http::get('https://api.example.com/status')->json();
+final readonly class StatusCheck
+{
+    public function __construct(private Http $http)
+    {
+    }
 
-Http::post($url, form: ['email' => $email]);
-Http::post($url, json: ['email' => $email], timeout: 10)->throw();
-Http::get($url, query: ['page' => 2], headers: ['Accept' => 'application/json']);
+    public function run(): ?array
+    {
+        $reply = $this->http->get('https://api.example.com/status');
+        return $reply->ok() ? $reply->json() : null;
+    }
+}
+
+// In register():
+$check = new StatusCheck($minn->http);
 ```
-
-The import matters: in a file with a namespace (every extension and engine
-class has one), PHP reads `Minn\Http` relative to that namespace and fails to
-find it. `use Minn\Http;` or a leading backslash (`\Minn\Http::get()`) fixes it.
 
 Every verb (`get`, `head`, `delete`, `post`, `put`, `patch`) returns an
 `Exchange`. Ask it what you need: `ok()` (a 2xx arrived), `failed()` (nothing
@@ -221,14 +250,15 @@ redirect and after DNS, so a URL a user typed is safe to fetch. `hosts:`
 narrows a request to the URL prefixes you name. When a redirect leaves the
 origin, `Authorization` and `Cookie` stay behind.
 
-Test without the network by faking it; plugins' `wp_remote_*()` calls are
-answered by the same fake:
+Test without the network by handing the class a fake's client. The fake
+answers that client alone, so there is nothing to put back:
 
 ```php
-$fake = Http::fake(['api.example.com/*' => ['ok' => true]]);
-$result = my_status_check();
+use Minn\Http\Fake;
+
+$fake = new Fake(['api.example.com/*' => ['ok' => true]]);
+$result = (new StatusCheck($fake->http()))->run();
 $fake->sent('api.example.com/status');   // the requests that went there
-$fake->restore();
 ```
 
 The rules are in `contracts/http.md`. `tests/unit/http.php` proves the
@@ -240,7 +270,7 @@ surface against the fake and `tests/http.test.php` against a local server.
 from the root of the namespace:
 
 ```php
-use Minn\{Http, Json};
+use Minn\{Html, Json};
 
 $body = Json::encode($rows);                    // {"url":"https://example.com/a","name":"Café"}
 $data = Json::decode($text);                    // objects as arrays; JsonException when it is not JSON

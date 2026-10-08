@@ -539,7 +539,7 @@ namespace WpOrg\Requests\Transport {
         private function minn_send(string $url, array $headers, $data, array $options): string
         {
             $hooks = $options['hooks'] ?? new Hooks();
-            $exchange = \Minn\Http::send($this->minn_outbound($url, $headers, $data, $options, $hooks));
+            $exchange = (new \Minn\Http())->send($this->minn_outbound($url, $headers, $data, $options, $hooks));
             $hooks->dispatch('curl.after_send', []);
             if ($exchange->failed()) {
                 throw new Exception(sprintf('cURL error %d: %s', $exchange->errno, $exchange->error), 'curlerror', null);

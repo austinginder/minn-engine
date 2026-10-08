@@ -6,11 +6,11 @@ the extension contract and its seams
 |---|---|---|---|
 | [`Extension`](#extension) | interface | 5 | What a Minn extension is: a class the engine constructs once per request |
 | [`Extensions`](#extensions) | final class | 14 | Where the engine looks for the seams an extension registered. The |
-| [`Loader`](#loader) | final class | 127 | Finds extensions under wp-content/plugins and wp-content/mu-plugins, |
-| [`Manifest`](#manifest) | final readonly class | 53 | minn.json, read as data. A folder under wp-content/plugins (or |
+| [`Loader`](#loader) | final class | 129 | Finds extensions under wp-content/plugins and wp-content/mu-plugins, |
+| [`Manifest`](#manifest) | final readonly class | 78 | minn.json, read as data. A folder under wp-content/plugins (or |
 | [`Registrations`](#registrations) | final readonly class | 25 | Everything the extensions registered for this request, handed from Seams to the runner once. |
 | [`SeamRunner`](#seamrunner) | final readonly class | 79 | The engine's side of the seams: what the loader collected, called at the |
-| [`Seams`](#seams) | final class | 99 | Where an extension can take part in a request: eight typed registrations |
+| [`Seams`](#seams) | final class | 145 | Where an extension can take part in a request: eight typed registrations, |
 | [`Shortcodes`](#shortcodes) | final class | 54 | The shortcode syntax in rendered content: [tag], [tag attr="v" flag], |
 
 ## Extension
@@ -94,9 +94,9 @@ Which active WordPress plugin files an extension stands in for. @return array<st
 
 ### `register(Minn\Extension\Seams $seams): void`
 
-Registers every active extension's seams.
+Registers every active extension, each on seams of its own; one that throws adds nothing.
 
-Internals: `autoload()` (private, line 130)
+Internals: `autoload()` (private, line 132)
 
 
 ## Manifest
@@ -116,7 +116,8 @@ a WordPress plugin, in which case the two share a name and a version.
 "extension": "Minn\\Ext\\BlockVisibility\\Extension",
 "shortcodes": ["example_tag"],
 "blocks": ["vendor/block"],
-"types": [{"slug": "zz_note", "name": "Notes", "rest_base": "zz-note"}]
+"types": [{"slug": "zz_note", "name": "Notes", "rest_base": "zz-note"}],
+"needs": {"http": ["https://api.example.com/"]}
 }
 
 "replaces" names the WordPress plugin files whose behaviour this
@@ -125,11 +126,13 @@ in active_plugins, or when its own folder is listed there, or when it is
 named in the minn_active_extensions option. "shortcodes" and "blocks"
 are the content tokens preflight treats as provided instead of missing.
 "types" are extra post types the engine should serve on wp/v2.
+"needs" says what the extension reaches outside the process: "http" is
+the URL prefixes its $minn->http may request (true for any public host).
 
-Used by: `Minn\Cli\Preflight`, `Minn\Content\PluginState`, `Minn\Extension\Loader`, `Minn\Ops\Packages`, `Minn\Rest\PluginsController`
+Used by: `Minn\Cli\Preflight`, `Minn\Content\PluginState`, `Minn\Extension\Loader`, `Minn\Extension\Seams`, `Minn\Ops\Packages`, `Minn\Rest\PluginsController`
 
 ```php
-__construct(string $slug, string $dir, string $name, string $version, string $license, array $replaces, array $autoload, string $extension, string $covers = '', array $shortcodes = array ( ), array $blocks = array ( ), array $types = array ( ))
+__construct(string $slug, string $dir, string $name, string $version, string $license, array $replaces, array $autoload, string $extension, string $covers = '', array $shortcodes = array ( ), array $blocks = array ( ), array $types = array ( ), ?array $http = NULL)
 ```
 - `@param list<string> $replaces`
 - `@param array<string, string> $autoload namespace prefix => directory`
@@ -149,10 +152,13 @@ __construct(string $slug, string $dir, string $name, string $version, string $li
 - readonly `array $shortcodes`
 - readonly `array $blocks`
 - readonly `array $types`
+- readonly `?array $http`
 
 ### static `read(string $dir): ?self`
 
 A folder's minn.json, or null when there is none.
+
+Internals: `http()` (private, line 100)
 
 
 ## Registrations
@@ -242,21 +248,36 @@ The whole document through every document filter.
 
 `final class Minn\Extension\Seams` · `public/minn/src/Minn/Extension/Seams.php`
 
-Where an extension can take part in a request: eight typed registrations
-and the request they run in. This is the whole surface an extension sees.
-The engine calls what was registered through SeamRunner, at the right
-moment and in registration order.
+Where an extension can take part in a request: eight typed registrations,
+the request they run in, and the outgoing HTTP its minn.json asks for.
+This is the whole surface an extension sees. Each extension registers on
+its own (forExtension), and what it registered joins the request's once
+its register() returns (adopt). The engine calls what was registered
+through SeamRunner, at the right moment and in registration order.
 
 Used by: `Minn\Engine`, `Minn\Extension\Extension`, `Minn\Extension\Extensions`, `Minn\Extension\Loader`, `Minn\Extension\SeamRunner`, `Minn\Extension\Shortcodes`
 
 ```php
-__construct(Minn\Db $db, Minn\Content\Site $site, Minn\Http\Request $request, Minn\Content\Reader $reader)
+__construct(Minn\Db $db, Minn\Content\Site $site, Minn\Http\Request $request, Minn\Content\Reader $reader, ?Minn\Http $http = NULL)
 ```
 
+- readonly `Minn\Http $http` — Outgoing HTTP, bound to the hosts the extension's needs.http lists; a client that throws when it asked for none.
 - readonly `Minn\Db $db`
 - readonly `Minn\Content\Site $site`
 - readonly `Minn\Http\Request $request`
 - readonly `Minn\Content\Reader $reader`
+
+### `forExtension(Minn\Extension\Manifest $manifest): self`
+
+The seams one extension registers on: this request, and the outgoing
+HTTP its manifest grants. A manifest without needs.http gets a client
+that throws at its first request, naming the key to add.
+
+### `adopt(self $extension): void`
+
+Takes on what one extension registered, after its register() returned,
+so an extension that throws half-way adds nothing. A closure the
+engine hands seams to is handed that extension's own.
 
 ### `gateBlocks(Closure $gate): void`
 

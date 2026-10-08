@@ -6200,7 +6200,7 @@
             "namespace": "Minn\\Admin",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Admin/Translations.php",
-            "lines": 236,
+            "lines": 237,
             "doc": "Languages for the admin. A person's locale is their `locale` user meta,\nelse the site's WPLANG, else en_US, exactly as the reference resolves it.\nThe app translates itself from a map of its source strings, read from the\nJED catalogs Minn Admin's language packs install under\nwp-content/languages/plugins (the bundle's own languages folder is the\nfallback). Installing a pack fetches the release asset the bundle's\nmanifest names for that locale, checks its hash, and unpacks only that\nlocale's files, so an eject leaves the files WordPress would have written.",
             "implements": [],
             "extends": null,
@@ -6208,6 +6208,7 @@
                 "Minn\\Admin\\App",
                 "Minn\\Content\\Site",
                 "Minn\\Content\\Users",
+                "Minn\\Http",
                 "Minn\\Http\\Download",
                 "Minn\\Json",
                 "Minn\\RestError"
@@ -6219,7 +6220,7 @@
                 "Minn\\Rest\\Services"
             ],
             "constructor": {
-                "signature": "__construct(Minn\\Content\\Users $users, Minn\\Content\\Site $site, Minn\\Admin\\App $app, string $contentDir)",
+                "signature": "__construct(Minn\\Content\\Users $users, Minn\\Content\\Site $site, Minn\\Admin\\App $app, string $contentDir, Minn\\Http $http = \\Minn\\Http::__set_state(array(    'within' =>    array (   ),    'fake' => NULL,    'refusal' => NULL, )))",
                 "doc": "",
                 "shapes": [],
                 "params": [
@@ -6250,11 +6251,18 @@
                         "shape": "",
                         "default": null,
                         "doc": ""
+                    },
+                    {
+                        "name": "http",
+                        "type": "Minn\\Http",
+                        "shape": "",
+                        "default": "\\Minn\\Http::__set_state(array(    'within' =>    array (   ),    'fake' => NULL,    'refusal' => NULL, ))",
+                        "doc": ""
                     }
                 ],
                 "visibility": "public",
-                "line": 26,
-                "end": 32
+                "line": 28,
+                "end": 35
             },
             "cases": [],
             "constants": [
@@ -6301,6 +6309,15 @@
                     "doc": "",
                     "visibility": "private",
                     "promoted": true
+                },
+                {
+                    "name": "http",
+                    "type": "Minn\\Http",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
                 }
             ],
             "methods": [
@@ -6321,8 +6338,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 35,
-                    "end": 42
+                    "line": 38,
+                    "end": 45
                 },
                 {
                     "routes": [],
@@ -6333,8 +6350,8 @@
                     "doc": "The site's locale from WPLANG, en_US by default.",
                     "shapes": [],
                     "params": [],
-                    "line": 45,
-                    "end": 49
+                    "line": 48,
+                    "end": 52
                 },
                 {
                     "routes": [],
@@ -6353,8 +6370,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 52,
-                    "end": 55
+                    "line": 55,
+                    "end": 58
                 },
                 {
                     "routes": [],
@@ -6375,8 +6392,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 64,
-                    "end": 84
+                    "line": 67,
+                    "end": 87
                 },
                 {
                     "routes": [],
@@ -6395,8 +6412,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 87,
-                    "end": 90
+                    "line": 90,
+                    "end": 93
                 },
                 {
                     "routes": [],
@@ -6409,8 +6426,8 @@
                         "@return list<array{0: string, 1: string}> the site-default row, en_US, then every installed locale"
                     ],
                     "params": [],
-                    "line": 97,
-                    "end": 105
+                    "line": 100,
+                    "end": 108
                 },
                 {
                     "routes": [],
@@ -6429,8 +6446,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 108,
-                    "end": 111
+                    "line": 111,
+                    "end": 114
                 },
                 {
                     "routes": [],
@@ -6449,8 +6466,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 114,
-                    "end": 117
+                    "line": 117,
+                    "end": 120
                 },
                 {
                     "routes": [],
@@ -6469,8 +6486,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 144,
-                    "end": 201
+                    "line": 147,
+                    "end": 204
                 },
                 {
                     "routes": [],
@@ -6496,8 +6513,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 119,
-                    "end": 137
+                    "line": 122,
+                    "end": 140
                 },
                 {
                     "routes": [],
@@ -6518,8 +6535,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 204,
-                    "end": 213
+                    "line": 207,
+                    "end": 216
                 },
                 {
                     "routes": [],
@@ -6532,8 +6549,8 @@
                         "@return list<string> locale codes with a core pack or a Minn Admin pack on disk, sorted"
                     ],
                     "params": [],
-                    "line": 216,
-                    "end": 234
+                    "line": 219,
+                    "end": 237
                 },
                 {
                     "routes": [],
@@ -6546,13 +6563,13 @@
                         "@return array<string, string>"
                     ],
                     "params": [],
-                    "line": 237,
-                    "end": 247
+                    "line": 240,
+                    "end": 250
                 },
                 {
                     "routes": [],
                     "name": "download",
-                    "static": true,
+                    "static": false,
                     "visibility": "private",
                     "signature": "download(string $url): string",
                     "doc": "",
@@ -6566,8 +6583,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 249,
-                    "end": 256
+                    "line": 252,
+                    "end": 259
                 }
             ]
         },
@@ -11585,6 +11602,7 @@
                 "Minn\\Content\\Excerpt",
                 "Minn\\Content\\Menus",
                 "Minn\\Extension\\SeamRunner",
+                "Minn\\Extension\\Seams",
                 "Minn\\Runtime\\BlockFilters",
                 "Minn\\Support\\Kses",
                 "Minn\\Theme\\TemplatePatterns"
@@ -37666,7 +37684,7 @@
             "namespace": "Minn\\Extension",
             "kind": "final class",
             "file": "public/minn/src/Minn/Extension/Loader.php",
-            "lines": 127,
+            "lines": 129,
             "doc": "Finds extensions under wp-content/plugins and wp-content/mu-plugins,\ndecides which are active, autoloads them, and asks each to register.\nAn extension that throws is logged and skipped; the page still renders.",
             "implements": [],
             "extends": null,
@@ -37827,7 +37845,7 @@
                     "static": false,
                     "visibility": "public",
                     "signature": "register(Minn\\Extension\\Seams $seams): void",
-                    "doc": "Registers every active extension's seams.",
+                    "doc": "Registers every active extension, each on seams of its own; one that throws adds nothing.",
                     "shapes": [],
                     "params": [
                         {
@@ -37839,7 +37857,7 @@
                         }
                     ],
                     "line": 114,
-                    "end": 128
+                    "end": 130
                 },
                 {
                     "routes": [],
@@ -37858,8 +37876,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 130,
-                    "end": 143
+                    "line": 132,
+                    "end": 145
                 }
             ]
         },
@@ -37869,8 +37887,8 @@
             "namespace": "Minn\\Extension",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Extension/Manifest.php",
-            "lines": 53,
-            "doc": "minn.json, read as data. A folder under wp-content/plugins (or\nmu-plugins) with this file is an extension; the same folder may also be\na WordPress plugin, in which case the two share a name and a version.\n\n{\n\"name\": \"Block Visibility for Minn\",\n\"version\": \"1.0.0\",\n\"license\": \"MIT\",\n\"replaces\": [\"block-visibility/block-visibility.php\"],\n\"autoload\": {\"Minn\\\\Ext\\\\BlockVisibility\\\\\": \"src/\"},\n\"extension\": \"Minn\\\\Ext\\\\BlockVisibility\\\\Extension\",\n\"shortcodes\": [\"example_tag\"],\n\"blocks\": [\"vendor/block\"],\n\"types\": [{\"slug\": \"zz_note\", \"name\": \"Notes\", \"rest_base\": \"zz-note\"}]\n}\n\n\"replaces\" names the WordPress plugin files whose behaviour this\nextension stands in for; the extension is active whenever one of them is\nin active_plugins, or when its own folder is listed there, or when it is\nnamed in the minn_active_extensions option. \"shortcodes\" and \"blocks\"\nare the content tokens preflight treats as provided instead of missing.\n\"types\" are extra post types the engine should serve on wp/v2.",
+            "lines": 78,
+            "doc": "minn.json, read as data. A folder under wp-content/plugins (or\nmu-plugins) with this file is an extension; the same folder may also be\na WordPress plugin, in which case the two share a name and a version.\n\n{\n\"name\": \"Block Visibility for Minn\",\n\"version\": \"1.0.0\",\n\"license\": \"MIT\",\n\"replaces\": [\"block-visibility/block-visibility.php\"],\n\"autoload\": {\"Minn\\\\Ext\\\\BlockVisibility\\\\\": \"src/\"},\n\"extension\": \"Minn\\\\Ext\\\\BlockVisibility\\\\Extension\",\n\"shortcodes\": [\"example_tag\"],\n\"blocks\": [\"vendor/block\"],\n\"types\": [{\"slug\": \"zz_note\", \"name\": \"Notes\", \"rest_base\": \"zz-note\"}],\n\"needs\": {\"http\": [\"https://api.example.com/\"]}\n}\n\n\"replaces\" names the WordPress plugin files whose behaviour this\nextension stands in for; the extension is active whenever one of them is\nin active_plugins, or when its own folder is listed there, or when it is\nnamed in the minn_active_extensions option. \"shortcodes\" and \"blocks\"\nare the content tokens preflight treats as provided instead of missing.\n\"types\" are extra post types the engine should serve on wp/v2.\n\"needs\" says what the extension reaches outside the process: \"http\" is\nthe URL prefixes its $minn->http may request (true for any public host).",
             "implements": [],
             "extends": null,
             "uses": [
@@ -37880,11 +37898,12 @@
                 "Minn\\Cli\\Preflight",
                 "Minn\\Content\\PluginState",
                 "Minn\\Extension\\Loader",
+                "Minn\\Extension\\Seams",
                 "Minn\\Ops\\Packages",
                 "Minn\\Rest\\PluginsController"
             ],
             "constructor": {
-                "signature": "__construct(string $slug, string $dir, string $name, string $version, string $license, array $replaces, array $autoload, string $extension, string $covers = '', array $shortcodes = array ( ), array $blocks = array ( ), array $types = array ( ))",
+                "signature": "__construct(string $slug, string $dir, string $name, string $version, string $license, array $replaces, array $autoload, string $extension, string $covers = '', array $shortcodes = array ( ), array $blocks = array ( ), array $types = array ( ), ?array $http = NULL)",
                 "doc": "",
                 "shapes": [
                     "@param list<string> $replaces",
@@ -37977,11 +37996,18 @@
                         "shape": "list<array<string, mixed>>",
                         "default": "array ( )",
                         "doc": ""
+                    },
+                    {
+                        "name": "http",
+                        "type": "?array",
+                        "shape": "",
+                        "default": "NULL",
+                        "doc": ""
                     }
                 ],
                 "visibility": "public",
-                "line": 42,
-                "end": 57
+                "line": 45,
+                "end": 62
             },
             "cases": [],
             "constants": [],
@@ -38093,6 +38119,15 @@
                     "doc": "",
                     "visibility": "public",
                     "promoted": true
+                },
+                {
+                    "name": "http",
+                    "type": "?array",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "public",
+                    "promoted": true
                 }
             ],
             "methods": [
@@ -38113,8 +38148,30 @@
                             "doc": ""
                         }
                     ],
-                    "line": 60,
-                    "end": 84
+                    "line": 65,
+                    "end": 90
+                },
+                {
+                    "routes": [],
+                    "name": "http",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "http(mixed $asked): ?array",
+                    "doc": "needs.http as a grant: true for any public host, or a URL prefix (or a\nlist of them) every request must start with; null when the manifest\ndoes not ask. A prefix naming only a host is closed with \"/\", so\nhttps://api.example.com does not also admit api.example.com.evil.net.",
+                    "shapes": [
+                        "@return list<string>|null"
+                    ],
+                    "params": [
+                        {
+                            "name": "asked",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 100,
+                    "end": 112
                 }
             ]
         },
@@ -38531,16 +38588,19 @@
             "namespace": "Minn\\Extension",
             "kind": "final class",
             "file": "public/minn/src/Minn/Extension/Seams.php",
-            "lines": 99,
-            "doc": "Where an extension can take part in a request: eight typed registrations\nand the request they run in. This is the whole surface an extension sees.\nThe engine calls what was registered through SeamRunner, at the right\nmoment and in registration order.",
+            "lines": 145,
+            "doc": "Where an extension can take part in a request: eight typed registrations,\nthe request they run in, and the outgoing HTTP its minn.json asks for.\nThis is the whole surface an extension sees. Each extension registers on\nits own (forExtension), and what it registered joins the request's once\nits register() returns (adopt). The engine calls what was registered\nthrough SeamRunner, at the right moment and in registration order.",
             "implements": [],
             "extends": null,
             "uses": [
+                "Minn\\Blocks\\Block",
                 "Minn\\Content\\Reader",
                 "Minn\\Content\\Site",
                 "Minn\\Db",
+                "Minn\\Extension\\Manifest",
                 "Minn\\Extension\\Registrations",
                 "Minn\\Extension\\SeamRunner",
+                "Minn\\Http",
                 "Minn\\Http\\Request"
             ],
             "usedBy": [
@@ -38552,7 +38612,7 @@
                 "Minn\\Extension\\Shortcodes"
             ],
             "constructor": {
-                "signature": "__construct(Minn\\Db $db, Minn\\Content\\Site $site, Minn\\Http\\Request $request, Minn\\Content\\Reader $reader)",
+                "signature": "__construct(Minn\\Db $db, Minn\\Content\\Site $site, Minn\\Http\\Request $request, Minn\\Content\\Reader $reader, ?Minn\\Http $http = NULL)",
                 "doc": "",
                 "shapes": [],
                 "params": [
@@ -38583,11 +38643,18 @@
                         "shape": "",
                         "default": null,
                         "doc": ""
+                    },
+                    {
+                        "name": "http",
+                        "type": "?Minn\\Http",
+                        "shape": "",
+                        "default": "NULL",
+                        "doc": ""
                     }
                 ],
                 "visibility": "public",
-                "line": 40,
-                "end": 46
+                "line": 47,
+                "end": 55
             },
             "cases": [],
             "constants": [],
@@ -38674,6 +38741,15 @@
                     "promoted": false
                 },
                 {
+                    "name": "http",
+                    "type": "Minn\\Http",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "Outgoing HTTP, bound to the hosts the extension's needs.http lists; a client that throws when it asked for none.",
+                    "visibility": "public",
+                    "promoted": false
+                },
+                {
                     "name": "db",
                     "type": "Minn\\Db",
                     "readonly": true,
@@ -38713,6 +38789,46 @@
             "methods": [
                 {
                     "routes": [],
+                    "name": "forExtension",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "forExtension(Minn\\Extension\\Manifest $manifest): self",
+                    "doc": "The seams one extension registers on: this request, and the outgoing\nHTTP its manifest grants. A manifest without needs.http gets a client\nthat throws at its first request, naming the key to add.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "manifest",
+                            "type": "Minn\\Extension\\Manifest",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 62,
+                    "end": 68
+                },
+                {
+                    "routes": [],
+                    "name": "adopt",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "adopt(self $extension): void",
+                    "doc": "Takes on what one extension registered, after its register() returned,\nso an extension that throws half-way adds nothing. A closure the\nengine hands seams to is handed that extension's own.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "extension",
+                            "type": "self",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 75,
+                    "end": 96
+                },
+                {
+                    "routes": [],
                     "name": "gateBlocks",
                     "static": false,
                     "visibility": "public",
@@ -38728,8 +38844,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 49,
-                    "end": 52
+                    "line": 99,
+                    "end": 102
                 },
                 {
                     "routes": [],
@@ -38748,8 +38864,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 55,
-                    "end": 58
+                    "line": 105,
+                    "end": 108
                 },
                 {
                     "routes": [],
@@ -38775,8 +38891,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 61,
-                    "end": 64
+                    "line": 111,
+                    "end": 114
                 },
                 {
                     "routes": [],
@@ -38795,8 +38911,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 67,
-                    "end": 70
+                    "line": 117,
+                    "end": 120
                 },
                 {
                     "routes": [],
@@ -38815,8 +38931,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 73,
-                    "end": 76
+                    "line": 123,
+                    "end": 126
                 },
                 {
                     "routes": [],
@@ -38835,8 +38951,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 79,
-                    "end": 82
+                    "line": 129,
+                    "end": 132
                 },
                 {
                     "routes": [],
@@ -38855,8 +38971,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 85,
-                    "end": 88
+                    "line": 135,
+                    "end": 138
                 },
                 {
                     "routes": [],
@@ -38875,8 +38991,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 91,
-                    "end": 94
+                    "line": 141,
+                    "end": 144
                 },
                 {
                     "routes": [],
@@ -38895,8 +39011,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 97,
-                    "end": 100
+                    "line": 147,
+                    "end": 150
                 },
                 {
                     "routes": [],
@@ -38907,8 +39023,8 @@
                     "doc": "What was registered, for the engine's runner. Extensions have no reason to call this.",
                     "shapes": [],
                     "params": [],
-                    "line": 103,
-                    "end": 116
+                    "line": 153,
+                    "end": 166
                 }
             ]
         },
@@ -57684,10 +57800,10 @@
             "name": "Minn\\Http",
             "short": "Http",
             "namespace": "Minn",
-            "kind": "final class",
+            "kind": "final readonly class",
             "file": "public/minn/src/Minn/Http.php",
-            "lines": 205,
-            "doc": "Outgoing HTTP, called from anywhere after one import:\n\nuse Minn\\Http;\n\n$data = Http::get('https://api.example.com/status')->json();\nHttp::post($url, json: ['email' => $email], timeout: 10)->throw();\n\nEvery verb answers with an Exchange (->ok(), ->failed(), ->json(),\n->header(), ->cookie(), ->throw(), ->code, ->body) and takes the same\nnamed arguments, each optional:\n\n- `query`: array added to the URL's query string\n- `headers`: `name => value` (a list value repeats the header), or \"Name: value\" lines\n- `json`, `form`, `body` (post, put, patch): an array sent as JSON, an array\nform-encoded, or a string sent as it is; one of the three, and the first\ntwo set the Content-Type\n- `timeout`: seconds for the whole exchange, 5 by default\n- `redirects`: how many to follow, 5 by default; 0 hands back the 3xx\n- `hosts`: URL prefixes every hop must start with (`['https://api.github.com/']`)\n- `private`: hosts allowed to reach a private address. Loopback, LAN,\nlink-local and cloud-metadata addresses are refused otherwise, at every\nhop and after DNS, so a URL someone typed is safe to fetch\n- `maxBytes`: the largest body accepted; a longer one fails the exchange\n- `userAgent`: Minn/{version} by default\n\nA misspelt argument is an error at the line that has it. Credentials\n(Authorization, Cookie) are dropped when a redirect leaves the origin.",
+            "lines": 184,
+            "doc": "Outgoing HTTP, a client handed to the code that uses it. An extension\nfinds one on $minn->http, bound to the hosts its minn.json asks for under\nneeds.http; an engine class takes one in its constructor, the real network\nunless a test passes a fake's:\n\n$data = $minn->http->get('https://api.example.com/status')->json();\n$this->http->post($url, json: ['email' => $email], timeout: 10)->throw();\n\nEvery verb answers with an Exchange (->ok(), ->failed(), ->json(),\n->header(), ->cookie(), ->throw(), ->code, ->body) and takes the same\nnamed arguments, each optional:\n\n- `query`: array added to the URL's query string\n- `headers`: `name => value` (a list value repeats the header), or \"Name: value\" lines\n- `json`, `form`, `body` (post, put, patch): an array sent as JSON, an array\nform-encoded, or a string sent as it is; one of the three, and the first\ntwo set the Content-Type\n- `timeout`: seconds for the whole exchange, 5 by default\n- `redirects`: how many to follow, 5 by default; 0 hands back the 3xx\n- `hosts`: URL prefixes every hop must start with (`['https://api.github.com/']`)\n- `private`: hosts allowed to reach a private address. Loopback, LAN,\nlink-local and cloud-metadata addresses are refused otherwise, at every\nhop and after DNS, so a URL someone typed is safe to fetch\n- `maxBytes`: the largest body accepted; a longer one fails the exchange\n- `userAgent`: Minn/{version} by default\n\nA misspelt argument is an error at the line that has it. Credentials\n(Authorization, Cookie) are dropped when a redirect leaves the origin.\nA fake (new Http\\Fake([...])->http()) answers only the client it made,\nso a test shares nothing with the rest of the process.",
             "implements": [],
             "extends": null,
             "uses": [
@@ -57700,6 +57816,8 @@
                 "Minn\\Json"
             ],
             "usedBy": [
+                "Minn\\Admin\\Translations",
+                "Minn\\Extension\\Seams",
                 "Minn\\Html",
                 "Minn\\Http\\Access",
                 "Minn\\Http\\Args",
@@ -57735,10 +57853,44 @@
                 "Minn\\Http\\TrustedProxies",
                 "Minn\\Ops\\Changelog",
                 "Minn\\Ops\\Directory",
+                "Minn\\Ops\\EngineUpdate",
                 "Minn\\Ops\\Packages",
-                "Minn\\Ops\\Releases"
+                "Minn\\Ops\\Releases",
+                "Minn\\Ops\\Updates"
             ],
-            "constructor": null,
+            "constructor": {
+                "signature": "__construct(array $within = array ( ), ?Minn\\Http\\Fake $fake = NULL, ?string $refusal = NULL)",
+                "doc": "The network, or $fake answering in its place. With $within, every hop\nof every request must also start with one of those URL prefixes,\nwhatever a call's own hosts: say (an extension's needs.http).",
+                "shapes": [
+                    "@param list<string> $within"
+                ],
+                "params": [
+                    {
+                        "name": "within",
+                        "type": "array",
+                        "shape": "list<string>",
+                        "default": "array ( )",
+                        "doc": ""
+                    },
+                    {
+                        "name": "fake",
+                        "type": "?Minn\\Http\\Fake",
+                        "shape": "",
+                        "default": "NULL",
+                        "doc": ""
+                    },
+                    {
+                        "name": "refusal",
+                        "type": "?string",
+                        "shape": "",
+                        "default": "NULL",
+                        "doc": ""
+                    }
+                ],
+                "visibility": "public",
+                "line": 60,
+                "end": 62
+            },
             "cases": [],
             "constants": [
                 {
@@ -57756,20 +57908,58 @@
             ],
             "properties": [
                 {
-                    "name": "fake",
-                    "type": "?Minn\\Http\\Fake",
-                    "readonly": false,
-                    "static": true,
+                    "name": "within",
+                    "type": "array",
+                    "readonly": true,
+                    "static": false,
                     "doc": "",
                     "visibility": "private",
-                    "promoted": false
+                    "promoted": true
+                },
+                {
+                    "name": "fake",
+                    "type": "?Minn\\Http\\Fake",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
+                },
+                {
+                    "name": "refusal",
+                    "type": "?string",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
                 }
             ],
             "methods": [
                 {
                     "routes": [],
-                    "name": "get",
+                    "name": "refused",
                     "static": true,
+                    "visibility": "public",
+                    "signature": "refused(string $why): self",
+                    "doc": "A client that throws $why at every call: what an extension holds when its minn.json did not ask for http.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "why",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 65,
+                    "end": 68
+                },
+                {
+                    "routes": [],
+                    "name": "get",
+                    "static": false,
                     "visibility": "public",
                     "signature": "get(string $url, array $query = array ( ), array $headers = array ( ), float $timeout = 5.0, int $redirects = 5, array $hosts = array ( ), array $private = array ( ), ?int $maxBytes = NULL, ?string $userAgent = NULL): Minn\\Http\\Exchange",
                     "doc": "A GET.",
@@ -57839,13 +58029,13 @@
                             "doc": ""
                         }
                     ],
-                    "line": 53,
-                    "end": 56
+                    "line": 71,
+                    "end": 74
                 },
                 {
                     "routes": [],
                     "name": "head",
-                    "static": true,
+                    "static": false,
                     "visibility": "public",
                     "signature": "head(string $url, array $query = array ( ), array $headers = array ( ), float $timeout = 5.0, int $redirects = 5, array $hosts = array ( ), array $private = array ( ), ?string $userAgent = NULL): Minn\\Http\\Exchange",
                     "doc": "A HEAD: the status and headers a GET would bring, without the body.",
@@ -57908,13 +58098,13 @@
                             "doc": ""
                         }
                     ],
-                    "line": 59,
-                    "end": 62
+                    "line": 77,
+                    "end": 80
                 },
                 {
                     "routes": [],
                     "name": "delete",
-                    "static": true,
+                    "static": false,
                     "visibility": "public",
                     "signature": "delete(string $url, array $query = array ( ), array $headers = array ( ), float $timeout = 5.0, int $redirects = 5, array $hosts = array ( ), array $private = array ( ), ?int $maxBytes = NULL, ?string $userAgent = NULL): Minn\\Http\\Exchange",
                     "doc": "A DELETE.",
@@ -57984,13 +58174,13 @@
                             "doc": ""
                         }
                     ],
-                    "line": 65,
-                    "end": 68
+                    "line": 83,
+                    "end": 86
                 },
                 {
                     "routes": [],
                     "name": "post",
-                    "static": true,
+                    "static": false,
                     "visibility": "public",
                     "signature": "post(string $url, ?array $json = NULL, ?array $form = NULL, ?string $body = NULL, array $query = array ( ), array $headers = array ( ), float $timeout = 5.0, int $redirects = 5, array $hosts = array ( ), array $private = array ( ), ?int $maxBytes = NULL, ?string $userAgent = NULL): Minn\\Http\\Exchange",
                     "doc": "A POST with a json:, form: or body: payload.",
@@ -58081,13 +58271,13 @@
                             "doc": ""
                         }
                     ],
-                    "line": 71,
-                    "end": 74
+                    "line": 89,
+                    "end": 92
                 },
                 {
                     "routes": [],
                     "name": "put",
-                    "static": true,
+                    "static": false,
                     "visibility": "public",
                     "signature": "put(string $url, ?array $json = NULL, ?array $form = NULL, ?string $body = NULL, array $query = array ( ), array $headers = array ( ), float $timeout = 5.0, int $redirects = 5, array $hosts = array ( ), array $private = array ( ), ?int $maxBytes = NULL, ?string $userAgent = NULL): Minn\\Http\\Exchange",
                     "doc": "A PUT with a json:, form: or body: payload.",
@@ -58178,13 +58368,13 @@
                             "doc": ""
                         }
                     ],
-                    "line": 77,
-                    "end": 80
+                    "line": 95,
+                    "end": 98
                 },
                 {
                     "routes": [],
                     "name": "patch",
-                    "static": true,
+                    "static": false,
                     "visibility": "public",
                     "signature": "patch(string $url, ?array $json = NULL, ?array $form = NULL, ?string $body = NULL, array $query = array ( ), array $headers = array ( ), float $timeout = 5.0, int $redirects = 5, array $hosts = array ( ), array $private = array ( ), ?int $maxBytes = NULL, ?string $userAgent = NULL): Minn\\Http\\Exchange",
                     "doc": "A PATCH with a json:, form: or body: payload.",
@@ -58275,16 +58465,16 @@
                             "doc": ""
                         }
                     ],
-                    "line": 83,
-                    "end": 86
+                    "line": 101,
+                    "end": 104
                 },
                 {
                     "routes": [],
                     "name": "send",
-                    "static": true,
+                    "static": false,
                     "visibility": "public",
                     "signature": "send(Minn\\Http\\Outbound $request): Minn\\Http\\Exchange",
-                    "doc": "Sends exactly what the Outbound says, with none of the verbs' rules\nabout where a request may go: the door WordPress's own HTTP API comes\nthrough after applying its rules, and the one a fake answers at.",
+                    "doc": "Sends exactly what the Outbound says, with none of the verbs' rules\nabout where a request may go: the door WordPress's own HTTP API comes\nthrough after applying its rules. A client bound to hosts refuses it,\nsince curl follows a sent request's redirects where no rule can see.",
                     "shapes": [],
                     "params": [
                         {
@@ -58295,83 +58485,13 @@
                             "doc": ""
                         }
                     ],
-                    "line": 93,
-                    "end": 96
-                },
-                {
-                    "routes": [],
-                    "name": "fake",
-                    "static": true,
-                    "visibility": "public",
-                    "signature": "fake(array $answers = array ( )): Minn\\Http\\Fake",
-                    "doc": "Answers requests from $answers instead of the network until\nrestore(), for tests. Keys are URL patterns (* matches anything; the\nscheme and query may be left off); values are an array (sent as JSON),\na string (the body), a status code, an Exchange from reply(), or a\nclosure taking the Outbound and returning one of those. A request no\npattern matches fails as if nothing were listening. The fake answers\nwp_remote_*() too, and refuses to start outside the command line.",
-                    "shapes": [
-                        "@param array<string, mixed> $answers"
-                    ],
-                    "params": [
-                        {
-                            "name": "answers",
-                            "type": "array",
-                            "shape": "array<string, mixed>",
-                            "default": "array ( )",
-                            "doc": ""
-                        }
-                    ],
-                    "line": 109,
-                    "end": 115
-                },
-                {
-                    "routes": [],
-                    "name": "restore",
-                    "static": true,
-                    "visibility": "public",
-                    "signature": "restore(): void",
-                    "doc": "Puts the network back after fake().",
-                    "shapes": [],
-                    "params": [],
-                    "line": 118,
-                    "end": 121
-                },
-                {
-                    "routes": [],
-                    "name": "reply",
-                    "static": true,
-                    "visibility": "public",
-                    "signature": "reply(array|string $body = '', int $status = 200, array $headers = array ( )): Minn\\Http\\Exchange",
-                    "doc": "A response made by hand, for a fake to answer with. An array body is sent as JSON.",
-                    "shapes": [
-                        "@param array<string, string|list<string>> $headers name => value; Set-Cookie values become cookies"
-                    ],
-                    "params": [
-                        {
-                            "name": "body",
-                            "type": "array|string",
-                            "shape": "",
-                            "default": "''",
-                            "doc": ""
-                        },
-                        {
-                            "name": "status",
-                            "type": "int",
-                            "shape": "",
-                            "default": "200",
-                            "doc": ""
-                        },
-                        {
-                            "name": "headers",
-                            "type": "array",
-                            "shape": "array<string, string|list<string>>",
-                            "default": "array ( )",
-                            "doc": "name => value; Set-Cookie values become cookies"
-                        }
-                    ],
-                    "line": 128,
-                    "end": 145
+                    "line": 112,
+                    "end": 119
                 },
                 {
                     "routes": [],
                     "name": "follow",
-                    "static": true,
+                    "static": false,
                     "visibility": "private",
                     "signature": "follow(Minn\\Http\\Outbound $request, int $redirects, Minn\\Http\\Destination $where): Minn\\Http\\Exchange",
                     "doc": "Sends each hop, judging every one against the destination rules, until a response is not a redirect.",
@@ -58399,13 +58519,13 @@
                             "doc": ""
                         }
                     ],
-                    "line": 148,
-                    "end": 165
+                    "line": 122,
+                    "end": 140
                 },
                 {
                     "routes": [],
                     "name": "deliver",
-                    "static": true,
+                    "static": false,
                     "visibility": "private",
                     "signature": "deliver(Minn\\Http\\Outbound $request, Minn\\Http\\Destination $where): Minn\\Http\\Exchange",
                     "doc": "",
@@ -58426,8 +58546,20 @@
                             "doc": ""
                         }
                     ],
-                    "line": 167,
-                    "end": 174
+                    "line": 142,
+                    "end": 149
+                },
+                {
+                    "routes": [],
+                    "name": "throwIfRefused",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "throwIfRefused(): void",
+                    "doc": "",
+                    "shapes": [],
+                    "params": [],
+                    "line": 151,
+                    "end": 156
                 },
                 {
                     "routes": [],
@@ -58460,8 +58592,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 177,
-                    "end": 185
+                    "line": 159,
+                    "end": 167
                 },
                 {
                     "routes": [],
@@ -58531,8 +58663,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 188,
-                    "end": 200
+                    "line": 170,
+                    "end": 182
                 },
                 {
                     "routes": [],
@@ -58567,8 +58699,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 203,
-                    "end": 214
+                    "line": 185,
+                    "end": 196
                 },
                 {
                     "routes": [],
@@ -58596,8 +58728,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 221,
-                    "end": 238
+                    "line": 203,
+                    "end": 220
                 },
                 {
                     "routes": [],
@@ -58623,8 +58755,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 240,
-                    "end": 248
+                    "line": 222,
+                    "end": 230
                 }
             ]
         },
@@ -59169,8 +59301,8 @@
             "namespace": "Minn\\Http",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Http/Destination.php",
-            "lines": 97,
-            "doc": "Where Minn\\Http lets a request go. Only http and https; when hosts are\nnamed, every hop must start with one of them; and an address outside the\npublic internet (loopback, private and shared ranges, link-local, cloud\nmetadata, reserved) is refused unless its host is listed in $private. A\nname is resolved here and curl is pinned to the addresses that were\nchecked, so DNS cannot answer one way to the check and another to the\nconnection.",
+            "lines": 102,
+            "doc": "Where Minn\\Http lets a request go. Only http and https; when hosts are\nnamed, every hop must start with one of them (and with one of the\nclient's own, when it is bound); and an address outside the\npublic internet (loopback, private and shared ranges, link-local, cloud\nmetadata, reserved) is refused unless its host is listed in $private. A\nname is resolved here and curl is pinned to the addresses that were\nchecked, so DNS cannot answer one way to the check and another to the\nconnection.",
             "implements": [],
             "extends": null,
             "uses": [
@@ -59184,12 +59316,13 @@
                 "Minn\\Http\\Location"
             ],
             "constructor": {
-                "signature": "__construct(array $hosts = array ( ), array $private = array ( ), ?Closure $lookup = NULL)",
+                "signature": "__construct(array $hosts = array ( ), array $private = array ( ), ?Closure $lookup = NULL, array $within = array ( ))",
                 "doc": "",
                 "shapes": [
                     "@param list<string> $hosts URL prefixes every hop must start with; none means any public host",
                     "@param list<string> $private host names or addresses allowed to reach a private address",
-                    "@param (Closure(string): list<string>)|null $lookup a host's addresses; DNS when null"
+                    "@param (Closure(string): list<string>)|null $lookup a host's addresses; DNS when null",
+                    "@param list<string> $within URL prefixes the client itself is bound to (an extension's needs.http); none means unbound"
                 ],
                 "params": [
                     {
@@ -59212,11 +59345,18 @@
                         "shape": "(Closure(string): list<string>)|null",
                         "default": "NULL",
                         "doc": "a host's addresses; DNS when null"
+                    },
+                    {
+                        "name": "within",
+                        "type": "array",
+                        "shape": "list<string>",
+                        "default": "array ( )",
+                        "doc": "URL prefixes the client itself is bound to (an extension's needs.http); none means unbound"
                     }
                 ],
                 "visibility": "public",
-                "line": 28,
-                "end": 31
+                "line": 30,
+                "end": 33
             },
             "cases": [],
             "constants": [],
@@ -59247,6 +59387,15 @@
                     "doc": "",
                     "visibility": "private",
                     "promoted": true
+                },
+                {
+                    "name": "within",
+                    "type": "array",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
                 }
             ],
             "methods": [
@@ -59267,8 +59416,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 34,
-                    "end": 48
+                    "line": 36,
+                    "end": 53
                 },
                 {
                     "routes": [],
@@ -59287,8 +59436,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 55,
-                    "end": 75
+                    "line": 60,
+                    "end": 80
                 },
                 {
                     "routes": [],
@@ -59307,17 +59456,19 @@
                             "doc": ""
                         }
                     ],
-                    "line": 78,
-                    "end": 81
+                    "line": 83,
+                    "end": 86
                 },
                 {
                     "routes": [],
-                    "name": "listed",
-                    "static": false,
+                    "name": "startsWithOne",
+                    "static": true,
                     "visibility": "private",
-                    "signature": "listed(string $url): bool",
+                    "signature": "startsWithOne(string $url, array $prefixes): bool",
                     "doc": "",
-                    "shapes": [],
+                    "shapes": [
+                        "@param list<string> $prefixes"
+                    ],
                     "params": [
                         {
                             "name": "url",
@@ -59325,10 +59476,17 @@
                             "shape": "",
                             "default": null,
                             "doc": ""
+                        },
+                        {
+                            "name": "prefixes",
+                            "type": "array",
+                            "shape": "list<string>",
+                            "default": null,
+                            "doc": ""
                         }
                     ],
-                    "line": 83,
-                    "end": 91
+                    "line": 89,
+                    "end": 97
                 },
                 {
                     "routes": [],
@@ -59354,8 +59512,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 93,
-                    "end": 98
+                    "line": 99,
+                    "end": 104
                 },
                 {
                     "routes": [],
@@ -59376,8 +59534,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 105,
-                    "end": 113
+                    "line": 111,
+                    "end": 119
                 }
             ]
         },
@@ -59385,10 +59543,10 @@
             "name": "Minn\\Http\\Download",
             "short": "Download",
             "namespace": "Minn\\Http",
-            "kind": "final class",
+            "kind": "final readonly class",
             "file": "public/minn/src/Minn/Http/Download.php",
-            "lines": 32,
-            "doc": "A file the engine fetches for itself (a package, a language pack), over\nMinn\\Http with the rules a download needs: https at every hop, one of the\ncaller's host prefixes when given, no private address, and a body over\nthe cap fails rather than being truncated. The messages are written for\nthe person who asked for the download.",
+            "lines": 36,
+            "doc": "A file the engine fetches for itself (a package, a language pack), over\nits Minn\\Http client with the rules a download needs: https at every hop,\none of the caller's host prefixes when given, no private address, and a\nbody over the cap fails rather than being truncated. The messages are\nwritten for the person who asked for the download.",
             "implements": [],
             "extends": null,
             "uses": [
@@ -59400,15 +59558,41 @@
                 "Minn\\Ops\\EngineUpdate",
                 "Minn\\Ops\\Packages"
             ],
-            "constructor": null,
+            "constructor": {
+                "signature": "__construct(Minn\\Http $http = \\Minn\\Http::__set_state(array(    'within' =>    array (   ),    'fake' => NULL,    'refusal' => NULL, )))",
+                "doc": "",
+                "shapes": [],
+                "params": [
+                    {
+                        "name": "http",
+                        "type": "Minn\\Http",
+                        "shape": "",
+                        "default": "\\Minn\\Http::__set_state(array(    'within' =>    array (   ),    'fake' => NULL,    'refusal' => NULL, ))",
+                        "doc": ""
+                    }
+                ],
+                "visibility": "public",
+                "line": 19,
+                "end": 21
+            },
             "cases": [],
             "constants": [],
-            "properties": [],
+            "properties": [
+                {
+                    "name": "http",
+                    "type": "Minn\\Http",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
+                }
+            ],
             "methods": [
                 {
                     "routes": [],
                     "name": "https",
-                    "static": true,
+                    "static": false,
                     "visibility": "public",
                     "signature": "https(string $url, int $maxBytes, array $hostPrefixes = array ( ), string $userAgent = 'Minn Engine'): string",
                     "doc": "The body at $url, following at most five redirects.",
@@ -59445,8 +59629,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 24,
-                    "end": 46
+                    "line": 29,
+                    "end": 51
                 }
             ]
         },
@@ -60160,36 +60344,37 @@
             "namespace": "Minn\\Http",
             "kind": "final class",
             "file": "public/minn/src/Minn/Http/Fake.php",
-            "lines": 57,
-            "doc": "Answers requests in place of the network while a test runs, and keeps\nwhat was sent. Made by Minn\\Http::fake(); every request through\nMinn\\Http, wp_remote_*() and the Requests library reaches it.",
+            "lines": 94,
+            "doc": "Answers requests in place of the network, and keeps what was sent. A test\nmakes one and hands its client to the code it tests:\n\n$fake = new Fake(['api.example.com/*' => ['ok' => true]]);\n$result = (new StatusCheck($fake->http()))->run();\n$fake->sent('api.example.com/status');   // the requests that went there\n\nOnly that client is answered, so there is nothing to put back and nothing\nelse in the process sees the fake.",
             "implements": [],
             "extends": null,
             "uses": [
                 "Minn\\Http",
                 "Minn\\Http\\Exchange",
-                "Minn\\Http\\Outbound"
+                "Minn\\Http\\Outbound",
+                "Minn\\Json"
             ],
             "usedBy": [
                 "Minn\\Http"
             ],
             "constructor": {
-                "signature": "__construct(array $answers)",
-                "doc": "",
+                "signature": "__construct(array $answers = array ( ))",
+                "doc": "Keys are URL patterns (* matches anything; the scheme and query may be\nleft off); values are an array (sent as JSON), a string (the body), a\nstatus code, an Exchange from reply(), or a closure taking the\nOutbound and returning one of those. A request no pattern matches\nfails as if nothing were listening.",
                 "shapes": [
-                    "@param array<string, mixed> $answers URL pattern => answer, see Minn\\Http::fake()"
+                    "@param array<string, mixed> $answers"
                 ],
                 "params": [
                     {
                         "name": "answers",
                         "type": "array",
                         "shape": "array<string, mixed>",
-                        "default": null,
-                        "doc": "URL pattern => answer, see Minn\\Http::fake()"
+                        "default": "array ( )",
+                        "doc": ""
                     }
                 ],
                 "visibility": "public",
-                "line": 21,
-                "end": 23
+                "line": 36,
+                "end": 38
             },
             "cases": [],
             "constants": [],
@@ -60216,6 +60401,28 @@
             "methods": [
                 {
                     "routes": [],
+                    "name": "http",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "http(array $within = array ( )): Minn\\Http",
+                    "doc": "A client this fake answers, bound to $within as an extension's is by\nits needs.http. The destination rules still run, but names are not resolved.",
+                    "shapes": [
+                        "@param list<string> $within"
+                    ],
+                    "params": [
+                        {
+                            "name": "within",
+                            "type": "array",
+                            "shape": "list<string>",
+                            "default": "array ( )",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 46,
+                    "end": 49
+                },
+                {
+                    "routes": [],
                     "name": "answer",
                     "static": false,
                     "visibility": "public",
@@ -60231,8 +60438,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 26,
-                    "end": 35
+                    "line": 52,
+                    "end": 61
                 },
                 {
                     "routes": [],
@@ -60253,20 +60460,44 @@
                             "doc": ""
                         }
                     ],
-                    "line": 42,
-                    "end": 45
+                    "line": 68,
+                    "end": 71
                 },
                 {
                     "routes": [],
-                    "name": "restore",
-                    "static": false,
+                    "name": "reply",
+                    "static": true,
                     "visibility": "public",
-                    "signature": "restore(): void",
-                    "doc": "Puts the network back.",
-                    "shapes": [],
-                    "params": [],
-                    "line": 48,
-                    "end": 51
+                    "signature": "reply(array|string $body = '', int $status = 200, array $headers = array ( )): Minn\\Http\\Exchange",
+                    "doc": "A response made by hand, for a fake to answer with. An array body is sent as JSON.",
+                    "shapes": [
+                        "@param array<string, string|list<string>> $headers name => value; Set-Cookie values become cookies"
+                    ],
+                    "params": [
+                        {
+                            "name": "body",
+                            "type": "array|string",
+                            "shape": "",
+                            "default": "''",
+                            "doc": ""
+                        },
+                        {
+                            "name": "status",
+                            "type": "int",
+                            "shape": "",
+                            "default": "200",
+                            "doc": ""
+                        },
+                        {
+                            "name": "headers",
+                            "type": "array",
+                            "shape": "array<string, string|list<string>>",
+                            "default": "array ( )",
+                            "doc": "name => value; Set-Cookie values become cookies"
+                        }
+                    ],
+                    "line": 78,
+                    "end": 95
                 },
                 {
                     "routes": [],
@@ -60292,8 +60523,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 54,
-                    "end": 59
+                    "line": 98,
+                    "end": 103
                 },
                 {
                     "routes": [],
@@ -60319,8 +60550,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 61,
-                    "end": 70
+                    "line": 105,
+                    "end": 114
                 }
             ]
         },
@@ -66936,6 +67167,7 @@
                 "Minn\\Html",
                 "Minn\\Http",
                 "Minn\\Http\\Exchange",
+                "Minn\\Http\\Fake",
                 "Minn\\Http\\Request",
                 "Minn\\Http\\Response",
                 "Minn\\I18n\\ScriptTranslations",
@@ -77836,7 +78068,7 @@
             "namespace": "Minn\\Ops",
             "kind": "final class",
             "file": "public/minn/src/Minn/Ops/Changelog.php",
-            "lines": 67,
+            "lines": 68,
             "doc": "A changelog read from its repository rather than shipped: a Minn release\ncarries no notes, its own or Minn Admin's, for anyone to find on the\nsites that run it. The update service reads changelog.md from the\nrepository's default branch on GitHub; the engine asks the service at most\nonce a day and keeps the copy in an option (JSON) with the time it came;\nsections still marked Unreleased are left out, so a site only reads about\nreleases that exist. A fetch GitHub does not answer keeps the last copy; a\n404 (no such file, or a private repository) keeps nothing.",
             "implements": [],
             "extends": null,
@@ -77851,7 +78083,7 @@
                 "Minn\\Rest\\Services"
             ],
             "constructor": {
-                "signature": "__construct(Closure $load, Closure $save, string $source)",
+                "signature": "__construct(Closure $load, Closure $save, string $source, Minn\\Http $http = \\Minn\\Http::__set_state(array(    'within' =>    array (   ),    'fake' => NULL,    'refusal' => NULL, )))",
                 "doc": "",
                 "shapes": [
                     "@param Closure(): ?string $load the stored copy, as JSON",
@@ -77878,11 +78110,18 @@
                         "shape": "",
                         "default": null,
                         "doc": ""
+                    },
+                    {
+                        "name": "http",
+                        "type": "Minn\\Http",
+                        "shape": "",
+                        "default": "\\Minn\\Http::__set_state(array(    'within' =>    array (   ),    'fake' => NULL,    'refusal' => NULL, ))",
+                        "doc": ""
                     }
                 ],
                 "visibility": "public",
                 "line": 32,
-                "end": 37
+                "end": 38
             },
             "cases": [],
             "constants": [
@@ -77932,6 +78171,15 @@
                     "doc": "",
                     "visibility": "private",
                     "promoted": true
+                },
+                {
+                    "name": "http",
+                    "type": "Minn\\Http",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
                 }
             ],
             "methods": [
@@ -77952,8 +78200,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 40,
-                    "end": 43
+                    "line": 41,
+                    "end": 44
                 },
                 {
                     "routes": [],
@@ -77972,8 +78220,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 46,
-                    "end": 49
+                    "line": 47,
+                    "end": 50
                 },
                 {
                     "routes": [],
@@ -77984,8 +78232,8 @@
                     "doc": "The released sections as Markdown, fetched first when the copy is a day old; '' when there is none.",
                     "shapes": [],
                     "params": [],
-                    "line": 63,
-                    "end": 79
+                    "line": 64,
+                    "end": 80
                 },
                 {
                     "routes": [],
@@ -78004,8 +78252,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 82,
-                    "end": 87
+                    "line": 83,
+                    "end": 88
                 },
                 {
                     "routes": [],
@@ -78038,8 +78286,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 51,
-                    "end": 60
+                    "line": 52,
+                    "end": 61
                 }
             ]
         },
@@ -78811,13 +79059,20 @@
                     "name": "post",
                     "static": true,
                     "visibility": "public",
-                    "signature": "post(string $path, array $form): array",
-                    "doc": "A form POST to the service (the update checks), its answer decoded.",
+                    "signature": "post(Minn\\Http $http, string $path, array $form): array",
+                    "doc": "A form POST to the service (the update checks) over the caller's client, its answer decoded.",
                     "shapes": [
                         "@param array<string, string> $form",
                         "@return array<string, mixed>"
                     ],
                     "params": [
+                        {
+                            "name": "http",
+                            "type": "Minn\\Http",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
                         {
                             "name": "path",
                             "type": "string",
@@ -79038,6 +79293,7 @@
             "implements": [],
             "extends": null,
             "uses": [
+                "Minn\\Http",
                 "Minn\\Http\\Download",
                 "Minn\\Ops\\Archive",
                 "Minn\\Ops\\Directory",
@@ -79050,7 +79306,7 @@
                 "Minn\\Rest\\Services"
             ],
             "constructor": {
-                "signature": "__construct(string $engineDir, array $keys = self::KEYS)",
+                "signature": "__construct(string $engineDir, array $keys = self::KEYS, Minn\\Http $http = \\Minn\\Http::__set_state(array(    'within' =>    array (   ),    'fake' => NULL,    'refusal' => NULL, )))",
                 "doc": "",
                 "shapes": [
                     "@param list<string> $keys the release keys to trust (tests pass their own)"
@@ -79069,11 +79325,18 @@
                         "shape": "list<string>",
                         "default": "self::KEYS",
                         "doc": "the release keys to trust (tests pass their own)"
+                    },
+                    {
+                        "name": "http",
+                        "type": "Minn\\Http",
+                        "shape": "",
+                        "default": "\\Minn\\Http::__set_state(array(    'within' =>    array (   ),    'fake' => NULL,    'refusal' => NULL, ))",
+                        "doc": ""
                     }
                 ],
                 "visibility": "public",
-                "line": 40,
-                "end": 42
+                "line": 41,
+                "end": 43
             },
             "cases": [],
             "constants": [
@@ -79108,6 +79371,15 @@
                     "doc": "",
                     "visibility": "private",
                     "promoted": true
+                },
+                {
+                    "name": "http",
+                    "type": "Minn\\Http",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
                 }
             ],
             "methods": [
@@ -79128,8 +79400,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 45,
-                    "end": 53
+                    "line": 46,
+                    "end": 54
                 },
                 {
                     "routes": [],
@@ -79169,8 +79441,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 56,
-                    "end": 79
+                    "line": 57,
+                    "end": 80
                 },
                 {
                     "routes": [],
@@ -79189,8 +79461,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 139,
-                    "end": 143
+                    "line": 140,
+                    "end": 144
                 },
                 {
                     "routes": [],
@@ -79223,8 +79495,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 82,
-                    "end": 117
+                    "line": 83,
+                    "end": 118
                 },
                 {
                     "routes": [],
@@ -79250,8 +79522,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 120,
-                    "end": 136
+                    "line": 121,
+                    "end": 137
                 },
                 {
                     "routes": [],
@@ -79262,8 +79534,8 @@
                     "doc": "A link, or a folder inside a git working copy at any depth (the engine's own repository keeps it two levels down).",
                     "shapes": [],
                     "params": [],
-                    "line": 146,
-                    "end": 155
+                    "line": 147,
+                    "end": 156
                 }
             ]
         },
@@ -79639,7 +79911,7 @@
                 "Minn\\Rest\\Services"
             ],
             "constructor": {
-                "signature": "__construct(Minn\\Content\\Site $site, string $contentDir)",
+                "signature": "__construct(Minn\\Content\\Site $site, string $contentDir, Minn\\Http $http = \\Minn\\Http::__set_state(array(    'within' =>    array (   ),    'fake' => NULL,    'refusal' => NULL, )))",
                 "doc": "",
                 "shapes": [],
                 "params": [
@@ -79656,11 +79928,18 @@
                         "shape": "",
                         "default": null,
                         "doc": ""
+                    },
+                    {
+                        "name": "http",
+                        "type": "Minn\\Http",
+                        "shape": "",
+                        "default": "\\Minn\\Http::__set_state(array(    'within' =>    array (   ),    'fake' => NULL,    'refusal' => NULL, ))",
+                        "doc": ""
                     }
                 ],
                 "visibility": "public",
-                "line": 37,
-                "end": 39
+                "line": 38,
+                "end": 40
             },
             "cases": [],
             "constants": [
@@ -79707,6 +79986,15 @@
                     "doc": "",
                     "visibility": "private",
                     "promoted": true
+                },
+                {
+                    "name": "http",
+                    "type": "Minn\\Http",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
                 }
             ],
             "methods": [
@@ -79729,8 +80017,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 42,
-                    "end": 66
+                    "line": 43,
+                    "end": 67
                 },
                 {
                     "routes": [],
@@ -79758,8 +80046,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 73,
-                    "end": 107
+                    "line": 74,
+                    "end": 108
                 },
                 {
                     "routes": [],
@@ -79778,8 +80066,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 110,
-                    "end": 144
+                    "line": 111,
+                    "end": 145
                 },
                 {
                     "routes": [],
@@ -79805,8 +80093,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 147,
-                    "end": 150
+                    "line": 148,
+                    "end": 151
                 },
                 {
                     "routes": [],
@@ -79832,8 +80120,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 153,
-                    "end": 156
+                    "line": 154,
+                    "end": 157
                 },
                 {
                     "routes": [],
@@ -79854,8 +80142,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 186,
-                    "end": 197
+                    "line": 187,
+                    "end": 198
                 },
                 {
                     "routes": [],
@@ -79891,8 +80179,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 210,
-                    "end": 219
+                    "line": 211,
+                    "end": 220
                 },
                 {
                     "routes": [],
@@ -79927,8 +80215,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 232,
-                    "end": 256
+                    "line": 233,
+                    "end": 257
                 },
                 {
                     "routes": [],
@@ -79963,8 +80251,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 263,
-                    "end": 287
+                    "line": 264,
+                    "end": 288
                 },
                 {
                     "routes": [],
@@ -79985,8 +80273,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 294,
-                    "end": 301
+                    "line": 295,
+                    "end": 302
                 },
                 {
                     "routes": [],
@@ -80012,8 +80300,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 304,
-                    "end": 307
+                    "line": 305,
+                    "end": 308
                 },
                 {
                     "routes": [],
@@ -80039,8 +80327,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 310,
-                    "end": 313
+                    "line": 311,
+                    "end": 314
                 },
                 {
                     "routes": [],
@@ -80068,8 +80356,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 341,
-                    "end": 353
+                    "line": 342,
+                    "end": 354
                 },
                 {
                     "routes": [],
@@ -80095,8 +80383,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 356,
-                    "end": 359
+                    "line": 357,
+                    "end": 360
                 },
                 {
                     "routes": [],
@@ -80122,8 +80410,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 418,
-                    "end": 436
+                    "line": 419,
+                    "end": 437
                 },
                 {
                     "routes": [],
@@ -80151,8 +80439,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 468,
-                    "end": 485
+                    "line": 469,
+                    "end": 486
                 },
                 {
                     "routes": [],
@@ -80178,8 +80466,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 498,
-                    "end": 508
+                    "line": 499,
+                    "end": 509
                 },
                 {
                     "routes": [],
@@ -80205,8 +80493,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 159,
-                    "end": 179
+                    "line": 160,
+                    "end": 180
                 },
                 {
                     "routes": [],
@@ -80225,8 +80513,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 222,
-                    "end": 225
+                    "line": 223,
+                    "end": 226
                 },
                 {
                     "routes": [],
@@ -80252,8 +80540,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 316,
-                    "end": 333
+                    "line": 317,
+                    "end": 334
                 },
                 {
                     "routes": [],
@@ -80289,8 +80577,8 @@
                             "doc": "the upgrader's install arguments"
                         }
                     ],
-                    "line": 369,
-                    "end": 384
+                    "line": 370,
+                    "end": 385
                 },
                 {
                     "routes": [],
@@ -80325,8 +80613,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 392,
-                    "end": 415
+                    "line": 393,
+                    "end": 416
                 },
                 {
                     "routes": [],
@@ -80352,8 +80640,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 439,
-                    "end": 447
+                    "line": 440,
+                    "end": 448
                 },
                 {
                     "routes": [],
@@ -80381,8 +80669,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 454,
-                    "end": 465
+                    "line": 455,
+                    "end": 466
                 },
                 {
                     "routes": [],
@@ -80401,8 +80689,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 488,
-                    "end": 491
+                    "line": 489,
+                    "end": 492
                 }
             ]
         },
@@ -80627,7 +80915,7 @@
             "namespace": "Minn\\Ops",
             "kind": "final class",
             "file": "public/minn/src/Minn/Ops/Releases.php",
-            "lines": 86,
+            "lines": 87,
             "doc": "Whether a newer Minn is out, asked of the Minn update service at most\nonce a day: its latest installable release (published on GitHub, read\nby the service), kept in the minn_release option (JSON) with the time it\nwas asked. A check the service does not answer (offline, GitHub rate\nlimiting it) keeps the last answer and waits a day like any other; no\ninstallable release (a 404) offers nothing. This is Minn asking Minn,\nnever wordpress.org, and never GitHub directly.",
             "implements": [],
             "extends": null,
@@ -80645,7 +80933,7 @@
                 "Minn\\Rest\\Services"
             ],
             "constructor": {
-                "signature": "__construct(Closure $load, Closure $save, string $installed, string $source = self::SOURCE)",
+                "signature": "__construct(Closure $load, Closure $save, string $installed, string $source = self::SOURCE, Minn\\Http $http = \\Minn\\Http::__set_state(array(    'within' =>    array (   ),    'fake' => NULL,    'refusal' => NULL, )))",
                 "doc": "",
                 "shapes": [
                     "@param Closure(): ?string $load the stored answer, as JSON",
@@ -80679,11 +80967,18 @@
                         "shape": "",
                         "default": "self::SOURCE",
                         "doc": ""
+                    },
+                    {
+                        "name": "http",
+                        "type": "Minn\\Http",
+                        "shape": "",
+                        "default": "\\Minn\\Http::__set_state(array(    'within' =>    array (   ),    'fake' => NULL,    'refusal' => NULL, ))",
+                        "doc": ""
                     }
                 ],
                 "visibility": "public",
                 "line": 31,
-                "end": 37
+                "end": 38
             },
             "cases": [],
             "constants": [
@@ -80742,6 +81037,15 @@
                     "doc": "",
                     "visibility": "private",
                     "promoted": true
+                },
+                {
+                    "name": "http",
+                    "type": "Minn\\Http",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
                 }
             ],
             "methods": [
@@ -80769,8 +81073,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 40,
-                    "end": 49
+                    "line": 41,
+                    "end": 50
                 },
                 {
                     "routes": [],
@@ -80783,8 +81087,8 @@
                         "@return array{checked: int, latest: ?array<string, string>}"
                     ],
                     "params": [],
-                    "line": 56,
-                    "end": 63
+                    "line": 57,
+                    "end": 64
                 },
                 {
                     "routes": [],
@@ -80795,8 +81099,8 @@
                     "doc": "Whether the stored answer is a day old, or there is none.",
                     "shapes": [],
                     "params": [],
-                    "line": 66,
-                    "end": 69
+                    "line": 67,
+                    "end": 70
                 },
                 {
                     "routes": [],
@@ -80809,8 +81113,8 @@
                         "@return array{checked: int, latest: ?array<string, string>, answered: bool}"
                     ],
                     "params": [],
-                    "line": 77,
-                    "end": 91
+                    "line": 78,
+                    "end": 92
                 },
                 {
                     "routes": [],
@@ -80821,8 +81125,8 @@
                     "doc": "The release on offer: the latest one, when it is newer than the running engine.",
                     "shapes": [],
                     "params": [],
-                    "line": 94,
-                    "end": 99
+                    "line": 95,
+                    "end": 100
                 },
                 {
                     "routes": [],
@@ -80841,8 +81145,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 101,
-                    "end": 105
+                    "line": 102,
+                    "end": 106
                 }
             ]
         },
@@ -81081,13 +81385,14 @@
             "namespace": "Minn\\Ops",
             "kind": "final class",
             "file": "public/minn/src/Minn/Ops/Updates.php",
-            "lines": 435,
+            "lines": 436,
             "doc": "Update offers for the site's plugins and themes from the directory, asked\nthrough the Minn update service (Ops\\Directory), which answers with\nwordpress.org's own offers and serves their packages: the update-check\nendpoints asked with the installed headers (each plugin's Name, Version\nand Update URI, so a plugin that updates from elsewhere is never offered\nthe directory's plugin of the same folder name), the answer kept in the\nminn_updates option (JSON) for twelve hours, and the offers applied by\ndownloading the release archive through the one package unpacker. A\nplugin or theme the directory does not know keeps its folder untouched\nand is never offered anything. The per-item\nauto-update lists are the site's own auto_update_plugins and\nauto_update_themes options, in the shape the app already reads.\n\nThe directory is not the only source. A plugin that hosts itself answers\nfor its own version through the update transient's filter, which is where\nWordPress reads it too, so Runtime\\PluginUpdates asks the runtime the same\nquestion and its answer is merged in. Applying such an offer goes through\nthe publisher: a package outside the directory is unpacked only when\n`upgrader_pre_download` hands back a copy it verified.",
             "implements": [],
             "extends": null,
             "uses": [
                 "Minn\\Content\\Inventory",
                 "Minn\\Content\\Site",
+                "Minn\\Http",
                 "Minn\\Json",
                 "Minn\\Ops\\AutoUpdates",
                 "Minn\\Ops\\Directory",
@@ -81107,7 +81412,7 @@
                 "Minn\\Rest\\Services"
             ],
             "constructor": {
-                "signature": "__construct(Minn\\Content\\Site $site, Minn\\Content\\Inventory $inventory, Minn\\Ops\\Packages $packages, string $contentDir)",
+                "signature": "__construct(Minn\\Content\\Site $site, Minn\\Content\\Inventory $inventory, Minn\\Ops\\Packages $packages, string $contentDir, Minn\\Http $http = \\Minn\\Http::__set_state(array(    'within' =>    array (   ),    'fake' => NULL,    'refusal' => NULL, )))",
                 "doc": "",
                 "shapes": [],
                 "params": [
@@ -81138,11 +81443,18 @@
                         "shape": "",
                         "default": null,
                         "doc": ""
+                    },
+                    {
+                        "name": "http",
+                        "type": "Minn\\Http",
+                        "shape": "",
+                        "default": "\\Minn\\Http::__set_state(array(    'within' =>    array (   ),    'fake' => NULL,    'refusal' => NULL, ))",
+                        "doc": ""
                     }
                 ],
                 "visibility": "public",
-                "line": 44,
-                "end": 50
+                "line": 45,
+                "end": 52
             },
             "cases": [],
             "constants": [
@@ -81204,6 +81516,15 @@
                     "doc": "",
                     "visibility": "private",
                     "promoted": true
+                },
+                {
+                    "name": "http",
+                    "type": "Minn\\Http",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
                 }
             ],
             "methods": [
@@ -81231,8 +81552,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 53,
-                    "end": 56
+                    "line": 55,
+                    "end": 58
                 },
                 {
                     "routes": [],
@@ -81258,8 +81579,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 63,
-                    "end": 70
+                    "line": 65,
+                    "end": 72
                 },
                 {
                     "routes": [],
@@ -81270,8 +81591,8 @@
                     "doc": "The stored answer, refreshed when older than the TTL or absent.",
                     "shapes": [],
                     "params": [],
-                    "line": 73,
-                    "end": 89
+                    "line": 75,
+                    "end": 91
                 },
                 {
                     "routes": [],
@@ -81282,8 +81603,8 @@
                     "doc": "Asks the directory now, whatever the cache says, and keeps the answer.",
                     "shapes": [],
                     "params": [],
-                    "line": 92,
-                    "end": 95
+                    "line": 94,
+                    "end": 97
                 },
                 {
                     "routes": [],
@@ -81294,8 +81615,8 @@
                     "doc": "Asks the directory now and stores the answer.",
                     "shapes": [],
                     "params": [],
-                    "line": 98,
-                    "end": 148
+                    "line": 100,
+                    "end": 150
                 },
                 {
                     "routes": [],
@@ -81306,8 +81627,8 @@
                     "doc": "The offers in WordPress's update transients, update_plugins and\nupdate_themes, in the shape wp_update_plugins and wp_update_themes\nleave there: where plugins, the facade's update helpers and the\nupgraders read them. Written after every check and after an update.",
                     "shapes": [],
                     "params": [],
-                    "line": 156,
-                    "end": 177
+                    "line": 158,
+                    "end": 179
                 },
                 {
                     "routes": [],
@@ -81320,8 +81641,8 @@
                         "@return array<string, string>"
                     ],
                     "params": [],
-                    "line": 210,
-                    "end": 221
+                    "line": 212,
+                    "end": 223
                 },
                 {
                     "routes": [],
@@ -81334,8 +81655,8 @@
                         "@return array<string, string>"
                     ],
                     "params": [],
-                    "line": 224,
-                    "end": 235
+                    "line": 226,
+                    "end": 237
                 },
                 {
                     "routes": [],
@@ -81348,8 +81669,8 @@
                         "@return array<string, array{slug: string, icon: string, url: string}>"
                     ],
                     "params": [],
-                    "line": 238,
-                    "end": 256
+                    "line": 240,
+                    "end": 258
                 },
                 {
                     "routes": [],
@@ -81368,8 +81689,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 259,
-                    "end": 263
+                    "line": 261,
+                    "end": 265
                 },
                 {
                     "routes": [],
@@ -81388,8 +81709,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 266,
-                    "end": 277
+                    "line": 268,
+                    "end": 279
                 },
                 {
                     "routes": [],
@@ -81408,8 +81729,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 280,
-                    "end": 291
+                    "line": 282,
+                    "end": 293
                 },
                 {
                     "routes": [],
@@ -81430,8 +81751,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 294,
-                    "end": 298
+                    "line": 296,
+                    "end": 300
                 },
                 {
                     "routes": [],
@@ -81459,8 +81780,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 305,
-                    "end": 308
+                    "line": 307,
+                    "end": 310
                 },
                 {
                     "routes": [],
@@ -81486,8 +81807,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 311,
-                    "end": 314
+                    "line": 313,
+                    "end": 316
                 },
                 {
                     "routes": [],
@@ -81508,8 +81829,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 340,
-                    "end": 363
+                    "line": 342,
+                    "end": 365
                 },
                 {
                     "routes": [],
@@ -81522,8 +81843,8 @@
                         "@return array<string, string>"
                     ],
                     "params": [],
-                    "line": 366,
-                    "end": 373
+                    "line": 368,
+                    "end": 375
                 },
                 {
                     "routes": [],
@@ -81536,8 +81857,8 @@
                         "@return array<string, string>"
                     ],
                     "params": [],
-                    "line": 391,
-                    "end": 398
+                    "line": 393,
+                    "end": 400
                 },
                 {
                     "routes": [],
@@ -81550,8 +81871,8 @@
                         "@return array<string, array<string, string>>"
                     ],
                     "params": [],
-                    "line": 401,
-                    "end": 415
+                    "line": 403,
+                    "end": 417
                 },
                 {
                     "routes": [],
@@ -81573,8 +81894,8 @@
                             "doc": "the previous state"
                         }
                     ],
-                    "line": 188,
-                    "end": 207
+                    "line": 190,
+                    "end": 209
                 },
                 {
                     "routes": [],
@@ -81610,8 +81931,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 323,
-                    "end": 332
+                    "line": 325,
+                    "end": 334
                 },
                 {
                     "routes": [],
@@ -81624,8 +81945,8 @@
                         "@return array<string, array{Name: string, Version: string, UpdateURI: string}>"
                     ],
                     "params": [],
-                    "line": 380,
-                    "end": 388
+                    "line": 382,
+                    "end": 390
                 },
                 {
                     "routes": [],
@@ -81658,8 +81979,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 424,
-                    "end": 437
+                    "line": 426,
+                    "end": 439
                 },
                 {
                     "routes": [],
@@ -81692,8 +82013,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 445,
-                    "end": 455
+                    "line": 447,
+                    "end": 457
                 },
                 {
                     "routes": [],
@@ -81712,8 +82033,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 458,
-                    "end": 464
+                    "line": 460,
+                    "end": 466
                 },
                 {
                     "routes": [],
@@ -81732,8 +82053,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 466,
-                    "end": 469
+                    "line": 468,
+                    "end": 471
                 }
             ]
         },

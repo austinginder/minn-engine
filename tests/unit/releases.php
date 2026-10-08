@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use Minn\Http\Fake;
 use Minn\Ops\Changelog;
 use Minn\Ops\Directory;
 use Minn\Ops\EngineUpdate;
@@ -36,14 +37,9 @@ $memory = static function (?string &$stored): array {
 };
 $check = static function (array $answers, ?string &$stored, string $installed = '0.1.0') use ($memory): Releases {
     [$load, $save] = $memory($stored);
-    $fake = Minn\Http::fake($answers);
-    try {
-        $releases = new Releases($load, $save, $installed);
-        $releases->refresh();
-        return $releases;
-    } finally {
-        $fake->restore();
-    }
+    $releases = new Releases($load, $save, $installed, http: (new Fake($answers))->http());
+    $releases->refresh();
+    return $releases;
 };
 // A scratch webroot holding a minimal engine at $version, and the zip of another.
 $webroot = static function (string $version): string {
@@ -98,14 +94,10 @@ return [
     'the check asks the update service, keeps the latest release and offers it when it is newer' => static function () use ($memory, $answer) {
         $stored = null;
         [$load, $save] = $memory($stored);
-        $fake = Minn\Http::fake(['updates.minn.run/*' => $answer()]);
-        try {
-            $releases = new Releases($load, $save, '0.1.0');
-            $releases->refresh();
-            $asked = array_map(static fn ($request) => $request->url, $fake->sent());
-        } finally {
-            $fake->restore();
-        }
+        $fake = new Fake(['updates.minn.run/*' => $answer()]);
+        $releases = new Releases($load, $save, '0.1.0', http: $fake->http());
+        $releases->refresh();
+        $asked = array_map(static fn ($request) => $request->url, $fake->sent());
         return $asked === [Directory::BASE . 'minn/releases/latest'] && $releases->offer()?->version === '0.2.0' && !$releases->due() ?: json_encode($asked);
     },
     'the running version or a newer one is offered nothing' => static function () use ($check, $answer) {
@@ -116,13 +108,13 @@ return [
     'no installable release (404) offers nothing' => static function () use ($check, $answer) {
         $stored = null;
         $check(['updates.minn.run/*' => $answer()], $stored);
-        $releases = $check(['updates.minn.run/*' => Minn\Http::reply(['error' => 'no_release'], 404)], $stored);
+        $releases = $check(['updates.minn.run/*' => Fake::reply(['error' => 'no_release'], 404)], $stored);
         return $releases->offer() === null && json_decode((string) $stored, true)['latest'] === null;
     },
     'a check the service does not answer keeps the last answer, and waits a day' => static function () use ($check, $answer) {
         $stored = null;
         $check(['updates.minn.run/*' => $answer()], $stored);
-        $releases = $check(['updates.minn.run/*' => Minn\Http::reply(['error' => 'upstream_failed'], 502)], $stored);
+        $releases = $check(['updates.minn.run/*' => Fake::reply(['error' => 'upstream_failed'], 502)], $stored);
         return $releases->offer()?->version === '0.2.0' && !$releases->due();
     },
     'a day-old answer is due' => static function () use ($memory) {
@@ -138,29 +130,16 @@ return [
     'the changelog is read through the service once a day, and a failed read keeps the last copy' => static function () use ($memory) {
         $stored = null;
         [$load, $save] = $memory($stored);
-        $changelog = new Changelog($load, $save, Changelog::ENGINE_SOURCE);
-        $fake = Minn\Http::fake(['updates.minn.run/*' => "# Changelog\n\n## **v0.1.0** - November 2 2026\n\nfirst\n"]);
-        try {
-            $first = $changelog->markdown();
-            $again = $changelog->markdown();
-            $sent = array_map(static fn ($request) => $request->url, $fake->sent());
-        } finally {
-            $fake->restore();
-        }
+        $changelog = static fn (Fake $fake): Changelog => new Changelog($load, $save, Changelog::ENGINE_SOURCE, $fake->http());
+        $fake = new Fake(['updates.minn.run/*' => "# Changelog\n\n## **v0.1.0** - November 2 2026\n\nfirst\n"]);
+        $reading = $changelog($fake);
+        $first = $reading->markdown();
+        $again = $reading->markdown();
+        $sent = array_map(static fn ($request) => $request->url, $fake->sent());
         $stored = json_encode(['checked' => time() - Changelog::TTL - 1, 'markdown' => $first]);
-        $fake = Minn\Http::fake(['updates.minn.run/*' => Minn\Http::reply('busy', 503)]);
-        try {
-            $kept = $changelog->markdown();
-        } finally {
-            $fake->restore();
-        }
-        $fake = Minn\Http::fake(['updates.minn.run/*' => Minn\Http::reply('{"error":"not_found"}', 404)]);
+        $kept = $changelog(new Fake(['updates.minn.run/*' => Fake::reply('busy', 503)]))->markdown();
         $stored = json_encode(['checked' => 0, 'markdown' => $first]);
-        try {
-            $gone = $changelog->markdown();
-        } finally {
-            $fake->restore();
-        }
+        $gone = $changelog(new Fake(['updates.minn.run/*' => Fake::reply('{"error":"not_found"}', 404)]))->markdown();
         return str_contains($first, 'v0.1.0') && $again === $first && $sent === [Directory::BASE . 'minn/changelog'] && $kept === $first && $gone === '' ?: json_encode([$first, $sent, $kept, $gone]);
     },
     'the engine swaps itself for a signed release archive and carries the install record' => static function () use ($webroot, $archive, $leftovers, $clean, $public, $sign) {
@@ -225,15 +204,14 @@ return [
     },
     'a package that is not on the update service is refused before any download' => static function () use ($webroot, $clean) {
         $root = $webroot('0.1.0');
-        $fake = Minn\Http::fake([]);
+        $fake = new Fake([]);
         try {
             $elsewhere = new Release('0.2.0', '', '', '', 'https://github.com/austinginder/minn-engine/releases/download/v0.2.0/minn.zip', str_repeat('ab', 32), base64_encode(str_repeat("\x07", 64)));
-            (new EngineUpdate("{$root}/minn"))->apply($elsewhere);
+            (new EngineUpdate("{$root}/minn", http: $fake->http()))->apply($elsewhere);
             return 'installed';
         } catch (RuntimeException $e) {
             return str_contains($e->getMessage(), 'not on the Minn update service') && $fake->sent() === [] && EngineUpdate::versionOf("{$root}/minn") === '0.1.0' ?: $e->getMessage();
         } finally {
-            $fake->restore();
             $clean($root);
         }
     },

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Minn\Ops;
 
+use Minn\Http;
 use Minn\Http\Download;
 use Minn\Support\Files;
 use RuntimeException;
@@ -37,7 +38,7 @@ final readonly class EngineUpdate
     private const MAX_DOWNLOAD = 64 * 1048576;
 
     /** @param list<string> $keys the release keys to trust (tests pass their own) */
-    public function __construct(private string $engineDir, private array $keys = self::KEYS)
+    public function __construct(private string $engineDir, private array $keys = self::KEYS, private Http $http = new Http())
     {
     }
 
@@ -48,7 +49,7 @@ final readonly class EngineUpdate
         if (!str_starts_with($release->package, Release::DOWNLOADS)) {
             throw new RuntimeException("Minn {$release->version}'s minn.zip is not on the Minn update service, so it is not installed.");
         }
-        $zip = Download::https($release->package, self::MAX_DOWNLOAD, [Directory::ORIGIN], 'Minn Engine/' . self::versionOf($this->engineDir));
+        $zip = (new Download($this->http))->https($release->package, self::MAX_DOWNLOAD, [Directory::ORIGIN], 'Minn Engine/' . self::versionOf($this->engineDir));
         return $this->install($zip, $release->sha256, $release->signature, $release->version);
     }
 

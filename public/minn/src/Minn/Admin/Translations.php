@@ -6,6 +6,8 @@ namespace Minn\Admin;
 
 use Minn\Content\Site;
 use Minn\Content\Users;
+use Minn\Http;
+use Minn\Http\Download;
 use Minn\Json;
 use Minn\RestError;
 
@@ -28,6 +30,7 @@ final readonly class Translations
         private Site $site,
         private App $app,
         private string $contentDir,
+        private Http $http = new Http(),
     ) {
     }
 
@@ -167,7 +170,7 @@ final readonly class Translations
         if (empty($entry['sha256'])) {
             throw new RestError('minn_language_install', 'The manifest names no hash for that language pack, so it cannot be verified.', 500);
         }
-        $zip = self::download((string) $entry['package']);
+        $zip = $this->download((string) $entry['package']);
         if (!hash_equals((string) $entry['sha256'], hash('sha256', $zip))) {
             throw new RestError('minn_language_install', 'The language pack did not match the hash the manifest names.', 500);
         }
@@ -246,10 +249,10 @@ final readonly class Translations
         return $names;
     }
 
-    private static function download(string $url): string
+    private function download(string $url): string
     {
         try {
-            return \Minn\Http\Download::https($url, 64 * 1048576, [], 'Minn Engine/' . MINN_ENGINE_VERSION);
+            return (new Download($this->http))->https($url, 64 * 1048576, [], 'Minn Engine/' . MINN_ENGINE_VERSION);
         } catch (\RuntimeException $e) {
             throw new RestError('minn_language_install', 'The language pack could not be downloaded. ' . $e->getMessage(), 500);
         }

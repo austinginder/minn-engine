@@ -1140,7 +1140,7 @@ moved this time:
 | Facade | Minn class | What it holds |
 |---|---|---|
 | `WP_Query` | `Runtime\QueryFlags`, `Runtime\QueriedObject` | the is_* flags a set of query variables implies; which object a query is about (term by id or slug, post type, posts page, post, author) |
-| `WP_Http` | `WpOrg\Requests\Requests` (the facade), `Minn\Http::send` | `WP_Http` maps its arguments onto the Requests library, whose curl transport sends through `Minn\Http::send`, so a test's `Minn\Http::fake()` answers `wp_remote_*()` too |
+| `WP_Http` | `WpOrg\Requests\Requests` (the facade), `Minn\Http->send()` | `WP_Http` maps its arguments onto the Requests library, whose curl transport sends through a `Minn\Http` client's `send()`; a test answers `wp_remote_*()` with WordPress's own `pre_http_request` filter |
 | `WP_REST_Server` | `Rest\RouteMatch`, `Rest\RouteIndex`, `Rest\AdditionalFields` | handler lookup by method and path with captured params and defaults; the index description of one route; which object type a wp/v2 route serves |
 | `WP_REST_Request` | `Rest\ParamCheck` | the required / validate / sanitize pass over declared arguments |
 | `WP_Block_Supports` | `Blocks\Supports` | wrapper class, style, and id from a block's supports and attributes |

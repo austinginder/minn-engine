@@ -8,7 +8,8 @@ use Closure;
 
 /**
  * Where Minn\Http lets a request go. Only http and https; when hosts are
- * named, every hop must start with one of them; and an address outside the
+ * named, every hop must start with one of them (and with one of the
+ * client's own, when it is bound); and an address outside the
  * public internet (loopback, private and shared ranges, link-local, cloud
  * metadata, reserved) is refused unless its host is listed in $private. A
  * name is resolved here and curl is pinned to the addresses that were
@@ -24,8 +25,9 @@ final readonly class Destination
      * @param list<string> $hosts URL prefixes every hop must start with; none means any public host
      * @param list<string> $private host names or addresses allowed to reach a private address
      * @param (Closure(string): list<string>)|null $lookup a host's addresses; DNS when null
+     * @param list<string> $within URL prefixes the client itself is bound to (an extension's needs.http); none means unbound
      */
-    public function __construct(private array $hosts = [], array $private = [], private ?Closure $lookup = null)
+    public function __construct(private array $hosts = [], array $private = [], private ?Closure $lookup = null, private array $within = [])
     {
         $this->private = array_map(static fn (string $host): string => strtolower(trim($host, '[]')), $private);
     }
@@ -38,7 +40,10 @@ final readonly class Destination
         if (!in_array($scheme, ['http', 'https'], true) || $host === '') {
             return "Only http and https URLs can be requested, not {$url}.";
         }
-        if ($this->hosts !== [] && !$this->listed($url)) {
+        if ($this->within !== [] && !self::startsWithOne($url, $this->within)) {
+            return "{$host} is not one of the hosts this client was granted (needs.http in minn.json).";
+        }
+        if ($this->hosts !== [] && !self::startsWithOne($url, $this->hosts)) {
             return "{$host} is not one of the hosts this request may reach.";
         }
         if (filter_var($host, FILTER_VALIDATE_IP) !== false && !$this->allowed($host, $host)) {
@@ -80,9 +85,10 @@ final readonly class Destination
         return strtolower(trim((string) parse_url($url, PHP_URL_HOST), '[]'));
     }
 
-    private function listed(string $url): bool
+    /** @param list<string> $prefixes */
+    private static function startsWithOne(string $url, array $prefixes): bool
     {
-        foreach ($this->hosts as $prefix) {
+        foreach ($prefixes as $prefix) {
             if (str_starts_with(strtolower($url), strtolower($prefix))) {
                 return true;
             }

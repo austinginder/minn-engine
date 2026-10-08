@@ -6,6 +6,7 @@ namespace Minn\Ops;
 
 use Minn\Content\Inventory;
 use Minn\Content\Site;
+use Minn\Http;
 use Minn\Json;
 use Minn\RestError;
 use Minn\Support\FileHeaders;
@@ -46,6 +47,7 @@ final class Updates
         private readonly Inventory $inventory,
         private readonly Packages $packages,
         private readonly string $contentDir,
+        private readonly Http $http = new Http(),
     ) {
     }
 
@@ -113,13 +115,13 @@ final class Updates
         $stylesheet = (string) ($this->site->option('stylesheet') ?? '');
         $locale = (string) ($this->site->option('WPLANG') ?: 'en_US');
 
-        $pluginAnswer = $plugins === [] ? [] : Directory::post('plugins/update-check/1.1/', [
+        $pluginAnswer = $plugins === [] ? [] : Directory::post($this->http, 'plugins/update-check/1.1/', [
             'plugins' => Json::encode(['plugins' => $plugins, 'active' => array_values($active)], Json::ESCAPED),
             'translations' => '{}',
             'locale' => Json::encode([$locale], Json::ESCAPED),
             'all' => 'true',
         ]);
-        $themeAnswer = $themes === [] ? [] : Directory::post('themes/update-check/1.1/', [
+        $themeAnswer = $themes === [] ? [] : Directory::post($this->http, 'themes/update-check/1.1/', [
             'themes' => Json::encode(['active' => $stylesheet, 'themes' => $themes], Json::ESCAPED),
             'translations' => '{}',
             'locale' => Json::encode([$locale], Json::ESCAPED),

@@ -29,7 +29,7 @@ the minn-admin/v1 namespace and serving the Minn Admin app
 | [`StructureController`](#structurecontroller) | final readonly class | 131 | The Structure view of minn-admin/v1: post types, taxonomies, and the |
 | [`SystemController`](#systemcontroller) | final readonly class | 73 | The System view: diagnostics, the scheduled-post list, autoloaded options, and the logs. |
 | [`ThemesController`](#themescontroller) | final readonly class | 100 | The theme inventory of minn-admin/v1: every theme on disk with its |
-| [`Translations`](#translations) | final readonly class | 236 | Languages for the admin. A person's locale is their `locale` user meta, |
+| [`Translations`](#translations) | final readonly class | 237 | Languages for the admin. A person's locale is their `locale` user meta, |
 | [`UpdatesController`](#updatescontroller) | final readonly class | 129 | The minn-admin/v1 update routes: offers, directory meta, the check, the installs, the auto-update lists. |
 | [`UploadsSize`](#uploadssize) | final readonly class | 93 | How much the uploads folder holds, as Minn Admin 0.43 works it out and |
 | [`V1Controller`](#v1controller) | final readonly class | 81 | The boot burst of minn-admin/v1: the bell feed and its read marker, the |
@@ -1061,7 +1061,7 @@ locale's files, so an eject leaves the files WordPress would have written.
 Used by: `Minn\Admin\BootPayload`, `Minn\Admin\LanguageController`, `Minn\Engine`, `Minn\Rest\Services`
 
 ```php
-__construct(Minn\Content\Users $users, Minn\Content\Site $site, Minn\Admin\App $app, string $contentDir)
+__construct(Minn\Content\Users $users, Minn\Content\Site $site, Minn\Admin\App $app, string $contentDir, Minn\Http $http = \Minn\Http::__set_state(array(    'within' =>    array (   ),    'fake' => NULL,    'refusal' => NULL, )))
 ```
 
 
@@ -1109,7 +1109,7 @@ Fetches and unpacks Minn Admin's language pack for a locale from the
 release the bundle's manifest names. True when files were written;
 false when the manifest offers no pack for the locale.
 
-Internals: `languages()` (private, line 119), `catalogFiles()` (private, line 204), `installedCodes()` (private, line 216), `names()` (private, line 237), `download()` (private, line 249)
+Internals: `languages()` (private, line 122), `catalogFiles()` (private, line 207), `installedCodes()` (private, line 219), `names()` (private, line 240), `download()` (private, line 252)
 
 
 ## UpdatesController
