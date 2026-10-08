@@ -7,7 +7,7 @@ namespace Minn\Ext\BlockVisibility;
 use Minn\Blocks\Block;
 use Minn\Extension\Extension as MinnExtension;
 use Minn\Extension\Seams;
-use Minn\Support\Html;
+use Minn\Html;
 
 final class Extension implements MinnExtension
 {

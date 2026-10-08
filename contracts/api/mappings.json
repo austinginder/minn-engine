@@ -25903,7 +25903,7 @@
             "lines": 3,
             "kind": "minn",
             "minn": [
-                "Minn\\Support\\Html::addClasses"
+                "Minn\\Html::addClasses"
             ],
             "composes": [
                 "_minn_inner_wrapper_class"
@@ -28724,7 +28724,7 @@
             "lines": 4,
             "kind": "minn",
             "minn": [
-                "Minn\\Support\\Html::textField"
+                "Minn\\Html::textField"
             ],
             "composes": [
                 "wp_check_invalid_utf8",
@@ -56985,7 +56985,7 @@
             "lines": 1,
             "kind": "noop",
             "minn": [
-                "Minn\\Support\\Html::split"
+                "Minn\\Html::split"
             ],
             "composes": []
         },
@@ -60417,7 +60417,7 @@
             "lines": 7,
             "kind": "minn",
             "minn": [
-                "Minn\\Support\\Html::scriptBody"
+                "Minn\\Html::scriptBody"
             ],
             "composes": [
                 "__",
@@ -61833,7 +61833,7 @@
             "lines": 1,
             "kind": "noop",
             "minn": [
-                "Minn\\Support\\Html::stripAllTags"
+                "Minn\\Html::stripAllTags"
             ],
             "composes": []
         },

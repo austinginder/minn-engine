@@ -7,7 +7,7 @@ namespace Minn\Ext\JetpackSlideshow;
 use Minn\Blocks\Block;
 use Minn\Extension\Extension as MinnExtension;
 use Minn\Extension\Seams;
-use Minn\Support\Html;
+use Minn\Html;
 
 /**
  * The Jetpack slideshow block, as the plugin's front end delivered it: the

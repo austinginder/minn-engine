@@ -22,7 +22,7 @@ use Minn\Front\Kind;
 use Minn\Front\Permalinks;
 use Minn\Front\Resolution;
 use Minn\Runtime\Runtime;
-use Minn\Support\Html;
+use Minn\Html;
 
 /**
  * A whole page from the active block theme: the template the resolution

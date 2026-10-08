@@ -6,7 +6,7 @@ namespace Minn\Ext\GoogleAnalytics;
 
 use Minn\Extension\Extension as MinnExtension;
 use Minn\Extension\Seams;
-use Minn\Support\Html;
+use Minn\Html;
 use Minn\Support\Serialized;
 
 /** The gtag snippet from gap_options: the tracking id, in the head or the footer, with the anonymize flag. */

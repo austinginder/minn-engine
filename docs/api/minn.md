@@ -8,6 +8,7 @@ the front door, the autoloader, the one database door, the REST error
 | [`Context`](#context) | final readonly class | 41 | One request, as a value: the database door, who is asking, what they |
 | [`Db`](#db) | final class | 261 | The one door to the database. Every query is a prepared statement; the |
 | [`Engine`](#engine) | final readonly class | 270 | The engine's front door. An unmodified wp-config.php ends by requiring |
+| [`Html`](#html) | final class | 107 | HTML, the front door for escaping and cutting markup: plain static calls, |
 | [`Http`](#http) | final class | 205 | Outgoing HTTP, called from anywhere after one import: |
 | [`Json`](#json) | final class | 115 | JSON in and out, for the engine and for code written for Minn: |
 | [`RestError`](#resterror) | final class | 60 | A WordPress-shaped error, thrown from anywhere and rendered once by the |
@@ -211,6 +212,63 @@ underneath, each answered in the language the request asked in.
 Internals: `restRoute()` (private, line 112), `bootRuntimeForRest()` (private, line 126), `adoptSettledUser()` (private, line 166), `handle()` (private, line 185), `frontPipeline()` (private, line 264)
 
 
+## Html
+
+`final class Minn\Html` · `public/minn/src/Minn/Html.php`
+
+HTML, the front door for escaping and cutting markup: plain static calls,
+one import away (use Minn\Html;), the way Minn\Http and Minn\Json are.
+Escaping at output boundaries goes through here.
+
+- const `SPLIT` = `'/(<(?:!--.*?(?:-->|$)|!\\[CDATA\\[.*?(?:\\]\\]>|$)|[^>]*>?))/s'` — Markup's pieces of HTML: comments and CDATA whole (to the end when unclosed), else from "<" to the next ">".
+
+Used by: `Minn\Admin\AppController`, `Minn\Admin\LanguageChoices`, `Minn\Blocks\Dynamic\LatestComments`, `Minn\Blocks\Dynamic\LatestPosts`, `Minn\Blocks\Dynamic\Search`, `Minn\Blocks\Dynamic\SocialLinks`, `Minn\Blocks\Dynamic\TagCloud`, `Minn\Blocks\Dynamic\Theme\Comments`, `Minn\Blocks\Dynamic\Theme\Navigation`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Blocks\Dynamic\Theme\Structure`, `Minn\Blocks\Dynamic\Theme\TermBlocks`, `Minn\Blocks\ImageTags`, `Minn\Blocks\Renderer`, `Minn\Blocks\Wrapper`, `Minn\Content\Menus`, `Minn\Content\PasswordGate`, `Minn\Content\TermLinks`, `Minn\Front\AdminBar`, `Minn\Front\PostNavigation`, `Minn\Front\Renderer`, `Minn\Front\SitemapXml`, `Minn\Front\TermLists`, `Minn\Html\Decoder`, `Minn\Html\Edits`, `Minn\Html\Escaped`, `Minn\Html\Scanner`, `Minn\Html\TagQuery`, `Minn\Html\Tags`, `Minn\Html\TokenMap`, `Minn\Http\Failure`, `Minn\Login\LoginController`, `Minn\Login\LoginForm`, `Minn\Login\LoginNotices`, `Minn\Rest\MediaObject`, `Minn\Rest\PluginsController`, `Minn\Runtime\Shortcodes`, `Minn\Theme\ArchiveTitle`, `Minn\Theme\ClassicContent`, `Minn\Theme\ClassicRenderer`, `Minn\Theme\HeadLinks`, `Minn\Theme\PageRenderer`
+
+### static `split(string $html): array`
+
+Markup cut into text and HTML pieces, the HTML ones at the odd
+positions (wp_html_split): a comment or CDATA section is one piece
+whatever it holds, and a "<" in text starts a piece that runs to the
+next ">".
+
+- `@return list<string>`
+
+### static `esc(?string $value): string`
+
+Text escaped for HTML.
+
+### static `attr(?string $value): string`
+
+Text escaped for an attribute value.
+
+### static `addClasses(string $html, array $classes, ?string $onClass = NULL): string`
+
+Appends classes to the first element in a fragment (or to the first
+element already carrying $onClass), adding a class attribute when
+the element has none. Existing classes keep their order.
+
+- `@param list<string> $classes`
+
+### static `stripAllTags(string $text, bool $collapseWhitespace = false): string`
+
+Drops script and style elements with their contents, then every other tag; whitespace runs optionally collapse to one space.
+
+### static `textField(string $text, bool $keepNewlines, Closure $validUtf8, Closure $encodeLessThan): string`
+
+A single line of plain text from user input: tags stripped, control
+whitespace folded, percent escapes removed. The caller passes its own
+UTF-8 check and less-than encoder so its filters keep applying.
+
+- `@param Closure(string): string $validUtf8 @param Closure(string): string $encodeLessThan`
+
+### static `scriptBody(string $markup): ?string`
+
+The code inside markup that is exactly one bare script element once the
+surrounding whitespace is gone, or null for anything else: a tag with
+attributes, an empty element, a missing end. The tag names match in any
+case and the code is returned as written.
+
+
 ## Http
 
 `final class Minn\Http` · `public/minn/src/Minn/Http.php`
@@ -246,7 +304,7 @@ A misspelt argument is an error at the line that has it. Credentials
 - const `REDIRECTS` = `array (   0 => 301,   1 => 302,   2 => 303,   3 => 307,   4 => 308, )`
 - const `CREDENTIALS` = `array (   0 => 'authorization',   1 => 'cookie',   2 => 'proxy-authorization', )`
 
-Used by: `Minn\Http\Access`, `Minn\Http\Args`, `Minn\Http\CertificateName`, `Minn\Http\CookieText`, `Minn\Http\Destination`, `Minn\Http\Download`, `Minn\Http\Envelope`, `Minn\Http\Exchange`, `Minn\Http\Failure`, `Minn\Http\Fake`, `Minn\Http\Ipv6`, `Minn\Http\IriParts`, `Minn\Http\Kernel`, `Minn\Http\Location`, `Minn\Http\Matched`, `Minn\Http\Method`, `Minn\Http\Outbound`, `Minn\Http\Policy`, `Minn\Http\Punycode`, `Minn\Http\RawResponse`, `Minn\Http\Request`, `Minn\Http\RequestFailed`, `Minn\Http\RequestsNames`, `Minn\Http\Response`, `Minn\Http\Route`, `Minn\Http\RouteMiss`, `Minn\Http\RouteParams`, `Minn\Http\RouteRow`, `Minn\Http\Router`, `Minn\Http\Subject`, `Minn\Http\Transport`, `Minn\Http\TrustedProxies`, `Minn\Ops\Changelog`, `Minn\Ops\Directory`, `Minn\Ops\Packages`, `Minn\Ops\Releases`
+Used by: `Minn\Html`, `Minn\Http\Access`, `Minn\Http\Args`, `Minn\Http\CertificateName`, `Minn\Http\CookieText`, `Minn\Http\Destination`, `Minn\Http\Download`, `Minn\Http\Envelope`, `Minn\Http\Exchange`, `Minn\Http\Failure`, `Minn\Http\Fake`, `Minn\Http\Ipv6`, `Minn\Http\IriParts`, `Minn\Http\Kernel`, `Minn\Http\Location`, `Minn\Http\Matched`, `Minn\Http\Method`, `Minn\Http\Outbound`, `Minn\Http\Policy`, `Minn\Http\Punycode`, `Minn\Http\RawResponse`, `Minn\Http\Request`, `Minn\Http\RequestFailed`, `Minn\Http\RequestsNames`, `Minn\Http\Response`, `Minn\Http\Route`, `Minn\Http\RouteMiss`, `Minn\Http\RouteParams`, `Minn\Http\RouteRow`, `Minn\Http\Router`, `Minn\Http\Subject`, `Minn\Http\Transport`, `Minn\Http\TrustedProxies`, `Minn\Ops\Changelog`, `Minn\Ops\Directory`, `Minn\Ops\Packages`, `Minn\Ops\Releases`
 
 
 ### static `get(string $url, array $query = array ( ), array $headers = array ( ), float $timeout = 5.0, int $redirects = 5, array $hosts = array ( ), array $private = array ( ), ?int $maxBytes = NULL, ?string $userAgent = NULL): Minn\Http\Exchange`
@@ -326,7 +384,7 @@ encoded even then (NAN, nesting past the depth) throws a JsonException.
 - const `READABLE` = `320` — Slashes and non-ASCII characters written as themselves: encode()'s default.
 - const `ESCAPED` = `0` — Slashes and non-ASCII characters escaped, as wp_json_encode() and the REST API write them.
 
-Used by: `Minn\Admin\AdminTypes`, `Minn\Admin\AppController`, `Minn\Admin\PackagesController`, `Minn\Admin\StructureController`, `Minn\Admin\Translations`, `Minn\Auth\Roles`, `Minn\Blocks\CoreBlocks`, `Minn\Blocks\Dynamic\SocialLinks`, `Minn\Blocks\Parser`, `Minn\Blocks\Serializer`, `Minn\Cli\Installer`, `Minn\Cli\MinnCommand`, `Minn\Cli\OptionCommand`, `Minn\Cli\Preflight`, `Minn\Content\Emoji`, `Minn\Content\PluginState`, `Minn\Extension\Loader`, `Minn\Extension\Manifest`, `Minn\Front\AdminBar`, `Minn\Http`, `Minn\Http\Exchange`, `Minn\Http\Request`, `Minn\Http\Response`, `Minn\I18n\ScriptTranslations`, `Minn\Mail\MailLog`, `Minn\Mail\MailSettings`, `Minn\Mail\MailerStrings`, `Minn\Ops\Changelog`, `Minn\Ops\Packages`, `Minn\Ops\Releases`, `Minn\Ops\Updates`, `Minn\Rest\ArgCheck`, `Minn\Rest\BatchController`, `Minn\Rest\Embed`, `Minn\Rest\Reply`, `Minn\Rest\RuntimeRoutes`, `Minn\Rest\Schema`, `Minn\Rest\Taxonomies`, `Minn\Rest\Types`, `Minn\Runtime\Assets`, `Minn\Runtime\Constants`, `Minn\Runtime\Interactivity`, `Minn\Runtime\OEmbed`, `Minn\Runtime\Recovery`, `Minn\Runtime\Registry`, `Minn\Runtime\ScriptModules`, `Minn\Runtime\SymbolGap`, `Minn\Runtime\ThemeSupports`, `Minn\Support\Accents`, `Minn\Support\KsesEntities`, `Minn\Theme\GlobalStyles`, `Minn\Theme\StylePresets`, `Minn\Theme\TemplateIndex`, `Minn\Theme\TemplatePartTheme`, `Minn\Theme\TemplatePatterns`, `Minn\Theme\Templates`, `Minn\Theme\Theme`, `Minn\Theme\ThemeStyles`, `Minn\Theme\UserStyles`
+Used by: `Minn\Admin\AdminTypes`, `Minn\Admin\AppController`, `Minn\Admin\PackagesController`, `Minn\Admin\StructureController`, `Minn\Admin\Translations`, `Minn\Auth\Roles`, `Minn\Blocks\CoreBlocks`, `Minn\Blocks\Dynamic\SocialLinks`, `Minn\Blocks\Parser`, `Minn\Blocks\Serializer`, `Minn\Cli\Installer`, `Minn\Cli\MinnCommand`, `Minn\Cli\OptionCommand`, `Minn\Cli\Preflight`, `Minn\Content\Emoji`, `Minn\Content\PluginState`, `Minn\Extension\Loader`, `Minn\Extension\Manifest`, `Minn\Front\AdminBar`, `Minn\Html`, `Minn\Http`, `Minn\Http\Exchange`, `Minn\Http\Request`, `Minn\Http\Response`, `Minn\I18n\ScriptTranslations`, `Minn\Mail\MailLog`, `Minn\Mail\MailSettings`, `Minn\Mail\MailerStrings`, `Minn\Ops\Changelog`, `Minn\Ops\Packages`, `Minn\Ops\Releases`, `Minn\Ops\Updates`, `Minn\Rest\ArgCheck`, `Minn\Rest\BatchController`, `Minn\Rest\Embed`, `Minn\Rest\Reply`, `Minn\Rest\RuntimeRoutes`, `Minn\Rest\Schema`, `Minn\Rest\Taxonomies`, `Minn\Rest\Types`, `Minn\Runtime\Assets`, `Minn\Runtime\Constants`, `Minn\Runtime\Interactivity`, `Minn\Runtime\OEmbed`, `Minn\Runtime\Recovery`, `Minn\Runtime\Registry`, `Minn\Runtime\ScriptModules`, `Minn\Runtime\SymbolGap`, `Minn\Runtime\ThemeSupports`, `Minn\Support\Accents`, `Minn\Support\KsesEntities`, `Minn\Theme\GlobalStyles`, `Minn\Theme\StylePresets`, `Minn\Theme\TemplateIndex`, `Minn\Theme\TemplatePartTheme`, `Minn\Theme\TemplatePatterns`, `Minn\Theme\Templates`, `Minn\Theme\Theme`, `Minn\Theme\ThemeStyles`, `Minn\Theme\UserStyles`
 
 ### static `encode(mixed $value, int $flags = self::READABLE, int $depth = 512): string`
 

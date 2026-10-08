@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Minn\Content;
 
 use Minn\Auth\PortableHash;
-use Minn\Support\Html;
+use Minn\Html;
 
 /**
  * A password-protected post on the front end: its body is the password

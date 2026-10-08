@@ -11,7 +11,7 @@ use Minn\Content\Texturize;
 use Minn\Extension\Extensions;
 use Minn\Front\Permalinks;
 use Minn\Runtime\Runtime;
-use Minn\Support\Html;
+use Minn\Html;
 
 /**
  * What a classic theme's the_content() prints: the engine's block pipeline

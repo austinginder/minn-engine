@@ -13,7 +13,7 @@ use Minn\Front\Kind;
 use Minn\Front\Permalinks;
 use Minn\Runtime\BlockHooks;
 use Minn\Runtime\Runtime;
-use Minn\Support\Html;
+use Minn\Html;
 use Minn\Theme\Templates;
 use Minn\Theme\Theme;
 use Minn\Blocks\RenderState;

@@ -27,7 +27,7 @@ use Minn\Front\Permalinks;
 use Minn\Media\Uploads;
 use Minn\Runtime\BlockFilters;
 use Minn\Runtime\Runtime;
-use Minn\Support\Html;
+use Minn\Html;
 use Minn\Theme\Templates;
 use Minn\Theme\Theme;
 

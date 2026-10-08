@@ -13,7 +13,7 @@ use Minn\Front\Resolution;
 use Minn\Front\Resolver;
 use Minn\Http\Request;
 use Minn\Media\Metadata;
-use Minn\Support\Html;
+use Minn\Html;
 use Minn\Support\Serialized;
 
 /**

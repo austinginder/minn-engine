@@ -13,7 +13,7 @@ use Minn\Auth\Nonce;
 use Minn\Content\Site;
 use Minn\Content\UserRecord;
 use Minn\Json;
-use Minn\Support\Html;
+use Minn\Html;
 
 /**
  * The Minn bar on the public site: the same server-rendered chrome the

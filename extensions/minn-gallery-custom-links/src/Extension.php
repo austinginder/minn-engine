@@ -7,7 +7,7 @@ namespace Minn\Ext\GalleryLinks;
 use Minn\Content\Posts;
 use Minn\Extension\Extension as MinnExtension;
 use Minn\Extension\Seams;
-use Minn\Support\Html;
+use Minn\Html;
 
 /**
  * Wraps every attachment image that carries a _gallery_link_url in the

@@ -11,7 +11,7 @@ use Minn\Content\Site;
 use Minn\Db;
 use Minn\Front\Permalinks;
 use Minn\Rest\UserObject;
-use Minn\Support\Html;
+use Minn\Html;
 use Minn\Support\Kses;
 
 /** core/latest-comments: the newest approved comments with avatar, meta, and a 20-word excerpt. */

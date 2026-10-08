@@ -17,7 +17,7 @@ use Minn\Content\Site;
 use Minn\Content\Users;
 use Minn\Content\Texturize;
 use Minn\Front\Permalinks;
-use Minn\Support\Html;
+use Minn\Html;
 use Minn\Support\Kses;
 use Minn\Content\PasswordGate;
 use Minn\Runtime\Avatar;

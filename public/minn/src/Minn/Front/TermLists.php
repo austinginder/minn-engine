@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Minn\Front;
 
-use Minn\Support\Html;
+use Minn\Html;
 
 /**
  * A term's parent chain and the tag cloud, built from term rows the caller

@@ -19,7 +19,7 @@ use Minn\Runtime\Pages;
 use Minn\Runtime\Runtime;
 use Minn\Front\Kind;
 use Minn\Front\Permalinks;
-use Minn\Support\Html;
+use Minn\Html;
 use Minn\Support\Kses;
 
 /**

@@ -13,7 +13,7 @@
 use Minn\Blocks\Layout;
 use Minn\Blocks\LayoutStyle;
 use Minn\Content\Blocks as MinnBlocks;
-use Minn\Support\Html;
+use Minn\Html;
 
 /** The layout types the reference defines: class names, base styles, spacing styles (data/layout-definitions.json). */
 function wp_get_layout_definitions()

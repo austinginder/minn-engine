@@ -15,7 +15,6 @@ escaping, serialized readers, small helpers
 | [`Files`](#files) | final class | 66 | Recursive filesystem work behind WP_Filesystem_Direct: best-effort tree |
 | [`Flag`](#flag) | final class | 11 | A yes or no as WordPress reads one from loose input (wp_validate_boolean). |
 | [`Hierarchy`](#hierarchy) | final class | 52 | Loops in a parent chain, found with two walkers: a slow one that takes one |
-| [`Html`](#html) | final class | 107 |  |
 | [`Ip`](#ip) | final class | 22 | Addresses with their identifying tail removed, for logs and analytics that |
 | [`Kses`](#kses) | final class | 577 | The HTML a user without unfiltered_html may store. Tags outside the |
 | [`KsesAttributes`](#ksesattributes) | final class | 64 | Kses one attribute at a time, for the shortcode pass that runs inside |
@@ -284,59 +283,6 @@ when the chain ends without a loop.
 - `@return array<int|string, true>|null`
 
 Internals: `walk()` (private, line 43)
-
-
-## Html
-
-`final class Minn\Support\Html` · `public/minn/src/Minn/Support/Html.php`
-
-- const `SPLIT` = `'/(<(?:!--.*?(?:-->|$)|!\\[CDATA\\[.*?(?:\\]\\]>|$)|[^>]*>?))/s'` — Markup's pieces of HTML: comments and CDATA whole (to the end when unclosed), else from "<" to the next ">".
-
-Used by: `Minn\Admin\AppController`, `Minn\Admin\LanguageChoices`, `Minn\Blocks\Dynamic\LatestComments`, `Minn\Blocks\Dynamic\LatestPosts`, `Minn\Blocks\Dynamic\Search`, `Minn\Blocks\Dynamic\SocialLinks`, `Minn\Blocks\Dynamic\TagCloud`, `Minn\Blocks\Dynamic\Theme\Comments`, `Minn\Blocks\Dynamic\Theme\Navigation`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Blocks\Dynamic\Theme\Structure`, `Minn\Blocks\Dynamic\Theme\TermBlocks`, `Minn\Blocks\ImageTags`, `Minn\Blocks\Renderer`, `Minn\Blocks\Wrapper`, `Minn\Content\Menus`, `Minn\Content\PasswordGate`, `Minn\Content\TermLinks`, `Minn\Front\AdminBar`, `Minn\Front\PostNavigation`, `Minn\Front\Renderer`, `Minn\Front\SitemapXml`, `Minn\Front\TermLists`, `Minn\Http\Failure`, `Minn\Login\LoginController`, `Minn\Login\LoginForm`, `Minn\Login\LoginNotices`, `Minn\Rest\MediaObject`, `Minn\Rest\PluginsController`, `Minn\Runtime\Shortcodes`, `Minn\Theme\ArchiveTitle`, `Minn\Theme\ClassicContent`, `Minn\Theme\ClassicRenderer`, `Minn\Theme\HeadLinks`, `Minn\Theme\PageRenderer`
-
-### static `split(string $html): array`
-
-Markup cut into text and HTML pieces, the HTML ones at the odd
-positions (wp_html_split): a comment or CDATA section is one piece
-whatever it holds, and a "<" in text starts a piece that runs to the
-next ">".
-
-- `@return list<string>`
-
-### static `esc(?string $value): string`
-
-Text escaped for HTML.
-
-### static `attr(?string $value): string`
-
-Text escaped for an attribute value.
-
-### static `addClasses(string $html, array $classes, ?string $onClass = NULL): string`
-
-Appends classes to the first element in a fragment (or to the first
-element already carrying $onClass), adding a class attribute when
-the element has none. Existing classes keep their order.
-
-- `@param list<string> $classes`
-
-### static `stripAllTags(string $text, bool $collapseWhitespace = false): string`
-
-Drops script and style elements with their contents, then every other tag; whitespace runs optionally collapse to one space.
-
-### static `textField(string $text, bool $keepNewlines, Closure $validUtf8, Closure $encodeLessThan): string`
-
-A single line of plain text from user input: tags stripped, control
-whitespace folded, percent escapes removed. The caller passes its own
-UTF-8 check and less-than encoder so its filters keep applying.
-
-- `@param Closure(string): string $validUtf8 @param Closure(string): string $encodeLessThan`
-
-### static `scriptBody(string $markup): ?string`
-
-The code inside markup that is exactly one bare script element once the
-surrounding whitespace is gone, or null for anything else: a tag with
-attributes, an empty element, a missing end. The tag names match in any
-case and the code is returned as written.
 
 
 ## Ip

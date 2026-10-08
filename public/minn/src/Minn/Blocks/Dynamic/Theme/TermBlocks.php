@@ -12,7 +12,7 @@ use Minn\Content\TermRecord;
 use Minn\Content\Terms;
 use Minn\Front\Kind;
 use Minn\Front\Permalinks;
-use Minn\Support\Html;
+use Minn\Html;
 
 /**
  * term-name, term-count and term-description: the term a block's context

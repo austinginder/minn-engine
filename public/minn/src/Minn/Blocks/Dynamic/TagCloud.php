@@ -8,7 +8,7 @@ use Minn\Content\TermRecord;
 use Minn\Blocks\Block;
 use Minn\Db;
 use Minn\Front\Permalinks;
-use Minn\Support\Html;
+use Minn\Html;
 
 /**
  * core/tag-cloud: non-empty tags by name, sized from 8pt to 22pt in

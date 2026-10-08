@@ -11,7 +11,7 @@ use Minn\Content\Texturize;
 use Minn\Front\Permalinks;
 use Minn\Media\Metadata;
 use Minn\Media\Uploads;
-use Minn\Support\Html;
+use Minn\Html;
 
 /** The wp/v2 media object, view and edit context. */
 final readonly class MediaObject

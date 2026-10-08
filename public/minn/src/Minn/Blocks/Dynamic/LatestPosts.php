@@ -9,7 +9,7 @@ use Minn\Blocks\Block;
 use Minn\Content\Site;
 use Minn\Db;
 use Minn\Front\Permalinks;
-use Minn\Support\Html;
+use Minn\Html;
 use Minn\Content\PasswordGate;
 
 /** core/latest-posts: the newest published posts as a list, optionally dated. */

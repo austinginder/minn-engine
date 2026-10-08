@@ -10,7 +10,7 @@ use Minn\Runtime\Runtime;
 use Minn\Content\Posts;
 use Minn\Media\Metadata;
 use Minn\Media\Uploads;
-use Minn\Support\Html;
+use Minn\Html;
 
 /**
  * The attributes the reference adds to an <img> that carries a

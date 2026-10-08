@@ -8,7 +8,7 @@ use Minn\Blocks\Block;
 use Minn\Blocks\RenderState;
 use Minn\Blocks\Renderer;
 use Minn\Front\Permalinks;
-use Minn\Support\Html;
+use Minn\Html;
 use Minn\Blocks\Styles;
 
 /**

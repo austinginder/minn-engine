@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Minn\Login;
 
-use Minn\Support\Html;
+use Minn\Html;
 
 /** The sign-in page markup. */
 final class LoginForm

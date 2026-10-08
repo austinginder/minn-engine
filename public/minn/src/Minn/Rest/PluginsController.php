@@ -18,7 +18,7 @@ use Minn\Http\Policy;
 use Minn\Http\Route;
 use Minn\Runtime\Refusal;
 use Minn\RestError;
-use Minn\Support\Html;
+use Minn\Html;
 use Minn\Support\Serialized;
 
 /**

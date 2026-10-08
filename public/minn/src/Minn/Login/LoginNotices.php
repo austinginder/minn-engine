@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Minn\Login;
 
-use Minn\Support\Html;
+use Minn\Html;
 
 /**
  * What a sign-in page tells the reader, held as the reference's pages hold

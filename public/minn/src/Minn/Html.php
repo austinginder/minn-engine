@@ -2,10 +2,15 @@
 
 declare(strict_types=1);
 
-namespace Minn\Support;
+namespace Minn;
 
 use Closure;
 
+/**
+ * HTML, the front door for escaping and cutting markup: plain static calls,
+ * one import away (use Minn\Html;), the way Minn\Http and Minn\Json are.
+ * Escaping at output boundaries goes through here.
+ */
 final class Html
 {
     /** Markup's pieces of HTML: comments and CDATA whole (to the end when unclosed), else from "<" to the next ">". */

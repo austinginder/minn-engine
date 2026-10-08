@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Minn\Http;
 
-use Minn\Support\Html;
+use Minn\Html;
 use Throwable;
 
 /**

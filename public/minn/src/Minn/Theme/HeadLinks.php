@@ -11,7 +11,7 @@ use Minn\Front\Kind;
 use Minn\Front\Permalinks;
 use Minn\Front\Resolution;
 use Minn\Runtime\Runtime;
-use Minn\Support\Html;
+use Minn\Html;
 use Minn\I18n\Gettext;
 use Minn\Support\Escape;
 use Minn\Support\Lists;

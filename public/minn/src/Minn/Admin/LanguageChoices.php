@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Minn\Admin;
 
-use Minn\Support\Html;
+use Minn\Html;
 
 /**
  * The language picker's markup. English always leads the list and carries the

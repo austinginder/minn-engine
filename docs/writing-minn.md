@@ -99,7 +99,7 @@ namespace Minn\Blocks\Dynamic;
 use Minn\Blocks\Block;
 use Minn\Blocks\Renderer;
 use Minn\Content\Posts;
-use Minn\Support\Html;
+use Minn\Html;
 
 /** core/acme-latest: the newest post's title, linked. */
 final readonly class AcmeLatest
@@ -161,7 +161,7 @@ namespace Minn\Ext\AcmeFooter;
 
 use Minn\Extension\Extension as MinnExtension;
 use Minn\Extension\Seams;
-use Minn\Support\Html;
+use Minn\Html;
 
 final class Extension implements MinnExtension
 {

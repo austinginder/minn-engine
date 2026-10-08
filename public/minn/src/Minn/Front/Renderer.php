@@ -9,7 +9,7 @@ use Minn\Content\Blocks;
 use Minn\Content\Page;
 use Minn\Content\Excerpt;
 use Minn\Db;
-use Minn\Support\Html;
+use Minn\Html;
 use Minn\Theme\QueryClasses;
 use Minn\Content\PasswordGate;
 

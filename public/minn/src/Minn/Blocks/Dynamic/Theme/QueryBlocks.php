@@ -19,7 +19,7 @@ use Minn\Content\Texturize;
 use Minn\Front\Kind;
 use Minn\Runtime\Runtime;
 use Minn\Front\Permalinks;
-use Minn\Support\Html;
+use Minn\Html;
 use Minn\Support\Serialized;
 
 /** query, post-template, query-title, query-no-results, query-pagination, query-total. */

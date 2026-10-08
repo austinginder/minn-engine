@@ -9,7 +9,7 @@ use DateTimeZone;
 use Minn\Front\Kind;
 use Minn\Front\Resolution;
 use Minn\Runtime\Runtime;
-use Minn\Support\Html;
+use Minn\Html;
 
 /**
  * The label and name an archive titles itself with: `Category:` around the

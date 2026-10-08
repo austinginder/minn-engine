@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Minn\Front;
 
-use Minn\Support\Html;
+use Minn\Html;
 
 /** The two sitemap documents, index and URL set, from entry maps; one builder for the engine's routes and the facade's renderer. */
 final class SitemapXml

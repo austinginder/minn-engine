@@ -8,7 +8,7 @@ use Minn\Blocks\Block;
 use Minn\Content\Blocks;
 use Minn\Extension\Extension as MinnExtension;
 use Minn\Extension\Seams;
-use Minn\Support\Html;
+use Minn\Html;
 
 /**
  * The mosne/dark-palette navigation item, as the plugin rendered it: a

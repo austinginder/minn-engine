@@ -15,7 +15,7 @@ use Minn\Http\Access;
 use Minn\Http\Policy;
 use Minn\Http\Route;
 use Minn\Json;
-use Minn\Support\Html;
+use Minn\Html;
 
 /**
  * Serves Minn Admin from the engine: the path-routed shell (every

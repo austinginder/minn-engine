@@ -19,7 +19,7 @@ use Minn\Http\Route;
 use Minn\Auth\Authenticated;
 use Minn\Auth\Nonce;
 use Minn\Runtime\Runtime;
-use Minn\Support\Html;
+use Minn\Html;
 use Minn\Auth\PasswordReset;
 use Minn\Auth\PortableHash;
 

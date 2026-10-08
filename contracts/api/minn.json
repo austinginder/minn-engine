@@ -873,14 +873,14 @@
                 "Minn\\Auth\\Authenticator",
                 "Minn\\Auth\\Capabilities",
                 "Minn\\Front\\Permalinks",
+                "Minn\\Html",
                 "Minn\\Http\\Access",
                 "Minn\\Http\\Method",
                 "Minn\\Http\\Policy",
                 "Minn\\Http\\Request",
                 "Minn\\Http\\Response",
                 "Minn\\Http\\Route",
-                "Minn\\Json",
-                "Minn\\Support\\Html"
+                "Minn\\Json"
             ],
             "usedBy": [
                 "Minn\\Engine"
@@ -2900,7 +2900,7 @@
             "implements": [],
             "extends": null,
             "uses": [
-                "Minn\\Support\\Html"
+                "Minn\\Html"
             ],
             "usedBy": [],
             "constructor": null,
@@ -12526,8 +12526,8 @@
                 "Minn\\Content\\Site",
                 "Minn\\Db",
                 "Minn\\Front\\Permalinks",
+                "Minn\\Html",
                 "Minn\\Rest\\UserObject",
-                "Minn\\Support\\Html",
                 "Minn\\Support\\Kses"
             ],
             "usedBy": [
@@ -12679,7 +12679,7 @@
                 "Minn\\Content\\Site",
                 "Minn\\Db",
                 "Minn\\Front\\Permalinks",
-                "Minn\\Support\\Html"
+                "Minn\\Html"
             ],
             "usedBy": [
                 "Minn\\Blocks\\Renderer"
@@ -12785,7 +12785,7 @@
                 "Minn\\Blocks\\Renderer",
                 "Minn\\Blocks\\Styles",
                 "Minn\\Front\\Permalinks",
-                "Minn\\Support\\Html"
+                "Minn\\Html"
             ],
             "usedBy": [
                 "Minn\\Blocks\\Renderer"
@@ -12872,8 +12872,8 @@
                 "Minn\\Blocks\\Layout",
                 "Minn\\Blocks\\Renderer",
                 "Minn\\Blocks\\Styles",
+                "Minn\\Html",
                 "Minn\\Json",
-                "Minn\\Support\\Html",
                 "Minn\\Support\\Kses"
             ],
             "usedBy": [
@@ -13111,7 +13111,7 @@
                 "Minn\\Content\\TermRecord",
                 "Minn\\Db",
                 "Minn\\Front\\Permalinks",
-                "Minn\\Support\\Html"
+                "Minn\\Html"
             ],
             "usedBy": [
                 "Minn\\Blocks\\Renderer"
@@ -13210,9 +13210,9 @@
                 "Minn\\Content\\Texturize",
                 "Minn\\Content\\Users",
                 "Minn\\Front\\Permalinks",
+                "Minn\\Html",
                 "Minn\\Runtime\\Avatar",
                 "Minn\\Runtime\\Runtime",
-                "Minn\\Support\\Html",
                 "Minn\\Support\\Kses"
             ],
             "usedBy": [
@@ -13774,9 +13774,9 @@
                 "Minn\\Db",
                 "Minn\\Front\\Kind",
                 "Minn\\Front\\Permalinks",
+                "Minn\\Html",
                 "Minn\\Runtime\\Pages",
                 "Minn\\Runtime\\Runtime",
-                "Minn\\Support\\Html",
                 "Minn\\Support\\Kses"
             ],
             "usedBy": [],
@@ -14408,8 +14408,8 @@
                 "Minn\\Front\\Kind",
                 "Minn\\Front\\Permalinks",
                 "Minn\\Front\\Resolution",
-                "Minn\\Runtime\\Runtime",
-                "Minn\\Support\\Html"
+                "Minn\\Html",
+                "Minn\\Runtime\\Runtime"
             ],
             "usedBy": [
                 "Minn\\Blocks\\Renderer"
@@ -14877,9 +14877,9 @@
                 "Minn\\Content\\Texturize",
                 "Minn\\Front\\Kind",
                 "Minn\\Front\\Permalinks",
+                "Minn\\Html",
                 "Minn\\I18n\\Gettext",
                 "Minn\\Runtime\\Runtime",
-                "Minn\\Support\\Html",
                 "Minn\\Support\\Serialized",
                 "Minn\\Theme\\ArchiveTitle"
             ],
@@ -15359,9 +15359,9 @@
                 "Minn\\Content\\Site",
                 "Minn\\Front\\Kind",
                 "Minn\\Front\\Permalinks",
+                "Minn\\Html",
                 "Minn\\Runtime\\BlockHooks",
                 "Minn\\Runtime\\Runtime",
-                "Minn\\Support\\Html",
                 "Minn\\Theme\\Templates",
                 "Minn\\Theme\\Theme"
             ],
@@ -15638,7 +15638,7 @@
                 "Minn\\Content\\Terms",
                 "Minn\\Front\\Kind",
                 "Minn\\Front\\Permalinks",
-                "Minn\\Support\\Html"
+                "Minn\\Html"
             ],
             "usedBy": [
                 "Minn\\Blocks\\Renderer"
@@ -16015,10 +16015,10 @@
             "uses": [
                 "Minn\\Blocks\\RenderState",
                 "Minn\\Content\\Posts",
+                "Minn\\Html",
                 "Minn\\Media\\Metadata",
                 "Minn\\Media\\Uploads",
-                "Minn\\Runtime\\Runtime",
-                "Minn\\Support\\Html"
+                "Minn\\Runtime\\Runtime"
             ],
             "usedBy": [
                 "Minn\\Blocks\\Renderer"
@@ -18359,10 +18359,10 @@
                 "Minn\\Db",
                 "Minn\\Extension\\Extensions",
                 "Minn\\Front\\Permalinks",
+                "Minn\\Html",
                 "Minn\\Media\\Uploads",
                 "Minn\\Runtime\\BlockFilters",
                 "Minn\\Runtime\\Runtime",
-                "Minn\\Support\\Html",
                 "Minn\\Theme\\Templates",
                 "Minn\\Theme\\Theme"
             ],
@@ -20116,7 +20116,7 @@
                 "Minn\\Blocks\\Block",
                 "Minn\\Blocks\\RenderState",
                 "Minn\\Blocks\\Styles",
-                "Minn\\Support\\Html"
+                "Minn\\Html"
             ],
             "usedBy": [
                 "Minn\\Blocks\\Dynamic\\Theme\\Comments",
@@ -27837,8 +27837,8 @@
                 "Minn\\Content\\Terms",
                 "Minn\\Db",
                 "Minn\\Front\\Permalinks",
+                "Minn\\Html",
                 "Minn\\Runtime\\Refusal",
-                "Minn\\Support\\Html",
                 "Minn\\Support\\Serialized"
             ],
             "usedBy": [
@@ -28761,7 +28761,7 @@
                 "Minn\\Auth\\PortableHash",
                 "Minn\\Content\\PostRecord",
                 "Minn\\Content\\Reader",
-                "Minn\\Support\\Html"
+                "Minn\\Html"
             ],
             "usedBy": [
                 "Minn\\Blocks\\Dynamic\\LatestPosts",
@@ -33501,7 +33501,7 @@
             "implements": [],
             "extends": null,
             "uses": [
-                "Minn\\Support\\Html"
+                "Minn\\Html"
             ],
             "usedBy": [],
             "constructor": null,
@@ -40283,8 +40283,8 @@
                 "Minn\\Front\\Kind",
                 "Minn\\Front\\Permalinks",
                 "Minn\\Front\\Resolution",
-                "Minn\\Json",
-                "Minn\\Support\\Html"
+                "Minn\\Html",
+                "Minn\\Json"
             ],
             "usedBy": [
                 "Minn\\Engine",
@@ -45049,7 +45049,7 @@
             "implements": [],
             "extends": null,
             "uses": [
-                "Minn\\Support\\Html"
+                "Minn\\Html"
             ],
             "usedBy": [],
             "constructor": null,
@@ -45885,7 +45885,7 @@
                 "Minn\\Front\\Kind",
                 "Minn\\Front\\Permalinks",
                 "Minn\\Front\\Resolution",
-                "Minn\\Support\\Html",
+                "Minn\\Html",
                 "Minn\\Theme\\QueryClasses"
             ],
             "usedBy": [
@@ -48523,7 +48523,7 @@
             "implements": [],
             "extends": null,
             "uses": [
-                "Minn\\Support\\Html"
+                "Minn\\Html"
             ],
             "usedBy": [],
             "constructor": null,
@@ -48769,7 +48769,7 @@
             "implements": [],
             "extends": null,
             "uses": [
-                "Minn\\Support\\Html"
+                "Minn\\Html"
             ],
             "usedBy": [],
             "constructor": null,
@@ -49613,6 +49613,267 @@
             ]
         },
         {
+            "name": "Minn\\Html",
+            "short": "Html",
+            "namespace": "Minn",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Html.php",
+            "lines": 107,
+            "doc": "HTML, the front door for escaping and cutting markup: plain static calls,\none import away (use Minn\\Html;), the way Minn\\Http and Minn\\Json are.\nEscaping at output boundaries goes through here.",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\Http",
+                "Minn\\Json"
+            ],
+            "usedBy": [
+                "Minn\\Admin\\AppController",
+                "Minn\\Admin\\LanguageChoices",
+                "Minn\\Blocks\\Dynamic\\LatestComments",
+                "Minn\\Blocks\\Dynamic\\LatestPosts",
+                "Minn\\Blocks\\Dynamic\\Search",
+                "Minn\\Blocks\\Dynamic\\SocialLinks",
+                "Minn\\Blocks\\Dynamic\\TagCloud",
+                "Minn\\Blocks\\Dynamic\\Theme\\Comments",
+                "Minn\\Blocks\\Dynamic\\Theme\\Navigation",
+                "Minn\\Blocks\\Dynamic\\Theme\\PostBlocks",
+                "Minn\\Blocks\\Dynamic\\Theme\\QueryBlocks",
+                "Minn\\Blocks\\Dynamic\\Theme\\Structure",
+                "Minn\\Blocks\\Dynamic\\Theme\\TermBlocks",
+                "Minn\\Blocks\\ImageTags",
+                "Minn\\Blocks\\Renderer",
+                "Minn\\Blocks\\Wrapper",
+                "Minn\\Content\\Menus",
+                "Minn\\Content\\PasswordGate",
+                "Minn\\Content\\TermLinks",
+                "Minn\\Front\\AdminBar",
+                "Minn\\Front\\PostNavigation",
+                "Minn\\Front\\Renderer",
+                "Minn\\Front\\SitemapXml",
+                "Minn\\Front\\TermLists",
+                "Minn\\Html\\Decoder",
+                "Minn\\Html\\Edits",
+                "Minn\\Html\\Escaped",
+                "Minn\\Html\\Scanner",
+                "Minn\\Html\\TagQuery",
+                "Minn\\Html\\Tags",
+                "Minn\\Html\\TokenMap",
+                "Minn\\Http\\Failure",
+                "Minn\\Login\\LoginController",
+                "Minn\\Login\\LoginForm",
+                "Minn\\Login\\LoginNotices",
+                "Minn\\Rest\\MediaObject",
+                "Minn\\Rest\\PluginsController",
+                "Minn\\Runtime\\Shortcodes",
+                "Minn\\Theme\\ArchiveTitle",
+                "Minn\\Theme\\ClassicContent",
+                "Minn\\Theme\\ClassicRenderer",
+                "Minn\\Theme\\HeadLinks",
+                "Minn\\Theme\\PageRenderer"
+            ],
+            "constructor": null,
+            "cases": [],
+            "constants": [
+                {
+                    "name": "SPLIT",
+                    "value": "'/(<(?:!--.*?(?:-->|$)|!\\\\[CDATA\\\\[.*?(?:\\\\]\\\\]>|$)|[^>]*>?))/s'",
+                    "doc": "Markup's pieces of HTML: comments and CDATA whole (to the end when unclosed), else from \"<\" to the next \">\".",
+                    "visibility": "public"
+                }
+            ],
+            "properties": [],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "split",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "split(string $html): array",
+                    "doc": "Markup cut into text and HTML pieces, the HTML ones at the odd\npositions (wp_html_split): a comment or CDATA section is one piece\nwhatever it holds, and a \"<\" in text starts a piece that runs to the\nnext \">\".",
+                    "shapes": [
+                        "@return list<string>"
+                    ],
+                    "params": [
+                        {
+                            "name": "html",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 27,
+                    "end": 30
+                },
+                {
+                    "routes": [],
+                    "name": "esc",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "esc(?string $value): string",
+                    "doc": "Text escaped for HTML.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "value",
+                            "type": "?string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 33,
+                    "end": 36
+                },
+                {
+                    "routes": [],
+                    "name": "attr",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "attr(?string $value): string",
+                    "doc": "Text escaped for an attribute value.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "value",
+                            "type": "?string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 39,
+                    "end": 42
+                },
+                {
+                    "routes": [],
+                    "name": "addClasses",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "addClasses(string $html, array $classes, ?string $onClass = NULL): string",
+                    "doc": "Appends classes to the first element in a fragment (or to the first\nelement already carrying $onClass), adding a class attribute when\nthe element has none. Existing classes keep their order.",
+                    "shapes": [
+                        "@param list<string> $classes"
+                    ],
+                    "params": [
+                        {
+                            "name": "html",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "classes",
+                            "type": "array",
+                            "shape": "list<string>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "onClass",
+                            "type": "?string",
+                            "shape": "",
+                            "default": "NULL",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 51,
+                    "end": 73
+                },
+                {
+                    "routes": [],
+                    "name": "stripAllTags",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "stripAllTags(string $text, bool $collapseWhitespace = false): string",
+                    "doc": "Drops script and style elements with their contents, then every other tag; whitespace runs optionally collapse to one space.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "text",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "collapseWhitespace",
+                            "type": "bool",
+                            "shape": "",
+                            "default": "false",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 76,
+                    "end": 83
+                },
+                {
+                    "routes": [],
+                    "name": "textField",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "textField(string $text, bool $keepNewlines, Closure $validUtf8, Closure $encodeLessThan): string",
+                    "doc": "A single line of plain text from user input: tags stripped, control\nwhitespace folded, percent escapes removed. The caller passes its own\nUTF-8 check and less-than encoder so its filters keep applying.",
+                    "shapes": [
+                        "@param Closure(string): string $validUtf8 @param Closure(string): string $encodeLessThan"
+                    ],
+                    "params": [
+                        {
+                            "name": "text",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "keepNewlines",
+                            "type": "bool",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "validUtf8",
+                            "type": "Closure",
+                            "shape": "Closure(string): string",
+                            "default": null,
+                            "doc": "@param Closure(string): string $encodeLessThan"
+                        },
+                        {
+                            "name": "encodeLessThan",
+                            "type": "Closure",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 92,
+                    "end": 108
+                },
+                {
+                    "routes": [],
+                    "name": "scriptBody",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "scriptBody(string $markup): ?string",
+                    "doc": "The code inside markup that is exactly one bare script element once the\nsurrounding whitespace is gone, or null for anything else: a tag with\nattributes, an empty element, a missing end. The tag names match in any\ncase and the code is returned as written.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "markup",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 116,
+                    "end": 119
+                }
+            ]
+        },
+        {
             "name": "Minn\\Html\\Decoder",
             "short": "Decoder",
             "namespace": "Minn\\Html",
@@ -49622,7 +49883,9 @@
             "doc": "Character reference decoding for text and attribute values: numeric and\nnamed references, the legacy names that work without a semicolon (not in\nan attribute when an \"=\" or alphanumeric follows), unknown ones left as is.",
             "implements": [],
             "extends": null,
-            "uses": [],
+            "uses": [
+                "Minn\\Html"
+            ],
             "usedBy": [
                 "Minn\\Html\\Edits",
                 "Minn\\Html\\Scanner",
@@ -49822,6 +50085,7 @@
             "implements": [],
             "extends": null,
             "uses": [
+                "Minn\\Html",
                 "Minn\\Html\\Decoder",
                 "Minn\\Html\\Tags"
             ],
@@ -50380,7 +50644,9 @@
             "doc": "An attribute value that comes already escaped (a URL through esc_url), written as it is.",
             "implements": [],
             "extends": null,
-            "uses": [],
+            "uses": [
+                "Minn\\Html"
+            ],
             "usedBy": [
                 "Minn\\Html\\Tags"
             ],
@@ -50427,6 +50693,7 @@
             "implements": [],
             "extends": null,
             "uses": [
+                "Minn\\Html",
                 "Minn\\Html\\Decoder",
                 "Minn\\Html\\Tags"
             ],
@@ -50828,7 +51095,9 @@
             "doc": "A tag processor's next_tag() query: a tag name (any case), a class, the\nnth match to stop at, and whether closers count.",
             "implements": [],
             "extends": null,
-            "uses": [],
+            "uses": [
+                "Minn\\Html"
+            ],
             "usedBy": [
                 "Minn\\Html\\Tags"
             ],
@@ -50980,6 +51249,7 @@
             "implements": [],
             "extends": null,
             "uses": [
+                "Minn\\Html",
                 "Minn\\Html\\Decoder",
                 "Minn\\Html\\Edits",
                 "Minn\\Html\\Escaped",
@@ -52106,7 +52376,9 @@
             "doc": "A map from words to replacements that reads the longest word at a place\nin a text (as character reference names are read): words shorter than\nthe key length stand alone, the others are grouped by their first bytes,\nlongest first.",
             "implements": [],
             "extends": null,
-            "uses": [],
+            "uses": [
+                "Minn\\Html"
+            ],
             "usedBy": [],
             "constructor": {
                 "signature": "__construct(array $mappings, int $keyLength)",
@@ -57428,6 +57700,7 @@
                 "Minn\\Json"
             ],
             "usedBy": [
+                "Minn\\Html",
                 "Minn\\Http\\Access",
                 "Minn\\Http\\Args",
                 "Minn\\Http\\CertificateName",
@@ -59560,9 +59833,9 @@
             "implements": [],
             "extends": null,
             "uses": [
+                "Minn\\Html",
                 "Minn\\Http",
-                "Minn\\Http\\Response",
-                "Minn\\Support\\Html"
+                "Minn\\Http\\Response"
             ],
             "usedBy": [
                 "Minn\\Engine",
@@ -66660,6 +66933,7 @@
                 "Minn\\Extension\\Loader",
                 "Minn\\Extension\\Manifest",
                 "Minn\\Front\\AdminBar",
+                "Minn\\Html",
                 "Minn\\Http",
                 "Minn\\Http\\Exchange",
                 "Minn\\Http\\Request",
@@ -66904,6 +67178,7 @@
                 "Minn\\Content\\UserRecord",
                 "Minn\\Content\\Users",
                 "Minn\\Front\\Permalinks",
+                "Minn\\Html",
                 "Minn\\Http\\Access",
                 "Minn\\Http\\Method",
                 "Minn\\Http\\Policy",
@@ -66913,8 +67188,7 @@
                 "Minn\\Login\\LoginForm",
                 "Minn\\Login\\LoginHooks",
                 "Minn\\Login\\LoginNotices",
-                "Minn\\Runtime\\Runtime",
-                "Minn\\Support\\Html"
+                "Minn\\Runtime\\Runtime"
             ],
             "usedBy": [
                 "Minn\\Engine"
@@ -67565,9 +67839,9 @@
             "implements": [],
             "extends": null,
             "uses": [
+                "Minn\\Html",
                 "Minn\\Login\\LoginHooks",
-                "Minn\\Login\\LoginNotices",
-                "Minn\\Support\\Html"
+                "Minn\\Login\\LoginNotices"
             ],
             "usedBy": [
                 "Minn\\Login\\LoginController"
@@ -68379,7 +68653,7 @@
             "implements": [],
             "extends": null,
             "uses": [
-                "Minn\\Support\\Html"
+                "Minn\\Html"
             ],
             "usedBy": [
                 "Minn\\Login\\LoginController",
@@ -90966,6 +91240,7 @@
                 "Minn\\Content\\Posts",
                 "Minn\\Content\\Texturize",
                 "Minn\\Front\\Permalinks",
+                "Minn\\Html",
                 "Minn\\Media\\Metadata",
                 "Minn\\Media\\Uploads",
                 "Minn\\Rest\\Caller",
@@ -90974,8 +91249,7 @@
                 "Minn\\Rest\\RenderedFields",
                 "Minn\\Rest\\RestMeta",
                 "Minn\\Rest\\RestUrl",
-                "Minn\\Rest\\RuntimePrepare",
-                "Minn\\Support\\Html"
+                "Minn\\Rest\\RuntimePrepare"
             ],
             "usedBy": [
                 "Minn\\Rest\\MediaController",
@@ -92503,6 +92777,7 @@
                 "Minn\\Content\\Site",
                 "Minn\\Extension\\Loader",
                 "Minn\\Extension\\Manifest",
+                "Minn\\Html",
                 "Minn\\Http\\Access",
                 "Minn\\Http\\Method",
                 "Minn\\Http\\Policy",
@@ -92516,7 +92791,6 @@
                 "Minn\\Rest\\Reply",
                 "Minn\\Rest\\RestUrl",
                 "Minn\\Runtime\\Refusal",
-                "Minn\\Support\\Html",
                 "Minn\\Support\\Serialized"
             ],
             "usedBy": [
@@ -126235,8 +126509,8 @@
             "implements": [],
             "extends": null,
             "uses": [
+                "Minn\\Html",
                 "Minn\\Runtime\\Runtime",
-                "Minn\\Support\\Html",
                 "Minn\\Support\\KsesAttributes"
             ],
             "usedBy": [
@@ -133911,257 +134185,6 @@
             ]
         },
         {
-            "name": "Minn\\Support\\Html",
-            "short": "Html",
-            "namespace": "Minn\\Support",
-            "kind": "final class",
-            "file": "public/minn/src/Minn/Support/Html.php",
-            "lines": 107,
-            "doc": "",
-            "implements": [],
-            "extends": null,
-            "uses": [],
-            "usedBy": [
-                "Minn\\Admin\\AppController",
-                "Minn\\Admin\\LanguageChoices",
-                "Minn\\Blocks\\Dynamic\\LatestComments",
-                "Minn\\Blocks\\Dynamic\\LatestPosts",
-                "Minn\\Blocks\\Dynamic\\Search",
-                "Minn\\Blocks\\Dynamic\\SocialLinks",
-                "Minn\\Blocks\\Dynamic\\TagCloud",
-                "Minn\\Blocks\\Dynamic\\Theme\\Comments",
-                "Minn\\Blocks\\Dynamic\\Theme\\Navigation",
-                "Minn\\Blocks\\Dynamic\\Theme\\PostBlocks",
-                "Minn\\Blocks\\Dynamic\\Theme\\QueryBlocks",
-                "Minn\\Blocks\\Dynamic\\Theme\\Structure",
-                "Minn\\Blocks\\Dynamic\\Theme\\TermBlocks",
-                "Minn\\Blocks\\ImageTags",
-                "Minn\\Blocks\\Renderer",
-                "Minn\\Blocks\\Wrapper",
-                "Minn\\Content\\Menus",
-                "Minn\\Content\\PasswordGate",
-                "Minn\\Content\\TermLinks",
-                "Minn\\Front\\AdminBar",
-                "Minn\\Front\\PostNavigation",
-                "Minn\\Front\\Renderer",
-                "Minn\\Front\\SitemapXml",
-                "Minn\\Front\\TermLists",
-                "Minn\\Http\\Failure",
-                "Minn\\Login\\LoginController",
-                "Minn\\Login\\LoginForm",
-                "Minn\\Login\\LoginNotices",
-                "Minn\\Rest\\MediaObject",
-                "Minn\\Rest\\PluginsController",
-                "Minn\\Runtime\\Shortcodes",
-                "Minn\\Theme\\ArchiveTitle",
-                "Minn\\Theme\\ClassicContent",
-                "Minn\\Theme\\ClassicRenderer",
-                "Minn\\Theme\\HeadLinks",
-                "Minn\\Theme\\PageRenderer"
-            ],
-            "constructor": null,
-            "cases": [],
-            "constants": [
-                {
-                    "name": "SPLIT",
-                    "value": "'/(<(?:!--.*?(?:-->|$)|!\\\\[CDATA\\\\[.*?(?:\\\\]\\\\]>|$)|[^>]*>?))/s'",
-                    "doc": "Markup's pieces of HTML: comments and CDATA whole (to the end when unclosed), else from \"<\" to the next \">\".",
-                    "visibility": "public"
-                }
-            ],
-            "properties": [],
-            "methods": [
-                {
-                    "routes": [],
-                    "name": "split",
-                    "static": true,
-                    "visibility": "public",
-                    "signature": "split(string $html): array",
-                    "doc": "Markup cut into text and HTML pieces, the HTML ones at the odd\npositions (wp_html_split): a comment or CDATA section is one piece\nwhatever it holds, and a \"<\" in text starts a piece that runs to the\nnext \">\".",
-                    "shapes": [
-                        "@return list<string>"
-                    ],
-                    "params": [
-                        {
-                            "name": "html",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 22,
-                    "end": 25
-                },
-                {
-                    "routes": [],
-                    "name": "esc",
-                    "static": true,
-                    "visibility": "public",
-                    "signature": "esc(?string $value): string",
-                    "doc": "Text escaped for HTML.",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "value",
-                            "type": "?string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 28,
-                    "end": 31
-                },
-                {
-                    "routes": [],
-                    "name": "attr",
-                    "static": true,
-                    "visibility": "public",
-                    "signature": "attr(?string $value): string",
-                    "doc": "Text escaped for an attribute value.",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "value",
-                            "type": "?string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 34,
-                    "end": 37
-                },
-                {
-                    "routes": [],
-                    "name": "addClasses",
-                    "static": true,
-                    "visibility": "public",
-                    "signature": "addClasses(string $html, array $classes, ?string $onClass = NULL): string",
-                    "doc": "Appends classes to the first element in a fragment (or to the first\nelement already carrying $onClass), adding a class attribute when\nthe element has none. Existing classes keep their order.",
-                    "shapes": [
-                        "@param list<string> $classes"
-                    ],
-                    "params": [
-                        {
-                            "name": "html",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "classes",
-                            "type": "array",
-                            "shape": "list<string>",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "onClass",
-                            "type": "?string",
-                            "shape": "",
-                            "default": "NULL",
-                            "doc": ""
-                        }
-                    ],
-                    "line": 46,
-                    "end": 68
-                },
-                {
-                    "routes": [],
-                    "name": "stripAllTags",
-                    "static": true,
-                    "visibility": "public",
-                    "signature": "stripAllTags(string $text, bool $collapseWhitespace = false): string",
-                    "doc": "Drops script and style elements with their contents, then every other tag; whitespace runs optionally collapse to one space.",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "text",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "collapseWhitespace",
-                            "type": "bool",
-                            "shape": "",
-                            "default": "false",
-                            "doc": ""
-                        }
-                    ],
-                    "line": 71,
-                    "end": 78
-                },
-                {
-                    "routes": [],
-                    "name": "textField",
-                    "static": true,
-                    "visibility": "public",
-                    "signature": "textField(string $text, bool $keepNewlines, Closure $validUtf8, Closure $encodeLessThan): string",
-                    "doc": "A single line of plain text from user input: tags stripped, control\nwhitespace folded, percent escapes removed. The caller passes its own\nUTF-8 check and less-than encoder so its filters keep applying.",
-                    "shapes": [
-                        "@param Closure(string): string $validUtf8 @param Closure(string): string $encodeLessThan"
-                    ],
-                    "params": [
-                        {
-                            "name": "text",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "keepNewlines",
-                            "type": "bool",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "validUtf8",
-                            "type": "Closure",
-                            "shape": "Closure(string): string",
-                            "default": null,
-                            "doc": "@param Closure(string): string $encodeLessThan"
-                        },
-                        {
-                            "name": "encodeLessThan",
-                            "type": "Closure",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 87,
-                    "end": 103
-                },
-                {
-                    "routes": [],
-                    "name": "scriptBody",
-                    "static": true,
-                    "visibility": "public",
-                    "signature": "scriptBody(string $markup): ?string",
-                    "doc": "The code inside markup that is exactly one bare script element once the\nsurrounding whitespace is gone, or null for anything else: a tag with\nattributes, an empty element, a missing end. The tag names match in any\ncase and the code is returned as written.",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "markup",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 111,
-                    "end": 114
-                }
-            ]
-        },
-        {
             "name": "Minn\\Support\\Ip",
             "short": "Ip",
             "namespace": "Minn\\Support",
@@ -137475,8 +137498,8 @@
             "uses": [
                 "Minn\\Front\\Kind",
                 "Minn\\Front\\Resolution",
-                "Minn\\Runtime\\Runtime",
-                "Minn\\Support\\Html"
+                "Minn\\Html",
+                "Minn\\Runtime\\Runtime"
             ],
             "usedBy": [
                 "Minn\\Blocks\\Dynamic\\Theme\\QueryBlocks"
@@ -137826,8 +137849,8 @@
                 "Minn\\Content\\Texturize",
                 "Minn\\Extension\\Extensions",
                 "Minn\\Front\\Permalinks",
-                "Minn\\Runtime\\Runtime",
-                "Minn\\Support\\Html"
+                "Minn\\Html",
+                "Minn\\Runtime\\Runtime"
             ],
             "usedBy": [],
             "constructor": null,
@@ -137884,9 +137907,9 @@
                 "Minn\\Front\\Kind",
                 "Minn\\Front\\Permalinks",
                 "Minn\\Front\\Resolution",
+                "Minn\\Html",
                 "Minn\\Runtime\\Plugins",
                 "Minn\\Runtime\\Runtime",
-                "Minn\\Support\\Html",
                 "Minn\\Theme\\BodyClasses",
                 "Minn\\Theme\\BodyFacts",
                 "Minn\\Theme\\ClassicTheme",
@@ -139581,10 +139604,10 @@
                 "Minn\\Front\\Kind",
                 "Minn\\Front\\Permalinks",
                 "Minn\\Front\\Resolution",
+                "Minn\\Html",
                 "Minn\\I18n\\Gettext",
                 "Minn\\Runtime\\Runtime",
                 "Minn\\Support\\Escape",
-                "Minn\\Support\\Html",
                 "Minn\\Support\\Lists"
             ],
             "usedBy": [
@@ -140345,8 +140368,8 @@
                 "Minn\\Front\\Kind",
                 "Minn\\Front\\Permalinks",
                 "Minn\\Front\\Resolution",
+                "Minn\\Html",
                 "Minn\\Runtime\\Runtime",
-                "Minn\\Support\\Html",
                 "Minn\\Theme\\GlobalStyles",
                 "Minn\\Theme\\HeadLinks",
                 "Minn\\Theme\\MainQueryBridge",

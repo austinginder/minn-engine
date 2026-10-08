@@ -11,7 +11,7 @@ use Minn\Support\Accents;
 use Minn\Support\Email;
 use Minn\Support\Entities;
 use Minn\Support\Escape;
-use Minn\Support\Html;
+use Minn\Html;
 use Minn\Support\KsesEntities;
 use Minn\Support\Kses;
 use Minn\Support\Lists;
@@ -825,13 +825,13 @@ function get_url_in_content($content)
 
 function wp_html_split($input)
 {
-    return Minn\Support\Html::split((string) $input);
+    return Minn\Html::split((string) $input);
 }
 
 /** The pattern wp_html_split cuts markup by. */
 function get_html_split_regex()
 {
-    return Minn\Support\Html::SPLIT;
+    return Minn\Html::SPLIT;
 }
 
 function wp_replace_in_html_tags($haystack, $replace_pairs)

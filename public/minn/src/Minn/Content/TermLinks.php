@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Minn\Content;
 
-use Minn\Support\Html;
+use Minn\Html;
 
 /**
  * A post's terms rendered as links, in the two shapes the reference

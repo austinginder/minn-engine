@@ -14,7 +14,7 @@ use Minn\Front\Permalinks;
 use Minn\Front\Resolution;
 use Minn\Runtime\Plugins;
 use Minn\Runtime\Runtime;
-use Minn\Support\Html;
+use Minn\Html;
 
 /**
  * A whole page from the active classic theme: the reference's PHP template

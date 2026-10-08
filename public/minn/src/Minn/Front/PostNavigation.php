@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Minn\Front;
 
-use Minn\Support\Html;
+use Minn\Html;
 
 /**
  * The links to the posts either side of this one, and the nav block that

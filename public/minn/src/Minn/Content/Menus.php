@@ -8,7 +8,7 @@ use Minn\Blocks\Block;
 use Minn\Db;
 use Minn\Front\Permalinks;
 use Minn\Runtime\Refusal;
-use Minn\Support\Html;
+use Minn\Html;
 use Minn\Support\Serialized;
 
 /**

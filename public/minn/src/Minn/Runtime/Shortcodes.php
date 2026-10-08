@@ -162,7 +162,7 @@ final class Shortcodes
         $run = function (string $text, ?int &$count = null) use ($pattern): string {
             return (string) preg_replace_callback($pattern, fn (array $m): string => $this->run($m), $text, -1, $count);
         };
-        $pieces = \Minn\Support\Html::split(strtr($content, ['&#91;' => '&#091;', '&#93;' => '&#093;']));
+        $pieces = \Minn\Html::split(strtr($content, ['&#91;' => '&#091;', '&#93;' => '&#093;']));
         foreach ($pieces as $i => $piece) {
             if ($piece === '' || $piece[0] !== '<') {
                 continue;

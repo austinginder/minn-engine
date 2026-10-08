@@ -8,7 +8,7 @@ use Minn\Blocks\Block;
 use Minn\Blocks\Layout;
 use Minn\Blocks\Renderer;
 use Minn\Json;
-use Minn\Support\Html;
+use Minn\Html;
 use Minn\Blocks\Styles;
 use Minn\Support\Kses;
 

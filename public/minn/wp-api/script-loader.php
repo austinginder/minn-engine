@@ -563,7 +563,7 @@ function wp_maybe_inline_styles()
 
 function wp_remove_surrounding_empty_script_tags($contents)
 {
-    $body = Minn\Support\Html::scriptBody((string) $contents);
+    $body = Minn\Html::scriptBody((string) $contents);
     if ($body !== null) {
         return $body;
     }

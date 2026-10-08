@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Minn\Blocks;
 
-use Minn\Support\Html;
+use Minn\Html;
 
 /**
  * The opening tag of a dynamic block's wrapper, in the reference's class

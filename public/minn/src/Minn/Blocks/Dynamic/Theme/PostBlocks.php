@@ -19,7 +19,7 @@ use Minn\Content\Site;
 use Minn\Content\Texturize;
 use Minn\Content\Users;
 use Minn\Front\Permalinks;
-use Minn\Support\Html;
+use Minn\Html;
 use Minn\Content\PasswordGate;
 use Minn\Content\Reader;
 use Minn\Extension\Extensions;
