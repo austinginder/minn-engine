@@ -354,3 +354,49 @@ function is_login()
     $request = Minn\Runtime\Runtime::booted() ? Minn\Runtime\Runtime::current()->request : null;
     return ($script !== '' && stripos(wp_login_url(), $script) !== false) || ($request !== null && str_ends_with($request->path, '/wp-login.php'));
 }
+
+/** Whether this request is one recovery mode protects: the login screen, the admin outside Ajax, or a protected Ajax action; else is_protected_endpoint. */
+function is_protected_endpoint()
+{
+    if (($GLOBALS['pagenow'] ?? '') === 'wp-login.php' || is_login() || (is_admin() && !wp_doing_ajax()) || is_protected_ajax_action()) {
+        return true;
+    }
+    return (bool) apply_filters('is_protected_endpoint', false);
+}
+
+/** Whether this Ajax request is for an action that could fix a fatal error (wp_protected_ajax_actions). */
+function is_protected_ajax_action()
+{
+    if (!wp_doing_ajax() || !isset($_REQUEST['action'])) {
+        return false;
+    }
+    $actions = (array) apply_filters('wp_protected_ajax_actions', ['edit-theme-plugin-file', 'heartbeat', 'install-plugin', 'install-theme', 'search-plugins', 'search-install-plugins', 'update-plugin', 'update-theme', 'activate-plugin']);
+    return in_array($_REQUEST['action'], $actions, true);
+}
+
+/** FORCE_SSL_ADMIN settled from the site address when wp-config left it out; the old FORCE_SSL_LOGIN turns it on. */
+function wp_ssl_constants()
+{
+    if (!defined('FORCE_SSL_ADMIN')) {
+        define('FORCE_SSL_ADMIN', parse_url((string) get_option('siteurl'), PHP_URL_SCHEME) === 'https');
+    }
+    force_ssl_admin(FORCE_SSL_ADMIN);
+    if (defined('FORCE_SSL_LOGIN') && FORCE_SSL_LOGIN) {
+        force_ssl_admin(true);
+    }
+}
+
+/** The database is always connected here. */
+function require_wp_db()
+{
+}
+
+/** The database's table names and field types are set when it connects. */
+function wp_set_wpdb_vars()
+{
+}
+
+/** The object cache is always running here. */
+function wp_start_object_cache()
+{
+}

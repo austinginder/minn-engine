@@ -585,3 +585,15 @@ function wp_scripts_get_suffix($type = '')
 {
     return $type !== 'dev' && defined('SCRIPT_DEBUG') && SCRIPT_DEBUG ? '' : '.min';
 }
+
+/** The jQuery UI datepicker, when it is queued, told the site's month and day names, date format, first day and direction. */
+function wp_localize_jquery_ui_datepicker()
+{
+    global $wp_locale;
+    if (!wp_script_is('jquery-ui-datepicker', 'enqueued')) {
+        return;
+    }
+    $format = str_replace(['d', 'j', 'l', 'z', 'F', 'M', 'n', 'm', 'Y', 'y'], ['dd', 'd', 'DD', 'o', 'MM', 'M', 'm', 'mm', 'yy', 'y'], (string) get_option('date_format'));
+    $defaults = wp_json_encode(['closeText' => __('Close'), 'currentText' => __('Today'), 'monthNames' => array_values($wp_locale->month), 'monthNamesShort' => array_values($wp_locale->month_abbrev), 'nextText' => __('Next'), 'prevText' => __('Previous'), 'dayNames' => array_values($wp_locale->weekday), 'dayNamesShort' => array_values($wp_locale->weekday_abbrev), 'dayNamesMin' => array_values($wp_locale->weekday_initial), 'dateFormat' => $format, 'firstDay' => absint(get_option('start_of_week')), 'isRTL' => $wp_locale->is_rtl()]);
+    wp_add_inline_script('jquery-ui-datepicker', "jQuery(function(jQuery){jQuery.datepicker.setDefaults({$defaults});});");
+}

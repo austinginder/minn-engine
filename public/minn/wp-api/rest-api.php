@@ -588,3 +588,8 @@ function rest_send_allow_header($response, $server, $request)
     }
     return $response;
 }
+
+/** The engine answers REST requests before any page loads, so this has nothing to serve. */
+function rest_api_loaded()
+{
+}

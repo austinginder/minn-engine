@@ -1844,3 +1844,21 @@ function wp_make_content_images_responsive($content)
     _deprecated_function(__FUNCTION__, '5.5.0', 'wp_filter_content_tags()');
     return wp_filter_content_tags($content);
 }
+
+/** Deprecated since 3.5: an image resized with the image editor and saved beside it (or where asked), its path. */
+function image_resize($file, $max_w, $max_h, $crop = false, $suffix = null, $dest_path = null, $jpeg_quality = 90)
+{
+    _deprecated_function(__FUNCTION__, '3.5.0', 'wp_get_image_editor()');
+    $editor = wp_get_image_editor($file);
+    if (is_wp_error($editor)) {
+        return $editor;
+    }
+    $editor->set_quality($jpeg_quality);
+    $resized = $editor->resize($max_w, $max_h, $crop);
+    if (is_wp_error($resized)) {
+        return $resized;
+    }
+    $destination = $editor->generate_filename($suffix, $dest_path);
+    $saved = $editor->save($destination);
+    return is_wp_error($saved) ? $saved : $destination;
+}

@@ -260,6 +260,23 @@ class WP_Customize_Sidebar_Section extends WP_Customize_Section
 {
 }
 
+class WP_Customize_Background_Position_Control extends WP_Customize_Control
+{
+    public $type = 'background_position';
+}
+
+class WP_Customize_Custom_CSS_Setting extends WP_Customize_Setting
+{
+    public $type = 'custom_css';
+    public $transport = 'postMessage';
+    public $capability = 'edit_css';
+    public $stylesheet = '';
+}
+
+class WP_Customize_Filter_Setting extends WP_Customize_Setting
+{
+}
+
 class WP_Customize_Partial
 {
     public $id = '';

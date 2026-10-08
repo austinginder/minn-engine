@@ -236,7 +236,10 @@ final class Assets
             $this->changed();
             return false;
         }
-        $this->items[$handle]['inline'][$position === 'before' ? 'before' : 'after'][] = $code;
+        $at = $position === 'before' ? 'before' : 'after';
+        $this->items[$handle]['inline'][$at][] = $code;
+        // The reference keeps the code as the position's data, added to what was there (false when nothing, so a first addition follows a false).
+        $this->items[$handle]['data'][$at] = [...(array) ($this->items[$handle]['data'][$at] ?? false), $code];
         $this->changed();
         return true;
     }
@@ -274,8 +277,7 @@ final class Assets
     /** A data key of an asset, or false. */
     public function data(string $handle, string $key): mixed
     {
-        $inline = ($key === 'before' || $key === 'after') ? ($this->items[$handle]['inline'][$key] ?? []) : [];
-        return $inline !== [] ? $inline : ($this->items[$handle]['data'][$key] ?? false);
+        return $this->items[$handle]['data'][$key] ?? false;
     }
 
     /** Attaches a localized object to a script. */

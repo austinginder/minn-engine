@@ -783,6 +783,9 @@ function insert_with_markers($filename, $marker, $insertion)
 
 function copy_dir($from, $to, $skip_list = [])
 {
+    if (!is_dir((string) $from)) {
+        return new WP_Error('dirlist_failed_copy_dir', __('Directory listing failed.'), basename((string) $from));
+    }
     return Minn\Support\FileTree::copy((string) $from, (string) $to, array_map('strval', (array) $skip_list));
 }
 
@@ -912,4 +915,45 @@ function wp_filter_oembed_iframe_title_attribute($result, $data, $url)
 function _oembed_rest_pre_serve_request($served, $result, $request, $server)
 {
     return $served;
+}
+
+/**
+ * A folder moved, through the filesystem: refused onto itself, or onto a
+ * folder that is there unless overwriting (which deletes it first); copied
+ * and the source removed when it cannot be moved in one step.
+ */
+function move_dir($from, $to, $overwrite = false)
+{
+    global $wp_filesystem;
+    if (trailingslashit(strtolower((string) $from)) === trailingslashit(strtolower((string) $to))) {
+        return new WP_Error('source_destination_same_move_dir', __('The source and destination are the same.'));
+    }
+    if ($wp_filesystem->exists($to)) {
+        if (!$overwrite) {
+            return new WP_Error('destination_already_exists_move_dir', __('The destination folder already exists.'), $to);
+        }
+        if (!$wp_filesystem->delete($to, true)) {
+            return new WP_Error('destination_not_deleted_move_dir', __('The destination folder could not be deleted.'));
+        }
+    }
+    if (!$wp_filesystem->move($from, $to)) {
+        $copied = copy_dir($from, $to, [basename((string) $to)]);
+        if (is_wp_error($copied)) {
+            return $copied;
+        }
+        $wp_filesystem->delete($from, true);
+    }
+    wp_opcache_invalidate_directory($to);
+    return true;
+}
+
+/** Every PHP file under a folder dropped from the opcode cache. */
+function wp_opcache_invalidate_directory($dir)
+{
+    if (!is_string($dir) || trim($dir) === '' || !is_dir($dir)) {
+        return;
+    }
+    foreach (new RecursiveIteratorIterator(new RecursiveDirectoryIterator($dir, FilesystemIterator::SKIP_DOTS)) as $file) {
+        wp_opcache_invalidate($file->getPathname());
+    }
 }

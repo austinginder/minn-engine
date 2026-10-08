@@ -13,7 +13,7 @@ the WordPress runtime plugins load against
 | [`ApplicationPasswordSignIn`](#applicationpasswordsignin) | final class | 80 | wp_authenticate_application_password as the reference answers it (probe |
 | [`ArchiveLinks`](#archivelinks) | final class | 41 | A post type's archive address and its feed, as the reference gives them |
 | [`AssetEdits`](#assetedits) | final class | 29 | What a plugin did to $wp_scripts->registered or $wp_styles->registered |
-| [`Assets`](#assets) | final class | 411 | The registry behind wp_register_/wp_enqueue_ for scripts and styles: |
+| [`Assets`](#assets) | final class | 413 | The registry behind wp_register_/wp_enqueue_ for scripts and styles: |
 | [`Avatar`](#avatar) | final class | 62 | Avatars the way get_avatar_data and get_avatar decide them: the argument |
 | [`BlockFilters`](#blockfilters) | final class | 82 | The block-level filters plugin code hooks (pre_render_block, |
 | [`BlockHooks`](#blockhooks) | final class | 69 | The Block Hooks API on the engine's own front end: a plugin asks for its |
@@ -569,7 +569,7 @@ The handles queued.
 
 Whether these are scripts or styles.
 
-Internals: `changed()` (private, line 45), `depsOf()` (private, line 146), `defaults()` (private, line 152), `held()` (private, line 223), `ordered()` (private, line 325)
+Internals: `changed()` (private, line 45), `depsOf()` (private, line 146), `defaults()` (private, line 152), `held()` (private, line 223), `ordered()` (private, line 327)
 
 
 ## Avatar

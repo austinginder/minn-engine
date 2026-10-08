@@ -5417,3 +5417,64 @@ engine's block renderer applies supports through its own
 `Blocks\Supports`, and it has no duotone. Making the supports one
 registry that both the renderer and those functions use is its own
 change.
+
+## The queue's tail: bootstrap steps, moving folders, and admin placeholders (2026-10-08)
+
+The seventh slice of the plugin queue (probe plugin-queue7, 13 cases).
+
+**Real**:
+
+- `is_protected_endpoint`: the login screen, the admin outside Ajax, or a
+  protected Ajax action (`is_protected_ajax_action`), else the filter.
+- `wp_ssl_constants`: `FORCE_SSL_ADMIN` from the site address when
+  wp-config leaves it out.
+- `require_wp_db`, `wp_set_wpdb_vars`, `wp_start_object_cache` and
+  `rest_api_loaded` do nothing here: the database and the object cache are
+  always up, and the engine answers REST before a page loads.
+- `move_dir`:
+  - refused onto itself or onto a folder that is there, unless
+    overwriting (which deletes it first);
+  - copied and the source removed when one move cannot do it;
+  - `wp_opcache_invalidate_directory` after.
+- `copy_dir` now fails (`dirlist_failed_copy_dir`) for a source that is
+  not there, as the reference's listing does.
+- `image_resize` (deprecated since 3.5) uses the image editor.
+- `wp_localize_jquery_ui_datepicker` converts the date format in the
+  reference's order (`n` becomes `m` before `m` doubles, `j` becomes `d`
+  after `d` doubles).
+
+**Inline script data**:
+
+- `wp_add_inline_script` now keeps the position's data as the reference
+  does. The code is added to what was there, which is `false` when
+  nothing was, so `get_data('after')` reads `[false, 'code']`; it read
+  `['code']`.
+- Printing still reads the inline list.
+- Open: the engine refuses inline code and data on core script handles it
+  ships no file for (`wp-util`, `underscore`, jQuery UI), where the
+  reference stores them. So the datepicker's localization attaches nothing
+  here, and the probe leaves it out.
+
+**Placeholders** for admin-only names that plugins reference and that
+log if called:
+
+- functions: `touch_time`, `wp_edit_attachments_query`,
+  `wp_edit_posts_query`, `_media_states`, `find_posts_div`,
+  `get_media_items`, `media_upload_form_handler`, the
+  `wp_ajax_activate_plugin`, `wp_ajax_wp_link_ajax` and
+  `wp_ajax_get_attachment` handlers, `wp_nav_menu_item_post_type_meta_box`,
+  `wp_dashboard_cached_rss_widget`, `iis7_save_url_rewrite_rules`,
+  `_wp_get_allowed_postdata`, `_wp_translate_postdata`,
+  `maybe_convert_table_to_utf8mb4`, `wp_read_audio_metadata`;
+- classes: the REST revisions, autosaves, template revisions and
+  autosaves, block patterns and site export controllers, the REST meta
+  field classes, `WP_Debug_Data` and `WP_Navigation_Fallback`.
+
+`WP_Customize_Custom_CSS_Setting`, `WP_Customize_Filter_Setting` and
+`WP_Customize_Background_Position_Control` sit in customize.php beside
+their parents, which the generated placeholders load before.
+
+The first engine run of this probe died after it had changed
+`date_format` and before it put it back, and its next run "restored" the
+changed value. Thirty-six comment-date checks failed until the option was
+set back to `F j, Y`.
