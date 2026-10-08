@@ -14,9 +14,10 @@ escaping, serialized readers, small helpers
 | [`FileTree`](#filetree) | final class | 70 | Whole-directory reads and copies. The engine's own installer, the update |
 | [`Files`](#files) | final class | 66 | Recursive filesystem work behind WP_Filesystem_Direct: best-effort tree |
 | [`Flag`](#flag) | final class | 11 | A yes or no as WordPress reads one from loose input (wp_validate_boolean). |
+| [`Hierarchy`](#hierarchy) | final class | 52 | Loops in a parent chain, found with two walkers: a slow one that takes one |
 | [`Html`](#html) | final class | 107 |  |
 | [`Ip`](#ip) | final class | 22 | Addresses with their identifying tail removed, for logs and analytics that |
-| [`Json`](#json) | final class | 19 | Makes a value encodable: strings that are not valid UTF-8 get their high bytes replaced, recursively. |
+| [`Json`](#json) | final class | 44 | Makes a value encodable the way the JSON encoder's fallback does it |
 | [`Kses`](#kses) | final class | 577 | The HTML a user without unfiltered_html may store. Tags outside the |
 | [`KsesAttributes`](#ksesattributes) | final class | 64 | Kses one attribute at a time, for the shortcode pass that runs inside |
 | [`KsesEntities`](#ksesentities) | final class | 30 | The named references kses keeps as written: the list captured from the |
@@ -258,6 +259,34 @@ Used by: `Minn\Content\MediaShortcodes`
 The string "false" in any case is no; anything else is PHP's truth.
 
 
+## Hierarchy
+
+`final class Minn\Support\Hierarchy` · `public/minn/src/Minn/Support/Hierarchy.php`
+
+Loops in a parent chain, found with two walkers: a slow one that takes one
+step at a time and a fast one that takes two (probe functions-utils, the
+hierarchy-loop finders). They meet only when the chain loops; it ends
+when a parent is empty. Each walker reads parents through the closure it
+is given, so a caller can override any node's parent.
+
+### static `meeting(Closure $parentOf, mixed $start): mixed`
+
+The node where the slow walker meets the fast one, or null when the chain ends.
+
+- `@param Closure(mixed): mixed $parentOf a node's parent`
+
+### static `walked(Closure $parentOf, mixed $start): ?array`
+
+Every node either walker stepped on before they met, in the order first
+reached (the slow walker's node, then the fast one's two steps), or null
+when the chain ends without a loop.
+
+- `@param Closure(mixed): mixed $parentOf a node's parent`
+- `@return array<int|string, true>|null`
+
+Internals: `walk()` (private, line 43)
+
+
 ## Html
 
 `final class Minn\Support\Html` · `public/minn/src/Minn/Support/Html.php`
@@ -332,11 +361,21 @@ An address with its last octet, or its tail, zeroed.
 
 `final class Minn\Support\Json` · `public/minn/src/Minn/Support/Json.php`
 
-Makes a value encodable: strings that are not valid UTF-8 get their high bytes replaced, recursively.
+Makes a value encodable the way the JSON encoder's fallback does it
+(probe functions-utils): every string and every key made valid UTF-8,
+each invalid byte becoming "?" while the valid characters stay, objects
+read as plain objects of their public properties, no deeper than the
+depth asked for.
 
-### static `sanitize(mixed $value): mixed`
+### static `convert(string $text): string`
 
-A value with every string made valid UTF-8, ready to encode.
+A string made valid UTF-8: each invalid byte becomes "?", the valid characters stay.
+
+### static `sanitize(mixed $value, int $depth = 512): mixed`
+
+A value with every string and key made valid UTF-8, ready to encode.
+
+Internals: `item()` (private, line 53)
 
 
 ## Kses

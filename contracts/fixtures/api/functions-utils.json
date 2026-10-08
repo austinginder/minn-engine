@@ -1,0 +1,551 @@
+[
+    [
+        "validate cache id",
+        [
+            [
+                5,
+                true,
+                []
+            ],
+            [
+                "7",
+                true,
+                []
+            ],
+            [
+                "7a",
+                false,
+                [
+                    [
+                        "_get_non_cached_ids",
+                        "Object ID must be an integer, string given.",
+                        "6.3.0"
+                    ]
+                ]
+            ],
+            [
+                0,
+                true,
+                []
+            ],
+            [
+                -3,
+                true,
+                []
+            ],
+            [
+                1.5,
+                false,
+                [
+                    [
+                        "_get_non_cached_ids",
+                        "Object ID must be an integer, double given.",
+                        "6.3.0"
+                    ]
+                ]
+            ],
+            [
+                "",
+                false,
+                [
+                    [
+                        "_get_non_cached_ids",
+                        "Object ID must be an integer, string given.",
+                        "6.3.0"
+                    ]
+                ]
+            ],
+            [
+                null,
+                false,
+                [
+                    [
+                        "_get_non_cached_ids",
+                        "Object ID must be an integer, NULL given.",
+                        "6.3.0"
+                    ]
+                ]
+            ],
+            [
+                true,
+                false,
+                [
+                    [
+                        "_get_non_cached_ids",
+                        "Object ID must be an integer, boolean given.",
+                        "6.3.0"
+                    ]
+                ]
+            ],
+            [
+                [
+                    1
+                ],
+                false,
+                [
+                    [
+                        "_get_non_cached_ids",
+                        "Object ID must be an integer, array given.",
+                        "6.3.0"
+                    ]
+                ]
+            ],
+            [
+                "0012",
+                false,
+                [
+                    [
+                        "_get_non_cached_ids",
+                        "Object ID must be an integer, string given.",
+                        "6.3.0"
+                    ]
+                ]
+            ]
+        ]
+    ],
+    [
+        "json convert string",
+        [
+            "706c61696e",
+            "636166c3a9",
+            "626164203f2062797465",
+            "",
+            "3f3f"
+        ]
+    ],
+    [
+        "json prepare data",
+        [
+            {
+                "a": 1
+            },
+            "x",
+            null,
+            [
+                [
+                    "_wp_json_prepare_data",
+                    "",
+                    "5.3.0"
+                ],
+                [
+                    "_wp_json_prepare_data",
+                    "",
+                    "5.3.0"
+                ],
+                [
+                    "_wp_json_prepare_data",
+                    "",
+                    "5.3.0"
+                ]
+            ]
+        ]
+    ],
+    [
+        "json sanity check",
+        [
+            [
+                "ok",
+                {
+                    "a": "ok",
+                    "b": {
+                        "deep": "café"
+                    }
+                }
+            ],
+            [
+                "ok",
+                {
+                    "bad": "x ? y",
+                    "k?y": 1
+                }
+            ],
+            [
+                "ok",
+                {
+                    "p": "x ?"
+                }
+            ],
+            [
+                "throws",
+                "Exception",
+                "Reached depth limit"
+            ],
+            [
+                "ok",
+                "x ?"
+            ],
+            [
+                "ok",
+                42
+            ]
+        ]
+    ],
+    [
+        "check existing file names",
+        [
+            true,
+            false,
+            true,
+            false,
+            false,
+            false,
+            false,
+            true,
+            false,
+            true,
+            false,
+            false,
+            true,
+            true
+        ]
+    ],
+    [
+        "check alternate file names",
+        [
+            false,
+            false,
+            true,
+            false,
+            false,
+            true,
+            true
+        ]
+    ],
+    [
+        "hierarchy loops",
+        [
+            [
+                "a",
+                "b",
+                {
+                    "b": true,
+                    "c": true,
+                    "a": true
+                },
+                "b",
+                {
+                    "a": true,
+                    "b": true,
+                    "c": true
+                }
+            ],
+            [
+                "d",
+                "e",
+                [],
+                false,
+                false
+            ],
+            [
+                "f",
+                "f",
+                {
+                    "f": true
+                },
+                "f",
+                {
+                    "f": true
+                }
+            ],
+            [
+                "g",
+                "h",
+                {
+                    "h": true,
+                    "i": true
+                },
+                "h",
+                {
+                    "g": true,
+                    "h": true,
+                    "i": true
+                }
+            ],
+            [
+                "x",
+                "a",
+                {
+                    "a": true,
+                    "b": true,
+                    "c": true
+                },
+                false,
+                false
+            ],
+            [
+                "e",
+                "d",
+                {
+                    "e": true,
+                    "d": true
+                },
+                false,
+                false
+            ],
+            [
+                "override",
+                "d",
+                {
+                    "d": true,
+                    "e": true
+                }
+            ],
+            [
+                "callback args",
+                {
+                    "r": true,
+                    "s": true,
+                    "q": true
+                }
+            ]
+        ]
+    ],
+    [
+        "smilies init",
+        [
+            43,
+            {
+                ";-)": "😉",
+                ";)": "😉",
+                ":|": "😐",
+                ":x": "😡",
+                ":wink:": "😉",
+                ":twisted:": "😈"
+            },
+            "/(?<=[\\r\\n\\t ]|\\xC2\\xA0|&nbsp;|^);(?:\\-\\)|\\))(?=[\\r\\n\\t ]|\\xC2\\xA0|&nbsp;|$)|(?<=[\\r\\n\\t ]|\\xC2\\xA0|&nbsp;|^)\\:(?:\\||x|wink\\:|twisted\\:|smile\\:|shock\\:|sad\\:|roll\\:|razz\\:|oops\\:|o|neutral\\:|mrgreen\\:|mad\\:|lol\\:|idea\\:|grin\\:|evil\\:|eek\\:|cry\\:|cool\\:|arrow\\:|P|D|\\?\\?\\?\\:|\\?\\:|\\?|\\-\\||\\-x|\\-o|\\-P|\\-D|\\-\\?|\\-\\)|\\-\\(|\\)|\\(|\\!\\:)(?=[\\r\\n\\t ]|\\xC2\\xA0|&nbsp;|$)|(?<=[\\r\\n\\t ]|\\xC2\\xA0|&nbsp;|^)8(?:O|\\-O|\\-\\))(?=[\\r\\n\\t ]|\\xC2\\xA0|&nbsp;|$)/m"
+        ]
+    ],
+    [
+        "smilies init, filtered",
+        [
+            {
+                "zz)": "zz.png",
+                ":zz": "zz2.png",
+                ":z": "z.png"
+            },
+            "/(?<=[\\r\\n\\t ]|\\xC2\\xA0|&nbsp;|^)z(?:z\\))(?=[\\r\\n\\t ]|\\xC2\\xA0|&nbsp;|$)|(?<=[\\r\\n\\t ]|\\xC2\\xA0|&nbsp;|^)\\:(?:zz|z)(?=[\\r\\n\\t ]|\\xC2\\xA0|&nbsp;|$)/m"
+        ]
+    ],
+    [
+        "smilies init, smilies off",
+        [
+            false,
+            "unset"
+        ]
+    ],
+    [
+        "clean dirsize cache",
+        [
+            {
+                "/srv/a/b/c": 1,
+                "/srv/x": 7
+            },
+            {
+                "/srv/a": 10
+            }
+        ]
+    ],
+    [
+        "lighttpd before 1.5",
+        [
+            [
+                "lighttpd/1.4.59",
+                true
+            ],
+            [
+                "lighttpd/1.5.0",
+                false
+            ],
+            [
+                "lighttpd/1.4",
+                true
+            ],
+            [
+                "nginx/1.25",
+                false
+            ],
+            [
+                "Apache",
+                false
+            ],
+            [
+                "",
+                false
+            ],
+            [
+                "lighttpd",
+                true
+            ]
+        ]
+    ],
+    [
+        "site meta supported",
+        [
+            false
+        ]
+    ],
+    [
+        "utf-8 charset",
+        [
+            [
+                "UTF-8",
+                true
+            ],
+            [
+                "utf-8",
+                true
+            ],
+            [
+                "utf8",
+                true
+            ],
+            [
+                "UTF8",
+                true
+            ],
+            [
+                "utf-16",
+                false
+            ],
+            [
+                "ISO-8859-1",
+                false
+            ],
+            [
+                "",
+                false
+            ],
+            [
+                null,
+                true
+            ]
+        ]
+    ],
+    [
+        "heic types",
+        [
+            [
+                "image/heic",
+                true
+            ],
+            [
+                "image/heif",
+                true
+            ],
+            [
+                "image/heic-sequence",
+                true
+            ],
+            [
+                "image/heif-sequence",
+                true
+            ],
+            [
+                "image/avif",
+                false
+            ],
+            [
+                "IMAGE/HEIC",
+                false
+            ],
+            [
+                "",
+                false
+            ]
+        ]
+    ],
+    [
+        "update https urls",
+        [
+            "https://developer.wordpress.org/advanced-administration/security/https/",
+            "",
+            "https://developer.wordpress.org/advanced-administration/security/https/",
+            ""
+        ]
+    ],
+    [
+        "update https urls, filtered",
+        [
+            "https://host.example/https",
+            "https://host.example/direct",
+            "This resource is provided by your web host, and is specific to your site. For more information, <a href=\"https://wordpress.org/support/update-php/\" target=\"_blank\">see the official WordPress documentation</a>."
+        ]
+    ],
+    [
+        "admin email change notice",
+        [
+            [
+                {
+                    "to": "old@example.test",
+                    "subject": "[Minn] Admin Email Changed",
+                    "message": "Hi,\n\nThis notice confirms that the admin email address was changed on Minn.\n\nThe new admin email address is new@example.test.\n\nThis email has been sent to old@example.test\n\nRegards,\nAll at Minn\nhttps://minn.localhost",
+                    "headers": "",
+                    "attachments": [],
+                    "embeds": []
+                },
+                {
+                    "to": "old@example.test",
+                    "subject": "[Minn] Admin Email Changed",
+                    "message": "Hi,\n\nThis notice confirms that the admin email address was changed on Minn.\n\nThe new admin email address is old@example.test.\n\nThis email has been sent to old@example.test\n\nRegards,\nAll at Minn\nhttps://minn.localhost",
+                    "headers": "",
+                    "attachments": [],
+                    "embeds": []
+                },
+                {
+                    "to": "not-an-email",
+                    "subject": "[Minn] Admin Email Changed",
+                    "message": "Hi,\n\nThis notice confirms that the admin email address was changed on Minn.\n\nThe new admin email address is new@example.test.\n\nThis email has been sent to not-an-email\n\nRegards,\nAll at Minn\nhttps://minn.localhost",
+                    "headers": "",
+                    "attachments": [],
+                    "embeds": []
+                },
+                {
+                    "to": "a@example.test",
+                    "subject": "[Minn] Admin Email Changed",
+                    "message": "Hi,\n\nThis notice confirms that the admin email address was changed on Minn.\n\nThe new admin email address is x@example.test.\n\nThis email has been sent to a@example.test\n\nRegards,\nAll at Minn\nhttps://minn.localhost",
+                    "headers": "",
+                    "attachments": [],
+                    "embeds": []
+                }
+            ],
+            [
+                [
+                    false,
+                    "",
+                    "x@example.test"
+                ],
+                [
+                    true,
+                    "a@example.test",
+                    "x@example.test"
+                ]
+            ]
+        ]
+    ],
+    [
+        "maybe load widgets",
+        [
+            10,
+            10,
+            false
+        ]
+    ],
+    [
+        "config home and siteurl, undefined",
+        [
+            "https://zz.example/",
+            "https://zz.example/",
+            "",
+            false,
+            false
+        ]
+    ],
+    [
+        "config home and siteurl, defined",
+        [
+            "https://home.zz.example",
+            "https://site.zz.example/wp",
+            "https://home.zz.example"
+        ]
+    ]
+]

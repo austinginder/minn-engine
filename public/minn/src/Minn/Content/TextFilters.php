@@ -19,6 +19,28 @@ final class TextFilters
     private const IGNORED = ['code', 'pre', 'script', 'style', 'textarea'];
 
     /**
+     * The search pattern smilies_init leaves in $wp_smiliessearch, from the
+     * codes in their stored order (reverse-sorted): one alternative per first
+     * character, its code's rest quoted and joined, each bounded by
+     * whitespace, a no-break space or the line's ends (probe functions-utils).
+     *
+     * @param list<string> $codes
+     */
+    public static function smiliesSearch(array $codes): string
+    {
+        $space = '[\r\n\t ]|\xC2\xA0|&nbsp;';
+        $groups = [];
+        foreach ($codes as $code) {
+            $groups[substr((string) $code, 0, 1)][] = preg_quote(substr((string) $code, 1), '/');
+        }
+        $alternatives = [];
+        foreach ($groups as $first => $rests) {
+            $alternatives[] = '(?<=' . $space . '|^)' . preg_quote((string) $first, '/') . '(?:' . implode('|', $rests) . ')(?=' . $space . '|$)';
+        }
+        return '/' . implode('|', $alternatives) . '/m';
+    }
+
+    /**
      * Smilies become their emoji, or an image for the few that have one: a
      * code only counts as a whole word between spaces, and nothing inside a
      * code, pre, script, style or textarea element, or inside a tag, changes.

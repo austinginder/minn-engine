@@ -358,6 +358,13 @@ add_action('begin_fetch_post_thumbnail_html', '_wp_post_thumbnail_class_filter_a
 add_action('begin_fetch_post_thumbnail_html', '_wp_post_thumbnail_context_filter_add');
 add_action('end_fetch_post_thumbnail_html', '_wp_post_thumbnail_class_filter_remove');
 add_action('end_fetch_post_thumbnail_html', '_wp_post_thumbnail_context_filter_remove');
+// WP_HOME and WP_SITEURL stand for their options; smilies are built at init 5; the Widgets menu goes on as plugins load;
+// a changed admin email tells the old address (probe functions-utils).
+add_filter('option_home', '_config_wp_home');
+add_filter('option_siteurl', '_config_wp_siteurl');
+add_action('init', 'smilies_init', 5);
+add_action('plugins_loaded', 'wp_maybe_load_widgets', 0);
+add_action('update_option_admin_email', 'wp_site_admin_email_change_notification', 10, 3);
 // oEmbed, as the reference registers it: a post's data made rich, a provider's iframe titled.
 add_filter('oembed_response_data', 'get_oembed_response_data_rich', 10, 4);
 add_filter('oembed_dataparse', 'wp_filter_oembed_iframe_title_attribute', 5, 3);

@@ -6210,3 +6210,74 @@ Left in `media.php`: `wp_add_crossorigin_attributes`,
 `wp_maybe_generate_attachment_metadata`, and the personal-data exporter pair
 (`wp_media_personal_data_exporter`, `wp_register_media_personal_data_exporter`),
 which go with the comment and user exporters in a privacy batch.
+
+## functions.php's utilities (2026-10-08)
+
+Batch 7: twenty-two functions of `functions.php`, over `Support\Json`, the new
+`Support\Hierarchy` and `Content\TextFilters`. The probe is
+`tests/tools/functions-utils-probe.php` (fixture `functions-utils`, 21 rows);
+it puts the `dirsize_cache` transient back at shutdown.
+
+- **WP_HOME and WP_SITEURL.** `_config_wp_home` and `_config_wp_siteurl` answer
+  the constant, untrailingslashed, when wp-config.php defines it, and are hooked
+  on `option_home` and `option_siteurl` as on the reference. The engine's own
+  classes still read the stored option; a site whose constant differs from it
+  reads the constant only through the facade.
+- **The JSON encoder's fallback.** `Support\Json::convert` replaces only the
+  invalid bytes of a string with "?" and keeps its valid characters
+  (`mb_convert_encoding`); the engine used to replace every high byte of a
+  string that held one invalid byte. `Json::sanitize` now converts keys too,
+  reads an object as a plain object of its public properties, and throws
+  "Reached depth limit" past the depth asked for. `wp_json_encode` uses it
+  through `_wp_json_sanity_check` and answers false on that exception;
+  `_minn_json_sanitize` is gone. `_wp_json_prepare_data` is deprecated (5.3.0)
+  and returns its value.
+- **Cache ids.** `_validate_cache_id` accepts an integer, or a string that
+  reads as one exactly (`"7"`, not `"0012"`); anything else is reported as
+  `_get_non_cached_ids` called incorrectly ("Object ID must be an integer, %s
+  given.", 6.3.0, the PHP type name) and refused.
+- **Unique-filename helpers.** `_wp_check_existing_file_names` looks for a
+  sub-size of the name in the list: `name-WxH`, `name-scaled` or `name-rotated`
+  with the same extension, any case. `_wp_check_alternate_file_names` checks
+  each alternate name on disk as `$dir . $name`, with no separator added (the
+  reference's callers pass a folder with its trailing slash), then against the
+  list. The engine's `wp_unique_filename` does not ask these yet.
+- **Hierarchy loops.** `Support\Hierarchy` walks a parent chain with a slow
+  walker (one step) and a fast one (two). `wp_find_hierarchy_loop_tortoise_hare`
+  returns where they meet, or with `$_return_loop` every node walked in the
+  order first reached (the slow walker's node, then the fast one's two steps),
+  or false when a parent is empty. `wp_find_hierarchy_loop` overrides the
+  start's parent with `$start_parent`, finds a meeting node, then walks again
+  from it to collect the loop.
+- **Smilies.** `smilies_init` (hooked at `init`, 5) builds `$wpsmiliestrans`
+  from the defaults or an earlier table through `smilies`, reverse-sorts it,
+  and leaves `$wp_smiliessearch`: one alternative per first character, the
+  rests `preg_quote`d, each bounded by whitespace, `\xC2\xA0`, `&nbsp;` or the
+  line's ends, with the `m` flag. `convert_smilies` reads the global table
+  once it exists.
+- **Small helpers.**
+  - `clean_dirsize_cache` drops a folder and every folder above it from the
+    cache; folders below and beside keep their sizes.
+  - `is_lighttpd_before_150`, `is_utf8_charset` (`utf-8`/`utf8`, any case; the
+    `blog_charset` option when none is given) and `wp_is_heic_image_mime_type`
+    (the four HEIC/HEIF types, exact case) are plain checks.
+  - `is_site_meta_supported` is false on a single site.
+  - The HTTPS links: the documentation page, `WP_UPDATE_HTTPS_URL` and
+    `WP_DIRECT_UPDATE_HTTPS_URL` through their filters.
+    `wp_get_update_php_annotation` says the page comes from the host only when
+    `wp_update_php_url` changed it.
+  - `wp_site_admin_email_change_notification` (on `update_option_admin_email`)
+    mails the old address, even when it equals the new one, unless it is
+    empty or the installer's `you@example.com`.
+  - `wp_maybe_load_widgets` (on `plugins_loaded`, 0) adds the Widgets menu
+    unless `load_default_widgets` says no; the widgets themselves register at
+    init as before.
+- **Dead ends.** `_mce_set_direction` (TinyMCE settings) is editor;
+  `wp_widgets_add_menu` (`_admin_menu`) and `wp_direct_php_update_button` are
+  admin.
+
+Left in `functions.php`: `dead_db`, `do_favicon` and `_jsonp_wp_die_handler`
+(each ends the request, so an in-process probe cannot see them),
+`wp_post_preview_js` (prints only on a preview), and the four privacy
+clean-up and scheduling functions, which go with the exporters in a privacy
+batch.

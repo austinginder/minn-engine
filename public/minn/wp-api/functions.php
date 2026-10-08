@@ -1349,3 +1349,168 @@ function wp_get_font_dir()
     $url = untrailingslashit((string) $uploads['baseurl']) . '/fonts';
     return apply_filters('font_dir', ['path' => $path, 'url' => $url, 'subdir' => '', 'basedir' => $path, 'baseurl' => $url, 'error' => false]);
 }
+
+/** WP_HOME, when wp-config.php defines it, stands for the home option (hooked on option_home; probe functions-utils). */
+function _config_wp_home($url = '')
+{
+    return defined('WP_HOME') ? untrailingslashit(WP_HOME) : $url;
+}
+
+/** WP_SITEURL, when wp-config.php defines it, stands for the siteurl option (hooked on option_siteurl). */
+function _config_wp_siteurl($url = '')
+{
+    return defined('WP_SITEURL') ? untrailingslashit(WP_SITEURL) : $url;
+}
+
+/** Whether a cache id is an integer or a string that reads as one exactly; anything else is reported and refused. */
+function _validate_cache_id($object_id)
+{
+    if (is_int($object_id) || (is_string($object_id) && (string) (int) $object_id === $object_id)) {
+        return true;
+    }
+    _doing_it_wrong('_get_non_cached_ids', sprintf(__('Object ID must be an integer, %s given.'), gettype($object_id)), '6.3.0');
+    return false;
+}
+
+/** Whether a list of files holds one of a file's sub-sizes: name-WxH, name-scaled or name-rotated, same extension, any case. */
+function _wp_check_existing_file_names($filename, $files)
+{
+    $filename = (string) $filename;
+    $dot = strrpos($filename, '.');
+    $pattern = '/^' . preg_quote($dot === false ? $filename : substr($filename, 0, $dot), '/') . '-(?:\d+x\d+|scaled|rotated)' . preg_quote($dot === false ? '' : substr($filename, $dot), '/') . '$/i';
+    foreach ((array) $files as $file) {
+        if (preg_match($pattern, (string) $file) === 1) {
+            return true;
+        }
+    }
+    return false;
+}
+
+/** Whether any alternate name is taken: on disk as $dir joined to the name as given (no separator added), or by a sub-size in $files. */
+function _wp_check_alternate_file_names($filenames, $dir, $files)
+{
+    foreach ((array) $filenames as $filename) {
+        if (file_exists($dir . $filename) || (!empty($files) && _wp_check_existing_file_names($filename, $files))) {
+            return true;
+        }
+    }
+    return false;
+}
+
+/** @internal a parent lookup for the hierarchy-loop finders: an override first, else the callback with its extra arguments */
+function _minn_hierarchy_parent(callable $callback, array $override, array $callback_args): Closure
+{
+    return static fn ($id) => isset($override[$id]) ? $override[$id] : call_user_func_array($callback, array_merge([$id], $callback_args));
+}
+
+/** The loop a parent chain falls into from $start (given $start_parent), as the nodes in it; empty when there is none. */
+function wp_find_hierarchy_loop($callback, $start, $start_parent, $callback_args = [])
+{
+    $override = $start_parent === null ? [] : [$start => $start_parent];
+    $member = wp_find_hierarchy_loop_tortoise_hare($callback, $start, $override, $callback_args);
+    return $member ? wp_find_hierarchy_loop_tortoise_hare($callback, $member, $override, $callback_args, true) : [];
+}
+
+/** Where a slow and a fast walker up the parent chain meet (or every node walked, with $_return_loop), or false when the chain ends. */
+function wp_find_hierarchy_loop_tortoise_hare($callback, $start, $override = [], $callback_args = [], $_return_loop = false)
+{
+    $parentOf = _minn_hierarchy_parent($callback, (array) $override, (array) $callback_args);
+    $found = $_return_loop ? Minn\Support\Hierarchy::walked($parentOf, $start) : Minn\Support\Hierarchy::meeting($parentOf, $start);
+    return $found ?? false;
+}
+
+/** Drops a folder and every folder above it from the dirsize cache; folders below it and beside it keep their sizes. */
+function clean_dirsize_cache($path)
+{
+    $cache = get_transient('dirsize_cache');
+    if (!is_array($cache) || $cache === []) {
+        return;
+    }
+    $path = untrailingslashit((string) $path);
+    for ($parent = ''; $path !== $parent && $path !== '' && $path !== '.'; $parent = $path, $path = dirname($path)) {
+        unset($cache[$path]);
+    }
+    set_transient('dirsize_cache', $cache, wp_using_ext_object_cache() ? 0 : 10 * YEAR_IN_SECONDS);
+}
+
+/** Whether the server is lighttpd older than 1.5.0. */
+function is_lighttpd_before_150()
+{
+    $software = explode('/', (string) ($_SERVER['SERVER_SOFTWARE'] ?? ''));
+    return $software[0] === 'lighttpd' && version_compare($software[1] ?? '', '1.5.0') === -1;
+}
+
+/** Whether sites in a network can carry meta: never on a single site. */
+function is_site_meta_supported()
+{
+    return is_multisite() && (bool) get_network_option(get_main_network_id(), 'site_meta_supported', false);
+}
+
+/** Whether a charset (the blog_charset option when none is given) names UTF-8, with or without the dash, any case. */
+function is_utf8_charset($blog_charset = null)
+{
+    return in_array(strtolower((string) ($blog_charset ?? get_option('blog_charset'))), ['utf-8', 'utf8'], true);
+}
+
+/** Whether a type is one of the HEIC/HEIF image types, spelled exactly. */
+function wp_is_heic_image_mime_type($mime_type)
+{
+    return in_array($mime_type, ['image/heic', 'image/heif', 'image/heic-sequence', 'image/heif-sequence'], true);
+}
+
+/** The documentation page on moving a site to HTTPS. */
+function wp_get_default_update_https_url()
+{
+    return __('https://developer.wordpress.org/advanced-administration/security/https/');
+}
+
+/** Where the host lets a site switch to HTTPS in one step: WP_DIRECT_UPDATE_HTTPS_URL, through wp_direct_update_https_url. */
+function wp_get_direct_update_https_url()
+{
+    $url = getenv('WP_DIRECT_UPDATE_HTTPS_URL');
+    return apply_filters('wp_direct_update_https_url', $url === false ? '' : $url);
+}
+
+/** Where to read about HTTPS: WP_UPDATE_HTTPS_URL or the documentation, through wp_update_https_url; empty falls back to the documentation. */
+function wp_get_update_https_url()
+{
+    $default = wp_get_default_update_https_url();
+    $url = getenv('WP_UPDATE_HTTPS_URL');
+    $url = apply_filters('wp_update_https_url', $url === false ? $default : $url);
+    return empty($url) ? $default : $url;
+}
+
+/** The note that the PHP update page comes from the host, when wp_update_php_url changed it; else nothing. */
+function wp_get_update_php_annotation()
+{
+    $default = wp_get_default_update_php_url();
+    if (wp_get_update_php_url() === $default) {
+        return '';
+    }
+    return sprintf(__('This resource is provided by your web host, and is specific to your site. For more information, <a href="%s" target="_blank">see the official WordPress documentation</a>.'), esc_url($default));
+}
+
+/** Tells the old admin address that the admin email changed (hooked on update_option_admin_email); never from an empty or placeholder address. */
+function wp_site_admin_email_change_notification($old_email, $new_email, $option_name)
+{
+    if (!apply_filters('send_site_admin_email_change_email', $old_email !== '' && $old_email !== 'you@example.com', $old_email, $new_email)) {
+        return;
+    }
+    $email = apply_filters('site_admin_email_change_email', [
+        'to' => $old_email,
+        'subject' => __('[%s] Admin Email Changed'),
+        'message' => __("Hi,\n\nThis notice confirms that the admin email address was changed on ###SITENAME###.\n\nThe new admin email address is ###NEW_EMAIL###.\n\nThis email has been sent to ###OLD_EMAIL###\n\nRegards,\nAll at ###SITENAME###\n###SITEURL###"),
+        'headers' => '',
+    ], $old_email, $new_email);
+    $site = wp_specialchars_decode((string) get_option('blogname'), ENT_QUOTES);
+    $message = str_replace(['###OLD_EMAIL###', '###NEW_EMAIL###', '###SITENAME###', '###SITEURL###'], [$old_email, $new_email, $site, home_url()], $email['message']);
+    wp_mail($email['to'], sprintf($email['subject'], $site), $message, $email['headers']);
+}
+
+/** Adds the Widgets menu unless load_default_widgets turns it off (hooked on plugins_loaded at 0); the engine registers the widgets themselves at init. */
+function wp_maybe_load_widgets()
+{
+    if (apply_filters('load_default_widgets', true)) {
+        add_action('_admin_menu', 'wp_widgets_add_menu');
+    }
+}

@@ -171,14 +171,30 @@ function wp_json_encode($value, $flags = 0, $depth = 512)
     if ($json !== false) {
         return $json;
     }
-    $clean = _minn_json_sanitize($value);
+    try {
+        $clean = _wp_json_sanity_check($value, $depth);
+    } catch (Exception $e) {
+        return false;
+    }
     return json_encode($clean, $flags, $depth);
 }
 
-/** @internal invalid UTF-8 becomes ? so encoding can succeed */
-function _minn_json_sanitize($value)
+/** A string made valid UTF-8 for encoding: each invalid byte becomes "?" (probe functions-utils). */
+function _wp_json_convert_string($input_string)
 {
-    return Json::sanitize($value);
+    return is_string($input_string) ? Json::convert($input_string) : $input_string;
+}
+
+/** A value with every string and key made valid UTF-8; nesting deeper than $depth throws "Reached depth limit". */
+function _wp_json_sanity_check($value, $depth)
+{
+    return Json::sanitize($value, (int) $depth);
+}
+
+function _wp_json_prepare_data($value)
+{
+    _deprecated_function(__FUNCTION__, '5.3.0');
+    return $value;
 }
 
 function sanitize_key($key)
@@ -637,9 +653,33 @@ function convert_smilies($text)
 /** @internal The smilies table, from the reference's own (data/smilies.json), through the smilies filter. */
 function _minn_smilies(): array
 {
+    // smilies_init's table once it has run (init, 5), as the reference reads it; else the defaults, filtered.
+    if (isset($GLOBALS['wpsmiliestrans']) && is_array($GLOBALS['wpsmiliestrans'])) {
+        return $GLOBALS['wpsmiliestrans'];
+    }
+    return (array) apply_filters('smilies', _minn_smilies_defaults());
+}
+
+/** @internal the default smilies table (data/smilies.json): code => emoji or image file, in the stored order */
+function _minn_smilies_defaults(): array
+{
     static $table = null;
-    $table ??= json_decode((string) file_get_contents(MINN_ENGINE_DIR . '/data/smilies.json'), true) ?: [];
-    return (array) apply_filters('smilies', $table);
+    return $table ??= json_decode((string) file_get_contents(MINN_ENGINE_DIR . '/data/smilies.json'), true) ?: [];
+}
+
+/** Builds $wpsmiliestrans (filtered through smilies, reverse-sorted) and its search pattern $wp_smiliessearch, when smilies are on. */
+function smilies_init()
+{
+    global $wpsmiliestrans, $wp_smiliessearch;
+    if (!get_option('use_smilies')) {
+        return;
+    }
+    $wpsmiliestrans = (array) apply_filters('smilies', is_array($wpsmiliestrans) ? $wpsmiliestrans : _minn_smilies_defaults());
+    if ($wpsmiliestrans === []) {
+        return;
+    }
+    krsort($wpsmiliestrans);
+    $wp_smiliessearch = Minn\Content\TextFilters::smiliesSearch(array_map('strval', array_keys($wpsmiliestrans)));
 }
 
 function capital_P_dangit($text)

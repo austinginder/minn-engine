@@ -38,7 +38,7 @@ the repositories and records: posts, users, terms, comments, and the render pipe
 | [`TermLinks`](#termlinks) | final class | 39 | A post's terms rendered as links, in the two shapes the reference |
 | [`TermRecord`](#termrecord) | final readonly class | 88 | One term with its taxonomy row, read by name: $term->name, ->slug, |
 | [`Terms`](#terms) | final readonly class | 221 |  |
-| [`TextFilters`](#textfilters) | final class | 139 | The small text filters the reference runs over content, titles and |
+| [`TextFilters`](#textfilters) | final class | 161 | The small text filters the reference runs over content, titles and |
 | [`Texturize`](#texturize) | final class | 102 | The texturize subset the reference applies to rendered text: straight |
 | [`UserRecord`](#userrecord) | final readonly class | 96 | One row of the users table, read by name. Columns keep their WordPress |
 | [`Users`](#users) | final readonly class | 291 |  |
@@ -1847,6 +1847,15 @@ addresses, the feed's embed clean-up, and a comment's links and spans.
 - const `IMAGE` = `'/\\.(png|gif|jpe?g|svg|webp)$/i'`
 - const `IGNORED` = `array (   0 => 'code',   1 => 'pre',   2 => 'script',   3 => 'style',   4 => 'textarea', )`
 
+### static `smiliesSearch(array $codes): string`
+
+The search pattern smilies_init leaves in $wp_smiliessearch, from the
+codes in their stored order (reverse-sorted): one alternative per first
+character, its code's rest quoted and joined, each bounded by
+whitespace, a no-break space or the line's ends (probe functions-utils).
+
+- `@param list<string> $codes`
+
 ### static `smilies(string $text, array $table, Closure $image): string`
 
 Smilies become their emoji, or an image for the few that have one: a
@@ -1894,7 +1903,7 @@ without keeps its attributes as written and takes rel at the end.
 
 A span keeps no class in a comment (where a note's mention would be faked); slashed text in, slashed out.
 
-Internals: `ignoring()` (private, line 45), `words()` (private, line 54), `attributes()` (private, line 142)
+Internals: `ignoring()` (private, line 67), `words()` (private, line 76), `attributes()` (private, line 164)
 
 
 ## Texturize

@@ -34528,7 +34528,7 @@
             "namespace": "Minn\\Content",
             "kind": "final class",
             "file": "public/minn/src/Minn/Content/TextFilters.php",
-            "lines": 139,
+            "lines": 161,
             "doc": "The small text filters the reference runs over content, titles and\ncomments, each from its observed rules (contracts/runtime.md \"The content\nfilters\", \"The comment form\"): smilies, the capital P, insecure home\naddresses, the feed's embed clean-up, and a comment's links and spans.",
             "implements": [],
             "extends": null,
@@ -34554,6 +34554,28 @@
             ],
             "properties": [],
             "methods": [
+                {
+                    "routes": [],
+                    "name": "smiliesSearch",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "smiliesSearch(array $codes): string",
+                    "doc": "The search pattern smilies_init leaves in $wp_smiliessearch, from the\ncodes in their stored order (reverse-sorted): one alternative per first\ncharacter, its code's rest quoted and joined, each bounded by\nwhitespace, a no-break space or the line's ends (probe functions-utils).",
+                    "shapes": [
+                        "@param list<string> $codes"
+                    ],
+                    "params": [
+                        {
+                            "name": "codes",
+                            "type": "array",
+                            "shape": "list<string>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 29,
+                    "end": 41
+                },
                 {
                     "routes": [],
                     "name": "smilies",
@@ -34588,8 +34610,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 29,
-                    "end": 42
+                    "line": 51,
+                    "end": 64
                 },
                 {
                     "routes": [],
@@ -34608,8 +34630,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 68,
-                    "end": 71
+                    "line": 90,
+                    "end": 93
                 },
                 {
                     "routes": [],
@@ -34628,8 +34650,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 74,
-                    "end": 77
+                    "line": 96,
+                    "end": 99
                 },
                 {
                     "routes": [],
@@ -34662,8 +34684,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 80,
-                    "end": 84
+                    "line": 102,
+                    "end": 106
                 },
                 {
                     "routes": [],
@@ -34682,8 +34704,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 87,
-                    "end": 94
+                    "line": 109,
+                    "end": 116
                 },
                 {
                     "routes": [],
@@ -34718,8 +34740,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 104,
-                    "end": 107
+                    "line": 126,
+                    "end": 129
                 },
                 {
                     "routes": [],
@@ -34754,8 +34776,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 117,
-                    "end": 129
+                    "line": 139,
+                    "end": 151
                 },
                 {
                     "routes": [],
@@ -34774,8 +34796,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 132,
-                    "end": 139
+                    "line": 154,
+                    "end": 161
                 },
                 {
                     "routes": [],
@@ -34801,8 +34823,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 45,
-                    "end": 51
+                    "line": 67,
+                    "end": 73
                 },
                 {
                     "routes": [],
@@ -34837,8 +34859,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 54,
-                    "end": 65
+                    "line": 76,
+                    "end": 87
                 },
                 {
                     "routes": [],
@@ -34859,8 +34881,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 142,
-                    "end": 153
+                    "line": 164,
+                    "end": 175
                 }
             ]
         },
@@ -133469,6 +133491,113 @@
             ]
         },
         {
+            "name": "Minn\\Support\\Hierarchy",
+            "short": "Hierarchy",
+            "namespace": "Minn\\Support",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Support/Hierarchy.php",
+            "lines": 52,
+            "doc": "Loops in a parent chain, found with two walkers: a slow one that takes one\nstep at a time and a fast one that takes two (probe functions-utils, the\nhierarchy-loop finders). They meet only when the chain loops; it ends\nwhen a parent is empty. Each walker reads parents through the closure it\nis given, so a caller can override any node's parent.",
+            "implements": [],
+            "extends": null,
+            "uses": [],
+            "usedBy": [],
+            "constructor": null,
+            "cases": [],
+            "constants": [],
+            "properties": [],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "meeting",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "meeting(Closure $parentOf, mixed $start): mixed",
+                    "doc": "The node where the slow walker meets the fast one, or null when the chain ends.",
+                    "shapes": [
+                        "@param Closure(mixed): mixed $parentOf a node's parent"
+                    ],
+                    "params": [
+                        {
+                            "name": "parentOf",
+                            "type": "Closure",
+                            "shape": "Closure(mixed): mixed",
+                            "default": null,
+                            "doc": "a node's parent"
+                        },
+                        {
+                            "name": "start",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 23,
+                    "end": 26
+                },
+                {
+                    "routes": [],
+                    "name": "walked",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "walked(Closure $parentOf, mixed $start): ?array",
+                    "doc": "Every node either walker stepped on before they met, in the order first\nreached (the slow walker's node, then the fast one's two steps), or null\nwhen the chain ends without a loop.",
+                    "shapes": [
+                        "@param Closure(mixed): mixed $parentOf a node's parent",
+                        "@return array<int|string, true>|null"
+                    ],
+                    "params": [
+                        {
+                            "name": "parentOf",
+                            "type": "Closure",
+                            "shape": "Closure(mixed): mixed",
+                            "default": null,
+                            "doc": "a node's parent"
+                        },
+                        {
+                            "name": "start",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 36,
+                    "end": 40
+                },
+                {
+                    "routes": [],
+                    "name": "walk",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "walk(Closure $parentOf, mixed $start): array",
+                    "doc": "",
+                    "shapes": [
+                        "@return array{0: mixed, 1: array<int|string, true>} the meeting node (or null) and the nodes walked"
+                    ],
+                    "params": [
+                        {
+                            "name": "parentOf",
+                            "type": "Closure",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "start",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 43,
+                    "end": 66
+                }
+            ]
+        },
+        {
             "name": "Minn\\Support\\Html",
             "short": "Html",
             "namespace": "Minn\\Support",
@@ -133771,8 +133900,8 @@
             "namespace": "Minn\\Support",
             "kind": "final class",
             "file": "public/minn/src/Minn/Support/Json.php",
-            "lines": 19,
-            "doc": "Makes a value encodable: strings that are not valid UTF-8 get their high bytes replaced, recursively.",
+            "lines": 44,
+            "doc": "Makes a value encodable the way the JSON encoder's fallback does it\n(probe functions-utils): every string and every key made valid UTF-8,\neach invalid byte becoming \"?\" while the valid characters stay, objects\nread as plain objects of their public properties, no deeper than the\ndepth asked for.",
             "implements": [],
             "extends": null,
             "uses": [],
@@ -133784,11 +133913,31 @@
             "methods": [
                 {
                     "routes": [],
+                    "name": "convert",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "convert(string $text): string",
+                    "doc": "A string made valid UTF-8: each invalid byte becomes \"?\", the valid characters stay.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "text",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 20,
+                    "end": 23
+                },
+                {
+                    "routes": [],
                     "name": "sanitize",
                     "static": true,
                     "visibility": "public",
-                    "signature": "sanitize(mixed $value): mixed",
-                    "doc": "A value with every string made valid UTF-8, ready to encode.",
+                    "signature": "sanitize(mixed $value, int $depth = 512): mixed",
+                    "doc": "A value with every string and key made valid UTF-8, ready to encode.",
                     "shapes": [],
                     "params": [
                         {
@@ -133797,10 +133946,44 @@
                             "shape": "",
                             "default": null,
                             "doc": ""
+                        },
+                        {
+                            "name": "depth",
+                            "type": "int",
+                            "shape": "",
+                            "default": "512",
+                            "doc": ""
                         }
                     ],
-                    "line": 11,
-                    "end": 25
+                    "line": 30,
+                    "end": 50
+                },
+                {
+                    "routes": [],
+                    "name": "item",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "item(mixed $item, int $depth): mixed",
+                    "doc": "One member of an array or object: a nested one goes a level deeper, a string is converted.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "item",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "depth",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 53,
+                    "end": 59
                 }
             ]
         },
