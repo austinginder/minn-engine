@@ -86,7 +86,7 @@ final class ToolbarMenus
     /** The menu button wp-admin's narrow screens show; the front end has none. */
     public static function sidebarToggle(\WP_Admin_Bar $bar): void
     {
-        if (\is_admin()) {
+        if (Runtime::current()->isAdmin) {
             $bar->add_node(['id' => 'menu-toggle', 'title' => self::ICON . '<span class="screen-reader-text">' . Gettext::text('Menu') . '</span>', 'href' => '#']);
         }
     }
@@ -134,8 +134,8 @@ final class ToolbarMenus
             $title = '<img class="site-icon" src="' . \esc_url($small) . '"' . ($large !== $small ? ' srcset="' . \esc_url($large) . ' 2x"' : '') . ' alt="" width="20" height="20" />' . $title;
             $meta['class'] = 'has-site-icon';
         }
-        $bar->add_node(['id' => 'site-name', 'title' => $title, 'href' => \is_admin() || !\current_user_can('read') ? \home_url('/') : \admin_url(), 'meta' => $meta]);
-        if (\is_admin()) {
+        $bar->add_node(['id' => 'site-name', 'title' => $title, 'href' => Runtime::current()->isAdmin || !\current_user_can('read') ? \home_url('/') : \admin_url(), 'meta' => $meta]);
+        if (Runtime::current()->isAdmin) {
             $bar->add_node(['parent' => 'site-name', 'id' => 'view-site', 'title' => Gettext::text('Visit Site'), 'href' => \home_url('/')]);
             return;
         }
@@ -175,7 +175,7 @@ final class ToolbarMenus
     /** Edit Site under a block theme, opening the template this page was built from when there is one. */
     public static function editSiteMenu(\WP_Admin_Bar $bar): void
     {
-        if (!\wp_is_block_theme() || !\current_user_can('edit_theme_options') || \is_admin()) {
+        if (!(bool) Runtime::current()->get('block_theme', true) || !\current_user_can('edit_theme_options') || Runtime::current()->isAdmin) {
             return;
         }
         $template = $GLOBALS['_wp_current_template_id'] ?? null;
@@ -189,7 +189,7 @@ final class ToolbarMenus
     /** Customize, for a theme the customizer serves (a block theme only once something registers with it). */
     public static function customizeMenu(\WP_Admin_Bar $bar): void
     {
-        if (!\current_user_can('customize') || \is_admin() || (\wp_is_block_theme() && !Runtime::hooks()->has('customize_register'))) {
+        if (!\current_user_can('customize') || Runtime::current()->isAdmin || ((bool) Runtime::current()->get('block_theme', true) && !Runtime::hooks()->has('customize_register'))) {
             return;
         }
         $request = Runtime::current()->request;
@@ -274,7 +274,7 @@ final class ToolbarMenus
     /** Edit, for the post, term or user the page shows, when the user may edit it. */
     public static function editMenu(\WP_Admin_Bar $bar): void
     {
-        $shown = \is_admin() ? null : ($GLOBALS['wp_the_query'] ?? null)?->get_queried_object();
+        $shown = Runtime::current()->isAdmin ? null : ($GLOBALS['wp_the_query'] ?? null)?->get_queried_object();
         if (empty($shown)) {
             return;
         }
@@ -344,7 +344,7 @@ final class ToolbarMenus
     /** The search box, on the front end. */
     public static function searchMenu(\WP_Admin_Bar $bar): void
     {
-        if (\is_admin()) {
+        if (Runtime::current()->isAdmin) {
             return;
         }
         $form = '<form action="' . \esc_url(\home_url('/')) . '" method="get" id="adminbarsearch">'

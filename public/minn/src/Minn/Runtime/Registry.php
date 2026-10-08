@@ -340,7 +340,7 @@ final class Registry
     /** Whether a registered rewrite settles into its full form: with pretty permalinks or in the admin; otherwise it stays as given. */
     public static function settlesRewrites(): bool
     {
-        return !Runtime::booted() || !\function_exists('get_option') || \is_admin() || (string) Runtime::options()->filtered('permalink_structure') !== '';
+        return !Runtime::booted() || !\function_exists('get_option') || Runtime::current()->isAdmin || (string) Runtime::options()->filtered('permalink_structure') !== '';
     }
 
     /** Forgets a non-builtin taxonomy. */

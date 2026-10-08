@@ -49,7 +49,7 @@ final class NavMenuItems
             'update_menu_item_cache' => true, 'tax_query' => [['taxonomy' => 'nav_menu', 'field' => 'term_taxonomy_id', 'terms' => $menu->term_taxonomy_id]],
         ]);
         $items = array_map(self::setUp(...), (array) \get_posts($args));
-        if (!\is_admin()) {
+        if (!Runtime::current()->isAdmin) {
             $items = array_filter($items, static fn ($item) => empty($item->_invalid));
         }
         if ($args['output'] === \ARRAY_A) {

@@ -72,6 +72,7 @@ $set = static function (string $html, array $ops): array {
 $say('set new attribute', $set('<div class="a">x</div>', [['set_attribute', 'id', 'one'], ['set_attribute', 'data-n', 5], ['set_attribute', 'data-f', 1.5]]));
 $say('set existing attribute', $set('<div id=\'old\' class="a">x</div>', [['set_attribute', 'id', 'new'], ['set_attribute', 'CLASS', 'b c']]));
 $say('set escaping', $set('<div>', [['set_attribute', 'title', 'a "b" <c> & \'d\' &amp; é'], ['set_attribute', 'data-json', '{"a":1}']]));
+$say('set URL attributes', $set('<a href="x">', [['set_attribute', 'href', 'https://x.example/?a=1&b=2 c'], ['set_attribute', 'src', 'javascript:alert(1)'], ['set_attribute', 'action', '/relative?q="x"'], ['set_attribute', 'data-href', 'https://x.example/?a=1&b=2'], ['set_attribute', 'cite', ''], ['set_attribute', 'HREF', 'https://x.example/ü']]));
 $say('set boolean', $set('<input type="text" disabled="disabled">', [['set_attribute', 'required', true], ['set_attribute', 'disabled', true], ['set_attribute', 'readonly', false], ['set_attribute', 'type', false]]));
 $say('set null', $set('<div id="x" class="a">', [['set_attribute', 'id', null], ['set_attribute', 'title', null]]));
 $say('set invalid names', $set('<div>', [['set_attribute', 'bad name', 'x'], ['set_attribute', '', 'x'], ['set_attribute', 'x=y', 'x'], ['set_attribute', 'ok-name_1:x', 'x'], ['set_attribute', 'UPPER', 'x'], ['set_attribute', 'a"b', 'x']]));

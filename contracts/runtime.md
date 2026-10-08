@@ -4995,3 +4995,51 @@ Still constant, on purpose:
 - `do_enclose` and the pings (DELIBERATE).
 - `wp_text_diff` and `WP_Block::process_block_bindings`: to look at
   separately.
+
+## Block bindings (2026-10-08)
+
+The engine kept a bare list of bindings sources and never applied one, so
+content bound to post meta (ACF's own source works the same way), a synced
+pattern's overrides, and Twenty Twenty-Five's `twentytwentyfive/format`
+rendered their saved defaults. Now (probe block-bindings, 49 cases):
+
+- `WP_Block_Bindings_Registry` and `WP_Block_Bindings_Source` work as the
+  reference's do:
+  - one registration per lower-case namespaced name, with a label and a
+    callable `get_value_callback`; anything else gets a notice and false;
+  - `uses_context` stays null unless given;
+  - `get_value` hands the callback's answer to
+    `block_bindings_source_value`.
+- The core sources register at `init`:
+  - `core/pattern-overrides`: the `pattern/overrides` context, by the
+    block's metadata name.
+  - `core/post-meta`: only on a readable post, not behind a password, and
+    only for an unprotected key shown in REST; the registered default when
+    no value is stored.
+  - `core/post-data`: `date` (ISO 8601), `modified` (only when later than
+    the date, otherwise ""), and `link`.
+  - `core/term-data`: no case the probe could make gave a value on the
+    reference, so none is given here.
+- `Blocks\Bindings`:
+  - **What can bind:** paragraph and heading content; a button's url,
+    text, target and rel; an image's id, url, title, alt and caption; a
+    post date's datetime; a navigation link's or submenu's url. Both
+    filters (`block_bindings_supported_attributes`, then its per-block form)
+    can widen the list. A `__default` pattern-overrides binding stands for
+    every supported attribute.
+  - **How values land:** rich text is put inside the selected element,
+    through `wp_kses_post`; other values are set as the selected element's
+    attribute. A dynamic block renders with the values merged in.
+- The renderer binds every block it renders, reading the post being
+  rendered and the context enclosing blocks provide. A synced pattern
+  provides its overrides. A core block rendered through `WP_Block` passes
+  its own context along.
+
+`WP_HTML_Tag_Processor::set_attribute` now writes a URL attribute through
+`esc_url` (refusing a value it wipes out, such as `javascript:`). New
+attributes are written in the order of their text, as the reference sorts
+them; the engine used to reverse the order they were set.
+
+`is_admin` and `wp_is_block_theme` were pure delegates to the runtime, so
+the engine reads the runtime directly. The WordPress-call ratchet falls
+to 1057.

@@ -60,6 +60,8 @@ final class Renderer
 
     /** @var array<string, callable> */
     private array $dynamic = [];
+    /** @var list<array<string, mixed>> context enclosing blocks provide to those inside */
+    private array $provided = [];
     private Context $context;
     private RenderState $state;
 
@@ -176,7 +178,8 @@ final class Renderer
                 }
                 $block = $before;
             }
-            $html = $this->renderNamed($block);
+            $bound = Bindings::values($block, $this->blockContext());
+            $html = $this->renderNamed($bound === [] ? $block : $block->withAttrs(array_merge($block->attrs, $bound)), $bound);
             if ($html !== '') {
                 $this->state->recordBlock($block->name);
             }
@@ -195,7 +198,32 @@ final class Renderer
         }
     }
 
-    private function renderNamed(Block $block): string
+    /**
+     * The context a block's bindings read: the post being rendered (postId,
+     * postType) and what enclosing blocks provide (a synced pattern's
+     * overrides).
+     *
+     * @return array<string, mixed>
+     */
+    public function blockContext(): array
+    {
+        $post = $this->context->post();
+        return array_merge($post === null ? [] : ['postId' => $post->id, 'postType' => $post->type], ...$this->provided);
+    }
+
+    /** Renders with context provided to the blocks inside (render_block_context's job on the reference). @param array<string, mixed> $context */
+    public function providing(array $context, \Closure $render): string
+    {
+        $this->provided[] = $context;
+        try {
+            return (string) $render();
+        } finally {
+            array_pop($this->provided);
+        }
+    }
+
+    /** @param array<string, mixed> $bound the bound attributes' values, put into a static block's HTML */
+    private function renderNamed(Block $block, array $bound = []): string
     {
         if (isset($this->dynamic[$block->name])) {
             // The element class is numbered before the block renders (the
@@ -213,7 +241,7 @@ final class Renderer
         foreach ($block->innerContent as $chunk) {
             $out .= $chunk ?? $this->renderBlock($block->innerBlocks[$inner++]);
         }
-        return $this->decorate($block, $out, $elements);
+        return $this->decorate($block, $bound === [] ? $out : Bindings::html($out, (string) $block->name, $bound), $elements);
     }
 
     private function decorate(Block $block, string $html, ?string $elements): string

@@ -37,6 +37,12 @@ final class Edits
         $this->attributes[$lower] = ['name' => $name, 'value' => $value];
     }
 
+    /** Records an attribute value that comes already escaped (a URL through esc_url), written as it is. */
+    public function setEscapedAttribute(string $name, string $escaped): void
+    {
+        $this->attributes[strtolower($name)] = ['name' => $name, 'value' => $escaped, 'escaped' => true];
+    }
+
     /** Records a removal of an attribute the source has. */
     public function removeAttribute(string $name): void
     {
@@ -169,7 +175,8 @@ final class Edits
     /**
      * The source replacements the attribute and class edits amount to, and
      * forgets them: a changed attribute is rewritten in place (its duplicates
-     * removed), a removed one is cut, a new one is inserted after the tag name.
+     * removed), a removed one is cut, a new one is inserted after the tag name
+     * (several in the order of their text).
      *
      * @param list<array{name: string, lower: string, start: int, end: int, value: ?string}> $attributes the tag's own
      * @return list<array{int, int, string}> start, end, text
@@ -189,7 +196,8 @@ final class Edits
         }
         foreach ($updates as $lower => $update) {
             $lower = (string) $lower;
-            $text = $update['value'] === true ? $update['name'] : $update['name'] . '="' . self::escape((string) $update['value']) . '"';
+            $value = ($update['escaped'] ?? false) ? (string) $update['value'] : self::escape((string) $update['value']);
+            $text = $update['value'] === true ? $update['name'] : $update['name'] . '="' . $value . '"';
             $matched = false;
             foreach ($attributes as $attr) {
                 if ($attr['lower'] !== $lower) {
@@ -209,7 +217,9 @@ final class Edits
             }
         }
         if ($inserts !== []) {
-            $replacements[] = [$nameEnd, $nameEnd, implode('', array_reverse($inserts))];
+            // New attributes all go after the tag name, ordered by their text as written (the reference sorts its updates so).
+            sort($inserts, SORT_STRING);
+            $replacements[] = [$nameEnd, $nameEnd, implode('', $inserts)];
         }
         $this->attributes = [];
         $this->classes = [];

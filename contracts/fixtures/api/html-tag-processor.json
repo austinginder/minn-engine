@@ -643,6 +643,21 @@
         ]
     ],
     [
+        "set URL attributes",
+        [
+            [
+                true,
+                false,
+                true,
+                true,
+                true,
+                true
+            ],
+            "<a action=\"/relative?q=x\" cite=\"\" data-href=\"https://x.example/?a=1&amp;b=2\" HREF=\"https://x.example/ü\">",
+            "<a action=\"/relative?q=x\" cite=\"\" data-href=\"https://x.example/?a=1&amp;b=2\" HREF=\"https://x.example/ü\">"
+        ]
+    ],
+    [
         "set boolean",
         [
             [

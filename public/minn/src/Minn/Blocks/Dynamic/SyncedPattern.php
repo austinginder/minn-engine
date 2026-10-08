@@ -31,7 +31,8 @@ final readonly class SyncedPattern
         if ($row === null || !$renderer->state()->enter('block:' . $ref)) {
             return '';
         }
-        $out = $renderer->renderBlocks(Parser::parse((string) $row['post_content']));
+        // Its overrides reach the blocks inside, for their pattern-overrides bindings.
+        $out = $renderer->providing(['pattern/overrides' => $block->attr('content', [])], static fn (): string => $renderer->renderBlocks(Parser::parse((string) $row['post_content'])));
         $renderer->state()->leave('block:' . $ref);
         return $out;
     }

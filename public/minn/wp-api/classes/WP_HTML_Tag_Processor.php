@@ -183,6 +183,11 @@ class WP_HTML_Tag_Processor
         if (!is_string($name) || (!is_scalar($value) && $value !== null)) {
             return false;
         }
+        // A URL attribute's value goes through esc_url, and one it wipes out is refused.
+        if (is_string($value) && in_array(strtolower($name), wp_kses_uri_attributes(), true)) {
+            $escaped = esc_url($value);
+            return ($escaped !== '' || $value === '') && $this->tags->setAttribute($name, new Minn\Html\Escaped($escaped));
+        }
         $ok = $this->tags->setAttribute($name, $value);
         if (!$ok && $value !== null && $value !== false && $name !== '' && preg_match('/[\s"\'>\/=]/', $name)) {
             _doing_it_wrong('WP_HTML_Tag_Processor::set_attribute', 'Invalid attribute name.', '6.2.0');

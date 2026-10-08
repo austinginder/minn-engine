@@ -170,7 +170,7 @@ final readonly class SidebarsController
             'after_widget' => (string) ($sidebar['after_widget'] ?? ''),
             'before_title' => (string) ($sidebar['before_title'] ?? ''),
             'after_title' => (string) ($sidebar['after_title'] ?? ''),
-            'status' => $id !== WidgetAreas::INACTIVE && \is_registered_sidebar($id) && !\wp_is_block_theme() ? 'active' : 'inactive',
+            'status' => $id !== WidgetAreas::INACTIVE && \is_registered_sidebar($id) && !(bool) Runtime::current()->get('block_theme', true) ? 'active' : 'inactive',
             'widgets' => array_values(array_filter((array) (\retrieve_widgets()[$id] ?? []), static fn ($widget) => isset($registered[$widget]))),
             '_links' => [
                 'collection' => [['href' => $this->url->to('/wp/v2/sidebars')]],

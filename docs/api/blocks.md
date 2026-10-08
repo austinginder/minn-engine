@@ -5,7 +5,8 @@ the block parser and renderer
 | Class | Kind | Lines | Summary |
 |---|---|---|---|
 | [`Attributes`](#attributes) | final readonly class | 30 | The JSON object a block delimiter carries, read in place. Rewriting one |
-| [`Block`](#block) | final readonly class | 29 | One parsed block. A null name is freeform HTML between blocks. The |
+| [`Bindings`](#bindings) | final class | 138 | Block bindings (probe block-bindings): a block attribute bound to a |
+| [`Block`](#block) | final readonly class | 63 | One parsed block. A null name is freeform HTML between blocks. The |
 | [`BlockName`](#blockname) | final class | 17 | The block name rules: a string, lower-case, `namespace/name`. |
 | [`Context`](#context) | final class | 76 | What the template blocks render against: the resolution, the main |
 | [`Elements`](#elements) | final class | 79 | Per-block element styles (style.elements in a block's attributes, the |
@@ -14,7 +15,7 @@ the block parser and renderer
 | [`Parser`](#parser) | final class | 91 | Parses block markup into a tree. The grammar is the delimiter comment: |
 | [`QueryVars`](#queryvars) | final class | 122 | The query variables a Query Loop block's context asks for, the way the |
 | [`RenderState`](#renderstate) | final class | 346 | Per-request rendering state, owned by the renderer. The reference numbers |
-| [`Renderer`](#renderer) | final class | 231 | Renders a block tree the way the reference renders post_content: |
+| [`Renderer`](#renderer) | final class | 259 | Renders a block tree the way the reference renders post_content: |
 | [`Selector`](#selector) | final class | 42 | The CSS selector a block type declares for its root or for one feature, from its `selectors` map or the older per-support keys. |
 | [`Serializer`](#serializer) | final class | 46 | Parsed blocks back to markup. A core block is written by its short name; |
 | [`StyleEngine`](#styleengine) | final class | 148 | What a block's style object comes to, as the reference's style engine |
@@ -38,6 +39,52 @@ Used by: `Minn\Theme\TemplatePartTheme`, `Minn\Theme\TemplatePatterns`
 The JSON object starting at $at, brace-matched through any strings; null when there is none.
 
 
+## Bindings
+
+`final class Minn\Blocks\Bindings` · `public/minn/src/Minn/Blocks/Bindings.php`
+
+Block bindings (probe block-bindings): a block attribute bound to a
+source registered with register_block_bindings_source takes the source's
+value as the block renders. Only the attributes a block supports bind
+(SUPPORTED, widened by block_bindings_supported_attributes and its
+per-block form); a "__default" pattern-overrides binding stands for every
+one of them. A static block's saved HTML takes the values (rich text,
+kses'd, inside the element its definition selects; plain values set as
+the selected element's attribute); a dynamic block renders with them.
+
+- const `SUPPORTED` = `array (   'core/paragraph' =>    array (     0 => 'content',   ),   'core/heading' =>    array (     0 => 'content',   ),   'core/image' =>    array (     0 => 'id',     1 => 'url',     2 => 'title',     3 => 'alt',     4 => 'caption',   ),   'core/button' =>    array (     0 => 'url',     1 => 'text',     2 => 'linkTarget',     3 => 'rel',   ),   'core/post-date' =>    array (     0 => 'datetime',   ),   'core/navigation-link' =>    array (     0 => 'url',   ),   'core/navigation-submenu' =>    array (     0 => 'url',   ), )`
+
+Used by: `Minn\Blocks\Renderer`
+
+### static `supported(string $name): array`
+
+The attributes a block may bind (get_block_bindings_supported_attributes). @return list<string>
+
+- `@return list<string>`
+
+### static `values(Minn\Blocks\Block $block, array $context): array`
+
+The bound attributes' values for a block about to render, as the
+sources answer them for a WP_Block made with the context given (each
+source also seeing the context it uses); the expanded bindings ride
+along under metadata for a pattern-overrides default. Empty when
+nothing is bound or nothing answered.
+
+- `@param array<string, mixed> $context`
+- `@return array<string, mixed>`
+
+### static `html(string $html, string $blockName, array $values): string`
+
+A static block's HTML with the bound values in place, by its type's
+attribute definitions: rich text and html replace what the selected
+element holds; an attribute source sets the selected element's
+attribute; anything else is left alone.
+
+- `@param array<string, mixed> $values`
+
+Internals: `inner()` (private, line 106), `closing()` (private, line 127), `opening()` (private, line 141), `attribute()` (private, line 147)
+
+
 ## Block
 
 `final readonly class Minn\Blocks\Block` · `public/minn/src/Minn/Blocks/Block.php`
@@ -46,7 +93,7 @@ One parsed block. A null name is freeform HTML between blocks. The
 innerContent list holds the block's own HTML chunks in order, with a
 null placeholder wherever an inner block sits.
 
-Used by: `Minn\Blocks\Dynamic\Archives`, `Minn\Blocks\Dynamic\Categories`, `Minn\Blocks\Dynamic\LatestComments`, `Minn\Blocks\Dynamic\LatestPosts`, `Minn\Blocks\Dynamic\Search`, `Minn\Blocks\Dynamic\SocialLinks`, `Minn\Blocks\Dynamic\SyncedPattern`, `Minn\Blocks\Dynamic\TagCloud`, `Minn\Blocks\Dynamic\Theme\Comments`, `Minn\Blocks\Dynamic\Theme\Navigation`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Blocks\Dynamic\Theme\Structure`, `Minn\Blocks\Parser`, `Minn\Blocks\Renderer`, `Minn\Blocks\Serializer`, `Minn\Blocks\Wrapper`, `Minn\Content\ContentScan`, `Minn\Content\Excerpt`, `Minn\Content\Menus`, `Minn\Extension\SeamRunner`, `Minn\Runtime\BlockFilters`, `Minn\Support\Kses`, `Minn\Theme\TemplatePatterns`
+Used by: `Minn\Blocks\Bindings`, `Minn\Blocks\Dynamic\Archives`, `Minn\Blocks\Dynamic\Categories`, `Minn\Blocks\Dynamic\LatestComments`, `Minn\Blocks\Dynamic\LatestPosts`, `Minn\Blocks\Dynamic\Search`, `Minn\Blocks\Dynamic\SocialLinks`, `Minn\Blocks\Dynamic\SyncedPattern`, `Minn\Blocks\Dynamic\TagCloud`, `Minn\Blocks\Dynamic\Theme\Comments`, `Minn\Blocks\Dynamic\Theme\Navigation`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Blocks\Dynamic\Theme\Structure`, `Minn\Blocks\Parser`, `Minn\Blocks\Renderer`, `Minn\Blocks\Serializer`, `Minn\Blocks\Wrapper`, `Minn\Content\ContentScan`, `Minn\Content\Excerpt`, `Minn\Content\Menus`, `Minn\Extension\SeamRunner`, `Minn\Runtime\BlockFilters`, `Minn\Support\Kses`, `Minn\Theme\TemplatePatterns`
 
 ```php
 __construct(?string $name, array $attrs, array $innerBlocks, string $innerHtml, array $innerContent)
@@ -61,6 +108,24 @@ __construct(?string $name, array $attrs, array $innerBlocks, string $innerHtml, 
 ### static `freeform(string $html): self`
 
 A block-less run of HTML, as the parser reads it.
+
+### static `fromArray(array $block): self`
+
+A block as parse_blocks hands it out, as the value object. @param array<string, mixed> $block
+
+- `@param array<string, mixed> $block`
+
+### `withAttrs(array $attrs): self`
+
+The same block with other attributes. @param array<string, mixed> $attrs
+
+- `@param array<string, mixed> $attrs`
+
+### `toArray(): array`
+
+The block as parse_blocks hands it to plugin code.
+
+- `@return array{blockName: ?string, attrs: array<string, mixed>, innerBlocks: list<array<string, mixed>>, innerHTML: string, innerContent: list<string|null>}`
 
 ### `attr(string $key, mixed $default = NULL): mixed`
 
@@ -548,7 +613,21 @@ A tree of blocks as HTML.
 
 One block as HTML, with the filters around it.
 
-Internals: `renderNamed()` (private, line 198), `decorate()` (private, line 219), `gallery()` (private, line 250), `flexWithoutContainer()` (private, line 258)
+### `blockContext(): array`
+
+The context a block's bindings read: the post being rendered (postId,
+postType) and what enclosing blocks provide (a synced pattern's
+overrides).
+
+- `@return array<string, mixed>`
+
+### `providing(array $context, Closure $render): string`
+
+Renders with context provided to the blocks inside (render_block_context's job on the reference). @param array<string, mixed> $context
+
+- `@param array<string, mixed> $context`
+
+Internals: `renderNamed()` (private, line 226), `decorate()` (private, line 247), `gallery()` (private, line 278), `flexWithoutContainer()` (private, line 286)
 
 
 ## Selector

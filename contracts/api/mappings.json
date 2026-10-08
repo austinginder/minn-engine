@@ -2,12 +2,12 @@
     "generated": "2026-10-08",
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line)",
     "summary": {
-        "minn": 685,
-        "composes": 1088,
-        "leaf": 692,
-        "noop": 2058,
-        "functions": 4449,
-        "minnMethods": 809,
+        "minn": 683,
+        "composes": 1094,
+        "leaf": 693,
+        "noop": 2071,
+        "functions": 4467,
+        "minnMethods": 813,
         "leafLinesOver15": 13
     },
     "functions": {
@@ -5115,7 +5115,10 @@
             "file": "classes/WP_Block.php",
             "lines": 1,
             "kind": "noop",
-            "minn": [],
+            "minn": [
+                "Minn\\Blocks\\Bindings::values",
+                "Minn\\Blocks\\Block::fromArray"
+            ],
             "composes": []
         },
         "WP_Block::refresh_context_dependents": {
@@ -5134,9 +5137,12 @@
         },
         "WP_Block::render": {
             "file": "classes/WP_Block.php",
-            "lines": 21,
-            "kind": "composes",
-            "minn": [],
+            "lines": 30,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Blocks\\Bindings::html",
+                "Minn\\Content\\Blocks::renderer"
+            ],
             "composes": [
                 "_minn_render_core_block",
                 "apply_filters",
@@ -5146,6 +5152,84 @@
         "WP_Block::render_inner_blocks": {
             "file": "classes/WP_Block.php",
             "lines": 15,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "apply_filters"
+            ]
+        },
+        "WP_Block_Bindings_Registry::__wakeup": {
+            "file": "classes/WP_Block_Bindings_Registry.php",
+            "lines": 8,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Block_Bindings_Registry::get_all_registered": {
+            "file": "classes/WP_Block_Bindings_Registry.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Block_Bindings_Registry::get_instance": {
+            "file": "classes/WP_Block_Bindings_Registry.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Block_Bindings_Registry::get_registered": {
+            "file": "classes/WP_Block_Bindings_Registry.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Block_Bindings_Registry::is_registered": {
+            "file": "classes/WP_Block_Bindings_Registry.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Block_Bindings_Registry::register": {
+            "file": "classes/WP_Block_Bindings_Registry.php",
+            "lines": 8,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "_doing_it_wrong",
+                "_minn_block_bindings_refusal"
+            ]
+        },
+        "WP_Block_Bindings_Registry::unregister": {
+            "file": "classes/WP_Block_Bindings_Registry.php",
+            "lines": 7,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "__",
+                "_doing_it_wrong"
+            ]
+        },
+        "WP_Block_Bindings_Source::__construct": {
+            "file": "classes/WP_Block_Bindings_Source.php",
+            "lines": 4,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Block_Bindings_Source::__wakeup": {
+            "file": "classes/WP_Block_Bindings_Source.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Block_Bindings_Source::get_value": {
+            "file": "classes/WP_Block_Bindings_Source.php",
+            "lines": 2,
             "kind": "composes",
             "minn": [],
             "composes": [
@@ -7966,11 +8050,15 @@
         },
         "WP_HTML_Tag_Processor::set_attribute": {
             "file": "classes/WP_HTML_Tag_Processor.php",
-            "lines": 8,
-            "kind": "composes",
-            "minn": [],
+            "lines": 13,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Html\\Escaped::__construct"
+            ],
             "composes": [
-                "_doing_it_wrong"
+                "_doing_it_wrong",
+                "esc_url",
+                "wp_kses_uri_attributes"
             ]
         },
         "WP_HTML_Tag_Processor::set_bookmark": {
@@ -16699,6 +16787,48 @@
                 "_wp_die_process_input"
             ]
         },
+        "_block_bindings_pattern_overrides_get_value": {
+            "file": "blocks.php",
+            "lines": 2,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "_wp_array_get"
+            ]
+        },
+        "_block_bindings_post_data_get_value": {
+            "file": "blocks.php",
+            "lines": 10,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "_minn_block_bindings_post_readable",
+                "get_permalink",
+                "get_post",
+                "get_the_date",
+                "get_the_modified_date"
+            ]
+        },
+        "_block_bindings_post_meta_get_value": {
+            "file": "blocks.php",
+            "lines": 7,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "_minn_block_bindings_post_readable",
+                "get_post",
+                "get_post_meta",
+                "get_registered_meta_keys",
+                "is_protected_meta"
+            ]
+        },
+        "_block_bindings_term_data_get_value": {
+            "file": "blocks.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
         "_c": {
             "file": "l10n.php",
             "lines": 4,
@@ -17216,10 +17346,10 @@
         },
         "_minn_array_to_block": {
             "file": "blocks.php",
-            "lines": 7,
-            "kind": "minn",
+            "lines": 1,
+            "kind": "noop",
             "minn": [
-                "Minn\\Blocks\\Block::__construct"
+                "Minn\\Blocks\\Block::fromArray"
             ],
             "composes": []
         },
@@ -17334,6 +17464,26 @@
                 "wp_roles"
             ]
         },
+        "_minn_block_bindings_post_readable": {
+            "file": "blocks.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "current_user_can",
+                "is_post_publicly_viewable",
+                "post_password_required"
+            ]
+        },
+        "_minn_block_bindings_refusal": {
+            "file": "classes/WP_Block_Bindings_Registry.php",
+            "lines": 10,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "__"
+            ]
+        },
         "_minn_block_galleries": {
             "file": "media.php",
             "lines": 20,
@@ -17373,8 +17523,8 @@
         },
         "_minn_block_to_array": {
             "file": "blocks.php",
-            "lines": 7,
-            "kind": "leaf",
+            "lines": 1,
+            "kind": "noop",
             "minn": [],
             "composes": []
         },
@@ -18420,6 +18570,16 @@
                 "post_type_archive_title",
                 "single_post_title",
                 "single_term_title"
+            ]
+        },
+        "_minn_register_block_bindings_sources": {
+            "file": "blocks.php",
+            "lines": 4,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "_x",
+                "register_block_bindings_source"
             ]
         },
         "_minn_register_core_rss_block": {
@@ -22675,10 +22835,7 @@
             "file": "blocks.php",
             "lines": 1,
             "kind": "noop",
-            "minn": [
-                "Minn\\Runtime\\Runtime::current",
-                "Minn\\Runtime\\Runtime::get"
-            ],
+            "minn": [],
             "composes": []
         },
         "get_all_user_settings": {
@@ -22972,11 +23129,17 @@
         },
         "get_block_bindings_source": {
             "file": "blocks.php",
-            "lines": 2,
-            "kind": "minn",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "get_block_bindings_supported_attributes": {
+            "file": "blocks.php",
+            "lines": 1,
+            "kind": "noop",
             "minn": [
-                "Minn\\Runtime\\Runtime::current",
-                "Minn\\Runtime\\Runtime::get"
+                "Minn\\Blocks\\Bindings::supported"
             ],
             "composes": []
         },
@@ -29424,13 +29587,9 @@
         },
         "register_block_bindings_source": {
             "file": "blocks.php",
-            "lines": 4,
-            "kind": "minn",
-            "minn": [
-                "Minn\\Runtime\\Runtime::current",
-                "Minn\\Runtime\\Runtime::get",
-                "Minn\\Runtime\\Runtime::set"
-            ],
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
             "composes": []
         },
         "register_block_core_footnotes_post_meta": {
@@ -32320,13 +32479,9 @@
         },
         "unregister_block_bindings_source": {
             "file": "blocks.php",
-            "lines": 5,
-            "kind": "minn",
-            "minn": [
-                "Minn\\Runtime\\Runtime::current",
-                "Minn\\Runtime\\Runtime::get",
-                "Minn\\Runtime\\Runtime::set"
-            ],
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
             "composes": []
         },
         "unregister_block_pattern": {

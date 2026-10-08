@@ -11,7 +11,7 @@ dynamic core blocks that render from data
 | [`LatestPosts`](#latestposts) | final readonly class | 34 | core/latest-posts: the newest published posts as a list, optionally dated. |
 | [`Search`](#search) | final readonly class | 48 | core/search: the site search form. The button sits outside or inside |
 | [`SocialLinks`](#sociallinks) | final class | 75 | core/social-links and core/social-link. The list keeps its stored |
-| [`SyncedPattern`](#syncedpattern) | final readonly class | 25 | core/block: a synced pattern, rendered from the wp_block post it references. |
+| [`SyncedPattern`](#syncedpattern) | final readonly class | 26 | core/block: a synced pattern, rendered from the wp_block post it references. |
 | [`TagCloud`](#tagcloud) | final readonly class | 36 | core/tag-cloud: non-empty tags by name, sized from 8pt to 22pt in |
 
 ## Archives

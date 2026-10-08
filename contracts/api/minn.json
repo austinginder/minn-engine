@@ -11296,17 +11296,268 @@
             ]
         },
         {
+            "name": "Minn\\Blocks\\Bindings",
+            "short": "Bindings",
+            "namespace": "Minn\\Blocks",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Blocks/Bindings.php",
+            "lines": 138,
+            "doc": "Block bindings (probe block-bindings): a block attribute bound to a\nsource registered with register_block_bindings_source takes the source's\nvalue as the block renders. Only the attributes a block supports bind\n(SUPPORTED, widened by block_bindings_supported_attributes and its\nper-block form); a \"__default\" pattern-overrides binding stands for every\none of them. A static block's saved HTML takes the values (rich text,\nkses'd, inside the element its definition selects; plain values set as\nthe selected element's attribute); a dynamic block renders with them.",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\Blocks\\Block",
+                "Minn\\Runtime\\Runtime"
+            ],
+            "usedBy": [
+                "Minn\\Blocks\\Renderer"
+            ],
+            "constructor": null,
+            "cases": [],
+            "constants": [
+                {
+                    "name": "SUPPORTED",
+                    "value": "array (   'core/paragraph' =>    array (     0 => 'content',   ),   'core/heading' =>    array (     0 => 'content',   ),   'core/image' =>    array (     0 => 'id',     1 => 'url',     2 => 'title',     3 => 'alt',     4 => 'caption',   ),   'core/button' =>    array (     0 => 'url',     1 => 'text',     2 => 'linkTarget',     3 => 'rel',   ),   'core/post-date' =>    array (     0 => 'datetime',   ),   'core/navigation-link' =>    array (     0 => 'url',   ),   'core/navigation-submenu' =>    array (     0 => 'url',   ), )",
+                    "doc": "",
+                    "visibility": "public"
+                }
+            ],
+            "properties": [],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "supported",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "supported(string $name): array",
+                    "doc": "The attributes a block may bind (get_block_bindings_supported_attributes). @return list<string>",
+                    "shapes": [
+                        "@return list<string>"
+                    ],
+                    "params": [
+                        {
+                            "name": "name",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 32,
+                    "end": 37
+                },
+                {
+                    "routes": [],
+                    "name": "values",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "values(Minn\\Blocks\\Block $block, array $context): array",
+                    "doc": "The bound attributes' values for a block about to render, as the\nsources answer them for a WP_Block made with the context given (each\nsource also seeing the context it uses); the expanded bindings ride\nalong under metadata for a pattern-overrides default. Empty when\nnothing is bound or nothing answered.",
+                    "shapes": [
+                        "@param array<string, mixed> $context",
+                        "@return array<string, mixed>"
+                    ],
+                    "params": [
+                        {
+                            "name": "block",
+                            "type": "Minn\\Blocks\\Block",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "context",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 49,
+                    "end": 80
+                },
+                {
+                    "routes": [],
+                    "name": "html",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "html(string $html, string $blockName, array $values): string",
+                    "doc": "A static block's HTML with the bound values in place, by its type's\nattribute definitions: rich text and html replace what the selected\nelement holds; an attribute source sets the selected element's\nattribute; anything else is left alone.",
+                    "shapes": [
+                        "@param array<string, mixed> $values"
+                    ],
+                    "params": [
+                        {
+                            "name": "html",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "blockName",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "values",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 90,
+                    "end": 103
+                },
+                {
+                    "routes": [],
+                    "name": "inner",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "inner(string $html, array $selectors, string $value): string",
+                    "doc": "What the first element matching a selector holds (the block's first element counts), replaced. @param list<string> $selectors",
+                    "shapes": [
+                        "@param list<string> $selectors"
+                    ],
+                    "params": [
+                        {
+                            "name": "html",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "selectors",
+                            "type": "array",
+                            "shape": "list<string>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "value",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 106,
+                    "end": 124
+                },
+                {
+                    "routes": [],
+                    "name": "closing",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "closing(string $html, string $tag, int $from): ?int",
+                    "doc": "Where the element opened before $from closes: the offset of its \"</tag\", nested ones of the same name skipped.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "html",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "tag",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "from",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 127,
+                    "end": 139
+                },
+                {
+                    "routes": [],
+                    "name": "opening",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "opening(string $name): string",
+                    "doc": "",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "name",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 141,
+                    "end": 144
+                },
+                {
+                    "routes": [],
+                    "name": "attribute",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "attribute(string $html, string $selector, string $name, mixed $value): string",
+                    "doc": "The first element matching the selector, with an attribute set to the value.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "html",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "selector",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "name",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "value",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 147,
+                    "end": 155
+                }
+            ]
+        },
+        {
             "name": "Minn\\Blocks\\Block",
             "short": "Block",
             "namespace": "Minn\\Blocks",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Blocks/Block.php",
-            "lines": 29,
+            "lines": 63,
             "doc": "One parsed block. A null name is freeform HTML between blocks. The\ninnerContent list holds the block's own HTML chunks in order, with a\nnull placeholder wherever an inner block sits.",
             "implements": [],
             "extends": null,
             "uses": [],
             "usedBy": [
+                "Minn\\Blocks\\Bindings",
                 "Minn\\Blocks\\Dynamic\\Archives",
                 "Minn\\Blocks\\Dynamic\\Categories",
                 "Minn\\Blocks\\Dynamic\\LatestComments",
@@ -11449,6 +11700,64 @@
                 },
                 {
                     "routes": [],
+                    "name": "fromArray",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "fromArray(array $block): self",
+                    "doc": "A block as parse_blocks hands it out, as the value object. @param array<string, mixed> $block",
+                    "shapes": [
+                        "@param array<string, mixed> $block"
+                    ],
+                    "params": [
+                        {
+                            "name": "block",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 33,
+                    "end": 42
+                },
+                {
+                    "routes": [],
+                    "name": "withAttrs",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "withAttrs(array $attrs): self",
+                    "doc": "The same block with other attributes. @param array<string, mixed> $attrs",
+                    "shapes": [
+                        "@param array<string, mixed> $attrs"
+                    ],
+                    "params": [
+                        {
+                            "name": "attrs",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 45,
+                    "end": 48
+                },
+                {
+                    "routes": [],
+                    "name": "toArray",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "toArray(): array",
+                    "doc": "The block as parse_blocks hands it to plugin code.",
+                    "shapes": [
+                        "@return array{blockName: ?string, attrs: array<string, mixed>, innerBlocks: list<array<string, mixed>>, innerHTML: string, innerContent: list<string|null>}"
+                    ],
+                    "params": [],
+                    "line": 55,
+                    "end": 64
+                },
+                {
+                    "routes": [],
                     "name": "attr",
                     "static": false,
                     "visibility": "public",
@@ -11471,8 +11780,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 33,
-                    "end": 36
+                    "line": 67,
+                    "end": 70
                 },
                 {
                     "routes": [],
@@ -11483,8 +11792,8 @@
                     "doc": "The class names declared on the block's own attributes (className).",
                     "shapes": [],
                     "params": [],
-                    "line": 39,
-                    "end": 42
+                    "line": 73,
+                    "end": 76
                 }
             ]
         },
@@ -12571,7 +12880,7 @@
             "namespace": "Minn\\Blocks\\Dynamic",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Blocks/Dynamic/SyncedPattern.php",
-            "lines": 25,
+            "lines": 26,
             "doc": "core/block: a synced pattern, rendered from the wp_block post it references.",
             "implements": [],
             "extends": null,
@@ -12641,7 +12950,7 @@
                         }
                     ],
                     "line": 21,
-                    "end": 37
+                    "end": 38
                 }
             ]
         },
@@ -16802,11 +17111,12 @@
             "namespace": "Minn\\Blocks",
             "kind": "final class",
             "file": "public/minn/src/Minn/Blocks/Renderer.php",
-            "lines": 231,
+            "lines": 259,
             "doc": "Renders a block tree the way the reference renders post_content:\ndelimiters gone, each block's own HTML kept with inner blocks rendered\nin place, then the per-block render-time additions (layout classes, the\nparagraph class, image attributes, gallery ids, style-variation\ncounters), and finally texturize over the whole.",
             "implements": [],
             "extends": null,
             "uses": [
+                "Minn\\Blocks\\Bindings",
                 "Minn\\Blocks\\Block",
                 "Minn\\Blocks\\Context",
                 "Minn\\Blocks\\Dynamic\\Archives",
@@ -16864,8 +17174,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 66,
-                "end": 71
+                "line": 68,
+                "end": 73
             },
             "cases": [],
             "constants": [
@@ -16879,6 +17189,15 @@
             "properties": [
                 {
                     "name": "dynamic",
+                    "type": "array",
+                    "readonly": false,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": false
+                },
+                {
+                    "name": "provided",
                     "type": "array",
                     "readonly": false,
                     "static": false,
@@ -16951,8 +17270,8 @@
                     "doc": "The per-request rendering state: counters, containers, variations, the images seen.",
                     "shapes": [],
                     "params": [],
-                    "line": 74,
-                    "end": 77
+                    "line": 76,
+                    "end": 79
                 },
                 {
                     "routes": [],
@@ -16963,8 +17282,8 @@
                     "doc": "What is being rendered.",
                     "shapes": [],
                     "params": [],
-                    "line": 80,
-                    "end": 83
+                    "line": 82,
+                    "end": 85
                 },
                 {
                     "routes": [],
@@ -16983,8 +17302,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 86,
-                    "end": 89
+                    "line": 88,
+                    "end": 91
                 },
                 {
                     "routes": [],
@@ -16995,8 +17314,8 @@
                     "doc": "The image tag builder.",
                     "shapes": [],
                     "params": [],
-                    "line": 92,
-                    "end": 95
+                    "line": 94,
+                    "end": 97
                 },
                 {
                     "routes": [],
@@ -17015,8 +17334,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 98,
-                    "end": 124
+                    "line": 100,
+                    "end": 126
                 },
                 {
                     "routes": [],
@@ -17044,8 +17363,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 131,
-                    "end": 134
+                    "line": 133,
+                    "end": 136
                 },
                 {
                     "routes": [],
@@ -17064,8 +17383,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 137,
-                    "end": 140
+                    "line": 139,
+                    "end": 142
                 },
                 {
                     "routes": [],
@@ -17086,8 +17405,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 147,
-                    "end": 154
+                    "line": 149,
+                    "end": 156
                 },
                 {
                     "routes": [],
@@ -17106,17 +17425,62 @@
                             "doc": ""
                         }
                     ],
-                    "line": 157,
-                    "end": 196
+                    "line": 159,
+                    "end": 199
+                },
+                {
+                    "routes": [],
+                    "name": "blockContext",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "blockContext(): array",
+                    "doc": "The context a block's bindings read: the post being rendered (postId,\npostType) and what enclosing blocks provide (a synced pattern's\noverrides).",
+                    "shapes": [
+                        "@return array<string, mixed>"
+                    ],
+                    "params": [],
+                    "line": 208,
+                    "end": 212
+                },
+                {
+                    "routes": [],
+                    "name": "providing",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "providing(array $context, Closure $render): string",
+                    "doc": "Renders with context provided to the blocks inside (render_block_context's job on the reference). @param array<string, mixed> $context",
+                    "shapes": [
+                        "@param array<string, mixed> $context"
+                    ],
+                    "params": [
+                        {
+                            "name": "context",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "render",
+                            "type": "Closure",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 215,
+                    "end": 223
                 },
                 {
                     "routes": [],
                     "name": "renderNamed",
                     "static": false,
                     "visibility": "private",
-                    "signature": "renderNamed(Minn\\Blocks\\Block $block): string",
+                    "signature": "renderNamed(Minn\\Blocks\\Block $block, array $bound = array ( )): string",
                     "doc": "",
-                    "shapes": [],
+                    "shapes": [
+                        "@param array<string, mixed> $bound the bound attributes' values, put into a static block's HTML"
+                    ],
                     "params": [
                         {
                             "name": "block",
@@ -17124,10 +17488,17 @@
                             "shape": "",
                             "default": null,
                             "doc": ""
+                        },
+                        {
+                            "name": "bound",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": "array ( )",
+                            "doc": "the bound attributes' values, put into a static block's HTML"
                         }
                     ],
-                    "line": 198,
-                    "end": 217
+                    "line": 226,
+                    "end": 245
                 },
                 {
                     "routes": [],
@@ -17160,8 +17531,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 219,
-                    "end": 248
+                    "line": 247,
+                    "end": 276
                 },
                 {
                     "routes": [],
@@ -17172,8 +17543,8 @@
                     "doc": "",
                     "shapes": [],
                     "params": [],
-                    "line": 250,
-                    "end": 255
+                    "line": 278,
+                    "end": 283
                 },
                 {
                     "routes": [],
@@ -17199,8 +17570,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 258,
-                    "end": 264
+                    "line": 286,
+                    "end": 292
                 }
             ]
         },
@@ -48133,7 +48504,7 @@
             "namespace": "Minn\\Html",
             "kind": "final class",
             "file": "public/minn/src/Minn/Html/Edits.php",
-            "lines": 319,
+            "lines": 329,
             "doc": "The edits pending on the current token: attribute sets and removals,\nclass additions and removals, and a text replacement, in call order.\nThey answer reads before they are written, and become the source\nreplacements the reader splices in when it moves on.",
             "implements": [],
             "extends": null,
@@ -48226,6 +48597,33 @@
                 },
                 {
                     "routes": [],
+                    "name": "setEscapedAttribute",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "setEscapedAttribute(string $name, string $escaped): void",
+                    "doc": "Records an attribute value that comes already escaped (a URL through esc_url), written as it is.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "name",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "escaped",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 41,
+                    "end": 44
+                },
+                {
+                    "routes": [],
                     "name": "removeAttribute",
                     "static": false,
                     "visibility": "public",
@@ -48241,8 +48639,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 41,
-                    "end": 49
+                    "line": 47,
+                    "end": 55
                 },
                 {
                     "routes": [],
@@ -48261,8 +48659,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 52,
-                    "end": 59
+                    "line": 58,
+                    "end": 65
                 },
                 {
                     "routes": [],
@@ -48283,8 +48681,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 62,
-                    "end": 65
+                    "line": 68,
+                    "end": 71
                 },
                 {
                     "routes": [],
@@ -48303,8 +48701,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 68,
-                    "end": 72
+                    "line": 74,
+                    "end": 78
                 },
                 {
                     "routes": [],
@@ -48323,8 +48721,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 75,
-                    "end": 79
+                    "line": 81,
+                    "end": 85
                 },
                 {
                     "routes": [],
@@ -48335,8 +48733,8 @@
                     "doc": "Whether any class edit is pending.",
                     "shapes": [],
                     "params": [],
-                    "line": 82,
-                    "end": 85
+                    "line": 88,
+                    "end": 91
                 },
                 {
                     "routes": [],
@@ -48347,8 +48745,8 @@
                     "doc": "Whether any attribute or class edit is pending.",
                     "shapes": [],
                     "params": [],
-                    "line": 88,
-                    "end": 91
+                    "line": 94,
+                    "end": 97
                 },
                 {
                     "routes": [],
@@ -48370,8 +48768,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 100,
-                    "end": 117
+                    "line": 106,
+                    "end": 123
                 },
                 {
                     "routes": [],
@@ -48411,8 +48809,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 127,
-                    "end": 159
+                    "line": 133,
+                    "end": 165
                 },
                 {
                     "routes": [],
@@ -48423,8 +48821,8 @@
                     "doc": "The pending text replacement, taken: it is cleared on read.",
                     "shapes": [],
                     "params": [],
-                    "line": 162,
-                    "end": 167
+                    "line": 168,
+                    "end": 173
                 },
                 {
                     "routes": [],
@@ -48432,7 +48830,7 @@
                     "static": false,
                     "visibility": "public",
                     "signature": "takeReplacements(array $attributes, int $nameEnd, ?string $baseClassValue): array",
-                    "doc": "The source replacements the attribute and class edits amount to, and\nforgets them: a changed attribute is rewritten in place (its duplicates\nremoved), a removed one is cut, a new one is inserted after the tag name.",
+                    "doc": "The source replacements the attribute and class edits amount to, and\nforgets them: a changed attribute is rewritten in place (its duplicates\nremoved), a removed one is cut, a new one is inserted after the tag name\n(several in the order of their text).",
                     "shapes": [
                         "@param list<array{name: string, lower: string, start: int, end: int, value: ?string}> $attributes the tag's own",
                         "@return list<array{int, int, string}> start, end, text"
@@ -48460,8 +48858,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 177,
-                    "end": 217
+                    "line": 184,
+                    "end": 227
                 },
                 {
                     "routes": [],
@@ -48472,8 +48870,8 @@
                     "doc": "Forgets everything pending.",
                     "shapes": [],
                     "params": [],
-                    "line": 220,
-                    "end": 225
+                    "line": 230,
+                    "end": 235
                 },
                 {
                     "routes": [],
@@ -48524,8 +48922,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 278,
-                    "end": 298
+                    "line": 288,
+                    "end": 308
                 },
                 {
                     "routes": [],
@@ -48554,8 +48952,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 306,
-                    "end": 317
+                    "line": 316,
+                    "end": 327
                 },
                 {
                     "routes": [],
@@ -48585,8 +48983,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 326,
-                    "end": 330
+                    "line": 336,
+                    "end": 340
                 },
                 {
                     "routes": [],
@@ -48605,8 +49003,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 228,
-                    "end": 252
+                    "line": 238,
+                    "end": 262
                 },
                 {
                     "routes": [],
@@ -48634,8 +49032,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 255,
-                    "end": 263
+                    "line": 265,
+                    "end": 273
                 },
                 {
                     "routes": [],
@@ -48654,10 +49052,56 @@
                             "doc": ""
                         }
                     ],
-                    "line": 265,
-                    "end": 268
+                    "line": 275,
+                    "end": 278
                 }
             ]
+        },
+        {
+            "name": "Minn\\Html\\Escaped",
+            "short": "Escaped",
+            "namespace": "Minn\\Html",
+            "kind": "final readonly class",
+            "file": "public/minn/src/Minn/Html/Escaped.php",
+            "lines": 6,
+            "doc": "An attribute value that comes already escaped (a URL through esc_url), written as it is.",
+            "implements": [],
+            "extends": null,
+            "uses": [],
+            "usedBy": [
+                "Minn\\Html\\Tags"
+            ],
+            "constructor": {
+                "signature": "__construct(string $value)",
+                "doc": "",
+                "shapes": [],
+                "params": [
+                    {
+                        "name": "value",
+                        "type": "string",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    }
+                ],
+                "visibility": "public",
+                "line": 10,
+                "end": 12
+            },
+            "cases": [],
+            "constants": [],
+            "properties": [
+                {
+                    "name": "value",
+                    "type": "string",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "public",
+                    "promoted": true
+                }
+            ],
+            "methods": []
         },
         {
             "name": "Minn\\Html\\Scanner",
@@ -49218,13 +49662,14 @@
             "namespace": "Minn\\Html",
             "kind": "final class",
             "file": "public/minn/src/Minn/Html/Tags.php",
-            "lines": 587,
+            "lines": 584,
             "doc": "A streaming HTML tokenizer with in-place edits: tags, text, comments,\ndoctypes, and processing instructions in document order, attribute reads\nwith character references decoded, attribute and class edits applied to\nthe source without reserialising anything else, bookmarks to seek back to.\nBehaviour pinned by the html-tag-processor probe fixture.",
             "implements": [],
             "extends": null,
             "uses": [
                 "Minn\\Html\\Decoder",
                 "Minn\\Html\\Edits",
+                "Minn\\Html\\Escaped",
                 "Minn\\Html\\Scanner",
                 "Minn\\Html\\TagQuery"
             ],
@@ -49751,7 +50196,7 @@
                         }
                     ],
                     "line": 318,
-                    "end": 329
+                    "end": 330
                 },
                 {
                     "routes": [],
@@ -49772,8 +50217,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 336,
-                    "end": 349
+                    "line": 337,
+                    "end": 350
                 },
                 {
                     "routes": [],
@@ -49781,13 +50226,13 @@
                     "static": false,
                     "visibility": "public",
                     "signature": "classes(): array",
-                    "doc": "The current tag's classes.",
+                    "doc": "The current tag's classes. @return list<string> distinct class names after pending edits",
                     "shapes": [
                         "@return list<string> distinct class names after pending edits"
                     ],
                     "params": [],
-                    "line": 356,
-                    "end": 362
+                    "line": 353,
+                    "end": 359
                 },
                 {
                     "routes": [],
@@ -49806,15 +50251,15 @@
                             "doc": ""
                         }
                     ],
-                    "line": 365,
-                    "end": 368
+                    "line": 362,
+                    "end": 365
                 },
                 {
                     "routes": [],
                     "name": "setAttribute",
                     "static": false,
                     "visibility": "public",
-                    "signature": "setAttribute(string $name, string|int|float|bool|null $value): bool",
+                    "signature": "setAttribute(string $name, Minn\\Html\\Escaped|string|int|float|bool|null $value): bool",
                     "doc": "Sets an attribute on the current tag.",
                     "shapes": [],
                     "params": [
@@ -49827,14 +50272,14 @@
                         },
                         {
                             "name": "value",
-                            "type": "string|int|float|bool|null",
+                            "type": "Minn\\Html\\Escaped|string|int|float|bool|null",
                             "shape": "",
                             "default": null,
                             "doc": ""
                         }
                     ],
-                    "line": 382,
-                    "end": 395
+                    "line": 379,
+                    "end": 392
                 },
                 {
                     "routes": [],
@@ -49853,8 +50298,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 398,
-                    "end": 410
+                    "line": 395,
+                    "end": 407
                 },
                 {
                     "routes": [],
@@ -49873,8 +50318,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 413,
-                    "end": 420
+                    "line": 410,
+                    "end": 417
                 },
                 {
                     "routes": [],
@@ -49893,8 +50338,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 423,
-                    "end": 430
+                    "line": 420,
+                    "end": 427
                 },
                 {
                     "routes": [],
@@ -49913,8 +50358,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 433,
-                    "end": 436
+                    "line": 430,
+                    "end": 433
                 },
                 {
                     "routes": [],
@@ -49933,8 +50378,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 439,
-                    "end": 449
+                    "line": 436,
+                    "end": 446
                 },
                 {
                     "routes": [],
@@ -49953,8 +50398,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 452,
-                    "end": 459
+                    "line": 449,
+                    "end": 456
                 },
                 {
                     "routes": [],
@@ -49973,8 +50418,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 462,
-                    "end": 465
+                    "line": 459,
+                    "end": 462
                 },
                 {
                     "routes": [],
@@ -49993,8 +50438,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 468,
-                    "end": 478
+                    "line": 465,
+                    "end": 475
                 },
                 {
                     "routes": [],
@@ -50020,8 +50465,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 486,
-                    "end": 490
+                    "line": 483,
+                    "end": 487
                 },
                 {
                     "routes": [],
@@ -50040,8 +50485,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 493,
-                    "end": 496
+                    "line": 490,
+                    "end": 493
                 },
                 {
                     "routes": [],
@@ -50052,8 +50497,8 @@
                     "doc": "Back to the start of the document, with every update written in and the bookmarks kept.",
                     "shapes": [],
                     "params": [],
-                    "line": 499,
-                    "end": 509
+                    "line": 496,
+                    "end": 506
                 },
                 {
                     "routes": [],
@@ -50064,8 +50509,8 @@
                     "doc": "Where the current token sits in the document: [start, end].",
                     "shapes": [],
                     "params": [],
-                    "line": 512,
-                    "end": 515
+                    "line": 509,
+                    "end": 512
                 },
                 {
                     "routes": [],
@@ -50076,8 +50521,8 @@
                     "doc": "Where the current text token's text sits: [start, length].",
                     "shapes": [],
                     "params": [],
-                    "line": 518,
-                    "end": 521
+                    "line": 515,
+                    "end": 518
                 },
                 {
                     "routes": [],
@@ -50103,8 +50548,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 524,
-                    "end": 527
+                    "line": 521,
+                    "end": 524
                 },
                 {
                     "routes": [],
@@ -50123,8 +50568,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 530,
-                    "end": 533
+                    "line": 527,
+                    "end": 530
                 },
                 {
                     "routes": [],
@@ -50135,8 +50580,8 @@
                     "doc": "The document with every update written in.",
                     "shapes": [],
                     "params": [],
-                    "line": 536,
-                    "end": 540
+                    "line": 533,
+                    "end": 537
                 },
                 {
                     "routes": [],
@@ -50263,8 +50708,8 @@
                         "@return list<string>"
                     ],
                     "params": [],
-                    "line": 371,
-                    "end": 374
+                    "line": 368,
+                    "end": 371
                 },
                 {
                     "routes": [],
@@ -50275,8 +50720,8 @@
                     "doc": "",
                     "shapes": [],
                     "params": [],
-                    "line": 376,
-                    "end": 379
+                    "line": 373,
+                    "end": 376
                 },
                 {
                     "routes": [],
@@ -50287,8 +50732,8 @@
                     "doc": "Writes every pending update into the source, keeping bookmarks and the current token aligned.",
                     "shapes": [],
                     "params": [],
-                    "line": 543,
-                    "end": 561
+                    "line": 540,
+                    "end": 558
                 },
                 {
                     "routes": [],
@@ -50309,8 +50754,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 564,
-                    "end": 567
+                    "line": 561,
+                    "end": 564
                 },
                 {
                     "routes": [],
@@ -50321,8 +50766,8 @@
                     "doc": "Re-reads the current token so attribute offsets match the new source.",
                     "shapes": [],
                     "params": [],
-                    "line": 570,
-                    "end": 584
+                    "line": 567,
+                    "end": 581
                 },
                 {
                     "routes": [],
@@ -50333,8 +50778,8 @@
                     "doc": "",
                     "shapes": [],
                     "params": [],
-                    "line": 586,
-                    "end": 598
+                    "line": 583,
+                    "end": 595
                 }
             ]
         },
@@ -112796,6 +113241,7 @@
             "extends": null,
             "uses": [
                 "Minn\\I18n\\Gettext",
+                "Minn\\Runtime\\Runtime",
                 "Minn\\Support\\Lists"
             ],
             "usedBy": [],
@@ -121752,6 +122198,7 @@
                 "Minn\\Auth\\Authenticator",
                 "Minn\\Auth\\Capabilities",
                 "Minn\\Auth\\RegisteredCaps",
+                "Minn\\Blocks\\Bindings",
                 "Minn\\Blocks\\Dynamic\\Theme\\Comments",
                 "Minn\\Blocks\\Dynamic\\Theme\\Navigation",
                 "Minn\\Blocks\\Dynamic\\Theme\\PostBlocks",
@@ -121839,6 +122286,7 @@
                 "Minn\\Runtime\\Interactivity",
                 "Minn\\Runtime\\MetaKeys",
                 "Minn\\Runtime\\NavMenu",
+                "Minn\\Runtime\\NavMenuItems",
                 "Minn\\Runtime\\OptionSanitizer",
                 "Minn\\Runtime\\Patterns",
                 "Minn\\Runtime\\PlaceholderTrace",

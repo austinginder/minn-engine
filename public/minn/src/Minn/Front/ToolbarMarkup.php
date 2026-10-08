@@ -25,7 +25,7 @@ final class ToolbarMarkup
     public static function open(): string
     {
         $class = 'nojq nojs' . (\wp_is_mobile() ? ' mobile' : '');
-        $skip = !\is_admin() && !Runtime::hooks()->actionsDone('wp_body_open')
+        $skip = !Runtime::current()->isAdmin && !Runtime::hooks()->actionsDone('wp_body_open')
             ? "\t\t\t\t\t\t\t<a class=\"screen-reader-shortcut\" href=\"#wp-toolbar\" tabindex=\"1\">" . Gettext::text('Skip to toolbar') . "</a>\n"
             : '';
         return "\t\t<div id=\"wpadminbar\" class=\"{$class}\">\n" . $skip

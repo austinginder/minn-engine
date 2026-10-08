@@ -5,10 +5,11 @@ the HTML tag processor
 | Class | Kind | Lines | Summary |
 |---|---|---|---|
 | [`Decoder`](#decoder) | final class | 129 | Character reference decoding for text and attribute values: numeric and |
-| [`Edits`](#edits) | final class | 319 | The edits pending on the current token: attribute sets and removals, |
+| [`Edits`](#edits) | final class | 329 | The edits pending on the current token: attribute sets and removals, |
+| [`Escaped`](#escaped) | final readonly class | 6 | An attribute value that comes already escaped (a URL through esc_url), written as it is. |
 | [`Scanner`](#scanner) | final class | 291 | Reads one token's shape out of raw HTML at an offset: a tag with its |
 | [`TagQuery`](#tagquery) | final readonly class | 37 | A tag processor's next_tag() query: a tag name (any case), a class, the |
-| [`Tags`](#tags) | final class | 587 | A streaming HTML tokenizer with in-place edits: tags, text, comments, |
+| [`Tags`](#tags) | final class | 584 | A streaming HTML tokenizer with in-place edits: tags, text, comments, |
 | [`TokenMap`](#tokenmap) | final class | 87 | A map from words to replacements that reads the longest word at a place |
 
 ## Decoder
@@ -66,6 +67,10 @@ Whether an attribute name may be set at all, by the reference's rules.
 
 Records a set; setting class outright forgets the class edits before it.
 
+### `setEscapedAttribute(string $name, string $escaped): void`
+
+Records an attribute value that comes already escaped (a URL through esc_url), written as it is.
+
 ### `removeAttribute(string $name): void`
 
 Records a removal of an attribute the source has.
@@ -119,7 +124,8 @@ The pending text replacement, taken: it is cleared on read.
 
 The source replacements the attribute and class edits amount to, and
 forgets them: a changed attribute is rewritten in place (its duplicates
-removed), a removed one is cut, a new one is inserted after the tag name.
+removed), a removed one is cut, a new one is inserted after the tag name
+(several in the order of their text).
 
 - `@param list<array{name: string, lower: string, start: int, end: int, value: ?string}> $attributes the tag's own`
 - `@return list<array{int, int, string}> start, end, text`
@@ -152,7 +158,22 @@ The class names before class edits.
 - `@param list<array{lower: string, value: ?string}> $attributes`
 - `@return list<string>`
 
-Internals: `rebuiltClassValue()` (private, line 228), `existingName()` (private, line 255), `escape()` (private, line 265)
+Internals: `rebuiltClassValue()` (private, line 238), `existingName()` (private, line 265), `escape()` (private, line 275)
+
+
+## Escaped
+
+`final readonly class Minn\Html\Escaped` · `public/minn/src/Minn/Html/Escaped.php`
+
+An attribute value that comes already escaped (a URL through esc_url), written as it is.
+
+Used by: `Minn\Html\Tags`
+
+```php
+__construct(string $value)
+```
+
+- readonly `string $value`
 
 
 ## Scanner
@@ -353,7 +374,7 @@ The current tag's attribute names with a prefix, lower-cased.
 
 ### `classes(): array`
 
-The current tag's classes.
+The current tag's classes. @return list<string> distinct class names after pending edits
 
 - `@return list<string> distinct class names after pending edits`
 
@@ -361,7 +382,7 @@ The current tag's classes.
 
 Whether the current tag has a class.
 
-### `setAttribute(string $name, string|int|float|bool|null $value): bool`
+### `setAttribute(string $name, Minn\Html\Escaped|string|int|float|bool|null $value): bool`
 
 Sets an attribute on the current tag.
 
@@ -432,7 +453,7 @@ Where a bookmark starts, or null when there is none of that name.
 
 The document with every update written in.
 
-Internals: `setToken()` (private, line 134), `resetToken()` (private, line 144), `takeTag()` (private, line 158), `take()` (private, line 188), `baseClassList()` (private, line 371), `baseClassValue()` (private, line 376), `flush()` (private, line 543), `applyReplacements()` (private, line 564), `rescanCurrent()` (private, line 570), `rescan()` (private, line 586)
+Internals: `setToken()` (private, line 134), `resetToken()` (private, line 144), `takeTag()` (private, line 158), `take()` (private, line 188), `baseClassList()` (private, line 368), `baseClassValue()` (private, line 373), `flush()` (private, line 540), `applyReplacements()` (private, line 561), `rescanCurrent()` (private, line 567), `rescan()` (private, line 583)
 
 
 ## TokenMap

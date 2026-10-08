@@ -16,25 +16,13 @@ use Minn\Runtime\Runtime;
 /** @internal the engine's block value objects as the arrays plugin code reads */
 function _minn_block_to_array(MinnBlock $block): array
 {
-    return [
-        'blockName' => $block->name,
-        'attrs' => $block->attrs,
-        'innerBlocks' => array_map('_minn_block_to_array', $block->innerBlocks),
-        'innerHTML' => $block->innerHtml,
-        'innerContent' => $block->innerContent,
-    ];
+    return $block->toArray();
 }
 
 /** @internal the reverse: a parsed array as the engine's value object */
 function _minn_array_to_block(array $block): MinnBlock
 {
-    return new MinnBlock(
-        $block['blockName'] ?? null,
-        (array) ($block['attrs'] ?? []),
-        array_map('_minn_array_to_block', (array) ($block['innerBlocks'] ?? [])),
-        (string) ($block['innerHTML'] ?? ''),
-        (array) ($block['innerContent'] ?? []),
-    );
+    return MinnBlock::fromArray($block);
 }
 
 /** @internal a core block rendered by the engine, with the wrapper classes the engine gives it */
@@ -503,30 +491,83 @@ function unregister_block_pattern_category($category_name)
 
 function register_block_bindings_source($source_name, array $source_properties)
 {
-    $sources = Runtime::current()->get('block_bindings', []);
-    $sources[$source_name] = $source_properties + ['name' => $source_name];
-    Runtime::current()->set('block_bindings', $sources);
-    return (object) $sources[$source_name];
+    return WP_Block_Bindings_Registry::get_instance()->register((string) $source_name, $source_properties);
 }
 
 function unregister_block_bindings_source($source_name)
 {
-    $sources = Runtime::current()->get('block_bindings', []);
-    $removed = $sources[$source_name] ?? false;
-    unset($sources[$source_name]);
-    Runtime::current()->set('block_bindings', $sources);
-    return $removed === false ? false : (object) $removed;
+    return WP_Block_Bindings_Registry::get_instance()->unregister((string) $source_name);
 }
 
 function get_all_registered_block_bindings_sources()
 {
-    return Runtime::current()->get('block_bindings', []);
+    return WP_Block_Bindings_Registry::get_instance()->get_all_registered();
 }
 
 function get_block_bindings_source($source_name)
 {
-    $sources = Runtime::current()->get('block_bindings', []);
-    return isset($sources[$source_name]) ? (object) $sources[$source_name] : null;
+    return WP_Block_Bindings_Registry::get_instance()->get_registered((string) $source_name);
+}
+
+/** The attributes a block may bind to a source, through block_bindings_supported_attributes and its per-block form. */
+function get_block_bindings_supported_attributes($block_type)
+{
+    return Minn\Blocks\Bindings::supported((string) $block_type);
+}
+
+/** @internal whether a bound post's data may be read here: viewable to all or readable by this user, and not behind a password */
+function _minn_block_bindings_post_readable($post): bool
+{
+    return $post instanceof WP_Post && (is_post_publicly_viewable($post) || current_user_can('read_post', $post->ID)) && !post_password_required($post);
+}
+
+/** A post meta value for a binding: the post must be readable, the key unprotected and shown in REST. */
+function _block_bindings_post_meta_get_value(array $source_args, $block_instance)
+{
+    $key = $source_args['key'] ?? '';
+    $post_id = $block_instance->context['postId'] ?? 0;
+    if ($key === '' || empty($post_id) || !_minn_block_bindings_post_readable(get_post($post_id)) || is_protected_meta($key, 'post')) {
+        return null;
+    }
+    $keys = array_merge(get_registered_meta_keys('post', (string) ($block_instance->context['postType'] ?? '')), get_registered_meta_keys('post', ''));
+    return empty($keys[$key]['show_in_rest']) ? null : get_post_meta($post_id, $key, true);
+}
+
+/** A synced pattern's override for a named block's attribute, from the pattern/overrides context. */
+function _block_bindings_pattern_overrides_get_value(array $source_args, $block_instance, string $attribute_name)
+{
+    $name = $block_instance->attributes['metadata']['name'] ?? '';
+    return $name === '' ? null : _wp_array_get($block_instance->context, ['pattern/overrides', $name, $attribute_name], null);
+}
+
+/** A post's date (ISO 8601), its modified date when later than that ("" otherwise), or its link, for a binding. */
+function _block_bindings_post_data_get_value(array $source_args, $block_instance)
+{
+    $post_id = $block_instance->context['postId'] ?? 0;
+    if (empty($post_id) || !_minn_block_bindings_post_readable(get_post($post_id))) {
+        return null;
+    }
+    return match ($source_args['key'] ?? '') {
+        'date' => get_the_date('c', $post_id),
+        'modified' => get_the_modified_date('U', $post_id) > get_the_date('U', $post_id) ? get_the_modified_date('c', $post_id) : '',
+        'link' => get_permalink($post_id),
+        default => null,
+    };
+}
+
+/** Term data for a binding: no case the probe could make gave a value on the reference, so none is given here. */
+function _block_bindings_term_data_get_value(array $source_args, $block_instance)
+{
+    return null;
+}
+
+/** The core bindings sources, registered at init as the reference registers them. */
+function _minn_register_block_bindings_sources()
+{
+    register_block_bindings_source('core/pattern-overrides', ['label' => _x('Pattern Overrides', 'block bindings source'), 'get_value_callback' => '_block_bindings_pattern_overrides_get_value', 'uses_context' => ['pattern/overrides']]);
+    register_block_bindings_source('core/post-data', ['label' => _x('Post Data', 'block bindings source'), 'get_value_callback' => '_block_bindings_post_data_get_value', 'uses_context' => ['postId', 'postType']]);
+    register_block_bindings_source('core/post-meta', ['label' => _x('Post Meta', 'block bindings source'), 'get_value_callback' => '_block_bindings_post_meta_get_value', 'uses_context' => ['postId', 'postType']]);
+    register_block_bindings_source('core/term-data', ['label' => _x('Term Data', 'block bindings source'), 'get_value_callback' => '_block_bindings_term_data_get_value', 'uses_context' => ['termId', 'taxonomy']]);
 }
 
 function wp_interactivity_data_wp_context($context, $store_namespace = '')

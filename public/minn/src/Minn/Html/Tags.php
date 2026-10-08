@@ -325,7 +325,8 @@ final class Tags
             $list = $this->classes();
             return $list === [] ? null : implode(' ', $list);
         }
-        return $this->edits->attribute($lower)['value'] ?? Scanner::attributeValue($this->attributes, $lower);
+        $pending = $this->edits->attribute($lower);
+        return ($pending['escaped'] ?? false) ? Decoder::attribute((string) $pending['value']) : ($pending['value'] ?? Scanner::attributeValue($this->attributes, $lower));
     }
 
     /**
@@ -348,11 +349,7 @@ final class Tags
         return $names;
     }
 
-    /**
-     * The current tag's classes.
-     *
-     * @return list<string> distinct class names after pending edits
-     */
+    /** The current tag's classes. @return list<string> distinct class names after pending edits */
     public function classes(): array
     {
         if ($this->type !== self::TAG || $this->closer) {
@@ -379,7 +376,7 @@ final class Tags
     }
 
     /** Sets an attribute on the current tag. */
-    public function setAttribute(string $name, string|bool|int|float|null $value): bool
+    public function setAttribute(string $name, string|bool|int|float|null|Escaped $value): bool
     {
         if ($this->type !== self::TAG || $this->closer || $value === null) {
             return false;
@@ -390,7 +387,7 @@ final class Tags
         if (!Edits::validName($name)) {
             return false;
         }
-        $this->edits->setAttribute($name, $value === true ? true : (string) $value);
+        $value instanceof Escaped ? $this->edits->setEscapedAttribute($name, $value->value) : $this->edits->setAttribute($name, $value === true ? true : (string) $value);
         return true;
     }
 

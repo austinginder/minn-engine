@@ -78,15 +78,21 @@ class WP_Block
         return null;
     }
 
+    /** The bound attributes' values, as the sources answer them for this block and its context (Minn\\Blocks\\Bindings). */
     public function process_block_bindings()
     {
-        return [];
+        return \Minn\Blocks\Bindings::values(MinnBlock::fromArray($this->parsed_block), (array) $this->available_context);
     }
 
     public function render($options = [])
     {
         $options = wp_parse_args($options, ['dynamic' => true, 'minn_filters' => true]);
         $is_dynamic = $options['dynamic'] && $this->name && $this->block_type !== null && $this->block_type->is_dynamic();
+        // The engine's renderer binds a static core block itself; this one binds the rest.
+        $bound = $is_dynamic || !str_starts_with((string) $this->name, 'core/') ? $this->process_block_bindings() : [];
+        if ($bound !== []) {
+            $this->attributes = array_merge($this->attributes, $bound);
+        }
         $block_content = !$options['dynamic'] || empty($this->block_type->skip_inner_blocks) ? $this->render_inner_blocks() : '';
         if ($is_dynamic) {
             $global_post = $GLOBALS['post'] ?? null;
@@ -96,8 +102,12 @@ class WP_Block
             WP_Block_Supports::$block_to_render = $parent;
             $GLOBALS['post'] = $global_post;
         } elseif ($this->name !== null && str_starts_with($this->name, 'core/') && $this->block_type !== null) {
-            // A static core block takes its classes from the engine's own renderer, which applies the block filters itself.
-            return _minn_render_core_block($this, $block_content);
+            // A static core block takes its classes from the engine's own renderer, which applies the block filters itself
+            // and binds the block, reading this block's context.
+            return MinnBlocks::renderer()->providing((array) $this->available_context, fn (): string => _minn_render_core_block($this, $block_content));
+        }
+        if ($bound !== [] && $block_content !== '') {
+            $block_content = \Minn\Blocks\Bindings::html($block_content, (string) $this->name, $bound);
         }
         $this->enqueue_assets();
         if (($options['minn_filters'] ?? true) === false) {

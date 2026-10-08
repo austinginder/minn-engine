@@ -77,7 +77,7 @@ final class ThemeSupports
     /** _add_default_theme_supports: what every block theme supports before its own setup. */
     public static function blockThemeDefaults(): void
     {
-        if (!\wp_is_block_theme()) {
+        if (!(bool) Runtime::current()->get('block_theme', true)) {
             return;
         }
         foreach (['post-thumbnails' => [], 'responsive-embeds' => [], 'editor-styles' => [], 'html5' => [['comment-form', 'comment-list', 'search-form', 'gallery', 'caption', 'style', 'script']], 'automatic-feed-links' => []] as $feature => $args) {
@@ -88,7 +88,7 @@ final class ThemeSupports
     /** wp_enable_block_templates and wp_setup_widgets_block_editor: a block theme's templates, and the block widget editor for any theme. */
     public static function editorDefaults(string $which): void
     {
-        if ($which === 'block-templates' && \wp_is_block_theme()) {
+        if ($which === 'block-templates' && (bool) Runtime::current()->get('block_theme', true)) {
             self::add('block-templates', []);
         } elseif ($which === 'widgets-block-editor') {
             self::add('widgets-block-editor', []);

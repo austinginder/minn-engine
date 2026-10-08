@@ -7,7 +7,7 @@ The engine's own classes under `public/minn/src/Minn/`, one page per namespace, 
 | [`Minn`](minn.md) | 6 | the front door, the autoloader, the one database door, the REST error |
 | [`Minn\Admin`](admin.md) | 29 | the minn-admin/v1 namespace and serving the Minn Admin app |
 | [`Minn\Auth`](auth.md) | 19 | passwords, sessions, cookies, nonces, roles and capabilities |
-| [`Minn\Blocks`](blocks.md) | 18 | the block parser and renderer |
+| [`Minn\Blocks`](blocks.md) | 19 | the block parser and renderer |
 | [`Minn\Blocks\Dynamic`](blocks-dynamic.md) | 9 | dynamic core blocks that render from data |
 | [`Minn\Blocks\Dynamic\Theme`](blocks-dynamic-theme.md) | 5 | the template blocks a block theme composes with |
 | [`Minn\Cli`](cli.md) | 17 | the wp verbs the engine answers itself |
@@ -16,7 +16,7 @@ The engine's own classes under `public/minn/src/Minn/`, one page per namespace, 
 | [`Minn\Extension`](extension.md) | 8 | the extension contract and its seams |
 | [`Minn\Feed`](feed.md) | 8 |  |
 | [`Minn\Front`](front.md) | 46 | URL resolution, permalinks, feeds, sitemaps and the public page |
-| [`Minn\Html`](html.md) | 6 | the HTML tag processor |
+| [`Minn\Html`](html.md) | 7 | the HTML tag processor |
 | [`Minn\Html\Tree`](html-tree.md) | 13 |  |
 | [`Minn\Http`](http.md) | 32 | request, response, routing, and the outgoing client |
 | [`Minn\I18n`](i18n.md) | 10 |  |
