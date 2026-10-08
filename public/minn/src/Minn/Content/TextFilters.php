@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Minn\Content;
 
 use Closure;
+use Minn\Support\Escape;
 
 /**
  * The small text filters the reference runs over content, titles and
@@ -93,31 +94,38 @@ final class TextFilters
     }
 
     /**
-     * Every link in a comment marked as user-generated, on slashed text as
-     * the comment filters carry it: rel gains "nofollow ugc" after whatever
-     * it held ("ugc" alone for a link to the site's own host), moves to the
-     * end of the tag, and each attribute is written double-quoted.
+     * Every link given a rel (wp_rel_nofollow, wp_rel_ugc), on slashed text
+     * as the content filters carry it, slashed again after (probes
+     * comment-fields, plugin-queue5). A link to the site itself does not
+     * take "nofollow".
      *
      * @param Closure(string $href): bool $internal whether an href points at the site itself
      */
-    public static function relUgc(string $slashed, Closure $internal): string
+    public static function rel(string $slashed, string $rel, Closure $internal): string
     {
-        return (string) preg_replace_callback('/<a\s([^>]*)>/i', static function (array $m) use ($internal): string {
-            $attributes = self::attributes(stripslashes($m[1]));
-            $rel = array_values(array_filter(preg_split('/\s+/', (string) ($attributes['rel'] ?? '')) ?: [], static fn (string $v): bool => $v !== ''));
+        return addslashes((string) preg_replace_callback('|<a (.+?)>|i', static fn (array $m): string => self::linkRel($m[1], $rel, $internal), stripslashes($slashed)));
+    }
+
+    /**
+     * One link's opening tag with the rel added (wp_rel_callback): a tag
+     * that has a rel keeps its words first, gains the new ones, and is
+     * written again with every attribute double-quoted and rel last; one
+     * without keeps its attributes as written and takes rel at the end.
+     *
+     * @param Closure(string $href): bool $internal
+     */
+    public static function linkRel(string $inner, string $rel, Closure $internal): string
+    {
+        $attributes = self::attributes($inner);
+        if (($attributes['href'] ?? '') !== '' && $internal($attributes['href'])) {
+            $rel = trim(str_replace('nofollow', '', $rel));
+        }
+        if (isset($attributes['rel'])) {
+            $rel = implode(' ', array_unique([...array_map('trim', explode(' ', $attributes['rel'])), ...array_map('trim', explode(' ', $rel))]));
             unset($attributes['rel']);
-            $add = $internal((string) ($attributes['href'] ?? '')) ? ['ugc'] : ['nofollow', 'ugc'];
-            $rel = array_values(array_unique([...$rel, ...$add]));
-            if ($add === ['ugc']) {
-                $rel = array_values(array_diff($rel, ['nofollow']));
-            }
-            $attributes['rel'] = implode(' ', $rel);
-            $out = '';
-            foreach ($attributes as $name => $value) {
-                $out .= ' ' . $name . '="' . $value . '"';
-            }
-            return addslashes('<a' . $out . '>');
-        }, $slashed);
+            $inner = trim(implode(' ', array_map(static fn (string $name, ?string $value): string => $value === null ? $name : $name . '="' . Escape::attr($value) . '"', array_keys($attributes), $attributes)));
+        }
+        return '<a ' . $inner . ($rel !== '' ? ' rel="' . Escape::attr($rel) . '"' : '') . '>';
     }
 
     /** A span keeps no class in a comment (where a note's mention would be faked); slashed text in, slashed out. */
@@ -130,14 +138,16 @@ final class TextFilters
         return addslashes($plain);
     }
 
-    /** A tag's attributes in order, name => value (quotes removed; a bare name has an empty value). @return array<string, string> */
+    /** A tag's attributes in order, name => value (quotes removed; a bare name has null). @return array<string, ?string> */
     private static function attributes(string $raw): array
     {
         preg_match_all('/([\w:-]+)(?:\s*=\s*("([^"]*)"|\'([^\']*)\'|([^\s>"\']+)))?/', $raw, $found, PREG_SET_ORDER);
         $attributes = [];
         foreach ($found as $one) {
             $name = strtolower($one[1]);
-            $attributes[$name] ??= ($one[3] ?? '') !== '' ? $one[3] : (($one[4] ?? '') !== '' ? $one[4] : ($one[5] ?? ''));
+            if (!array_key_exists($name, $attributes)) {
+                $attributes[$name] = ($one[2] ?? '') === '' ? null : (($one[3] ?? '') !== '' ? $one[3] : (($one[4] ?? '') !== '' ? $one[4] : ($one[5] ?? '')));
+            }
         }
         return $attributes;
     }

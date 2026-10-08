@@ -43,7 +43,7 @@ the WordPress runtime plugins load against
 | [`Interactivity`](#interactivity) | final class | 509 | Server-side directive processing for the Interactivity API: the state and |
 | [`MenuEvents`](#menuevents) | final readonly class | 220 | Menus and their items saved as the reference saves them, telling |
 | [`MenuItemMarks`](#menuitemmarks) | final class | 202 | The classes and current flags the reference gives a menu's items for the |
-| [`Meta`](#meta) | final readonly class | 210 | The four meta tables behind get_metadata and friends: reads by object, and the row-level writes the update and delete rules need. |
+| [`Meta`](#meta) | final readonly class | 223 | The four meta tables behind get_metadata and friends: reads by object, and the row-level writes the update and delete rules need. |
 | [`MetaKeys`](#metakeys) | final class | 183 | The meta keys code registers, kept where the reference keeps them |
 | [`MetaTypes`](#metatypes) | final class | 21 | Meta types a plugin brought, by the table it named on $wpdb as |
 | [`NavMenu`](#navmenu) | final class | 88 | wp_nav_menu()'s menu: the one the arguments name, its items marked for |
@@ -1798,6 +1798,14 @@ an object with none has an empty list.
 
 - `@param list<int> $objectIds`
 - `@return array<int, array<string, list<string>>>`
+
+### `listing(string $type, int $objectId): array`
+
+Every row of an object's meta by key, then id, as the post meta box
+lists them: the key, the value, the row's id and the object's, all as
+stored (strings).
+
+- `@return list<array<string, string>>`
 
 ### `rowsOf(string $type, int $objectId): array`
 

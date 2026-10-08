@@ -80,16 +80,19 @@ final class Sizing
     }
 
     /**
-     * The registered size that serves a request: by name, or the smallest
-     * size that covers a requested box (the full size never counts), with
-     * its path and URL beside the file's.
+     * The registered size that serves a request: by name, or for a
+     * requested box the size of exactly that box, else the smallest larger
+     * one in its proportion (the full size never counts), else the
+     * thumbnail when it is wide enough; with its path and URL beside the
+     * file's.
      *
      * @param array<string, mixed> $meta attachment metadata
      * @param string|array{0: int, 1: int} $size
      * @param Closure(int, int, array): array{0: int, 1: int} $editorConstrain
+     * @param Closure(int, int, int, int): bool $matchesRatio
      * @return array<string, mixed>|null
      */
-    public static function intermediate(array $meta, string|array $size, ?string $fileUrl, Closure $editorConstrain): ?array
+    public static function intermediate(array $meta, string|array $size, ?string $fileUrl, Closure $editorConstrain, Closure $matchesRatio): ?array
     {
         if (empty($meta['sizes'])) {
             return null;
@@ -105,11 +108,14 @@ final class Sizing
                 if (!empty($meta['width']) && !empty($meta['height']) && (int) $row['width'] === (int) $meta['width'] && (int) $row['height'] === (int) $meta['height']) {
                     continue;
                 }
-                if ($row['width'] >= $size[0] && $row['height'] >= $size[1]) {
+                if ((int) $row['width'] === (int) $size[0] && (int) $row['height'] === (int) $size[1]) {
                     $candidates[$row['width'] * $row['height']] = $row;
-                    if ((int) $row['width'] === (int) $size[0] && (int) $row['height'] === (int) $size[1]) {
-                        break;
-                    }
+                    break;
+                }
+                // A larger size counts only in the requested proportion (the original's when a side is 0).
+                $box = (int) $size[0] === 0 || (int) $size[1] === 0 ? [(int) ($meta['width'] ?? 0), (int) ($meta['height'] ?? 0)] : [(int) $size[0], (int) $size[1]];
+                if ($row['width'] >= $size[0] && $row['height'] >= $size[1] && $matchesRatio((int) $row['width'], (int) $row['height'], ...$box)) {
+                    $candidates[$row['width'] * $row['height']] = $row;
                 }
             }
             if ($candidates !== []) {

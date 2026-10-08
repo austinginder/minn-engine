@@ -5258,3 +5258,90 @@ reference marks them:
 The probe runs the reference's custom-item rules as a web request would:
 a request host, https when the site is. Under WP-CLI the reference skips
 them, and the home item loses menu-item-home.
+
+## The playlist, link rel, and the stubs themes call (2026-10-08)
+
+The fifth slice of the plugin queue (probe plugin-queue5, 70 cases).
+
+**[playlist]** (`wp_playlist_shortcode`, markup in `Content\Playlist`, the
+templates in data/playlist-templates.html):
+
+- `ids` lists attachments (in that order unless another is asked); without
+  them, the post's own attachments are listed, but only for someone who may
+  read the post. The reference checks `read_post`, which an anonymous
+  request does not pass even on a published post, so its own-attachments
+  playlists come back empty to visitors.
+- Audio, or else video (an unknown type plays as video).
+- `post_playlist` may answer first; it gets the instance number.
+- The player:
+  - 640 wide, or the content width less 22;
+  - a video player as tall as the last track that had a size (each
+    track's resized height, in proportion).
+- Each track:
+  - its file, type, title, caption and description;
+  - its ID3 fields (`meta`, an empty list when it has no metadata);
+  - a video's original and resized dimensions;
+  - its featured image, or the type's icon at 48x64.
+- The flags in the JSON pass `wp_validate_boolean`, but whether tracks
+  carry images follows the raw value: `images="false"` still sends them.
+- The JSON keeps slashes unescaped.
+- A feed gets a line of links.
+- `wp_playlist_scripts` (on the `wp_playlist_scripts` action) queues the
+  style and script and prints `wp_underscore_playlist_templates` in the
+  footer at 0.
+
+**Link rel** (`Content\TextFilters::rel` and `linkRel`, one writer for
+`wp_rel_nofollow`, `wp_rel_ugc`, `wp_rel_callback`,
+`wp_rel_nofollow_callback`):
+
+- A link that has a rel keeps its words first and gains the new ones.
+  The tag is written again, double-quoted, with bare attributes left bare
+  and rel last.
+- A link without a rel keeps its attributes as written and takes rel at
+  the end.
+- A link to the site itself does not take "nofollow". That is
+  `wp_is_internal_link`: a known scheme and a host from
+  `wp_internal_hosts`, so ftp:// to the site counts and //host does not.
+- The targeted-link rel filters are gone in 7.1:
+  `wp_init_targeted_link_rel_filters` and
+  `wp_remove_targeted_link_rel_filters` only report themselves deprecated.
+
+**Images**: `get_image_tag`; `wp_make_content_images_responsive`
+(deprecated). An intermediate size for a requested box is now one of
+exactly that box, or a larger one in its proportion (the original's
+when a side is 0), else the thumbnail when wide enough, else the full
+file. The engine took any larger size; a 300x225 medium served a 100x50
+request that the reference serves from the full file.
+
+**Also**:
+
+- `before_last_bar`, `_split_str_by_whitespace`, `wp_specialchars`;
+- the comment author email family; `get_the_author_email`,
+  `the_author_email`, `get_user_by_email`;
+- `posts_nav_link` and `get_posts_nav_link`; `get_meta_sql`;
+- the cache primers, which have nothing to fill here:
+  `update_post_author_caches`, `update_comment_cache`,
+  `update_term_cache`, `wp_prime_option_caches_by_group`;
+- `wp_cache_set_posts_last_changed`, `global_terms_enabled`;
+- `_flatten_blocks`, breadth first, as references;
+- `wp_get_default_extension_for_mime_type`, `_device_can_upload`;
+- `array_first` and `array_last` before PHP 8.5;
+- `wp_unique_id_from_values` (eight hex of the MD5 of the values' JSON);
+- `wp_is_theme_directory_ignored` (prefixes: version control folders,
+  .DS_Store, node_modules, vendor);
+- `wp_should_load_block_assets_on_demand`.
+
+The deprecated functions report the reference's versions and
+replacements.
+
+**Placeholders made real**: `cancel_comment_reply_link`,
+`edit_term_link`, `get_post_parent`, `get_all_page_ids` (every page,
+whatever its status, through `Content\Posts`), `is_login` (the
+wp-login.php script, or a request for it), `_deep_replace`,
+`add_magic_quotes`, `addslashes_gpc`, `clean_attachment_cache`,
+`wp_scripts_get_suffix`, `get_theme_data`, `has_meta` (by key, then id,
+through `Runtime\Meta`).
+
+The probe masks home and site with one token. WP-CLI runs the reference
+as https (its configured address is), but the engine's CLI runtime counts
+as plain http, so `site_url` differs there and nowhere else.

@@ -116,6 +116,8 @@ add_shortcode('caption', 'img_caption_shortcode');
 add_shortcode('gallery', 'gallery_shortcode');
 add_shortcode('audio', 'wp_audio_shortcode');
 add_shortcode('video', 'wp_video_shortcode');
+add_shortcode('playlist', 'wp_playlist_shortcode');
+add_action('wp_playlist_scripts', 'wp_playlist_scripts');
 $GLOBALS['wp_embed'] ??= new WP_Embed();
 add_filter('widget_text_content', [$GLOBALS['wp_embed'], 'run_shortcode'], 8);
 add_filter('widget_text_content', [$GLOBALS['wp_embed'], 'autoembed'], 8);

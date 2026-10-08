@@ -1537,3 +1537,46 @@ function get_comment_statuses()
 {
     return ['hold' => __('Unapproved'), 'approve' => _x('Approved', 'comment status'), 'spam' => _x('Spam', 'comment status'), 'trash' => _x('Trash', 'comment status')];
 }
+
+/** A comment author's email address, through get_comment_author_email. */
+function get_comment_author_email($comment_id = 0)
+{
+    $comment = get_comment($comment_id);
+    return apply_filters('get_comment_author_email', $comment?->comment_author_email, $comment?->comment_ID ?? $comment_id, $comment);
+}
+
+/** Prints a comment author's email address, through author_email. */
+function comment_author_email($comment_id = 0)
+{
+    $comment = get_comment($comment_id);
+    echo apply_filters('author_email', get_comment_author_email($comment), $comment?->comment_ID);
+}
+
+/** A mailto link to a comment's author (the address scrambled by antispambot), its text the address or the one given; "" without an address. */
+function get_comment_author_email_link($link_text = '', $before = '', $after = '', $comment = null)
+{
+    $comment = get_comment($comment);
+    $email = apply_filters('comment_email', $comment?->comment_author_email, $comment);
+    if (empty($email) || $email === '@') {
+        return '';
+    }
+    $email = antispambot($email);
+    return $before . sprintf('<a href="%1$s">%2$s</a>', esc_url('mailto:' . $email), esc_html($link_text !== '' ? $link_text : $email)) . $after;
+}
+
+/** Prints get_comment_author_email_link. */
+function comment_author_email_link($link_text = '', $before = '', $after = '', $comment = null)
+{
+    echo get_comment_author_email_link($link_text, $before, $after, $comment);
+}
+
+/** Prints the link that cancels a reply. */
+function cancel_comment_reply_link($link_text = '')
+{
+    echo get_cancel_comment_reply_link($link_text);
+}
+
+/** Comments keep no cache here to fill. */
+function update_comment_cache($comments, $update_meta_cache = true)
+{
+}

@@ -531,3 +531,26 @@ function wp_get_computed_fluid_typography_value($args = [])
 {
     return Minn\Theme\Typography::clamp($args['minimum_viewport_width'] ?? null, $args['maximum_viewport_width'] ?? null, $args['minimum_font_size'] ?? null, $args['maximum_font_size'] ?? null, $args['scale_factor'] ?? null);
 }
+
+/** Whether a path in a theme lies under a folder theme scans pass over: version control, macOS's, node_modules and vendor. */
+function wp_is_theme_directory_ignored($path)
+{
+    foreach (['.DS_Store', '.svn', '.git', '.hg', '.bzr', 'node_modules', 'vendor'] as $directory) {
+        if (str_starts_with((string) $path, $directory)) {
+            return true;
+        }
+    }
+    return false;
+}
+
+/** Deprecated since 3.4: a theme's headers by the old names, from its style.css (wp_get_theme). */
+function get_theme_data($theme_file)
+{
+    _deprecated_function(__FUNCTION__, '3.4.0', 'wp_get_theme()');
+    $theme = wp_get_theme(wp_basename(dirname($theme_file)), dirname($theme_file, 2));
+    $data = ['Name' => $theme->get('Name'), 'URI' => $theme->display('ThemeURI', true, false), 'Description' => $theme->display('Description', true, false), 'Author' => $theme->display('Author', true, false), 'AuthorURI' => $theme->display('AuthorURI', true, false), 'Version' => $theme->get('Version'), 'Template' => $theme->get('Template'), 'Status' => $theme->get('Status'), 'Tags' => $theme->get('Tags'), 'Title' => $theme->get('Name'), 'AuthorName' => $theme->get('Author')];
+    foreach ((array) apply_filters('extra_theme_headers', []) as $header) {
+        $data[$header] ??= $theme->get($header);
+    }
+    return $data;
+}

@@ -819,3 +819,10 @@ function _minn_confirm_user_request(?string $request_id, ?string $confirm_key): 
     do_action('user_request_action_confirmed', (int) $request_id);
     return [true, _wp_privacy_account_request_confirmed_message((int) $request_id)];
 }
+
+/** Deprecated since 3.3: get_user_by('email'). */
+function get_user_by_email($email)
+{
+    _deprecated_function(__FUNCTION__, '3.3.0', "get_user_by('email')");
+    return get_user_by('email', $email);
+}

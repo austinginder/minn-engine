@@ -579,3 +579,9 @@ function wp_style_loader_src($src, $handle)
     }
     return $src;
 }
+
+/** The suffix a core script file takes: none under SCRIPT_DEBUG, else .min (always .min for "dev"). */
+function wp_scripts_get_suffix($type = '')
+{
+    return $type !== 'dev' && defined('SCRIPT_DEBUG') && SCRIPT_DEBUG ? '' : '.min';
+}

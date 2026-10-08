@@ -389,3 +389,9 @@ function _get_meta_table($type)
     $table = (string) $type . 'meta';
     return $type !== '' && isset($wpdb->$table) && is_string($wpdb->$table) ? $wpdb->$table : false;
 }
+
+/** The JOIN and WHERE a meta query adds to a query of an object type (WP_Meta_Query); false for a type without meta. */
+function get_meta_sql($meta_query, $type, $primary_table, $primary_id_column, $context = null)
+{
+    return (new WP_Meta_Query($meta_query))->get_sql($type, $primary_table, $primary_id_column, $context);
+}

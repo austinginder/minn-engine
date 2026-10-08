@@ -12,7 +12,7 @@ uploads, image sizes and attachment metadata
 | [`Metadata`](#metadata) | final class | 111 | The _wp_attachment_metadata blob: parsed by scanning for the shapes it |
 | [`PhotoMeta`](#photometa) | final class | 165 | A photo's own description, read as the reference's wp_read_image_metadata |
 | [`PreparedUpload`](#preparedupload) | final readonly class | 13 | An upload made ready for its attachment: the file stored, its sizes cut, |
-| [`Sizing`](#sizing) | final class | 226 | The image size arithmetic the media functions share: the crop or scale a |
+| [`Sizing`](#sizing) | final class | 232 | The image size arithmetic the media functions share: the crop or scale a |
 | [`Upload`](#upload) | final readonly class | 76 | One file arriving for the library, on either transport: a multipart |
 | [`Uploads`](#uploads) | final readonly class | 179 | The uploads directory: paths, URLs, the allowed types, and landing a file. |
 | [`Writer`](#writer) | final readonly class | 181 | The writes the media library makes. An Upload becomes an attachment: the |
@@ -305,15 +305,18 @@ or null when the image would only grow or nothing changes.
 - `@param Closure(int, int, int, int): array{0: int, 1: int} $constrain scales a box into a maximum`
 - `@return array{0: int, 1: int, 2: int, 3: int, 4: int, 5: int, 6: int, 7: int}|null`
 
-### static `intermediate(array $meta, array|string $size, ?string $fileUrl, Closure $editorConstrain): ?array`
+### static `intermediate(array $meta, array|string $size, ?string $fileUrl, Closure $editorConstrain, Closure $matchesRatio): ?array`
 
-The registered size that serves a request: by name, or the smallest
-size that covers a requested box (the full size never counts), with
-its path and URL beside the file's.
+The registered size that serves a request: by name, or for a
+requested box the size of exactly that box, else the smallest larger
+one in its proportion (the full size never counts), else the
+thumbnail when it is wide enough; with its path and URL beside the
+file's.
 
 - `@param array<string, mixed> $meta attachment metadata`
 - `@param string|array{0: int, 1: int} $size`
 - `@param Closure(int, int, array): array{0: int, 1: int} $editorConstrain`
+- `@param Closure(int, int, int, int): bool $matchesRatio`
 - `@return array<string, mixed>|null`
 
 ### static `sources(array $sizeArray, string $src, array $meta, Closure $matchesRatio): array`
@@ -344,7 +347,7 @@ image-downsize).
 
 - `@return array{0: string, 1: int, 2: int}|null the file's name, width and height`
 
-Internals: `join()` (private, line 218)
+Internals: `join()` (private, line 224)
 
 
 ## Upload

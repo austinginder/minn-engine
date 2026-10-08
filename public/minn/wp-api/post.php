@@ -2504,3 +2504,56 @@ function wp_resolve_post_date($post_date = '', $post_date_gmt = '')
     $valid = wp_checkdate((int) substr($post_date, 5, 2), (int) substr($post_date, 8, 2), (int) substr($post_date, 0, 4), $post_date);
     return $valid ? $post_date : false;
 }
+
+/** Posts' authors keep no cache here to fill. */
+function update_post_author_caches($posts)
+{
+}
+
+/** The posts' last-changed time moved on. */
+function wp_cache_set_posts_last_changed()
+{
+    wp_cache_set_last_changed('posts');
+}
+
+/** A post's parent post, or null when it has none. */
+function get_post_parent($post = null)
+{
+    $post = get_post($post);
+    return !empty($post->post_parent) ? get_post($post->post_parent) : null;
+}
+
+/** Every page's id, whatever its status, as stored (Content\Posts). */
+function get_all_page_ids()
+{
+    return _minn_posts()->idsOfType('page');
+}
+
+/** An attachment's term cache let go when asked, then clean_attachment_cache. */
+function clean_attachment_cache($id, $clean_terms = false)
+{
+    if ($clean_terms) {
+        clean_object_term_cache((int) $id, 'attachment');
+    }
+    do_action('clean_attachment_cache', (int) $id);
+}
+
+/** A post's meta rows by key, then id: key, value, the row's id and the post's (Runtime\Meta). */
+function has_meta($post_id)
+{
+    return _minn_meta()->listing('post', (int) $post_id);
+}
+
+/** Deprecated since 2.8: get_the_author_meta('email'). */
+function get_the_author_email()
+{
+    _deprecated_function(__FUNCTION__, '2.8.0', "get_the_author_meta('email')");
+    return get_the_author_meta('email');
+}
+
+/** Deprecated since 2.8: the_author_meta('email'). */
+function the_author_email()
+{
+    _deprecated_function(__FUNCTION__, '2.8.0', "the_author_meta('email')");
+    the_author_meta('email');
+}

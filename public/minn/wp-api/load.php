@@ -346,3 +346,11 @@ function wp_populate_basic_auth_from_authorization_header()
         [$_SERVER['PHP_AUTH_USER'], $_SERVER['PHP_AUTH_PW']] = explode(':', $decoded, 2);
     }
 }
+
+/** Whether this is the login screen: the script running is wp-login.php's, or the request is for it. */
+function is_login()
+{
+    $script = (string) ($_SERVER['SCRIPT_NAME'] ?? '');
+    $request = Minn\Runtime\Runtime::booted() ? Minn\Runtime\Runtime::current()->request : null;
+    return ($script !== '' && stripos(wp_login_url(), $script) !== false) || ($request !== null && str_ends_with($request->path, '/wp-login.php'));
+}

@@ -106,6 +106,19 @@ final readonly class Meta
         return $cache;
     }
 
+    /**
+     * Every row of an object's meta by key, then id, as the post meta box
+     * lists them: the key, the value, the row's id and the object's, all as
+     * stored (strings).
+     *
+     * @return list<array<string, string>>
+     */
+    public function listing(string $type, int $objectId): array
+    {
+        [$table, $column, $id] = $this->spec($type);
+        return array_map(static fn (array $row): array => array_map('strval', $row), $this->db->rows("SELECT meta_key, meta_value, {$id}, {$column} FROM {$table} WHERE {$column} = ? ORDER BY meta_key, {$id}", [$objectId]));
+    }
+
     /** Every row of an object's meta in id order, for removing them one by one. @return list<array{meta_id: int, meta_key: string, meta_value: string}> */
     public function rowsOf(string $type, int $objectId): array
     {

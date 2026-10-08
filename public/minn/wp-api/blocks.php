@@ -1377,3 +1377,32 @@ function block_footer_area()
 {
     block_template_part('footer');
 }
+
+/** Every block and every block inside one, breadth first, as references into the list. */
+function _flatten_blocks(&$blocks)
+{
+    $all = [];
+    $queue = [];
+    foreach ($blocks as &$block) {
+        $queue[] = &$block;
+    }
+    while ($queue !== []) {
+        $current = &$queue[0];
+        array_shift($queue);
+        $all[] = &$current;
+        foreach (array_keys((array) ($current['innerBlocks'] ?? [])) as $key) {
+            $queue[] = &$current['innerBlocks'][$key];
+        }
+        unset($current);
+    }
+    return $all;
+}
+
+/** Whether block assets load only for the blocks a page has: on a block theme, through should_load_block_assets_on_demand; never in the admin, a feed or the REST API. */
+function wp_should_load_block_assets_on_demand()
+{
+    if (is_admin() || is_feed() || wp_is_rest_endpoint()) {
+        return false;
+    }
+    return (bool) apply_filters('should_load_block_assets_on_demand', wp_is_block_theme());
+}

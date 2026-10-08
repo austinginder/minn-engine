@@ -160,7 +160,7 @@ rather than encoded again, the specials and both quotes encoded, then the
 filter plugins hook (esc_html, attribute_escape) handed the result and the
 original.
 
-Used by: `Minn\Content\MediaShortcodes`, `Minn\Front\EmbedCard`, `Minn\Front\FeedTags`, `Minn\Front\PageLinks`, `Minn\Front\PostEmbed`, `Minn\Front\ToolbarMarkup`, `Minn\Front\ToolbarMenus`, `Minn\Runtime\NavMenu`, `Minn\Runtime\OptionSanitizer`, `Minn\Runtime\UpdateCounts`, `Minn\Support\KsesAttributes`, `Minn\Theme\HeadLinks`, `Minn\Widgets\WidgetForms`
+Used by: `Minn\Content\MediaShortcodes`, `Minn\Content\TextFilters`, `Minn\Front\EmbedCard`, `Minn\Front\FeedTags`, `Minn\Front\PageLinks`, `Minn\Front\PostEmbed`, `Minn\Front\ToolbarMarkup`, `Minn\Front\ToolbarMenus`, `Minn\Runtime\NavMenu`, `Minn\Runtime\OptionSanitizer`, `Minn\Runtime\UpdateCounts`, `Minn\Support\KsesAttributes`, `Minn\Theme\HeadLinks`, `Minn\Widgets\WidgetForms`
 
 ### static `html(mixed $text): string`
 

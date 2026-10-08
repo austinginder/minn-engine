@@ -472,3 +472,10 @@ function _c($text, $domain = 'default')
     $bar = strrpos($translated, '|');
     return $bar === false ? $translated : substr($translated, 0, $bar);
 }
+
+/** The text before its last "|", or all of it when there is none. */
+function before_last_bar($text)
+{
+    $last = strrpos((string) $text, '|');
+    return $last === false ? $text : substr((string) $text, 0, $last);
+}

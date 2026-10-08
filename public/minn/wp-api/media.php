@@ -228,7 +228,7 @@ function image_get_intermediate_size($post_id, $size = 'thumbnail')
     if (!is_array($meta) || !$size) {
         return false;
     }
-    $data = Sizing::intermediate($meta, $size, wp_get_attachment_url($post_id) ?: null, static fn (int $w, int $h, array $box): array => image_constrain_size_for_editor($w, $h, $box));
+    $data = Sizing::intermediate($meta, $size, wp_get_attachment_url($post_id) ?: null, static fn (int $w, int $h, array $box): array => image_constrain_size_for_editor($w, $h, $box), static fn (int $w, int $h, int $tw, int $th): bool => wp_image_matches_ratio($w, $h, $tw, $th));
     return $data === null ? false : apply_filters('image_get_intermediate_size', $data, $post_id, $size);
 }
 
@@ -1312,6 +1312,107 @@ function wp_video_shortcode($attr, $content = '')
     return Minn\Content\MediaShortcodes::video(is_array($attr) ? $attr : (string) $attr, (string) $content);
 }
 
+/**
+ * [playlist] (probe plugin-queue5): the listed attachments, or the post's
+ * own (for someone who may read the post), of audio or else video, as a
+ * wp-playlist player with its tracks as JSON; post_playlist may answer
+ * first; in a feed, a line of links. The player is as wide as the content
+ * (less 22) or 640, a video player as tall as the last sized track.
+ */
+function wp_playlist_shortcode($attr)
+{
+    $post = get_post();
+    $instance = _minn_av_instance('playlist');
+    $attr = (array) $attr;
+    if (!empty($attr['ids'])) {
+        $attr['orderby'] = empty($attr['orderby']) ? 'post__in' : $attr['orderby'];
+        $attr['include'] = $attr['ids'];
+    }
+    $output = apply_filters('post_playlist', '', $attr, $instance);
+    if ($output !== '') {
+        return $output;
+    }
+    $atts = shortcode_atts(['type' => 'audio', 'order' => 'ASC', 'orderby' => 'menu_order ID', 'id' => $post ? $post->ID : 0, 'include' => '', 'exclude' => '', 'style' => 'light', 'tracklist' => true, 'tracknumbers' => true, 'images' => true, 'artists' => true], $attr, 'playlist');
+    $atts['type'] = $atts['type'] === 'audio' ? 'audio' : 'video';
+    $attachments = _minn_playlist_attachments($atts);
+    if ($attachments === []) {
+        return '';
+    }
+    if (is_feed()) {
+        return "\n" . implode('', array_map(static fn ($id) => wp_get_attachment_link($id) . "\n", array_keys($attachments)));
+    }
+    $width = empty($GLOBALS['content_width']) ? 640 : (int) $GLOBALS['content_width'] - 22;
+    $height = empty($GLOBALS['content_width']) ? 360 : (int) round(360 * $width / 640);
+    $tracks = [];
+    foreach ($attachments as $attachment) {
+        $tracks[] = _minn_playlist_track($attachment, $atts, $width, $height);
+    }
+    $data = ['type' => $atts['type']] + array_map('wp_validate_boolean', array_intersect_key($atts, array_flip(['tracklist', 'tracknumbers', 'images', 'artists']))) + ['tracks' => $tracks];
+    do_action('wp_playlist_scripts', $atts['type'], $atts['style']);
+    $links = array_map(static fn ($id) => wp_get_attachment_link($id), array_keys($attachments));
+    return Minn\Content\Playlist::markup($atts['type'], esc_attr($atts['style']), $width, $height, $links, (string) wp_json_encode($data, JSON_UNESCAPED_SLASHES));
+}
+
+/** @internal the playlist's attachments by id: those listed, or the post's own when the visitor may read the post */
+function _minn_playlist_attachments(array $atts): array
+{
+    $args = ['post_status' => 'inherit', 'post_type' => 'attachment', 'post_mime_type' => $atts['type'], 'order' => $atts['order'], 'orderby' => $atts['orderby']];
+    if (!empty($atts['include'])) {
+        $found = [];
+        foreach (get_posts($args + ['include' => $atts['include']]) as $attachment) {
+            $found[$attachment->ID] = $attachment;
+        }
+        return $found;
+    }
+    if (!current_user_can('read_post', (int) $atts['id'])) {
+        return [];
+    }
+    return (array) get_children($args + ['post_parent' => (int) $atts['id']] + (empty($atts['exclude']) ? [] : ['exclude' => $atts['exclude']]));
+}
+
+/** @internal one track: its file, type and text, its ID3 fields, a video's size (the player's height follows it), its image or the type's icon */
+function _minn_playlist_track(WP_Post $attachment, array $atts, int $width, int &$height): array
+{
+    $url = wp_get_attachment_url($attachment->ID);
+    $track = ['src' => $url, 'type' => wp_check_filetype($url, wp_get_mime_types())['type'], 'title' => $attachment->post_title, 'caption' => $attachment->post_excerpt, 'description' => $attachment->post_content, 'meta' => []];
+    $meta = wp_get_attachment_metadata($attachment->ID);
+    if (!empty($meta)) {
+        foreach (array_keys(wp_get_attachment_id3_keys($attachment)) as $key) {
+            if (!empty($meta[$key])) {
+                $track['meta'][$key] = $meta[$key];
+            }
+        }
+        if ($atts['type'] === 'video') {
+            $sized = !empty($meta['width']) && !empty($meta['height']);
+            $original = $sized ? ['width' => $meta['width'], 'height' => $meta['height']] : ['width' => 640, 'height' => 360];
+            $height = $sized ? (int) round($meta['height'] * $width / $meta['width']) : $height;
+            $track['dimensions'] = ['original' => $original, 'resized' => ['width' => $width, 'height' => $height]];
+        }
+    }
+    if ($atts['images']) {
+        $thumbnail = get_post_thumbnail_id($attachment->ID);
+        $icon = ['src' => wp_mime_type_icon($attachment->ID, '.svg'), 'width' => 48, 'height' => 64];
+        $track['image'] = $thumbnail ? array_combine(['src', 'width', 'height'], array_slice((array) wp_get_attachment_image_src($thumbnail, 'full'), 0, 3)) : $icon;
+        $track['thumb'] = $thumbnail ? array_combine(['src', 'width', 'height'], array_slice((array) wp_get_attachment_image_src($thumbnail, 'thumbnail'), 0, 3)) : $icon;
+    }
+    return $track;
+}
+
+/** The playlist's style and script, and its templates printed in the footer. */
+function wp_playlist_scripts($type)
+{
+    wp_enqueue_style('wp-mediaelement');
+    wp_enqueue_script('wp-playlist');
+    add_action('wp_footer', 'wp_underscore_playlist_templates', 0);
+    add_action('admin_footer', 'wp_underscore_playlist_templates', 0);
+}
+
+/** The Underscore templates wp-playlist draws its items with (Content\Playlist). */
+function wp_underscore_playlist_templates()
+{
+    echo Minn\Content\Playlist::templates(_x('&#8220;%s&#8221;', 'playlist item title'));
+}
+
 /** Registered sizes the attachment's metadata lacks and its dimensions can fit (empty for the battery attachment, probed). */
 function wp_get_missing_image_subsizes($attachment_id)
 {
@@ -1725,4 +1826,21 @@ function image_add_caption($html, $id, $caption, $title, $align, $url, $size, $a
 function _cleanup_image_add_caption($matches)
 {
     return preg_replace('/[\r\n\t]+/', ' ', $matches[0]);
+}
+
+/** An image tag for an attachment at a size, its class aligned and sized (get_image_tag_class), through get_image_tag. */
+function get_image_tag($id, $alt, $title, $align, $size = 'medium')
+{
+    [$src, $width, $height] = image_downsize($id, $size) ?: [null, null, null];
+    $title = $title ? 'title="' . esc_attr($title) . '" ' : '';
+    $class = apply_filters('get_image_tag_class', 'align' . esc_attr($align) . ' size-' . esc_attr(is_array($size) ? implode('x', $size) : $size) . ' wp-image-' . $id, $id, $align, $size);
+    $html = '<img src="' . esc_url((string) $src) . '" alt="' . esc_attr($alt) . '" ' . $title . image_hwstring($width, $height) . 'class="' . $class . '" />';
+    return apply_filters('get_image_tag', $html, $id, $alt, $title, $align, $size);
+}
+
+/** Deprecated since 5.5: wp_filter_content_tags. */
+function wp_make_content_images_responsive($content)
+{
+    _deprecated_function(__FUNCTION__, '5.5.0', 'wp_filter_content_tags()');
+    return wp_filter_content_tags($content);
 }

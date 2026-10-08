@@ -861,3 +861,46 @@ function get_edit_tag_link($tag, $taxonomy = 'post_tag')
 {
     return apply_filters('get_edit_tag_link', get_edit_term_link($tag, $taxonomy));
 }
+
+/**
+ * The previous and next page links of a listing, the separator between
+ * them only when both are there; nothing on a single post or a listing of
+ * one page.
+ */
+function get_posts_nav_link($args = [])
+{
+    if (is_singular()) {
+        return '';
+    }
+    $args = wp_parse_args($args, ['sep' => ' &#8212; ', 'prelabel' => __('&laquo; Previous Page'), 'nxtlabel' => __('Next Page &raquo;')]);
+    $pages = (int) _minn_main_query()->max_num_pages;
+    $paged = (int) get_query_var('paged');
+    if ($paged < 2 || $paged >= $pages) {
+        $args['sep'] = '';
+    }
+    if ($pages <= 1) {
+        return '';
+    }
+    return get_previous_posts_link($args['prelabel']) . preg_replace('/&([^#])(?![a-z]{1,8};)/i', '&#038;$1', (string) $args['sep']) . get_next_posts_link($args['nxtlabel']);
+}
+
+/** Prints get_posts_nav_link with the labels given. */
+function posts_nav_link($sep = '', $prelabel = '', $nxtlabel = '')
+{
+    echo get_posts_nav_link(array_filter(compact('sep', 'prelabel', 'nxtlabel')));
+}
+
+/** A link to edit a term (the queried one by default), for someone who may; printed unless display is off. */
+function edit_term_link($link = '', $before = '', $after = '', $term = null, $display = true)
+{
+    $term = $term === null ? get_queried_object() : get_term($term);
+    if (!$term instanceof WP_Term || !current_user_can('edit_term', $term->term_id)) {
+        return null;
+    }
+    $link = $before . apply_filters('edit_term_link', '<a href="' . get_edit_term_link($term->term_id, $term->taxonomy) . '">' . ($link === '' ? __('Edit This') : $link) . '</a>', $term->term_id) . $after;
+    if (!$display) {
+        return $link;
+    }
+    echo $link;
+    return null;
+}

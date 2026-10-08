@@ -1114,6 +1114,21 @@ if (!function_exists('array_all')) {
     }
 }
 
+// PHP 8.5's, likewise.
+if (!function_exists('array_first')) {
+    function array_first(array $array): mixed
+    {
+        return $array === [] ? null : $array[array_key_first($array)];
+    }
+}
+
+if (!function_exists('array_last')) {
+    function array_last(array $array): mixed
+    {
+        return $array === [] ? null : $array[array_key_last($array)];
+    }
+}
+
 /** Where the "Learn more about updating PHP" links point: wp_update_php_url, or the default when that answers nothing (probe plugin-activation). */
 function wp_get_update_php_url()
 {
@@ -1256,4 +1271,46 @@ function wp_privacy_exports_url()
 function bool_from_yn($yn)
 {
     return strtolower((string) $yn) === 'y';
+}
+
+/** Every string in an array slashed, nested arrays too; other values as they were. */
+function add_magic_quotes($input_array)
+{
+    foreach ((array) $input_array as $key => $value) {
+        $input_array[$key] = is_array($value) ? add_magic_quotes($value) : (is_string($value) ? addslashes($value) : $value);
+    }
+    return $input_array;
+}
+
+/** The first extension wp_get_mime_types lists for a MIME type; false for one it does not know. */
+function wp_get_default_extension_for_mime_type($mime_type)
+{
+    $extensions = (string) array_search($mime_type, wp_get_mime_types(), true);
+    return $extensions === '' ? false : explode('|', $extensions)[0];
+}
+
+/** Whether the device can upload files: any but a mobile one, and of the iOS devices only iOS 6 and later. */
+function _device_can_upload()
+{
+    if (!wp_is_mobile()) {
+        return true;
+    }
+    $agent = (string) ($_SERVER['HTTP_USER_AGENT'] ?? '');
+    if (str_contains($agent, 'iPhone') || str_contains($agent, 'iPad') || str_contains($agent, 'iPod')) {
+        return preg_match('#OS ([\d_]+) like Mac OS X#', $agent, $version) === 1 && version_compare($version[1], '6', '>=');
+    }
+    return true;
+}
+
+/** An id for a set of values: the prefix and the first eight hex of the MD5 of their JSON. */
+function wp_unique_id_from_values(array $data, string $prefix = ''): string
+{
+    return $prefix . substr(md5((string) wp_json_encode($data)), 0, 8);
+}
+
+/** Deprecated since 6.1: global terms are gone. */
+function global_terms_enabled()
+{
+    _deprecated_function(__FUNCTION__, '6.1.0');
+    return false;
 }

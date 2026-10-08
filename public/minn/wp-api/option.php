@@ -605,3 +605,8 @@ function wp_protect_special_option($option)
         wp_die(sprintf(__('%s is a protected WP option and may not be modified'), esc_html($option)));
     }
 }
+
+/** Options keep no cache here to prime. */
+function wp_prime_option_caches_by_group($option_group)
+{
+}

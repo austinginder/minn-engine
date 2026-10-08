@@ -1628,3 +1628,8 @@ function wp_term_is_shared($term_id)
     }
     return count(get_terms(['include' => [(int) $term_id], 'hide_empty' => false, 'fields' => 'tt_ids', 'taxonomy' => array_keys(get_taxonomies())])) > 1;
 }
+
+/** Terms keep no cache here to fill. */
+function update_term_cache($terms, $taxonomy = '')
+{
+}

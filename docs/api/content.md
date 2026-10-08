@@ -21,13 +21,14 @@ the repositories and records: posts, users, terms, comments, and the render pipe
 | [`MoreTag`](#moretag) | final class | 20 | The `<!--more-->` marker that splits a post into the part a listing shows |
 | [`Page`](#page) | final readonly class | 49 | One page of a listing: the rows on it and how many rows the whole |
 | [`PasswordGate`](#passwordgate) | final class | 34 | A password-protected post on the front end: its body is the password |
+| [`Playlist`](#playlist) | final class | 25 | The [playlist] shortcode's markup as the reference prints it (probe |
 | [`PluginState`](#pluginstate) | final readonly class | 72 | Switching plugins on and off: a WordPress plugin file goes through the |
 | [`PostClasses`](#postclasses) | final class | 55 | The class list a post carries on its article element, in the reference's |
 | [`PostRecord`](#postrecord) | final readonly class | 156 | One row of the posts table, read by name. The columns keep their |
 | [`PostSlugs`](#postslugs) | final readonly class | 75 | Which slug a live post may take beside the others, as the reference |
 | [`PostStatus`](#poststatus) | enum | 42 | The statuses a post row can hold; the value is the column's own spelling. |
 | [`PostWriter`](#postwriter) | final readonly class | 482 | Every write to the posts table and its satellites: rows, meta, term |
-| [`Posts`](#posts) | final readonly class | 378 | Reads over the posts table. A post comes back as a PostRecord; a listing |
+| [`Posts`](#posts) | final readonly class | 384 | Reads over the posts table. A post comes back as a PostRecord; a listing |
 | [`Reader`](#reader) | final class | 72 | Who is reading this request: their user id, whether they may read |
 | [`Revisions`](#revisions) | final readonly class | 95 | Revision rows: the plain snapshots and the per-author autosave slots. |
 | [`Site`](#site) | final readonly class | 73 | Site-wide options and the site's clock. |
@@ -37,7 +38,7 @@ the repositories and records: posts, users, terms, comments, and the render pipe
 | [`TermLinks`](#termlinks) | final class | 39 | A post's terms rendered as links, in the two shapes the reference |
 | [`TermRecord`](#termrecord) | final readonly class | 88 | One term with its taxonomy row, read by name: $term->name, ->slug, |
 | [`Terms`](#terms) | final readonly class | 221 |  |
-| [`TextFilters`](#textfilters) | final class | 130 | The small text filters the reference runs over content, titles and |
+| [`TextFilters`](#textfilters) | final class | 139 | The small text filters the reference runs over content, titles and |
 | [`Texturize`](#texturize) | final class | 102 | The texturize subset the reference applies to rendered text: straight |
 | [`UserRecord`](#userrecord) | final readonly class | 96 | One row of the users table, read by name. Columns keep their WordPress |
 | [`Users`](#users) | final readonly class | 267 |  |
@@ -825,6 +826,28 @@ True while the post has a password the reader's cookie does not match.
 The form, with the reference's stray closing p after the hidden field.
 
 
+## Playlist
+
+`final class Minn\Content\Playlist` · `public/minn/src/Minn/Content/Playlist.php`
+
+The [playlist] shortcode's markup as the reference prints it (probe
+plugin-queue5): the player for audio (with the current-item box) or for
+video (with its height), the next and previous controls, a noscript list
+of links to the files, and the tracks as JSON for wp-playlist; and the
+two Underscore templates the script draws them with
+(data/playlist-templates.html).
+
+### static `markup(string $type, string $style, int $width, int $height, array $links, string $json): string`
+
+The player and its data.
+
+- `@param list<string> $links one link per track, for the noscript list`
+
+### static `templates(string $quoted): string`
+
+The two templates, each title wrapped in the quoting format given (its %s takes the title placeholder).
+
+
 ## PluginState
 
 `final readonly class Minn\Content\PluginState` · `public/minn/src/Minn/Content/PluginState.php`
@@ -1323,6 +1346,12 @@ oldest first), the same on both stacks over one database.
 
 Whether any post of a type is published.
 
+### `idsOfType(string $type): array`
+
+Every post id of a type, whatever its status, as stored (strings), in the table's order. @return list<string>
+
+- `@return list<string>`
+
 ### `meta(int $postId, string $key): ?string`
 
 One meta value of a post, or null when it has none.
@@ -1397,7 +1426,7 @@ The newest autosave of a post by one author, or null.
 
 The slug of the post's first category, or null.
 
-Internals: `record()` (private, line 20), `byName()` (private, line 48), `byPath()` (private, line 123), `neighbour()` (private, line 255), `weekMode()` (private, line 323), `monthBeside()` (private, line 358)
+Internals: `record()` (private, line 20), `byName()` (private, line 48), `byPath()` (private, line 123), `neighbour()` (private, line 261), `weekMode()` (private, line 329), `monthBeside()` (private, line 364)
 
 
 ## Reader
@@ -1832,20 +1861,29 @@ The site's own http address made https, escaped forms included.
 
 A feed carries an embedded post's iframe without the style that hides it until its script runs.
 
-### static `relUgc(string $slashed, Closure $internal): string`
+### static `rel(string $slashed, string $rel, Closure $internal): string`
 
-Every link in a comment marked as user-generated, on slashed text as
-the comment filters carry it: rel gains "nofollow ugc" after whatever
-it held ("ugc" alone for a link to the site's own host), moves to the
-end of the tag, and each attribute is written double-quoted.
+Every link given a rel (wp_rel_nofollow, wp_rel_ugc), on slashed text
+as the content filters carry it, slashed again after (probes
+comment-fields, plugin-queue5). A link to the site itself does not
+take "nofollow".
 
 - `@param Closure(string $href): bool $internal whether an href points at the site itself`
+
+### static `linkRel(string $inner, string $rel, Closure $internal): string`
+
+One link's opening tag with the rel added (wp_rel_callback): a tag
+that has a rel keeps its words first, gains the new ones, and is
+written again with every attribute double-quoted and rel last; one
+without keeps its attributes as written and takes rel at the end.
+
+- `@param Closure(string $href): bool $internal`
 
 ### static `noteMentionClasses(string $slashed): string`
 
 A span keeps no class in a comment (where a note's mention would be faked); slashed text in, slashed out.
 
-Internals: `ignoring()` (private, line 44), `words()` (private, line 53), `attributes()` (private, line 134)
+Internals: `ignoring()` (private, line 45), `words()` (private, line 54), `attributes()` (private, line 142)
 
 
 ## Texturize

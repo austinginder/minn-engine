@@ -1012,11 +1012,53 @@ function sanitize_sql_orderby($orderby)
     return false;
 }
 
-/** A comment's links marked user-generated (Minn\Content\TextFilters::relUgc); a link to the site's own host is ugc alone. */
+/** A comment's links marked user-generated (Content\TextFilters::rel); a link to the site itself is ugc alone. */
 function wp_rel_ugc($text)
 {
-    $home = strtolower((string) parse_url(home_url(), PHP_URL_HOST));
-    return \Minn\Content\TextFilters::relUgc((string) $text, static fn (string $href): bool => $home !== '' && strtolower((string) parse_url($href, PHP_URL_HOST)) === $home);
+    return \Minn\Content\TextFilters::rel((string) $text, 'nofollow ugc', static fn (string $href): bool => wp_is_internal_link($href));
+}
+
+/** The links in slashed text marked nofollow, except those to the site itself (Content\TextFilters::rel). */
+function wp_rel_nofollow($text)
+{
+    return \Minn\Content\TextFilters::rel((string) $text, 'nofollow', static fn (string $href): bool => wp_is_internal_link($href));
+}
+
+/** One link's opening tag, from its matched attributes, with the rel added (Content\TextFilters::linkRel). */
+function wp_rel_callback($matches, $rel)
+{
+    return \Minn\Content\TextFilters::linkRel((string) $matches[1], (string) $rel, static fn (string $href): bool => wp_is_internal_link($href));
+}
+
+/** wp_rel_callback with nofollow. */
+function wp_rel_nofollow_callback($matches)
+{
+    return wp_rel_callback($matches, 'nofollow');
+}
+
+/** Whether a link points at one of the site's own hosts: a known scheme and a host from wp_internal_hosts. */
+function wp_is_internal_link($link)
+{
+    $link = strtolower((string) $link);
+    return in_array(wp_parse_url($link, PHP_URL_SCHEME), wp_allowed_protocols(), true) && in_array(wp_parse_url($link, PHP_URL_HOST), wp_internal_hosts(), true);
+}
+
+/** The hosts the site's own links are on: its home's, through wp_internal_hosts, lower-cased and once each. */
+function wp_internal_hosts()
+{
+    return array_values(array_unique(array_map('strtolower', (array) apply_filters('wp_internal_hosts', [wp_parse_url(home_url(), PHP_URL_HOST)]))));
+}
+
+/** Deprecated since 6.7: the save filters no longer add rel to targeted links. */
+function wp_init_targeted_link_rel_filters()
+{
+    _deprecated_function(__FUNCTION__, '6.7.0');
+}
+
+/** Deprecated since 6.7: there are no targeted-link rel filters to remove. */
+function wp_remove_targeted_link_rel_filters()
+{
+    _deprecated_function(__FUNCTION__, '6.7.0');
 }
 
 /** A span in a comment keeps no class, so a note's mention cannot be faked (Minn\Content\TextFilters::noteMentionClasses). */
@@ -1062,4 +1104,50 @@ function wp_richedit_pre($text)
         return apply_filters('richedit_pre', '');
     }
     return apply_filters('richedit_pre', htmlspecialchars(wpautop(convert_chars($text)), ENT_NOQUOTES, get_option('blog_charset')));
+}
+
+/**
+ * A string cut into pieces of at most $goal bytes, each ending after
+ * whitespace; a word longer than that runs on to the next whitespace. The
+ * rest, when it fits, is the last piece.
+ */
+function _split_str_by_whitespace($text, $goal)
+{
+    $text = (string) $text;
+    $chunks = [];
+    while (strlen($text) > $goal) {
+        $blanks = strtr($text, "\r\n\t\v\f ", "\0\0\0\0\0\0");
+        $at = strrpos(substr($blanks, 0, $goal + 1), "\0");
+        $at = $at === false ? strpos($blanks, "\0", $goal + 1) : $at;
+        if ($at === false) {
+            break;
+        }
+        $chunks[] = substr($text, 0, $at + 1);
+        $text = substr($text, $at + 1);
+    }
+    return $text === '' ? $chunks : [...$chunks, $text];
+}
+
+/** Deprecated since 2.8: esc_html, or _wp_specialchars when given more than the text. */
+function wp_specialchars($text, $quote_style = ENT_NOQUOTES, $charset = false, $double_encode = false)
+{
+    _deprecated_function(__FUNCTION__, '2.8.0', 'esc_html()');
+    return func_num_args() > 1 ? _wp_specialchars(...func_get_args()) : esc_html($text);
+}
+
+/** The search removed from the subject again and again, until none is left (a removal can join a new match). */
+function _deep_replace($search, $subject)
+{
+    $subject = (string) $subject;
+    do {
+        $subject = str_replace($search, '', $subject, $count);
+    } while ($count > 0);
+    return $subject;
+}
+
+/** Deprecated since 7.0: wp_slash. */
+function addslashes_gpc($gpc)
+{
+    _deprecated_function(__FUNCTION__, '7.0.0', 'wp_slash()');
+    return wp_slash($gpc);
 }

@@ -27361,6 +27361,102 @@
             ]
         },
         {
+            "name": "Minn\\Content\\Playlist",
+            "short": "Playlist",
+            "namespace": "Minn\\Content",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Content/Playlist.php",
+            "lines": 25,
+            "doc": "The [playlist] shortcode's markup as the reference prints it (probe\nplugin-queue5): the player for audio (with the current-item box) or for\nvideo (with its height), the next and previous controls, a noscript list\nof links to the files, and the tracks as JSON for wp-playlist; and the\ntwo Underscore templates the script draws them with\n(data/playlist-templates.html).",
+            "implements": [],
+            "extends": null,
+            "uses": [],
+            "usedBy": [],
+            "constructor": null,
+            "cases": [],
+            "constants": [],
+            "properties": [],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "markup",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "markup(string $type, string $style, int $width, int $height, array $links, string $json): string",
+                    "doc": "The player and its data.",
+                    "shapes": [
+                        "@param list<string> $links one link per track, for the noscript list"
+                    ],
+                    "params": [
+                        {
+                            "name": "type",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "style",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "width",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "height",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "links",
+                            "type": "array",
+                            "shape": "list<string>",
+                            "default": null,
+                            "doc": "one link per track, for the noscript list"
+                        },
+                        {
+                            "name": "json",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": "the type, the flags and the tracks, encoded"
+                        }
+                    ],
+                    "line": 23,
+                    "end": 31
+                },
+                {
+                    "routes": [],
+                    "name": "templates",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "templates(string $quoted): string",
+                    "doc": "The two templates, each title wrapped in the quoting format given (its %s takes the title placeholder).",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "quoted",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 34,
+                    "end": 38
+                }
+            ]
+        },
+        {
             "name": "Minn\\Content\\PluginState",
             "short": "PluginState",
             "namespace": "Minn\\Content",
@@ -29729,7 +29825,7 @@
             "namespace": "Minn\\Content",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Content/Posts.php",
-            "lines": 378,
+            "lines": 384,
             "doc": "Reads over the posts table. A post comes back as a PostRecord; a listing\nis the main query's (WP_Query); rendering and escaping happen elsewhere.",
             "implements": [],
             "extends": null,
@@ -30061,6 +30157,28 @@
                 },
                 {
                     "routes": [],
+                    "name": "idsOfType",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "idsOfType(string $type): array",
+                    "doc": "Every post id of a type, whatever its status, as stored (strings), in the table's order. @return list<string>",
+                    "shapes": [
+                        "@return list<string>"
+                    ],
+                    "params": [
+                        {
+                            "name": "type",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 186,
+                    "end": 189
+                },
+                {
+                    "routes": [],
                     "name": "meta",
                     "static": false,
                     "visibility": "public",
@@ -30083,8 +30201,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 186,
-                    "end": 193
+                    "line": 192,
+                    "end": 199
                 },
                 {
                     "routes": [],
@@ -30112,8 +30230,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 200,
-                    "end": 211
+                    "line": 206,
+                    "end": 217
                 },
                 {
                     "routes": [],
@@ -30132,8 +30250,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 214,
-                    "end": 220
+                    "line": 220,
+                    "end": 226
                 },
                 {
                     "routes": [],
@@ -30152,8 +30270,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 223,
-                    "end": 231
+                    "line": 229,
+                    "end": 237
                 },
                 {
                     "routes": [],
@@ -30179,8 +30297,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 234,
-                    "end": 241
+                    "line": 240,
+                    "end": 247
                 },
                 {
                     "routes": [],
@@ -30199,8 +30317,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 244,
-                    "end": 247
+                    "line": 250,
+                    "end": 253
                 },
                 {
                     "routes": [],
@@ -30219,8 +30337,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 250,
-                    "end": 253
+                    "line": 256,
+                    "end": 259
                 },
                 {
                     "routes": [],
@@ -30248,8 +30366,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 273,
-                    "end": 280
+                    "line": 279,
+                    "end": 286
                 },
                 {
                     "routes": [],
@@ -30284,8 +30402,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 287,
-                    "end": 295
+                    "line": 293,
+                    "end": 301
                 },
                 {
                     "routes": [],
@@ -30327,8 +30445,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 304,
-                    "end": 320
+                    "line": 310,
+                    "end": 326
                 },
                 {
                     "routes": [],
@@ -30370,8 +30488,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 333,
-                    "end": 341
+                    "line": 339,
+                    "end": 347
                 },
                 {
                     "routes": [],
@@ -30404,8 +30522,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 344,
-                    "end": 348
+                    "line": 350,
+                    "end": 354
                 },
                 {
                     "routes": [],
@@ -30438,8 +30556,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 351,
-                    "end": 355
+                    "line": 357,
+                    "end": 361
                 },
                 {
                     "routes": [],
@@ -30465,8 +30583,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 368,
-                    "end": 375
+                    "line": 374,
+                    "end": 381
                 },
                 {
                     "routes": [],
@@ -30485,8 +30603,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 378,
-                    "end": 389
+                    "line": 384,
+                    "end": 395
                 },
                 {
                     "routes": [],
@@ -30606,8 +30724,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 255,
-                    "end": 264
+                    "line": 261,
+                    "end": 270
                 },
                 {
                     "routes": [],
@@ -30618,8 +30736,8 @@
                     "doc": "MySQL's WEEK() mode for the site's first day of the week: 0 for Sunday, 1 for Monday.",
                     "shapes": [],
                     "params": [],
-                    "line": 323,
-                    "end": 326
+                    "line": 329,
+                    "end": 332
                 },
                 {
                     "routes": [],
@@ -30654,8 +30772,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 358,
-                    "end": 365
+                    "line": 364,
+                    "end": 371
                 }
             ]
         },
@@ -32927,11 +33045,13 @@
             "namespace": "Minn\\Content",
             "kind": "final class",
             "file": "public/minn/src/Minn/Content/TextFilters.php",
-            "lines": 130,
+            "lines": 139,
             "doc": "The small text filters the reference runs over content, titles and\ncomments, each from its observed rules (contracts/runtime.md \"The content\nfilters\", \"The comment form\"): smilies, the capital P, insecure home\naddresses, the feed's embed clean-up, and a comment's links and spans.",
             "implements": [],
             "extends": null,
-            "uses": [],
+            "uses": [
+                "Minn\\Support\\Escape"
+            ],
             "usedBy": [],
             "constructor": null,
             "cases": [],
@@ -32985,8 +33105,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 28,
-                    "end": 41
+                    "line": 29,
+                    "end": 42
                 },
                 {
                     "routes": [],
@@ -33005,8 +33125,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 67,
-                    "end": 70
+                    "line": 68,
+                    "end": 71
                 },
                 {
                     "routes": [],
@@ -33025,8 +33145,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 73,
-                    "end": 76
+                    "line": 74,
+                    "end": 77
                 },
                 {
                     "routes": [],
@@ -33059,8 +33179,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 79,
-                    "end": 83
+                    "line": 80,
+                    "end": 84
                 },
                 {
                     "routes": [],
@@ -33079,22 +33199,29 @@
                             "doc": ""
                         }
                     ],
-                    "line": 86,
-                    "end": 93
+                    "line": 87,
+                    "end": 94
                 },
                 {
                     "routes": [],
-                    "name": "relUgc",
+                    "name": "rel",
                     "static": true,
                     "visibility": "public",
-                    "signature": "relUgc(string $slashed, Closure $internal): string",
-                    "doc": "Every link in a comment marked as user-generated, on slashed text as\nthe comment filters carry it: rel gains \"nofollow ugc\" after whatever\nit held (\"ugc\" alone for a link to the site's own host), moves to the\nend of the tag, and each attribute is written double-quoted.",
+                    "signature": "rel(string $slashed, string $rel, Closure $internal): string",
+                    "doc": "Every link given a rel (wp_rel_nofollow, wp_rel_ugc), on slashed text\nas the content filters carry it, slashed again after (probes\ncomment-fields, plugin-queue5). A link to the site itself does not\ntake \"nofollow\".",
                     "shapes": [
                         "@param Closure(string $href): bool $internal whether an href points at the site itself"
                     ],
                     "params": [
                         {
                             "name": "slashed",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "rel",
                             "type": "string",
                             "shape": "",
                             "default": null,
@@ -33108,8 +33235,44 @@
                             "doc": ""
                         }
                     ],
-                    "line": 103,
-                    "end": 121
+                    "line": 104,
+                    "end": 107
+                },
+                {
+                    "routes": [],
+                    "name": "linkRel",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "linkRel(string $inner, string $rel, Closure $internal): string",
+                    "doc": "One link's opening tag with the rel added (wp_rel_callback): a tag\nthat has a rel keeps its words first, gains the new ones, and is\nwritten again with every attribute double-quoted and rel last; one\nwithout keeps its attributes as written and takes rel at the end.",
+                    "shapes": [
+                        "@param Closure(string $href): bool $internal"
+                    ],
+                    "params": [
+                        {
+                            "name": "inner",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "rel",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "internal",
+                            "type": "Closure",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 117,
+                    "end": 129
                 },
                 {
                     "routes": [],
@@ -33128,8 +33291,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 124,
-                    "end": 131
+                    "line": 132,
+                    "end": 139
                 },
                 {
                     "routes": [],
@@ -33155,8 +33318,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 44,
-                    "end": 50
+                    "line": 45,
+                    "end": 51
                 },
                 {
                     "routes": [],
@@ -33191,8 +33354,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 53,
-                    "end": 64
+                    "line": 54,
+                    "end": 65
                 },
                 {
                     "routes": [],
@@ -33200,9 +33363,9 @@
                     "static": true,
                     "visibility": "private",
                     "signature": "attributes(string $raw): array",
-                    "doc": "A tag's attributes in order, name => value (quotes removed; a bare name has an empty value). @return array<string, string>",
+                    "doc": "A tag's attributes in order, name => value (quotes removed; a bare name has null). @return array<string, ?string>",
                     "shapes": [
-                        "@return array<string, string>"
+                        "@return array<string, ?string>"
                     ],
                     "params": [
                         {
@@ -33213,8 +33376,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 134,
-                    "end": 143
+                    "line": 142,
+                    "end": 153
                 }
             ]
         },
@@ -73578,7 +73741,7 @@
             "namespace": "Minn\\Media",
             "kind": "final class",
             "file": "public/minn/src/Minn/Media/Sizing.php",
-            "lines": 226,
+            "lines": 232,
             "doc": "The image size arithmetic the media functions share: the crop or scale a\nresize needs, the registered size a requested box picks, and the srcset\ncandidates an image's sizes yield. Behaviour pinned by contracts/fixtures/api/media.json.",
             "implements": [],
             "extends": null,
@@ -73697,12 +73860,13 @@
                     "name": "intermediate",
                     "static": true,
                     "visibility": "public",
-                    "signature": "intermediate(array $meta, array|string $size, ?string $fileUrl, Closure $editorConstrain): ?array",
-                    "doc": "The registered size that serves a request: by name, or the smallest\nsize that covers a requested box (the full size never counts), with\nits path and URL beside the file's.",
+                    "signature": "intermediate(array $meta, array|string $size, ?string $fileUrl, Closure $editorConstrain, Closure $matchesRatio): ?array",
+                    "doc": "The registered size that serves a request: by name, or for a\nrequested box the size of exactly that box, else the smallest larger\none in its proportion (the full size never counts), else the\nthumbnail when it is wide enough; with its path and URL beside the\nfile's.",
                     "shapes": [
                         "@param array<string, mixed> $meta attachment metadata",
                         "@param string|array{0: int, 1: int} $size",
                         "@param Closure(int, int, array): array{0: int, 1: int} $editorConstrain",
+                        "@param Closure(int, int, int, int): bool $matchesRatio",
                         "@return array<string, mixed>|null"
                     ],
                     "params": [
@@ -73733,10 +73897,17 @@
                             "shape": "Closure(int, int, array): array{0: int, 1: int}",
                             "default": null,
                             "doc": ""
+                        },
+                        {
+                            "name": "matchesRatio",
+                            "type": "Closure",
+                            "shape": "Closure(int, int, int, int): bool",
+                            "default": null,
+                            "doc": ""
                         }
                     ],
-                    "line": 92,
-                    "end": 135
+                    "line": 95,
+                    "end": 141
                 },
                 {
                     "routes": [],
@@ -73780,8 +73951,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 146,
-                    "end": 180
+                    "line": 152,
+                    "end": 186
                 },
                 {
                     "routes": [],
@@ -73800,8 +73971,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 183,
-                    "end": 193
+                    "line": 189,
+                    "end": 199
                 },
                 {
                     "routes": [],
@@ -73850,8 +74021,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 196,
-                    "end": 216
+                    "line": 202,
+                    "end": 222
                 },
                 {
                     "routes": [],
@@ -73879,8 +74050,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 230,
-                    "end": 238
+                    "line": 236,
+                    "end": 244
                 },
                 {
                     "routes": [],
@@ -73906,8 +74077,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 218,
-                    "end": 221
+                    "line": 224,
+                    "end": 227
                 }
             ]
         },
@@ -111876,7 +112047,7 @@
             "namespace": "Minn\\Runtime",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Runtime/Meta.php",
-            "lines": 210,
+            "lines": 223,
             "doc": "The four meta tables behind get_metadata and friends: reads by object, and the row-level writes the update and delete rules need.",
             "implements": [],
             "extends": null,
@@ -112027,6 +112198,35 @@
                 },
                 {
                     "routes": [],
+                    "name": "listing",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "listing(string $type, int $objectId): array",
+                    "doc": "Every row of an object's meta by key, then id, as the post meta box\nlists them: the key, the value, the row's id and the object's, all as\nstored (strings).",
+                    "shapes": [
+                        "@return list<array<string, string>>"
+                    ],
+                    "params": [
+                        {
+                            "name": "type",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "objectId",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 116,
+                    "end": 120
+                },
+                {
+                    "routes": [],
                     "name": "rowsOf",
                     "static": false,
                     "visibility": "public",
@@ -112051,8 +112251,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 110,
-                    "end": 117
+                    "line": 123,
+                    "end": 130
                 },
                 {
                     "routes": [],
@@ -112080,8 +112280,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 120,
-                    "end": 125
+                    "line": 133,
+                    "end": 138
                 },
                 {
                     "routes": [],
@@ -112102,8 +112302,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 128,
-                    "end": 132
+                    "line": 141,
+                    "end": 145
                 },
                 {
                     "routes": [],
@@ -112143,8 +112343,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 135,
-                    "end": 139
+                    "line": 148,
+                    "end": 152
                 },
                 {
                     "routes": [],
@@ -112184,8 +112384,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 142,
-                    "end": 147
+                    "line": 155,
+                    "end": 160
                 },
                 {
                     "routes": [],
@@ -112220,8 +112420,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 150,
-                    "end": 154
+                    "line": 163,
+                    "end": 167
                 },
                 {
                     "routes": [],
@@ -112257,8 +112457,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 165,
-                    "end": 177
+                    "line": 178,
+                    "end": 190
                 },
                 {
                     "routes": [],
@@ -112291,8 +112491,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 180,
-                    "end": 187
+                    "line": 193,
+                    "end": 200
                 },
                 {
                     "routes": [],
@@ -112334,8 +112534,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 190,
-                    "end": 204
+                    "line": 203,
+                    "end": 217
                 },
                 {
                     "routes": [],
@@ -112363,8 +112563,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 211,
-                    "end": 218
+                    "line": 224,
+                    "end": 231
                 },
                 {
                     "routes": [],
@@ -130655,6 +130855,7 @@
             ],
             "usedBy": [
                 "Minn\\Content\\MediaShortcodes",
+                "Minn\\Content\\TextFilters",
                 "Minn\\Front\\EmbedCard",
                 "Minn\\Front\\FeedTags",
                 "Minn\\Front\\PageLinks",

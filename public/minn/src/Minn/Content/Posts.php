@@ -182,6 +182,12 @@ final readonly class Posts
         return $this->db->value("SELECT ID FROM {$this->db->table('posts')} WHERE post_type = ? AND post_status = 'publish' LIMIT 1", [$type]) !== null;
     }
 
+    /** Every post id of a type, whatever its status, as stored (strings), in the table's order. @return list<string> */
+    public function idsOfType(string $type): array
+    {
+        return array_map(static fn (array $row): string => (string) $row['ID'], $this->db->rows("SELECT ID FROM {$this->db->table('posts')} WHERE post_type = ?", [$type]));
+    }
+
     /** One meta value of a post, or null when it has none. */
     public function meta(int $postId, string $key): ?string
     {
