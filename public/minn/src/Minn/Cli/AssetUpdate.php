@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Minn\Cli;
 
-use Minn\Ops\Packages;
 use Minn\Ops\Updates;
 use Minn\Content\Inventory;
 use Minn\RestError;
@@ -31,12 +30,11 @@ final class AssetUpdate
     public static function boot(string $kind): self
     {
         $runtime = Runtime::boot();
+        // Updates run through WordPress's upgraders, which want the runtime up.
+        Runtime::bootEngine();
         $contentDir = rtrim(ABSPATH, '/') . '/wp-content';
         $site = $runtime->site;
-        $inventory = new Inventory($contentDir, $site);
-        $packages = new Packages($site, $contentDir);
-        $updates = new Updates($site, $inventory, $packages, $contentDir);
-        return new self($kind, $updates, $inventory);
+        return new self($kind, Updates::forSite($site, $contentDir), new Inventory($contentDir, $site));
     }
 
     /**

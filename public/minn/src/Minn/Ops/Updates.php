@@ -8,9 +8,7 @@ use Minn\Content\Inventory;
 use Minn\Content\Site;
 use Minn\RestError;
 use Minn\Support\FileHeaders;
-use Minn\Runtime\PackageDownload;
 use Minn\Runtime\PluginUpdates;
-use Minn\Runtime\Refusal;
 use Minn\Support\Serialized;
 
 /**
@@ -48,6 +46,26 @@ final class Updates
         private readonly Packages $packages,
         private readonly string $contentDir,
     ) {
+    }
+
+    /** The updater over a site's wp-content. */
+    public static function forSite(Site $site, string $contentDir): self
+    {
+        return new self($site, new Inventory($contentDir, $site), new Packages($site, $contentDir), $contentDir);
+    }
+
+    /**
+     * wp_update_plugins and wp_update_themes: the service asked when the
+     * stored answer is old (or a fresh one is wanted), and the offers left
+     * in the update transients when they are not there already.
+     */
+    public function checkForWordPress(string $transient, array $fresh): void
+    {
+        $state = $fresh === [] ? $this->state() : $this->refresh();
+        $published = \get_site_transient($transient);
+        if (!is_object($published) || (int) ($published->last_checked ?? 0) !== (int) $state['checked']) {
+            $this->publish();
+        }
     }
 
     /** The stored answer, refreshed when older than the TTL or absent. */
@@ -123,7 +141,38 @@ final class Updates
             'supplied' => array_values(array_unique([...array_keys($supplied['plugins']), ...array_keys($supplied['no_update'])])),
         ];
         $this->site->setOption(self::OPTION, (string) json_encode($state, JSON_UNESCAPED_SLASHES));
+        $this->state = $state;
+        $this->publish();
         return $state;
+    }
+
+    /**
+     * The offers in WordPress's update transients, update_plugins and
+     * update_themes, in the shape wp_update_plugins and wp_update_themes
+     * leave there: where plugins, the facade's update helpers and the
+     * upgraders read them. Written after every check and after an update.
+     */
+    public function publish(): void
+    {
+        $state = $this->state();
+        $themes = [];
+        foreach ($this->themeHeaders() as $slug => $headers) {
+            $themes[$slug] = $headers['Version'];
+        }
+        \set_site_transient('update_plugins', (object) [
+            'last_checked' => (int) $state['checked'],
+            'response' => array_map(static fn (array $offer): object => (object) $offer, $state['plugins']),
+            'translations' => [],
+            'no_update' => array_map(static fn (array $offer): object => (object) $offer, $state['no_update']),
+            'checked' => $this->pluginVersions(),
+        ]);
+        \set_site_transient('update_themes', (object) [
+            'last_checked' => (int) $state['checked'],
+            'checked' => $themes,
+            'response' => $state['themes'],
+            'no_update' => $state['themes_current'],
+            'translations' => [],
+        ]);
     }
 
     /**
@@ -221,7 +270,7 @@ final class Updates
         if (!isset($this->pluginOffers()[$file])) {
             throw new RestError('no_update', 'No update available for that plugin.', 400);
         }
-        $this->install((string) ($this->state()['plugins'][$file]['package'] ?? ''), 'plugin', dirname($file), $file);
+        $this->apply('plugin', $file, (string) ($this->state()['plugins'][$file]['package'] ?? ''));
         $this->consume('plugins', 'no_update', $file);
         return $this->pluginVersions()[$file] ?? '';
     }
@@ -235,7 +284,7 @@ final class Updates
         if (!isset($this->themeOffers()[$stylesheet])) {
             throw new RestError('no_update', 'No update available for that theme.', 400);
         }
-        $this->install((string) ($this->state()['themes'][$stylesheet]['package'] ?? ''), 'theme', $stylesheet, $stylesheet);
+        $this->apply('theme', $stylesheet, (string) ($this->state()['themes'][$stylesheet]['package'] ?? ''));
         $this->consume('themes', 'themes_current', $stylesheet);
         return $this->themeHeaders()[$stylesheet]['Version'] ?? '';
     }
@@ -365,53 +414,33 @@ final class Updates
     }
 
     /**
-     * Fetches and unpacks an offer's package. A directory package is
-     * downloaded here from the Minn update service, every redirect hop
-     * staying on it; anything else has to come from its publisher, verified.
-     * The archive's SHA-256 is kept under "archives" in the state either
-     * way, so an audit can ask what code arrived.
+     * Applies one offer through the upgrader (UpgraderRun): the update
+     * transients carry the offers first, as they do on WordPress when an
+     * update starts. The archive's SHA-256 is kept under "archives" in the
+     * state when the package came from the update service, so an audit can
+     * ask what code arrived.
      */
-    private function install(string $package, string $kind, string $folder, string $asset = ''): void
+    private function apply(string $kind, string $item, string $package): void
     {
-        $zip = str_starts_with($package, Directory::PACKAGES)
-            ? $this->packages->fetch($package, Directory::ORIGIN)
-            : $this->vouched($package, $kind, $asset);
-        $result = $this->packages->unpackReplacing($zip, $kind);
-        if ($result['folder'] !== $folder) {
-            throw new RestError('update_failed', "The package unpacked as {$result['folder']}, not {$folder}.", 500);
+        $bucket = $kind === 'theme' ? 'update_themes' : 'update_plugins';
+        if (!isset(((array) (\get_site_transient($bucket)->response ?? []))[$item])) {
+            $this->publish();
         }
+        $sha256 = (new UpgraderRun($this->packages))->update($kind, $item, $package);
+        $folder = $kind === 'theme' ? $item : dirname($item);
         $state = $this->state();
-        $state['archives']["{$kind}/{$folder}"] = ['sha256' => hash('sha256', $zip), 'version' => $result['version'], 'package' => $package, 'installed' => time()];
+        $version = $kind === 'theme' ? ($this->themeHeaders()[$item]['Version'] ?? '') : ($this->pluginVersions()[$item] ?? '');
+        $state['archives']["{$kind}/{$folder}"] = ['sha256' => $sha256, 'version' => $version, 'package' => $package, 'installed' => time()];
         $this->state = $state;
         $this->site->setOption(self::OPTION, (string) json_encode($state, JSON_UNESCAPED_SLASHES));
     }
 
     /**
-     * A package from outside the directory, and only on its publisher's
-     * word: the reference asks `upgrader_pre_download` before every
-     * download, and a plugin that hosts itself answers there with the copy
-     * it fetched and checked against the hash it publishes. No answer means
-     * nobody vouched for the archive, and the engine will not unpack code
-     * over a folder on nobody's word.
+     * An applied offer moves to the current bucket so the next read agrees
+     * with the folder, and the offers left go back into the update
+     * transients the upgrader cleared, as Minn Admin puts them back on
+     * WordPress.
      */
-    private function vouched(string $package, string $kind, string $asset): string
-    {
-        $verified = PackageDownload::verified($package, $asset === '' ? [] : [$kind => $asset]);
-        if ($verified instanceof Refusal) {
-            throw new RestError('update_failed', $verified->message, 500);
-        }
-        if ($verified === null) {
-            throw new RestError('update_failed', "The offer's package is not from the Minn update service and its publisher did not verify the download.", 500);
-        }
-        $zip = (string) file_get_contents($verified);
-        unlink($verified);
-        if ($zip === '') {
-            throw new RestError('update_failed', 'The publisher verified an empty package.', 500);
-        }
-        return $zip;
-    }
-
-    /** An applied offer moves to the current bucket so the next read agrees with the folder. */
     private function consume(string $from, string $to, string $key): void
     {
         $state = $this->state();
@@ -421,6 +450,7 @@ final class Updates
         }
         $this->state = $state;
         $this->site->setOption(self::OPTION, (string) json_encode($state, JSON_UNESCAPED_SLASHES));
+        $this->publish();
     }
 
     /** The directory answers an empty bucket as a list; a map either way. */

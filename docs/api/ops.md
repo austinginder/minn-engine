@@ -4,7 +4,7 @@
 
 | Class | Kind | Lines | Summary |
 |---|---|---|---|
-| [`Archive`](#archive) | final class | 69 | A zip unpacked the safe way, for the plugin and theme installer and for |
+| [`Archive`](#archive) | final class | 96 | A zip unpacked the safe way, for the plugin and theme installer and for |
 | [`AutoUpdates`](#autoupdates) | final readonly class | 29 | Whether per-item auto-updates apply to plugins or themes, as the |
 | [`Changelog`](#changelog) | final class | 67 | A changelog read from its repository rather than shipped: a Minn release |
 | [`CoreStatus`](#corestatus) | final readonly class | 48 | The core the app's update banner and chip speak of, which on Minn is |
@@ -13,12 +13,13 @@
 | [`EngineUpdate`](#engineupdate) | final readonly class | 129 | Replaces the running engine with a published release. The release's |
 | [`InstalledSoftware`](#installedsoftware) | final readonly class | 59 | What is installed, as the System view lists it: every extension and |
 | [`Logs`](#logs) | final readonly class | 150 | The log files the System view can read and clear: the debug log the |
-| [`Packages`](#packages) | final readonly class | 450 | Putting themes and extensions on disk. Themes come from the directory |
+| [`Packages`](#packages) | final readonly class | 477 | Putting plugins, themes and extensions on disk. Plugins and themes come |
 | [`PluginsApi`](#pluginsapi) | final readonly class | 35 | plugins_api() as plugins call it and answer it (probe plugins-api): the |
 | [`Release`](#release) | final readonly class | 58 | One published Minn release as the update service describes it (and as |
 | [`Releases`](#releases) | final class | 86 | Whether a newer Minn is out, asked of the Minn update service at most |
 | [`Unzip`](#unzip) | final readonly class | 101 | An archive unpacked as unzip_file() unpacks it (probe unzip-file): into |
-| [`Updates`](#updates) | final class | 403 | Update offers for the site's plugins and themes from the directory, asked |
+| [`Updates`](#updates) | final class | 435 | Update offers for the site's plugins and themes from the directory, asked |
+| [`UpgraderRun`](#upgraderrun) | final readonly class | 113 | The engine's own installs and updates, run through the reference's |
 
 ## Archive
 
@@ -34,17 +35,25 @@ noise aside). Nothing is written until every entry has passed.
 - const `MAX_BYTES` = `536870912`
 - const `MAX_ENTRIES` = `20000`
 
-Used by: `Minn\Ops\EngineUpdate`, `Minn\Ops\Packages`
+Used by: `Minn\Ops\EngineUpdate`, `Minn\Ops\Packages`, `Minn\Ops\UpgraderRun`
 
 ### static `unpackFolder(string $file, string $stage): string`
 
 Unpacks a zip file into a new folder $stage; the path of the one folder the archive held.
 
+### static `inspect(string $file): string`
+
+Checks every entry of a zip file without writing anything; the one folder it holds.
+
+### static `holds(string $file, string $entry): bool`
+
+Whether a zip file holds an entry by that name.
+
 ### static `isFolderName(string $name): bool`
 
 A plain folder name: no separators, never "." or "..".
 
-Internals: `isSymlinkEntry()` (private, line 76)
+Internals: `isSymlinkEntry()` (private, line 103)
 
 
 ## AutoUpdates
@@ -214,7 +223,7 @@ least"), never the site's address.
 - const `BASE` = `'https://updates.minn.run/v1/'`
 - const `PACKAGES` = `'https://updates.minn.run/v1/download/'` — Where plugin, theme and translation packages download from.
 
-Used by: `Minn\Cli\PackageInstaller`, `Minn\Ops\Changelog`, `Minn\Ops\EngineUpdate`, `Minn\Ops\Packages`, `Minn\Ops\Release`, `Minn\Ops\Releases`, `Minn\Ops\Updates`
+Used by: `Minn\Cli\PackageInstaller`, `Minn\Ops\Changelog`, `Minn\Ops\EngineUpdate`, `Minn\Ops\Packages`, `Minn\Ops\Release`, `Minn\Ops\Releases`, `Minn\Ops\Updates`, `Minn\Ops\UpgraderRun`
 
 ### static `url(string $path): string`
 
@@ -367,24 +376,23 @@ A byte count in KB, MB, or GB.
 
 `final readonly class Minn\Ops\Packages` · `public/minn/src/Minn/Ops/Packages.php`
 
-Putting themes and extensions on disk. Themes come from the directory
-(wordpress.org's, asked through the Minn update service, Ops\Directory;
-block themes render on the engine) or an uploaded zip; extensions come
-from an uploaded zip or a URL, and must carry a minn.json: a WordPress
-plugin would install but never run, so it is refused with the reason.
-Every archive is unpacked through one guarded routine: exactly one
-top-level folder that is a plain name (never "." or ".."), no absolute
-or dotted paths, no symbolic links, bounded entry count and size, the
-folder's identity checked and its destination proven to be a direct
-child of the kind's directory before it is moved into place. Removal
-proves the same containment before anything is deleted.
+Putting plugins, themes and extensions on disk. Plugins and themes come
+from the directory (wordpress.org's, asked through the Minn update
+service, Ops\Directory) or an uploaded zip, and are installed through
+WordPress's upgraders (UpgraderRun), so plugins hear every upgrader hook;
+a Minn extension (a folder with a minn.json) is placed by the engine.
+Every archive passes Archive's checks first: exactly one top-level
+folder that is a plain name (never "." or ".."), no absolute or dotted
+paths, no symbolic links, bounded entry count and size. Removal proves
+the folder is a direct child of its kind's directory before anything is
+deleted.
 
 - const `THEMES_INFO` = `'https://updates.minn.run/v1/themes/info/1.2/'` — The largest archive fetched or unpacked, in bytes.
 - const `PLUGINS_INFO` = `'https://updates.minn.run/v1/plugins/info/1.2/'`
 - const `INFO_OPTION` = `'minn_plugin_info'`
 - const `INFO_TTL` = `43200`
 
-Used by: `Minn\Admin\PackagesController`, `Minn\Cli\AssetUpdate`, `Minn\Cli\DirectorySearch`, `Minn\Cli\PackageInstaller`, `Minn\Cli\PluginCommand`, `Minn\Cli\ThemeCommand`, `Minn\Cron\Cron`, `Minn\Ops\PluginsApi`, `Minn\Ops\Updates`, `Minn\Rest\PluginsController`, `Minn\Rest\Services`
+Used by: `Minn\Admin\PackagesController`, `Minn\Cli\DirectorySearch`, `Minn\Cli\PackageInstaller`, `Minn\Cli\PluginCommand`, `Minn\Cli\ThemeCommand`, `Minn\Ops\PluginsApi`, `Minn\Ops\Updates`, `Minn\Ops\UpgraderRun`, `Minn\Rest\PluginsController`, `Minn\Rest\Services`
 
 ```php
 __construct(Minn\Content\Site $site, string $contentDir)
@@ -411,7 +419,7 @@ The slim card for one directory plugin, cached twelve hours per slug.
 
 ### `installPlugin(string $slug, string $version = ''): string`
 
-Installs a directory plugin by slug; returns its folder.
+Installs a directory plugin by slug, through the upgrader; returns its folder.
 
 ### `replacePlugin(string $slug, string $version = ''): string`
 
@@ -452,7 +460,7 @@ One directory theme record, or null when the slug is unknown.
 
 ### `installTheme(string $slug, string $version = ''): string`
 
-Installs a directory theme by slug; returns its stylesheet folder.
+Installs a directory theme by slug, through the upgrader; returns its stylesheet folder.
 
 ### `replaceTheme(string $slug, string $version = ''): string`
 
@@ -461,7 +469,9 @@ Installs a directory theme over the folder already there.
 ### `unpack(string $zip, string $kind): array`
 
 Unpacks an uploaded or downloaded archive into wp-content/themes or
-wp-content/plugins. @return array{folder: string, name: string, version: string, kind: string}
+wp-content/plugins: a theme or a WordPress plugin through the upgrader,
+a Minn extension (minn.json) placed by the engine; refused when its
+folder is taken. @return array{folder: string, name: string, version: string, kind: string}
 
 - `@return array{folder: string, name: string, version: string, kind: string}`
 
@@ -473,13 +483,19 @@ Unpacks a zip over a folder already there, replacing it whole.
 
 Removes a theme or plugin folder that is not in use.
 
+### `identity(string $dir, string $kind): array`
+
+What a folder holds by its headers; kind "unknown" when nothing identifies it. @return array{name: string, version: string, kind: string}
+
+- `@return array{name: string, version: string, kind: string}`
+
 ### `fetch(string $url, string ...$hostPrefixes): string`
 
 A package over https, every redirect hop included, refusing anything
 else; when host prefixes are given, every hop must start with one.
 The request names the engine, never the site's address.
 
-Internals: `pluginPackage()` (private, line 159), `plain()` (private, line 218), `themePackage()` (private, line 312), `place()` (private, line 361), `contained()` (private, line 408), `identify()` (private, line 423), `describe()` (private, line 437), `ask()` (private, line 457)
+Internals: `pluginPackage()` (private, line 158), `plain()` (private, line 217), `themePackage()` (private, line 311), `upload()` (private, line 364), `place()` (private, line 387), `contained()` (private, line 434), `identify()` (private, line 449), `ask()` (private, line 483)
 
 
 ## PluginsApi
@@ -667,6 +683,16 @@ __construct(Minn\Content\Site $site, Minn\Content\Inventory $inventory, Minn\Ops
 ```
 
 
+### static `forSite(Minn\Content\Site $site, string $contentDir): self`
+
+The updater over a site's wp-content.
+
+### `checkForWordPress(string $transient, array $fresh): void`
+
+wp_update_plugins and wp_update_themes: the service asked when the
+stored answer is old (or a fresh one is wanted), and the offers left
+in the update transients when they are not there already.
+
 ### `state(): array`
 
 The stored answer, refreshed when older than the TTL or absent.
@@ -678,6 +704,13 @@ Asks the directory now, whatever the cache says, and keeps the answer.
 ### `check(): array`
 
 Asks the directory now and stores the answer.
+
+### `publish(): void`
+
+The offers in WordPress's update transients, update_plugins and
+update_themes, in the shape wp_update_plugins and wp_update_themes
+leave there: where plugins, the facade's update helpers and the
+upgraders read them. Written after every check and after an update.
 
 ### `pluginOffers(): array`
 
@@ -750,5 +783,50 @@ Stylesheet => style.css headers. @return array<string, array<string, string>>
 
 - `@return array<string, array<string, string>>`
 
-Internals: `supplied()` (private, line 138), `saveAuto()` (private, line 273), `pluginHeaders()` (private, line 330), `install()` (private, line 374), `vouched()` (private, line 397), `consume()` (private, line 415), `map()` (private, line 427), `safeUrl()` (private, line 435)
+Internals: `supplied()` (private, line 187), `saveAuto()` (private, line 322), `pluginHeaders()` (private, line 379), `apply()` (private, line 423), `consume()` (private, line 444), `map()` (private, line 457), `safeUrl()` (private, line 465)
+
+
+## UpgraderRun
+
+`final readonly class Minn\Ops\UpgraderRun` · `public/minn/src/Minn/Ops/UpgraderRun.php`
+
+The engine's own installs and updates, run through the reference's
+upgraders (Plugin_Upgrader, Theme_Upgrader) so plugins hear every hook a
+WordPress install or update tells them: the REST plugin route, Minn
+Admin's install, upload and update routes, the CLI verbs and the
+automatic updates all come here. The Minn update service's packages are
+fetched over the engine's own client (Packages::fetch: https, the
+service's host, a size cap) and handed to the upgrader as a file through
+upgrader_pre_download, so where Minn gets code is never the
+plugin-filterable HTTP API's to change. A package from anywhere else is
+installed only when its publisher answered upgrader_pre_download with a
+copy it checked (or refused it): nobody's word, no install. A package
+from the service passes Archive's checks before the upgrader unpacks it;
+a local file (an upload, checked by Packages) is the upgrader's to read. The upgrader's refusals come back
+as the engine's REST errors, in the words its routes already use.
+
+Used by: `Minn\Ops\Packages`, `Minn\Ops\Updates`
+
+```php
+__construct(Minn\Ops\Packages $packages)
+```
+
+
+### `install(string $kind, string $package, array $args = array ( )): array`
+
+Installs a package (or, with overwrite_package, replaces the folder it
+lands on): its folder and the sha256 of a package fetched from the
+service, '' otherwise.
+
+- `@param array<string, mixed> $args the upgrader's install arguments`
+- `@return array{folder: string, sha256: string}`
+
+### `update(string $kind, string $item, string $package): string`
+
+Applies the offer the update transient holds for one plugin (file) or
+theme (folder), as Minn Admin does on WordPress: a plugin through
+bulk_upgrade, a theme through upgrade. The sha256 of the package, ''
+when it did not come from the service.
+
+Internals: `guarded()` (private, line 75), `refusal()` (private, line 106), `taken()` (private, line 126)
 

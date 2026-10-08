@@ -45,6 +45,10 @@ function minn_test_trace_describe($value): string
         return 'int';
     }
     if (is_string($value)) {
+        // The theme caches' option names carry a hash; named by what they are.
+        if (preg_match('/^(_site_transient_(timeout_)?)?wp_theme_files_patterns-[0-9a-f]{32}$/', $value) === 1) {
+            return "'theme-cache'";
+        }
         // Statuses, keys and slugs are the same on both stacks; free text is not compared.
         return preg_match('/^[a-z0-9_-]{1,40}$/', $value) === 1 ? "'{$value}'" : 'string';
     }

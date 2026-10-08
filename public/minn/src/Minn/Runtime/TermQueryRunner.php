@@ -189,7 +189,7 @@ final class TermQueryRunner
     private function names(array $args, array $taxonomies): void
     {
         if (!empty($args['name']) || (is_string($args['name']) && $args['name'] !== '')) {
-            $names = array_map(static fn ($name) => stripslashes((string) \sanitize_term_field('name', $name, 0, reset($taxonomies), 'db')), (array) $args['name']);
+            $names = array_map(static fn ($name) => stripslashes((string) TermFields::field('name', $name, 0, reset($taxonomies), 'db')), (array) $args['name']);
             $this->where['name'] = "t.name IN ('" . implode("', '", array_map('esc_sql', $names)) . "')";
         }
         if (!empty($args['slug']) || (is_string($args['slug']) && $args['slug'] !== '')) {

@@ -4,7 +4,7 @@ the wp verbs the engine answers itself
 
 | Class | Kind | Lines | Summary |
 |---|---|---|---|
-| [`AssetUpdate`](#assetupdate) | final class | 330 | Shared wording for `wp plugin update` and `wp theme update`. Captured |
+| [`AssetUpdate`](#assetupdate) | final class | 329 | Shared wording for `wp plugin update` and `wp theme update`. Captured |
 | [`CacheCommand`](#cachecommand) | final class | 15 | `wp cache flush`: the engine has no object cache, so this is a no-op success. |
 | [`Commands`](#commands) | final class | 94 | The verbs the engine answers to. Every one is registered for the |
 | [`CronCommand`](#croncommand) | final class | 277 | `wp cron`: the events, schedules, and spawn test a host and a fleet ask |
@@ -13,7 +13,7 @@ the wp verbs the engine answers itself
 | [`MaintenanceCommand`](#maintenancecommand) | final class | 65 | `wp maintenance-mode`: the `.maintenance` marker in the webroot. The |
 | [`MinnCommand`](#minncommand) | final class | 304 | Identifies the engine. |
 | [`OptionCommand`](#optioncommand) | final class | 185 | Options, read and written straight to the options table. Serialized |
-| [`PackageInstaller`](#packageinstaller) | final readonly class | 138 | Puts a theme or a plugin on disk for `wp theme install` and `wp plugin |
+| [`PackageInstaller`](#packageinstaller) | final readonly class | 142 | Puts a theme or a plugin on disk for `wp theme install` and `wp plugin |
 | [`PluginCommand`](#plugincommand) | final class | 405 | `wp plugin list\|install\|update\|activate\|deactivate\|delete`: the inventory and the fleet's install/update/delete. |
 | [`Preflight`](#preflight) | final class | 360 | What a site will and will not get from the engine, before anything |
 | [`RewriteCommand`](#rewritecommand) | final class | 52 | `wp rewrite flush\|structure`: permalink_structure is the engine's |
@@ -49,7 +49,7 @@ Updates the named assets, or all of them.
 
 - `@param list<string> $names`
 
-Internals: `offers()` (private, line 104), `previewRow()` (private, line 152), `apply()` (private, line 164), `render()` (private, line 197), `emit()` (private, line 247), `skipped()` (private, line 268), `missing()` (private, line 276), `installed()` (private, line 285), `titleFor()` (private, line 298), `statusByName()` (private, line 312), `channel()` (private, line 323), `samePrefix()` (private, line 334), `pluginSlug()` (private, line 346)
+Internals: `offers()` (private, line 102), `previewRow()` (private, line 150), `apply()` (private, line 162), `render()` (private, line 195), `emit()` (private, line 245), `skipped()` (private, line 266), `missing()` (private, line 274), `installed()` (private, line 283), `titleFor()` (private, line 296), `statusByName()` (private, line 310), `channel()` (private, line 321), `samePrefix()` (private, line 332), `pluginSlug()` (private, line 344)
 
 
 ## CacheCommand
@@ -536,7 +536,7 @@ and whether this call put it there.
 
 - `@return array{0: ?string, 1: bool}`
 
-Internals: `fromDirectory()` (private, line 80), `archive()` (private, line 113), `present()` (private, line 139), `refuse()` (private, line 149)
+Internals: `fromDirectory()` (private, line 84), `archive()` (private, line 117), `present()` (private, line 143), `refuse()` (private, line 153)
 
 
 ## PluginCommand
@@ -802,7 +802,7 @@ The engine, booted for a command: reads the site's wp-config.php (which
 ends in wp-settings.php, whose engine boot stops short of serving under
 WP-CLI) so the database constants and table prefix are known.
 
-Used by: `Minn\Cli\AssetUpdate`, `Minn\Cli\CronCommand`, `Minn\Cli\DirectorySearch`, `Minn\Cli\MaintenanceCommand`, `Minn\Cli\MinnCommand`, `Minn\Cli\OptionCommand`, `Minn\Cli\PluginCommand`, `Minn\Cli\RewriteCommand`, `Minn\Cli\SearchReplaceCommand`, `Minn\Cli\ThemeCommand`, `Minn\Cli\UserCommand`
+Used by: `Minn\Cli\AssetUpdate`, `Minn\Cli\CronCommand`, `Minn\Cli\DirectorySearch`, `Minn\Cli\MaintenanceCommand`, `Minn\Cli\MinnCommand`, `Minn\Cli\OptionCommand`, `Minn\Cli\PackageInstaller`, `Minn\Cli\PluginCommand`, `Minn\Cli\RewriteCommand`, `Minn\Cli\SearchReplaceCommand`, `Minn\Cli\ThemeCommand`, `Minn\Cli\UserCommand`
 
 - readonly `Minn\Db $db`
 - readonly `Minn\Content\Site $site`

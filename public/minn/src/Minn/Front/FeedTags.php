@@ -7,6 +7,7 @@ namespace Minn\Front;
 use Minn\Runtime\Runtime;
 use Minn\Support\Escape;
 use Minn\Support\Url;
+use Minn\Runtime\TermFields;
 
 /**
  * The template tags a feed is written with that take more than a line, as
@@ -23,7 +24,7 @@ final class FeedTags
         $names = [];
         foreach ([['category', (array) \get_the_category()], ['post_tag', (array) (\get_the_tags() ?: [])]] as [$taxonomy, $terms]) {
             foreach ($terms as $term) {
-                $names[] = $type === 'atom' ? (string) $term->name : (string) \sanitize_term_field('name', $term->name, $term->term_id, $taxonomy, 'rss');
+                $names[] = $type === 'atom' ? (string) $term->name : (string) TermFields::field('name', $term->name, (int) $term->term_id, (string) $taxonomy, 'rss');
             }
         }
         $out = '';

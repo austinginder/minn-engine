@@ -14,17 +14,16 @@ use Minn\Support\Files;
 use Minn\Support\FileHeaders;
 
 /**
- * Putting themes and extensions on disk. Themes come from the directory
- * (wordpress.org's, asked through the Minn update service, Ops\Directory;
- * block themes render on the engine) or an uploaded zip; extensions come
- * from an uploaded zip or a URL, and must carry a minn.json: a WordPress
- * plugin would install but never run, so it is refused with the reason.
- * Every archive is unpacked through one guarded routine: exactly one
- * top-level folder that is a plain name (never "." or ".."), no absolute
- * or dotted paths, no symbolic links, bounded entry count and size, the
- * folder's identity checked and its destination proven to be a direct
- * child of the kind's directory before it is moved into place. Removal
- * proves the same containment before anything is deleted.
+ * Putting plugins, themes and extensions on disk. Plugins and themes come
+ * from the directory (wordpress.org's, asked through the Minn update
+ * service, Ops\Directory) or an uploaded zip, and are installed through
+ * WordPress's upgraders (UpgraderRun), so plugins hear every upgrader hook;
+ * a Minn extension (a folder with a minn.json) is placed by the engine.
+ * Every archive passes Archive's checks first: exactly one top-level
+ * folder that is a plain name (never "." or ".."), no absolute or dotted
+ * paths, no symbolic links, bounded entry count and size. Removal proves
+ * the folder is a direct child of its kind's directory before anything is
+ * deleted.
  */
 final readonly class Packages
 {
@@ -143,16 +142,16 @@ final readonly class Packages
         return $card;
     }
 
-    /** Installs a directory plugin by slug; returns its folder. */
+    /** Installs a directory plugin by slug, through the upgrader; returns its folder. */
     public function installPlugin(string $slug, string $version = ''): string
     {
-        return $this->unpack($this->fetch($this->pluginPackage($slug, $version), Directory::ORIGIN), 'plugin')['folder'];
+        return (new UpgraderRun($this))->install('plugin', $this->pluginPackage($slug, $version))['folder'];
     }
 
     /** Installs a directory plugin over the folder already there. */
     public function replacePlugin(string $slug, string $version = ''): string
     {
-        return $this->unpackReplacing($this->fetch($this->pluginPackage($slug, $version), Directory::ORIGIN), 'plugin')['folder'];
+        return (new UpgraderRun($this))->install('plugin', $this->pluginPackage($slug, $version), ['overwrite_package' => true])['folder'];
     }
 
     /** The download link of a directory plugin (on the update service), at a version when one is asked for. */
@@ -296,16 +295,16 @@ final readonly class Packages
         return $data;
     }
 
-    /** Installs a directory theme by slug; returns its stylesheet folder. */
+    /** Installs a directory theme by slug, through the upgrader; returns its stylesheet folder. */
     public function installTheme(string $slug, string $version = ''): string
     {
-        return $this->unpack($this->fetch($this->themePackage($slug, $version), Directory::ORIGIN), 'theme')['folder'];
+        return (new UpgraderRun($this))->install('theme', $this->themePackage($slug, $version))['folder'];
     }
 
     /** Installs a directory theme over the folder already there. */
     public function replaceTheme(string $slug, string $version = ''): string
     {
-        return $this->unpackReplacing($this->fetch($this->themePackage($slug, $version), Directory::ORIGIN), 'theme')['folder'];
+        return (new UpgraderRun($this))->install('theme', $this->themePackage($slug, $version), ['overwrite_package' => true])['folder'];
     }
 
     /** The download link of a directory theme (on the update service), at a version when one is asked for. */
@@ -330,12 +329,14 @@ final readonly class Packages
 
     /**
      * Unpacks an uploaded or downloaded archive into wp-content/themes or
-     * wp-content/plugins. @return array{folder: string, name: string, version: string, kind: string}
+     * wp-content/plugins: a theme or a WordPress plugin through the upgrader,
+     * a Minn extension (minn.json) placed by the engine; refused when its
+     * folder is taken. @return array{folder: string, name: string, version: string, kind: string}
      */
     public function unpack(string $zip, string $kind): array
     {
-        return $this->place($zip, $kind, function (string $dest, string $kind, array $identity): void {
-            $current = $this->describe($dest, $kind);
+        return $this->upload($zip, $kind, []) ?? $this->place($zip, $kind, function (string $dest, string $kind, array $identity): void {
+            $current = $this->identity($dest, $kind);
             throw new RestError('folder_exists', 'Destination folder already exists.', 409, [
                 'destination' => $dest,
                 'current_name' => $current['name'],
@@ -349,7 +350,32 @@ final readonly class Packages
     /** Unpacks a zip over a folder already there, replacing it whole. */
     public function unpackReplacing(string $zip, string $kind): array
     {
-        return $this->place($zip, $kind, static fn (string $dest): mixed => Files::deleteTree($dest));
+        return $this->upload($zip, $kind, ['overwrite_package' => true]) ?? $this->place($zip, $kind, static fn (string $dest): mixed => Files::deleteTree($dest));
+    }
+
+    /**
+     * An archive checked by Archive and installed through the upgrader, as
+     * Minn Admin's uploads are on WordPress; null for a Minn extension,
+     * which the engine places itself.
+     *
+     * @param array<string, mixed> $args the upgrader's install arguments
+     * @return array{folder: string, name: string, version: string, kind: string}|null
+     */
+    private function upload(string $zip, string $kind, array $args): ?array
+    {
+        $file = tempnam(sys_get_temp_dir(), 'minn-pkg-');
+        file_put_contents($file, $zip);
+        try {
+            $top = Archive::inspect($file);
+            if (Archive::holds($file, "{$top}/minn.json")) {
+                return null;
+            }
+            $kind = $kind === 'theme' ? 'theme' : 'plugin';
+            $folder = (new UpgraderRun($this))->install($kind, $file, $args)['folder'];
+        } finally {
+            @unlink($file);
+        }
+        return ['folder' => $folder] + $this->identity($this->contained($kind, $folder), $kind);
     }
 
     /**
@@ -422,7 +448,7 @@ final readonly class Packages
      */
     private function identify(string $dir, string $kind): array
     {
-        $identity = $this->describe($dir, $kind);
+        $identity = $this->identity($dir, $kind);
         if ($identity['kind'] === 'unknown') {
             throw new RestError(
                 $kind === 'theme' ? 'not_theme' : 'not_plugin',
@@ -434,7 +460,7 @@ final readonly class Packages
     }
 
     /** What a folder holds by its headers; kind "unknown" when nothing identifies it. @return array{name: string, version: string, kind: string} */
-    private function describe(string $dir, string $kind): array
+    public function identity(string $dir, string $kind): array
     {
         if ($kind === 'theme') {
             $headers = FileHeaders::values("{$dir}/style.css", ['Theme Name', 'Version']);

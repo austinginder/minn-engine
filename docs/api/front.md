@@ -503,7 +503,7 @@ The site icon as an RSS 2.0 image (titled with the feed's title), or '' without 
 
 The site icon as an Atom icon, or '' without one.
 
-Internals: `enclosures()` (private, line 41)
+Internals: `enclosures()` (private, line 42)
 
 
 ## FeedTemplates

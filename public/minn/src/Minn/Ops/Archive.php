@@ -22,8 +22,27 @@ final class Archive
     /** Unpacks a zip file into a new folder $stage; the path of the one folder the archive held. */
     public static function unpackFolder(string $file, string $stage): string
     {
+        $top = self::inspect($file);
         $archive = new \ZipArchive();
         if ($archive->open($file) !== true) {
+            throw new RestError('not_zip', 'The archive could not be opened.', 400);
+        }
+        try {
+            mkdir($stage, 0755, true);
+            if (!$archive->extractTo($stage)) {
+                throw new RestError('extract_failed', 'The archive could not be unpacked.', 500);
+            }
+            return "{$stage}/{$top}";
+        } finally {
+            $archive->close();
+        }
+    }
+
+    /** Checks every entry of a zip file without writing anything; the one folder it holds. */
+    public static function inspect(string $file): string
+    {
+        $archive = new \ZipArchive();
+        if (!is_file($file) || $archive->open($file) !== true) {
             throw new RestError('not_zip', 'The archive could not be opened.', 400);
         }
         try {
@@ -56,14 +75,22 @@ final class Archive
             if ($top === null || !self::isFolderName($top)) {
                 throw new RestError('bad_archive', 'The archive must hold exactly one folder.', 400);
             }
-            mkdir($stage, 0755, true);
-            if (!$archive->extractTo($stage)) {
-                throw new RestError('extract_failed', 'The archive could not be unpacked.', 500);
-            }
-            return "{$stage}/{$top}";
+            return $top;
         } finally {
             $archive->close();
         }
+    }
+
+    /** Whether a zip file holds an entry by that name. */
+    public static function holds(string $file, string $entry): bool
+    {
+        $archive = new \ZipArchive();
+        if ($archive->open($file) !== true) {
+            return false;
+        }
+        $found = $archive->locateName($entry) !== false;
+        $archive->close();
+        return $found;
     }
 
     /** A plain folder name: no separators, never "." or "..". */

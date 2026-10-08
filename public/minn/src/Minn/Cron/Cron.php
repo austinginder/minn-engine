@@ -5,12 +5,10 @@ declare(strict_types=1);
 namespace Minn\Cron;
 
 use Closure;
-use Minn\Content\Inventory;
 use Minn\Content\Posts;
 use Minn\Content\PostWriter;
 use Minn\Content\Site;
 use Minn\Db;
-use Minn\Ops\Packages;
 use Minn\Ops\Updates;
 use Minn\Runtime\CronTable;
 use Minn\Runtime\Runtime;
@@ -47,7 +45,7 @@ final readonly class Cron
      */
     public static function create(Db $db, Site $site, string $contentDir, ?Closure $fireDueEvents): self
     {
-        $updates = new Updates($site, new Inventory($contentDir, $site), new Packages($site, $contentDir), $contentDir);
+        $updates = Updates::forSite($site, $contentDir);
         return new self($db, $site, new PostWriter($db, new Posts($db), $site), $updates, $fireDueEvents);
     }
 

@@ -28,12 +28,16 @@ final readonly class PackageInstaller
     /** The installer `wp theme install` uses. */
     public static function themes(Packages $packages): self
     {
+        // Installs run through WordPress's upgraders, which want the runtime up (as WP-CLI loads WordPress for them).
+        Runtime::bootEngine();
         return new self($packages, 'theme', '%s: Invalid slug provided', '%s: Theme not found');
     }
 
     /** The installer `wp plugin install` uses. */
     public static function plugins(Packages $packages): self
     {
+        // Installs run through WordPress's upgraders, which want the runtime up (as WP-CLI loads WordPress for them).
+        Runtime::bootEngine();
         return new self($packages, 'plugin', '%s: Invalid plugin slug.', '%s: Plugin not found.');
     }
 

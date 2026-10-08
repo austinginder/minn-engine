@@ -4694,3 +4694,73 @@ their own statements, and some edit them as strings.
     minute adds nothing, and a part that builds to zero is left out.
   - Values out of range, and a year, month and day that make no date, earn
     the reference's notices.
+
+## Plugins and themes switched, installed and updated (2026-10-07)
+
+**Activation** (`Runtime\PluginActivation`, `Runtime\PluginRequirements`,
+probe plugin-activation). `activate_plugin` checks the plugin header's
+Requires PHP, Requires at least and Requires Plugins (a readme.txt is not
+read; slugs that are not lower-case slugs are passed over; the rest taken
+sorted), loads the plugin through the runtime's gate before
+`activate_plugin` so its activation hook runs (silent mode loads it too),
+fires `activate_plugin`, `activate_<file>`, writes `active_plugins` sorted
+through `update_option`, then `activated_plugin`; what it printed makes the
+answer `unexpected_output` with the plugin left active. A plugin the gate
+will not load is refused (`plugin_unsupported`, naming what it lacks)
+rather than recorded active with code that cannot run. REST answers a
+refusal with 500 and the refusal's data under `additional_data`;
+`wp plugin activate` warns in WP-CLI's words and boots the runtime.
+
+**Plugin headers** (probe plugin-data). `get_plugin_data` translates (the
+plugin's domain loaded from its folder and Domain Path; name, addresses,
+version, description and author through it), cuts text to a, abbr,
+acronym, code, em and strong, escapes the addresses, and marks up (title
+and author linked, the description texturized with its By line). A plugin
+in its own folder that names no text domain uses the folder's name. The
+REST plugin item is built from the same passes and reads only the plugin
+asked for. A domain with nothing found is looked for again after
+`load_plugin_textdomain` names its folder; one unloaded for good stays
+closed.
+
+**The upgraders** (`Runtime\Upgrade`, `wp-api/classes/WP_Upgrader.php`,
+`WP_Upgrader_Skin.php`, probe upgrader). Plugin_Upgrader and
+Theme_Upgrader install, overwrite, update and bulk-update in the
+reference's order of hooks, words and checks; a single update leaves the
+plugin switched off (the caller switches it back), a bulk one keeps it on
+behind maintenance mode. The skins that draw wp-admin's screens draw none
+of the screen. An update's old copy is set aside while it runs and removed
+after: the reference keeps it a week for a cron event and restores it at
+shutdown on failure; Minn keeps nothing and restores at once.
+
+**The engine's own installs and updates** (`Ops\UpgraderRun`). The REST
+plugin route, Minn Admin's install, upload and update routes, the CLI verbs
+and the automatic updates all run the upgraders, so plugins hear every
+hook. Uploads pass `Ops\Archive`'s checks first (one plain top folder, no
+symbolic links, bounded size); a Minn extension (minn.json) is placed by
+the engine. An update applies the offer as Minn Admin does on WordPress
+(`bulk_upgrade` for a plugin, `upgrade` for a theme), with the offers
+published first in `update_plugins` and `update_themes` (the shape
+`wp_update_plugins` leaves) and put back after.
+
+**Minn's own requests.** The update service's packages are fetched over the
+engine's own client (https, the service's host, a size cap) and handed to
+the upgrader through `upgrader_pre_download`, never through the
+plugin-filterable HTTP API, so no plugin can change where Minn gets code
+from. A package from anywhere else is installed only on its publisher's
+word (an `upgrader_pre_download` answer). The reference tells plugins
+about its own requests to wordpress.org (`requests-*`, `http_api_curl`,
+`http_api_debug`); the hook-trace suite drops them (DELIBERATE).
+
+**Theme caches.** The reference keeps the theme roots (`theme_roots`) and
+each theme's pattern files (`wp_theme_files_patterns-<hash>`) in site
+transients, written and cleared as their state allows; Minn reads both from
+disk and keeps neither (DELIBERATE in hook-trace; left out of the upgrader
+probe).
+
+**Site options** (probe site-options). On a single site the network layer
+is options stored not to autoload, with its own hooks around the option
+calls: `pre_site_option_<name>` and `pre_site_option` may answer a read,
+`default_site_option_<name>` sets its default, `site_option_<name>` has the
+last word; writes are told as `add_`, `update_` and `delete_site_option`.
+Site transients go through it, the update transients reading no timeout.
+Inside an `all` callback the hook is the current one.

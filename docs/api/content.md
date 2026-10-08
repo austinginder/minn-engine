@@ -471,7 +471,7 @@ version come from the file headers, status from the options.
 file => its description and the constant that must be true for it to
 load (true when nothing gates it).
 
-Used by: `Minn\Cli\AssetUpdate`, `Minn\Cli\MinnCommand`, `Minn\Cli\PluginCommand`, `Minn\Cli\ThemeCommand`, `Minn\Content\PluginState`, `Minn\Cron\Cron`, `Minn\Ops\InstalledSoftware`, `Minn\Ops\Packages`, `Minn\Ops\Updates`, `Minn\Rest\PluginsController`, `Minn\Rest\Services`
+Used by: `Minn\Cli\AssetUpdate`, `Minn\Cli\MinnCommand`, `Minn\Cli\PluginCommand`, `Minn\Cli\ThemeCommand`, `Minn\Content\PluginState`, `Minn\Ops\InstalledSoftware`, `Minn\Ops\Packages`, `Minn\Ops\Updates`, `Minn\Rest\PluginsController`, `Minn\Rest\Services`
 
 ```php
 __construct(string $contentDir, Minn\Content\Site $site)

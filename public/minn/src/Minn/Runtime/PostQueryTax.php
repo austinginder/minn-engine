@@ -110,15 +110,15 @@ final class PostQueryTax
         $tag = (string) $q['tag'];
         if (str_contains($tag, ',')) {
             foreach (preg_split('/[,\r\n\t ]+/', $tag) ?: [] as $one) {
-                $q['tag_slug__in'][] = \sanitize_term_field('slug', $one, 0, 'post_tag', 'db');
+                $q['tag_slug__in'][] = TermFields::field('slug', $one, 0, 'post_tag', 'db');
                 sort($q['tag_slug__in']);
             }
         } elseif (preg_match('/[+\r\n\t ]+/', $tag) === 1 || !empty($q['cat'])) {
             foreach (preg_split('/[+\r\n\t ]+/', $tag) ?: [] as $one) {
-                $q['tag_slug__and'][] = \sanitize_term_field('slug', $one, 0, 'post_tag', 'db');
+                $q['tag_slug__and'][] = TermFields::field('slug', $one, 0, 'post_tag', 'db');
             }
         } else {
-            $q['tag'] = \sanitize_term_field('slug', $tag, 0, 'post_tag', 'db');
+            $q['tag'] = TermFields::field('slug', $tag, 0, 'post_tag', 'db');
             $q['tag_slug__in'][] = $q['tag'];
             sort($q['tag_slug__in']);
         }

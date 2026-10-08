@@ -805,6 +805,18 @@ function wp_get_update_data()
     return apply_filters('wp_get_update_data', $data, $titles);
 }
 
+/** Minn's own check: the update service asked when the last answer is old, the offers left in update_plugins. */
+function wp_update_plugins($extra_stats = [])
+{
+    Minn\Ops\Updates::forSite(Runtime::current()->site, Runtime::current()->contentDir())->checkForWordPress('update_plugins', (array) $extra_stats);
+}
+
+/** Minn's own check: the update service asked when the last answer is old, the offers left in update_themes. */
+function wp_update_themes($extra_stats = [])
+{
+    Minn\Ops\Updates::forSite(Runtime::current()->site, Runtime::current()->contentDir())->checkForWordPress('update_themes', (array) $extra_stats);
+}
+
 function wp_clean_plugins_cache($clear_update_cache = true)
 {
     if ($clear_update_cache) {

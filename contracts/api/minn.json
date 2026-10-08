@@ -18360,14 +18360,13 @@
             "namespace": "Minn\\Cli",
             "kind": "final class",
             "file": "public/minn/src/Minn/Cli/AssetUpdate.php",
-            "lines": 330,
+            "lines": 329,
             "doc": "Shared wording for `wp plugin update` and `wp theme update`. Captured\nfrom the reference: missing plugins warn and count as failed; a missing\ntheme is a fatal Error and stops. json/csv print only the rows (empty\nstdout when nothing changed). `--exclude` always prints the skipped\nline in table/summary, even when the list is empty.",
             "implements": [],
             "extends": null,
             "uses": [
                 "Minn\\Cli\\Runtime",
                 "Minn\\Content\\Inventory",
-                "Minn\\Ops\\Packages",
                 "Minn\\Ops\\Updates",
                 "Minn\\RestError"
             ],
@@ -18403,8 +18402,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 23,
-                "end": 28
+                "line": 22,
+                "end": 27
             },
             "cases": [],
             "constants": [],
@@ -18455,8 +18454,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 31,
-                    "end": 40
+                    "line": 30,
+                    "end": 38
                 },
                 {
                     "routes": [],
@@ -18484,8 +18483,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 47,
-                    "end": 101
+                    "line": 45,
+                    "end": 99
                 },
                 {
                     "routes": [],
@@ -18506,8 +18505,8 @@
                             "doc": "@return array<string, array<string, string>>"
                         }
                     ],
-                    "line": 104,
-                    "end": 149
+                    "line": 102,
+                    "end": 147
                 },
                 {
                     "routes": [],
@@ -18528,8 +18527,8 @@
                             "doc": "@return array<string, string>"
                         }
                     ],
-                    "line": 152,
-                    "end": 161
+                    "line": 150,
+                    "end": 159
                 },
                 {
                     "routes": [],
@@ -18557,8 +18556,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 164,
-                    "end": 190
+                    "line": 162,
+                    "end": 188
                 },
                 {
                     "routes": [],
@@ -18637,8 +18636,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 197,
-                    "end": 244
+                    "line": 195,
+                    "end": 242
                 },
                 {
                     "routes": [],
@@ -18680,8 +18679,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 247,
-                    "end": 265
+                    "line": 245,
+                    "end": 263
                 },
                 {
                     "routes": [],
@@ -18709,8 +18708,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 268,
-                    "end": 274
+                    "line": 266,
+                    "end": 272
                 },
                 {
                     "routes": [],
@@ -18729,8 +18728,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 276,
-                    "end": 283
+                    "line": 274,
+                    "end": 281
                 },
                 {
                     "routes": [],
@@ -18749,8 +18748,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 285,
-                    "end": 296
+                    "line": 283,
+                    "end": 294
                 },
                 {
                     "routes": [],
@@ -18769,8 +18768,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 298,
-                    "end": 309
+                    "line": 296,
+                    "end": 307
                 },
                 {
                     "routes": [],
@@ -18783,8 +18782,8 @@
                         "@return array<string, string>"
                     ],
                     "params": [],
-                    "line": 312,
-                    "end": 320
+                    "line": 310,
+                    "end": 318
                 },
                 {
                     "routes": [],
@@ -18819,8 +18818,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 323,
-                    "end": 332
+                    "line": 321,
+                    "end": 330
                 },
                 {
                     "routes": [],
@@ -18853,8 +18852,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 334,
-                    "end": 344
+                    "line": 332,
+                    "end": 342
                 },
                 {
                     "routes": [],
@@ -18873,8 +18872,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 346,
-                    "end": 349
+                    "line": 344,
+                    "end": 347
                 }
             ]
         },
@@ -20571,11 +20570,12 @@
             "namespace": "Minn\\Cli",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Cli/PackageInstaller.php",
-            "lines": 138,
+            "lines": 142,
             "doc": "Puts a theme or a plugin on disk for `wp theme install` and `wp plugin\ninstall`: a directory slug, a local zip, or a zip URL, saying along\nthe way what WP-CLI says. The two kinds differ only in their words, in\nwhere they live, and in a plugin being allowed to be a single file.",
             "implements": [],
             "extends": null,
             "uses": [
+                "Minn\\Cli\\Runtime",
                 "Minn\\Ops\\Directory",
                 "Minn\\Ops\\Packages",
                 "Minn\\RestError"
@@ -20681,7 +20681,7 @@
                         }
                     ],
                     "line": 29,
-                    "end": 32
+                    "end": 34
                 },
                 {
                     "routes": [],
@@ -20700,8 +20700,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 35,
-                    "end": 38
+                    "line": 37,
+                    "end": 42
                 },
                 {
                     "routes": [],
@@ -20736,8 +20736,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 47,
-                    "end": 72
+                    "line": 51,
+                    "end": 76
                 },
                 {
                     "routes": [],
@@ -20787,8 +20787,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 80,
-                    "end": 106
+                    "line": 84,
+                    "end": 110
                 },
                 {
                     "routes": [],
@@ -20816,8 +20816,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 113,
-                    "end": 136
+                    "line": 117,
+                    "end": 140
                 },
                 {
                     "routes": [],
@@ -20836,8 +20836,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 139,
-                    "end": 142
+                    "line": 143,
+                    "end": 146
                 },
                 {
                     "routes": [],
@@ -20865,8 +20865,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 149,
-                    "end": 154
+                    "line": 153,
+                    "end": 158
                 }
             ]
         },
@@ -21831,6 +21831,7 @@
                 "Minn\\Cli\\MaintenanceCommand",
                 "Minn\\Cli\\MinnCommand",
                 "Minn\\Cli\\OptionCommand",
+                "Minn\\Cli\\PackageInstaller",
                 "Minn\\Cli\\PluginCommand",
                 "Minn\\Cli\\RewriteCommand",
                 "Minn\\Cli\\SearchReplaceCommand",
@@ -24831,7 +24832,6 @@
                 "Minn\\Cli\\PluginCommand",
                 "Minn\\Cli\\ThemeCommand",
                 "Minn\\Content\\PluginState",
-                "Minn\\Cron\\Cron",
                 "Minn\\Ops\\InstalledSoftware",
                 "Minn\\Ops\\Packages",
                 "Minn\\Ops\\Updates",
@@ -34008,13 +34008,11 @@
             "implements": [],
             "extends": null,
             "uses": [
-                "Minn\\Content\\Inventory",
                 "Minn\\Content\\PostWriter",
                 "Minn\\Content\\Posts",
                 "Minn\\Content\\Site",
                 "Minn\\Db",
                 "Minn\\Ops\\AutoUpdates",
-                "Minn\\Ops\\Packages",
                 "Minn\\Ops\\Updates",
                 "Minn\\Runtime\\CronTable",
                 "Minn\\Runtime\\Runtime"
@@ -34069,8 +34067,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 38,
-                "end": 40
+                "line": 36,
+                "end": 38
             },
             "cases": [],
             "constants": [
@@ -34175,8 +34173,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 48,
-                    "end": 52
+                    "line": 46,
+                    "end": 50
                 },
                 {
                     "routes": [],
@@ -34189,8 +34187,8 @@
                         "@return list<string>"
                     ],
                     "params": [],
-                    "line": 55,
-                    "end": 77
+                    "line": 53,
+                    "end": 75
                 },
                 {
                     "routes": [],
@@ -34201,8 +34199,8 @@
                     "doc": "True when a scheduled post's time has come or the cron option holds a due event.",
                     "shapes": [],
                     "params": [],
-                    "line": 80,
-                    "end": 83
+                    "line": 78,
+                    "end": 81
                 },
                 {
                     "routes": [],
@@ -34213,8 +34211,8 @@
                     "doc": "Fires the due events through the runtime. A callback that throws\nends the events step, as a fatal ends the reference's cron request;\nthe event was already rescheduled or removed, so it does not repeat\non the next trigger, and the sweeps still run.",
                     "shapes": [],
                     "params": [],
-                    "line": 91,
-                    "end": 100
+                    "line": 89,
+                    "end": 98
                 },
                 {
                     "routes": [],
@@ -34227,8 +34225,8 @@
                         "@return list<string>"
                     ],
                     "params": [],
-                    "line": 109,
-                    "end": 118
+                    "line": 107,
+                    "end": 116
                 },
                 {
                     "routes": [],
@@ -34239,8 +34237,8 @@
                     "doc": "",
                     "shapes": [],
                     "params": [],
-                    "line": 120,
-                    "end": 126
+                    "line": 118,
+                    "end": 124
                 },
                 {
                     "routes": [],
@@ -34251,8 +34249,8 @@
                     "doc": "A scheduled post goes live as the reference publishes it: status only,\ndates and modified untouched, term counts refreshed. With plugins\nloaded it goes through check_and_publish_future_post, the reference's\nown publish_future_post work, so they hear publish_post and the\ntransition; a plugin that throws on one post holds back no other.",
                     "shapes": [],
                     "params": [],
-                    "line": 135,
-                    "end": 155
+                    "line": 133,
+                    "end": 153
                 },
                 {
                     "routes": [],
@@ -34263,8 +34261,8 @@
                     "doc": "",
                     "shapes": [],
                     "params": [],
-                    "line": 157,
-                    "end": 169
+                    "line": 155,
+                    "end": 167
                 },
                 {
                     "routes": [],
@@ -34275,8 +34273,8 @@
                     "doc": "",
                     "shapes": [],
                     "params": [],
-                    "line": 171,
-                    "end": 183
+                    "line": 169,
+                    "end": 181
                 },
                 {
                     "routes": [],
@@ -34287,8 +34285,8 @@
                     "doc": "",
                     "shapes": [],
                     "params": [],
-                    "line": 185,
-                    "end": 197
+                    "line": 183,
+                    "end": 195
                 },
                 {
                     "routes": [],
@@ -34299,8 +34297,8 @@
                     "doc": "",
                     "shapes": [],
                     "params": [],
-                    "line": 199,
-                    "end": 202
+                    "line": 197,
+                    "end": 200
                 }
             ]
         },
@@ -40532,6 +40530,7 @@
             "uses": [
                 "Minn\\Front\\FeedWriter",
                 "Minn\\Runtime\\Runtime",
+                "Minn\\Runtime\\TermFields",
                 "Minn\\Support\\Escape",
                 "Minn\\Support\\Url"
             ],
@@ -40560,8 +40559,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 21,
-                    "end": 38
+                    "line": 22,
+                    "end": 39
                 },
                 {
                     "routes": [],
@@ -40572,8 +40571,8 @@
                     "doc": "The current post's enclosures as RSS has them: address, length, and the type the third line starts with.",
                     "shapes": [],
                     "params": [],
-                    "line": 51,
-                    "end": 62
+                    "line": 52,
+                    "end": 63
                 },
                 {
                     "routes": [],
@@ -40584,8 +40583,8 @@
                     "doc": "The current post's enclosures as Atom links: the length a line that is a number, the type a line that is a known MIME type.",
                     "shapes": [],
                     "params": [],
-                    "line": 65,
-                    "end": 85
+                    "line": 66,
+                    "end": 86
                 },
                 {
                     "routes": [],
@@ -40611,8 +40610,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 88,
-                    "end": 110
+                    "line": 89,
+                    "end": 111
                 },
                 {
                     "routes": [],
@@ -40631,8 +40630,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 117,
-                    "end": 136
+                    "line": 118,
+                    "end": 137
                 },
                 {
                     "routes": [],
@@ -40643,8 +40642,8 @@
                     "doc": "The site icon as an RSS 2.0 image (titled with the feed's title), or '' without one.",
                     "shapes": [],
                     "params": [],
-                    "line": 139,
-                    "end": 149
+                    "line": 140,
+                    "end": 150
                 },
                 {
                     "routes": [],
@@ -40655,8 +40654,8 @@
                     "doc": "The site icon as an Atom icon, or '' without one.",
                     "shapes": [],
                     "params": [],
-                    "line": 152,
-                    "end": 156
+                    "line": 153,
+                    "end": 157
                 },
                 {
                     "routes": [],
@@ -40669,8 +40668,8 @@
                         "@return list<list<string>> the current post's enclosures, each as its lines, unless its password is wanted"
                     ],
                     "params": [],
-                    "line": 41,
-                    "end": 48
+                    "line": 42,
+                    "end": 49
                 }
             ]
         },
@@ -74998,7 +74997,7 @@
             "namespace": "Minn\\Ops",
             "kind": "final class",
             "file": "public/minn/src/Minn/Ops/Archive.php",
-            "lines": 69,
+            "lines": 96,
             "doc": "A zip unpacked the safe way, for the plugin and theme installer and for\nthe engine's own update alike: every entry stays inside its folder (no\nabsolute path, no \"..\", no backslash, no NUL), none is a symbolic link,\nthere are no more than 20,000 of them, they unpack to no more than\n512 MB, and they all sit in exactly one top folder (macOS's __MACOSX\nnoise aside). Nothing is written until every entry has passed.",
             "implements": [],
             "extends": null,
@@ -75007,7 +75006,8 @@
             ],
             "usedBy": [
                 "Minn\\Ops\\EngineUpdate",
-                "Minn\\Ops\\Packages"
+                "Minn\\Ops\\Packages",
+                "Minn\\Ops\\UpgraderRun"
             ],
             "constructor": null,
             "cases": [],
@@ -75052,7 +75052,54 @@
                         }
                     ],
                     "line": 23,
-                    "end": 67
+                    "end": 39
+                },
+                {
+                    "routes": [],
+                    "name": "inspect",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "inspect(string $file): string",
+                    "doc": "Checks every entry of a zip file without writing anything; the one folder it holds.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "file",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 42,
+                    "end": 82
+                },
+                {
+                    "routes": [],
+                    "name": "holds",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "holds(string $file, string $entry): bool",
+                    "doc": "Whether a zip file holds an entry by that name.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "file",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "entry",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 85,
+                    "end": 94
                 },
                 {
                     "routes": [],
@@ -75071,8 +75118,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 70,
-                    "end": 73
+                    "line": 97,
+                    "end": 100
                 },
                 {
                     "routes": [],
@@ -75098,8 +75145,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 76,
-                    "end": 84
+                    "line": 103,
+                    "end": 111
                 }
             ]
         },
@@ -76115,7 +76162,8 @@
                 "Minn\\Ops\\Packages",
                 "Minn\\Ops\\Release",
                 "Minn\\Ops\\Releases",
-                "Minn\\Ops\\Updates"
+                "Minn\\Ops\\Updates",
+                "Minn\\Ops\\UpgraderRun"
             ],
             "constructor": null,
             "cases": [],
@@ -76786,8 +76834,8 @@
             "namespace": "Minn\\Ops",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Ops/Packages.php",
-            "lines": 450,
-            "doc": "Putting themes and extensions on disk. Themes come from the directory\n(wordpress.org's, asked through the Minn update service, Ops\\Directory;\nblock themes render on the engine) or an uploaded zip; extensions come\nfrom an uploaded zip or a URL, and must carry a minn.json: a WordPress\nplugin would install but never run, so it is refused with the reason.\nEvery archive is unpacked through one guarded routine: exactly one\ntop-level folder that is a plain name (never \".\" or \"..\"), no absolute\nor dotted paths, no symbolic links, bounded entry count and size, the\nfolder's identity checked and its destination proven to be a direct\nchild of the kind's directory before it is moved into place. Removal\nproves the same containment before anything is deleted.",
+            "lines": 477,
+            "doc": "Putting plugins, themes and extensions on disk. Plugins and themes come\nfrom the directory (wordpress.org's, asked through the Minn update\nservice, Ops\\Directory) or an uploaded zip, and are installed through\nWordPress's upgraders (UpgraderRun), so plugins hear every upgrader hook;\na Minn extension (a folder with a minn.json) is placed by the engine.\nEvery archive passes Archive's checks first: exactly one top-level\nfolder that is a plain name (never \".\" or \"..\"), no absolute or dotted\npaths, no symbolic links, bounded entry count and size. Removal proves\nthe folder is a direct child of its kind's directory before anything is\ndeleted.",
             "implements": [],
             "extends": null,
             "uses": [
@@ -76797,20 +76845,20 @@
                 "Minn\\Http\\Download",
                 "Minn\\Ops\\Archive",
                 "Minn\\Ops\\Directory",
+                "Minn\\Ops\\UpgraderRun",
                 "Minn\\RestError",
                 "Minn\\Support\\FileHeaders",
                 "Minn\\Support\\Files"
             ],
             "usedBy": [
                 "Minn\\Admin\\PackagesController",
-                "Minn\\Cli\\AssetUpdate",
                 "Minn\\Cli\\DirectorySearch",
                 "Minn\\Cli\\PackageInstaller",
                 "Minn\\Cli\\PluginCommand",
                 "Minn\\Cli\\ThemeCommand",
-                "Minn\\Cron\\Cron",
                 "Minn\\Ops\\PluginsApi",
                 "Minn\\Ops\\Updates",
+                "Minn\\Ops\\UpgraderRun",
                 "Minn\\Rest\\PluginsController",
                 "Minn\\Rest\\Services"
             ],
@@ -76835,8 +76883,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 37,
-                "end": 39
+                "line": 36,
+                "end": 38
             },
             "cases": [],
             "constants": [
@@ -76905,8 +76953,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 42,
-                    "end": 66
+                    "line": 41,
+                    "end": 65
                 },
                 {
                     "routes": [],
@@ -76934,8 +76982,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 73,
-                    "end": 107
+                    "line": 72,
+                    "end": 106
                 },
                 {
                     "routes": [],
@@ -76954,8 +77002,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 110,
-                    "end": 144
+                    "line": 109,
+                    "end": 143
                 },
                 {
                     "routes": [],
@@ -76963,7 +77011,7 @@
                     "static": false,
                     "visibility": "public",
                     "signature": "installPlugin(string $slug, string $version = ''): string",
-                    "doc": "Installs a directory plugin by slug; returns its folder.",
+                    "doc": "Installs a directory plugin by slug, through the upgrader; returns its folder.",
                     "shapes": [],
                     "params": [
                         {
@@ -76981,8 +77029,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 147,
-                    "end": 150
+                    "line": 146,
+                    "end": 149
                 },
                 {
                     "routes": [],
@@ -77008,8 +77056,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 153,
-                    "end": 156
+                    "line": 152,
+                    "end": 155
                 },
                 {
                     "routes": [],
@@ -77030,8 +77078,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 186,
-                    "end": 197
+                    "line": 185,
+                    "end": 196
                 },
                 {
                     "routes": [],
@@ -77060,8 +77108,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 207,
-                    "end": 215
+                    "line": 206,
+                    "end": 214
                 },
                 {
                     "routes": [],
@@ -77096,8 +77144,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 228,
-                    "end": 252
+                    "line": 227,
+                    "end": 251
                 },
                 {
                     "routes": [],
@@ -77132,8 +77180,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 259,
-                    "end": 283
+                    "line": 258,
+                    "end": 282
                 },
                 {
                     "routes": [],
@@ -77154,8 +77202,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 290,
-                    "end": 297
+                    "line": 289,
+                    "end": 296
                 },
                 {
                     "routes": [],
@@ -77163,7 +77211,7 @@
                     "static": false,
                     "visibility": "public",
                     "signature": "installTheme(string $slug, string $version = ''): string",
-                    "doc": "Installs a directory theme by slug; returns its stylesheet folder.",
+                    "doc": "Installs a directory theme by slug, through the upgrader; returns its stylesheet folder.",
                     "shapes": [],
                     "params": [
                         {
@@ -77181,8 +77229,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 300,
-                    "end": 303
+                    "line": 299,
+                    "end": 302
                 },
                 {
                     "routes": [],
@@ -77208,8 +77256,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 306,
-                    "end": 309
+                    "line": 305,
+                    "end": 308
                 },
                 {
                     "routes": [],
@@ -77217,7 +77265,7 @@
                     "static": false,
                     "visibility": "public",
                     "signature": "unpack(string $zip, string $kind): array",
-                    "doc": "Unpacks an uploaded or downloaded archive into wp-content/themes or\nwp-content/plugins. @return array{folder: string, name: string, version: string, kind: string}",
+                    "doc": "Unpacks an uploaded or downloaded archive into wp-content/themes or\nwp-content/plugins: a theme or a WordPress plugin through the upgrader,\na Minn extension (minn.json) placed by the engine; refused when its\nfolder is taken. @return array{folder: string, name: string, version: string, kind: string}",
                     "shapes": [
                         "@return array{folder: string, name: string, version: string, kind: string}"
                     ],
@@ -77237,8 +77285,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 335,
-                    "end": 347
+                    "line": 336,
+                    "end": 348
                 },
                 {
                     "routes": [],
@@ -77264,8 +77312,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 350,
-                    "end": 353
+                    "line": 351,
+                    "end": 354
                 },
                 {
                     "routes": [],
@@ -77291,8 +77339,37 @@
                             "doc": ""
                         }
                     ],
-                    "line": 387,
-                    "end": 405
+                    "line": 413,
+                    "end": 431
+                },
+                {
+                    "routes": [],
+                    "name": "identity",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "identity(string $dir, string $kind): array",
+                    "doc": "What a folder holds by its headers; kind \"unknown\" when nothing identifies it. @return array{name: string, version: string, kind: string}",
+                    "shapes": [
+                        "@return array{name: string, version: string, kind: string}"
+                    ],
+                    "params": [
+                        {
+                            "name": "dir",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "kind",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 463,
+                    "end": 480
                 },
                 {
                     "routes": [],
@@ -77318,8 +77395,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 467,
-                    "end": 477
+                    "line": 493,
+                    "end": 503
                 },
                 {
                     "routes": [],
@@ -77345,8 +77422,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 159,
-                    "end": 179
+                    "line": 158,
+                    "end": 178
                 },
                 {
                     "routes": [],
@@ -77365,8 +77442,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 218,
-                    "end": 221
+                    "line": 217,
+                    "end": 220
                 },
                 {
                     "routes": [],
@@ -77392,8 +77469,45 @@
                             "doc": ""
                         }
                     ],
-                    "line": 312,
-                    "end": 329
+                    "line": 311,
+                    "end": 328
+                },
+                {
+                    "routes": [],
+                    "name": "upload",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "upload(string $zip, string $kind, array $args): ?array",
+                    "doc": "An archive checked by Archive and installed through the upgrader, as\nMinn Admin's uploads are on WordPress; null for a Minn extension,\nwhich the engine places itself.",
+                    "shapes": [
+                        "@param array<string, mixed> $args the upgrader's install arguments",
+                        "@return array{folder: string, name: string, version: string, kind: string}|null"
+                    ],
+                    "params": [
+                        {
+                            "name": "zip",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "kind",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "args",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": "the upgrader's install arguments"
+                        }
+                    ],
+                    "line": 364,
+                    "end": 379
                 },
                 {
                     "routes": [],
@@ -77428,8 +77542,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 361,
-                    "end": 384
+                    "line": 387,
+                    "end": 410
                 },
                 {
                     "routes": [],
@@ -77455,8 +77569,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 408,
-                    "end": 416
+                    "line": 434,
+                    "end": 442
                 },
                 {
                     "routes": [],
@@ -77484,37 +77598,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 423,
-                    "end": 434
-                },
-                {
-                    "routes": [],
-                    "name": "describe",
-                    "static": false,
-                    "visibility": "private",
-                    "signature": "describe(string $dir, string $kind): array",
-                    "doc": "What a folder holds by its headers; kind \"unknown\" when nothing identifies it. @return array{name: string, version: string, kind: string}",
-                    "shapes": [
-                        "@return array{name: string, version: string, kind: string}"
-                    ],
-                    "params": [
-                        {
-                            "name": "dir",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "kind",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 437,
-                    "end": 454
+                    "line": 449,
+                    "end": 460
                 },
                 {
                     "routes": [],
@@ -77533,8 +77618,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 457,
-                    "end": 460
+                    "line": 483,
+                    "end": 486
                 }
             ]
         },
@@ -78345,7 +78430,7 @@
             "namespace": "Minn\\Ops",
             "kind": "final class",
             "file": "public/minn/src/Minn/Ops/Updates.php",
-            "lines": 403,
+            "lines": 435,
             "doc": "Update offers for the site's plugins and themes from the directory, asked\nthrough the Minn update service (Ops\\Directory), which answers with\nwordpress.org's own offers and serves their packages: the update-check\nendpoints asked with the installed headers (each plugin's Name, Version\nand Update URI, so a plugin that updates from elsewhere is never offered\nthe directory's plugin of the same folder name), the answer kept in the\nminn_updates option (JSON) for twelve hours, and the offers applied by\ndownloading the release archive through the one package unpacker. A\nplugin or theme the directory does not know keeps its folder untouched\nand is never offered anything. The per-item\nauto-update lists are the site's own auto_update_plugins and\nauto_update_themes options, in the shape the app already reads.\n\nThe directory is not the only source. A plugin that hosts itself answers\nfor its own version through the update transient's filter, which is where\nWordPress reads it too, so Runtime\\PluginUpdates asks the runtime the same\nquestion and its answer is merged in. Applying such an offer goes through\nthe publisher: a package outside the directory is unpacked only when\n`upgrader_pre_download` hands back a copy it verified.",
             "implements": [],
             "extends": null,
@@ -78355,10 +78440,9 @@
                 "Minn\\Ops\\AutoUpdates",
                 "Minn\\Ops\\Directory",
                 "Minn\\Ops\\Packages",
+                "Minn\\Ops\\UpgraderRun",
                 "Minn\\RestError",
-                "Minn\\Runtime\\PackageDownload",
                 "Minn\\Runtime\\PluginUpdates",
-                "Minn\\Runtime\\Refusal",
                 "Minn\\Support\\FileHeaders",
                 "Minn\\Support\\Serialized"
             ],
@@ -78405,8 +78489,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 45,
-                "end": 51
+                "line": 43,
+                "end": 49
             },
             "cases": [],
             "constants": [
@@ -78473,6 +78557,60 @@
             "methods": [
                 {
                     "routes": [],
+                    "name": "forSite",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "forSite(Minn\\Content\\Site $site, string $contentDir): self",
+                    "doc": "The updater over a site's wp-content.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "site",
+                            "type": "Minn\\Content\\Site",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "contentDir",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 52,
+                    "end": 55
+                },
+                {
+                    "routes": [],
+                    "name": "checkForWordPress",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "checkForWordPress(string $transient, array $fresh): void",
+                    "doc": "wp_update_plugins and wp_update_themes: the service asked when the\nstored answer is old (or a fresh one is wanted), and the offers left\nin the update transients when they are not there already.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "transient",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "fresh",
+                            "type": "array",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 62,
+                    "end": 69
+                },
+                {
+                    "routes": [],
                     "name": "state",
                     "static": false,
                     "visibility": "public",
@@ -78480,8 +78618,8 @@
                     "doc": "The stored answer, refreshed when older than the TTL or absent.",
                     "shapes": [],
                     "params": [],
-                    "line": 54,
-                    "end": 70
+                    "line": 72,
+                    "end": 88
                 },
                 {
                     "routes": [],
@@ -78492,8 +78630,8 @@
                     "doc": "Asks the directory now, whatever the cache says, and keeps the answer.",
                     "shapes": [],
                     "params": [],
-                    "line": 73,
-                    "end": 76
+                    "line": 91,
+                    "end": 94
                 },
                 {
                     "routes": [],
@@ -78504,8 +78642,20 @@
                     "doc": "Asks the directory now and stores the answer.",
                     "shapes": [],
                     "params": [],
-                    "line": 79,
-                    "end": 127
+                    "line": 97,
+                    "end": 147
+                },
+                {
+                    "routes": [],
+                    "name": "publish",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "publish(): void",
+                    "doc": "The offers in WordPress's update transients, update_plugins and\nupdate_themes, in the shape wp_update_plugins and wp_update_themes\nleave there: where plugins, the facade's update helpers and the\nupgraders read them. Written after every check and after an update.",
+                    "shapes": [],
+                    "params": [],
+                    "line": 155,
+                    "end": 176
                 },
                 {
                     "routes": [],
@@ -78518,8 +78668,8 @@
                         "@return array<string, string>"
                     ],
                     "params": [],
-                    "line": 160,
-                    "end": 171
+                    "line": 209,
+                    "end": 220
                 },
                 {
                     "routes": [],
@@ -78532,8 +78682,8 @@
                         "@return array<string, string>"
                     ],
                     "params": [],
-                    "line": 174,
-                    "end": 185
+                    "line": 223,
+                    "end": 234
                 },
                 {
                     "routes": [],
@@ -78546,8 +78696,8 @@
                         "@return array<string, array{slug: string, icon: string, url: string}>"
                     ],
                     "params": [],
-                    "line": 188,
-                    "end": 206
+                    "line": 237,
+                    "end": 255
                 },
                 {
                     "routes": [],
@@ -78566,8 +78716,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 209,
-                    "end": 213
+                    "line": 258,
+                    "end": 262
                 },
                 {
                     "routes": [],
@@ -78586,8 +78736,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 216,
-                    "end": 227
+                    "line": 265,
+                    "end": 276
                 },
                 {
                     "routes": [],
@@ -78606,8 +78756,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 230,
-                    "end": 241
+                    "line": 279,
+                    "end": 290
                 },
                 {
                     "routes": [],
@@ -78628,8 +78778,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 244,
-                    "end": 248
+                    "line": 293,
+                    "end": 297
                 },
                 {
                     "routes": [],
@@ -78657,8 +78807,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 255,
-                    "end": 258
+                    "line": 304,
+                    "end": 307
                 },
                 {
                     "routes": [],
@@ -78684,8 +78834,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 261,
-                    "end": 264
+                    "line": 310,
+                    "end": 313
                 },
                 {
                     "routes": [],
@@ -78706,8 +78856,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 290,
-                    "end": 313
+                    "line": 339,
+                    "end": 362
                 },
                 {
                     "routes": [],
@@ -78720,8 +78870,8 @@
                         "@return array<string, string>"
                     ],
                     "params": [],
-                    "line": 316,
-                    "end": 323
+                    "line": 365,
+                    "end": 372
                 },
                 {
                     "routes": [],
@@ -78734,8 +78884,8 @@
                         "@return array<string, string>"
                     ],
                     "params": [],
-                    "line": 341,
-                    "end": 348
+                    "line": 390,
+                    "end": 397
                 },
                 {
                     "routes": [],
@@ -78748,8 +78898,8 @@
                         "@return array<string, array<string, string>>"
                     ],
                     "params": [],
-                    "line": 351,
-                    "end": 365
+                    "line": 400,
+                    "end": 414
                 },
                 {
                     "routes": [],
@@ -78771,8 +78921,8 @@
                             "doc": "the previous state"
                         }
                     ],
-                    "line": 138,
-                    "end": 157
+                    "line": 187,
+                    "end": 206
                 },
                 {
                     "routes": [],
@@ -78808,8 +78958,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 273,
-                    "end": 282
+                    "line": 322,
+                    "end": 331
                 },
                 {
                     "routes": [],
@@ -78822,66 +78972,18 @@
                         "@return array<string, array{Name: string, Version: string, UpdateURI: string}>"
                     ],
                     "params": [],
-                    "line": 330,
-                    "end": 338
-                },
-                {
-                    "routes": [],
-                    "name": "install",
-                    "static": false,
-                    "visibility": "private",
-                    "signature": "install(string $package, string $kind, string $folder, string $asset = ''): void",
-                    "doc": "Fetches and unpacks an offer's package. A directory package is\ndownloaded here from the Minn update service, every redirect hop\nstaying on it; anything else has to come from its publisher, verified.\nThe archive's SHA-256 is kept under \"archives\" in the state either\nway, so an audit can ask what code arrived.",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "package",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "kind",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "folder",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "asset",
-                            "type": "string",
-                            "shape": "",
-                            "default": "''",
-                            "doc": ""
-                        }
-                    ],
-                    "line": 374,
+                    "line": 379,
                     "end": 387
                 },
                 {
                     "routes": [],
-                    "name": "vouched",
+                    "name": "apply",
                     "static": false,
                     "visibility": "private",
-                    "signature": "vouched(string $package, string $kind, string $asset): string",
-                    "doc": "A package from outside the directory, and only on its publisher's\nword: the reference asks `upgrader_pre_download` before every\ndownload, and a plugin that hosts itself answers there with the copy\nit fetched and checked against the hash it publishes. No answer means\nnobody vouched for the archive, and the engine will not unpack code\nover a folder on nobody's word.",
+                    "signature": "apply(string $kind, string $item, string $package): void",
+                    "doc": "Applies one offer through the upgrader (UpgraderRun): the update\ntransients carry the offers first, as they do on WordPress when an\nupdate starts. The archive's SHA-256 is kept under \"archives\" in the\nstate when the package came from the update service, so an audit can\nask what code arrived.",
                     "shapes": [],
                     "params": [
-                        {
-                            "name": "package",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
                         {
                             "name": "kind",
                             "type": "string",
@@ -78890,15 +78992,22 @@
                             "doc": ""
                         },
                         {
-                            "name": "asset",
+                            "name": "item",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "package",
                             "type": "string",
                             "shape": "",
                             "default": null,
                             "doc": ""
                         }
                     ],
-                    "line": 397,
-                    "end": 412
+                    "line": 423,
+                    "end": 436
                 },
                 {
                     "routes": [],
@@ -78906,7 +79015,7 @@
                     "static": false,
                     "visibility": "private",
                     "signature": "consume(string $from, string $to, string $key): void",
-                    "doc": "An applied offer moves to the current bucket so the next read agrees with the folder.",
+                    "doc": "An applied offer moves to the current bucket so the next read agrees\nwith the folder, and the offers left go back into the update\ntransients the upgrader cleared, as Minn Admin puts them back on\nWordPress.",
                     "shapes": [],
                     "params": [
                         {
@@ -78931,8 +79040,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 415,
-                    "end": 424
+                    "line": 444,
+                    "end": 454
                 },
                 {
                     "routes": [],
@@ -78951,8 +79060,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 427,
-                    "end": 433
+                    "line": 457,
+                    "end": 463
                 },
                 {
                     "routes": [],
@@ -78971,8 +79080,242 @@
                             "doc": ""
                         }
                     ],
-                    "line": 435,
-                    "end": 438
+                    "line": 465,
+                    "end": 468
+                }
+            ]
+        },
+        {
+            "name": "Minn\\Ops\\UpgraderRun",
+            "short": "UpgraderRun",
+            "namespace": "Minn\\Ops",
+            "kind": "final readonly class",
+            "file": "public/minn/src/Minn/Ops/UpgraderRun.php",
+            "lines": 113,
+            "doc": "The engine's own installs and updates, run through the reference's\nupgraders (Plugin_Upgrader, Theme_Upgrader) so plugins hear every hook a\nWordPress install or update tells them: the REST plugin route, Minn\nAdmin's install, upload and update routes, the CLI verbs and the\nautomatic updates all come here. The Minn update service's packages are\nfetched over the engine's own client (Packages::fetch: https, the\nservice's host, a size cap) and handed to the upgrader as a file through\nupgrader_pre_download, so where Minn gets code is never the\nplugin-filterable HTTP API's to change. A package from anywhere else is\ninstalled only when its publisher answered upgrader_pre_download with a\ncopy it checked (or refused it): nobody's word, no install. A package\nfrom the service passes Archive's checks before the upgrader unpacks it;\na local file (an upload, checked by Packages) is the upgrader's to read. The upgrader's refusals come back\nas the engine's REST errors, in the words its routes already use.",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\Ops\\Archive",
+                "Minn\\Ops\\Directory",
+                "Minn\\Ops\\Packages",
+                "Minn\\RestError",
+                "Minn\\Runtime\\Runtime"
+            ],
+            "usedBy": [
+                "Minn\\Ops\\Packages",
+                "Minn\\Ops\\Updates"
+            ],
+            "constructor": {
+                "signature": "__construct(Minn\\Ops\\Packages $packages)",
+                "doc": "",
+                "shapes": [],
+                "params": [
+                    {
+                        "name": "packages",
+                        "type": "Minn\\Ops\\Packages",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    }
+                ],
+                "visibility": "public",
+                "line": 28,
+                "end": 30
+            },
+            "cases": [],
+            "constants": [],
+            "properties": [
+                {
+                    "name": "packages",
+                    "type": "Minn\\Ops\\Packages",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
+                }
+            ],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "install",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "install(string $kind, string $package, array $args = array ( )): array",
+                    "doc": "Installs a package (or, with overwrite_package, replaces the folder it\nlands on): its folder and the sha256 of a package fetched from the\nservice, '' otherwise.",
+                    "shapes": [
+                        "@param array<string, mixed> $args the upgrader's install arguments",
+                        "@return array{folder: string, sha256: string}"
+                    ],
+                    "params": [
+                        {
+                            "name": "kind",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "package",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "args",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": "array ( )",
+                            "doc": "the upgrader's install arguments"
+                        }
+                    ],
+                    "line": 40,
+                    "end": 50
+                },
+                {
+                    "routes": [],
+                    "name": "update",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "update(string $kind, string $item, string $package): string",
+                    "doc": "Applies the offer the update transient holds for one plugin (file) or\ntheme (folder), as Minn Admin does on WordPress: a plugin through\nbulk_upgrade, a theme through upgrade. The sha256 of the package, ''\nwhen it did not come from the service.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "kind",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "item",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "package",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 58,
+                    "end": 68
+                },
+                {
+                    "routes": [],
+                    "name": "guarded",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "guarded(string $package, string $sha256, Closure $call): mixed",
+                    "doc": "Runs $call with the engine's say over the download: the service's\npackage fetched here, any other remote one only on its publisher's\nanswer. $sha256 is set when the service's package was fetched.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "package",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "sha256",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "call",
+                            "type": "Closure",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 75,
+                    "end": 103
+                },
+                {
+                    "routes": [],
+                    "name": "refusal",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "refusal(string $kind, WP_Ajax_Upgrader_Skin $skin, mixed $answer, WP_Upgrader $upgrader): Minn\\RestError",
+                    "doc": "The upgrader's refusal in the engine's words: a taken folder says what is there and what came.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "kind",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "skin",
+                            "type": "WP_Ajax_Upgrader_Skin",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "answer",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "upgrader",
+                            "type": "WP_Upgrader",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 106,
+                    "end": 123
+                },
+                {
+                    "routes": [],
+                    "name": "taken",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "taken(string $kind, string $destination, WP_Upgrader $upgrader): Minn\\RestError",
+                    "doc": "The refusal for a folder already taken, naming what is there and what the package holds.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "kind",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "destination",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "upgrader",
+                            "type": "WP_Upgrader",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 126,
+                    "end": 137
                 }
             ]
         },
@@ -81185,6 +81528,7 @@
                 "Minn\\Ops\\Logs",
                 "Minn\\Ops\\Packages",
                 "Minn\\Ops\\Updates",
+                "Minn\\Ops\\UpgraderRun",
                 "Minn\\Rest\\AbilitiesController",
                 "Minn\\Rest\\Api",
                 "Minn\\Rest\\ApplicationPasswordsController",
@@ -113867,86 +114211,6 @@
             ]
         },
         {
-            "name": "Minn\\Runtime\\PackageDownload",
-            "short": "PackageDownload",
-            "namespace": "Minn\\Runtime",
-            "kind": "final class",
-            "file": "public/minn/src/Minn/Runtime/PackageDownload.php",
-            "lines": 32,
-            "doc": "The publisher's say over its own download. Before fetching an update\npackage, the reference asks `upgrader_pre_download`: a plugin that hosts\nitself answers there, and answering is how it proves the archive is the\none it published. Three answers, which are the reference's:\n\na file path  the publisher fetched and verified the package itself\na refusal    the publisher rejects this download, with its reason\nnothing      nobody vouched for it\n\nThe engine asks the same question, and installs a package from outside\nthe wordpress.org directory only on the first answer. That is stricter\nthan the reference, which downloads whatever the offer names; here an\narchive nobody vouched for is never unpacked over a plugin folder.",
-            "implements": [],
-            "extends": null,
-            "uses": [
-                "Minn\\Runtime\\Refusal",
-                "Minn\\Runtime\\Runtime"
-            ],
-            "usedBy": [
-                "Minn\\Ops\\Updates"
-            ],
-            "constructor": null,
-            "cases": [],
-            "constants": [
-                {
-                    "name": "HOOK",
-                    "value": "'upgrader_pre_download'",
-                    "doc": "",
-                    "visibility": "private"
-                }
-            ],
-            "properties": [],
-            "methods": [
-                {
-                    "routes": [],
-                    "name": "verified",
-                    "static": true,
-                    "visibility": "public",
-                    "signature": "verified(string $package, array $hookExtra): Minn\\Runtime\\Refusal|string|null",
-                    "doc": "The publisher's verified copy of the package, its refusal, or null\nwhen nothing answered.",
-                    "shapes": [
-                        "@param array<string, string> $hookExtra what is being updated, as the reference passes it ('plugin' or 'theme')"
-                    ],
-                    "params": [
-                        {
-                            "name": "package",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "hookExtra",
-                            "type": "array",
-                            "shape": "array<string, string>",
-                            "default": null,
-                            "doc": "what is being updated, as the reference passes it ('plugin' or 'theme')"
-                        }
-                    ],
-                    "line": 32,
-                    "end": 42
-                },
-                {
-                    "routes": [],
-                    "name": "refusal",
-                    "static": true,
-                    "visibility": "private",
-                    "signature": "refusal(mixed $reply): ?Minn\\Runtime\\Refusal",
-                    "doc": "A WP_Error answer as a Refusal; anything else is no answer.",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "reply",
-                            "type": "mixed",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 45,
-                    "end": 52
-                }
-            ]
-        },
-        {
             "name": "Minn\\Runtime\\PageMenu",
             "short": "PageMenu",
             "namespace": "Minn\\Runtime",
@@ -118156,7 +118420,9 @@
             "doc": "The taxonomy side of WP_Query as the reference runs it (probe\nwp-query-sql): the clauses its variables make (tax_query, taxonomy and\nterm, each taxonomy's query var, cat and the category__ lists, tag and the\ntag__ lists), settled back into the variables; the post types a taxonomy\narchive with no type searches; and the cat, category_name, tag_id,\ntaxonomy and term variables set from the terms queried.",
             "implements": [],
             "extends": null,
-            "uses": [],
+            "uses": [
+                "Minn\\Runtime\\TermFields"
+            ],
             "usedBy": [
                 "Minn\\Runtime\\PostQuery"
             ],
@@ -120067,7 +120333,6 @@
                 "Minn\\Content\\Menus",
                 "Minn\\Content\\PluginState",
                 "Minn\\Ops\\Unzip",
-                "Minn\\Ops\\Updates",
                 "Minn\\Rest\\ArgCheck",
                 "Minn\\Rest\\BlockRendererController",
                 "Minn\\Rest\\MenusController",
@@ -120076,7 +120341,6 @@
                 "Minn\\Rest\\RouteMatch",
                 "Minn\\Rest\\Schema",
                 "Minn\\Runtime\\Connectors",
-                "Minn\\Runtime\\PackageDownload",
                 "Minn\\Runtime\\Patterns",
                 "Minn\\Runtime\\PluginActivation",
                 "Minn\\Runtime\\PluginRequirements",
@@ -121441,6 +121705,7 @@
                 "Minn\\Mail\\Mailer",
                 "Minn\\Media\\Icons",
                 "Minn\\Media\\Images",
+                "Minn\\Ops\\UpgraderRun",
                 "Minn\\Rest\\AbilitiesController",
                 "Minn\\Rest\\Api",
                 "Minn\\Rest\\BatchController",
@@ -121488,7 +121753,6 @@
                 "Minn\\Runtime\\MetaKeys",
                 "Minn\\Runtime\\NavMenu",
                 "Minn\\Runtime\\OptionSanitizer",
-                "Minn\\Runtime\\PackageDownload",
                 "Minn\\Runtime\\Patterns",
                 "Minn\\Runtime\\PlaceholderTrace",
                 "Minn\\Runtime\\PluginActivation",
@@ -124784,7 +125048,11 @@
             "implements": [],
             "extends": null,
             "uses": [],
-            "usedBy": [],
+            "usedBy": [
+                "Minn\\Front\\FeedTags",
+                "Minn\\Runtime\\PostQueryTax",
+                "Minn\\Runtime\\TermQueryRunner"
+            ],
             "constructor": null,
             "cases": [],
             "constants": [
@@ -125658,6 +125926,7 @@
             "extends": null,
             "uses": [
                 "Minn\\Query\\Sql",
+                "Minn\\Runtime\\TermFields",
                 "Minn\\Runtime\\TermOrder",
                 "Minn\\Runtime\\TermQueryTree",
                 "Minn\\Support\\Lists"

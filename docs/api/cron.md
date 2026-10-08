@@ -50,5 +50,5 @@ Runs every due job; the report lists what happened. @return list<string>
 
 True when a scheduled post's time has come or the cron option holds a due event.
 
-Internals: `fireEvents()` (private, line 91), `applyAutoUpdates()` (private, line 109), `postDue()` (private, line 120), `publishDue()` (private, line 135), `sweepTransients()` (private, line 157), `sweepThrottle()` (private, line 171), `lock()` (private, line 185), `unlock()` (private, line 199)
+Internals: `fireEvents()` (private, line 89), `applyAutoUpdates()` (private, line 107), `postDue()` (private, line 118), `publishDue()` (private, line 133), `sweepTransients()` (private, line 155), `sweepThrottle()` (private, line 169), `lock()` (private, line 183), `unlock()` (private, line 197)
 

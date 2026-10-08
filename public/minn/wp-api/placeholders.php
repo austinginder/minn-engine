@@ -607,18 +607,6 @@ function wp_update_php_annotation($before = '<p class="description">', $after = 
     return null;
 }
 
-function wp_update_plugins($extra_stats = [])
-{
-    \Minn\Runtime\PlaceholderTrace::hit('wp_update_plugins');
-    return null;
-}
-
-function wp_update_themes($extra_stats = [])
-{
-    \Minn\Runtime\PlaceholderTrace::hit('wp_update_themes');
-    return null;
-}
-
 function wp_version_check($extra_stats = [], $force_check = false)
 {
     \Minn\Runtime\PlaceholderTrace::hit('wp_version_check');

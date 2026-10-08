@@ -25,11 +25,6 @@ declare(strict_types=1);
 require __DIR__ . '/lib.php';
 
 const DIVERGENT = [
-    'plugin-install' => 'the engine installs without the upgrader: no HTTP API hooks, no upgrader_process_complete, the update transient kept',
-    'plugin-update' => 'the engine updates without the upgrader: no HTTP API hooks, no upgrader_process_complete',
-    'theme-install' => 'the engine installs without the upgrader: no HTTP API hooks, no upgrader_process_complete, the update transient kept',
-    'theme-delete' => 'the engine keeps no theme roots or pattern-file caches to clear',
-    'theme-update' => 'the engine updates without the upgrader: no HTTP API hooks, no upgrader_process_complete',
 ];
 
 /**
@@ -38,10 +33,18 @@ const DIVERGENT = [
  * (contracts/lexicon.md): on every save of a published post the reference
  * queues them as _pingme and _encloseme and puts do_pings on the cron
  * calendar; Minn sends none, so it queues none (contracts/round-trip.md).
+ * The HTTP transport and the theme caches are below, each with its reason.
  */
 const DELIBERATE = [
     '/^(add|added)_post_meta\(int,(int,)?\'_(pingme|encloseme)\'/',
     '/^(update_option\(\'cron\'|update_option_cron\(|updated_option\(\'cron\')/',
+    // WordPress's HTTP transport (contracts/runtime.md "Minn's own requests"): the reference
+    // tells plugins about its requests to wordpress.org; Minn fetches from its update service
+    // over the engine's own client, so no plugin can change where Minn gets code from.
+    '/^(requests-[a-z._]+|http_api_curl|http_api_debug)\(/',
+    // The theme caches (contracts/runtime.md "Theme caches"): the reference keeps the theme
+    // roots and each theme's pattern files in site transients; Minn reads both from disk.
+    '/theme_roots|wp_theme_files_patterns|\'theme-cache\'/',
 ];
 
 /** Actions that describe how a stack looked something up, not what it told plugins about the write. */
@@ -220,7 +223,10 @@ foreach ($stacks as $stack => [$base, $content]) {
     // The engine's verbs answer only where its wp-cli.yml is found: run from the webroot.
     $wp = $stack === 'reference' ? $WP : 'cd ' . escapeshellarg($SITE . '/public') . ' && /opt/homebrew/bin/wp';
     $offers = static fn () => $call($base, $content, "{$stack}-offers", 'POST', '/minn-admin/v1/check-updates', '{}', ['Content-Type: application/json']);
+    // The stacks share a database: each starts its installs with no update transients, whatever the other left.
+    $forgetOffers = static fn () => shell_exec("{$WP} option delete _site_transient_update_plugins _site_transient_update_themes >/dev/null 2>&1");
     shell_exec("{$wp} plugin delete hello-dolly >/dev/null 2>&1");
+    $forgetOffers();
     $run('plugin-install', 'POST', '/wp/v2/plugins', ['slug' => 'hello-dolly']);
     $run('plugin-activate', 'POST', '/wp/v2/plugins/hello-dolly/hello', ['status' => 'active']);
     $run('plugin-deactivate', 'POST', '/wp/v2/plugins/hello-dolly/hello', ['status' => 'inactive']);
@@ -230,6 +236,7 @@ foreach ($stacks as $stack => [$base, $content]) {
     $run('plugin-update', 'POST', '/minn-admin/v1/plugins/update', ['plugin' => 'hello-dolly/hello.php']);
     shell_exec("{$wp} plugin delete hello-dolly >/dev/null 2>&1");
     shell_exec("{$wp} theme delete twentytwentyone >/dev/null 2>&1");
+    $forgetOffers();
     $run('theme-install', 'POST', '/minn-admin/v1/themes/install', ['slug' => 'twentytwentyone']);
     $run('theme-delete', 'POST', '/minn-admin/v1/themes/delete', ['stylesheet' => 'twentytwentyone']);
     shell_exec("{$wp} theme install twentytwentyone --version=2.0 >/dev/null 2>&1");

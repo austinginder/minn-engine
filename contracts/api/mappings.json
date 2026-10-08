@@ -5,9 +5,9 @@
         "minn": 674,
         "composes": 1012,
         "leaf": 675,
-        "noop": 2015,
-        "functions": 4302,
-        "minnMethods": 794,
+        "noop": 2017,
+        "functions": 4304,
+        "minnMethods": 796,
         "leafLinesOver15": 13
     },
     "functions": {
@@ -38386,6 +38386,18 @@
                 "_minn_menu_events"
             ]
         },
+        "wp_update_plugins": {
+            "file": "admin.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Ops\\Updates::forSite",
+                "Minn\\Runtime\\Runtime::contentDir",
+                "Minn\\Runtime\\Runtime::current",
+                "Minn\\Runtime\\Runtime::site"
+            ],
+            "composes": []
+        },
         "wp_update_post": {
             "file": "post.php",
             "lines": 24,
@@ -38435,6 +38447,18 @@
                 "clean_term_cache",
                 "get_taxonomy"
             ]
+        },
+        "wp_update_themes": {
+            "file": "admin.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Ops\\Updates::forSite",
+                "Minn\\Runtime\\Runtime::contentDir",
+                "Minn\\Runtime\\Runtime::current",
+                "Minn\\Runtime\\Runtime::site"
+            ],
+            "composes": []
         },
         "wp_update_user": {
             "file": "misc.php",

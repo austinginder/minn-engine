@@ -23,10 +23,10 @@ The engine's own classes under `public/minn/src/Minn/`, one page per namespace, 
 | [`Minn\Login`](login.md) | 5 | /wp-login.php and the sign-in surface |
 | [`Minn\Mail`](mail.md) | 24 | sending mail and the notices the engine sends |
 | [`Minn\Media`](media.md) | 12 | uploads, image sizes and attachment metadata |
-| [`Minn\Ops`](ops.md) | 15 |  |
+| [`Minn\Ops`](ops.md) | 16 |  |
 | [`Minn\Query`](query.md) | 9 | shared SQL fragments |
 | [`Minn\Rest`](rest.md) | 83 | the wp/v2 surface: shapes and controllers |
-| [`Minn\Runtime`](runtime.md) | 108 | the WordPress runtime plugins load against |
+| [`Minn\Runtime`](runtime.md) | 107 | the WordPress runtime plugins load against |
 | [`Minn\Support`](support.md) | 29 | escaping, serialized readers, small helpers |
 | [`Minn\Theme`](theme.md) | 32 | the block-theme reader, templates, global styles and the page renderer |
 | [`Minn\Widgets`](widgets.md) | 1 |  |
