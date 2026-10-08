@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 /**
  * Milestones 22 and 23: the front-end comment form's target, the
- * post-password cookie, private posts for signed-in readers, and
- * previews. Each check matches the reference on the same database
+ * post-password cookie, private posts for signed-in readers, previews,
+ * and a post whose slug is a number. Each check matches the reference on the same database
  * (same request, same cookie) or exercises the cross-stack acceptance of
  * a cookie the other stack minted. Everything created here is removed.
  */
@@ -194,6 +194,17 @@ check($r['status'] === '200' && str_contains($r['body'], 'zz reader autosave wor
 check(page($ENGINE . $path)['status'] === '404', 'the preview link is nothing to an anonymous reader');
 $plain = page("$ENGINE/?p=10", '', [sessionCookie($author, $ENGINE)]);
 check($plain['status'] === '200' && !str_contains($plain['body'], 'zz reader autosave words'), 'without the preview link the draft shows its stored content');
+
+// 5. A post slugged with a number, under /%postname%/: its address is the post, not that year's archive.
+$numeric = (int) wp("post create --post_status=publish --post_title='zz reader numeric' --post_date='2001-03-11 10:00:00' --porcelain");
+$created[] = $numeric;
+wp("db query \"UPDATE wp_posts SET post_name='1987' WHERE ID=$numeric\"");
+wp('cache flush');
+$kind = static fn (array $p): string => $p['status'] . (preg_match('/<body class="[^"]*\bpostid-' . $numeric . '\b/', $p['body']) === 1 ? ' the post' : ' not the post');
+foreach (['/1987/' => '200 the post', '/1987/2/' => '404 not the post', '/2001/' => '200 not the post'] as $path => $expected) {
+    $e = $kind(page($ENGINE . $path));
+    check($e === $expected && $e === $kind(page($REF . $path)), "a numeric slug: {$path} is {$expected}, as on the reference", $e);
+}
 
 echo "\n{$pass} passed, {$fail} failed\n";
 exit($fail === 0 ? 0 : 1);

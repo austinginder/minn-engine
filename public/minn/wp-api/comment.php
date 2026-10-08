@@ -1516,3 +1516,18 @@ function wp_comment_form_unfiltered_html_nonce()
     wp_nonce_field('unfiltered-html-comment_' . $post->ID, '_wp_unfiltered_html_comment_disabled', false);
     wp_print_inline_script_tag("(function(){if(window===window.parent){document.getElementById('_wp_unfiltered_html_comment_disabled').name='_wp_unfiltered_html_comment';}})();\n//# sourceURL=wp_comment_form_unfiltered_html_nonce");
 }
+
+/** A comment's first twenty words (comment_excerpt_length), tags and line breaks gone; "Password protected" on a post behind a password. */
+function get_comment_excerpt($comment_id = 0)
+{
+    $comment = get_comment($comment_id);
+    $text = post_password_required($comment->comment_post_ID) ? __('Password protected') : strip_tags(str_replace(["\n", "\r"], ' ', $comment->comment_content));
+    $length = (int) apply_filters('comment_excerpt_length', (int) _x('20', 'comment_excerpt_length'));
+    return apply_filters('get_comment_excerpt', wp_trim_words($text, $length, '&hellip;'), $comment->comment_ID, $comment);
+}
+
+function comment_excerpt($comment_id = 0)
+{
+    $comment = get_comment($comment_id);
+    echo apply_filters('comment_excerpt', get_comment_excerpt($comment), $comment->comment_ID);
+}

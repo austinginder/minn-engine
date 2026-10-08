@@ -1120,3 +1120,15 @@ function wp_get_default_update_php_url()
 {
     return _x('https://wordpress.org/support/update-php/', 'localized PHP upgrade information page');
 }
+
+/** The timezone setting's offset from UTC now, in hours; false when the site keeps a plain offset instead. */
+function wp_timezone_override_offset()
+{
+    $zone = get_option('timezone_string');
+    $timezone = $zone ? timezone_open($zone) : false;
+    $now = date_create();
+    if ($timezone === false || $now === false) {
+        return false;
+    }
+    return round(timezone_offset_get($timezone, $now) / HOUR_IN_SECONDS, 2);
+}

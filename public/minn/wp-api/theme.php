@@ -471,3 +471,37 @@ function get_locale_stylesheet_uri()
     $stylesheet = file_exists("{$dir}/{$locale}.css") ? "{$uri}/{$locale}.css" : ($direction !== '' && file_exists("{$dir}/{$direction}.css") ? "{$uri}/{$direction}.css" : '');
     return apply_filters('locale_stylesheet_uri', $stylesheet, $uri);
 }
+
+/** The folders a block theme keeps its templates and parts in: templates and parts, or the old names when the theme has those; the defaults for a theme that is not there. */
+function get_block_theme_folders($theme_stylesheet = null)
+{
+    $theme = wp_get_theme((string) $theme_stylesheet);
+    return $theme->exists() ? $theme->get_block_template_folders() : ['wp_template' => 'templates', 'wp_template_part' => 'parts'];
+}
+
+/** @deprecated 3.4.0 The current theme's name. */
+function get_current_theme()
+{
+    _deprecated_function(__FUNCTION__, '3.4.0', 'wp_get_theme()');
+    return get_option('current_theme') ?: wp_get_theme()->get('Name');
+}
+
+/** @deprecated 3.4.0 The installed themes keyed by name (a repeated name also by name/stylesheet). */
+function get_themes()
+{
+    _deprecated_function(__FUNCTION__, '3.4.0', 'wp_get_themes()');
+    $named = [];
+    foreach (wp_get_themes() as $theme) {
+        $name = (string) $theme->get('Name');
+        $named[isset($named[$name]) ? $name . '/' . $theme->get_stylesheet() : $name] = $theme;
+    }
+    return $named;
+}
+
+/** @deprecated 3.4.0 An installed theme by name, or null. */
+function get_theme($theme)
+{
+    _deprecated_function(__FUNCTION__, '3.4.0', 'wp_get_theme($stylesheet)');
+    $themes = get_themes();
+    return array_key_exists($theme, $themes) ? $themes[$theme] : null;
+}

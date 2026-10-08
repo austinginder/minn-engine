@@ -67,8 +67,8 @@ function get_post($post = null, $output = OBJECT, $filter = 'raw')
     } else {
         // Each caller gets its own copy: what one plugin changes on its post, the next get_post() does not see.
         $cached = wp_cache_get((int) $post, 'posts', false, $found);
-        if ($found && $cached instanceof WP_Post) {
-            $object = clone $cached;
+        if ($found && is_object($cached)) {
+            $object = $cached instanceof WP_Post ? clone $cached : new WP_Post($cached);
         } else {
             $row = (int) $post > 0 ? _minn_posts()->find((int) $post) : null;
             if ($row === null) {
@@ -1225,6 +1225,55 @@ function wp_save_post_revision($post_id)
     return $post === null ? null : PostRevisions::save($post);
 }
 
+/**
+ * Puts a revision's fields (all the revisioned ones, or those named) back
+ * on its post through wp_update_post, which saves a revision of its own
+ * (probe plugin-queue). The post's id; what wp_get_post_revision answered
+ * when it is not a revision; false when no field was left to restore.
+ */
+function wp_restore_post_revision($revision, $fields = null)
+{
+    $revision = wp_get_post_revision($revision, ARRAY_A);
+    if (!$revision) {
+        return $revision;
+    }
+    if (!is_array($fields)) {
+        $fields = array_keys(_wp_post_revision_fields($revision));
+    }
+    $update = array_intersect_key($revision, array_flip($fields));
+    if ($update === []) {
+        return false;
+    }
+    $update['ID'] = $revision['post_parent'];
+    $post_id = wp_update_post(wp_slash($update));
+    if (!$post_id || is_wp_error($post_id)) {
+        return $post_id;
+    }
+    update_post_meta($post_id, '_edit_last', get_current_user_id());
+    do_action('wp_restore_post_revision', $post_id, $revision['ID']);
+    return $post_id;
+}
+
+/** Posts into the object cache, each only where none is cached yet. */
+function update_post_cache(&$posts)
+{
+    if (!$posts) {
+        return;
+    }
+    $data = [];
+    foreach ($posts as $post) {
+        $post = empty($post->filter) || $post->filter !== 'raw' ? sanitize_post($post, 'raw') : $post;
+        $data[$post->ID] = $post;
+    }
+    wp_cache_add_multiple($data, 'posts');
+}
+
+/** A wp_untrash_post_status callback: a post comes back from the trash in the status it had. */
+function wp_untrash_post_set_previous_status($new_status, $post_id, $previous_status)
+{
+    return $previous_status;
+}
+
 function wp_update_post($postarr = [], $wp_error = false, $fire_after_hooks = true)
 {
     $postarr = is_object($postarr) ? get_object_vars($postarr) : (array) $postarr;
@@ -2055,21 +2104,37 @@ function prepend_attachment($content)
     return '<p class="attachment">' . $link . "</p>\n" . $content;
 }
 
-/** The newest modification among published content, format Y-m-d H:i:s; the server variant carries microseconds, as probed. */
+/** The newest published post's date (probe plugin-queue): local for 'blog', GMT for 'gmt', GMT with microseconds for 'server'; false for another timezone or an unknown type. */
+function get_lastpostdate($timezone = 'server', $post_type = 'any')
+{
+    return apply_filters('get_lastpostdate', _minn_last_post_time($timezone, 'date', $post_type), $timezone, $post_type);
+}
+
+/** The newest change to a published post: its modified stamp, or its date when that is later. */
 function get_lastpostmodified($timezone = 'server', $post_type = 'any')
 {
-    $type = (string) $post_type;
-    if ($type !== 'any' && get_post_type_object($type) === null) {
+    $modified = apply_filters('pre_get_lastpostmodified', false, $timezone, $post_type);
+    if ($modified !== false) {
+        return $modified;
+    }
+    $modified = _minn_last_post_time($timezone, 'modified', $post_type);
+    $date = get_lastpostdate($timezone, $post_type);
+    return apply_filters('get_lastpostmodified', $date > $modified ? $date : $modified, $timezone, $post_type);
+}
+
+/** @internal the newest published date or modified stamp in a timezone, among the public types or of one type */
+function _minn_last_post_time($timezone, string $field, $post_type)
+{
+    $zone = strtolower((string) $timezone);
+    if (!in_array($zone, ['gmt', 'blog', 'server'], true) || ($post_type !== 'any' && !post_type_exists($post_type))) {
         return false;
     }
-    $value = strtolower((string) $timezone) === 'gmt' ? _minn_posts()->lastModifiedGmt($type === 'any' ? null : $type) : _minn_posts()->lastModified($type === 'any' ? null : $type);
+    $types = $post_type === 'any' ? array_values(get_post_types(['public' => true])) : [(string) $post_type];
+    $value = _minn_posts()->newest($types, "post_{$field}" . ($zone === 'blog' ? '' : '_gmt'));
     if ($value === null) {
         return false;
     }
-    if (strtolower((string) $timezone) === 'server') {
-        $value .= '.000000';
-    }
-    return apply_filters('get_lastpostmodified', $value, $timezone, $post_type);
+    return $zone === 'server' ? $value . '.000000' : $value;
 }
 
 /** Every descendant page of one page within the caller's own list, preorder. */
@@ -2312,4 +2377,54 @@ function get_posts_by_author_sql($post_type, $full = true, $post_author = null, 
         }
     }
     return Minn\Query\AuthorPostsSql::sql($types, is_user_logged_in() ? get_current_user_id() : 0, $full ? 'full' : '', $post_author === null ? null : (int) $post_author, $public_only ? 'public' : '');
+}
+
+/**
+ * The site's authors (probe plugin-queue): links to their posts, or names
+ * alone (html false), as li items or a comma list (style none), by name,
+ * with post counts, full names and feed links when asked. The account
+ * shown as "admin" is left out unless asked for, and so are authors with
+ * no published posts. Echoed unless echo is false.
+ */
+function wp_list_authors($args = '')
+{
+    $args = wp_parse_args($args, ['orderby' => 'name', 'order' => 'ASC', 'number' => '', 'optioncount' => false, 'exclude_admin' => true, 'show_fullname' => false, 'hide_empty' => true, 'feed' => '', 'feed_image' => '', 'feed_type' => '', 'echo' => true, 'style' => 'list', 'html' => true, 'exclude' => '', 'include' => '']);
+    $query = apply_filters('wp_list_authors_args', wp_array_slice_assoc($args, ['orderby', 'order', 'number', 'exclude', 'include']) + ['fields' => 'ids'], $args);
+    $counts = apply_filters('pre_wp_list_authors_post_counts_query', false, $args);
+    if (!is_array($counts)) {
+        $viewer = is_user_logged_in() && !current_user_can('read_private_posts') ? get_current_user_id() : -1;
+        $counts = _minn_post_lookup()->countsByAuthor(['post'], current_user_can('read_private_posts') ? ['publish', 'private'] : ['publish'], $viewer);
+    }
+    $items = [];
+    foreach (get_users($query) as $id) {
+        $author = get_userdata($id);
+        $posts = $author ? (int) ($counts[$author->ID] ?? 0) : 0;
+        if (!$author || ($args['exclude_admin'] && $author->display_name === 'admin') || (!$posts && $args['hide_empty'])) {
+            continue;
+        }
+        $name = $args['show_fullname'] && $author->first_name && $author->last_name ? "{$author->first_name} {$author->last_name}" : $author->display_name;
+        $items[] = $args['html'] ? _minn_list_author_item($author, $name, $posts, $args) : $name;
+    }
+    $output = $args['html'] && $args['style'] === 'list' ? implode('', $items) : implode(', ', $items);
+    if (!$args['echo']) {
+        return $output;
+    }
+    echo $output;
+}
+
+/** @internal one author's entry in wp_list_authors: the link, the feed link, the count, in an li for the list style */
+function _minn_list_author_item(WP_User $author, string $name, int $posts, array $args): string
+{
+    $link = '<a href="' . esc_url(get_author_posts_url($author->ID, $author->user_nicename)) . '">' . esc_html($name) . '</a>';
+    if (!empty($args['feed_image']) || !empty($args['feed'])) {
+        $image = !empty($args['feed_image']);
+        $alt = empty($args['feed']) ? '' : ' alt="' . esc_attr($args['feed']) . '"';
+        $label = $image ? '<img src="' . esc_url($args['feed_image']) . '" style="border: none;"' . $alt . ' />' : (empty($args['feed']) ? $name : $args['feed']);
+        $feed = '<a href="' . get_author_feed_link($author->ID, $args['feed_type']) . '">' . $label . '</a>';
+        $link .= ' ' . ($image ? $feed : '(' . $feed . ')');
+    }
+    if ($args['optioncount']) {
+        $link .= ' (' . $posts . ')';
+    }
+    return $args['style'] === 'list' ? '<li>' . $link . '</li>' : $link;
 }

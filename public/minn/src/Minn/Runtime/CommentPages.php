@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Minn\Runtime;
 
 use Minn\Support\Url;
+use Minn\Support\Lists;
 
 /**
  * Which page of a post's comments a comment falls on, and the link that
@@ -32,7 +33,7 @@ final class CommentPages
         if (!$comment instanceof \WP_Comment) {
             return null;
         }
-        $args = \wp_parse_args($args, self::DEFAULTS);
+        $args = Lists::args($args, self::DEFAULTS);
         $original = $args;
         if (Runtime::options()->filtered('page_comments')) {
             $args['per_page'] = $args['per_page'] === '' ? \get_query_var('comments_per_page') : $args['per_page'];

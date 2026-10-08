@@ -264,18 +264,19 @@ final readonly class Posts
     }
 
     /**
-     * The newest modification time among published posts, for
-     * get_lastpostmodified: one type or all of them, blog or GMT column.
+     * The newest value of a date column (post_date, post_modified, or their
+     * GMT twins) among published posts of the types given, for
+     * get_lastpostdate and get_lastpostmodified.
+     *
+     * @param list<string> $types
      */
-    public function lastModified(?string $type): ?string
+    public function newest(array $types, string $column): ?string
     {
-        return $this->latest($type, 'post_modified');
-    }
-
-    /** The newest GMT modified stamp among published posts of a type, or of the three core types. */
-    public function lastModifiedGmt(?string $type): ?string
-    {
-        return $this->latest($type, 'post_modified_gmt');
+        if ($types === [] || !in_array($column, ['post_date', 'post_date_gmt', 'post_modified', 'post_modified_gmt'], true)) {
+            return null;
+        }
+        $value = $this->db->value("SELECT MAX({$column}) FROM {$this->db->table('posts')} WHERE post_status = 'publish' AND post_type IN (?)", [array_values($types)]);
+        return $value === null || $value === '' ? null : (string) $value;
     }
 
     /**
@@ -361,20 +362,6 @@ final readonly class Posts
             [$type, $edge],
         );
         return $row === null ? null : [(int) $row['y'], (int) $row['m']];
-    }
-
-    private function latest(?string $type, string $column): ?string
-    {
-        $sql = "SELECT MAX({$column}) FROM {$this->db->table('posts')} WHERE post_status = 'publish'";
-        $params = [];
-        if ($type !== null && $type !== 'any') {
-            $sql .= ' AND post_type = ?';
-            $params[] = $type;
-        } else {
-            $sql .= " AND post_type IN ('post', 'page', 'attachment')";
-        }
-        $value = $this->db->value($sql, $params);
-        return $value === null || $value === '' ? null : (string) $value;
     }
 
     /** The newest autosave of a post by one author, or null. */

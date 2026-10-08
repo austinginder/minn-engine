@@ -1503,3 +1503,20 @@ function _pad_term_counts(&$terms, $taxonomy)
 function wp_lazyload_term_meta(array $term_ids)
 {
 }
+
+/** Prints a post's terms as links between before and after, through the_terms; false for a taxonomy that does not exist. */
+function the_terms($post_id, $taxonomy, $before = '', $sep = ', ', $after = '')
+{
+    $list = get_the_term_list($post_id, $taxonomy, $before, $sep, $after);
+    if (is_wp_error($list)) {
+        return false;
+    }
+    echo apply_filters('the_terms', $list, $taxonomy, $before, $sep, $after);
+}
+
+/** A term's parent in a taxonomy (0 at the top), or false when the term is not in it. */
+function wp_get_term_taxonomy_parent_id($term_id, $taxonomy)
+{
+    $term = get_term((int) $term_id, $taxonomy);
+    return $term instanceof WP_Term ? (int) $term->parent : false;
+}

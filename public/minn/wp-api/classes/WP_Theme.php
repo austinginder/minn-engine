@@ -66,6 +66,16 @@ class WP_Theme implements ArrayAccess
         return $this->errors ?? false;
     }
 
+    /** The folders the theme keeps block templates and parts in: the old block-templates and block-template-parts when it has either, else templates and parts. */
+    public function get_block_template_folders()
+    {
+        $dir = $this->get_stylesheet_directory();
+        if (file_exists($dir . '/block-templates') || file_exists($dir . '/block-template-parts')) {
+            return ['wp_template' => 'block-templates', 'wp_template_part' => 'block-template-parts'];
+        }
+        return ['wp_template' => 'templates', 'wp_template_part' => 'parts'];
+    }
+
     public function exists()
     {
         return $this->errors === null;

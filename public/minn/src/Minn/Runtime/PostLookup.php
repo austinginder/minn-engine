@@ -76,6 +76,28 @@ final readonly class PostLookup
     }
 
     /**
+     * Post counts by author for wp_list_authors: the types' posts in the
+     * statuses given, and the private ones of the viewer (an id, or -1 for
+     * none) beside them.
+     *
+     * @param list<string> $types @param list<string> $statuses
+     * @return array<int, int>
+     */
+    public function countsByAuthor(array $types, array $statuses, int $viewer): array
+    {
+        $counts = [];
+        $rows = $this->db->rows(
+            "SELECT post_author, COUNT(ID) AS count FROM {$this->db->table('posts')}
+             WHERE post_type IN (?) AND (post_status IN (?) OR (post_status = 'private' AND post_author = ?)) GROUP BY post_author",
+            [$types, $statuses, $viewer],
+        );
+        foreach ($rows as $row) {
+            $counts[(int) $row['post_author']] = (int) $row['count'];
+        }
+        return $counts;
+    }
+
+    /**
      * Every post id of an author.
      *
      * @return list<int>

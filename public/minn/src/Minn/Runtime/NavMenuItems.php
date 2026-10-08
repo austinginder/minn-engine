@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Minn\Runtime;
 
 use Minn\I18n\Gettext;
+use Minn\Support\Lists;
 
 /**
  * Classic menu items as the reference serves them to walkers and plugins
@@ -43,7 +44,7 @@ final class NavMenuItems
      */
     public static function forMenu(\WP_Term $menu, array $args): array
     {
-        $args = \wp_parse_args($args, [
+        $args = Lists::args($args, [
             'order' => 'ASC', 'orderby' => 'menu_order', 'post_type' => 'nav_menu_item', 'post_status' => 'publish', 'output' => \ARRAY_A, 'output_key' => 'menu_order', 'nopaging' => true,
             'update_menu_item_cache' => true, 'tax_query' => [['taxonomy' => 'nav_menu', 'field' => 'term_taxonomy_id', 'terms' => $menu->term_taxonomy_id]],
         ]);

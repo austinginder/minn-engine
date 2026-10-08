@@ -14,6 +14,7 @@ use Minn\Runtime\Runtime;
 use Minn\Support\Html;
 use Minn\I18n\Gettext;
 use Minn\Support\Escape;
+use Minn\Support\Lists;
 
 /**
  * The links the reference puts in every head: the site and comments
@@ -63,7 +64,7 @@ final readonly class HeadLinks
      */
     public static function siteFeeds(array $args): string
     {
-        $args = \wp_parse_args($args, ['separator' => Gettext::inContext('&raquo;', 'feed link'), 'feedtitle' => Gettext::text('%1$s %2$s Feed'), 'comstitle' => Gettext::text('%1$s %2$s Comments Feed')]);
+        $args = Lists::args($args, ['separator' => Gettext::inContext('&raquo;', 'feed link'), 'feedtitle' => Gettext::text('%1$s %2$s Feed'), 'comstitle' => Gettext::text('%1$s %2$s Comments Feed')]);
         $name = (string) \get_bloginfo('name');
         $link = static fn (string $title, string $href): string => sprintf('<link rel="alternate" type="%s" title="%s" href="%s" />' . "\n", \feed_content_type(), Escape::attr(sprintf($title, $name, $args['separator'])), \esc_url($href));
         $out = \apply_filters('feed_links_show_posts_feed', true) ? $link((string) $args['feedtitle'], (string) \get_feed_link()) : '';

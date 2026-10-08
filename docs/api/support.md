@@ -21,7 +21,7 @@ escaping, serialized readers, small helpers
 | [`KsesEntities`](#ksesentities) | final class | 30 | The named references kses keeps as written: the list captured from the |
 | [`KsesPolicy`](#ksespolicy) | final readonly class | 115 | What one kses pass allows: the tags, each tag's attributes (allowed |
 | [`KsesValues`](#ksesvalues) | final class | 38 | The value rules an allowlist attribute may carry, as the reference judges |
-| [`Lists`](#lists) | final class | 116 | List shaping behind the facade's array utilities: the multi-field sort |
+| [`Lists`](#lists) | final class | 135 | List shaping behind the facade's array utilities: arguments over their |
 | [`Locale`](#locale) | final class | 31 | The locale's calendar and number vocabulary as data: the names a site |
 | [`Markers`](#markers) | final class | 59 | The BEGIN/END marker blocks insert_with_markers() maintains in files like |
 | [`Paths`](#paths) | final class | 64 | File-system path and permission spellings. |
@@ -560,12 +560,21 @@ Internals: `wholeNumber()` (private, line 48)
 
 `final class Minn\Support\Lists` · `public/minn/src/Minn/Support/Lists.php`
 
-List shaping behind the facade's array utilities: the multi-field sort
+List shaping behind the facade's array utilities: arguments over their
+defaults (wp_parse_args), the multi-field sort
 wp_list_sort() promises (loose comparison per field, first difference
 wins) and the row-shape conversions wpdb hands back for its OBJECT_K /
 ARRAY_A / ARRAY_N output formats.
 
-Used by: `Minn\Query\CommentOrder`, `Minn\Rest\InstalledThemesController`, `Minn\Rest\RegisteredFields`, `Minn\Runtime\CommentQueryWhere`, `Minn\Runtime\Pages`, `Minn\Runtime\TermOrder`, `Minn\Runtime\TermQueryRunner`, `Minn\Runtime\UserOrder`, `Minn\Runtime\UserQueryRunner`
+Used by: `Minn\Query\CommentOrder`, `Minn\Rest\InstalledThemesController`, `Minn\Rest\RegisteredFields`, `Minn\Runtime\CommentPages`, `Minn\Runtime\CommentQueryWhere`, `Minn\Runtime\NavMenuItems`, `Minn\Runtime\Pages`, `Minn\Runtime\TermOrder`, `Minn\Runtime\TermQueryRunner`, `Minn\Runtime\TermSave`, `Minn\Runtime\UserOrder`, `Minn\Runtime\UserQueryRunner`, `Minn\Theme\HeadLinks`
+
+### static `args(mixed $args, mixed $defaults = array ( )): array`
+
+Arguments as WordPress takes them (wp_parse_args): an object's
+properties, an array, or a query string, over the defaults.
+
+- `@param array<array-key, mixed> $defaults`
+- `@return array<array-key, mixed>`
 
 ### static `items(mixed $input): array`
 
@@ -610,7 +619,7 @@ get_page_children walk. Visited ids guard against a parent cycle.
 - `@param list<int> $visited`
 - `@return list<mixed>`
 
-Internals: `keyedByFirstColumn()` (private, line 116)
+Internals: `keyedByFirstColumn()` (private, line 136)
 
 
 ## Locale

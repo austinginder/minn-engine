@@ -6,6 +6,7 @@ namespace Minn\Runtime;
 
 use Minn\Content\Terms;
 use Minn\Support\Slashes;
+use Minn\Support\Lists;
 
 /**
  * wp_insert_term and wp_update_term in the reference's order (probe
@@ -43,7 +44,7 @@ final class TermSave
         if (trim((string) $term) === '') {
             return new \WP_Error('empty_term_name', 'A name is required for this term.');
         }
-        $args = \wp_parse_args($args, self::DEFAULTS);
+        $args = Lists::args($args, self::DEFAULTS);
         if ((int) $args['parent'] > 0 && \term_exists((int) $args['parent']) === null) {
             return new \WP_Error('missing_parent', 'Parent term does not exist.');
         }
@@ -96,7 +97,7 @@ final class TermSave
         if (!$term instanceof \WP_Term) {
             return new \WP_Error('invalid_term', 'Empty Term.');
         }
-        $parsed = \wp_parse_args(array_merge((array) Slashes::add($term->to_array()), $changes), self::DEFAULTS);
+        $parsed = Lists::args(array_merge((array) Slashes::add($term->to_array()), $changes), self::DEFAULTS);
         $args = (array) \sanitize_term($parsed, $taxonomy, 'db');
         $name = (string) Slashes::strip((string) $args['name']);
         $description = (string) Slashes::strip((string) $args['description']);

@@ -5,13 +5,33 @@ declare(strict_types=1);
 namespace Minn\Support;
 
 /**
- * List shaping behind the facade's array utilities: the multi-field sort
+ * List shaping behind the facade's array utilities: arguments over their
+ * defaults (wp_parse_args), the multi-field sort
  * wp_list_sort() promises (loose comparison per field, first difference
  * wins) and the row-shape conversions wpdb hands back for its OBJECT_K /
  * ARRAY_A / ARRAY_N output formats.
  */
 final class Lists
 {
+    /**
+     * Arguments as WordPress takes them (wp_parse_args): an object's
+     * properties, an array, or a query string, over the defaults.
+     *
+     * @param array<array-key, mixed> $defaults
+     * @return array<array-key, mixed>
+     */
+    public static function args(mixed $args, mixed $defaults = []): array
+    {
+        if (is_object($args)) {
+            $parsed = get_object_vars($args);
+        } elseif (is_array($args)) {
+            $parsed = $args;
+        } else {
+            parse_str((string) $args, $parsed);
+        }
+        return is_array($defaults) && $defaults ? array_merge($defaults, $parsed) : $parsed;
+    }
+
     /**
      * A list as arguments give one (wp_parse_list): an array's entries
      * trimmed, the empty ones dropped (keys kept); a string split on commas

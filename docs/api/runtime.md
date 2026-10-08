@@ -66,7 +66,7 @@ the WordPress runtime plugins load against
 | [`PostEvents`](#postevents) | final readonly class | 181 | What the reference's REST controllers tell plugins about a post they |
 | [`PostInsert`](#postinsert) | final readonly class | 168 | The decisions behind wp_insert_post: which columns a postarr fills, when |
 | [`PostLinks`](#postlinks) | final class | 151 | Post addresses as the reference's link functions build them (probe |
-| [`PostLookup`](#postlookup) | final readonly class | 85 | The post reads plugin code asks for by shape: a page by title, revisions, counts. |
+| [`PostLookup`](#postlookup) | final readonly class | 107 | The post reads plugin code asks for by shape: a page by title, revisions, counts. |
 | [`PostQuery`](#postquery) | final class | 388 | WP_Query::get_posts as the reference runs it (probe wp-query-sql): the |
 | [`PostQueryParts`](#postqueryparts) | final class | 56 | The pieces of one WP_Query run as the reference builds them and hands |
 | [`PostQueryResults`](#postqueryresults) | final class | 111 | What WP_Query does with its posts once it has them, as the reference does |
@@ -975,7 +975,7 @@ oldest comments come first.
 
 A post's link opened at a page of its comments, as pretty or plain links write it.
 
-Internals: `olderQuery()` (private, line 60)
+Internals: `olderQuery()` (private, line 61)
 
 
 ## CommentQuery
@@ -1964,7 +1964,7 @@ wp_get_nav_menu_items for a menu found.
 - `@param array<string, mixed> $args`
 - `@return array<int, object>`
 
-Internals: `menuItem()` (private, line 65), `pointsAtPost()` (private, line 88), `pointsAtTerm()` (private, line 105), `pointsAtArchive()` (private, line 119), `custom()` (private, line 131), `post()` (private, line 139), `term()` (private, line 158)
+Internals: `menuItem()` (private, line 66), `pointsAtPost()` (private, line 89), `pointsAtTerm()` (private, line 106), `pointsAtArchive()` (private, line 120), `custom()` (private, line 132), `post()` (private, line 140), `term()` (private, line 159)
 
 
 ## OEmbed
@@ -2845,6 +2845,15 @@ How many attachments there are per mime type.
 How many posts an author has among the types and statuses.
 
 - `@param list<string> $types @param list<string> $statuses`
+
+### `countsByAuthor(array $types, array $statuses, int $viewer): array`
+
+Post counts by author for wp_list_authors: the types' posts in the
+statuses given, and the private ones of the viewer (an id, or -1 for
+none) beside them.
+
+- `@param list<string> $types @param list<string> $statuses`
+- `@return array<int, int>`
 
 ### `idsByAuthor(int $userId): array`
 
@@ -4515,7 +4524,7 @@ A changed term's ids, or why not.
 - `@param array<string, mixed> $changes`
 - `@return array{term_id: int, term_taxonomy_id: int}|\WP_Error`
 
-Internals: `write()` (private, line 128), `nameTaken()` (private, line 161), `updatedSlug()` (private, line 185), `slugFromId()` (private, line 204), `row()` (private, line 217)
+Internals: `write()` (private, line 129), `nameTaken()` (private, line 162), `updatedSlug()` (private, line 186), `slugFromId()` (private, line 205), `row()` (private, line 218)
 
 
 ## TermWriter

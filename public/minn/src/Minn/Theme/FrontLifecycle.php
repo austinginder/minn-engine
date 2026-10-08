@@ -44,7 +44,8 @@ final class FrontLifecycle
                 $vars[$var] = is_array($given[$var]) ? $given[$var] : (string) $given[$var];
             }
         }
-        $wp->query_vars = (array) \apply_filters('request', $parse === null ? $vars : $parse($wp->public_query_vars));
+        // A date archive whose year, month or day is a post's numeric slug is that post, before plugins see the request.
+        $wp->query_vars = (array) \apply_filters('request', \wp_resolve_numeric_slug_conflicts($parse === null ? $vars : $parse($wp->public_query_vars)));
         \do_action_ref_array('parse_request', [&$wp]);
         $wp->build_query_string();
         return true;

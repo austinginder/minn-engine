@@ -591,18 +591,35 @@ function rel_canonical()
         return;
     }
     $id = (int) get_queried_object_id();
-    if ($id < 1) {
-        return;
+    $url = $id === 0 ? false : wp_get_canonical_url($id);
+    if (!empty($url)) {
+        echo '<link rel="canonical" href="' . esc_url($url) . '" />' . "\n";
     }
-    $url = (string) get_permalink($id);
-    if ($url === '') {
-        return;
+}
+
+/**
+ * A published post's canonical URL (probe plugin-queue): its permalink,
+ * and for the queried post the page or the comments page being shown;
+ * false for anything unpublished. Filtered by get_canonical_url.
+ */
+function wp_get_canonical_url($post = null)
+{
+    $post = get_post($post);
+    if (!$post || $post->post_status !== 'publish') {
+        return false;
     }
-    $page = (int) get_query_var('page');
-    if ($page >= 2) {
-        $url = trailingslashit($url) . user_trailingslashit((string) $page, 'single_paged');
+    $url = get_permalink($post);
+    if ((int) get_queried_object_id() === (int) $post->ID) {
+        $page = (int) get_query_var('page', 0);
+        if ($page >= 2) {
+            $url = get_option('permalink_structure') ? trailingslashit($url) . user_trailingslashit((string) $page, 'single_paged') : add_query_arg('page', $page, $url);
+        }
+        $cpage = get_query_var('cpage', 0);
+        if ($cpage) {
+            $url = get_comments_pagenum_link($cpage);
+        }
     }
-    echo '<link rel="canonical" href="' . esc_url($url) . '" />' . "\n";
+    return apply_filters('get_canonical_url', $url, $post);
 }
 
 /** The shortlink head tag on singular views, after the canonical in the reference's order. */

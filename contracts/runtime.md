@@ -4829,3 +4829,42 @@ its comments: the template refuses it, and the fallback template prints
 the reference's note. `COMMENTS_TEMPLATE` is defined. Called with nothing,
 `get_comment_pages_count` answers the query's count; it is 1 when comments
 are not paged.
+
+## The head of the plugin queue (2026-10-07)
+
+The Sep 1 catalogue report, re-judged against today's gap, put 1,728 of the
+top 2,000 plugins through the gate. The first wave of its queue (probe
+plugin-queue, 103 cases) takes that to 1,768.
+
+- `get_lastpostdate` and `get_lastpostmodified` read the public types (or one
+  type): 'blog' gives the local column, 'gmt' the GMT one, 'server' the GMT
+  one with microseconds. Any other timezone or type answers false, still
+  filtered. The modified time is the later of the newest modified stamp
+  and the newest date, and `pre_get_lastpostmodified` may answer first.
+- `wp_restore_post_revision` puts back the revisioned fields (or those
+  named) through `wp_update_post`, which saves a revision of its own. It
+  sets `_edit_last` and fires `wp_restore_post_revision`.
+- `wp_resolve_numeric_slug_conflicts` reads a date archive's year, month or
+  day as a post's numeric slug where %postname% stands in the structure.
+  That needs the post's date to match the URL's, and what follows to be one
+  of its pages. The front calls it before the `request` filter, so `/1987/`
+  is a post slugged 1987 (reader suite), not that year's archive.
+- `wp_list_authors` lists by name and leaves out the account displayed as
+  "admin" and authors with no posts unless asked. Counts are published
+  posts (and private ones the viewer may read).
+- `wp_get_canonical_url` is false for anything unpublished. For the queried
+  post it adds the page, or uses the comments page link (`#comments`
+  included); `rel_canonical` prints it.
+- `add_option`, `update_option` and `delete_option` stop on `alloptions`
+  and `notoptions` (`wp_protect_special_option`).
+- `get_block_theme_folders` reads the old folder names when a theme has
+  them; a missing theme gets the defaults.
+- Also: `update_post_cache` (only where nothing is cached; `get_post` takes a
+  plain object from the cache), `wp_get_term_taxonomy_parent_id`,
+  `the_terms`, `get_comment_excerpt` and `comment_excerpt`,
+  `wp_is_large_user_count`, `wp_timezone_override_offset`,
+  `wp_get_first_block`, `wp_untrash_post_set_previous_status`, and the
+  deprecated `get_current_theme`, `get_themes` and `get_theme`.
+
+`wp_parse_args` lives in `Support\Lists::args` now; the engine's own callers
+use it, and the WordPress-call ratchet is 1071.

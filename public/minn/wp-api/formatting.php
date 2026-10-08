@@ -147,14 +147,7 @@ function untrailingslashit($value)
 
 function wp_parse_args($args, $defaults = [])
 {
-    if (is_object($args)) {
-        $parsed = get_object_vars($args);
-    } elseif (is_array($args)) {
-        $parsed = $args;
-    } else {
-        parse_str((string) $args, $parsed);
-    }
-    return is_array($defaults) && $defaults ? array_merge($defaults, $parsed) : $parsed;
+    return Minn\Support\Lists::args($args, $defaults);
 }
 
 function wp_parse_list($input_list)

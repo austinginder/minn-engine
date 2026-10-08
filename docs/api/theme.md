@@ -13,7 +13,7 @@ the block-theme reader, templates, global styles and the page renderer
 | [`EmbedRenderer`](#embedrenderer) | final readonly class | 33 | A post's embed page (its /embed/ address, or ?embed= on it), the card |
 | [`FeedHeaders`](#feedheaders) | final class | 50 | The headers a feed is sent with, as the reference's send_headers sends |
 | [`Folder`](#folder) | final readonly class | 77 | A theme folder read from disk: its style.css headers, which folder its templates come from, its screenshot, whether it is a block theme. |
-| [`FrontLifecycle`](#frontlifecycle) | final class | 102 | WordPress's front-end request steps around the main query, as WP::main |
+| [`FrontLifecycle`](#frontlifecycle) | final class | 103 | WordPress's front-end request steps around the main query, as WP::main |
 | [`GlobalStyles`](#globalstyles) | final readonly class | 571 | theme.json to CSS. Presets become custom properties on :root and their |
 | [`HeadLinks`](#headlinks) | final readonly class | 133 | The links the reference puts in every head: the site and comments |
 | [`Hierarchy`](#hierarchy) | final class | 146 | The classic template hierarchy: the candidate file names each template |

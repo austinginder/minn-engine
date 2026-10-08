@@ -565,3 +565,10 @@ function wp_maybe_grant_site_health_caps($allcaps, $caps, $args, $user)
     }
     return $allcaps;
 }
+
+/** Whether the site counts more than ten thousand users, through wp_is_large_user_count. */
+function wp_is_large_user_count($network_id = null)
+{
+    $count = get_user_count($network_id);
+    return apply_filters('wp_is_large_user_count', $count > 10000, $count, $network_id);
+}

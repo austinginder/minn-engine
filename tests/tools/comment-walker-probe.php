@@ -63,9 +63,9 @@ $GLOBALS['wp_query']->post = $GLOBALS['post'];
 $comments = get_comments(['post_id' => $post, 'status' => 'all', 'orderby' => 'comment_date_gmt', 'order' => 'ASC']);
 $words = static function (string $html) use (&$labels, $post): string {
     foreach ($labels as $id => $label) {
-        $html = (string) preg_replace('/(?<![0-9])' . $id . '(?![0-9])/', '{' . $label . '}', $html);
+        $html = (string) preg_replace('/(?<![0-9a-z])' . $id . '(?![0-9a-z])/i', '{' . $label . '}', $html);
     }
-    $html = (string) preg_replace('/(?<![0-9])' . $post . '(?![0-9])/', '{post}', $html);
+    $html = (string) preg_replace('/(?<![0-9a-z])' . $post . '(?![0-9a-z])/i', '{post}', $html);
     return str_replace(home_url(), '{home}', $html);
 };
 $list = static function (string $label, array $args, ?array $list = null) use ($say, $words, &$comments): void {

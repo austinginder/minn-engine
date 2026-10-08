@@ -102,7 +102,11 @@ function delete_site_option($option)
 function add_option($option, $value = '', $deprecated = '', $autoload = null)
 {
     $option = trim((string) $option);
-    if ($option === '' || Options::guarded($option)) {
+    if ($option === '') {
+        return false;
+    }
+    wp_protect_special_option($option);
+    if (Options::guarded($option)) {
         return false;
     }
     $value = sanitize_option($option, $value);
@@ -129,7 +133,11 @@ function add_option($option, $value = '', $deprecated = '', $autoload = null)
 function update_option($option, $value, $autoload = null)
 {
     $option = trim((string) $option);
-    if ($option === '' || Options::guarded($option)) {
+    if ($option === '') {
+        return false;
+    }
+    wp_protect_special_option($option);
+    if (Options::guarded($option)) {
         return false;
     }
     $value = sanitize_option($option, $value);
@@ -156,7 +164,11 @@ function update_option($option, $value, $autoload = null)
 function delete_option($option)
 {
     $option = trim((string) $option);
-    if ($option === '' || Options::guarded($option) || !Runtime::options()->exists($option)) {
+    if ($option === '') {
+        return false;
+    }
+    wp_protect_special_option($option);
+    if (Options::guarded($option) || !Runtime::options()->exists($option)) {
         return false;
     }
     do_action('delete_option', $option);
@@ -584,4 +596,12 @@ function wp_autoload_values_to_autoload()
 {
     // A filter may narrow the list, never widen it: what it returns is kept only where core knows the value, keys and all.
     return array_intersect(apply_filters('wp_autoload_values_to_autoload', Minn\Runtime\Options::AUTOLOAD_VALUES), Minn\Runtime\Options::AUTOLOAD_VALUES);
+}
+
+/** Stops with wp_die when asked to touch alloptions or notoptions, the names the option cache keeps for itself. */
+function wp_protect_special_option($option)
+{
+    if ($option === 'alloptions' || $option === 'notoptions') {
+        wp_die(sprintf(__('%s is a protected WP option and may not be modified'), esc_html($option)));
+    }
 }

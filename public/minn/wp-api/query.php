@@ -515,3 +515,35 @@ function post_type_archive_title($prefix = '', $display = true)
     }
     return $title;
 }
+
+/**
+ * A date archive's query vars read as the post they name (probe
+ * plugin-queue). Under a structure with %postname% first, second or third,
+ * the year, month or day in that place is a slug; when a post has it, was
+ * dated in the year (and month) the URL gives, and what follows the slug
+ * is one of its pages, the vars become that post's name and page (0 for
+ * none). Anything else is left as a date archive.
+ */
+function wp_resolve_numeric_slug_conflicts($query_vars = [])
+{
+    if (!isset($query_vars['year']) && !isset($query_vars['monthnum']) && !isset($query_vars['day'])) {
+        return $query_vars;
+    }
+    $index = array_search('%postname%', array_values(array_filter(explode('/', (string) get_option('permalink_structure')))), true);
+    $slot = is_int($index) ? (['year', 'monthnum', 'day'][$index] ?? null) : null;
+    $post = $slot !== null && isset($query_vars[$slot]) ? get_page_by_path((string) $query_vars[$slot], OBJECT, 'post') : null;
+    if (!$post instanceof WP_Post) {
+        return $query_vars;
+    }
+    $dated = $slot === 'year' || !isset($query_vars['year']) || ((int) $query_vars['year'] === (int) substr($post->post_date, 0, 4) && ($slot !== 'day' || !isset($query_vars['monthnum']) || (int) $query_vars['monthnum'] === (int) substr($post->post_date, 5, 2)));
+    $next = ['year' => 'monthnum', 'monthnum' => 'day'][$slot] ?? null;
+    $page = $next !== null ? (int) trim((string) ($query_vars[$next] ?? ''), '/') : 0;
+    $pages = substr_count($post->post_content, '<!--nextpage-->') + 1;
+    if (!$dated || ($page && ($pages === 1 || $page > $pages))) {
+        return $query_vars;
+    }
+    $query_vars['page'] = $page;
+    unset($query_vars['year'], $query_vars['monthnum'], $query_vars['day']);
+    $query_vars['name'] = $post->post_name;
+    return $query_vars;
+}

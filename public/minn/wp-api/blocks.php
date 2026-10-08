@@ -1282,3 +1282,17 @@ function wp_style_engine_get_stylesheet_from_context($context, $options = [])
     return WP_Style_Engine::compile_stylesheet_from_css_rules(WP_Style_Engine::get_store($context)->get_all_rules(), $options);
 }
 
+/** The first block of a name in a parsed tree, depth first; an empty array when there is none. */
+function wp_get_first_block($blocks, $block_name)
+{
+    foreach ($blocks as $block) {
+        if ($block['blockName'] === $block_name) {
+            return $block;
+        }
+        $inner = empty($block['innerBlocks']) ? [] : wp_get_first_block($block['innerBlocks'], $block_name);
+        if ($inner !== []) {
+            return $inner;
+        }
+    }
+    return [];
+}

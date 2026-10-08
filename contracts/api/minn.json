@@ -29116,7 +29116,7 @@
             "namespace": "Minn\\Content",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Content/Posts.php",
-            "lines": 391,
+            "lines": 378,
             "doc": "Reads over the posts table. A post comes back as a PostRecord; a listing\nis the main query's (WP_Query); rendering and escaping happen elsewhere.",
             "implements": [],
             "extends": null,
@@ -29611,43 +29611,32 @@
                 },
                 {
                     "routes": [],
-                    "name": "lastModified",
+                    "name": "newest",
                     "static": false,
                     "visibility": "public",
-                    "signature": "lastModified(?string $type): ?string",
-                    "doc": "The newest modification time among published posts, for\nget_lastpostmodified: one type or all of them, blog or GMT column.",
-                    "shapes": [],
+                    "signature": "newest(array $types, string $column): ?string",
+                    "doc": "The newest value of a date column (post_date, post_modified, or their\nGMT twins) among published posts of the types given, for\nget_lastpostdate and get_lastpostmodified.",
+                    "shapes": [
+                        "@param list<string> $types"
+                    ],
                     "params": [
                         {
-                            "name": "type",
-                            "type": "?string",
+                            "name": "types",
+                            "type": "array",
+                            "shape": "list<string>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "column",
+                            "type": "string",
                             "shape": "",
                             "default": null,
                             "doc": ""
                         }
                     ],
-                    "line": 270,
-                    "end": 273
-                },
-                {
-                    "routes": [],
-                    "name": "lastModifiedGmt",
-                    "static": false,
-                    "visibility": "public",
-                    "signature": "lastModifiedGmt(?string $type): ?string",
-                    "doc": "The newest GMT modified stamp among published posts of a type, or of the three core types.",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "type",
-                            "type": "?string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 276,
-                    "end": 279
+                    "line": 273,
+                    "end": 280
                 },
                 {
                     "routes": [],
@@ -29682,8 +29671,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 286,
-                    "end": 294
+                    "line": 287,
+                    "end": 295
                 },
                 {
                     "routes": [],
@@ -29725,8 +29714,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 303,
-                    "end": 319
+                    "line": 304,
+                    "end": 320
                 },
                 {
                     "routes": [],
@@ -29768,8 +29757,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 332,
-                    "end": 340
+                    "line": 333,
+                    "end": 341
                 },
                 {
                     "routes": [],
@@ -29802,8 +29791,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 343,
-                    "end": 347
+                    "line": 344,
+                    "end": 348
                 },
                 {
                     "routes": [],
@@ -29836,8 +29825,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 350,
-                    "end": 354
+                    "line": 351,
+                    "end": 355
                 },
                 {
                     "routes": [],
@@ -29863,8 +29852,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 381,
-                    "end": 388
+                    "line": 368,
+                    "end": 375
                 },
                 {
                     "routes": [],
@@ -29883,8 +29872,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 391,
-                    "end": 402
+                    "line": 378,
+                    "end": 389
                 },
                 {
                     "routes": [],
@@ -30016,8 +30005,8 @@
                     "doc": "MySQL's WEEK() mode for the site's first day of the week: 0 for Sunday, 1 for Monday.",
                     "shapes": [],
                     "params": [],
-                    "line": 322,
-                    "end": 325
+                    "line": 323,
+                    "end": 326
                 },
                 {
                     "routes": [],
@@ -30052,35 +30041,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 357,
-                    "end": 364
-                },
-                {
-                    "routes": [],
-                    "name": "latest",
-                    "static": false,
-                    "visibility": "private",
-                    "signature": "latest(?string $type, string $column): ?string",
-                    "doc": "",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "type",
-                            "type": "?string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "column",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 366,
-                    "end": 378
+                    "line": 358,
+                    "end": 365
                 }
             ]
         },
@@ -107360,6 +107322,7 @@
             "extends": null,
             "uses": [
                 "Minn\\Runtime\\Runtime",
+                "Minn\\Support\\Lists",
                 "Minn\\Support\\Url"
             ],
             "usedBy": [],
@@ -107401,8 +107364,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 29,
-                    "end": 57
+                    "line": 30,
+                    "end": 58
                 },
                 {
                     "routes": [],
@@ -107430,8 +107393,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 86,
-                    "end": 103
+                    "line": 87,
+                    "end": 104
                 },
                 {
                     "routes": [],
@@ -107450,8 +107413,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 110,
-                    "end": 113
+                    "line": 111,
+                    "end": 114
                 },
                 {
                     "routes": [],
@@ -107477,8 +107440,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 116,
-                    "end": 126
+                    "line": 117,
+                    "end": 127
                 },
                 {
                     "routes": [],
@@ -107506,8 +107469,8 @@
                             "doc": "the count of the top-level comments older than this one, through get_page_of_comment_query_args"
                         }
                     ],
-                    "line": 60,
-                    "end": 77
+                    "line": 61,
+                    "end": 78
                 }
             ]
         },
@@ -112703,7 +112666,8 @@
             "implements": [],
             "extends": null,
             "uses": [
-                "Minn\\I18n\\Gettext"
+                "Minn\\I18n\\Gettext",
+                "Minn\\Support\\Lists"
             ],
             "usedBy": [],
             "constructor": null,
@@ -112728,8 +112692,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 28,
-                    "end": 36
+                    "line": 29,
+                    "end": 37
                 },
                 {
                     "routes": [],
@@ -112758,8 +112722,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 44,
-                    "end": 62
+                    "line": 45,
+                    "end": 63
                 },
                 {
                     "routes": [],
@@ -112778,8 +112742,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 65,
-                    "end": 85
+                    "line": 66,
+                    "end": 86
                 },
                 {
                     "routes": [],
@@ -112798,8 +112762,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 88,
-                    "end": 102
+                    "line": 89,
+                    "end": 103
                 },
                 {
                     "routes": [],
@@ -112818,8 +112782,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 105,
-                    "end": 116
+                    "line": 106,
+                    "end": 117
                 },
                 {
                     "routes": [],
@@ -112838,8 +112802,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 119,
-                    "end": 128
+                    "line": 120,
+                    "end": 129
                 },
                 {
                     "routes": [],
@@ -112865,8 +112829,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 131,
-                    "end": 136
+                    "line": 132,
+                    "end": 137
                 },
                 {
                     "routes": [],
@@ -112885,8 +112849,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 139,
-                    "end": 155
+                    "line": 140,
+                    "end": 156
                 },
                 {
                     "routes": [],
@@ -112905,8 +112869,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 158,
-                    "end": 177
+                    "line": 159,
+                    "end": 178
                 }
             ]
         },
@@ -117059,7 +117023,7 @@
             "namespace": "Minn\\Runtime",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Runtime/PostLookup.php",
-            "lines": 85,
+            "lines": 107,
             "doc": "The post reads plugin code asks for by shape: a page by title, revisions, counts.",
             "implements": [],
             "extends": null,
@@ -117223,6 +117187,43 @@
                 },
                 {
                     "routes": [],
+                    "name": "countsByAuthor",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "countsByAuthor(array $types, array $statuses, int $viewer): array",
+                    "doc": "Post counts by author for wp_list_authors: the types' posts in the\nstatuses given, and the private ones of the viewer (an id, or -1 for\nnone) beside them.",
+                    "shapes": [
+                        "@param list<string> $types @param list<string> $statuses",
+                        "@return array<int, int>"
+                    ],
+                    "params": [
+                        {
+                            "name": "types",
+                            "type": "array",
+                            "shape": "list<string>",
+                            "default": null,
+                            "doc": "@param list<string> $statuses"
+                        },
+                        {
+                            "name": "statuses",
+                            "type": "array",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "viewer",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 86,
+                    "end": 98
+                },
+                {
+                    "routes": [],
                     "name": "idsByAuthor",
                     "static": false,
                     "visibility": "public",
@@ -117240,8 +117241,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 83,
-                    "end": 86
+                    "line": 105,
+                    "end": 108
                 },
                 {
                     "routes": [],
@@ -117260,8 +117261,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 89,
-                    "end": 93
+                    "line": 111,
+                    "end": 115
                 }
             ]
         },
@@ -126436,6 +126437,7 @@
             "uses": [
                 "Minn\\Content\\Terms",
                 "Minn\\Runtime\\Runtime",
+                "Minn\\Support\\Lists",
                 "Minn\\Support\\Slashes"
             ],
             "usedBy": [],
@@ -126485,8 +126487,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 34,
-                    "end": 82
+                    "line": 35,
+                    "end": 83
                 },
                 {
                     "routes": [],
@@ -126522,8 +126524,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 90,
-                    "end": 119
+                    "line": 91,
+                    "end": 120
                 },
                 {
                     "routes": [],
@@ -126574,8 +126576,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 128,
-                    "end": 151
+                    "line": 129,
+                    "end": 152
                 },
                 {
                     "routes": [],
@@ -126610,8 +126612,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 161,
-                    "end": 176
+                    "line": 162,
+                    "end": 177
                 },
                 {
                     "routes": [],
@@ -126660,8 +126662,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 185,
-                    "end": 195
+                    "line": 186,
+                    "end": 196
                 },
                 {
                     "routes": [],
@@ -126711,8 +126713,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 204,
-                    "end": 209
+                    "line": 205,
+                    "end": 210
                 },
                 {
                     "routes": [],
@@ -126733,8 +126735,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 217,
-                    "end": 221
+                    "line": 218,
+                    "end": 222
                 }
             ]
         },
@@ -132225,8 +132227,8 @@
             "namespace": "Minn\\Support",
             "kind": "final class",
             "file": "public/minn/src/Minn/Support/Lists.php",
-            "lines": 116,
-            "doc": "List shaping behind the facade's array utilities: the multi-field sort\nwp_list_sort() promises (loose comparison per field, first difference\nwins) and the row-shape conversions wpdb hands back for its OBJECT_K /\nARRAY_A / ARRAY_N output formats.",
+            "lines": 135,
+            "doc": "List shaping behind the facade's array utilities: arguments over their\ndefaults (wp_parse_args), the multi-field sort\nwp_list_sort() promises (loose comparison per field, first difference\nwins) and the row-shape conversions wpdb hands back for its OBJECT_K /\nARRAY_A / ARRAY_N output formats.",
             "implements": [],
             "extends": null,
             "uses": [],
@@ -132234,18 +132236,52 @@
                 "Minn\\Query\\CommentOrder",
                 "Minn\\Rest\\InstalledThemesController",
                 "Minn\\Rest\\RegisteredFields",
+                "Minn\\Runtime\\CommentPages",
                 "Minn\\Runtime\\CommentQueryWhere",
+                "Minn\\Runtime\\NavMenuItems",
                 "Minn\\Runtime\\Pages",
                 "Minn\\Runtime\\TermOrder",
                 "Minn\\Runtime\\TermQueryRunner",
+                "Minn\\Runtime\\TermSave",
                 "Minn\\Runtime\\UserOrder",
-                "Minn\\Runtime\\UserQueryRunner"
+                "Minn\\Runtime\\UserQueryRunner",
+                "Minn\\Theme\\HeadLinks"
             ],
             "constructor": null,
             "cases": [],
             "constants": [],
             "properties": [],
             "methods": [
+                {
+                    "routes": [],
+                    "name": "args",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "args(mixed $args, mixed $defaults = array ( )): array",
+                    "doc": "Arguments as WordPress takes them (wp_parse_args): an object's\nproperties, an array, or a query string, over the defaults.",
+                    "shapes": [
+                        "@param array<array-key, mixed> $defaults",
+                        "@return array<array-key, mixed>"
+                    ],
+                    "params": [
+                        {
+                            "name": "args",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "defaults",
+                            "type": "mixed",
+                            "shape": "array<array-key, mixed>",
+                            "default": "array ( )",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 23,
+                    "end": 33
+                },
                 {
                     "routes": [],
                     "name": "items",
@@ -132265,8 +132301,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 22,
-                    "end": 28
+                    "line": 42,
+                    "end": 48
                 },
                 {
                     "routes": [],
@@ -132287,8 +132323,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 36,
-                    "end": 39
+                    "line": 56,
+                    "end": 59
                 },
                 {
                     "routes": [],
@@ -132325,8 +132361,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 48,
-                    "end": 68
+                    "line": 68,
+                    "end": 88
                 },
                 {
                     "routes": [],
@@ -132355,8 +132391,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 77,
-                    "end": 85
+                    "line": 97,
+                    "end": 105
                 },
                 {
                     "routes": [],
@@ -132409,8 +132445,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 98,
-                    "end": 110
+                    "line": 118,
+                    "end": 130
                 },
                 {
                     "routes": [],
@@ -132432,8 +132468,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 116,
-                    "end": 127
+                    "line": 136,
+                    "end": 147
                 }
             ]
         },
@@ -135289,7 +135325,7 @@
             "namespace": "Minn\\Theme",
             "kind": "final class",
             "file": "public/minn/src/Minn/Theme/FrontLifecycle.php",
-            "lines": 102,
+            "lines": 103,
             "doc": "WordPress's front-end request steps around the main query, as WP::main\nruns them (front lifecycle trace): parse the request (do_parse_request\nmay take it over; query_vars names the public variables, a plugin's own\nread from the query string; request filters the result; parse_request\nfollows), the main query, the 404 decision (pre_handle_404 first), the\nglobals, and the headers (wp_headers, the status, send_headers). The\nengine has already resolved the URL; these steps tell plugins about it\nin the reference's order and let them change what the query asks.",
             "implements": [],
             "extends": null,
@@ -135350,7 +135386,7 @@
                         }
                     ],
                     "line": 31,
-                    "end": 51
+                    "end": 52
                 },
                 {
                     "routes": [],
@@ -135376,8 +135412,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 63,
-                    "end": 77
+                    "line": 64,
+                    "end": 78
                 },
                 {
                     "routes": [],
@@ -135396,8 +135432,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 85,
-                    "end": 121
+                    "line": 86,
+                    "end": 122
                 }
             ]
         },
@@ -136003,7 +136039,8 @@
                 "Minn\\I18n\\Gettext",
                 "Minn\\Runtime\\Runtime",
                 "Minn\\Support\\Escape",
-                "Minn\\Support\\Html"
+                "Minn\\Support\\Html",
+                "Minn\\Support\\Lists"
             ],
             "usedBy": [
                 "Minn\\Theme\\ClassicRenderer",
@@ -136037,8 +136074,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 27,
-                "end": 32
+                "line": 28,
+                "end": 33
             },
             "cases": [],
             "constants": [],
@@ -136081,8 +136118,8 @@
                     "doc": "The link to the engine's own block stylesheet.",
                     "shapes": [],
                     "params": [],
-                    "line": 35,
-                    "end": 38
+                    "line": 36,
+                    "end": 39
                 },
                 {
                     "routes": [],
@@ -136101,8 +136138,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 41,
-                    "end": 44
+                    "line": 42,
+                    "end": 45
                 },
                 {
                     "routes": [],
@@ -136113,8 +136150,8 @@
                     "doc": "The site and comments feed links.",
                     "shapes": [],
                     "params": [],
-                    "line": 47,
-                    "end": 55
+                    "line": 48,
+                    "end": 56
                 },
                 {
                     "routes": [],
@@ -136135,8 +136172,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 64,
-                    "end": 71
+                    "line": 65,
+                    "end": 72
                 },
                 {
                     "routes": [],
@@ -136155,8 +136192,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 74,
-                    "end": 102
+                    "line": 75,
+                    "end": 103
                 },
                 {
                     "routes": [],
@@ -136167,8 +136204,8 @@
                     "doc": "No trailing newline: the reference prints the JSON alternate and the RSD link on the same physical line.",
                     "shapes": [],
                     "params": [],
-                    "line": 105,
-                    "end": 108
+                    "line": 106,
+                    "end": 109
                 },
                 {
                     "routes": [],
@@ -136187,8 +136224,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 111,
-                    "end": 124
+                    "line": 112,
+                    "end": 125
                 },
                 {
                     "routes": [],
@@ -136199,8 +136236,8 @@
                     "doc": "The RSD link.",
                     "shapes": [],
                     "params": [],
-                    "line": 127,
-                    "end": 130
+                    "line": 128,
+                    "end": 131
                 },
                 {
                     "routes": [],
@@ -136219,8 +136256,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 133,
-                    "end": 143
+                    "line": 134,
+                    "end": 144
                 },
                 {
                     "routes": [],
@@ -136231,8 +136268,8 @@
                     "doc": "The site icon links: the 32 and 192 pixel icons, the Apple touch icon, and the tile image.",
                     "shapes": [],
                     "params": [],
-                    "line": 146,
-                    "end": 156
+                    "line": 147,
+                    "end": 157
                 }
             ]
         },
