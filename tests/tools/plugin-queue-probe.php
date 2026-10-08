@@ -25,10 +25,14 @@ $editor = (int) (get_users(['role' => 'administrator', 'number' => 1, 'fields' =
 $made = ['posts' => [], 'terms' => [], 'comments' => []];
 register_shutdown_function(static function () use (&$made): void {
     foreach ($made['comments'] as $id) {
-        wp_delete_comment($id, true);
+        if (is_int($id) && $id > 0) {
+            wp_delete_comment($id, true);
+        }
     }
     foreach ($made['posts'] as $id) {
-        wp_delete_post($id, true);
+        if (is_int($id) && $id > 0) {
+            wp_delete_post($id, true);
+        }
     }
     foreach ($made['terms'] as $id) {
         wp_delete_term($id, 'category');

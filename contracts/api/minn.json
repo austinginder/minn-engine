@@ -65295,7 +65295,7 @@
             "namespace": "Minn\\Login",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Login/LoginController.php",
-            "lines": 435,
+            "lines": 441,
             "doc": "Signing in. The page people see is /minn-admin/login: the form, the\nlost-password and reset flows, and logout all live there and link there.\n/wp-login.php stays as the address tooling knows (one-time login links,\nuptime probes, scripted sign-ins) and answers in place with the same\nshapes; a bare GET of it sends a browser to the clean page. Sessions\nand cookies validate on the engine AND on WordPress either way.",
             "implements": [],
             "extends": null,
@@ -65477,7 +65477,7 @@
                         }
                     ],
                     "line": 57,
-                    "end": 105
+                    "end": 111
                 },
                 {
                     "routes": [
@@ -65500,8 +65500,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 329,
-                    "end": 364
+                    "line": 335,
+                    "end": 370
                 },
                 {
                     "routes": [],
@@ -65520,8 +65520,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 108,
-                    "end": 116
+                    "line": 114,
+                    "end": 122
                 },
                 {
                     "routes": [],
@@ -65547,8 +65547,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 119,
-                    "end": 123
+                    "line": 125,
+                    "end": 129
                 },
                 {
                     "routes": [],
@@ -65567,8 +65567,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 126,
-                    "end": 148
+                    "line": 132,
+                    "end": 154
                 },
                 {
                     "routes": [],
@@ -65601,8 +65601,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 156,
-                    "end": 166
+                    "line": 162,
+                    "end": 172
                 },
                 {
                     "routes": [],
@@ -65621,8 +65621,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 173,
-                    "end": 187
+                    "line": 179,
+                    "end": 193
                 },
                 {
                     "routes": [],
@@ -65643,8 +65643,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 190,
-                    "end": 203
+                    "line": 196,
+                    "end": 209
                 },
                 {
                     "routes": [],
@@ -65663,8 +65663,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 205,
-                    "end": 231
+                    "line": 211,
+                    "end": 237
                 },
                 {
                     "routes": [],
@@ -65690,8 +65690,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 240,
-                    "end": 259
+                    "line": 246,
+                    "end": 265
                 },
                 {
                     "routes": [],
@@ -65717,8 +65717,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 265,
-                    "end": 273
+                    "line": 271,
+                    "end": 279
                 },
                 {
                     "routes": [],
@@ -65767,8 +65767,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 280,
-                    "end": 284
+                    "line": 286,
+                    "end": 290
                 },
                 {
                     "routes": [],
@@ -65787,8 +65787,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 292,
-                    "end": 323
+                    "line": 298,
+                    "end": 329
                 },
                 {
                     "routes": [],
@@ -65807,8 +65807,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 370,
-                    "end": 382
+                    "line": 376,
+                    "end": 388
                 },
                 {
                     "routes": [],
@@ -65827,8 +65827,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 389,
-                    "end": 412
+                    "line": 395,
+                    "end": 418
                 },
                 {
                     "routes": [],
@@ -65847,8 +65847,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 419,
-                    "end": 428
+                    "line": 425,
+                    "end": 434
                 },
                 {
                     "routes": [],
@@ -65881,8 +65881,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 431,
-                    "end": 438
+                    "line": 437,
+                    "end": 444
                 },
                 {
                     "routes": [],
@@ -65901,8 +65901,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 441,
-                    "end": 444
+                    "line": 447,
+                    "end": 450
                 },
                 {
                     "routes": [],
@@ -65928,8 +65928,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 447,
-                    "end": 452
+                    "line": 453,
+                    "end": 458
                 },
                 {
                     "routes": [],
@@ -65955,8 +65955,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 455,
-                    "end": 467
+                    "line": 461,
+                    "end": 473
                 }
             ]
         },
@@ -65966,7 +65966,7 @@
             "namespace": "Minn\\Login",
             "kind": "final class",
             "file": "public/minn/src/Minn/Login/LoginForm.php",
-            "lines": 213,
+            "lines": 231,
             "doc": "The sign-in page markup.",
             "implements": [],
             "extends": null,
@@ -66270,6 +66270,76 @@
                 },
                 {
                     "routes": [],
+                    "name": "confirmed",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "confirmed(string $siteName, string $message, string $homeUrl, array $parts = array ( )): string",
+                    "doc": "A personal data request confirmed from its mail: the page's word (the\nconfirmation message, which comes as markup) and the way to the site.",
+                    "shapes": [
+                        "@param array{title?: string, head?: string, bodyClass?: string, message?: string, errors?: string, messages?: string, footer?: string} $parts"
+                    ],
+                    "params": [
+                        {
+                            "name": "siteName",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "message",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "homeUrl",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "parts",
+                            "type": "array",
+                            "shape": "array{title?: string, head?: string, bodyClass?: string, message?: string, errors?: string, messages?: string, footer?: string}",
+                            "default": "array ( )",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 155,
+                    "end": 159
+                },
+                {
+                    "routes": [],
+                    "name": "failure",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "failure(string $siteName, string $message): string",
+                    "doc": "The plain page a refused link gets: the reason, nothing else to do.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "siteName",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "message",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 162,
+                    "end": 165
+                },
+                {
+                    "routes": [],
                     "name": "notice",
                     "static": true,
                     "visibility": "public",
@@ -66306,8 +66376,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 150,
-                    "end": 155
+                    "line": 168,
+                    "end": 173
                 },
                 {
                     "routes": [],
@@ -66342,8 +66412,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 163,
-                    "end": 167
+                    "line": 181,
+                    "end": 185
                 },
                 {
                     "routes": [],
@@ -66378,8 +66448,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 176,
-                    "end": 181
+                    "line": 194,
+                    "end": 199
                 },
                 {
                     "routes": [],
@@ -66435,8 +66505,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 184,
-                    "end": 194
+                    "line": 202,
+                    "end": 212
                 }
             ]
         },

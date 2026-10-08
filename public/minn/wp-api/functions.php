@@ -1168,3 +1168,15 @@ function print_emoji_styles()
 {
     _deprecated_function(__FUNCTION__, '6.4.0', 'wp_enqueue_emoji_styles');
 }
+
+/** A secret's fast hash, as keys are stored: BLAKE2b keyed for this purpose, in URL-safe base64 after "$generic$". */
+function wp_fast_hash(string $message): string
+{
+    return Minn\Auth\FastHash::hash($message);
+}
+
+/** Whether a secret matches a fast hash, or a phpass hash from before WordPress 6.8. */
+function wp_verify_fast_hash(string $message, string $hash): bool
+{
+    return str_starts_with($hash, '$generic$') ? Minn\Auth\FastHash::verify($message, $hash) : Minn\Auth\PortableHash::verify($message, $hash);
+}

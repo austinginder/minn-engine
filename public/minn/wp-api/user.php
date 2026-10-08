@@ -599,3 +599,172 @@ function wp_destroy_all_sessions()
 {
     WP_Session_Tokens::get_instance(get_current_user_id())->destroy_all();
 }
+
+/** The two kinds of personal data request: export and erase. */
+function _wp_privacy_action_request_types()
+{
+    return ['export_personal_data', 'remove_personal_data'];
+}
+
+/**
+ * Records a personal data request (probe user-requests): a user_request
+ * post for the address, the action and the data, pending or confirmed,
+ * owned by the user with that address. A bad address, an action other
+ * than export or erase, another status, or an unfinished request for the
+ * same address and action is refused.
+ */
+function wp_create_user_request($email_address = '', $action_name = '', $request_data = [], $status = 'pending')
+{
+    $email_address = sanitize_email($email_address);
+    $action_name = sanitize_key($action_name);
+    $refusal = match (true) {
+        !is_email($email_address) => ['invalid_email', __('Invalid email address.')],
+        !in_array($action_name, _wp_privacy_action_request_types(), true) => ['invalid_action', __('Invalid action name.')],
+        !in_array($status, ['pending', 'confirmed'], true) => ['invalid_status', __('Invalid request status.')],
+        (bool) get_posts(['post_type' => 'user_request', 'post_name__in' => [$action_name], 'title' => $email_address, 'post_status' => ['request-pending', 'request-confirmed'], 'fields' => 'ids', 'numberposts' => 1]) => ['duplicate_request', __('An incomplete personal data request for this email address already exists.')],
+        default => null,
+    };
+    if ($refusal !== null) {
+        return new WP_Error($refusal[0], $refusal[1]);
+    }
+    $user = get_user_by('email', $email_address);
+    return wp_insert_post(['post_author' => $user ? $user->ID : 0, 'post_name' => $action_name, 'post_title' => $email_address, 'post_content' => wp_json_encode($request_data), 'post_status' => 'request-' . $status, 'post_type' => 'user_request', 'post_date' => current_time('mysql', false), 'post_date_gmt' => current_time('mysql', true)], true);
+}
+
+/** A personal data request by its post, or false for anything else. */
+function wp_get_user_request($request_id)
+{
+    $post = get_post(absint($request_id));
+    return $post instanceof WP_Post && $post->post_type === 'user_request' ? new WP_User_Request($post) : false;
+}
+
+/** The action a request asks for, as its mails name it. */
+function wp_user_request_action_description($action_name)
+{
+    $description = match ($action_name) {
+        'export_personal_data' => __('Export Personal Data'),
+        'remove_personal_data' => __('Erase Personal Data'),
+        default => sprintf(__('Confirm the "%s" action'), $action_name),
+    };
+    return apply_filters('user_request_action_description', $description, $action_name);
+}
+
+/** A new confirmation key for a request: twenty letters and digits, stored hashed, the request pending again. */
+function wp_generate_user_request_key($request_id)
+{
+    $key = wp_generate_password(20, false);
+    wp_update_post(['ID' => $request_id, 'post_status' => 'request-pending', 'post_password' => wp_fast_hash($key)]);
+    return $key;
+}
+
+/** Whether a confirmation key opens a request: it must be pending (or failed), the key given and right, and no older than a day (user_request_key_expiration). */
+function wp_validate_user_request_key($request_id, $key)
+{
+    $request = wp_get_user_request($request_id);
+    if (!$request || !$request->confirm_key || !$request->modified_timestamp) {
+        return new WP_Error('invalid_request', __('Invalid personal data request.'));
+    }
+    if (!in_array($request->status, ['request-pending', 'request-failed'], true)) {
+        return new WP_Error('expired_request', __('This personal data request has expired.'));
+    }
+    if (empty($key)) {
+        return new WP_Error('missing_key', __('The confirmation key is missing from this personal data request.'));
+    }
+    $expires = $request->modified_timestamp + (int) apply_filters('user_request_key_expiration', DAY_IN_SECONDS);
+    if (!wp_verify_fast_hash($key, $request->confirm_key)) {
+        return new WP_Error('invalid_key', __('The confirmation key is invalid for this personal data request.'));
+    }
+    return time() > $expires ? new WP_Error('expired_key', __('The confirmation key has expired for this personal data request.')) : true;
+}
+
+/**
+ * Mails the requester the link that confirms a request, in their language
+ * (the site's for a visitor), with a fresh key; subject, content and
+ * headers each pass their filter. True when the mail went.
+ */
+function wp_send_user_request($request_id)
+{
+    $request_id = absint($request_id);
+    $request = wp_get_user_request($request_id);
+    if (!$request) {
+        return new WP_Error('invalid_request', __('Invalid personal data request.'));
+    }
+    $switched = !empty($request->user_id) ? switch_to_user_locale($request->user_id) : switch_to_locale(get_locale());
+    $data = ['request' => $request, 'email' => $request->email, 'description' => wp_user_request_action_description($request->action_name), 'confirm_url' => add_query_arg(['action' => 'confirmaction', 'request_id' => $request_id, 'confirm_key' => wp_generate_user_request_key($request_id)], wp_login_url()), 'sitename' => wp_specialchars_decode(get_option('blogname'), ENT_QUOTES), 'siteurl' => home_url()];
+    $subject = apply_filters('user_request_action_email_subject', sprintf(__('[%1$s] Confirm Action: %2$s'), $data['sitename'], $data['description']), $data['sitename'], $data);
+    /* translators: Do not translate DESCRIPTION, CONFIRM_URL, SITENAME, SITEURL: those are placeholders. */
+    $content = apply_filters('user_request_action_email_content', __("Howdy,\n\nA request has been made to perform the following action on your account:\n\n     ###DESCRIPTION###\n\nTo confirm this, please click on the following link:\n###CONFIRM_URL###\n\nYou can safely ignore and delete this email if you do not want to\ntake this action.\n\nRegards,\nAll at ###SITENAME###\n###SITEURL###"), $data);
+    $content = strtr($content, ['###DESCRIPTION###' => $data['description'], '###CONFIRM_URL###' => sanitize_url($data['confirm_url']), '###EMAIL###' => $data['email'], '###SITENAME###' => $data['sitename'], '###SITEURL###' => sanitize_url($data['siteurl'])]);
+    $headers = apply_filters('user_request_action_email_headers', '', $subject, $content, $request_id, $data);
+    $sent = wp_mail($data['email'], $subject, $content, $headers);
+    if ($switched) {
+        restore_previous_locale();
+    }
+    return $sent ? true : new WP_Error('privacy_email_error', __('Unable to send personal data export confirmation email.'));
+}
+
+/** A pending (or failed) request confirmed: its time noted, its status confirmed (on user_request_action_confirmed). */
+function _wp_privacy_account_request_confirmed($request_id)
+{
+    $request = wp_get_user_request($request_id);
+    if (!$request || !in_array($request->status, ['request-pending', 'request-failed'], true)) {
+        return;
+    }
+    update_post_meta($request_id, '_wp_user_request_confirmed_timestamp', time());
+    wp_update_post(['ID' => $request_id, 'post_status' => 'request-confirmed']);
+}
+
+/** What the confirmation page says: thanks for an export or erasure, a plain confirmation otherwise; filtered by user_request_action_confirmed_message. */
+function _wp_privacy_account_request_confirmed_message($request_id)
+{
+    $request = wp_get_user_request($request_id);
+    $message = '<p class="success">' . __('Action has been confirmed.') . '</p><p>' . __('The site administrator has been notified and will fulfill your request as soon as possible.') . '</p>';
+    if ($request && $request->action_name === 'export_personal_data') {
+        $message = '<p class="success">' . __('Thanks for confirming your export request.') . '</p><p>' . __('The site administrator has been notified. You will receive a link to download your export via email when they fulfill your request.') . '</p>';
+    } elseif ($request && $request->action_name === 'remove_personal_data') {
+        $message = '<p class="success">' . __('Thanks for confirming your erasure request.') . '</p><p>' . __('The site administrator has been notified. You will receive an email confirmation when they erase your data.') . '</p>';
+    }
+    return apply_filters('user_request_action_confirmed_message', $message, $request_id);
+}
+
+/** Tells the site owner, once, that a request was confirmed and where to handle it (on user_request_action_confirmed). */
+function _wp_privacy_send_request_confirmation_notification($request_id)
+{
+    $request = wp_get_user_request($request_id);
+    if (!$request instanceof WP_User_Request || $request->status !== 'request-confirmed' || get_post_meta($request_id, '_wp_admin_notified', true)) {
+        return;
+    }
+    $manage = ['export_personal_data' => admin_url('export-personal-data.php'), 'remove_personal_data' => admin_url('erase-personal-data.php')][$request->action_name] ?? '';
+    $data = ['request' => $request, 'user_email' => $request->email, 'description' => wp_user_request_action_description($request->action_name), 'manage_url' => $manage, 'sitename' => wp_specialchars_decode(get_option('blogname'), ENT_QUOTES), 'siteurl' => home_url(), 'admin_email' => apply_filters('user_request_confirmed_email_to', get_site_option('admin_email'), $request)];
+    $subject = apply_filters('user_request_confirmed_email_subject', sprintf(__('[%1$s] Action Confirmed: %2$s'), $data['sitename'], $data['description']), $data['sitename'], $data);
+    /* translators: Do not translate SITENAME, USER_EMAIL, DESCRIPTION, MANAGE_URL, SITEURL: those are placeholders. */
+    $content = apply_filters('user_request_confirmed_email_content', __("Howdy,\n\nA user data privacy request has been confirmed on ###SITENAME###:\n\nUser: ###USER_EMAIL###\nRequest: ###DESCRIPTION###\n\nYou can view and manage these data privacy requests here:\n\n###MANAGE_URL###\n\nRegards,\nAll at ###SITENAME###\n###SITEURL###"), $data);
+    $content = strtr($content, ['###SITENAME###' => $data['sitename'], '###USER_EMAIL###' => $data['user_email'], '###DESCRIPTION###' => $data['description'], '###MANAGE_URL###' => sanitize_url($data['manage_url']), '###SITEURL###' => sanitize_url($data['siteurl'])]);
+    $headers = apply_filters('user_request_confirmed_email_headers', '', $subject, $content, $request_id, $data);
+    if (wp_mail($data['admin_email'], $subject, $content, $headers)) {
+        update_post_meta($request_id, '_wp_admin_notified', true);
+    }
+}
+
+/**
+ * @internal the link a personal data request's mail carries
+ * (wp-login.php?action=confirmaction): [true, the confirmation message]
+ * once the key opens the request and plugins heard it confirmed
+ * (user_request_action_confirmed); [false, why] for a missing id or key, or
+ * a key that does not open it.
+ */
+function _minn_confirm_user_request(?string $request_id, ?string $confirm_key): array
+{
+    if ($request_id === null) {
+        return [false, __('Missing request ID.')];
+    }
+    if ($confirm_key === null) {
+        return [false, __('Missing confirm key.')];
+    }
+    $result = wp_validate_user_request_key((int) $request_id, sanitize_text_field(wp_unslash($confirm_key)));
+    if (is_wp_error($result)) {
+        return [false, $result->get_error_message()];
+    }
+    do_action('user_request_action_confirmed', (int) $request_id);
+    return [true, _wp_privacy_account_request_confirmed_message((int) $request_id)];
+}

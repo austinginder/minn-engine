@@ -24,7 +24,9 @@ $say = static function (string $label, $value) use (&$log): void {
 $made = ['posts' => [], 'users' => [], 'files' => []];
 register_shutdown_function(static function () use (&$made): void {
     foreach ($made['posts'] as $id) {
-        wp_delete_post($id, true);
+        if (is_int($id) && $id > 0) {
+            wp_delete_post($id, true);
+        }
     }
     require_once ABSPATH . 'wp-admin/includes/user.php';
     foreach ($made['users'] as $id) {

@@ -5043,3 +5043,43 @@ them; the engine used to reverse the order they were set.
 `is_admin` and `wp_is_block_theme` were pure delegates to the runtime, so
 the engine reads the runtime directly. The WordPress-call ratchet falls
 to 1057.
+
+## Personal data requests (2026-10-08)
+
+The family of functions privacy and form plugins call to file and confirm
+data requests (WPS Hide Login, All-In-One Security, Ninja Forms, Ultimate
+Member, CF7 Redirect) was missing (probe user-requests, 36 cases):
+
+- `wp_create_user_request` records a `user_request` post:
+  - the email in the title, the action in the slug, the data as JSON;
+  - pending or confirmed, owned by the user with that address.
+  - Refusals: a bad address (`invalid_email`); an action other than export
+    or erase (`invalid_action`, which 7.1 does refuse); another status
+    (`invalid_status`); an unfinished request for the same address and
+    action (`duplicate_request`).
+- `WP_User_Request` and `wp_get_user_request` read it back.
+- `wp_generate_user_request_key` stores a 20-character key with
+  `wp_fast_hash` (now in the facade, over `Auth\FastHash`).
+  `wp_validate_user_request_key` refuses, in the reference's order: an
+  invalid request, one no longer pending (`expired_request`), a missing
+  key, a wrong key, then a key older than `user_request_key_expiration`.
+- `wp_send_user_request` mails the confirmation link in the requester's
+  language. The subject, content and headers each pass their filter.
+- On `user_request_action_confirmed`:
+  - at 10, `_wp_privacy_account_request_confirmed` notes the time and
+    confirms the request;
+  - at 12, `_wp_privacy_send_request_confirmation_notification` tells the
+    site owner, once.
+- `_wp_privacy_account_request_confirmed_message` thanks the requester for
+  an export or an erasure (`user_request_action_confirmed_message`).
+- The mail's link (`wp-login.php?action=confirmaction`) works on Minn's
+  login screen:
+  - a good key confirms the request and says so;
+  - a missing id or key, or a key that does not open the request, gets an
+    error page with status 500, as the reference's `wp_die` gives (reader
+    suite, on both stacks).
+
+The capture's first run deleted post 1 from the shared database: an
+error-returning request id was cast to an integer (1) and cleaned up. Post 1,
+its comment and its old slugs were put back from the fixtures. The probes
+now delete only real ids.

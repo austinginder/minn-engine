@@ -80,6 +80,12 @@ final readonly class LoginController
                     default => '',
                 };
                 return Response::html(LoginForm::lostPassword($siteName, $this->actionUrl($request, 'lostpassword'), $error, '', $this->parts('lostpassword', 'Lost Password', $siteName, null, LoginNotices::plain($code, $error))));
+            case 'confirmaction':
+                // A personal data request's link: the facade checks the key and confirms it, as wp-login.php does.
+                [$confirmed, $message] = \_minn_confirm_user_request($request->has('request_id') ? (string) $request->query('request_id') : null, $request->has('confirm_key') ? (string) $request->query('confirm_key') : null);
+                return $confirmed
+                    ? Response::html(LoginForm::confirmed($siteName, $message, $this->permalinks->url('/'), $this->parts('confirmaction', 'User action confirmed.', $siteName)))
+                    : Response::html(LoginForm::failure($siteName, $message), 500);
             case 'checkemail':
                 return Response::html(LoginForm::checkEmail($siteName, $this->permalinks->url($this->base($request)), $this->parts('checkemail', 'Check your email', $siteName, null, $this->signInNotices($request, $this->checkEmail($request)))));
             case 'rp':

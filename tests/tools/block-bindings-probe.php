@@ -18,7 +18,9 @@ $say = static function (string $label, $value) use (&$log): void {
 $made = [];
 register_shutdown_function(static function () use (&$made): void {
     foreach ($made as $id) {
-        wp_delete_post($id, true);
+        if (is_int($id) && $id > 0) {
+            wp_delete_post($id, true);
+        }
     }
 });
 set_error_handler(static fn () => true, E_USER_NOTICE | E_USER_WARNING | E_USER_DEPRECATED);

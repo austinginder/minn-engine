@@ -136,6 +136,8 @@ add_action('init', 'wp_create_initial_comment_meta');
 add_action('init', 'wp_register_persisted_preferences_meta');
 add_action('init', 'register_block_core_footnotes_post_meta', 20);
 add_action('init', '_minn_register_block_bindings_sources');
+add_action('user_request_action_confirmed', '_wp_privacy_account_request_confirmed', 10);
+add_action('user_request_action_confirmed', '_wp_privacy_send_request_confirmation_notification', 12);
 
 // The kses tables as the globals plugin code reads directly.
 if (Minn\Runtime\Runtime::booted()) {

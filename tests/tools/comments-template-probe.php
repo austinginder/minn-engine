@@ -27,9 +27,13 @@ file_put_contents($tpl, "<?php\n");
 $ids = [];
 register_shutdown_function(static function () use (&$ids, $post, $tpl): void {
     foreach ($ids as $id) {
-        wp_delete_comment($id, true);
+        if (is_int($id) && $id > 0) {
+            wp_delete_comment($id, true);
+        }
     }
-    wp_delete_post($post, true);
+    if ($post > 0) {
+        wp_delete_post($post, true);
+    }
     @unlink($tpl);
 });
 $add = static function (string $label, int $hour, array $fields = []) use ($post, &$ids): int {

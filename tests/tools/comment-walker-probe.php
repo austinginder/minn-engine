@@ -27,10 +27,14 @@ foreach ($options as $option) {
 $made = ['post' => 0, 'comments' => []];
 register_shutdown_function(static function () use (&$made, $saved): void {
     foreach ($made['comments'] as $id) {
-        wp_delete_comment($id, true);
+        if (is_int($id) && $id > 0) {
+            wp_delete_comment($id, true);
+        }
     }
     if ($made['post']) {
-        wp_delete_post($made['post'], true);
+        if ($made['post'] > 0) {
+            wp_delete_post($made['post'], true);
+        }
     }
     foreach ($saved as $option => $value) {
         update_option($option, $value);

@@ -5,7 +5,8 @@ declare(strict_types=1);
 /**
  * Milestones 22 and 23: the front-end comment form's target, the
  * post-password cookie, private posts for signed-in readers, previews,
- * and a post whose slug is a number. Each check matches the reference on the same database
+ * a post whose slug is a number, and a personal data request's
+ * confirmation link. Each check matches the reference on the same database
  * (same request, same cookie) or exercises the cross-stack acceptance of
  * a cookie the other stack minted. Everything created here is removed.
  */
@@ -204,6 +205,18 @@ $kind = static fn (array $p): string => $p['status'] . (preg_match('/<body class
 foreach (['/1987/' => '200 the post', '/1987/2/' => '404 not the post', '/2001/' => '200 not the post'] as $path => $expected) {
     $e = $kind(page($ENGINE . $path));
     check($e === $expected && $e === $kind(page($REF . $path)), "a numeric slug: {$path} is {$expected}, as on the reference", $e);
+}
+
+// 6. A personal data request's confirmation link (wp-login.php?action=confirmaction), one request per stack.
+foreach (['engine' => $ENGINE, 'reference' => $REF] as $label => $base) {
+    [$id, $key] = explode(' ', wp("eval '\$id = wp_create_user_request(\"zz-reader-{$label}@example.com\", \"export_personal_data\"); echo \$id, \" \", wp_generate_user_request_key(\$id);'") . ' ');
+    $created[] = (int) $id;
+    $first = page("$base/wp-login.php?action=confirmaction&request_id={$id}&confirm_key={$key}");
+    $again = page("$base/wp-login.php?action=confirmaction&request_id={$id}&confirm_key={$key}");
+    $missing = page("$base/wp-login.php?action=confirmaction&request_id={$id}");
+    $status = wp("post get {$id} --field=post_status");
+    check($first['status'] === '200' && str_contains($first['body'], 'Thanks for confirming your export request.') && $status === 'request-confirmed', "confirmaction on the {$label}: the key confirms the request and the page says so", $first['status'] . ' ' . $status);
+    check($again['status'] === '500' && str_contains($again['body'], 'This personal data request has expired.') && $missing['status'] === '500' && str_contains($missing['body'], 'Missing confirm key.'), "confirmaction on the {$label}: a spent key and a missing one are refused", $again['status'] . ' ' . $missing['status']);
 }
 
 echo "\n{$pass} passed, {$fail} failed\n";

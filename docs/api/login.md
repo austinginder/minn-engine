@@ -4,8 +4,8 @@
 
 | Class | Kind | Lines | Summary |
 |---|---|---|---|
-| [`LoginController`](#logincontroller) | final readonly class | 435 | Signing in. The page people see is /minn-admin/login: the form, the |
-| [`LoginForm`](#loginform) | final class | 213 | The sign-in page markup. |
+| [`LoginController`](#logincontroller) | final readonly class | 441 | Signing in. The page people see is /minn-admin/login: the form, the |
+| [`LoginForm`](#loginform) | final class | 231 | The sign-in page markup. |
 | [`LoginHooks`](#loginhooks) | final readonly class | 99 | The sign-in as plugins see it, when they are loaded. The credentials go |
 | [`LoginNotices`](#loginnotices) | final readonly class | 113 | What a sign-in page tells the reader, held as the reference's pages hold |
 | [`ServeLogin`](#servelogin) | final class | 3 | Thrown by the wp-login.php shape file when plugin code require's it |
@@ -52,7 +52,7 @@ Route: `POST /wp-login.php (public)`
 
 Handles the posted form for each of those pages.
 
-Internals: `checkEmail()` (private, line 108), `signInNotices()` (private, line 119), `lostPassword()` (private, line 126), `retrieve()` (private, line 156), `openResetLink()` (private, line 173), `resetSession()` (private, line 190), `savePassword()` (private, line 205), `register()` (private, line 240), `validateReset()` (private, line 265), `parts()` (private, line 280), `tokenLogin()` (private, line 292), `safeRedirect()` (private, line 370), `logout()` (private, line 389), `action()` (private, line 419), `actionUrl()` (private, line 431), `base()` (private, line 441), `tooManyAttempts()` (private, line 447), `render()` (private, line 455)
+Internals: `checkEmail()` (private, line 114), `signInNotices()` (private, line 125), `lostPassword()` (private, line 132), `retrieve()` (private, line 162), `openResetLink()` (private, line 179), `resetSession()` (private, line 196), `savePassword()` (private, line 211), `register()` (private, line 246), `validateReset()` (private, line 271), `parts()` (private, line 286), `tokenLogin()` (private, line 298), `safeRedirect()` (private, line 376), `logout()` (private, line 395), `action()` (private, line 425), `actionUrl()` (private, line 437), `base()` (private, line 447), `tooManyAttempts()` (private, line 453), `render()` (private, line 461)
 
 
 ## LoginForm
@@ -102,6 +102,17 @@ The new-password form; the key rides in a hidden field as on the reference.
 
 - `@param array{title?: string, head?: string, bodyClass?: string, headerUrl?: string, headerText?: string, message?: string, form?: string, footer?: string} $parts`
 
+### static `confirmed(string $siteName, string $message, string $homeUrl, array $parts = array ( )): string`
+
+A personal data request confirmed from its mail: the page's word (the
+confirmation message, which comes as markup) and the way to the site.
+
+- `@param array{title?: string, head?: string, bodyClass?: string, message?: string, errors?: string, messages?: string, footer?: string} $parts`
+
+### static `failure(string $siteName, string $message): string`
+
+The plain page a refused link gets: the reason, nothing else to do.
+
 ### static `notice(string $siteName, string $title, string $message, string $loginUrl): string`
 
 A message with a link back to sign-in.
@@ -113,7 +124,7 @@ area) and the way back to sign in.
 
 - `@param array{title?: string, head?: string, bodyClass?: string, message?: string, errors?: string, messages?: string, footer?: string} $parts`
 
-Internals: `notices()` (private, line 176), `page()` (private, line 184)
+Internals: `notices()` (private, line 194), `page()` (private, line 202)
 
 
 ## LoginHooks

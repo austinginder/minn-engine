@@ -146,6 +146,24 @@ final class LoginForm
             . '</form>', $parts);
     }
 
+    /**
+     * A personal data request confirmed from its mail: the page's word (the
+     * confirmation message, which comes as markup) and the way to the site.
+     *
+     * @param array{title?: string, head?: string, bodyClass?: string, message?: string, errors?: string, messages?: string, footer?: string} $parts
+     */
+    public static function confirmed(string $siteName, string $message, string $homeUrl, array $parts = []): string
+    {
+        return self::page($siteName, 'User action confirmed.', '', '',
+            '<form><h1>' . Html::esc($siteName) . '</h1><div class="msg">' . $message . '</div><p class="hint"><a href="' . Html::attr($homeUrl) . '">&larr; Go to ' . Html::esc($siteName) . '</a></p></form>', $parts);
+    }
+
+    /** The plain page a refused link gets: the reason, nothing else to do. */
+    public static function failure(string $siteName, string $message): string
+    {
+        return self::page($siteName, 'Error', '', '', '<form><h1>' . Html::esc($siteName) . '</h1><p class="hint">' . Html::esc($message) . '</p></form>');
+    }
+
     /** A message with a link back to sign-in. */
     public static function notice(string $siteName, string $title, string $message, string $loginUrl): string
     {
