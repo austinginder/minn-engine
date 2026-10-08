@@ -4,138 +4,192 @@ declare(strict_types=1);
 
 namespace Minn\Blocks;
 
+use Minn\Runtime\Runtime;
+use Minn\Support\Kses;
+
 /**
- * The layout-support classes the reference adds at render time. Every
- * container carries is-layout-{type} and {block}-is-layout-{type}; flex and
- * grid layouts with rules of their own also carry a wp-container-* class
- * whose suffix names their generated stylesheet.
+ * The layout support's classes and rules (wp_render_layout_support_flag,
+ * probe block-supports), for core and plugin blocks alike:
  *
- * That suffix is a digest the engine cannot reproduce (its inputs are not
- * observable), so the engine derives its own deterministic suffix from the
- * layout attributes. Same shape, different value: recorded in the contract,
- * and the parity suites normalise it.
+ * - is-layout-{type} and {block}-is-layout-{type} for the layout the block
+ *   uses (its own over its type's default), with has-global-padding for a
+ *   constrained layout under a theme with root-padding-aware alignments;
+ * - is-vertical or is-horizontal, is-content-justification-* and is-nowrap
+ *   from the layout the block itself stores;
+ * - a wp-container-{block}-is-layout-* class when the layout writes CSS
+ *   (LayoutStyle), and wp-container-content-* for a child's own size or
+ *   place in its parent's layout.
+ *
+ * The rules go to the page's block-support styles through the private
+ * minn_block_support_rules action. A container class's suffix is a digest
+ * the engine cannot reproduce (its inputs are not observable), so the engine
+ * derives its own from the layout: same shape, different value, which the
+ * parity suites normalise.
  */
 final class Layout
 {
-    /** Blocks the reference always gives a numbered container, whether or not their layout carries rules. */
-    private const ALWAYS_CONTAINER = ['columns'];
-
-    /** Whether the active theme opts into root-padding-aware alignments (theme.json settings.useRootPaddingAwareAlignments). */
-
-    /** Whether the theme uses root padding-aware alignments. */
-
     /**
-     * The layout classes a block's wrapper carries.
+     * The layout classes a core block's wrapper carries, under its type's
+     * supports (data/blocks.json).
      *
      * @return list<string>
      */
-    public static function classes(string $blockSlug, array $attrs, string $defaultType = 'flow'): array
+    public static function classes(string $blockName, array $attrs): array
     {
-        $layout = (array) ($attrs['layout'] ?? []);
-        $type = (string) ($layout['type'] ?? $defaultType);
-        $type = $type === 'default' ? 'flow' : $type;
-        $classes = [];
+        return self::forBlock($blockName, $attrs, CoreBlocks::supports($blockName));
+    }
 
-        if ($type === 'flex') {
-            if (($layout['orientation'] ?? '') === 'vertical') {
-                $classes[] = 'is-vertical';
-            } elseif (($layout['orientation'] ?? '') === 'horizontal') {
-                $classes[] = 'is-horizontal';
-            }
-            if (!empty($layout['justifyContent'])) {
-                $classes[] = 'is-content-justification-' . Styles::slug((string) $layout['justifyContent']);
-            }
-            if (($layout['flexWrap'] ?? '') === 'nowrap') {
-                $classes[] = 'is-nowrap';
-            }
-        }
-        // Constrained containers carry has-global-padding only under a theme
-        // that opts into root-padding-aware alignments; observed on the reference
-        // with and without the setting.
-        if ($type === 'constrained' && RenderState::current()->rootPaddingAware()) {
-            $classes[] = 'has-global-padding';
-        }
-        $classes[] = 'is-layout-' . $type;
-        if (in_array($blockSlug, self::ALWAYS_CONTAINER, true) || self::hasRules($type, $layout, $attrs)) {
-            $container = 'wp-container-core-' . $blockSlug . '-is-layout-' . self::suffix($layout, $attrs);
+    /**
+     * The layout classes a block's wrapper carries, its container's rules
+     * recorded, under the theme's layout settings the render state holds
+     * (root-padding-aware alignments, block gaps).
+     *
+     * @param array<string, mixed> $supports the block type's supports (layout and its default, spacing)
+     * @return list<string>
+     */
+    public static function forBlock(string $blockName, array $attrs, array $supports): array
+    {
+        $state = RenderState::current();
+        $own = (array) ($attrs['layout'] ?? []);
+        $used = self::used($own, $supports);
+        $type = (string) ($used['type'] ?? 'default');
+        $slug = str_starts_with($blockName, 'core/') ? substr($blockName, 5) : str_replace('/', '-', $blockName);
+        $name = $type === 'default' ? 'flow' : Styles::slug($type);
+        $classes = [...self::typeClasses($type, $own), "is-layout-{$name}"];
+        $container = 'wp-container-' . str_replace('/', '-', $blockName) . '-is-layout-' . substr(md5(serialize([$used, $attrs['style']['spacing'] ?? null])), 0, 8);
+        $gap = $state->blockGap() && !self::skipsGap($supports) ? self::gapCss(self::sanitizeGap($attrs['style']['spacing']['blockGap'] ?? null)) : null;
+        $padding = self::paddingCss((array) ($attrs['style']['spacing']['padding'] ?? []));
+        $fallback = (string) ($supports['spacing']['blockGap']['__experimentalDefault'] ?? '0.5em');
+        $rules = LayoutStyle::rules(".{$container}", self::widths(LayoutStyle::containerValues($used)), $gap, $padding, $fallback);
+        if ($rules !== []) {
             $classes[] = $container;
-            RenderState::current()->recordContainer($container, self::declarations($type, $layout, $attrs));
+            self::record($rules);
         }
-        $classes[] = 'wp-block-' . $blockSlug . '-is-layout-' . $type;
+        $classes[] = "wp-block-{$slug}-is-layout-{$name}";
         return $classes;
     }
 
-    /** A container stylesheet exists only when the layout declares something the defaults do not. */
-    private static function hasRules(string $type, array $layout, array $attrs): bool
+    /**
+     * The class a child's own layout earns (its size or place in the parent's
+     * layout), its rules recorded; null when it writes none.
+     *
+     * @param array<string, mixed> $child the block's style.layout
+     * @param array<string, mixed> $parent the parent's layout
+     */
+    public static function childClass(array $child, array $parent): ?string
     {
-        if (isset($attrs['style']['spacing']['blockGap'])) {
-            return true;
+        $class = 'wp-container-content-' . substr(md5(serialize([$child, $parent])), 0, 8);
+        $rules = LayoutStyle::childRules(".{$class}", LayoutStyle::childValues($child), $parent);
+        if ($rules === []) {
+            return null;
         }
-        return match ($type) {
-            'flex' => isset($layout['flexWrap']) || isset($layout['justifyContent']) || isset($layout['orientation']) || isset($layout['verticalAlignment']),
-            'grid' => isset($layout['minimumColumnWidth']) || isset($layout['columnCount']),
-            'constrained' => isset($layout['justifyContent']) || isset($layout['contentSize']) || isset($layout['wideSize'])
-                || isset($attrs['style']['spacing']['padding']['left']) || isset($attrs['style']['spacing']['padding']['right']),
-            default => false,
-        };
+        self::record($rules);
+        return $class;
     }
 
-    /** The declarations behind a container class, in the reference's order. */
-    public static function declarations(string $type, array $layout, array $attrs): string
+    /**
+     * A block gap as the layout reads it: a value with a character that could
+     * end a declaration or open a function (\ ( & = } or a comment) is
+     * dropped, a side of one too; anything not a string is left as it is.
+     */
+    public static function sanitizeGap(mixed $gap): mixed
     {
-        $rules = [];
-        $gap = $attrs['style']['spacing']['blockGap'] ?? null;
         if (is_array($gap)) {
-            $gap = $gap['left'] ?? $gap['top'] ?? null;
+            return array_map(static fn ($side) => is_string($side) ? self::safeGap($side) : null, $gap);
         }
-        if ($type === 'flex') {
-            $vertical = ($layout['orientation'] ?? '') === 'vertical';
-            if ($vertical) {
-                $rules[] = 'flex-direction:column';
-            }
-            if (($layout['flexWrap'] ?? '') === 'nowrap') {
-                $rules[] = 'flex-wrap:nowrap';
-            }
-            if ($gap !== null) {
-                $rules[] = 'gap:' . Styles::value((string) $gap);
-            }
-            $justify = (string) ($layout['justifyContent'] ?? '');
-            $justifyMap = ['left' => 'flex-start', 'center' => 'center', 'right' => 'flex-end', 'space-between' => 'space-between', 'stretch' => 'stretch'];
-            $alignMap = ['top' => 'flex-start', 'center' => 'center', 'bottom' => 'flex-end', 'stretch' => 'stretch', 'space-between' => 'space-between'];
-            if ($vertical) {
-                $rules[] = 'align-items:' . ($justifyMap[$justify] ?? 'flex-start');
-                if (!empty($layout['verticalAlignment'])) {
-                    $rules[] = 'justify-content:' . ($alignMap[$layout['verticalAlignment']] ?? 'flex-start');
-                }
-            } else {
-                if ($justify !== '' && isset($justifyMap[$justify])) {
-                    $rules[] = 'justify-content:' . $justifyMap[$justify];
-                }
-                if (!empty($layout['verticalAlignment'])) {
-                    $rules[] = 'align-items:' . ($alignMap[$layout['verticalAlignment']] ?? 'center');
-                }
-            }
-        } elseif ($type === 'grid') {
-            if (!empty($layout['columnCount'])) {
-                $rules[] = 'grid-template-columns:repeat(' . (int) $layout['columnCount'] . ', minmax(0, 1fr))';
-            } else {
-                $rules[] = 'grid-template-columns:repeat(auto-fill, minmax(min(' . (Styles::value((string) ($layout['minimumColumnWidth'] ?? '12rem')) ?: '12rem') . ', 100%), 1fr))';
-                $rules[] = 'container-type:inline-size';
-            }
-            if ($gap !== null) {
-                $rules[] = 'gap:' . Styles::value((string) $gap);
-            }
-        } elseif ($gap !== null) {
-            // Flow and constrained layouts with their own gap: the reference writes the gap onto the
-            // children (every child, then every child after the first), never onto the container.
-            $value = Styles::value((string) $gap);
-            return "> *{margin-block-start:{$value};margin-block-end:0;}> * + *{margin-block-start:{$value};margin-block-end:0;}";
-        }
-        return implode(';', $rules) . ($rules === [] ? '' : ';');
+        return is_string($gap) ? self::safeGap($gap) : $gap;
     }
 
-    private static function suffix(array $layout, array $attrs): string
+    private static function safeGap(string $value): ?string
     {
-        return substr(md5(serialize([$layout, $attrs['style']['spacing']['blockGap'] ?? null])), 0, 8);
+        return preg_match('%[\\\\(&=}]|/\*%', $value) === 1 ? null : $value;
+    }
+
+    /**
+     * A gap with its presets as custom properties, a side at a time.
+     *
+     * @return string|array<string, string>|null
+     */
+    public static function gapCss(mixed $gap): string|array|null
+    {
+        if (is_array($gap)) {
+            return array_map(static fn ($side) => Styles::value((string) $side), array_filter($gap, 'is_scalar'));
+        }
+        return is_scalar($gap) ? Styles::value((string) $gap) : null;
+    }
+
+    /** @param array<string, mixed> $supports */
+    private static function skipsGap(array $supports): bool
+    {
+        $skip = $supports['spacing']['__experimentalSkipSerialization'] ?? false;
+        return is_array($skip) ? in_array('blockGap', $skip, true) : (bool) $skip;
+    }
+
+    /**
+     * The layout a block uses: its own over its type's default; the legacy
+     * inherit flag means constrained.
+     *
+     * @param array<string, mixed> $supports
+     * @return array<string, mixed>
+     */
+    private static function used(array $own, array $supports): array
+    {
+        $support = $supports['layout'] ?? $supports['__experimentalLayout'] ?? [];
+        $used = array_merge(is_array($support) ? (array) ($support['default'] ?? []) : [], $own);
+        if (!empty($used['inherit']) && !isset($used['type'])) {
+            $used['type'] = 'constrained';
+        }
+        return $used;
+    }
+
+    /** @return list<string> */
+    private static function typeClasses(string $type, array $own): array
+    {
+        $classes = [];
+        if ($type === 'constrained' && RenderState::current()->rootPaddingAware()) {
+            $classes[] = 'has-global-padding';
+        }
+        if ($type === 'flex' && in_array($own['orientation'] ?? null, ['vertical', 'horizontal'], true)) {
+            $classes[] = 'is-' . $own['orientation'];
+        }
+        if (($type === 'flex' || $type === 'constrained') && !empty($own['justifyContent'])) {
+            $classes[] = 'is-content-justification-' . Styles::slug((string) $own['justifyContent']);
+        }
+        if ($type === 'flex' && ($own['flexWrap'] ?? '') === 'nowrap') {
+            $classes[] = 'is-nowrap';
+        }
+        return $classes;
+    }
+
+    /**
+     * A block's side padding with its presets as custom properties.
+     *
+     * @return array<string, string>
+     */
+    public static function paddingCss(array $padding): array
+    {
+        return array_map(static fn ($side) => Styles::value((string) $side), array_filter($padding, 'is_scalar'));
+    }
+
+    /**
+     * A layout with its widths checked: the first declaration of each, through
+     * the style attribute filter, empty when that drops it.
+     *
+     * @return array<string, mixed>
+     */
+    public static function widths(array $layout): array
+    {
+        foreach (['contentSize', 'wideSize'] as $key) {
+            if (isset($layout[$key])) {
+                $layout[$key] = Kses::style(explode(';', (string) $layout[$key])[0]);
+            }
+        }
+        return $layout;
+    }
+
+    /** @param list<array<string, mixed>> $rules */
+    private static function record(array $rules): void
+    {
+        Runtime::hooks()->action('minn_block_support_rules', [$rules]);
     }
 }

@@ -43,24 +43,25 @@ use Minn\Theme\Theme;
 final class Renderer
 {
     /**
-     * Style variations that carry a numbered companion class at render.
-     * These come from the active theme's registered block styles; the set
-     * mirrors the reference's theme until the engine reads theme data.
+     * The numbered companion of a block style variation the block's class
+     * names (is-style-{name}--N), consuming the counter: a variation with
+     * styles of its own, the theme's or a registered style's (the facade
+     * answers the private minn_block_style_variation filter), whose CSS the
+     * facade prints once numbered (minn_block_style_variation_used). Null
+     * when none applies.
      */
-    private const NUMBERED_STYLES = [
-        'core/separator' => ['wide'],
-        'core/button' => ['outline'],
-        'core/post-terms' => ['post-terms-1'],
-    ];
-
-    /** The numbered companion of a registered style variation, consuming a counter; null when none applies. */
     public static function numberedStyle(string $blockName, string $className): ?string
     {
-        foreach (self::NUMBERED_STYLES[$blockName] ?? [] as $style) {
-            if (preg_match('/\bis-style-' . preg_quote($style, '/') . '\b/', $className)) {
+        preg_match_all('/(?<![\w-])is-style-([\w-]+)(?![\w-])/', $className, $styles);
+        foreach ($styles[1] as $style) {
+            if ($style === 'default' || preg_match('/--\d+$/', $style) === 1) {
+                continue;
+            }
+            $variation = Runtime::hooks()->filter('minn_block_style_variation', [null, $blockName, $style]);
+            if (is_array($variation) && $variation !== []) {
                 $instance = RenderState::current()->nextId();
-                RenderState::current()->recordVariation($blockName, $style, $instance);
-                return "is-style-{$style}--" . $instance;
+                Runtime::hooks()->action('minn_block_style_variation_used', [$blockName, $style, $instance, $variation]);
+                return "is-style-{$style}--{$instance}";
             }
         }
         return null;
@@ -70,6 +71,8 @@ final class Renderer
     private array $dynamic = [];
     /** @var array<string, callable> the engine's own renderers, kept when a plugin's callback takes a block over */
     private array $native = [];
+    /** Whether the next block renders without the block filters around it (renderNativeUnfiltered()). */
+    private bool $unfiltered = false;
     /** @var list<array<string, mixed>> context enclosing blocks provide to those inside */
     private array $provided = [];
     private Context $context;
@@ -120,6 +123,9 @@ final class Renderer
         $renderer = new self($images);
         $theme = Theme::active($site, $permalinks, ABSPATH . 'wp-content/themes');
         $renderer->state()->useRootPadding((bool) ($theme?->json()['settings']['useRootPaddingAwareAlignments'] ?? false));
+        // A block theme writes block gaps unless its settings switch them off with null.
+        $spacing = (array) ($theme?->json()['settings']['spacing'] ?? []);
+        $renderer->state()->useBlockGap($theme !== null && (!array_key_exists('blockGap', $spacing) || $spacing['blockGap'] !== null));
         $renderer->registerDynamic('core/latest-posts', (new LatestPosts($db, $site, $permalinks))->render(...));
         $renderer->registerDynamic('core/archives', (new Archives($db, $permalinks))->render(...));
         $renderer->registerDynamic('core/search', (new Search($permalinks))->render(...));
@@ -226,9 +232,26 @@ final class Renderer
         return $out;
     }
 
-    /** One block as HTML, with the filters around it. */
+    /**
+     * A core block as renderNative() renders it, without the block filters
+     * around this one block (its inner blocks keep theirs): its caller, the
+     * facade's WP_Block::render, applies them once.
+     */
+    public function renderNativeUnfiltered(Block $block): string
+    {
+        $this->unfiltered = true;
+        try {
+            return $this->renderNative($block);
+        } finally {
+            $this->unfiltered = false;
+        }
+    }
+
+    /** One block as HTML, with the filters around it (unless renderNativeUnfiltered() asked for this one without). */
     public function renderBlock(Block $block): string
     {
+        $unfiltered = $this->unfiltered;
+        $this->unfiltered = false;
         if ($block->name === null) {
             return $block->innerHtml;
         }
@@ -241,9 +264,10 @@ final class Renderer
             return '';
         }
         try {
-            $filtered = BlockFilters::active();
+            $filtered = !$unfiltered && BlockFilters::active();
+            $native = $this->rendersNatively((string) $block->name);
             if ($filtered) {
-                $before = BlockFilters::before($block);
+                $before = BlockFilters::before($block, $native ? BlockFilters::NATIVE_DATA_DONE : []);
                 if (is_string($before)) {
                     return $before;
                 }
@@ -258,7 +282,7 @@ final class Renderer
             if (!$filtered) {
                 return $html;
             }
-            $after = BlockFilters::after($block, $html);
+            $after = BlockFilters::after($block, $html, $native ? BlockFilters::NATIVE_RENDER_DONE : []);
             $lost = substr_count($html, '<img') - substr_count($after, '<img');
             if ($lost > 0) {
                 $this->state->refundImages($lost, str_contains($html, 'fetchpriority="high"') && !str_contains($after, 'fetchpriority="high"'));
@@ -293,31 +317,51 @@ final class Renderer
         }
     }
 
+    /**
+     * Whether the engine's own renderer answers for a block: a core block no
+     * plugin's callback took over. It applies the block supports it knows
+     * itself (layout, element styles); the facade's render_block filters do
+     * the rest, and all of them for any other block.
+     */
+    public function rendersNatively(string $name): bool
+    {
+        return str_starts_with($name, 'core/') && ($this->dynamic[$name] ?? null) === ($this->native[$name] ?? null);
+    }
+
+    /** A core block's wp-elements-N class, its rules recorded, when the engine renders it itself. */
+    private function elementsClass(Block $block): ?string
+    {
+        return $this->rendersNatively((string) $block->name) ? Elements::className($block->attrs, CoreBlocks::supports((string) $block->name)) : null;
+    }
+
     /** @param array<string, mixed> $bound the bound attributes' values, put into a static block's HTML */
     private function renderNamed(Block $block, array $bound = []): string
     {
         if (isset($this->dynamic[$block->name])) {
             // The element class is numbered before the block renders (the
             // reference counts it even for a block that renders nothing).
-            $outer = $this->state->setPendingElements(Elements::className($block->attrs, $block->name));
+            $outer = $this->state->setPendingElements($this->elementsClass($block));
+            // So is its style variation: the reference numbers it, and prints its CSS, even for a block that renders nothing.
+            $outerVariation = $this->state->setPendingVariation($this->rendersNatively((string) $block->name) ? self::numberedStyle((string) $block->name, $block->className()) : null);
             $out = ($this->dynamic[$block->name])($block, $this);
             $this->state->setPendingElements($outer);
+            $this->state->setPendingVariation($outerVariation);
             // A plugin's block gets the content image treatment the reference applies to the_content.
             return str_starts_with($block->name, 'core/') ? $out : $this->images->enrichPlugin($out);
         }
-        // A parent's element styles number before its children's.
-        $elements = Elements::className($block->attrs, $block->name);
+        // A parent's element styles and style variation number before its children's.
+        $elements = $this->elementsClass($block);
+        $numbered = $this->rendersNatively((string) $block->name) ? self::numberedStyle((string) $block->name, $block->className()) : null;
         $out = '';
         $inner = 0;
         foreach ($block->innerContent as $chunk) {
             $out .= $chunk ?? $this->renderBlock($block->innerBlocks[$inner++]);
         }
-        return $this->decorate($block, $bound === [] ? $out : Bindings::html($out, (string) $block->name, $bound), $elements);
+        return $this->decorate($block, $bound === [] ? $out : Bindings::html($out, (string) $block->name, $bound), $elements, $numbered);
     }
 
-    private function decorate(Block $block, string $html, ?string $elements): string
+    private function decorate(Block $block, string $html, ?string $elements, ?string $numbered): string
     {
-        $slug = str_starts_with($block->name, 'core/') ? substr($block->name, 5) : str_replace('/', '-', $block->name);
         if ($elements !== null) {
             $html = Html::addClasses($html, [$elements]);
         }
@@ -326,23 +370,15 @@ final class Renderer
             // Saved without their class (older content), these get it as they render.
             'core/heading' => Html::addClasses($html, ['wp-block-heading']),
             'core/list' => Html::addClasses($html, ['wp-block-list']),
-            'core/group' => Html::addClasses($html, Layout::classes('group', $block->attrs)),
-            'core/columns' => Html::addClasses($html, Layout::classes('columns', $block->attrs, 'flex')),
-            'core/column', 'core/quote', 'core/details' => Html::addClasses($html, ['is-layout-flow', "wp-block-{$slug}-is-layout-flow"]),
-            'core/buttons' => Html::addClasses($html, self::flexWithoutContainer('buttons', $block->attrs)),
+            'core/group', 'core/columns', 'core/column', 'core/quote', 'core/details', 'core/buttons' => Html::addClasses($html, Layout::classes($block->name, $block->attrs)),
             'core/gallery' => $this->images->enrichGallery(Html::addClasses($html, ['wp-block-gallery-' . self::gallery(), 'is-layout-flex', 'wp-block-gallery-is-layout-flex'])),
-            'core/cover' => Html::addClasses(
-                $this->images->enrich($html),
-                ['has-global-padding', 'is-layout-constrained', 'wp-block-cover-is-layout-constrained'],
-                'wp-block-cover__inner-container',
-            ),
+            'core/cover' => Html::addClasses($this->images->enrich($html), Layout::classes($block->name, $block->attrs), 'wp-block-cover__inner-container'),
             'core/image', 'core/media-text' => $this->images->enrich($html),
             // Third-party blocks pass through as stored; their images still
             // count toward the page's loading rules, as the reference's
             // content filter sees them.
             default => str_starts_with($block->name, 'core/') ? $html : $this->images->enrich($html),
         };
-        $numbered = self::numberedStyle($block->name, $block->className());
         return $numbered === null ? $html : Html::addClasses($html, [$numbered]);
     }
 
@@ -353,12 +389,4 @@ final class Renderer
         return $instance;
     }
 
-    /** Buttons are flex containers without a stylesheet of their own by default. */
-    private static function flexWithoutContainer(string $slug, array $attrs): array
-    {
-        return array_values(array_filter(
-            Layout::classes($slug, $attrs, 'flex'),
-            static fn (string $class) => !str_starts_with($class, 'wp-container-'),
-        ));
-    }
 }

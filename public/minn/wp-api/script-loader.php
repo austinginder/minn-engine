@@ -194,11 +194,11 @@ function _minn_print_styles($handles = false)
             $tag = "<link rel='stylesheet' id='" . esc_attr($handle) . "-css' href='" . esc_url($href) . "' media='" . esc_attr((string) $item['extra']) . "' />\n";
             echo apply_filters('style_loader_tag', $tag, $handle, $href, (string) $item['extra']);
         }
-        foreach ($item['inline']['after'] as $css) {
-            // A style inlined from a file names that file as its source, so a
-            // browser's devtools still point at the stylesheet on disk.
+        if ($item['inline']['after'] !== []) {
+            // One tag for the handle, its additions a line apart. A style inlined from a file names that
+            // file as its source, so a browser's devtools still point at the stylesheet on disk.
             $source = _minn_inline_style_sources()[$handle] ?? ($handle . '-inline-css');
-            echo '<style id="' . esc_attr($handle) . '-inline-css">' . "\n" . $css . (defined('WP_DEBUG') && WP_DEBUG ? "\n/*# sourceURL=" . esc_attr($source) . ' */' : '') . "\n</style>\n";
+            echo '<style id="' . esc_attr($handle) . '-inline-css">' . "\n" . implode("\n", $item['inline']['after']) . (defined('WP_DEBUG') && WP_DEBUG ? "\n/*# sourceURL=" . esc_attr($source) . ' */' : '') . "\n</style>\n";
         }
         $assets->markDone($handle);
     }

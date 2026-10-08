@@ -34,10 +34,16 @@ return [
     'a fresh state assumes the theme puts root padding in custom properties' => static function () {
         return (new RenderState())->rootPaddingAware() === true;
     },
-    'variations and galleries are recorded for the stylesheet' => static function () {
+    'galleries are recorded for the stylesheet' => static function () {
         $s = new RenderState();
-        $s->recordVariation('core/button', 'outline', 3);
         $s->recordGallery(2);
-        return $s->variations() === [['core/button', 'outline', 3]] && $s->galleries() === [2];
+        return $s->galleries() === [2];
+    },
+    'block gaps are render configuration, so a reset leaves them alone' => static function () {
+        $s = new RenderState();
+        $fresh = $s->blockGap();
+        $s->useBlockGap(false);
+        $s->reset();
+        return $fresh === true && $s->blockGap() === false;
     },
 ];

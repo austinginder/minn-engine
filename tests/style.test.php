@@ -176,8 +176,8 @@ $check('dead ends: public/minn/data/deadend-symbols.json is current', $deadEndsS
 $status = json_decode((string) shell_exec('php ' . escapeshellarg(dirname(__DIR__) . '/tests/tools/compat-status.php') . ' --check 2>/dev/null'), true);
 exec('php ' . escapeshellarg(dirname(__DIR__) . '/tests/tools/compat-status.php') . ' --check', $ignored, $statusStale);
 $check('compat status: contracts/api/compat-status.json is current', is_array($status) && $statusStale === 0, 'run php tests/tools/compat-status.php');
-$missingCeiling = ['functions' => 649, 'classes' => 79, 'methods' => 800];
-$verifiedFloor = ['functions' => 1571, 'classes' => 80, 'methods' => 763];
+$missingCeiling = ['functions' => 555, 'classes' => 78, 'methods' => 789];
+$verifiedFloor = ['functions' => 1640, 'classes' => 83, 'methods' => 842];
 foreach ($missingCeiling as $group => $ceiling) {
     $check("compat status: missing {$group} stay at or under {$ceiling}", is_array($status) && ($status[$group]['missing'] ?? PHP_INT_MAX) <= $ceiling, (string) ($status[$group]['missing'] ?? '?'));
     $check("compat status: verified {$group} stay at or over {$verifiedFloor[$group]}", is_array($status) && ($status[$group]['verified'] ?? 0) >= $verifiedFloor[$group], (string) ($status[$group]['verified'] ?? '?'));
@@ -350,7 +350,7 @@ $check('api docs: docs/api/ is current', is_array($docs) && ($docs['stale'] ?? t
 // or more (take the two or three the class calls; Services makes the rest
 // cheap). Lower a ceiling when a class loses its last offender.
 $undocumentedCeiling = 0;
-$boolParamCeiling = 81;
+$boolParamCeiling = 79;
 $wideConstructorCeiling = 24;
 $model = json_decode((string) file_get_contents(dirname(__DIR__) . '/contracts/api/minn.json'), true);
 $undocumented = 0;

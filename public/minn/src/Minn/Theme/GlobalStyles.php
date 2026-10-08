@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace Minn\Theme;
 
+use Minn\Blocks\CoreBlocks;
 use Minn\Blocks\RenderState;
 use Minn\Blocks\Styles;
+use Minn\Runtime\Runtime;
 
 /**
  * theme.json to CSS. Presets become custom properties on :root and their
@@ -96,7 +98,6 @@ final readonly class GlobalStyles
                 $out .= $this->blockStyles((string) $name, (array) $blockStyles);
             }
         }
-        $out .= $this->variationStyles($blocks);
         $out .= $this->containerStyles();
         return $out;
     }
@@ -120,7 +121,6 @@ final readonly class GlobalStyles
             foreach ($blocks as $name => $blockStyles) {
                 $out .= $this->blockStyles((string) $name, (array) $blockStyles);
             }
-            $out .= $this->variationStyles($blocks);
         }
         return $out . (in_array('presets', $types, true) ? $presets : '');
     }
@@ -141,7 +141,7 @@ final readonly class GlobalStyles
         $base = ':root { --wp--style--global--content-size: ' . ($layout['contentSize'] ?? '620px') . ';--wp--style--global--wide-size: ' . ($layout['wideSize'] ?? '1000px') . '; }';
         $base .= self::structuralRules((string) Styles::value((string) ($styles['spacing']['blockGap'] ?? '24px')), (bool) ($this->theme->json()['settings']['useRootPaddingAwareAlignments'] ?? false));
         $base .= $this->rootStyles($styles);
-        $base .= $this->elementStyles((array) ($styles['elements'] ?? []), '');
+        $base .= self::elementStyles((array) ($styles['elements'] ?? []), '');
         return ['variables' => $variables, 'base' => $base, 'presets' => StylePresets::presetClasses($presets), 'blocks' => (array) ($styles['blocks'] ?? [])];
     }
 
@@ -251,7 +251,7 @@ final readonly class GlobalStyles
         return 'body{' . implode(';', $declarations) . ';}';
     }
 
-    private function elementStyles(array $elements, string $scope): string
+    private static function elementStyles(array $elements, string $scope): string
     {
         $out = '';
         foreach (self::ELEMENT_SELECTORS as $element => $selector) {
@@ -278,7 +278,7 @@ final readonly class GlobalStyles
             }
             // An element's own CSS, under the element's selector (probe editor-styles).
             if (is_string($rules['css'] ?? null) && $rules['css'] !== '') {
-                $out .= self::scopedCss($rules['css'], $full);
+                $out .= CustomCss::scoped($rules['css'], $full);
             }
         }
         return $out;
@@ -309,7 +309,7 @@ final readonly class GlobalStyles
     {
         $slug = str_starts_with($name, 'core/') ? substr($name, 5) : str_replace('/', '-', $name);
         $selectors = self::selectorsOf($name);
-        $selector = is_string($selectors['root'] ?? null) ? $selectors['root'] : (self::BLOCK_SELECTORS[$name] ?? ".wp-block-{$slug}");
+        $selector = self::rootSelector($name);
         [$rootStyles, $features] = self::byFeature($blockStyles, $selectors);
         $out = '';
         $declarations = self::declarations($rootStyles, ['blockGap']);
@@ -326,18 +326,24 @@ final readonly class GlobalStyles
             }
         }
         if (isset($blockStyles['css'])) {
-            $out .= self::scopedCss((string) $blockStyles['css'], $selector);
+            $out .= CustomCss::scoped((string) $blockStyles['css'], $selector);
         }
-        $out .= $this->elementStyles((array) ($blockStyles['elements'] ?? []), $selector);
+        $out .= self::elementStyles((array) ($blockStyles['elements'] ?? []), $selector);
         return $out;
     }
 
-    /** A core block's selectors from its metadata (data/blocks.json). @return array<string, mixed> */
+    /** A block's root selector: its metadata's, the reference's own for a few core blocks, else .wp-block-{slug}. */
+    public static function rootSelector(string $name): string
+    {
+        $root = self::selectorsOf($name)['root'] ?? null;
+        $slug = str_starts_with($name, 'core/') ? substr($name, 5) : str_replace('/', '-', $name);
+        return is_string($root) ? $root : (self::BLOCK_SELECTORS[$name] ?? ".wp-block-{$slug}");
+    }
+
+    /** A core block's selectors from its metadata. @return array<string, mixed> */
     private static function selectorsOf(string $name): array
     {
-        static $blocks = null;
-        $blocks ??= (array) json_decode((string) file_get_contents(MINN_ENGINE_DIR . '/data/blocks.json'), true);
-        return (array) ($blocks[$name]['selectors'] ?? []);
+        return (array) (CoreBlocks::metadata($name)['selectors'] ?? []);
     }
 
     /**
@@ -387,101 +393,41 @@ final readonly class GlobalStyles
         return $styles;
     }
 
-    /** Custom "css" blocks in theme.json use "&" for the block selector. */
     /**
-     * A block's own CSS under its selector (probe editor-styles), split at
-     * each ampersand: a part with no rule applies to the block itself; a
-     * nested selector that starts with a space is scoped, every comma part
-     * after the block's selector; any other is appended to it; a pseudo
-     * element moves to the end, outside :where().
+     * A numbered style variation's CSS (probe block-supports): its element
+     * rules scoped by the numbered class alone, then the variation on the
+     * block's root selector (the class riding on the block's own class:
+     * .wp-block-button.is-style-outline--3 .wp-block-button__link), its own
+     * CSS, and the blocks styled inside it.
      */
-    private static function scopedCss(string $css, string $selector): string
+    public static function variationCss(string $name, string $style, int $instance, array $variation): string
     {
-        $out = '';
-        foreach (explode('&', $css) as $part) {
-            if (!str_contains($part, '{')) {
-                if (trim($part) !== '') {
-                    $out .= ':root :where(' . trim($selector) . '){' . trim($part) . '}';
-                }
-                continue;
+        $slug = str_starts_with($name, 'core/') ? substr($name, 5) : str_replace('/', '-', $name);
+        $root = self::BLOCK_SELECTORS[$name] ?? ".wp-block-{$slug}";
+        $class = ".is-style-{$style}--{$instance}";
+        $selector = str_contains($root, ".wp-block-{$slug}") ? preg_replace('/\.wp-block-' . preg_quote($slug, '/') . '(?![\w-])/', ".wp-block-{$slug}{$class}", $root, 1) : $root . $class;
+        $out = self::elementStyles((array) ($variation['elements'] ?? []), $class);
+        $declarations = self::declarations($variation, ['blockGap']);
+        $out .= ":root :where({$selector}){" . implode(';', $declarations) . ($declarations === [] ? '' : ';') . '}';
+        if (isset($variation['css'])) {
+            $out .= CustomCss::scoped((string) $variation['css'], $selector);
+        }
+        foreach ((array) ($variation['blocks'] ?? []) as $innerName => $innerStyles) {
+            $innerSlug = str_starts_with((string) $innerName, 'core/') ? substr((string) $innerName, 5) : str_replace('/', '-', (string) $innerName);
+            $innerSelector = "{$class} " . (self::BLOCK_SELECTORS[$innerName] ?? ".wp-block-{$innerSlug}");
+            $innerDeclarations = self::declarations((array) $innerStyles, ['blockGap']);
+            if ($innerDeclarations !== []) {
+                $out .= ":root :where({$innerSelector}){" . implode(';', $innerDeclarations) . ';}';
             }
-            $pieces = explode('{', str_replace('}', '', $part));
-            if (count($pieces) !== 2) {
-                continue;
-            }
-            [$nested, $body] = $pieces;
-            $pseudo = preg_match('/([>+~\s]*::[a-zA-Z-]+)/', $nested, $m) ? $m[1] : '';
-            $nested = $pseudo !== '' ? str_replace($pseudo, '', $nested) : $nested;
-            $scoped = str_starts_with($nested, ' ') ? self::scope($selector, $nested) : self::append($selector, $nested);
-            $out .= ":root :where({$scoped}){$pseudo}{" . trim($body) . '}';
+            $out .= self::elementStyles((array) ($innerStyles['elements'] ?? []), $innerSelector);
         }
         return $out;
     }
 
-    /** Every comma part of a selector list after every part of the scope. */
-    private static function scope(string $scope, string $selector): string
-    {
-        $scoped = [];
-        foreach (explode(',', $scope) as $outer) {
-            foreach (explode(',', $selector) as $inner) {
-                [$outer, $inner] = [trim($outer), trim($inner)];
-                $scoped[] = $outer === '' ? $inner : ($inner === '' ? $outer : "{$outer} {$inner}");
-            }
-        }
-        return implode(', ', $scoped);
-    }
-
-    /** Text appended to every comma part of a selector list. */
-    private static function append(string $selector, string $suffix): string
-    {
-        return implode(',', array_map(static fn (string $part): string => $part . $suffix, explode(',', $selector)));
-    }
-
-    /** Style variations the page rendered, one rule set per numbered instance. */
-    private function variationStyles(array $blocks): string
-    {
-        $out = '';
-        foreach (RenderState::current()->variations() as [$name, $style, $instance]) {
-            $slug = str_starts_with($name, 'core/') ? substr($name, 5) : str_replace('/', '-', $name);
-            $variation = (array) ($blocks[$name]['variations'][$style] ?? []);
-            // The variation class rides on the block's own class inside the block's root selector
-            // (.wp-block-button.is-style-outline--3 .wp-block-button__link); element rules inside
-            // the variation are scoped by the numbered class alone.
-            $root = self::BLOCK_SELECTORS[$name] ?? ".wp-block-{$slug}";
-            $class = ".is-style-{$style}--{$instance}";
-            $selector = str_contains($root, ".wp-block-{$slug}") ? preg_replace('/\.wp-block-' . preg_quote($slug, '/') . '(?![\w-])/', ".wp-block-{$slug}{$class}", $root, 1) : $root . $class;
-            $declarations = self::declarations($variation, ['blockGap']);
-            $out .= ":root :where({$selector}){" . implode(';', $declarations) . ($declarations === [] ? '' : ';') . '}';
-            if (isset($variation['css'])) {
-                $out .= self::scopedCss((string) $variation['css'], $selector);
-            }
-            $out .= $this->elementStyles((array) ($variation['elements'] ?? []), $class);
-            foreach ((array) ($variation['blocks'] ?? []) as $innerName => $innerStyles) {
-                $innerSlug = str_starts_with((string) $innerName, 'core/') ? substr((string) $innerName, 5) : str_replace('/', '-', (string) $innerName);
-                $innerSelector = "{$class} " . (self::BLOCK_SELECTORS[$innerName] ?? ".wp-block-{$innerSlug}");
-                $innerDeclarations = self::declarations((array) $innerStyles, ['blockGap']);
-                if ($innerDeclarations !== []) {
-                    $out .= ":root :where({$innerSelector}){" . implode(';', $innerDeclarations) . ';}';
-                }
-                $out .= $this->elementStyles((array) ($innerStyles['elements'] ?? []), $innerSelector);
-            }
-        }
-        return $out;
-    }
-
+    /** The page's block-support rules (layouts, element styles, and the rest), which the facade keeps in the style engine's block-supports store. */
     private function containerStyles(): string
     {
-        $out = implode('', RenderState::current()->elementRules());
-        foreach (RenderState::current()->containers() as $class => $declarations) {
-            if (str_starts_with($declarations, '>')) {
-                // A flow or constrained gap is a pair of child rules, not a declaration on the container.
-                foreach (array_filter(explode('}', $declarations)) as $rule) {
-                    $out .= ".{$class} {$rule}}";
-                }
-                continue;
-            }
-            $out .= ".{$class}{{$declarations}}";
-        }
+        $out = (string) Runtime::hooks()->filter('minn_block_supports_css', ['']);
         foreach (RenderState::current()->galleries() as $instance) {
             $out .= ".wp-block-gallery.wp-block-gallery-{$instance}{--wp--style--unstable-gallery-gap:var( --wp--style--gallery-gap-default, var( --gallery-block--gutter-size, var( --wp--style--block-gap, 0.5em ) ) );}";
         }
@@ -534,6 +480,10 @@ final readonly class GlobalStyles
         }
         foreach (['margin', 'padding'] as $property) {
             $box = $styles['spacing'][$property] ?? null;
+            if (is_scalar($box) && (string) $box !== '') {
+                $out[] = "{$property}: " . $value($box);
+                continue;
+            }
             if (!is_array($box)) {
                 continue;
             }

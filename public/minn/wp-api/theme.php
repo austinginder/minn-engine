@@ -310,10 +310,11 @@ function wp_get_global_settings($path = [], $context = [])
 /** @internal the active theme's styles data, resolved once per request */
 function _minn_theme_styles(): Minn\Theme\ThemeStyles
 {
-    static $cached = null;
-    if ($cached === null) {
-        $runtime = Runtime::current();
+    $runtime = Runtime::current();
+    $cached = $runtime->get('minn_theme_styles');
+    if (!$cached instanceof Minn\Theme\ThemeStyles) {
         $cached = Minn\Theme\ThemeStyles::forSite(new Minn\Content\Site($runtime->db), Minn\Front\Permalinks::fromDb($runtime->db), ABSPATH . 'wp-content/themes');
+        $runtime->set('minn_theme_styles', $cached);
     }
     return $cached;
 }
@@ -348,19 +349,30 @@ function wp_get_global_styles($path = [], $context = [])
 /** @internal the merged styles node for the active theme, or [] without one */
 function _minn_global_styles(): array
 {
-    static $cached = null;
-    if ($cached !== null) {
+    $runtime = Runtime::current();
+    $cached = $runtime->get('minn_global_styles');
+    if (is_array($cached)) {
         return $cached;
     }
-    $runtime = Runtime::current();
     $site = new Minn\Content\Site($runtime->db);
     $permalinks = Minn\Front\Permalinks::fromDb($runtime->db);
     $theme = Minn\Theme\Theme::forStyles($site, $permalinks, ABSPATH . 'wp-content/themes');
-    if ($theme === null) {
-        return $cached = [];
+    $styles = [];
+    if ($theme !== null) {
+        $templates = new Minn\Theme\Templates($runtime->db, new Minn\Content\Posts($runtime->db), $theme);
+        $styles = (new Minn\Theme\GlobalStyles($theme, $templates->userStyles()))->resolvedStyles();
     }
-    $templates = new Minn\Theme\Templates($runtime->db, new Minn\Content\Posts($runtime->db), $theme);
-    return $cached = (new Minn\Theme\GlobalStyles($theme, $templates->userStyles()))->resolvedStyles();
+    $runtime->set('minn_global_styles', $styles);
+    return $styles;
+}
+
+/** Forgets the merged theme.json data for the request, so the next read builds it again (with the block styles registered since). */
+function wp_clean_theme_json_cache()
+{
+    Runtime::current()->set('minn_theme_styles', null);
+    Runtime::current()->set('minn_global_styles', null);
+    Runtime::current()->set('minn_global_styles_custom_css', null);
+    WP_Theme_JSON_Resolver::clean_cached_data();
 }
 
 /** The global stylesheet by type (variables, styles, presets; all three when none is named), as Theme\GlobalStyles writes it. */

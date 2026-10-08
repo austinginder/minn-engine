@@ -10,11 +10,12 @@ the block-theme reader, templates, global styles and the page renderer
 | [`ClassicContent`](#classiccontent) | final class | 39 | What a classic theme's the_content() prints: the engine's block pipeline |
 | [`ClassicRenderer`](#classicrenderer) | final readonly class | 134 | A whole page from the active classic theme: the reference's PHP template |
 | [`ClassicTheme`](#classictheme) | final readonly class | 31 | The active classic (PHP-template) theme on disk. A theme is classic when |
+| [`CustomCss`](#customcss) | final class | 69 | Custom CSS as theme.json and blocks write it (a styles node's "css", a |
 | [`EmbedRenderer`](#embedrenderer) | final readonly class | 33 | A post's embed page (its /embed/ address, or ?embed= on it), the card |
 | [`FeedHeaders`](#feedheaders) | final class | 50 | The headers a feed is sent with, as the reference's send_headers sends |
 | [`Folder`](#folder) | final readonly class | 77 | A theme folder read from disk: its style.css headers, which folder its templates come from, its screenshot, whether it is a block theme. |
 | [`FrontLifecycle`](#frontlifecycle) | final class | 103 | WordPress's front-end request steps around the main query, as WP::main |
-| [`GlobalStyles`](#globalstyles) | final readonly class | 571 | theme.json to CSS. Presets become custom properties on :root and their |
+| [`GlobalStyles`](#globalstyles) | final readonly class | 519 | theme.json to CSS. Presets become custom properties on :root and their |
 | [`HeadLinks`](#headlinks) | final readonly class | 133 | The links the reference puts in every head: the site and comments |
 | [`Hierarchy`](#hierarchy) | final class | 146 | The classic template hierarchy: the candidate file names each template |
 | [`MainQueryBridge`](#mainquerybridge) | final readonly class | 125 | Stands the main query for a themed page and runs the front-end steps |
@@ -175,6 +176,36 @@ Used by: `Minn\Engine`, `Minn\Theme\ClassicRenderer`
 ### static `active(Minn\Content\Site $site, string $themesDir): ?self`
 
 The active classic theme, or null under a block theme.
+
+
+## CustomCss
+
+`final class Minn\Theme\CustomCss` · `public/minn/src/Minn/Theme/CustomCss.php`
+
+Custom CSS as theme.json and blocks write it (a styles node's "css", a
+block's style.css): nested rules under "&" unfolded beneath the selector
+they belong to, each wrapped in :root :where() as the reference prints
+them. Pure: CSS and selectors in, rules out.
+
+Used by: `Minn\Theme\GlobalStyles`
+
+### static `scoped(string $css, string $selector): string`
+
+A block's own CSS under its selector (probe editor-styles; a block's
+style.css too, probe block-supports), split at each ampersand: a part
+with no rule applies to the block itself; a nested selector that starts
+with a space is scoped, every comma part after the block's selector;
+any other is appended to it; a pseudo element moves to the end, outside
+:where().
+
+### static `ofStyles(array $styles): string`
+
+The styles' own CSS (WP_Theme_JSON::get_custom_css): the top-level
+css, then each block's under its root selector.
+
+- `@param array<string, mixed> $styles`
+
+Internals: `scope()` (private, line 47), `append()` (private, line 60)
 
 
 ## EmbedRenderer
@@ -338,7 +369,7 @@ attaches them to the block's own stylesheet; these core blocks have
 none, so their styles never reach a page. A block from outside core
 has no such stylesheet to wait for, so its styles always print.
 
-Used by: `Minn\Admin\RenderController`, `Minn\Theme\ClassicRenderer`, `Minn\Theme\PageRenderer`
+Used by: `Minn\Admin\RenderController`, `Minn\Theme\ClassicRenderer`, `Minn\Theme\CustomCss`, `Minn\Theme\PageRenderer`
 
 ```php
 __construct(Minn\Theme\Theme $theme, ?array $user = NULL)
@@ -376,7 +407,19 @@ file:./ resolved against the theme that carries the file and the
 format named from the extension. Families without files print
 nothing.
 
-Internals: `parts()` (private, line 129), `fontUrl()` (private, line 186), `structuralRules()` (private, line 204), `gapRules()` (private, line 224), `rootStyles()` (private, line 240), `elementStyles()` (private, line 254), `blockCustomProperties()` (private, line 288), `blockStyles()` (private, line 308), `selectorsOf()` (private, line 336), `byFeature()` (private, line 351), `withoutEmpty()` (private, line 378), `scopedCss()` (private, line 398), `scope()` (private, line 422), `append()` (private, line 435), `variationStyles()` (private, line 441), `containerStyles()` (private, line 472), `declarations()` (private, line 497), `ordered()` (private, line 570)
+### static `rootSelector(string $name): string`
+
+A block's root selector: its metadata's, the reference's own for a few core blocks, else .wp-block-{slug}.
+
+### static `variationCss(string $name, string $style, int $instance, array $variation): string`
+
+A numbered style variation's CSS (probe block-supports): its element
+rules scoped by the numbered class alone, then the variation on the
+block's root selector (the class riding on the block's own class:
+.wp-block-button.is-style-outline--3 .wp-block-button__link), its own
+CSS, and the blocks styled inside it.
+
+Internals: `parts()` (private, line 129), `fontUrl()` (private, line 186), `structuralRules()` (private, line 204), `gapRules()` (private, line 224), `rootStyles()` (private, line 240), `elementStyles()` (private, line 254), `blockCustomProperties()` (private, line 288), `blockStyles()` (private, line 308), `selectorsOf()` (private, line 344), `byFeature()` (private, line 357), `withoutEmpty()` (private, line 384), `containerStyles()` (private, line 428), `declarations()` (private, line 443), `ordered()` (private, line 520)
 
 
 ## HeadLinks

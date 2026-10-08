@@ -54,10 +54,18 @@ preg_match_all('/wp-container-core-[a-z-]+-is-layout-[0-9a-f]{8}/', $engineHome,
 $unstyled = array_values(array_filter(array_unique($m[0]), static fn (string $class) => !str_contains($engineCss, ".$class{")));
 $check($unstyled === [], 'every rendered container class has a stylesheet rule', implode(', ', $unstyled));
 
-preg_match_all('/is-style-[a-z0-9-]+--\d+/', $fetch("$ENGINE/zz-block-battery-layout/"), $m);
-$variationCss = $globalStyles($fetch("$ENGINE/zz-block-battery-layout/"));
+// Numbered style variations print on their own handle, as on the reference: one tag, its rules for every number the page used.
+$battery = $fetch("$ENGINE/zz-block-battery-layout/");
+preg_match_all('/is-style-[a-z0-9-]+--\d+/', $battery, $m);
+preg_match_all('/<style id="block-style-variation-styles-inline-css"[^>]*>(.*?)<\/style>/s', $battery, $tags);
+$variationCss = implode('', $tags[1]);
 $unstyled = array_values(array_filter(array_unique($m[0]), static fn (string $class) => !str_contains($variationCss, ".$class")));
 $check($unstyled === [], 'every numbered style variation has a rule', implode(', ', $unstyled));
+$check(count($tags[1]) === 1, 'the variations print in one style tag', (string) count($tags[1]));
+$referenceBattery = $fetch("$REF/zz-block-battery-layout/");
+preg_match_all('/\.is-style-[a-z0-9-]+--\d+/', $referenceBattery, $referenceNumbered);
+preg_match_all('/\.is-style-[a-z0-9-]+--\d+/', $battery, $engineNumbered);
+$check(array_values(array_unique($engineNumbered[0])) === array_values(array_unique($referenceNumbered[0])), 'the page numbers the variations the reference does', implode(' ', array_unique($engineNumbered[0])) . ' vs ' . implode(' ', array_unique($referenceNumbered[0])));
 
 [$h, $body] = minn_test_fetch("$ENGINE/minn/assets/blocks.css");
 $check($h['status'] === 200 && str_contains($body, '.wp-block-columns'), 'the engine block stylesheet is served');

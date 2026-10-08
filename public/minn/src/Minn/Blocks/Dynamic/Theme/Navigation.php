@@ -112,7 +112,7 @@ final readonly class Navigation
             $justify !== '' ? 'items-justified-' . Styles::slug($justify) : null,
             'wp-block-navigation',
             ...$family,
-            ...array_filter(Layout::classes('navigation', $block->attrs, 'flex'), static fn (string $c) => $c !== 'is-vertical'),
+            ...array_filter(Layout::classes('core/navigation', $block->attrs), static fn (string $c) => $c !== 'is-vertical'),
         ]));
         $nav = '<nav ' . $style . 'class="' . Html::attr(implode(' ', $navClasses)) . '"';
         if (!$responsive) {

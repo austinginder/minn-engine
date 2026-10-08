@@ -503,12 +503,28 @@ final class Kses
         return self::css($style);
     }
 
+    /** The CSS functions a value may use (transforms, shapes and the math ones), whatever they hold. */
+    private const CSS_FUNCTIONS = '/\b(?:var|calc|min|max|minmax|clamp|repeat|rotate(?:X|Y|Z|3d)?|translate(?:X|Y|Z|3d)?|scale(?:X|Y|Z|3d)?|skew(?:X|Y)?|matrix(?:3d)?|perspective|inset|circle|ellipse|polygon|path)(\((?:[^()]|(?1))*\))/';
+
+    /** The gradients a background may use. */
+    private const CSS_GRADIENTS = '/\b(?:repeating-)?(?:linear|radial|conic)-gradient(\((?:[^()]|(?1))*\))/';
+
+    /** The properties that may use a url(). */
+    private const CSS_URL_PROPERTIES = ['background', 'background-image', 'cursor', 'filter', 'mask', 'clip-path'];
+
+    /** The properties that may use a gradient. */
+    private const CSS_GRADIENT_PROPERTIES = ['background', 'background-image'];
+
     /**
      * The style attribute's declarations kept as written, as the reference
-     * keeps them: a listed property (the list through safe_style_css when
-     * the runtime hooks it; --* lets custom properties through), a value
-     * with no expression, behavior, script, data: or escape, url() only on
-     * image properties; each asked through safecss_filter_attr_allow_css.
+     * keeps them (probes kses, block-supports): a listed property, named
+     * exactly (the list through safe_style_css when the runtime hooks it;
+     * --* lets custom properties through), or a bare value; and nothing in
+     * the value that could end the declaration or open a function (\ ( & =
+     * } or a comment) once the functions it may use are taken out, with a
+     * background's gradients and the url()s of allowed schemes a background,
+     * a cursor, a filter, a mask or a clip path may use. Each is asked
+     * through safecss_filter_attr_allow_css.
      */
     private static function css(string $style): string
     {
@@ -516,16 +532,11 @@ final class Kses
         $kept = [];
         foreach (explode(';', $style) as $declaration) {
             $declaration = trim($declaration);
-            if (!str_contains($declaration, ':')) {
+            if ($declaration === '') {
                 continue;
             }
-            [$property, $value] = array_map('trim', explode(':', $declaration, 2));
-            $name = strtolower($property);
-            $custom = preg_match('/^--[a-z0-9_-]+$/', $name) === 1 && in_array('--*', $allowed, true);
-            if ((!$custom && !in_array($name, $allowed, true)) || $value === '') {
-                continue;
-            }
-            $allow = self::safeValue($name, $value);
+            $test = self::cssTestString($declaration, $allowed);
+            $allow = $test !== null && preg_match('%[\\\\(&=}]|/\*%', $test) !== 1;
             if (self::$styleHooks !== null) {
                 $allow = (self::$styleHooks[1])($allow, $declaration);
             }
@@ -536,17 +547,38 @@ final class Kses
         return implode(';', $kept);
     }
 
-    /** No expression, behavior, script, data: or escape anywhere; url() only on image properties, without parentheses around it. */
-    private static function safeValue(string $property, string $value): bool
+    /**
+     * What of a declaration must hold no unsafe character: its value (or the
+     * bare value) without the functions it may use; null for a property not
+     * listed, or a url() with a scheme not allowed (on a property that cannot
+     * use one, its parenthesis fails the test).
+     *
+     * @param list<string> $allowed
+     */
+    private static function cssTestString(string $declaration, array $allowed): ?string
     {
-        if (preg_match('/expression|behavior|javascript|vbscript|@import|data:|\\\\|[<>{}]/i', $value)) {
-            return false;
+        if (!str_contains($declaration, ':')) {
+            return (string) preg_replace(self::CSS_FUNCTIONS, '', $declaration);
         }
-        if (!preg_match('/url\s*\(/i', $value)) {
-            return true;
+        [$property, $value] = array_map('trim', explode(':', $declaration, 2));
+        $custom = preg_match('/^--[a-zA-Z0-9_-]+$/', $property) === 1 && in_array('--*', $allowed, true);
+        if (!$custom && !in_array($property, $allowed, true)) {
+            return null;
         }
-        $image = in_array($property, ['background', 'background-image', 'list-style', 'list-style-image'], true);
-        return $image && preg_match('/^[^()]*url\s*\(\s*["\']?[^"\')]*["\']?\s*\)[^()]*$/i', $value) === 1;
+        if (in_array($property, self::CSS_GRADIENT_PROPERTIES, true)) {
+            $value = (string) preg_replace(self::CSS_GRADIENTS, '', $value);
+        }
+        if (in_array($property, self::CSS_URL_PROPERTIES, true)) {
+            $bad = false;
+            $value = (string) preg_replace_callback('/\burl\(\s*([\'"]?)(.*?)\1\s*\)/', static function (array $url) use (&$bad): string {
+                $bad = $bad || trim($url[2]) === '' || self::attributeUrl(trim($url[2])) !== trim($url[2]);
+                return '';
+            }, $value);
+            if ($bad) {
+                return null;
+            }
+        }
+        return (string) preg_replace(self::CSS_FUNCTIONS, '', $value);
     }
 
     /**

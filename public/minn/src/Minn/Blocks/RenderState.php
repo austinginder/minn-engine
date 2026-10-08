@@ -18,10 +18,6 @@ final class RenderState
     private int $counter = 0;
     private int $images = 0;
     private bool $priorityClaimed = false;
-    /** @var array<string, string> container class => declarations */
-    private array $containers = [];
-    /** @var list<array{0: string, 1: string, 2: int}> block name, style, instance number */
-    private array $variations = [];
     /** @var array<string, true> */
     private array $blocks = [];
     /** @var list<int> */
@@ -34,14 +30,16 @@ final class RenderState
     public const MAX_DEPTH = 64;
     /** Whether the theme's layout puts root padding in custom properties; render configuration, so reset() leaves it. */
     private bool $rootPaddingAware = true;
+    /** Whether the theme writes block gaps (settings.spacing.blockGap); render configuration too. */
+    private bool $blockGap = true;
     /** The state for code that renders with no request behind it: the command line and the unit suite. */
     private static ?self $offRequest = null;
     /** the element class claimed for the dynamic block being rendered, until its wrapper takes it */
     private ?string $pendingElements = null;
+    /** the numbered style variation class claimed for the dynamic block being rendered, until its wrapper takes it */
+    private ?string $pendingVariation = null;
     /** @var array<string, int> navigation labels used so far, for the reference's de-duplicated aria-labels */
     private array $labels = [];
-    /** @var list<string> element-style rules, in render order */
-    private array $elementRules = [];
 
     /** @var list<list<string>> the images of each content the_content is filtering, innermost last */
     private array $contentImages = [];
@@ -77,6 +75,18 @@ final class RenderState
     public function useRootPadding(bool $aware): void
     {
         $this->rootPaddingAware = $aware;
+    }
+
+    /** Whether the theme writes block gaps, which decides whether a layout's gap makes CSS. */
+    public function blockGap(): bool
+    {
+        return $this->blockGap;
+    }
+
+    /** Records whether the active theme's spacing settings write block gaps. */
+    public function useBlockGap(bool $writes): void
+    {
+        $this->blockGap = $writes;
     }
 
     /** The next per-request counter value. */
@@ -171,22 +181,6 @@ final class RenderState
         $this->priorityClaimed = false;
     }
 
-    /** A container stylesheet this page needs: the class and its declarations. */
-    public function recordContainer(string $class, string $declarations): void
-    {
-        $this->containers[$class] = $declarations;
-    }
-
-    /**
-     * The layout containers rendering discovered.
-     *
-     * @return array<string, string>
-     */
-    public function containers(): array
-    {
-        return $this->containers;
-    }
-
     /** Every block name the page rendered; the stylesheet prints block styles for these only. */
     public function recordBlock(string $blockName): void
     {
@@ -201,22 +195,6 @@ final class RenderState
     public function blocks(): array
     {
         return $this->blocks;
-    }
-
-    /** Notes a style variation instance for the stylesheet. */
-    public function recordVariation(string $blockName, string $style, int $instance): void
-    {
-        $this->variations[] = [$blockName, $style, $instance];
-    }
-
-    /**
-     * The style variations rendering met.
-     *
-     * @return list<array{0: string, 1: string, 2: int}>
-     */
-    public function variations(): array
-    {
-        return $this->variations;
     }
 
     /** The next wp-elements-N class; the reference numbers these apart from the shared counter. */
@@ -311,24 +289,26 @@ final class RenderState
     {
         $class = $this->pendingElements;
         $this->pendingElements = null;
+        $this->pendingVariation = null;
         return $class;
     }
 
-    /** Adds a per-elements CSS rule. */
-    public function recordElementRule(string $css): void
+    /** Holds the numbered style variation class a dynamic block claimed before rendering; returns the one it replaces. */
+    public function setPendingVariation(?string $class): ?string
     {
-        $this->elementRules[] = $css;
+        $outer = $this->pendingVariation;
+        $this->pendingVariation = $class;
+        return $outer;
     }
 
-    /**
-     * The per-elements CSS rules rendering produced.
-     *
-     * @return list<string>
-     */
-    public function elementRules(): array
+    /** The numbered style variation class the dynamic block being rendered claimed, once: its wrapper takes it. */
+    public function takePendingVariation(): ?string
     {
-        return $this->elementRules;
+        $class = $this->pendingVariation;
+        $this->pendingVariation = null;
+        return $class;
     }
+
 
     /** Notes a gallery instance. */
     public function recordGallery(int $instance): void
@@ -352,8 +332,6 @@ final class RenderState
         $this->counter = 0;
         $this->images = 0;
         $this->priorityClaimed = false;
-        $this->containers = [];
-        $this->variations = [];
         $this->blocks = [];
         $this->galleries = [];
         $this->elements = 0;
@@ -361,7 +339,6 @@ final class RenderState
         $this->depth = 0;
         $this->navigation = 0;
         $this->pendingElements = null;
-        $this->elementRules = [];
         $this->labels = [];
     }
 }

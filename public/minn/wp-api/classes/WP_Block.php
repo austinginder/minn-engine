@@ -1,8 +1,8 @@
 <?php
 
 use Minn\Blocks\Block as MinnBlock;
-use Minn\Blocks\Supports;
 use Minn\Content\Blocks as MinnBlocks;
+use Minn\Runtime\BlockFilters;
 use Minn\Runtime\Runtime;
 
 /** A parsed block ready to render, with its context and inner blocks. */
@@ -87,15 +87,22 @@ class WP_Block
     public function render($options = [])
     {
         $options = wp_parse_args($options, ['dynamic' => true, 'minn_filters' => true]);
+        if ($this->rendered_by_engine((bool) $options['dynamic'])) {
+            // The engine's renderer renders a core block whole (its inner blocks, bindings and the supports it
+            // applies itself); the block's own render_block filters run once, after it, as on the reference.
+            $block_content = MinnBlocks::renderer()->providing((array) $this->available_context, fn (): string => _minn_render_core_block($this, '', false));
+            if ($this->block_type->is_dynamic()) {
+                $this->enqueue_assets();
+            }
+            return $options['minn_filters'] === false ? $block_content : BlockFilters::rendered($block_content, (array) $this->parsed_block, $this, BlockFilters::NATIVE_RENDER_DONE);
+        }
         $is_dynamic = $options['dynamic'] && $this->name && $this->block_type !== null && $this->block_type->is_dynamic();
         // The engine's renderer binds a static core block itself; this one binds the rest.
         $bound = $is_dynamic || !str_starts_with((string) $this->name, 'core/') ? $this->process_block_bindings() : [];
         if ($bound !== []) {
             $this->attributes = array_merge($this->attributes, $bound);
         }
-        // A core block the engine renders itself renders its inner blocks too; rendering them first would run their queries twice.
-        $native = $is_dynamic && _minn_core_renders_natively((string) $this->name, $this->block_type->render_callback);
-        $block_content = !$native && (!$options['dynamic'] || empty($this->block_type->skip_inner_blocks)) ? $this->render_inner_blocks() : '';
+        $block_content = !$options['dynamic'] || empty($this->block_type->skip_inner_blocks) ? $this->render_inner_blocks() : '';
         if ($is_dynamic) {
             $global_post = $GLOBALS['post'] ?? null;
             $parent = WP_Block_Supports::$block_to_render;
@@ -103,10 +110,6 @@ class WP_Block
             $block_content = (string) call_user_func($this->block_type->render_callback, $this->attributes, $block_content, $this);
             WP_Block_Supports::$block_to_render = $parent;
             $GLOBALS['post'] = $global_post;
-        } elseif ($this->name !== null && str_starts_with($this->name, 'core/') && $this->block_type !== null) {
-            // A static core block takes its classes from the engine's own renderer, which applies the block filters itself
-            // and binds the block, reading this block's context.
-            return MinnBlocks::renderer()->providing((array) $this->available_context, fn (): string => _minn_render_core_block($this, $block_content));
         }
         if ($bound !== [] && $block_content !== '') {
             $block_content = \Minn\Blocks\Bindings::html($block_content, (string) $this->name, $bound);
@@ -116,8 +119,20 @@ class WP_Block
             // The engine's renderer applies the render_block filters once around a bridged block.
             return $block_content;
         }
-        $block_content = apply_filters('render_block', $block_content, $this->parsed_block, $this);
-        return apply_filters("render_block_{$this->name}", $block_content, $this->parsed_block, $this);
+        return BlockFilters::rendered($block_content, (array) $this->parsed_block, $this);
+    }
+
+    /**
+     * Whether the engine's own renderer answers for this block: a registered
+     * core block, static, or dynamic with its own render callback (none a
+     * plugin took over), rendered with its callback.
+     */
+    private function rendered_by_engine(bool $dynamic): bool
+    {
+        if ($this->block_type === null || !_minn_renders_natively($this->name)) {
+            return false;
+        }
+        return !$this->block_type->is_dynamic() || ($dynamic && _minn_core_renders_natively((string) $this->name, $this->block_type->render_callback));
     }
 
     /**
@@ -137,9 +152,16 @@ class WP_Block
                 continue;
             }
             $inner = $this->inner_blocks[$index++];
-            $context = apply_filters('render_block_context', $inner->available_context, $inner->parsed_block, $this);
-            if (is_array($context) && $context !== $inner->available_context) {
-                $inner = new self($inner->parsed_block, $context, $this->registry);
+            $pre_render = apply_filters('pre_render_block', null, $inner->parsed_block, $this);
+            if ($pre_render !== null) {
+                $content .= $pre_render;
+                continue;
+            }
+            $parsed = BlockFilters::data((array) $inner->parsed_block, $this, _minn_renders_natively($inner->name) ? BlockFilters::NATIVE_DATA_DONE : []);
+            $context = apply_filters('render_block_context', $inner->available_context, $parsed, $this);
+            $context = is_array($context) ? $context : $inner->available_context;
+            if ($parsed !== $inner->parsed_block || $context !== $inner->available_context) {
+                $inner = new self($parsed, $context, $this->registry);
             }
             $content .= $inner->render();
         }
@@ -257,31 +279,49 @@ final class WP_Block_Supports
         return self::$instance;
     }
 
+    /** Registers the supports' attributes on every block type registered so far (hooked to init at 22). */
     public static function init()
     {
+        self::get_instance()->register_attributes();
     }
 
+    /** Records a support: its register_attribute and apply callbacks, in the order supports apply. */
     public function register($block_support_name, $block_support_config)
     {
         $this->block_supports[$block_support_name] = array_merge($block_support_config, ['name' => $block_support_name]);
     }
 
+    /**
+     * The wrapper attributes the block being rendered earns: every support's
+     * apply callback in turn, a later one's value joined to an earlier one's
+     * with a space.
+     */
     public function apply_block_supports()
     {
         $block = self::$block_to_render;
-        if ($block === null || empty($block['blockName'])) {
+        $block_type = $block === null || empty($block['blockName']) ? null : WP_Block_Type_Registry::get_instance()->get_registered($block['blockName']);
+        if (!$block_type instanceof WP_Block_Type) {
             return [];
         }
-        $block_type = WP_Block_Type_Registry::get_instance()->get_registered($block['blockName']);
-        if ($block_type === null) {
-            return [];
+        $attributes = $block_type->prepare_attributes_for_render((array) ($block['attrs'] ?? []));
+        $output = [];
+        foreach (array_filter(array_column($this->block_supports, 'apply')) as $apply) {
+            foreach ((array) call_user_func($apply, $block_type, $attributes) as $name => $value) {
+                $output[$name] = empty($output[$name]) ? $value : $output[$name] . ' ' . $value;
+            }
         }
-        $attributes = $block_type->prepare_attributes_for_render($block['attrs'] ?? []);
-        $supports = is_array($block_type->supports) ? $block_type->supports : [];
-        return Supports::attributes($attributes, $supports, wp_get_block_default_classname($block['blockName']), static fn (string $name) => _wp_to_kebab_case($name));
+        return $output;
     }
 
+    /** Lets each support add the attributes it needs to every registered block type. */
     public function register_attributes()
     {
+        foreach (WP_Block_Type_Registry::get_instance()->get_all_registered() as $block_type) {
+            foreach ($this->block_supports as $support) {
+                if (!empty($support['register_attribute'])) {
+                    call_user_func($support['register_attribute'], $block_type);
+                }
+            }
+        }
     }
 }

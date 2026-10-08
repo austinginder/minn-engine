@@ -2,9 +2,9 @@
 
 /**
  * The reference's theme.json object as plugin code reads it: the merged
- * data the engine builds (get_raw_data, get_data, get_settings) is real;
- * every other method keeps its inert placeholder, so a call still traces
- * as a gap instead of failing.
+ * data the engine builds (get_raw_data, get_data, get_settings) and the
+ * custom CSS are real; every other method keeps its inert placeholder, so a
+ * call still traces as a gap instead of failing.
  */
 #[AllowDynamicProperties]
 class WP_Theme_JSON
@@ -143,16 +143,17 @@ class WP_Theme_JSON
         return null;
     }
 
+    /** A block's own CSS under its selector, nested rules unfolded (Minn\Theme\CustomCss::scoped, probe block-supports). */
     public static function process_blocks_custom_css($css, $selector)
     {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_Theme_JSON::process_blocks_custom_css');
-        return null;
+        return \Minn\Theme\CustomCss::scoped((string) $css, (string) $selector);
     }
 
+    /** The styles' own CSS: the top-level css, then each block's (deprecated since 6.7.0 for get_stylesheet). */
     public function get_custom_css()
     {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_Theme_JSON::get_custom_css');
-        return null;
+        _deprecated_function(__METHOD__, '6.7.0', 'get_stylesheet');
+        return \Minn\Theme\CustomCss::ofStyles((array) ($this->theme_json['styles'] ?? []));
     }
 
     public function get_custom_templates()

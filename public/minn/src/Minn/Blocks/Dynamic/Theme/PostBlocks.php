@@ -106,7 +106,7 @@ final readonly class PostBlocks
             styleFirst: true,
             extraClasses: array_values(array_filter(['entry-content', $align])),
             // Without a layout attribute the block still carries its default flow layout classes.
-            trailingClasses: Layout::classes('post-content', $block->attrs),
+            trailingClasses: Layout::classes('core/post-content', $block->attrs),
         ) . $content . '</div>';
     }
 
@@ -210,7 +210,7 @@ final readonly class PostBlocks
             $links[] = '<a href="' . Html::attr($this->permalinks->forTerm($term)) . '" rel="tag">' . Html::esc((string) $term['name']) . '</a>';
         }
         $separator = '<span class="wp-block-post-terms__separator">' . Html::esc((string) $block->attr('separator', ', ')) . '</span>';
-        return self::open('div', ['taxonomy-' . $taxonomy, 'wp-block-post-terms', ...Styles::classes($block->attrs)], $block, styleFirst: true, blockName: 'core/post-terms')
+        return self::open('div', ['taxonomy-' . $taxonomy, 'wp-block-post-terms', ...Styles::classes($block->attrs)], $block, styleFirst: true)
             . implode($separator, $links) . '</div>';
     }
 
@@ -271,7 +271,7 @@ final readonly class PostBlocks
         return (string) $block->attr('linkTarget', '_self') === '_blank' ? '_blank' : '_self';
     }
 
-    private static function open(string $tag, array $classes, Block $block, bool $styleFirst = false, string $blockName = '', bool $linkColorClass = false): string
+    private static function open(string $tag, array $classes, Block $block, bool $styleFirst = false, bool $linkColorClass = false): string
     {
         // The wp-block-* entry is the block's own class; the preset classes come from the attributes.
         $blockClass = '';
@@ -283,6 +283,6 @@ final readonly class PostBlocks
                 $extra[] = $class;
             }
         }
-        return Wrapper::open($tag, $blockClass, $block, $styleFirst, $blockName, linkColorClass: $linkColorClass, extraClasses: $extra);
+        return Wrapper::open($tag, $blockClass, $block, $styleFirst, linkColorClass: $linkColorClass, extraClasses: $extra);
     }
 }

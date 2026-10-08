@@ -5798,3 +5798,152 @@ The second whole-API batch: the named functions in `wp-includes/blocks`, in
 | | missing | verified |
 |---|---|---|
 | functions | 826 → 649 | 1,418 → 1,571 |
+
+## Block supports (2026-10-08)
+
+The third whole-API batch: `wp-includes/block-supports`, `WP_Block_Supports`,
+`WP_Duotone`, and the block supports' deprecated functions, in
+`wp-api/block-supports*.php`. The probe is
+`tests/tools/block-supports-probe.php` (fixture `block-supports`, 43
+sections), with a plugin block type that has every support.
+
+- **Registering and applying.** The supports register with
+  `WP_Block_Supports` in the reference's order, which is the order of the
+  wrapper's classes and styles. Each `wp_register_*_support` adds the
+  attributes it needs to a block type that opts in. Each
+  `wp_apply_*_support` returns the classes and styles a block's attributes
+  earn, through the style engine. Colors and typography turn presets into
+  class names; spacing, shadow and border keep theirs as custom properties.
+- **The wrapper.** `get_block_wrapper_attributes` prints style, class, id
+  and aria-label first, then the caller's other attributes. The supports'
+  styles come before the caller's: split on semicolons, each part trimmed,
+  the ends trimmed of semicolons. The caller's classes come first, each once.
+  The caller's id and aria-label win.
+- **One layout path.** `Minn\Blocks\Layout` gives core and plugin blocks
+  their layout classes:
+  - the layout used is the block's own over its type's default;
+  - `is-vertical`, `is-content-justification-*` and `is-nowrap` come from
+    the block's own layout;
+  - a `wp-container-*` class appears exactly when the layout writes CSS.
+
+  `Minn\Blocks\LayoutStyle` writes that CSS, as `wp_get_layout_style` does.
+  The reference's own rule replaced the engine's earlier exceptions: a
+  container for columns always, none for buttons, a hand list of layouts
+  with rules. A flex group with only `orientation: horizontal` has no
+  container on the reference, and now none here. A child's own size or place
+  earns a `wp-container-content-*` class. Classes go on the element that
+  holds the inner blocks: the tag the markup last opens before them.
+- **One stylesheet.** The engine's renderer hands its layout and element
+  rules to the style engine's `block-supports` store, through the private
+  `minn_block_support_rules` action. The page prints the store with the
+  global styles (`minn_block_supports_css`); the old container and
+  element-rule lists in `RenderState` are gone. Position, visibility, states
+  and duotone rules land in the same store.
+- **Element styles.** A block earns a `wp-elements-N` class for
+  colours on these elements:
+  - a link's text colour, plain or on hover;
+  - a heading's, a heading level's or a button's text, background or
+    gradient.
+
+  Caption and cite styles earn nothing. A colour support that skips
+  serialization switches a kind off (link, heading or button). The engine
+  had excluded core/buttons, social-links and navigation by name; on the
+  reference they get the class, and now do here.
+  `wp_get_elements_class_name` numbers from the render state's counter, the
+  one the renderer uses.
+- **One counter.** `wp_unique_id` numbers from the render state's
+  per-request counter. The engine's renderer numbers galleries, style
+  variations and inputs from the same counter, as the reference numbers
+  them from `wp_unique_id`.
+- **Style variations.** A block whose className names a variation with
+  styles of its own gets `is-style-{name}--N`. The styles are the theme's,
+  or a registered style's `style_data`. The variation's CSS goes on the
+  `block-style-variation-styles` handle, element rules first. The renderer's
+  fixed list of three TT5 variations is gone: `Renderer::numberedStyle` asks
+  the facade for the data (`minn_block_style_variation`). The reference
+  reads registered `style_data` through its theme.json cache, so a style
+  registered after the cache is built numbers only once
+  `wp_clean_theme_json_cache()` runs. The engine reads the registry
+  directly. `wp_clean_theme_json_cache` now clears the facade's theme.json
+  caches, which moved into the request's runtime state.
+- **The other render filters.**
+  - Background: an image's styles with has-background (cover by default, a
+    contained image centred).
+  - Dimensions: an explicit aspect ratio unsets the heights; a minimum
+    height unsets the ratio.
+  - Position: sticky (or fixed, where the theme allows it) gets a numbered
+    `wp-container-N`, counted for any position named. The top offset
+    clears the admin bar, its value raw (a preset is not resolved, as on
+    the reference).
+  - Typography: a stored custom font size made fluid, the first tag's style
+    rewritten a declaration at a time.
+  - Visibility: hidden viewports in name order, or nothing at all.
+  - Custom CSS: nested rules unfolded on `wp-block-custom-css`.
+  - Block-level presets: only lists keyed by origin count. The class goes
+    ahead of the layout classes, the CSS into a `<style>` of its own.
+  - States: only for `WP_Theme_JSON::VALID_BLOCK_PSEUDO_SELECTORS` blocks,
+    from `style[":hover"]`. Rules are `!important`, split by the block's
+    selectors, with the reference's fallbacks.
+  - Duotone: a preset's CSS is its custom property; custom colours use the
+    filter's url. Rules land when `output_block_styles` runs; the footer SVGs
+    follow the order of use.
+- **Filters once.** For a core block the engine renders, `render_block()`
+  and `WP_Block::render` had applied `pre_render_block` and
+  `render_block_data` twice, and a dynamic block's `render_block` twice too.
+  A static core block's inner blocks had rendered twice.
+  - `WP_Block::render` now has the engine render a native core block whole
+    (`Renderer::renderNativeUnfiltered`) and applies its render filters once.
+  - Inner blocks of other blocks pass through `pre_render_block` and
+    `render_block_data` with their parent, as on the reference.
+  - `Runtime\BlockFilters` leaves out the support filters the renderer
+    applies itself (layout container, element styles, style variations).
+    The child-layout part runs as a stand-in.
+- **safecss.** `safecss_filter_attr` follows the reference declaration by
+  declaration (58 cases in the safety-filters probe):
+  - A bare value is kept.
+  - Property names match exactly.
+  - The functions a value may use are taken out before the character test:
+    calc, var, min, max, minmax, clamp, repeat, and the transform and shape
+    functions.
+  - `url()` is allowed on background, background-image, cursor, filter,
+    mask and clip-path, with allowed schemes. Gradients are allowed on the
+    two background properties.
+  - A value is rejected if it then holds `\ ( & = }` or `/*`.
+
+  The engine had kept `width:a&b`, `rgb()` and `fit-content()`, and
+  dropped `width:javascript`.
+- **Caught by the browser and styles suites.** A vertical flex layout
+  lines its items up at the start (`align-items:flex-start`) unless it is
+  justified otherwise; without that, a stacked group's paragraph sat
+  centred. A handle's inline styles print in one tag, a line apart, as the
+  reference prints them. A dynamic core block's style variation is numbered
+  before it renders (the wrapper takes the pending class), so a block that
+  renders nothing still numbers it and prints its CSS, as the reference
+  does with post-terms.
+- **Smaller fixes on the way.** A style's inline data starts its list
+  without a `false` (a script's keeps one). Variation CSS prints a padding
+  or margin shorthand. The custom CSS strip filters belong to
+  `wp_custom_css_kses_init_filters`, not `kses_init_filters`.
+  `WP_Theme_JSON::get_custom_css` and `process_blocks_custom_css` are real
+  (`Minn\Theme\CustomCss`).
+- **Deprecated.** The tinycolor helpers keep the reference's arithmetic:
+  - a channel reads as a whole number, so a percentage is its number and a
+    fraction is 0;
+  - a grey goes through the channels;
+  - colour names other than transparent are not read.
+
+  `WP_Duotone`'s preset methods report their own deprecation, and the
+  render path uses private helpers. `_wp_theme_json_webfonts_handler`
+  registers its three hooks with no work in them: the engine prints the
+  theme's font faces itself.
+- **Left for later.**
+  - `wp_get_layout_style`'s `$options` and the child rules'
+    `$viewport_overrides` are accepted and unused.
+  - The native renderer reads a parent's layout only through `parentLayout`
+    on the facade path.
+
+| | missing | verified |
+|---|---|---|
+| functions | 649 → 555 | 1,571 → 1,640 |
+| classes | 79 → 78 | 80 → 83 |
+| methods | 800 → 789 | 763 → 842 |

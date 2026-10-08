@@ -9,20 +9,23 @@ the block parser and renderer
 | [`Block`](#block) | final readonly class | 63 | One parsed block. A null name is freeform HTML between blocks. The |
 | [`BlockName`](#blockname) | final class | 17 | The block name rules: a string, lower-case, `namespace/name`. |
 | [`Context`](#context) | final class | 76 | What the template blocks render against: the resolution, the main |
-| [`Elements`](#elements) | final class | 79 | Per-block element styles (style.elements in a block's attributes, the |
+| [`CoreBlocks`](#coreblocks) | final class | 26 | The core block types' metadata as the reference registers them |
+| [`Duotone`](#duotone) | final class | 79 | Duotone filters (probe block-supports): a CSS color read into its red, |
+| [`Elements`](#elements) | final class | 121 | Per-block element styles (style.elements in a block's attributes, the |
 | [`ImageTags`](#imagetags) | final readonly class | 263 | The attributes the reference adds to an <img> that carries a |
-| [`Layout`](#layout) | final class | 124 | The layout-support classes the reference adds at render time. Every |
+| [`Layout`](#layout) | final class | 167 | The layout support's classes and rules (wp_render_layout_support_flag, |
+| [`LayoutStyle`](#layoutstyle) | final class | 193 | The CSS rules a block's layout writes (wp_get_layout_style, probe |
 | [`Parser`](#parser) | final class | 91 | Parses block markup into a tree. The grammar is the delimiter comment: |
 | [`QueryVars`](#queryvars) | final class | 122 | The query variables a Query Loop block's context asks for, the way the |
-| [`RenderState`](#renderstate) | final class | 352 | Per-request rendering state, owned by the renderer. The reference numbers |
-| [`Renderer`](#renderer) | final class | 322 | Renders a block tree the way the reference renders post_content: |
+| [`RenderState`](#renderstate) | final class | 329 | Per-request rendering state, owned by the renderer. The reference numbers |
+| [`Renderer`](#renderer) | final class | 350 | Renders a block tree the way the reference renders post_content: |
 | [`Selector`](#selector) | final class | 42 | The CSS selector a block type declares for its root or for one feature, from its `selectors` map or the older per-support keys. |
 | [`Serializer`](#serializer) | final class | 46 | Parsed blocks back to markup. A core block is written by its short name; |
+| [`States`](#states) | final class | 160 | Block state styles (a block's style[":hover"] and the like, probe |
 | [`StyleEngine`](#styleengine) | final class | 148 | What a block's style object comes to, as the reference's style engine |
 | [`Styles`](#styles) | final class | 155 | The inline style and class names a block's "style" and preset |
-| [`Supports`](#supports) | final class | 72 | The wrapper attributes a block's supports declaration earns from its |
 | [`TemplatePartVariations`](#templatepartvariations) | final class | 28 | The template part block's variations as the reference builds them (probe |
-| [`Wrapper`](#wrapper) | final class | 60 | The opening tag of a dynamic block's wrapper, in the reference's class |
+| [`Wrapper`](#wrapper) | final class | 59 | The opening tag of a dynamic block's wrapper, in the reference's class |
 
 ## Attributes
 
@@ -205,26 +208,97 @@ The page number being rendered.
 How many pages the listing makes.
 
 
+## CoreBlocks
+
+`final class Minn\Blocks\CoreBlocks` · `public/minn/src/Minn/Blocks/CoreBlocks.php`
+
+The core block types' metadata as the reference registers them
+(data/blocks.json): their supports and selectors, read once.
+
+Used by: `Minn\Blocks\Layout`, `Minn\Blocks\Renderer`, `Minn\Theme\GlobalStyles`
+
+
+### static `metadata(string $name): array`
+
+A core block type's registered metadata; empty for a name core does not register.
+
+- `@return array<string, mixed>`
+
+### static `supports(string $name): array`
+
+A core block type's supports.
+
+- `@return array<string, mixed>`
+
+
+## Duotone
+
+`final class Minn\Blocks\Duotone` · `public/minn/src/Minn/Blocks/Duotone.php`
+
+Duotone filters (probe block-supports): a CSS color read into its red,
+green, blue (0 to 255) and alpha (0 to 1, to two places) channels, and
+the hidden SVG filter that maps an image's shades onto a list of colors,
+one table of values per channel.
+
+- const `SVG` = `'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 0 0" width="0" height="0" focusable="false" role="none" style="visibility: hidden; position: absolute; left: -9999px; overflow: hidden;" ><defs><filter id="%s"><feColorMatrix color-interpolation-filters="sRGB" type="matrix" values=" .299 .587 .114 0 0 .299 .587 .114 0 0 .299 .587 .114 0 0 .299 .587 .114 0 0 " /><feComponentTransfer color-interpolation-filters="sRGB" ><feFuncR type="table" tableValues="%s" /><feFuncG type="table" tableValues="%s" /><feFuncB type="table" tableValues="%s" /><feFuncA type="table" tableValues="%s" /></feComponentTransfer><feComposite in2="SourceGraphic" operator="in" /></filter></defs></svg>'`
+
+### static `svg(string $filterId, array $colors): string`
+
+The filter for a list of colors; colors that do not parse are left out.
+
+- `@param list<string> $colors`
+
+### static `parse(string $input): ?array`
+
+A color's channels: hex (3, 4, 6 or 8 digits), rgb()/rgba() and hsl()/hsla().
+
+- `@return array{r: float, g: float, b: float, a: float}|null`
+
+Internals: `alpha()` (private, line 61), `hsl()` (private, line 70)
+
+
 ## Elements
 
 `final class Minn\Blocks\Elements` · `public/minn/src/Minn/Blocks/Elements.php`
 
 Per-block element styles (style.elements in a block's attributes, the
-link colour most often). The reference gives each such block a
-numbered wp-elements-N class and a rule per element state, emitted with
-the page's support styles in render order.
+link colour most often; probe block-supports). A block whose element
+styles set a colour gets a numbered wp-elements-N class and a rule per
+element and state, recorded with the page's block-support styles in
+render order: links (their text colour, plain or on hover), headings,
+each heading level and buttons (text, background or gradient). A block
+type whose colour support skips serialization, whole or for links,
+headings or buttons, writes none for those.
 
 - const `SELECTORS` = `array (   'link' => 'a:where(:not(.wp-element-button))',   'heading' => 'h1, h2, h3, h4, h5, h6',   'h1' => 'h1',   'h2' => 'h2',   'h3' => 'h3',   'h4' => 'h4',   'h5' => 'h5',   'h6' => 'h6',   'button' => '.wp-element-button, .wp-block-button__link', )`
-- const `WITHOUT_ELEMENTS` = `array (   0 => 'core/search',   1 => 'core/navigation',   2 => 'core/social-links',   3 => 'core/buttons',   4 => 'core/button', )` — Blocks whose colour support has no element slots: their stored
-element styles are ignored and do not take a number.
+- const `KINDS` = `array (   'link' => 'link',   'heading' => 'heading',   'h1' => 'heading',   'h2' => 'heading',   'h3' => 'heading',   'h4' => 'heading',   'h5' => 'heading',   'h6' => 'heading',   'button' => 'button', )` — The kind each element's skip answers to: every heading level is a heading.
 
 Used by: `Minn\Blocks\Renderer`
 
-### static `className(array $attrs, ?string $blockName = NULL): ?string`
+### static `className(array $attrs, array $supports): ?string`
 
-The block's wp-elements-N class, recording its rules; null when the block styles no element.
+The block's wp-elements-N class, recording its rules; null when its
+element styles earn none.
 
-Internals: `declarations()` (private, line 67)
+- `@param array<string, mixed> $supports the block type's supports`
+
+### static `shouldAdd(array $elements, array $skip): bool`
+
+Whether element styles earn a class: a link's text colour (or its
+hover's), a heading's, a heading level's or a button's text,
+background or gradient, for a kind not skipped.
+
+- `@param array<string, mixed> $elements`
+- `@param array<string, bool> $skip by kind: link, heading, button`
+
+### static `skips(array $supports): array`
+
+The kinds a block type's colour support skips serializing.
+
+- `@param array<string, mixed> $supports`
+- `@return array<string, bool>`
+
+Internals: `rules()` (private, line 99), `declarations()` (private, line 124)
 
 
 ## ImageTags
@@ -287,31 +361,136 @@ Internals: `fit()` (private, line 85), `attachmentOf()` (private, line 93), `pla
 
 `final class Minn\Blocks\Layout` · `public/minn/src/Minn/Blocks/Layout.php`
 
-The layout-support classes the reference adds at render time. Every
-container carries is-layout-{type} and {block}-is-layout-{type}; flex and
-grid layouts with rules of their own also carry a wp-container-* class
-whose suffix names their generated stylesheet.
+The layout support's classes and rules (wp_render_layout_support_flag,
+probe block-supports), for core and plugin blocks alike:
 
-That suffix is a digest the engine cannot reproduce (its inputs are not
-observable), so the engine derives its own deterministic suffix from the
-layout attributes. Same shape, different value: recorded in the contract,
-and the parity suites normalise it.
+- is-layout-{type} and {block}-is-layout-{type} for the layout the block
+uses (its own over its type's default), with has-global-padding for a
+constrained layout under a theme with root-padding-aware alignments;
+- is-vertical or is-horizontal, is-content-justification-* and is-nowrap
+from the layout the block itself stores;
+- a wp-container-{block}-is-layout-* class when the layout writes CSS
+(LayoutStyle), and wp-container-content-* for a child's own size or
+place in its parent's layout.
 
-- const `ALWAYS_CONTAINER` = `array (   0 => 'columns', )` — Blocks the reference always gives a numbered container, whether or not their layout carries rules.
+The rules go to the page's block-support styles through the private
+minn_block_support_rules action. A container class's suffix is a digest
+the engine cannot reproduce (its inputs are not observable), so the engine
+derives its own from the layout: same shape, different value, which the
+parity suites normalise.
 
 Used by: `Minn\Blocks\Dynamic\SocialLinks`, `Minn\Blocks\Dynamic\Theme\Navigation`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Blocks\Renderer`
 
-### static `classes(string $blockSlug, array $attrs, string $defaultType = 'flow'): array`
+### static `classes(string $blockName, array $attrs): array`
 
-The layout classes a block's wrapper carries.
+The layout classes a core block's wrapper carries, under its type's
+supports (data/blocks.json).
 
 - `@return list<string>`
 
-### static `declarations(string $type, array $layout, array $attrs): string`
+### static `forBlock(string $blockName, array $attrs, array $supports): array`
 
-The declarations behind a container class, in the reference's order.
+The layout classes a block's wrapper carries, its container's rules
+recorded, under the theme's layout settings the render state holds
+(root-padding-aware alignments, block gaps).
 
-Internals: `hasRules()` (private, line 69), `suffix()` (private, line 137)
+- `@param array<string, mixed> $supports the block type's supports (layout and its default, spacing)`
+- `@return list<string>`
+
+### static `childClass(array $child, array $parent): ?string`
+
+The class a child's own layout earns (its size or place in the parent's
+layout), its rules recorded; null when it writes none.
+
+- `@param array<string, mixed> $child the block's style.layout`
+- `@param array<string, mixed> $parent the parent's layout`
+
+### static `sanitizeGap(mixed $gap): mixed`
+
+A block gap as the layout reads it: a value with a character that could
+end a declaration or open a function (\ ( & = } or a comment) is
+dropped, a side of one too; anything not a string is left as it is.
+
+### static `gapCss(mixed $gap): array|string|null`
+
+A gap with its presets as custom properties, a side at a time.
+
+- `@return string|array<string, string>|null`
+
+### static `paddingCss(array $padding): array`
+
+A block's side padding with its presets as custom properties.
+
+- `@return array<string, string>`
+
+### static `widths(array $layout): array`
+
+A layout with its widths checked: the first declaration of each, through
+the style attribute filter, empty when that drops it.
+
+- `@return array<string, mixed>`
+
+Internals: `safeGap()` (private, line 103), `skipsGap()` (private, line 122), `used()` (private, line 135), `typeClasses()` (private, line 146), `record()` (private, line 191)
+
+
+## LayoutStyle
+
+`final class Minn\Blocks\LayoutStyle` · `public/minn/src/Minn/Blocks/LayoutStyle.php`
+
+The CSS rules a block's layout writes (wp_get_layout_style, probe
+block-supports), as selector => declarations pairs the style engine turns
+into a stylesheet:
+
+- flow: only the gap between children (none, then the gap, on each);
+- constrained: the content width on the children that are not aligned
+left, right or full, the wide width on wide ones, no limit on full ones
+(justifyContent pushes the children to a side: both margins with a
+width, the one side alone without), negative margins on full ones for a
+block with side padding, then the children's gap;
+- flex: nowrap, the gap, then the direction and alignments the
+orientation reads from justifyContent and verticalAlignment;
+- grid: the column template (a count, a minimum width, or both folded
+together with the gap, or the fallback gap without one), then the gap.
+
+Widths arrive checked (one dropped as unsafe is empty) and gaps with
+presets turned into custom properties.
+
+- const `JUSTIFY` = `array (   'left' => 'flex-start',   'right' => 'flex-end',   'center' => 'center',   'stretch' => 'stretch',   'space-between' => 'space-between', )`
+- const `ALIGN` = `array (   'top' => 'flex-start',   'center' => 'center',   'bottom' => 'flex-end',   'stretch' => 'stretch',   'space-between' => 'space-between', )`
+- const `CHILD_KEYS` = `array (   0 => 'selfStretch',   1 => 'flexSize',   2 => 'columnSpan',   3 => 'rowSpan',   4 => 'columnStart',   5 => 'rowStart', )`
+
+Used by: `Minn\Blocks\Layout`
+
+### static `rules(string $selector, array $layout, array|string|null $gap, array $padding = array ( ), string $fallbackGap = '0.5em'): array`
+
+The rules for a container.
+
+- `@param array<string, mixed> $layout the layout, its widths checked`
+- `@param string|array<string, string>|null $gap the block gap (a value, or top and left), null when it is not written`
+- `@param array<string, string> $padding the block's own padding (left, right), for full-width children`
+- `@return list<array{selector: string, declarations: array<string, string>}>`
+
+### static `childRules(string $selector, array $child, array $parent): array`
+
+The rules a child writes from its own layout (wp_get_child_layout_style_rules):
+a fixed or filling flex size, a grid span, a grid position, released
+again (the full row for a span) in a container narrower than the
+columns it needs: the columns at the parent's minimum width (12rem by
+default) and the gaps between them (1.5rem, or 24px for a width in px).
+
+- `@param array<string, mixed> $child the child's layout (selfStretch, flexSize, columnSpan, rowSpan, columnStart, rowStart)`
+- `@param array<string, mixed> $parent the parent's layout`
+- `@return list<array<string, mixed>>`
+
+### static `containerValues(array $layout): array`
+
+A layout's container values: everything but the child keys.
+
+### static `childValues(array $layout): array`
+
+A layout's child values: the child keys alone.
+
+Internals: `flowGap()` (private, line 53), `constrained()` (private, line 66), `flex()` (private, line 99), `grid()` (private, line 121), `gapValue()` (private, line 141), `filled()` (private, line 154), `single()` (private, line 163)
 
 
 ## Parser
@@ -396,6 +575,14 @@ Whether the theme puts root padding in custom properties, which decides the cons
 
 Records what the active theme's layout settings say about root padding.
 
+### `blockGap(): bool`
+
+Whether the theme writes block gaps, which decides whether a layout's gap makes CSS.
+
+### `useBlockGap(bool $writes): void`
+
+Records whether the active theme's spacing settings write block gaps.
+
 ### `nextId(): int`
 
 The next per-request counter value.
@@ -443,16 +630,6 @@ Takes high fetch priority off the table for the rest of the page; a plugin prior
 
 Puts high fetch priority back on offer, so the next large enough image takes it.
 
-### `recordContainer(string $class, string $declarations): void`
-
-A container stylesheet this page needs: the class and its declarations.
-
-### `containers(): array`
-
-The layout containers rendering discovered.
-
-- `@return array<string, string>`
-
 ### `recordBlock(string $blockName): void`
 
 Every block name the page rendered; the stylesheet prints block styles for these only.
@@ -462,16 +639,6 @@ Every block name the page rendered; the stylesheet prints block styles for these
 The block names rendering met.
 
 - `@return array<string, true>`
-
-### `recordVariation(string $blockName, string $style, int $instance): void`
-
-Notes a style variation instance for the stylesheet.
-
-### `variations(): array`
-
-The style variations rendering met.
-
-- `@return list<array{0: string, 1: string, 2: int}>`
 
 ### `nextElements(): int`
 
@@ -527,15 +694,13 @@ A dynamic block claims its element class before rendering, so a block that rende
 
 The pending elements class, cleared.
 
-### `recordElementRule(string $css): void`
+### `setPendingVariation(?string $class): ?string`
 
-Adds a per-elements CSS rule.
+Holds the numbered style variation class a dynamic block claimed before rendering; returns the one it replaces.
 
-### `elementRules(): array`
+### `takePendingVariation(): ?string`
 
-The per-elements CSS rules rendering produced.
-
-- `@return list<string>`
+The numbered style variation class the dynamic block being rendered claimed, once: its wrapper takes it.
 
 ### `recordGallery(int $instance): void`
 
@@ -562,11 +727,7 @@ in place, then the per-block render-time additions (layout classes, the
 paragraph class, image attributes, gallery ids, style-variation
 counters), and finally texturize over the whole.
 
-- const `NUMBERED_STYLES` = `array (   'core/separator' =>    array (     0 => 'wide',   ),   'core/button' =>    array (     0 => 'outline',   ),   'core/post-terms' =>    array (     0 => 'post-terms-1',   ), )` — Style variations that carry a numbered companion class at render.
-These come from the active theme's registered block styles; the set
-mirrors the reference's theme until the engine reads theme data.
-
-Used by: `Minn\Blocks\Dynamic\Archives`, `Minn\Blocks\Dynamic\LatestComments`, `Minn\Blocks\Dynamic\Search`, `Minn\Blocks\Dynamic\SocialLinks`, `Minn\Blocks\Dynamic\SyncedPattern`, `Minn\Blocks\Dynamic\Theme\Comments`, `Minn\Blocks\Dynamic\Theme\Navigation`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Blocks\Dynamic\Theme\Structure`, `Minn\Blocks\Dynamic\Theme\TermBlocks`, `Minn\Blocks\Wrapper`, `Minn\Content\Blocks`, `Minn\Runtime\Runtime`, `Minn\Theme\PageRenderer`
+Used by: `Minn\Blocks\Dynamic\Archives`, `Minn\Blocks\Dynamic\LatestComments`, `Minn\Blocks\Dynamic\Search`, `Minn\Blocks\Dynamic\SocialLinks`, `Minn\Blocks\Dynamic\SyncedPattern`, `Minn\Blocks\Dynamic\Theme\Comments`, `Minn\Blocks\Dynamic\Theme\Navigation`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Blocks\Dynamic\Theme\Structure`, `Minn\Blocks\Dynamic\Theme\TermBlocks`, `Minn\Content\Blocks`, `Minn\Runtime\Runtime`, `Minn\Theme\PageRenderer`
 
 ```php
 __construct(Minn\Blocks\ImageTags $images)
@@ -575,7 +736,12 @@ __construct(Minn\Blocks\ImageTags $images)
 
 ### static `numberedStyle(string $blockName, string $className): ?string`
 
-The numbered companion of a registered style variation, consuming a counter; null when none applies.
+The numbered companion of a block style variation the block's class
+names (is-style-{name}--N), consuming the counter: a variation with
+styles of its own, the theme's or a registered style's (the facade
+answers the private minn_block_style_variation filter), whose CSS the
+facade prints once numbered (minn_block_style_variation_used). Null
+when none applies.
 
 ### `state(): Minn\Blocks\RenderState`
 
@@ -629,9 +795,15 @@ A tree of blocks as HTML.
 
 - `@param list<Block> $blocks`
 
+### `renderNativeUnfiltered(Minn\Blocks\Block $block): string`
+
+A core block as renderNative() renders it, without the block filters
+around this one block (its inner blocks keep theirs): its caller, the
+facade's WP_Block::render, applies them once.
+
 ### `renderBlock(Minn\Blocks\Block $block): string`
 
-One block as HTML, with the filters around it.
+One block as HTML, with the filters around it (unless renderNativeUnfiltered() asked for this one without).
 
 ### `blockContext(): array`
 
@@ -647,7 +819,14 @@ Renders with context provided to the blocks inside (render_block_context's job o
 
 - `@param array<string, mixed> $context`
 
-Internals: `renderWith()` (private, line 200), `renderNamed()` (private, line 297), `decorate()` (private, line 318), `gallery()` (private, line 349), `flexWithoutContainer()` (private, line 357)
+### `rendersNatively(string $name): bool`
+
+Whether the engine's own renderer answers for a block: a core block no
+plugin's callback took over. It applies the block supports it knows
+itself (layout, element styles); the facade's render_block filters do
+the rest, and all of them for any other block.
+
+Internals: `renderWith()` (private, line 206), `elementsClass()` (private, line 332), `renderNamed()` (private, line 338), `decorate()` (private, line 363), `gallery()` (private, line 385)
 
 
 ## Selector
@@ -695,6 +874,76 @@ Content wrapped in a block's delimiters; a block with no content is written self
 ### static `attributes(array $attrs): string`
 
 Block attributes as the delimiter carries them.
+
+
+## States
+
+`final class Minn\Blocks\States` · `public/minn/src/Minn/Blocks/States.php`
+
+Block state styles (a block's style[":hover"] and the like, probe
+block-supports): the selector arithmetic and the fallbacks the reference
+applies when it writes a state's rules. Pure: styles and selectors in,
+styles, groups and declarations out.
+
+- const `SIDES` = `array (   0 => 'top',   1 => 'right',   2 => 'bottom',   3 => 'left', )`
+
+### static `split(string $selector): array`
+
+A selector list split at its top-level commas (none inside parentheses
+counts), each part as written.
+
+- `@return list<string>`
+
+### static `selector(string $base, string $selectors, string $state): string`
+
+A state on each selector of a block's list, its leading compound
+selector swapped for the base; the base alone for an empty list.
+
+### static `presetVars(mixed $value): mixed`
+
+Presets (var:preset|{kind}|{slug}) as their custom properties, through arrays; anything else as it is.
+
+### static `backgroundResets(array $declarations): array`
+
+Declarations with a background image unset under a background colour
+that sets neither a background nor an image of its own.
+
+- `@param array<string, string> $declarations`
+- `@return array<string, string>`
+
+### static `borderFallbacks(array $declarations): array`
+
+Declarations with a solid border style for a border (or a side of one)
+given a width or a colour and no style.
+
+- `@param array<string, string> $declarations`
+- `@return array<string, string>`
+
+### static `dimensionFallbacks(array $style): array`
+
+A state's style with an explicit aspect ratio unsetting the height and
+minimum height, or a height or minimum height unsetting the aspect ratio.
+
+- `@param array<string, mixed> $style`
+- `@return array<string, mixed>`
+
+### static `groups(array $style, array $selectors): array`
+
+A state's style split by the selectors a block gives its features: a
+feature (or one of its properties) with a selector of its own goes
+there, a feature's other properties to its root selector, the rest to
+the block's root. Groups keep the order they are first met in.
+
+- `@param array<string, mixed> $style`
+- `@param array<string, mixed> $selectors the block's selectors, root among them`
+- `@return list<array{selector: ?string, style: array<string, mixed>}>`
+
+### static `addGroup(array $groups, ?string $selector, array $style): void`
+
+Adds a style to the group of a selector, merged into what it holds.
+
+- `@param array<string, array{selector: ?string, style: array<string, mixed>}> $groups`
+- `@param array<string, mixed> $style`
 
 
 ## StyleEngine
@@ -787,26 +1036,6 @@ The align class an "align" attribute declares.
 Internals: `borderDeclarations()` (private, line 64), `colorDeclarations()` (private, line 85), `spacingDeclarations()` (private, line 95), `typographyDeclarations()` (private, line 112), `dimensionDeclarations()` (private, line 133)
 
 
-## Supports
-
-`final class Minn\Blocks\Supports` · `public/minn/src/Minn/Blocks/Supports.php`
-
-The wrapper attributes a block's supports declaration earns from its
-attributes: align and class-name classes, color and gradient presets or
-inline values, the font-size preset, the anchor id.
-
-### static `attributes(array $attributes, array $supports, string $defaultClass, callable $kebab): array`
-
-The classes and inline styles a block's supports amount to.
-
-- `@param array<string, mixed> $attributes the block's prepared attributes`
-- `@param array<string, mixed> $supports the block type's supports`
-- `@param callable(string): string $kebab the slug form of a preset name (filtered on the reference)`
-- `@return array<string, string> class, style, id, only those that apply`
-
-Internals: `color()` (private, line 59)
-
-
 ## TemplatePartVariations
 
 `final class Minn\Blocks\TemplatePartVariations` · `public/minn/src/Minn/Blocks/TemplatePartVariations.php`
@@ -840,7 +1069,7 @@ the layout classes last; the style attribute inline.
 
 Used by: `Minn\Blocks\Dynamic\Theme\Comments`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Blocks\Dynamic\Theme\Structure`, `Minn\Blocks\Dynamic\Theme\TermBlocks`
 
-### static `open(string $tag, string $blockClass, Minn\Blocks\Block $block, bool $styleFirst = false, string $blockName = '', bool $linkColorClass = false, array $extraClasses = array ( ), array $trailingClasses = array ( )): string`
+### static `open(string $tag, string $blockClass, Minn\Blocks\Block $block, bool $styleFirst = false, bool $linkColorClass = false, array $extraClasses = array ( ), array $trailingClasses = array ( )): string`
 
 A dynamic block's opening tag with its classes in the reference's order.
 

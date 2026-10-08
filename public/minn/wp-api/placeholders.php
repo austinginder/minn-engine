@@ -55,36 +55,6 @@ function wp_admin_css_color($key, $name, $url, $colors = [], $icons = [])
     return null;
 }
 
-function wp_apply_border_support($block_type, $block_attributes)
-{
-    \Minn\Runtime\PlaceholderTrace::hit('wp_apply_border_support');
-    return null;
-}
-
-function wp_apply_colors_support($block_type, $block_attributes)
-{
-    \Minn\Runtime\PlaceholderTrace::hit('wp_apply_colors_support');
-    return null;
-}
-
-function wp_apply_custom_classname_support($block_type, $block_attributes)
-{
-    \Minn\Runtime\PlaceholderTrace::hit('wp_apply_custom_classname_support');
-    return null;
-}
-
-function wp_apply_spacing_support($block_type, $block_attributes)
-{
-    \Minn\Runtime\PlaceholderTrace::hit('wp_apply_spacing_support');
-    return null;
-}
-
-function wp_apply_typography_support($block_type, $block_attributes)
-{
-    \Minn\Runtime\PlaceholderTrace::hit('wp_apply_typography_support');
-    return null;
-}
-
 function wp_clean_update_cache()
 {
     \Minn\Runtime\PlaceholderTrace::hit('wp_clean_update_cache');

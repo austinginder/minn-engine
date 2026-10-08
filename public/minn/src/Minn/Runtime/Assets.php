@@ -238,8 +238,10 @@ final class Assets
         }
         $at = $position === 'before' ? 'before' : 'after';
         $this->items[$handle]['inline'][$at][] = $code;
-        // The reference keeps the code as the position's data, added to what was there (false when nothing, so a first addition follows a false).
-        $this->items[$handle]['data'][$at] = [...(array) ($this->items[$handle]['data'][$at] ?? false), $code];
+        // The reference keeps the code as the position's data, added to what was there: a script's first addition follows a false
+        // (the data it found, cast to a list), a style's starts the list (probe block-supports).
+        $found = $this->items[$handle]['data'][$at] ?? false;
+        $this->items[$handle]['data'][$at] = [...($this->kind === 'style' ? ($found ?: []) : (array) $found), $code];
         $this->changed();
         return true;
     }

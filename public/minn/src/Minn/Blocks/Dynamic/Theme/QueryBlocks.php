@@ -59,7 +59,7 @@ final class QueryBlocks
             $out .= $chunk ?? $renderer->renderBlock($block->innerBlocks[$inner++]);
         }
         array_pop($this->queries);
-        return Html::addClasses($out, Layout::classes('query', $block->attrs));
+        return Html::addClasses($out, Layout::classes('core/query', $block->attrs));
     }
 
     /**
@@ -157,7 +157,7 @@ final class QueryBlocks
             $block,
             styleFirst: true,
             extraClasses: array_values(array_filter([$columns > 0 ? 'columns-' . $columns : null, Styles::align($block->attrs)])),
-            trailingClasses: Layout::classes('post-template', $block->attrs),
+            trailingClasses: Layout::classes('core/post-template', $block->attrs),
         );
         return $open . $items . '</ul>';
     }
@@ -267,7 +267,7 @@ final class QueryBlocks
         $classes = array_values(array_filter([
             'wp-block-query-pagination',
             Styles::align($block->attrs),
-            ...Layout::classes('query-pagination', $block->attrs, 'flex'),
+            ...Layout::classes('core/query-pagination', $block->attrs),
         ]));
         return '<nav class="' . implode(' ', $classes) . '" aria-label="Pagination">' . implode("\n", array_filter($parts)) . '</nav>';
     }

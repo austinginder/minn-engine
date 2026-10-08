@@ -234,9 +234,6 @@ function kses_init_filters()
     add_filter('pre_comment_author_name', 'wp_filter_kses');
     add_filter('pre_term_description', 'wp_filter_kses');
     add_filter('pre_link_description', 'wp_filter_kses');
-    // Custom CSS on a block is theirs to write who may write HTML unfiltered.
-    add_filter('content_save_pre', 'wp_strip_custom_css_from_blocks', 8);
-    add_filter('content_filtered_save_pre', 'wp_strip_custom_css_from_blocks', 8);
 }
 
 function kses_remove_filters()
@@ -247,8 +244,6 @@ function kses_remove_filters()
     remove_filter('pre_comment_content', 'wp_filter_post_kses');
     remove_filter('pre_comment_content', 'wp_filter_kses');
     remove_filter('title_save_pre', 'wp_filter_kses');
-    remove_filter('content_save_pre', 'wp_strip_custom_css_from_blocks', 8);
-    remove_filter('content_filtered_save_pre', 'wp_strip_custom_css_from_blocks', 8);
 }
 
 function kses_init()

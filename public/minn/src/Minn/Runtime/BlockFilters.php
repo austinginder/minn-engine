@@ -55,15 +55,57 @@ final class BlockFilters
     /** @var array<int, array<string, mixed>> the parsed array render_block_data produced, by block object id */
     private static array $parsedFor = [];
 
-    /** A short-circuit from pre_render_block, or the block as render_block_data left it. */
-    public static function before(Block $block): string|Block
+    /** The block-support data filters the engine's renderer does itself for a block it renders natively: element styles, style variations. */
+    public const NATIVE_DATA_DONE = ['wp_render_elements_support_styles' => 10, 'wp_render_block_style_variation_support_styles' => 10];
+
+    /**
+     * The block-support render filters it does itself: the element and style
+     * variation classes and the layout's container classes, a child's own
+     * layout left to a stand-in.
+     */
+    public const NATIVE_RENDER_DONE = ['wp_render_elements_class_name' => 10, 'wp_render_block_style_variation_class_name' => 10, 'wp_render_layout_support_flag' => [10, '_minn_render_child_layout_support']];
+
+    /**
+     * A parsed block through render_block_data, without the callbacks done
+     * already (NATIVE_DATA_DONE for a block the engine's renderer renders).
+     *
+     * @param array<string, mixed> $parsed
+     * @param object|null $parent the WP_Block rendering it, when there is one
+     * @param array<string, int|array{0: int, 1: string}> $done
+     */
+    public static function data(array $parsed, ?object $parent, array $done = []): mixed
+    {
+        return Runtime::hooks()->filterWithout('render_block_data', [$parsed, $parsed, $parent], $done);
+    }
+
+    /**
+     * A rendered block through render_block and its per-name filter, without
+     * the callbacks done already (NATIVE_RENDER_DONE, with its stand-ins, for
+     * a block the engine's renderer renders).
+     *
+     * @param array<string, mixed> $parsed
+     * @param object|null $instance the WP_Block the filters receive
+     * @param array<string, int|array{0: int, 1: string}> $done
+     */
+    public static function rendered(string $html, array $parsed, ?object $instance, array $done = []): string
+    {
+        $html = (string) Runtime::hooks()->filterWithout('render_block', [$html, $parsed, $instance], $done);
+        return (string) Runtime::hooks()->filter('render_block_' . ($parsed['blockName'] ?? ''), [$html, $parsed, $instance]);
+    }
+
+    /**
+     * A short-circuit from pre_render_block, or the block as render_block_data left it.
+     *
+     * @param array<string, int|array{0: int, 1: string}> $done the data filters done already
+     */
+    public static function before(Block $block, array $done = []): string|Block
     {
         $parsed = self::toArray($block);
         $pre = Runtime::hooks()->filter('pre_render_block', [null, $parsed, null]);
         if ($pre !== null) {
             return (string) $pre;
         }
-        $filtered = Runtime::hooks()->filter('render_block_data', [$parsed, $parsed, null]);
+        $filtered = self::data($parsed, null, $done);
         if (!is_array($filtered)) {
             return $block;
         }
@@ -73,15 +115,18 @@ final class BlockFilters
         return $block;
     }
 
-    /** A rendered block through render_block and its per-name filter. */
-    public static function after(Block $block, string $html): string
+    /**
+     * A rendered block through render_block and its per-name filter.
+     *
+     * @param array<string, int|array{0: int, 1: string}> $done the render filters done already
+     */
+    public static function after(Block $block, string $html, array $done = []): string
     {
         $id = spl_object_id($block);
         $parsed = self::$parsedFor[$id] ?? self::toArray($block);
         unset(self::$parsedFor[$id]);
         $instance = class_exists('\WP_Block', false) ? new \WP_Block($parsed, self::context()) : null;
-        $html = (string) Runtime::hooks()->filter('render_block', [$html, $parsed, $instance]);
-        return (string) Runtime::hooks()->filter('render_block_' . $block->name, [$html, $parsed, $instance]);
+        return self::rendered($html, $parsed, $instance, $done);
     }
 
     /** @return array<string, mixed> */

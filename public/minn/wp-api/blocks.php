@@ -6,10 +6,12 @@ use Minn\Theme\TemplateHierarchy;
 use Minn\Blocks\Block as MinnBlock;
 use Minn\Blocks\Parser;
 use Minn\Blocks\QueryVars;
+use Minn\Blocks\RenderState;
 use Minn\Blocks\Selector;
 use Minn\Blocks\Serializer;
 use Minn\Support\Kses;
 use Minn\Content\Blocks as MinnBlocks;
+use Minn\Runtime\BlockFilters;
 use Minn\Runtime\BlockMetadata;
 use Minn\Runtime\Runtime;
 
@@ -91,7 +93,7 @@ function _minn_register_core_block(string $name): void
 }
 
 /** @internal a core block rendered by the engine's own renderer, with the wrapper classes the engine gives it */
-function _minn_render_core_block(WP_Block $block, string $content = ''): string
+function _minn_render_core_block(WP_Block $block, string $content = '', bool $filtered = true): string
 {
     // A plugin's query loop hands the engine its per-item post (and a
     // comment loop its comment) through the block context; the engine's own
@@ -114,7 +116,8 @@ function _minn_render_core_block(WP_Block $block, string $content = ''): string
     }
     try {
         $provided = array_diff_key($context, ['postId' => true, 'postType' => true, 'commentId' => true]);
-        return $renderer->providing($provided, static fn (): string => $renderer->renderNative(_minn_array_to_block($block->parsed_block)));
+        $native = _minn_array_to_block($block->parsed_block);
+        return $renderer->providing($provided, static fn (): string => $filtered ? $renderer->renderNative($native) : $renderer->renderNativeUnfiltered($native));
     } finally {
         $renderer->context()->withComment($outerComment);
         if ($contextPost !== null) {
@@ -346,44 +349,64 @@ function wp_get_block_css_selector($block_type, $target = 'root', $fallback = fa
     return Selector::resolve((array) ($block_type->selectors ?: []), (array) ($block_type->supports ?: []), $target, (bool) $fallback, wp_get_block_default_classname($block_type->name));
 }
 
+/**
+ * The wrapper attributes of the block being rendered (probe block-supports):
+ * the supports' classes after the caller's (each once), the supports'
+ * styles before the caller's (split on semicolons, each part trimmed, the
+ * ends trimmed of semicolons), and the caller's other attributes, the
+ * caller's id and aria-label winning. Style, class, id and aria-label come
+ * first, in that order.
+ */
 function get_block_wrapper_attributes($extra_attributes = [])
 {
     $new_attributes = WP_Block_Supports::get_instance()->apply_block_supports();
     if (empty($new_attributes) && empty($extra_attributes)) {
         return '';
     }
-    foreach (['class', 'style'] as $attribute) {
-        if (!empty($new_attributes[$attribute]) && array_key_exists($attribute, $extra_attributes)) {
-            // An empty class or style from the caller leaves the block's own in place.
-            if (!empty($extra_attributes[$attribute])) {
-                $new_attributes[$attribute] = $extra_attributes[$attribute] . ' ' . $new_attributes[$attribute];
-            }
-            unset($extra_attributes[$attribute]);
+    $extra_attributes = (array) $extra_attributes;
+    $attributes = [];
+    if (!empty($new_attributes['style']) || !empty($extra_attributes['style'])) {
+        $style = (string) ($new_attributes['style'] ?? '') . (string) ($extra_attributes['style'] ?? '');
+        $attributes['style'] = trim(implode(';', array_map('trim', explode(';', $style))), ';');
+    }
+    if (!empty($new_attributes['class']) || !empty($extra_attributes['class'])) {
+        $classes = preg_split('/\s+/', trim(($extra_attributes['class'] ?? '') . ' ' . ($new_attributes['class'] ?? '')), -1, PREG_SPLIT_NO_EMPTY) ?: [];
+        $attributes['class'] = implode(' ', array_unique($classes));
+    }
+    unset($new_attributes['style'], $new_attributes['class'], $extra_attributes['style'], $extra_attributes['class']);
+    foreach (['id', 'aria-label'] as $name) {
+        $value = $extra_attributes[$name] ?? $new_attributes[$name] ?? null;
+        if ($value !== null && $value !== '') {
+            $attributes[$name] = $value;
         }
+        unset($new_attributes[$name], $extra_attributes[$name]);
     }
-    if (!empty($new_attributes['class'])) {
-        // A class named by both the caller and the block supports appears once.
-        $new_attributes['class'] = implode(' ', array_unique(preg_split('/\s+/', trim((string) $new_attributes['class']), -1, PREG_SPLIT_NO_EMPTY) ?: []));
-    }
-    $attributes = array_merge($new_attributes, $extra_attributes);
     $normalized = [];
-    foreach ($attributes as $key => $value) {
-        if ($key === 'class') {
-            $value = trim((string) preg_replace('/\s+/', ' ', (string) $value));
-        }
+    foreach ($attributes + $new_attributes + $extra_attributes as $key => $value) {
         $normalized[] = $key . '="' . esc_attr((string) $value) . '"';
     }
     return implode(' ', $normalized);
 }
 
+/** @internal whether the engine's renderer answers for a block by name: a core block no plugin's callback took over */
+function _minn_renders_natively($name): bool
+{
+    return is_string($name) && str_starts_with($name, 'core/') && MinnBlocks::renderer()->rendersNatively($name);
+}
+
+/**
+ * A parsed block as HTML: pre_render_block may answer for it, then
+ * render_block_data and render_block_context shape it (the block-support
+ * filters the engine's renderer applies itself left out for a core block it
+ * renders) before WP_Block renders it.
+ */
 function render_block($parsed_block)
 {
     $pre_render = apply_filters('pre_render_block', null, $parsed_block, null);
     if ($pre_render !== null) {
         return $pre_render;
     }
-    $source_block = $parsed_block;
-    $parsed_block = apply_filters('render_block_data', $parsed_block, $source_block, null);
+    $parsed_block = BlockFilters::data((array) $parsed_block, null, _minn_renders_natively($parsed_block['blockName'] ?? null) ? BlockFilters::NATIVE_DATA_DONE : []);
     $context = [];
     $post = get_post();
     if ($post instanceof WP_Post) {
@@ -849,11 +872,6 @@ function wp_register_block_metadata_collection($path, $manifest)
 
 function wp_register_block_types_from_metadata_collection($path, $manifest = '')
 {
-}
-
-function wp_render_layout_support_flag($block_content, $block)
-{
-    return $block_content;
 }
 
 function wp_migrate_old_typography_shape($metadata)
@@ -1630,10 +1648,10 @@ function get_block_core_post_featured_image_border_attributes($attributes)
     return array_filter(['class' => $css['classnames'] ?? '', 'style' => $css['css'] ?? '']);
 }
 
-/** A fresh class for a block's element styles: wp-elements- and the next number. */
+/** A fresh class for a block's element styles: wp-elements- and the next number, the count the engine's renderer shares. */
 function wp_get_elements_class_name()
 {
-    return wp_unique_prefixed_id('wp-elements-');
+    return 'wp-elements-' . RenderState::current()->nextElements();
 }
 
 /** A block template part of the theme's, printed through do_blocks; nothing when the theme has none by that name. */

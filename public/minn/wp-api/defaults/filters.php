@@ -159,6 +159,41 @@ add_filter('pre_link_description', 'wp_filter_kses');
 // status, a note's status, the editor's preferences, and at 20 the
 // footnotes of every type that supports them by then.
 add_action('init', 'wp_create_initial_post_meta');
+// Block supports add their attributes to every block type registered by then (block-supports.php).
+add_action('init', ['WP_Block_Supports', 'init'], 22);
+// The block supports' render filters, in the reference's order (probe block-supports): what each adds to a block's first tag.
+foreach (['wp_render_typography_support', '_wp_add_block_level_presets_class', 'wp_render_elements_class_name', 'wp_render_layout_support_flag', 'wp_render_position_support', 'wp_render_dimensions_support', ['WP_Duotone', 'render_duotone_support'], 'wp_render_background_support', 'wp_render_block_style_variation_class_name', 'wp_render_block_visibility_support', 'wp_render_custom_css_class_name', 'wp_render_block_states_support'] as $minn_support_filter) {
+    add_filter('render_block', $minn_support_filter, 10, is_array($minn_support_filter) ? 3 : 2);
+}
+unset($minn_support_filter);
+// The classes a block's element styles, style variation and custom CSS earn are chosen before it renders; a block learns its parent's layout.
+add_filter('render_block_data', 'wp_render_elements_support_styles', 10, 1);
+add_filter('render_block_data', 'wp_add_parent_layout_to_parsed_block', 10, 3);
+add_filter('render_block_data', 'wp_render_block_style_variation_support_styles', 10, 1);
+add_filter('render_block_data', 'wp_render_custom_css_support_styles', 10, 1);
+add_filter('pre_render_block', '_wp_add_block_level_preset_styles', 10, 2);
+// A theme without theme.json gets the group's and the image's old wrappers back.
+add_filter('render_block_core/group', 'wp_restore_group_inner_container', 10, 2);
+add_filter('render_block_core/image', 'wp_restore_image_outer_container', 10, 2);
+add_filter('render_block_core/image', ['WP_Duotone', 'restore_image_outer_container'], 10, 1);
+// Their stylesheets: custom CSS and style variations enqueued first, the duotone rules and presets around the theme's, the SVG filters in the footer.
+add_action('wp_enqueue_scripts', 'wp_enqueue_block_style_variation_styles', 1);
+add_action('wp_enqueue_scripts', 'wp_enqueue_block_custom_css', 1);
+add_action('wp_enqueue_scripts', ['WP_Duotone', 'output_block_styles'], 9);
+add_action('wp_enqueue_scripts', ['WP_Duotone', 'output_global_styles'], 11);
+add_action('wp_footer', ['WP_Duotone', 'output_footer_assets'], 10);
+add_filter('block_type_metadata_settings', ['WP_Duotone', 'migrate_experimental_duotone_support_flag'], 10, 2);
+add_filter('register_block_type_args', 'wp_mark_auto_generate_control_attributes', 5);
+// Custom CSS on a block is stripped from what a user who may not edit CSS saves.
+add_action('init', 'wp_custom_css_kses_init', 20);
+add_action('set_current_user', 'wp_custom_css_kses_init');
+add_filter('force_filtered_html_on_import', 'wp_custom_css_force_filtered_html_on_import_filter', 999);
+// The engine's renderer hands its own support rules to the block-supports store and prints the store with the global styles;
+// it asks for a style variation's styles and has its CSS printed once numbered.
+add_action('minn_block_support_rules', '_minn_store_block_support_rules');
+add_filter('minn_block_supports_css', '_minn_block_supports_css');
+add_filter('minn_block_style_variation', '_minn_block_style_variation', 10, 3);
+add_action('minn_block_style_variation_used', '_minn_block_style_variation_css', 10, 4);
 // The core blocks the facade renders join the engine's renderer as it is built; widget groups learn the sidebar they sit in.
 add_action('minn_block_renderers', '_minn_register_block_renderers');
 add_action('dynamic_sidebar_before', 'note_sidebar_being_rendered');

@@ -12101,6 +12101,223 @@
             ]
         },
         {
+            "name": "Minn\\Blocks\\CoreBlocks",
+            "short": "CoreBlocks",
+            "namespace": "Minn\\Blocks",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Blocks/CoreBlocks.php",
+            "lines": 26,
+            "doc": "The core block types' metadata as the reference registers them\n(data/blocks.json): their supports and selectors, read once.",
+            "implements": [],
+            "extends": null,
+            "uses": [],
+            "usedBy": [
+                "Minn\\Blocks\\Layout",
+                "Minn\\Blocks\\Renderer",
+                "Minn\\Theme\\GlobalStyles"
+            ],
+            "constructor": null,
+            "cases": [],
+            "constants": [],
+            "properties": [
+                {
+                    "name": "metadata",
+                    "type": "?array",
+                    "readonly": false,
+                    "static": true,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": false
+                }
+            ],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "metadata",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "metadata(string $name): array",
+                    "doc": "A core block type's registered metadata; empty for a name core does not register.",
+                    "shapes": [
+                        "@return array<string, mixed>"
+                    ],
+                    "params": [
+                        {
+                            "name": "name",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 21,
+                    "end": 25
+                },
+                {
+                    "routes": [],
+                    "name": "supports",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "supports(string $name): array",
+                    "doc": "A core block type's supports.",
+                    "shapes": [
+                        "@return array<string, mixed>"
+                    ],
+                    "params": [
+                        {
+                            "name": "name",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 32,
+                    "end": 35
+                }
+            ]
+        },
+        {
+            "name": "Minn\\Blocks\\Duotone",
+            "short": "Duotone",
+            "namespace": "Minn\\Blocks",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Blocks/Duotone.php",
+            "lines": 79,
+            "doc": "Duotone filters (probe block-supports): a CSS color read into its red,\ngreen, blue (0 to 255) and alpha (0 to 1, to two places) channels, and\nthe hidden SVG filter that maps an image's shades onto a list of colors,\none table of values per channel.",
+            "implements": [],
+            "extends": null,
+            "uses": [],
+            "usedBy": [],
+            "constructor": null,
+            "cases": [],
+            "constants": [
+                {
+                    "name": "SVG",
+                    "value": "'<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 0 0\" width=\"0\" height=\"0\" focusable=\"false\" role=\"none\" style=\"visibility: hidden; position: absolute; left: -9999px; overflow: hidden;\" ><defs><filter id=\"%s\"><feColorMatrix color-interpolation-filters=\"sRGB\" type=\"matrix\" values=\" .299 .587 .114 0 0 .299 .587 .114 0 0 .299 .587 .114 0 0 .299 .587 .114 0 0 \" /><feComponentTransfer color-interpolation-filters=\"sRGB\" ><feFuncR type=\"table\" tableValues=\"%s\" /><feFuncG type=\"table\" tableValues=\"%s\" /><feFuncB type=\"table\" tableValues=\"%s\" /><feFuncA type=\"table\" tableValues=\"%s\" /></feComponentTransfer><feComposite in2=\"SourceGraphic\" operator=\"in\" /></filter></defs></svg>'",
+                    "doc": "",
+                    "visibility": "private"
+                }
+            ],
+            "properties": [],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "svg",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "svg(string $filterId, array $colors): string",
+                    "doc": "The filter for a list of colors; colors that do not parse are left out.",
+                    "shapes": [
+                        "@param list<string> $colors"
+                    ],
+                    "params": [
+                        {
+                            "name": "filterId",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "colors",
+                            "type": "array",
+                            "shape": "list<string>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 22,
+                    "end": 36
+                },
+                {
+                    "routes": [],
+                    "name": "parse",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "parse(string $input): ?array",
+                    "doc": "A color's channels: hex (3, 4, 6 or 8 digits), rgb()/rgba() and hsl()/hsla().",
+                    "shapes": [
+                        "@return array{r: float, g: float, b: float, a: float}|null"
+                    ],
+                    "params": [
+                        {
+                            "name": "input",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 43,
+                    "end": 59
+                },
+                {
+                    "routes": [],
+                    "name": "alpha",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "alpha(?string $value, string $pct): float",
+                    "doc": "",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "value",
+                            "type": "?string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "pct",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 61,
+                    "end": 67
+                },
+                {
+                    "routes": [],
+                    "name": "hsl",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "hsl(float $hue, float $saturation, float $lightness): array",
+                    "doc": "",
+                    "shapes": [
+                        "@return array{r: float, g: float, b: float} hue in degrees, saturation and lightness in percent"
+                    ],
+                    "params": [
+                        {
+                            "name": "hue",
+                            "type": "float",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "saturation",
+                            "type": "float",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "lightness",
+                            "type": "float",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 70,
+                    "end": 90
+                }
+            ]
+        },
+        {
             "name": "Minn\\Blocks\\Dynamic\\Archives",
             "short": "Archives",
             "namespace": "Minn\\Blocks\\Dynamic",
@@ -14546,7 +14763,7 @@
                     "name": "open",
                     "static": true,
                     "visibility": "private",
-                    "signature": "open(string $tag, array $classes, Minn\\Blocks\\Block $block, bool $styleFirst = false, string $blockName = '', bool $linkColorClass = false): string",
+                    "signature": "open(string $tag, array $classes, Minn\\Blocks\\Block $block, bool $styleFirst = false, bool $linkColorClass = false): string",
                     "doc": "",
                     "shapes": [],
                     "params": [
@@ -14576,13 +14793,6 @@
                             "type": "bool",
                             "shape": "",
                             "default": "false",
-                            "doc": ""
-                        },
-                        {
-                            "name": "blockName",
-                            "type": "string",
-                            "shape": "",
-                            "default": "''",
                             "doc": ""
                         },
                         {
@@ -15573,13 +15783,14 @@
             "namespace": "Minn\\Blocks",
             "kind": "final class",
             "file": "public/minn/src/Minn/Blocks/Elements.php",
-            "lines": 79,
-            "doc": "Per-block element styles (style.elements in a block's attributes, the\nlink colour most often). The reference gives each such block a\nnumbered wp-elements-N class and a rule per element state, emitted with\nthe page's support styles in render order.",
+            "lines": 121,
+            "doc": "Per-block element styles (style.elements in a block's attributes, the\nlink colour most often; probe block-supports). A block whose element\nstyles set a colour gets a numbered wp-elements-N class and a rule per\nelement and state, recorded with the page's block-support styles in\nrender order: links (their text colour, plain or on hover), headings,\neach heading level and buttons (text, background or gradient). A block\ntype whose colour support skips serialization, whole or for links,\nheadings or buttons, writes none for those.",
             "implements": [],
             "extends": null,
             "uses": [
                 "Minn\\Blocks\\RenderState",
-                "Minn\\Blocks\\Styles"
+                "Minn\\Blocks\\Styles",
+                "Minn\\Runtime\\Runtime"
             ],
             "usedBy": [
                 "Minn\\Blocks\\Renderer"
@@ -15594,9 +15805,9 @@
                     "visibility": "private"
                 },
                 {
-                    "name": "WITHOUT_ELEMENTS",
-                    "value": "array (   0 => 'core/search',   1 => 'core/navigation',   2 => 'core/social-links',   3 => 'core/buttons',   4 => 'core/button', )",
-                    "doc": "Blocks whose colour support has no element slots: their stored\nelement styles are ignored and do not take a number.",
+                    "name": "KINDS",
+                    "value": "array (   'link' => 'link',   'heading' => 'heading',   'h1' => 'heading',   'h2' => 'heading',   'h3' => 'heading',   'h4' => 'heading',   'h5' => 'heading',   'h6' => 'heading',   'button' => 'button', )",
+                    "doc": "The kind each element's skip answers to: every heading level is a heading.",
                     "visibility": "private"
                 }
             ],
@@ -15607,9 +15818,11 @@
                     "name": "className",
                     "static": true,
                     "visibility": "public",
-                    "signature": "className(array $attrs, ?string $blockName = NULL): ?string",
-                    "doc": "The block's wp-elements-N class, recording its rules; null when the block styles no element.",
-                    "shapes": [],
+                    "signature": "className(array $attrs, array $supports): ?string",
+                    "doc": "The block's wp-elements-N class, recording its rules; null when its\nelement styles earn none.",
+                    "shapes": [
+                        "@param array<string, mixed> $supports the block type's supports"
+                    ],
                     "params": [
                         {
                             "name": "attrs",
@@ -15619,24 +15832,117 @@
                             "doc": ""
                         },
                         {
-                            "name": "blockName",
-                            "type": "?string",
-                            "shape": "",
-                            "default": "NULL",
+                            "name": "supports",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": "the block type's supports"
+                        }
+                    ],
+                    "line": 37,
+                    "end": 50
+                },
+                {
+                    "routes": [],
+                    "name": "shouldAdd",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "shouldAdd(array $elements, array $skip): bool",
+                    "doc": "Whether element styles earn a class: a link's text colour (or its\nhover's), a heading's, a heading level's or a button's text,\nbackground or gradient, for a kind not skipped.",
+                    "shapes": [
+                        "@param array<string, mixed> $elements",
+                        "@param array<string, bool> $skip by kind: link, heading, button"
+                    ],
+                    "params": [
+                        {
+                            "name": "elements",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "skip",
+                            "type": "array",
+                            "shape": "array<string, bool>",
+                            "default": null,
+                            "doc": "by kind: link, heading, button"
+                        }
+                    ],
+                    "line": 60,
+                    "end": 76
+                },
+                {
+                    "routes": [],
+                    "name": "skips",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "skips(array $supports): array",
+                    "doc": "The kinds a block type's colour support skips serializing.",
+                    "shapes": [
+                        "@param array<string, mixed> $supports",
+                        "@return array<string, bool>"
+                    ],
+                    "params": [
+                        {
+                            "name": "supports",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
                             "doc": ""
                         }
                     ],
-                    "line": 29,
-                    "end": 65
+                    "line": 84,
+                    "end": 92
+                },
+                {
+                    "routes": [],
+                    "name": "rules",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "rules(string $class, array $elements, array $skip): array",
+                    "doc": "",
+                    "shapes": [
+                        "@param array<string, mixed> $elements",
+                        "@param array<string, bool> $skip",
+                        "@return list<array{selector: string, declarations: array<string, string>}>"
+                    ],
+                    "params": [
+                        {
+                            "name": "class",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "elements",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "skip",
+                            "type": "array",
+                            "shape": "array<string, bool>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 99,
+                    "end": 121
                 },
                 {
                     "routes": [],
                     "name": "declarations",
                     "static": true,
                     "visibility": "private",
-                    "signature": "declarations(array $styles): string",
+                    "signature": "declarations(array $styles): array",
                     "doc": "",
-                    "shapes": [],
+                    "shapes": [
+                        "@return array<string, string>"
+                    ],
                     "params": [
                         {
                             "name": "styles",
@@ -15646,8 +15952,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 67,
-                    "end": 90
+                    "line": 124,
+                    "end": 138
                 }
             ]
         },
@@ -16185,13 +16491,17 @@
             "namespace": "Minn\\Blocks",
             "kind": "final class",
             "file": "public/minn/src/Minn/Blocks/Layout.php",
-            "lines": 124,
-            "doc": "The layout-support classes the reference adds at render time. Every\ncontainer carries is-layout-{type} and {block}-is-layout-{type}; flex and\ngrid layouts with rules of their own also carry a wp-container-* class\nwhose suffix names their generated stylesheet.\n\nThat suffix is a digest the engine cannot reproduce (its inputs are not\nobservable), so the engine derives its own deterministic suffix from the\nlayout attributes. Same shape, different value: recorded in the contract,\nand the parity suites normalise it.",
+            "lines": 167,
+            "doc": "The layout support's classes and rules (wp_render_layout_support_flag,\nprobe block-supports), for core and plugin blocks alike:\n\n- is-layout-{type} and {block}-is-layout-{type} for the layout the block\nuses (its own over its type's default), with has-global-padding for a\nconstrained layout under a theme with root-padding-aware alignments;\n- is-vertical or is-horizontal, is-content-justification-* and is-nowrap\nfrom the layout the block itself stores;\n- a wp-container-{block}-is-layout-* class when the layout writes CSS\n(LayoutStyle), and wp-container-content-* for a child's own size or\nplace in its parent's layout.\n\nThe rules go to the page's block-support styles through the private\nminn_block_support_rules action. A container class's suffix is a digest\nthe engine cannot reproduce (its inputs are not observable), so the engine\nderives its own from the layout: same shape, different value, which the\nparity suites normalise.",
             "implements": [],
             "extends": null,
             "uses": [
+                "Minn\\Blocks\\CoreBlocks",
+                "Minn\\Blocks\\LayoutStyle",
                 "Minn\\Blocks\\RenderState",
-                "Minn\\Blocks\\Styles"
+                "Minn\\Blocks\\Styles",
+                "Minn\\Runtime\\Runtime",
+                "Minn\\Support\\Kses"
             ],
             "usedBy": [
                 "Minn\\Blocks\\Dynamic\\SocialLinks",
@@ -16202,14 +16512,7 @@
             ],
             "constructor": null,
             "cases": [],
-            "constants": [
-                {
-                    "name": "ALWAYS_CONTAINER",
-                    "value": "array (   0 => 'columns', )",
-                    "doc": "Blocks the reference always gives a numbered container, whether or not their layout carries rules.",
-                    "visibility": "private"
-                }
-            ],
+            "constants": [],
             "properties": [],
             "methods": [
                 {
@@ -16217,14 +16520,14 @@
                     "name": "classes",
                     "static": true,
                     "visibility": "public",
-                    "signature": "classes(string $blockSlug, array $attrs, string $defaultType = 'flow'): array",
-                    "doc": "The layout classes a block's wrapper carries.",
+                    "signature": "classes(string $blockName, array $attrs): array",
+                    "doc": "The layout classes a core block's wrapper carries, under its type's\nsupports (data/blocks.json).",
                     "shapes": [
                         "@return list<string>"
                     ],
                     "params": [
                         {
-                            "name": "blockSlug",
+                            "name": "blockName",
                             "type": "string",
                             "shape": "",
                             "default": null,
@@ -16236,37 +16539,26 @@
                             "shape": "",
                             "default": null,
                             "doc": ""
-                        },
-                        {
-                            "name": "defaultType",
-                            "type": "string",
-                            "shape": "",
-                            "default": "'flow'",
-                            "doc": ""
                         }
                     ],
-                    "line": 32,
-                    "end": 66
+                    "line": 37,
+                    "end": 40
                 },
                 {
                     "routes": [],
-                    "name": "declarations",
+                    "name": "forBlock",
                     "static": true,
                     "visibility": "public",
-                    "signature": "declarations(string $type, array $layout, array $attrs): string",
-                    "doc": "The declarations behind a container class, in the reference's order.",
-                    "shapes": [],
+                    "signature": "forBlock(string $blockName, array $attrs, array $supports): array",
+                    "doc": "The layout classes a block's wrapper carries, its container's rules\nrecorded, under the theme's layout settings the render state holds\n(root-padding-aware alignments, block gaps).",
+                    "shapes": [
+                        "@param array<string, mixed> $supports the block type's supports (layout and its default, spacing)",
+                        "@return list<string>"
+                    ],
                     "params": [
                         {
-                            "name": "type",
+                            "name": "blockName",
                             "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "layout",
-                            "type": "array",
                             "shape": "",
                             "default": null,
                             "doc": ""
@@ -16277,55 +16569,476 @@
                             "shape": "",
                             "default": null,
                             "doc": ""
+                        },
+                        {
+                            "name": "supports",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": "the block type's supports (layout and its default, spacing)"
                         }
                     ],
-                    "line": 84,
-                    "end": 135
+                    "line": 50,
+                    "end": 70
                 },
                 {
                     "routes": [],
-                    "name": "hasRules",
+                    "name": "childClass",
                     "static": true,
-                    "visibility": "private",
-                    "signature": "hasRules(string $type, array $layout, array $attrs): bool",
-                    "doc": "A container stylesheet exists only when the layout declares something the defaults do not.",
+                    "visibility": "public",
+                    "signature": "childClass(array $child, array $parent): ?string",
+                    "doc": "The class a child's own layout earns (its size or place in the parent's\nlayout), its rules recorded; null when it writes none.",
+                    "shapes": [
+                        "@param array<string, mixed> $child the block's style.layout",
+                        "@param array<string, mixed> $parent the parent's layout"
+                    ],
+                    "params": [
+                        {
+                            "name": "child",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": "the block's style.layout"
+                        },
+                        {
+                            "name": "parent",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": "the parent's layout"
+                        }
+                    ],
+                    "line": 79,
+                    "end": 88
+                },
+                {
+                    "routes": [],
+                    "name": "sanitizeGap",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "sanitizeGap(mixed $gap): mixed",
+                    "doc": "A block gap as the layout reads it: a value with a character that could\nend a declaration or open a function (\\ ( & = } or a comment) is\ndropped, a side of one too; anything not a string is left as it is.",
                     "shapes": [],
                     "params": [
                         {
-                            "name": "type",
-                            "type": "string",
+                            "name": "gap",
+                            "type": "mixed",
                             "shape": "",
                             "default": null,
                             "doc": ""
-                        },
+                        }
+                    ],
+                    "line": 95,
+                    "end": 101
+                },
+                {
+                    "routes": [],
+                    "name": "gapCss",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "gapCss(mixed $gap): array|string|null",
+                    "doc": "A gap with its presets as custom properties, a side at a time.",
+                    "shapes": [
+                        "@return string|array<string, string>|null"
+                    ],
+                    "params": [
+                        {
+                            "name": "gap",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 113,
+                    "end": 119
+                },
+                {
+                    "routes": [],
+                    "name": "paddingCss",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "paddingCss(array $padding): array",
+                    "doc": "A block's side padding with its presets as custom properties.",
+                    "shapes": [
+                        "@return array<string, string>"
+                    ],
+                    "params": [
+                        {
+                            "name": "padding",
+                            "type": "array",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 169,
+                    "end": 172
+                },
+                {
+                    "routes": [],
+                    "name": "widths",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "widths(array $layout): array",
+                    "doc": "A layout with its widths checked: the first declaration of each, through\nthe style attribute filter, empty when that drops it.",
+                    "shapes": [
+                        "@return array<string, mixed>"
+                    ],
+                    "params": [
                         {
                             "name": "layout",
                             "type": "array",
                             "shape": "",
                             "default": null,
                             "doc": ""
-                        },
-                        {
-                            "name": "attrs",
-                            "type": "array",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
                         }
                     ],
-                    "line": 69,
-                    "end": 81
+                    "line": 180,
+                    "end": 188
                 },
                 {
                     "routes": [],
-                    "name": "suffix",
+                    "name": "safeGap",
                     "static": true,
                     "visibility": "private",
-                    "signature": "suffix(array $layout, array $attrs): string",
+                    "signature": "safeGap(string $value): ?string",
                     "doc": "",
                     "shapes": [],
                     "params": [
                         {
+                            "name": "value",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 103,
+                    "end": 106
+                },
+                {
+                    "routes": [],
+                    "name": "skipsGap",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "skipsGap(array $supports): bool",
+                    "doc": "",
+                    "shapes": [
+                        "@param array<string, mixed> $supports"
+                    ],
+                    "params": [
+                        {
+                            "name": "supports",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 122,
+                    "end": 126
+                },
+                {
+                    "routes": [],
+                    "name": "used",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "used(array $own, array $supports): array",
+                    "doc": "The layout a block uses: its own over its type's default; the legacy\ninherit flag means constrained.",
+                    "shapes": [
+                        "@param array<string, mixed> $supports",
+                        "@return array<string, mixed>"
+                    ],
+                    "params": [
+                        {
+                            "name": "own",
+                            "type": "array",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "supports",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 135,
+                    "end": 143
+                },
+                {
+                    "routes": [],
+                    "name": "typeClasses",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "typeClasses(string $type, array $own): array",
+                    "doc": "",
+                    "shapes": [
+                        "@return list<string>"
+                    ],
+                    "params": [
+                        {
+                            "name": "type",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "own",
+                            "type": "array",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 146,
+                    "end": 162
+                },
+                {
+                    "routes": [],
+                    "name": "record",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "record(array $rules): void",
+                    "doc": "",
+                    "shapes": [
+                        "@param list<array<string, mixed>> $rules"
+                    ],
+                    "params": [
+                        {
+                            "name": "rules",
+                            "type": "array",
+                            "shape": "list<array<string, mixed>>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 191,
+                    "end": 194
+                }
+            ]
+        },
+        {
+            "name": "Minn\\Blocks\\LayoutStyle",
+            "short": "LayoutStyle",
+            "namespace": "Minn\\Blocks",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Blocks/LayoutStyle.php",
+            "lines": 193,
+            "doc": "The CSS rules a block's layout writes (wp_get_layout_style, probe\nblock-supports), as selector => declarations pairs the style engine turns\ninto a stylesheet:\n\n- flow: only the gap between children (none, then the gap, on each);\n- constrained: the content width on the children that are not aligned\nleft, right or full, the wide width on wide ones, no limit on full ones\n(justifyContent pushes the children to a side: both margins with a\nwidth, the one side alone without), negative margins on full ones for a\nblock with side padding, then the children's gap;\n- flex: nowrap, the gap, then the direction and alignments the\norientation reads from justifyContent and verticalAlignment;\n- grid: the column template (a count, a minimum width, or both folded\ntogether with the gap, or the fallback gap without one), then the gap.\n\nWidths arrive checked (one dropped as unsafe is empty) and gaps with\npresets turned into custom properties.",
+            "implements": [],
+            "extends": null,
+            "uses": [],
+            "usedBy": [
+                "Minn\\Blocks\\Layout"
+            ],
+            "constructor": null,
+            "cases": [],
+            "constants": [
+                {
+                    "name": "JUSTIFY",
+                    "value": "array (   'left' => 'flex-start',   'right' => 'flex-end',   'center' => 'center',   'stretch' => 'stretch',   'space-between' => 'space-between', )",
+                    "doc": "",
+                    "visibility": "private"
+                },
+                {
+                    "name": "ALIGN",
+                    "value": "array (   'top' => 'flex-start',   'center' => 'center',   'bottom' => 'flex-end',   'stretch' => 'stretch',   'space-between' => 'space-between', )",
+                    "doc": "",
+                    "visibility": "private"
+                },
+                {
+                    "name": "CHILD_KEYS",
+                    "value": "array (   0 => 'selfStretch',   1 => 'flexSize',   2 => 'columnSpan',   3 => 'rowSpan',   4 => 'columnStart',   5 => 'rowStart', )",
+                    "doc": "",
+                    "visibility": "private"
+                }
+            ],
+            "properties": [],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "rules",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "rules(string $selector, array $layout, array|string|null $gap, array $padding = array ( ), string $fallbackGap = '0.5em'): array",
+                    "doc": "The rules for a container.",
+                    "shapes": [
+                        "@param array<string, mixed> $layout the layout, its widths checked",
+                        "@param string|array<string, string>|null $gap the block gap (a value, or top and left), null when it is not written",
+                        "@param array<string, string> $padding the block's own padding (left, right), for full-width children",
+                        "@return list<array{selector: string, declarations: array<string, string>}>"
+                    ],
+                    "params": [
+                        {
+                            "name": "selector",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "layout",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": "the layout, its widths checked"
+                        },
+                        {
+                            "name": "gap",
+                            "type": "array|string|null",
+                            "shape": "string|array<string, string>|null",
+                            "default": null,
+                            "doc": "the block gap (a value, or top and left), null when it is not written"
+                        },
+                        {
+                            "name": "padding",
+                            "type": "array",
+                            "shape": "array<string, string>",
+                            "default": "array ( )",
+                            "doc": "the block's own padding (left, right), for full-width children"
+                        },
+                        {
+                            "name": "fallbackGap",
+                            "type": "string",
+                            "shape": "",
+                            "default": "'0.5em'",
+                            "doc": "the gap a grid with a minimum column width counts when the block writes none"
+                        }
+                    ],
+                    "line": 41,
+                    "end": 50
+                },
+                {
+                    "routes": [],
+                    "name": "childRules",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "childRules(string $selector, array $child, array $parent): array",
+                    "doc": "The rules a child writes from its own layout (wp_get_child_layout_style_rules):\na fixed or filling flex size, a grid span, a grid position, released\nagain (the full row for a span) in a container narrower than the\ncolumns it needs: the columns at the parent's minimum width (12rem by\ndefault) and the gaps between them (1.5rem, or 24px for a width in px).",
+                    "shapes": [
+                        "@param array<string, mixed> $child the child's layout (selfStretch, flexSize, columnSpan, rowSpan, columnStart, rowStart)",
+                        "@param array<string, mixed> $parent the parent's layout",
+                        "@return list<array<string, mixed>>"
+                    ],
+                    "params": [
+                        {
+                            "name": "selector",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "child",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": "the child's layout (selfStretch, flexSize, columnSpan, rowSpan, columnStart, rowStart)"
+                        },
+                        {
+                            "name": "parent",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": "the parent's layout"
+                        }
+                    ],
+                    "line": 179,
+                    "end": 205
+                },
+                {
+                    "routes": [],
+                    "name": "containerValues",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "containerValues(array $layout): array",
+                    "doc": "A layout's container values: everything but the child keys.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "layout",
+                            "type": "array",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 208,
+                    "end": 211
+                },
+                {
+                    "routes": [],
+                    "name": "childValues",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "childValues(array $layout): array",
+                    "doc": "A layout's child values: the child keys alone.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "layout",
+                            "type": "array",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 214,
+                    "end": 217
+                },
+                {
+                    "routes": [],
+                    "name": "flowGap",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "flowGap(string $selector, array|string|null $gap): array",
+                    "doc": "",
+                    "shapes": [
+                        "@return list<array{selector: string, declarations: array<string, string>}>"
+                    ],
+                    "params": [
+                        {
+                            "name": "selector",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "gap",
+                            "type": "array|string|null",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 53,
+                    "end": 63
+                },
+                {
+                    "routes": [],
+                    "name": "constrained",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "constrained(string $selector, array $layout, array $padding): array",
+                    "doc": "",
+                    "shapes": [
+                        "@return list<array{selector: string, declarations: array<string, string>}>"
+                    ],
+                    "params": [
+                        {
+                            "name": "selector",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
                             "name": "layout",
                             "type": "array",
                             "shape": "",
@@ -16333,15 +17046,153 @@
                             "doc": ""
                         },
                         {
-                            "name": "attrs",
+                            "name": "padding",
                             "type": "array",
                             "shape": "",
                             "default": null,
                             "doc": ""
                         }
                     ],
-                    "line": 137,
-                    "end": 140
+                    "line": 66,
+                    "end": 96
+                },
+                {
+                    "routes": [],
+                    "name": "flex",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "flex(array $layout, array|string|null $gap): array",
+                    "doc": "",
+                    "shapes": [
+                        "@return array<string, string>"
+                    ],
+                    "params": [
+                        {
+                            "name": "layout",
+                            "type": "array",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "gap",
+                            "type": "array|string|null",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 99,
+                    "end": 118
+                },
+                {
+                    "routes": [],
+                    "name": "grid",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "grid(array $layout, array|string|null $gap, string $fallbackGap): array",
+                    "doc": "",
+                    "shapes": [
+                        "@return array<string, string>"
+                    ],
+                    "params": [
+                        {
+                            "name": "layout",
+                            "type": "array",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "gap",
+                            "type": "array|string|null",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "fallbackGap",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 121,
+                    "end": 138
+                },
+                {
+                    "routes": [],
+                    "name": "gapValue",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "gapValue(array|string|null $gap): ?string",
+                    "doc": "A flex or grid gap: one value, or the row and column gaps together.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "gap",
+                            "type": "array|string|null",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 141,
+                    "end": 148
+                },
+                {
+                    "routes": [],
+                    "name": "filled",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "filled(array $declarations): array",
+                    "doc": "",
+                    "shapes": [
+                        "@param array<string, string> $declarations",
+                        "@return array<string, string> the declarations that have a value"
+                    ],
+                    "params": [
+                        {
+                            "name": "declarations",
+                            "type": "array",
+                            "shape": "array<string, string>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 154,
+                    "end": 157
+                },
+                {
+                    "routes": [],
+                    "name": "single",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "single(string $selector, array $declarations): array",
+                    "doc": "",
+                    "shapes": [
+                        "@param array<string, string> $declarations",
+                        "@return list<array{selector: string, declarations: array<string, string>}>"
+                    ],
+                    "params": [
+                        {
+                            "name": "selector",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "declarations",
+                            "type": "array",
+                            "shape": "array<string, string>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 163,
+                    "end": 166
                 }
             ]
         },
@@ -16656,7 +17507,7 @@
             "namespace": "Minn\\Blocks",
             "kind": "final class",
             "file": "public/minn/src/Minn/Blocks/RenderState.php",
-            "lines": 352,
+            "lines": 329,
             "doc": "Per-request rendering state, owned by the renderer. The reference numbers\ngalleries, style variations, and search inputs from ONE counter that runs\nacross every block rendered in the request (a list response keeps\ncounting from post to post), so the counter lives here, not on any block.\nLeaf helpers with no renderer in hand reach it through current().",
             "implements": [],
             "extends": null,
@@ -16711,24 +17562,6 @@
                 {
                     "name": "priorityClaimed",
                     "type": "bool",
-                    "readonly": false,
-                    "static": false,
-                    "doc": "",
-                    "visibility": "private",
-                    "promoted": false
-                },
-                {
-                    "name": "containers",
-                    "type": "array",
-                    "readonly": false,
-                    "static": false,
-                    "doc": "",
-                    "visibility": "private",
-                    "promoted": false
-                },
-                {
-                    "name": "variations",
-                    "type": "array",
                     "readonly": false,
                     "static": false,
                     "doc": "",
@@ -16799,6 +17632,15 @@
                     "promoted": false
                 },
                 {
+                    "name": "blockGap",
+                    "type": "bool",
+                    "readonly": false,
+                    "static": false,
+                    "doc": "Whether the theme writes block gaps (settings.spacing.blockGap); render configuration too.",
+                    "visibility": "private",
+                    "promoted": false
+                },
+                {
                     "name": "offRequest",
                     "type": "?self",
                     "readonly": false,
@@ -16817,16 +17659,16 @@
                     "promoted": false
                 },
                 {
-                    "name": "labels",
-                    "type": "array",
+                    "name": "pendingVariation",
+                    "type": "?string",
                     "readonly": false,
                     "static": false,
-                    "doc": "",
+                    "doc": "the numbered style variation class claimed for the dynamic block being rendered, until its wrapper takes it",
                     "visibility": "private",
                     "promoted": false
                 },
                 {
-                    "name": "elementRules",
+                    "name": "labels",
                     "type": "array",
                     "readonly": false,
                     "static": false,
@@ -16854,8 +17696,8 @@
                     "doc": "The state of the request being rendered, which its runtime holds, so\na request cannot count on from the one before it. Rendering with no\nruntime (the command line, the unit suite) shares one off-request\nstate instead, since the counters have to survive between calls.",
                     "shapes": [],
                     "params": [],
-                    "line": 55,
-                    "end": 58
+                    "line": 53,
+                    "end": 56
                 },
                 {
                     "routes": [],
@@ -16866,8 +17708,8 @@
                     "doc": "Makes this the state current() answers with, for the renderer that brought its own.",
                     "shapes": [],
                     "params": [],
-                    "line": 61,
-                    "end": 68
+                    "line": 59,
+                    "end": 66
                 },
                 {
                     "routes": [],
@@ -16878,8 +17720,8 @@
                     "doc": "Whether the theme puts root padding in custom properties, which decides the constrained layout's classes.",
                     "shapes": [],
                     "params": [],
-                    "line": 71,
-                    "end": 74
+                    "line": 69,
+                    "end": 72
                 },
                 {
                     "routes": [],
@@ -16898,8 +17740,40 @@
                             "doc": ""
                         }
                     ],
-                    "line": 77,
-                    "end": 80
+                    "line": 75,
+                    "end": 78
+                },
+                {
+                    "routes": [],
+                    "name": "blockGap",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "blockGap(): bool",
+                    "doc": "Whether the theme writes block gaps, which decides whether a layout's gap makes CSS.",
+                    "shapes": [],
+                    "params": [],
+                    "line": 81,
+                    "end": 84
+                },
+                {
+                    "routes": [],
+                    "name": "useBlockGap",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "useBlockGap(bool $writes): void",
+                    "doc": "Records whether the active theme's spacing settings write block gaps.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "writes",
+                            "type": "bool",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 87,
+                    "end": 90
                 },
                 {
                     "routes": [],
@@ -16910,8 +17784,8 @@
                     "doc": "The next per-request counter value.",
                     "shapes": [],
                     "params": [],
-                    "line": 83,
-                    "end": 86
+                    "line": 93,
+                    "end": 96
                 },
                 {
                     "routes": [],
@@ -16922,8 +17796,8 @@
                     "doc": "Content images seen so far in this page, for the loading rules.",
                     "shapes": [],
                     "params": [],
-                    "line": 89,
-                    "end": 92
+                    "line": 99,
+                    "end": 102
                 },
                 {
                     "routes": [],
@@ -16949,8 +17823,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 98,
-                    "end": 104
+                    "line": 108,
+                    "end": 114
                 },
                 {
                     "routes": [],
@@ -16971,8 +17845,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 115,
-                    "end": 123
+                    "line": 125,
+                    "end": 133
                 },
                 {
                     "routes": [],
@@ -16998,8 +17872,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 130,
-                    "end": 138
+                    "line": 140,
+                    "end": 148
                 },
                 {
                     "routes": [],
@@ -17018,8 +17892,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 141,
-                    "end": 145
+                    "line": 151,
+                    "end": 155
                 },
                 {
                     "routes": [],
@@ -17030,8 +17904,8 @@
                     "doc": "True once, for the image that gets fetchpriority=\"high\".",
                     "shapes": [],
                     "params": [],
-                    "line": 148,
-                    "end": 154
+                    "line": 158,
+                    "end": 164
                 },
                 {
                     "routes": [],
@@ -17042,8 +17916,8 @@
                     "doc": "Whether no element has taken high fetch priority yet on this page.",
                     "shapes": [],
                     "params": [],
-                    "line": 157,
-                    "end": 160
+                    "line": 167,
+                    "end": 170
                 },
                 {
                     "routes": [],
@@ -17054,8 +17928,8 @@
                     "doc": "Takes high fetch priority off the table for the rest of the page; a plugin prioritising its own element does this.",
                     "shapes": [],
                     "params": [],
-                    "line": 163,
-                    "end": 166
+                    "line": 173,
+                    "end": 176
                 },
                 {
                     "routes": [],
@@ -17066,49 +17940,8 @@
                     "doc": "Puts high fetch priority back on offer, so the next large enough image takes it.",
                     "shapes": [],
                     "params": [],
-                    "line": 169,
-                    "end": 172
-                },
-                {
-                    "routes": [],
-                    "name": "recordContainer",
-                    "static": false,
-                    "visibility": "public",
-                    "signature": "recordContainer(string $class, string $declarations): void",
-                    "doc": "A container stylesheet this page needs: the class and its declarations.",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "class",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "declarations",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 175,
-                    "end": 178
-                },
-                {
-                    "routes": [],
-                    "name": "containers",
-                    "static": false,
-                    "visibility": "public",
-                    "signature": "containers(): array",
-                    "doc": "The layout containers rendering discovered.",
-                    "shapes": [
-                        "@return array<string, string>"
-                    ],
-                    "params": [],
-                    "line": 185,
-                    "end": 188
+                    "line": 179,
+                    "end": 182
                 },
                 {
                     "routes": [],
@@ -17127,8 +17960,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 191,
-                    "end": 194
+                    "line": 185,
+                    "end": 188
                 },
                 {
                     "routes": [],
@@ -17141,56 +17974,8 @@
                         "@return array<string, true>"
                     ],
                     "params": [],
-                    "line": 201,
-                    "end": 204
-                },
-                {
-                    "routes": [],
-                    "name": "recordVariation",
-                    "static": false,
-                    "visibility": "public",
-                    "signature": "recordVariation(string $blockName, string $style, int $instance): void",
-                    "doc": "Notes a style variation instance for the stylesheet.",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "blockName",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "style",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "instance",
-                            "type": "int",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 207,
-                    "end": 210
-                },
-                {
-                    "routes": [],
-                    "name": "variations",
-                    "static": false,
-                    "visibility": "public",
-                    "signature": "variations(): array",
-                    "doc": "The style variations rendering met.",
-                    "shapes": [
-                        "@return list<array{0: string, 1: string, 2: int}>"
-                    ],
-                    "params": [],
-                    "line": 217,
-                    "end": 220
+                    "line": 195,
+                    "end": 198
                 },
                 {
                     "routes": [],
@@ -17201,8 +17986,8 @@
                     "doc": "The next wp-elements-N class; the reference numbers these apart from the shared counter.",
                     "shapes": [],
                     "params": [],
-                    "line": 223,
-                    "end": 226
+                    "line": 201,
+                    "end": 204
                 },
                 {
                     "routes": [],
@@ -17221,8 +18006,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 229,
-                    "end": 233
+                    "line": 207,
+                    "end": 211
                 },
                 {
                     "routes": [],
@@ -17233,8 +18018,8 @@
                     "doc": "A page list renders plain on its own and takes the navigation block's\nitem classes, submenu toggles, and interactivity only while it sits\ninside one, so the navigation block marks the span it owns.",
                     "shapes": [],
                     "params": [],
-                    "line": 240,
-                    "end": 243
+                    "line": 218,
+                    "end": 221
                 },
                 {
                     "routes": [],
@@ -17245,8 +18030,8 @@
                     "doc": "Leaves a navigation block.",
                     "shapes": [],
                     "params": [],
-                    "line": 246,
-                    "end": 249
+                    "line": 224,
+                    "end": 227
                 },
                 {
                     "routes": [],
@@ -17257,8 +18042,8 @@
                     "doc": "Whether rendering is inside a navigation block.",
                     "shapes": [],
                     "params": [],
-                    "line": 252,
-                    "end": 255
+                    "line": 230,
+                    "end": 233
                 },
                 {
                     "routes": [],
@@ -17277,8 +18062,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 258,
-                    "end": 265
+                    "line": 236,
+                    "end": 243
                 },
                 {
                     "routes": [],
@@ -17297,8 +18082,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 268,
-                    "end": 271
+                    "line": 246,
+                    "end": 249
                 },
                 {
                     "routes": [],
@@ -17317,8 +18102,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 274,
-                    "end": 277
+                    "line": 252,
+                    "end": 255
                 },
                 {
                     "routes": [],
@@ -17329,8 +18114,8 @@
                     "doc": "True while the block tree is shallower than the cap; deeper blocks render as nothing.",
                     "shapes": [],
                     "params": [],
-                    "line": 280,
-                    "end": 287
+                    "line": 258,
+                    "end": 265
                 },
                 {
                     "routes": [],
@@ -17341,8 +18126,8 @@
                     "doc": "Leaves one nesting level.",
                     "shapes": [],
                     "params": [],
-                    "line": 290,
-                    "end": 293
+                    "line": 268,
+                    "end": 271
                 },
                 {
                     "routes": [],
@@ -17353,8 +18138,8 @@
                     "doc": "How deep the block tree is right now; zero outside any block render.",
                     "shapes": [],
                     "params": [],
-                    "line": 296,
-                    "end": 299
+                    "line": 274,
+                    "end": 277
                 },
                 {
                     "routes": [],
@@ -17373,8 +18158,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 302,
-                    "end": 307
+                    "line": 280,
+                    "end": 285
                 },
                 {
                     "routes": [],
@@ -17385,42 +18170,40 @@
                     "doc": "The pending elements class, cleared.",
                     "shapes": [],
                     "params": [],
-                    "line": 310,
-                    "end": 315
+                    "line": 288,
+                    "end": 294
                 },
                 {
                     "routes": [],
-                    "name": "recordElementRule",
+                    "name": "setPendingVariation",
                     "static": false,
                     "visibility": "public",
-                    "signature": "recordElementRule(string $css): void",
-                    "doc": "Adds a per-elements CSS rule.",
+                    "signature": "setPendingVariation(?string $class): ?string",
+                    "doc": "Holds the numbered style variation class a dynamic block claimed before rendering; returns the one it replaces.",
                     "shapes": [],
                     "params": [
                         {
-                            "name": "css",
-                            "type": "string",
+                            "name": "class",
+                            "type": "?string",
                             "shape": "",
                             "default": null,
                             "doc": ""
                         }
                     ],
-                    "line": 318,
-                    "end": 321
+                    "line": 297,
+                    "end": 302
                 },
                 {
                     "routes": [],
-                    "name": "elementRules",
+                    "name": "takePendingVariation",
                     "static": false,
                     "visibility": "public",
-                    "signature": "elementRules(): array",
-                    "doc": "The per-elements CSS rules rendering produced.",
-                    "shapes": [
-                        "@return list<string>"
-                    ],
+                    "signature": "takePendingVariation(): ?string",
+                    "doc": "The numbered style variation class the dynamic block being rendered claimed, once: its wrapper takes it.",
+                    "shapes": [],
                     "params": [],
-                    "line": 328,
-                    "end": 331
+                    "line": 305,
+                    "end": 310
                 },
                 {
                     "routes": [],
@@ -17439,8 +18222,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 334,
-                    "end": 337
+                    "line": 314,
+                    "end": 317
                 },
                 {
                     "routes": [],
@@ -17453,8 +18236,8 @@
                         "@return list<int>"
                     ],
                     "params": [],
-                    "line": 344,
-                    "end": 347
+                    "line": 324,
+                    "end": 327
                 },
                 {
                     "routes": [],
@@ -17465,8 +18248,8 @@
                     "doc": "Clears every per-request counter.",
                     "shapes": [],
                     "params": [],
-                    "line": 350,
-                    "end": 366
+                    "line": 330,
+                    "end": 343
                 }
             ]
         },
@@ -17476,7 +18259,7 @@
             "namespace": "Minn\\Blocks",
             "kind": "final class",
             "file": "public/minn/src/Minn/Blocks/Renderer.php",
-            "lines": 322,
+            "lines": 350,
             "doc": "Renders a block tree the way the reference renders post_content:\ndelimiters gone, each block's own HTML kept with inner blocks rendered\nin place, then the per-block render-time additions (layout classes, the\nparagraph class, image attributes, gallery ids, style-variation\ncounters), and finally texturize over the whole.",
             "implements": [],
             "extends": null,
@@ -17484,6 +18267,7 @@
                 "Minn\\Blocks\\Bindings",
                 "Minn\\Blocks\\Block",
                 "Minn\\Blocks\\Context",
+                "Minn\\Blocks\\CoreBlocks",
                 "Minn\\Blocks\\Dynamic\\Archives",
                 "Minn\\Blocks\\Dynamic\\LatestComments",
                 "Minn\\Blocks\\Dynamic\\LatestPosts",
@@ -17528,7 +18312,6 @@
                 "Minn\\Blocks\\Dynamic\\Theme\\QueryBlocks",
                 "Minn\\Blocks\\Dynamic\\Theme\\Structure",
                 "Minn\\Blocks\\Dynamic\\Theme\\TermBlocks",
-                "Minn\\Blocks\\Wrapper",
                 "Minn\\Content\\Blocks",
                 "Minn\\Runtime\\Runtime",
                 "Minn\\Theme\\PageRenderer"
@@ -17547,18 +18330,11 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 78,
-                "end": 83
+                "line": 81,
+                "end": 86
             },
             "cases": [],
-            "constants": [
-                {
-                    "name": "NUMBERED_STYLES",
-                    "value": "array (   'core/separator' =>    array (     0 => 'wide',   ),   'core/button' =>    array (     0 => 'outline',   ),   'core/post-terms' =>    array (     0 => 'post-terms-1',   ), )",
-                    "doc": "Style variations that carry a numbered companion class at render.\nThese come from the active theme's registered block styles; the set\nmirrors the reference's theme until the engine reads theme data.",
-                    "visibility": "private"
-                }
-            ],
+            "constants": [],
             "properties": [
                 {
                     "name": "dynamic",
@@ -17575,6 +18351,15 @@
                     "readonly": false,
                     "static": false,
                     "doc": "",
+                    "visibility": "private",
+                    "promoted": false
+                },
+                {
+                    "name": "unfiltered",
+                    "type": "bool",
+                    "readonly": false,
+                    "static": false,
+                    "doc": "Whether the next block renders without the block filters around it (renderNativeUnfiltered()).",
                     "visibility": "private",
                     "promoted": false
                 },
@@ -17622,7 +18407,7 @@
                     "static": true,
                     "visibility": "public",
                     "signature": "numberedStyle(string $blockName, string $className): ?string",
-                    "doc": "The numbered companion of a registered style variation, consuming a counter; null when none applies.",
+                    "doc": "The numbered companion of a block style variation the block's class\nnames (is-style-{name}--N), consuming the counter: a variation with\nstyles of its own, the theme's or a registered style's (the facade\nanswers the private minn_block_style_variation filter), whose CSS the\nfacade prints once numbered (minn_block_style_variation_used). Null\nwhen none applies.",
                     "shapes": [],
                     "params": [
                         {
@@ -17640,8 +18425,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 57,
-                    "end": 67
+                    "line": 53,
+                    "end": 68
                 },
                 {
                     "routes": [],
@@ -17652,8 +18437,8 @@
                     "doc": "The per-request rendering state: counters, containers, variations, the images seen.",
                     "shapes": [],
                     "params": [],
-                    "line": 86,
-                    "end": 89
+                    "line": 89,
+                    "end": 92
                 },
                 {
                     "routes": [],
@@ -17664,8 +18449,8 @@
                     "doc": "What is being rendered.",
                     "shapes": [],
                     "params": [],
-                    "line": 92,
-                    "end": 95
+                    "line": 95,
+                    "end": 98
                 },
                 {
                     "routes": [],
@@ -17684,8 +18469,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 98,
-                    "end": 101
+                    "line": 101,
+                    "end": 104
                 },
                 {
                     "routes": [],
@@ -17696,8 +18481,8 @@
                     "doc": "The image tag builder.",
                     "shapes": [],
                     "params": [],
-                    "line": 104,
-                    "end": 107
+                    "line": 107,
+                    "end": 110
                 },
                 {
                     "routes": [],
@@ -17716,8 +18501,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 110,
-                    "end": 149
+                    "line": 113,
+                    "end": 155
                 },
                 {
                     "routes": [],
@@ -17745,8 +18530,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 158,
-                    "end": 165
+                    "line": 164,
+                    "end": 171
                 },
                 {
                     "routes": [],
@@ -17774,8 +18559,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 173,
-                    "end": 176
+                    "line": 179,
+                    "end": 182
                 },
                 {
                     "routes": [],
@@ -17794,8 +18579,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 184,
-                    "end": 198
+                    "line": 190,
+                    "end": 204
                 },
                 {
                     "routes": [],
@@ -17814,8 +18599,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 210,
-                    "end": 213
+                    "line": 216,
+                    "end": 219
                 },
                 {
                     "routes": [],
@@ -17836,16 +18621,16 @@
                             "doc": ""
                         }
                     ],
-                    "line": 220,
-                    "end": 227
+                    "line": 226,
+                    "end": 233
                 },
                 {
                     "routes": [],
-                    "name": "renderBlock",
+                    "name": "renderNativeUnfiltered",
                     "static": false,
                     "visibility": "public",
-                    "signature": "renderBlock(Minn\\Blocks\\Block $block): string",
-                    "doc": "One block as HTML, with the filters around it.",
+                    "signature": "renderNativeUnfiltered(Minn\\Blocks\\Block $block): string",
+                    "doc": "A core block as renderNative() renders it, without the block filters\naround this one block (its inner blocks keep theirs): its caller, the\nfacade's WP_Block::render, applies them once.",
                     "shapes": [],
                     "params": [
                         {
@@ -17856,8 +18641,28 @@
                             "doc": ""
                         }
                     ],
-                    "line": 230,
-                    "end": 270
+                    "line": 240,
+                    "end": 248
+                },
+                {
+                    "routes": [],
+                    "name": "renderBlock",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "renderBlock(Minn\\Blocks\\Block $block): string",
+                    "doc": "One block as HTML, with the filters around it (unless renderNativeUnfiltered() asked for this one without).",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "block",
+                            "type": "Minn\\Blocks\\Block",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 251,
+                    "end": 294
                 },
                 {
                     "routes": [],
@@ -17870,8 +18675,8 @@
                         "@return array<string, mixed>"
                     ],
                     "params": [],
-                    "line": 279,
-                    "end": 283
+                    "line": 303,
+                    "end": 307
                 },
                 {
                     "routes": [],
@@ -17899,8 +18704,28 @@
                             "doc": ""
                         }
                     ],
-                    "line": 286,
-                    "end": 294
+                    "line": 310,
+                    "end": 318
+                },
+                {
+                    "routes": [],
+                    "name": "rendersNatively",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "rendersNatively(string $name): bool",
+                    "doc": "Whether the engine's own renderer answers for a block: a core block no\nplugin's callback took over. It applies the block supports it knows\nitself (layout, element styles); the facade's render_block filters do\nthe rest, and all of them for any other block.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "name",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 326,
+                    "end": 329
                 },
                 {
                     "routes": [],
@@ -17926,8 +18751,28 @@
                             "doc": ""
                         }
                     ],
-                    "line": 200,
-                    "end": 207
+                    "line": 206,
+                    "end": 213
+                },
+                {
+                    "routes": [],
+                    "name": "elementsClass",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "elementsClass(Minn\\Blocks\\Block $block): ?string",
+                    "doc": "A core block's wp-elements-N class, its rules recorded, when the engine renders it itself.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "block",
+                            "type": "Minn\\Blocks\\Block",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 332,
+                    "end": 335
                 },
                 {
                     "routes": [],
@@ -17955,15 +18800,15 @@
                             "doc": "the bound attributes' values, put into a static block's HTML"
                         }
                     ],
-                    "line": 297,
-                    "end": 316
+                    "line": 338,
+                    "end": 361
                 },
                 {
                     "routes": [],
                     "name": "decorate",
                     "static": false,
                     "visibility": "private",
-                    "signature": "decorate(Minn\\Blocks\\Block $block, string $html, ?string $elements): string",
+                    "signature": "decorate(Minn\\Blocks\\Block $block, string $html, ?string $elements, ?string $numbered): string",
                     "doc": "",
                     "shapes": [],
                     "params": [
@@ -17987,10 +18832,17 @@
                             "shape": "",
                             "default": null,
                             "doc": ""
+                        },
+                        {
+                            "name": "numbered",
+                            "type": "?string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
                         }
                     ],
-                    "line": 318,
-                    "end": 347
+                    "line": 363,
+                    "end": 383
                 },
                 {
                     "routes": [],
@@ -18001,35 +18853,8 @@
                     "doc": "",
                     "shapes": [],
                     "params": [],
-                    "line": 349,
-                    "end": 354
-                },
-                {
-                    "routes": [],
-                    "name": "flexWithoutContainer",
-                    "static": true,
-                    "visibility": "private",
-                    "signature": "flexWithoutContainer(string $slug, array $attrs): array",
-                    "doc": "Buttons are flex containers without a stylesheet of their own by default.",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "slug",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "attrs",
-                            "type": "array",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 357,
-                    "end": 363
+                    "line": 385,
+                    "end": 390
                 }
             ]
         },
@@ -18249,6 +19074,245 @@
                     ],
                     "line": 51,
                     "end": 57
+                }
+            ]
+        },
+        {
+            "name": "Minn\\Blocks\\States",
+            "short": "States",
+            "namespace": "Minn\\Blocks",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Blocks/States.php",
+            "lines": 160,
+            "doc": "Block state styles (a block's style[\":hover\"] and the like, probe\nblock-supports): the selector arithmetic and the fallbacks the reference\napplies when it writes a state's rules. Pure: styles and selectors in,\nstyles, groups and declarations out.",
+            "implements": [],
+            "extends": null,
+            "uses": [],
+            "usedBy": [],
+            "constructor": null,
+            "cases": [],
+            "constants": [
+                {
+                    "name": "SIDES",
+                    "value": "array (   0 => 'top',   1 => 'right',   2 => 'bottom',   3 => 'left', )",
+                    "doc": "",
+                    "visibility": "private"
+                }
+            ],
+            "properties": [],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "split",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "split(string $selector): array",
+                    "doc": "A selector list split at its top-level commas (none inside parentheses\ncounts), each part as written.",
+                    "shapes": [
+                        "@return list<string>"
+                    ],
+                    "params": [
+                        {
+                            "name": "selector",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 23,
+                    "end": 39
+                },
+                {
+                    "routes": [],
+                    "name": "selector",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "selector(string $base, string $selectors, string $state): string",
+                    "doc": "A state on each selector of a block's list, its leading compound\nselector swapped for the base; the base alone for an empty list.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "base",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "selectors",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "state",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 45,
+                    "end": 53
+                },
+                {
+                    "routes": [],
+                    "name": "presetVars",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "presetVars(mixed $value): mixed",
+                    "doc": "Presets (var:preset|{kind}|{slug}) as their custom properties, through arrays; anything else as it is.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "value",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 56,
+                    "end": 65
+                },
+                {
+                    "routes": [],
+                    "name": "backgroundResets",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "backgroundResets(array $declarations): array",
+                    "doc": "Declarations with a background image unset under a background colour\nthat sets neither a background nor an image of its own.",
+                    "shapes": [
+                        "@param array<string, string> $declarations",
+                        "@return array<string, string>"
+                    ],
+                    "params": [
+                        {
+                            "name": "declarations",
+                            "type": "array",
+                            "shape": "array<string, string>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 74,
+                    "end": 80
+                },
+                {
+                    "routes": [],
+                    "name": "borderFallbacks",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "borderFallbacks(array $declarations): array",
+                    "doc": "Declarations with a solid border style for a border (or a side of one)\ngiven a width or a colour and no style.",
+                    "shapes": [
+                        "@param array<string, string> $declarations",
+                        "@return array<string, string>"
+                    ],
+                    "params": [
+                        {
+                            "name": "declarations",
+                            "type": "array",
+                            "shape": "array<string, string>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 89,
+                    "end": 97
+                },
+                {
+                    "routes": [],
+                    "name": "dimensionFallbacks",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "dimensionFallbacks(array $style): array",
+                    "doc": "A state's style with an explicit aspect ratio unsetting the height and\nminimum height, or a height or minimum height unsetting the aspect ratio.",
+                    "shapes": [
+                        "@param array<string, mixed> $style",
+                        "@return array<string, mixed>"
+                    ],
+                    "params": [
+                        {
+                            "name": "style",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 106,
+                    "end": 119
+                },
+                {
+                    "routes": [],
+                    "name": "groups",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "groups(array $style, array $selectors): array",
+                    "doc": "A state's style split by the selectors a block gives its features: a\nfeature (or one of its properties) with a selector of its own goes\nthere, a feature's other properties to its root selector, the rest to\nthe block's root. Groups keep the order they are first met in.",
+                    "shapes": [
+                        "@param array<string, mixed> $style",
+                        "@param array<string, mixed> $selectors the block's selectors, root among them",
+                        "@return list<array{selector: ?string, style: array<string, mixed>}>"
+                    ],
+                    "params": [
+                        {
+                            "name": "style",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "selectors",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": "the block's selectors, root among them"
+                        }
+                    ],
+                    "line": 131,
+                    "end": 158
+                },
+                {
+                    "routes": [],
+                    "name": "addGroup",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "addGroup(array $groups, ?string $selector, array $style): void",
+                    "doc": "Adds a style to the group of a selector, merged into what it holds.",
+                    "shapes": [
+                        "@param array<string, array{selector: ?string, style: array<string, mixed>}> $groups",
+                        "@param array<string, mixed> $style"
+                    ],
+                    "params": [
+                        {
+                            "name": "groups",
+                            "type": "array",
+                            "shape": "array<string, array{selector: ?string, style: array<string, mixed>}>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "selector",
+                            "type": "?string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "style",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 166,
+                    "end": 171
                 }
             ]
         },
@@ -18922,121 +19986,6 @@
             ]
         },
         {
-            "name": "Minn\\Blocks\\Supports",
-            "short": "Supports",
-            "namespace": "Minn\\Blocks",
-            "kind": "final class",
-            "file": "public/minn/src/Minn/Blocks/Supports.php",
-            "lines": 72,
-            "doc": "The wrapper attributes a block's supports declaration earns from its\nattributes: align and class-name classes, color and gradient presets or\ninline values, the font-size preset, the anchor id.",
-            "implements": [],
-            "extends": null,
-            "uses": [],
-            "usedBy": [],
-            "constructor": null,
-            "cases": [],
-            "constants": [],
-            "properties": [],
-            "methods": [
-                {
-                    "routes": [],
-                    "name": "attributes",
-                    "static": true,
-                    "visibility": "public",
-                    "signature": "attributes(array $attributes, array $supports, string $defaultClass, callable $kebab): array",
-                    "doc": "The classes and inline styles a block's supports amount to.",
-                    "shapes": [
-                        "@param array<string, mixed> $attributes the block's prepared attributes",
-                        "@param array<string, mixed> $supports the block type's supports",
-                        "@param callable(string): string $kebab the slug form of a preset name (filtered on the reference)",
-                        "@return array<string, string> class, style, id, only those that apply"
-                    ],
-                    "params": [
-                        {
-                            "name": "attributes",
-                            "type": "array",
-                            "shape": "array<string, mixed>",
-                            "default": null,
-                            "doc": "the block's prepared attributes"
-                        },
-                        {
-                            "name": "supports",
-                            "type": "array",
-                            "shape": "array<string, mixed>",
-                            "default": null,
-                            "doc": "the block type's supports"
-                        },
-                        {
-                            "name": "defaultClass",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "kebab",
-                            "type": "callable",
-                            "shape": "callable(string): string",
-                            "default": null,
-                            "doc": "the slug form of a preset name (filtered on the reference)"
-                        }
-                    ],
-                    "line": 22,
-                    "end": 56
-                },
-                {
-                    "routes": [],
-                    "name": "color",
-                    "static": true,
-                    "visibility": "private",
-                    "signature": "color(array $attributes, mixed $color, callable $kebab, array $classes, array $styles): void",
-                    "doc": "",
-                    "shapes": [
-                        "@param list<string> $classes @param list<string> $styles"
-                    ],
-                    "params": [
-                        {
-                            "name": "attributes",
-                            "type": "array",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "color",
-                            "type": "mixed",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "kebab",
-                            "type": "callable",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "classes",
-                            "type": "array",
-                            "shape": "list<string>",
-                            "default": null,
-                            "doc": "@param list<string> $styles"
-                        },
-                        {
-                            "name": "styles",
-                            "type": "array",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 59,
-                    "end": 82
-                }
-            ]
-        },
-        {
             "name": "Minn\\Blocks\\TemplatePartVariations",
             "short": "TemplatePartVariations",
             "namespace": "Minn\\Blocks",
@@ -19092,14 +20041,13 @@
             "namespace": "Minn\\Blocks",
             "kind": "final class",
             "file": "public/minn/src/Minn/Blocks/Wrapper.php",
-            "lines": 60,
+            "lines": 59,
             "doc": "The opening tag of a dynamic block's wrapper, in the reference's class\norder: text alignment, the link-colour marker (for the blocks that\ncarry it), the block's own extra classes (a taxonomy, an alignment),\nthe custom class and its numbered style companion, the element-style\nclass, the block's class, colour presets, font size and family, and\nthe layout classes last; the style attribute inline.",
             "implements": [],
             "extends": null,
             "uses": [
                 "Minn\\Blocks\\Block",
                 "Minn\\Blocks\\RenderState",
-                "Minn\\Blocks\\Renderer",
                 "Minn\\Blocks\\Styles",
                 "Minn\\Support\\Html"
             ],
@@ -19120,7 +20068,7 @@
                     "name": "open",
                     "static": true,
                     "visibility": "public",
-                    "signature": "open(string $tag, string $blockClass, Minn\\Blocks\\Block $block, bool $styleFirst = false, string $blockName = '', bool $linkColorClass = false, array $extraClasses = array ( ), array $trailingClasses = array ( )): string",
+                    "signature": "open(string $tag, string $blockClass, Minn\\Blocks\\Block $block, bool $styleFirst = false, bool $linkColorClass = false, array $extraClasses = array ( ), array $trailingClasses = array ( )): string",
                     "doc": "A dynamic block's opening tag with its classes in the reference's order.",
                     "shapes": [],
                     "params": [
@@ -19153,13 +20101,6 @@
                             "doc": ""
                         },
                         {
-                            "name": "blockName",
-                            "type": "string",
-                            "shape": "",
-                            "default": "''",
-                            "doc": ""
-                        },
-                        {
                             "name": "linkColorClass",
                             "type": "bool",
                             "shape": "",
@@ -19182,7 +20123,7 @@
                         }
                     ],
                     "line": 20,
-                    "end": 75
+                    "end": 74
                 }
             ]
         },
@@ -105761,7 +106702,7 @@
             "namespace": "Minn\\Runtime",
             "kind": "final class",
             "file": "public/minn/src/Minn/Runtime/Assets.php",
-            "lines": 413,
+            "lines": 415,
             "doc": "The registry behind wp_register_/wp_enqueue_ for scripts and styles:\nhandles, sources, dependencies, versions, inline additions, localized\ndata, and the head/footer split. Printing follows the reference's tag\nshapes as far as captured; see contracts/runtime.md.",
             "implements": [],
             "extends": null,
@@ -106198,7 +107139,7 @@
                         }
                     ],
                     "line": 233,
-                    "end": 245
+                    "end": 247
                 },
                 {
                     "routes": [],
@@ -106231,8 +107172,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 248,
-                    "end": 261
+                    "line": 250,
+                    "end": 263
                 },
                 {
                     "routes": [],
@@ -106265,8 +107206,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 264,
-                    "end": 275
+                    "line": 266,
+                    "end": 277
                 },
                 {
                     "routes": [],
@@ -106292,8 +107233,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 278,
-                    "end": 281
+                    "line": 280,
+                    "end": 283
                 },
                 {
                     "routes": [],
@@ -106326,8 +107267,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 284,
-                    "end": 299
+                    "line": 286,
+                    "end": 301
                 },
                 {
                     "routes": [],
@@ -106346,8 +107287,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 302,
-                    "end": 309
+                    "line": 304,
+                    "end": 311
                 },
                 {
                     "routes": [],
@@ -106369,8 +107310,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 318,
-                    "end": 321
+                    "line": 320,
+                    "end": 323
                 },
                 {
                     "routes": [],
@@ -106383,8 +107324,8 @@
                         "@return array<string, string> handle => path"
                     ],
                     "params": [],
-                    "line": 366,
-                    "end": 376
+                    "line": 368,
+                    "end": 378
                 },
                 {
                     "routes": [],
@@ -106403,8 +107344,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 379,
-                    "end": 385
+                    "line": 381,
+                    "end": 387
                 },
                 {
                     "routes": [],
@@ -106423,8 +107364,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 388,
-                    "end": 392
+                    "line": 390,
+                    "end": 394
                 },
                 {
                     "routes": [],
@@ -106443,8 +107384,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 395,
-                    "end": 398
+                    "line": 397,
+                    "end": 400
                 },
                 {
                     "routes": [],
@@ -106457,8 +107398,8 @@
                         "@return array<string, array<string, mixed>>"
                     ],
                     "params": [],
-                    "line": 405,
-                    "end": 408
+                    "line": 407,
+                    "end": 410
                 },
                 {
                     "routes": [],
@@ -106471,8 +107412,8 @@
                         "@return list<string>"
                     ],
                     "params": [],
-                    "line": 415,
-                    "end": 418
+                    "line": 417,
+                    "end": 420
                 },
                 {
                     "routes": [],
@@ -106483,8 +107424,8 @@
                     "doc": "Whether these are scripts or styles.",
                     "shapes": [],
                     "params": [],
-                    "line": 421,
-                    "end": 424
+                    "line": 423,
+                    "end": 426
                 },
                 {
                     "routes": [],
@@ -106574,8 +107515,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 327,
-                    "end": 357
+                    "line": 329,
+                    "end": 359
                 }
             ]
         },
@@ -106758,7 +107699,7 @@
             "namespace": "Minn\\Runtime",
             "kind": "final class",
             "file": "public/minn/src/Minn/Runtime/BlockFilters.php",
-            "lines": 82,
+            "lines": 127,
             "doc": "The block-level filters plugin code hooks (pre_render_block,\nrender_block_data, render_block, render_block_{name}), applied around the\nengine's own renderer so a plugin sees every block the page renders, not\nonly the ones it registered.",
             "implements": [],
             "extends": null,
@@ -106771,7 +107712,20 @@
             ],
             "constructor": null,
             "cases": [],
-            "constants": [],
+            "constants": [
+                {
+                    "name": "NATIVE_DATA_DONE",
+                    "value": "array (   'wp_render_elements_support_styles' => 10,   'wp_render_block_style_variation_support_styles' => 10, )",
+                    "doc": "The block-support data filters the engine's renderer does itself for a block it renders natively: element styles, style variations.",
+                    "visibility": "public"
+                },
+                {
+                    "name": "NATIVE_RENDER_DONE",
+                    "value": "array (   'wp_render_elements_class_name' => 10,   'wp_render_block_style_variation_class_name' => 10,   'wp_render_layout_support_flag' =>    array (     0 => 10,     1 => '_minn_render_child_layout_support',   ), )",
+                    "doc": "The block-support render filters it does itself: the element and style\nvariation classes and the layout's container classes, a child's own\nlayout left to a stand-in.",
+                    "visibility": "public"
+                }
+            ],
             "properties": [
                 {
                     "name": "parsedFor",
@@ -106840,12 +107794,95 @@
                 },
                 {
                     "routes": [],
+                    "name": "data",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "data(array $parsed, ?object $parent, array $done = array ( )): mixed",
+                    "doc": "A parsed block through render_block_data, without the callbacks done\nalready (NATIVE_DATA_DONE for a block the engine's renderer renders).",
+                    "shapes": [
+                        "@param array<string, mixed> $parsed",
+                        "@param array<string, int|array{0: int, 1: string}> $done"
+                    ],
+                    "params": [
+                        {
+                            "name": "parsed",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "parent",
+                            "type": "?object",
+                            "shape": "object|null",
+                            "default": null,
+                            "doc": "the WP_Block rendering it, when there is one"
+                        },
+                        {
+                            "name": "done",
+                            "type": "array",
+                            "shape": "array<string, int|array{0: int, 1: string}>",
+                            "default": "array ( )",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 76,
+                    "end": 79
+                },
+                {
+                    "routes": [],
+                    "name": "rendered",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "rendered(string $html, array $parsed, ?object $instance, array $done = array ( )): string",
+                    "doc": "A rendered block through render_block and its per-name filter, without\nthe callbacks done already (NATIVE_RENDER_DONE, with its stand-ins, for\na block the engine's renderer renders).",
+                    "shapes": [
+                        "@param array<string, mixed> $parsed",
+                        "@param array<string, int|array{0: int, 1: string}> $done"
+                    ],
+                    "params": [
+                        {
+                            "name": "html",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "parsed",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "instance",
+                            "type": "?object",
+                            "shape": "object|null",
+                            "default": null,
+                            "doc": "the WP_Block the filters receive"
+                        },
+                        {
+                            "name": "done",
+                            "type": "array",
+                            "shape": "array<string, int|array{0: int, 1: string}>",
+                            "default": "array ( )",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 90,
+                    "end": 94
+                },
+                {
+                    "routes": [],
                     "name": "before",
                     "static": true,
                     "visibility": "public",
-                    "signature": "before(Minn\\Blocks\\Block $block): Minn\\Blocks\\Block|string",
+                    "signature": "before(Minn\\Blocks\\Block $block, array $done = array ( )): Minn\\Blocks\\Block|string",
                     "doc": "A short-circuit from pre_render_block, or the block as render_block_data left it.",
-                    "shapes": [],
+                    "shapes": [
+                        "@param array<string, int|array{0: int, 1: string}> $done the data filters done already"
+                    ],
                     "params": [
                         {
                             "name": "block",
@@ -106853,19 +107890,28 @@
                             "shape": "",
                             "default": null,
                             "doc": ""
+                        },
+                        {
+                            "name": "done",
+                            "type": "array",
+                            "shape": "array<string, int|array{0: int, 1: string}>",
+                            "default": "array ( )",
+                            "doc": "the data filters done already"
                         }
                     ],
-                    "line": 59,
-                    "end": 74
+                    "line": 101,
+                    "end": 116
                 },
                 {
                     "routes": [],
                     "name": "after",
                     "static": true,
                     "visibility": "public",
-                    "signature": "after(Minn\\Blocks\\Block $block, string $html): string",
+                    "signature": "after(Minn\\Blocks\\Block $block, string $html, array $done = array ( )): string",
                     "doc": "A rendered block through render_block and its per-name filter.",
-                    "shapes": [],
+                    "shapes": [
+                        "@param array<string, int|array{0: int, 1: string}> $done the render filters done already"
+                    ],
                     "params": [
                         {
                             "name": "block",
@@ -106880,10 +107926,17 @@
                             "shape": "",
                             "default": null,
                             "doc": ""
+                        },
+                        {
+                            "name": "done",
+                            "type": "array",
+                            "shape": "array<string, int|array{0: int, 1: string}>",
+                            "default": "array ( )",
+                            "doc": "the render filters done already"
                         }
                     ],
-                    "line": 77,
-                    "end": 85
+                    "line": 123,
+                    "end": 130
                 },
                 {
                     "routes": [],
@@ -106896,8 +107949,8 @@
                         "@return array<string, mixed>"
                     ],
                     "params": [],
-                    "line": 88,
-                    "end": 95
+                    "line": 133,
+                    "end": 140
                 }
             ]
         },
@@ -122641,7 +123694,9 @@
                 "Minn\\Blocks\\Dynamic\\Theme\\PostBlocks",
                 "Minn\\Blocks\\Dynamic\\Theme\\QueryBlocks",
                 "Minn\\Blocks\\Dynamic\\Theme\\Structure",
+                "Minn\\Blocks\\Elements",
                 "Minn\\Blocks\\ImageTags",
+                "Minn\\Blocks\\Layout",
                 "Minn\\Blocks\\RenderState",
                 "Minn\\Blocks\\Renderer",
                 "Minn\\Cli\\Runtime",
@@ -122758,6 +123813,7 @@
                 "Minn\\Theme\\EmbedRenderer",
                 "Minn\\Theme\\FeedHeaders",
                 "Minn\\Theme\\FrontLifecycle",
+                "Minn\\Theme\\GlobalStyles",
                 "Minn\\Theme\\HeadLinks",
                 "Minn\\Theme\\MainQueryBridge",
                 "Minn\\Theme\\PageRenderer",
@@ -132211,7 +133267,7 @@
             "namespace": "Minn\\Support",
             "kind": "final class",
             "file": "public/minn/src/Minn/Support/Kses.php",
-            "lines": 545,
+            "lines": 577,
             "doc": "The HTML a user without unfiltered_html may store. Tags outside the\nallowlist are removed and their text kept; attributes outside the tag's\nlist are dropped; URL attributes lose unsafe schemes; style attributes\nkeep only listed properties and no code. Comments keep their text, and\nblock delimiters are written back with their attribute values filtered.",
             "implements": [],
             "extends": null,
@@ -132231,6 +133287,7 @@
                 "Minn\\Blocks\\Dynamic\\SocialLinks",
                 "Minn\\Blocks\\Dynamic\\Theme\\Comments",
                 "Minn\\Blocks\\Dynamic\\Theme\\Navigation",
+                "Minn\\Blocks\\Layout",
                 "Minn\\Content\\Users",
                 "Minn\\Media\\Writer",
                 "Minn\\Rest\\MenusController",
@@ -132285,6 +133342,30 @@
                     "name": "MARKUP",
                     "value": "array (   '&' => '&amp;',   '<' => '&lt;',   '>' => '&gt;',   '\"' => '&quot;',   '\\'' => '&apos;', )",
                     "doc": "",
+                    "visibility": "private"
+                },
+                {
+                    "name": "CSS_FUNCTIONS",
+                    "value": "'/\\\\b(?:var|calc|min|max|minmax|clamp|repeat|rotate(?:X|Y|Z|3d)?|translate(?:X|Y|Z|3d)?|scale(?:X|Y|Z|3d)?|skew(?:X|Y)?|matrix(?:3d)?|perspective|inset|circle|ellipse|polygon|path)(\\\\((?:[^()]|(?1))*\\\\))/'",
+                    "doc": "The CSS functions a value may use (transforms, shapes and the math ones), whatever they hold.",
+                    "visibility": "private"
+                },
+                {
+                    "name": "CSS_GRADIENTS",
+                    "value": "'/\\\\b(?:repeating-)?(?:linear|radial|conic)-gradient(\\\\((?:[^()]|(?1))*\\\\))/'",
+                    "doc": "The gradients a background may use.",
+                    "visibility": "private"
+                },
+                {
+                    "name": "CSS_URL_PROPERTIES",
+                    "value": "array (   0 => 'background',   1 => 'background-image',   2 => 'cursor',   3 => 'filter',   4 => 'mask',   5 => 'clip-path', )",
+                    "doc": "The properties that may use a url().",
+                    "visibility": "private"
+                },
+                {
+                    "name": "CSS_GRADIENT_PROPERTIES",
+                    "value": "array (   0 => 'background',   1 => 'background-image', )",
+                    "doc": "The properties that may use a gradient.",
                     "visibility": "private"
                 }
             ],
@@ -132677,8 +133758,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 560,
-                    "end": 563
+                    "line": 592,
+                    "end": 595
                 },
                 {
                     "routes": [],
@@ -132970,7 +134051,7 @@
                     "static": true,
                     "visibility": "private",
                     "signature": "css(string $style): string",
-                    "doc": "The style attribute's declarations kept as written, as the reference\nkeeps them: a listed property (the list through safe_style_css when\nthe runtime hooks it; --* lets custom properties through), a value\nwith no expression, behavior, script, data: or escape, url() only on\nimage properties; each asked through safecss_filter_attr_allow_css.",
+                    "doc": "The style attribute's declarations kept as written, as the reference\nkeeps them (probes kses, block-supports): a listed property, named\nexactly (the list through safe_style_css when the runtime hooks it;\n--* lets custom properties through), or a bare value; and nothing in\nthe value that could end the declaration or open a function (\\ ( & =\n} or a comment) once the functions it may use are taken out, with a\nbackground's gradients and the url()s of allowed schemes a background,\na cursor, a filter, a mask or a clip path may use. Each is asked\nthrough safecss_filter_attr_allow_css.",
                     "shapes": [],
                     "params": [
                         {
@@ -132981,35 +134062,37 @@
                             "doc": ""
                         }
                     ],
-                    "line": 513,
-                    "end": 537
+                    "line": 529,
+                    "end": 548
                 },
                 {
                     "routes": [],
-                    "name": "safeValue",
+                    "name": "cssTestString",
                     "static": true,
                     "visibility": "private",
-                    "signature": "safeValue(string $property, string $value): bool",
-                    "doc": "No expression, behavior, script, data: or escape anywhere; url() only on image properties, without parentheses around it.",
-                    "shapes": [],
+                    "signature": "cssTestString(string $declaration, array $allowed): ?string",
+                    "doc": "What of a declaration must hold no unsafe character: its value (or the\nbare value) without the functions it may use; null for a property not\nlisted, or a url() with a scheme not allowed (on a property that cannot\nuse one, its parenthesis fails the test).",
+                    "shapes": [
+                        "@param list<string> $allowed"
+                    ],
                     "params": [
                         {
-                            "name": "property",
+                            "name": "declaration",
                             "type": "string",
                             "shape": "",
                             "default": null,
                             "doc": ""
                         },
                         {
-                            "name": "value",
-                            "type": "string",
-                            "shape": "",
+                            "name": "allowed",
+                            "type": "array",
+                            "shape": "list<string>",
                             "default": null,
                             "doc": ""
                         }
                     ],
-                    "line": 540,
-                    "end": 550
+                    "line": 558,
+                    "end": 582
                 }
             ]
         },
@@ -136297,6 +137380,132 @@
             ]
         },
         {
+            "name": "Minn\\Theme\\CustomCss",
+            "short": "CustomCss",
+            "namespace": "Minn\\Theme",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Theme/CustomCss.php",
+            "lines": 69,
+            "doc": "Custom CSS as theme.json and blocks write it (a styles node's \"css\", a\nblock's style.css): nested rules under \"&\" unfolded beneath the selector\nthey belong to, each wrapped in :root :where() as the reference prints\nthem. Pure: CSS and selectors in, rules out.",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\Theme\\GlobalStyles"
+            ],
+            "usedBy": [
+                "Minn\\Theme\\GlobalStyles"
+            ],
+            "constructor": null,
+            "cases": [],
+            "constants": [],
+            "properties": [],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "scoped",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "scoped(string $css, string $selector): string",
+                    "doc": "A block's own CSS under its selector (probe editor-styles; a block's\nstyle.css too, probe block-supports), split at each ampersand: a part\nwith no rule applies to the block itself; a nested selector that starts\nwith a space is scoped, every comma part after the block's selector;\nany other is appended to it; a pseudo element moves to the end, outside\n:where().",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "css",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "selector",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 23,
+                    "end": 44
+                },
+                {
+                    "routes": [],
+                    "name": "ofStyles",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "ofStyles(array $styles): string",
+                    "doc": "The styles' own CSS (WP_Theme_JSON::get_custom_css): the top-level\ncss, then each block's under its root selector.",
+                    "shapes": [
+                        "@param array<string, mixed> $styles"
+                    ],
+                    "params": [
+                        {
+                            "name": "styles",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 71,
+                    "end": 80
+                },
+                {
+                    "routes": [],
+                    "name": "scope",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "scope(string $scope, string $selector): string",
+                    "doc": "Every comma part of a selector list after every part of the scope.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "scope",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "selector",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 47,
+                    "end": 57
+                },
+                {
+                    "routes": [],
+                    "name": "append",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "append(string $selector, string $suffix): string",
+                    "doc": "Text appended to every comma part of a selector list.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "selector",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "suffix",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 60,
+                    "end": 63
+                }
+            ]
+        },
+        {
             "name": "Minn\\Theme\\EmbedRenderer",
             "short": "EmbedRenderer",
             "namespace": "Minn\\Theme",
@@ -136866,13 +138075,16 @@
             "namespace": "Minn\\Theme",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Theme/GlobalStyles.php",
-            "lines": 571,
+            "lines": 519,
             "doc": "theme.json to CSS. Presets become custom properties on :root and their\nhas-* utility classes; settings.layout sizes, root styles, elements, and\nper-block styles become rules; the containers, galleries, and style\nvariations the page actually rendered get their own stylesheets. The\nlayout rules themselves (flow, constrained, flex, grid, alignments) are\nthe engine's own, written to the same class hooks.",
             "implements": [],
             "extends": null,
             "uses": [
+                "Minn\\Blocks\\CoreBlocks",
                 "Minn\\Blocks\\RenderState",
                 "Minn\\Blocks\\Styles",
+                "Minn\\Runtime\\Runtime",
+                "Minn\\Theme\\CustomCss",
                 "Minn\\Theme\\StylePresets",
                 "Minn\\Theme\\StyleSettings",
                 "Minn\\Theme\\Theme"
@@ -136880,6 +138092,7 @@
             "usedBy": [
                 "Minn\\Admin\\RenderController",
                 "Minn\\Theme\\ClassicRenderer",
+                "Minn\\Theme\\CustomCss",
                 "Minn\\Theme\\PageRenderer"
             ],
             "constructor": {
@@ -136903,8 +138116,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 60,
-                "end": 62
+                "line": 62,
+                "end": 64
             },
             "cases": [],
             "constants": [
@@ -136957,8 +138170,8 @@
                     "doc": "The theme.json (plus site-editor) styles node, under the engine's own defaults.",
                     "shapes": [],
                     "params": [],
-                    "line": 65,
-                    "end": 70
+                    "line": 67,
+                    "end": 72
                 },
                 {
                     "routes": [],
@@ -136969,8 +138182,8 @@
                     "doc": "The same node with every `var:preset|…` token resolved to the custom\nproperty it names, which is the shape a caller reading the styles as\ndata expects (the CSS writer resolves them on the way out instead).",
                     "shapes": [],
                     "params": [],
-                    "line": 77,
-                    "end": 80
+                    "line": 79,
+                    "end": 82
                 },
                 {
                     "routes": [],
@@ -136981,8 +138194,8 @@
                     "doc": "The global stylesheet from theme.json and the user's styles, as a page prints it: only the core blocks it rendered.",
                     "shapes": [],
                     "params": [],
-                    "line": 83,
-                    "end": 102
+                    "line": 85,
+                    "end": 103
                 },
                 {
                     "routes": [],
@@ -137003,7 +138216,7 @@
                             "doc": ""
                         }
                     ],
-                    "line": 111,
+                    "line": 112,
                     "end": 126
                 },
                 {
@@ -137017,6 +138230,67 @@
                     "params": [],
                     "line": 156,
                     "end": 184
+                },
+                {
+                    "routes": [],
+                    "name": "rootSelector",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "rootSelector(string $name): string",
+                    "doc": "A block's root selector: its metadata's, the reference's own for a few core blocks, else .wp-block-{slug}.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "name",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 336,
+                    "end": 341
+                },
+                {
+                    "routes": [],
+                    "name": "variationCss",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "variationCss(string $name, string $style, int $instance, array $variation): string",
+                    "doc": "A numbered style variation's CSS (probe block-supports): its element\nrules scoped by the numbered class alone, then the variation on the\nblock's root selector (the class riding on the block's own class:\n.wp-block-button.is-style-outline--3 .wp-block-button__link), its own\nCSS, and the blocks styled inside it.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "name",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "style",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "instance",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "variation",
+                            "type": "array",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 403,
+                    "end": 425
                 },
                 {
                     "routes": [],
@@ -137129,7 +138403,7 @@
                 {
                     "routes": [],
                     "name": "elementStyles",
-                    "static": false,
+                    "static": true,
                     "visibility": "private",
                     "signature": "elementStyles(array $elements, string $scope): string",
                     "doc": "",
@@ -137208,7 +138482,7 @@
                     "static": true,
                     "visibility": "private",
                     "signature": "selectorsOf(string $name): array",
-                    "doc": "A core block's selectors from its metadata (data/blocks.json). @return array<string, mixed>",
+                    "doc": "A core block's selectors from its metadata. @return array<string, mixed>",
                     "shapes": [
                         "@return array<string, mixed>"
                     ],
@@ -137221,8 +138495,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 336,
-                    "end": 341
+                    "line": 344,
+                    "end": 347
                 },
                 {
                     "routes": [],
@@ -137252,8 +138526,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 351,
-                    "end": 376
+                    "line": 357,
+                    "end": 382
                 },
                 {
                     "routes": [],
@@ -137272,109 +138546,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 378,
-                    "end": 388
-                },
-                {
-                    "routes": [],
-                    "name": "scopedCss",
-                    "static": true,
-                    "visibility": "private",
-                    "signature": "scopedCss(string $css, string $selector): string",
-                    "doc": "A block's own CSS under its selector (probe editor-styles), split at\neach ampersand: a part with no rule applies to the block itself; a\nnested selector that starts with a space is scoped, every comma part\nafter the block's selector; any other is appended to it; a pseudo\nelement moves to the end, outside :where().",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "css",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "selector",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 398,
-                    "end": 419
-                },
-                {
-                    "routes": [],
-                    "name": "scope",
-                    "static": true,
-                    "visibility": "private",
-                    "signature": "scope(string $scope, string $selector): string",
-                    "doc": "Every comma part of a selector list after every part of the scope.",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "scope",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "selector",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 422,
-                    "end": 432
-                },
-                {
-                    "routes": [],
-                    "name": "append",
-                    "static": true,
-                    "visibility": "private",
-                    "signature": "append(string $selector, string $suffix): string",
-                    "doc": "Text appended to every comma part of a selector list.",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "selector",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "suffix",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 435,
-                    "end": 438
-                },
-                {
-                    "routes": [],
-                    "name": "variationStyles",
-                    "static": false,
-                    "visibility": "private",
-                    "signature": "variationStyles(array $blocks): string",
-                    "doc": "Style variations the page rendered, one rule set per numbered instance.",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "blocks",
-                            "type": "array",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 441,
-                    "end": 470
+                    "line": 384,
+                    "end": 394
                 },
                 {
                     "routes": [],
@@ -137382,11 +138555,11 @@
                     "static": false,
                     "visibility": "private",
                     "signature": "containerStyles(): string",
-                    "doc": "",
+                    "doc": "The page's block-support rules (layouts, element styles, and the rest), which the facade keeps in the style engine's block-supports store.",
                     "shapes": [],
                     "params": [],
-                    "line": 472,
-                    "end": 489
+                    "line": 428,
+                    "end": 435
                 },
                 {
                     "routes": [],
@@ -137414,8 +138587,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 497,
-                    "end": 560
+                    "line": 443,
+                    "end": 510
                 },
                 {
                     "routes": [],
@@ -137437,8 +138610,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 570,
-                    "end": 587
+                    "line": 520,
+                    "end": 537
                 }
             ]
         },

@@ -50,7 +50,7 @@ final class SocialLinks
             $child = $block->innerBlocks[$inner++];
             $out .= $child->name === 'core/social-link' ? $this->link($child, $block) : $renderer->renderBlock($child);
         }
-        return Html::addClasses($out, Layout::classes('social-links', $block->attrs, 'flex'));
+        return Html::addClasses($out, Layout::classes('core/social-links', $block->attrs));
     }
 
     private function link(Block $link, Block $parent): string

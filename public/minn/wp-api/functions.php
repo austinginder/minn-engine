@@ -1,6 +1,7 @@
 <?php
 /** Dates, files, mime types, and the odds and ends of wp-includes/functions.php. */
 
+use Minn\Blocks\RenderState;
 use Minn\Runtime\Deferrals;
 use Minn\Runtime\Runtime;
 
@@ -666,10 +667,10 @@ function wp_fuzzy_number_match($expected, $actual, $precision = 1)
     return abs((float) $expected - (float) $actual) <= $precision;
 }
 
+/** A prefix and the next number of the request's one counter, which the engine's renderer numbers galleries, style variations and inputs from too. */
 function wp_unique_id($prefix = '')
 {
-    static $id = 0;
-    return $prefix . (++$id);
+    return $prefix . RenderState::current()->nextId();
 }
 
 function wp_unique_prefixed_id($prefix = '')

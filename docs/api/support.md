@@ -17,7 +17,7 @@ escaping, serialized readers, small helpers
 | [`Html`](#html) | final class | 107 |  |
 | [`Ip`](#ip) | final class | 22 | Addresses with their identifying tail removed, for logs and analytics that |
 | [`Json`](#json) | final class | 19 | Makes a value encodable: strings that are not valid UTF-8 get their high bytes replaced, recursively. |
-| [`Kses`](#kses) | final class | 545 | The HTML a user without unfiltered_html may store. Tags outside the |
+| [`Kses`](#kses) | final class | 577 | The HTML a user without unfiltered_html may store. Tags outside the |
 | [`KsesAttributes`](#ksesattributes) | final class | 64 | Kses one attribute at a time, for the shortcode pass that runs inside |
 | [`KsesEntities`](#ksesentities) | final class | 30 | The named references kses keeps as written: the list captured from the |
 | [`KsesPolicy`](#ksespolicy) | final readonly class | 115 | What one kses pass allows: the tags, each tag's attributes (allowed |
@@ -356,8 +356,12 @@ block delimiters are written back with their attribute values filtered.
 - const `REFERENCE` = `'/&(#[0-9]+|#[xX][0-9a-fA-F]+|[a-zA-Z][a-zA-Z0-9]{0,31});/'`
 - const `STRAY_AMPERSAND` = `'/&(?!(?:#[0-9]+|#[xX][0-9a-fA-F]+|[a-zA-Z][a-zA-Z0-9]{0,31});)/'`
 - const `MARKUP` = `array (   '&' => '&amp;',   '<' => '&lt;',   '>' => '&gt;',   '"' => '&quot;',   '\'' => '&apos;', )`
+- const `CSS_FUNCTIONS` = `'/\\b(?:var|calc|min|max|minmax|clamp|repeat|rotate(?:X|Y|Z|3d)?|translate(?:X|Y|Z|3d)?|scale(?:X|Y|Z|3d)?|skew(?:X|Y)?|matrix(?:3d)?|perspective|inset|circle|ellipse|polygon|path)(\\((?:[^()]|(?1))*\\))/'` — The CSS functions a value may use (transforms, shapes and the math ones), whatever they hold.
+- const `CSS_GRADIENTS` = `'/\\b(?:repeating-)?(?:linear|radial|conic)-gradient(\\((?:[^()]|(?1))*\\))/'` — The gradients a background may use.
+- const `CSS_URL_PROPERTIES` = `array (   0 => 'background',   1 => 'background-image',   2 => 'cursor',   3 => 'filter',   4 => 'mask',   5 => 'clip-path', )` — The properties that may use a url().
+- const `CSS_GRADIENT_PROPERTIES` = `array (   0 => 'background',   1 => 'background-image', )` — The properties that may use a gradient.
 
-Used by: `Minn\Blocks\Dynamic\LatestComments`, `Minn\Blocks\Dynamic\SocialLinks`, `Minn\Blocks\Dynamic\Theme\Comments`, `Minn\Blocks\Dynamic\Theme\Navigation`, `Minn\Content\Users`, `Minn\Media\Writer`, `Minn\Rest\MenusController`, `Minn\Rest\PostsWriteController`, `Minn\Rest\RevisionsController`, `Minn\Rest\TermsController`, `Minn\Rest\UsersController`, `Minn\Support\Escape`, `Minn\Support\KsesAttributes`, `Minn\Support\KsesPolicy`
+Used by: `Minn\Blocks\Dynamic\LatestComments`, `Minn\Blocks\Dynamic\SocialLinks`, `Minn\Blocks\Dynamic\Theme\Comments`, `Minn\Blocks\Dynamic\Theme\Navigation`, `Minn\Blocks\Layout`, `Minn\Content\Users`, `Minn\Media\Writer`, `Minn\Rest\MenusController`, `Minn\Rest\PostsWriteController`, `Minn\Rest\RevisionsController`, `Minn\Rest\TermsController`, `Minn\Rest\UsersController`, `Minn\Support\Escape`, `Minn\Support\KsesAttributes`, `Minn\Support\KsesPolicy`
 
 
 ### static `post(string $html): string`
@@ -461,7 +465,7 @@ The facade sets these as it loads.
 - `@param Closure(list<string>): list<string> $properties`
 - `@param Closure(bool, string): bool $allow`
 
-Internals: `cleanValue()` (private, line 169), `run()` (private, line 203), `htmlComment()` (private, line 227), `deepDecode()` (private, line 333), `visible()` (private, line 346), `normalizeText()` (private, line 361), `normalizeAttribute()` (private, line 384), `named()` (private, line 404), `codePoint()` (private, line 411), `attributes()` (private, line 426), `rendered()` (private, line 451), `srcset()` (private, line 489), `css()` (private, line 513), `safeValue()` (private, line 540)
+Internals: `cleanValue()` (private, line 169), `run()` (private, line 203), `htmlComment()` (private, line 227), `deepDecode()` (private, line 333), `visible()` (private, line 346), `normalizeText()` (private, line 361), `normalizeAttribute()` (private, line 384), `named()` (private, line 404), `codePoint()` (private, line 411), `attributes()` (private, line 426), `rendered()` (private, line 451), `srcset()` (private, line 489), `css()` (private, line 529), `cssTestString()` (private, line 558)
 
 
 ## KsesAttributes

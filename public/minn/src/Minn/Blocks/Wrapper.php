@@ -22,7 +22,6 @@ final class Wrapper
         string $blockClass,
         Block $block,
         bool $styleFirst = false,
-        string $blockName = '',
         bool $linkColorClass = false,
         array $extraClasses = [],
         array $trailingClasses = [],
@@ -40,7 +39,7 @@ final class Wrapper
         if ($className !== '') {
             // A custom class and its numbered style companion lead, before the block's own class.
             $classes[] = $className;
-            $numbered = $blockName === '' ? null : Renderer::numberedStyle($blockName, $className);
+            $numbered = RenderState::current()->takePendingVariation();
             if ($numbered !== null) {
                 $classes[] = $numbered;
             }
