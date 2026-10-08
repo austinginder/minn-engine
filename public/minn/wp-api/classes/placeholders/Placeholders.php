@@ -1375,6 +1375,30 @@ class WP_Comments_List_Table extends WP_List_Table
     }
 }
 
+class WP_Filesystem_FTPext extends WP_Filesystem_Base
+{
+    public $link = NULL;
+    public $options = NULL;
+
+    public function __construct($opt = NULL)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Filesystem_FTPext::__construct');
+        return null;
+    }
+
+    public function parselisting($line)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Filesystem_FTPext::parselisting');
+        return null;
+    }
+
+    public function __destruct()
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Filesystem_FTPext::__destruct');
+        return null;
+    }
+}
+
 class WP_Font_Face_Resolver
 {
 
@@ -3622,6 +3646,16 @@ class Walker_Category_Checklist extends Walker
 {
     public $tree_type = 'category';
     public $db_fields = ['parent' => 'parent', 'id' => 'term_id'];
+}
+
+class Walker_Nav_Menu_Checklist extends Walker_Nav_Menu
+{
+
+    public function __construct($fields = false)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('Walker_Nav_Menu_Checklist::__construct');
+        return null;
+    }
 }
 
 class Walker_Nav_Menu_Edit extends Walker_Nav_Menu

@@ -1180,3 +1180,80 @@ function wp_verify_fast_hash(string $message, string $hash): bool
 {
     return str_starts_with($hash, '$generic$') ? Minn\Auth\FastHash::verify($message, $hash) : Minn\Auth\PortableHash::verify($message, $hash);
 }
+
+/**
+ * A folder's size in bytes, its folders' too, all kept in the dirsize_cache
+ * transient: a size already there is answered from it; a folder named in
+ * $exclude, or one that is not there, counts as false; past the time
+ * allowed (the PHP limit less a second) the size is null.
+ */
+function recurse_dirsize($directory, $exclude = null, $max_execution_time = null, &$directory_cache = null)
+{
+    $directory = untrailingslashit($directory);
+    $save = !isset($directory_cache);
+    if ($save) {
+        $directory_cache = get_transient('dirsize_cache');
+    }
+    if (isset($directory_cache[$directory]) && is_int($directory_cache[$directory])) {
+        return $directory_cache[$directory];
+    }
+    if (!is_dir($directory) || !is_readable($directory) || (is_string($exclude) && $directory === $exclude) || (is_array($exclude) && in_array($directory, $exclude, true))) {
+        return false;
+    }
+    if ($max_execution_time === null) {
+        $max_execution_time = (int) ini_get('max_execution_time');
+        $max_execution_time = $max_execution_time > 10 ? $max_execution_time - 1 : $max_execution_time;
+    }
+    $size = apply_filters('pre_recurse_dirsize', false, $directory, $exclude, $max_execution_time, $directory_cache);
+    if ($size === false) {
+        $size = _minn_dirsize($directory, $exclude, (int) $max_execution_time, $directory_cache);
+    }
+    $directory_cache = is_array($directory_cache) ? $directory_cache : [];
+    $directory_cache[$directory] = $size;
+    if ($save) {
+        set_transient('dirsize_cache', $directory_cache, wp_using_ext_object_cache() ? 0 : 10 * YEAR_IN_SECONDS);
+    }
+    return $size;
+}
+
+/** @internal a folder's files and folders summed, or null when the time ran out */
+function _minn_dirsize(string $directory, $exclude, int $max_execution_time, &$directory_cache): ?int
+{
+    $size = 0;
+    $started = defined('WP_START_TIMESTAMP') ? WP_START_TIMESTAMP : (float) ($_SERVER['REQUEST_TIME_FLOAT'] ?? microtime(true));
+    foreach (scandir($directory, SCANDIR_SORT_NONE) ?: [] as $file) {
+        if ($file === '.' || $file === '..') {
+            continue;
+        }
+        $path = $directory . '/' . $file;
+        $size += is_file($path) ? (int) filesize($path) : (is_dir($path) ? max(0, (int) recurse_dirsize($path, $exclude, $max_execution_time, $directory_cache)) : 0);
+        if ($max_execution_time > 0 && microtime(true) - $started > $max_execution_time) {
+            return null;
+        }
+    }
+    return $size;
+}
+
+/** A folder's size, through recurse_dirsize and its cache. */
+function get_dirsize($directory, $max_execution_time = null)
+{
+    return recurse_dirsize($directory, null, $max_execution_time);
+}
+
+/** The folder personal data exports are written to, in uploads. */
+function wp_privacy_exports_dir()
+{
+    return apply_filters('wp_privacy_exports_dir', trailingslashit(wp_upload_dir()['basedir']) . 'wp-personal-data-exports/');
+}
+
+/** The address of the personal data exports folder. */
+function wp_privacy_exports_url()
+{
+    return apply_filters('wp_privacy_exports_url', trailingslashit(wp_upload_dir()['baseurl']) . 'wp-personal-data-exports/');
+}
+
+/** True for "y" in either case; anything else is false. */
+function bool_from_yn($yn)
+{
+    return strtolower((string) $yn) === 'y';
+}

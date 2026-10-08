@@ -505,3 +505,29 @@ function get_theme($theme)
     $themes = get_themes();
     return array_key_exists($theme, $themes) ? $themes[$theme] : null;
 }
+
+/** A CSS length's number and unit (px, rem, em), converted on request; null for anything else. */
+function wp_get_typography_value_and_unit($raw_value, $options = [])
+{
+    if (!is_string($raw_value) && !is_int($raw_value) && !is_float($raw_value)) {
+        _doing_it_wrong(__FUNCTION__, __('Raw size value must be a string, integer, or float.'), '6.1.0');
+        return null;
+    }
+    return Minn\Theme\Typography::valueAndUnit($raw_value, (array) $options);
+}
+
+/** A font size preset as CSS: fluid (a clamp()) when the settings, over the global ones, turn fluid typography on. */
+function wp_get_typography_font_size_value($preset, $settings = [])
+{
+    if (is_bool($settings)) {
+        _deprecated_argument(__FUNCTION__, '6.6.0', __('$settings must be an array.'));
+        $settings = ['typography' => ['fluid' => $settings]];
+    }
+    return Minn\Theme\Typography::fontSize((array) $preset, wp_parse_args($settings, wp_get_global_settings()));
+}
+
+/** The clamp() between two font sizes over two viewport widths, or null. */
+function wp_get_computed_fluid_typography_value($args = [])
+{
+    return Minn\Theme\Typography::clamp($args['minimum_viewport_width'] ?? null, $args['maximum_viewport_width'] ?? null, $args['minimum_font_size'] ?? null, $args['maximum_font_size'] ?? null, $args['scale_factor'] ?? null);
+}

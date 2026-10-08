@@ -1337,3 +1337,43 @@ function wp_get_first_block($blocks, $block_name)
     }
     return [];
 }
+
+/** A featured image block's border as class and style attributes, through the style engine (a preset colour as its class). */
+function get_block_core_post_featured_image_border_attributes($attributes)
+{
+    $border = (array) ($attributes['style']['border'] ?? []);
+    $styles = array_intersect_key($border, array_flip(['radius', 'style', 'width']));
+    $styles['color'] = array_key_exists('borderColor', $attributes) ? "var:preset|color|{$attributes['borderColor']}" : ($border['color'] ?? null);
+    foreach (['top', 'right', 'bottom', 'left'] as $side) {
+        $styles[$side] = ['color' => $border[$side]['color'] ?? null, 'style' => $border[$side]['style'] ?? null, 'width' => $border[$side]['width'] ?? null];
+    }
+    $css = wp_style_engine_get_styles(['border' => $styles]);
+    return array_filter(['class' => $css['classnames'] ?? '', 'style' => $css['css'] ?? '']);
+}
+
+/** A fresh class for a block's element styles: wp-elements- and the next number. */
+function wp_get_elements_class_name()
+{
+    return wp_unique_prefixed_id('wp-elements-');
+}
+
+/** A block template part of the theme's, printed through do_blocks; nothing when the theme has none by that name. */
+function block_template_part($part)
+{
+    $template = get_block_template(get_stylesheet() . '//' . $part, 'wp_template_part');
+    if ($template && !empty($template->content)) {
+        echo do_blocks($template->content);
+    }
+}
+
+/** The theme's header part. */
+function block_header_area()
+{
+    block_template_part('header');
+}
+
+/** The theme's footer part. */
+function block_footer_area()
+{
+    block_template_part('footer');
+}

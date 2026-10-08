@@ -490,6 +490,11 @@ function url_to_postid($url)
         if ($post !== null && $permalinks->forPost($post) === rtrim($home, '/') . '/' . $path . '/') {
             return (int) $post['ID'];
         }
+        // An attachment answers to its own address (a page path finds one too on the reference).
+        $attachment = _minn_posts()->findByNameAnyStatus(end($segments), ['attachment']);
+        if ($attachment !== null && untrailingslashit((string) get_permalink((int) $attachment['ID'])) === rtrim($home, '/') . '/' . $path) {
+            return (int) $attachment['ID'];
+        }
     }
     return 0;
 }

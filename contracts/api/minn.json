@@ -60575,7 +60575,7 @@
             "namespace": "Minn\\Http",
             "kind": "final class",
             "file": "public/minn/src/Minn/Http/RawResponse.php",
-            "lines": 82,
+            "lines": 105,
             "doc": "An HTTP response as text, the way the Requests library hands it from\ntransport to parser: the status line and headers, a blank line, the\nbody. Built from an exchange, split back up, chunked bodies joined and\ncompressed ones inflated.",
             "implements": [],
             "extends": null,
@@ -60675,6 +60675,26 @@
                 },
                 {
                     "routes": [],
+                    "name": "inflateLoose",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "inflateLoose(string $data): string|false",
+                    "doc": "A gzip body inflated past its header fields (extra, name, comment,\nheader CRC) and trailer, or a zlib one past its two-byte header, as\nWP_Http_Encoding::compatible_gzinflate reads them; false when neither\ninflates.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "data",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 85,
+                    "end": 100
+                },
+                {
+                    "routes": [],
                     "name": "inflate",
                     "static": true,
                     "visibility": "public",
@@ -60690,8 +60710,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 80,
-                    "end": 95
+                    "line": 103,
+                    "end": 118
                 }
             ]
         },
@@ -138645,12 +138665,13 @@
             "namespace": "Minn\\Theme",
             "kind": "final class",
             "file": "public/minn/src/Minn/Theme/StylePresets.php",
-            "lines": 195,
+            "lines": 174,
             "doc": "The preset side of theme.json: the colour, gradient, font-size,\nfont-family, spacing, and shadow lists a theme declares over core's\nown, as the custom properties on :root and the has-* utility classes\nthe reference prints for them. Pure: settings in, CSS fragments out.",
             "implements": [],
             "extends": null,
             "uses": [
-                "Minn\\Blocks\\StyleEngine"
+                "Minn\\Blocks\\StyleEngine",
+                "Minn\\Theme\\Typography"
             ],
             "usedBy": [
                 "Minn\\Theme\\GlobalStyles"
@@ -138859,7 +138880,7 @@
                     "static": true,
                     "visibility": "public",
                     "signature": "fluidFontSize(array $preset, array $settings): string",
-                    "doc": "A font size with fluid bounds becomes clamp(min, min + ((1vw - v) * f),\nmax) scaled between a 320px viewport and the theme's wide size, which\nis how the reference arrives at 0.196 for a 1rem to 1.125rem size on a\n1340px wide layout. A plain size stays as written.",
+                    "doc": "A font size preset as the global stylesheet writes it: fluid by the theme's settings (Typography::fontSize).",
                     "shapes": [],
                     "params": [
                         {
@@ -138877,8 +138898,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 176,
-                    "end": 195
+                    "line": 171,
+                    "end": 174
                 },
                 {
                     "routes": [],
@@ -138897,8 +138918,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 198,
-                    "end": 208
+                    "line": 177,
+                    "end": 187
                 }
             ]
         },
@@ -141820,6 +141841,174 @@
                     "params": [],
                     "line": 126,
                     "end": 129
+                }
+            ]
+        },
+        {
+            "name": "Minn\\Theme\\Typography",
+            "short": "Typography",
+            "namespace": "Minn\\Theme",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Theme/Typography.php",
+            "lines": 105,
+            "doc": "Font sizes as the reference writes them (probe plugin-queue3): a size in\npx, rem or em, and, with fluid typography on, a clamp() that grows\nlinearly from a minimum at a small viewport to the size (or the preset's\nown maximum) at the wide one.",
+            "implements": [],
+            "extends": null,
+            "uses": [],
+            "usedBy": [
+                "Minn\\Theme\\StylePresets"
+            ],
+            "constructor": null,
+            "cases": [],
+            "constants": [
+                {
+                    "name": "FLOOR",
+                    "value": "'14px'",
+                    "doc": "",
+                    "visibility": "private"
+                },
+                {
+                    "name": "SMALL_VIEWPORT",
+                    "value": "'320px'",
+                    "doc": "",
+                    "visibility": "private"
+                },
+                {
+                    "name": "WIDE_VIEWPORT",
+                    "value": "'1600px'",
+                    "doc": "",
+                    "visibility": "private"
+                }
+            ],
+            "properties": [],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "valueAndUnit",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "valueAndUnit(mixed $raw, array $options = array ( )): ?array",
+                    "doc": "A CSS length split into its number and unit (px, rem or em, or the\nunits given), converted to another unit on request at a 16px root\n(or the one given); a bare number is px. Null for anything else.",
+                    "shapes": [
+                        "@param array{coerce_to?: string, root_size_value?: int|float, acceptable_units?: list<string>} $options",
+                        "@return array{value: float, unit: string}|null"
+                    ],
+                    "params": [
+                        {
+                            "name": "raw",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "options",
+                            "type": "array",
+                            "shape": "array{coerce_to?: string, root_size_value?: int|float, acceptable_units?: list<string>}",
+                            "default": "array ( )",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 27,
+                    "end": 49
+                },
+                {
+                    "routes": [],
+                    "name": "fontSize",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "fontSize(array $preset, array $settings): mixed",
+                    "doc": "A font size preset as CSS (wp_get_typography_font_size_value). It\nstays as written unless fluid typography is on and the size is in a\nknown unit and above the floor (14px, or the settings' minFontSize);\nthen it grows from a minimum (the preset's own, else the size scaled\nby 1 - 0.075 log2 of its px, held between 0.25 and 0.75, never under\nthe floor) to a maximum (the preset's own, else the size).",
+                    "shapes": [
+                        "@param array<string, mixed> $preset",
+                        "@param array<string, mixed> $settings typography and layout, merged over the global settings"
+                    ],
+                    "params": [
+                        {
+                            "name": "preset",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "settings",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": "typography and layout, merged over the global settings"
+                        }
+                    ],
+                    "line": 62,
+                    "end": 88
+                },
+                {
+                    "routes": [],
+                    "name": "clamp",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "clamp(?string $minViewport, ?string $maxViewport, ?string $minSize, ?string $maxSize, int|float|null $scale): ?string",
+                    "doc": "The clamp() between two sizes over two viewport widths\n(wp_get_computed_fluid_typography_value): the slope in the minimum's\nunit, the base in rem. Null when a size or a width is missing or in an\nunknown unit, or the widths are equal.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "minViewport",
+                            "type": "?string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "maxViewport",
+                            "type": "?string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "minSize",
+                            "type": "?string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "maxSize",
+                            "type": "?string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "scale",
+                            "type": "int|float|null",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 96,
+                    "end": 110
+                },
+                {
+                    "routes": [],
+                    "name": "number",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "number(int|float $value): string",
+                    "doc": "A number as PHP writes a float: no trailing \".0\".",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "value",
+                            "type": "int|float",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 113,
+                    "end": 116
                 }
             ]
         },

@@ -1634,3 +1634,95 @@ function wp_img_tag_add_srcset_and_sizes_attr($image, $context, $attachment_id)
     }
     return wp_image_add_srcset_and_sizes($image, wp_get_attachment_metadata($attachment_id), $attachment_id);
 }
+
+/** Whether a value is a GD image. */
+function is_gd_image($image)
+{
+    return $image instanceof GdImage || (is_resource($image) && get_resource_type($image) === 'gd');
+}
+
+/** A truecolor GD canvas that keeps its transparency when saved. */
+function wp_imagecreatetruecolor($width, $height)
+{
+    $image = imagecreatetruecolor($width, $height);
+    if (is_gd_image($image)) {
+        imagealphablending($image, false);
+        imagesavealpha($image, true);
+    }
+    return $image;
+}
+
+/** @deprecated 3.5.0 An image file (or an attachment's) read into GD, or the reason it could not be. */
+function wp_load_image($file)
+{
+    _deprecated_function(__FUNCTION__, '3.5.0', 'wp_get_image_editor()');
+    $file = is_numeric($file) ? get_attached_file($file) : $file;
+    if (!is_file((string) $file)) {
+        return sprintf(__('File &#8220;%s&#8221; does not exist?'), $file);
+    }
+    wp_raise_memory_limit('image');
+    $image = @imagecreatefromstring((string) file_get_contents($file));
+    return is_gd_image($image) ? $image : sprintf(__('File &#8220;%s&#8221; is not an image.'), $file);
+}
+
+/** An EXIF date ("2021:03:04 05:06:07") as a timestamp; false for anything else. */
+function wp_exif_date2ts($str)
+{
+    $parts = explode(' ', trim((string) $str));
+    $date = explode(':', $parts[0]);
+    return strtotime(($date[0] ?? '') . '-' . ($date[1] ?? '') . '-' . ($date[2] ?? '') . ' ' . ($parts[1] ?? ''));
+}
+
+/** An EXIF fraction ("1/250") as a number: a plain number as itself, anything unreadable (or over zero) as 0. */
+function wp_exif_frac2dec($str)
+{
+    if (!is_scalar($str) || is_bool($str)) {
+        return 0;
+    }
+    if (!is_string($str)) {
+        return $str;
+    }
+    if (substr_count($str, '/') !== 1) {
+        return is_numeric($str) ? (float) $str : 0;
+    }
+    [$numerator, $denominator] = explode('/', $str);
+    return is_numeric($numerator) && is_numeric($denominator) && $denominator != 0 ? $numerator / $denominator : 0;
+}
+
+/** Whether a URL is one of this site's attachments: its ?attachment_id address, or a link that resolves to one. */
+function is_local_attachment($url)
+{
+    if (!str_contains((string) $url, home_url())) {
+        return false;
+    }
+    if (str_contains((string) $url, home_url('/?attachment_id='))) {
+        return true;
+    }
+    $id = url_to_postid($url);
+    return $id && get_post($id)?->post_type === 'attachment';
+}
+
+/**
+ * An image's markup wrapped in a [caption] shortcode for the editor: the
+ * image's width and the alignment given, the alignment class taken off the
+ * image, the caption's line breaks as <br /> (none inside its tags).
+ * Unchanged with no caption, captions turned off, or no width.
+ */
+function image_add_caption($html, $id, $caption, $title, $align, $url, $size, $alt = '')
+{
+    $caption = apply_filters('image_add_caption_text', $caption, $id);
+    if (empty($caption) || apply_filters('disable_captions', '') || !preg_match('/width=["\']([0-9]+)/', $html, $width)) {
+        return $html;
+    }
+    $caption = preg_replace_callback('/<[a-zA-Z0-9]+(?: [^<>]+>)*/', '_cleanup_image_add_caption', str_replace(["\r\n", "\r"], "\n", $caption));
+    $caption = preg_replace('/[ \n\t]*\n[ \t]*/', '<br />', $caption);
+    $html = preg_replace('/(class=["\'][^\'"]*)align(none|left|right|center)\s?/', '$1', $html);
+    $shortcode = '[caption id="' . ((int) $id > 0 ? 'attachment_' . $id : '') . '" align="align' . ($align ?: 'none') . '" width="' . $width[1] . '"]' . $html . ' ' . $caption . '[/caption]';
+    return apply_filters('image_add_caption_shortcode', $shortcode, $html);
+}
+
+/** @internal one tag in a caption with its line breaks made spaces */
+function _cleanup_image_add_caption($matches)
+{
+    return preg_replace('/[\r\n\t]+/', ' ', $matches[0]);
+}

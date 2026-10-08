@@ -60,3 +60,52 @@ function upgrade_all()
 function make_db_current_silent($tables = 'all')
 {
 }
+
+/** Drops an index and the numbered copies an old upgrade could leave (name_0 to name_24); true whatever was there. */
+function drop_index($table, $index)
+{
+    global $wpdb;
+    $wpdb->hide_errors();
+    $wpdb->query("ALTER TABLE `{$table}` DROP INDEX `{$index}`");
+    for ($i = 0; $i < 25; $i++) {
+        $wpdb->query("ALTER TABLE `{$table}` DROP INDEX `{$index}_{$i}`");
+    }
+    $wpdb->show_errors();
+    return true;
+}
+
+/** An index added afresh: dropped first (copies included), then added on the column of its name. */
+function add_clean_index($table, $index)
+{
+    global $wpdb;
+    drop_index($table, $index);
+    $wpdb->query("ALTER TABLE `{$table}` ADD INDEX ( `{$index}` )");
+    return true;
+}
+
+/** An option straight from the table, past the cache (home and the site address from their constants when defined, without a trailing slash). */
+function __get_option($setting)
+{
+    global $wpdb;
+    $constant = ['home' => 'WP_HOME', 'siteurl' => 'WP_SITEURL'][$setting] ?? null;
+    if ($constant !== null && defined($constant)) {
+        return untrailingslashit(constant($constant));
+    }
+    $option = $wpdb->get_var($wpdb->prepare("SELECT option_value FROM {$wpdb->options} WHERE option_name = %s", $setting));
+    if ($setting === 'home' && !$option) {
+        return __get_option('siteurl');
+    }
+    return maybe_unserialize(in_array($setting, ['siteurl', 'home', 'category_base', 'tag_base'], true) ? untrailingslashit((string) $option) : $option);
+}
+
+/** Backslashes before quotes dropped, and runs of them made one. */
+function deslash($content)
+{
+    return preg_replace(['/\\\\+\'/', '/\\\\+"/', '/\\\\+/'], ['\'', '"', '\\\\'], $content);
+}
+
+/** The core files' checksums for a version: Minn asks wordpress.org for nothing (Track H), so there are none to give. */
+function get_core_checksums($version, $locale)
+{
+    return false;
+}

@@ -1021,3 +1021,13 @@ function wp_meta()
 {
     do_action('wp_meta');
 }
+
+/** The page templates as <option>s, by name, the one given selected. */
+function page_template_dropdown($default_template = '', $post_type = 'page')
+{
+    $templates = get_page_templates(null, $post_type);
+    ksort($templates);
+    foreach ($templates as $name => $file) {
+        echo "\n\t<option value='" . esc_attr($file) . "' " . selected($default_template, $file, false) . '>' . esc_html($name) . '</option>';
+    }
+}

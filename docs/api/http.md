@@ -23,7 +23,7 @@ request, response, routing, and the outgoing client
 | [`Outbound`](#outbound) | final readonly class | 46 | One outgoing HTTP request, normalised: the transport needs nothing else. |
 | [`Policy`](#policy) | final readonly class | 108 | What a route requires of its caller, as data on the route: the router |
 | [`Punycode`](#punycode) | final class | 103 | Internationalized host names in ASCII: each label that is not ASCII is |
-| [`RawResponse`](#rawresponse) | final class | 82 | An HTTP response as text, the way the Requests library hands it from |
+| [`RawResponse`](#rawresponse) | final class | 105 | An HTTP response as text, the way the Requests library hands it from |
 | [`Request`](#request) | final readonly class | 139 | An immutable picture of the incoming request. Built once from the PHP |
 | [`RequestFailed`](#requestfailed) | final class | 7 | Thrown by Exchange::throw() when no response arrived or it was not a 2xx; the exchange rides along. |
 | [`RequestsNames`](#requestsnames) | final class | 18 | The Requests library's PSR-0 class names (Requests_Exception_HTTP_404, |
@@ -724,6 +724,13 @@ A head alone (the body went to a file): protocol, status, header pairs, and an e
 ### static `unchunk(string $body): string`
 
 A chunked body joined; text that is not chunked comes back as it was.
+
+### static `inflateLoose(string $data): string|false`
+
+A gzip body inflated past its header fields (extra, name, comment,
+header CRC) and trailer, or a zlib one past its two-byte header, as
+WP_Http_Encoding::compatible_gzinflate reads them; false when neither
+inflates.
 
 ### static `inflate(string $data): string`
 

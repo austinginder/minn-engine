@@ -167,31 +167,10 @@ final class StylePresets
         return array_values($out);
     }
 
-    /**
-     * A font size with fluid bounds becomes clamp(min, min + ((1vw - v) * f),
-     * max) scaled between a 320px viewport and the theme's wide size, which
-     * is how the reference arrives at 0.196 for a 1rem to 1.125rem size on a
-     * 1340px wide layout. A plain size stays as written.
-     */
+    /** A font size preset as the global stylesheet writes it: fluid by the theme's settings (Typography::fontSize). */
     public static function fluidFontSize(array $preset, array $settings): string
     {
-        $size = (string) $preset['size'];
-        $fluid = $preset['fluid'] ?? ($settings['typography']['fluid'] ?? false);
-        if ($fluid === false || !is_array($fluid) || !isset($fluid['min'], $fluid['max'])) {
-            return $size;
-        }
-        $min = (string) $fluid['min'];
-        $max = (string) $fluid['max'];
-        $unit = preg_replace('/[0-9.]/', '', $min) ?: 'rem';
-        $perRem = $unit === 'rem' ? 1 : 16;
-        $minViewport = 320 / 16;
-        $maxViewport = ((float) ($settings['layout']['wideSize'] ?? '1600px')) / 16;
-        $slope = ((float) $max - (float) $min) / $perRem / ($maxViewport - $minViewport);
-        $factor = rtrim(rtrim(number_format($slope * 100, 3, '.', ''), '0'), '.');
-        $offset = $unit === 'rem' ? ($minViewport / 100) . 'rem' : (320 / 100) . 'px';
-        // The additive term is always in rem: a px minimum is converted (20px becomes 1.25rem, 35px 2.188rem).
-        $base = $unit === 'rem' ? $min : rtrim(rtrim(number_format((float) $min / 16, 3, '.', ''), '0'), '.') . 'rem';
-        return sprintf('clamp(%s, %s + ((1vw - %s) * %s), %s)', $min, $base, $offset, $factor, $max);
+        return (string) Typography::fontSize($preset, $settings);
     }
 
     /** The format() a font source is declared with, from its file extension. */

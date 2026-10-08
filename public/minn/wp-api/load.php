@@ -291,3 +291,58 @@ function _minn_script_globals(string $path): void
     $_SERVER['SCRIPT_NAME'] = '/wp-admin/admin-ajax.php';
     $_SERVER['PHP_SELF'] = '/wp-admin/admin-ajax.php';
 }
+
+/**
+ * The server variables some hosts leave out or get wrong, set as the
+ * reference sets them: an empty software name and request URI first, the
+ * request URI built from IIS's headers or the script and path info, a
+ * php.cgi script file and path info corrected, PHP_SELF from the request
+ * URI, and Basic credentials from the Authorization header.
+ */
+function wp_fix_server_vars()
+{
+    $_SERVER = array_merge(['SERVER_SOFTWARE' => '', 'REQUEST_URI' => ''], $_SERVER);
+    if (empty($_SERVER['REQUEST_URI']) || (PHP_SAPI !== 'cgi-fcgi' && preg_match('/^Microsoft-IIS\//', $_SERVER['SERVER_SOFTWARE']))) {
+        $_SERVER['REQUEST_URI'] = $_SERVER['HTTP_X_ORIGINAL_URL'] ?? $_SERVER['HTTP_X_REWRITE_URL'] ?? _minn_request_uri_from_parts();
+    }
+    if (isset($_SERVER['SCRIPT_FILENAME']) && str_ends_with($_SERVER['SCRIPT_FILENAME'], 'php.cgi')) {
+        $_SERVER['SCRIPT_FILENAME'] = $_SERVER['PATH_TRANSLATED'] ?? $_SERVER['SCRIPT_FILENAME'];
+    }
+    if (isset($_SERVER['SCRIPT_NAME']) && str_contains($_SERVER['SCRIPT_NAME'], 'php.cgi')) {
+        unset($_SERVER['PATH_INFO']);
+    }
+    if (empty($_SERVER['PHP_SELF'])) {
+        $_SERVER['PHP_SELF'] = preg_replace('/(\?.*)?$/', '', $_SERVER['REQUEST_URI']);
+    }
+    $GLOBALS['PHP_SELF'] = $_SERVER['PHP_SELF'];
+    wp_populate_basic_auth_from_authorization_header();
+}
+
+/** @internal a request URI from the script name, the path info (or its original) and the query string */
+function _minn_request_uri_from_parts(): string
+{
+    if (!isset($_SERVER['PATH_INFO']) && isset($_SERVER['ORIG_PATH_INFO'])) {
+        $_SERVER['PATH_INFO'] = $_SERVER['ORIG_PATH_INFO'];
+    }
+    $uri = '';
+    if (isset($_SERVER['PATH_INFO'])) {
+        $uri = $_SERVER['PATH_INFO'] === ($_SERVER['SCRIPT_NAME'] ?? null) ? $_SERVER['PATH_INFO'] : ($_SERVER['SCRIPT_NAME'] ?? '') . $_SERVER['PATH_INFO'];
+    }
+    return $uri . (empty($_SERVER['QUERY_STRING']) ? '' : '?' . $_SERVER['QUERY_STRING']);
+}
+
+/** Basic credentials from an Authorization header into PHP_AUTH_USER and PHP_AUTH_PW, when PHP did not set them. */
+function wp_populate_basic_auth_from_authorization_header()
+{
+    if (isset($_SERVER['PHP_AUTH_USER']) || isset($_SERVER['PHP_AUTH_PW'])) {
+        return;
+    }
+    $header = $_SERVER['HTTP_AUTHORIZATION'] ?? $_SERVER['REDIRECT_HTTP_AUTHORIZATION'] ?? '';
+    if (!is_string($header) || !str_starts_with(strtolower($header), 'basic ')) {
+        return;
+    }
+    $decoded = base64_decode(substr($header, 6), true);
+    if (is_string($decoded) && str_contains($decoded, ':')) {
+        [$_SERVER['PHP_AUTH_USER'], $_SERVER['PHP_AUTH_PW']] = explode(':', $decoded, 2);
+    }
+}

@@ -19,6 +19,12 @@ function _unzip_file_pclzip($file, $to, $needed_dirs = [])
     return null;
 }
 
+function _wp_customize_include()
+{
+    \Minn\Runtime\PlaceholderTrace::hit('_wp_customize_include');
+    return null;
+}
+
 function _wp_get_iframed_editor_assets()
 {
     \Minn\Runtime\PlaceholderTrace::hit('_wp_get_iframed_editor_assets');
@@ -49,12 +55,6 @@ function addslashes_gpc($gpc)
     return null;
 }
 
-function block_template_part($part)
-{
-    \Minn\Runtime\PlaceholderTrace::hit('block_template_part');
-    return null;
-}
-
 function cancel_comment_reply_link($link_text = '')
 {
     \Minn\Runtime\PlaceholderTrace::hit('cancel_comment_reply_link');
@@ -64,6 +64,12 @@ function cancel_comment_reply_link($link_text = '')
 function clean_attachment_cache($id, $clean_terms = false)
 {
     \Minn\Runtime\PlaceholderTrace::hit('clean_attachment_cache');
+    return null;
+}
+
+function core_update_footer($msg = '')
+{
+    \Minn\Runtime\PlaceholderTrace::hit('core_update_footer');
     return null;
 }
 
@@ -88,6 +94,12 @@ function edit_post($post_data = NULL)
 function edit_term_link($link = '', $before = '', $after = '', $term = NULL, $display = true)
 {
     \Minn\Runtime\PlaceholderTrace::hit('edit_term_link');
+    return null;
+}
+
+function export_wp($args = [])
+{
+    \Minn\Runtime\PlaceholderTrace::hit('export_wp');
     return null;
 }
 
@@ -154,12 +166,6 @@ function get_default_block_editor_settings()
 function get_default_post_to_edit($post_type = 'post', $create_in_db = false)
 {
     \Minn\Runtime\PlaceholderTrace::hit('get_default_post_to_edit');
-    return null;
-}
-
-function get_dirsize($directory, $max_execution_time = NULL)
-{
-    \Minn\Runtime\PlaceholderTrace::hit('get_dirsize');
     return null;
 }
 
@@ -241,6 +247,12 @@ function media_send_to_editor($html)
     return null;
 }
 
+function media_upload_form($errors = NULL)
+{
+    \Minn\Runtime\PlaceholderTrace::hit('media_upload_form');
+    return null;
+}
+
 function media_upload_header()
 {
     \Minn\Runtime\PlaceholderTrace::hit('media_upload_header');
@@ -256,6 +268,12 @@ function populate_roles()
 function post_tags_meta_box($post, $box)
 {
     \Minn\Runtime\PlaceholderTrace::hit('post_tags_meta_box');
+    return null;
+}
+
+function register_and_do_post_meta_boxes($post)
+{
+    \Minn\Runtime\PlaceholderTrace::hit('register_and_do_post_meta_boxes');
     return null;
 }
 
@@ -292,6 +310,24 @@ function translate_settings_using_i18n_schema($i18n_schema, $settings, $textdoma
 function update_core($from, $to)
 {
     \Minn\Runtime\PlaceholderTrace::hit('update_core');
+    return null;
+}
+
+function update_recently_edited($file)
+{
+    \Minn\Runtime\PlaceholderTrace::hit('update_recently_edited');
+    return null;
+}
+
+function validate_file_to_edit($file, $allowed_files = [])
+{
+    \Minn\Runtime\PlaceholderTrace::hit('validate_file_to_edit');
+    return null;
+}
+
+function verify_file_md5($filename, $expected_md5)
+{
+    \Minn\Runtime\PlaceholderTrace::hit('verify_file_md5');
     return null;
 }
 
@@ -469,6 +505,12 @@ function wp_import_upload_form($action)
     return null;
 }
 
+function wp_install($blog_title, $user_name, $user_email, $is_public, $deprecated = '', $user_password = '', $language = '')
+{
+    \Minn\Runtime\PlaceholderTrace::hit('wp_install');
+    return null;
+}
+
 function wp_load_translations_early()
 {
     \Minn\Runtime\PlaceholderTrace::hit('wp_load_translations_early');
@@ -478,6 +520,12 @@ function wp_load_translations_early()
 function wp_maybe_auto_update()
 {
     \Minn\Runtime\PlaceholderTrace::hit('wp_maybe_auto_update');
+    return null;
+}
+
+function wp_nav_menu_disabled_check($nav_menu_selected_id, $display = true)
+{
+    \Minn\Runtime\PlaceholderTrace::hit('wp_nav_menu_disabled_check');
     return null;
 }
 
@@ -532,6 +580,12 @@ function wp_print_request_filesystem_credentials_modal()
 function wp_read_video_metadata($file)
 {
     \Minn\Runtime\PlaceholderTrace::hit('wp_read_video_metadata');
+    return null;
+}
+
+function wp_register_tinymce_scripts($scripts, $force_uncompressed = false)
+{
+    \Minn\Runtime\PlaceholderTrace::hit('wp_register_tinymce_scripts');
     return null;
 }
 

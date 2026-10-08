@@ -76,6 +76,29 @@ final class RawResponse
         return $out === '' ? $body : $out;
     }
 
+    /**
+     * A gzip body inflated past its header fields (extra, name, comment,
+     * header CRC) and trailer, or a zlib one past its two-byte header, as
+     * WP_Http_Encoding::compatible_gzinflate reads them; false when neither
+     * inflates.
+     */
+    public static function inflateLoose(string $data): string|false
+    {
+        if (str_starts_with($data, "\x1f\x8b\x08")) {
+            $at = 10;
+            $flags = ord($data[3] ?? "\0");
+            $at += $flags & 4 ? 2 + (int) (unpack('v', substr($data, $at, 2))[1] ?? 0) : 0;
+            foreach ([8, 16] as $field) {
+                $at = $flags & $field ? (int) strpos($data, "\0", $at) + 1 : $at;
+            }
+            $inflated = @gzinflate(substr($data, $at + ($flags & 2 ? 2 : 0), -8));
+            if ($inflated !== false) {
+                return $inflated;
+            }
+        }
+        return @gzinflate(substr($data, 2));
+    }
+
     /** A gzip or zlib body inflated; anything else (raw deflate included) comes back as it was. */
     public static function inflate(string $data): string
     {

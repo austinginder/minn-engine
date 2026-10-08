@@ -23,7 +23,7 @@ the block-theme reader, templates, global styles and the page renderer
 | [`PatternText`](#patterntext) | final class | 198 | Block-theme patterns are PHP files whose only code is a handful of |
 | [`Printed`](#printed) | final class | 3 | Raised once a WordPress handler has printed a whole response (a sitemap, |
 | [`QueryClasses`](#queryclasses) | final readonly class | 120 | The body-class tokens the main query stands for, in the reference's |
-| [`StylePresets`](#stylepresets) | final class | 195 | The preset side of theme.json: the colour, gradient, font-size, |
+| [`StylePresets`](#stylepresets) | final class | 174 | The preset side of theme.json: the colour, gradient, font-size, |
 | [`StyleSettings`](#stylesettings) | final class | 82 | The settings and styles nodes as wp/v2/global-styles reports them: |
 | [`TemplateHierarchy`](#templatehierarchy) | final class | 75 | The templates a block theme falls back through for a template slug, as |
 | [`TemplateIndex`](#templateindex) | final class | 250 | Every block template and template part the site offers, in the order the |
@@ -35,6 +35,7 @@ the block-theme reader, templates, global styles and the page renderer
 | [`Theme`](#theme) | final class | 340 | The active block theme on disk, read as data: theme.json, the templates |
 | [`ThemeJsonData`](#themejsondata) | final class | 20 | The theme's theme.json as plugins and the theme's own functions may |
 | [`ThemeStyles`](#themestyles) | final readonly class | 115 | The active theme's global styles as wp/v2/global-styles/themes/{stylesheet} |
+| [`Typography`](#typography) | final class | 105 | Font sizes as the reference writes them (probe plugin-queue3): a size in |
 | [`UserStyles`](#userstyles) | final readonly class | 106 | The site editor's saved global styles: one wp_global_styles post per |
 
 ## ArchiveTitle
@@ -733,10 +734,7 @@ default in place, and the theme's other sizes follow the scale.
 
 ### static `fluidFontSize(array $preset, array $settings): string`
 
-A font size with fluid bounds becomes clamp(min, min + ((1vw - v) * f),
-max) scaled between a 320px viewport and the theme's wide size, which
-is how the reference arrives at 0.196 for a 1rem to 1.125rem size on a
-1340px wide layout. A plain size stays as written.
+A font size preset as the global stylesheet writes it: fluid by the theme's settings (Typography::fontSize).
 
 ### static `fontFormat(string $url): string`
 
@@ -1212,6 +1210,52 @@ way the theme's own are.
 - `@return list<array>`
 
 Internals: `withSectionStyles()` (private, line 91), `partials()` (private, line 113), `defaults()` (private, line 126)
+
+
+## Typography
+
+`final class Minn\Theme\Typography` · `public/minn/src/Minn/Theme/Typography.php`
+
+Font sizes as the reference writes them (probe plugin-queue3): a size in
+px, rem or em, and, with fluid typography on, a clamp() that grows
+linearly from a minimum at a small viewport to the size (or the preset's
+own maximum) at the wide one.
+
+- const `FLOOR` = `'14px'`
+- const `SMALL_VIEWPORT` = `'320px'`
+- const `WIDE_VIEWPORT` = `'1600px'`
+
+Used by: `Minn\Theme\StylePresets`
+
+### static `valueAndUnit(mixed $raw, array $options = array ( )): ?array`
+
+A CSS length split into its number and unit (px, rem or em, or the
+units given), converted to another unit on request at a 16px root
+(or the one given); a bare number is px. Null for anything else.
+
+- `@param array{coerce_to?: string, root_size_value?: int|float, acceptable_units?: list<string>} $options`
+- `@return array{value: float, unit: string}|null`
+
+### static `fontSize(array $preset, array $settings): mixed`
+
+A font size preset as CSS (wp_get_typography_font_size_value). It
+stays as written unless fluid typography is on and the size is in a
+known unit and above the floor (14px, or the settings' minFontSize);
+then it grows from a minimum (the preset's own, else the size scaled
+by 1 - 0.075 log2 of its px, held between 0.25 and 0.75, never under
+the floor) to a maximum (the preset's own, else the size).
+
+- `@param array<string, mixed> $preset`
+- `@param array<string, mixed> $settings typography and layout, merged over the global settings`
+
+### static `clamp(?string $minViewport, ?string $maxViewport, ?string $minSize, ?string $maxSize, int|float|null $scale): ?string`
+
+The clamp() between two sizes over two viewport widths
+(wp_get_computed_fluid_typography_value): the slope in the minimum's
+unit, the base in rem. Null when a size or a width is missing or in an
+unknown unit, or the widths are equal.
+
+Internals: `number()` (private, line 113)
 
 
 ## UserStyles

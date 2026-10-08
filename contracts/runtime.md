@@ -5083,3 +5083,64 @@ The capture's first run deleted post 1 from the shared database: an
 error-returning request id was cast to an integer (1) and cleaned up. Post 1,
 its comment and its old slugs were put back from the fixtures. The probes
 now delete only real ids.
+
+## The queue's third wave: fluid type sizes, index helpers and HTTP encoding (2026-10-08)
+
+The third slice of the plugin queue (probe plugin-queue3, 88 cases):
+
+- **Fluid type sizes** (`Theme\Typography`):
+  - `wp_get_typography_value_and_unit` splits a px, rem or em length (a bare
+    number is px). It converts between them at a 16px root when asked, and
+    rounds to three places. Percentages, viewport units, negatives and
+    words are null.
+  - `wp_get_typography_font_size_value` leaves a size as written unless the
+    theme's `typography.fluid` is on. A preset's own `fluid` bounds do not
+    switch it on; the old global stylesheet path did, and the unit check now
+    states the setting.
+  - With fluid on, a size above the floor (14px, or the settings'
+    `minFontSize`) runs from a minimum at a 320px viewport to the size at the
+    theme's wide size (else 1600px). The minimum is the preset's own, or the
+    size times `1 - 0.075 log2(px)` held between 0.25 and 0.75, never under
+    the floor. A preset with `fluid: false`, a size in another unit, or two
+    equal viewports stay as written. A bool `$settings` (the old signature)
+    is deprecated and read as the global settings.
+  - `wp_get_computed_fluid_typography_value` writes the clamp(): the slope in
+    the minimum's unit, the base in rem. The global stylesheet's font size
+    presets now go through the same code.
+- **Upgrade helpers**: `drop_index` and `add_clean_index`, `__get_option`,
+  `deslash`. `get_core_checksums` answers false: the engine never asks
+  wordpress.org (Track H).
+- **Directory sizes**: `recurse_dirsize` and `get_dirsize` add up a tree,
+  skipping the parts left out, and keep each directory's size in the
+  `dirsize_cache` transient as the reference does. `wp_privacy_exports_dir`
+  and `wp_privacy_exports_url` point under uploads.
+- **Images**: `is_gd_image`, `wp_imagecreatetruecolor`, `wp_load_image` (with
+  the reference's "does not exist?" and "is not an image." messages),
+  `wp_exif_date2ts`, `wp_exif_frac2dec`, `is_local_attachment`,
+  `image_add_caption`. `url_to_postid` now finds an attachment by its page
+  address, kept only when the permalink is that address.
+- **Blocks**: `get_block_core_post_featured_image_border_attributes`,
+  `wp_get_elements_class_name` (no parameter, as 7.1 has it),
+  `block_template_part` (out of the placeholders), `block_header_area` and
+  `block_footer_area`.
+- **Requests**: `wp_fix_server_vars` fills `REQUEST_URI`, `PHP_SELF` and the
+  rest as the reference does for a bare server.
+  `wp_populate_basic_auth_from_authorization_header` reads Basic
+  credentials from the Authorization header.
+- **`WP_Http_Encoding`**: compress, decompress, `compatible_gzinflate`,
+  `accept_encoding`, `content_encoding`, `should_decode`, `is_available`. The
+  gzip header walk (extra field, name, comment, header CRC) lives beside
+  the response reader's own inflate, `Http\RawResponse::inflateLoose`.
+- Also: `bool_from_yn`, `wp_htmledit_pre`, `wp_richedit_pre`,
+  `next_widget_id_number`, `page_template_dropdown`.
+- **Placeholders added**: these are wp-admin and installer functions that no
+  plugin needs on the front end. They log, as the other placeholders do:
+  `_wp_customize_include`, `core_update_footer`, `export_wp`,
+  `media_upload_form`, `register_and_do_post_meta_boxes`,
+  `update_recently_edited`, `validate_file_to_edit`, `verify_file_md5`,
+  `wp_install`, `wp_nav_menu_disabled_check`, `wp_register_tinymce_scripts`,
+  `WP_Filesystem_FTPext`, `Walker_Nav_Menu_Checklist`.
+
+The reference's first capture died in `next_widget_id_number`, which lives in
+wp-admin/includes/widgets.php. The probe loads that file now. The fatal left
+the probe's index test table behind; it was dropped.

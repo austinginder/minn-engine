@@ -1043,3 +1043,23 @@ function backslashit($value)
     }
     return addcslashes($value, 'A..Za..z');
 }
+
+/** @deprecated 4.3.0 Text for the old plain-text editor: tags and ampersands escaped, quotes left. */
+function wp_htmledit_pre($output)
+{
+    _deprecated_function(__FUNCTION__, '4.3.0', 'format_for_editor()');
+    if (!empty($output)) {
+        $output = htmlspecialchars($output, ENT_NOQUOTES, get_option('blog_charset'));
+    }
+    return apply_filters('htmledit_pre', $output);
+}
+
+/** @deprecated 4.3.0 Text for the old visual editor: characters converted, paragraphs made, then escaped. */
+function wp_richedit_pre($text)
+{
+    _deprecated_function(__FUNCTION__, '4.3.0', 'format_for_editor()');
+    if (empty($text)) {
+        return apply_filters('richedit_pre', '');
+    }
+    return apply_filters('richedit_pre', htmlspecialchars(wpautop(convert_chars($text)), ENT_NOQUOTES, get_option('blog_charset')));
+}

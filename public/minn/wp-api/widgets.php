@@ -370,3 +370,15 @@ function retrieve_widgets($theme_changed = false)
 {
     return WidgetAreas::retrieve();
 }
+
+/** The number after the highest of a widget base's registered instances (1 when there are none), plus one. */
+function next_widget_id_number($id_base)
+{
+    $number = 1;
+    foreach (array_keys((array) ($GLOBALS['wp_registered_widgets'] ?? [])) as $widget_id) {
+        if (preg_match('/' . preg_quote((string) $id_base, '/') . '-([0-9]+)$/', (string) $widget_id, $m)) {
+            $number = max($number, (int) $m[1]);
+        }
+    }
+    return $number + 1;
+}
