@@ -101,6 +101,7 @@
         "wp_admin_bar_render",
         "wp_admin_css",
         "wp_admin_css_color",
+        "wp_ajax_install_plugin",
         "wp_ajax_widgets_order",
         "wp_apply_border_support",
         "wp_apply_colors_support",

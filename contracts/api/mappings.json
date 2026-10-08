@@ -2,11 +2,11 @@
     "generated": "2026-10-08",
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line)",
     "summary": {
-        "minn": 676,
-        "composes": 1037,
-        "leaf": 677,
-        "noop": 2031,
-        "functions": 4347,
+        "minn": 677,
+        "composes": 1043,
+        "leaf": 679,
+        "noop": 2039,
+        "functions": 4364,
         "minnMethods": 796,
         "leafLinesOver15": 13
     },
@@ -5235,6 +5235,71 @@
             "file": "classes/WP_Block.php",
             "lines": 1,
             "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Block_Parser::add_block_from_stack": {
+            "file": "classes/WP_Block_Parser.php",
+            "lines": 0,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Block_Parser::add_freeform": {
+            "file": "classes/WP_Block_Parser.php",
+            "lines": 0,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Block_Parser::add_inner_block": {
+            "file": "classes/WP_Block_Parser.php",
+            "lines": 0,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Block_Parser::freeform": {
+            "file": "classes/WP_Block_Parser.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Block_Parser::next_token": {
+            "file": "classes/WP_Block_Parser.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Block_Parser::parse": {
+            "file": "classes/WP_Block_Parser.php",
+            "lines": 5,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Blocks\\Parser::parse"
+            ],
+            "composes": []
+        },
+        "WP_Block_Parser::proceed": {
+            "file": "classes/WP_Block_Parser.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Block_Parser_Block::__construct": {
+            "file": "classes/WP_Block_Parser.php",
+            "lines": 5,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Block_Parser_Frame::__construct": {
+            "file": "classes/WP_Block_Parser.php",
+            "lines": 5,
+            "kind": "leaf",
             "minn": [],
             "composes": []
         },
@@ -17344,6 +17409,17 @@
                 "wp_json_encode"
             ]
         },
+        "_minn_earned_priority": {
+            "file": "media.php",
+            "lines": 2,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Blocks\\RenderState::current"
+            ],
+            "composes": [
+                "apply_filters"
+            ]
+        },
         "_minn_embed_featured_image": {
             "file": "embed.php",
             "lines": 1,
@@ -23772,6 +23848,15 @@
             "minn": [],
             "composes": []
         },
+        "get_media_embedded_in_content": {
+            "file": "media.php",
+            "lines": 7,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "apply_filters"
+            ]
+        },
         "get_metadata": {
             "file": "meta.php",
             "lines": 5,
@@ -25624,6 +25709,16 @@
                 "get_userdata"
             ]
         },
+        "get_the_author_posts": {
+            "file": "post.php",
+            "lines": 2,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "count_user_posts",
+                "get_post"
+            ]
+        },
         "get_the_author_posts_link": {
             "file": "post.php",
             "lines": 5,
@@ -26175,6 +26270,15 @@
             "kind": "leaf",
             "minn": [],
             "composes": []
+        },
+        "get_user_count": {
+            "file": "user.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "get_network_option"
+            ]
         },
         "get_user_locale": {
             "file": "l10n.php",
@@ -28319,12 +28423,12 @@
         },
         "parse_blocks": {
             "file": "blocks.php",
-            "lines": 5,
-            "kind": "minn",
-            "minn": [
-                "Minn\\Blocks\\Parser::parse"
-            ],
-            "composes": []
+            "lines": 3,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "apply_filters"
+            ]
         },
         "parse_date": {
             "file": "simplepie/Interfaces.php",
@@ -34844,14 +34948,25 @@
             "minn": [],
             "composes": []
         },
+        "wp_get_loading_attr_default": {
+            "file": "media.php",
+            "lines": 2,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "_deprecated_function",
+                "wp_get_loading_optimization_attributes"
+            ]
+        },
         "wp_get_loading_optimization_attributes": {
             "file": "media.php",
-            "lines": 40,
+            "lines": 32,
             "kind": "minn",
             "minn": [
                 "Minn\\Blocks\\RenderState::current"
             ],
             "composes": [
+                "_minn_earned_priority",
                 "apply_filters",
                 "doing_filter",
                 "in_the_loop",
@@ -35553,6 +35668,18 @@
             "composes": [
                 "apply_filters",
                 "wp_basename"
+            ]
+        },
+        "wp_img_tag_add_loading_attr": {
+            "file": "media.php",
+            "lines": 11,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "_deprecated_function",
+                "apply_filters",
+                "esc_attr",
+                "wp_get_loading_attr_default"
             ]
         },
         "wp_insert_attachment": {
@@ -36433,6 +36560,16 @@
                 "apply_filters"
             ]
         },
+        "wp_maybe_enqueue_oembed_host_js": {
+            "file": "embed.php",
+            "lines": 4,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "has_action",
+                "wp_enqueue_script"
+            ]
+        },
         "wp_maybe_grant_install_languages_cap": {
             "file": "user.php",
             "lines": 4,
@@ -36698,6 +36835,13 @@
                 "home_url",
                 "is_singular"
             ]
+        },
+        "wp_oembed_add_host_js": {
+            "file": "embed.php",
+            "lines": 0,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
         },
         "wp_oembed_add_provider": {
             "file": "misc.php",

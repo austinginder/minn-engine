@@ -1768,6 +1768,13 @@ function get_the_author_posts_link()
     return sprintf('<a href="%1$s" rel="author">%2$s</a>', esc_url(get_author_posts_url($author->ID)), get_the_author());
 }
 
+/** How many posts of its type the current post's author has published; 0 with no post (probe theme-symbols). */
+function get_the_author_posts()
+{
+    $post = get_post();
+    return $post ? (int) count_user_posts($post->post_author, $post->post_type) : 0;
+}
+
 function count_user_posts($userid, $post_type = 'post', $public_only = false)
 {
     $count = _minn_post_lookup()->countByAuthor((int) $userid, array_map('strval', (array) $post_type), $public_only ? ['publish'] : ['publish', 'private']);

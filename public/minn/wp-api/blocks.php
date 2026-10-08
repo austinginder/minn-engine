@@ -77,13 +77,12 @@ function _minn_bridge_dynamic_block(string $name): void
     });
 }
 
+/** The blocks of a document, by the parser block_parser_class names (WP_Block_Parser unless a theme or plugin swaps its own in). */
 function parse_blocks($content)
 {
-    $content = (string) $content;
-    if ($content === '') {
-        return [];
-    }
-    return array_map('_minn_block_to_array', Parser::parse($content));
+    $class = apply_filters('block_parser_class', 'WP_Block_Parser');
+    $parser = is_string($class) && class_exists($class) ? new $class() : new WP_Block_Parser();
+    return $parser->parse((string) $content);
 }
 
 /**

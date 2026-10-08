@@ -91,3 +91,17 @@ function _minn_embed_featured_image($thumbnail, $shape)
 {
     echo EmbedCard::featuredImage($thumbnail, (string) $shape);
 }
+
+/** Kept on wp_head for plugins that look for it; the host script is queued where an embed card appears (wp_maybe_enqueue_oembed_host_js). */
+function wp_oembed_add_host_js()
+{
+}
+
+/** An embed card queues the script that sizes it, when the host script is wanted on this page; the HTML comes back as it was (probe theme-symbols). */
+function wp_maybe_enqueue_oembed_host_js($html)
+{
+    if (has_action('wp_head', 'wp_oembed_add_host_js') && preg_match('/<blockquote\s[^>]*?wp-embedded-content/', (string) $html)) {
+        wp_enqueue_script('wp-embed');
+    }
+    return $html;
+}

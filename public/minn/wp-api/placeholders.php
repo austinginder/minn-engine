@@ -331,6 +331,12 @@ function wp_admin_css_color($key, $name, $url, $colors = [], $icons = [])
     return null;
 }
 
+function wp_ajax_install_plugin()
+{
+    \Minn\Runtime\PlaceholderTrace::hit('wp_ajax_install_plugin');
+    return null;
+}
+
 function wp_ajax_widgets_order()
 {
     \Minn\Runtime\PlaceholderTrace::hit('wp_ajax_widgets_order');

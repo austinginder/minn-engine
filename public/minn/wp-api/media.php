@@ -351,11 +351,47 @@ function image_hwstring($width, $height)
     return $out;
 }
 
+/** The audio, video, object, embed and iframe elements in content, in order, kept to the types asked for (probe theme-symbols). */
+function get_media_embedded_in_content($content, $types = null)
+{
+    $allowed = (array) apply_filters('media_embedded_in_content_allowed_types', ['audio', 'video', 'object', 'embed', 'iframe']);
+    $tags = empty($types) ? $allowed : array_intersect($allowed, (array) $types);
+    if ($tags === []) {
+        return [];
+    }
+    $pattern = '#<(?P<tag>' . implode('|', array_map(static fn ($tag) => preg_quote((string) $tag, '#'), $tags)) . ')[^<]*?(?:>[\s\S]*?<\/(?P=tag)>|\s*\/>)#';
+    return preg_match_all($pattern, (string) $content, $found) ? $found[0] : [];
+}
+
+/** Deprecated since 6.3: the loading attribute a context gives an image by default. */
+function wp_get_loading_attr_default($context)
+{
+    _deprecated_function(__FUNCTION__, '6.3.0', 'wp_get_loading_optimization_attributes()');
+    return wp_get_loading_optimization_attributes('img', ['width' => 1, 'height' => 1], (string) $context)['loading'] ?? false;
+}
+
+/** Deprecated since 6.3: an img tag given its default loading attribute, when it has a source and a size and none of its own. */
+function wp_img_tag_add_loading_attr($image, $context)
+{
+    _deprecated_function(__FUNCTION__, '6.3.0', 'wp_img_tag_add_loading_optimization_attrs()');
+    $value = wp_get_loading_attr_default($context);
+    $image = (string) $image;
+    if (!str_contains($image, ' src="') || !str_contains($image, ' width="') || !str_contains($image, ' height="') || str_contains($image, ' loading=')) {
+        return $image;
+    }
+    $value = apply_filters('wp_img_tag_add_loading_attr', $value, $image, $context);
+    if (!$value) {
+        return $image;
+    }
+    return str_replace('<img', '<img loading="' . esc_attr(in_array($value, ['lazy', 'eager'], true) ? $value : 'lazy') . '"', $image);
+}
+
 function wp_get_loading_optimization_attributes($tag_name, $attr, $context)
 {
     $optimization = [];
-    // An image made while the_content runs is fitted with the rest of the content, as the reference leaves it.
-    if ($tag_name !== 'img' && $tag_name !== 'iframe' || ($context !== 'the_content' && doing_filter('the_content'))) {
+    // An image made while the_content runs is fitted with the rest of the content, as the reference leaves it;
+    // the template context is handled where the template is (probe theme-symbols).
+    if ($tag_name !== 'img' && $tag_name !== 'iframe' || $context === 'template' || ($context !== 'the_content' && doing_filter('the_content'))) {
         return $optimization;
     }
     if ($tag_name === 'img') {
@@ -369,30 +405,28 @@ function wp_get_loading_optimization_attributes($tag_name, $attr, $context)
         RenderState::current()->closePriority();
     } elseif ($explicitLoading) {
         // Never lazy, and high priority only for an image large enough to deserve it (a logo usually is not).
-        $pixels = (int) ($attr['width'] ?? 0) * (int) ($attr['height'] ?? 0);
-        if ($pixels >= (int) apply_filters('wp_min_priority_img_pixels', 50000) && RenderState::current()->claimPriority()) {
-            $optimization['fetchpriority'] = 'high';
-        }
-    } elseif ($context === 'get_header_image_tag') {
-        // A header image is in view (probe custom-header): never lazy, one of the eager images, high priority when large enough.
+        $optimization += _minn_earned_priority($attr);
+    } elseif ($context === 'get_header_image_tag' || $context === 'template_part_header') {
+        // A header image, or one in the header template part, is in view (probes custom-header, theme-symbols): never lazy, one of the eager images.
         RenderState::current()->nextImage();
-        $pixels = (int) ($attr['width'] ?? 0) * (int) ($attr['height'] ?? 0);
-        if ($pixels >= (int) apply_filters('wp_min_priority_img_pixels', 50000) && RenderState::current()->claimPriority()) {
-            $optimization['fetchpriority'] = 'high';
-        }
+        $optimization += _minn_earned_priority($attr);
     } elseif ($tag_name === 'img' && (RenderState::current()->depth() > 0 || (in_the_loop() && is_main_query())) && !(defined('REST_REQUEST') && REST_REQUEST) && RenderState::current()->nextImage() <= 3) {
         // Inside a page render the plugin's image shares the engine's budget:
         // three eager images, and the first one large enough to be worth the
         // network's attention takes high priority. A thumbnail or an avatar is
         // not, so the flag can fall to a later image.
-        $pixels = (int) ($attr['width'] ?? 0) * (int) ($attr['height'] ?? 0);
-        if ($pixels >= (int) apply_filters('wp_min_priority_img_pixels', 50000) && RenderState::current()->claimPriority()) {
-            $optimization['fetchpriority'] = 'high';
-        }
+        $optimization += _minn_earned_priority($attr);
     } elseif (wp_lazy_loading_enabled($tag_name, $context)) {
         $optimization['loading'] = 'lazy';
     }
     return apply_filters('wp_get_loading_optimization_attributes', $optimization, $tag_name, $attr, $context);
+}
+
+/** @internal fetchpriority high for an image large enough to deserve it, while no other image has taken it */
+function _minn_earned_priority(array $attr): array
+{
+    $pixels = (int) ($attr['width'] ?? 0) * (int) ($attr['height'] ?? 0);
+    return $pixels >= (int) apply_filters('wp_min_priority_img_pixels', 50000) && RenderState::current()->claimPriority() ? ['fetchpriority' => 'high'] : [];
 }
 
 function wp_high_priority_element_flag($value = null)

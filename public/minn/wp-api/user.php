@@ -255,6 +255,12 @@ function delete_user_option($user_id, $option_name, $is_global = false)
     return delete_user_meta($user_id, $key);
 }
 
+/** The site's user count as last counted (the user_count option), -1 before it was ever counted (probe theme-symbols). */
+function get_user_count($network_id = null)
+{
+    return (int) get_network_option($network_id, 'user_count', -1);
+}
+
 function count_users($strategy = 'time', $site_id = null)
 {
     return ['total_users' => (new Users(Runtime::current()->db))->count(), 'avail_roles' => []];
