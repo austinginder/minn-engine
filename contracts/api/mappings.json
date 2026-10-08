@@ -3,10 +3,10 @@
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line)",
     "summary": {
         "minn": 678,
-        "composes": 1045,
-        "leaf": 683,
+        "composes": 1046,
+        "leaf": 684,
         "noop": 2046,
-        "functions": 4378,
+        "functions": 4380,
         "minnMethods": 799,
         "leafLinesOver15": 13
     },
@@ -17486,6 +17486,27 @@
             ],
             "composes": []
         },
+        "_minn_comments_flattened": {
+            "file": "comment.php",
+            "lines": 8,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "_minn_comments_template_args": {
+            "file": "comment.php",
+            "lines": 19,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "apply_filters",
+                "get_current_user_id",
+                "get_option",
+                "get_query_var",
+                "is_user_logged_in",
+                "wp_get_unapproved_comment_author_email"
+            ]
+        },
         "_minn_content_img_tag": {
             "file": "media.php",
             "lines": 1,
@@ -20969,22 +20990,23 @@
         },
         "comments_template": {
             "file": "comment.php",
-            "lines": 18,
+            "lines": 24,
             "kind": "composes",
             "minn": [],
             "composes": [
+                "_minn_comments_flattened",
+                "_minn_comments_template_args",
                 "apply_filters",
+                "esc_url",
                 "get_comment_pages_count",
-                "get_comments",
-                "get_current_user_id",
+                "get_option",
+                "get_query_var",
                 "is_page",
                 "is_single",
-                "is_user_logged_in",
                 "locate_template",
-                "post_password_required",
                 "separate_comments",
-                "wp_get_current_commenter",
-                "wp_get_unapproved_comment_author_email"
+                "set_query_var",
+                "wp_get_current_commenter"
             ]
         },
         "compatible_gzinflate": {
@@ -23172,11 +23194,12 @@
         },
         "get_comment_pages_count": {
             "file": "comment.php",
-            "lines": 14,
+            "lines": 18,
             "kind": "composes",
             "minn": [],
             "composes": [
-                "get_option"
+                "get_option",
+                "get_query_var"
             ]
         },
         "get_comment_reply_link": {

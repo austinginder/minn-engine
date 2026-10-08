@@ -760,22 +760,30 @@ function wp_get_current_commenter()
     return apply_filters('wp_get_current_commenter', $commenter);
 }
 
-/** Pages of comments at the per-page setting; threaded counts top-level comments only. */
+/**
+ * Pages of comments at the page size: one when comments are not paged,
+ * top-level comments only while threaded. Asked with nothing, the main
+ * query's own count once comments_template has paged it.
+ */
 function get_comment_pages_count($comments = null, $per_page = null, $threaded = null)
 {
-    $comments ??= $GLOBALS['wp_query']->comments ?? [];
+    global $wp_query;
+    if ($comments === null && $per_page === null && $threaded === null && !empty($wp_query->max_num_comment_pages)) {
+        return $wp_query->max_num_comment_pages;
+    }
+    $comments ??= $wp_query->comments ?? [];
     if (empty($comments)) {
         return 0;
     }
-    $per_page = (int) ($per_page ?? get_option('comments_per_page'));
-    if ($per_page === 0) {
-        $per_page = (int) get_option('comments_per_page');
+    if (!get_option('page_comments')) {
+        return 1;
     }
+    $per_page = (int) ($per_page ?? get_query_var('comments_per_page')) ?: (int) get_option('comments_per_page');
     if ($per_page === 0) {
         return 1;
     }
-    $threaded ??= (bool) get_option('thread_comments');
-    $count = $threaded ? count(array_filter($comments, static fn ($c) => (int) ($c->comment_parent ?? 0) === 0)) : count($comments);
+    $threaded ??= get_option('thread_comments');
+    $count = $threaded ? (new Walker_Comment())->get_number_of_root_elements($comments) : count($comments);
     return (int) ceil($count / $per_page);
 }
 
@@ -1035,27 +1043,78 @@ function paginate_comments_links($args = [])
     return $links;
 }
 
-/** The post's comments into the main query, then the theme's comments.php or the engine's own. */
+/**
+ * The post's comments into the main query, then the theme's comments.php
+ * or the engine's own (probe comments-template): the approved ones and the
+ * visitor's own held ones, threaded as the settings say. Paged, it is one
+ * page of top-level comments with their replies; with none asked for and
+ * the newest first, the last page, which becomes the page shown. A post
+ * behind a password is the template's to refuse. The template sees
+ * $comments and the remembered commenter's details.
+ */
 function comments_template($file = '/comments.php', $separate_comments = false)
 {
-    global $wp_query, $withcomments, $post, $comment, $user_ID;
+    global $wp_query, $withcomments, $post, $comment, $user_ID, $overridden_cpage;
     if (!(is_single() || is_page() || $withcomments) || empty($post)) {
         return;
     }
-    if (post_password_required()) {
-        return;
+    $commenter = wp_get_current_commenter();
+    [$comment_author, $comment_author_email, $comment_author_url] = [$commenter['comment_author'], $commenter['comment_author_email'], esc_url($commenter['comment_author_url'])];
+    $args = apply_filters('comments_template_query_args', _minn_comments_template_args($post));
+    $query = new WP_Comment_Query($args);
+    $comments = apply_filters('comments_array', _minn_comments_flattened($query->comments, $args), (int) $post->ID);
+    $wp_query->comments = $comments;
+    $wp_query->comment_count = count($comments);
+    $wp_query->max_num_comment_pages = $query->max_num_pages;
+    $wp_query->comments_by_type = $separate_comments ? separate_comments($comments) : [];
+    $comments_by_type = $wp_query->comments_by_type;
+    $overridden_cpage = false;
+    if ((string) get_query_var('cpage') === '' && $wp_query->max_num_comment_pages > 1) {
+        set_query_var('cpage', get_option('default_comments_page') === 'newest' ? get_comment_pages_count() : 1);
+        $overridden_cpage = true;
     }
-    $email = is_user_logged_in() ? '' : ((string) wp_get_current_commenter()['comment_author_email'] ?: wp_get_unapproved_comment_author_email());
-    $rows = get_comments(['post_id' => (int) $post->ID, 'orderby' => 'comment_date_gmt', 'order' => 'ASC', 'status' => 'approve', 'include_unapproved' => is_user_logged_in() ? [get_current_user_id()] : ($email === '' ? [] : [$email]), 'no_found_rows' => false]);
-    $wp_query->comments = apply_filters('comments_array', $rows, (int) $post->ID);
-    $wp_query->comment_count = count($wp_query->comments);
-    $wp_query->max_num_comment_pages = get_comment_pages_count($wp_query->comments);
-    if ($separate_comments) {
-        $wp_query->comments_by_type = separate_comments($wp_query->comments);
+    if (!defined('COMMENTS_TEMPLATE')) {
+        define('COMMENTS_TEMPLATE', true);
     }
     $theme_template = locate_template([ltrim((string) $file, '/')]);
-    $include = apply_filters('comments_template', $theme_template !== '' ? $theme_template : MINN_ENGINE_DIR . '/wp-api/theme-compat/comments.php');
-    require $include;
+    require apply_filters('comments_template', $theme_template !== '' ? $theme_template : MINN_ENGINE_DIR . '/wp-api/theme-compat/comments.php');
+}
+
+/** @internal the query comments_template runs: one page of top-level comments when paged, the last page found by counting them when the newest come first */
+function _minn_comments_template_args(WP_Post $post): array
+{
+    $args = ['orderby' => 'comment_date_gmt', 'order' => 'ASC', 'status' => 'approve', 'post_id' => $post->ID, 'no_found_rows' => false, 'hierarchical' => get_option('thread_comments') ? 'threaded' : false];
+    $own = is_user_logged_in() ? get_current_user_id() : wp_get_unapproved_comment_author_email();
+    if ($own) {
+        $args['include_unapproved'] = [$own];
+    }
+    if (!get_option('page_comments')) {
+        return $args;
+    }
+    $per_page = (int) get_query_var('comments_per_page') ?: (int) get_option('comments_per_page');
+    $page = (int) get_query_var('cpage');
+    $args['number'] = $per_page;
+    if ($page || get_option('default_comments_page') === 'oldest') {
+        $args['offset'] = max(0, $page - 1) * $per_page;
+        return $args;
+    }
+    $count = ['count' => true, 'orderby' => false, 'post_id' => $post->ID, 'status' => 'approve'] + ($args['hierarchical'] ? ['parent' => 0] : []) + array_intersect_key($args, ['include_unapproved' => true]);
+    $top = (int) (new WP_Comment_Query())->query(apply_filters('comments_template_top_level_query_args', $count));
+    $args['offset'] = ((int) ceil($top / max(1, $per_page)) - 1) * $per_page;
+    return $args;
+}
+
+/** @internal a threaded query's comments as the walker takes them: each top-level comment, then its replies depth first */
+function _minn_comments_flattened(array $comments, array $args): array
+{
+    if (empty($args['hierarchical'])) {
+        return $comments;
+    }
+    $flat = [];
+    foreach ($comments as $top) {
+        array_push($flat, $top, ...array_values($top->get_children(['format' => 'flat', 'status' => $args['status'] ?? 'approve', 'orderby' => $args['orderby'] ?? ''])));
+    }
+    return $flat;
 }
 
 /** Comments grouped by type (comment, trackback, pingback, any other type under its own name), pings being trackbacks and pingbacks together. */

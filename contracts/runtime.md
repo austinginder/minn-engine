@@ -4815,6 +4815,17 @@ html5 and pings, ` &nbsp;&nbsp;(Edit)` in xhtml. Pings have no avatar:
 `get_avatar_comment_types` adds, and `get_avatar_data` answers any other
 type with `url` false.
 
-Open: `comments_template` loads all of a post's comments and sets
-`max_num_comment_pages`, so a paged post shows every comment on each page;
-the reference queries one page.
+**The post's comments** (probe comments-template, 13 cases).
+`comments_template` loads what the reference loads: approved comments plus
+the visitor's own held ones (the signed-in user, or the unapproved
+commenter's email). The query is threaded as the settings say and handed
+to `comments_template_query_args`; replies follow each top-level comment,
+depth first. Paged, it is one page of top-level comments. With no page
+asked for and the newest first, it counts the top-level comments
+(`comments_template_top_level_query_args`) to find the last page, then
+sets `cpage` to it and `$overridden_cpage`. `max_num_comment_pages` is the
+query's page count, 0 when not paged. A post behind a password still loads
+its comments: the template refuses it, and the fallback template prints
+the reference's note. `COMMENTS_TEMPLATE` is defined. Called with nothing,
+`get_comment_pages_count` answers the query's count; it is 1 when comments
+are not paged.

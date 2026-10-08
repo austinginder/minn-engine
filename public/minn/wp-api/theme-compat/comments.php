@@ -1,9 +1,14 @@
 <?php
 /**
  * The comments template a theme without comments.php gets: the heading,
- * the paged navigation, the list, and the form, in the reference's shape.
+ * the paged navigation, the list, and the form, in the reference's shape;
+ * for a post behind a password, only the note saying so.
  */
 
+if (post_password_required()) {
+    echo "\t\t<p class=\"nocomments\">This post is password protected. Enter the password to view comments.</p>\n\t";
+    return;
+}
 $minnCount = (int) ($GLOBALS['wp_query']->comment_count ?? 0);
 echo "\n<!-- You can start editing here. -->\n\n";
 if ($minnCount > 0) {
