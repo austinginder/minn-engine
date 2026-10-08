@@ -136,7 +136,7 @@ function wp_kses_bad_protocol_once($content, $allowed_protocols, $count = 1)
         if (!$allowed) {
             return $parts[1];
         }
-        return $protocol . ':' . $parts[1];
+        return strtolower($protocol) . ':' . $parts[1];
     }
     return $content;
 }
@@ -181,14 +181,14 @@ function _wp_kses_allow_pdf_objects($url)
 }
 
 // Plugins' say over style attributes, wherever kses reads one: the property list and each declaration.
-Kses::styleHooks(
+Minn\Support\KsesCss::styleHooks(
     static fn (array $properties): array => array_values((array) apply_filters('safe_style_css', $properties)),
     static fn (bool $allow, string $declaration): bool => (bool) apply_filters('safecss_filter_attr_allow_css', $allow, $declaration),
 );
 
 function safecss_filter_attr($css, $deprecated = '')
 {
-    return Kses::style((string) $css);
+    return Minn\Support\KsesCss::style((string) $css);
 }
 
 function wp_kses_hair($attr, $allowed_protocols)
@@ -289,4 +289,107 @@ function _wp_add_global_attributes($value)
         $value = [];
     }
     return is_array($value) ? array_merge($value, $global) : $value;
+}
+
+/** Whether a code point may be named by a reference: tab, line feed, carriage return, and Unicode from space up but the surrogates, U+FFFE and U+FFFF. */
+function valid_unicode($i)
+{
+    return Kses::validCodePoint((int) $i);
+}
+
+/** The byte a decimal reference's number stands for, as kses decodes it (wp_kses_decode_entities). */
+function _wp_kses_decode_entities_chr($matches)
+{
+    return chr((int) $matches[1]);
+}
+
+/** The byte a hex reference's number stands for, as kses decodes it (wp_kses_decode_entities). */
+function _wp_kses_decode_entities_chr_hexdec($matches)
+{
+    return chr((int) hexdec($matches[1]));
+}
+
+/** A named reference kept when kses knows the name, else its "&" escaped; nothing for no name. */
+function wp_kses_named_entities($matches)
+{
+    if (empty($matches[1])) {
+        return '';
+    }
+    return Minn\Support\KsesEntities::known($matches[1]) ? '&' . $matches[1] . ';' : '&amp;' . $matches[1] . ';';
+}
+
+/** A named reference for XML: the five XML names kept, another known name decoded to its character, anything else escaped. */
+function wp_kses_xml_named_entities($matches)
+{
+    if (empty($matches[1])) {
+        return '';
+    }
+    $name = $matches[1];
+    if (in_array($name, ['amp', 'lt', 'gt', 'quot', 'apos'], true)) {
+        return '&' . $name . ';';
+    }
+    return Minn\Support\KsesEntities::known($name) ? html_entity_decode('&' . $name . ';', ENT_HTML5) : '&amp;' . $name . ';';
+}
+
+/** A decimal reference kept, its digits padded to three, when it names a valid character; else its "&" escaped. */
+function wp_kses_normalize_entities2($matches)
+{
+    if (empty($matches[1])) {
+        return '';
+    }
+    $digits = ltrim($matches[1], '0');
+    return valid_unicode($digits) ? '&#' . str_pad($digits, 3, '0', STR_PAD_LEFT) . ';' : '&amp;#' . $matches[1] . ';';
+}
+
+/** A hex reference kept, without leading zeros, when it names a valid character; else its "&" escaped. */
+function wp_kses_normalize_entities3($matches)
+{
+    if (empty($matches[1])) {
+        return '';
+    }
+    $hex = ltrim($matches[1], '0');
+    return valid_unicode(hexdec($hex)) ? '&#x' . $hex . ';' : '&amp;#x' . $matches[1] . ';';
+}
+
+/** A URL's scheme, decoded, without whitespace and lower-cased, with its colon when it is allowed; nothing when it is not. */
+function wp_kses_bad_protocol_once2($scheme, $allowed_protocols)
+{
+    $scheme = strtolower((string) preg_replace('/[\s\x00-\x20]/', '', wp_kses_decode_entities((string) $scheme)));
+    foreach ((array) $allowed_protocols as $protocol) {
+        if (strtolower((string) $protocol) === $scheme) {
+            return $scheme . ':';
+        }
+    }
+    return '';
+}
+
+/** An attribute string cut into its attributes, each with the whitespace after it; false when anything in it is not an attribute. */
+function wp_kses_hair_parse($attr)
+{
+    return Minn\Support\KsesAttributes::parse((string) $attr) ?? false;
+}
+
+/** What follows the first malformed run of an attribute string (a quoted or bare run and the whitespace after it). */
+function wp_kses_html_error($attr)
+{
+    return (string) preg_replace('/^("[^"]*("|$)|\'[^\']*(\'|$)|\S)*\s*/', '', (string) $attr);
+}
+
+/** An element rebuilt with the attributes the allowlist lets it keep, its name as written and an XHTML slash kept. */
+function wp_kses_attr($element, $attr, $allowed_html, $allowed_protocols)
+{
+    return Kses::element((string) $element, (string) $attr, _minn_kses_policy($allowed_html, (array) $allowed_protocols));
+}
+
+/** One run of the split pass on its own: a comment, a tag judged by the allowlist, or a lone ">" escaped. */
+function wp_kses_split2($content, $allowed_html, $allowed_protocols)
+{
+    return Kses::tag((string) $content, _minn_kses_policy($allowed_html, (array) $allowed_protocols));
+}
+
+/** The split pass's callback: one run judged by the rules wp_kses_split left in its globals. */
+function _wp_kses_split_callback($matches)
+{
+    global $pass_allowed_html, $pass_allowed_protocols;
+    return wp_kses_split2($matches[0], $pass_allowed_html, $pass_allowed_protocols);
 }

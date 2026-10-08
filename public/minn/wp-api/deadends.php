@@ -361,6 +361,12 @@ function _wp_keep_alive_customize_changeset_dependent_auto_drafts($new_status, $
     return null;
 }
 
+function _wp_kses_allow_note_mention_span($allowed, $context)
+{
+    \Minn\Runtime\PlaceholderTrace::hit('_wp_kses_allow_note_mention_span');
+    return [];
+}
+
 function _wp_nav_menu_meta_box_object($data_object = NULL)
 {
     \Minn\Runtime\PlaceholderTrace::hit('_wp_nav_menu_meta_box_object');

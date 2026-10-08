@@ -1071,65 +1071,6 @@ function wp_debug_backtrace_summary($ignore_class = null, $skip_frames = 0, $pre
     return $pretty ? implode(', ', array_reverse($names)) : $names;
 }
 
-// PHP 8.4's array functions, which the reference provides on older PHP.
-if (!function_exists('array_find')) {
-    function array_find(array $array, callable $callback)
-    {
-        foreach ($array as $key => $value) {
-            if ($callback($value, $key)) {
-                return $value;
-            }
-        }
-        return null;
-    }
-}
-
-if (!function_exists('array_find_key')) {
-    function array_find_key(array $array, callable $callback)
-    {
-        foreach ($array as $key => $value) {
-            if ($callback($value, $key)) {
-                return $key;
-            }
-        }
-        return null;
-    }
-}
-
-if (!function_exists('array_any')) {
-    function array_any(array $array, callable $callback): bool
-    {
-        return array_find_key($array, $callback) !== null;
-    }
-}
-
-if (!function_exists('array_all')) {
-    function array_all(array $array, callable $callback): bool
-    {
-        foreach ($array as $key => $value) {
-            if (!$callback($value, $key)) {
-                return false;
-            }
-        }
-        return true;
-    }
-}
-
-// PHP 8.5's, likewise.
-if (!function_exists('array_first')) {
-    function array_first(array $array): mixed
-    {
-        return $array === [] ? null : $array[array_key_first($array)];
-    }
-}
-
-if (!function_exists('array_last')) {
-    function array_last(array $array): mixed
-    {
-        return $array === [] ? null : $array[array_key_last($array)];
-    }
-}
-
 /** Where the "Learn more about updating PHP" links point: wp_update_php_url, or the default when that answers nothing (probe plugin-activation). */
 function wp_get_update_php_url()
 {
@@ -1449,7 +1390,7 @@ function is_site_meta_supported()
 /** Whether a charset (the blog_charset option when none is given) names UTF-8, with or without the dash, any case. */
 function is_utf8_charset($blog_charset = null)
 {
-    return in_array(strtolower((string) ($blog_charset ?? get_option('blog_charset'))), ['utf-8', 'utf8'], true);
+    return _is_utf8_charset($blog_charset ?? get_option('blog_charset'));
 }
 
 /** Whether a type is one of the HEIC/HEIF image types, spelled exactly. */

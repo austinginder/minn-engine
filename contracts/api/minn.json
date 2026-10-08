@@ -16564,7 +16564,7 @@
                 "Minn\\Blocks\\RenderState",
                 "Minn\\Blocks\\Styles",
                 "Minn\\Runtime\\Runtime",
-                "Minn\\Support\\Kses"
+                "Minn\\Support\\KsesCss"
             ],
             "usedBy": [
                 "Minn\\Blocks\\Dynamic\\SocialLinks",
@@ -134809,7 +134809,7 @@
             "namespace": "Minn\\Support",
             "kind": "final class",
             "file": "public/minn/src/Minn/Support/Kses.php",
-            "lines": 577,
+            "lines": 475,
             "doc": "The HTML a user without unfiltered_html may store. Tags outside the\nallowlist are removed and their text kept; attributes outside the tag's\nlist are dropped; URL attributes lose unsafe schemes; style attributes\nkeep only listed properties and no code. Comments keep their text, and\nblock delimiters are written back with their attribute values filtered.",
             "implements": [],
             "extends": null,
@@ -134819,6 +134819,7 @@
                 "Minn\\Blocks\\Serializer",
                 "Minn\\Html\\Decoder",
                 "Minn\\Support\\Entities",
+                "Minn\\Support\\KsesCss",
                 "Minn\\Support\\KsesEntities",
                 "Minn\\Support\\KsesPolicy",
                 "Minn\\Support\\KsesValues",
@@ -134829,7 +134830,6 @@
                 "Minn\\Blocks\\Dynamic\\SocialLinks",
                 "Minn\\Blocks\\Dynamic\\Theme\\Comments",
                 "Minn\\Blocks\\Dynamic\\Theme\\Navigation",
-                "Minn\\Blocks\\Layout",
                 "Minn\\Content\\Users",
                 "Minn\\Media\\Writer",
                 "Minn\\Rest\\MenusController",
@@ -134839,6 +134839,7 @@
                 "Minn\\Rest\\UsersController",
                 "Minn\\Support\\Escape",
                 "Minn\\Support\\KsesAttributes",
+                "Minn\\Support\\KsesCss",
                 "Minn\\Support\\KsesPolicy"
             ],
             "constructor": null,
@@ -134863,12 +134864,6 @@
                     "visibility": "public"
                 },
                 {
-                    "name": "CSS_PROPERTIES",
-                    "value": "array (   0 => 'background',   1 => 'background-color',   2 => 'background-image',   3 => 'background-position',   4 => 'background-repeat',   5 => 'background-size',   6 => 'background-attachment',   7 => 'background-blend-mode',   8 => 'border',   9 => 'border-radius',   10 => 'border-width',   11 => 'border-color',   12 => 'border-style',   13 => 'border-right',   14 => 'border-right-color',   15 => 'border-right-style',   16 => 'border-right-width',   17 => 'border-bottom',   18 => 'border-bottom-color',   19 => 'border-bottom-left-radius',   20 => 'border-bottom-right-radius',   21 => 'border-bottom-style',   22 => 'border-bottom-width',   23 => 'border-bottom-right-radius',   24 => 'border-bottom-left-radius',   25 => 'border-left',   26 => 'border-left-color',   27 => 'border-left-style',   28 => 'border-left-width',   29 => 'border-top',   30 => 'border-top-color',   31 => 'border-top-left-radius',   32 => 'border-top-right-radius',   33 => 'border-top-style',   34 => 'border-top-width',   35 => 'border-top-left-radius',   36 => 'border-top-right-radius',   37 => 'border-spacing',   38 => 'border-collapse',   39 => 'caption-side',   40 => 'columns',   41 => 'column-count',   42 => 'column-fill',   43 => 'column-gap',   44 => 'column-rule',   45 => 'column-span',   46 => 'column-width',   47 => 'display',   48 => 'color',   49 => 'filter',   50 => 'font',   51 => 'font-family',   52 => 'font-size',   53 => 'font-style',   54 => 'font-variant',   55 => 'font-weight',   56 => 'letter-spacing',   57 => 'line-height',   58 => 'text-align',   59 => 'text-decoration',   60 => 'text-indent',   61 => 'text-transform',   62 => 'white-space',   63 => 'height',   64 => 'min-height',   65 => 'max-height',   66 => 'width',   67 => 'min-width',   68 => 'max-width',   69 => 'margin',   70 => 'margin-right',   71 => 'margin-bottom',   72 => 'margin-left',   73 => 'margin-top',   74 => 'margin-block-start',   75 => 'margin-block-end',   76 => 'margin-inline-start',   77 => 'margin-inline-end',   78 => 'padding',   79 => 'padding-right',   80 => 'padding-bottom',   81 => 'padding-left',   82 => 'padding-top',   83 => 'padding-block-start',   84 => 'padding-block-end',   85 => 'padding-inline-start',   86 => 'padding-inline-end',   87 => 'flex',   88 => 'flex-basis',   89 => 'flex-direction',   90 => 'flex-flow',   91 => 'flex-grow',   92 => 'flex-shrink',   93 => 'flex-wrap',   94 => 'gap',   95 => 'column-gap',   96 => 'row-gap',   97 => 'grid-template-columns',   98 => 'grid-auto-columns',   99 => 'grid-column-start',   100 => 'grid-column-end',   101 => 'grid-column',   102 => 'grid-column-gap',   103 => 'grid-template-rows',   104 => 'grid-auto-rows',   105 => 'grid-row-start',   106 => 'grid-row-end',   107 => 'grid-row',   108 => 'grid-row-gap',   109 => 'grid-gap',   110 => 'justify-content',   111 => 'justify-items',   112 => 'justify-self',   113 => 'align-content',   114 => 'align-items',   115 => 'align-self',   116 => 'clear',   117 => 'cursor',   118 => 'direction',   119 => 'float',   120 => 'list-style-type',   121 => 'object-fit',   122 => 'object-position',   123 => 'opacity',   124 => 'overflow',   125 => 'vertical-align',   126 => 'writing-mode',   127 => 'position',   128 => 'top',   129 => 'right',   130 => 'bottom',   131 => 'left',   132 => 'z-index',   133 => 'box-shadow',   134 => 'aspect-ratio',   135 => 'container-type',   136 => 'fill',   137 => 'fill-opacity',   138 => 'fill-rule',   139 => 'stroke',   140 => 'stroke-dasharray',   141 => 'stroke-dashoffset',   142 => 'stroke-linecap',   143 => 'stroke-linejoin',   144 => 'stroke-miterlimit',   145 => 'stroke-opacity',   146 => 'stroke-width',   147 => 'color-interpolation',   148 => 'color-interpolation-filters',   149 => 'paint-order',   150 => 'stop-color',   151 => 'stop-opacity',   152 => 'flood-color',   153 => 'flood-opacity',   154 => 'lighting-color',   155 => 'marker',   156 => 'marker-end',   157 => 'marker-mid',   158 => 'marker-start',   159 => 'clip-path',   160 => 'clip-rule',   161 => 'mask',   162 => 'mask-type',   163 => 'cx',   164 => 'cy',   165 => 'r',   166 => 'rx',   167 => 'ry',   168 => 'x',   169 => 'y',   170 => 'd',   171 => 'alignment-baseline',   172 => 'baseline-shift',   173 => 'dominant-baseline',   174 => 'glyph-orientation-horizontal',   175 => 'glyph-orientation-vertical',   176 => 'text-anchor',   177 => 'unicode-bidi',   178 => 'word-spacing',   179 => 'font-size-adjust',   180 => 'font-stretch',   181 => 'color-rendering',   182 => 'image-rendering',   183 => 'shape-rendering',   184 => 'text-rendering',   185 => 'vector-effect',   186 => 'transform',   187 => 'transform-origin',   188 => 'pointer-events',   189 => 'visibility',   190 => '--*', )",
-                    "doc": "The properties style attributes keep, as the reference lists them before safe_style_css (probe safety-filters); --* stands for custom properties.",
-                    "visibility": "private"
-                },
-                {
                     "name": "REFERENCE",
                     "value": "'/&(#[0-9]+|#[xX][0-9a-fA-F]+|[a-zA-Z][a-zA-Z0-9]{0,31});/'",
                     "doc": "",
@@ -134884,6 +134879,845 @@
                     "name": "MARKUP",
                     "value": "array (   '&' => '&amp;',   '<' => '&lt;',   '>' => '&gt;',   '\"' => '&quot;',   '\\'' => '&apos;', )",
                     "doc": "",
+                    "visibility": "private"
+                }
+            ],
+            "properties": [],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "post",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "post(string $html): string",
+                    "doc": "Post content as an author without unfiltered_html may store it.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "html",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 37,
+                    "end": 40
+                },
+                {
+                    "routes": [],
+                    "name": "comment",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "comment(string $html): string",
+                    "doc": "A comment, profile or term description as anyone without unfiltered_html may store it: listed attributes only.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "html",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 43,
+                    "end": 46
+                },
+                {
+                    "routes": [],
+                    "name": "sanitize",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "sanitize(string $html, Minn\\Support\\KsesPolicy $policy): string",
+                    "doc": "The whole pass wp_kses makes with its default hooks: control\ncharacters out, references normalized, a \"<\" that opens no tag\nescaped, block attribute values filtered the same way, then the tags.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "html",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "policy",
+                            "type": "Minn\\Support\\KsesPolicy",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 53,
+                    "end": 58
+                },
+                {
+                    "routes": [],
+                    "name": "withoutControls",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "withoutControls(string $html): string",
+                    "doc": "The control characters kses removes (tab, newline and carriage return stay).",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "html",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 61,
+                    "end": 64
+                },
+                {
+                    "routes": [],
+                    "name": "normalizeEntities",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "normalizeEntities(string $html): string",
+                    "doc": "Every \"&\" made a reference, in one pass: a known name or a code point\nkses accepts stays one (decimal padded to three digits, hex with a\nlower-case x), anything else becomes \"&amp;\".",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "html",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 71,
+                    "end": 86
+                },
+                {
+                    "routes": [],
+                    "name": "lessThan",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "lessThan(string $html, ?Closure $escape = NULL): string",
+                    "doc": "A \"<\" that reaches the next \"<\" or the end without a \">\" is text: the\nrun is escaped the way esc_html escapes it (quotes included).",
+                    "shapes": [
+                        "@param (Closure(string): string)|null $escape"
+                    ],
+                    "params": [
+                        {
+                            "name": "html",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "escape",
+                            "type": "?Closure",
+                            "shape": "(Closure(string): string)|null",
+                            "default": "NULL",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 94,
+                    "end": 98
+                },
+                {
+                    "routes": [],
+                    "name": "escapeHtml",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "escapeHtml(string $text): string",
+                    "doc": "Text escaped for HTML with references kept: invalid UTF-8 gives nothing, quotes become &quot; and &#039;.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "text",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 101,
+                    "end": 107
+                },
+                {
+                    "routes": [],
+                    "name": "blockAttributes",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "blockAttributes(string $html, Closure $clean): string",
+                    "doc": "Block markup with every attribute key and string value passed through\nthe same filter, and the delimiters written back in their canonical\nform (\"--->\" read as \"-->\"). Markup without a comment is left alone.",
+                    "shapes": [
+                        "@param Closure(string): string $clean"
+                    ],
+                    "params": [
+                        {
+                            "name": "html",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "clean",
+                            "type": "Closure",
+                            "shape": "Closure(string): string",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 116,
+                    "end": 128
+                },
+                {
+                    "routes": [],
+                    "name": "filter",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "filter(string $html, Minn\\Support\\KsesPolicy $policy): string",
+                    "doc": "The tag pass: each run from \"<\" to the next \">\" (or the end) is a\ncomment, an inert bogus comment (\"</\" before a non-letter, \"<!\"\nbefore a lower-case letter), or an element judged by the policy;\nanything else in angle brackets goes. Text between keeps its\nreferences, with stray ones escaped. Run alone (wp_kses_split), a\nlast \"<\" with no \">\" still reads as a tag; inside sanitize() the\nless-than pass has already escaped it.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "html",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "policy",
+                            "type": "Minn\\Support\\KsesPolicy",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 155,
+                    "end": 162
+                },
+                {
+                    "routes": [],
+                    "name": "tag",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "tag(string $run, Minn\\Support\\KsesPolicy $policy): string",
+                    "doc": "One run of the tag pass on its own (wp_kses_split2): a comment, a\ntag, or, for anything not starting with \"<\", a lone \">\".",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "run",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "policy",
+                            "type": "Minn\\Support\\KsesPolicy",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 168,
+                    "end": 171
+                },
+                {
+                    "routes": [],
+                    "name": "element",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "element(string $element, string $attributes, Minn\\Support\\KsesPolicy $policy): string",
+                    "doc": "An element rebuilt with the attributes the policy allows it\n(wp_kses_attr), its name as written and an XHTML slash kept; an\nelement the policy does not know keeps none.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "element",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "attributes",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "policy",
+                            "type": "Minn\\Support\\KsesPolicy",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 178,
+                    "end": 181
+                },
+                {
+                    "routes": [],
+                    "name": "attributeList",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "attributeList(string $raw): ?array",
+                    "doc": "The attributes written inside a tag, read the way kses reads them: a\nname, then \"=\" and a quoted or bare value, or no value at all; junk\nbetween (stray quotes, \"=\", \"/\") is skipped; the first of two\nsame-named attributes wins. Null when a quoted value never closes,\nwhich costs the tag every attribute.",
+                    "shapes": [
+                        "@return array<string, array{name: string, value: ?string, whole: string}>|null"
+                    ],
+                    "params": [
+                        {
+                            "name": "raw",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 233,
+                    "end": 268
+                },
+                {
+                    "routes": [],
+                    "name": "text",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "text(string $value): string",
+                    "doc": "Plain text: tags gone, whitespace collapsed, control characters dropped.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "value",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 271,
+                    "end": 277
+                },
+                {
+                    "routes": [],
+                    "name": "url",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "url(string $url): string",
+                    "doc": "A URL for a stored field: empty when its scheme is not one the reference allows.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "url",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 280,
+                    "end": 287
+                },
+                {
+                    "routes": [],
+                    "name": "attributeUrl",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "attributeUrl(string $url, array $schemes = self::SCHEMES): string",
+                    "doc": "A URL inside markup: whatever stands before the first colon, once\nevery character reference and percent escape is decoded as deep as it\ngoes and the invisible characters are dropped, must be an allowed\nscheme, or it is cut off and the rest is judged again. The reference\ncuts \"?q=a:b\" to \"b\" and \"javascript:alert(1)//http://\" to \"//\" the\nsame way. A value with a good scheme is returned as given.",
+                    "shapes": [
+                        "@param list<string> $schemes"
+                    ],
+                    "params": [
+                        {
+                            "name": "url",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "schemes",
+                            "type": "array",
+                            "shape": "list<string>",
+                            "default": "self::SCHEMES",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 299,
+                    "end": 315
+                },
+                {
+                    "routes": [],
+                    "name": "validCodePoint",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "validCodePoint(int $code): bool",
+                    "doc": "Whether a code point is one a reference may name (valid_unicode): tab,\nline feed, carriage return, and the rest of Unicode from space up,\nexcept the surrogates and U+FFFE and U+FFFF.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "code",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 407,
+                    "end": 413
+                },
+                {
+                    "routes": [],
+                    "name": "pdfObject",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "pdfObject(string $url, string $uploadsUrl): bool",
+                    "doc": "Whether a URL may be an object's data in post content: an http or https\nURL on the uploads host and port, no credentials, query or fragment,\nwhose path ends in \".pdf\".",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "url",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "uploadsUrl",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 467,
+                    "end": 481
+                },
+                {
+                    "routes": [],
+                    "name": "cleanValue",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "cleanValue(mixed $value, Closure $clean): mixed",
+                    "doc": "",
+                    "shapes": [
+                        "@param Closure(string): string $clean"
+                    ],
+                    "params": [
+                        {
+                            "name": "value",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "clean",
+                            "type": "Closure",
+                            "shape": "Closure(string): string",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 131,
+                    "end": 144
+                },
+                {
+                    "routes": [],
+                    "name": "run",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "run(string $run, Minn\\Support\\KsesPolicy $policy): string",
+                    "doc": "One bracketed run as the tag pass keeps it, or nothing.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "run",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "policy",
+                            "type": "Minn\\Support\\KsesPolicy",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 184,
+                    "end": 205
+                },
+                {
+                    "routes": [],
+                    "name": "htmlComment",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "htmlComment(string $body, Minn\\Support\\KsesPolicy $policy): string",
+                    "doc": "A comment kept whole, its body run through the same pass (a \">\" in it\nescaped, tags judged): no \"--\" inside, an empty one dropped, an\nunclosed one closed.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "body",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "policy",
+                            "type": "Minn\\Support\\KsesPolicy",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 212,
+                    "end": 222
+                },
+                {
+                    "routes": [],
+                    "name": "deepDecode",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "deepDecode(string $value): string",
+                    "doc": "A value with its references and percent escapes decoded until nothing changes, so no encoding hides a scheme.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "value",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 318,
+                    "end": 328
+                },
+                {
+                    "routes": [],
+                    "name": "visible",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "visible(string $text): string",
+                    "doc": "The text with whitespace, control characters, no-break spaces, and replacement characters removed.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "text",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 331,
+                    "end": 335
+                },
+                {
+                    "routes": [],
+                    "name": "normalizeText",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "normalizeText(string $text): string",
+                    "doc": "Text between tags as the reference stores it: valid references stay\nreferences (decimal ones padded to three digits), invalid ones and\nstray ampersands become \"&amp;\", and a closing bracket is escaped.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "text",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 346,
+                    "end": 361
+                },
+                {
+                    "routes": [],
+                    "name": "normalizeAttribute",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "normalizeAttribute(string $value): string",
+                    "doc": "An attribute value as the reference stores it: valid references become\ntheir characters, except that the five markup characters stay escaped\n(an apostrophe as &apos;); invalid references and stray ampersands\nbecome \"&amp;\"; raw quotes are escaped.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "value",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 369,
+                    "end": 386
+                },
+                {
+                    "routes": [],
+                    "name": "named",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "named(string $name): ?string",
+                    "doc": "What a named reference stands for, or null when the name is not one.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "name",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 389,
+                    "end": 393
+                },
+                {
+                    "routes": [],
+                    "name": "codePoint",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "codePoint(string $body): ?int",
+                    "doc": "A numeric reference's code point, or null when it names no character the reference accepts.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "body",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 396,
+                    "end": 400
+                },
+                {
+                    "routes": [],
+                    "name": "attributes",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "attributes(string $raw, string $tag, Minn\\Support\\KsesPolicy $policy): string",
+                    "doc": "The attributes the policy allows, in the order written: a value must\nmeet its rules, a URI keeps only an allowed scheme, srcset and style are\njudged on their own terms. A tag that loses a required attribute keeps\nnone at all.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "raw",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "tag",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "policy",
+                            "type": "Minn\\Support\\KsesPolicy",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 421,
+                    "end": 443
+                },
+                {
+                    "routes": [],
+                    "name": "rendered",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "rendered(string $name, ?string $value, Minn\\Support\\KsesPolicy $policy): ?string",
+                    "doc": "One allowed attribute as stored, or null when its value is judged away entirely.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "name",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "value",
+                            "type": "?string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "policy",
+                            "type": "Minn\\Support\\KsesPolicy",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 446,
+                    "end": 460
+                },
+                {
+                    "routes": [],
+                    "name": "srcset",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "srcset(string $value): string",
+                    "doc": "Every candidate must be an absolute URL with a safe scheme, or the attribute goes.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "value",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 484,
+                    "end": 493
+                }
+            ]
+        },
+        {
+            "name": "Minn\\Support\\KsesAttributes",
+            "short": "KsesAttributes",
+            "namespace": "Minn\\Support",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Support/KsesAttributes.php",
+            "lines": 76,
+            "doc": "Kses one attribute at a time, for the shortcode pass that runs inside\nHTML tags: an opening tag cut into its attributes, and one attribute\njudged as kses judges it on its element. Probe shortcode-run.",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\Support\\Escape",
+                "Minn\\Support\\Kses",
+                "Minn\\Support\\KsesCss",
+                "Minn\\Support\\KsesPolicy",
+                "Minn\\Support\\KsesValues"
+            ],
+            "usedBy": [
+                "Minn\\Runtime\\Shortcodes"
+            ],
+            "constructor": null,
+            "cases": [],
+            "constants": [],
+            "properties": [],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "elementParts",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "elementParts(string $element): ?array",
+                    "doc": "An opening tag cut as wp_kses_attr_parse cuts it: the start (\"<a \"),\neach attribute with the whitespace after it (a shortcode standing as\na name counts as one), and the end (\">\" or \"/>\"). Null for a closing\ntag, a comment, CDATA, or anything between the brackets that is not\nattributes.",
+                    "shapes": [
+                        "@return list<string>|null"
+                    ],
+                    "params": [
+                        {
+                            "name": "element",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 23,
+                    "end": 31
+                },
+                {
+                    "routes": [],
+                    "name": "parse",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "parse(string $attributes): ?array",
+                    "doc": "An attribute string cut into its attributes, each with the whitespace\nafter it (wp_kses_hair_parse): a name (or a shortcode standing as one),\nthen \"=\" and a quoted or bare value, or nothing. Null when anything in\nit is not an attribute: leading whitespace, a stray quote, a quoted\nvalue that never closes.",
+                    "shapes": [
+                        "@return list<string>|null"
+                    ],
+                    "params": [
+                        {
+                            "name": "attributes",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 42,
+                    "end": 46
+                },
+                {
+                    "routes": [],
+                    "name": "oneAttribute",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "oneAttribute(string $attr, string $element, Minn\\Support\\KsesPolicy $policy): string",
+                    "doc": "One attribute as written, judged as kses judges it on the element\n(wp_kses_one_attr): the value escaped for an attribute and kept in its\nown quotes (a bare one gains double quotes), a URL's bad scheme cut\naway, style kept to the allowed properties; nothing when the element\nmay not carry it or a quoted value never closes. The whitespace\naround it stays.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "attr",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "element",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "policy",
+                            "type": "Minn\\Support\\KsesPolicy",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 56,
+                    "end": 86
+                }
+            ]
+        },
+        {
+            "name": "Minn\\Support\\KsesCss",
+            "short": "KsesCss",
+            "namespace": "Minn\\Support",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Support/KsesCss.php",
+            "lines": 137,
+            "doc": "The style attribute as kses keeps it (safecss_filter_attr): each\ndeclaration whose property is on the list stays, a value's url() only\non the properties that may hold one and only with a safe scheme, the\ngradients and CSS functions the reference allows, and nothing that could\nend the declaration. Plugins widen the list and the verdict through the\nhooks the facade wires in (safe_style_css, safecss_filter_attr_allow_css).",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\Support\\Kses"
+            ],
+            "usedBy": [
+                "Minn\\Blocks\\Layout",
+                "Minn\\Support\\Kses",
+                "Minn\\Support\\KsesAttributes"
+            ],
+            "constructor": null,
+            "cases": [],
+            "constants": [
+                {
+                    "name": "CSS_PROPERTIES",
+                    "value": "array (   0 => 'background',   1 => 'background-color',   2 => 'background-image',   3 => 'background-position',   4 => 'background-repeat',   5 => 'background-size',   6 => 'background-attachment',   7 => 'background-blend-mode',   8 => 'border',   9 => 'border-radius',   10 => 'border-width',   11 => 'border-color',   12 => 'border-style',   13 => 'border-right',   14 => 'border-right-color',   15 => 'border-right-style',   16 => 'border-right-width',   17 => 'border-bottom',   18 => 'border-bottom-color',   19 => 'border-bottom-left-radius',   20 => 'border-bottom-right-radius',   21 => 'border-bottom-style',   22 => 'border-bottom-width',   23 => 'border-bottom-right-radius',   24 => 'border-bottom-left-radius',   25 => 'border-left',   26 => 'border-left-color',   27 => 'border-left-style',   28 => 'border-left-width',   29 => 'border-top',   30 => 'border-top-color',   31 => 'border-top-left-radius',   32 => 'border-top-right-radius',   33 => 'border-top-style',   34 => 'border-top-width',   35 => 'border-top-left-radius',   36 => 'border-top-right-radius',   37 => 'border-spacing',   38 => 'border-collapse',   39 => 'caption-side',   40 => 'columns',   41 => 'column-count',   42 => 'column-fill',   43 => 'column-gap',   44 => 'column-rule',   45 => 'column-span',   46 => 'column-width',   47 => 'display',   48 => 'color',   49 => 'filter',   50 => 'font',   51 => 'font-family',   52 => 'font-size',   53 => 'font-style',   54 => 'font-variant',   55 => 'font-weight',   56 => 'letter-spacing',   57 => 'line-height',   58 => 'text-align',   59 => 'text-decoration',   60 => 'text-indent',   61 => 'text-transform',   62 => 'white-space',   63 => 'height',   64 => 'min-height',   65 => 'max-height',   66 => 'width',   67 => 'min-width',   68 => 'max-width',   69 => 'margin',   70 => 'margin-right',   71 => 'margin-bottom',   72 => 'margin-left',   73 => 'margin-top',   74 => 'margin-block-start',   75 => 'margin-block-end',   76 => 'margin-inline-start',   77 => 'margin-inline-end',   78 => 'padding',   79 => 'padding-right',   80 => 'padding-bottom',   81 => 'padding-left',   82 => 'padding-top',   83 => 'padding-block-start',   84 => 'padding-block-end',   85 => 'padding-inline-start',   86 => 'padding-inline-end',   87 => 'flex',   88 => 'flex-basis',   89 => 'flex-direction',   90 => 'flex-flow',   91 => 'flex-grow',   92 => 'flex-shrink',   93 => 'flex-wrap',   94 => 'gap',   95 => 'column-gap',   96 => 'row-gap',   97 => 'grid-template-columns',   98 => 'grid-auto-columns',   99 => 'grid-column-start',   100 => 'grid-column-end',   101 => 'grid-column',   102 => 'grid-column-gap',   103 => 'grid-template-rows',   104 => 'grid-auto-rows',   105 => 'grid-row-start',   106 => 'grid-row-end',   107 => 'grid-row',   108 => 'grid-row-gap',   109 => 'grid-gap',   110 => 'justify-content',   111 => 'justify-items',   112 => 'justify-self',   113 => 'align-content',   114 => 'align-items',   115 => 'align-self',   116 => 'clear',   117 => 'cursor',   118 => 'direction',   119 => 'float',   120 => 'list-style-type',   121 => 'object-fit',   122 => 'object-position',   123 => 'opacity',   124 => 'overflow',   125 => 'vertical-align',   126 => 'writing-mode',   127 => 'position',   128 => 'top',   129 => 'right',   130 => 'bottom',   131 => 'left',   132 => 'z-index',   133 => 'box-shadow',   134 => 'aspect-ratio',   135 => 'container-type',   136 => 'fill',   137 => 'fill-opacity',   138 => 'fill-rule',   139 => 'stroke',   140 => 'stroke-dasharray',   141 => 'stroke-dashoffset',   142 => 'stroke-linecap',   143 => 'stroke-linejoin',   144 => 'stroke-miterlimit',   145 => 'stroke-opacity',   146 => 'stroke-width',   147 => 'color-interpolation',   148 => 'color-interpolation-filters',   149 => 'paint-order',   150 => 'stop-color',   151 => 'stop-opacity',   152 => 'flood-color',   153 => 'flood-opacity',   154 => 'lighting-color',   155 => 'marker',   156 => 'marker-end',   157 => 'marker-mid',   158 => 'marker-start',   159 => 'clip-path',   160 => 'clip-rule',   161 => 'mask',   162 => 'mask-type',   163 => 'cx',   164 => 'cy',   165 => 'r',   166 => 'rx',   167 => 'ry',   168 => 'x',   169 => 'y',   170 => 'd',   171 => 'alignment-baseline',   172 => 'baseline-shift',   173 => 'dominant-baseline',   174 => 'glyph-orientation-horizontal',   175 => 'glyph-orientation-vertical',   176 => 'text-anchor',   177 => 'unicode-bidi',   178 => 'word-spacing',   179 => 'font-size-adjust',   180 => 'font-stretch',   181 => 'color-rendering',   182 => 'image-rendering',   183 => 'shape-rendering',   184 => 'text-rendering',   185 => 'vector-effect',   186 => 'transform',   187 => 'transform-origin',   188 => 'pointer-events',   189 => 'visibility',   190 => '--*', )",
+                    "doc": "The properties style attributes keep, as the reference lists them before safe_style_css (probe safety-filters); --* stands for custom properties.",
                     "visibility": "private"
                 },
                 {
@@ -134925,336 +135759,6 @@
             "methods": [
                 {
                     "routes": [],
-                    "name": "post",
-                    "static": true,
-                    "visibility": "public",
-                    "signature": "post(string $html): string",
-                    "doc": "Post content as an author without unfiltered_html may store it.",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "html",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 75,
-                    "end": 78
-                },
-                {
-                    "routes": [],
-                    "name": "comment",
-                    "static": true,
-                    "visibility": "public",
-                    "signature": "comment(string $html): string",
-                    "doc": "A comment, profile or term description as anyone without unfiltered_html may store it: listed attributes only.",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "html",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 81,
-                    "end": 84
-                },
-                {
-                    "routes": [],
-                    "name": "sanitize",
-                    "static": true,
-                    "visibility": "public",
-                    "signature": "sanitize(string $html, Minn\\Support\\KsesPolicy $policy): string",
-                    "doc": "The whole pass wp_kses makes with its default hooks: control\ncharacters out, references normalized, a \"<\" that opens no tag\nescaped, block attribute values filtered the same way, then the tags.",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "html",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "policy",
-                            "type": "Minn\\Support\\KsesPolicy",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 91,
-                    "end": 96
-                },
-                {
-                    "routes": [],
-                    "name": "withoutControls",
-                    "static": true,
-                    "visibility": "public",
-                    "signature": "withoutControls(string $html): string",
-                    "doc": "The control characters kses removes (tab, newline and carriage return stay).",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "html",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 99,
-                    "end": 102
-                },
-                {
-                    "routes": [],
-                    "name": "normalizeEntities",
-                    "static": true,
-                    "visibility": "public",
-                    "signature": "normalizeEntities(string $html): string",
-                    "doc": "Every \"&\" made a reference, in one pass: a known name or a code point\nkses accepts stays one (decimal padded to three digits, hex with a\nlower-case x), anything else becomes \"&amp;\".",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "html",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 109,
-                    "end": 124
-                },
-                {
-                    "routes": [],
-                    "name": "lessThan",
-                    "static": true,
-                    "visibility": "public",
-                    "signature": "lessThan(string $html, ?Closure $escape = NULL): string",
-                    "doc": "A \"<\" that reaches the next \"<\" or the end without a \">\" is text: the\nrun is escaped the way esc_html escapes it (quotes included).",
-                    "shapes": [
-                        "@param (Closure(string): string)|null $escape"
-                    ],
-                    "params": [
-                        {
-                            "name": "html",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "escape",
-                            "type": "?Closure",
-                            "shape": "(Closure(string): string)|null",
-                            "default": "NULL",
-                            "doc": ""
-                        }
-                    ],
-                    "line": 132,
-                    "end": 136
-                },
-                {
-                    "routes": [],
-                    "name": "escapeHtml",
-                    "static": true,
-                    "visibility": "public",
-                    "signature": "escapeHtml(string $text): string",
-                    "doc": "Text escaped for HTML with references kept: invalid UTF-8 gives nothing, quotes become &quot; and &#039;.",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "text",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 139,
-                    "end": 145
-                },
-                {
-                    "routes": [],
-                    "name": "blockAttributes",
-                    "static": true,
-                    "visibility": "public",
-                    "signature": "blockAttributes(string $html, Closure $clean): string",
-                    "doc": "Block markup with every attribute key and string value passed through\nthe same filter, and the delimiters written back in their canonical\nform (\"--->\" read as \"-->\"). Markup without a comment is left alone.",
-                    "shapes": [
-                        "@param Closure(string): string $clean"
-                    ],
-                    "params": [
-                        {
-                            "name": "html",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "clean",
-                            "type": "Closure",
-                            "shape": "Closure(string): string",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 154,
-                    "end": 166
-                },
-                {
-                    "routes": [],
-                    "name": "filter",
-                    "static": true,
-                    "visibility": "public",
-                    "signature": "filter(string $html, Minn\\Support\\KsesPolicy $policy): string",
-                    "doc": "The tag pass: each run from \"<\" to the next \">\" (or the end) is a\ncomment, an inert bogus comment (\"</\" before a non-letter, \"<!\"\nbefore a lower-case letter), or an element judged by the policy;\nanything else in angle brackets goes. Text between keeps its\nreferences, with stray ones escaped. Run alone (wp_kses_split), a\nlast \"<\" with no \">\" still reads as a tag; inside sanitize() the\nless-than pass has already escaped it.",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "html",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "policy",
-                            "type": "Minn\\Support\\KsesPolicy",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 193,
-                    "end": 200
-                },
-                {
-                    "routes": [],
-                    "name": "attributeList",
-                    "static": true,
-                    "visibility": "public",
-                    "signature": "attributeList(string $raw): ?array",
-                    "doc": "The attributes written inside a tag, read the way kses reads them: a\nname, then \"=\" and a quoted or bare value, or no value at all; junk\nbetween (stray quotes, \"=\", \"/\") is skipped; the first of two\nsame-named attributes wins. Null when a quoted value never closes,\nwhich costs the tag every attribute.",
-                    "shapes": [
-                        "@return array<string, array{name: string, value: ?string, whole: string}>|null"
-                    ],
-                    "params": [
-                        {
-                            "name": "raw",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 248,
-                    "end": 283
-                },
-                {
-                    "routes": [],
-                    "name": "text",
-                    "static": true,
-                    "visibility": "public",
-                    "signature": "text(string $value): string",
-                    "doc": "Plain text: tags gone, whitespace collapsed, control characters dropped.",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "value",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 286,
-                    "end": 292
-                },
-                {
-                    "routes": [],
-                    "name": "url",
-                    "static": true,
-                    "visibility": "public",
-                    "signature": "url(string $url): string",
-                    "doc": "A URL for a stored field: empty when its scheme is not one the reference allows.",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "url",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 295,
-                    "end": 302
-                },
-                {
-                    "routes": [],
-                    "name": "attributeUrl",
-                    "static": true,
-                    "visibility": "public",
-                    "signature": "attributeUrl(string $url, array $schemes = self::SCHEMES): string",
-                    "doc": "A URL inside markup: whatever stands before the first colon, once\nevery character reference and percent escape is decoded as deep as it\ngoes and the invisible characters are dropped, must be an allowed\nscheme, or it is cut off and the rest is judged again. The reference\ncuts \"?q=a:b\" to \"b\" and \"javascript:alert(1)//http://\" to \"//\" the\nsame way. A value with a good scheme is returned as given.",
-                    "shapes": [
-                        "@param list<string> $schemes"
-                    ],
-                    "params": [
-                        {
-                            "name": "url",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "schemes",
-                            "type": "array",
-                            "shape": "list<string>",
-                            "default": "self::SCHEMES",
-                            "doc": ""
-                        }
-                    ],
-                    "line": 314,
-                    "end": 330
-                },
-                {
-                    "routes": [],
-                    "name": "pdfObject",
-                    "static": true,
-                    "visibility": "public",
-                    "signature": "pdfObject(string $url, string $uploadsUrl): bool",
-                    "doc": "Whether a URL may be an object's data in post content: an http or https\nURL on the uploads host and port, no credentials, query or fragment,\nwhose path ends in \".pdf\".",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "url",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "uploadsUrl",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 472,
-                    "end": 486
-                },
-                {
-                    "routes": [],
                     "name": "style",
                     "static": true,
                     "visibility": "public",
@@ -135270,8 +135774,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 501,
-                    "end": 504
+                    "line": 58,
+                    "end": 61
                 },
                 {
                     "routes": [],
@@ -135300,292 +135804,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 592,
-                    "end": 595
-                },
-                {
-                    "routes": [],
-                    "name": "cleanValue",
-                    "static": true,
-                    "visibility": "private",
-                    "signature": "cleanValue(mixed $value, Closure $clean): mixed",
-                    "doc": "",
-                    "shapes": [
-                        "@param Closure(string): string $clean"
-                    ],
-                    "params": [
-                        {
-                            "name": "value",
-                            "type": "mixed",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "clean",
-                            "type": "Closure",
-                            "shape": "Closure(string): string",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 169,
-                    "end": 182
-                },
-                {
-                    "routes": [],
-                    "name": "run",
-                    "static": true,
-                    "visibility": "private",
-                    "signature": "run(string $run, Minn\\Support\\KsesPolicy $policy): string",
-                    "doc": "One bracketed run as the tag pass keeps it, or nothing.",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "run",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "policy",
-                            "type": "Minn\\Support\\KsesPolicy",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 203,
-                    "end": 224
-                },
-                {
-                    "routes": [],
-                    "name": "htmlComment",
-                    "static": true,
-                    "visibility": "private",
-                    "signature": "htmlComment(string $body): string",
-                    "doc": "A comment kept with its body as text: no \"--\" inside, an empty one dropped.",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "body",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 227,
-                    "end": 237
-                },
-                {
-                    "routes": [],
-                    "name": "deepDecode",
-                    "static": true,
-                    "visibility": "private",
-                    "signature": "deepDecode(string $value): string",
-                    "doc": "A value with its references and percent escapes decoded until nothing changes, so no encoding hides a scheme.",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "value",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 333,
-                    "end": 343
-                },
-                {
-                    "routes": [],
-                    "name": "visible",
-                    "static": true,
-                    "visibility": "private",
-                    "signature": "visible(string $text): string",
-                    "doc": "The text with whitespace, control characters, no-break spaces, and replacement characters removed.",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "text",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 346,
-                    "end": 350
-                },
-                {
-                    "routes": [],
-                    "name": "normalizeText",
-                    "static": true,
-                    "visibility": "private",
-                    "signature": "normalizeText(string $text): string",
-                    "doc": "Text between tags as the reference stores it: valid references stay\nreferences (decimal ones padded to three digits), invalid ones and\nstray ampersands become \"&amp;\", and a closing bracket is escaped.",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "text",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 361,
-                    "end": 376
-                },
-                {
-                    "routes": [],
-                    "name": "normalizeAttribute",
-                    "static": true,
-                    "visibility": "private",
-                    "signature": "normalizeAttribute(string $value): string",
-                    "doc": "An attribute value as the reference stores it: valid references become\ntheir characters, except that the five markup characters stay escaped\n(an apostrophe as &apos;); invalid references and stray ampersands\nbecome \"&amp;\"; raw quotes are escaped.",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "value",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 384,
-                    "end": 401
-                },
-                {
-                    "routes": [],
-                    "name": "named",
-                    "static": true,
-                    "visibility": "private",
-                    "signature": "named(string $name): ?string",
-                    "doc": "What a named reference stands for, or null when the name is not one.",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "name",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 404,
-                    "end": 408
-                },
-                {
-                    "routes": [],
-                    "name": "codePoint",
-                    "static": true,
-                    "visibility": "private",
-                    "signature": "codePoint(string $body): ?int",
-                    "doc": "A numeric reference's code point, or null when it names no character the reference accepts (NUL, controls, surrogates, beyond Unicode).",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "body",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 411,
-                    "end": 418
-                },
-                {
-                    "routes": [],
-                    "name": "attributes",
-                    "static": true,
-                    "visibility": "private",
-                    "signature": "attributes(string $raw, string $tag, Minn\\Support\\KsesPolicy $policy): string",
-                    "doc": "The attributes the policy allows, in the order written: a value must\nmeet its rules, a URI keeps only an allowed scheme, srcset and style are\njudged on their own terms. A tag that loses a required attribute keeps\nnone at all.",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "raw",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "tag",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "policy",
-                            "type": "Minn\\Support\\KsesPolicy",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 426,
-                    "end": 448
-                },
-                {
-                    "routes": [],
-                    "name": "rendered",
-                    "static": true,
-                    "visibility": "private",
-                    "signature": "rendered(string $name, ?string $value, Minn\\Support\\KsesPolicy $policy): ?string",
-                    "doc": "One allowed attribute as stored, or null when its value is judged away entirely.",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "name",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "value",
-                            "type": "?string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "policy",
-                            "type": "Minn\\Support\\KsesPolicy",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 451,
-                    "end": 465
-                },
-                {
-                    "routes": [],
-                    "name": "srcset",
-                    "static": true,
-                    "visibility": "private",
-                    "signature": "srcset(string $value): string",
-                    "doc": "Every candidate must be an absolute URL with a safe scheme, or the attribute goes.",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "value",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 489,
-                    "end": 498
+                    "line": 149,
+                    "end": 152
                 },
                 {
                     "routes": [],
@@ -135604,8 +135824,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 529,
-                    "end": 548
+                    "line": 86,
+                    "end": 105
                 },
                 {
                     "routes": [],
@@ -135633,90 +135853,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 558,
-                    "end": 582
-                }
-            ]
-        },
-        {
-            "name": "Minn\\Support\\KsesAttributes",
-            "short": "KsesAttributes",
-            "namespace": "Minn\\Support",
-            "kind": "final class",
-            "file": "public/minn/src/Minn/Support/KsesAttributes.php",
-            "lines": 64,
-            "doc": "Kses one attribute at a time, for the shortcode pass that runs inside\nHTML tags: an opening tag cut into its attributes, and one attribute\njudged as kses judges it on its element. Probe shortcode-run.",
-            "implements": [],
-            "extends": null,
-            "uses": [
-                "Minn\\Support\\Escape",
-                "Minn\\Support\\Kses",
-                "Minn\\Support\\KsesPolicy",
-                "Minn\\Support\\KsesValues"
-            ],
-            "usedBy": [
-                "Minn\\Runtime\\Shortcodes"
-            ],
-            "constructor": null,
-            "cases": [],
-            "constants": [],
-            "properties": [],
-            "methods": [
-                {
-                    "routes": [],
-                    "name": "elementParts",
-                    "static": true,
-                    "visibility": "public",
-                    "signature": "elementParts(string $element): ?array",
-                    "doc": "An opening tag cut as wp_kses_attr_parse cuts it: the start (\"<a \"),\neach attribute with the whitespace after it (a shortcode standing as\na name counts as one), and the end (\">\" or \"/>\"). Null for a closing\ntag, a comment, CDATA, or anything between the brackets that is not\nattributes.",
-                    "shapes": [
-                        "@return list<string>|null"
-                    ],
-                    "params": [
-                        {
-                            "name": "element",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 23,
-                    "end": 34
-                },
-                {
-                    "routes": [],
-                    "name": "oneAttribute",
-                    "static": true,
-                    "visibility": "public",
-                    "signature": "oneAttribute(string $attr, string $element, Minn\\Support\\KsesPolicy $policy): string",
-                    "doc": "One attribute as written, judged as kses judges it on the element\n(wp_kses_one_attr): the value escaped for an attribute and kept in its\nown quotes (a bare one gains double quotes), a URL's bad scheme cut\naway, style kept to the allowed properties; nothing when the element\nmay not carry it or a quoted value never closes. The whitespace\naround it stays.",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "attr",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "element",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "policy",
-                            "type": "Minn\\Support\\KsesPolicy",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 44,
-                    "end": 74
+                    "line": 115,
+                    "end": 139
                 }
             ]
         },
@@ -137984,8 +138122,8 @@
             "namespace": "Minn\\Support",
             "kind": "final class",
             "file": "public/minn/src/Minn/Support/Utf8.php",
-            "lines": 8,
-            "doc": "Whether bytes are well-formed UTF-8 as the reference judges them: overlong\nforms, surrogates, code points past U+10FFFF, stray continuation bytes and\ntruncated sequences fail; noncharacters, NUL and a byte order mark pass.",
+            "lines": 52,
+            "doc": "UTF-8 as the reference reads it. Well-formed means no overlong forms,\nsurrogates, code points past U+10FFFF, stray continuation bytes or\ntruncated sequences; noncharacters, NUL and a byte order mark pass. Split\ninto characters (the multibyte fallbacks in compat.php), a malformed byte\nis one character and so is the longest start of a sequence that breaks\noff, so \"\\xE2\\x82\" counts once.",
             "implements": [],
             "extends": null,
             "uses": [],
@@ -137994,7 +138132,20 @@
             ],
             "constructor": null,
             "cases": [],
-            "constants": [],
+            "constants": [
+                {
+                    "name": "CHARACTER",
+                    "value": "'[\\\\x00-\\\\x7F]|[\\\\xC2-\\\\xDF][\\\\x80-\\\\xBF]|\\\\xE0[\\\\xA0-\\\\xBF][\\\\x80-\\\\xBF]|[\\\\xE1-\\\\xEC\\\\xEE\\\\xEF][\\\\x80-\\\\xBF]{2}|\\\\xED[\\\\x80-\\\\x9F][\\\\x80-\\\\xBF]|\\\\xF0[\\\\x90-\\\\xBF][\\\\x80-\\\\xBF]{2}|[\\\\xF1-\\\\xF3][\\\\x80-\\\\xBF]{3}|\\\\xF4[\\\\x80-\\\\x8F][\\\\x80-\\\\xBF]{2}'",
+                    "doc": "One well-formed character.",
+                    "visibility": "private"
+                },
+                {
+                    "name": "BROKEN",
+                    "value": "'\\\\xE0[\\\\xA0-\\\\xBF]|[\\\\xE1-\\\\xEC\\\\xEE\\\\xEF][\\\\x80-\\\\xBF]|\\\\xED[\\\\x80-\\\\x9F]|\\\\xF0[\\\\x90-\\\\xBF][\\\\x80-\\\\xBF]?|[\\\\xF1-\\\\xF3][\\\\x80-\\\\xBF]{1,2}|\\\\xF4[\\\\x80-\\\\x8F][\\\\x80-\\\\xBF]?'",
+                    "doc": "The start of a sequence that breaks off.",
+                    "visibility": "private"
+                }
+            ],
             "properties": [],
             "methods": [
                 {
@@ -138014,8 +138165,70 @@
                             "doc": ""
                         }
                     ],
-                    "line": 15,
-                    "end": 18
+                    "line": 24,
+                    "end": 27
+                },
+                {
+                    "routes": [],
+                    "name": "characters",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "characters(string $bytes): array",
+                    "doc": "The bytes cut into characters, a malformed byte or a broken-off\nsequence counting as one.",
+                    "shapes": [
+                        "@return list<string>"
+                    ],
+                    "params": [
+                        {
+                            "name": "bytes",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 35,
+                    "end": 39
+                },
+                {
+                    "routes": [],
+                    "name": "fromCodePoint",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "fromCodePoint(int $code): ?string",
+                    "doc": "The UTF-8 bytes for a code point, or null for a negative one, a surrogate, or one past U+10FFFF.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "code",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 42,
+                    "end": 51
+                },
+                {
+                    "routes": [],
+                    "name": "firstCodePoint",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "firstCodePoint(string $bytes): ?int",
+                    "doc": "The code point of the first character, or null when the bytes do not start with a whole, well-formed one.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "bytes",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 54,
+                    "end": 65
                 }
             ]
         },

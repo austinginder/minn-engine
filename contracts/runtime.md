@@ -6400,3 +6400,80 @@ functions, six dead ends; with the privacy batch, `comment.php` owes nothing.
   are editor: the mention markup comes from the block editor's notes, and no
   content written by hand is read as a mention. The four
   `wp_*_for_environment` ping switches join the XML-RPC area's pings.
+
+## kses.php's inner helpers (2026-10-08)
+
+Probe `kses-internals` (`tests/tools/kses-internals-probe.php`). Thirteen
+functions, one dead end, and three fixes to the kses the engine already had.
+
+- **Code points.** `valid_unicode`: tab, line feed, carriage return, U+0020 to
+  U+D7FF, U+E000 to U+FFFD, U+10000 to U+10FFFF; a numeric string counts by
+  its integer value. `Kses::validCodePoint` is that rule, and the engine's
+  own reference normalising now uses it. **Fixed:** `&#65534;`, `&#xFFFE;`
+  and `&#xffff;` used to stay references here; the reference escapes their
+  `&`.
+- **The entity callbacks.** `_wp_kses_decode_entities_chr` and its hex twin
+  are PHP's `chr` (one byte, so 8364 gives 0xAC). `wp_kses_named_entities`
+  keeps a name kses knows and escapes any other (case counts: `AMP` is
+  unknown). `wp_kses_xml_named_entities` keeps the five XML names and
+  decodes any other known name to its character. `wp_kses_normalize_entities2`
+  pads a valid decimal reference to three digits, `wp_kses_normalize_entities3`
+  drops a hex reference's leading zeros and keeps its case; an invalid one
+  is escaped as written; a `0` match gives nothing at all.
+- **Schemes.** `wp_kses_bad_protocol_once2` decodes the scheme, drops
+  whitespace and controls, lower-cases it, and answers `{scheme}:` when it is
+  allowed, else nothing. **Fixed:** `wp_kses_bad_protocol` now lower-cases an
+  allowed scheme (`HTTP://x` became `http://x` on the reference, not here).
+- **Attributes.** `wp_kses_hair_parse` cuts an attribute string into
+  attributes, each with its trailing whitespace (`KsesAttributes::parse`, the
+  cut `wp_kses_attr_parse` already used); `false` for leading whitespace, a
+  stray quote or an unclosed value, `[]` for nothing. `wp_kses_html_error`
+  drops the first malformed run and the whitespace after it.
+  `wp_kses_attr` rebuilds an element with the allowlist's attributes, its
+  name as written, an XHTML slash kept; an element the allowlist does not
+  know keeps none (`<script>`), it is not dropped (`Kses::element`).
+- **The split pass.** `wp_kses_split2` judges one run (`Kses::tag`); a run not
+  starting with `<` is a lone `&gt;`. `_wp_kses_split_callback` reads the
+  rules `wp_kses_split` leaves in `$pass_allowed_html` and
+  `$pass_allowed_protocols`. **Fixed:** the tag pass now reads an HTML
+  comment whole (to `-->` or the end) and runs its body through the same pass,
+  so `<!-- a > b -->` keeps its comment (`<!-- a &gt; b -->`) and an
+  unclosed one is closed; before, the comment was cut at its first `>`. A
+  comment holding a `<` is still broken up first by the less-than pass, as on
+  the reference.
+- **Dead end.** `_wp_kses_allow_note_mention_span` (on
+  `wp_kses_allowed_html`) changes nothing in any context a probe can set; it
+  answers to state the block editor's notes hold, so it is editor with the
+  other mention helpers.
+- `Support\KsesCss` now holds the style attribute's rules (`style`,
+  `styleHooks`), split from `Kses`, which had grown past six hundred lines.
+
+Left in `kses.php`: `wp_filter_global_styles_post`, which waits on
+`WP_Theme_JSON::remove_insecure_properties` (still a placeholder).
+
+## compat.php's stand-ins (2026-10-08)
+
+Probe `compat` (`tests/tools/compat-probe.php`), run on the PHP 8.3 the probes
+use, where the reference supplies every one of these. All thirteen now live
+in `wp-api/compat.php`; the array functions moved there from `functions.php`
+and, like `clamp`, are written with `if (!function_exists(...)) :` so a PHP
+that has them keeps its own.
+
+- `_is_utf8_charset`: `utf-8` or `utf8`, any case, nothing around it;
+  `is_utf8_charset` asks it with the site's charset by default.
+- `_wp_can_use_pcre_u` is always true; passing it anything is deprecated (6.9.0).
+- The multibyte fallbacks read the encoding given, or the site's charset.
+  Under UTF-8, `_mb_strlen` and `_mb_substr` count characters, a malformed byte
+  or a sequence that breaks off counting as one (`"\xE2\x82"` is one), with
+  `mb_substr`'s negative start and length; any other encoding counts bytes.
+  `_mb_chr` takes an integer only and answers false for another encoding, a
+  surrogate, a negative code point or one past U+10FFFF (U+0000 is a NUL).
+  `_mb_ord` reads the first character, false for another encoding, an empty
+  string or a malformed start. `Support\Utf8` holds the character rules.
+- `array_find`, `array_find_key`, `array_any`, `array_all` call back with
+  (value, key) and take any truthy answer; `array_first` and `array_last`
+  follow the array's order, null when empty.
+- `clamp` compares as PHP compares (strings, arrays, null too), returns the
+  bound when the value passes it (INF to the maximum, a NAN value as it is),
+  and throws `ValueError` for a NAN bound or a minimum above the maximum,
+  with PHP's own messages.

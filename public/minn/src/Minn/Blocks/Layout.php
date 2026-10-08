@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Minn\Blocks;
 
 use Minn\Runtime\Runtime;
-use Minn\Support\Kses;
+use Minn\Support\KsesCss;
 
 /**
  * The layout support's classes and rules (wp_render_layout_support_flag,
@@ -181,7 +181,7 @@ final class Layout
     {
         foreach (['contentSize', 'wideSize'] as $key) {
             if (isset($layout[$key])) {
-                $layout[$key] = Kses::style(explode(';', (string) $layout[$key])[0]);
+                $layout[$key] = KsesCss::style(explode(';', (string) $layout[$key])[0]);
             }
         }
         return $layout;

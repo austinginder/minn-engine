@@ -16,8 +16,9 @@ escaping, serialized readers, small helpers
 | [`Flag`](#flag) | final class | 11 | A yes or no as WordPress reads one from loose input (wp_validate_boolean). |
 | [`Hierarchy`](#hierarchy) | final class | 52 | Loops in a parent chain, found with two walkers: a slow one that takes one |
 | [`Ip`](#ip) | final class | 22 | Addresses with their identifying tail removed, for logs and analytics that |
-| [`Kses`](#kses) | final class | 577 | The HTML a user without unfiltered_html may store. Tags outside the |
-| [`KsesAttributes`](#ksesattributes) | final class | 64 | Kses one attribute at a time, for the shortcode pass that runs inside |
+| [`Kses`](#kses) | final class | 475 | The HTML a user without unfiltered_html may store. Tags outside the |
+| [`KsesAttributes`](#ksesattributes) | final class | 76 | Kses one attribute at a time, for the shortcode pass that runs inside |
+| [`KsesCss`](#ksescss) | final class | 137 | The style attribute as kses keeps it (safecss_filter_attr): each |
 | [`KsesEntities`](#ksesentities) | final class | 30 | The named references kses keeps as written: the list captured from the |
 | [`KsesPolicy`](#ksespolicy) | final readonly class | 115 | What one kses pass allows: the tags, each tag's attributes (allowed |
 | [`KsesValues`](#ksesvalues) | final class | 38 | The value rules an allowlist attribute may carry, as the reference judges |
@@ -31,7 +32,7 @@ escaping, serialized readers, small helpers
 | [`Slashes`](#slashes) | final class | 32 | Magic-quote slashes the way WordPress keeps them (wp_slash, wp_unslash): |
 | [`Time`](#time) | final class | 21 | Human-scale spans: a number of seconds as the largest whole unit it fills, rounded, never below one. |
 | [`Url`](#url) | final class | 214 | URL shaping the escaping and query helpers share: the character cleanup |
-| [`Utf8`](#utf8) | final class | 8 | Whether bytes are well-formed UTF-8 as the reference judges them: overlong |
+| [`Utf8`](#utf8) | final class | 52 | UTF-8 as the reference reads it. Well-formed means no overlong forms, |
 | [`WebServer`](#webserver) | final class | 8 | What the SERVER_SOFTWARE string says about the web server in front of the site. |
 
 ## Accents
@@ -315,17 +316,11 @@ block delimiters are written back with their attribute values filtered.
 - const `COMMENT` = `array (   'a' =>    array (     0 => 'href',     1 => 'title',     2 => 'rel',   ),   'abbr' =>    array (     0 => 'title',   ),   'acronym' =>    array (     0 => 'title',   ),   'b' =>    array (   ),   'blockquote' =>    array (     0 => 'cite',   ),   'cite' =>    array (   ),   'code' =>    array (   ),   'del' =>    array (     0 => 'datetime',   ),   'em' =>    array (   ),   'i' =>    array (   ),   'q' =>    array (     0 => 'cite',   ),   's' =>    array (   ),   'strike' =>    array (   ),   'strong' =>    array (   ), )`
 - const `URI_ATTRIBUTES` = `array (   0 => 'action',   1 => 'archive',   2 => 'background',   3 => 'cite',   4 => 'classid',   5 => 'codebase',   6 => 'data',   7 => 'formaction',   8 => 'href',   9 => 'icon',   10 => 'longdesc',   11 => 'manifest',   12 => 'poster',   13 => 'profile',   14 => 'src',   15 => 'usemap',   16 => 'xmlns', )` — Every attribute the reference treats as holding a URI, so its scheme is judged wherever the attribute is allowed.
 - const `SCHEMES` = `array (   0 => 'http',   1 => 'https',   2 => 'ftp',   3 => 'ftps',   4 => 'mailto',   5 => 'news',   6 => 'irc',   7 => 'gopher',   8 => 'nntp',   9 => 'feed',   10 => 'telnet',   11 => 'mms',   12 => 'rtsp',   13 => 'sms',   14 => 'svn',   15 => 'tel',   16 => 'fax',   17 => 'xmpp',   18 => 'webcal',   19 => 'urn', )` — The URI schemes allowed by default.
-- const `CSS_PROPERTIES` = `array (   0 => 'background',   1 => 'background-color',   2 => 'background-image',   3 => 'background-position',   4 => 'background-repeat',   5 => 'background-size',   6 => 'background-attachment',   7 => 'background-blend-mode',   8 => 'border',   9 => 'border-radius',   10 => 'border-width',   11 => 'border-color',   12 => 'border-style',   13 => 'border-right',   14 => 'border-right-color',   15 => 'border-right-style',   16 => 'border-right-width',   17 => 'border-bottom',   18 => 'border-bottom-color',   19 => 'border-bottom-left-radius',   20 => 'border-bottom-right-radius',   21 => 'border-bottom-style',   22 => 'border-bottom-width',   23 => 'border-bottom-right-radius',   24 => 'border-bottom-left-radius',   25 => 'border-left',   26 => 'border-left-color',   27 => 'border-left-style',   28 => 'border-left-width',   29 => 'border-top',   30 => 'border-top-color',   31 => 'border-top-left-radius',   32 => 'border-top-right-radius',   33 => 'border-top-style',   34 => 'border-top-width',   35 => 'border-top-left-radius',   36 => 'border-top-right-radius',   37 => 'border-spacing',   38 => 'border-collapse',   39 => 'caption-side',   40 => 'columns',   41 => 'column-count',   42 => 'column-fill',   43 => 'column-gap',   44 => 'column-rule',   45 => 'column-span',   46 => 'column-width',   47 => 'display',   48 => 'color',   49 => 'filter',   50 => 'font',   51 => 'font-family',   52 => 'font-size',   53 => 'font-style',   54 => 'font-variant',   55 => 'font-weight',   56 => 'letter-spacing',   57 => 'line-height',   58 => 'text-align',   59 => 'text-decoration',   60 => 'text-indent',   61 => 'text-transform',   62 => 'white-space',   63 => 'height',   64 => 'min-height',   65 => 'max-height',   66 => 'width',   67 => 'min-width',   68 => 'max-width',   69 => 'margin',   70 => 'margin-right',   71 => 'margin-bottom',   72 => 'margin-left',   73 => 'margin-top',   74 => 'margin-block-start',   75 => 'margin-block-end',   76 => 'margin-inline-start',   77 => 'margin-inline-end',   78 => 'padding',   79 => 'padding-right',   80 => 'padding-bottom',   81 => 'padding-left',   82 => 'padding-top',   83 => 'padding-block-start',   84 => 'padding-block-end',   85 => 'padding-inline-start',   86 => 'padding-inline-end',   87 => 'flex',   88 => 'flex-basis',   89 => 'flex-direction',   90 => 'flex-flow',   91 => 'flex-grow',   92 => 'flex-shrink',   93 => 'flex-wrap',   94 => 'gap',   95 => 'column-gap',   96 => 'row-gap',   97 => 'grid-template-columns',   98 => 'grid-auto-columns',   99 => 'grid-column-start',   100 => 'grid-column-end',   101 => 'grid-column',   102 => 'grid-column-gap',   103 => 'grid-template-rows',   104 => 'grid-auto-rows',   105 => 'grid-row-start',   106 => 'grid-row-end',   107 => 'grid-row',   108 => 'grid-row-gap',   109 => 'grid-gap',   110 => 'justify-content',   111 => 'justify-items',   112 => 'justify-self',   113 => 'align-content',   114 => 'align-items',   115 => 'align-self',   116 => 'clear',   117 => 'cursor',   118 => 'direction',   119 => 'float',   120 => 'list-style-type',   121 => 'object-fit',   122 => 'object-position',   123 => 'opacity',   124 => 'overflow',   125 => 'vertical-align',   126 => 'writing-mode',   127 => 'position',   128 => 'top',   129 => 'right',   130 => 'bottom',   131 => 'left',   132 => 'z-index',   133 => 'box-shadow',   134 => 'aspect-ratio',   135 => 'container-type',   136 => 'fill',   137 => 'fill-opacity',   138 => 'fill-rule',   139 => 'stroke',   140 => 'stroke-dasharray',   141 => 'stroke-dashoffset',   142 => 'stroke-linecap',   143 => 'stroke-linejoin',   144 => 'stroke-miterlimit',   145 => 'stroke-opacity',   146 => 'stroke-width',   147 => 'color-interpolation',   148 => 'color-interpolation-filters',   149 => 'paint-order',   150 => 'stop-color',   151 => 'stop-opacity',   152 => 'flood-color',   153 => 'flood-opacity',   154 => 'lighting-color',   155 => 'marker',   156 => 'marker-end',   157 => 'marker-mid',   158 => 'marker-start',   159 => 'clip-path',   160 => 'clip-rule',   161 => 'mask',   162 => 'mask-type',   163 => 'cx',   164 => 'cy',   165 => 'r',   166 => 'rx',   167 => 'ry',   168 => 'x',   169 => 'y',   170 => 'd',   171 => 'alignment-baseline',   172 => 'baseline-shift',   173 => 'dominant-baseline',   174 => 'glyph-orientation-horizontal',   175 => 'glyph-orientation-vertical',   176 => 'text-anchor',   177 => 'unicode-bidi',   178 => 'word-spacing',   179 => 'font-size-adjust',   180 => 'font-stretch',   181 => 'color-rendering',   182 => 'image-rendering',   183 => 'shape-rendering',   184 => 'text-rendering',   185 => 'vector-effect',   186 => 'transform',   187 => 'transform-origin',   188 => 'pointer-events',   189 => 'visibility',   190 => '--*', )` — The properties style attributes keep, as the reference lists them before safe_style_css (probe safety-filters); --* stands for custom properties.
 - const `REFERENCE` = `'/&(#[0-9]+|#[xX][0-9a-fA-F]+|[a-zA-Z][a-zA-Z0-9]{0,31});/'`
 - const `STRAY_AMPERSAND` = `'/&(?!(?:#[0-9]+|#[xX][0-9a-fA-F]+|[a-zA-Z][a-zA-Z0-9]{0,31});)/'`
 - const `MARKUP` = `array (   '&' => '&amp;',   '<' => '&lt;',   '>' => '&gt;',   '"' => '&quot;',   '\'' => '&apos;', )`
-- const `CSS_FUNCTIONS` = `'/\\b(?:var|calc|min|max|minmax|clamp|repeat|rotate(?:X|Y|Z|3d)?|translate(?:X|Y|Z|3d)?|scale(?:X|Y|Z|3d)?|skew(?:X|Y)?|matrix(?:3d)?|perspective|inset|circle|ellipse|polygon|path)(\\((?:[^()]|(?1))*\\))/'` — The CSS functions a value may use (transforms, shapes and the math ones), whatever they hold.
-- const `CSS_GRADIENTS` = `'/\\b(?:repeating-)?(?:linear|radial|conic)-gradient(\\((?:[^()]|(?1))*\\))/'` — The gradients a background may use.
-- const `CSS_URL_PROPERTIES` = `array (   0 => 'background',   1 => 'background-image',   2 => 'cursor',   3 => 'filter',   4 => 'mask',   5 => 'clip-path', )` — The properties that may use a url().
-- const `CSS_GRADIENT_PROPERTIES` = `array (   0 => 'background',   1 => 'background-image', )` — The properties that may use a gradient.
 
-Used by: `Minn\Blocks\Dynamic\LatestComments`, `Minn\Blocks\Dynamic\SocialLinks`, `Minn\Blocks\Dynamic\Theme\Comments`, `Minn\Blocks\Dynamic\Theme\Navigation`, `Minn\Blocks\Layout`, `Minn\Content\Users`, `Minn\Media\Writer`, `Minn\Rest\MenusController`, `Minn\Rest\PostsWriteController`, `Minn\Rest\RevisionsController`, `Minn\Rest\TermsController`, `Minn\Rest\UsersController`, `Minn\Support\Escape`, `Minn\Support\KsesAttributes`, `Minn\Support\KsesPolicy`
-
+Used by: `Minn\Blocks\Dynamic\LatestComments`, `Minn\Blocks\Dynamic\SocialLinks`, `Minn\Blocks\Dynamic\Theme\Comments`, `Minn\Blocks\Dynamic\Theme\Navigation`, `Minn\Content\Users`, `Minn\Media\Writer`, `Minn\Rest\MenusController`, `Minn\Rest\PostsWriteController`, `Minn\Rest\RevisionsController`, `Minn\Rest\TermsController`, `Minn\Rest\UsersController`, `Minn\Support\Escape`, `Minn\Support\KsesAttributes`, `Minn\Support\KsesCss`, `Minn\Support\KsesPolicy`
 
 ### static `post(string $html): string`
 
@@ -380,6 +375,17 @@ references, with stray ones escaped. Run alone (wp_kses_split), a
 last "<" with no ">" still reads as a tag; inside sanitize() the
 less-than pass has already escaped it.
 
+### static `tag(string $run, Minn\Support\KsesPolicy $policy): string`
+
+One run of the tag pass on its own (wp_kses_split2): a comment, a
+tag, or, for anything not starting with "<", a lone ">".
+
+### static `element(string $element, string $attributes, Minn\Support\KsesPolicy $policy): string`
+
+An element rebuilt with the attributes the policy allows it
+(wp_kses_attr), its name as written and an XHTML slash kept; an
+element the policy does not know keeps none.
+
 ### static `attributeList(string $raw): ?array`
 
 The attributes written inside a tag, read the way kses reads them: a
@@ -409,26 +415,19 @@ same way. A value with a good scheme is returned as given.
 
 - `@param list<string> $schemes`
 
+### static `validCodePoint(int $code): bool`
+
+Whether a code point is one a reference may name (valid_unicode): tab,
+line feed, carriage return, and the rest of Unicode from space up,
+except the surrogates and U+FFFE and U+FFFF.
+
 ### static `pdfObject(string $url, string $uploadsUrl): bool`
 
 Whether a URL may be an object's data in post content: an http or https
 URL on the uploads host and port, no credentials, query or fragment,
 whose path ends in ".pdf".
 
-### static `style(string $style): string`
-
-A style attribute's value with only the listed properties kept.
-
-### static `styleHooks(Closure $properties, Closure $allow): void`
-
-The runtime's say over style attributes: the property list
-(safe_style_css) and each declaration (safecss_filter_attr_allow_css).
-The facade sets these as it loads.
-
-- `@param Closure(list<string>): list<string> $properties`
-- `@param Closure(bool, string): bool $allow`
-
-Internals: `cleanValue()` (private, line 169), `run()` (private, line 203), `htmlComment()` (private, line 227), `deepDecode()` (private, line 333), `visible()` (private, line 346), `normalizeText()` (private, line 361), `normalizeAttribute()` (private, line 384), `named()` (private, line 404), `codePoint()` (private, line 411), `attributes()` (private, line 426), `rendered()` (private, line 451), `srcset()` (private, line 489), `css()` (private, line 529), `cssTestString()` (private, line 558)
+Internals: `cleanValue()` (private, line 131), `run()` (private, line 184), `htmlComment()` (private, line 212), `deepDecode()` (private, line 318), `visible()` (private, line 331), `normalizeText()` (private, line 346), `normalizeAttribute()` (private, line 369), `named()` (private, line 389), `codePoint()` (private, line 396), `attributes()` (private, line 421), `rendered()` (private, line 446), `srcset()` (private, line 484)
 
 
 ## KsesAttributes
@@ -451,6 +450,16 @@ attributes.
 
 - `@return list<string>|null`
 
+### static `parse(string $attributes): ?array`
+
+An attribute string cut into its attributes, each with the whitespace
+after it (wp_kses_hair_parse): a name (or a shortcode standing as one),
+then "=" and a quoted or bare value, or nothing. Null when anything in
+it is not an attribute: leading whitespace, a stray quote, a quoted
+value that never closes.
+
+- `@return list<string>|null`
+
 ### static `oneAttribute(string $attr, string $element, Minn\Support\KsesPolicy $policy): string`
 
 One attribute as written, judged as kses judges it on the element
@@ -459,6 +468,42 @@ own quotes (a bare one gains double quotes), a URL's bad scheme cut
 away, style kept to the allowed properties; nothing when the element
 may not carry it or a quoted value never closes. The whitespace
 around it stays.
+
+
+## KsesCss
+
+`final class Minn\Support\KsesCss` · `public/minn/src/Minn/Support/KsesCss.php`
+
+The style attribute as kses keeps it (safecss_filter_attr): each
+declaration whose property is on the list stays, a value's url() only
+on the properties that may hold one and only with a safe scheme, the
+gradients and CSS functions the reference allows, and nothing that could
+end the declaration. Plugins widen the list and the verdict through the
+hooks the facade wires in (safe_style_css, safecss_filter_attr_allow_css).
+
+- const `CSS_PROPERTIES` = `array (   0 => 'background',   1 => 'background-color',   2 => 'background-image',   3 => 'background-position',   4 => 'background-repeat',   5 => 'background-size',   6 => 'background-attachment',   7 => 'background-blend-mode',   8 => 'border',   9 => 'border-radius',   10 => 'border-width',   11 => 'border-color',   12 => 'border-style',   13 => 'border-right',   14 => 'border-right-color',   15 => 'border-right-style',   16 => 'border-right-width',   17 => 'border-bottom',   18 => 'border-bottom-color',   19 => 'border-bottom-left-radius',   20 => 'border-bottom-right-radius',   21 => 'border-bottom-style',   22 => 'border-bottom-width',   23 => 'border-bottom-right-radius',   24 => 'border-bottom-left-radius',   25 => 'border-left',   26 => 'border-left-color',   27 => 'border-left-style',   28 => 'border-left-width',   29 => 'border-top',   30 => 'border-top-color',   31 => 'border-top-left-radius',   32 => 'border-top-right-radius',   33 => 'border-top-style',   34 => 'border-top-width',   35 => 'border-top-left-radius',   36 => 'border-top-right-radius',   37 => 'border-spacing',   38 => 'border-collapse',   39 => 'caption-side',   40 => 'columns',   41 => 'column-count',   42 => 'column-fill',   43 => 'column-gap',   44 => 'column-rule',   45 => 'column-span',   46 => 'column-width',   47 => 'display',   48 => 'color',   49 => 'filter',   50 => 'font',   51 => 'font-family',   52 => 'font-size',   53 => 'font-style',   54 => 'font-variant',   55 => 'font-weight',   56 => 'letter-spacing',   57 => 'line-height',   58 => 'text-align',   59 => 'text-decoration',   60 => 'text-indent',   61 => 'text-transform',   62 => 'white-space',   63 => 'height',   64 => 'min-height',   65 => 'max-height',   66 => 'width',   67 => 'min-width',   68 => 'max-width',   69 => 'margin',   70 => 'margin-right',   71 => 'margin-bottom',   72 => 'margin-left',   73 => 'margin-top',   74 => 'margin-block-start',   75 => 'margin-block-end',   76 => 'margin-inline-start',   77 => 'margin-inline-end',   78 => 'padding',   79 => 'padding-right',   80 => 'padding-bottom',   81 => 'padding-left',   82 => 'padding-top',   83 => 'padding-block-start',   84 => 'padding-block-end',   85 => 'padding-inline-start',   86 => 'padding-inline-end',   87 => 'flex',   88 => 'flex-basis',   89 => 'flex-direction',   90 => 'flex-flow',   91 => 'flex-grow',   92 => 'flex-shrink',   93 => 'flex-wrap',   94 => 'gap',   95 => 'column-gap',   96 => 'row-gap',   97 => 'grid-template-columns',   98 => 'grid-auto-columns',   99 => 'grid-column-start',   100 => 'grid-column-end',   101 => 'grid-column',   102 => 'grid-column-gap',   103 => 'grid-template-rows',   104 => 'grid-auto-rows',   105 => 'grid-row-start',   106 => 'grid-row-end',   107 => 'grid-row',   108 => 'grid-row-gap',   109 => 'grid-gap',   110 => 'justify-content',   111 => 'justify-items',   112 => 'justify-self',   113 => 'align-content',   114 => 'align-items',   115 => 'align-self',   116 => 'clear',   117 => 'cursor',   118 => 'direction',   119 => 'float',   120 => 'list-style-type',   121 => 'object-fit',   122 => 'object-position',   123 => 'opacity',   124 => 'overflow',   125 => 'vertical-align',   126 => 'writing-mode',   127 => 'position',   128 => 'top',   129 => 'right',   130 => 'bottom',   131 => 'left',   132 => 'z-index',   133 => 'box-shadow',   134 => 'aspect-ratio',   135 => 'container-type',   136 => 'fill',   137 => 'fill-opacity',   138 => 'fill-rule',   139 => 'stroke',   140 => 'stroke-dasharray',   141 => 'stroke-dashoffset',   142 => 'stroke-linecap',   143 => 'stroke-linejoin',   144 => 'stroke-miterlimit',   145 => 'stroke-opacity',   146 => 'stroke-width',   147 => 'color-interpolation',   148 => 'color-interpolation-filters',   149 => 'paint-order',   150 => 'stop-color',   151 => 'stop-opacity',   152 => 'flood-color',   153 => 'flood-opacity',   154 => 'lighting-color',   155 => 'marker',   156 => 'marker-end',   157 => 'marker-mid',   158 => 'marker-start',   159 => 'clip-path',   160 => 'clip-rule',   161 => 'mask',   162 => 'mask-type',   163 => 'cx',   164 => 'cy',   165 => 'r',   166 => 'rx',   167 => 'ry',   168 => 'x',   169 => 'y',   170 => 'd',   171 => 'alignment-baseline',   172 => 'baseline-shift',   173 => 'dominant-baseline',   174 => 'glyph-orientation-horizontal',   175 => 'glyph-orientation-vertical',   176 => 'text-anchor',   177 => 'unicode-bidi',   178 => 'word-spacing',   179 => 'font-size-adjust',   180 => 'font-stretch',   181 => 'color-rendering',   182 => 'image-rendering',   183 => 'shape-rendering',   184 => 'text-rendering',   185 => 'vector-effect',   186 => 'transform',   187 => 'transform-origin',   188 => 'pointer-events',   189 => 'visibility',   190 => '--*', )` — The properties style attributes keep, as the reference lists them before safe_style_css (probe safety-filters); --* stands for custom properties.
+- const `CSS_FUNCTIONS` = `'/\\b(?:var|calc|min|max|minmax|clamp|repeat|rotate(?:X|Y|Z|3d)?|translate(?:X|Y|Z|3d)?|scale(?:X|Y|Z|3d)?|skew(?:X|Y)?|matrix(?:3d)?|perspective|inset|circle|ellipse|polygon|path)(\\((?:[^()]|(?1))*\\))/'` — The CSS functions a value may use (transforms, shapes and the math ones), whatever they hold.
+- const `CSS_GRADIENTS` = `'/\\b(?:repeating-)?(?:linear|radial|conic)-gradient(\\((?:[^()]|(?1))*\\))/'` — The gradients a background may use.
+- const `CSS_URL_PROPERTIES` = `array (   0 => 'background',   1 => 'background-image',   2 => 'cursor',   3 => 'filter',   4 => 'mask',   5 => 'clip-path', )` — The properties that may use a url().
+- const `CSS_GRADIENT_PROPERTIES` = `array (   0 => 'background',   1 => 'background-image', )` — The properties that may use a gradient.
+
+Used by: `Minn\Blocks\Layout`, `Minn\Support\Kses`, `Minn\Support\KsesAttributes`
+
+
+### static `style(string $style): string`
+
+A style attribute's value with only the listed properties kept.
+
+### static `styleHooks(Closure $properties, Closure $allow): void`
+
+The runtime's say over style attributes: the property list
+(safe_style_css) and each declaration (safecss_filter_attr_allow_css).
+The facade sets these as it loads.
+
+- `@param Closure(list<string>): list<string> $properties`
+- `@param Closure(bool, string): bool $allow`
+
+Internals: `css()` (private, line 86), `cssTestString()` (private, line 115)
 
 
 ## KsesEntities
@@ -941,15 +986,36 @@ Internals: `isPrivate()` (private, line 143)
 
 `final class Minn\Support\Utf8` · `public/minn/src/Minn/Support/Utf8.php`
 
-Whether bytes are well-formed UTF-8 as the reference judges them: overlong
-forms, surrogates, code points past U+10FFFF, stray continuation bytes and
-truncated sequences fail; noncharacters, NUL and a byte order mark pass.
+UTF-8 as the reference reads it. Well-formed means no overlong forms,
+surrogates, code points past U+10FFFF, stray continuation bytes or
+truncated sequences; noncharacters, NUL and a byte order mark pass. Split
+into characters (the multibyte fallbacks in compat.php), a malformed byte
+is one character and so is the longest start of a sequence that breaks
+off, so "\xE2\x82" counts once.
+
+- const `CHARACTER` = `'[\\x00-\\x7F]|[\\xC2-\\xDF][\\x80-\\xBF]|\\xE0[\\xA0-\\xBF][\\x80-\\xBF]|[\\xE1-\\xEC\\xEE\\xEF][\\x80-\\xBF]{2}|\\xED[\\x80-\\x9F][\\x80-\\xBF]|\\xF0[\\x90-\\xBF][\\x80-\\xBF]{2}|[\\xF1-\\xF3][\\x80-\\xBF]{3}|\\xF4[\\x80-\\x8F][\\x80-\\xBF]{2}'` — One well-formed character.
+- const `BROKEN` = `'\\xE0[\\xA0-\\xBF]|[\\xE1-\\xEC\\xEE\\xEF][\\x80-\\xBF]|\\xED[\\x80-\\x9F]|\\xF0[\\x90-\\xBF][\\x80-\\xBF]?|[\\xF1-\\xF3][\\x80-\\xBF]{1,2}|\\xF4[\\x80-\\x8F][\\x80-\\xBF]?'` — The start of a sequence that breaks off.
 
 Used by: `Minn\Support\Kses`
 
 ### static `isValid(string $bytes): bool`
 
 True for well-formed UTF-8, including the empty string.
+
+### static `characters(string $bytes): array`
+
+The bytes cut into characters, a malformed byte or a broken-off
+sequence counting as one.
+
+- `@return list<string>`
+
+### static `fromCodePoint(int $code): ?string`
+
+The UTF-8 bytes for a code point, or null for a negative one, a surrogate, or one past U+10FFFF.
+
+### static `firstCodePoint(string $bytes): ?int`
+
+The code point of the first character, or null when the bytes do not start with a whole, well-formed one.
 
 
 ## WebServer

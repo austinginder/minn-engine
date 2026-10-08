@@ -26,11 +26,23 @@ final class KsesAttributes
             return null;
         }
         [$attributes, $end] = str_ends_with($m[4], '/') ? [substr($m[4], 0, -1), '/' . $m[5]] : [$m[4], $m[5]];
+        $found = self::parse($attributes);
+        return $found === null ? null : [$m[1] . $m[3], ...$found, $end];
+    }
+
+    /**
+     * An attribute string cut into its attributes, each with the whitespace
+     * after it (wp_kses_hair_parse): a name (or a shortcode standing as one),
+     * then "=" and a quoted or bare value, or nothing. Null when anything in
+     * it is not an attribute: leading whitespace, a stray quote, a quoted
+     * value that never closes.
+     *
+     * @return list<string>|null
+     */
+    public static function parse(string $attributes): ?array
+    {
         preg_match_all('%(?:[_a-zA-Z][-_a-zA-Z0-9:.]*|\[\[?[^\[\]]+\]\]?)(?:\s*=\s*(?:"[^"]*"|\'[^\']*\'|[^\s"\']+(?:\s|$)))?\s*%', $attributes, $found);
-        if (implode('', $found[0]) !== $attributes) {
-            return null;
-        }
-        return [$m[1] . $m[3], ...$found[0], $end];
+        return implode('', $found[0]) === $attributes ? $found[0] : null;
     }
 
     /**
@@ -67,7 +79,7 @@ final class KsesAttributes
         if ($rules === null || !KsesValues::satisfies($value, 'n', $rules)) {
             return '';
         }
-        if (strtolower($name) === 'style' && ($value = Kses::style($value)) === '') {
+        if (strtolower($name) === 'style' && ($value = KsesCss::style($value)) === '') {
             return '';
         }
         return $lead . $name . '=' . $quote . $value . $quote . $trail;

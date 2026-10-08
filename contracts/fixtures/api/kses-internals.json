@@ -1,0 +1,333 @@
+[
+    [
+        "valid unicode",
+        [
+            [
+                9,
+                true
+            ],
+            [
+                10,
+                true
+            ],
+            [
+                13,
+                true
+            ],
+            [
+                32,
+                true
+            ],
+            [
+                65,
+                true
+            ],
+            [
+                127,
+                true
+            ],
+            [
+                55295,
+                true
+            ],
+            [
+                55296,
+                false
+            ],
+            [
+                57343,
+                false
+            ],
+            [
+                57344,
+                true
+            ],
+            [
+                65533,
+                true
+            ],
+            [
+                65534,
+                false
+            ],
+            [
+                65535,
+                false
+            ],
+            [
+                65536,
+                true
+            ],
+            [
+                1114111,
+                true
+            ],
+            [
+                1114112,
+                false
+            ],
+            [
+                0,
+                false
+            ],
+            [
+                1,
+                false
+            ],
+            [
+                8,
+                false
+            ],
+            [
+                11,
+                false
+            ],
+            [
+                31,
+                false
+            ],
+            [
+                -1,
+                false
+            ],
+            [
+                "65",
+                true
+            ],
+            [
+                "0x41",
+                false
+            ]
+        ]
+    ],
+    [
+        "decode a decimal reference",
+        [
+            "41",
+            "41",
+            "a9",
+            "ac",
+            "00",
+            "00",
+            "ff"
+        ]
+    ],
+    [
+        "decode a hex reference",
+        [
+            "41",
+            "41",
+            "a9",
+            "a9",
+            "ac",
+            "00",
+            "00"
+        ]
+    ],
+    [
+        "named entities",
+        [
+            "&amp;",
+            "&nbsp;",
+            "&copy;",
+            "&hellip;",
+            "&eacute;",
+            "&amp;bogus;",
+            "&amp;AMP;",
+            "&apos;",
+            "&quot;",
+            "&lt;",
+            ""
+        ]
+    ],
+    [
+        "xml named entities",
+        [
+            "&amp;",
+            "&lt;",
+            "&gt;",
+            "&quot;",
+            "&apos;",
+            " ",
+            "©",
+            "…",
+            "&amp;bogus;",
+            ""
+        ]
+    ],
+    [
+        "decimal references normalised",
+        [
+            "&#065;",
+            "&#065;",
+            "&#065;",
+            "&#169;",
+            "",
+            "&amp;#8;",
+            "&amp;#55296;",
+            "&#65533;",
+            "&amp;#65534;",
+            "&amp;#65535;",
+            "&#1114111;",
+            "&amp;#1114112;",
+            "&amp;#99999999;"
+        ]
+    ],
+    [
+        "hex references normalised",
+        [
+            "&#x41;",
+            "&#x41;",
+            "&#xa9;",
+            "&#xA9;",
+            "",
+            "&amp;#x8;",
+            "&amp;#xD800;",
+            "&#xFFFD;",
+            "&amp;#xFFFE;",
+            "&amp;#xffff;",
+            "&#x10FFFF;",
+            "&amp;#x110000;",
+            "&amp;#xfffffff;"
+        ]
+    ],
+    [
+        "comments through the whole pass",
+        [
+            "<!-- a &gt; b -->",
+            "x &lt;!-- <b>kept</b>gone --&gt; y",
+            "<!-- one - two -->",
+            "",
+            "&lt;!-- unclosed <b>bold</b>",
+            "<p>t</p><!-- c --><p>u</p>"
+        ]
+    ],
+    [
+        "whole markup normalised",
+        [
+            "a &amp;#65534; b &amp;#xFFFE; c &#65533; d &amp;#xffff; e &#1114111;",
+            "x &amp;#65534; y"
+        ]
+    ],
+    [
+        "a scheme judged",
+        [
+            "http:",
+            "http:",
+            "https:",
+            "",
+            "",
+            "",
+            "",
+            "http:",
+            "mailto:",
+            "feed:",
+            "",
+            "",
+            "http:",
+            ""
+        ]
+    ],
+    [
+        "whole URLs judged",
+        [
+            "http://x.test/",
+            "https://x.test/",
+            "alert(1)",
+            "mailto:a@b.test",
+            "http://x.test/"
+        ]
+    ],
+    [
+        "an attribute string parsed",
+        [
+            [
+                "a=\"b\" ",
+                "c=d ",
+                "e"
+            ],
+            [
+                "href=\"x\" ",
+                "title='y z' ",
+                "data-x"
+            ],
+            [
+                "a = \"b\""
+            ],
+            false,
+            false,
+            [],
+            false,
+            [
+                "a=\"b\"",
+                "c=\"d\""
+            ],
+            [
+                "x=y/"
+            ],
+            [
+                "one ",
+                "two ",
+                "three"
+            ],
+            [
+                "a=\"<>\""
+            ]
+        ]
+    ],
+    [
+        "a parse error skipped",
+        [
+            "stuff a=\"b\"",
+            "c",
+            "",
+            "",
+            "\"x\" y",
+            ""
+        ]
+    ],
+    [
+        "one element's attributes",
+        [
+            "<a href=\"https://example.test/\" title=\"t\">",
+            "<a href=\"alert(1)\">",
+            "<a>",
+            "<p />",
+            "<br />",
+            "<img src=\"x.png\" alt=\"a\" width=\"10\">",
+            "<script>",
+            "<div class=\"c\" style=\"color:red;position:fixed\" data-x=\"1\">",
+            "<A href=\"https://example.test/\">",
+            "<span class=\"x\">"
+        ]
+    ],
+    [
+        "one tag through the split pass",
+        [
+            "<a href=\"https://example.test/\">",
+            "</a>",
+            "</ p>",
+            "",
+            "<!-- note -->",
+            "<!-- <b>inner</b> -->",
+            "<p class=\"x\" />",
+            "<br />",
+            "",
+            "",
+            "&gt;",
+            "",
+            "",
+            "<IMG src=\"x.png\">"
+        ]
+    ],
+    [
+        "the split callback, with the pass's rules",
+        [
+            "<b>",
+            "<a href=\"https://x.test/\">",
+            "<a href=\"//x.test/\">",
+            "",
+            "</b>"
+        ]
+    ]
+]

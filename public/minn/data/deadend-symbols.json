@@ -72,6 +72,7 @@
         "_wp_handle_upload": "admin",
         "_wp_image_meta_replace_original": "admin",
         "_wp_keep_alive_customize_changeset_dependent_auto_drafts": "customizer",
+        "_wp_kses_allow_note_mention_span": "editor",
         "_wp_make_subsizes": "admin",
         "_wp_nav_menu_meta_box_object": "admin",
         "_wp_personal_data_cleanup_requests": "admin",
