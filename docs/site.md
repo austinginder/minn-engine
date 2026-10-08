@@ -90,8 +90,9 @@ site's plugins stay unnamed in the JSON; only counts are published.
   with. Never as part of a Minn product, feature, slogan, or domain. Never
   "Managed WordPress". Never a claim that Minn is WordPress. The footer names
   the marks and that Minn is independent, not affiliated or endorsed.
-- The source is not on GitHub yet; the page says so and points at Minn Admin's
-  repository. Swap the GitHub links when the engine repository goes public.
+- The source is public at https://github.com/austinginder/minn-engine (since
+  2026-10-08); the page's GitHub links point there, and Minn Admin's own button
+  points at its repository.
 
 ## Languages during a test run
 
