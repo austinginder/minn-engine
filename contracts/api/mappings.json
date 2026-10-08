@@ -2,11 +2,11 @@
     "generated": "2026-10-08",
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line)",
     "summary": {
-        "minn": 675,
-        "composes": 1018,
-        "leaf": 676,
-        "noop": 2021,
-        "functions": 4316,
+        "minn": 676,
+        "composes": 1037,
+        "leaf": 677,
+        "noop": 2031,
+        "functions": 4347,
         "minnMethods": 796,
         "leafLinesOver15": 13
     },
@@ -16456,6 +16456,22 @@
                 "is_user_logged_in"
             ]
         },
+        "_custom_background_cb": {
+            "file": "custom-header.php",
+            "lines": 24,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "current_theme_supports",
+                "get_background_color",
+                "get_background_image",
+                "get_theme_mod",
+                "get_theme_support",
+                "is_customize_preview",
+                "sanitize_url",
+                "set_url_scheme"
+            ]
+        },
         "_custom_header_background_just_in_time": {
             "file": "theme.php",
             "lines": 1,
@@ -16715,6 +16731,23 @@
                 "translate",
                 "wp_kses",
                 "wptexturize"
+            ]
+        },
+        "_get_random_header_data": {
+            "file": "custom-header.php",
+            "lines": 21,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Runtime\\Runtime::current",
+                "Minn\\Runtime\\Runtime::get",
+                "Minn\\Runtime\\Runtime::set"
+            ],
+            "composes": [
+                "current_theme_supports",
+                "get_stylesheet_directory_uri",
+                "get_template_directory_uri",
+                "get_theme_mod",
+                "get_uploaded_header_images"
             ]
         },
         "_get_term_children": {
@@ -19437,6 +19470,26 @@
                 "add_submenu_page"
             ]
         },
+        "add_custom_background": {
+            "file": "custom-header.php",
+            "lines": 3,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "_deprecated_function",
+                "add_theme_support"
+            ]
+        },
+        "add_custom_image_header": {
+            "file": "custom-header.php",
+            "lines": 6,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "_deprecated_function",
+                "add_theme_support"
+            ]
+        },
         "add_dashboard_page": {
             "file": "admin.php",
             "lines": 1,
@@ -20039,6 +20092,24 @@
             "kind": "noop",
             "minn": [],
             "composes": []
+        },
+        "background_color": {
+            "file": "custom-header.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "get_background_color"
+            ]
+        },
+        "background_image": {
+            "file": "custom-header.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "get_background_image"
+            ]
         },
         "balanceTags": {
             "file": "formatting.php",
@@ -21250,6 +21321,17 @@
             "minn": [],
             "composes": []
         },
+        "display_header_text": {
+            "file": "custom-header.php",
+            "lines": 4,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "current_theme_supports",
+                "get_theme_mod",
+                "get_theme_support"
+            ]
+        },
         "do_action": {
             "file": "hooks.php",
             "lines": 1,
@@ -22416,6 +22498,26 @@
                 "get_avatar_data"
             ]
         },
+        "get_background_color": {
+            "file": "custom-header.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "get_theme_mod",
+                "get_theme_support"
+            ]
+        },
+        "get_background_image": {
+            "file": "custom-header.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "get_theme_mod",
+                "get_theme_support"
+            ]
+        },
         "get_block_bindings_source": {
             "file": "blocks.php",
             "lines": 2,
@@ -23041,6 +23143,33 @@
                 "wp_get_current_user"
             ]
         },
+        "get_custom_header": {
+            "file": "custom-header.php",
+            "lines": 23,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "_get_random_header_data",
+                "current_theme_supports",
+                "get_stylesheet_directory_uri",
+                "get_template_directory_uri",
+                "get_theme_mod",
+                "get_theme_support",
+                "is_random_header_image",
+                "wp_parse_args"
+            ]
+        },
+        "get_custom_header_markup": {
+            "file": "custom-header.php",
+            "lines": 4,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "get_header_image_tag",
+                "has_custom_header",
+                "is_customize_preview"
+            ]
+        },
         "get_custom_logo": {
             "file": "theme.php",
             "lines": 1,
@@ -23372,12 +23501,75 @@
             ]
         },
         "get_header_image": {
-            "file": "theme.php",
+            "file": "custom-header.php",
+            "lines": 9,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "apply_filters",
+                "get_random_header_image",
+                "get_theme_mod",
+                "get_theme_support",
+                "is_random_header_image",
+                "sanitize_url",
+                "set_url_scheme"
+            ]
+        },
+        "get_header_image_tag": {
+            "file": "custom-header.php",
+            "lines": 32,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "absint",
+                "apply_filters",
+                "get_custom_header",
+                "get_header_image",
+                "get_post_meta",
+                "wp_calculate_image_sizes",
+                "wp_calculate_image_srcset",
+                "wp_get_loading_optimization_attributes",
+                "wp_parse_args"
+            ]
+        },
+        "get_header_textcolor": {
+            "file": "custom-header.php",
             "lines": 1,
             "kind": "noop",
             "minn": [],
             "composes": [
-                "get_theme_mod"
+                "get_theme_mod",
+                "get_theme_support"
+            ]
+        },
+        "get_header_video_settings": {
+            "file": "custom-header.php",
+            "lines": 19,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "__",
+                "absint",
+                "apply_filters",
+                "get_custom_header",
+                "get_header_image",
+                "get_header_video_url",
+                "wp_check_filetype",
+                "wp_get_mime_types"
+            ]
+        },
+        "get_header_video_url": {
+            "file": "custom-header.php",
+            "lines": 7,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "absint",
+                "apply_filters",
+                "get_theme_mod",
+                "sanitize_url",
+                "set_url_scheme",
+                "wp_get_attachment_url"
             ]
         },
         "get_headers": {
@@ -24655,6 +24847,15 @@
                 "_minn_main_query"
             ]
         },
+        "get_random_header_image": {
+            "file": "custom-header.php",
+            "lines": 2,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "_get_random_header_data"
+            ]
+        },
         "get_raw_theme_root": {
             "file": "theme.php",
             "lines": 1,
@@ -25837,7 +26038,7 @@
         },
         "get_theme_mod": {
             "file": "theme.php",
-            "lines": 8,
+            "lines": 9,
             "kind": "composes",
             "minn": [],
             "composes": [
@@ -25934,6 +26135,20 @@
                 "add_query_arg",
                 "admin_url",
                 "apply_filters"
+            ]
+        },
+        "get_uploaded_header_images": {
+            "file": "custom-header.php",
+            "lines": 15,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "get_option",
+                "get_post_meta",
+                "get_posts",
+                "sanitize_url",
+                "wp_get_attachment_metadata",
+                "wp_get_attachment_url"
             ]
         },
         "get_url_in_content": {
@@ -26127,6 +26342,17 @@
                 "has_term"
             ]
         },
+        "has_custom_header": {
+            "file": "custom-header.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "has_header_image",
+                "has_header_video",
+                "is_header_video_active"
+            ]
+        },
         "has_custom_logo": {
             "file": "theme.php",
             "lines": 1,
@@ -26154,6 +26380,24 @@
                 "Minn\\Runtime\\Runtime::hooks"
             ],
             "composes": []
+        },
+        "has_header_image": {
+            "file": "custom-header.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "get_header_image"
+            ]
+        },
+        "has_header_video": {
+            "file": "custom-header.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "get_header_video_url"
+            ]
         },
         "has_image_size": {
             "file": "media.php",
@@ -26263,6 +26507,25 @@
             "kind": "leaf",
             "minn": [],
             "composes": []
+        },
+        "header_image": {
+            "file": "custom-header.php",
+            "lines": 4,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "esc_url",
+                "get_header_image"
+            ]
+        },
+        "header_textcolor": {
+            "file": "custom-header.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "get_header_textcolor"
+            ]
         },
         "home_url": {
             "file": "link-template.php",
@@ -26718,6 +26981,16 @@
                 "_minn_main_query"
             ]
         },
+        "is_header_video_active": {
+            "file": "custom-header.php",
+            "lines": 6,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "apply_filters",
+                "get_theme_support"
+            ]
+        },
         "is_home": {
             "file": "query.php",
             "lines": 1,
@@ -26996,6 +27269,17 @@
             "minn": [],
             "composes": [
                 "apply_filters"
+            ]
+        },
+        "is_random_header_image": {
+            "file": "custom-header.php",
+            "lines": 5,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "get_random_header_image",
+                "get_theme_mod",
+                "get_theme_support"
             ]
         },
         "is_redirect": {
@@ -28607,6 +28891,13 @@
                 "plugin_basename"
             ]
         },
+        "register_default_headers": {
+            "file": "custom-header.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
         "register_importer": {
             "file": "admin.php",
             "lines": 4,
@@ -28909,6 +29200,26 @@
             "kind": "leaf",
             "minn": [],
             "composes": []
+        },
+        "remove_custom_background": {
+            "file": "custom-header.php",
+            "lines": 2,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "_deprecated_function",
+                "remove_theme_support"
+            ]
+        },
+        "remove_custom_image_header": {
+            "file": "custom-header.php",
+            "lines": 2,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "_deprecated_function",
+                "remove_theme_support"
+            ]
         },
         "remove_editor_styles": {
             "file": "theme.php",
@@ -30828,6 +31139,21 @@
                 "get_the_content_feed"
             ]
         },
+        "the_custom_header_markup": {
+            "file": "custom-header.php",
+            "lines": 9,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "get_custom_header_markup",
+                "get_header_video_settings",
+                "has_header_video",
+                "is_customize_preview",
+                "is_header_video_active",
+                "wp_enqueue_script",
+                "wp_localize_script"
+            ]
+        },
         "the_custom_logo": {
             "file": "theme.php",
             "lines": 1,
@@ -30905,6 +31231,25 @@
                 "apply_filters",
                 "get_post",
                 "get_the_guid"
+            ]
+        },
+        "the_header_image_tag": {
+            "file": "custom-header.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "get_header_image_tag"
+            ]
+        },
+        "the_header_video_url": {
+            "file": "custom-header.php",
+            "lines": 4,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "esc_url",
+                "get_header_video_url"
             ]
         },
         "the_modified_date": {
@@ -31330,6 +31675,13 @@
             "file": "blocks.php",
             "lines": 1,
             "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "unregister_default_headers": {
+            "file": "custom-header.php",
+            "lines": 8,
+            "kind": "leaf",
             "minn": [],
             "composes": []
         },
@@ -34494,7 +34846,7 @@
         },
         "wp_get_loading_optimization_attributes": {
             "file": "media.php",
-            "lines": 33,
+            "lines": 40,
             "kind": "minn",
             "minn": [
                 "Minn\\Blocks\\RenderState::current"

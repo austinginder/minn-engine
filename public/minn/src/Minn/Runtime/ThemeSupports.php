@@ -112,6 +112,13 @@ final class ThemeSupports
             $supports['custom-background'] = [array_merge(self::BACKGROUND, (array) $supports['custom-background'][0])];
         }
         Runtime::current()->set(self::KEY, $supports);
+        // Their wp_head callbacks print the header's and the background's styles (the background's is _custom_background_cb).
+        foreach (['custom-header', 'custom-background'] as $feature) {
+            $callback = $supports[$feature][0]['wp-head-callback'] ?? '';
+            if ($callback !== '' && $callback !== null && is_callable($callback)) {
+                Runtime::hooks()->add('wp_head', $callback);
+            }
+        }
     }
 
     /** register_theme_feature: true, or why the feature cannot be registered. */

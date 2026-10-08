@@ -99,7 +99,7 @@ the WordPress runtime plugins load against
 | [`TermQueryTree`](#termquerytree) | final class | 146 | What a term query does with its rows, as the reference does it (probe |
 | [`TermSave`](#termsave) | final class | 199 | wp_insert_term and wp_update_term in the reference's order (probe |
 | [`TermWriter`](#termwriter) | final readonly class | 119 | The decisions behind wp_delete_term and the object-term relationships: |
-| [`ThemeSupports`](#themesupports) | final class | 159 | What a theme supports, as add_theme_support keeps it (probe rest-themes): |
+| [`ThemeSupports`](#themesupports) | final class | 166 | What a theme supports, as add_theme_support keeps it (probe rest-themes): |
 | [`ThemeSwitch`](#themeswitch) | final class | 145 | Switching the theme as the reference does it, in two halves. The switch |
 | [`TreeWalk`](#treewalk) | final class | 74 | The Walker contract's traversal: elements keyed by the walker's |
 | [`UpdateCounts`](#updatecounts) | final class | 31 | The updates waiting, as wp_get_update_data counts them for the user |

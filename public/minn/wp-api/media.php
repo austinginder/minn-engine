@@ -373,6 +373,13 @@ function wp_get_loading_optimization_attributes($tag_name, $attr, $context)
         if ($pixels >= (int) apply_filters('wp_min_priority_img_pixels', 50000) && RenderState::current()->claimPriority()) {
             $optimization['fetchpriority'] = 'high';
         }
+    } elseif ($context === 'get_header_image_tag') {
+        // A header image is in view (probe custom-header): never lazy, one of the eager images, high priority when large enough.
+        RenderState::current()->nextImage();
+        $pixels = (int) ($attr['width'] ?? 0) * (int) ($attr['height'] ?? 0);
+        if ($pixels >= (int) apply_filters('wp_min_priority_img_pixels', 50000) && RenderState::current()->claimPriority()) {
+            $optimization['fetchpriority'] = 'high';
+        }
     } elseif ($tag_name === 'img' && (RenderState::current()->depth() > 0 || (in_the_loop() && is_main_query())) && !(defined('REST_REQUEST') && REST_REQUEST) && RenderState::current()->nextImage() <= 3) {
         // Inside a page render the plugin's image shares the engine's budget:
         // three eager images, and the first one large enough to be worth the

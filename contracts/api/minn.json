@@ -127196,7 +127196,7 @@
             "namespace": "Minn\\Runtime",
             "kind": "final class",
             "file": "public/minn/src/Minn/Runtime/ThemeSupports.php",
-            "lines": 159,
+            "lines": 166,
             "doc": "What a theme supports, as add_theme_support keeps it (probe rest-themes):\na bare feature is true, anything else its arguments. html5 lists add up\n(repeats and all), post thumbnails stay on for every type once on, post\nformats keep only real formats, the custom logo fills in its defaults at\nonce (flexible both ways when asked for bare), and the custom header and\nbackground get theirs as WordPress finishes loading, a header with no\nwidth or height made flexible that way. title-tag declared after loading\nis refused. A block theme supports thumbnails, responsive embeds, editor\nstyles, HTML5 markup and feed links before its own setup runs.\n\nThe features themselves (data/theme-features.json, and any a theme\nregisters) say how each is shown in REST: its schema, or the default\nwhen the theme does not support it.",
             "implements": [],
             "extends": null,
@@ -127359,7 +127359,7 @@
                     "shapes": [],
                     "params": [],
                     "line": 99,
-                    "end": 115
+                    "end": 122
                 },
                 {
                     "routes": [],
@@ -127385,8 +127385,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 118,
-                    "end": 144
+                    "line": 125,
+                    "end": 151
                 },
                 {
                     "routes": [],
@@ -127399,8 +127399,8 @@
                         "@return array<string, array<string, mixed>>"
                     ],
                     "params": [],
-                    "line": 147,
-                    "end": 152
+                    "line": 154,
+                    "end": 159
                 },
                 {
                     "routes": [],
@@ -127421,8 +127421,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 155,
-                    "end": 179
+                    "line": 162,
+                    "end": 186
                 }
             ]
         },

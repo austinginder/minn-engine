@@ -33,7 +33,8 @@ function get_theme_mod($name, $default_value = false)
     if (isset($mods[$name])) {
         return apply_filters("theme_mod_{$name}", $mods[$name]);
     }
-    if (is_string($default_value)) {
+    // Only a default with a %s (or %1$s) in it names the theme's folders; any other % is left alone.
+    if (is_string($default_value) && preg_match('#(?<!%)%(?:\d+\$?)?s#', $default_value) === 1) {
         $default_value = sprintf($default_value, get_template_directory_uri(), get_stylesheet_directory_uri());
     }
     return apply_filters("theme_mod_{$name}", $default_value);
@@ -193,11 +194,6 @@ function wp_map_nav_menu_locations($new_nav_menu_locations, $old_nav_menu_locati
 function validate_current_theme()
 {
     return true;
-}
-
-function get_header_image()
-{
-    return get_theme_mod('header_image');
 }
 
 function has_custom_logo($blog_id = 0)
