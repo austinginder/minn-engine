@@ -61,8 +61,8 @@ the wp/v2 surface: shapes and controllers
 | [`RuntimeEnvelope`](#runtimeenvelope) | final readonly class | 123 | The REST server's filters around one of Minn's own routes, as the |
 | [`RuntimePrepare`](#runtimeprepare) | final class | 70 | An item a REST response carries, through the filter the reference runs |
 | [`RuntimeRoutes`](#runtimeroutes) | final class | 429 | Routes plugin code registered with register_rest_route(), answered |
-| [`Schema`](#schema) | final readonly class | 479 | JSON-schema handling the way the REST API's argument validation does it: |
-| [`SchemaValues`](#schemavalues) | final class | 206 | The value side of JSON Schema, as the reference applies it: what counts |
+| [`Schema`](#schema) | final readonly class | 493 | JSON-schema handling the way the REST API's argument validation does it: |
+| [`SchemaValues`](#schemavalues) | final class | 231 | The value side of JSON Schema, as the reference applies it: what counts |
 | [`SearchController`](#searchcontroller) | final readonly class | 121 | wp/v2 search over published content: id, title, url, type, and the |
 | [`Services`](#services) | final class | 417 | The objects one REST request shares, each made once, on first use, from |
 | [`Settings`](#settings) | final readonly class | 113 | The registered settings the Settings views read and write, mapped to |
@@ -2498,6 +2498,21 @@ __construct(Closure $email, Closure $number, Closure $format)
 
 Whether a value satisfies a schema, or the reference's refusal.
 
+### `validateAs(string $type, mixed $value, array $args, string $param): Minn\Runtime\Refusal|true`
+
+One type's own checks, as the per-type validators run them: a number's
+bounds before an integer's wholeness, and no enum or format.
+
+### `validateEnum(mixed $value, array $args, string $param): Minn\Runtime\Refusal|true`
+
+Whether a value is one of the schema's enum, coerced to the schema's type first when it names one.
+
+### `combiningFailure(string $param, ?string $title, string $reason, mixed $position): Minn\Runtime\Refusal`
+
+The refusal for a value that matched none of a combinator's schemas,
+worded from the one that came closest: its title when it has one (an
+empty title still reads as one), and that schema's own reason.
+
 ### `sanitize(mixed $value, array $args, string $param = ''): mixed`
 
 A value coerced to its schema's types.
@@ -2520,7 +2535,7 @@ required flags on the create route only, and any arg_options overrides.
 
 The schema with additionalProperties closed on every object.
 
-Internals: `validateComposite()` (private, line 102), `validateString()` (private, line 128), `validateNumber()` (private, line 146), `validateArray()` (private, line 158), `validateObject()` (private, line 184), `validateFormat()` (private, line 227), `validateBounds()` (private, line 239), `enum()` (private, line 276), `wrongType()` (private, line 293)
+Internals: `validateInteger()` (private, line 107), `validateComposite()` (private, line 116), `validateString()` (private, line 142), `validateNumber()` (private, line 160), `validateArray()` (private, line 172), `validateObject()` (private, line 198), `validateFormat()` (private, line 241), `validateBounds()` (private, line 253), `enum()` (private, line 290), `wrongType()` (private, line 307)
 
 
 ## SchemaValues
@@ -2574,6 +2589,18 @@ Whether two values are equal by the reference's loose rules.
 ### static `patternProperty(string $property, array $args): ?array`
 
 The schema of the patternProperties entry a property name matches, or null.
+
+### static `matchesPattern(string $pattern, string $value): bool`
+
+Whether a value matches a schema pattern, read as the reference reads one: unanchored, # escaped, UTF-8.
+
+### static `hasUniqueItems(array $items): bool`
+
+Whether no two items are equal once their keys are sorted; types stay apart, so 1 and "1" differ.
+
+### static `intersectKeys(array $first, array $second): array`
+
+The first array's entries whose keys the second has too, at every level where both hold an array.
 
 ### static `stabilize(mixed $value): mixed`
 

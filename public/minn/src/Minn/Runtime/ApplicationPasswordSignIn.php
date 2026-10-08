@@ -72,6 +72,11 @@ final class ApplicationPasswordSignIn
         }
         $user = \get_userdata((int) $auth['user']);
         $error = self::refusal($user, '');
+        // With the feature off for the whole site nothing is tried and nothing announced, so
+        // rest_authentication_errors hears no refusal and the request reads as signed out (suite identity).
+        if ($error !== null && $error->get_error_code() === 'application_passwords_disabled') {
+            return $input;
+        }
         if ($error === null) {
             $error = new \WP_Error();
             \do_action_ref_array('wp_authenticate_application_password_errors', [$error, $user, $auth['item'], (string) $auth['password']]);

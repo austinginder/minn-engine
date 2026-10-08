@@ -594,8 +594,115 @@ function rest_api_loaded()
 {
 }
 
-/** A value checked as an object against a schema (rest_validate_value_from_schema with the type object). */
+/** A value checked against the object rules alone: no enum or format (probe rest-validators). */
 function rest_validate_object_value_from_schema($value, $args, $param)
 {
-    return rest_validate_value_from_schema($value, array_merge((array) $args, ['type' => 'object']), $param);
+    return _minn_schema_result(_minn_schema()->validateAs('object', $value, (array) $args, (string) $param));
+}
+
+/** A value checked against the array rules alone. */
+function rest_validate_array_value_from_schema($value, $args, $param)
+{
+    return _minn_schema_result(_minn_schema()->validateAs('array', $value, (array) $args, (string) $param));
+}
+
+/** A value checked against the string rules alone: length and pattern, not format. */
+function rest_validate_string_value_from_schema($value, $args, $param)
+{
+    return _minn_schema_result(_minn_schema()->validateAs('string', $value, (array) $args, (string) $param));
+}
+
+/** A value checked against the number rules alone: numeric, bounds, multipleOf. */
+function rest_validate_number_value_from_schema($value, $args, $param)
+{
+    return _minn_schema_result(_minn_schema()->validateAs('number', $value, (array) $args, (string) $param));
+}
+
+/** A value checked against the integer rules alone: the number rules, then wholeness. */
+function rest_validate_integer_value_from_schema($value, $args, $param)
+{
+    return _minn_schema_result(_minn_schema()->validateAs('integer', $value, (array) $args, (string) $param));
+}
+
+function rest_validate_boolean_value_from_schema($value, $param)
+{
+    return _minn_schema_result(_minn_schema()->validateAs('boolean', $value, [], (string) $param));
+}
+
+function rest_validate_null_value_from_schema($value, $param)
+{
+    return _minn_schema_result(_minn_schema()->validateAs('null', $value, [], (string) $param));
+}
+
+function rest_validate_enum($value, $args, $param)
+{
+    return _minn_schema_result(_minn_schema()->validateEnum($value, (array) $args, (string) $param));
+}
+
+function rest_validate_json_schema_pattern($pattern, $value)
+{
+    return SchemaValues::matchesPattern((string) $pattern, (string) $value);
+}
+
+function rest_validate_array_contains_unique_items($input_array)
+{
+    return SchemaValues::hasUniqueItems((array) $input_array);
+}
+
+function _rest_array_intersect_key_recursive($array1, $array2)
+{
+    return SchemaValues::intersectKeys((array) $array1, (array) $array2);
+}
+
+/** The refusal for a combinator none of whose schemas matched, from the closest one's error ($error: schema, error_object, index). */
+function rest_format_combining_operation_error($param, $error)
+{
+    $title = isset($error['schema']['title']) ? (string) $error['schema']['title'] : null;
+    $reason = ($error['error_object'] ?? null) instanceof WP_Error ? $error['error_object']->get_error_message() : '';
+    return _minn_schema_result(_minn_schema()->combiningFailure((string) $param, $title, $reason, $error['index'] ?? null));
+}
+
+/** Notes how an application password sign-in went (hooked on its success and failure actions), for rest_authentication_errors. */
+function rest_application_password_collect_status($user_or_error, $app_password = [])
+{
+    $GLOBALS['wp_rest_application_password_status'] = $user_or_error;
+    $GLOBALS['wp_rest_application_password_uuid'] = is_wp_error($user_or_error) ? null : ($app_password['uuid'] ?? null);
+}
+
+/** The uuid of the application password this request signed in with, or null. */
+function rest_get_authenticated_app_password()
+{
+    return $GLOBALS['wp_rest_application_password_uuid'] ?? null;
+}
+
+/** An earlier answer stands; otherwise a failed application password is a 401, and a successful one is true. */
+function rest_application_password_check_errors($result)
+{
+    if (!empty($result)) {
+        return $result;
+    }
+    $status = $GLOBALS['wp_rest_application_password_status'] ?? null;
+    if (is_wp_error($status)) {
+        $status->add_data(['status' => 401]);
+        return $status;
+    }
+    return $status instanceof WP_User ? true : $result;
+}
+
+/** Notes the cookie check's verdict as the auth_cookie_* action fires: true when valid, else the hook's name after auth_cookie_. */
+function rest_cookie_collect_status()
+{
+    $hook = (string) current_filter();
+    $GLOBALS['wp_rest_auth_cookie'] = $hook === 'auth_cookie_valid' ? true : substr($hook, 12);
+}
+
+/** The REST API's line in the XML-RPC service description. */
+function rest_output_rsd()
+{
+    echo "\t" . '<api name="WP-API" blogID="1" preferred="false" apiLink="' . esc_url(get_rest_url()) . '" />' . "\n\t";
+}
+
+/** Nothing to register: the engine's core routes answer on every request without being added to the server. */
+function create_initial_rest_routes()
+{
 }

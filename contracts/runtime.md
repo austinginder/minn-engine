@@ -6073,3 +6073,69 @@ answer plugins that call them.
 | | missing | verified |
 |---|---|---|
 | functions | 518 → 480 | 1,677 → 1,715 |
+
+## The REST API's schema helpers (2026-10-08)
+
+Batch 5: seventeen functions of `rest-api.php`, in `wp-api/rest-api.php` over
+`Rest\Schema` and `Rest\SchemaValues`. The probe is
+`tests/tools/rest-validators-probe.php` (fixture `rest-validators`, 65 rows).
+
+- **The per-type validators.** `rest_validate_{null,boolean,integer,number,string,array}_value_from_schema`
+  (and `rest_validate_object_value_from_schema`, which used to run the whole
+  validator) are `Schema::validateAs()`: one type's own checks and nothing
+  else, so no enum and no format.
+  - A number's bounds and `multipleOf` come before an integer's wholeness:
+    `5.5` against `maximum: 3` is `rest_out_of_bounds`, not `rest_invalid_type`.
+  - Called with no `type` in its schema, the number and integer validators
+    say "p is not of type ." (the type name is the schema's own). The
+    wholeness refusal always says "integer".
+  - The string validator checks length and pattern, never the format.
+- **One path for the whole validator.** `rest_validate_value_from_schema` now
+  runs `validateAs()` for the type, then the enum, then the format. That is
+  the reference's order, and the engine had two of them the other way round
+  (the enum before the type checks, wholeness before bounds), so
+  `'0'` against `minimum: 1, enum: [1, 2]` is now `rest_out_of_bounds`, not
+  `rest_not_in_enum`.
+- **Enums compare as their type.** `rest_validate_enum` (and the enum step
+  of the whole validator) sanitises the value to the schema's type first:
+  `"1"` is in `[1, 2]` as an integer, `"a"` is in `[true]` as a boolean. With
+  no type, the comparison is strict.
+- **Unique items** sort keys at every level but keep types apart:
+  `{a, b}` and `{b, a}` are duplicates; `1`, `1.0`, `"1"` and `true` are not.
+  The array validator's `uniqueItems` used to miss the key-order case.
+- **Patterns** (`rest_validate_json_schema_pattern`, string `pattern`,
+  `patternProperties`) share `SchemaValues::matchesPattern()`: unanchored,
+  `#` escaped, UTF-8. An empty pattern matches anything.
+- **`_rest_array_intersect_key_recursive`** keeps the first array's entries
+  whose keys the second has, recursing only where both hold an array.
+- **`rest_format_combining_operation_error`** reads `schema.title`,
+  `error_object` and `index`: "p is not a valid T. Reason: ..." when the
+  schema has a title (an empty one still counts), otherwise "p does not match
+  the expected format. Reason: ...", with `{position: index}` as data.
+- **Authentication status.** `rest_cookie_collect_status` (on the five
+  `auth_cookie_*` actions the reference hooks, not `bad_session_token`)
+  records `true` or the hook's name after its twelve-character prefix.
+  `rest_application_password_collect_status` (on the failure and success
+  actions) records the result and the password's uuid, null after a refusal;
+  `rest_get_authenticated_app_password` returns that uuid.
+  `rest_application_password_check_errors` (on `rest_authentication_errors`
+  at 90) lets an earlier answer stand, turns a recorded refusal into a 401,
+  and answers true after a success.
+- **Also hooked as on the reference.** `rest_output_rsd` on
+  `xmlrpc_rsd_apis`; `create_initial_rest_routes` on `rest_api_init` at 99.
+  It does nothing here: the engine's core routes answer without being added
+  to the server, so it is real but not counted as proven.
+- **An engine fix the probe found.** `rest_is_boolean('')` is false on the
+  reference; the engine said true. That came from the default widgets batch,
+  where a media widget's `update()` keeps `''` as `false`. The widget does
+  that itself: it reads an empty boolean field as an unticked checkbox, and
+  stays as strict as `rest_is_boolean` for anything else (`yes`, `on`, a
+  space are skipped). The empty string now goes to `false` in
+  `WP_Widget_Media::update()`, and `SchemaValues::isBoolean()` follows the
+  reference again.
+
+Left in `rest-api.php`: `rest_handle_deprecated_function`,
+`rest_handle_deprecated_argument` and `rest_handle_doing_it_wrong`. They send
+their headers with `header()` during a REST request, which a WP-CLI probe
+cannot see; they need an HTTP probe against the twin (a route that calls a
+deprecated function with debugging on).

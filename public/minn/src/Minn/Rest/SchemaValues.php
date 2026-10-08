@@ -24,7 +24,7 @@ final class SchemaValues
             return true;
         }
         if (is_string($value)) {
-            return in_array(strtolower($value), ['false', 'true', '0', '1', ''], true);
+            return in_array(strtolower($value), ['false', 'true', '0', '1'], true);
         }
         return is_int($value) && in_array($value, [0, 1], true);
     }
@@ -137,11 +137,36 @@ final class SchemaValues
     public static function patternProperty(string $property, array $args): ?array
     {
         foreach ($args['patternProperties'] ?? [] as $pattern => $schema) {
-            if (preg_match('#' . str_replace('#', '\\#', (string) $pattern) . '#u', $property)) {
+            if (self::matchesPattern((string) $pattern, $property)) {
                 return $schema;
             }
         }
         return null;
+    }
+
+    /** Whether a value matches a schema pattern, read as the reference reads one: unanchored, # escaped, UTF-8. */
+    public static function matchesPattern(string $pattern, string $value): bool
+    {
+        return preg_match('#' . str_replace('#', '\\#', $pattern) . '#u', $value) === 1;
+    }
+
+    /** Whether no two items are equal once their keys are sorted; types stay apart, so 1 and "1" differ. */
+    public static function hasUniqueItems(array $items): bool
+    {
+        $seen = array_map(static fn (mixed $item): string => serialize(self::stabilize($item)), $items);
+        return count(array_unique($seen)) === count($items);
+    }
+
+    /** The first array's entries whose keys the second has too, at every level where both hold an array. */
+    public static function intersectKeys(array $first, array $second): array
+    {
+        $kept = array_intersect_key($first, $second);
+        foreach ($kept as $key => $value) {
+            if (is_array($value) && is_array($second[$key])) {
+                $kept[$key] = self::intersectKeys($value, $second[$key]);
+            }
+        }
+        return $kept;
     }
 
     /** Keys sorted at every level, so two equal structures serialise the same. */

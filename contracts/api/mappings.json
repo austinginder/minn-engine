@@ -3,13 +3,13 @@
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line), placeholder (generated stub, behaviour still owed), deadend (generated stub for wp-admin, the editors, the Customizer or XML-RPC, inert by design); \"deadend\" on any entry names its dead-end area",
     "summary": {
         "minn": 722,
-        "composes": 1495,
+        "composes": 1499,
         "leaf": 753,
-        "noop": 2384,
+        "noop": 2397,
         "placeholder": 281,
         "deadend": 1579,
-        "functions": 7137,
-        "minnMethods": 861,
+        "functions": 7154,
+        "minnMethods": 864,
         "leafLinesOver15": 13
     },
     "functions": {
@@ -23594,7 +23594,7 @@
         },
         "WP_Widget_Media::update": {
             "file": "classes/WP_Widget_Media.php",
-            "lines": 19,
+            "lines": 23,
             "kind": "composes",
             "minn": [],
             "composes": [
@@ -28659,6 +28659,15 @@
                 "resolve_block_template"
             ]
         },
+        "_rest_array_intersect_key_recursive": {
+            "file": "rest-api.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Rest\\SchemaValues::intersectKeys"
+            ],
+            "composes": []
+        },
         "_restore_wpautop_hook": {
             "file": "blocks.php",
             "lines": 4,
@@ -32478,6 +32487,13 @@
                 "register_post_status",
                 "register_post_type"
             ]
+        },
+        "create_initial_rest_routes": {
+            "file": "rest-api.php",
+            "lines": 0,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
         },
         "create_initial_taxonomies": {
             "file": "placeholders.php",
@@ -46754,6 +46770,24 @@
             "minn": [],
             "composes": []
         },
+        "rest_application_password_check_errors": {
+            "file": "rest-api.php",
+            "lines": 9,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "is_wp_error"
+            ]
+        },
+        "rest_application_password_collect_status": {
+            "file": "rest-api.php",
+            "lines": 2,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "is_wp_error"
+            ]
+        },
         "rest_are_values_equal": {
             "file": "rest-api.php",
             "lines": 1,
@@ -46787,6 +46821,15 @@
             "kind": "noop",
             "minn": [],
             "composes": []
+        },
+        "rest_cookie_collect_status": {
+            "file": "rest-api.php",
+            "lines": 2,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "current_filter"
+            ]
         },
         "rest_default_additional_properties_to_false": {
             "file": "rest-api.php",
@@ -46875,7 +46918,24 @@
                 "rest_validate_value_from_schema"
             ]
         },
+        "rest_format_combining_operation_error": {
+            "file": "rest-api.php",
+            "lines": 3,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "_minn_schema",
+                "_minn_schema_result"
+            ]
+        },
         "rest_get_allowed_schema_keywords": {
+            "file": "rest-api.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "rest_get_authenticated_app_password": {
             "file": "rest-api.php",
             "lines": 1,
             "kind": "noop",
@@ -47109,6 +47169,16 @@
             ],
             "composes": []
         },
+        "rest_output_rsd": {
+            "file": "rest-api.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "esc_url",
+                "get_rest_url"
+            ]
+        },
         "rest_parse_date": {
             "file": "rest-api.php",
             "lines": 1,
@@ -47242,13 +47312,92 @@
                 "get_rest_url"
             ]
         },
+        "rest_validate_array_contains_unique_items": {
+            "file": "rest-api.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Rest\\SchemaValues::hasUniqueItems"
+            ],
+            "composes": []
+        },
+        "rest_validate_array_value_from_schema": {
+            "file": "rest-api.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "_minn_schema",
+                "_minn_schema_result"
+            ]
+        },
+        "rest_validate_boolean_value_from_schema": {
+            "file": "rest-api.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "_minn_schema",
+                "_minn_schema_result"
+            ]
+        },
+        "rest_validate_enum": {
+            "file": "rest-api.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "_minn_schema",
+                "_minn_schema_result"
+            ]
+        },
+        "rest_validate_integer_value_from_schema": {
+            "file": "rest-api.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "_minn_schema",
+                "_minn_schema_result"
+            ]
+        },
+        "rest_validate_json_schema_pattern": {
+            "file": "rest-api.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Rest\\SchemaValues::matchesPattern"
+            ],
+            "composes": []
+        },
+        "rest_validate_null_value_from_schema": {
+            "file": "rest-api.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "_minn_schema",
+                "_minn_schema_result"
+            ]
+        },
+        "rest_validate_number_value_from_schema": {
+            "file": "rest-api.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "_minn_schema",
+                "_minn_schema_result"
+            ]
+        },
         "rest_validate_object_value_from_schema": {
             "file": "rest-api.php",
             "lines": 1,
             "kind": "noop",
             "minn": [],
             "composes": [
-                "rest_validate_value_from_schema"
+                "_minn_schema",
+                "_minn_schema_result"
             ]
         },
         "rest_validate_request_arg": {
@@ -47258,6 +47407,16 @@
             "minn": [],
             "composes": [
                 "rest_validate_value_from_schema"
+            ]
+        },
+        "rest_validate_string_value_from_schema": {
+            "file": "rest-api.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "_minn_schema",
+                "_minn_schema_result"
             ]
         },
         "rest_validate_value_from_schema": {

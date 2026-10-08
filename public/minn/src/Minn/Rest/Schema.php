@@ -37,7 +37,7 @@ final readonly class Schema
         }
         if (!isset($args['type'])) {
             // An enum alone is still checked; nothing else is without a type.
-            return empty($args['enum']) ? true : $this->enum($value, $args['enum'], $param);
+            return empty($args['enum']) ? true : $this->validateEnum($value, $args, $param);
         }
         if (is_array($args['type'])) {
             $best = SchemaValues::bestType($value, $args['type']);
@@ -46,56 +46,70 @@ final readonly class Schema
             }
             $args['type'] = $best;
         }
+        // The type's own checks, then the enum, then the format (probe rest-validators).
         $type = (string) $args['type'];
-        if ($type === 'array') {
-            $refused = $this->validateArray($value, $args, $param);
-            if ($refused !== null) {
-                return $refused;
-            }
+        $verdict = $this->validateAs($type, $value, $args, $param);
+        if ($verdict === true && !empty($args['enum'])) {
+            $verdict = $this->validateEnum($value, $args, $param);
         }
-        if ($type === 'object') {
-            $refused = $this->validateObject($value, $args, $param);
-            if ($refused !== null) {
-                return $refused;
-            }
+        if ($verdict === true && isset($args['format']) && ($type === 'string' || !in_array($type, self::TYPES, true))) {
+            $verdict = $this->validateFormat($value, (string) $args['format'], $param) ?? true;
         }
-        if ($type === 'null') {
-            return $value === null ? true : $this->wrongType($param, 'null');
+        return $verdict;
+    }
+
+    /**
+     * One type's own checks, as the per-type validators run them: a number's
+     * bounds before an integer's wholeness, and no enum or format.
+     */
+    public function validateAs(string $type, mixed $value, array $args, string $param): true|Refusal
+    {
+        $refused = match ($type) {
+            'null' => $value === null ? null : $this->wrongType($param, 'null'),
+            'boolean' => SchemaValues::isBoolean($value) ? null : $this->wrongType($param, 'boolean'),
+            'number' => is_numeric($value) ? $this->validateNumber($value, $args, $param) : $this->wrongType($param, (string) ($args['type'] ?? '')),
+            'integer' => $this->validateInteger($value, $args, $param),
+            'string' => $this->validateString($value, $args, $param),
+            'array' => $this->validateArray($value, $args, $param),
+            'object' => $this->validateObject($value, $args, $param),
+            default => null,
+        };
+        return $refused ?? true;
+    }
+
+    /** Whether a value is one of the schema's enum, coerced to the schema's type first when it names one. */
+    public function validateEnum(mixed $value, array $args, string $param): true|Refusal
+    {
+        if (isset($args['type'])) {
+            $value = $this->sanitize($value, ['type' => $args['type']], $param);
         }
-        if (!empty($args['enum'])) {
-            $refused = $this->enum($value, $args['enum'], $param);
-            if ($refused !== true) {
-                return $refused;
-            }
+        return $this->enum($value, (array) ($args['enum'] ?? []), $param);
+    }
+
+    /**
+     * The refusal for a value that matched none of a combinator's schemas,
+     * worded from the one that came closest: its title when it has one (an
+     * empty title still reads as one), and that schema's own reason.
+     */
+    public function combiningFailure(string $param, ?string $title, string $reason, mixed $position): Refusal
+    {
+        $message = $title === null
+            ? sprintf('%1$s does not match the expected format. Reason: %2$s', $param, $reason)
+            : sprintf('%1$s is not a valid %2$s. Reason: %3$s', $param, $title, $reason);
+        return new Refusal('rest_no_matching_schema', $message, ['position' => $position]);
+    }
+
+    /**
+     * Numeric, within bounds and a multiple, then whole; null when the integer passes.
+     * A value that is not numeric names the schema's own type, empty when the
+     * schema names none (the reference words it "p is not of type .").
+     */
+    private function validateInteger(mixed $value, array $args, string $param): ?Refusal
+    {
+        if (!is_numeric($value)) {
+            return $this->wrongType($param, (string) ($args['type'] ?? ''));
         }
-        if (in_array($type, ['integer', 'number'], true) && !is_numeric($value)) {
-            return $this->wrongType($param, $type);
-        }
-        if ($type === 'integer' && !SchemaValues::isInteger($value)) {
-            return $this->wrongType($param, 'integer');
-        }
-        if ($type === 'boolean' && !SchemaValues::isBoolean($value)) {
-            return $this->wrongType($param, 'boolean');
-        }
-        if ($type === 'string') {
-            $refused = $this->validateString($value, $args, $param);
-            if ($refused !== null) {
-                return $refused;
-            }
-        }
-        if (isset($args['format']) && ($type === 'string' || !in_array($type, self::TYPES, true))) {
-            $refused = $this->validateFormat($value, (string) $args['format'], $param);
-            if ($refused !== null) {
-                return $refused;
-            }
-        }
-        if (in_array($type, ['number', 'integer'], true)) {
-            $refused = $this->validateNumber($value, $args, $param);
-            if ($refused !== null) {
-                return $refused;
-            }
-        }
-        return true;
+        return $this->validateNumber($value, $args, $param) ?? (SchemaValues::isInteger($value) ? null : $this->wrongType($param, 'integer'));
     }
 
     /** anyOf and oneOf: the verdict when the schema is a choice, null when it is not. */
@@ -136,7 +150,7 @@ final readonly class Schema
         if (isset($args['maxLength']) && mb_strlen($value) > $args['maxLength']) {
             return new Refusal('rest_too_long', sprintf('%1$s must be at most %2$s %3$s long.', $param, ($this->number)($args['maxLength']), (int) $args['maxLength'] === 1 ? 'character' : 'characters'));
         }
-        if (isset($args['pattern']) && !preg_match('#' . str_replace('#', '\\#', $args['pattern']) . '#u', $value)) {
+        if (isset($args['pattern']) && !SchemaValues::matchesPattern((string) $args['pattern'], $value)) {
             return new Refusal('rest_invalid_pattern', sprintf('%1$s does not match pattern %2$s.', $param, $args['pattern']));
         }
         return null;
@@ -175,7 +189,7 @@ final readonly class Schema
         if (isset($args['maxItems']) && count($value) > $args['maxItems']) {
             return new Refusal('rest_too_many_items', sprintf('%1$s must contain at most %2$s %3$s.', $param, ($this->number)($args['maxItems']), (int) $args['maxItems'] === 1 ? 'item' : 'items'));
         }
-        if (!empty($args['uniqueItems']) && count(array_unique(array_map('serialize', $value))) !== count($value)) {
+        if (!empty($args['uniqueItems']) && !SchemaValues::hasUniqueItems($value)) {
             return new Refusal('rest_duplicate_items', sprintf('%s has duplicate items.', $param));
         }
         return null;

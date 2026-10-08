@@ -343,6 +343,16 @@ add_action('init', '_wp_connectors_pass_default_keys_to_ai_client', 20);
 add_action('rest_api_init', 'rest_api_default_filters', 10, 1);
 // Core's settings are registered as the server starts, after a plugin's on init (probe rest-settings).
 add_action('rest_api_init', 'register_initial_settings', 10);
+// The REST API notes how the cookie and the application password sign-ins went, then answers rest_authentication_errors with it (probe rest-validators).
+foreach (['auth_cookie_malformed', 'auth_cookie_expired', 'auth_cookie_bad_username', 'auth_cookie_bad_hash', 'auth_cookie_valid'] as $minnCookieHook) {
+    add_action($minnCookieHook, 'rest_cookie_collect_status');
+}
+unset($minnCookieHook);
+add_action('application_password_failed_authentication', 'rest_application_password_collect_status');
+add_action('application_password_did_authenticate', 'rest_application_password_collect_status', 10, 2);
+add_filter('rest_authentication_errors', 'rest_application_password_check_errors', 90);
+add_action('xmlrpc_rsd_apis', 'rest_output_rsd');
+add_action('rest_api_init', 'create_initial_rest_routes', 99);
 // oEmbed, as the reference registers it: a post's data made rich, a provider's iframe titled.
 add_filter('oembed_response_data', 'get_oembed_response_data_rich', 10, 4);
 add_filter('oembed_dataparse', 'wp_filter_oembed_iframe_title_attribute', 5, 3);

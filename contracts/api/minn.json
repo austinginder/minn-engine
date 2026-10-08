@@ -98660,7 +98660,7 @@
             "namespace": "Minn\\Rest",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Rest/Schema.php",
-            "lines": 479,
+            "lines": 493,
             "doc": "JSON-schema handling the way the REST API's argument validation does it:\nvalidate a value against a schema (a Refusal names what failed), sanitise\nit into the schema's type, filter a response by context, and the type\ntests the schema vocabulary needs. Behaviour pinned by contracts/fixtures/api/rest.json.",
             "implements": [],
             "extends": null,
@@ -98794,7 +98794,123 @@
                         }
                     ],
                     "line": 32,
-                    "end": 99
+                    "end": 59
+                },
+                {
+                    "routes": [],
+                    "name": "validateAs",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "validateAs(string $type, mixed $value, array $args, string $param): Minn\\Runtime\\Refusal|true",
+                    "doc": "One type's own checks, as the per-type validators run them: a number's\nbounds before an integer's wholeness, and no enum or format.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "type",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "value",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "args",
+                            "type": "array",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "param",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 65,
+                    "end": 78
+                },
+                {
+                    "routes": [],
+                    "name": "validateEnum",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "validateEnum(mixed $value, array $args, string $param): Minn\\Runtime\\Refusal|true",
+                    "doc": "Whether a value is one of the schema's enum, coerced to the schema's type first when it names one.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "value",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "args",
+                            "type": "array",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "param",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 81,
+                    "end": 87
+                },
+                {
+                    "routes": [],
+                    "name": "combiningFailure",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "combiningFailure(string $param, ?string $title, string $reason, mixed $position): Minn\\Runtime\\Refusal",
+                    "doc": "The refusal for a value that matched none of a combinator's schemas,\nworded from the one that came closest: its title when it has one (an\nempty title still reads as one), and that schema's own reason.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "param",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "title",
+                            "type": "?string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "reason",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "position",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 94,
+                    "end": 100
                 },
                 {
                     "routes": [],
@@ -98827,8 +98943,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 299,
-                    "end": 367
+                    "line": 313,
+                    "end": 381
                 },
                 {
                     "routes": [],
@@ -98861,8 +98977,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 370,
-                    "end": 424
+                    "line": 384,
+                    "end": 438
                 },
                 {
                     "routes": [],
@@ -98895,8 +99011,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 427,
-                    "end": 435
+                    "line": 441,
+                    "end": 449
                 },
                 {
                     "routes": [],
@@ -98922,8 +99038,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 448,
-                    "end": 477
+                    "line": 462,
+                    "end": 491
                 },
                 {
                     "routes": [],
@@ -98942,8 +99058,42 @@
                             "doc": ""
                         }
                     ],
-                    "line": 480,
-                    "end": 493
+                    "line": 494,
+                    "end": 507
+                },
+                {
+                    "routes": [],
+                    "name": "validateInteger",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "validateInteger(mixed $value, array $args, string $param): ?Minn\\Runtime\\Refusal",
+                    "doc": "Numeric, within bounds and a multiple, then whole; null when the integer passes.\nA value that is not numeric names the schema's own type, empty when the\nschema names none (the reference words it \"p is not of type .\").",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "value",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "args",
+                            "type": "array",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "param",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 107,
+                    "end": 113
                 },
                 {
                     "routes": [],
@@ -98976,8 +99126,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 102,
-                    "end": 125
+                    "line": 116,
+                    "end": 139
                 },
                 {
                     "routes": [],
@@ -99010,8 +99160,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 128,
-                    "end": 143
+                    "line": 142,
+                    "end": 157
                 },
                 {
                     "routes": [],
@@ -99044,8 +99194,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 146,
-                    "end": 156
+                    "line": 160,
+                    "end": 170
                 },
                 {
                     "routes": [],
@@ -99078,8 +99228,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 158,
-                    "end": 182
+                    "line": 172,
+                    "end": 196
                 },
                 {
                     "routes": [],
@@ -99112,8 +99262,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 184,
-                    "end": 225
+                    "line": 198,
+                    "end": 239
                 },
                 {
                     "routes": [],
@@ -99146,8 +99296,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 227,
-                    "end": 237
+                    "line": 241,
+                    "end": 251
                 },
                 {
                     "routes": [],
@@ -99180,8 +99330,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 239,
-                    "end": 274
+                    "line": 253,
+                    "end": 288
                 },
                 {
                     "routes": [],
@@ -99214,8 +99364,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 276,
-                    "end": 291
+                    "line": 290,
+                    "end": 305
                 },
                 {
                     "routes": [],
@@ -99241,8 +99391,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 293,
-                    "end": 296
+                    "line": 307,
+                    "end": 310
                 }
             ]
         },
@@ -99252,7 +99402,7 @@
             "namespace": "Minn\\Rest",
             "kind": "final class",
             "file": "public/minn/src/Minn/Rest/SchemaValues.php",
-            "lines": 206,
+            "lines": 231,
             "doc": "The value side of JSON Schema, as the reference applies it: what counts\nas a boolean, integer, array, or object, the coercions to each, the\ncomparisons and date, colour, and uuid parsers the formats use, and the\ncombining walk anyOf and oneOf share. Schema holds the rules; this holds\nwhat they are applied to.",
             "implements": [],
             "extends": null,
@@ -99491,6 +99641,80 @@
                 },
                 {
                     "routes": [],
+                    "name": "matchesPattern",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "matchesPattern(string $pattern, string $value): bool",
+                    "doc": "Whether a value matches a schema pattern, read as the reference reads one: unanchored, # escaped, UTF-8.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "pattern",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "value",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 148,
+                    "end": 151
+                },
+                {
+                    "routes": [],
+                    "name": "hasUniqueItems",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "hasUniqueItems(array $items): bool",
+                    "doc": "Whether no two items are equal once their keys are sorted; types stay apart, so 1 and \"1\" differ.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "items",
+                            "type": "array",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 154,
+                    "end": 158
+                },
+                {
+                    "routes": [],
+                    "name": "intersectKeys",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "intersectKeys(array $first, array $second): array",
+                    "doc": "The first array's entries whose keys the second has too, at every level where both hold an array.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "first",
+                            "type": "array",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "second",
+                            "type": "array",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 161,
+                    "end": 170
+                },
+                {
+                    "routes": [],
                     "name": "stabilize",
                     "static": true,
                     "visibility": "public",
@@ -99506,8 +99730,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 148,
-                    "end": 158
+                    "line": 173,
+                    "end": 183
                 },
                 {
                     "routes": [],
@@ -99533,8 +99757,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 161,
-                    "end": 171
+                    "line": 186,
+                    "end": 196
                 },
                 {
                     "routes": [],
@@ -99553,8 +99777,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 174,
-                    "end": 177
+                    "line": 199,
+                    "end": 202
                 },
                 {
                     "routes": [],
@@ -99573,8 +99797,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 180,
-                    "end": 183
+                    "line": 205,
+                    "end": 208
                 },
                 {
                     "routes": [],
@@ -99595,8 +99819,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 190,
-                    "end": 193
+                    "line": 215,
+                    "end": 218
                 },
                 {
                     "routes": [],
@@ -99639,8 +99863,8 @@
                             "doc": "a branch validator"
                         }
                     ],
-                    "line": 203,
-                    "end": 222
+                    "line": 228,
+                    "end": 247
                 }
             ]
         },
@@ -106529,7 +106753,7 @@
             "namespace": "Minn\\Runtime",
             "kind": "final class",
             "file": "public/minn/src/Minn/Runtime/ApplicationPasswordSignIn.php",
-            "lines": 80,
+            "lines": 85,
             "doc": "wp_authenticate_application_password as the reference answers it (probe\napplication-passwords-api): a user found already stands; outside an API\nrequest (application_password_is_api_request) nothing is tried; then the\nuser by login or email, the feature's availability (for the site, for\nthe user), and each of the user's passwords, a match passing through\nwp_authenticate_application_password_errors, recorded, and announced\n(application_password_did_authenticate); every refusal announced\nthrough application_password_failed_authentication.",
             "implements": [],
             "extends": null,
@@ -106597,7 +106821,7 @@
                         }
                     ],
                     "line": 67,
-                    "end": 85
+                    "end": 90
                 },
                 {
                     "routes": [],
@@ -106623,8 +106847,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 88,
-                    "end": 97
+                    "line": 93,
+                    "end": 102
                 }
             ]
         },

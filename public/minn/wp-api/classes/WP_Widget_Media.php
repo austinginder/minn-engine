@@ -77,6 +77,10 @@ abstract class WP_Widget_Media extends WP_Widget
                 continue;
             }
             $value = $new_instance[$field];
+            // An unticked checkbox arrives empty, and the widget reads it as false (probe widgets).
+            if ($value === '' && ($schema['type'] ?? null) === 'boolean') {
+                $value = false;
+            }
             if (is_wp_error(rest_validate_value_from_schema($value, $schema, $field))) {
                 continue;
             }

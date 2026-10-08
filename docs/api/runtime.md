@@ -10,7 +10,7 @@ the WordPress runtime plugins load against
 | [`AjaxController`](#ajaxcontroller) | final readonly class | 80 | admin-ajax.php, the endpoint plugins post their front-end work to: a form |
 | [`AllowedOptions`](#allowedoptions) | final class | 26 | The settings-page allowlist plugins extend: option group => the option |
 | [`ApplicationPasswordEvents`](#applicationpasswordevents) | final class | 46 | Application password changes made over REST, as the reference makes them |
-| [`ApplicationPasswordSignIn`](#applicationpasswordsignin) | final class | 80 | wp_authenticate_application_password as the reference answers it (probe |
+| [`ApplicationPasswordSignIn`](#applicationpasswordsignin) | final class | 85 | wp_authenticate_application_password as the reference answers it (probe |
 | [`ArchiveLinks`](#archivelinks) | final class | 41 | A post type's archive address and its feed, as the reference gives them |
 | [`AssetEdits`](#assetedits) | final class | 29 | What a plugin did to $wp_scripts->registered or $wp_styles->registered |
 | [`Assets`](#assets) | final class | 415 | The registry behind wp_register_/wp_enqueue_ for scripts and styles: |
@@ -377,7 +377,7 @@ wp_authenticate_application_password_errors, then
 application_password_did_authenticate; a refusal is announced and
 leaves the request signed out.
 
-Internals: `refusal()` (private, line 88)
+Internals: `refusal()` (private, line 93)
 
 
 ## ArchiveLinks
