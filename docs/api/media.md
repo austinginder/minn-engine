@@ -4,12 +4,13 @@ uploads, image sizes and attachment metadata
 
 | Class | Kind | Lines | Summary |
 |---|---|---|---|
+| [`AvifInfo`](#avifinfo) | final class | 142 | An AVIF file's primary image as wp_get_avif_info reports it (probe |
 | [`Canvas`](#canvas) | final readonly class | 156 | One GD bitmap and the operations the media layer needs on it. Every |
 | [`Gallery`](#gallery) | final class | 54 | The classic `[gallery]` shortcode's markup. Every gallery on a page is |
 | [`Icons`](#icons) | final class | 68 | The icon a file type is shown with, as wp_mime_type_icon finds it (probe |
 | [`Images`](#images) | final readonly class | 163 | GD sub-size generation for the sizes the site has. |
 | [`Kind`](#kind) | final class | 75 | Whether an attachment is an image, audio, video, or a given extension, judged by its MIME type first and its file extension second. |
-| [`Metadata`](#metadata) | final class | 111 | The _wp_attachment_metadata blob: parsed by scanning for the shapes it |
+| [`Metadata`](#metadata) | final class | 145 | The _wp_attachment_metadata blob: parsed by scanning for the shapes it |
 | [`PhotoMeta`](#photometa) | final class | 165 | A photo's own description, read as the reference's wp_read_image_metadata |
 | [`PreparedUpload`](#preparedupload) | final readonly class | 13 | An upload made ready for its attachment: the file stored, its sizes cut, |
 | [`Sizing`](#sizing) | final class | 232 | The image size arithmetic the media functions share: the crop or scale a |
@@ -17,6 +18,29 @@ uploads, image sizes and attachment metadata
 | [`Uploads`](#uploads) | final readonly class | 179 | The uploads directory: paths, URLs, the allowed types, and landing a file. |
 | [`WebpInfo`](#webpinfo) | final class | 24 | A WebP file's size and kind from its first 40 bytes, as wp_get_webp_info |
 | [`Writer`](#writer) | final readonly class | 181 | The writes the media library makes. An Upload becomes an attachment: the |
+
+## AvifInfo
+
+`final class Minn\Media\AvifInfo` · `public/minn/src/Minn/Media/AvifInfo.php`
+
+An AVIF file's primary image as wp_get_avif_info reports it (probe
+media-tags): width and height from its spatial-extent property, bit depth
+and channel count from its pixel-information property. The file is an
+ISO base media file: an ftyp box naming the avif or avis brand, then a meta
+box whose primary item (pitm) is tied to its properties (ipco) by the
+association table (ipma). Anything else, or a file it cannot follow, is
+unknown in every field.
+
+- const `UNKNOWN` = `array (   'width' => false,   'height' => false,   'bit_depth' => false,   'num_channels' => false, )`
+
+### static `read(string $bytes): array`
+
+The primary image's size, bit depth and channels from a file's first bytes.
+
+- `@return array{width: int|false, height: int|false, bit_depth: int|false, num_channels: int|false}`
+
+Internals: `isAvif()` (private, line 63), `primaryItem()` (private, line 76), `associations()` (private, line 90), `boxes()` (private, line 121), `ordered()` (private, line 135)
+
 
 ## Canvas
 
@@ -214,6 +238,16 @@ image_meta as a:13 with alt last.
 - const `IMAGE_META_KEYS` = `array (   0 => 'aperture',   1 => 'credit',   2 => 'camera',   3 => 'caption',   4 => 'created_timestamp',   5 => 'copyright',   6 => 'focal_length',   7 => 'iso',   8 => 'shutter_speed',   9 => 'title',   10 => 'orientation', )`
 
 Used by: `Minn\Admin\SiteController`, `Minn\Blocks\ImageTags`, `Minn\Content\SiteIcon`, `Minn\Media\PhotoMeta`, `Minn\Media\Writer`, `Minn\Rest\MediaObject`
+
+### static `namesFile(string $location, array $meta): bool`
+
+Whether an image location names the attachment's file, one of its
+sizes, or its original (probe media-tags): the location, its query
+dropped, must end with the stored path, or with the stored folder and
+a size's or the original's file name. A bare file name with no folder
+matches nothing.
+
+- `@param array<string, mixed> $meta the attachment metadata as stored`
 
 ### static `parse(?string $blob): array`
 

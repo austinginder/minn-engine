@@ -353,6 +353,11 @@ add_action('application_password_did_authenticate', 'rest_application_password_c
 add_filter('rest_authentication_errors', 'rest_application_password_check_errors', 90);
 add_action('xmlrpc_rsd_apis', 'rest_output_rsd');
 add_action('rest_api_init', 'create_initial_rest_routes', 99);
+// While a post thumbnail is fetched its image takes wp-post-image and the the_post_thumbnail context (probe media-tags).
+add_action('begin_fetch_post_thumbnail_html', '_wp_post_thumbnail_class_filter_add');
+add_action('begin_fetch_post_thumbnail_html', '_wp_post_thumbnail_context_filter_add');
+add_action('end_fetch_post_thumbnail_html', '_wp_post_thumbnail_class_filter_remove');
+add_action('end_fetch_post_thumbnail_html', '_wp_post_thumbnail_context_filter_remove');
 // oEmbed, as the reference registers it: a post's data made rich, a provider's iframe titled.
 add_filter('oembed_response_data', 'get_oembed_response_data_rich', 10, 4);
 add_filter('oembed_dataparse', 'wp_filter_oembed_iframe_title_attribute', 5, 3);

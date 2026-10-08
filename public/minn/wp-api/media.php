@@ -303,7 +303,9 @@ function wp_get_attachment_image($attachment_id, $size = 'thumbnail', $icon = fa
     [$src, $width, $height] = $image;
     $size_class = is_array($size) ? implode('x', $size) : $size;
     $attr = wp_parse_args($attr, ['src' => $src, 'class' => "attachment-{$size_class} size-{$size_class}", 'alt' => trim(strip_tags((string) get_post_meta($attachment_id, '_wp_attachment_image_alt', true)))]);
-    $attr = _minn_attachment_image_attributes($attachment_id, $attr, $src, (int) $width, (int) $height);
+    // A post thumbnail names its own context while it is fetched (_wp_post_thumbnail_context_filter).
+    $context = apply_filters('wp_get_attachment_image_context', 'wp_get_attachment_image');
+    $attr = _minn_attachment_image_attributes($attachment_id, $attr, $src, (int) $width, (int) $height, (string) $context);
     $attr = apply_filters('wp_get_attachment_image_attributes', $attr, get_post($attachment_id), $size);
     $attr = array_map('esc_attr', array_filter($attr, static fn ($v) => $v !== false && $v !== null));
     $html = rtrim('<img ' . image_hwstring($width, $height));
@@ -314,9 +316,9 @@ function wp_get_attachment_image($attachment_id, $size = 'thumbnail', $icon = fa
 }
 
 /** @internal the loading attributes and the srcset/sizes pair an attachment image carries unless the caller set them */
-function _minn_attachment_image_attributes(int $attachment_id, array $attr, string $src, int $width, int $height): array
+function _minn_attachment_image_attributes(int $attachment_id, array $attr, string $src, int $width, int $height, string $context = 'wp_get_attachment_image'): array
 {
-    $loading = wp_get_loading_optimization_attributes('img', $attr + ['width' => $width, 'height' => $height], 'wp_get_attachment_image');
+    $loading = wp_get_loading_optimization_attributes('img', $attr + ['width' => $width, 'height' => $height], $context);
     foreach (['loading', 'fetchpriority'] as $key) {
         if (array_key_exists($key, $attr) && !$attr[$key]) {
             unset($loading[$key]);
@@ -332,16 +334,16 @@ function _minn_attachment_image_attributes(int $attachment_id, array $attr, stri
             $attr['sizes'] = empty($attr['sizes']) ? $sizes : $attr['sizes'];
         }
     }
-    if (($attr['loading'] ?? '') === 'lazy' && !empty($attr['sizes']) && is_string($attr['sizes']) && !_minn_sizes_say_auto($attr['sizes']) && apply_filters('wp_img_tag_add_auto_sizes', true)) {
+    if (($attr['loading'] ?? '') === 'lazy' && !empty($attr['sizes']) && is_string($attr['sizes']) && !wp_sizes_attribute_includes_valid_auto($attr['sizes']) && apply_filters('wp_img_tag_add_auto_sizes', true)) {
         $attr['sizes'] = 'auto, ' . $attr['sizes'];
     }
     return $attr;
 }
 
-/** @internal whether a sizes list already starts with auto */
-function _minn_sizes_say_auto(string $sizes): bool
+/** Whether a sizes list starts with auto, alone or before a comma, any case (probe media-tags). */
+function wp_sizes_attribute_includes_valid_auto($sizes_attr)
 {
-    return preg_match('/^auto(\s*,|$)/i', trim($sizes)) === 1;
+    return preg_match('/^auto(\s*,|$)/i', trim((string) $sizes_attr)) === 1;
 }
 
 /**
@@ -362,7 +364,7 @@ function wp_img_tag_add_auto_sizes($image)
     $loading = $tags->get_attribute('loading');
     $width = $tags->get_attribute('width');
     $sizes = $tags->get_attribute('sizes');
-    if (!is_string($loading) || strtolower(trim($loading)) !== 'lazy' || !is_string($width) || $width === '' || !is_string($sizes) || _minn_sizes_say_auto($sizes)) {
+    if (!is_string($loading) || strtolower(trim($loading)) !== 'lazy' || !is_string($width) || $width === '' || !is_string($sizes) || wp_sizes_attribute_includes_valid_auto($sizes)) {
         return $image;
     }
     $tags->set_attribute('sizes', 'auto, ' . $sizes);
@@ -469,6 +471,194 @@ function wp_high_priority_element_flag($value = null)
         RenderState::current()->closePriority();
     }
     return RenderState::current()->priorityAvailable();
+}
+
+/** Adds to the page's count of content images and returns the new count; the loading rules read the same count. */
+function wp_increase_content_media_count($amount = 1)
+{
+    return RenderState::current()->countImages((int) $amount);
+}
+
+/**
+ * High priority for an image large enough, when nothing has claimed it yet:
+ * an image that names a priority keeps it, and a lazy one never gets it
+ * (probe media-tags).
+ */
+function wp_maybe_add_fetchpriority_high_attr($loading_attrs, $tag_name, $attr)
+{
+    if ($tag_name !== 'img') {
+        return $loading_attrs;
+    }
+    if (isset($attr['fetchpriority'])) {
+        if ($attr['fetchpriority'] === 'high') {
+            $loading_attrs['fetchpriority'] = 'high';
+            wp_high_priority_element_flag(false);
+        }
+        return $loading_attrs;
+    }
+    if (($loading_attrs['loading'] ?? null) === 'lazy' || !wp_high_priority_element_flag()) {
+        return $loading_attrs;
+    }
+    return $loading_attrs + _minn_earned_priority((array) $attr);
+}
+
+/** @internal an attribute's value as a tag carries it, or null when the tag has none */
+function _minn_tag_attribute(string $tag, string $name): ?string
+{
+    return preg_match('/\s' . $name . '=["\']?([^"\'\s>]*)/i', $tag, $m) === 1 ? $m[1] : null;
+}
+
+/**
+ * An <img> given what it lacks of decoding, loading and fetchpriority, each
+ * placed straight after "<img" (so the last added reads first): decoding
+ * through wp_img_tag_add_decoding_attr, loading (only with a width and a
+ * height) through wp_img_tag_add_loading_attr, then a high priority.
+ */
+function wp_img_tag_add_loading_optimization_attrs($image, $context)
+{
+    $image = (string) $image;
+    $attr = array_filter(['width' => _minn_tag_attribute($image, 'width'), 'height' => _minn_tag_attribute($image, 'height'), 'loading' => _minn_tag_attribute($image, 'loading'), 'decoding' => _minn_tag_attribute($image, 'decoding'), 'fetchpriority' => _minn_tag_attribute($image, 'fetchpriority')], static fn ($v) => $v !== null);
+    $optimization = wp_get_loading_optimization_attributes('img', $attr, $context);
+    if (!isset($attr['decoding'])) {
+        $decoding = apply_filters('wp_img_tag_add_decoding_attr', $optimization['decoding'] ?? false, $image, $context);
+        if (in_array($decoding, ['async', 'sync', 'auto'], true)) {
+            $image = (string) preg_replace('/<img\b/i', '<img decoding="' . esc_attr($decoding) . '"', $image, 1);
+        }
+    }
+    if (!isset($attr['loading']) && isset($attr['width'], $attr['height'])) {
+        $loading = apply_filters('wp_img_tag_add_loading_attr', $optimization['loading'] ?? false, $image, $context);
+        if ($loading) {
+            $image = (string) preg_replace('/<img\b/i', '<img loading="' . esc_attr(in_array($loading, ['lazy', 'eager'], true) ? $loading : 'lazy') . '"', $image, 1);
+        }
+    }
+    if (!isset($attr['fetchpriority']) && ($optimization['fetchpriority'] ?? null) === 'high') {
+        $image = (string) preg_replace('/<img\b/i', '<img fetchpriority="high"', $image, 1);
+    }
+    return $image;
+}
+
+/** An attachment's <img> given its width and height when it lacks either, from the size its source names. */
+function wp_img_tag_add_width_and_height_attr($image, $context, $attachment_id)
+{
+    $image = (string) $image;
+    $src = _minn_tag_attribute($image, 'src');
+    if ($src === null || $src === '' || (_minn_tag_attribute($image, 'width') !== null && _minn_tag_attribute($image, 'height') !== null)) {
+        return $image;
+    }
+    if (!apply_filters('wp_img_tag_add_width_and_height_attr', true, $image, $context, $attachment_id)) {
+        return $image;
+    }
+    $meta = wp_get_attachment_metadata((int) $attachment_id);
+    $size = is_array($meta) ? wp_image_src_get_dimensions($src, $meta, (int) $attachment_id) : false;
+    return $size ? (string) preg_replace('/<img\b/i', '<img ' . trim(image_hwstring($size[0], $size[1])), $image, 1) : $image;
+}
+
+/** An <iframe> with a width and a height given its loading through wp_iframe_tag_add_loading_attr, whatever loading it already has. */
+function wp_iframe_tag_add_loading_attr($iframe, $context)
+{
+    $iframe = (string) $iframe;
+    $width = _minn_tag_attribute($iframe, 'width');
+    $height = _minn_tag_attribute($iframe, 'height');
+    if ($width === null || $height === null) {
+        return $iframe;
+    }
+    $optimization = wp_get_loading_optimization_attributes('iframe', ['width' => $width, 'height' => $height], $context);
+    $loading = apply_filters('wp_iframe_tag_add_loading_attr', $optimization['loading'] ?? false, $iframe, $context);
+    if (!$loading) {
+        return $iframe;
+    }
+    return (string) preg_replace('/<iframe\b/i', '<iframe loading="' . esc_attr(in_array($loading, ['lazy', 'eager'], true) ? $loading : 'lazy') . '"', $iframe, 1);
+}
+
+/** The largest size an example of these proportions takes inside a box: it grows to fit as well as shrinks. */
+function wp_expand_dimensions($example_width, $example_height, $max_width, $max_height)
+{
+    return wp_constrain_dimensions((int) $example_width * 1000000, (int) $example_height * 1000000, (int) $max_width, (int) $max_height);
+}
+
+/** The quality an image of a type is written at: 86 for WebP, 82 otherwise (or the default given), then wp_editor_set_quality, and jpeg_quality for a JPEG. */
+function wp_get_image_encode_quality($mime_type, $size = [], $default_quality = null)
+{
+    $quality = apply_filters('wp_editor_set_quality', $default_quality ?? ($mime_type === 'image/webp' ? 86 : 82), $mime_type, $size);
+    return $mime_type === 'image/jpeg' ? apply_filters('jpeg_quality', $quality, 'image_resize') : $quality;
+}
+
+/** The link a media player falls back to: the escaped address as its own text. */
+function wp_mediaelement_fallback($url)
+{
+    return apply_filters('wp_mediaelement_fallback', sprintf('<a href="%1$s">%1$s</a>', esc_url($url)), $url);
+}
+
+/** An AVIF file's width, height, bit depth and channel count; false for each when it is not one. */
+function wp_get_avif_info($filename)
+{
+    $filename = (string) $filename;
+    $bytes = $filename !== '' && is_file($filename) && is_readable($filename) ? (string) file_get_contents($filename, false, null, 0, 1 << 20) : '';
+    return Minn\Media\AvifInfo::read($bytes);
+}
+
+/** The browser's Chromium major version from its user agent, or null for any other browser. */
+function wp_get_chromium_major_version()
+{
+    return preg_match('#Chrome/(\d+)#', (string) ($_SERVER['HTTP_USER_AGENT'] ?? ''), $m) === 1 ? (int) $m[1] : null;
+}
+
+/** Whether images are processed in the browser before upload: off unless a filter turns it on. */
+function wp_is_client_side_media_processing_enabled()
+{
+    return apply_filters('wp_client_side_media_processing_enabled', false);
+}
+
+/** Whether an image location names an attachment's file, one of its sizes, or its original. */
+function wp_image_file_matches_image_meta($image_location, $image_meta, $attachment_id = 0)
+{
+    $match = is_string($image_location) && is_array($image_meta) && Minn\Media\Metadata::namesFile($image_location, $image_meta);
+    return apply_filters('wp_image_file_matches_image_meta', $match, $image_location, $image_meta, $attachment_id);
+}
+
+/** Adds wp-post-image to a post thumbnail's classes (hooked while the thumbnail is fetched). */
+function _wp_post_thumbnail_class_filter($attr)
+{
+    $attr['class'] = ($attr['class'] ?? '') . ' wp-post-image';
+    return $attr;
+}
+
+function _wp_post_thumbnail_class_filter_add($attr)
+{
+    add_filter('wp_get_attachment_image_attributes', '_wp_post_thumbnail_class_filter');
+}
+
+function _wp_post_thumbnail_class_filter_remove($attr)
+{
+    remove_filter('wp_get_attachment_image_attributes', '_wp_post_thumbnail_class_filter');
+}
+
+/** A post thumbnail's image is loaded in the_post_thumbnail context (hooked while the thumbnail is fetched). */
+function _wp_post_thumbnail_context_filter($context)
+{
+    return 'the_post_thumbnail';
+}
+
+function _wp_post_thumbnail_context_filter_add()
+{
+    add_filter('wp_get_attachment_image_context', '_wp_post_thumbnail_context_filter');
+}
+
+function _wp_post_thumbnail_context_filter_remove()
+{
+    remove_filter('wp_get_attachment_image_context', '_wp_post_thumbnail_context_filter');
+}
+
+/** The link to the next image attached to the same post, or an empty string. */
+function get_next_image_link($size = 'thumbnail', $text = false)
+{
+    return get_adjacent_image_link(false, $size, $text);
+}
+
+/** The link to the previous image attached to the same post, or an empty string. */
+function get_previous_image_link($size = 'thumbnail', $text = false)
+{
+    return get_adjacent_image_link(true, $size, $text);
 }
 
 function wp_lazy_loading_enabled($tag_name, $context)

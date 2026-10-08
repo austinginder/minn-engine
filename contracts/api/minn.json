@@ -17543,7 +17543,7 @@
             "namespace": "Minn\\Blocks",
             "kind": "final class",
             "file": "public/minn/src/Minn/Blocks/RenderState.php",
-            "lines": 329,
+            "lines": 335,
             "doc": "Per-request rendering state, owned by the renderer. The reference numbers\ngalleries, style variations, and search inputs from ONE counter that runs\nacross every block rendered in the request (a list response keeps\ncounting from post to post), so the counter lives here, not on any block.\nLeaf helpers with no renderer in hand reach it through current().",
             "implements": [],
             "extends": null,
@@ -17825,6 +17825,26 @@
                 },
                 {
                     "routes": [],
+                    "name": "countImages",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "countImages(int $amount): int",
+                    "doc": "Adds to the page's count of content images (wp_increase_content_media_count) and returns the new count.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "amount",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 99,
+                    "end": 102
+                },
+                {
+                    "routes": [],
                     "name": "nextImage",
                     "static": false,
                     "visibility": "public",
@@ -17832,8 +17852,8 @@
                     "doc": "Content images seen so far in this page, for the loading rules.",
                     "shapes": [],
                     "params": [],
-                    "line": 99,
-                    "end": 102
+                    "line": 105,
+                    "end": 108
                 },
                 {
                     "routes": [],
@@ -17859,8 +17879,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 108,
-                    "end": 114
+                    "line": 114,
+                    "end": 120
                 },
                 {
                     "routes": [],
@@ -17881,8 +17901,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 125,
-                    "end": 133
+                    "line": 131,
+                    "end": 139
                 },
                 {
                     "routes": [],
@@ -17908,8 +17928,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 140,
-                    "end": 148
+                    "line": 146,
+                    "end": 154
                 },
                 {
                     "routes": [],
@@ -17928,8 +17948,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 151,
-                    "end": 155
+                    "line": 157,
+                    "end": 161
                 },
                 {
                     "routes": [],
@@ -17940,8 +17960,8 @@
                     "doc": "True once, for the image that gets fetchpriority=\"high\".",
                     "shapes": [],
                     "params": [],
-                    "line": 158,
-                    "end": 164
+                    "line": 164,
+                    "end": 170
                 },
                 {
                     "routes": [],
@@ -17952,8 +17972,8 @@
                     "doc": "Whether no element has taken high fetch priority yet on this page.",
                     "shapes": [],
                     "params": [],
-                    "line": 167,
-                    "end": 170
+                    "line": 173,
+                    "end": 176
                 },
                 {
                     "routes": [],
@@ -17964,8 +17984,8 @@
                     "doc": "Takes high fetch priority off the table for the rest of the page; a plugin prioritising its own element does this.",
                     "shapes": [],
                     "params": [],
-                    "line": 173,
-                    "end": 176
+                    "line": 179,
+                    "end": 182
                 },
                 {
                     "routes": [],
@@ -17976,8 +17996,8 @@
                     "doc": "Puts high fetch priority back on offer, so the next large enough image takes it.",
                     "shapes": [],
                     "params": [],
-                    "line": 179,
-                    "end": 182
+                    "line": 185,
+                    "end": 188
                 },
                 {
                     "routes": [],
@@ -17996,8 +18016,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 185,
-                    "end": 188
+                    "line": 191,
+                    "end": 194
                 },
                 {
                     "routes": [],
@@ -18010,8 +18030,8 @@
                         "@return array<string, true>"
                     ],
                     "params": [],
-                    "line": 195,
-                    "end": 198
+                    "line": 201,
+                    "end": 204
                 },
                 {
                     "routes": [],
@@ -18022,8 +18042,8 @@
                     "doc": "The next wp-elements-N class; the reference numbers these apart from the shared counter.",
                     "shapes": [],
                     "params": [],
-                    "line": 201,
-                    "end": 204
+                    "line": 207,
+                    "end": 210
                 },
                 {
                     "routes": [],
@@ -18042,8 +18062,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 207,
-                    "end": 211
+                    "line": 213,
+                    "end": 217
                 },
                 {
                     "routes": [],
@@ -18054,8 +18074,8 @@
                     "doc": "A page list renders plain on its own and takes the navigation block's\nitem classes, submenu toggles, and interactivity only while it sits\ninside one, so the navigation block marks the span it owns.",
                     "shapes": [],
                     "params": [],
-                    "line": 218,
-                    "end": 221
+                    "line": 224,
+                    "end": 227
                 },
                 {
                     "routes": [],
@@ -18066,8 +18086,8 @@
                     "doc": "Leaves a navigation block.",
                     "shapes": [],
                     "params": [],
-                    "line": 224,
-                    "end": 227
+                    "line": 230,
+                    "end": 233
                 },
                 {
                     "routes": [],
@@ -18078,8 +18098,8 @@
                     "doc": "Whether rendering is inside a navigation block.",
                     "shapes": [],
                     "params": [],
-                    "line": 230,
-                    "end": 233
+                    "line": 236,
+                    "end": 239
                 },
                 {
                     "routes": [],
@@ -18098,8 +18118,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 236,
-                    "end": 243
+                    "line": 242,
+                    "end": 249
                 },
                 {
                     "routes": [],
@@ -18118,8 +18138,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 246,
-                    "end": 249
+                    "line": 252,
+                    "end": 255
                 },
                 {
                     "routes": [],
@@ -18138,8 +18158,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 252,
-                    "end": 255
+                    "line": 258,
+                    "end": 261
                 },
                 {
                     "routes": [],
@@ -18150,8 +18170,8 @@
                     "doc": "True while the block tree is shallower than the cap; deeper blocks render as nothing.",
                     "shapes": [],
                     "params": [],
-                    "line": 258,
-                    "end": 265
+                    "line": 264,
+                    "end": 271
                 },
                 {
                     "routes": [],
@@ -18162,8 +18182,8 @@
                     "doc": "Leaves one nesting level.",
                     "shapes": [],
                     "params": [],
-                    "line": 268,
-                    "end": 271
+                    "line": 274,
+                    "end": 277
                 },
                 {
                     "routes": [],
@@ -18174,8 +18194,8 @@
                     "doc": "How deep the block tree is right now; zero outside any block render.",
                     "shapes": [],
                     "params": [],
-                    "line": 274,
-                    "end": 277
+                    "line": 280,
+                    "end": 283
                 },
                 {
                     "routes": [],
@@ -18194,8 +18214,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 280,
-                    "end": 285
+                    "line": 286,
+                    "end": 291
                 },
                 {
                     "routes": [],
@@ -18206,8 +18226,8 @@
                     "doc": "The pending elements class, cleared.",
                     "shapes": [],
                     "params": [],
-                    "line": 288,
-                    "end": 294
+                    "line": 294,
+                    "end": 300
                 },
                 {
                     "routes": [],
@@ -18226,8 +18246,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 297,
-                    "end": 302
+                    "line": 303,
+                    "end": 308
                 },
                 {
                     "routes": [],
@@ -18238,8 +18258,8 @@
                     "doc": "The numbered style variation class the dynamic block being rendered claimed, once: its wrapper takes it.",
                     "shapes": [],
                     "params": [],
-                    "line": 305,
-                    "end": 310
+                    "line": 311,
+                    "end": 316
                 },
                 {
                     "routes": [],
@@ -18258,8 +18278,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 314,
-                    "end": 317
+                    "line": 320,
+                    "end": 323
                 },
                 {
                     "routes": [],
@@ -18272,8 +18292,8 @@
                         "@return list<int>"
                     ],
                     "params": [],
-                    "line": 324,
-                    "end": 327
+                    "line": 330,
+                    "end": 333
                 },
                 {
                     "routes": [],
@@ -18284,8 +18304,8 @@
                     "doc": "Clears every per-request counter.",
                     "shapes": [],
                     "params": [],
-                    "line": 330,
-                    "end": 343
+                    "line": 336,
+                    "end": 349
                 }
             ]
         },
@@ -73788,6 +73808,217 @@
             ]
         },
         {
+            "name": "Minn\\Media\\AvifInfo",
+            "short": "AvifInfo",
+            "namespace": "Minn\\Media",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Media/AvifInfo.php",
+            "lines": 142,
+            "doc": "An AVIF file's primary image as wp_get_avif_info reports it (probe\nmedia-tags): width and height from its spatial-extent property, bit depth\nand channel count from its pixel-information property. The file is an\nISO base media file: an ftyp box naming the avif or avis brand, then a meta\nbox whose primary item (pitm) is tied to its properties (ipco) by the\nassociation table (ipma). Anything else, or a file it cannot follow, is\nunknown in every field.",
+            "implements": [],
+            "extends": null,
+            "uses": [],
+            "usedBy": [],
+            "constructor": null,
+            "cases": [],
+            "constants": [
+                {
+                    "name": "UNKNOWN",
+                    "value": "array (   'width' => false,   'height' => false,   'bit_depth' => false,   'num_channels' => false, )",
+                    "doc": "",
+                    "visibility": "private"
+                }
+            ],
+            "properties": [],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "read",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "read(string $bytes): array",
+                    "doc": "The primary image's size, bit depth and channels from a file's first bytes.",
+                    "shapes": [
+                        "@return array{width: int|false, height: int|false, bit_depth: int|false, num_channels: int|false}"
+                    ],
+                    "params": [
+                        {
+                            "name": "bytes",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 25,
+                    "end": 60
+                },
+                {
+                    "routes": [],
+                    "name": "isAvif",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "isAvif(string $bytes, array $ftyp): bool",
+                    "doc": "Whether the ftyp box names the avif or avis brand, as its major brand or a compatible one.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "bytes",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "ftyp",
+                            "type": "array",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 63,
+                    "end": 73
+                },
+                {
+                    "routes": [],
+                    "name": "primaryItem",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "primaryItem(string $bytes, array $pitm): ?int",
+                    "doc": "The primary item's id from a pitm box: 16 bits in version 0, 32 after.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "bytes",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "pitm",
+                            "type": "array",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 76,
+                    "end": 82
+                },
+                {
+                    "routes": [],
+                    "name": "associations",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "associations(string $bytes, array $ipma, int $item): array",
+                    "doc": "The 1-based property indices the ipma box ties to one item.",
+                    "shapes": [
+                        "@param array{0: int, 1: int} $ipma the box's content span",
+                        "@return list<int>"
+                    ],
+                    "params": [
+                        {
+                            "name": "bytes",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "ipma",
+                            "type": "array",
+                            "shape": "array{0: int, 1: int}",
+                            "default": null,
+                            "doc": "the box's content span"
+                        },
+                        {
+                            "name": "item",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 90,
+                    "end": 113
+                },
+                {
+                    "routes": [],
+                    "name": "boxes",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "boxes(string $bytes, int $from, int $to): array",
+                    "doc": "The boxes between two offsets by type, each as its content span (after\nthe header). A box of size 1 carries a 64-bit size; size 0 runs to the end.",
+                    "shapes": [
+                        "@return array<string, list<array{0: int, 1: int}>>"
+                    ],
+                    "params": [
+                        {
+                            "name": "bytes",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "from",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "to",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 121,
+                    "end": 128
+                },
+                {
+                    "routes": [],
+                    "name": "ordered",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "ordered(string $bytes, int $from, int $to): array",
+                    "doc": "The boxes between two offsets in file order: type, content start, end.",
+                    "shapes": [
+                        "@return list<array{0: string, 1: int, 2: int}>"
+                    ],
+                    "params": [
+                        {
+                            "name": "bytes",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "from",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "to",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 135,
+                    "end": 156
+                }
+            ]
+        },
+        {
             "name": "Minn\\Media\\Canvas",
             "short": "Canvas",
             "namespace": "Minn\\Media",
@@ -74843,7 +75074,7 @@
             "namespace": "Minn\\Media",
             "kind": "final class",
             "file": "public/minn/src/Minn/Media/Metadata.php",
-            "lines": 111,
+            "lines": 145,
             "doc": "The _wp_attachment_metadata blob: parsed by scanning for the shapes it\nholds (top-level dims and file, the sizes map, the image_meta scalars)\nand written back in the reference's stored form: a:6 at the top,\nimage_meta as a:13 with alt last.",
             "implements": [],
             "extends": null,
@@ -74870,6 +75101,35 @@
             "methods": [
                 {
                     "routes": [],
+                    "name": "namesFile",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "namesFile(string $location, array $meta): bool",
+                    "doc": "Whether an image location names the attachment's file, one of its\nsizes, or its original (probe media-tags): the location, its query\ndropped, must end with the stored path, or with the stored folder and\na size's or the original's file name. A bare file name with no folder\nmatches nothing.",
+                    "shapes": [
+                        "@param array<string, mixed> $meta the attachment metadata as stored"
+                    ],
+                    "params": [
+                        {
+                            "name": "location",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "meta",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": "the attachment metadata as stored"
+                        }
+                    ],
+                    "line": 29,
+                    "end": 52
+                },
+                {
+                    "routes": [],
                     "name": "parse",
                     "static": true,
                     "visibility": "public",
@@ -74887,8 +75147,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 25,
-                    "end": 69
+                    "line": 59,
+                    "end": 103
                 },
                 {
                     "routes": [],
@@ -74907,8 +75167,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 72,
-                    "end": 102
+                    "line": 106,
+                    "end": 136
                 },
                 {
                     "routes": [],
@@ -74919,8 +75179,8 @@
                     "doc": "The image_meta block a fresh upload carries.",
                     "shapes": [],
                     "params": [],
-                    "line": 105,
-                    "end": 122
+                    "line": 139,
+                    "end": 156
                 }
             ]
         },

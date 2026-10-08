@@ -95,6 +95,12 @@ final class RenderState
         return ++$this->counter;
     }
 
+    /** Adds to the page's count of content images (wp_increase_content_media_count) and returns the new count. */
+    public function countImages(int $amount): int
+    {
+        return $this->images += $amount;
+    }
+
     /** Content images seen so far in this page, for the loading rules. */
     public function nextImage(): int
     {

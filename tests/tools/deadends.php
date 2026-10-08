@@ -29,8 +29,10 @@ const PINGS = ['pingback', 'do_all_pings', 'do_all_pingbacks', 'do_all_trackback
 // The editors' own REST controllers and loaders: what only the block or site editor asks for.
 const EDITOR_FILES = '#wp-includes/(block-editor\.php|class-wp-block-editor-context\.php|rest-api/endpoints/class-wp-rest-(block-directory|pattern-directory|edit-site-export|global-styles(-revisions)?|template-autosaves|template-revisions|navigation-fallback|font-(collections|faces|families))-controller\.php)#';
 
-// Deprecated functions that live in wp-includes but only ever served the admin or the editors.
-const NAMED = ['the_editor' => 'admin', 'wp_ajax_press_this_add_category' => 'admin', 'wp_ajax_press_this_save_post' => 'admin', 'remove_option_whitelist' => 'admin', 'wp_add_editor_classic_theme_styles' => 'editor', 'wp_add_iframed_editor_assets_html' => 'editor'];
+// Functions that live in wp-includes but only ever serve the admin or the editors: deprecated ones, and
+// media.php's uploader and editor helpers, hooked only on admin_init, the plupload settings and the
+// editor screens' load-* actions (probe media-tags, 2026-10-08).
+const NAMED = ['wp_set_client_side_media_processing_flag' => 'admin', 'wp_show_heic_upload_error' => 'admin', 'wp_set_up_cross_origin_isolation' => 'editor', 'wp_start_cross_origin_isolation_output_buffer' => 'editor', 'wpview_media_sandbox_styles' => 'editor', 'the_editor' => 'admin', 'wp_ajax_press_this_add_category' => 'admin', 'wp_ajax_press_this_save_post' => 'admin', 'remove_option_whitelist' => 'admin', 'wp_add_editor_classic_theme_styles' => 'editor', 'wp_add_iframed_editor_assets_html' => 'editor'];
 
 /** The dead end a symbol belongs to, or null when it should behave like the reference. */
 function category(string $name, string $file): ?string

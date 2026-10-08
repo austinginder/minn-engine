@@ -18,6 +18,40 @@ final class Metadata
     ];
 
     /**
+     * Whether an image location names the attachment's file, one of its
+     * sizes, or its original (probe media-tags): the location, its query
+     * dropped, must end with the stored path, or with the stored folder and
+     * a size's or the original's file name. A bare file name with no folder
+     * matches nothing.
+     *
+     * @param array<string, mixed> $meta the attachment metadata as stored
+     */
+    public static function namesFile(string $location, array $meta): bool
+    {
+        $file = is_string($meta['file'] ?? null) ? $meta['file'] : '';
+        if ($file === '' || $location === '') {
+            return false;
+        }
+        $location = (string) preg_replace('/[?#].*$/', '', $location);
+        $folder = dirname($file) === '.' ? '' : dirname($file) . '/';
+        $names = [$file];
+        foreach ((array) ($meta['sizes'] ?? []) as $size) {
+            if (is_array($size) && is_string($size['file'] ?? null)) {
+                $names[] = $folder . $size['file'];
+            }
+        }
+        if (is_string($meta['original_image'] ?? null)) {
+            $names[] = $folder . $meta['original_image'];
+        }
+        foreach ($names as $name) {
+            if ($location === $name || str_ends_with($location, '/' . $name)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
      * The attachment metadata blob as an array, tolerant of anything missing.
      *
      * @return array{width: int, height: int, file: string, filesize: int, sizes: array<string, array>, image_meta: ?array}

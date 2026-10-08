@@ -1,0 +1,522 @@
+[
+    [
+        "media count at start",
+        [
+            0,
+            1,
+            3,
+            3
+        ]
+    ],
+    [
+        "sizes auto",
+        [
+            [
+                "auto",
+                true
+            ],
+            [
+                "auto, 100vw",
+                true
+            ],
+            [
+                "AUTO , 50vw",
+                true
+            ],
+            [
+                "100vw, auto",
+                false
+            ],
+            [
+                " auto",
+                true
+            ],
+            [
+                "autocomplete",
+                false
+            ],
+            [
+                "",
+                false
+            ],
+            [
+                "auto,",
+                true
+            ],
+            [
+                "(max-width: 600px) 100vw, auto",
+                false
+            ]
+        ]
+    ],
+    [
+        "expand dimensions",
+        [
+            [
+                [
+                    640,
+                    360,
+                    500,
+                    500
+                ],
+                [
+                    500,
+                    281
+                ]
+            ],
+            [
+                [
+                    640,
+                    360,
+                    1000,
+                    1000
+                ],
+                [
+                    1000,
+                    563
+                ]
+            ],
+            [
+                [
+                    100,
+                    100,
+                    50,
+                    200
+                ],
+                [
+                    50,
+                    50
+                ]
+            ],
+            [
+                [
+                    300,
+                    150,
+                    300,
+                    150
+                ],
+                [
+                    300,
+                    150
+                ]
+            ],
+            [
+                [
+                    200,
+                    400,
+                    100,
+                    100
+                ],
+                [
+                    50,
+                    100
+                ]
+            ],
+            [
+                [
+                    16,
+                    9,
+                    320,
+                    1000
+                ],
+                [
+                    320,
+                    180
+                ]
+            ]
+        ]
+    ],
+    [
+        "encode quality",
+        {
+            "image/jpeg": [
+                82,
+                82,
+                70
+            ],
+            "image/png": [
+                82,
+                82,
+                70
+            ],
+            "image/webp": [
+                86,
+                86,
+                70
+            ],
+            "image/avif": [
+                82,
+                82,
+                70
+            ],
+            "image/heic": [
+                82,
+                82,
+                70
+            ],
+            "text/plain": [
+                82,
+                82,
+                70
+            ]
+        }
+    ],
+    [
+        "encode quality filtered",
+        [
+            61,
+            82
+        ]
+    ],
+    [
+        "encode quality, jpeg_quality filtered",
+        [
+            72,
+            82,
+            40
+        ]
+    ],
+    [
+        "mediaelement fallback",
+        [
+            "<a href=\"https://minn.localhost/a.mp3\">https://minn.localhost/a.mp3</a>",
+            "<a href=\"https://minn.localhost/a%20b&#038;c.mp4\">https://minn.localhost/a%20b&#038;c.mp4</a>"
+        ]
+    ],
+    [
+        "avif info",
+        [
+            {
+                "width": false,
+                "height": false,
+                "bit_depth": false,
+                "num_channels": false
+            },
+            {
+                "width": false,
+                "height": false,
+                "bit_depth": false,
+                "num_channels": false
+            },
+            {
+                "width": 24,
+                "height": 16,
+                "bit_depth": 8,
+                "num_channels": 3
+            }
+        ]
+    ],
+    [
+        "chromium version",
+        [
+            [
+                "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36",
+                129
+            ],
+            [
+                "Mozilla/5.0 (X11; Linux x86_64; rv:131.0) Gecko/20100101 Firefox/131.0",
+                null
+            ],
+            [
+                "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.6099.71 Safari/537.36 Edg/120.0.2210.61",
+                120
+            ],
+            [
+                "Mozilla/5.0 (Macintosh) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15",
+                null
+            ],
+            [
+                "",
+                null
+            ],
+            [
+                "Chromium/88.1",
+                null
+            ],
+            [
+                "(none)",
+                null
+            ]
+        ]
+    ],
+    [
+        "client-side processing",
+        [
+            false,
+            true
+        ]
+    ],
+    [
+        "file matches meta",
+        [
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            true,
+            true,
+            true,
+            true,
+            true,
+            true
+        ]
+    ],
+    [
+        "file matches meta, filtered",
+        [
+            true,
+            true
+        ]
+    ],
+    [
+        "img loading optimization",
+        {
+            "the_content": [
+                "<img loading=\"lazy\" decoding=\"async\" src=\"a.jpg\" width=\"100\" height=\"100\">",
+                "<img loading=\"lazy\" decoding=\"async\" src=\"big.jpg\" width=\"1200\" height=\"800\">",
+                "<img decoding=\"async\" src=\"a.jpg\">",
+                "<img decoding=\"async\" src=\"a.jpg\" width=\"100\" height=\"100\" loading=\"eager\">",
+                "<img decoding=\"async\" src=\"a.jpg\" width=\"100\" height=\"100\" loading=\"lazy\">",
+                "<img decoding=\"async\" src=\"big.jpg\" width=\"1200\" height=\"800\" fetchpriority=\"high\">",
+                "<img loading=\"lazy\" src=\"a.jpg\" width=\"100\" height=\"100\" decoding=\"sync\">",
+                "<img loading=\"lazy\" decoding=\"async\" width=\"100\" height=\"100\" src=\"a.jpg\" class=\"x\"/>"
+            ],
+            "wp_get_attachment_image": [
+                "<img loading=\"lazy\" decoding=\"async\" src=\"a.jpg\" width=\"100\" height=\"100\">",
+                "<img loading=\"lazy\" decoding=\"async\" src=\"big.jpg\" width=\"1200\" height=\"800\">",
+                "<img decoding=\"async\" src=\"a.jpg\">",
+                "<img decoding=\"async\" src=\"a.jpg\" width=\"100\" height=\"100\" loading=\"eager\">",
+                "<img decoding=\"async\" src=\"a.jpg\" width=\"100\" height=\"100\" loading=\"lazy\">",
+                "<img decoding=\"async\" src=\"big.jpg\" width=\"1200\" height=\"800\" fetchpriority=\"high\">",
+                "<img loading=\"lazy\" src=\"a.jpg\" width=\"100\" height=\"100\" decoding=\"sync\">",
+                "<img loading=\"lazy\" decoding=\"async\" width=\"100\" height=\"100\" src=\"a.jpg\" class=\"x\"/>"
+            ],
+            "widget_text_content": [
+                "<img loading=\"lazy\" decoding=\"async\" src=\"a.jpg\" width=\"100\" height=\"100\">",
+                "<img loading=\"lazy\" decoding=\"async\" src=\"big.jpg\" width=\"1200\" height=\"800\">",
+                "<img decoding=\"async\" src=\"a.jpg\">",
+                "<img decoding=\"async\" src=\"a.jpg\" width=\"100\" height=\"100\" loading=\"eager\">",
+                "<img decoding=\"async\" src=\"a.jpg\" width=\"100\" height=\"100\" loading=\"lazy\">",
+                "<img decoding=\"async\" src=\"big.jpg\" width=\"1200\" height=\"800\" fetchpriority=\"high\">",
+                "<img loading=\"lazy\" src=\"a.jpg\" width=\"100\" height=\"100\" decoding=\"sync\">",
+                "<img loading=\"lazy\" decoding=\"async\" width=\"100\" height=\"100\" src=\"a.jpg\" class=\"x\"/>"
+            ],
+            "template": [
+                "<img src=\"a.jpg\" width=\"100\" height=\"100\">",
+                "<img src=\"big.jpg\" width=\"1200\" height=\"800\">",
+                "<img src=\"a.jpg\">",
+                "<img src=\"a.jpg\" width=\"100\" height=\"100\" loading=\"eager\">",
+                "<img src=\"a.jpg\" width=\"100\" height=\"100\" loading=\"lazy\">",
+                "<img src=\"big.jpg\" width=\"1200\" height=\"800\" fetchpriority=\"high\">",
+                "<img src=\"a.jpg\" width=\"100\" height=\"100\" decoding=\"sync\">",
+                "<img width=\"100\" height=\"100\" src=\"a.jpg\" class=\"x\"/>"
+            ],
+            "zz_other": [
+                "<img loading=\"lazy\" decoding=\"async\" src=\"a.jpg\" width=\"100\" height=\"100\">",
+                "<img loading=\"lazy\" decoding=\"async\" src=\"big.jpg\" width=\"1200\" height=\"800\">",
+                "<img decoding=\"async\" src=\"a.jpg\">",
+                "<img decoding=\"async\" src=\"a.jpg\" width=\"100\" height=\"100\" loading=\"eager\">",
+                "<img decoding=\"async\" src=\"a.jpg\" width=\"100\" height=\"100\" loading=\"lazy\">",
+                "<img decoding=\"async\" src=\"big.jpg\" width=\"1200\" height=\"800\" fetchpriority=\"high\">",
+                "<img loading=\"lazy\" src=\"a.jpg\" width=\"100\" height=\"100\" decoding=\"sync\">",
+                "<img loading=\"lazy\" decoding=\"async\" width=\"100\" height=\"100\" src=\"a.jpg\" class=\"x\"/>"
+            ]
+        }
+    ],
+    [
+        "img loading optimization, loading filtered off",
+        [
+            "<img decoding=\"async\" src=\"a.jpg\" width=\"100\" height=\"100\">",
+            "<img decoding=\"async\" src=\"big.jpg\" width=\"1200\" height=\"800\">"
+        ]
+    ],
+    [
+        "media count after the tag helpers",
+        [
+            3
+        ]
+    ],
+    [
+        "img width and height",
+        [
+            "<img width=\"1200\" height=\"800\" src=\"https://minn.localhost/wp-content/uploads/2026/08/minn-battery.png\" class=\"wp-image-607\">",
+            "<img width=\"1200\" height=\"800\" src=\"https://minn.localhost/wp-content/uploads/2026/08/minn-battery.png\" width=\"10\" class=\"wp-image-607\">",
+            "<img src=\"https://minn.localhost/elsewhere.jpg\">",
+            "<img src=\"https://minn.localhost/wp-content/uploads/2026/08/minn-battery.png\">"
+        ]
+    ],
+    [
+        "img width and height, filtered off",
+        [
+            "<img src=\"https://minn.localhost/wp-content/uploads/2026/08/minn-battery.png\" class=\"wp-image-607\">"
+        ]
+    ],
+    [
+        "iframe loading",
+        {
+            "the_content": [
+                "<iframe loading=\"lazy\" src=\"https://x.example/\" width=\"560\" height=\"315\"></iframe>",
+                "<iframe src=\"https://x.example/\"></iframe>",
+                "<iframe loading=\"lazy\" loading=\"eager\" src=\"x\" width=\"1\" height=\"1\"></iframe>",
+                "<iframe loading=\"lazy\" src=\"x\" width=\"1\" height=\"1\" data-wp-loading=\"x\"></iframe>"
+            ],
+            "widget_text_content": [
+                "<iframe loading=\"lazy\" src=\"https://x.example/\" width=\"560\" height=\"315\"></iframe>",
+                "<iframe src=\"https://x.example/\"></iframe>",
+                "<iframe loading=\"lazy\" loading=\"eager\" src=\"x\" width=\"1\" height=\"1\"></iframe>",
+                "<iframe loading=\"lazy\" src=\"x\" width=\"1\" height=\"1\" data-wp-loading=\"x\"></iframe>"
+            ],
+            "zz_other": [
+                "<iframe loading=\"lazy\" src=\"https://x.example/\" width=\"560\" height=\"315\"></iframe>",
+                "<iframe src=\"https://x.example/\"></iframe>",
+                "<iframe loading=\"lazy\" loading=\"eager\" src=\"x\" width=\"1\" height=\"1\"></iframe>",
+                "<iframe loading=\"lazy\" src=\"x\" width=\"1\" height=\"1\" data-wp-loading=\"x\"></iframe>"
+            ]
+        }
+    ],
+    [
+        "iframe loading, filtered off",
+        [
+            "<iframe src=\"https://x.example/\" width=\"560\" height=\"315\"></iframe>"
+        ]
+    ],
+    [
+        "fetchpriority high",
+        [
+            [
+                [],
+                "img",
+                {
+                    "width": 1200,
+                    "height": 800
+                },
+                {
+                    "fetchpriority": "high"
+                },
+                false
+            ],
+            [
+                {
+                    "loading": "lazy"
+                },
+                "img",
+                {
+                    "width": 1200,
+                    "height": 800
+                },
+                {
+                    "loading": "lazy"
+                },
+                false
+            ],
+            [
+                [],
+                "img",
+                {
+                    "width": 10,
+                    "height": 10
+                },
+                [],
+                false
+            ],
+            [
+                [],
+                "iframe",
+                {
+                    "width": 1200,
+                    "height": 800
+                },
+                [],
+                false
+            ],
+            [
+                [],
+                "img",
+                {
+                    "width": 1200,
+                    "height": 800,
+                    "fetchpriority": "low"
+                },
+                [],
+                false
+            ],
+            [
+                [],
+                "img",
+                {
+                    "width": 1200,
+                    "height": 800
+                },
+                [],
+                false
+            ]
+        ]
+    ],
+    [
+        "thumbnail class filter",
+        [
+            {
+                "class": "a wp-post-image"
+            },
+            {
+                "class": " wp-post-image"
+            },
+            {
+                "alt": "x",
+                "class": " wp-post-image"
+            },
+            "the_post_thumbnail"
+        ]
+    ],
+    [
+        "thumbnail filters added and removed",
+        [
+            [
+                false,
+                false
+            ],
+            [
+                10,
+                10
+            ],
+            [
+                false,
+                false
+            ]
+        ]
+    ],
+    [
+        "post thumbnail",
+        [
+            "<img width=\"1200\" height=\"800\" src=\"https://minn.localhost/wp-content/uploads/2026/08/minn-battery.png\" class=\"attachment-post-thumbnail size-post-thumbnail wp-post-image\" alt=\"\" decoding=\"async\" loading=\"lazy\" srcset=\"https://minn.localhost/wp-content/uploads/2026/08/minn-battery.png 1200w, https://minn.localhost/wp-content/uploads/2026/08/minn-battery-300x200.png 300w, https://minn.localhost/wp-content/uploads/2026/08/minn-battery-1024x683.png 1024w, https://minn.localhost/wp-content/uploads/2026/08/minn-battery-768x512.png 768w\" sizes=\"auto, (max-width: 1200px) 100vw, 1200px\" />",
+            "<img width=\"150\" height=\"150\" src=\"https://minn.localhost/wp-content/uploads/2026/08/minn-battery-150x150.png\" class=\"custom wp-post-image\" alt=\"\" decoding=\"async\" loading=\"lazy\" />",
+            [
+                "the_post_thumbnail",
+                "the_post_thumbnail"
+            ],
+            [
+                false,
+                false
+            ]
+        ]
+    ],
+    [
+        "adjacent image links",
+        [
+            "<a href='https://minn.localhost/zz-media-tags-parent/zz-media-tags-c/'>Next</a>",
+            "<a href='https://minn.localhost/zz-media-tags-parent/zz-media-tags-a/'>Prev</a>",
+            "<a href='https://minn.localhost/zz-media-tags-parent/zz-media-tags-c/'>zz-media-tags-c</a>",
+            "<a href='https://minn.localhost/zz-media-tags-parent/zz-media-tags-a/'>zz-media-tags-a</a>"
+        ]
+    ],
+    [
+        "adjacent image links at the end",
+        [
+            "",
+            "<a href='https://minn.localhost/zz-media-tags-parent/zz-media-tags-b/'>Prev</a>"
+        ]
+    ]
+]

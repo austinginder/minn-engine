@@ -6139,3 +6139,74 @@ Left in `rest-api.php`: `rest_handle_deprecated_function`,
 their headers with `header()` during a REST request, which a WP-CLI probe
 cannot see; they need an HTTP probe against the twin (a route that calls a
 deprecated function with debugging on).
+
+## media.php's tag helpers (2026-10-08)
+
+Batch 6: twenty-one functions of `media.php`, in `wp-api/media.php` over
+`Media\Metadata`, the new `Media\AvifInfo` and `Blocks\RenderState`. The probe
+is `tests/tools/media-tags-probe.php` (fixture `media-tags`, 25 rows); it uses
+the block battery's image (607) and sweeps the posts it makes by name.
+
+- **`wp_img_tag_add_loading_optimization_attrs`.** Reads the tag's width,
+  height, loading, decoding and fetchpriority, asks
+  `wp_get_loading_optimization_attributes`, then adds what the tag lacks, each
+  straight after `<img`, so the last added reads first: decoding through
+  `wp_img_tag_add_decoding_attr`, then loading through
+  `wp_img_tag_add_loading_attr` (only when the tag has a width and a height),
+  then `fetchpriority="high"`. The decoding filter is handed the tag as it was,
+  the loading filter the tag with decoding added. Nothing is added in the
+  `template` context.
+- **`wp_img_tag_add_width_and_height_attr`** adds both when the tag lacks
+  either, from `wp_image_src_get_dimensions` for the size its source names,
+  after `wp_img_tag_add_width_and_height_attr` allows it.
+- **`wp_iframe_tag_add_loading_attr`** gives an iframe with a width and a height
+  its loading through `wp_iframe_tag_add_loading_attr`, even when it already
+  has one (the reference writes `loading="lazy" loading="eager"`). The content
+  filter checks for a loading attribute first; the helper does not.
+- **`wp_maybe_add_fetchpriority_high_attr`**: only for an `img`; a priority the
+  image names stands (`high` closes the flag), a lazy image never gets it, and
+  otherwise the first image large enough (`wp_min_priority_img_pixels`, 50000)
+  claims it.
+- **`wp_increase_content_media_count`** adds to `RenderState`'s image count, the
+  same count the loading rules read, so a plugin moving it moves the eager
+  budget.
+- **Post thumbnails.** `begin_fetch_post_thumbnail_html` and
+  `end_fetch_post_thumbnail_html` add and remove
+  `_wp_post_thumbnail_class_filter` (appends ` wp-post-image`, even to a missing
+  class) and `_wp_post_thumbnail_context_filter` (the context becomes
+  `the_post_thumbnail`). `wp_get_attachment_image` now asks
+  `wp_get_attachment_image_context` (one argument) and hands the answer to the
+  loading rules. Before this, the classic path never gave a thumbnail
+  `wp-post-image`.
+- **Small helpers.**
+  - `wp_sizes_attribute_includes_valid_auto` replaces the engine's private
+    `_minn_sizes_say_auto`: `auto`, alone or before a comma, any case.
+  - `wp_expand_dimensions` fits the example's proportions to the box, growing
+    as well as shrinking.
+  - `wp_get_image_encode_quality`: 86 for WebP, 82 otherwise or the default
+    given, then `wp_editor_set_quality` (type, size), then `jpeg_quality`
+    (`image_resize`) for a JPEG. `WP_Image_Editor::set_quality` now asks it.
+  - `wp_mediaelement_fallback`: the escaped address as its own text, then
+    `wp_mediaelement_fallback`.
+  - `wp_get_avif_info`: the primary item's `ispe` and `pixi` properties, tied
+    to it by `ipma`; false in every field for anything not AVIF.
+  - `wp_get_chromium_major_version`: the number after `Chrome/`, null for any
+    other browser or none.
+  - `wp_is_client_side_media_processing_enabled`: false unless
+    `wp_client_side_media_processing_enabled` says otherwise.
+  - `wp_image_file_matches_image_meta`: the location, query dropped, ends with
+    the stored path, or the stored folder plus a size's or the original's
+    name; then `wp_image_file_matches_image_meta`.
+  - `get_next_image_link` and `get_previous_image_link` return what
+    `get_adjacent_image_link` returns.
+- **Dead ends.** `wp_set_client_side_media_processing_flag` (hooked only on
+  `admin_init`) and `wp_show_heic_upload_error` (the plupload settings) are
+  admin; `wp_set_up_cross_origin_isolation` (the editor screens' `load-*`
+  actions), `wp_start_cross_origin_isolation_output_buffer` and
+  `wpview_media_sandbox_styles` are editor. They are in `deadends.php`'s
+  `NAMED` list.
+
+Left in `media.php`: `wp_add_crossorigin_attributes`,
+`wp_maybe_generate_attachment_metadata`, and the personal-data exporter pair
+(`wp_media_personal_data_exporter`, `wp_register_media_personal_data_exporter`),
+which go with the comment and user exporters in a privacy batch.

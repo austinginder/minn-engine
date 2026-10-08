@@ -64,10 +64,7 @@ abstract class WP_Image_Editor
     {
         $mime_type = $this->output_mime_type ?: $this->mime_type;
         if ($quality === null) {
-            $quality = apply_filters('wp_editor_set_quality', $this->get_default_quality($mime_type), $mime_type, $dims ?: $this->size);
-            if ($mime_type === 'image/jpeg') {
-                $quality = apply_filters('jpeg_quality', $quality, 'image_resize');
-            }
+            $quality = wp_get_image_encode_quality($mime_type, $dims ?: $this->size, $this->get_default_quality($mime_type));
             if ($quality < 0 || $quality > 100) {
                 $quality = $this->default_quality;
             }
