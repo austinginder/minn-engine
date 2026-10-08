@@ -620,10 +620,10 @@ render_block_data, render_block, render_block_{name}), applied around the
 engine's own renderer so a plugin sees every block the page renders, not
 only the ones it registered.
 
-- const `NATIVE_DATA_DONE` = `array (   'wp_render_elements_support_styles' => 10,   'wp_render_block_style_variation_support_styles' => 10, )` — The block-support data filters the engine's renderer does itself for a block it renders natively: element styles, style variations.
-- const `NATIVE_RENDER_DONE` = `array (   'wp_render_elements_class_name' => 10,   'wp_render_block_style_variation_class_name' => 10,   'wp_render_layout_support_flag' =>    array (     0 => 10,     1 => '_minn_render_child_layout_support',   ), )` — The block-support render filters it does itself: the element and style
-variation classes and the layout's container classes, a child's own
-layout left to a stand-in.
+- const `NATIVE_DATA_DONE` = `array (   'wp_render_elements_support_styles' => 10,   'wp_render_block_style_variation_support_styles' => 10,   'block_core_gallery_data_id_backcompatibility' => 10, )` — The data filters the engine's renderer does itself for a block it renders natively: element styles, style variations, a gallery's image ids.
+- const `NATIVE_RENDER_DONE` = `array (   'wp_render_elements_class_name' => 10,   'wp_render_block_style_variation_class_name' => 10,   'wp_render_layout_support_flag' =>    array (     0 => 10,     1 => '_minn_render_child_layout_support',   ),   'block_core_paragraph_add_class' => 10, )` — The render filters it does itself: the element and style variation
+classes, the layout's container classes (a child's own layout left to a
+stand-in), the paragraph's class.
 
 Used by: `Minn\Blocks\Renderer`
 

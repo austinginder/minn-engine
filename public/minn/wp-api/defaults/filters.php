@@ -198,6 +198,15 @@ add_action('minn_block_style_variation_used', '_minn_block_style_variation_css',
 add_filter('get_block_type_variations', 'block_core_navigation_link_filter_variations', 10, 2);
 add_filter('render_block_data', 'block_core_navigation_typographic_presets_backcompatibility');
 add_filter('render_block', 'block_core_navigation_add_support_classes_to_container', 11, 2);
+// The content blocks (probe content-blocks): the gallery's image ids and context, older latest-posts categories, the query as parsed,
+// low priority inside details, the paragraph's class. The comment form's block button is the engine's own (comment_form), so
+// comments_block_form_defaults is left unhooked; the legacy post comments block comes from the block data, not init.
+add_filter('render_block_data', 'block_core_gallery_data_id_backcompatibility');
+add_filter('render_block_data', 'block_core_latest_posts_migrate_categories');
+add_filter('render_block_data', 'block_core_query_disable_enhanced_pagination', 10, 1);
+add_filter('render_block_context', 'block_core_gallery_render_context', 10, 2);
+add_filter('render_block_core/details', 'block_core_details_set_img_fetchpriority_low', 10, 2);
+add_filter('render_block_core/paragraph', 'block_core_paragraph_add_class');
 // The core blocks the facade renders join the engine's renderer as it is built; widget groups learn the sidebar they sit in.
 add_action('minn_block_renderers', '_minn_register_block_renderers');
 add_action('dynamic_sidebar_before', 'note_sidebar_being_rendered');

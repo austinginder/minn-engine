@@ -6002,3 +6002,74 @@ plugins that call the helpers.
 | | missing | verified |
 |---|---|---|
 | functions | 555 → 518 | 1,640 → 1,677 |
+
+## The content blocks' helpers (2026-10-08)
+
+Batch 4b: the helpers of the search, social link, gallery, image, details,
+paragraph, avatar, featured image, latest posts and comments, post excerpt,
+post terms, query, archives and comments blocks, in
+`wp-api/core-blocks-content.php`. The probe is
+`tests/tools/content-blocks-probe.php` (fixture `content-blocks`, 37
+sections). The engine's own renderer still renders these blocks; the helpers
+answer plugins that call them.
+
+- **Search.** The block's classes, colour, border and typography classes, and
+  the four inline styles.
+  - With the button inside, the width and border go on the wrapper, and the
+    radius grows by its padding (`calc(R + 4px)`).
+  - Otherwise the border goes on the input and the button. The radius is
+    whole or per corner.
+- **Image lightbox.**
+  - `block_core_image_render_lightbox` gives the figure its context and key
+    and the image its directives, puts the trigger button after the image,
+    records the image's metadata in the `core/image` state, and hooks the
+    overlay into `wp_footer`.
+  - The trigger and overlay markup are captured reference output in
+    `data/lightbox-trigger.html` and `data/lightbox-overlay.html`. The
+    overlay takes the theme's text and background colours.
+- **Hooks.** These are registered as on the reference:
+  - the gallery's image ids and context;
+  - older latest-posts categories;
+  - the query's data pass;
+  - low fetch priority inside details;
+  - the paragraph's class.
+
+  The engine already does the paragraph class and the gallery's `data-id`
+  for blocks it renders natively. So `BlockFilters::NATIVE_RENDER_DONE` and
+  `NATIVE_DATA_DONE` name those two filters, and a native render skips them.
+  The done lists now apply to the `render_block_{name}` filters too.
+- **Engine fixes the probe found.**
+  - `wp_get_global_settings` reads a `block_name` context under
+    `blocks.{name}`.
+  - `wp_enqueue_block_style` waits on one `render_block` filter per call,
+    matched by block name, as on the reference. It used to use
+    `render_block_{name}`.
+  - A lazy attachment image's `sizes` starts with `auto`, before the
+    `wp_get_attachment_image_attributes` filter. `wp_img_tag_add_auto_sizes`
+    adds it to the first lazy `img` with a width and a sizes list.
+  - `wp_enqueue_img_auto_sizes_contain_css_fix` replaces the engine's private
+    copy. It hooks `wp_head` at 0 and runs once a request; the first call
+    decides.
+  - A caller's own `loading`, anything but `lazy`, is no longer made lazy.
+- **Kept on purpose.**
+  - `block_core_gallery_resolve_dynamic_source` and
+    `block_core_query_disable_enhanced_pagination` changed nothing in any case
+    tried on the reference. The engine's return `[]` and the block as given.
+  - `register_legacy_post_comments_block` drops any registration and
+    registers the old block afresh, without supports attributes, as the
+    reference does. Nothing calls it at `init`, because the engine's block
+    data already registers the block.
+  - `comments_block_form_defaults` is defined but not hooked, because the
+    engine's `comment_form` styles a block theme's button itself.
+- **Owed.**
+  - The engine's renderer has no lightbox, and no archives dropdown, of its
+    own.
+  - The native latest posts block ignores `categories`.
+  - The native search renderer repeats part of the search helpers; that is a
+    consolidation item.
+  - On the reference, `WP_Block::render` drops the styles a block enqueued
+    while rendering when its output is empty. The engine keeps them.
+
+| | missing | verified |
+|---|---|---|
+| functions | 518 → 480 | 1,677 → 1,715 |

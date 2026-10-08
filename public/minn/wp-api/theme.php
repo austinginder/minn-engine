@@ -298,6 +298,10 @@ function wp_get_global_settings($path = [], $context = [])
 {
     $origin = is_array($context) && ($context['origin'] ?? '') === 'base' ? 'theme' : 'custom';
     $settings = WP_Theme_JSON_Resolver::get_merged_data($origin)->get_settings();
+    if (is_array($context) && !empty($context['block_name'])) {
+        // A block's settings sit under blocks.{name}; a path not given as a list reads them whole.
+        $path = array_merge(['blocks', $context['block_name']], is_array($path) ? $path : []);
+    }
     foreach ((array) $path as $key) {
         if (!is_array($settings) || !array_key_exists($key, $settings)) {
             return WP_Theme_JSON_Resolver::get_merged_data($origin)->get_settings();

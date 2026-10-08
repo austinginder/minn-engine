@@ -589,7 +589,7 @@ function _minn_classic_head_defaults()
     add_action('wp_head', 'wp_shortlink_wp_head', 10, 0);
     add_action('wp_head', 'wp_oembed_add_discovery_links', 10, 0);
     add_action('wp_head', 'wp_site_icon', 99, 0);
-    add_action('wp_enqueue_scripts', '_minn_enqueue_auto_sizes_style', 0);
+    add_action('wp_head', 'wp_enqueue_img_auto_sizes_contain_css_fix', 0);
     add_action('wp_head', '_minn_classic_bar_head', 200, 0);
     add_action('wp_footer', '_minn_classic_bar_footer', 200, 0);
 }
@@ -637,9 +637,17 @@ function wp_print_speculation_rules()
     wp_print_inline_script_tag((string) json_encode($rules, JSON_HEX_TAG | JSON_UNESCAPED_SLASHES), ['type' => 'speculationrules']);
 }
 
-/** @internal the reference's auto-sizes containment style, first in the queue */
-function _minn_enqueue_auto_sizes_style()
+/** The style that sizes auto-sized images before they load, first in the queue, once a request (the first call decides), unless wp_img_tag_add_auto_sizes turns them off. */
+function wp_enqueue_img_auto_sizes_contain_css_fix()
 {
+    static $done = false;
+    if ($done) {
+        return;
+    }
+    $done = true;
+    if (!apply_filters('wp_img_tag_add_auto_sizes', true)) {
+        return;
+    }
     wp_register_style('wp-img-auto-sizes-contain', false, [], false);
     wp_add_inline_style('wp-img-auto-sizes-contain', 'img:is([sizes=auto i],[sizes^="auto," i]){contain-intrinsic-size:3000px 1500px}');
     wp_enqueue_style('wp-img-auto-sizes-contain');

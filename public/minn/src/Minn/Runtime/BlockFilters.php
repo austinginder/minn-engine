@@ -55,15 +55,15 @@ final class BlockFilters
     /** @var array<int, array<string, mixed>> the parsed array render_block_data produced, by block object id */
     private static array $parsedFor = [];
 
-    /** The block-support data filters the engine's renderer does itself for a block it renders natively: element styles, style variations. */
-    public const NATIVE_DATA_DONE = ['wp_render_elements_support_styles' => 10, 'wp_render_block_style_variation_support_styles' => 10];
+    /** The data filters the engine's renderer does itself for a block it renders natively: element styles, style variations, a gallery's image ids. */
+    public const NATIVE_DATA_DONE = ['wp_render_elements_support_styles' => 10, 'wp_render_block_style_variation_support_styles' => 10, 'block_core_gallery_data_id_backcompatibility' => 10];
 
     /**
-     * The block-support render filters it does itself: the element and style
-     * variation classes and the layout's container classes, a child's own
-     * layout left to a stand-in.
+     * The render filters it does itself: the element and style variation
+     * classes, the layout's container classes (a child's own layout left to a
+     * stand-in), the paragraph's class.
      */
-    public const NATIVE_RENDER_DONE = ['wp_render_elements_class_name' => 10, 'wp_render_block_style_variation_class_name' => 10, 'wp_render_layout_support_flag' => [10, '_minn_render_child_layout_support']];
+    public const NATIVE_RENDER_DONE = ['wp_render_elements_class_name' => 10, 'wp_render_block_style_variation_class_name' => 10, 'wp_render_layout_support_flag' => [10, '_minn_render_child_layout_support'], 'block_core_paragraph_add_class' => 10];
 
     /**
      * A parsed block through render_block_data, without the callbacks done
@@ -90,7 +90,7 @@ final class BlockFilters
     public static function rendered(string $html, array $parsed, ?object $instance, array $done = []): string
     {
         $html = (string) Runtime::hooks()->filterWithout('render_block', [$html, $parsed, $instance], $done);
-        return (string) Runtime::hooks()->filter('render_block_' . ($parsed['blockName'] ?? ''), [$html, $parsed, $instance]);
+        return (string) Runtime::hooks()->filterWithout('render_block_' . ($parsed['blockName'] ?? ''), [$html, $parsed, $instance], $done);
     }
 
     /**

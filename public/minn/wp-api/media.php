@@ -323,20 +323,50 @@ function _minn_attachment_image_attributes(int $attachment_id, array $attr, stri
         }
     }
     $attr = array_merge($attr, $loading);
-    if (!empty($attr['srcset'])) {
-        return $attr;
+    $meta = empty($attr['srcset']) ? wp_get_attachment_metadata($attachment_id) : null;
+    if (is_array($meta)) {
+        $srcset = wp_calculate_image_srcset([$width, $height], $src, $meta, $attachment_id);
+        $sizes = wp_calculate_image_sizes([$width, $height], $src, $meta, $attachment_id);
+        if ($srcset && ($sizes || !empty($attr['sizes']))) {
+            $attr['srcset'] = $srcset;
+            $attr['sizes'] = empty($attr['sizes']) ? $sizes : $attr['sizes'];
+        }
     }
-    $meta = wp_get_attachment_metadata($attachment_id);
-    if (!is_array($meta)) {
-        return $attr;
-    }
-    $srcset = wp_calculate_image_srcset([$width, $height], $src, $meta, $attachment_id);
-    $sizes = wp_calculate_image_sizes([$width, $height], $src, $meta, $attachment_id);
-    if ($srcset && ($sizes || !empty($attr['sizes']))) {
-        $attr['srcset'] = $srcset;
-        $attr['sizes'] = empty($attr['sizes']) ? $sizes : $attr['sizes'];
+    if (($attr['loading'] ?? '') === 'lazy' && !empty($attr['sizes']) && is_string($attr['sizes']) && !_minn_sizes_say_auto($attr['sizes']) && apply_filters('wp_img_tag_add_auto_sizes', true)) {
+        $attr['sizes'] = 'auto, ' . $attr['sizes'];
     }
     return $attr;
+}
+
+/** @internal whether a sizes list already starts with auto */
+function _minn_sizes_say_auto(string $sizes): bool
+{
+    return preg_match('/^auto(\s*,|$)/i', trim($sizes)) === 1;
+}
+
+/**
+ * A lazy image with a width learns sizes="auto, ..." so the browser sizes
+ * it by layout (its first img only; a sizes list already led by auto, an
+ * eager image, one with no width or no sizes, and the filter turned off
+ * leave it alone).
+ */
+function wp_img_tag_add_auto_sizes($image)
+{
+    if (!apply_filters('wp_img_tag_add_auto_sizes', true)) {
+        return $image;
+    }
+    $tags = new WP_HTML_Tag_Processor((string) $image);
+    if (!$tags->next_tag('img')) {
+        return $image;
+    }
+    $loading = $tags->get_attribute('loading');
+    $width = $tags->get_attribute('width');
+    $sizes = $tags->get_attribute('sizes');
+    if (!is_string($loading) || strtolower(trim($loading)) !== 'lazy' || !is_string($width) || $width === '' || !is_string($sizes) || _minn_sizes_say_auto($sizes)) {
+        return $image;
+    }
+    $tags->set_attribute('sizes', 'auto, ' . $sizes);
+    return $tags->get_updated_html();
 }
 
 function image_hwstring($width, $height)
@@ -397,7 +427,8 @@ function wp_get_loading_optimization_attributes($tag_name, $attr, $context)
     if ($tag_name === 'img') {
         $optimization['decoding'] = 'async';
     }
-    $explicitLoading = array_key_exists('loading', $attr) && !$attr['loading'];
+    // A caller's own loading (off, eager, auto: anything but lazy) is never made lazy.
+    $explicitLoading = array_key_exists('loading', $attr) && $attr['loading'] !== 'lazy';
     $explicitPriority = array_key_exists('fetchpriority', $attr) && $attr['fetchpriority'] === 'high';
     if ($explicitPriority) {
         // A caller that asks for high priority keeps it, and no later image competes.

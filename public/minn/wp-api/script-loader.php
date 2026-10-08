@@ -422,9 +422,10 @@ function wp_common_block_scripts_and_styles()
 }
 
 /**
- * A block's own stylesheet (probe editor-styles): registered and enqueued
- * when the block renders where core blocks load their assets one by one,
- * otherwise on the page's asset hooks.
+ * A block's own stylesheet (probes editor-styles, content-blocks):
+ * registered and enqueued when a block of that name renders (one
+ * render_block filter per call) where core blocks load their assets one by
+ * one, otherwise on the page's asset hooks.
  */
 function wp_enqueue_block_style($block_name, $args)
 {
@@ -440,7 +441,7 @@ function wp_enqueue_block_style($block_name, $args)
         return $content;
     };
     if (wp_should_load_separate_core_block_assets()) {
-        add_filter("render_block_{$block_name}", static fn ($content) => $enqueue($content), 10, 1);
+        add_filter('render_block', static fn ($content, $block) => ($block['blockName'] ?? null) === $block_name ? $enqueue($content) : $content, 10, 2);
         return;
     }
     add_filter(did_action('wp_enqueue_scripts') ? 'wp_footer' : 'wp_enqueue_scripts', $enqueue);
