@@ -70,7 +70,7 @@ ROUNDTRIP_ROOT="${MINN_ROUNDTRIP_ROOT:-~/Cove/Sites/cove-minn.localhost}"
 [ -f "$ROUNDTRIP_ROOT/private/round-trip.json" ] && check_twin cove-minn
 
 failed=0
-for suite in unit http style hooks api runtime ajax hook-trace front-lifecycle rest-gate abilities rest-posts auth identity application-passwords caps writes login-endpoint login-hooks rest-parity allow embed minn-v1 comments media settings users terms write-fields editor templates navigation permalinks blocks theme classic styles probes dogfood cli layout hardening security install cron-mail cron reader extensions front-method recovery front-page menus declared-types global-styles reusable-blocks admin-surfaces updates site code-size l10n dropins feeds requests mail html-api comment-form feed-hooks sitemap-hooks embed-template attachment-pages canonical-hooks request-vars plugin-rules rewrite-endpoints rest-envelope round-trip woo; do
+for suite in unit http style hooks api runtime ajax hook-trace front-lifecycle rest-gate abilities rest-posts auth identity application-passwords caps writes login-endpoint login-hooks rest-parity allow embed minn-v1 comments media settings users terms write-fields editor templates navigation permalinks blocks theme classic styles probes dogfood cli layout hardening security install cron-mail cron reader extensions front-method recovery front-page menus declared-types global-styles reusable-blocks admin-surfaces updates upgrades site code-size l10n dropins feeds requests mail html-api comment-form feed-hooks sitemap-hooks embed-template attachment-pages canonical-hooks request-vars plugin-rules rewrite-endpoints rest-envelope round-trip woo; do
 	printf '\n=== %s ===\n' "$suite"
 	php "$suite.test.php" || failed=1
 done
