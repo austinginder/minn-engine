@@ -122,6 +122,12 @@ check(wp("db query \"SELECT COUNT(*) FROM wp_options WHERE option_name LIKE '%zz
 
 // 2. Password reset, end to end through mail.
 wp("db query \"DELETE FROM wp_options WHERE option_name LIKE 'minn_login_throttle_%'\"");
+// A session from before the reset, opened first: a sign-in may renew an outdated
+// hash (the web PHP's bcrypt cost can be above the CLI's), and a renewed hash
+// clears any reset key, on the reference as on the engine.
+$cookieHash = md5($ENGINE);
+$old = page("$ENGINE/wp-login.php", 'log=editor&pwd=minn-editor-pass-1');
+$oldCookie = preg_match('/wordpress_logged_in_[0-9a-f]+=([^;]+)/', $old['headers']['set-cookie'] ?? '', $c) ? 'wordpress_logged_in_' . $cookieHash . '=' . $c[1] : '';
 $before = mailpit('messages?limit=1')['total'] ?? 0;
 $ask = page("$ENGINE/wp-login.php?action=lostpassword", 'user_login=editor@minn-engine.localhost');
 check($ask['status'] === '302' && str_contains($ask['headers']['location'] ?? '', 'checkemail=confirm'), 'lostpassword redirects to checkemail=confirm, as the reference', $ask['status'] . ' ' . ($ask['headers']['location'] ?? ''));
@@ -137,7 +143,6 @@ $stored = wp("db query \"SELECT user_activation_key FROM wp_users WHERE ID=2\" -
 check(preg_match('/^\d+:\$generic\$[A-Za-z0-9_-]{40}$/', $stored) === 1, 'user_activation_key holds time:hash in the reference\'s own hash, never the key itself', $stored);
 check(wp('eval \'echo check_password_reset_key("' . $key . '", "editor") instanceof WP_User ? "yes" : "no";\'') === 'yes', 'the reference accepts the key the engine sent: a link survives a switch back');
 $open = page($link);
-$cookieHash = md5($ENGINE);
 check($open['status'] === '302' && str_contains($open['headers']['location'] ?? '', 'action=rp') && !str_contains($open['headers']['location'] ?? '', 'key=') && str_contains($open['headers']['set-cookie'] ?? '', "wp-resetpass-$cookieHash=editor%3A$key") && str_contains($open['headers']['set-cookie'] ?? '', 'path=/wp-login.php'), 'the link moves the key into the wp-login.php cookie and redirects without it', json_encode($open['headers']));
 $cookie = "Cookie: wp-resetpass-$cookieHash=editor:$key";
 $form = page("$ENGINE/wp-login.php?action=rp", '', [$cookie]);
@@ -146,8 +151,6 @@ $bad = page("$ENGINE/wp-login.php?action=rp", '', ["Cookie: wp-resetpass-$cookie
 check($bad['status'] === '302' && str_contains($bad['headers']['location'] ?? '', 'error=invalidkey'), 'a wrong key bounces to lostpassword with error=invalidkey');
 $mismatch = page("$ENGINE/wp-login.php?action=resetpass", "pass1=New-Pass-1&pass2=Other-Pass-2&rp_key=$key", [$cookie]);
 check($mismatch['status'] === '200' && str_contains($mismatch['body'], 'do not match'), 'mismatched passwords are refused');
-$old = page("$ENGINE/wp-login.php", 'log=editor&pwd=minn-editor-pass-1');
-$oldCookie = preg_match('/wordpress_logged_in_[0-9a-f]+=([^;]+)/', $old['headers']['set-cookie'] ?? '', $c) ? 'wordpress_logged_in_' . $cookieHash . '=' . $c[1] : '';
 $saved = page("$ENGINE/wp-login.php?action=resetpass", "pass1=New-Pass-1&pass2=New-Pass-1&rp_key=$key", [$cookie]);
 check($saved['status'] === '200' && str_contains($saved['body'], 'Your password has been reset'), 'the new password is saved');
 check(wp("db query \"SELECT user_activation_key FROM wp_users WHERE ID=2\" --skip-column-names") === '', 'the key is spent');

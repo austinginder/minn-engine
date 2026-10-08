@@ -2,14 +2,14 @@
     "generated": "2026-10-08",
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line), placeholder (generated stub, behaviour still owed), deadend (generated stub for wp-admin, the editors, the Customizer or XML-RPC, inert by design); \"deadend\" on any entry names its dead-end area",
     "summary": {
-        "minn": 727,
-        "composes": 1513,
+        "minn": 732,
+        "composes": 1523,
         "leaf": 757,
-        "noop": 2418,
+        "noop": 2419,
         "placeholder": 281,
         "deadend": 1587,
-        "functions": 7206,
-        "minnMethods": 869,
+        "functions": 7222,
+        "minnMethods": 871,
         "leafLinesOver15": 13
     },
     "functions": {
@@ -28307,6 +28307,32 @@
                 "selected"
             ]
         },
+        "_minn_user_place_and_sessions_export": {
+            "file": "user.php",
+            "lines": 21,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Content\\PersonalData::item"
+            ],
+            "composes": [
+                "__",
+                "date_i18n",
+                "get_user_meta"
+            ]
+        },
+        "_minn_user_profile_export": {
+            "file": "user.php",
+            "lines": 24,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Content\\PersonalData::item"
+            ],
+            "composes": [
+                "__",
+                "_doing_it_wrong",
+                "apply_filters"
+            ]
+        },
         "_minn_user_row": {
             "file": "user.php",
             "lines": 8,
@@ -29729,6 +29755,29 @@
             "composes": [],
             "deadend": "admin"
         },
+        "_wp_privacy_send_erasure_fulfillment_notification": {
+            "file": "user.php",
+            "lines": 23,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "__",
+                "apply_filters",
+                "get_locale",
+                "get_option",
+                "get_post_meta",
+                "get_privacy_policy_url",
+                "home_url",
+                "restore_previous_locale",
+                "sanitize_url",
+                "switch_to_locale",
+                "switch_to_user_locale",
+                "update_post_meta",
+                "wp_get_user_request",
+                "wp_mail",
+                "wp_specialchars_decode"
+            ]
+        },
         "_wp_privacy_send_request_confirmation_notification": {
             "file": "user.php",
             "lines": 14,
@@ -29757,6 +29806,15 @@
             "minn": [],
             "composes": [],
             "deadend": "admin"
+        },
+        "_wp_privacy_statuses": {
+            "file": "post.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "_x"
+            ]
         },
         "_wp_put_post_revision": {
             "file": "post.php",
@@ -53291,6 +53349,34 @@
             "composes": [],
             "deadend": "admin"
         },
+        "wp_comments_personal_data_eraser": {
+            "file": "comment.php",
+            "lines": 22,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "__",
+                "apply_filters",
+                "clean_comment_cache",
+                "get_comments",
+                "wp_privacy_anonymize_data"
+            ]
+        },
+        "wp_comments_personal_data_exporter": {
+            "file": "comment.php",
+            "lines": 20,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Content\\PersonalData::item"
+            ],
+            "composes": [
+                "__",
+                "esc_html",
+                "esc_url",
+                "get_comment_link",
+                "get_comments"
+            ]
+        },
         "wp_common_block_scripts_and_styles": {
             "file": "script-loader.php",
             "lines": 1,
@@ -58607,6 +58693,20 @@
             "composes": [],
             "deadend": "admin"
         },
+        "wp_media_personal_data_exporter": {
+            "file": "media.php",
+            "lines": 8,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Content\\PersonalData::item"
+            ],
+            "composes": [
+                "__",
+                "get_posts",
+                "get_user_by",
+                "wp_get_attachment_url"
+            ]
+        },
         "wp_media_upload_handler": {
             "file": "deadends.php",
             "lines": 2,
@@ -59628,6 +59728,19 @@
             ],
             "composes": []
         },
+        "wp_privacy_delete_old_export_files": {
+            "file": "functions.php",
+            "lines": 4,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Content\\PersonalData::expiredExports"
+            ],
+            "composes": [
+                "apply_filters",
+                "wp_delete_file",
+                "wp_privacy_exports_dir"
+            ]
+        },
         "wp_privacy_exports_dir": {
             "file": "functions.php",
             "lines": 1,
@@ -59665,6 +59778,17 @@
             "minn": [],
             "composes": [],
             "deadend": "admin"
+        },
+        "wp_privacy_personal_data_cleanup_requests": {
+            "file": "functions.php",
+            "lines": 7,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "apply_filters",
+                "get_posts",
+                "wp_update_post"
+            ]
         },
         "wp_privacy_process_personal_data_erasure_page": {
             "file": "deadends.php",
@@ -59980,6 +60104,24 @@
                 "_minn_support_attributes"
             ]
         },
+        "wp_register_comment_personal_data_eraser": {
+            "file": "comment.php",
+            "lines": 2,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "__"
+            ]
+        },
+        "wp_register_comment_personal_data_exporter": {
+            "file": "comment.php",
+            "lines": 2,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "__"
+            ]
+        },
         "wp_register_custom_classname_support": {
             "file": "block-supports.php",
             "lines": 3,
@@ -60058,6 +60200,15 @@
             "composes": [
                 "_minn_support_attributes",
                 "block_has_support"
+            ]
+        },
+        "wp_register_media_personal_data_exporter": {
+            "file": "media.php",
+            "lines": 2,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "__"
             ]
         },
         "wp_register_options_connectors_menu_item": {
@@ -60203,6 +60354,15 @@
             "minn": [],
             "composes": [
                 "_minn_support_attributes"
+            ]
+        },
+        "wp_register_user_personal_data_exporter": {
+            "file": "user.php",
+            "lines": 2,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "__"
             ]
         },
         "wp_register_widget_control": {
@@ -61043,6 +61203,16 @@
                 "wp_slash"
             ]
         },
+        "wp_schedule_delete_old_privacy_export_files": {
+            "file": "functions.php",
+            "lines": 3,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "wp_next_scheduled",
+                "wp_schedule_event"
+            ]
+        },
         "wp_schedule_event": {
             "file": "cron.php",
             "lines": 18,
@@ -61057,6 +61227,16 @@
                 "_set_cron_array",
                 "apply_filters",
                 "wp_get_schedules"
+            ]
+        },
+        "wp_schedule_personal_data_cleanup_requests": {
+            "file": "functions.php",
+            "lines": 3,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "wp_next_scheduled",
+                "wp_schedule_event"
             ]
         },
         "wp_schedule_single_event": {
@@ -62837,6 +63017,17 @@
                 "apply_filters"
             ],
             "deadend": "editor"
+        },
+        "wp_user_personal_data_exporter": {
+            "file": "user.php",
+            "lines": 5,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "_minn_user_place_and_sessions_export",
+                "_minn_user_profile_export",
+                "get_user_by"
+            ]
         },
         "wp_user_request_action_description": {
             "file": "user.php",

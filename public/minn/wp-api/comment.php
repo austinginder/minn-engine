@@ -1590,3 +1590,81 @@ function update_comment_cache($comments, $update_meta_cache = true)
 function _prime_comment_caches($comment_ids, $update_meta_cache = true)
 {
 }
+
+/** Adds the comments exporter to the privacy tools' list (wp_privacy_personal_data_exporters). */
+function wp_register_comment_personal_data_exporter($exporters)
+{
+    $exporters['wordpress-comments'] = ['exporter_friendly_name' => __('WordPress Comments'), 'callback' => 'wp_comments_personal_data_exporter'];
+    return $exporters;
+}
+
+/** Adds the comments eraser to the privacy tools' list (wp_privacy_personal_data_erasers). */
+function wp_register_comment_personal_data_eraser($erasers)
+{
+    $erasers['wordpress-comments'] = ['eraser_friendly_name' => __('WordPress Comments'), 'callback' => 'wp_comments_personal_data_eraser'];
+    return $erasers;
+}
+
+/**
+ * A person's comments for a personal data export (probe privacy), 500 a
+ * page in id order, held ones included: each comment's author, address,
+ * link, IP, browser, local date, content and where it is, a field without a
+ * value left out. A page before the first holds nothing.
+ */
+function wp_comments_personal_data_exporter($email_address, $page = 1)
+{
+    $number = 500;
+    if ((int) $page < 1) {
+        return ['data' => [], 'done' => true];
+    }
+    $comments = get_comments(['author_email' => $email_address, 'number' => $number, 'paged' => (int) $page, 'orderby' => 'comment_ID', 'order' => 'ASC', 'update_comment_meta_cache' => false]);
+    $items = [];
+    foreach ($comments as $comment) {
+        $link = get_comment_link($comment);
+        $items[] = Minn\Content\PersonalData::item('comments', __('Comments'), __('User&#8217;s comment data.'), 'comment-' . $comment->comment_ID, [
+            __('Comment Author') => $comment->comment_author,
+            __('Comment Author Email') => $comment->comment_author_email,
+            __('Comment Author URL') => $comment->comment_author_url,
+            __('Comment Author IP') => $comment->comment_author_IP,
+            __('Comment Author User Agent') => $comment->comment_agent,
+            __('Comment Date') => $comment->comment_date,
+            __('Comment Content') => $comment->comment_content,
+            __('Comment URL') => '<a href="' . esc_url($link) . '" target="_blank">' . esc_html($link) . '</a>',
+        ]);
+    }
+    return ['data' => $items, 'done' => count($comments) < $number];
+}
+
+/**
+ * Anonymises a person's comments for a personal data erasure (probe
+ * privacy), 500 a page: the author becomes "Anonymous", the address, link
+ * and browser go, the IP loses its tail and the account link is cut; the
+ * content stays. A comment wp_anonymize_comment answers with anything but
+ * true is kept, and its message (or the default) reported. The rows are
+ * written directly, so edit_comment does not fire.
+ */
+function wp_comments_personal_data_eraser($email_address, $page = 1)
+{
+    global $wpdb;
+    $result = ['items_removed' => false, 'items_retained' => false, 'messages' => [], 'done' => true];
+    if (empty($email_address)) {
+        return $result;
+    }
+    $number = 500;
+    $comments = get_comments(['author_email' => $email_address, 'number' => $number, 'paged' => (int) $page, 'orderby' => 'comment_ID', 'order' => 'ASC', 'update_comment_meta_cache' => false]);
+    foreach ($comments as $comment) {
+        $anonymized = ['comment_agent' => '', 'comment_author' => __('Anonymous'), 'comment_author_email' => '', 'comment_author_IP' => wp_privacy_anonymize_data('ip', $comment->comment_author_IP), 'comment_author_url' => '', 'user_id' => 0];
+        $answer = apply_filters('wp_anonymize_comment', true, $comment, $anonymized);
+        if ($answer !== true) {
+            $result['items_retained'] = true;
+            $result['messages'][] = is_string($answer) && $answer !== '' ? $answer : sprintf(__('Comment %d contains personal data but could not be anonymized.'), $comment->comment_ID);
+            continue;
+        }
+        if ($wpdb->update($wpdb->comments, $anonymized, ['comment_ID' => $comment->comment_ID])) {
+            $result['items_removed'] = true;
+        }
+        clean_comment_cache($comment->comment_ID);
+    }
+    $result['done'] = count($comments) < $number;
+    return $result;
+}

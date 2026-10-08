@@ -2083,3 +2083,23 @@ function image_resize($file, $max_w, $max_h, $crop = false, $suffix = null, $des
     $saved = $editor->save($destination);
     return is_wp_error($saved) ? $saved : $destination;
 }
+
+/** Adds the media exporter to the privacy tools' list (wp_privacy_personal_data_exporters). */
+function wp_register_media_personal_data_exporter($exporters)
+{
+    $exporters['wordpress-media'] = ['exporter_friendly_name' => __('WordPress Media'), 'callback' => 'wp_media_personal_data_exporter'];
+    return $exporters;
+}
+
+/** The uploads of the account with an address, for a personal data export, 50 a page, each with its address (probe privacy). */
+function wp_media_personal_data_exporter($email_address, $page = 1)
+{
+    $user = get_user_by('email', $email_address);
+    if (!$user) {
+        return ['data' => [], 'done' => true];
+    }
+    $number = 50;
+    $uploads = get_posts(['author' => $user->ID, 'posts_per_page' => $number, 'paged' => (int) $page, 'post_type' => 'attachment', 'post_status' => 'any', 'orderby' => 'ID', 'order' => 'ASC']);
+    $items = array_map(static fn (WP_Post $upload): array => Minn\Content\PersonalData::item('media', __('Media'), __('User&#8217;s media data.'), 'post-' . $upload->ID, [__('URL') => wp_get_attachment_url($upload->ID)]), $uploads);
+    return ['data' => $items, 'done' => count($uploads) < $number];
+}

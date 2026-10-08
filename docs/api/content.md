@@ -21,6 +21,7 @@ the repositories and records: posts, users, terms, comments, and the render pipe
 | [`MoreTag`](#moretag) | final class | 20 | The `<!--more-->` marker that splits a post into the part a listing shows |
 | [`Page`](#page) | final readonly class | 49 | One page of a listing: the rows on it and how many rows the whole |
 | [`PasswordGate`](#passwordgate) | final class | 34 | A password-protected post on the front end: its body is the password |
+| [`PersonalData`](#personaldata) | final class | 36 | Personal data as the privacy tools hand it over (probe privacy): an |
 | [`Playlist`](#playlist) | final class | 25 | The [playlist] shortcode's markup as the reference prints it (probe |
 | [`PluginState`](#pluginstate) | final readonly class | 72 | Switching plugins on and off: a WordPress plugin file goes through the |
 | [`PostClasses`](#postclasses) | final class | 55 | The class list a post carries on its article element, in the reference's |
@@ -835,6 +836,30 @@ True while the post has a password the reader's cookie does not match.
 ### static `form(Minn\Content\PostRecord $post, string $siteUrl, string $permalink): string`
 
 The form, with the reference's stray closing p after the hidden field.
+
+
+## PersonalData
+
+`final class Minn\Content\PersonalData` · `public/minn/src/Minn/Content/PersonalData.php`
+
+Personal data as the privacy tools hand it over (probe privacy): an
+exported item is a labelled group of name and value rows in which a row
+without a value is left out, and an export file is old once it was last
+written before the cut-off (the folder's index.php and hidden files are
+never old).
+
+### static `item(string $groupId, string $groupLabel, string $groupDescription, string $itemId, array $rows): array`
+
+One exported item, its rows in the order given, a row whose value is empty left out.
+
+- `@param array<string, mixed> $rows name => value`
+- `@return array{group_id: string, group_label: string, group_description: string, item_id: string, data: list<array{name: string, value: mixed}>}`
+
+### static `expiredExports(string $dir, int $before): array`
+
+The export files in $dir last written before $before.
+
+- `@return list<string>`
 
 
 ## Playlist

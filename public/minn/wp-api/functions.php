@@ -1514,3 +1514,40 @@ function wp_maybe_load_widgets()
         add_action('_admin_menu', 'wp_widgets_add_menu');
     }
 }
+
+/** Schedules the hourly removal of old personal data exports, once (on init). */
+function wp_schedule_delete_old_privacy_export_files()
+{
+    if (!wp_next_scheduled('wp_privacy_delete_old_export_files')) {
+        wp_schedule_event(time(), 'hourly', 'wp_privacy_delete_old_export_files');
+    }
+}
+
+/** Removes the personal data export files written more than three days ago (wp_privacy_export_expiration); the folder's index.php stays. */
+function wp_privacy_delete_old_export_files()
+{
+    $before = time() - (int) apply_filters('wp_privacy_export_expiration', 3 * DAY_IN_SECONDS);
+    foreach (Minn\Content\PersonalData::expiredExports(wp_privacy_exports_dir(), $before) as $file) {
+        wp_delete_file($file);
+    }
+}
+
+/** Schedules the daily clean-up of unconfirmed personal data requests, once (on init). */
+function wp_schedule_personal_data_cleanup_requests()
+{
+    if (!wp_next_scheduled('wp_privacy_personal_data_cleanup_requests')) {
+        wp_schedule_event(time(), 'daily', 'wp_privacy_personal_data_cleanup_requests');
+    }
+}
+
+/** Marks a request still pending once its confirmation key has expired (a day; user_request_key_expiration) as failed. */
+function wp_privacy_personal_data_cleanup_requests()
+{
+    $before = time() - (int) apply_filters('user_request_key_expiration', DAY_IN_SECONDS);
+    $pending = get_posts(['post_type' => 'user_request', 'post_status' => 'request-pending', 'posts_per_page' => -1]);
+    foreach ($pending as $request) {
+        if (strtotime($request->post_modified_gmt . ' UTC') < $before) {
+            wp_update_post(['ID' => $request->ID, 'post_status' => 'request-failed']);
+        }
+    }
+}

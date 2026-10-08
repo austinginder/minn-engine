@@ -219,6 +219,17 @@ add_action('init', 'register_block_core_footnotes_post_meta', 20);
 add_action('init', '_minn_register_block_bindings_sources');
 add_action('user_request_action_confirmed', '_wp_privacy_account_request_confirmed', 10);
 add_action('user_request_action_confirmed', '_wp_privacy_send_request_confirmation_notification', 12);
+// Personal data: the core exporters and eraser listed, the two clean-up jobs scheduled at init and run by cron,
+// the requester told once an erasure is done (probe privacy).
+add_filter('wp_privacy_personal_data_exporters', 'wp_register_user_personal_data_exporter', 1);
+add_filter('wp_privacy_personal_data_exporters', 'wp_register_comment_personal_data_exporter');
+add_filter('wp_privacy_personal_data_exporters', 'wp_register_media_personal_data_exporter');
+add_filter('wp_privacy_personal_data_erasers', 'wp_register_comment_personal_data_eraser');
+add_action('init', 'wp_schedule_delete_old_privacy_export_files');
+add_action('init', 'wp_schedule_personal_data_cleanup_requests');
+add_action('wp_privacy_delete_old_export_files', 'wp_privacy_delete_old_export_files');
+add_action('wp_privacy_personal_data_cleanup_requests', 'wp_privacy_personal_data_cleanup_requests');
+add_action('wp_privacy_personal_data_erased', '_wp_privacy_send_erasure_fulfillment_notification');
 
 // The kses tables as the globals plugin code reads directly.
 if (Minn\Runtime\Runtime::booted()) {

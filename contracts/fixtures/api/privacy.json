@@ -1,0 +1,922 @@
+[
+    [
+        "registered",
+        [
+            {
+                "other": [
+                    "keep"
+                ],
+                "wordpress-comments": {
+                    "exporter_friendly_name": "WordPress Comments",
+                    "callback": "wp_comments_personal_data_exporter"
+                }
+            },
+            {
+                "other": [
+                    "keep"
+                ],
+                "wordpress-comments": {
+                    "eraser_friendly_name": "WordPress Comments",
+                    "callback": "wp_comments_personal_data_eraser"
+                }
+            },
+            {
+                "wordpress-media": {
+                    "exporter_friendly_name": "WordPress Media",
+                    "callback": "wp_media_personal_data_exporter"
+                }
+            },
+            {
+                "wordpress-user": {
+                    "exporter_friendly_name": "WordPress User",
+                    "callback": "wp_user_personal_data_exporter"
+                }
+            }
+        ]
+    ],
+    [
+        "statuses",
+        {
+            "request-pending": "Pending",
+            "request-confirmed": "Confirmed",
+            "request-failed": "Failed",
+            "request-completed": "Completed"
+        }
+    ],
+    [
+        "comments exported",
+        [
+            {
+                "data": [
+                    {
+                        "group_id": "comments",
+                        "group_label": "Comments",
+                        "group_description": "User&#8217;s comment data.",
+                        "item_id": "comment-{comment1}",
+                        "data": [
+                            {
+                                "name": "Comment Author",
+                                "value": "Zed Privacy"
+                            },
+                            {
+                                "name": "Comment Author Email",
+                                "value": "zz-privacy@example.test"
+                            },
+                            {
+                                "name": "Comment Author URL",
+                                "value": "https://zz-privacy.example/"
+                            },
+                            {
+                                "name": "Comment Author IP",
+                                "value": "203.0.113.7"
+                            },
+                            {
+                                "name": "Comment Author User Agent",
+                                "value": "ProbeAgent/1.0"
+                            },
+                            {
+                                "name": "Comment Date",
+                                "value": "2026-01-02 03:04:05"
+                            },
+                            {
+                                "name": "Comment Content",
+                                "value": "Signed in."
+                            },
+                            {
+                                "name": "Comment URL",
+                                "value": "<a href=\"{home}/zz-privacy-post/#comment-{comment1}\" target=\"_blank\">{home}/zz-privacy-post/#comment-{comment1}</a>"
+                            }
+                        ]
+                    },
+                    {
+                        "group_id": "comments",
+                        "group_label": "Comments",
+                        "group_description": "User&#8217;s comment data.",
+                        "item_id": "comment-{comment2}",
+                        "data": [
+                            {
+                                "name": "Comment Author",
+                                "value": "Zed"
+                            },
+                            {
+                                "name": "Comment Author Email",
+                                "value": "ZZ-Privacy@Example.test"
+                            },
+                            {
+                                "name": "Comment Author IP",
+                                "value": "2001:db8::1234"
+                            },
+                            {
+                                "name": "Comment Date",
+                                "value": "2026-01-02 03:04:05"
+                            },
+                            {
+                                "name": "Comment Content",
+                                "value": "As a guest."
+                            },
+                            {
+                                "name": "Comment URL",
+                                "value": "<a href=\"{home}/zz-privacy-post/#comment-{comment2}\" target=\"_blank\">{home}/zz-privacy-post/#comment-{comment2}</a>"
+                            }
+                        ]
+                    },
+                    {
+                        "group_id": "comments",
+                        "group_label": "Comments",
+                        "group_description": "User&#8217;s comment data.",
+                        "item_id": "comment-{comment3}",
+                        "data": [
+                            {
+                                "name": "Comment Author",
+                                "value": "Zed again"
+                            },
+                            {
+                                "name": "Comment Author Email",
+                                "value": "zz-privacy@example.test"
+                            },
+                            {
+                                "name": "Comment Author URL",
+                                "value": "https://zz-privacy.example/b"
+                            },
+                            {
+                                "name": "Comment Author IP",
+                                "value": "203.0.113.8"
+                            },
+                            {
+                                "name": "Comment Author User Agent",
+                                "value": "Other/2"
+                            },
+                            {
+                                "name": "Comment Date",
+                                "value": "2026-01-02 03:04:05"
+                            },
+                            {
+                                "name": "Comment Content",
+                                "value": "Keep me."
+                            },
+                            {
+                                "name": "Comment URL",
+                                "value": "<a href=\"{home}/zz-privacy-post/#comment-{comment3}\" target=\"_blank\">{home}/zz-privacy-post/#comment-{comment3}</a>"
+                            }
+                        ]
+                    },
+                    {
+                        "group_id": "comments",
+                        "group_label": "Comments",
+                        "group_description": "User&#8217;s comment data.",
+                        "item_id": "comment-{comment4}",
+                        "data": [
+                            {
+                                "name": "Comment Author",
+                                "value": "Zed held"
+                            },
+                            {
+                                "name": "Comment Author Email",
+                                "value": "zz-privacy@example.test"
+                            },
+                            {
+                                "name": "Comment Author IP",
+                                "value": "203.0.113.11"
+                            },
+                            {
+                                "name": "Comment Date",
+                                "value": "2026-01-02 03:04:05"
+                            },
+                            {
+                                "name": "Comment Content",
+                                "value": "Held for moderation."
+                            },
+                            {
+                                "name": "Comment URL",
+                                "value": "<a href=\"{home}/zz-privacy-post/#comment-{comment4}\" target=\"_blank\">{home}/zz-privacy-post/#comment-{comment4}</a>"
+                            }
+                        ]
+                    }
+                ],
+                "done": true
+            },
+            {
+                "data": [],
+                "done": true
+            },
+            {
+                "data": [
+                    {
+                        "group_id": "comments",
+                        "group_label": "Comments",
+                        "group_description": "User&#8217;s comment data.",
+                        "item_id": "comment-{comment1}",
+                        "data": [
+                            {
+                                "name": "Comment Author",
+                                "value": "Zed Privacy"
+                            },
+                            {
+                                "name": "Comment Author Email",
+                                "value": "zz-privacy@example.test"
+                            },
+                            {
+                                "name": "Comment Author URL",
+                                "value": "https://zz-privacy.example/"
+                            },
+                            {
+                                "name": "Comment Author IP",
+                                "value": "203.0.113.7"
+                            },
+                            {
+                                "name": "Comment Author User Agent",
+                                "value": "ProbeAgent/1.0"
+                            },
+                            {
+                                "name": "Comment Date",
+                                "value": "2026-01-02 03:04:05"
+                            },
+                            {
+                                "name": "Comment Content",
+                                "value": "Signed in."
+                            },
+                            {
+                                "name": "Comment URL",
+                                "value": "<a href=\"{home}/zz-privacy-post/#comment-{comment1}\" target=\"_blank\">{home}/zz-privacy-post/#comment-{comment1}</a>"
+                            }
+                        ]
+                    },
+                    {
+                        "group_id": "comments",
+                        "group_label": "Comments",
+                        "group_description": "User&#8217;s comment data.",
+                        "item_id": "comment-{comment2}",
+                        "data": [
+                            {
+                                "name": "Comment Author",
+                                "value": "Zed"
+                            },
+                            {
+                                "name": "Comment Author Email",
+                                "value": "ZZ-Privacy@Example.test"
+                            },
+                            {
+                                "name": "Comment Author IP",
+                                "value": "2001:db8::1234"
+                            },
+                            {
+                                "name": "Comment Date",
+                                "value": "2026-01-02 03:04:05"
+                            },
+                            {
+                                "name": "Comment Content",
+                                "value": "As a guest."
+                            },
+                            {
+                                "name": "Comment URL",
+                                "value": "<a href=\"{home}/zz-privacy-post/#comment-{comment2}\" target=\"_blank\">{home}/zz-privacy-post/#comment-{comment2}</a>"
+                            }
+                        ]
+                    },
+                    {
+                        "group_id": "comments",
+                        "group_label": "Comments",
+                        "group_description": "User&#8217;s comment data.",
+                        "item_id": "comment-{comment3}",
+                        "data": [
+                            {
+                                "name": "Comment Author",
+                                "value": "Zed again"
+                            },
+                            {
+                                "name": "Comment Author Email",
+                                "value": "zz-privacy@example.test"
+                            },
+                            {
+                                "name": "Comment Author URL",
+                                "value": "https://zz-privacy.example/b"
+                            },
+                            {
+                                "name": "Comment Author IP",
+                                "value": "203.0.113.8"
+                            },
+                            {
+                                "name": "Comment Author User Agent",
+                                "value": "Other/2"
+                            },
+                            {
+                                "name": "Comment Date",
+                                "value": "2026-01-02 03:04:05"
+                            },
+                            {
+                                "name": "Comment Content",
+                                "value": "Keep me."
+                            },
+                            {
+                                "name": "Comment URL",
+                                "value": "<a href=\"{home}/zz-privacy-post/#comment-{comment3}\" target=\"_blank\">{home}/zz-privacy-post/#comment-{comment3}</a>"
+                            }
+                        ]
+                    },
+                    {
+                        "group_id": "comments",
+                        "group_label": "Comments",
+                        "group_description": "User&#8217;s comment data.",
+                        "item_id": "comment-{comment4}",
+                        "data": [
+                            {
+                                "name": "Comment Author",
+                                "value": "Zed held"
+                            },
+                            {
+                                "name": "Comment Author Email",
+                                "value": "zz-privacy@example.test"
+                            },
+                            {
+                                "name": "Comment Author IP",
+                                "value": "203.0.113.11"
+                            },
+                            {
+                                "name": "Comment Date",
+                                "value": "2026-01-02 03:04:05"
+                            },
+                            {
+                                "name": "Comment Content",
+                                "value": "Held for moderation."
+                            },
+                            {
+                                "name": "Comment URL",
+                                "value": "<a href=\"{home}/zz-privacy-post/#comment-{comment4}\" target=\"_blank\">{home}/zz-privacy-post/#comment-{comment4}</a>"
+                            }
+                        ]
+                    }
+                ],
+                "done": true
+            },
+            {
+                "data": [],
+                "done": true
+            },
+            {
+                "data": [],
+                "done": true
+            }
+        ]
+    ],
+    [
+        "media exported",
+        [
+            {
+                "data": [
+                    {
+                        "group_id": "media",
+                        "group_label": "Media",
+                        "group_description": "User&#8217;s media data.",
+                        "item_id": "post-{upload}",
+                        "data": [
+                            {
+                                "name": "URL",
+                                "value": "{home}/wp-content/uploads/2026/10/zz-privacy-photo.jpg"
+                            }
+                        ]
+                    }
+                ],
+                "done": true
+            },
+            {
+                "data": [],
+                "done": true
+            },
+            {
+                "data": [],
+                "done": true
+            }
+        ]
+    ],
+    [
+        "user exported",
+        [
+            {
+                "data": [
+                    {
+                        "group_id": "user",
+                        "group_label": "User",
+                        "group_description": "User&#8217;s profile data.",
+                        "item_id": "user-{user}",
+                        "data": [
+                            {
+                                "name": "User ID",
+                                "value": "{user}"
+                            },
+                            {
+                                "name": "User Login Name",
+                                "value": "zzprivacy"
+                            },
+                            {
+                                "name": "User Nice Name",
+                                "value": "zzprivacy"
+                            },
+                            {
+                                "name": "User Email",
+                                "value": "zz-privacy@example.test"
+                            },
+                            {
+                                "name": "User URL",
+                                "value": "https://zz-privacy.example/"
+                            },
+                            {
+                                "name": "User Registration Date",
+                                "value": "{date}"
+                            },
+                            {
+                                "name": "User Display Name",
+                                "value": "Zed Privacy"
+                            },
+                            {
+                                "name": "User Nickname",
+                                "value": "zed"
+                            },
+                            {
+                                "name": "User First Name",
+                                "value": "Zed"
+                            },
+                            {
+                                "name": "User Last Name",
+                                "value": "Privacy"
+                            },
+                            {
+                                "name": "User Description",
+                                "value": "About Zed."
+                            }
+                        ]
+                    },
+                    {
+                        "group_id": "community-events-location",
+                        "group_label": "Community Events Location",
+                        "group_description": "User&#8217;s location data used for the Community Events in the WordPress Events and News dashboard widget.",
+                        "item_id": "community-events-location-{user}",
+                        "data": [
+                            {
+                                "name": "City",
+                                "value": "Zed Town"
+                            },
+                            {
+                                "name": "Country",
+                                "value": "US"
+                            },
+                            {
+                                "name": "Latitude",
+                                "value": "40.1"
+                            },
+                            {
+                                "name": "Longitude",
+                                "value": "-75.2"
+                            },
+                            {
+                                "name": "IP",
+                                "value": "203.0.113.0"
+                            }
+                        ]
+                    },
+                    {
+                        "group_id": "session-tokens",
+                        "group_label": "Session Tokens",
+                        "group_description": "User&#8217;s Session Tokens data.",
+                        "item_id": "session-tokens-{user}-zzhash",
+                        "data": [
+                            {
+                                "name": "Expiration",
+                                "value": "May 18, 2033 03:33 AM"
+                            },
+                            {
+                                "name": "IP",
+                                "value": "203.0.113.9"
+                            },
+                            {
+                                "name": "User Agent",
+                                "value": "ProbeAgent/1.0"
+                            },
+                            {
+                                "name": "Last Login",
+                                "value": "March 17, 2030 17:46 PM"
+                            }
+                        ]
+                    }
+                ],
+                "done": true
+            },
+            {
+                "data": [
+                    {
+                        "group_id": "user",
+                        "group_label": "User",
+                        "group_description": "User&#8217;s profile data.",
+                        "item_id": "user-{bare}",
+                        "data": [
+                            {
+                                "name": "User ID",
+                                "value": "{bare}"
+                            },
+                            {
+                                "name": "User Login Name",
+                                "value": "zzprivacybare"
+                            },
+                            {
+                                "name": "User Nice Name",
+                                "value": "zzprivacybare"
+                            },
+                            {
+                                "name": "User Email",
+                                "value": "zz-bare@example.test"
+                            },
+                            {
+                                "name": "User Registration Date",
+                                "value": "{date}"
+                            },
+                            {
+                                "name": "User Display Name",
+                                "value": "zzprivacybare"
+                            },
+                            {
+                                "name": "User Nickname",
+                                "value": "zzprivacybare"
+                            }
+                        ]
+                    }
+                ],
+                "done": true
+            },
+            {
+                "data": [],
+                "done": true
+            }
+        ]
+    ],
+    [
+        "user exported, with additional profile data",
+        [
+            {
+                "group_id": "user",
+                "group_label": "User",
+                "group_description": "User&#8217;s profile data.",
+                "item_id": "user-{user}",
+                "data": [
+                    {
+                        "name": "User ID",
+                        "value": "{user}"
+                    },
+                    {
+                        "name": "User Login Name",
+                        "value": "zzprivacy"
+                    },
+                    {
+                        "name": "User Nice Name",
+                        "value": "zzprivacy"
+                    },
+                    {
+                        "name": "User Email",
+                        "value": "zz-privacy@example.test"
+                    },
+                    {
+                        "name": "User URL",
+                        "value": "https://zz-privacy.example/"
+                    },
+                    {
+                        "name": "User Registration Date",
+                        "value": "{date}"
+                    },
+                    {
+                        "name": "User Display Name",
+                        "value": "Zed Privacy"
+                    },
+                    {
+                        "name": "User Nickname",
+                        "value": "zed"
+                    },
+                    {
+                        "name": "User First Name",
+                        "value": "Zed"
+                    },
+                    {
+                        "name": "User Last Name",
+                        "value": "Privacy"
+                    },
+                    {
+                        "name": "User Description",
+                        "value": "About Zed."
+                    },
+                    {
+                        "name": "Shoe size",
+                        "value": "42"
+                    },
+                    {
+                        "name": "ID",
+                        "value": "clash"
+                    },
+                    {
+                        "name": "No value"
+                    }
+                ]
+            },
+            [
+                [],
+                true,
+                [
+                    "User ID",
+                    "User Login Name",
+                    "User Nice Name",
+                    "User Email",
+                    "User URL",
+                    "User Registration Date",
+                    "User Display Name",
+                    "User Nickname",
+                    "User First Name",
+                    "User Last Name",
+                    "User Description"
+                ]
+            ],
+            [
+                "wp_user_personal_data_exporter"
+            ]
+        ]
+    ],
+    [
+        "session dates in the site timezone",
+        {
+            "group_id": "session-tokens",
+            "group_label": "Session Tokens",
+            "group_description": "User&#8217;s Session Tokens data.",
+            "item_id": "session-tokens-{user}-zzhash",
+            "data": [
+                {
+                    "name": "Expiration",
+                    "value": "May 18, 2033 03:33 AM"
+                },
+                {
+                    "name": "IP",
+                    "value": "203.0.113.9"
+                },
+                {
+                    "name": "User Agent",
+                    "value": "ProbeAgent/1.0"
+                },
+                {
+                    "name": "Last Login",
+                    "value": "March 17, 2030 17:46 PM"
+                }
+            ]
+        }
+    ],
+    [
+        "comments erased",
+        [
+            {
+                "items_removed": true,
+                "items_retained": true,
+                "messages": [
+                    "Comment {comment2} contains personal data but could not be anonymized.",
+                    "Kept for the records."
+                ],
+                "done": true
+            },
+            [],
+            [
+                "Anonymous",
+                "",
+                "",
+                "203.0.113.0",
+                "",
+                0,
+                "Signed in."
+            ],
+            [
+                "Zed",
+                "ZZ-Privacy@Example.test",
+                "",
+                "2001:db8::1234",
+                "",
+                0,
+                "As a guest."
+            ],
+            [
+                "Zed again",
+                "zz-privacy@example.test",
+                "https://zz-privacy.example/b",
+                "203.0.113.8",
+                "Other/2",
+                0,
+                "Keep me."
+            ],
+            [
+                "Anonymous",
+                "",
+                "",
+                "203.0.113.0",
+                "",
+                0,
+                "Held for moderation."
+            ],
+            [
+                "Somebody",
+                "zz-stranger@example.test",
+                "",
+                "203.0.113.50",
+                "",
+                0,
+                "Not Zed."
+            ]
+        ]
+    ],
+    [
+        "comments erased again",
+        [
+            {
+                "items_removed": true,
+                "items_retained": false,
+                "messages": [],
+                "done": true
+            },
+            {
+                "items_removed": false,
+                "items_retained": false,
+                "messages": [],
+                "done": true
+            },
+            {
+                "items_removed": false,
+                "items_retained": false,
+                "messages": [],
+                "done": true
+            }
+        ]
+    ],
+    [
+        "jobs scheduled",
+        [
+            [
+                [
+                    true,
+                    "hourly",
+                    []
+                ]
+            ],
+            [
+                [
+                    true,
+                    "daily",
+                    []
+                ]
+            ]
+        ]
+    ],
+    [
+        "stale requests failed",
+        [
+            "request-failed",
+            "request-pending",
+            "request-confirmed"
+        ]
+    ],
+    [
+        "a longer key life keeps the request",
+        "request-pending"
+    ],
+    [
+        "old export files removed",
+        [
+            [
+                "zz-old.zip",
+                false
+            ],
+            [
+                "zz-new.zip",
+                true
+            ],
+            [
+                "zz-old.html",
+                false
+            ],
+            [
+                "zz-old.txt",
+                false
+            ],
+            [
+                "zz-old.json",
+                false
+            ],
+            [
+                "zz-old",
+                false
+            ],
+            [
+                "index.php",
+                true
+            ]
+        ]
+    ],
+    [
+        "a longer export life keeps the file",
+        true
+    ],
+    [
+        "erasure fulfilled notice",
+        [
+            [
+                null,
+                [
+                    {
+                        "to": "zz-privacy@example.test",
+                        "subject": "[Minn] Erasure Request Fulfilled",
+                        "message": "Howdy,\n\nYour request to erase your personal data on Minn has been completed.\n\nIf you have any follow-up questions or concerns, please contact the site administrator.\n\nRegards,\nAll at Minn\n{home}",
+                        "headers": "",
+                        "attachments": [],
+                        "embeds": []
+                    }
+                ],
+                "1"
+            ],
+            [
+                null,
+                [],
+                ""
+            ],
+            [
+                null,
+                [
+                    {
+                        "to": "zz-exporter@example.test",
+                        "subject": "[Minn] Erasure Request Fulfilled",
+                        "message": "Howdy,\n\nYour request to erase your personal data on Minn has been completed.\n\nIf you have any follow-up questions or concerns, please contact the site administrator.\n\nRegards,\nAll at Minn\n{home}",
+                        "headers": "",
+                        "attachments": [],
+                        "embeds": []
+                    }
+                ],
+                "1"
+            ],
+            [
+                null,
+                [
+                    {
+                        "to": "zz-visitor@example.test",
+                        "subject": "[Minn] Erasure Request Fulfilled",
+                        "message": "Howdy,\n\nYour request to erase your personal data on Minn has been completed.\n\nIf you have any follow-up questions or concerns, please contact the site administrator.\n\nRegards,\nAll at Minn\n{home}",
+                        "headers": "",
+                        "attachments": [],
+                        "embeds": []
+                    }
+                ],
+                "1"
+            ],
+            [
+                null,
+                [],
+                null
+            ],
+            [
+                "again",
+                []
+            ],
+            [
+                "with a policy and filters",
+                [
+                    {
+                        "to": "zz-policy@example.test",
+                        "subject": "Subject from a filter",
+                        "message": "Howdy,\n\nYour request to erase your personal data on Minn has been completed.\n\nIf you have any follow-up questions or concerns, please contact the site administrator.\n\nFor more information, you can also read our privacy policy: {home}/zz-privacy-policy/\n\nRegards,\nAll at Minn\n{home}",
+                        "headers": "X-Probe: 1",
+                        "attachments": [],
+                        "embeds": []
+                    }
+                ],
+                [
+                    [
+                        "user_erasure_fulfillment_email_to",
+                        2,
+                        "zz-policy@example.test",
+                        null
+                    ],
+                    [
+                        "user_erasure_fulfillment_email_subject",
+                        3,
+                        "[Minn] Erasure Request Fulfilled",
+                        [
+                            "request",
+                            "message_recipient",
+                            "privacy_policy_url",
+                            "sitename",
+                            "siteurl"
+                        ]
+                    ],
+                    [
+                        "user_erasure_fulfillment_email_content",
+                        2,
+                        "Howdy,\n\nYour request to erase your personal data on ###SITENAME### has been completed.\n\nIf you have any follow-up questions or concerns, please contact the site administrator.\n\nFor more information, you can also read our privacy policy: ###PRIVACY_POLICY_URL###\n\nRegards,\nAll at ###SITENAME###\n###SITEURL###",
+                        null
+                    ],
+                    [
+                        "user_erasure_fulfillment_email_headers",
+                        5,
+                        "",
+                        null
+                    ]
+                ]
+            ]
+        ]
+    ]
+]

@@ -2654,3 +2654,9 @@ function get_meta_keys()
 {
     return _minn_meta()->keys('post');
 }
+
+/** The statuses a personal data request moves through, with their labels. */
+function _wp_privacy_statuses()
+{
+    return ['request-pending' => _x('Pending', 'request status'), 'request-confirmed' => _x('Confirmed', 'request status'), 'request-failed' => _x('Failed', 'request status'), 'request-completed' => _x('Completed', 'request status')];
+}

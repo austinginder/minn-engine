@@ -875,3 +875,117 @@ function wp_get_user_request_data($request_id)
     _deprecated_function(__FUNCTION__, '5.4.0', 'wp_get_user_request()');
     return wp_get_user_request($request_id);
 }
+
+/** Adds the account exporter to the privacy tools' list, first (wp_privacy_personal_data_exporters, priority 1). */
+function wp_register_user_personal_data_exporter($exporters)
+{
+    $exporters['wordpress-user'] = ['exporter_friendly_name' => __('WordPress User'), 'callback' => 'wp_user_personal_data_exporter'];
+    return $exporters;
+}
+
+/**
+ * The account with an address, for a personal data export (probe privacy):
+ * its profile, then its Community Events location and each of its
+ * sessions, when it has any.
+ */
+function wp_user_personal_data_exporter($email_address)
+{
+    $user = get_user_by('email', $email_address);
+    if (!$user) {
+        return ['data' => [], 'done' => true];
+    }
+    return ['data' => [_minn_user_profile_export($user), ..._minn_user_place_and_sessions_export($user)], 'done' => true];
+}
+
+/**
+ * @internal the profile fields of an account that have a value, then what
+ * wp_privacy_additional_user_profile_data adds; a pair reusing a profile
+ * field's name is dropped, with a notice.
+ */
+function _minn_user_profile_export(WP_User $user): array
+{
+    $profile = [
+        __('User ID') => $user->ID,
+        __('User Login Name') => $user->user_login,
+        __('User Nice Name') => $user->user_nicename,
+        __('User Email') => $user->user_email,
+        __('User URL') => $user->user_url,
+        __('User Registration Date') => $user->user_registered,
+        __('User Display Name') => $user->display_name,
+        __('User Nickname') => $user->nickname,
+        __('User First Name') => $user->first_name,
+        __('User Last Name') => $user->last_name,
+        __('User Description') => $user->description,
+    ];
+    $account = Minn\Content\PersonalData::item('user', __('User'), __('User&#8217;s profile data.'), 'user-' . $user->ID, $profile);
+    $reserved = array_keys($profile);
+    $extra = apply_filters('wp_privacy_additional_user_profile_data', [], $user, $reserved);
+    if (is_array($extra) && $extra !== []) {
+        $clashing = array_filter($extra, static fn ($pair): bool => is_array($pair) && in_array($pair['name'] ?? null, $reserved, true));
+        if ($clashing !== []) {
+            _doing_it_wrong('wp_user_personal_data_exporter', sprintf(__('Filter %s returned items with reserved names.'), '<code>wp_privacy_additional_user_profile_data</code>'), '5.4.0');
+        }
+        $account['data'] = array_merge($account['data'], array_values(array_diff_key($extra, $clashing)));
+    }
+    return $account;
+}
+
+/** @internal an account's Community Events location and its sessions as export items, the sessions dated in UTC. */
+function _minn_user_place_and_sessions_export(WP_User $user): array
+{
+    $items = [];
+    $location = get_user_meta($user->ID, 'community-events-location', true);
+    if (is_array($location) && $location !== []) {
+        $items[] = Minn\Content\PersonalData::item('community-events-location', __('Community Events Location'), __('User&#8217;s location data used for the Community Events in the WordPress Events and News dashboard widget.'), 'community-events-location-' . $user->ID, [
+            __('City') => $location['description'] ?? '',
+            __('Country') => $location['country'] ?? '',
+            __('Latitude') => $location['latitude'] ?? '',
+            __('Longitude') => $location['longitude'] ?? '',
+            __('IP') => $location['ip'] ?? '',
+        ]);
+    }
+    $sessions = get_user_meta($user->ID, 'session_tokens', true);
+    foreach (is_array($sessions) ? $sessions : [] as $hash => $session) {
+        $items[] = Minn\Content\PersonalData::item('session-tokens', __('Session Tokens'), __('User&#8217;s Session Tokens data.'), 'session-tokens-' . $user->ID . '-' . $hash, [
+            __('Expiration') => date_i18n('F j, Y H:i A', (int) ($session['expiration'] ?? 0)),
+            __('IP') => $session['ip'] ?? '',
+            __('User Agent') => $session['ua'] ?? '',
+            __('Last Login') => date_i18n('F j, Y H:i A', (int) ($session['login'] ?? 0)),
+        ]);
+    }
+    return $items;
+}
+
+/**
+ * Tells the requester their personal data was erased (on
+ * wp_privacy_personal_data_erased): once (_wp_user_notified), only for a
+ * completed request, in their language (the site's for a visitor), with the
+ * privacy policy's address when one is published. The recipient, subject,
+ * content and headers each pass their filter.
+ */
+function _wp_privacy_send_erasure_fulfillment_notification($request_id)
+{
+    $request = wp_get_user_request($request_id);
+    if (!$request instanceof WP_User_Request || $request->status !== 'request-completed' || get_post_meta($request_id, '_wp_user_notified', true)) {
+        return;
+    }
+    $switched = !empty($request->user_id) ? switch_to_user_locale($request->user_id) : switch_to_locale(get_locale());
+    $to = apply_filters('user_erasure_fulfillment_email_to', $request->email, $request);
+    $data = ['request' => $request, 'message_recipient' => $to, 'privacy_policy_url' => get_privacy_policy_url(), 'sitename' => wp_specialchars_decode(get_option('blogname'), ENT_QUOTES), 'siteurl' => home_url()];
+    $subject = apply_filters('user_erasure_fulfillment_email_subject', sprintf(__('[%s] Erasure Request Fulfilled'), $data['sitename']), $data['sitename'], $data);
+    $content = $data['privacy_policy_url'] === ''
+        /* translators: Do not translate SITENAME, SITEURL: those are placeholders. */
+        ? __("Howdy,\n\nYour request to erase your personal data on ###SITENAME### has been completed.\n\nIf you have any follow-up questions or concerns, please contact the site administrator.\n\nRegards,\nAll at ###SITENAME###\n###SITEURL###")
+        /* translators: Do not translate SITENAME, SITEURL, PRIVACY_POLICY_URL: those are placeholders. */
+        : __("Howdy,\n\nYour request to erase your personal data on ###SITENAME### has been completed.\n\nIf you have any follow-up questions or concerns, please contact the site administrator.\n\nFor more information, you can also read our privacy policy: ###PRIVACY_POLICY_URL###\n\nRegards,\nAll at ###SITENAME###\n###SITEURL###");
+    $content = apply_filters('user_erasure_fulfillment_email_content', $content, $data);
+    $content = strtr($content, ['###SITENAME###' => $data['sitename'], '###PRIVACY_POLICY_URL###' => $data['privacy_policy_url'], '###SITEURL###' => sanitize_url($data['siteurl'])]);
+    $headers = apply_filters('user_erasure_fulfillment_email_headers', '', $subject, $content, $request_id, $data);
+    $sent = wp_mail($to, $subject, $content, $headers);
+    if ($switched) {
+        restore_previous_locale();
+    }
+    if ($sent) {
+        update_post_meta($request_id, '_wp_user_notified', true);
+    }
+}

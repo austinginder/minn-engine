@@ -6281,3 +6281,69 @@ Left in `functions.php`: `dead_db`, `do_favicon` and `_jsonp_wp_die_handler`
 `wp_post_preview_js` (prints only on a preview), and the four privacy
 clean-up and scheduling functions, which go with the exporters in a privacy
 batch.
+
+## Personal data: exporters, the eraser, and the clean-up jobs (2026-10-08)
+
+Probe `privacy` (`tests/tools/privacy-probe.php`, fixture
+`contracts/fixtures/api/privacy.json`). Fourteen functions from `comment.php`,
+`media.php`, `user.php`, `post.php` and `functions.php`; `Content\PersonalData`
+holds the two pure rules (an export item's rows, and which export files are
+old).
+
+- **The lists.** `wp_privacy_personal_data_exporters` gets the account
+  exporter at priority 1, then comments and media at 10;
+  `wp_privacy_personal_data_erasers` gets the comments eraser. Each entry is
+  `{exporter|eraser}_friendly_name` plus `callback`, keyed `wordpress-user`,
+  `wordpress-comments`, `wordpress-media`. `_wp_privacy_statuses` names the four
+  request statuses.
+- **An export item.** `group_id`, `group_label`, `group_description` (the
+  `User&#8217;s ... data.` entity is in the string), `item_id`, `data`: name and
+  value rows in a fixed order, a row with an empty value left out.
+  - Comments (`comment-{id}`): every comment with the address, matched without
+    case, held ones included, 500 a page in id order. Author, address, link,
+    IP, browser, the local `comment_date` as stored, the content as stored,
+    and `<a href="{link}" target="_blank">{link}</a>`. A page below 1 holds
+    nothing. `done` is a short page.
+  - Media (`post-{id}`): the uploads of the account with the address, 50 a
+    page, each with its file's address.
+  - The account (`user-{id}`): ID, login, nice name, address, link,
+    registration date, display name, nickname, first and last name,
+    description, the empty ones left out. `wp_privacy_additional_user_profile_data`
+    gets `[]`, the user and the eleven reserved names; what it returns is
+    appended as given, except a pair reusing a reserved name, which is
+    dropped with a `_doing_it_wrong` notice. Then the Community Events
+    location (City, Country, Latitude, Longitude, IP) when the user meta
+    holds one, and one item per session token (`session-tokens-{id}-{hash}`:
+    Expiration, IP, User Agent, Last Login), dated `F j, Y H:i A` in UTC
+    whatever the site's timezone.
+  - A stranger's address gets `{"data": [], "done": true}`.
+- **The eraser.** Nothing for an empty address. Otherwise, for each comment
+  with the address (500 a page): author `Anonymous`, address, link and
+  browser emptied, the IP anonymised, `user_id` 0, the content kept, written
+  straight to the table (`edit_comment` does not fire). `wp_anonymize_comment`
+  (true, the comment, the anonymised fields) keeps a comment when it answers
+  anything but true: its string is the message, or `Comment {id} contains
+  personal data but could not be anonymized.`. `items_removed` and
+  `items_retained` say whether any comment went either way.
+- **The clean-up jobs.** At init, `wp_privacy_delete_old_export_files` is
+  scheduled hourly and `wp_privacy_personal_data_cleanup_requests` daily, each
+  once, starting now. The first removes every file in the exports folder
+  last written more than three days ago (`wp_privacy_export_expiration`),
+  whatever its type, except `index.php` (and, here, hidden files). The second
+  marks a pending request whose `post_modified_gmt` is older than
+  `user_request_key_expiration` (a day) as failed; a confirmed one stays.
+- **The erasure notice.** `_wp_privacy_send_erasure_fulfillment_notification`
+  (on `wp_privacy_personal_data_erased`) mails `[{site}] Erasure Request
+  Fulfilled` for any completed request, an export one included, once
+  (`_wp_user_notified`). A request not completed, or no request, sends
+  nothing. The body names the privacy policy's address only when a published
+  page is set. Filters: `user_erasure_fulfillment_email_to` (address,
+  request), `_subject` (subject, site name, the data: request,
+  message_recipient, privacy_policy_url, sitename, siteurl), `_content`
+  (the text with its `###SITENAME###`, `###PRIVACY_POLICY_URL###`,
+  `###SITEURL###` placeholders, the data) and `_headers` (headers, subject,
+  content, request id, data).
+
+The admin screens that drive these (`wp_privacy_process_personal_data_*`,
+the export file and its email) were already admin dead ends; the functions
+here are what plugins and cron call.

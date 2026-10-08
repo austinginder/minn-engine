@@ -28877,6 +28877,105 @@
             ]
         },
         {
+            "name": "Minn\\Content\\PersonalData",
+            "short": "PersonalData",
+            "namespace": "Minn\\Content",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Content/PersonalData.php",
+            "lines": 36,
+            "doc": "Personal data as the privacy tools hand it over (probe privacy): an\nexported item is a labelled group of name and value rows in which a row\nwithout a value is left out, and an export file is old once it was last\nwritten before the cut-off (the folder's index.php and hidden files are\nnever old).",
+            "implements": [],
+            "extends": null,
+            "uses": [],
+            "usedBy": [],
+            "constructor": null,
+            "cases": [],
+            "constants": [],
+            "properties": [],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "item",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "item(string $groupId, string $groupLabel, string $groupDescription, string $itemId, array $rows): array",
+                    "doc": "One exported item, its rows in the order given, a row whose value is empty left out.",
+                    "shapes": [
+                        "@param array<string, mixed> $rows name => value",
+                        "@return array{group_id: string, group_label: string, group_description: string, item_id: string, data: list<array{name: string, value: mixed}>}"
+                    ],
+                    "params": [
+                        {
+                            "name": "groupId",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "groupLabel",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "groupDescription",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "itemId",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "rows",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": "name => value"
+                        }
+                    ],
+                    "line": 22,
+                    "end": 31
+                },
+                {
+                    "routes": [],
+                    "name": "expiredExports",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "expiredExports(string $dir, int $before): array",
+                    "doc": "The export files in $dir last written before $before.",
+                    "shapes": [
+                        "@return list<string>"
+                    ],
+                    "params": [
+                        {
+                            "name": "dir",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "before",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 38,
+                    "end": 48
+                }
+            ]
+        },
+        {
             "name": "Minn\\Content\\Playlist",
             "short": "Playlist",
             "namespace": "Minn\\Content",
