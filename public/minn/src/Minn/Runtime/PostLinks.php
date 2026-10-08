@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Minn\Runtime;
 
+use Minn\Support\Url;
+
 /**
  * Post addresses as the reference's link functions build them (probe
  * permalinks): a post through pre_post_link (the structure) and post_link;
@@ -96,7 +98,7 @@ final class PostLinks
             $parentLink = $parent->post_type === 'page' ? self::page($parent, 0) : (string) \get_permalink($parent);
             $name = is_numeric($post->post_name) || str_contains((string) Runtime::options()->filtered('permalink_structure'), '%category%') ? 'attachment/' . $post->post_name : (string) $post->post_name;
             if (!str_contains($parentLink, '?')) {
-                $link = \user_trailingslashit(\trailingslashit($parentLink) . '%postname%');
+                $link = \user_trailingslashit(Url::withTrailingSlash($parentLink) . '%postname%');
                 $link = $leavename ? $link : str_replace('%postname%', $name, $link);
             }
         } elseif ($pretty && !$leavename) {

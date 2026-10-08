@@ -1107,3 +1107,15 @@ if (!function_exists('array_all')) {
         return true;
     }
 }
+
+/** Where the "Learn more about updating PHP" links point: wp_update_php_url, or the default when that answers nothing (probe plugin-activation). */
+function wp_get_update_php_url()
+{
+    $url = apply_filters('wp_update_php_url', wp_get_default_update_php_url());
+    return is_string($url) && $url !== '' ? $url : wp_get_default_update_php_url();
+}
+
+function wp_get_default_update_php_url()
+{
+    return _x('https://wordpress.org/support/update-php/', 'localized PHP upgrade information page');
+}

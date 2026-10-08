@@ -424,7 +424,7 @@
             "pattern": "/minn-admin/v1/themes/search",
             "name": "Minn\\Admin\\PackagesController::searchThemes",
             "handler": "Minn\\Admin\\PackagesController::searchThemes",
-            "summary": "Searches wordpress.org themes.",
+            "summary": "Searches the theme directory.",
             "policy": {
                 "access": "Floor",
                 "describe": "floor edit_posts + install_themes",
@@ -449,7 +449,7 @@
             "pattern": "/minn-admin/v1/themes/install",
             "name": "Minn\\Admin\\PackagesController::installTheme",
             "handler": "Minn\\Admin\\PackagesController::installTheme",
-            "summary": "Installs a theme from wordpress.org by slug.",
+            "summary": "Installs a theme from the directory by slug.",
             "policy": {
                 "access": "Floor",
                 "describe": "floor edit_posts + install_themes",
@@ -574,7 +574,7 @@
             "pattern": "/minn-admin/v1/plugins/search",
             "name": "Minn\\Admin\\PackagesController::searchPlugins",
             "handler": "Minn\\Admin\\PackagesController::searchPlugins",
-            "summary": "Searches wordpress.org plugins.",
+            "summary": "Searches the plugin directory.",
             "policy": {
                 "access": "Floor",
                 "describe": "floor edit_posts + install_plugins",
@@ -599,7 +599,7 @@
             "pattern": "/minn-admin/v1/plugins/info",
             "name": "Minn\\Admin\\PackagesController::pluginInfo",
             "handler": "Minn\\Admin\\PackagesController::pluginInfo",
-            "summary": "One wordpress.org plugin's details.",
+            "summary": "One directory plugin's details.",
             "policy": {
                 "access": "Floor",
                 "describe": "floor edit_posts + install_plugins",
@@ -1385,7 +1385,7 @@
             "pattern": "/minn-admin/v1/check-updates",
             "name": "Minn\\Admin\\UpdatesController::check",
             "handler": "Minn\\Admin\\UpdatesController::check",
-            "summary": "Asks again, now: wordpress.org for plugins and themes, and the Minn update service for Minn itself (its status answered as core).",
+            "summary": "Asks the Minn update service again, now: for plugin and theme offers, and for Minn itself (its status answered as core).",
             "policy": {
                 "access": "SignedIn",
                 "describe": "signed in",
@@ -4543,7 +4543,7 @@
             "pattern": "/wp/v2/plugins",
             "name": "Minn\\Rest\\PluginsController::install",
             "handler": "Minn\\Rest\\PluginsController::install",
-            "summary": "Installs a wordpress.org plugin by slug, optionally activating it; answers 201 with the item.",
+            "summary": "Installs a directory plugin by slug, optionally activating it; answers 201 with the item.",
             "policy": {
                 "access": "Cap",
                 "describe": "cap activate_plugins",

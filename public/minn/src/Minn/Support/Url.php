@@ -13,6 +13,18 @@ use Closure;
  */
 final class Url
 {
+    /** The value with one trailing slash, whatever slashes or backslashes it ended in (trailingslashit). */
+    public static function withTrailingSlash(string $value): string
+    {
+        return self::withoutTrailingSlash($value) . '/';
+    }
+
+    /** The value with every trailing slash and backslash taken off (untrailingslashit). */
+    public static function withoutTrailingSlash(string $value): string
+    {
+        return rtrim($value, '/\\');
+    }
+
     /** Spaces encoded, stray characters dropped, ";//" healed, a bare host given http; '' when nothing survives. */
     public static function clean(string $url): string
     {

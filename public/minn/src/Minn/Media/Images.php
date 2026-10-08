@@ -32,7 +32,7 @@ final readonly class Images
             'medium_large' => [$option('medium_large_size_w', 768), $option('medium_large_size_h', 0), false],
         ];
         $added = ['1536x1536' => ['width' => 1536, 'height' => 1536, 'crop' => false], '2048x2048' => ['width' => 2048, 'height' => 2048, 'crop' => false]];
-        foreach (Runtime::booted() && \did_action('plugins_loaded') ? (array) ($GLOBALS['_wp_additional_image_sizes'] ?? []) : $added as $name => $size) {
+        foreach (Runtime::booted() && Runtime::hooks()->actionsDone('plugins_loaded') ? (array) ($GLOBALS['_wp_additional_image_sizes'] ?? []) : $added as $name => $size) {
             $ladder[(string) $name] = [(int) $size['width'], (int) $size['height'], (bool) $size['crop']];
         }
         return $ladder;

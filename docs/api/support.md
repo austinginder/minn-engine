@@ -30,7 +30,7 @@ escaping, serialized readers, small helpers
 | [`Serialized`](#serialized) | final class | 311 | Tolerant readers for the serialized-PHP blobs WordPress stores. Nothing |
 | [`Slashes`](#slashes) | final class | 32 | Magic-quote slashes the way WordPress keeps them (wp_slash, wp_unslash): |
 | [`Time`](#time) | final class | 21 | Human-scale spans: a number of seconds as the largest whole unit it fills, rounded, never below one. |
-| [`Url`](#url) | final class | 202 | URL shaping the escaping and query helpers share: the character cleanup |
+| [`Url`](#url) | final class | 214 | URL shaping the escaping and query helpers share: the character cleanup |
 | [`Utf8`](#utf8) | final class | 8 | Whether bytes are well-formed UTF-8 as the reference judges them: overlong |
 | [`WebServer`](#webserver) | final class | 8 | What the SERVER_SOFTWARE string says about the web server in front of the site. |
 
@@ -180,7 +180,7 @@ Header values from a plugin or theme file. The labels (Plugin Name,
 Theme Name, Version) are the published file-header contract; the
 reader is a line scan of the first 8 KB, never PHP execution.
 
-Used by: `Minn\Admin\App`, `Minn\Admin\ThemesController`, `Minn\Cli\ThemeCommand`, `Minn\Content\Inventory`, `Minn\Ops\InstalledSoftware`, `Minn\Ops\Packages`, `Minn\Ops\Updates`, `Minn\Rest\PluginsController`, `Minn\Runtime\Plugins`, `Minn\Theme\Folder`
+Used by: `Minn\Admin\App`, `Minn\Admin\ThemesController`, `Minn\Cli\ThemeCommand`, `Minn\Content\Inventory`, `Minn\Ops\InstalledSoftware`, `Minn\Ops\Packages`, `Minn\Ops\Updates`, `Minn\Rest\PluginsController`, `Minn\Runtime\PluginRequirements`, `Minn\Runtime\Plugins`, `Minn\Theme\Folder`
 
 ### static `values(string $file, array $labels): array`
 
@@ -839,6 +839,16 @@ URL shaping the escaping and query helpers share: the character cleanup
 esc_url applies, bracket encoding outside the authority, and query
 argument merging. Behaviour pinned by contracts/fixtures/api/functions.json.
 
+Used by: `Minn\Front\FeedTags`, `Minn\Front\PostEmbed`, `Minn\Runtime\ArchiveLinks`, `Minn\Runtime\CommentPages`, `Minn\Runtime\NavMenu`, `Minn\Runtime\PostLinks`
+
+### static `withTrailingSlash(string $value): string`
+
+The value with one trailing slash, whatever slashes or backslashes it ended in (trailingslashit).
+
+### static `withoutTrailingSlash(string $value): string`
+
+The value with every trailing slash and backslash taken off (untrailingslashit).
+
 ### static `clean(string $url): string`
 
 Spaces encoded, stray characters dropped, ";//" healed, a bare host given http; '' when nothing survives.
@@ -889,7 +899,7 @@ credentials, and a host the caller allows (local paths always pass).
 
 - `@param Closure(string): list<string> $allowedHosts the hosts allowed for the target's host`
 
-Internals: `isPrivate()` (private, line 131)
+Internals: `isPrivate()` (private, line 143)
 
 
 ## Utf8

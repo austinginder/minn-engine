@@ -6,6 +6,7 @@ namespace Minn\Front;
 
 use Minn\Runtime\Runtime;
 use Minn\Support\Escape;
+use Minn\Support\Url;
 
 /**
  * The template tags a feed is written with that take more than a line, as
@@ -98,7 +99,7 @@ final class FeedTags
                 $url = \add_query_arg('attachment_id', $postId, \home_url('/feed/') . (\get_default_feed() !== $feed ? "{$feed}/" : ''));
             } else {
                 $front = Runtime::options()->filtered('show_on_front') === 'page' && (int) Runtime::options()->filtered('page_on_front') === $postId;
-                $base = \trailingslashit((string) ($front ? \_get_page_link($postId) : \get_permalink($postId))) . 'feed';
+                $base = Url::withTrailingSlash((string) ($front ? \_get_page_link($postId) : \get_permalink($postId))) . 'feed';
                 $url = \user_trailingslashit($base . (\get_default_feed() !== $feed ? "/{$feed}" : ''), 'single_feed');
             }
         } else {

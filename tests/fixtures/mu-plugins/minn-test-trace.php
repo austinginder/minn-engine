@@ -49,6 +49,11 @@ function minn_test_trace_describe($value): string
         return preg_match('/^[a-z0-9_-]{1,40}$/', $value) === 1 ? "'{$value}'" : 'string';
     }
     if (is_array($value)) {
+        // An upgrader's hook_extra: what it did, to which plugins or themes.
+        if (is_string($value['action'] ?? null) && is_string($value['type'] ?? null)) {
+            $items = $value['plugins'] ?? $value['themes'] ?? $value['plugin'] ?? $value['theme'] ?? [];
+            return "extra:{$value['action']}:{$value['type']}:" . implode(',', array_map('strval', (array) $items));
+        }
         return 'array';
     }
     return $value === null ? 'null' : gettype($value);

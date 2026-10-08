@@ -485,28 +485,11 @@ function revoke_super_admin($user_id)
     return false;
 }
 
+/** Activation as the reference runs it (probe plugin-activation): requirements, the plugin loaded, the actions, the list. */
 function activate_plugin($plugin, $redirect = '', $network_wide = false, $silent = false)
 {
-    $plugin = plugin_basename(trim((string) $plugin));
-    $current = get_option('active_plugins', []);
-    $current = is_array($current) ? $current : [];
-    if (in_array($plugin, $current, true)) {
-        return null;
-    }
-    if (!is_file(WP_PLUGIN_DIR . '/' . $plugin)) {
-        return new WP_Error('plugin_not_found', 'Plugin file does not exist.');
-    }
-    if (!$silent) {
-        do_action('activate_plugin', $plugin, $network_wide);
-        do_action("activate_{$plugin}", $network_wide);
-    }
-    $current[] = $plugin;
-    sort($current);
-    update_option('active_plugins', $current);
-    if (!$silent) {
-        do_action('activated_plugin', $plugin, $network_wide);
-    }
-    return null;
+    $refusal = Minn\Runtime\PluginActivation::activate(plugin_basename(trim((string) $plugin)), $silent ? null : Minn\Runtime\Runtime::hooks());
+    return $refusal === null ? null : new WP_Error($refusal->code, $refusal->message, $refusal->data);
 }
 
 function activate_plugins($plugins, $redirect = '', $network_wide = false, $silent = false)
@@ -544,28 +527,20 @@ function delete_plugins($plugins, $deprecated = '')
 
 function deactivate_plugins($plugins, $silent = false, $network_wide = null)
 {
-    $current = get_option('active_plugins', []);
-    $current = is_array($current) ? $current : [];
-    foreach ((array) $plugins as $plugin) {
-        $plugin = plugin_basename(trim((string) $plugin));
-        if (!in_array($plugin, $current, true)) {
-            continue;
-        }
-        if (!$silent) {
-            do_action('deactivate_plugin', $plugin, false);
-        }
-        $current = array_values(array_diff($current, [$plugin]));
-        if (!$silent) {
-            do_action("deactivate_{$plugin}", false);
-            do_action('deactivated_plugin', $plugin, false);
-        }
-    }
-    update_option('active_plugins', $current);
+    $files = array_map(static fn ($plugin): string => plugin_basename(trim((string) $plugin)), (array) $plugins);
+    Minn\Runtime\PluginActivation::deactivate($files, $silent ? null : Minn\Runtime\Runtime::hooks());
 }
 
 function validate_plugin($plugin)
 {
     return is_file(WP_PLUGIN_DIR . '/' . $plugin) ? 0 : new WP_Error('plugin_not_found', 'Plugin file does not exist.');
+}
+
+/** True when the plugin's header asks for nothing the site lacks; otherwise the refusal activation gives. */
+function validate_plugin_requirements($plugin)
+{
+    $refusal = Minn\Runtime\PluginRequirements::check((string) $plugin);
+    return $refusal === null ? true : new WP_Error($refusal->code, $refusal->message, $refusal->data);
 }
 
 function validate_active_plugins()

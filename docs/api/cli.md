@@ -14,7 +14,7 @@ the wp verbs the engine answers itself
 | [`MinnCommand`](#minncommand) | final class | 304 | Identifies the engine. |
 | [`OptionCommand`](#optioncommand) | final class | 185 | Options, read and written straight to the options table. Serialized |
 | [`PackageInstaller`](#packageinstaller) | final readonly class | 138 | Puts a theme or a plugin on disk for `wp theme install` and `wp plugin |
-| [`PluginCommand`](#plugincommand) | final class | 386 | `wp plugin list\|install\|update\|activate\|deactivate\|delete`: the inventory and the fleet's install/update/delete. |
+| [`PluginCommand`](#plugincommand) | final class | 405 | `wp plugin list\|install\|update\|activate\|deactivate\|delete`: the inventory and the fleet's install/update/delete. |
 | [`Preflight`](#preflight) | final class | 360 | What a site will and will not get from the engine, before anything |
 | [`RewriteCommand`](#rewritecommand) | final class | 52 | `wp rewrite flush\|structure`: permalink_structure is the engine's |
 | [`Runtime`](#runtime) | final class | 80 | The engine, booted for a command: reads the site's wp-config.php (which |
@@ -180,7 +180,7 @@ Used by: `Minn\Cli\PluginCommand`, `Minn\Cli\ThemeCommand`
 
 ### static `run(string $kind, array $args, array $assocArgs): void`
 
-Searches wordpress.org for one kind of asset and prints the page.
+Searches the directory (through the Minn update service) for one kind of asset and prints the page.
 
 - `@param array<string, mixed> $assocArgs`
 
@@ -598,7 +598,7 @@ Deactivates one or more plugins.
 
 ### `install(array $args, array $assocArgs): void`
 
-Installs one or more plugins from wordpress.org, a zip, or a URL.
+Installs one or more plugins from the plugin directory, a zip, or a URL.
 
 ## OPTIONS
 
@@ -606,7 +606,7 @@ Installs one or more plugins from wordpress.org, a zip, or a URL.
 : A plugin slug, a local zip path, or a zip URL.
 
 [--version=<version>]
-: Install that wordpress.org version instead of the current one.
+: Install that version from the directory instead of the current one.
 
 [--force]
 : Overwrite an installed copy of the same folder.
@@ -616,7 +616,7 @@ Installs one or more plugins from wordpress.org, a zip, or a URL.
 
 ### `update(array $args, array $assocArgs): void`
 
-Updates one or more plugins from wordpress.org.
+Updates one or more plugins from the plugin directory.
 
 ## OPTIONS
 
@@ -684,7 +684,7 @@ Checks if a given plugin is active. Exit 0 when it is, 1 when not.
 
 ### `search(array $args, array $assocArgs): void`
 
-Searches the wordpress.org plugin directory.
+Searches the plugin directory.
 
 ## OPTIONS
 
@@ -721,7 +721,7 @@ options:
 - yaml
 ---
 
-Internals: `switch()` (private, line 326), `pinVersion()` (private, line 360), `activateFolder()` (private, line 384)
+Internals: `switch()` (private, line 326), `pinVersion()` (private, line 368), `activateFolder()` (private, line 392), `plain()` (private, line 415)
 
 
 ## Preflight
@@ -919,7 +919,7 @@ options:
 
 ### `install(array $args, array $assocArgs): void`
 
-Installs one or more themes from wordpress.org, a zip, or a URL.
+Installs one or more themes from the theme directory, a zip, or a URL.
 
 ## OPTIONS
 
@@ -927,7 +927,7 @@ Installs one or more themes from wordpress.org, a zip, or a URL.
 : A theme slug, a local zip path, or a zip URL.
 
 [--version=<version>]
-: Install that wordpress.org version instead of the current one.
+: Install that version from the directory instead of the current one.
 
 [--force]
 : Overwrite an installed copy of the same folder.
@@ -937,7 +937,7 @@ Installs one or more themes from wordpress.org, a zip, or a URL.
 
 ### `update(array $args, array $assocArgs): void`
 
-Updates one or more themes from wordpress.org.
+Updates one or more themes from the theme directory.
 
 ## OPTIONS
 
@@ -1014,7 +1014,7 @@ Checks if a given theme is active. Exit 0 when it is, 1 when not.
 
 ### `search(array $args, array $assocArgs): void`
 
-Searches the wordpress.org theme directory.
+Searches the theme directory.
 
 ## OPTIONS
 

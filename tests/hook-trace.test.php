@@ -14,6 +14,7 @@
  * with "agrees now: drop it", as the allow suite does.
  *
  *   php tests/hook-trace.test.php [--show=<step>] [--filters]
+ *   MINN_TRACE_STEPS=<file> php tests/hook-trace.test.php   (every step's two traces, as JSON)
  *
  * --filters also records the filters each request applies and prints, per
  * step, those only one stack applied (MINN_TRACE_DUMP=<file> keeps them).
@@ -24,6 +25,14 @@ declare(strict_types=1);
 require __DIR__ . '/lib.php';
 
 const DIVERGENT = [
+    'plugin-install' => 'the engine installs without the upgrader: no HTTP API hooks, no upgrader_process_complete, the update transient kept',
+    'plugin-activate' => 'the plugin item loads no text domain to translate its headers',
+    'plugin-deactivate' => 'the plugin item loads no text domain to translate its headers',
+    'plugin-delete' => 'the plugin item loads no text domain to translate its headers',
+    'plugin-update' => 'the engine updates without the upgrader, and the plugin item loads no text domain',
+    'theme-install' => 'the engine installs without the upgrader: no HTTP API hooks, no upgrader_process_complete, the update transient kept',
+    'theme-delete' => 'the engine keeps no theme roots or pattern-file caches to clear',
+    'theme-update' => 'the engine updates without the upgrader: no HTTP API hooks, no upgrader_process_complete',
 ];
 
 /**
@@ -208,6 +217,28 @@ foreach ($stacks as $stack => [$base, $content]) {
     // The comment form, signed out: where spam plugins (CleanTalk, Akismet) and notifications do their work.
     $sweepReaders();
     $run('comment-form', 'POST', '/wp-comments-post.php', ['comment_post_ID' => 1, 'author' => 'Trace Reader', 'email' => 'reader@minn-engine.localhost', 'url' => '', 'comment' => "A traced comment from the {$stack} form", 'comment_parent' => 0]);
+    // Plugins and themes: what an install, an update and a removal tell plugins (the upgrader's hooks,
+    // activation, deletion). Each stack installs into its own wp-content; the old versions an update
+    // starts from are put in place with that stack's wp-cli, and the offer is asked for before the trace.
+    // The engine's verbs answer only where its wp-cli.yml is found: run from the webroot.
+    $wp = $stack === 'reference' ? $WP : 'cd ' . escapeshellarg($SITE . '/public') . ' && /opt/homebrew/bin/wp';
+    $offers = static fn () => $call($base, $content, "{$stack}-offers", 'POST', '/minn-admin/v1/check-updates', '{}', ['Content-Type: application/json']);
+    shell_exec("{$wp} plugin delete hello-dolly >/dev/null 2>&1");
+    $run('plugin-install', 'POST', '/wp/v2/plugins', ['slug' => 'hello-dolly']);
+    $run('plugin-activate', 'POST', '/wp/v2/plugins/hello-dolly/hello', ['status' => 'active']);
+    $run('plugin-deactivate', 'POST', '/wp/v2/plugins/hello-dolly/hello', ['status' => 'inactive']);
+    $run('plugin-delete', 'DELETE', '/wp/v2/plugins/hello-dolly/hello');
+    shell_exec("{$wp} plugin install hello-dolly --version=1.6 >/dev/null 2>&1");
+    $offers();
+    $run('plugin-update', 'POST', '/minn-admin/v1/plugins/update', ['plugin' => 'hello-dolly/hello.php']);
+    shell_exec("{$wp} plugin delete hello-dolly >/dev/null 2>&1");
+    shell_exec("{$wp} theme delete twentytwentyone >/dev/null 2>&1");
+    $run('theme-install', 'POST', '/minn-admin/v1/themes/install', ['slug' => 'twentytwentyone']);
+    $run('theme-delete', 'POST', '/minn-admin/v1/themes/delete', ['stylesheet' => 'twentytwentyone']);
+    shell_exec("{$wp} theme install twentytwentyone --version=2.0 >/dev/null 2>&1");
+    $offers();
+    $run('theme-update', 'POST', '/minn-admin/v1/themes/update', ['stylesheet' => 'twentytwentyone']);
+    shell_exec("{$wp} theme delete twentytwentyone >/dev/null 2>&1");
 }
 
 if ($filters) {
@@ -219,6 +250,11 @@ if ($filters) {
         $only = static fn (array $a, array $b): string => implode(' ', array_diff($a, $b));
         echo "--- {$name} filters\n  reference only: " . $only($pair['reference']['filters'], $pair['engine']['filters']) . "\n  engine only: " . $only($pair['engine']['filters'], $pair['reference']['filters']) . "\n";
     }
+}
+
+// MINN_TRACE_STEPS=<file> keeps every step's two traces, for reading side by side.
+if (getenv('MINN_TRACE_STEPS')) {
+    file_put_contents((string) getenv('MINN_TRACE_STEPS'), json_encode(array_map(static fn ($pair) => ['reference' => $pair['reference']['trace'] ?? [], 'engine' => $pair['engine']['trace'] ?? [], 'status' => [$pair['reference']['status'] ?? null, $pair['engine']['status'] ?? null]], $steps), JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
 }
 
 $listed = DIVERGENT;

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Minn\Runtime;
 
 use Minn\Support\Escape;
+use Minn\Support\Url;
 
 /**
  * Nav-menu item decoration for wp_nav_menu(): the reference's class tokens
@@ -112,7 +113,7 @@ final class NavMenu
         $frontPageId = (int) Runtime::options()->filtered('page_on_front');
         $postsPageId = (int) Runtime::options()->filtered('page_for_posts');
         $queriedId = (int) \get_queried_object_id();
-        $home = \untrailingslashit((string) \home_url());
+        $home = Url::withoutTrailingSlash((string) \home_url());
         $context = self::singularContext();
         $currentIds = $parentItemIds = $ancestorItemIds = [];
         foreach ($items as $item) {
@@ -133,13 +134,13 @@ final class NavMenu
                     $classes[] = 'page_item';
                     $classes[] = 'page-item-' . (int) $item->object_id;
                     $classes[] = 'current_page_item';
-                } elseif ((string) $item->type === 'custom' && \untrailingslashit((string) $item->url) === $home) {
+                } elseif ((string) $item->type === 'custom' && Url::withoutTrailingSlash((string) $item->url) === $home) {
                     $classes[] = 'current_page_item';
                 }
                 $currentIds[] = (int) $item->db_id;
             }
             // A custom item pointing at home is the home item on EVERY view, seated after the current tokens.
-            if ((string) $item->type === 'custom' && \untrailingslashit((string) $item->url) === $home) {
+            if ((string) $item->type === 'custom' && Url::withoutTrailingSlash((string) $item->url) === $home) {
                 $classes[] = 'menu-item-home';
             }
             $item->classes = $classes;
@@ -239,8 +240,8 @@ final class NavMenu
         }
         if ($type === 'custom') {
             // Exact request-URL equality only: the home item is NOT current on /page/2/ or ?s= views.
-            $url = \untrailingslashit((string) $item->url);
-            return $url !== '' && $url === \untrailingslashit(self::currentUrl());
+            $url = Url::withoutTrailingSlash((string) $item->url);
+            return $url !== '' && $url === Url::withoutTrailingSlash(self::currentUrl());
         }
         return false;
     }

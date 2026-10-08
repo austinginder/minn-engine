@@ -137,12 +137,12 @@ function wp_strip_all_tags($text, $remove_breaks = false)
 
 function trailingslashit($value)
 {
-    return untrailingslashit($value) . '/';
+    return Minn\Support\Url::withTrailingSlash((string) $value);
 }
 
 function untrailingslashit($value)
 {
-    return rtrim((string) $value, '/\\');
+    return Minn\Support\Url::withoutTrailingSlash((string) $value);
 }
 
 function wp_parse_args($args, $defaults = [])

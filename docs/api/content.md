@@ -20,7 +20,7 @@ the repositories and records: posts, users, terms, comments, and the render pipe
 | [`MoreTag`](#moretag) | final class | 20 | The `<!--more-->` marker that splits a post into the part a listing shows |
 | [`Page`](#page) | final readonly class | 49 | One page of a listing: the rows on it and how many rows the whole |
 | [`PasswordGate`](#passwordgate) | final class | 34 | A password-protected post on the front end: its body is the password |
-| [`PluginState`](#pluginstate) | final readonly class | 86 | Switching plugins on and off, the way the reference records it: a |
+| [`PluginState`](#pluginstate) | final readonly class | 72 | Switching plugins on and off: a WordPress plugin file goes through the |
 | [`PostClasses`](#postclasses) | final class | 55 | The class list a post carries on its article element, in the reference's |
 | [`PostRecord`](#postrecord) | final readonly class | 156 | One row of the posts table, read by name. The columns keep their |
 | [`PostSlugs`](#postslugs) | final readonly class | 75 | Which slug a live post may take beside the others, as the reference |
@@ -780,11 +780,13 @@ The form, with the reference's stray closing p after the hidden field.
 
 `final readonly class Minn\Content\PluginState` · `public/minn/src/Minn/Content/PluginState.php`
 
-Switching plugins on and off, the way the reference records it: a
-WordPress plugin file joins or leaves the sorted active_plugins list; a
-Minn extension joins or leaves minn_active_extensions, and deactivating
-one also releases the plugin files it stood in for. The REST toggle and
-the CLI verbs share this so they cannot drift.
+Switching plugins on and off: a WordPress plugin file goes through the
+reference's activation and deactivation (PluginActivation: requirements,
+the plugin loaded, its hooks, the sorted active_plugins list); a Minn
+extension joins or leaves minn_active_extensions, and deactivating one
+also releases, silently, the plugin files it stood in for. The REST
+toggle and the CLI verbs share this so they cannot drift; both run with
+the runtime booted.
 
 Used by: `Minn\Cli\PluginCommand`, `Minn\Rest\PluginsController`
 
@@ -804,15 +806,17 @@ folder there as active); only a pure extension uses the engine's list.
 
 Whether a plugin, by file, or a Minn extension is active.
 
-### `activate(Minn\Extension\Manifest|string $plugin): void`
+### `activate(Minn\Extension\Manifest|string $plugin): ?Minn\Runtime\Refusal`
 
-Records a plugin or an extension as active or not, in the option each kind uses.
+Records a plugin or an extension as active, in the option each kind
+uses; null, or why a plugin was refused (unexpected_output leaves it
+active, as the reference does).
 
 ### `deactivate(Minn\Extension\Manifest|string $plugin): void`
 
 Records a plugin, by file, or a Minn extension as inactive; an extension also deactivates the plugins it replaced.
 
-Internals: `ownWithout()` (private, line 80), `addFile()` (private, line 86), `removeFile()` (private, line 93), `filesWithout()` (private, line 99)
+Internals: `ownWithout()` (private, line 89)
 
 
 ## PostClasses

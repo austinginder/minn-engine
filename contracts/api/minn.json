@@ -4142,7 +4142,7 @@
                     "static": false,
                     "visibility": "public",
                     "signature": "searchThemes(Minn\\Http\\Request $request): Minn\\Http\\Response",
-                    "doc": "Searches wordpress.org themes.",
+                    "doc": "Searches the theme directory.",
                     "shapes": [],
                     "params": [
                         {
@@ -4164,7 +4164,7 @@
                     "static": false,
                     "visibility": "public",
                     "signature": "installTheme(Minn\\Http\\Request $request): Minn\\Http\\Response",
-                    "doc": "Installs a theme from wordpress.org by slug.",
+                    "doc": "Installs a theme from the directory by slug.",
                     "shapes": [],
                     "params": [
                         {
@@ -4274,7 +4274,7 @@
                     "static": false,
                     "visibility": "public",
                     "signature": "searchPlugins(Minn\\Http\\Request $request): Minn\\Http\\Response",
-                    "doc": "Searches wordpress.org plugins.",
+                    "doc": "Searches the plugin directory.",
                     "shapes": [],
                     "params": [
                         {
@@ -4296,7 +4296,7 @@
                     "static": false,
                     "visibility": "public",
                     "signature": "pluginInfo(Minn\\Http\\Request $request): Minn\\Http\\Response",
-                    "doc": "One wordpress.org plugin's details.",
+                    "doc": "One directory plugin's details.",
                     "shapes": [],
                     "params": [
                         {
@@ -6708,7 +6708,7 @@
                     "static": false,
                     "visibility": "public",
                     "signature": "check(Minn\\Http\\Request $request): Minn\\Http\\Response",
-                    "doc": "Asks again, now: wordpress.org for plugins and themes, and the Minn update service for Minn itself (its status answered as core).",
+                    "doc": "Asks the Minn update service again, now: for plugin and theme offers, and for Minn itself (its status answered as core).",
                     "shapes": [],
                     "params": [
                         {
@@ -19393,7 +19393,7 @@
                     "static": true,
                     "visibility": "public",
                     "signature": "run(string $kind, array $args, array $assocArgs): void",
-                    "doc": "Searches wordpress.org for one kind of asset and prints the page.",
+                    "doc": "Searches the directory (through the Minn update service) for one kind of asset and prints the page.",
                     "shapes": [
                         "@param array<string, mixed> $assocArgs"
                     ],
@@ -20876,7 +20876,7 @@
             "namespace": "Minn\\Cli",
             "kind": "final class",
             "file": "public/minn/src/Minn/Cli/PluginCommand.php",
-            "lines": 386,
+            "lines": 405,
             "doc": "`wp plugin list|install|update|activate|deactivate|delete`: the inventory and the fleet's install/update/delete.",
             "implements": [],
             "extends": null,
@@ -20992,7 +20992,7 @@
                     "static": false,
                     "visibility": "public",
                     "signature": "install(array $args, array $assocArgs): void",
-                    "doc": "Installs one or more plugins from wordpress.org, a zip, or a URL.\n\n## OPTIONS\n\n<plugin|zip|url>...\n: A plugin slug, a local zip path, or a zip URL.\n\n[--version=<version>]\n: Install that wordpress.org version instead of the current one.\n\n[--force]\n: Overwrite an installed copy of the same folder.\n\n[--activate]\n: Activate the plugin after it is installed (or if it is already on disk).",
+                    "doc": "Installs one or more plugins from the plugin directory, a zip, or a URL.\n\n## OPTIONS\n\n<plugin|zip|url>...\n: A plugin slug, a local zip path, or a zip URL.\n\n[--version=<version>]\n: Install that version from the directory instead of the current one.\n\n[--force]\n: Overwrite an installed copy of the same folder.\n\n[--activate]\n: Activate the plugin after it is installed (or if it is already on disk).",
                     "shapes": [],
                     "params": [
                         {
@@ -21019,7 +21019,7 @@
                     "static": false,
                     "visibility": "public",
                     "signature": "update(array $args, array $assocArgs): void",
-                    "doc": "Updates one or more plugins from wordpress.org.\n\n## OPTIONS\n\n[<plugin>...]\n: One or more plugins to update.\n\n[--all]\n: If set, all plugins that have updates will be updated.\n\n[--exclude=<name>]\n: Comma separated list of plugin names that should be excluded from updating.\n\n[--minor]\n: Only perform updates for minor releases.\n\n[--patch]\n: Only perform updates for patch releases.\n\n[--format=<format>]\n: Render output in a particular format.\n---\ndefault: table\noptions:\n- table\n- csv\n- json\n- summary\n---\n\n[--version=<version>]\n: If set, the plugin will be updated to the specified version.\n\n[--dry-run]\n: Preview which plugins would be updated.",
+                    "doc": "Updates one or more plugins from the plugin directory.\n\n## OPTIONS\n\n[<plugin>...]\n: One or more plugins to update.\n\n[--all]\n: If set, all plugins that have updates will be updated.\n\n[--exclude=<name>]\n: Comma separated list of plugin names that should be excluded from updating.\n\n[--minor]\n: Only perform updates for minor releases.\n\n[--patch]\n: Only perform updates for patch releases.\n\n[--format=<format>]\n: Render output in a particular format.\n---\ndefault: table\noptions:\n- table\n- csv\n- json\n- summary\n---\n\n[--version=<version>]\n: If set, the plugin will be updated to the specified version.\n\n[--dry-run]\n: Preview which plugins would be updated.",
                     "shapes": [],
                     "params": [
                         {
@@ -21127,7 +21127,7 @@
                     "static": false,
                     "visibility": "public",
                     "signature": "search(array $args, array $assocArgs): void",
-                    "doc": "Searches the wordpress.org plugin directory.\n\n## OPTIONS\n\n<search>\n: The string to search for.\n\n[--page=<page>]\n: Optional page to display.\n---\ndefault: 1\n---\n\n[--per-page=<per-page>]\n: Optional number of results to display.\n---\ndefault: 10\n---\n\n[--field=<field>]\n: Prints the value of a single field for each plugin.\n\n[--fields=<fields>]\n: Limit the output to specific object fields. Defaults to name,slug,rating.\n\n[--format=<format>]\n: Render output in a particular format.\n---\ndefault: table\noptions:\n- table\n- csv\n- json\n- count\n- yaml\n---",
+                    "doc": "Searches the plugin directory.\n\n## OPTIONS\n\n<search>\n: The string to search for.\n\n[--page=<page>]\n: Optional page to display.\n---\ndefault: 1\n---\n\n[--per-page=<per-page>]\n: Optional number of results to display.\n---\ndefault: 10\n---\n\n[--field=<field>]\n: Prints the value of a single field for each plugin.\n\n[--fields=<fields>]\n: Limit the output to specific object fields. Defaults to name,slug,rating.\n\n[--format=<format>]\n: Render output in a particular format.\n---\ndefault: table\noptions:\n- table\n- csv\n- json\n- count\n- yaml\n---",
                     "shapes": [],
                     "params": [
                         {
@@ -21173,7 +21173,7 @@
                         }
                     ],
                     "line": 326,
-                    "end": 357
+                    "end": 365
                 },
                 {
                     "routes": [],
@@ -21199,8 +21199,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 360,
-                    "end": 382
+                    "line": 368,
+                    "end": 390
                 },
                 {
                     "routes": [],
@@ -21226,8 +21226,28 @@
                             "doc": ""
                         }
                     ],
-                    "line": 384,
-                    "end": 399
+                    "line": 392,
+                    "end": 412
+                },
+                {
+                    "routes": [],
+                    "name": "plain",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "plain(string $message): string",
+                    "doc": "A refusal's HTML message as WP-CLI words it in a warning: links dropped, tags stripped, no \"Error:\" lead.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "message",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 415,
+                    "end": 418
                 }
             ]
         },
@@ -22226,7 +22246,7 @@
                     "static": false,
                     "visibility": "public",
                     "signature": "install(array $args, array $assocArgs): void",
-                    "doc": "Installs one or more themes from wordpress.org, a zip, or a URL.\n\n## OPTIONS\n\n<theme|zip|url>...\n: A theme slug, a local zip path, or a zip URL.\n\n[--version=<version>]\n: Install that wordpress.org version instead of the current one.\n\n[--force]\n: Overwrite an installed copy of the same folder.\n\n[--activate]\n: Activate the theme after it is installed (or if it is already on disk).",
+                    "doc": "Installs one or more themes from the theme directory, a zip, or a URL.\n\n## OPTIONS\n\n<theme|zip|url>...\n: A theme slug, a local zip path, or a zip URL.\n\n[--version=<version>]\n: Install that version from the directory instead of the current one.\n\n[--force]\n: Overwrite an installed copy of the same folder.\n\n[--activate]\n: Activate the theme after it is installed (or if it is already on disk).",
                     "shapes": [],
                     "params": [
                         {
@@ -22253,7 +22273,7 @@
                     "static": false,
                     "visibility": "public",
                     "signature": "update(array $args, array $assocArgs): void",
-                    "doc": "Updates one or more themes from wordpress.org.\n\n## OPTIONS\n\n[<theme>...]\n: One or more themes to update.\n\n[--all]\n: If set, all themes that have updates will be updated.\n\n[--exclude=<theme-names>]\n: Comma separated list of theme names that should be excluded from updating.\n\n[--minor]\n: Only perform updates for minor releases.\n\n[--patch]\n: Only perform updates for patch releases.\n\n[--format=<format>]\n: Render output in a particular format.\n---\ndefault: table\noptions:\n- table\n- csv\n- json\n- summary\n---\n\n[--version=<version>]\n: If set, the theme will be updated to the specified version.\n\n[--dry-run]\n: Preview which themes would be updated.",
+                    "doc": "Updates one or more themes from the theme directory.\n\n## OPTIONS\n\n[<theme>...]\n: One or more themes to update.\n\n[--all]\n: If set, all themes that have updates will be updated.\n\n[--exclude=<theme-names>]\n: Comma separated list of theme names that should be excluded from updating.\n\n[--minor]\n: Only perform updates for minor releases.\n\n[--patch]\n: Only perform updates for patch releases.\n\n[--format=<format>]\n: Render output in a particular format.\n---\ndefault: table\noptions:\n- table\n- csv\n- json\n- summary\n---\n\n[--version=<version>]\n: If set, the theme will be updated to the specified version.\n\n[--dry-run]\n: Preview which themes would be updated.",
                     "shapes": [],
                     "params": [
                         {
@@ -22388,7 +22408,7 @@
                     "static": false,
                     "visibility": "public",
                     "signature": "search(array $args, array $assocArgs): void",
-                    "doc": "Searches the wordpress.org theme directory.\n\n## OPTIONS\n\n<search>\n: The string to search for.\n\n[--page=<page>]\n: Optional page to display.\n---\ndefault: 1\n---\n\n[--per-page=<per-page>]\n: Optional number of results to display. Defaults to 10.\n\n[--field=<field>]\n: Prints the value of a single field for each theme.\n\n[--fields=<fields>]\n: Limit the output to specific object fields. Defaults to name,slug,rating.\n\n[--format=<format>]\n: Render output in a particular format.\n---\ndefault: table\noptions:\n- table\n- csv\n- json\n- count\n- yaml\n---",
+                    "doc": "Searches the theme directory.\n\n## OPTIONS\n\n<search>\n: The string to search for.\n\n[--page=<page>]\n: Optional page to display.\n---\ndefault: 1\n---\n\n[--per-page=<per-page>]\n: Optional number of results to display. Defaults to 10.\n\n[--field=<field>]\n: Prints the value of a single field for each theme.\n\n[--fields=<fields>]\n: Limit the output to specific object fields. Defaults to name,slug,rating.\n\n[--format=<format>]\n: Render output in a particular format.\n---\ndefault: table\noptions:\n- table\n- csv\n- json\n- count\n- yaml\n---",
                     "shapes": [],
                     "params": [
                         {
@@ -26734,8 +26754,8 @@
             "namespace": "Minn\\Content",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Content/PluginState.php",
-            "lines": 86,
-            "doc": "Switching plugins on and off, the way the reference records it: a\nWordPress plugin file joins or leaves the sorted active_plugins list; a\nMinn extension joins or leaves minn_active_extensions, and deactivating\none also releases the plugin files it stood in for. The REST toggle and\nthe CLI verbs share this so they cannot drift.",
+            "lines": 72,
+            "doc": "Switching plugins on and off: a WordPress plugin file goes through the\nreference's activation and deactivation (PluginActivation: requirements,\nthe plugin loaded, its hooks, the sorted active_plugins list); a Minn\nextension joins or leaves minn_active_extensions, and deactivating one\nalso releases, silently, the plugin files it stood in for. The REST\ntoggle and the CLI verbs share this so they cannot drift; both run with\nthe runtime booted.",
             "implements": [],
             "extends": null,
             "uses": [
@@ -26743,6 +26763,9 @@
                 "Minn\\Content\\Site",
                 "Minn\\Extension\\Loader",
                 "Minn\\Extension\\Manifest",
+                "Minn\\Runtime\\PluginActivation",
+                "Minn\\Runtime\\Refusal",
+                "Minn\\Runtime\\Runtime",
                 "Minn\\Support\\Serialized"
             ],
             "usedBy": [
@@ -26777,8 +26800,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 20,
-                "end": 22
+                "line": 25,
+                "end": 27
             },
             "cases": [],
             "constants": [],
@@ -26829,8 +26852,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 30,
-                    "end": 43
+                    "line": 35,
+                    "end": 48
                 },
                 {
                     "routes": [],
@@ -26849,16 +26872,16 @@
                             "doc": ""
                         }
                     ],
-                    "line": 46,
-                    "end": 52
+                    "line": 51,
+                    "end": 57
                 },
                 {
                     "routes": [],
                     "name": "activate",
                     "static": false,
                     "visibility": "public",
-                    "signature": "activate(Minn\\Extension\\Manifest|string $plugin): void",
-                    "doc": "Records a plugin or an extension as active or not, in the option each kind uses.",
+                    "signature": "activate(Minn\\Extension\\Manifest|string $plugin): ?Minn\\Runtime\\Refusal",
+                    "doc": "Records a plugin or an extension as active, in the option each kind\nuses; null, or why a plugin was refused (unexpected_output leaves it\nactive, as the reference does).",
                     "shapes": [],
                     "params": [
                         {
@@ -26869,8 +26892,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 55,
-                    "end": 63
+                    "line": 64,
+                    "end": 74
                 },
                 {
                     "routes": [],
@@ -26889,8 +26912,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 66,
-                    "end": 77
+                    "line": 77,
+                    "end": 86
                 },
                 {
                     "routes": [],
@@ -26911,70 +26934,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 80,
-                    "end": 84
-                },
-                {
-                    "routes": [],
-                    "name": "addFile",
-                    "static": false,
-                    "visibility": "private",
-                    "signature": "addFile(string $file): void",
-                    "doc": "",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "file",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 86,
-                    "end": 91
-                },
-                {
-                    "routes": [],
-                    "name": "removeFile",
-                    "static": false,
-                    "visibility": "private",
-                    "signature": "removeFile(string $file): void",
-                    "doc": "",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "file",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 93,
-                    "end": 96
-                },
-                {
-                    "routes": [],
-                    "name": "filesWithout",
-                    "static": false,
-                    "visibility": "private",
-                    "signature": "filesWithout(string $file): array",
-                    "doc": "The active plugin files minus one. @return list<string>",
-                    "shapes": [
-                        "@return list<string>"
-                    ],
-                    "params": [
-                        {
-                            "name": "file",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 99,
-                    "end": 102
+                    "line": 89,
+                    "end": 93
                 }
             ]
         },
@@ -40572,7 +40533,8 @@
             "uses": [
                 "Minn\\Front\\FeedWriter",
                 "Minn\\Runtime\\Runtime",
-                "Minn\\Support\\Escape"
+                "Minn\\Support\\Escape",
+                "Minn\\Support\\Url"
             ],
             "usedBy": [],
             "constructor": null,
@@ -40597,8 +40559,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 20,
-                    "end": 37
+                    "line": 21,
+                    "end": 38
                 },
                 {
                     "routes": [],
@@ -40609,8 +40571,8 @@
                     "doc": "The current post's enclosures as RSS has them: address, length, and the type the third line starts with.",
                     "shapes": [],
                     "params": [],
-                    "line": 50,
-                    "end": 61
+                    "line": 51,
+                    "end": 62
                 },
                 {
                     "routes": [],
@@ -40621,8 +40583,8 @@
                     "doc": "The current post's enclosures as Atom links: the length a line that is a number, the type a line that is a known MIME type.",
                     "shapes": [],
                     "params": [],
-                    "line": 64,
-                    "end": 84
+                    "line": 65,
+                    "end": 85
                 },
                 {
                     "routes": [],
@@ -40648,8 +40610,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 87,
-                    "end": 109
+                    "line": 88,
+                    "end": 110
                 },
                 {
                     "routes": [],
@@ -40668,8 +40630,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 116,
-                    "end": 135
+                    "line": 117,
+                    "end": 136
                 },
                 {
                     "routes": [],
@@ -40680,8 +40642,8 @@
                     "doc": "The site icon as an RSS 2.0 image (titled with the feed's title), or '' without one.",
                     "shapes": [],
                     "params": [],
-                    "line": 138,
-                    "end": 148
+                    "line": 139,
+                    "end": 149
                 },
                 {
                     "routes": [],
@@ -40692,8 +40654,8 @@
                     "doc": "The site icon as an Atom icon, or '' without one.",
                     "shapes": [],
                     "params": [],
-                    "line": 151,
-                    "end": 155
+                    "line": 152,
+                    "end": 156
                 },
                 {
                     "routes": [],
@@ -40706,8 +40668,8 @@
                         "@return list<list<string>> the current post's enclosures, each as its lines, unless its password is wanted"
                     ],
                     "params": [],
-                    "line": 40,
-                    "end": 47
+                    "line": 41,
+                    "end": 48
                 }
             ]
         },
@@ -43076,7 +43038,8 @@
             "extends": null,
             "uses": [
                 "Minn\\Runtime\\Runtime",
-                "Minn\\Support\\Escape"
+                "Minn\\Support\\Escape",
+                "Minn\\Support\\Url"
             ],
             "usedBy": [],
             "constructor": null,
@@ -43110,8 +43073,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 24,
-                    "end": 48
+                    "line": 25,
+                    "end": 49
                 },
                 {
                     "routes": [],
@@ -43153,8 +43116,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 51,
-                    "end": 65
+                    "line": 52,
+                    "end": 66
                 },
                 {
                     "routes": [],
@@ -43187,8 +43150,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 68,
-                    "end": 88
+                    "line": 69,
+                    "end": 89
                 },
                 {
                     "routes": [],
@@ -43207,8 +43170,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 91,
-                    "end": 102
+                    "line": 92,
+                    "end": 103
                 },
                 {
                     "routes": [],
@@ -43229,8 +43192,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 105,
-                    "end": 110
+                    "line": 106,
+                    "end": 111
                 },
                 {
                     "routes": [],
@@ -43258,8 +43221,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 113,
-                    "end": 123
+                    "line": 114,
+                    "end": 124
                 }
             ]
         },
@@ -47346,6 +47309,7 @@
             "extends": null,
             "uses": [
                 "Minn\\I18n\\Gettext",
+                "Minn\\Runtime\\Runtime",
                 "Minn\\Support\\Escape"
             ],
             "usedBy": [],
@@ -47370,8 +47334,8 @@
                     "doc": "The bar's wrapper up to its first group.",
                     "shapes": [],
                     "params": [],
-                    "line": 24,
-                    "end": 32
+                    "line": 25,
+                    "end": 33
                 },
                 {
                     "routes": [],
@@ -47382,8 +47346,8 @@
                     "doc": "The bar's wrapper after its last group.",
                     "shapes": [],
                     "params": [],
-                    "line": 35,
-                    "end": 38
+                    "line": 36,
+                    "end": 39
                 },
                 {
                     "routes": [],
@@ -47409,8 +47373,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 41,
-                    "end": 46
+                    "line": 42,
+                    "end": 47
                 },
                 {
                     "routes": [],
@@ -47429,8 +47393,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 49,
-                    "end": 67
+                    "line": 50,
+                    "end": 68
                 },
                 {
                     "routes": [],
@@ -47449,8 +47413,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 70,
-                    "end": 73
+                    "line": 71,
+                    "end": 74
                 }
             ]
         },
@@ -89724,7 +89688,7 @@
             "namespace": "Minn\\Rest",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Rest/PluginsController.php",
-            "lines": 244,
+            "lines": 251,
             "doc": "wp/v2 plugins: what sits in wp-content/plugins, in the reference's\nshape. Minn extensions (a minn.json manifest) are listed alongside the\nWordPress plugins the folder still holds; the engine runs the former\nand only records the latter's stored state. Activation writes the same\noptions the reference and the extension loader read; files are never\ninstalled or deleted from here.",
             "implements": [],
             "extends": null,
@@ -89747,7 +89711,7 @@
                 "Minn\\Rest\\Fields",
                 "Minn\\Rest\\Reply",
                 "Minn\\Rest\\RestUrl",
-                "Minn\\Runtime\\Runtime",
+                "Minn\\Runtime\\Refusal",
                 "Minn\\Support\\FileHeaders",
                 "Minn\\Support\\Html",
                 "Minn\\Support\\Serialized"
@@ -89756,7 +89720,7 @@
                 "Minn\\Rest\\Api"
             ],
             "constructor": {
-                "signature": "__construct(Minn\\Content\\Site $site, Minn\\Content\\Inventory $inventory, Minn\\Extension\\Loader $extensions, Minn\\Rest\\RestUrl $url, Minn\\Rest\\Caller $caller, Minn\\Ops\\Packages $packages, string $contentDir)",
+                "signature": "__construct(Minn\\Content\\Site $site, Minn\\Content\\Inventory $inventory, Minn\\Extension\\Loader $extensions, Minn\\Rest\\RestUrl $url, Minn\\Rest\\Caller $caller, Minn\\Ops\\Packages $packages)",
                 "doc": "",
                 "shapes": [],
                 "params": [
@@ -89801,18 +89765,11 @@
                         "shape": "",
                         "default": null,
                         "doc": ""
-                    },
-                    {
-                        "name": "contentDir",
-                        "type": "string",
-                        "shape": "",
-                        "default": null,
-                        "doc": ""
                     }
                 ],
                 "visibility": "public",
                 "line": 36,
-                "end": 45
+                "end": 44
             },
             "cases": [],
             "constants": [],
@@ -89870,15 +89827,6 @@
                     "doc": "",
                     "visibility": "private",
                     "promoted": true
-                },
-                {
-                    "name": "contentDir",
-                    "type": "string",
-                    "readonly": true,
-                    "static": false,
-                    "doc": "",
-                    "visibility": "private",
-                    "promoted": true
                 }
             ],
             "methods": [
@@ -89901,8 +89849,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 49,
-                    "end": 54
+                    "line": 48,
+                    "end": 53
                 },
                 {
                     "routes": [
@@ -89912,7 +89860,7 @@
                     "static": false,
                     "visibility": "public",
                     "signature": "install(Minn\\Http\\Request $request): Minn\\Http\\Response",
-                    "doc": "Installs a wordpress.org plugin by slug, optionally activating it; answers 201 with the item.",
+                    "doc": "Installs a directory plugin by slug, optionally activating it; answers 201 with the item.",
                     "shapes": [],
                     "params": [
                         {
@@ -89923,8 +89871,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 58,
-                    "end": 90
+                    "line": 57,
+                    "end": 89
                 },
                 {
                     "routes": [
@@ -89952,8 +89900,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 94,
-                    "end": 97
+                    "line": 93,
+                    "end": 96
                 },
                 {
                     "routes": [
@@ -89983,8 +89931,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 103,
-                    "end": 116
+                    "line": 102,
+                    "end": 119
                 },
                 {
                     "routes": [
@@ -90012,8 +89960,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 120,
-                    "end": 144
+                    "line": 123,
+                    "end": 143
                 },
                 {
                     "routes": [],
@@ -90026,8 +89974,8 @@
                         "@return list<array>"
                     ],
                     "params": [],
-                    "line": 147,
-                    "end": 160
+                    "line": 146,
+                    "end": 159
                 },
                 {
                     "routes": [],
@@ -90046,8 +89994,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 162,
-                    "end": 170
+                    "line": 161,
+                    "end": 169
                 },
                 {
                     "routes": [],
@@ -90066,8 +90014,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 172,
-                    "end": 180
+                    "line": 171,
+                    "end": 179
                 },
                 {
                     "routes": [],
@@ -90093,8 +90041,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 182,
-                    "end": 203
+                    "line": 181,
+                    "end": 202
                 },
                 {
                     "routes": [],
@@ -90127,8 +90075,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 205,
-                    "end": 234
+                    "line": 204,
+                    "end": 233
                 },
                 {
                     "routes": [],
@@ -90154,8 +90102,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 237,
-                    "end": 240
+                    "line": 236,
+                    "end": 239
                 },
                 {
                     "routes": [],
@@ -90174,8 +90122,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 243,
-                    "end": 259
+                    "line": 242,
+                    "end": 258
                 },
                 {
                     "routes": [],
@@ -90194,8 +90142,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 262,
-                    "end": 265
+                    "line": 261,
+                    "end": 264
                 },
                 {
                     "routes": [],
@@ -90214,8 +90162,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 267,
-                    "end": 270
+                    "line": 266,
+                    "end": 269
                 },
                 {
                     "routes": [],
@@ -90234,8 +90182,28 @@
                             "doc": ""
                         }
                     ],
-                    "line": 272,
-                    "end": 275
+                    "line": 271,
+                    "end": 274
+                },
+                {
+                    "routes": [],
+                    "name": "refuse",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "refuse(?Minn\\Runtime\\Refusal $refusal): void",
+                    "doc": "An activation the plugin refused, as the reference's REST answer carries it: HTTP 500, the refusal's own data kept beside.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "refusal",
+                            "type": "?Minn\\Runtime\\Refusal",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 278,
+                    "end": 283
                 }
             ]
         },
@@ -104490,7 +104458,8 @@
             "implements": [],
             "extends": null,
             "uses": [
-                "Minn\\Runtime\\Runtime"
+                "Minn\\Runtime\\Runtime",
+                "Minn\\Support\\Url"
             ],
             "usedBy": [],
             "constructor": null,
@@ -104515,8 +104484,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 21,
-                    "end": 39
+                    "line": 23,
+                    "end": 41
                 },
                 {
                     "routes": [],
@@ -104542,8 +104511,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 42,
-                    "end": 57
+                    "line": 44,
+                    "end": 59
                 }
             ]
         },
@@ -107134,7 +107103,8 @@
             "implements": [],
             "extends": null,
             "uses": [
-                "Minn\\Runtime\\Runtime"
+                "Minn\\Runtime\\Runtime",
+                "Minn\\Support\\Url"
             ],
             "usedBy": [],
             "constructor": null,
@@ -107175,8 +107145,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 27,
-                    "end": 55
+                    "line": 29,
+                    "end": 57
                 },
                 {
                     "routes": [],
@@ -107204,8 +107174,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 84,
-                    "end": 101
+                    "line": 86,
+                    "end": 103
                 },
                 {
                     "routes": [],
@@ -107231,8 +107201,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 104,
-                    "end": 114
+                    "line": 106,
+                    "end": 116
                 },
                 {
                     "routes": [],
@@ -107260,8 +107230,8 @@
                             "doc": "the count of the top-level comments older than this one, through get_page_of_comment_query_args"
                         }
                     ],
-                    "line": 58,
-                    "end": 75
+                    "line": 60,
+                    "end": 77
                 }
             ]
         },
@@ -109457,6 +109427,7 @@
             "extends": null,
             "uses": [],
             "usedBy": [
+                "Minn\\Runtime\\PluginActivation",
                 "Minn\\Runtime\\Runtime"
             ],
             "constructor": null,
@@ -112118,7 +112089,8 @@
             "extends": null,
             "uses": [
                 "Minn\\Runtime\\Runtime",
-                "Minn\\Support\\Escape"
+                "Minn\\Support\\Escape",
+                "Minn\\Support\\Url"
             ],
             "usedBy": [],
             "constructor": null,
@@ -112153,8 +112125,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 26,
-                    "end": 51
+                    "line": 27,
+                    "end": 52
                 },
                 {
                     "routes": [],
@@ -112176,8 +112148,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 110,
-                    "end": 148
+                    "line": 111,
+                    "end": 149
                 },
                 {
                     "routes": [],
@@ -112196,8 +112168,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 54,
-                    "end": 69
+                    "line": 55,
+                    "end": 70
                 },
                 {
                     "routes": [],
@@ -112223,8 +112195,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 72,
-                    "end": 84
+                    "line": 73,
+                    "end": 85
                 },
                 {
                     "routes": [],
@@ -112257,8 +112229,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 87,
-                    "end": 102
+                    "line": 88,
+                    "end": 103
                 },
                 {
                     "routes": [],
@@ -112271,8 +112243,8 @@
                         "@return array{type: string, termIds: list<int>, termAncestorIds: list<int>, parentId: int, postAncestorIds: list<int>}|null"
                     ],
                     "params": [],
-                    "line": 158,
-                    "end": 188
+                    "line": 159,
+                    "end": 189
                 },
                 {
                     "routes": [],
@@ -112324,8 +112296,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 201,
-                    "end": 222
+                    "line": 202,
+                    "end": 223
                 },
                 {
                     "routes": [],
@@ -112365,8 +112337,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 224,
-                    "end": 246
+                    "line": 225,
+                    "end": 247
                 },
                 {
                     "routes": [],
@@ -112427,8 +112399,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 260,
-                    "end": 308
+                    "line": 261,
+                    "end": 309
                 },
                 {
                     "routes": [],
@@ -112439,8 +112411,8 @@
                     "doc": "",
                     "shapes": [],
                     "params": [],
-                    "line": 310,
-                    "end": 317
+                    "line": 311,
+                    "end": 318
                 }
             ]
         },
@@ -114793,6 +114765,103 @@
             ]
         },
         {
+            "name": "Minn\\Runtime\\PluginActivation",
+            "short": "PluginActivation",
+            "namespace": "Minn\\Runtime",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Runtime/PluginActivation.php",
+            "lines": 64,
+            "doc": "Switching a plugin on and off the way the reference's activate_plugin\nand deactivate_plugins do (probe plugin-activation), for the facade and\nfor the engine's own REST routes and WP-CLI verbs alike. Activating\nchecks the plugin's requirements, then loads its main file through the\nruntime's gate (so its activation hook is registered, silent or not),\nfires activate_plugin and activate_<file> (which runs that hook), writes\nactive_plugins sorted through update_option, and fires activated_plugin;\nwhatever the plugin printed meanwhile makes the answer unexpected_output,\nwith the plugin left active, as the reference leaves it. Silent skips the\nactions, not the load. A plugin the gate will not load (it needs\nfunctions or classes the runtime lacks) is refused rather than recorded\nactive with code that could never run its activation hook. Deactivating\nfires deactivate_plugin, deactivate_<file> and deactivated_plugin for\neach plugin, then writes the list once.",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\Runtime\\Hooks",
+                "Minn\\Runtime\\PluginRequirements",
+                "Minn\\Runtime\\Plugins",
+                "Minn\\Runtime\\Refusal",
+                "Minn\\Runtime\\Runtime"
+            ],
+            "usedBy": [
+                "Minn\\Content\\PluginState"
+            ],
+            "constructor": null,
+            "cases": [],
+            "constants": [],
+            "properties": [],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "activate",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "activate(string $plugin, ?Minn\\Runtime\\Hooks $announce): ?Minn\\Runtime\\Refusal",
+                    "doc": "Activates one plugin (\"dir/file.php\"), announcing it to the hooks\ngiven, or to nobody (silent); null when it is active afterwards with\nnothing to report.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "plugin",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "announce",
+                            "type": "?Minn\\Runtime\\Hooks",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 30,
+                    "end": 57
+                },
+                {
+                    "routes": [],
+                    "name": "deactivate",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "deactivate(array $plugins, ?Minn\\Runtime\\Hooks $announce): void",
+                    "doc": "Deactivates plugins (\"dir/file.php\" each), announcing each to the hooks\ngiven, or to nobody (silent); those not active are passed over.",
+                    "shapes": [
+                        "@param list<string> $plugins"
+                    ],
+                    "params": [
+                        {
+                            "name": "plugins",
+                            "type": "array",
+                            "shape": "list<string>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "announce",
+                            "type": "?Minn\\Runtime\\Hooks",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 65,
+                    "end": 78
+                },
+                {
+                    "routes": [],
+                    "name": "active",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "active(): array",
+                    "doc": "",
+                    "shapes": [
+                        "@return list<string>"
+                    ],
+                    "params": [],
+                    "line": 81,
+                    "end": 85
+                }
+            ]
+        },
+        {
             "name": "Minn\\Runtime\\PluginRemoval",
             "short": "PluginRemoval",
             "namespace": "Minn\\Runtime",
@@ -114986,6 +115055,98 @@
             ]
         },
         {
+            "name": "Minn\\Runtime\\PluginRequirements",
+            "short": "PluginRequirements",
+            "namespace": "Minn\\Runtime",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Runtime/PluginRequirements.php",
+            "lines": 65,
+            "doc": "Whether a plugin can be switched on here, as the reference's\nvalidate_plugin_requirements answers (probe plugin-activation): the\nplugin header's \"Requires at least\" against the WordPress version the\nsite speaks, its \"Requires PHP\" against the running PHP, and every slug\nin its \"Requires Plugins\" installed and active (a readme.txt is not\nread). A refusal carries the reference's code, its HTML message word for\nword, and for missing plugins the slugs found inactive (slug => name) and\nnot installed (slug => slug). The slugs are taken sorted (one that is not\na lower-case slug is passed over), and named in that order.",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\Runtime\\Refusal",
+                "Minn\\Runtime\\Runtime",
+                "Minn\\Support\\FileHeaders"
+            ],
+            "usedBy": [
+                "Minn\\Runtime\\PluginActivation"
+            ],
+            "constructor": null,
+            "cases": [],
+            "constants": [],
+            "properties": [],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "check",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "check(string $plugin): ?Minn\\Runtime\\Refusal",
+                    "doc": "Null when the plugin may be activated, otherwise why not.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "plugin",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 23,
+                    "end": 43
+                },
+                {
+                    "routes": [],
+                    "name": "dependencies",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "dependencies(string $name, string $required): ?Minn\\Runtime\\Refusal",
+                    "doc": "The required plugins that are not installed and active, refused together.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "name",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "required",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 46,
+                    "end": 72
+                },
+                {
+                    "routes": [],
+                    "name": "installed",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "installed(string $slug): ?string",
+                    "doc": "The installed plugin a slug names: the first file in its folder with a plugin header, else a single-file plugin of that name.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "slug",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 75,
+                    "end": 83
+                }
+            ]
+        },
+        {
             "name": "Minn\\Runtime\\PluginUpdates",
             "short": "PluginUpdates",
             "namespace": "Minn\\Runtime",
@@ -115111,7 +115272,7 @@
             "namespace": "Minn\\Runtime",
             "kind": "final class",
             "file": "public/minn/src/Minn/Runtime/Plugins.php",
-            "lines": 238,
+            "lines": 264,
             "doc": "Loads the site's plugins into the runtime the way the reference does:\nmu-plugins first, then active_plugins in stored order, each file\nincluded once. A plugin loads only when the static symbol read finds\nnothing the runtime lacks; otherwise it is reported and skipped so the\nsite keeps rendering. The lifecycle actions fire between the phases.",
             "implements": [],
             "extends": null,
@@ -115129,6 +115290,7 @@
                 "Minn\\Cli\\Runtime",
                 "Minn\\Engine",
                 "Minn\\Extension\\Loader",
+                "Minn\\Runtime\\PluginActivation",
                 "Minn\\Theme\\ClassicRenderer"
             ],
             "constructor": null,
@@ -115238,6 +115400,33 @@
                 },
                 {
                     "routes": [],
+                    "name": "loadNow",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "loadNow(string $plugin, Minn\\Runtime\\Runtime $runtime): ?string",
+                    "doc": "Loads one plugin's main file now, as activating it does: the reference\nincludes the file (once) before activate_plugin fires, so the plugin's\nactivation hook is in place to hear activate_<file>, and announces no\nplugin_loaded for it. The same gate as the boot decides; null once the\nplugin is running, otherwise why the gate refused it.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "plugin",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "runtime",
+                            "type": "Minn\\Runtime\\Runtime",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 206,
+                    "end": 223
+                },
+                {
+                    "routes": [],
                     "name": "isLoaded",
                     "static": true,
                     "visibility": "public",
@@ -115253,8 +115442,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 200,
-                    "end": 203
+                    "line": 226,
+                    "end": 229
                 },
                 {
                     "routes": [],
@@ -115354,8 +115543,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 205,
-                    "end": 228
+                    "line": 231,
+                    "end": 254
                 },
                 {
                     "routes": [],
@@ -115388,8 +115577,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 236,
-                    "end": 248
+                    "line": 262,
+                    "end": 274
                 },
                 {
                     "routes": [],
@@ -115408,8 +115597,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 251,
-                    "end": 256
+                    "line": 277,
+                    "end": 282
                 }
             ]
         },
@@ -116420,7 +116609,8 @@
             "implements": [],
             "extends": null,
             "uses": [
-                "Minn\\Runtime\\Runtime"
+                "Minn\\Runtime\\Runtime",
+                "Minn\\Support\\Url"
             ],
             "usedBy": [],
             "constructor": null,
@@ -116471,8 +116661,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 31,
-                    "end": 41
+                    "line": 33,
+                    "end": 43
                 },
                 {
                     "routes": [],
@@ -116498,8 +116688,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 76,
-                    "end": 86
+                    "line": 78,
+                    "end": 88
                 },
                 {
                     "routes": [],
@@ -116525,8 +116715,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 89,
-                    "end": 106
+                    "line": 91,
+                    "end": 108
                 },
                 {
                     "routes": [],
@@ -116552,8 +116742,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 109,
-                    "end": 126
+                    "line": 111,
+                    "end": 128
                 },
                 {
                     "routes": [],
@@ -116588,8 +116778,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 149,
-                    "end": 169
+                    "line": 151,
+                    "end": 171
                 },
                 {
                     "routes": [],
@@ -116615,8 +116805,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 44,
-                    "end": 59
+                    "line": 46,
+                    "end": 61
                 },
                 {
                     "routes": [],
@@ -116635,8 +116825,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 62,
-                    "end": 73
+                    "line": 64,
+                    "end": 75
                 },
                 {
                     "routes": [],
@@ -116662,8 +116852,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 133,
-                    "end": 140
+                    "line": 135,
+                    "end": 142
                 }
             ]
         },
@@ -119872,17 +120062,21 @@
             "usedBy": [
                 "Minn\\Blocks\\BlockName",
                 "Minn\\Content\\Menus",
+                "Minn\\Content\\PluginState",
                 "Minn\\Ops\\Unzip",
                 "Minn\\Ops\\Updates",
                 "Minn\\Rest\\ArgCheck",
                 "Minn\\Rest\\BlockRendererController",
                 "Minn\\Rest\\MenusController",
                 "Minn\\Rest\\ParamCheck",
+                "Minn\\Rest\\PluginsController",
                 "Minn\\Rest\\RouteMatch",
                 "Minn\\Rest\\Schema",
                 "Minn\\Runtime\\Connectors",
                 "Minn\\Runtime\\PackageDownload",
                 "Minn\\Runtime\\Patterns",
+                "Minn\\Runtime\\PluginActivation",
+                "Minn\\Runtime\\PluginRequirements",
                 "Minn\\Runtime\\UserInsert",
                 "Minn\\Runtime\\UserSave"
             ],
@@ -121215,6 +121409,7 @@
                 "Minn\\Cli\\Runtime",
                 "Minn\\Content\\Blocks",
                 "Minn\\Content\\MediaShortcodes",
+                "Minn\\Content\\PluginState",
                 "Minn\\Content\\PostSlugs",
                 "Minn\\Content\\Reader",
                 "Minn\\Content\\Site",
@@ -121236,6 +121431,7 @@
                 "Minn\\Front\\RuleRoutes",
                 "Minn\\Front\\SingleQueries",
                 "Minn\\Front\\SitemapRequest",
+                "Minn\\Front\\ToolbarMarkup",
                 "Minn\\Front\\ToolbarMenus",
                 "Minn\\I18n\\Gettext",
                 "Minn\\Login\\LoginController",
@@ -121252,7 +121448,6 @@
                 "Minn\\Rest\\InstalledThemesController",
                 "Minn\\Rest\\LiveSettings",
                 "Minn\\Rest\\OEmbedController",
-                "Minn\\Rest\\PluginsController",
                 "Minn\\Rest\\PostCollectionParams",
                 "Minn\\Rest\\PostListArgs",
                 "Minn\\Rest\\PostsController",
@@ -121293,7 +121488,9 @@
                 "Minn\\Runtime\\PackageDownload",
                 "Minn\\Runtime\\Patterns",
                 "Minn\\Runtime\\PlaceholderTrace",
+                "Minn\\Runtime\\PluginActivation",
                 "Minn\\Runtime\\PluginRemoval",
+                "Minn\\Runtime\\PluginRequirements",
                 "Minn\\Runtime\\PluginUpdates",
                 "Minn\\Runtime\\Plugins",
                 "Minn\\Runtime\\PostEvents",
@@ -129220,6 +129417,7 @@
                 "Minn\\Ops\\Packages",
                 "Minn\\Ops\\Updates",
                 "Minn\\Rest\\PluginsController",
+                "Minn\\Runtime\\PluginRequirements",
                 "Minn\\Runtime\\Plugins",
                 "Minn\\Theme\\Folder"
             ],
@@ -132414,17 +132612,64 @@
             "namespace": "Minn\\Support",
             "kind": "final class",
             "file": "public/minn/src/Minn/Support/Url.php",
-            "lines": 202,
+            "lines": 214,
             "doc": "URL shaping the escaping and query helpers share: the character cleanup\nesc_url applies, bracket encoding outside the authority, and query\nargument merging. Behaviour pinned by contracts/fixtures/api/functions.json.",
             "implements": [],
             "extends": null,
             "uses": [],
-            "usedBy": [],
+            "usedBy": [
+                "Minn\\Front\\FeedTags",
+                "Minn\\Front\\PostEmbed",
+                "Minn\\Runtime\\ArchiveLinks",
+                "Minn\\Runtime\\CommentPages",
+                "Minn\\Runtime\\NavMenu",
+                "Minn\\Runtime\\PostLinks"
+            ],
             "constructor": null,
             "cases": [],
             "constants": [],
             "properties": [],
             "methods": [
+                {
+                    "routes": [],
+                    "name": "withTrailingSlash",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "withTrailingSlash(string $value): string",
+                    "doc": "The value with one trailing slash, whatever slashes or backslashes it ended in (trailingslashit).",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "value",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 17,
+                    "end": 20
+                },
+                {
+                    "routes": [],
+                    "name": "withoutTrailingSlash",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "withoutTrailingSlash(string $value): string",
+                    "doc": "The value with every trailing slash and backslash taken off (untrailingslashit).",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "value",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 23,
+                    "end": 26
+                },
                 {
                     "routes": [],
                     "name": "clean",
@@ -132442,8 +132687,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 17,
-                    "end": 29
+                    "line": 29,
+                    "end": 41
                 },
                 {
                     "routes": [],
@@ -132471,8 +132716,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 32,
-                    "end": 46
+                    "line": 44,
+                    "end": 58
                 },
                 {
                     "routes": [],
@@ -132516,8 +132761,8 @@
                             "doc": "builds the query string"
                         }
                     ],
-                    "line": 57,
-                    "end": 86
+                    "line": 69,
+                    "end": 98
                 },
                 {
                     "routes": [],
@@ -132567,8 +132812,8 @@
                             "doc": "the port list for a URL that names a port"
                         }
                     ],
-                    "line": 98,
-                    "end": 128
+                    "line": 110,
+                    "end": 140
                 },
                 {
                     "routes": [],
@@ -132594,8 +132839,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 137,
-                    "end": 149
+                    "line": 149,
+                    "end": 161
                 },
                 {
                     "routes": [],
@@ -132621,8 +132866,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 152,
-                    "end": 176
+                    "line": 164,
+                    "end": 188
                 },
                 {
                     "routes": [],
@@ -132648,8 +132893,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 179,
-                    "end": 190
+                    "line": 191,
+                    "end": 202
                 },
                 {
                     "routes": [],
@@ -132677,8 +132922,8 @@
                             "doc": "the hosts allowed for the target's host"
                         }
                     ],
-                    "line": 198,
-                    "end": 214
+                    "line": 210,
+                    "end": 226
                 },
                 {
                     "routes": [],
@@ -132699,8 +132944,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 131,
-                    "end": 134
+                    "line": 143,
+                    "end": 146
                 }
             ]
         },

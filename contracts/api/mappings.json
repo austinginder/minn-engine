@@ -2,12 +2,12 @@
     "generated": "2026-10-07",
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line)",
     "summary": {
-        "minn": 665,
-        "composes": 973,
+        "minn": 668,
+        "composes": 972,
         "leaf": 663,
-        "noop": 1964,
-        "functions": 4191,
-        "minnMethods": 782,
+        "noop": 1965,
+        "functions": 4194,
+        "minnMethods": 787,
         "leafLinesOver15": 13
     },
     "functions": {
@@ -18423,14 +18423,14 @@
         },
         "activate_plugin": {
             "file": "admin.php",
-            "lines": 20,
-            "kind": "composes",
-            "minn": [],
+            "lines": 2,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Runtime\\PluginActivation::activate",
+                "Minn\\Runtime\\Runtime::hooks"
+            ],
             "composes": [
-                "do_action",
-                "get_option",
-                "plugin_basename",
-                "update_option"
+                "plugin_basename"
             ]
         },
         "activate_plugins": {
@@ -19985,14 +19985,14 @@
         },
         "deactivate_plugins": {
             "file": "admin.php",
-            "lines": 17,
-            "kind": "composes",
-            "minn": [],
+            "lines": 2,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Runtime\\PluginActivation::deactivate",
+                "Minn\\Runtime\\Runtime::hooks"
+            ],
             "composes": [
-                "do_action",
-                "get_option",
-                "plugin_basename",
-                "update_option"
+                "plugin_basename"
             ]
         },
         "decode_body": {
@@ -30143,10 +30143,10 @@
             "file": "formatting.php",
             "lines": 1,
             "kind": "noop",
-            "minn": [],
-            "composes": [
-                "untrailingslashit"
-            ]
+            "minn": [
+                "Minn\\Support\\Url::withTrailingSlash"
+            ],
+            "composes": []
         },
         "translate": {
             "file": "l10n.php",
@@ -30430,7 +30430,9 @@
             "file": "formatting.php",
             "lines": 1,
             "kind": "noop",
-            "minn": [],
+            "minn": [
+                "Minn\\Support\\Url::withoutTrailingSlash"
+            ],
             "composes": []
         },
         "unzip_file": {
@@ -30824,6 +30826,15 @@
             "lines": 1,
             "kind": "noop",
             "minn": [],
+            "composes": []
+        },
+        "validate_plugin_requirements": {
+            "file": "admin.php",
+            "lines": 2,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Runtime\\PluginRequirements::check"
+            ],
             "composes": []
         },
         "validate_username": {
@@ -33261,6 +33272,15 @@
             "minn": [],
             "composes": []
         },
+        "wp_get_default_update_php_url": {
+            "file": "functions.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "_x"
+            ]
+        },
         "wp_get_development_mode": {
             "file": "load.php",
             "lines": 2,
@@ -33865,6 +33885,16 @@
             ],
             "composes": [
                 "apply_filters"
+            ]
+        },
+        "wp_get_update_php_url": {
+            "file": "functions.php",
+            "lines": 2,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "apply_filters",
+                "wp_get_default_update_php_url"
             ]
         },
         "wp_get_upload_dir": {

@@ -501,7 +501,7 @@ The site icon as an RSS 2.0 image (titled with the feed's title), or '' without 
 
 The site icon as an Atom icon, or '' without one.
 
-Internals: `enclosures()` (private, line 40)
+Internals: `enclosures()` (private, line 41)
 
 
 ## FeedTemplates
@@ -911,7 +911,7 @@ _oembed_create_xml: the data as an oembed document, nested arrays as nested elem
 
 - `@param array<string, mixed> $data`
 
-Internals: `append()` (private, line 113)
+Internals: `append()` (private, line 114)
 
 
 ## PostNavigation

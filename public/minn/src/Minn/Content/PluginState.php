@@ -6,14 +6,19 @@ namespace Minn\Content;
 
 use Minn\Extension\Loader;
 use Minn\Extension\Manifest;
+use Minn\Runtime\PluginActivation;
+use Minn\Runtime\Refusal;
+use Minn\Runtime\Runtime;
 use Minn\Support\Serialized;
 
 /**
- * Switching plugins on and off, the way the reference records it: a
- * WordPress plugin file joins or leaves the sorted active_plugins list; a
- * Minn extension joins or leaves minn_active_extensions, and deactivating
- * one also releases the plugin files it stood in for. The REST toggle and
- * the CLI verbs share this so they cannot drift.
+ * Switching plugins on and off: a WordPress plugin file goes through the
+ * reference's activation and deactivation (PluginActivation: requirements,
+ * the plugin loaded, its hooks, the sorted active_plugins list); a Minn
+ * extension joins or leaves minn_active_extensions, and deactivating one
+ * also releases, silently, the plugin files it stood in for. The REST
+ * toggle and the CLI verbs share this so they cannot drift; both run with
+ * the runtime booted.
  */
 final readonly class PluginState
 {
@@ -51,27 +56,31 @@ final readonly class PluginState
         return in_array($plugin, Serialized::stringList($this->site->option('active_plugins')), true);
     }
 
-    /** Records a plugin or an extension as active or not, in the option each kind uses. */
-    public function activate(Manifest|string $plugin): void
+    /**
+     * Records a plugin or an extension as active, in the option each kind
+     * uses; null, or why a plugin was refused (unexpected_output leaves it
+     * active, as the reference does).
+     */
+    public function activate(Manifest|string $plugin): ?Refusal
     {
+        $refusal = null;
         if ($plugin instanceof Manifest) {
             $this->site->setOption('minn_active_extensions', (string) json_encode([...$this->ownWithout($plugin), $plugin->slug]));
         } else {
-            $this->addFile($plugin);
+            $refusal = PluginActivation::activate($plugin, Runtime::hooks());
         }
         $this->extensions->refresh();
+        return $refusal;
     }
 
     /** Records a plugin, by file, or a Minn extension as inactive; an extension also deactivates the plugins it replaced. */
     public function deactivate(Manifest|string $plugin): void
     {
         if ($plugin instanceof Manifest) {
-            foreach ($plugin->replaces as $file) {
-                $this->removeFile($file);
-            }
+            PluginActivation::deactivate(array_values($plugin->replaces), null);
             $this->site->setOption('minn_active_extensions', (string) json_encode($this->ownWithout($plugin)));
         } else {
-            $this->removeFile($plugin);
+            PluginActivation::deactivate([$plugin], Runtime::hooks());
         }
         $this->extensions->refresh();
     }
@@ -81,23 +90,5 @@ final readonly class PluginState
     {
         $own = json_decode((string) ($this->site->option('minn_active_extensions') ?? '[]'), true);
         return array_values(array_diff(is_array($own) ? array_map('strval', $own) : [], [$plugin->slug]));
-    }
-
-    private function addFile(string $file): void
-    {
-        $list = [...$this->filesWithout($file), $file];
-        sort($list, SORT_STRING);
-        $this->site->setOption('active_plugins', Serialized::serializeStringList($list));
-    }
-
-    private function removeFile(string $file): void
-    {
-        $this->site->setOption('active_plugins', Serialized::serializeStringList($this->filesWithout($file)));
-    }
-
-    /** The active plugin files minus one. @return list<string> */
-    private function filesWithout(string $file): array
-    {
-        return array_values(array_diff(Serialized::stringList($this->site->option('active_plugins')), [$file]));
     }
 }

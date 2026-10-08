@@ -58,9 +58,11 @@ the WordPress runtime plugins load against
 | [`Patterns`](#patterns) | final class | 161 | The block pattern, pattern category, and block style registries as data. |
 | [`PlaceholderTrace`](#placeholdertrace) | final class | 27 | Records every call into a generated placeholder while a site opts in by |
 | [`Placeholders`](#placeholders) | final class | 49 | The printf placeholders plugin code hands wpdb::prepare, filled the way |
+| [`PluginActivation`](#pluginactivation) | final class | 64 | Switching a plugin on and off the way the reference's activate_plugin |
 | [`PluginRemoval`](#pluginremoval) | final class | 124 | Deleting plugins as the reference's delete_plugins does it: each in turn |
+| [`PluginRequirements`](#pluginrequirements) | final class | 65 | Whether a plugin can be switched on here, as the reference's |
 | [`PluginUpdates`](#pluginupdates) | final class | 65 | The update offers the site's own plugins publish. A plugin that hosts |
-| [`Plugins`](#plugins) | final class | 238 | Loads the site's plugins into the runtime the way the reference does: |
+| [`Plugins`](#plugins) | final class | 264 | Loads the site's plugins into the runtime the way the reference does: |
 | [`PostData`](#postdata) | final class | 65 | The loop's view of a post, as the reference's generate_postdata and |
 | [`PostEvents`](#postevents) | final readonly class | 181 | What the reference's REST controllers tell plugins about a post they |
 | [`PostInsert`](#postinsert) | final readonly class | 168 | The decisions behind wp_insert_post: which columns a postarr fills, when |
@@ -967,7 +969,7 @@ when the oldest comments come first.
 
 A post's link opened at a page of its comments, as pretty or plain links write it.
 
-Internals: `olderQuery()` (private, line 58)
+Internals: `olderQuery()` (private, line 60)
 
 
 ## CommentQuery
@@ -1445,7 +1447,7 @@ current or a lower priority waits for the next; a callback removed
 before its turn is skipped; the "all" hook sees every firing with the
 hook name first and every argument regardless of its accepted count.
 
-Used by: `Minn\Runtime\Runtime`
+Used by: `Minn\Runtime\PluginActivation`, `Minn\Runtime\Runtime`
 
 
 ### `onNew(Closure $observer): void`
@@ -1923,7 +1925,7 @@ Menu items with the classes and flags the reference adds for the current page.
 - `@param list<object> $items`
 - `@return list<object>`
 
-Internals: `menuForArgs()` (private, line 54), `wrapId()` (private, line 72), `container()` (private, line 87), `singularContext()` (private, line 158), `markQueriedAncestry()` (private, line 201), `isCurrent()` (private, line 224), `markAncestors()` (private, line 260), `currentUrl()` (private, line 310)
+Internals: `menuForArgs()` (private, line 55), `wrapId()` (private, line 73), `container()` (private, line 88), `singularContext()` (private, line 159), `markQueriedAncestry()` (private, line 202), `isCurrent()` (private, line 225), `markAncestors()` (private, line 261), `currentUrl()` (private, line 311)
 
 
 ## NavMenuItems
@@ -2412,6 +2414,43 @@ Fills a query's placeholders from the arguments; null when one has no argument.
 Internals: `quoted()` (private, line 56), `text()` (private, line 61)
 
 
+## PluginActivation
+
+`final class Minn\Runtime\PluginActivation` · `public/minn/src/Minn/Runtime/PluginActivation.php`
+
+Switching a plugin on and off the way the reference's activate_plugin
+and deactivate_plugins do (probe plugin-activation), for the facade and
+for the engine's own REST routes and WP-CLI verbs alike. Activating
+checks the plugin's requirements, then loads its main file through the
+runtime's gate (so its activation hook is registered, silent or not),
+fires activate_plugin and activate_<file> (which runs that hook), writes
+active_plugins sorted through update_option, and fires activated_plugin;
+whatever the plugin printed meanwhile makes the answer unexpected_output,
+with the plugin left active, as the reference leaves it. Silent skips the
+actions, not the load. A plugin the gate will not load (it needs
+functions or classes the runtime lacks) is refused rather than recorded
+active with code that could never run its activation hook. Deactivating
+fires deactivate_plugin, deactivate_<file> and deactivated_plugin for
+each plugin, then writes the list once.
+
+Used by: `Minn\Content\PluginState`
+
+### static `activate(string $plugin, ?Minn\Runtime\Hooks $announce): ?Minn\Runtime\Refusal`
+
+Activates one plugin ("dir/file.php"), announcing it to the hooks
+given, or to nobody (silent); null when it is active afterwards with
+nothing to report.
+
+### static `deactivate(array $plugins, ?Minn\Runtime\Hooks $announce): void`
+
+Deactivates plugins ("dir/file.php" each), announcing each to the hooks
+given, or to nobody (silent); those not active are passed over.
+
+- `@param list<string> $plugins`
+
+Internals: `active()` (private, line 81)
+
+
 ## PluginRemoval
 
 `final class Minn\Runtime\PluginRemoval` · `public/minn/src/Minn/Runtime/PluginRemoval.php`
@@ -2437,6 +2476,29 @@ uninstall_plugin: pre_uninstall_plugin, then the plugin's uninstall.php
 uninstall_<file>, with the plugin loaded); either is forgotten once run.
 
 Internals: `deleteOne()` (private, line 72), `removeFiles()` (private, line 87), `removeTranslations()` (private, line 103), `forget()` (private, line 120), `forgetUpdates()` (private, line 129)
+
+
+## PluginRequirements
+
+`final class Minn\Runtime\PluginRequirements` · `public/minn/src/Minn/Runtime/PluginRequirements.php`
+
+Whether a plugin can be switched on here, as the reference's
+validate_plugin_requirements answers (probe plugin-activation): the
+plugin header's "Requires at least" against the WordPress version the
+site speaks, its "Requires PHP" against the running PHP, and every slug
+in its "Requires Plugins" installed and active (a readme.txt is not
+read). A refusal carries the reference's code, its HTML message word for
+word, and for missing plugins the slugs found inactive (slug => name) and
+not installed (slug => slug). The slugs are taken sorted (one that is not
+a lower-case slug is passed over), and named in that order.
+
+Used by: `Minn\Runtime\PluginActivation`
+
+### static `check(string $plugin): ?Minn\Runtime\Refusal`
+
+Null when the plugin may be activated, otherwise why not.
+
+Internals: `dependencies()` (private, line 46), `installed()` (private, line 75)
 
 
 ## PluginUpdates
@@ -2496,7 +2558,7 @@ sign-in flow, and maintenance: those hooks come off right after the
 include so the two never print twice or disagree.
 - const `MINN_ADMIN_HOOKS` = `array (   0 =>    array (     0 => 'template_redirect',     1 =>      array (       0 => 'Minn_Admin',       1 => 'maybe_render_app',     ),     2 => 0,   ),   1 =>    array (     0 => 'template_redirect',     1 =>      array (       0 => 'Minn_Admin',       1 => 'maybe_maintenance_mode',     ),     2 => 1,   ),   2 =>    array (     0 => 'rest_authentication_errors',     1 =>      array (       0 => 'Minn_Admin',       1 => 'maintenance_rest',     ),     2 => 20,   ),   3 =>    array (     0 => 'login_redirect',     1 =>      array (       0 => 'Minn_Admin',       1 => 'login_redirect',     ),     2 => 20,   ),   4 =>    array (     0 => 'show_admin_bar',     1 =>      array (       0 => 'Minn_Admin',       1 => 'enforce_toolbar_policy',     ),     2 => 99,   ),   5 =>    array (     0 => 'show_admin_bar',     1 =>      array (       0 => 'Minn_Admin_Bar',       1 => 'suppress_core_bar',     ),     2 => 100,   ),   6 =>    array (     0 => 'wp_enqueue_scripts',     1 =>      array (       0 => 'Minn_Admin_Bar',       1 => 'enqueue',     ),     2 => 10,   ),   7 =>    array (     0 => 'wp_footer',     1 =>      array (       0 => 'Minn_Admin_Bar',       1 => 'render',     ),     2 => 10,   ),   8 =>    array (     0 => 'body_class',     1 =>      array (       0 => 'Minn_Admin_Bar',       1 => 'body_class',     ),     2 => 10,   ), )`
 
-Used by: `Minn\Cli\Runtime`, `Minn\Engine`, `Minn\Extension\Loader`, `Minn\Theme\ClassicRenderer`
+Used by: `Minn\Cli\Runtime`, `Minn\Engine`, `Minn\Extension\Loader`, `Minn\Runtime\PluginActivation`, `Minn\Theme\ClassicRenderer`
 
 
 ### static `load(Minn\Runtime\Runtime $runtime): void`
@@ -2525,11 +2587,19 @@ The plugins the symbol gate refused, with what they lacked.
 
 - `@return array<string, array<string, mixed>> plugin file => why it did not load`
 
+### static `loadNow(string $plugin, Minn\Runtime\Runtime $runtime): ?string`
+
+Loads one plugin's main file now, as activating it does: the reference
+includes the file (once) before activate_plugin fires, so the plugin's
+activation hook is in place to hear activate_<file>, and announces no
+plugin_loaded for it. The same gate as the boot decides; null once the
+plugin is running, otherwise why the gate refused it.
+
 ### static `isLoaded(string $plugin): bool`
 
 True when the named plugin file is running as code this request.
 
-Internals: `boot()` (private, line 67), `loadThemeFunctions()` (private, line 148), `rememberThemeDomain()` (private, line 171), `includeFile()` (private, line 205), `registerRealpath()` (private, line 236), `isolatedInclude()` (private, line 251)
+Internals: `boot()` (private, line 67), `loadThemeFunctions()` (private, line 148), `rememberThemeDomain()` (private, line 171), `includeFile()` (private, line 231), `registerRealpath()` (private, line 262), `isolatedInclude()` (private, line 277)
 
 
 ## PostData
@@ -2758,7 +2828,7 @@ a page's parents written in.
 
 - `@return array{0: string, 1: string}`
 
-Internals: `tokens()` (private, line 44), `category()` (private, line 62), `plain()` (private, line 133)
+Internals: `tokens()` (private, line 46), `category()` (private, line 64), `plain()` (private, line 135)
 
 
 ## PostLookup
@@ -3329,7 +3399,7 @@ Internals: `pluginFile()` (private, line 90), `activePlugins()` (private, line 1
 
 A refused operation, the way plugin code expects to read it: a code, a message, optional data. The facade turns it into WP_Error.
 
-Used by: `Minn\Blocks\BlockName`, `Minn\Content\Menus`, `Minn\Ops\Unzip`, `Minn\Ops\Updates`, `Minn\Rest\ArgCheck`, `Minn\Rest\BlockRendererController`, `Minn\Rest\MenusController`, `Minn\Rest\ParamCheck`, `Minn\Rest\RouteMatch`, `Minn\Rest\Schema`, `Minn\Runtime\Connectors`, `Minn\Runtime\PackageDownload`, `Minn\Runtime\Patterns`, `Minn\Runtime\UserInsert`, `Minn\Runtime\UserSave`
+Used by: `Minn\Blocks\BlockName`, `Minn\Content\Menus`, `Minn\Content\PluginState`, `Minn\Ops\Unzip`, `Minn\Ops\Updates`, `Minn\Rest\ArgCheck`, `Minn\Rest\BlockRendererController`, `Minn\Rest\MenusController`, `Minn\Rest\ParamCheck`, `Minn\Rest\PluginsController`, `Minn\Rest\RouteMatch`, `Minn\Rest\Schema`, `Minn\Runtime\Connectors`, `Minn\Runtime\PackageDownload`, `Minn\Runtime\Patterns`, `Minn\Runtime\PluginActivation`, `Minn\Runtime\PluginRequirements`, `Minn\Runtime\UserInsert`, `Minn\Runtime\UserSave`
 
 ```php
 __construct(string $code, string $message, mixed $data = NULL)
@@ -3574,7 +3644,7 @@ attributes. What it has not (an attachment's own link, smilies, the
 capital P, insecure home addresses) runs with the plugins' own
 callbacks.
 
-Used by: `Minn\Admin\BootPayload`, `Minn\Admin\PackagesController`, `Minn\Admin\ThemesController`, `Minn\Auth\Authenticator`, `Minn\Auth\Capabilities`, `Minn\Auth\RegisteredCaps`, `Minn\Blocks\Dynamic\Theme\Comments`, `Minn\Blocks\Dynamic\Theme\Navigation`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Blocks\Dynamic\Theme\Structure`, `Minn\Blocks\ImageTags`, `Minn\Blocks\RenderState`, `Minn\Cli\Runtime`, `Minn\Content\Blocks`, `Minn\Content\MediaShortcodes`, `Minn\Content\PostSlugs`, `Minn\Content\Reader`, `Minn\Content\Site`, `Minn\Content\Terms`, `Minn\Cron\Cron`, `Minn\Db`, `Minn\Engine`, `Minn\Extension\Extensions`, `Minn\Front\CommentPostController`, `Minn\Front\FeedTags`, `Minn\Front\FeedTemplates`, `Minn\Front\FrontController`, `Minn\Front\Permalinks`, `Minn\Front\PostEmbed`, `Minn\Front\ProbeController`, `Minn\Front\QueryMoves`, `Minn\Front\RequestParse`, `Minn\Front\Resolver`, `Minn\Front\RuleRoutes`, `Minn\Front\SingleQueries`, `Minn\Front\SitemapRequest`, `Minn\Front\ToolbarMenus`, `Minn\I18n\Gettext`, `Minn\Login\LoginController`, `Minn\Mail\Mailer`, `Minn\Media\Icons`, `Minn\Media\Images`, `Minn\Rest\AbilitiesController`, `Minn\Rest\Api`, `Minn\Rest\BatchController`, `Minn\Rest\BlockRendererController`, `Minn\Rest\BlockTypesController`, `Minn\Rest\Caller`, `Minn\Rest\Embed`, `Minn\Rest\InstalledThemesController`, `Minn\Rest\LiveSettings`, `Minn\Rest\OEmbedController`, `Minn\Rest\PluginsController`, `Minn\Rest\PostCollectionParams`, `Minn\Rest\PostListArgs`, `Minn\Rest\PostsController`, `Minn\Rest\RegisteredType`, `Minn\Rest\RenderedFields`, `Minn\Rest\RestMeta`, `Minn\Rest\RuntimeEnvelope`, `Minn\Rest\RuntimePrepare`, `Minn\Rest\RuntimeRoutes`, `Minn\Rest\Services`, `Minn\Rest\SettingsController`, `Minn\Rest\SidebarsController`, `Minn\Rest\StatusesController`, `Minn\Rest\TemplatesController`, `Minn\Rest\TermFilters`, `Minn\Rest\Types`, `Minn\Rest\UserCollectionParams`, `Minn\Rest\WidgetsController`, `Minn\Runtime\Abilities`, `Minn\Runtime\AccountFlows`, `Minn\Runtime\AjaxController`, `Minn\Runtime\ApplicationPasswordSignIn`, `Minn\Runtime\ArchiveLinks`, `Minn\Runtime\BlockFilters`, `Minn\Runtime\BlockHooks`, `Minn\Runtime\CommentEvents`, `Minn\Runtime\CommentFeedQuery`, `Minn\Runtime\CommentForm`, `Minn\Runtime\CommentPages`, `Minn\Runtime\Constants`, `Minn\Runtime\CurrentUser`, `Minn\Runtime\Deferrals`, `Minn\Runtime\FileUpload`, `Minn\Runtime\Interactivity`, `Minn\Runtime\MetaKeys`, `Minn\Runtime\NavMenu`, `Minn\Runtime\OptionSanitizer`, `Minn\Runtime\PackageDownload`, `Minn\Runtime\Patterns`, `Minn\Runtime\PlaceholderTrace`, `Minn\Runtime\PluginRemoval`, `Minn\Runtime\PluginUpdates`, `Minn\Runtime\Plugins`, `Minn\Runtime\PostEvents`, `Minn\Runtime\PostLinks`, `Minn\Runtime\PostQuery`, `Minn\Runtime\PostQueryResults`, `Minn\Runtime\PostQueryWhere`, `Minn\Runtime\PostSave`, `Minn\Runtime\RegisteredSettings`, `Minn\Runtime\Registry`, `Minn\Runtime\RewriteRules`, `Minn\Runtime\ScriptModules`, `Minn\Runtime\TermEvents`, `Minn\Runtime\TermQueryTree`, `Minn\Runtime\TermSave`, `Minn\Runtime\TermWriter`, `Minn\Runtime\ThemeSupports`, `Minn\Runtime\ThemeSwitch`, `Minn\Runtime\UserEvents`, `Minn\Theme\ArchiveTitle`, `Minn\Theme\ClassicContent`, `Minn\Theme\ClassicRenderer`, `Minn\Theme\EmbedRenderer`, `Minn\Theme\FeedHeaders`, `Minn\Theme\FrontLifecycle`, `Minn\Theme\HeadLinks`, `Minn\Theme\MainQueryBridge`, `Minn\Theme\PageRenderer`, `Minn\Theme\Templates`, `Minn\Theme\Theme`, `Minn\Theme\ThemeJsonData`
+Used by: `Minn\Admin\BootPayload`, `Minn\Admin\PackagesController`, `Minn\Admin\ThemesController`, `Minn\Auth\Authenticator`, `Minn\Auth\Capabilities`, `Minn\Auth\RegisteredCaps`, `Minn\Blocks\Dynamic\Theme\Comments`, `Minn\Blocks\Dynamic\Theme\Navigation`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Blocks\Dynamic\Theme\Structure`, `Minn\Blocks\ImageTags`, `Minn\Blocks\RenderState`, `Minn\Cli\Runtime`, `Minn\Content\Blocks`, `Minn\Content\MediaShortcodes`, `Minn\Content\PluginState`, `Minn\Content\PostSlugs`, `Minn\Content\Reader`, `Minn\Content\Site`, `Minn\Content\Terms`, `Minn\Cron\Cron`, `Minn\Db`, `Minn\Engine`, `Minn\Extension\Extensions`, `Minn\Front\CommentPostController`, `Minn\Front\FeedTags`, `Minn\Front\FeedTemplates`, `Minn\Front\FrontController`, `Minn\Front\Permalinks`, `Minn\Front\PostEmbed`, `Minn\Front\ProbeController`, `Minn\Front\QueryMoves`, `Minn\Front\RequestParse`, `Minn\Front\Resolver`, `Minn\Front\RuleRoutes`, `Minn\Front\SingleQueries`, `Minn\Front\SitemapRequest`, `Minn\Front\ToolbarMarkup`, `Minn\Front\ToolbarMenus`, `Minn\I18n\Gettext`, `Minn\Login\LoginController`, `Minn\Mail\Mailer`, `Minn\Media\Icons`, `Minn\Media\Images`, `Minn\Rest\AbilitiesController`, `Minn\Rest\Api`, `Minn\Rest\BatchController`, `Minn\Rest\BlockRendererController`, `Minn\Rest\BlockTypesController`, `Minn\Rest\Caller`, `Minn\Rest\Embed`, `Minn\Rest\InstalledThemesController`, `Minn\Rest\LiveSettings`, `Minn\Rest\OEmbedController`, `Minn\Rest\PostCollectionParams`, `Minn\Rest\PostListArgs`, `Minn\Rest\PostsController`, `Minn\Rest\RegisteredType`, `Minn\Rest\RenderedFields`, `Minn\Rest\RestMeta`, `Minn\Rest\RuntimeEnvelope`, `Minn\Rest\RuntimePrepare`, `Minn\Rest\RuntimeRoutes`, `Minn\Rest\Services`, `Minn\Rest\SettingsController`, `Minn\Rest\SidebarsController`, `Minn\Rest\StatusesController`, `Minn\Rest\TemplatesController`, `Minn\Rest\TermFilters`, `Minn\Rest\Types`, `Minn\Rest\UserCollectionParams`, `Minn\Rest\WidgetsController`, `Minn\Runtime\Abilities`, `Minn\Runtime\AccountFlows`, `Minn\Runtime\AjaxController`, `Minn\Runtime\ApplicationPasswordSignIn`, `Minn\Runtime\ArchiveLinks`, `Minn\Runtime\BlockFilters`, `Minn\Runtime\BlockHooks`, `Minn\Runtime\CommentEvents`, `Minn\Runtime\CommentFeedQuery`, `Minn\Runtime\CommentForm`, `Minn\Runtime\CommentPages`, `Minn\Runtime\Constants`, `Minn\Runtime\CurrentUser`, `Minn\Runtime\Deferrals`, `Minn\Runtime\FileUpload`, `Minn\Runtime\Interactivity`, `Minn\Runtime\MetaKeys`, `Minn\Runtime\NavMenu`, `Minn\Runtime\OptionSanitizer`, `Minn\Runtime\PackageDownload`, `Minn\Runtime\Patterns`, `Minn\Runtime\PlaceholderTrace`, `Minn\Runtime\PluginActivation`, `Minn\Runtime\PluginRemoval`, `Minn\Runtime\PluginRequirements`, `Minn\Runtime\PluginUpdates`, `Minn\Runtime\Plugins`, `Minn\Runtime\PostEvents`, `Minn\Runtime\PostLinks`, `Minn\Runtime\PostQuery`, `Minn\Runtime\PostQueryResults`, `Minn\Runtime\PostQueryWhere`, `Minn\Runtime\PostSave`, `Minn\Runtime\RegisteredSettings`, `Minn\Runtime\Registry`, `Minn\Runtime\RewriteRules`, `Minn\Runtime\ScriptModules`, `Minn\Runtime\TermEvents`, `Minn\Runtime\TermQueryTree`, `Minn\Runtime\TermSave`, `Minn\Runtime\TermWriter`, `Minn\Runtime\ThemeSupports`, `Minn\Runtime\ThemeSwitch`, `Minn\Runtime\UserEvents`, `Minn\Theme\ArchiveTitle`, `Minn\Theme\ClassicContent`, `Minn\Theme\ClassicRenderer`, `Minn\Theme\EmbedRenderer`, `Minn\Theme\FeedHeaders`, `Minn\Theme\FrontLifecycle`, `Minn\Theme\HeadLinks`, `Minn\Theme\MainQueryBridge`, `Minn\Theme\PageRenderer`, `Minn\Theme\Templates`, `Minn\Theme\Theme`, `Minn\Theme\ThemeJsonData`
 
 ```php
 __construct(Minn\Context $context, bool $isAdmin = false)

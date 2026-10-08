@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Minn\Runtime;
 
+use Minn\Support\Url;
+
 /**
  * A post type's archive address and its feed, as the reference gives them
  * (probe archive-links). The posts' archive is the posts page when the
@@ -49,7 +51,7 @@ final class ArchiveLinks
         }
         $type = \get_post_type_object($postType);
         if (Runtime::options()->filtered('permalink_structure') && $type && is_array($type->rewrite) && !empty($type->rewrite['feeds'])) {
-            $link = \trailingslashit((string) $link) . \user_trailingslashit('feed' . ($feed === $default ? '' : '/' . $feed), 'feed');
+            $link = Url::withTrailingSlash((string) $link) . \user_trailingslashit('feed' . ($feed === $default ? '' : '/' . $feed), 'feed');
         } else {
             $link = \add_query_arg('feed', $feed, (string) $link);
         }

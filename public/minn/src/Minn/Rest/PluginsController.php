@@ -16,7 +16,7 @@ use Minn\Http\Request;
 use Minn\Http\Response;
 use Minn\Http\Policy;
 use Minn\Http\Route;
-use Minn\Runtime\Runtime;
+use Minn\Runtime\Refusal;
 use Minn\RestError;
 use Minn\Support\FileHeaders;
 use Minn\Content\Texturize;
@@ -40,7 +40,6 @@ final readonly class PluginsController
         private RestUrl $url,
         private Caller $caller,
         private Packages $packages,
-        private string $contentDir,
     ) {
     }
 
@@ -84,7 +83,7 @@ final readonly class PluginsController
             throw new RestError('rest_plugin_install_failed', 'The installed folder carries no plugin file.', 500);
         }
         if ($status === 'active') {
-            (new PluginState($this->site, $this->inventory, $this->extensions))->activate($key . '.php');
+            self::refuse((new PluginState($this->site, $this->inventory, $this->extensions))->activate($key . '.php'));
         }
         return Reply::item($this->find($key), Fields::fromQuery($request->query), 201);
     }
@@ -110,7 +109,11 @@ final readonly class PluginsController
         if ($status !== $item['status']) {
             $state = new PluginState($this->site, $this->inventory, $this->extensions);
             $target = $this->manifestFor($plugin) ?? $plugin . '.php';
-            $status === 'active' ? $state->activate($target) : $state->deactivate($target);
+            if ($status === 'active') {
+                self::refuse($state->activate($target));
+            } else {
+                $state->deactivate($target);
+            }
         }
         return Reply::item($this->find($plugin), Fields::fromQuery($request->query));
     }
@@ -127,18 +130,14 @@ final readonly class PluginsController
             throw new RestError('rest_cannot_delete_active_plugin', 'Cannot delete an active plugin. Please deactivate it first.', 400);
         }
         // A WordPress plugin is deleted as the reference deletes it (uninstalled first, the delete hooks around it).
-        if (Runtime::booted() && array_key_exists($plugin . '.php', $this->inventory->pluginFiles())) {
+        if (array_key_exists($plugin . '.php', $this->inventory->pluginFiles())) {
             $deleted = \delete_plugins([$plugin . '.php']);
             if ($deleted instanceof \WP_Error) {
                 throw new RestError((string) $deleted->get_error_code(), (string) $deleted->get_error_message(), 500);
             }
-            return Reply::item(['deleted' => true, 'previous' => $item], Fields::fromQuery($request->query));
-        }
-        $folder = explode('/', $plugin, 2)[0];
-        if (str_contains($plugin, '/')) {
-            $this->packages->remove('extension', $folder);
         } else {
-            @unlink("{$this->contentDir}/plugins/{$plugin}.php");
+            // What is left is a Minn extension, removed as a package.
+            $this->packages->remove('extension', explode('/', $plugin, 2)[0]);
         }
         return Reply::item(['deleted' => true, 'previous' => $item], Fields::fromQuery($request->query));
     }
@@ -274,4 +273,12 @@ final readonly class PluginsController
         return $manifest->slug . '/' . $manifest->slug;
     }
 
+
+    /** An activation the plugin refused, as the reference's REST answer carries it: HTTP 500, the refusal's own data kept beside. */
+    private static function refuse(?Refusal $refusal): void
+    {
+        if ($refusal !== null) {
+            throw new RestError($refusal->code, $refusal->message, 500, [], $refusal->data === null ? [] : ['additional_data' => [$refusal->data]]);
+        }
+    }
 }

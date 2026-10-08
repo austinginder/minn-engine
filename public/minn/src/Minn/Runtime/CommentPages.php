@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Minn\Runtime;
 
+use Minn\Support\Url;
+
 /**
  * Which page of a post's comments a comment falls on, and the link that
  * opens it there, as the reference works them out (probe comment-pages):
@@ -107,7 +109,7 @@ final class CommentPages
         $pretty = $rewrite instanceof \WP_Rewrite && $rewrite->using_permalinks();
         if ($page && Runtime::options()->filtered('page_comments')) {
             $permalink = $pretty
-                ? \trailingslashit($permalink) . $rewrite->comments_pagination_base . '-' . $page
+                ? Url::withTrailingSlash($permalink) . $rewrite->comments_pagination_base . '-' . $page
                 : \add_query_arg('cpage', $page, $permalink);
         }
         return $pretty ? \user_trailingslashit($permalink, 'comment') : $permalink;

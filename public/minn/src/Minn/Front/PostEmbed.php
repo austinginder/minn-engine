@@ -6,6 +6,7 @@ namespace Minn\Front;
 
 use Minn\Runtime\Runtime;
 use Minn\Support\Escape;
+use Minn\Support\Url;
 
 /**
  * A post as other sites embed it, the oEmbed provider side, as the
@@ -96,7 +97,7 @@ final class PostEmbed
         }
         $permalink = (string) \get_permalink($post);
         $url = (string) Runtime::options()->filtered('permalink_structure') !== '' && !str_contains($permalink, '?')
-            ? \trailingslashit($permalink) . \user_trailingslashit('embed')
+            ? Url::withTrailingSlash($permalink) . \user_trailingslashit('embed')
             : \add_query_arg(['embed' => 'true'], $permalink);
         return (string) \apply_filters('post_embed_url', $url, $post);
     }

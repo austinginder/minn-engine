@@ -463,12 +463,6 @@ function wp_get_theme_file_editable_extensions($theme)
     return null;
 }
 
-function wp_get_update_php_url()
-{
-    \Minn\Runtime\PlaceholderTrace::hit('wp_get_update_php_url');
-    return null;
-}
-
 function wp_heartbeat_settings($settings)
 {
     \Minn\Runtime\PlaceholderTrace::hit('wp_heartbeat_settings');

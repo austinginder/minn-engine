@@ -6,6 +6,7 @@ namespace Minn\Front;
 
 use Minn\I18n\Gettext;
 use Minn\Support\Escape;
+use Minn\Runtime\Runtime;
 
 /**
  * WP_Admin_Bar's markup, piece by piece, as the reference prints it (probe
@@ -24,7 +25,7 @@ final class ToolbarMarkup
     public static function open(): string
     {
         $class = 'nojq nojs' . (\wp_is_mobile() ? ' mobile' : '');
-        $skip = !\is_admin() && !\did_action('wp_body_open')
+        $skip = !\is_admin() && !Runtime::hooks()->actionsDone('wp_body_open')
             ? "\t\t\t\t\t\t\t<a class=\"screen-reader-shortcut\" href=\"#wp-toolbar\" tabindex=\"1\">" . Gettext::text('Skip to toolbar') . "</a>\n"
             : '';
         return "\t\t<div id=\"wpadminbar\" class=\"{$class}\">\n" . $skip

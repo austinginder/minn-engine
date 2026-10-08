@@ -196,6 +196,32 @@ final class Plugins
         return self::$skipped;
     }
 
+    /**
+     * Loads one plugin's main file now, as activating it does: the reference
+     * includes the file (once) before activate_plugin fires, so the plugin's
+     * activation hook is in place to hear activate_<file>, and announces no
+     * plugin_loaded for it. The same gate as the boot decides; null once the
+     * plugin is running, otherwise why the gate refused it.
+     */
+    public static function loadNow(string $plugin, Runtime $runtime): ?string
+    {
+        if (!self::isLoaded($plugin)) {
+            unset(self::$skipped[$plugin]);
+            self::includeFile($runtime->contentDir() . '/plugins/' . $plugin, $plugin, $runtime);
+        }
+        $why = self::$skipped[$plugin] ?? null;
+        if ($why === null) {
+            return null;
+        }
+        if (isset($why['error'])) {
+            return 'The plugin could not be loaded: ' . rtrim((string) $why['error'], '.') . '.';
+        }
+        $lacks = [...array_map(static fn (string $name): string => "{$name}()", $why['functions']), ...$why['classes']];
+        return $lacks === []
+            ? 'The plugin is too large for the engine to read before loading it.'
+            : 'The plugin needs what the engine does not provide yet: ' . implode(', ', array_slice($lacks, 0, 5)) . (count($lacks) > 5 ? ' and ' . (count($lacks) - 5) . ' more' : '') . '.';
+    }
+
     /** True when the named plugin file is running as code this request. */
     public static function isLoaded(string $plugin): bool
     {

@@ -46,7 +46,7 @@ final class ThemeSupports
     {
         $supports = self::all();
         $had = $supports[$feature] ?? null;
-        if ($feature === 'title-tag' && \did_action('wp_loaded')) {
+        if ($feature === 'title-tag' && Runtime::hooks()->actionsDone('wp_loaded')) {
             \_doing_it_wrong('add_theme_support( \'title-tag\' )', 'Theme support for <code>title-tag</code> should be registered before the <code>wp_loaded</code> hook.', '4.1.0');
             return false;
         }

@@ -104,7 +104,7 @@ final readonly class Api
             }, new ArgCheck($s->schema()), $s->types()),
             new TaxonomiesController($s->taxonomies(), $caller),
             new SearchController($s->db(), $s->types(), $s->permalinks(), $s->url(), $caller),
-            new PluginsController($s->site(), $s->inventory(), $s->loader(), $s->url(), $caller, $s->packages(), $s->contentDir()),
+            new PluginsController($s->site(), $s->inventory(), $s->loader(), $s->url(), $caller, $s->packages()),
             new SessionsController($s->users(), $s->sessions(), $caller),
             new StructureController($s->db(), $s->types(), $s->taxonomies(), $caller),
             new ThemesController($s->site(), $s->permalinks(), $s->updates(), $caller, $s->contentDir()),

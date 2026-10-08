@@ -179,7 +179,7 @@ final class MediaShortcodes
     private static function library(string $kind): string
     {
         $library = (string) \apply_filters("wp_{$kind}_shortcode_library", 'mediaelement');
-        if ($library === 'mediaelement' && \did_action('init')) {
+        if ($library === 'mediaelement' && Runtime::hooks()->actionsDone('init')) {
             \wp_enqueue_style('wp-mediaelement');
             \wp_enqueue_script('wp-mediaelement');
         }

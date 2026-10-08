@@ -327,6 +327,9 @@ final class PluginCommand
     {
         $on = $verb === 'activate';
         $runtime = Runtime::boot();
+        // With WordPress loaded, as WP-CLI runs these on the reference: a plugin's
+        // requirements are checked and its activation and deactivation hooks run.
+        Runtime::bootEngine();
         $contentDir = ABSPATH . 'wp-content';
         $state = new PluginState($runtime->site, new Inventory($contentDir, $runtime->site), new Loader($contentDir, $runtime->site));
         $verb = $on ? 'activated' : 'deactivated';
@@ -345,7 +348,12 @@ final class PluginCommand
                 }
                 continue;
             }
-            $on ? $state->activate($plugin) : $state->deactivate($plugin);
+            if (!$on) {
+                $state->deactivate($plugin);
+            } elseif (($refusal = $state->activate($plugin)) !== null) {
+                WP_CLI::warning('Failed to activate plugin. ' . self::plain($refusal->message));
+                continue;
+            }
             WP_CLI::log("Plugin '{$slug}' {$verb}.");
             $done++;
         }
@@ -394,7 +402,18 @@ final class PluginCommand
         if ($state->isActive($plugin)) {
             return;
         }
-        $state->activate($plugin);
+        Runtime::bootEngine();
+        $refusal = $state->activate($plugin);
+        if ($refusal !== null) {
+            WP_CLI::warning('Failed to activate plugin. ' . self::plain($refusal->message));
+            return;
+        }
         WP_CLI::log("Plugin '{$folder}' activated.");
+    }
+
+    /** A refusal's HTML message as WP-CLI words it in a warning: links dropped, tags stripped, no "Error:" lead. */
+    private static function plain(string $message): string
+    {
+        return trim(str_replace('Error: ', '', strip_tags((string) preg_replace('/<a\s[^>]+>.*<\/a>/im', '', $message))));
     }
 }

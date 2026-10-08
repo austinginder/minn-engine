@@ -664,13 +664,13 @@ __construct(Minn\Ops\Packages $packages, Minn\Content\Site $site, Minn\Rest\Call
 
 Route: `GET /minn-admin/v1/themes/search (floor edit_posts + install_themes)`
 
-Searches wordpress.org themes.
+Searches the theme directory.
 
 ### `installTheme(Minn\Http\Request $request): Minn\Http\Response`
 
 Route: `POST /minn-admin/v1/themes/install (floor edit_posts + install_themes)`
 
-Installs a theme from wordpress.org by slug.
+Installs a theme from the directory by slug.
 
 ### `uploadTheme(Minn\Http\Request $request): Minn\Http\Response`
 
@@ -700,13 +700,13 @@ A zip URL, or a GitHub owner/repo whose latest release carries a zip asset.
 
 Route: `GET /minn-admin/v1/plugins/search (floor edit_posts + install_plugins)`
 
-Searches wordpress.org plugins.
+Searches the plugin directory.
 
 ### `pluginInfo(Minn\Http\Request $request): Minn\Http\Response`
 
 Route: `GET /minn-admin/v1/plugins/info (floor edit_posts + install_plugins)`
 
-One wordpress.org plugin's details.
+One directory plugin's details.
 
 Internals: `uploaded()` (private, line 122)
 
@@ -1141,7 +1141,7 @@ Icons and details for the installed plugins.
 
 Route: `POST /minn-admin/v1/check-updates (signed in)`
 
-Asks again, now: wordpress.org for plugins and themes, and the Minn update service for Minn itself (its status answered as core).
+Asks the Minn update service again, now: for plugin and theme offers, and for Minn itself (its status answered as core).
 
 ### `updatePlugin(Minn\Http\Request $request): Minn\Http\Response`
 

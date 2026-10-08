@@ -151,7 +151,7 @@ final readonly class SidebarsController
         if (!Runtime::booted()) {
             throw RestError::noRoute();
         }
-        if (!\did_action('widgets_init')) {
+        if (!Runtime::hooks()->actionsDone('widgets_init')) {
             \wp_widgets_init();
         }
     }
