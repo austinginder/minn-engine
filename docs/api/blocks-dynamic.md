@@ -5,7 +5,7 @@ dynamic core blocks that render from data
 | Class | Kind | Lines | Summary |
 |---|---|---|---|
 | [`Archives`](#archives) | final readonly class | 29 | core/archives: the months that have published posts, newest first, with their counts when asked (showPostCounts). |
-| [`Dates`](#dates) | final class | 19 | Site-local dates the way the dynamic blocks print them. |
+| [`Dates`](#dates) | final class | 16 | Site-local dates the way the dynamic blocks print them. |
 | [`LatestComments`](#latestcomments) | final readonly class | 68 | core/latest-comments: the newest approved comments with avatar, meta, and a 20-word excerpt. |
 | [`LatestPosts`](#latestposts) | final readonly class | 34 | core/latest-posts: the newest published posts as a list, optionally dated. |
 | [`Search`](#search) | final readonly class | 48 | core/search: the site search form. The button sits outside or inside |
@@ -41,7 +41,7 @@ Used by: `Minn\Blocks\Dynamic\LatestComments`, `Minn\Blocks\Dynamic\LatestPosts`
 
 ### static `iso(Minn\Content\Site $site, string $local): string`
 
-ISO 8601 with the site's offset, from a site-local MySQL datetime.
+ISO 8601 with the site's offset at that date (summer or winter time), from a site-local MySQL datetime.
 
 ### static `format(Minn\Content\Site $site, string $local, string $format = ''): string`
 

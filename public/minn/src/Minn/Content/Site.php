@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace Minn\Content;
 
+use DateTimeImmutable;
+use DateTimeZone;
+use Exception;
 use Minn\Db;
 
 /** Site-wide options and the site's clock. */
@@ -55,10 +58,29 @@ final readonly class Site
         return $follows && $value === 'open' ? 'open' : 'closed';
     }
 
-    /** The gmt_offset option in seconds. */
+    /**
+     * The site's timezone (wp_timezone): the zone timezone_string names, else
+     * gmt_offset as a fixed offset. With a zone set, the stored gmt_offset is
+     * not read at all, as the reference does not read it.
+     */
+    public function timezone(): DateTimeZone
+    {
+        $name = (string) ($this->db->option('timezone_string') ?? '');
+        if ($name !== '') {
+            try {
+                return new DateTimeZone($name);
+            } catch (Exception) {
+                // Not a zone PHP knows; the offset stands in.
+            }
+        }
+        $seconds = (int) round(((float) ($this->db->option('gmt_offset') ?? 0)) * 3600);
+        return new DateTimeZone(sprintf('%s%02d:%02d', $seconds < 0 ? '-' : '+', intdiv(abs($seconds), 3600), intdiv(abs($seconds) % 3600, 60)));
+    }
+
+    /** The site's offset from UTC in seconds now: the zone's, daylight saving included, or gmt_offset's. */
     public function gmtOffset(): int
     {
-        return (int) round(((float) ($this->db->option('gmt_offset') ?? 0)) * 3600);
+        return $this->timezone()->getOffset(new DateTimeImmutable('now'));
     }
 
     /** Now in the site's local time, MySQL format. */
@@ -76,7 +98,8 @@ final readonly class Site
     public function localDate(string $input): array
     {
         $local = str_replace('T', ' ', $input);
-        $stamp = strtotime($local . ' UTC') - $this->gmtOffset();
+        // The offset of the zone at that date, not today's: a summer date stays in summer time.
+        $stamp = (new DateTimeImmutable($local, $this->timezone()))->getTimestamp();
         return [$local, gmdate('Y-m-d H:i:s', $stamp), $stamp];
     }
 }

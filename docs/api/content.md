@@ -34,7 +34,7 @@ the repositories and records: posts, users, terms, comments, and the render pipe
 | [`Posts`](#posts) | final readonly class | 384 | Reads over the posts table. A post comes back as a PostRecord; a listing |
 | [`Reader`](#reader) | final class | 72 | Who is reading this request: their user id, whether they may read |
 | [`Revisions`](#revisions) | final readonly class | 95 | Revision rows: the plain snapshots and the per-author autosave slots. |
-| [`Site`](#site) | final readonly class | 73 | Site-wide options and the site's clock. |
+| [`Site`](#site) | final readonly class | 93 | Site-wide options and the site's clock. |
 | [`SiteIcon`](#siteicon) | final readonly class | 63 | The site icon: the attachment the site_icon option names, as the file |
 | [`Slug`](#slug) | final class | 81 |  |
 | [`TagBalancer`](#tagbalancer) | final class | 82 | Closes what markup leaves open and drops what it closes without opening, |
@@ -1643,9 +1643,15 @@ closed; with plugins loaded, get_default_comment_status() decides
 (support a plugin removed, the filter). $kind is "comment" or
 "pingback".
 
+### `timezone(): DateTimeZone`
+
+The site's timezone (wp_timezone): the zone timezone_string names, else
+gmt_offset as a fixed offset. With a zone set, the stored gmt_offset is
+not read at all, as the reference does not read it.
+
 ### `gmtOffset(): int`
 
-The gmt_offset option in seconds.
+The site's offset from UTC in seconds now: the zone's, daylight saving included, or gmt_offset's.
 
 ### `localNow(): string`
 

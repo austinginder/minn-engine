@@ -11,13 +11,10 @@ use Minn\Content\Site;
 /** Site-local dates the way the dynamic blocks print them. */
 final class Dates
 {
-    /** ISO 8601 with the site's offset, from a site-local MySQL datetime. */
+    /** ISO 8601 with the site's offset at that date (summer or winter time), from a site-local MySQL datetime. */
     public static function iso(Site $site, string $local): string
     {
-        $offset = $site->gmtOffset();
-        $sign = $offset < 0 ? '-' : '+';
-        $zone = sprintf('%s%02d:%02d', $sign, intdiv(abs($offset), 3600), intdiv(abs($offset) % 3600, 60));
-        return str_replace(' ', 'T', $local) . $zone;
+        return (new DateTimeImmutable($local, $site->timezone()))->format('c');
     }
 
     /** A site-local MySQL datetime in the format given, else the date_format option. */

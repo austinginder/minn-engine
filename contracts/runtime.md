@@ -6552,3 +6552,17 @@ modes given (or keeps the session's own) without those, the list passing
 column with no default (`wp_links.link_notes`, found by probe
 link-template-tags) failed here and succeeded on the reference, and
 `set_sql_mode` did nothing.
+
+## The site's timezone (2026-10-08)
+
+`Site::timezone()` is the site's zone as `wp_timezone` gives it: the zone
+`timezone_string` names, else `gmt_offset` as a fixed offset. With a zone set
+the stored `gmt_offset` is not read (the reference ignores it then too).
+`Site::gmtOffset()` is that zone's offset now, daylight saving included;
+`Dates::iso` (the `datetime` of the date blocks) uses the zone's offset at the
+date itself, and `Site::localDate` (REST writes) converts by it, so an August
+date stays at -04:00 in New York in winter. **Fixed:** the engine read the raw
+`gmt_offset`, so a site whose stored offset was 0 while `timezone_string` named
+a zone printed `+00:00` (found by the site suite on the marketing site, whose
+stored offset had become 0), and dates across a daylight-saving change were
+off by an hour.

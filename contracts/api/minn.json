@@ -12474,7 +12474,7 @@
             "namespace": "Minn\\Blocks\\Dynamic",
             "kind": "final class",
             "file": "public/minn/src/Minn/Blocks/Dynamic/Dates.php",
-            "lines": 19,
+            "lines": 16,
             "doc": "Site-local dates the way the dynamic blocks print them.",
             "implements": [],
             "extends": null,
@@ -12498,7 +12498,7 @@
                     "static": true,
                     "visibility": "public",
                     "signature": "iso(Minn\\Content\\Site $site, string $local): string",
-                    "doc": "ISO 8601 with the site's offset, from a site-local MySQL datetime.",
+                    "doc": "ISO 8601 with the site's offset at that date (summer or winter time), from a site-local MySQL datetime.",
                     "shapes": [],
                     "params": [
                         {
@@ -12517,7 +12517,7 @@
                         }
                     ],
                     "line": 15,
-                    "end": 21
+                    "end": 18
                 },
                 {
                     "routes": [],
@@ -12550,8 +12550,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 24,
-                    "end": 29
+                    "line": 21,
+                    "end": 26
                 }
             ]
         },
@@ -33168,7 +33168,7 @@
             "namespace": "Minn\\Content",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Content/Site.php",
-            "lines": 73,
+            "lines": 93,
             "doc": "Site-wide options and the site's clock.",
             "implements": [],
             "extends": null,
@@ -33262,8 +33262,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 12,
-                "end": 14
+                "line": 15,
+                "end": 17
             },
             "cases": [],
             "constants": [],
@@ -33296,8 +33296,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 17,
-                    "end": 20
+                    "line": 20,
+                    "end": 23
                 },
                 {
                     "routes": [],
@@ -33323,8 +33323,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 23,
-                    "end": 31
+                    "line": 26,
+                    "end": 34
                 },
                 {
                     "routes": [],
@@ -33343,8 +33343,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 34,
-                    "end": 37
+                    "line": 37,
+                    "end": 40
                 },
                 {
                     "routes": [],
@@ -33370,8 +33370,20 @@
                             "doc": ""
                         }
                     ],
-                    "line": 47,
-                    "end": 56
+                    "line": 50,
+                    "end": 59
+                },
+                {
+                    "routes": [],
+                    "name": "timezone",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "timezone(): DateTimeZone",
+                    "doc": "The site's timezone (wp_timezone): the zone timezone_string names, else\ngmt_offset as a fixed offset. With a zone set, the stored gmt_offset is\nnot read at all, as the reference does not read it.",
+                    "shapes": [],
+                    "params": [],
+                    "line": 66,
+                    "end": 78
                 },
                 {
                     "routes": [],
@@ -33379,11 +33391,11 @@
                     "static": false,
                     "visibility": "public",
                     "signature": "gmtOffset(): int",
-                    "doc": "The gmt_offset option in seconds.",
+                    "doc": "The site's offset from UTC in seconds now: the zone's, daylight saving included, or gmt_offset's.",
                     "shapes": [],
                     "params": [],
-                    "line": 59,
-                    "end": 62
+                    "line": 81,
+                    "end": 84
                 },
                 {
                     "routes": [],
@@ -33394,8 +33406,8 @@
                     "doc": "Now in the site's local time, MySQL format.",
                     "shapes": [],
                     "params": [],
-                    "line": 65,
-                    "end": 68
+                    "line": 87,
+                    "end": 90
                 },
                 {
                     "routes": [],
@@ -33416,8 +33428,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 76,
-                    "end": 81
+                    "line": 98,
+                    "end": 104
                 }
             ]
         },
