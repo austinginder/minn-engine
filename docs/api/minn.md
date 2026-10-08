@@ -6,7 +6,7 @@ the front door, the autoloader, the one database door, the REST error
 |---|---|---|---|
 | [`Autoloader`](#autoloader) | final class | 16 | PSR-4 for the Minn namespace: Minn\Http\Request lives at src/Minn/Http/Request.php. |
 | [`Context`](#context) | final readonly class | 41 | One request, as a value: the database door, who is asking, what they |
-| [`Db`](#db) | final class | 238 | The one door to the database. Every query is a prepared statement; the |
+| [`Db`](#db) | final class | 261 | The one door to the database. Every query is a prepared statement; the |
 | [`Engine`](#engine) | final readonly class | 270 | The engine's front door. An unmodified wp-config.php ends by requiring |
 | [`Http`](#http) | final class | 205 | Outgoing HTTP, called straight from anywhere with no import: |
 | [`RestError`](#resterror) | final class | 60 | A WordPress-shaped error, thrown from anywhere and rendered once by the |
@@ -83,6 +83,14 @@ Used by: `Minn\Admin\ActivityChart`, `Minn\Admin\ActivityFeed`, `Minn\Admin\Dash
 __construct(mysqli $connection, string $prefix)
 ```
 
+
+### static `columnLength(string $type): array|false`
+
+The most a column of a MySQL type holds, as wpdb::get_col_length
+answers: characters for char and varchar, bytes for the binary, blob
+and text types; false for any other type.
+
+- `@return array{type: string, length: int}|false`
 
 ### static `current(): self`
 
@@ -166,7 +174,7 @@ The id the last INSERT produced.
 
 One option's raw value, or null when it is unset.
 
-Internals: `placeholders()` (private, line 154), `run()` (private, line 236)
+Internals: `placeholders()` (private, line 177), `run()` (private, line 259)
 
 
 ## Engine

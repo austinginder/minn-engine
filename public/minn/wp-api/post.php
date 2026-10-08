@@ -359,18 +359,20 @@ function get_post_modified_time($format = 'U', $gmt = false, $post = null, $tran
     return apply_filters('get_post_modified_time', $time, $format, $gmt);
 }
 
+/** The loop post's date, printed (or returned) only when it starts a new day; the_date filters it either way. */
 function the_date($format = '', $before = '', $after = '', $display = true)
 {
-    $post = get_post();
-    if ($post === null) {
-        return null;
+    $date = '';
+    if (is_new_day()) {
+        $date = $before . get_the_date($format) . $after;
+        $GLOBALS['previousday'] = $GLOBALS['currentday'] ?? null;
     }
-    $out = $before . get_the_date($format) . $after;
+    $date = apply_filters('the_date', $date, $format, $before, $after);
     if ($display) {
-        echo $out;
+        echo $date;
         return null;
     }
-    return $out;
+    return $date;
 }
 
 function the_time($format = '')
@@ -522,12 +524,13 @@ function get_edit_post_link($post = 0, $context = 'display')
     if ($post === null || !current_user_can('edit_post', $post->ID)) {
         return null;
     }
-    $sep = $context === 'display' ? '&amp;' : '&';
+    // A revision's screen takes no action; everything else is edited.
+    $action = $post->post_type === 'revision' ? '' : ($context === 'display' ? '&amp;' : '&') . 'action=edit';
     $type = get_post_type_object($post->post_type);
     if ($type === null) {
         return null;
     }
-    $link = $type->_edit_link ? admin_url(sprintf($type->_edit_link . $sep . 'action=edit', $post->ID)) : '';
+    $link = $type->_edit_link ? admin_url(sprintf($type->_edit_link . $action, $post->ID)) : '';
     return apply_filters('get_edit_post_link', $link, $post->ID, $context);
 }
 
@@ -704,9 +707,33 @@ function wp_get_post_revisions($post = 0, $args = null)
     return $out;
 }
 
+/** A post's newest revision and how many it has; an error for no post, or one whose revisions are off. */
+function wp_get_latest_revision_id_and_total_count($post = 0)
+{
+    $post = get_post($post);
+    if (!$post) {
+        return new WP_Error('invalid_post', __('Invalid post.'));
+    }
+    if (!wp_revisions_enabled($post)) {
+        return new WP_Error('revisions_not_enabled', __('Revisions not enabled.'));
+    }
+    $query = new WP_Query();
+    $revisions = $query->query(['post_parent' => $post->ID, 'fields' => 'ids', 'post_type' => 'revision', 'post_status' => 'inherit', 'order' => 'DESC', 'orderby' => 'date ID', 'posts_per_page' => 1, 'ignore_sticky_posts' => true]);
+    return $revisions ? ['latest_id' => $revisions[0], 'count' => $query->found_posts] : ['latest_id' => 0, 'count' => 0];
+}
+
+/** The revisions screen for a post's latest revision, for those who may edit it; null without revisions. */
 function wp_get_post_revisions_url($post = 0)
 {
-    return null;
+    $post = get_post($post);
+    if (!$post instanceof WP_Post) {
+        return null;
+    }
+    if ($post->post_type === 'revision') {
+        return get_edit_post_link($post);
+    }
+    $revisions = wp_get_latest_revision_id_and_total_count($post->ID);
+    return is_array($revisions) && $revisions['count'] > 0 ? get_edit_post_link($revisions['latest_id']) : null;
 }
 
 function wp_revisions_enabled($post)
@@ -1835,9 +1862,15 @@ function get_the_author_link($use_title_attr = true)
     return get_the_author_posts_link();
 }
 
+/** Whether more than one author has published posts (kept in the is_multi_author transient until a post changes status). */
 function is_multi_author()
 {
-    return false;
+    $multi = get_transient('is_multi_author');
+    if ($multi === false) {
+        $multi = _minn_post_lookup()->publishingAuthors('post', 2) > 1 ? 1 : 0;
+        set_transient('is_multi_author', $multi);
+    }
+    return apply_filters('is_multi_author', (bool) $multi);
 }
 
 /** Whether the block editor edits a post type: it must exist and be visible in REST; attachments and revisions never are. */

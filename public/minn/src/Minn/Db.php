@@ -16,6 +16,29 @@ use mysqli_stmt;
  */
 final class Db
 {
+    /**
+     * The most a column of a MySQL type holds, as wpdb::get_col_length
+     * answers: characters for char and varchar, bytes for the binary, blob
+     * and text types; false for any other type.
+     *
+     * @return array{type: string, length: int}|false
+     */
+    public static function columnLength(string $type): array|false
+    {
+        if (!preg_match('/^(\w+)(?:\((\d+)\))?/', strtolower($type), $m)) {
+            return false;
+        }
+        return match ($m[1]) {
+            'char', 'varchar' => ['type' => 'char', 'length' => (int) ($m[2] ?? 0)],
+            'binary', 'varbinary' => ['type' => 'byte', 'length' => (int) ($m[2] ?? 0)],
+            'tinyblob', 'tinytext' => ['type' => 'byte', 'length' => 255],
+            'blob', 'text' => ['type' => 'byte', 'length' => 65535],
+            'mediumblob', 'mediumtext' => ['type' => 'byte', 'length' => 16777215],
+            'longblob', 'longtext' => ['type' => 'byte', 'length' => 4294967295],
+            default => false,
+        };
+    }
+
     private static ?self $shared = null;
     /** Whether a transaction this door opened is still open, so a nested call joins it instead of starting another. */
     private bool $inTransaction = false;

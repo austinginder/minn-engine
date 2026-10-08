@@ -66,7 +66,7 @@ the WordPress runtime plugins load against
 | [`PostEvents`](#postevents) | final readonly class | 181 | What the reference's REST controllers tell plugins about a post they |
 | [`PostInsert`](#postinsert) | final readonly class | 168 | The decisions behind wp_insert_post: which columns a postarr fills, when |
 | [`PostLinks`](#postlinks) | final class | 151 | Post addresses as the reference's link functions build them (probe |
-| [`PostLookup`](#postlookup) | final readonly class | 107 | The post reads plugin code asks for by shape: a page by title, revisions, counts. |
+| [`PostLookup`](#postlookup) | final readonly class | 113 | The post reads plugin code asks for by shape: a page by title, revisions, counts. |
 | [`PostQuery`](#postquery) | final class | 388 | WP_Query::get_posts as the reference runs it (probe wp-query-sql): the |
 | [`PostQueryParts`](#postqueryparts) | final class | 56 | The pieces of one WP_Query run as the reference builds them and hands |
 | [`PostQueryResults`](#postqueryresults) | final class | 111 | What WP_Query does with its posts once it has them, as the reference does |
@@ -2845,6 +2845,10 @@ How many attachments there are per mime type.
 How many posts an author has among the types and statuses.
 
 - `@param list<string> $types @param list<string> $statuses`
+
+### `publishingAuthors(string $type, int $limit): int`
+
+How many authors (up to a limit) have published posts of a type, for is_multi_author.
 
 ### `countsByAuthor(array $types, array $statuses, int $viewer): array`
 

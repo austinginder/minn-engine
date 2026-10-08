@@ -75,6 +75,12 @@ final readonly class PostLookup
         return (int) $this->db->value("SELECT COUNT(*) FROM {$this->db->table('posts')} WHERE post_author = ? AND post_type IN (?) AND post_status IN (?)", [$userId, $types, $statuses]);
     }
 
+    /** How many authors (up to a limit) have published posts of a type, for is_multi_author. */
+    public function publishingAuthors(string $type, int $limit): int
+    {
+        return count($this->db->rows("SELECT DISTINCT post_author FROM {$this->db->table('posts')} WHERE post_type = ? AND post_status = 'publish' LIMIT {$limit}", [$type]));
+    }
+
     /**
      * Post counts by author for wp_list_authors: the types' posts in the
      * statuses given, and the private ones of the viewer (an id, or -1 for

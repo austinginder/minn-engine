@@ -34327,7 +34327,7 @@
             "namespace": "Minn",
             "kind": "final class",
             "file": "public/minn/src/Minn/Db.php",
-            "lines": 238,
+            "lines": 261,
             "doc": "The one door to the database. Every query is a prepared statement; the\nplaceholder types are derived from the PHP values, so callers pass plain\narrays and never spell out \"issd\". A parameter that is a list stands for\na list of values: its \"?\" becomes as many placeholders as the list is\nlong, so \"post_type IN (?)\" takes the types themselves.",
             "implements": [],
             "extends": null,
@@ -34433,8 +34433,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 23,
-                "end": 27
+                "line": 46,
+                "end": 50
             },
             "cases": [],
             "constants": [],
@@ -34479,6 +34479,28 @@
             "methods": [
                 {
                     "routes": [],
+                    "name": "columnLength",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "columnLength(string $type): array|false",
+                    "doc": "The most a column of a MySQL type holds, as wpdb::get_col_length\nanswers: characters for char and varchar, bytes for the binary, blob\nand text types; false for any other type.",
+                    "shapes": [
+                        "@return array{type: string, length: int}|false"
+                    ],
+                    "params": [
+                        {
+                            "name": "type",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 26,
+                    "end": 40
+                },
+                {
+                    "routes": [],
                     "name": "current",
                     "static": true,
                     "visibility": "public",
@@ -34486,8 +34508,8 @@
                     "doc": "The connection the request being answered speaks through: its\nruntime's own, so nothing deep in a render can reach a connection\nbelonging to another request. With no runtime (the command line, the\nunit suite) it is the process's own connection.\n\nThis is the one place in the core that asks the runtime anything; the\nalternative is a database door threaded through every renderer, and\nthe seam is here until that threading is done.",
                     "shapes": [],
                     "params": [],
-                    "line": 39,
-                    "end": 42
+                    "line": 62,
+                    "end": 65
                 },
                 {
                     "routes": [],
@@ -34498,8 +34520,8 @@
                     "doc": "The one connection for this process, opened from wp-config's constants on first use.",
                     "shapes": [],
                     "params": [],
-                    "line": 45,
-                    "end": 53
+                    "line": 68,
+                    "end": 76
                 },
                 {
                     "routes": [],
@@ -34510,8 +34532,8 @@
                     "doc": "The underlying mysqli handle, for the facade's wpdb.",
                     "shapes": [],
                     "params": [],
-                    "line": 56,
-                    "end": 59
+                    "line": 79,
+                    "end": 82
                 },
                 {
                     "routes": [],
@@ -34530,8 +34552,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 62,
-                    "end": 65
+                    "line": 85,
+                    "end": 88
                 },
                 {
                     "routes": [],
@@ -34542,8 +34564,8 @@
                     "doc": "The table prefix from wp-config.",
                     "shapes": [],
                     "params": [],
-                    "line": 68,
-                    "end": 71
+                    "line": 91,
+                    "end": 94
                 },
                 {
                     "routes": [],
@@ -34562,8 +34584,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 74,
-                    "end": 77
+                    "line": 97,
+                    "end": 100
                 },
                 {
                     "routes": [],
@@ -34591,8 +34613,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 84,
-                    "end": 87
+                    "line": 107,
+                    "end": 110
                 },
                 {
                     "routes": [],
@@ -34620,8 +34642,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 94,
-                    "end": 97
+                    "line": 117,
+                    "end": 120
                 },
                 {
                     "routes": [],
@@ -34647,8 +34669,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 100,
-                    "end": 104
+                    "line": 123,
+                    "end": 127
                 },
                 {
                     "routes": [],
@@ -34674,8 +34696,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 107,
-                    "end": 110
+                    "line": 130,
+                    "end": 133
                 },
                 {
                     "routes": [],
@@ -34704,8 +34726,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 121,
-                    "end": 146
+                    "line": 144,
+                    "end": 169
                 },
                 {
                     "routes": [],
@@ -34726,8 +34748,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 201,
-                    "end": 218
+                    "line": 224,
+                    "end": 241
                 },
                 {
                     "routes": [],
@@ -34738,8 +34760,8 @@
                     "doc": "The id the last INSERT produced.",
                     "shapes": [],
                     "params": [],
-                    "line": 221,
-                    "end": 224
+                    "line": 244,
+                    "end": 247
                 },
                 {
                     "routes": [],
@@ -34758,8 +34780,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 227,
-                    "end": 234
+                    "line": 250,
+                    "end": 257
                 },
                 {
                     "routes": [],
@@ -34780,8 +34802,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 154,
-                    "end": 185
+                    "line": 177,
+                    "end": 208
                 },
                 {
                     "routes": [],
@@ -34807,8 +34829,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 236,
-                    "end": 253
+                    "line": 259,
+                    "end": 276
                 }
             ]
         },
@@ -117130,7 +117152,7 @@
             "namespace": "Minn\\Runtime",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Runtime/PostLookup.php",
-            "lines": 107,
+            "lines": 113,
             "doc": "The post reads plugin code asks for by shape: a page by title, revisions, counts.",
             "implements": [],
             "extends": null,
@@ -117294,6 +117316,33 @@
                 },
                 {
                     "routes": [],
+                    "name": "publishingAuthors",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "publishingAuthors(string $type, int $limit): int",
+                    "doc": "How many authors (up to a limit) have published posts of a type, for is_multi_author.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "type",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "limit",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 79,
+                    "end": 82
+                },
+                {
+                    "routes": [],
                     "name": "countsByAuthor",
                     "static": false,
                     "visibility": "public",
@@ -117326,8 +117375,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 86,
-                    "end": 98
+                    "line": 92,
+                    "end": 104
                 },
                 {
                     "routes": [],
@@ -117348,8 +117397,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 105,
-                    "end": 108
+                    "line": 111,
+                    "end": 114
                 },
                 {
                     "routes": [],
@@ -117368,8 +117417,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 111,
-                    "end": 115
+                    "line": 117,
+                    "end": 121
                 }
             ]
         },

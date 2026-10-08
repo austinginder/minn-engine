@@ -1179,9 +1179,16 @@ function media_sideload_image($file, $post_id = 0, $desc = null, $return_type = 
     return '<img src="' . esc_url($src) . '" alt="' . esc_attr((string) $desc) . '" />';
 }
 
+/** The ID3 fields an audio or video attachment shows (display) or hands its player (js), labelled. */
 function wp_get_attachment_id3_keys($attachment, $context = 'display')
 {
-    return [];
+    $fields = ['artist' => __('Artist'), 'album' => __('Album')];
+    if ($context === 'display') {
+        $fields += ['genre' => __('Genre'), 'year' => __('Year'), 'length_formatted' => _x('Length', 'video or audio')];
+    } elseif ($context === 'js') {
+        $fields += ['bitrate' => __('Bitrate'), 'bitrate_mode' => __('Bitrate Mode')];
+    }
+    return apply_filters('wp_get_attachment_id3_keys', $fields, $attachment, $context);
 }
 
 function wp_get_media_creation_timestamp($metadata)

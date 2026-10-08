@@ -170,9 +170,16 @@ class WP_Theme implements ArrayAccess
         return $uri === 'relative' ? $file : $this->get_stylesheet_directory_uri() . '/' . $file;
     }
 
+    /** The theme's files of a type (an extension or a list of them; any when null), to a depth (-1 for all), relative path => path; its parent's after when asked. */
     public function get_files($type = null, $depth = 0, $search_parent = false)
     {
-        return [];
+        $exclusions = (array) apply_filters('theme_scandir_exclusions', ['CVS', 'node_modules', 'vendor', 'bower_components']);
+        $types = $type === null ? null : (array) $type;
+        $files = self::scan($this->get_stylesheet_directory(), '', (int) $depth, $exclusions, $types);
+        if ($search_parent && $this->parent()) {
+            $files += self::scan($this->get_template_directory(), '', (int) $depth, $exclusions, $types);
+        }
+        return array_filter($files);
     }
 
     /**
@@ -221,16 +228,17 @@ class WP_Theme implements ArrayAccess
     /** The theme's PHP files one folder deep, in folder order (a parent's after the theme's own), relative path => path. @return array<string, string> */
     private function php_files(): array
     {
-        $exclusions = (array) apply_filters('theme_scandir_exclusions', ['CVS', 'node_modules', 'vendor', 'bower_components']);
-        $files = [];
-        foreach (array_unique([$this->get_stylesheet_directory(), $this->get_template_directory()]) as $root) {
-            $files += self::scan($root, '', 1, $exclusions);
-        }
-        return $files;
+        return $this->get_files('php', 1, $this->get_stylesheet() !== $this->get_template());
     }
 
-    /** @param list<string> $exclusions @return array<string, string> */
-    private static function scan(string $dir, string $prefix, int $depth, array $exclusions): array
+    /**
+     * A folder's files, skipping dot files and the exclusions, to a depth
+     * (-1 for all), of the types given (all when null).
+     *
+     * @param list<string> $exclusions @param list<string>|null $types
+     * @return array<string, string>
+     */
+    private static function scan(string $dir, string $prefix, int $depth, array $exclusions, ?array $types): array
     {
         $found = [];
         foreach (is_dir($dir) ? (scandir($dir) ?: []) : [] as $entry) {
@@ -238,8 +246,8 @@ class WP_Theme implements ArrayAccess
                 continue;
             }
             if (is_dir("{$dir}/{$entry}")) {
-                $found += $depth > 0 ? self::scan("{$dir}/{$entry}", "{$prefix}{$entry}/", $depth - 1, $exclusions) : [];
-            } elseif (str_ends_with($entry, '.php')) {
+                $found += $depth !== 0 ? self::scan("{$dir}/{$entry}", "{$prefix}{$entry}/", $depth - 1, $exclusions, $types) : [];
+            } elseif ($types === null || in_array(strtolower(pathinfo($entry, PATHINFO_EXTENSION)), $types, true)) {
                 $found["{$prefix}{$entry}"] = "{$dir}/{$entry}";
             }
         }

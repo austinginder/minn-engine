@@ -4952,3 +4952,46 @@ Open: the engine reads cookies from the request it received, not from
 mid-request (to make a cookie it just set visible) is not seen by
 `wp_get_session_token` or the auth cookie readers. The reference reads
 `$_COOKIE` live.
+
+## Facade functions that only answered a constant (2026-10-07)
+
+A sweep of the facade for bodies that only return a constant or their
+input, without the placeholder trace, found 130. Most are right as they
+stand:
+
+- multisite and network answers
+- abstract defaults the reference also gives (`WP_Filesystem_Base`,
+  `WP_Image_Editor`)
+- deprecated no-ops
+- Mute admin screens
+
+The ones themes and plugins read are now real (probe facade-stubs, 27
+cases):
+
+- `is_multi_author` counts the authors with published posts and keeps the
+  answer in its transient.
+- `is_new_day` compares `currentday` and `previousday`. `the_date` prints
+  only on a new day, through the `the_date` filter; it used to print on
+  every post.
+- `WP_Theme::get_files` lists by type and depth, the parent's too when
+  asked. `get_page_templates` reads through it.
+- `balanceTags` balances when forced or when `use_balanceTags` is on.
+- `get_attachment_taxonomies` covers the file extension, the MIME type and
+  each half of it.
+- `wpdb::get_col_info` reads the last result's fields;
+  `wpdb::get_col_length` reads the table's columns (`Db::columnLength`).
+- `WP_Rewrite::mod_rewrite_rules` gives the .htaccess block, the
+  Authorization line included.
+- `wp_widget_description`, `wp_get_attachment_id3_keys`,
+  `wp_iso_descrambler` and `_wp_iso_convert`, `wp_targeted_link_rel` and its
+  callback (`rel="noopener"`).
+- `wp_get_post_revisions_url` and `wp_get_latest_revision_id_and_total_count`.
+  A revision's edit link takes no `action=edit`.
+
+Still constant, on purpose:
+
+- `WP_oEmbed::discover`: Minn makes no discovery requests.
+- `wp_get_http_headers`
+- `do_enclose` and the pings (DELIBERATE).
+- `wp_text_diff` and `WP_Block::process_block_bindings`: to look at
+  separately.

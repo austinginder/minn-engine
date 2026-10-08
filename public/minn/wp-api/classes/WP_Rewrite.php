@@ -266,9 +266,26 @@ class WP_Rewrite
         update_option('rewrite_rules', $this->rules);
     }
 
+    /**
+     * The .htaccess block Apache needs for pretty permalinks (probe
+     * facade-stubs): the Authorization header passed through, the home's
+     * base, the external rules, then everything that is not a file or a
+     * folder sent to index.php; "" without pretty permalinks.
+     */
     public function mod_rewrite_rules()
     {
-        return '';
+        if (!$this->using_permalinks()) {
+            return '';
+        }
+        $home = (string) (parse_url(home_url(), PHP_URL_PATH) ?? '');
+        $home = $home === '' ? '/' : trailingslashit($home);
+        $rules = "<IfModule mod_rewrite.c>\nRewriteEngine On\nRewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]\nRewriteBase {$home}\nRewriteRule ^index\\.php$ - [L]\n";
+        foreach ((array) $this->non_wp_rules as $match => $query) {
+            $rules .= 'RewriteRule ^' . str_replace('.+?', '.+', (string) $match) . ' ' . $home . $query . " [QSA,L]\n";
+        }
+        $rules .= "RewriteCond %{REQUEST_FILENAME} !-f\nRewriteCond %{REQUEST_FILENAME} !-d\nRewriteRule . {$home}{$this->index} [L]\n</IfModule>\n";
+        $rules = apply_filters('mod_rewrite_rules', $rules);
+        return apply_filters_deprecated('rewrite_rules', [$rules], '1.5.0', 'mod_rewrite_rules');
     }
 
     public function iis7_url_rewrite_rules($add_parent_tag = false)

@@ -658,9 +658,10 @@ function force_balance_tags($text)
     return Minn\Content\TagBalancer::balance((string) $text);
 }
 
+/** Tags balanced when forced or when the use_balanceTags setting is on; as given otherwise. */
 function balanceTags($text, $force = false)
 {
-    return $text;
+    return $force || (int) get_option('use_balanceTags') === 1 ? force_balance_tags($text) : $text;
 }
 
 function format_to_edit($content, $rich_text = false)
@@ -676,9 +677,19 @@ function wp_sprintf($pattern, ...$args)
     return sprintf($pattern, ...$args);
 }
 
+/** A mail subject's quoted-printable encoded word decoded to its bytes (underscores as spaces), in the subject's own charset. */
 function wp_iso_descrambler($subject)
 {
-    return $subject;
+    if (!preg_match('#\=\?(.+)\?Q\?(.+)\?\=#i', (string) $subject, $m)) {
+        return $subject;
+    }
+    return preg_replace_callback('#\=([0-9a-f]{2})#i', '_wp_iso_convert', str_replace('_', ' ', $m[2]));
+}
+
+/** One =XX escape as its byte. */
+function _wp_iso_convert($matches)
+{
+    return chr((int) hexdec(strtolower($matches[1])));
 }
 
 /** Non-ASCII as lower-case percent escapes, whole characters up to $length bytes; ASCII too (as rawurlencode does) when asked. */
@@ -734,9 +745,30 @@ function _oembed_filter_feed_content($content)
     return Minn\Content\TextFilters::feedEmbeds((string) $content);
 }
 
+/** Links that open a new window (a target) gain rel="noopener" (wp_targeted_link_rel may change it), outside script and style. */
 function wp_targeted_link_rel($text)
 {
-    return $text;
+    if (stripos((string) $text, 'target') === false || stripos((string) $text, '<a ') === false || is_serialized($text)) {
+        return $text;
+    }
+    return preg_replace_callback('/<(script|style)\b.*?<\/\1>|<a\s([^>]*target\s*=[^>]*)>/si', static fn (array $m) => ($m[2] ?? '') !== '' ? wp_targeted_link_rel_callback([$m[0], $m[2]]) : $m[0], (string) $text);
+}
+
+/** One link's attributes with the rel values merged in, or the link as it was when it has no target. */
+function wp_targeted_link_rel_callback($matches)
+{
+    $link = $matches[1];
+    $escaped = !preg_match('/(^|[^\\\\])[\'"]/', $link);
+    $atts = wp_kses_hair($escaped ? preg_replace('/\\\\([\'"])/', '$1', $link) : $link, wp_allowed_protocols());
+    $rel = apply_filters('wp_targeted_link_rel', 'noopener', $link);
+    if (!$rel || !isset($atts['target'])) {
+        return "<a {$link}>";
+    }
+    $rel = isset($atts['rel']) ? implode(' ', array_unique(preg_split('/\s/', "{$atts['rel']['value']} {$rel}", -1, PREG_SPLIT_NO_EMPTY))) : $rel;
+    $quote = $escaped ? '\\"' : '"';
+    $attribute = 'rel=' . $quote . esc_attr($rel) . $quote;
+    $link = isset($atts['rel']) ? preg_replace('|rel\s*=\s*?\\\\{0,1}["\'].*?\\\\{0,1}["\']|i', $attribute, $link) : rtrim($link, ' /') . ' ' . $attribute . (str_ends_with(rtrim($link), '/') ? ' /' : '');
+    return "<a {$link}>";
 }
 
 function links_add_target($content, $target = '_blank', $tags = ['a'])

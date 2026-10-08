@@ -610,9 +610,10 @@ function wp_get_http_headers($url, $deprecated = false)
     return false;
 }
 
+/** 1 while the loop's post is dated on a different day from the last date the_date printed, else 0. */
 function is_new_day()
 {
-    return false;
+    return ($GLOBALS['currentday'] ?? null) !== ($GLOBALS['previousday'] ?? null) ? 1 : 0;
 }
 
 function build_query($data)
@@ -625,9 +626,13 @@ function _http_build_query($data, $prefix = null, $sep = null, $key = '', $urlen
     return _minn_build_query((array) $data, (string) $key);
 }
 
+/** A registered widget's description, escaped; nothing for a widget not registered. */
 function wp_widget_description($id)
 {
-    return '';
+    if (!is_scalar($id) || !isset($GLOBALS['wp_registered_widgets'][$id]['description'])) {
+        return null;
+    }
+    return esc_html($GLOBALS['wp_registered_widgets'][$id]['description']);
 }
 
 function wp_auth_check_load()

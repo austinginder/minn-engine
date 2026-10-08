@@ -88,9 +88,34 @@ function get_object_taxonomies($object_type, $output = 'names')
     return $output === 'names' ? array_values($out) : $out;
 }
 
+/**
+ * The taxonomies an attachment carries: those registered for attachments,
+ * for its file's extension, its MIME type, and each half of it
+ * (attachment:image, attachment:image/png, attachment:png...).
+ */
 function get_attachment_taxonomies($attachment, $output = 'names')
 {
-    return [];
+    $attachment = is_int($attachment) ? get_post($attachment) : (is_array($attachment) ? (object) $attachment : $attachment);
+    if (!is_object($attachment)) {
+        return [];
+    }
+    $file = wp_basename((string) get_attached_file($attachment->ID ?? 0));
+    $objects = ['attachment'];
+    if (str_contains($file, '.')) {
+        $objects[] = 'attachment:' . substr($file, strrpos($file, '.') + 1);
+    }
+    $mime = (string) ($attachment->post_mime_type ?? '');
+    if ($mime !== '') {
+        $objects[] = 'attachment:' . $mime;
+        foreach (array_filter(explode('/', $mime)) as $half) {
+            $objects[] = "attachment:{$half}";
+        }
+    }
+    $taxonomies = [];
+    foreach ($objects as $object) {
+        $taxonomies = array_merge($taxonomies, (array) get_object_taxonomies($object, $output));
+    }
+    return $output === 'names' ? array_values(array_unique($taxonomies)) : $taxonomies;
 }
 
 function register_taxonomy($taxonomy, $object_type, $args = [])

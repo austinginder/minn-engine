@@ -21,6 +21,7 @@ class wpdb
     public $last_query;
     public $last_result;
     public $col_info;
+    protected $col_meta = [];
     public $queries = [];
     public $prefix = '';
     public $base_prefix;
@@ -203,6 +204,7 @@ class wpdb
             return $this->rows_affected;
         }
         if ($result instanceof \mysqli_result) {
+            $this->col_info = $result->fetch_fields();
             $this->last_result = [];
             while ($row = $result->fetch_object()) {
                 $this->last_result[] = $row;
@@ -263,9 +265,16 @@ class wpdb
         return \Minn\Support\Lists::shapeRows((array) $this->last_result, (string) $output);
     }
 
+    /** Something about each column the last query returned (its name, table, type...), or about one by offset. */
     public function get_col_info($info_type = 'name', $col_offset = -1)
     {
-        return [];
+        if (!$this->col_info) {
+            return null;
+        }
+        if ((int) $col_offset === -1) {
+            return array_map(static fn (object $column) => $column->{$info_type} ?? null, array_values((array) $this->col_info));
+        }
+        return $this->col_info[(int) $col_offset]->{$info_type} ?? null;
     }
 
     public function insert($table, $data, $format = null)
@@ -452,9 +461,17 @@ class wpdb
         return $this->charset;
     }
 
+    /** The most a text or binary column holds: characters for char and varchar, bytes for the binary, blob and text types; false for any other column. */
     public function get_col_length($table, $column)
     {
-        return false;
+        $table = strtolower((string) $table);
+        if (!isset($this->col_meta[$table])) {
+            $this->col_meta[$table] = [];
+            foreach ((array) $this->get_results('SHOW FULL COLUMNS FROM `' . str_replace('`', '', $table) . '`') as $row) {
+                $this->col_meta[$table][strtolower((string) $row->Field)] = (string) $row->Type;
+            }
+        }
+        return \Minn\Db::columnLength($this->col_meta[$table][strtolower((string) $column)] ?? '');
     }
 
     public function strip_invalid_text_for_column($table, $column, $value)
