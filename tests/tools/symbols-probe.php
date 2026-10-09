@@ -237,7 +237,7 @@ $say('the_permalink_rss', $rel($capture(static fn () => the_permalink_rss())));
 add_filter('the_permalink_rss', static fn ($p) => $p . '?rss=1');
 $say('the_permalink_rss filtered', $rel($capture(static fn () => the_permalink_rss())));
 wp_reset_postdata();
-$say('wp_validate_boolean', array_map('wp_validate_boolean', [true, false, 'true', 'false', 'FALSE', 'False', '1', '0', 1, 0, '', null, 'yes', 'no', 'off', [], [0], 'null']));
+$say('wp_validate_boolean', array_map(static fn ($value) => wp_validate_boolean($value), [true, false, 'true', 'false', 'FALSE', 'False', '1', '0', 1, 0, '', null, 'yes', 'no', 'off', [], [0], 'null']));
 // Whether Imagick passes its test depends on the host's ImageMagick (7.1.3 accepts this machine's, 7.1 did not),
 // so the case keeps to GD and stays about the chooser.
 $gdOnly = static fn () => ['WP_Image_Editor_GD'];

@@ -219,7 +219,7 @@ $say('the pagination arrows', $arrows);
 $say('the pagination arrows without context', [get_comments_pagination_arrow(new WP_Block(['blockName' => 'core/comments-pagination-next', 'attrs' => []], []), 'next'), get_query_pagination_arrow(new WP_Block(['blockName' => 'core/query-pagination-next', 'attrs' => []], []), true)]);
 
 // Names, addresses and small helpers.
-$say('wp_get_block_name_from_theme_json_path', array_map('wp_get_block_name_from_theme_json_path', [['styles', 'blocks', 'core/paragraph', 'elements', 'link'], ['styles', 'blocks', 'core/group'], ['styles', 'elements', 'link'], ['settings', 'blocks', 'core/heading', 'color'], ['styles'], [], ['styles', 'blocks', 'my-plugin/thing', 'variations', 'x']]));
+$say('wp_get_block_name_from_theme_json_path', array_map(static fn ($value) => wp_get_block_name_from_theme_json_path($value), [['styles', 'blocks', 'core/paragraph', 'elements', 'link'], ['styles', 'blocks', 'core/group'], ['styles', 'elements', 'link'], ['settings', 'blocks', 'core/heading', 'color'], ['styles'], [], ['styles', 'blocks', 'my-plugin/thing', 'variations', 'x']]));
 $say('get_block_asset_url', $mask([
     get_block_asset_url(ABSPATH . WPINC . '/blocks/paragraph/style.css'),
     get_block_asset_url(WP_PLUGIN_DIR . '/zz-plugin/build/block.css'),

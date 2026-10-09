@@ -163,7 +163,7 @@ $say('wp_rel_nofollow', [
 ]);
 $say('wp_rel_callback', [wp_rel_callback(['<a href="https://example.com/" rel="me">', ' href="https://example.com/" rel="me"'], 'nofollow'), wp_rel_callback(['<a href="https://example.com/">', ' href="https://example.com/"'], 'ugc noopener')]);
 $host = (string) parse_url(home_url(), PHP_URL_HOST);
-$say('wp_is_internal_link', array_map('wp_is_internal_link', [home_url('/x/'), 'http://' . $host . '/x', strtoupper(home_url('/X')), 'https://elsewhere.example/', '//' . $host . '/x', '/x', 'mailto:me@' . $host, 'ftp://' . $host . '/f', '']));
+$say('wp_is_internal_link', array_map(static fn ($value) => wp_is_internal_link($value), [home_url('/x/'), 'http://' . $host . '/x', strtoupper(home_url('/X')), 'https://elsewhere.example/', '//' . $host . '/x', '/x', 'mailto:me@' . $host, 'ftp://' . $host . '/f', '']));
 $say('wp_internal_hosts', str_replace($host, '{host}', wp_internal_hosts()));
 $say('wp_rel_nofollow_callback', wp_rel_nofollow_callback(['<a href="https://example.com/">', 'href="https://example.com/"']));
 $say('wp_rel_nofollow, single quotes and bare names', [wp_rel_nofollow("<a href='https://example.com/' download>x</a>"), wp_rel_nofollow("<a href='https://example.com/' rel='me' download>x</a>"), wp_rel_nofollow('<a href="' . home_url('/') . '" rel="nofollow me">home</a>')]);
@@ -274,13 +274,13 @@ $say('get_image_tag', $mask([get_image_tag($image, 'An "alt"', 'A title', 'left'
 remove_filter('get_image_tag_class', $imgSpy, 10);
 remove_filter('get_image_tag', $imgSpy, 10);
 $say('wp_make_content_images_responsive', $mask(wp_make_content_images_responsive('<p><img src="' . wp_get_attachment_url($image) . '" class="wp-image-' . $image . '" /></p>')));
-$say('wp_get_default_extension_for_mime_type', array_map('wp_get_default_extension_for_mime_type', ['image/jpeg', 'image/png', 'audio/mpeg', 'text/plain', 'application/x-nope', '', 'IMAGE/JPEG']));
+$say('wp_get_default_extension_for_mime_type', array_map(static fn ($value) => wp_get_default_extension_for_mime_type($value), ['image/jpeg', 'image/png', 'audio/mpeg', 'text/plain', 'application/x-nope', '', 'IMAGE/JPEG']));
 $say('_device_can_upload', _device_can_upload());
 
 // Arrays, ids, theme folders, block assets.
 $say('array_first and array_last', [array_first([3 => 'a', 1 => 'b']), array_last([3 => 'a', 1 => 'b']), array_first([]), array_last([]), array_first(['k' => null, 'j' => 2])]);
 $say('wp_unique_id_from_values', [wp_unique_id_from_values(['a' => 1, 'b' => [2, 3]]), wp_unique_id_from_values(['a' => 1, 'b' => [2, 3]], 'zz-'), wp_unique_id_from_values(['b' => [2, 3], 'a' => 1]), $try(static fn () => wp_unique_id_from_values([]))]);
-$say('wp_is_theme_directory_ignored', array_map('wp_is_theme_directory_ignored', ['node_modules', 'vendor', '.git', 'src/node_modules', 'templates', 'node_modules/x', '.github', 'bower_components', '.svn', 'tests', 'dist', 'vendorx', 'Vendor', '', '/node_modules', 'parts/vendor']));
+$say('wp_is_theme_directory_ignored', array_map(static fn ($value) => wp_is_theme_directory_ignored($value), ['node_modules', 'vendor', '.git', 'src/node_modules', 'templates', 'node_modules/x', '.github', 'bower_components', '.svn', 'tests', 'dist', 'vendorx', 'Vendor', '', '/node_modules', 'parts/vendor']));
 $onDemand = [wp_should_load_block_assets_on_demand()];
 add_filter('should_load_block_assets_on_demand', '__return_true');
 $onDemand[] = wp_should_load_block_assets_on_demand();

@@ -95,10 +95,10 @@ $say('arrays and lists', (static function () {
         [wp_filter_object_list($rows, ['g' => 'x']), wp_filter_object_list($rows, ['g' => 'x', 'n' => 2], 'or', 'name'), wp_filter_object_list($rows, ['g' => 'x'], 'not', 'n'), wp_filter_object_list($objects, ['name' => 'a'], 'and', 'n'), wp_filter_object_list($keyed, [], 'and', 'name'), wp_filter_object_list($rows, ['zz' => 1])],
         [wp_parse_list('a, b ,c'), wp_parse_list(['a', ' b ', '']), wp_parse_list("a b\tc,,d"), wp_parse_list(''), wp_parse_id_list('1,2,a,-3,2, 4'), wp_parse_id_list([3, '3', 'x', 0]), wp_parse_slug_list('a b, C!d,a'), wp_parse_slug_list(['Hello World', 'hello-world'])],
         $sorted,
-        array_map('wp_validate_boolean', [true, false, 'false', 'FALSE', '0', 0, 1, '', 'no', 'yes', null, [], 'off', 'true']),
+        array_map(static fn ($value) => wp_validate_boolean($value), [true, false, 'false', 'FALSE', '0', 0, 1, '', 'no', 'yes', null, [], 'off', 'true']),
         [wp_fuzzy_number_match(1.0, 1.5), wp_fuzzy_number_match(1, 3), wp_fuzzy_number_match(1, 3, 2), wp_fuzzy_number_match('2', 2), wp_fuzzy_number_match(1, 2.0001)],
         [wp_is_uuid('6ba7b810-9dad-11d1-80b4-00c04fd430c8'), wp_is_uuid('6ba7b810-9dad-11d1-80b4-00c04fd430c8', 4), wp_is_uuid('f47ac10b-58cc-4372-a567-0e02b2c3d479', 4), wp_is_uuid('F47AC10B-58CC-4372-A567-0E02B2C3D479'), wp_is_uuid('zz'), wp_is_uuid(5), wp_is_uuid('f47ac10b-58cc-4372-a567-0e02b2c3d479', 1)],
-        array_map('is_serialized_string', ['s:1:"a";', 'a:0:{}', 's:2:"a";', ' s:1:"a"; ', 'zz', 's:0:"";', 's:1:"a"', 5, 'S:1:"a";']),
+        array_map(static fn ($value) => is_serialized_string($value), ['s:1:"a";', 'a:0:{}', 's:2:"a";', ' s:1:"a"; ', 'zz', 's:0:"";', 's:1:"a"', 5, 'S:1:"a";']),
         [wp_extract_urls('See https://a.example/x?y=1&z=2, http://b.example/ and <a href="https://c.example/q#f">c</a> or www.d.example, mailto:e@f.example, ftp://g.example/h. Again https://a.example/x?y=1&z=2'), wp_extract_urls('')],
         [get_tag_regex('p'), get_tag_regex('a b'), get_tag_regex(''), get_tag_regex('IMG')],
         [wp_checkdate(2, 29, 2020, '2020-02-29'), wp_checkdate(2, 30, 2020, '2020-02-30'), wp_checkdate('13', '1', '2020', 'x'), wp_checkdate(0, 0, 0, '0000-00-00')],
@@ -122,15 +122,15 @@ $say('paths and files', $mask((static function () use ($dir) {
     file_put_contents($inside = $dir . '/del.txt', 'x');
     $deleted = [wp_delete_file_from_directory($inside, $dir), is_file($inside), wp_delete_file_from_directory($dir . '/missing.txt', $dir), wp_delete_file_from_directory($dir . '/a.txt', sys_get_temp_dir() . '/zz-elsewhere'), wp_delete_file_from_directory($dir . '/../' . basename($dir) . '/b.jpg', $dir), is_file($dir . '/b.jpg')];
     return [
-        array_map('path_is_absolute', ['/a', 'a', 'C:\\x', 'C:/x', 'c:x', '\\\\server\\share', '.', '', './a', '../a', 'http://x', 'C:\\', '\\x', 'c:\\x', '/', 'z:\\a\\b', '1:\\x', 'ab:\\x', '\\\\', ' /a', ABSPATH, 'wp-content']),
+        array_map(static fn ($value) => path_is_absolute($value), ['/a', 'a', 'C:\\x', 'C:/x', 'c:x', '\\\\server\\share', '.', '', './a', '../a', 'http://x', 'C:\\', '\\x', 'c:\\x', '/', 'z:\\a\\b', '1:\\x', 'ab:\\x', '\\\\', ' /a', ABSPATH, 'wp-content']),
         [path_join('/a', 'b'), path_join('/a/', '/b'), path_join('/a', ''), path_join('', 'b'), path_join('a', 'b'), path_join('/a/', 'b/'), path_join('C:\\a', 'b')],
         array_map(static fn ($file) => validate_file($file), ['a/b.php', '../x', './x', 'a/../b', 'C:/x', 'c:\\x', 'a/b', '', 'a\\b', '..', '.../x', 'a/./b', 'x..y', '..\\x', 'a/..', '/../', 'a:b', ':ab', 'C:', '%2e%2e/x', 'a\\..\\b', '/abs/path']),
         [validate_file('a.php', ['a.php', 'b.php']), validate_file('c.php', ['a.php']), validate_file('../a.php', ['../a.php'])],
-        array_map('wp_is_stream', ['http://x', 'php://memory', 'file:///x', '/x', 'zz://x', 'HTTP://x', 'C:\\x', 'glob://*']),
+        array_map(static fn ($value) => wp_is_stream($value), ['http://x', 'php://memory', 'file:///x', '/x', 'zz://x', 'HTTP://x', 'C:\\x', 'glob://*']),
         [$unique, $heard, $callback],
         $deleted,
         [array_keys(wp_get_ext_types()), wp_get_ext_types()['image'], wp_get_ext_types()['code']],
-        array_map('wp_get_default_extension_for_mime_type', ['image/jpeg', 'text/plain', 'zz/zz', 'video/mp4', 'application/pdf', '']),
+        array_map(static fn ($value) => wp_get_default_extension_for_mime_type($value), ['image/jpeg', 'text/plain', 'zz/zz', 'video/mp4', 'application/pdf', '']),
         [_wp_upload_dir('2020/05'), array_keys(_wp_upload_dir())],
         [iis7_supports_permalinks(), (static function () {
             add_filter('iis7_supports_permalinks', '__return_true');
@@ -146,7 +146,7 @@ $say('dates, hashes and ids', (static function () {
     $zone = wp_timezone();
     return [
         [get_class($now), $now->getTimezone()->getName() === wp_timezone_string(), abs($now->getTimestamp() - time()) < 5, get_class($zone), $zone->getName() === wp_timezone_string()],
-        array_map('mysql_to_rfc3339', ['2026-10-07 12:34:56', '2026-10-07', '0000-00-00 00:00:00', 'zz', '2026-10-07T01:02:03']),
+        array_map(static fn ($value) => mysql_to_rfc3339($value), ['2026-10-07 12:34:56', '2026-10-07', '0000-00-00 00:00:00', 'zz', '2026-10-07T01:02:03']),
         [get_weekstartend('2026-10-07', 1), get_weekstartend('2026-10-07 23:00:00', 0), get_weekstartend('2026-10-04', '6'), get_weekstartend('2026-10-07')],
         [wp_fast_hash('zz'), wp_fast_hash(''), wp_verify_fast_hash('zz', wp_fast_hash('zz')), wp_verify_fast_hash('zy', wp_fast_hash('zz')), wp_verify_fast_hash('zz', md5('zz')), wp_verify_fast_hash('zz', 'zz')],
         [wp_unique_prefixed_id('zz-probe-'), wp_unique_prefixed_id('zz-probe-'), wp_unique_prefixed_id('zz-other-'), wp_unique_prefixed_id('zz-probe-')],
@@ -260,7 +260,7 @@ $say('the site\'s state', $mask((static function () use ($echoed) {
     $encoding = mb_internal_encoding();
     $steps = [mbstring_binary_safe_encoding(), mb_internal_encoding(), mbstring_binary_safe_encoding(), reset_mbstring_encoding(), mb_internal_encoding(), reset_mbstring_encoding(), mb_internal_encoding() === $encoding, mbstring_binary_safe_encoding(true), mb_internal_encoding() === $encoding];
     $out[] = $steps;
-    $out[] = array_map('_canonical_charset', ['utf8', 'UTF-8', 'utf-8', 'UTF8', 'Utf8', 'latin1', 'ISO-8859-1', 'iso8859-1', 'ISO8859-1', '', 'zz', 'utf-8 ']);
+    $out[] = array_map(static fn ($value) => _canonical_charset($value), ['utf8', 'UTF-8', 'utf-8', 'UTF8', 'Utf8', 'latin1', 'ISO-8859-1', 'iso8859-1', 'ISO8859-1', '', 'zz', 'utf-8 ']);
     wp_set_current_user(0);
     $out[] = [wp_auth_check([]), wp_auth_check(['wp-auth-check' => 'keep', 'other' => 1])];
     wp_set_current_user(1);

@@ -88,7 +88,7 @@ $say('tag cloud helpers', [
         uasort($list, '_wp_object_name_sort_cb');
         return array_column(array_values($list), 'name');
     })(),
-    array_map('default_topic_count_scale', [0, 1, 2, 9, 10, 99, 1000]),
+    array_map(static fn ($value) => default_topic_count_scale($value), [0, 1, 2, 9, 10, 99, 1000]),
 ]);
 
 $made['posts'][] = $post = (int) wp_insert_post(['post_title' => 'zz menu post', 'post_status' => 'publish', 'post_content' => 'x']);

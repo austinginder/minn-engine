@@ -65,9 +65,9 @@ $say('multiple types', [
 ]);
 
 $say('arrays, objects and colours sanitized', [
-    array_map('rest_sanitize_array', ['a,b, c', ['x', 'y'], ['k' => 'v'], '', null, 5, (object) ['a' => 1], [0 => 'a', 2 => 'b']]),
+    array_map(static fn ($value) => rest_sanitize_array($value), ['a,b, c', ['x', 'y'], ['k' => 'v'], '', null, 5, (object) ['a' => 1], [0 => 'a', 2 => 'b']]),
     array_map(static fn ($value) => $error(rest_sanitize_object($value)), ['', null, ['a' => 1], (object) ['b' => 2], 'string', 5, [1, 2], new ArrayObject(['c' => 3])]),
-    array_map('rest_parse_hex_color', ['#fff', '#ffffff', 'fff', '#FFF', '#ggg', '#ffff', '#12345', ' #fff', '#fff ', '', '#0a0B0c']),
+    array_map(static fn ($value) => rest_parse_hex_color($value), ['#fff', '#ffffff', 'fff', '#FFF', '#ggg', '#ffff', '#12345', ' #fff', '#fff ', '', '#0a0B0c']),
 ]);
 
 register_rest_route('zz-probe/v1', '/args', ['methods' => 'POST', 'callback' => '__return_null', 'permission_callback' => '__return_true', 'args' => [

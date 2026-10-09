@@ -99,7 +99,7 @@ WP_Connector_Registry::set_instance($registry);
 $say('restored registry', count(wp_get_connectors()));
 
 // Key masking and key sources.
-$say('mask', array_map('_wp_connectors_mask_api_key', ['', 'a', 'abc', 'abcd', 'abcde', 'abcdef', 'abcdefg', 'abcdefgh', 'abcdefghi', 'sk-ant-1234567890abcdef', 'ünïcödé-key-value', str_repeat('x', 20), str_repeat('x', 21), str_repeat('x', 40)]));
+$say('mask', array_map(static fn ($value) => _wp_connectors_mask_api_key($value), ['', 'a', 'abc', 'abcd', 'abcde', 'abcdef', 'abcdefg', 'abcdefgh', 'abcdefghi', 'sk-ant-1234567890abcdef', 'ünïcödé-key-value', str_repeat('x', 20), str_repeat('x', 21), str_repeat('x', 40)]));
 $say('logo and validity', [_wp_connectors_resolve_ai_provider_logo_url('rel.svg'), _wp_connectors_resolve_ai_provider_logo_url(''), _wp_connectors_is_ai_api_key_valid('', 'anthropic'), _wp_connectors_is_ai_api_key_valid('x', 'nope'), $wrong()]);
 delete_option('minn_probe_key');
 $say('source none', _wp_connectors_get_api_key_source('minn_probe_key', 'MINN_PROBE_ENV_UNSET', 'MINN_PROBE_CONST_UNSET'));
@@ -120,7 +120,7 @@ $say('source empty option', _wp_connectors_get_api_key_source('minn_probe_key'))
 delete_option('minn_probe_key');
 
 // Application-password credentials.
-$say('parse credentials', array_map('wp_connectors_parse_application_password_credentials', ['', 'user:pass word', 'u:p:x', 'nocolon', ':', 'u:', ':p', ' user : pass ']));
+$say('parse credentials', array_map(static fn ($value) => wp_connectors_parse_application_password_credentials($value), ['', 'user:pass word', 'u:p:x', 'nocolon', ':', 'u:', ':p', ' user : pass ']));
 $say('sanitize credentials', [wp_connectors_sanitize_application_password_credentials('user:pass'), wp_connectors_sanitize_application_password_credentials(['username' => 'u', 'password' => 'p']), wp_connectors_sanitize_application_password_credentials(''), wp_connectors_sanitize_application_password_credentials(['username' => 'u', 'password' => 'p', 'extra' => 1]), wp_connectors_sanitize_application_password_credentials(['username' => ' u ', 'password' => ' p ']), wp_connectors_sanitize_application_password_credentials(['username' => 'u']), wp_connectors_sanitize_application_password_credentials(['username' => '<b>u</b>', 'password' => 'a<b>b']), wp_connectors_sanitize_application_password_credentials(['username' => 5, 'password' => ['x']]), wp_connectors_sanitize_application_password_credentials(null)]);
 $say('credentials from auth', [wp_connectors_get_application_password_credentials([]), wp_connectors_get_application_password_credentials(['method' => 'application_password']), wp_connectors_get_application_password_credentials(['method' => 'application_password', 'setting_name' => 'minn_probe_creds'])]);
 update_option('minn_probe_creds', ['username' => 'u', 'password' => 'p']);

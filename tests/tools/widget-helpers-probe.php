@@ -20,7 +20,7 @@ if (!did_action('widgets_init')) {
 }
 $kept = ['sidebars_widgets' => get_option('sidebars_widgets', null), 'widget_search' => get_option('widget_search', null)];
 register_sidebar(['id' => 'zz-probe-side', 'name' => 'Probe Side', 'before_widget' => '<aside id="%1$s" class="widget %2$s">', 'after_widget' => '</aside>', 'before_title' => '<h3>', 'after_title' => '</h3>']);
-$say('parse ids', array_map('wp_parse_widget_id', ['search-2', 'block-12', 'foo', 'media_image-3', 'a-b-c-4', '-5']));
+$say('parse ids', array_map(static fn ($value) => wp_parse_widget_id($value), ['search-2', 'block-12', 'foo', 'media_image-3', 'a-b-c-4', '-5']));
 $say('sidebars', [wp_get_sidebar('zz-probe-side'), wp_get_sidebar('wp_inactive_widgets'), wp_get_sidebar('zz-nope')]);
 update_option('widget_search', [5 => ['title' => 'Helper search'], '_multiwidget' => 1]);
 wp_assign_widget_to_sidebar('search-5', 'zz-probe-side');
