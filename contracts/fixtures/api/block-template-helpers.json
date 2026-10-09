@@ -1,0 +1,368 @@
+[
+    [
+        "the head tags",
+        [
+            "<title>Minn</title>\n",
+            "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />\n"
+        ]
+    ],
+    [
+        "the old skip link filter",
+        [
+            "<header>h</header><main class=\"x\">m</main>",
+            "<main id=\"zz\">m</main>",
+            "<div>no main</div>",
+            ""
+        ]
+    ],
+    [
+        "a template drops the post context",
+        [
+            10,
+            [
+                {
+                    "queryId": 1
+                },
+                {
+                    "postId": 5,
+                    "postType": "wp_template_part"
+                },
+                [],
+                {
+                    "postId": 5
+                },
+                [],
+                {
+                    "postId": 5,
+                    "postType": "post"
+                },
+                []
+            ]
+        ]
+    ],
+    [
+        "a template built from a post",
+        [
+            {
+                "type": "wp_template",
+                "theme": "twentytwentyfive",
+                "slug": "zz-tpl",
+                "id": "twentytwentyfive//zz-tpl",
+                "title": "Zz Tpl",
+                "content": "<!-- wp:paragraph --><p>x</p><!-- /wp:paragraph -->",
+                "description": "Zz desc",
+                "source": "custom",
+                "origin": null,
+                "wp_id": "{tpl}",
+                "status": "publish",
+                "has_theme_file": false,
+                "is_custom": true,
+                "author": "0",
+                "plugin": null,
+                "post_types": null,
+                "area": null,
+                "dated": true
+            },
+            {
+                "type": "wp_template",
+                "theme": "zz-other",
+                "slug": "zz-tpl",
+                "id": "zz-other//zz-tpl",
+                "title": "Zz Tpl",
+                "content": "<!-- wp:paragraph --><p>x</p><!-- /wp:paragraph -->",
+                "description": "Zz desc",
+                "source": "custom",
+                "origin": "plugin",
+                "wp_id": "{tpl}",
+                "status": "publish",
+                "has_theme_file": false,
+                "is_custom": false,
+                "author": "0",
+                "plugin": null,
+                "post_types": null,
+                "area": null,
+                "dated": true
+            },
+            [
+                "template_missing_theme",
+                "No theme is defined for this template."
+            ],
+            [
+                "template_missing_theme",
+                "No theme is defined for this template."
+            ],
+            {
+                "type": "wp_template",
+                "theme": "twentytwentyfive",
+                "slug": "zz-tpl",
+                "id": "twentytwentyfive//zz-tpl",
+                "title": "Zz Tpl",
+                "content": "<!-- wp:paragraph --><p>x</p><!-- /wp:paragraph -->",
+                "description": "Zz desc",
+                "source": "custom",
+                "origin": null,
+                "wp_id": "{tpl}",
+                "status": "publish",
+                "has_theme_file": false,
+                "is_custom": true,
+                "author": "0",
+                "plugin": null,
+                "post_types": null,
+                "area": null,
+                "dated": true
+            },
+            {
+                "type": "wp_template",
+                "theme": "twentytwentyfive",
+                "slug": "zz-tpl",
+                "id": "twentytwentyfive//zz-tpl",
+                "title": "Zz Tpl",
+                "content": "<!-- wp:paragraph --><p>x</p><!-- /wp:paragraph -->",
+                "description": "Zz desc",
+                "source": "custom",
+                "origin": null,
+                "wp_id": "{tpl}",
+                "status": "publish",
+                "has_theme_file": false,
+                "is_custom": true,
+                "author": "0",
+                "plugin": null,
+                "post_types": null,
+                "area": null,
+                "dated": true
+            },
+            {
+                "type": "wp_template",
+                "theme": "twentytwentyfive",
+                "slug": "index",
+                "id": "twentytwentyfive//index",
+                "title": "Zz Tpl",
+                "content": "<!-- wp:paragraph --><p>x</p><!-- /wp:paragraph -->",
+                "description": "Zz desc",
+                "source": "custom",
+                "origin": null,
+                "wp_id": "{tpl}",
+                "status": "publish",
+                "has_theme_file": true,
+                "is_custom": false,
+                "author": "0",
+                "plugin": null,
+                "post_types": null,
+                "area": null,
+                "dated": true
+            },
+            {
+                "type": "wp_template",
+                "theme": "zz-other",
+                "slug": "index",
+                "id": "zz-other//index",
+                "title": "Zz Tpl",
+                "content": "<!-- wp:paragraph --><p>x</p><!-- /wp:paragraph -->",
+                "description": "Zz desc",
+                "source": "custom",
+                "origin": null,
+                "wp_id": "{tpl}",
+                "status": "publish",
+                "has_theme_file": false,
+                "is_custom": false,
+                "author": "0",
+                "plugin": null,
+                "post_types": null,
+                "area": null,
+                "dated": true
+            },
+            {
+                "type": "wp_template",
+                "theme": "twentytwentyfive",
+                "slug": "page-no-title",
+                "id": "twentytwentyfive//page-no-title",
+                "title": "Zz Tpl",
+                "content": "<!-- wp:paragraph --><p>x</p><!-- /wp:paragraph -->",
+                "description": "Zz desc",
+                "source": "custom",
+                "origin": null,
+                "wp_id": "{tpl}",
+                "status": "publish",
+                "has_theme_file": true,
+                "is_custom": true,
+                "author": "0",
+                "plugin": null,
+                "post_types": [
+                    "page"
+                ],
+                "area": null,
+                "dated": true
+            },
+            {
+                "type": "wp_template",
+                "theme": "twentytwentyfive",
+                "slug": "single",
+                "id": "twentytwentyfive//single",
+                "title": "Zz Tpl",
+                "content": "<!-- wp:paragraph --><p>x</p><!-- /wp:paragraph -->",
+                "description": "Zz desc",
+                "source": "custom",
+                "origin": null,
+                "wp_id": "{tpl}",
+                "status": "publish",
+                "has_theme_file": true,
+                "is_custom": false,
+                "author": "0",
+                "plugin": null,
+                "post_types": null,
+                "area": null,
+                "dated": true
+            },
+            {
+                "type": "wp_template_part",
+                "theme": "twentytwentyfive",
+                "slug": "zz-part",
+                "id": "twentytwentyfive//zz-part",
+                "title": "Zz Part",
+                "content": "x",
+                "description": "",
+                "source": "custom",
+                "origin": null,
+                "wp_id": "{part}",
+                "status": "publish",
+                "has_theme_file": false,
+                "is_custom": true,
+                "author": "0",
+                "plugin": null,
+                "post_types": null,
+                "area": "header",
+                "dated": true
+            },
+            {
+                "type": "wp_template_part",
+                "theme": "twentytwentyfive",
+                "slug": "zz-part",
+                "id": "twentytwentyfive//zz-part",
+                "title": "Zz Part",
+                "content": "x",
+                "description": "",
+                "source": "custom",
+                "origin": null,
+                "wp_id": "{part}",
+                "status": "publish",
+                "has_theme_file": false,
+                "is_custom": true,
+                "author": "0",
+                "plugin": null,
+                "post_types": null,
+                "area": null,
+                "dated": true
+            },
+            {
+                "type": "wp_template_part",
+                "theme": "twentytwentyfive",
+                "slug": "zz-part",
+                "id": "twentytwentyfive//zz-part",
+                "title": "Zz Part",
+                "content": "x",
+                "description": "",
+                "source": "custom",
+                "origin": null,
+                "wp_id": "{part}",
+                "status": "publish",
+                "has_theme_file": false,
+                "is_custom": true,
+                "author": "0",
+                "plugin": null,
+                "post_types": null,
+                "area": "zz-area",
+                "dated": true
+            },
+            {
+                "type": "wp_template_part",
+                "theme": "twentytwentyfive",
+                "slug": "header",
+                "id": "twentytwentyfive//header",
+                "title": "Zz Part",
+                "content": "x",
+                "description": "",
+                "source": "custom",
+                "origin": null,
+                "wp_id": "{part}",
+                "status": "publish",
+                "has_theme_file": true,
+                "is_custom": true,
+                "author": "0",
+                "plugin": null,
+                "post_types": null,
+                "area": null,
+                "dated": true
+            }
+        ]
+    ],
+    [
+        "titles for a single post's template",
+        [
+            [
+                true,
+                "Post: Zz Tt <b>Post</b>",
+                "Template for Zz Tt <b>Post</b>"
+            ],
+            [
+                false,
+                "Not found: Post (zz-tt-draft)",
+                "before d"
+            ],
+            [
+                false,
+                "Not found: Post (zz-never)",
+                "before d"
+            ],
+            [
+                true,
+                "Post: Zz Dup",
+                "Template for Zz Dup"
+            ],
+            [
+                true,
+                "Post: Zz Dup",
+                "Template for Zz Dup"
+            ],
+            [
+                false,
+                "Not found: Page (zz-tt-post)",
+                "before d"
+            ],
+            [
+                true,
+                "Page: Zz Solo Page",
+                "Template for Zz Solo Page"
+            ]
+        ]
+    ],
+    [
+        "titles for a term's template",
+        [
+            [
+                true,
+                "Category: Zz Tt Cat (zz-tt-cat)",
+                "Template for Zz Tt Cat"
+            ],
+            [
+                true,
+                "Category: Zz Tt Cat (zz-tt-cat-2)",
+                "Template for Zz Tt Cat"
+            ],
+            [
+                true,
+                "Category: Zz Tt Unique",
+                "Template for Zz Tt Unique"
+            ],
+            [
+                false,
+                "Not found: Category (zz-never)",
+                "before d"
+            ],
+            [
+                false,
+                "Not found: Tag (zz-tt-cat)",
+                "before d"
+            ]
+        ]
+    ]
+]

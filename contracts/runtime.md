@@ -8253,3 +8253,46 @@ Probe `footnotes`.
 - **Revisions.** `wp_get_footnotes_from_revision`
   (`_wp_post_revision_field_footnotes`, 3 arguments) answers the
   revision's own `footnotes` meta (single), `''` when it has none.
+
+## Block template helpers (2026-10-09)
+
+Probe `block-template-helpers`.
+
+- **Head tags.** `_block_template_render_title_tag` prints
+  `<title>{wp_get_document_title()}</title>` and a newline.
+  `_block_template_viewport_meta_tag` prints the
+  `width=device-width, initial-scale=1` viewport meta and a newline.
+- **_block_template_add_skip_link** returns the markup as given, with or
+  without a `<main>`, and raises no notice.
+- **Post context** (`render_block_context` 10). A context whose
+  `postType` is `wp_template` loses `postId` and `postType`. Template
+  parts and every other type keep theirs.
+- **_build_block_template_object_from_post_object.**
+  - It is the `template_missing_theme` error without a `wp_theme` term.
+    Otherwise it takes the post's fields with `source` `custom` and
+    `origin` from the meta.
+  - `has_theme_file` holds only when the term is the active theme and that
+    theme has the file; `post_types` then comes from the file.
+  - `is_custom` is false for a default template type and for truthy
+    `is_wp_suggestion` meta; a part is always custom.
+  - `area` is the `wp_template_part_area` term, unvalidated, for parts
+    only. `plugin` stays null, and `author` is the post's, as stored.
+- **Titles for a single post's template.**
+  - `{singular name}: {post title}` and `Template for {post title}`
+    (titles as stored) for the published post with that slug; true.
+  - `Not found: {singular name} ({slug})` otherwise, with the description
+    unchanged; false.
+  - Posts sharing a title are never told apart: the reference looks for
+    duplicates with a one-row query and needs more than one.
+- **Titles for a term's template.** `{singular name}: {name}`, followed by
+  ` ({slug})` when another term in the taxonomy has the same name, and
+  `Template for {name}`; Not found as above.
+- **Still owed.** Nothing observable from the command line:
+  - `_add_template_loader_filters` added no filters;
+  - `wp_set_unique_slug_on_create_template_part` changed no slug;
+  - `wp_enqueue_block_template_skip_link` queued nothing. The engine
+    prints the skip-link anchor but not the reference's skip-link CSS.
+
+  Not done yet: `_resolve_template_for_new_post`,
+  `inject_ignored_hooked_blocks_metadata_attributes` and
+  `wp_generate_block_templates_export_file`.

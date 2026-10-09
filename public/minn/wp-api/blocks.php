@@ -1312,6 +1312,98 @@ function _build_block_template_result_from_post($post)
     return $template;
 }
 
+/**
+ * A template built from a saved post with the terms and meta given (probe
+ * block-template-helpers): the theme from the wp_theme term (an error
+ * without one), the theme's file counted only for the active theme, custom
+ * unless the slug is a default type or the meta marks it a suggestion, a
+ * part's area as the term names it.
+ */
+function _build_block_template_object_from_post_object($post, $terms = [], $meta = [])
+{
+    if (empty($terms['wp_theme'])) {
+        return new WP_Error('template_missing_theme', __('No theme is defined for this template.'));
+    }
+    $theme = (string) $terms['wp_theme'];
+    $file = $theme === get_stylesheet() ? _get_block_template_file($post->post_type, $post->post_name) : null;
+    $template = new WP_Block_Template();
+    $template->wp_id = (int) $post->ID;
+    $template->id = $theme . '//' . $post->post_name;
+    $template->theme = $theme;
+    $template->content = $post->post_content;
+    $template->slug = $post->post_name;
+    $template->source = 'custom';
+    $template->origin = !empty($meta['origin']) ? $meta['origin'] : null;
+    $template->type = $post->post_type;
+    $template->description = $post->post_excerpt;
+    $template->title = $post->post_title;
+    $template->status = $post->post_status;
+    $template->has_theme_file = $file !== null;
+    $template->is_custom = empty($meta['is_wp_suggestion']) && ($post->post_type === 'wp_template_part' || Minn\Theme\TemplateIndex::isCustom((string) $post->post_name));
+    $template->author = $post->post_author;
+    $template->modified = $post->post_modified;
+    $template->date = $post->post_date;
+    $template->post_types = $file['postTypes'] ?? null;
+    $template->area = $post->post_type === 'wp_template_part' ? ($terms['wp_template_part_area'] ?? null) : null;
+    return $template;
+}
+
+/** A single-{type}-{slug} template titled after the published post it names (Type: title), or Not found; whether the post was found. */
+function _wp_build_title_and_description_for_single_post_type_block_template($post_type, $slug, WP_Block_Template $template)
+{
+    $singular = get_post_type_object($post_type)?->labels->singular_name;
+    $found = get_posts(['post_type' => $post_type, 'post_status' => 'publish', 'name' => $slug, 'posts_per_page' => 1, 'no_found_rows' => true, 'suppress_filters' => true]);
+    if ($found === []) {
+        $template->title = sprintf(__('Not found: %1$s (%2$s)'), $singular, $slug);
+        return false;
+    }
+    $template->title = sprintf(__('%1$s: %2$s'), $singular, $found[0]->post_title);
+    $template->description = sprintf(__('Template for %s'), $found[0]->post_title);
+    return true;
+}
+
+/** A {taxonomy}-{slug} template titled after the term it names (with the slug when another term shares the name), or Not found; whether the term was found. */
+function _wp_build_title_and_description_for_taxonomy_block_template($taxonomy, $slug, WP_Block_Template $template)
+{
+    $singular = get_taxonomy($taxonomy) ? get_taxonomy($taxonomy)->labels->singular_name : null;
+    $term = get_term_by('slug', $slug, $taxonomy);
+    if (!$term) {
+        $template->title = sprintf(__('Not found: %1$s (%2$s)'), $singular, $slug);
+        return false;
+    }
+    $shared = count(get_terms(['taxonomy' => $taxonomy, 'name' => $term->name, 'hide_empty' => false, 'fields' => 'ids', 'number' => 2])) > 1;
+    $template->title = sprintf(__('%1$s: %2$s'), $singular, $term->name) . ($shared ? ' (' . $slug . ')' : '');
+    $template->description = sprintf(__('Template for %s'), $term->name);
+    return true;
+}
+
+/** A block template's document title tag. */
+function _block_template_render_title_tag()
+{
+    echo '<title>' . wp_get_document_title() . '</title>' . "\n";
+}
+
+/** A block template's viewport meta tag. */
+function _block_template_viewport_meta_tag()
+{
+    echo '<meta name="viewport" content="width=device-width, initial-scale=1" />' . "\n";
+}
+
+/** The template markup as given: the skip link is printed with the page now. */
+function _block_template_add_skip_link($template_html)
+{
+    return $template_html;
+}
+
+/** A block rendered inside a template (render_block_context) has no post: its postId and postType go. */
+function _block_template_render_without_post_block_context($context)
+{
+    if (($context['postType'] ?? null) === 'wp_template') {
+        unset($context['postId'], $context['postType']);
+    }
+    return $context;
+}
+
 /** A theme file's own template by id, past whatever the site saved over it; pre_get_block_file_template may answer first. */
 function get_block_file_template($id, $template_type = 'wp_template')
 {

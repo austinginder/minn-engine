@@ -2,13 +2,13 @@
     "generated": "2026-10-09",
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line), placeholder (generated stub, behaviour still owed), deadend (generated stub for wp-admin, the editors, the Customizer or XML-RPC, inert by design); \"deadend\" on any entry names its dead-end area",
     "summary": {
-        "minn": 773,
-        "composes": 1754,
-        "leaf": 850,
-        "noop": 2638,
+        "minn": 774,
+        "composes": 1756,
+        "leaf": 851,
+        "noop": 2641,
         "placeholder": 242,
         "deadend": 1661,
-        "functions": 7840,
+        "functions": 7847,
         "minnMethods": 934,
         "leafLinesOver15": 12
     },
@@ -27890,6 +27890,49 @@
             "minn": [],
             "composes": []
         },
+        "_block_template_add_skip_link": {
+            "file": "blocks.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "_block_template_render_title_tag": {
+            "file": "blocks.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "wp_get_document_title"
+            ]
+        },
+        "_block_template_render_without_post_block_context": {
+            "file": "blocks.php",
+            "lines": 4,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "_block_template_viewport_meta_tag": {
+            "file": "blocks.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "_build_block_template_object_from_post_object": {
+            "file": "blocks.php",
+            "lines": 25,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Theme\\TemplateIndex::isCustom"
+            ],
+            "composes": [
+                "__",
+                "_get_block_template_file",
+                "get_stylesheet"
+            ]
+        },
         "_build_block_template_result_from_file": {
             "file": "blocks.php",
             "lines": 17,
@@ -32431,6 +32474,29 @@
             "composes": [
                 "get_theme_mod",
                 "wp_is_block_theme"
+            ]
+        },
+        "_wp_build_title_and_description_for_single_post_type_block_template": {
+            "file": "blocks.php",
+            "lines": 9,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "__",
+                "get_post_type_object",
+                "get_posts"
+            ]
+        },
+        "_wp_build_title_and_description_for_taxonomy_block_template": {
+            "file": "blocks.php",
+            "lines": 10,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "__",
+                "get_taxonomy",
+                "get_term_by",
+                "get_terms"
             ]
         },
         "_wp_call_all_hook": {
