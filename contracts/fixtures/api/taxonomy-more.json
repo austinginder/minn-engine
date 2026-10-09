@@ -1,0 +1,261 @@
+[
+    [
+        "term meta rows",
+        [
+            [
+                [
+                    "meta_key",
+                    "meta_value",
+                    "meta_id",
+                    "term_id"
+                ],
+                [
+                    "meta_key",
+                    "meta_value",
+                    "meta_id",
+                    "term_id"
+                ],
+                [
+                    "meta_key",
+                    "meta_value",
+                    "meta_id",
+                    "term_id"
+                ]
+            ],
+            [
+                {
+                    "meta_key": "zz_a",
+                    "meta_value": "first",
+                    "meta_id": "{meta 0}",
+                    "term_id": "{category}"
+                },
+                {
+                    "meta_key": "zz_a",
+                    "meta_value": "a:1:{s:2:\"an\";s:5:\"array\";}",
+                    "meta_id": "{meta 1}",
+                    "term_id": "{category}"
+                },
+                {
+                    "meta_key": "zz_b",
+                    "meta_value": "second key",
+                    "meta_id": "{meta 2}",
+                    "term_id": "{category}"
+                }
+            ],
+            [],
+            [],
+            true
+        ]
+    ],
+    [
+        "term meta support",
+        [
+            null,
+            "kept",
+            false,
+            [
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false
+            ],
+            null,
+            [],
+            [
+                "first",
+                {
+                    "an": "array"
+                }
+            ],
+            [
+                "second key"
+            ]
+        ]
+    ],
+    [
+        "term meta support, where it is hooked",
+        [
+            [
+                "get_term_metadata",
+                10
+            ],
+            [
+                "add_term_metadata",
+                10
+            ],
+            [
+                "update_term_metadata",
+                10
+            ],
+            [
+                "delete_term_metadata",
+                10
+            ],
+            [
+                "get_term_metadata_by_mid",
+                10
+            ],
+            [
+                "update_term_metadata_by_mid",
+                10
+            ],
+            [
+                "delete_term_metadata_by_mid",
+                10
+            ],
+            [
+                "update_term_metadata_cache",
+                10
+            ]
+        ]
+    ],
+    [
+        "publicly viewable",
+        [
+            true,
+            true,
+            true,
+            false,
+            true,
+            true
+        ]
+    ],
+    [
+        "taxonomies printed",
+        [
+            "Categories: <a href=\"{site}/category/zz-tm-category/\">zz tm category</a> and <a href=\"{site}/category/zz-tm-second/\">zz tm second</a>. Tags: <a href=\"{site}/tag/zz-tm-tag/\">zz tm tag</a>. Zz hidden: <a href=\"{site}/zz_tm_hidden/zz-tm-hidden/\">zz tm hidden</a>. Zz Shown: <a href=\"{site}/zz_tm_shown/zz-tm-shown/\">zz tm shown</a>.",
+            "<p>Categories: <a href=\"{site}/category/zz-tm-category/\">zz tm category</a> and <a href=\"{site}/category/zz-tm-second/\">zz tm second</a>. | Tags: <a href=\"{site}/tag/zz-tm-tag/\">zz tm tag</a>. | Zz hidden: <a href=\"{site}/zz_tm_hidden/zz-tm-hidden/\">zz tm hidden</a>. | Zz Shown: <a href=\"{site}/zz_tm_shown/zz-tm-shown/\">zz tm shown</a>.</p>",
+            "Categories are <em>zz tm category</em> and <em>zz tm second</em>. Tags are <em>zz tm tag</em>. Zz hidden are <em>zz tm hidden</em>. Zz Shown are <em>zz tm shown</em>.",
+            "[]",
+            "(Categories: <a href=\"{site}/category/zz-tm-category/\">zz tm category</a> and <a href=\"{site}/category/zz-tm-second/\">zz tm second</a>.;Tags: <a href=\"{site}/tag/zz-tm-tag/\">zz tm tag</a>.;Zz hidden: <a href=\"{site}/zz_tm_hidden/zz-tm-hidden/\">zz tm hidden</a>.;Zz Shown: <a href=\"{site}/zz_tm_shown/zz-tm-shown/\">zz tm shown</a>.)"
+        ]
+    ],
+    [
+        "split terms",
+        [
+            [],
+            [
+                {
+                    "category": 9,
+                    "post_tag": 11
+                },
+                {
+                    "category": 9,
+                    "post_tag": 11
+                },
+                [],
+                [],
+                11,
+                false
+            ]
+        ]
+    ],
+    [
+        "a deleted term takes its meta",
+        [
+            [
+                [
+                    "pre_delete_term",
+                    [
+                        "{doomed}",
+                        "category"
+                    ]
+                ],
+                [
+                    "edit_term_taxonomies",
+                    [
+                        [
+                            "{child}"
+                        ]
+                    ]
+                ],
+                [
+                    "edited_term_taxonomies",
+                    [
+                        [
+                            "{child}"
+                        ]
+                    ]
+                ],
+                [
+                    "delete_term_meta",
+                    [
+                        [
+                            "{doomed meta 1}"
+                        ],
+                        "{doomed}",
+                        "zz_d2"
+                    ]
+                ],
+                [
+                    "deleted_term_meta",
+                    [
+                        [
+                            "{doomed meta 1}"
+                        ],
+                        "{doomed}",
+                        "zz_d2"
+                    ]
+                ],
+                [
+                    "delete_term_meta",
+                    [
+                        [
+                            "{doomed meta 0}"
+                        ],
+                        "{doomed}",
+                        "zz_d1"
+                    ]
+                ],
+                [
+                    "deleted_term_meta",
+                    [
+                        [
+                            "{doomed meta 0}"
+                        ],
+                        "{doomed}",
+                        "zz_d1"
+                    ]
+                ],
+                [
+                    "delete_term_taxonomy",
+                    [
+                        "{doomed}"
+                    ]
+                ],
+                [
+                    "deleted_term_taxonomy",
+                    [
+                        "{doomed}"
+                    ]
+                ],
+                [
+                    "delete_term",
+                    [
+                        "{doomed}",
+                        "{doomed}",
+                        "category"
+                    ]
+                ],
+                [
+                    "delete_category",
+                    [
+                        "{doomed}",
+                        "{doomed}",
+                        "WP_Term"
+                    ]
+                ]
+            ],
+            [],
+            [],
+            0
+        ]
+    ]
+]

@@ -329,6 +329,10 @@ function get_metadata_by_mid($meta_type, $meta_id)
     if (!_minn_meta_table((string) $meta_type) || !is_numeric($meta_id) || (int) $meta_id <= 0) {
         return false;
     }
+    $check = apply_filters("get_{$meta_type}_metadata_by_mid", null, (int) $meta_id);
+    if ($check !== null) {
+        return $check;
+    }
     $row = _minn_meta()->byId((string) $meta_type, (int) $meta_id);
     if ($row === null) {
         return false;

@@ -6743,3 +6743,35 @@ discovery block; receiving and sending trackbacks stays in the XML-RPC area.
   (2.5.0). `trackback_rdf` prints the RDF block (permalink twice,
   `the_title_attribute`, the trackback URL); nothing when the user agent
   contains `W3C_Validator` in any case; an argument is deprecated (2.5.0).
+
+## taxonomy.php's remaining functions (2026-10-08)
+
+Probe `taxonomy-more` (`tests/tools/taxonomy-more-probe.php`). Five
+functions real. The five WordPress 4.2 shared-term splitting routines
+(`_wp_batch_split_terms`, `_wp_check_for_scheduled_split_terms`,
+`_wp_check_split_default_terms`, `_wp_check_split_nav_menu_terms`,
+`_wp_check_split_terms_in_menus`) stay missing, proposed for omission.
+
+- **Term meta support.** `wp_check_term_meta_support_prefilter` answers false
+  while `db_version` is below 34370 and passes the check through otherwise. It
+  is hooked on the eight term meta short-circuits: `get_`, `add_`, `update_`,
+  `delete_term_metadata`, the three `*_term_metadata_by_mid` and
+  `update_term_metadata_cache`. So on such a database every term meta call
+  refuses (false) and nothing is written. `get_metadata_by_mid` now fires
+  `get_{type}_metadata_by_mid` (it did not), and `update_termmeta_cache` is
+  `update_meta_cache('term', …)`, so it passes through its filter too.
+- `has_term_meta`: the support check first, then the term's rows as strings
+  (`meta_key`, `meta_value`, `meta_id`, `term_id`), by key then id.
+- **A deleted term takes its meta.** `wp_delete_term` removes each meta row by
+  id, ascending, with `delete_term_meta` and `deleted_term_meta` for each. That
+  happens after the children move up (`edit_term_taxonomies`) and before
+  `delete_term_taxonomy`. The engine left the rows behind before; 554 orphaned
+  probe rows were cleared from the test site.
+- `is_term_publicly_viewable`: the term's taxonomy is viewable (a
+  `publicly_queryable` taxonomy that is not public counts). The reference warns
+  for a missing term, so that case is not compared.
+- `the_taxonomies`: `before`, `get_the_taxonomies` joined by `sep` (a space),
+  `after`, printed even when the post has none; `template` and
+  `term_template` pass through. Non-public taxonomies are listed too.
+- `wp_get_split_terms`: the `_split_terms` record for the old id (taxonomy to
+  new id), `[]` when there is none.

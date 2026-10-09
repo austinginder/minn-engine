@@ -6,7 +6,6 @@ use Minn\Content\TermLinks;
 /** Terms and taxonomies. Behaviour from contracts/fixtures/api/content.json. */
 
 use Minn\Content\Terms;
-use Minn\Runtime\Meta;
 use Minn\Front\TermLists;
 use Minn\Content\PostWriter;
 use Minn\Runtime\Runtime;
@@ -602,6 +601,9 @@ function wp_delete_term($term, $taxonomy, $args = [])
     if (is_taxonomy_hierarchical($taxonomy)) {
         _minn_term_children_move($object, (string) $taxonomy);
     }
+    foreach (_minn_meta()->rowsOf('term', $object->term_id) as $meta) {
+        delete_metadata_by_mid('term', $meta['meta_id']);
+    }
     $objects = array_map('strval', _minn_term_writer()->delete($row, (string) $taxonomy, is_taxonomy_hierarchical($taxonomy), $taxonomy === 'category' ? $default : (int) ($args['default'] ?? 0)));
     do_action('deleted_term_taxonomy', $object->term_taxonomy_id);
     clean_term_cache($object->term_id, $taxonomy);
@@ -1028,18 +1030,10 @@ function __clear_multi_author_cache()
     delete_transient('is_multi_author');
 }
 
-/** Term meta per id, as the cache primer hands it back; false for an empty list. */
+/** Term meta per id, as update_meta_cache primes it; false for an empty list. */
 function update_termmeta_cache($term_ids)
 {
-    $ids = array_values(array_unique(array_map('intval', (array) $term_ids)));
-    if ($ids === []) {
-        return false;
-    }
-    $out = [];
-    foreach ($ids as $id) {
-        $out[$id] = (new Meta(Runtime::current()->db))->all('term', $id);
-    }
-    return $out;
+    return update_meta_cache('term', $term_ids);
 }
 
 /** The category's name, or "" for an id no category has. */
@@ -1593,6 +1587,40 @@ function wp_get_split_term($old_term_id, $taxonomy)
 {
     $splits = get_option('_split_terms', []);
     return is_array($splits) ? ($splits[(int) $old_term_id][(string) $taxonomy] ?? false) : false;
+}
+
+/** Every taxonomy's new id for a term split from a shared one, from the _split_terms record; [] when it was never split. */
+function wp_get_split_terms($old_term_id)
+{
+    $splits = get_option('_split_terms', []);
+    return is_array($splits) ? ($splits[(int) $old_term_id] ?? []) : [];
+}
+
+/** Whether a term's taxonomy can be viewed publicly; false for no term. */
+function is_term_publicly_viewable($term)
+{
+    $term = get_term($term);
+    return $term instanceof WP_Term && is_taxonomy_viewable($term->taxonomy);
+}
+
+/** Prints the post's taxonomies (get_the_taxonomies) between before and after, joined by sep. */
+function the_taxonomies($args = [])
+{
+    $args = wp_parse_args($args, ['post' => 0, 'before' => '', 'sep' => ' ', 'after' => '']);
+    echo $args['before'] . implode($args['sep'], get_the_taxonomies($args['post'], $args)) . $args['after'];
+}
+
+/** A term's meta rows (meta_key, meta_value, meta_id, term_id as strings) by key then id; false on a database older than term meta. */
+function has_term_meta($term_id)
+{
+    $check = wp_check_term_meta_support_prefilter(null);
+    return $check !== null ? $check : _minn_meta()->listing('term', (int) $term_id);
+}
+
+/** The term meta short-circuit: false on a database older than term meta (db_version 34370), the check as given otherwise. */
+function wp_check_term_meta_support_prefilter($check)
+{
+    return (int) get_option('db_version') < 34370 ? false : $check;
 }
 
 function single_tag_title($prefix = '', $display = true)

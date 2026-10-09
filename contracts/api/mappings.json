@@ -3,12 +3,12 @@
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line), placeholder (generated stub, behaviour still owed), deadend (generated stub for wp-admin, the editors, the Customizer or XML-RPC, inert by design); \"deadend\" on any entry names its dead-end area",
     "summary": {
         "minn": 743,
-        "composes": 1578,
+        "composes": 1581,
         "leaf": 764,
-        "noop": 2450,
+        "noop": 2452,
         "placeholder": 280,
         "deadend": 1599,
-        "functions": 7337,
+        "functions": 7342,
         "minnMethods": 893,
         "leafLinesOver15": 13
     },
@@ -37971,7 +37971,7 @@
         },
         "get_metadata_by_mid": {
             "file": "meta.php",
-            "lines": 9,
+            "lines": 13,
             "kind": "minn",
             "minn": [
                 "Minn\\Runtime\\Meta::byId"
@@ -37979,6 +37979,7 @@
             "composes": [
                 "_minn_meta",
                 "_minn_meta_table",
+                "apply_filters",
                 "maybe_unserialize"
             ]
         },
@@ -41433,6 +41434,18 @@
                 "wp_get_object_terms"
             ]
         },
+        "has_term_meta": {
+            "file": "taxonomy.php",
+            "lines": 2,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Runtime\\Meta::listing"
+            ],
+            "composes": [
+                "_minn_meta",
+                "wp_check_term_meta_support_prefilter"
+            ]
+        },
         "have_comments": {
             "file": "query.php",
             "lines": 1,
@@ -42811,6 +42824,16 @@
             "composes": [
                 "_deprecated_function",
                 "term_exists"
+            ]
+        },
+        "is_term_publicly_viewable": {
+            "file": "taxonomy.php",
+            "lines": 2,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "get_term",
+                "is_taxonomy_viewable"
             ]
         },
         "is_textdomain_loaded": {
@@ -50159,6 +50182,16 @@
                 "get_the_terms"
             ]
         },
+        "the_taxonomies": {
+            "file": "taxonomy.php",
+            "lines": 2,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "get_the_taxonomies",
+                "wp_parse_args"
+            ]
+        },
         "the_terms": {
             "file": "taxonomy.php",
             "lines": 5,
@@ -51089,14 +51122,12 @@
         },
         "update_termmeta_cache": {
             "file": "taxonomy.php",
-            "lines": 9,
-            "kind": "minn",
-            "minn": [
-                "Minn\\Runtime\\Meta::__construct",
-                "Minn\\Runtime\\Runtime::current",
-                "Minn\\Runtime\\Runtime::db"
-            ],
-            "composes": []
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "update_meta_cache"
+            ]
         },
         "update_user_caches": {
             "file": "post.php",
@@ -54005,6 +54036,15 @@
                 "_minn_term_row"
             ]
         },
+        "wp_check_term_meta_support_prefilter": {
+            "file": "taxonomy.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "get_option"
+            ]
+        },
         "wp_checkdate": {
             "file": "functions.php",
             "lines": 1,
@@ -55067,16 +55107,19 @@
         },
         "wp_delete_term": {
             "file": "taxonomy.php",
-            "lines": 23,
+            "lines": 26,
             "kind": "minn",
             "minn": [
+                "Minn\\Runtime\\Meta::rowsOf",
                 "Minn\\Runtime\\TermWriter::delete"
             ],
             "composes": [
+                "_minn_meta",
                 "_minn_term_children_move",
                 "_minn_term_row",
                 "_minn_term_writer",
                 "clean_term_cache",
+                "delete_metadata_by_mid",
                 "do_action",
                 "get_option",
                 "get_term",
@@ -57481,6 +57524,15 @@
             ]
         },
         "wp_get_split_term": {
+            "file": "taxonomy.php",
+            "lines": 2,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "get_option"
+            ]
+        },
+        "wp_get_split_terms": {
             "file": "taxonomy.php",
             "lines": 2,
             "kind": "composes",
