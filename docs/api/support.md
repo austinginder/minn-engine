@@ -30,9 +30,10 @@ escaping, serialized readers, small helpers
 | [`SearchReplace`](#searchreplace) | final class | 38 | String replace that walks serialized-PHP arrays of scalars without |
 | [`Serialized`](#serialized) | final class | 311 | Tolerant readers for the serialized-PHP blobs WordPress stores. Nothing |
 | [`Slashes`](#slashes) | final class | 32 | Magic-quote slashes the way WordPress keeps them (wp_slash, wp_unslash): |
+| [`SqlTable`](#sqltable) | final class | 63 | The table a SQL statement is about, as wpdb::get_table_from_query reports |
 | [`Time`](#time) | final class | 21 | Human-scale spans: a number of seconds as the largest whole unit it fills, rounded, never below one. |
 | [`Url`](#url) | final class | 214 | URL shaping the escaping and query helpers share: the character cleanup |
-| [`Utf8`](#utf8) | final class | 145 | UTF-8 as the reference reads it. Well-formed means no overlong forms, |
+| [`Utf8`](#utf8) | final class | 154 | UTF-8 as the reference reads it. Well-formed means no overlong forms, |
 | [`WebServer`](#webserver) | final class | 8 | What the SERVER_SOFTWARE string says about the web server in front of the site. |
 
 ## Accents
@@ -896,6 +897,30 @@ Every string in a value with one level of slashes taken off.
 Internals: `deep()` (private, line 27)
 
 
+## SqlTable
+
+`final class Minn\Support\SqlTable` · `public/minn/src/Minn/Support/SqlTable.php`
+
+The table a SQL statement is about, as wpdb::get_table_from_query reports
+it, and a database host string read into its parts (probe wpdb). A name is
+letters, digits, $ _ . - and backticks (dropped), plus two-byte UTF-8.
+
+- const `NAME` = `'((?:[0-9a-zA-Z$_.`-]|[\\xC2-\\xDF][\\x80-\\xBF])+)'`
+- const `LEADS` = `array (   0 => 'EXPLAIN(?:\\s+EXTENDED)?\\s+SELECT.*?\\s+FROM',   1 => 'SELECT.*?\\s+FROM',   2 => 'INSERT(?:\\s+(?:LOW_PRIORITY|DELAYED|HIGH_PRIORITY))?(?:\\s+IGNORE)?(?:\\s+INTO)?',   3 => 'REPLACE(?:\\s+(?:LOW_PRIORITY|DELAYED))?(?:\\s+INTO)?',   4 => 'UPDATE(?:\\s+LOW_PRIORITY)?(?:\\s+IGNORE)?',   5 => 'DELETE(?:\\s+(?:LOW_PRIORITY|QUICK|IGNORE))*(?:.+?FROM)?',   6 => '(?:DESCRIBE|DESC|EXPLAIN)',   7 => 'SHOW(?:\\s+FULL)?\\s+(?:COLUMNS|FIELDS|INDEX|INDEXES)\\s+FROM',   8 => 'SHOW\\s+CREATE\\s+TABLE',   9 => 'CREATE(?:\\s+TEMPORARY)?\\s+TABLE(?:\\s+IF\\s+NOT\\s+EXISTS)?',   10 => 'DROP\\s+TABLE(?:\\s+IF\\s+EXISTS)?',   11 => '(?:ALTER|TRUNCATE|OPTIMIZE|REPAIR|CHECK|ANALYZE|RENAME)(?:\\s+TABLE)?',   12 => 'LOCK\\s+TABLES?',   13 => 'LOAD\\s+DATA.*?INTO\\s+TABLE', )` — What leads to the table name in each statement the reference reads, tried in order.
+
+### static `of(string $query): ?string`
+
+The table a statement names (backticks dropped), or null when it names none the reference recognises.
+
+### static `host(string $host): ?array`
+
+A DB_HOST read as host, port, socket and whether the host is IPv6: a
+socket after ":/", an IPv6 address in brackets (more than one colon),
+a port only when it is digits. Null when nothing parses.
+
+- `@return array{0: string, 1: ?int, 2: ?string, 3: bool}|null`
+
+
 ## Time
 
 `final class Minn\Support\Time` · `public/minn/src/Minn/Support/Time.php`
@@ -1044,6 +1069,10 @@ and how many there were.
 ### static `toLatin1(string $bytes): string`
 
 UTF-8 as ISO-8859-1: a character past U+00FF, or a malformed run, becomes "?".
+
+### static `keptBy(string $bytes, string $charset): string`
+
+What a column in this charset keeps: utf8mb4 drops each malformed run, utf8 (utf8mb3) every four-byte character too; any other charset keeps the bytes.
 
 ### static `fromLatin1(string $bytes): string`
 

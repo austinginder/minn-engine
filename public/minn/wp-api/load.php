@@ -255,6 +255,7 @@ function _minn_require_wp_db(string $contentDir): void
     if (!isset($wpdb)) {
         $wpdb = new wpdb(defined('DB_USER') ? DB_USER : '', defined('DB_PASSWORD') ? DB_PASSWORD : '', defined('DB_NAME') ? DB_NAME : '', defined('DB_HOST') ? DB_HOST : '');
     }
+    wp_set_wpdb_vars();
 }
 
 /** @internal starts the object cache (a drop-in's or the engine's) with the groups the reference declares global and runtime-only */
@@ -392,8 +393,11 @@ function require_wp_db()
 }
 
 /** The database's table names and field types are set when it connects. */
+/** The integer columns wpdb formats as %d when a caller gives no format (probe wpdb). */
 function wp_set_wpdb_vars()
 {
+    global $wpdb;
+    $wpdb->field_types = array_fill_keys(['post_author', 'post_parent', 'menu_order', 'term_id', 'term_group', 'term_taxonomy_id', 'parent', 'count', 'object_id', 'term_order', 'ID', 'comment_ID', 'comment_post_ID', 'comment_parent', 'user_id', 'link_id', 'link_owner', 'link_rating', 'option_id', 'blog_id', 'meta_id', 'post_id', 'user_status', 'umeta_id', 'comment_karma', 'comment_count', 'active', 'cat_id', 'deleted', 'lang_id', 'mature', 'public', 'site_id', 'spam'], '%d');
 }
 
 /** The object cache is always running here. */

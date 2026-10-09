@@ -26,7 +26,29 @@ final class Placeholders
      */
     public static function fill(string $query, array $args, callable $escape): ?string
     {
+        return self::prepare($query, $args, $escape)['query'];
+    }
+
+    /**
+     * fill() with what wpdb::prepare reports alongside: how many placeholders
+     * the query has (%% not among them) and the type of each argument it
+     * could not use (an array or an object fills as '').
+     *
+     * @param list<mixed> $args
+     * @param callable(string): string $escape the connection's string escape
+     * @return array{query: ?string, placeholders: int, unsupported: list<string>}
+     */
+    public static function prepare(string $query, array $args, callable $escape): array
+    {
         $query = str_replace(["'%s'", '"%s"'], '%s', $query);
+        preg_match_all(self::SPEC, $query, $specs);
+        $unsupported = array_values(array_map('gettype', array_filter($args, static fn ($arg): bool => is_array($arg) || is_object($arg))));
+        return ['query' => self::filled($query, $args, $escape), 'placeholders' => count(array_filter($specs[5], static fn (string $type): bool => $type !== '%')), 'unsupported' => $unsupported];
+    }
+
+    /** @param list<mixed> $args */
+    private static function filled(string $query, array $args, callable $escape): ?string
+    {
         $args = array_values($args);
         $next = 0;
         $short = false;

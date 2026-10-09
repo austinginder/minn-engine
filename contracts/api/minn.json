@@ -119386,7 +119386,7 @@
             "namespace": "Minn\\Runtime",
             "kind": "final class",
             "file": "public/minn/src/Minn/Runtime/Placeholders.php",
-            "lines": 49,
+            "lines": 71,
             "doc": "The printf placeholders plugin code hands wpdb::prepare, filled the way\nthe reference fills them: a bare %s is escaped and quoted; a numbered\n(%1$s), padded (%5s) or precise (%.2f) one is formatted and escaped but\nnever quoted, so a plugin can name a table with it; %d and %f cast; %i\nbackticks an identifier; %% is a literal. Numbered placeholders address\nthe argument list directly while unnumbered ones count from the first\non their own, as vsprintf does. A placeholder with no argument behind it\nempties the whole query, as the reference does.",
             "implements": [],
             "extends": null,
@@ -119439,7 +119439,81 @@
                         }
                     ],
                     "line": 27,
-                    "end": 53
+                    "end": 30
+                },
+                {
+                    "routes": [],
+                    "name": "prepare",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "prepare(string $query, array $args, callable $escape): array",
+                    "doc": "fill() with what wpdb::prepare reports alongside: how many placeholders\nthe query has (%% not among them) and the type of each argument it\ncould not use (an array or an object fills as '').",
+                    "shapes": [
+                        "@param list<mixed> $args",
+                        "@param callable(string): string $escape the connection's string escape",
+                        "@return array{query: ?string, placeholders: int, unsupported: list<string>}"
+                    ],
+                    "params": [
+                        {
+                            "name": "query",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "args",
+                            "type": "array",
+                            "shape": "list<mixed>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "escape",
+                            "type": "callable",
+                            "shape": "callable(string): string",
+                            "default": null,
+                            "doc": "the connection's string escape"
+                        }
+                    ],
+                    "line": 41,
+                    "end": 47
+                },
+                {
+                    "routes": [],
+                    "name": "filled",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "filled(string $query, array $args, callable $escape): ?string",
+                    "doc": "",
+                    "shapes": [
+                        "@param list<mixed> $args"
+                    ],
+                    "params": [
+                        {
+                            "name": "query",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "args",
+                            "type": "array",
+                            "shape": "list<mixed>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "escape",
+                            "type": "callable",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 50,
+                    "end": 75
                 },
                 {
                     "routes": [],
@@ -119465,8 +119539,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 56,
-                    "end": 59
+                    "line": 78,
+                    "end": 81
                 },
                 {
                     "routes": [],
@@ -119485,8 +119559,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 61,
-                    "end": 64
+                    "line": 83,
+                    "end": 86
                 }
             ]
         },
@@ -138551,6 +138625,80 @@
             ]
         },
         {
+            "name": "Minn\\Support\\SqlTable",
+            "short": "SqlTable",
+            "namespace": "Minn\\Support",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Support/SqlTable.php",
+            "lines": 63,
+            "doc": "The table a SQL statement is about, as wpdb::get_table_from_query reports\nit, and a database host string read into its parts (probe wpdb). A name is\nletters, digits, $ _ . - and backticks (dropped), plus two-byte UTF-8.",
+            "implements": [],
+            "extends": null,
+            "uses": [],
+            "usedBy": [],
+            "constructor": null,
+            "cases": [],
+            "constants": [
+                {
+                    "name": "NAME",
+                    "value": "'((?:[0-9a-zA-Z$_.`-]|[\\\\xC2-\\\\xDF][\\\\x80-\\\\xBF])+)'",
+                    "doc": "",
+                    "visibility": "private"
+                },
+                {
+                    "name": "LEADS",
+                    "value": "array (   0 => 'EXPLAIN(?:\\\\s+EXTENDED)?\\\\s+SELECT.*?\\\\s+FROM',   1 => 'SELECT.*?\\\\s+FROM',   2 => 'INSERT(?:\\\\s+(?:LOW_PRIORITY|DELAYED|HIGH_PRIORITY))?(?:\\\\s+IGNORE)?(?:\\\\s+INTO)?',   3 => 'REPLACE(?:\\\\s+(?:LOW_PRIORITY|DELAYED))?(?:\\\\s+INTO)?',   4 => 'UPDATE(?:\\\\s+LOW_PRIORITY)?(?:\\\\s+IGNORE)?',   5 => 'DELETE(?:\\\\s+(?:LOW_PRIORITY|QUICK|IGNORE))*(?:.+?FROM)?',   6 => '(?:DESCRIBE|DESC|EXPLAIN)',   7 => 'SHOW(?:\\\\s+FULL)?\\\\s+(?:COLUMNS|FIELDS|INDEX|INDEXES)\\\\s+FROM',   8 => 'SHOW\\\\s+CREATE\\\\s+TABLE',   9 => 'CREATE(?:\\\\s+TEMPORARY)?\\\\s+TABLE(?:\\\\s+IF\\\\s+NOT\\\\s+EXISTS)?',   10 => 'DROP\\\\s+TABLE(?:\\\\s+IF\\\\s+EXISTS)?',   11 => '(?:ALTER|TRUNCATE|OPTIMIZE|REPAIR|CHECK|ANALYZE|RENAME)(?:\\\\s+TABLE)?',   12 => 'LOCK\\\\s+TABLES?',   13 => 'LOAD\\\\s+DATA.*?INTO\\\\s+TABLE', )",
+                    "doc": "What leads to the table name in each statement the reference reads, tried in order.",
+                    "visibility": "private"
+                }
+            ],
+            "properties": [],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "of",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "of(string $query): ?string",
+                    "doc": "The table a statement names (backticks dropped), or null when it names none the reference recognises.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "query",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 35,
+                    "end": 51
+                },
+                {
+                    "routes": [],
+                    "name": "host",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "host(string $host): ?array",
+                    "doc": "A DB_HOST read as host, port, socket and whether the host is IPv6: a\nsocket after \":/\", an IPv6 address in brackets (more than one colon),\na port only when it is digits. Null when nothing parses.",
+                    "shapes": [
+                        "@return array{0: string, 1: ?int, 2: ?string, 3: bool}|null"
+                    ],
+                    "params": [
+                        {
+                            "name": "host",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 60,
+                    "end": 73
+                }
+            ]
+        },
+        {
             "name": "Minn\\Support\\Time",
             "short": "Time",
             "namespace": "Minn\\Support",
@@ -138948,7 +139096,7 @@
             "namespace": "Minn\\Support",
             "kind": "final class",
             "file": "public/minn/src/Minn/Support/Utf8.php",
-            "lines": 145,
+            "lines": 154,
             "doc": "UTF-8 as the reference reads it. Well-formed means no overlong forms,\nsurrogates, code points past U+10FFFF, stray continuation bytes or\ntruncated sequences; noncharacters, NUL and a byte order mark pass. Split\ninto characters (the multibyte fallbacks in compat.php), a malformed byte\nis one character and so is the longest start of a sequence that breaks\noff, so \"\\xE2\\x82\" counts once.",
             "implements": [],
             "extends": null,
@@ -139177,6 +139325,33 @@
                 },
                 {
                     "routes": [],
+                    "name": "keptBy",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "keptBy(string $bytes, string $charset): string",
+                    "doc": "What a column in this charset keeps: utf8mb4 drops each malformed run, utf8 (utf8mb3) every four-byte character too; any other charset keeps the bytes.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "bytes",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "charset",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 129,
+                    "end": 135
+                },
+                {
+                    "routes": [],
                     "name": "fromLatin1",
                     "static": true,
                     "visibility": "public",
@@ -139192,8 +139367,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 129,
-                    "end": 132
+                    "line": 138,
+                    "end": 141
                 },
                 {
                     "routes": [],
@@ -139212,8 +139387,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 135,
-                    "end": 144
+                    "line": 144,
+                    "end": 153
                 },
                 {
                     "routes": [],
@@ -139232,8 +139407,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 147,
-                    "end": 158
+                    "line": 156,
+                    "end": 167
                 }
             ]
         },

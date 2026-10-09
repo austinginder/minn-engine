@@ -56,7 +56,7 @@ the WordPress runtime plugins load against
 | [`Pages`](#pages) | final class | 129 | get_pages() as the reference shapes it: its arguments as a post query |
 | [`Patterns`](#patterns) | final class | 161 | The block pattern, pattern category, and block style registries as data. |
 | [`PlaceholderTrace`](#placeholdertrace) | final class | 27 | Records every call into a generated placeholder while a site opts in by |
-| [`Placeholders`](#placeholders) | final class | 49 | The printf placeholders plugin code hands wpdb::prepare, filled the way |
+| [`Placeholders`](#placeholders) | final class | 71 | The printf placeholders plugin code hands wpdb::prepare, filled the way |
 | [`PluginActivation`](#pluginactivation) | final class | 64 | Switching a plugin on and off the way the reference's activate_plugin |
 | [`PluginRemoval`](#pluginremoval) | final class | 124 | Deleting plugins as the reference's delete_plugins does it: each in turn |
 | [`PluginRequirements`](#pluginrequirements) | final class | 66 | Whether a plugin can be switched on here, as the reference's |
@@ -2448,7 +2448,17 @@ Fills a query's placeholders from the arguments; null when one has no argument.
 - `@param list<mixed> $args`
 - `@param callable(string): string $escape the connection's string escape`
 
-Internals: `quoted()` (private, line 56), `text()` (private, line 61)
+### static `prepare(string $query, array $args, callable $escape): array`
+
+fill() with what wpdb::prepare reports alongside: how many placeholders
+the query has (%% not among them) and the type of each argument it
+could not use (an array or an object fills as '').
+
+- `@param list<mixed> $args`
+- `@param callable(string): string $escape the connection's string escape`
+- `@return array{query: ?string, placeholders: int, unsupported: list<string>}`
+
+Internals: `filled()` (private, line 50), `quoted()` (private, line 78), `text()` (private, line 83)
 
 
 ## PluginActivation

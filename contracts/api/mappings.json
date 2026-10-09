@@ -2,14 +2,14 @@
     "generated": "2026-10-09",
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line), placeholder (generated stub, behaviour still owed), deadend (generated stub for wp-admin, the editors, the Customizer or XML-RPC, inert by design); \"deadend\" on any entry names its dead-end area",
     "summary": {
-        "minn": 752,
-        "composes": 1601,
-        "leaf": 766,
-        "noop": 2458,
+        "minn": 753,
+        "composes": 1608,
+        "leaf": 777,
+        "noop": 2463,
         "placeholder": 279,
         "deadend": 1659,
-        "functions": 7437,
-        "minnMethods": 901,
+        "functions": 7461,
+        "minnMethods": 904,
         "leafLinesOver15": 13
     },
     "functions": {
@@ -28426,10 +28426,12 @@
         },
         "_minn_require_wp_db": {
             "file": "load.php",
-            "lines": 7,
-            "kind": "leaf",
+            "lines": 8,
+            "kind": "composes",
             "minn": [],
-            "composes": []
+            "composes": [
+                "wp_set_wpdb_vars"
+            ]
         },
         "_minn_resolve_pattern_blocks": {
             "file": "blocks.php",
@@ -63615,8 +63617,8 @@
         },
         "wp_set_wpdb_vars": {
             "file": "load.php",
-            "lines": 0,
-            "kind": "noop",
+            "lines": 2,
+            "kind": "leaf",
             "minn": [],
             "composes": []
         },
@@ -66173,7 +66175,7 @@
         },
         "wpdb::__construct": {
             "file": "classes/wpdb.php",
-            "lines": 8,
+            "lines": 7,
             "kind": "minn",
             "minn": [
                 "Minn\\Runtime\\Runtime::current",
@@ -66186,6 +66188,27 @@
             "file": "classes/wpdb.php",
             "lines": 4,
             "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "wpdb::__isset": {
+            "file": "classes/wpdb.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "wpdb::__set": {
+            "file": "classes/wpdb.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "wpdb::__unset": {
+            "file": "classes/wpdb.php",
+            "lines": 1,
+            "kind": "noop",
             "minn": [],
             "composes": []
         },
@@ -66210,6 +66233,16 @@
             "minn": [],
             "composes": []
         },
+        "wpdb::_weak_escape": {
+            "file": "classes/wpdb.php",
+            "lines": 2,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "_deprecated_function",
+                "esc_sql"
+            ]
+        },
         "wpdb::add_placeholder_escape": {
             "file": "classes/wpdb.php",
             "lines": 1,
@@ -66224,6 +66257,13 @@
             "minn": [],
             "composes": []
         },
+        "wpdb::check_ascii": {
+            "file": "classes/wpdb.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
         "wpdb::check_connection": {
             "file": "classes/wpdb.php",
             "lines": 1,
@@ -66231,10 +66271,33 @@
             "minn": [],
             "composes": []
         },
+        "wpdb::check_database_version": {
+            "file": "classes/wpdb.php",
+            "lines": 2,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "__"
+            ]
+        },
+        "wpdb::check_safe_collation": {
+            "file": "classes/wpdb.php",
+            "lines": 13,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
         "wpdb::close": {
             "file": "classes/wpdb.php",
             "lines": 1,
             "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "wpdb::columns": {
+            "file": "classes/wpdb.php",
+            "lines": 8,
+            "kind": "leaf",
             "minn": [],
             "composes": []
         },
@@ -66266,6 +66329,13 @@
             "minn": [],
             "composes": []
         },
+        "wpdb::determine_charset": {
+            "file": "classes/wpdb.php",
+            "lines": 10,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
         "wpdb::esc_like": {
             "file": "classes/wpdb.php",
             "lines": 1,
@@ -66275,10 +66345,13 @@
         },
         "wpdb::escape": {
             "file": "classes/wpdb.php",
-            "lines": 1,
-            "kind": "noop",
+            "lines": 2,
+            "kind": "composes",
             "minn": [],
-            "composes": []
+            "composes": [
+                "_deprecated_function",
+                "esc_sql"
+            ]
         },
         "wpdb::escape_by_ref": {
             "file": "classes/wpdb.php",
@@ -66301,6 +66374,15 @@
             "minn": [],
             "composes": []
         },
+        "wpdb::get_caller": {
+            "file": "classes/wpdb.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "wp_debug_backtrace_summary"
+            ]
+        },
         "wpdb::get_charset_collate": {
             "file": "classes/wpdb.php",
             "lines": 8,
@@ -66317,8 +66399,8 @@
         },
         "wpdb::get_col_charset": {
             "file": "classes/wpdb.php",
-            "lines": 1,
-            "kind": "noop",
+            "lines": 5,
+            "kind": "leaf",
             "minn": [],
             "composes": []
         },
@@ -66331,8 +66413,8 @@
         },
         "wpdb::get_col_length": {
             "file": "classes/wpdb.php",
-            "lines": 8,
-            "kind": "minn",
+            "lines": 1,
+            "kind": "noop",
             "minn": [
                 "Minn\\Db::columnLength"
             ],
@@ -66356,9 +66438,18 @@
         },
         "wpdb::get_table_charset": {
             "file": "classes/wpdb.php",
+            "lines": 6,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "wpdb::get_table_from_query": {
+            "file": "classes/wpdb.php",
             "lines": 1,
             "kind": "noop",
-            "minn": [],
+            "minn": [
+                "Minn\\Support\\SqlTable::of"
+            ],
             "composes": []
         },
         "wpdb::get_var": {
@@ -66382,6 +66473,13 @@
             "minn": [],
             "composes": []
         },
+        "wpdb::init_charset": {
+            "file": "classes/wpdb.php",
+            "lines": 2,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
         "wpdb::insert": {
             "file": "classes/wpdb.php",
             "lines": 1,
@@ -66389,11 +66487,29 @@
             "minn": [],
             "composes": []
         },
-        "wpdb::next_format": {
+        "wpdb::load_col_info": {
             "file": "classes/wpdb.php",
-            "lines": 8,
-            "kind": "leaf",
+            "lines": 1,
+            "kind": "noop",
             "minn": [],
+            "composes": []
+        },
+        "wpdb::log_query": {
+            "file": "classes/wpdb.php",
+            "lines": 2,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "apply_filters"
+            ]
+        },
+        "wpdb::parse_db_host": {
+            "file": "classes/wpdb.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Support\\SqlTable::host"
+            ],
             "composes": []
         },
         "wpdb::placeholder_escape": {
@@ -66405,12 +66521,15 @@
         },
         "wpdb::prepare": {
             "file": "classes/wpdb.php",
-            "lines": 8,
+            "lines": 16,
             "kind": "minn",
             "minn": [
-                "Minn\\Runtime\\Placeholders::fill"
+                "Minn\\Runtime\\Placeholders::prepare"
             ],
-            "composes": []
+            "composes": [
+                "__",
+                "_doing_it_wrong"
+            ]
         },
         "wpdb::print_error": {
             "file": "classes/wpdb.php",
@@ -66421,12 +66540,35 @@
                 "esc_html"
             ]
         },
-        "wpdb::process_fields": {
+        "wpdb::process_field_charsets": {
             "file": "classes/wpdb.php",
-            "lines": 11,
+            "lines": 4,
             "kind": "leaf",
             "minn": [],
             "composes": []
+        },
+        "wpdb::process_field_formats": {
+            "file": "classes/wpdb.php",
+            "lines": 8,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "wpdb::process_field_lengths": {
+            "file": "classes/wpdb.php",
+            "lines": 4,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "wpdb::process_fields": {
+            "file": "classes/wpdb.php",
+            "lines": 8,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "__"
+            ]
         },
         "wpdb::query": {
             "file": "classes/wpdb.php",
@@ -66436,6 +66578,13 @@
             "composes": [
                 "apply_filters"
             ]
+        },
+        "wpdb::quote_identifier": {
+            "file": "classes/wpdb.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
         },
         "wpdb::remove_placeholder_escape": {
             "file": "classes/wpdb.php",
@@ -66448,6 +66597,20 @@
             "file": "classes/wpdb.php",
             "lines": 1,
             "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "wpdb::select": {
+            "file": "classes/wpdb.php",
+            "lines": 4,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "wpdb::set_blog_id": {
+            "file": "classes/wpdb.php",
+            "lines": 6,
+            "kind": "leaf",
             "minn": [],
             "composes": []
         },
@@ -66486,12 +66649,39 @@
             "minn": [],
             "composes": []
         },
+        "wpdb::strip_invalid_text": {
+            "file": "classes/wpdb.php",
+            "lines": 12,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Support\\Utf8::keptBy"
+            ],
+            "composes": []
+        },
         "wpdb::strip_invalid_text_for_column": {
             "file": "classes/wpdb.php",
-            "lines": 1,
-            "kind": "noop",
+            "lines": 2,
+            "kind": "leaf",
             "minn": [],
             "composes": []
+        },
+        "wpdb::strip_invalid_text_from_query": {
+            "file": "classes/wpdb.php",
+            "lines": 6,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Support\\Utf8::keptBy"
+            ],
+            "composes": []
+        },
+        "wpdb::supports_collation": {
+            "file": "classes/wpdb.php",
+            "lines": 2,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "_deprecated_function"
+            ]
         },
         "wpdb::suppress_errors": {
             "file": "classes/wpdb.php",
@@ -66511,8 +66701,8 @@
         },
         "wpdb::timer_start": {
             "file": "classes/wpdb.php",
-            "lines": 1,
-            "kind": "noop",
+            "lines": 2,
+            "kind": "leaf",
             "minn": [],
             "composes": []
         },
@@ -66527,6 +66717,13 @@
             "file": "classes/wpdb.php",
             "lines": 17,
             "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "wpdb::weak_escaped": {
+            "file": "classes/wpdb.php",
+            "lines": 1,
+            "kind": "noop",
             "minn": [],
             "composes": []
         },

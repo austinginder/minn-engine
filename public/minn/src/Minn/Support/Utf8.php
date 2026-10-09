@@ -125,6 +125,15 @@ final class Utf8
         }, self::characters($bytes)));
     }
 
+    /** What a column in this charset keeps: utf8mb4 drops each malformed run, utf8 (utf8mb3) every four-byte character too; any other charset keeps the bytes. */
+    public static function keptBy(string $bytes, string $charset): string
+    {
+        if (!in_array($charset, ['utf8mb4', 'utf8', 'utf8mb3'], true)) {
+            return $bytes;
+        }
+        return implode('', array_filter(self::characters($bytes), static fn (string $c): bool => self::firstCodePoint($c) !== null && ($charset === 'utf8mb4' || strlen($c) < 4)));
+    }
+
     /** ISO-8859-1 as UTF-8: each byte the character of its value. */
     public static function fromLatin1(string $bytes): string
     {

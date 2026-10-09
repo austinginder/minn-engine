@@ -6962,3 +6962,64 @@ now lists the real symbols no probe names.
   a `<ul>` with each group in the order first written:
   `Group: name - ( N.NNk )`, where N.NN is the serialized group's length
   over 1024 (`ObjectCache::sizes`).
+
+## The database class (2026-10-08)
+
+Probe `wpdb` (`tests/tools/wpdb-probe.php`) proves `wpdb` through `$wpdb` and
+adds its 23 missing methods. Writes go to a `TEMPORARY` table, which goes
+away with the connection; protected methods are called through reflection.
+
+- **`prepare`** fills placeholders as before (`Runtime\Placeholders`), but
+  every literal `%` (from `%%`, a value, or an unknown `%x`) is now left as
+  the placeholder escape, as on the reference. `query()` takes those escapes
+  out before the `query` filter. `_doing_it_wrong` reports three cases:
+  - a query with no placeholder and no arguments ("must have a placeholder");
+  - a count that doesn't match the arguments (numbered placeholders each
+    count, so `%1$s, %2$d, %1$s` is 3). Too few arguments empty the query;
+  - an array or object argument ("Unsupported value type (…)."), which
+    fills as `''`.
+- **Field processing** follows the reference's chain: formats, then charsets,
+  lengths and invalid text.
+  - With no format, a field takes `field_types` (now filled by
+    `wp_set_wpdb_vars`, 34 integer columns) or `%s`. Value types are no
+    longer guessed. A short format list falls back to its first entry.
+  - A value its column couldn't keep unchanged (too long, malformed bytes)
+    refuses the write. `last_error` then reads "WordPress database error:
+    Processing the value for the following field failed: {field}. The
+    supplied value may be too long or contains invalid data."
+  - An insert or replace with no fields is false.
+- **Columns.** `get_col_charset` reads each column's collation: false for a
+  column with no text, the table's charset for one it doesn't have.
+  `strip_invalid_text_for_column` does what it says (`Utf8::keptBy`: utf8mb4
+  drops malformed runs, utf8 four-byte characters too, then the column's
+  length). `check_safe_collation` is true for an ASCII query, or a table
+  whose text columns are all binary or general.
+- **Charset.** `init_charset` (now run by the constructor) settles
+  DB_CHARSET and DB_COLLATE through `determine_charset`: utf8 becomes
+  utf8mb4, with unicode_ci then unicode_520_ci. So the collation is now
+  `utf8mb4_unicode_520_ci`, as the reference reports.
+- **The table a query names** (`Support\SqlTable::of`, written from 54
+  probed statements):
+  - SELECT, EXPLAIN SELECT, INSERT, REPLACE, UPDATE and DELETE with their
+    modifiers;
+  - DESCRIBE, SHOW COLUMNS, FIELDS or INDEX FROM, and SHOW CREATE TABLE;
+  - SHOW TABLES or TABLE STATUS by LIKE (`\_` unescaped, a trailing `%`
+    dropped) or by WHERE Name;
+  - CREATE, DROP, ALTER, TRUNCATE, OPTIMIZE, REPAIR, CHECK, ANALYZE, RENAME,
+    LOCK and LOAD DATA.
+
+  Backticks are dropped. It is false for SHOW KEYS IN, DROP TEMPORARY TABLE,
+  SHOW TABLES and SET.
+- **The rest.**
+  - `parse_db_host` (socket after `:/`, IPv6 in brackets, digits-only port).
+  - `quote_identifier`.
+  - `escape` and `_weak_escape` are deprecated since 3.6.0 (addslashes);
+    `supports_collation` since 3.5.0.
+  - `set_blog_id` returns the old id; `select`.
+  - `log_query` appends even when `$queries` is null, which is now its
+    default.
+  - `load_col_info` restores the last query's columns.
+  - `timer_start` / `timer_stop` measure.
+  - `__get`, `__set`, `__isset` and `__unset` reach protected members.
+  - `get_caller` and `check_database_version` (null while the server is new
+    enough).
