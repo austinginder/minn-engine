@@ -1,0 +1,625 @@
+[
+    [
+        "the hook",
+        10
+    ],
+    [
+        "the tab ids listed",
+        {
+            "labels and an anchor": [
+                [
+                    "zz-id-tab-0",
+                    "zz-two",
+                    "zz-id-tab-2"
+                ],
+                [
+                    "tab-0",
+                    "zz-two",
+                    "tab-2"
+                ]
+            ],
+            "the tabs anchored": [
+                [
+                    "zz-id-tab-0"
+                ],
+                [
+                    "tab-0"
+                ]
+            ],
+            "an empty anchor": [
+                [
+                    "zz-id-tab-0"
+                ],
+                [
+                    "tab-0"
+                ]
+            ],
+            "no panels": [
+                [],
+                []
+            ],
+            "panels outside their container": [
+                [],
+                []
+            ],
+            "other blocks among the panels": [
+                [
+                    "zz-id-tab-0",
+                    "zz-last"
+                ],
+                [
+                    "tab-0",
+                    "zz-last"
+                ]
+            ],
+            "two containers": [
+                [
+                    "zz-id-tab-0"
+                ],
+                [
+                    "tab-0"
+                ]
+            ],
+            "a block between unanchored panels": [
+                [
+                    "zz-id-tab-0",
+                    "zz-id-tab-1"
+                ],
+                [
+                    "tab-0",
+                    "tab-1"
+                ]
+            ]
+        }
+    ],
+    [
+        "the tab ids listed from odd input",
+        [
+            [],
+            [],
+            [
+                "zz-a",
+                "zz-tab-1"
+            ]
+        ]
+    ],
+    [
+        "the context given",
+        {
+            "labels and an anchor": [
+                {
+                    "keep": 1,
+                    "core/tabs-list": [
+                        "tabs_{n}-tab-0",
+                        "zz-two",
+                        "tabs_{n}-tab-2"
+                    ],
+                    "core/tabs-id": "tabs_{n}"
+                },
+                {
+                    "core/tabs-list": [
+                        "tabs_{n}-tab-0",
+                        "zz-two",
+                        "tabs_{n}-tab-2"
+                    ],
+                    "core/tabs-id": "tabs_{n}"
+                },
+                false
+            ],
+            "the tabs anchored": [
+                {
+                    "keep": 1,
+                    "core/tabs-list": [
+                        "zz-tabs-tab-0"
+                    ],
+                    "core/tabs-id": "zz-tabs"
+                },
+                {
+                    "core/tabs-list": [
+                        "zz-tabs-tab-0"
+                    ],
+                    "core/tabs-id": "zz-tabs"
+                },
+                true
+            ],
+            "an empty anchor": [
+                {
+                    "keep": 1,
+                    "core/tabs-list": [
+                        "tab-0"
+                    ],
+                    "core/tabs-id": ""
+                },
+                {
+                    "core/tabs-list": [
+                        "tab-0"
+                    ],
+                    "core/tabs-id": ""
+                },
+                true
+            ],
+            "no panels": [
+                {
+                    "keep": 1,
+                    "core/tabs-list": [],
+                    "core/tabs-id": "tabs_{n}"
+                },
+                {
+                    "core/tabs-list": [],
+                    "core/tabs-id": "tabs_{n}"
+                },
+                false
+            ],
+            "panels outside their container": [
+                {
+                    "keep": 1,
+                    "core/tabs-list": [],
+                    "core/tabs-id": "tabs_{n}"
+                },
+                {
+                    "core/tabs-list": [],
+                    "core/tabs-id": "tabs_{n}"
+                },
+                false
+            ],
+            "other blocks among the panels": [
+                {
+                    "keep": 1,
+                    "core/tabs-list": [
+                        "tabs_{n}-tab-0",
+                        "zz-last"
+                    ],
+                    "core/tabs-id": "tabs_{n}"
+                },
+                {
+                    "core/tabs-list": [
+                        "tabs_{n}-tab-0",
+                        "zz-last"
+                    ],
+                    "core/tabs-id": "tabs_{n}"
+                },
+                false
+            ],
+            "two containers": [
+                {
+                    "keep": 1,
+                    "core/tabs-list": [
+                        "tabs_{n}-tab-0"
+                    ],
+                    "core/tabs-id": "tabs_{n}"
+                },
+                {
+                    "core/tabs-list": [
+                        "tabs_{n}-tab-0"
+                    ],
+                    "core/tabs-id": "tabs_{n}"
+                },
+                false
+            ],
+            "a block between unanchored panels": [
+                {
+                    "keep": 1,
+                    "core/tabs-list": [
+                        "tabs_{n}-tab-0",
+                        "tabs_{n}-tab-1"
+                    ],
+                    "core/tabs-id": "tabs_{n}"
+                },
+                {
+                    "core/tabs-list": [
+                        "tabs_{n}-tab-0",
+                        "tabs_{n}-tab-1"
+                    ],
+                    "core/tabs-id": "tabs_{n}"
+                },
+                false
+            ]
+        }
+    ],
+    [
+        "the context of other blocks",
+        [
+            {
+                "keep": 1
+            },
+            {
+                "keep": 1
+            },
+            []
+        ]
+    ],
+    [
+        "the part variations",
+        [
+            {
+                "name": "instance_vertical-header",
+                "title": "Vertical site header",
+                "description": true,
+                "attributes": {
+                    "slug": "vertical-header",
+                    "theme": "twentytwentyfive",
+                    "area": "header"
+                },
+                "scope": [
+                    "inserter"
+                ],
+                "icon": "header",
+                "example": {
+                    "attributes": {
+                        "slug": "vertical-header",
+                        "theme": "twentytwentyfive",
+                        "area": "header"
+                    }
+                }
+            },
+            {
+                "name": "instance_footer-columns",
+                "title": "Footer Columns",
+                "description": true,
+                "attributes": {
+                    "slug": "footer-columns",
+                    "theme": "twentytwentyfive",
+                    "area": "footer"
+                },
+                "scope": [
+                    "inserter"
+                ],
+                "icon": "footer",
+                "example": {
+                    "attributes": {
+                        "slug": "footer-columns",
+                        "theme": "twentytwentyfive",
+                        "area": "footer"
+                    }
+                }
+            },
+            {
+                "name": "instance_footer-newsletter",
+                "title": "Footer Newsletter",
+                "description": true,
+                "attributes": {
+                    "slug": "footer-newsletter",
+                    "theme": "twentytwentyfive",
+                    "area": "footer"
+                },
+                "scope": [
+                    "inserter"
+                ],
+                "icon": "footer",
+                "example": {
+                    "attributes": {
+                        "slug": "footer-newsletter",
+                        "theme": "twentytwentyfive",
+                        "area": "footer"
+                    }
+                }
+            },
+            {
+                "name": "instance_header-large-title",
+                "title": "Header with large title",
+                "description": true,
+                "attributes": {
+                    "slug": "header-large-title",
+                    "theme": "twentytwentyfive",
+                    "area": "header"
+                },
+                "scope": [
+                    "inserter"
+                ],
+                "icon": "header",
+                "example": {
+                    "attributes": {
+                        "slug": "header-large-title",
+                        "theme": "twentytwentyfive",
+                        "area": "header"
+                    }
+                }
+            },
+            {
+                "name": "instance_footer",
+                "title": "Footer",
+                "description": true,
+                "attributes": {
+                    "slug": "footer",
+                    "theme": "twentytwentyfive",
+                    "area": "footer"
+                },
+                "scope": [
+                    "inserter"
+                ],
+                "icon": "footer",
+                "example": {
+                    "attributes": {
+                        "slug": "footer",
+                        "theme": "twentytwentyfive",
+                        "area": "footer"
+                    }
+                }
+            },
+            {
+                "name": "instance_sidebar",
+                "title": "Sidebar",
+                "description": true,
+                "attributes": {
+                    "slug": "sidebar",
+                    "theme": "twentytwentyfive",
+                    "area": "uncategorized"
+                },
+                "scope": [
+                    "inserter"
+                ],
+                "icon": "layout",
+                "example": {
+                    "attributes": {
+                        "slug": "sidebar",
+                        "theme": "twentytwentyfive",
+                        "area": "uncategorized"
+                    }
+                }
+            },
+            {
+                "name": "instance_header",
+                "title": "Header",
+                "description": true,
+                "attributes": {
+                    "slug": "header",
+                    "theme": "twentytwentyfive",
+                    "area": "header"
+                },
+                "scope": [
+                    "inserter"
+                ],
+                "icon": "header",
+                "example": {
+                    "attributes": {
+                        "slug": "header",
+                        "theme": "twentytwentyfive",
+                        "area": "header"
+                    }
+                }
+            }
+        ]
+    ],
+    [
+        "the area variations",
+        [
+            [
+                {
+                    "name": "area_header",
+                    "title": "Header",
+                    "description": "The Header template defines a page area that typically contains a title, logo, and main navigation.",
+                    "attributes": {
+                        "area": "header"
+                    },
+                    "scope": [
+                        "inserter"
+                    ],
+                    "icon": "header"
+                },
+                {
+                    "name": "area_footer",
+                    "title": "Footer",
+                    "description": "The Footer template defines a page area that typically contains site credits, social links, or any other combination of blocks.",
+                    "attributes": {
+                        "area": "footer"
+                    },
+                    "scope": [
+                        "inserter"
+                    ],
+                    "icon": "footer"
+                }
+            ],
+            [
+                {
+                    "name": "area_header",
+                    "title": "Header",
+                    "description": "The Header template defines a page area that typically contains a title, logo, and main navigation.",
+                    "attributes": {
+                        "area": "header"
+                    },
+                    "scope": [],
+                    "icon": "header"
+                },
+                {
+                    "name": "area_footer",
+                    "title": "Footer",
+                    "description": "The Footer template defines a page area that typically contains site credits, social links, or any other combination of blocks.",
+                    "attributes": {
+                        "area": "footer"
+                    },
+                    "scope": [],
+                    "icon": "footer"
+                }
+            ],
+            [
+                {
+                    "name": "area_header",
+                    "title": "Header",
+                    "description": "The Header template defines a page area that typically contains a title, logo, and main navigation.",
+                    "attributes": {
+                        "area": "header"
+                    },
+                    "scope": [],
+                    "icon": "header"
+                },
+                {
+                    "name": "area_footer",
+                    "title": "Footer",
+                    "description": "The Footer template defines a page area that typically contains site credits, social links, or any other combination of blocks.",
+                    "attributes": {
+                        "area": "footer"
+                    },
+                    "scope": [
+                        "inserter"
+                    ],
+                    "icon": "footer"
+                }
+            ],
+            [
+                {
+                    "name": "area_header",
+                    "title": "Header",
+                    "description": "The Header template defines a page area that typically contains a title, logo, and main navigation.",
+                    "attributes": {
+                        "area": "header"
+                    },
+                    "scope": [
+                        "inserter"
+                    ],
+                    "icon": "header"
+                },
+                {
+                    "name": "area_footer",
+                    "title": "Footer",
+                    "description": "The Footer template defines a page area that typically contains site credits, social links, or any other combination of blocks.",
+                    "attributes": {
+                        "area": "footer"
+                    },
+                    "scope": [],
+                    "icon": "footer"
+                }
+            ],
+            [
+                {
+                    "name": "area_header",
+                    "title": "Header",
+                    "description": "The Header template defines a page area that typically contains a title, logo, and main navigation.",
+                    "attributes": {
+                        "area": "header"
+                    },
+                    "scope": [
+                        "inserter"
+                    ],
+                    "icon": "header"
+                },
+                {
+                    "name": "area_footer",
+                    "title": "Footer",
+                    "description": "The Footer template defines a page area that typically contains site credits, social links, or any other combination of blocks.",
+                    "attributes": {
+                        "area": "footer"
+                    },
+                    "scope": [
+                        "inserter"
+                    ],
+                    "icon": "footer"
+                }
+            ],
+            [
+                {
+                    "name": "area_header",
+                    "title": "Header",
+                    "description": "The Header template defines a page area that typically contains a title, logo, and main navigation.",
+                    "attributes": {
+                        "area": "header"
+                    },
+                    "scope": [
+                        "inserter"
+                    ],
+                    "icon": "header"
+                },
+                {
+                    "name": "area_footer",
+                    "title": "Footer",
+                    "description": "The Footer template defines a page area that typically contains site credits, social links, or any other combination of blocks.",
+                    "attributes": {
+                        "area": "footer"
+                    },
+                    "scope": [
+                        "inserter"
+                    ],
+                    "icon": "footer"
+                },
+                {
+                    "name": "area_zz-sidebar",
+                    "title": "Zz Sidebar",
+                    "description": "Zz described.",
+                    "attributes": {
+                        "area": "zz-sidebar"
+                    },
+                    "scope": [],
+                    "icon": "sidebar"
+                },
+                {
+                    "name": "area_zz-div",
+                    "title": "Zz Div",
+                    "description": "d",
+                    "attributes": {
+                        "area": "zz-div"
+                    },
+                    "scope": [
+                        "inserter"
+                    ],
+                    "icon": "layout"
+                },
+                {
+                    "name": "area_zz-nav",
+                    "title": "Zz Nav",
+                    "description": "d",
+                    "attributes": {
+                        "area": "zz-nav"
+                    },
+                    "scope": [
+                        "inserter"
+                    ],
+                    "icon": "navigation-overlay"
+                }
+            ]
+        ]
+    ],
+    [
+        "the variations together",
+        [
+            [
+                "area_header",
+                []
+            ],
+            [
+                "area_footer",
+                []
+            ],
+            [
+                "instance_vertical-header",
+                [
+                    "inserter"
+                ]
+            ],
+            [
+                "instance_footer-columns",
+                [
+                    "inserter"
+                ]
+            ],
+            [
+                "instance_footer-newsletter",
+                [
+                    "inserter"
+                ]
+            ],
+            [
+                "instance_header-large-title",
+                [
+                    "inserter"
+                ]
+            ],
+            [
+                "instance_footer",
+                [
+                    "inserter"
+                ]
+            ],
+            [
+                "instance_sidebar",
+                [
+                    "inserter"
+                ]
+            ],
+            [
+                "instance_header",
+                [
+                    "inserter"
+                ]
+            ]
+        ]
+    ]
+]

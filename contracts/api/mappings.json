@@ -2,14 +2,14 @@
     "generated": "2026-10-09",
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line), placeholder (generated stub, behaviour still owed), deadend (generated stub for wp-admin, the editors, the Customizer or XML-RPC, inert by design); \"deadend\" on any entry names its dead-end area",
     "summary": {
-        "minn": 774,
-        "composes": 1809,
+        "minn": 773,
+        "composes": 1812,
         "leaf": 861,
-        "noop": 2649,
+        "noop": 2651,
         "placeholder": 242,
         "deadend": 1662,
-        "functions": 7919,
-        "minnMethods": 933,
+        "functions": 7923,
+        "minnMethods": 934,
         "leafLinesOver15": 12
     },
     "functions": {
@@ -35778,6 +35778,25 @@
                 "_minn_render_core_callback"
             ]
         },
+        "block_core_tabs_generate_tabs_list": {
+            "file": "core-blocks.php",
+            "lines": 5,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "current"
+            ]
+        },
+        "block_core_tabs_provide_context": {
+            "file": "core-blocks.php",
+            "lines": 7,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "block_core_tabs_generate_tabs_list",
+                "wp_unique_id"
+            ]
+        },
         "block_core_tabs_render_block_callback": {
             "file": "core-blocks.php",
             "lines": 1,
@@ -35952,16 +35971,37 @@
                 "is_taxonomy_viewable"
             ]
         },
-        "build_template_part_block_variations": {
+        "build_template_part_block_area_variations": {
             "file": "blocks.php",
-            "lines": 2,
-            "kind": "minn",
+            "lines": 1,
+            "kind": "noop",
             "minn": [
-                "Minn\\Blocks\\TemplatePartVariations::build"
+                "Minn\\Blocks\\TemplatePartVariations::areas"
+            ],
+            "composes": [
+                "get_allowed_block_template_part_areas"
+            ]
+        },
+        "build_template_part_block_instance_variations": {
+            "file": "blocks.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Blocks\\TemplatePartVariations::instances"
             ],
             "composes": [
                 "get_allowed_block_template_part_areas",
                 "get_block_templates"
+            ]
+        },
+        "build_template_part_block_variations": {
+            "file": "blocks.php",
+            "lines": 3,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "build_template_part_block_area_variations",
+                "build_template_part_block_instance_variations"
             ]
         },
         "build_variation_for_navigation_link": {

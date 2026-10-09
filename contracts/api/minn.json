@@ -20744,8 +20744,8 @@
             "namespace": "Minn\\Blocks",
             "kind": "final class",
             "file": "public/minn/src/Minn/Blocks/TemplatePartVariations.php",
-            "lines": 28,
-            "doc": "The template part block's variations as the reference builds them (probe\nrest-block-types): one per area some part belongs to, the general area\naside, carrying the area's label, description and icon; then one per\ntemplate part, in the order the parts are listed, offered in the\ninserter with the part's slug, theme and area as its attributes and its\nexample.",
+            "lines": 41,
+            "doc": "The template part block's variations as the reference builds them (probes\nrest-block-types, tabs-and-parts): one per area, the general and the\nnavigation overlay areas aside (by name),\ncarrying the area's label, description and icon, offered in the inserter\nonly while no part variation belongs to it; and one per template part, in\nthe order the parts are listed, offered in the inserter with the part's\nslug, theme and area as its attributes and its example.",
             "implements": [],
             "extends": null,
             "uses": [],
@@ -20757,11 +20757,42 @@
             "methods": [
                 {
                     "routes": [],
-                    "name": "build",
+                    "name": "areas",
                     "static": true,
                     "visibility": "public",
-                    "signature": "build(array $areas, array $parts): array",
-                    "doc": "The variations: the areas' first, then the parts'.",
+                    "signature": "areas(array $areas, array $instances): array",
+                    "doc": "The areas' variations beside the parts' ones.",
+                    "shapes": [
+                        "@param list<array<string, mixed>> $areas get_allowed_block_template_part_areas()",
+                        "@param list<array<string, mixed>> $instances the parts' variations",
+                        "@return list<array<string, mixed>>"
+                    ],
+                    "params": [
+                        {
+                            "name": "areas",
+                            "type": "array",
+                            "shape": "list<array<string, mixed>>",
+                            "default": null,
+                            "doc": "get_allowed_block_template_part_areas()"
+                        },
+                        {
+                            "name": "instances",
+                            "type": "array",
+                            "shape": "list<array<string, mixed>>",
+                            "default": null,
+                            "doc": "the parts' variations"
+                        }
+                    ],
+                    "line": 25,
+                    "end": 36
+                },
+                {
+                    "routes": [],
+                    "name": "instances",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "instances(array $areas, array $parts): array",
+                    "doc": "One variation per template part.",
                     "shapes": [
                         "@param list<array<string, mixed>> $areas get_allowed_block_template_part_areas()",
                         "@param list<object> $parts get_block_templates() for template parts",
@@ -20783,8 +20814,8 @@
                             "doc": "get_block_templates() for template parts"
                         }
                     ],
-                    "line": 24,
-                    "end": 41
+                    "line": 45,
+                    "end": 55
                 }
             ]
         },

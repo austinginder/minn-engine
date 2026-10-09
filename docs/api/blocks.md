@@ -25,7 +25,7 @@ the block parser and renderer
 | [`States`](#states) | final class | 160 | Block state styles (a block's style[":hover"] and the like, probe |
 | [`StyleEngine`](#styleengine) | final class | 148 | What a block's style object comes to, as the reference's style engine |
 | [`Styles`](#styles) | final class | 155 | The inline style and class names a block's "style" and preset |
-| [`TemplatePartVariations`](#templatepartvariations) | final class | 28 | The template part block's variations as the reference builds them (probe |
+| [`TemplatePartVariations`](#templatepartvariations) | final class | 41 | The template part block's variations as the reference builds them (probes |
 | [`Wrapper`](#wrapper) | final class | 59 | The opening tag of a dynamic block's wrapper, in the reference's class |
 
 ## Attributes
@@ -1159,16 +1159,25 @@ Internals: `borderDeclarations()` (private, line 64), `colorDeclarations()` (pri
 
 `final class Minn\Blocks\TemplatePartVariations` · `public/minn/src/Minn/Blocks/TemplatePartVariations.php`
 
-The template part block's variations as the reference builds them (probe
-rest-block-types): one per area some part belongs to, the general area
-aside, carrying the area's label, description and icon; then one per
-template part, in the order the parts are listed, offered in the
-inserter with the part's slug, theme and area as its attributes and its
-example.
+The template part block's variations as the reference builds them (probes
+rest-block-types, tabs-and-parts): one per area, the general and the
+navigation overlay areas aside (by name),
+carrying the area's label, description and icon, offered in the inserter
+only while no part variation belongs to it; and one per template part, in
+the order the parts are listed, offered in the inserter with the part's
+slug, theme and area as its attributes and its example.
 
-### static `build(array $areas, array $parts): array`
+### static `areas(array $areas, array $instances): array`
 
-The variations: the areas' first, then the parts'.
+The areas' variations beside the parts' ones.
+
+- `@param list<array<string, mixed>> $areas get_allowed_block_template_part_areas()`
+- `@param list<array<string, mixed>> $instances the parts' variations`
+- `@return list<array<string, mixed>>`
+
+### static `instances(array $areas, array $parts): array`
+
+One variation per template part.
 
 - `@param list<array<string, mixed>> $areas get_allowed_block_template_part_areas()`
 - `@param list<object> $parts get_block_templates() for template parts`

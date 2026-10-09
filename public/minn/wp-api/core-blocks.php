@@ -46,6 +46,32 @@ function block_core_tab_panel_render($attributes, $content, $block)
     return _minn_render_core_callback('core/tab-panel', $attributes, $content, $block);
 }
 
+/**
+ * The ids of a tabs block's tabs: one per panel in its first tab-panels
+ * block, the panel's anchor when it has one, else "{tabs id}-tab-{n}" (just
+ * "tab-{n}" without an id), counting the panels.
+ */
+function block_core_tabs_generate_tabs_list($innerblocks = [], $tabs_id = '')
+{
+    $named = static fn (string $name) => static fn ($block) => ($block['blockName'] ?? null) === $name;
+    $container = current(array_filter((array) $innerblocks, $named('core/tab-panels')));
+    $panels = array_values(array_filter($container['innerBlocks'] ?? [], $named('core/tab-panel')));
+    $prefix = $tabs_id !== '' ? $tabs_id . '-' : '';
+    return array_map(static fn ($panel, $index) => ($panel['attrs']['anchor'] ?? '') !== '' ? $panel['attrs']['anchor'] : $prefix . 'tab-' . $index, $panels, array_keys($panels));
+}
+
+/** A tabs block hands its inner blocks its id (its anchor as given, else a fresh tabs_{n}) and its tabs' ids (on render_block_context); other blocks' context passes. */
+function block_core_tabs_provide_context($context, $parsed_block)
+{
+    if (($parsed_block['blockName'] ?? null) !== 'core/tabs') {
+        return $context;
+    }
+    $id = $parsed_block['attrs']['anchor'] ?? wp_unique_id('tabs_');
+    $context['core/tabs-list'] = block_core_tabs_generate_tabs_list($parsed_block['innerBlocks'] ?? [], $id);
+    $context['core/tabs-id'] = $id;
+    return $context;
+}
+
 function block_core_tabs_render_block_callback($attributes, $content, $block)
 {
     return _minn_render_core_callback('core/tabs', $attributes, $content, $block);

@@ -1775,16 +1775,28 @@ function get_allowed_block_template_part_areas()
     return apply_filters('default_wp_template_part_areas', json_decode((string) file_get_contents(MINN_ENGINE_DIR . '/data/template-part-areas.json'), true));
 }
 
+/** One variation per template part of the theme, offered in the inserter. */
+function build_template_part_block_instance_variations()
+{
+    return TemplatePartVariations::instances(get_allowed_block_template_part_areas(), get_block_templates([], 'wp_template_part'));
+}
+
+/** One variation per area (the general and navigation overlay areas aside), offered in the inserter only while none of the given part variations belongs to it. */
+function build_template_part_block_area_variations($instance_variations)
+{
+    return TemplatePartVariations::areas(get_allowed_block_template_part_areas(), (array) $instance_variations);
+}
+
 /**
- * The template part block's variations: one per area that has parts (the
- * general area aside), then one per template part the theme offers, as the
- * reference builds them. Building them reads the theme's data, which
- * registers its block style partials, as the reference's build does.
+ * The template part block's variations: the areas', then the parts'.
+ * Building them reads the theme's data, which registers its block style
+ * partials, as the reference's build does.
  */
 function build_template_part_block_variations()
 {
     WP_Theme_JSON_Resolver::get_theme_data();
-    return TemplatePartVariations::build(get_allowed_block_template_part_areas(), get_block_templates([], 'wp_template_part'));
+    $instances = build_template_part_block_instance_variations();
+    return array_merge(build_template_part_block_area_variations($instances), $instances);
 }
 
 /** The templates a slug falls back through (Theme\TemplateHierarchy), against the registered types and taxonomies. */

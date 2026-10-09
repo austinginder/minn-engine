@@ -8723,3 +8723,32 @@ over the network: `_wp_cron` is left out (see below).
   `wp-cron.php`. The engine's own Cron runs due events after the response
   under its own lock, so hooking `_wp_cron` as well would run them twice.
   It is now an omitted dead end: an unhooked stub that logs the call.
+
+## The tabs block's helpers and the template part variations (2026-10-09)
+
+Probe `tabs-and-parts`.
+
+- **`block_core_tabs_generate_tabs_list`.** One id per `core/tab-panel` in
+  the first `core/tab-panels` child; later containers, and panels outside
+  one, are ignored. A panel's id is its anchor when that is not empty,
+  else `{tabs id}-tab-{n}` (`tab-{n}` with no id). `n` counts panels only,
+  skipping any other block between them.
+- **`block_core_tabs_provide_context`** (on `render_block_context`, 10, 2).
+  A `core/tabs` block adds `core/tabs-list` and `core/tabs-id` to the
+  context. The id is its anchor taken as given (an empty anchor stays
+  `''`), else a fresh `wp_unique_id('tabs_')` on every call. Other blocks'
+  context passes untouched.
+- **Template part variations.** The engine's one builder is now the
+  reference's two halves.
+  - `build_template_part_block_instance_variations` makes one per template
+    part.
+  - `build_template_part_block_area_variations($instances)` makes one per
+    area except `uncategorized` and `navigation-overlay` (by name: an area
+    tagged div, or with the overlay icon, still counts). Its scope is `[]`
+    when a given part variation belongs to the area, else `['inserter']`.
+    Before, an area with no parts got no variation at all.
+  - `build_template_part_block_variations` is the areas' variations, then
+    the parts'.
+- **Left open.** The engine still has no tabs renderer of its own (the
+  block goes through the generic core path), so the context these helpers
+  provide is not yet used in rendering.
