@@ -7102,3 +7102,42 @@ edits with GD (open).
   - `__destruct` has nothing to free.
 - **Errors.** A crop with no area is `image_crop_error` "Image crop failed.".
   A missing file reads "File does not exist?".
+
+## The widget classes (2026-10-09)
+
+Probe `widget-classes` (`tests/tools/widget-classes-probe.php`) proves
+`WP_Widget` through a small subclass and `WP_Widget_Media` through the image
+widget.
+
+- **Registering.** `_register_one` now also registers the type's update
+  callback (keyed by the bare `id_base`, `multi_number` -1) and the
+  instance's form, through the two new functions:
+  - `_register_widget_update_callback` registers once per id base; an empty
+    callback unregisters it.
+  - `_register_widget_form_callback` registers a control, 250 by 200 unless
+    told otherwise, with sizes made integers. Registering it again is
+    refused until `widgets_init`. An empty callback unregisters it.
+
+  The probe leaves out re-registering, since the engine's probe runtime
+  hasn't fired `widgets_init`.
+- **`update_callback`** (an empty stub before) saves the posted form once
+  per request. The first instance posted under `widget-{id_base}` goes
+  through `update()` with the old instance, then `widget_update_callback`
+  (false keeps the old one), and the settings are saved. Naming only the
+  type (`id_base` with `multi_number` or `widget_number`) makes an empty
+  new instance. The delete path is not done yet.
+- **`form_callback(-1)`** draws the template form a new widget copies,
+  numbered `__i__`, with no settings.
+- **`WP_Widget()`**, the PHP 4 constructor, runs `WP_Widget`'s own
+  constructor and reports itself deprecated (4.3.0).
+- **Media widgets.**
+  - `is_attachment_with_mime_type` goes through `wp_attachment_is`, so an
+    attachment with no file is no kind.
+  - The image widget sets its own labels ("Add Image", the media-library
+    link in `missing_attachment`, a `_n_noop` for the multi state).
+  - `reset_default_labels` leaves them, since there is no cache to clear.
+  - An image by URL always writes `width` and `height` (empty when zero or
+    unknown) and `loading="lazy"`.
+- The `wp-query-sql` case "parents in their order" can flake under the api
+  suite. Posts tied on `FIELD(post_parent, …)` have no defined order in
+  MySQL; it passes alone.

@@ -5,6 +5,15 @@ class WP_Widget_Media_Image extends WP_Widget_Media
     public function __construct()
     {
         parent::__construct('media_image', 'Image', ['description' => 'Displays an image.', 'mime_type' => 'image']);
+        $this->l10n = array_merge($this->l10n, [
+            'no_media_selected' => __('No image selected'),
+            'add_media' => _x('Add Image', 'label for button in the image widget'),
+            'replace_media' => _x('Replace Image', 'label for button in the image widget; should preferably not be longer than ~13 characters long'),
+            'edit_media' => _x('Edit Image', 'label for button in the image widget; should preferably not be longer than ~13 characters long'),
+            'missing_attachment' => sprintf(__('That image cannot be found. Check your <a href="%s">media library</a> and make sure it was not deleted.'), esc_url(admin_url('upload.php'))),
+            'media_library_state_multi' => _n_noop('Image Widget (%d)', 'Image Widget (%d)'),
+            'media_library_state_single' => __('Image Widget'),
+        ]);
     }
 
     public function get_instance_schema()
@@ -36,9 +45,9 @@ class WP_Widget_Media_Image extends WP_Widget_Media
             $caption = $instance['caption'];
             $width = (int) $instance['width'];
             $classes = 'image ' . $instance['image_classes'];
-            $dimensions = image_hwstring($instance['width'], $instance['height']);
-            $lazy = $instance['width'] && $instance['height'] ? ' loading="lazy"' : '';
-            $image = sprintf('<img class="%1$s" src="%2$s" alt="%3$s" %4$sdecoding="async"%5$s />', esc_attr($classes), esc_url($instance['url']), esc_attr($instance['alt']), $dimensions, $lazy);
+            // Width and height are always written, empty when unknown; the image loads lazily (probe widget-classes).
+            $attributes = ['class' => $classes, 'src' => esc_url($instance['url']), 'alt' => $instance['alt'], 'width' => $instance['width'] ?: '', 'height' => $instance['height'] ?: '', 'decoding' => 'async', 'loading' => 'lazy'];
+            $image = '<img' . implode('', array_map(static fn ($name, $value) => ' ' . $name . '="' . esc_attr((string) $value) . '"', array_keys($attributes), $attributes)) . ' />';
         } else {
             return;
         }

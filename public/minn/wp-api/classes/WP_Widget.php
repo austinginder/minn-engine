@@ -41,6 +41,13 @@ class WP_Widget
         $this->control_options = wp_parse_args($control_options, ['id_base' => $this->id_base]);
     }
 
+    /** The PHP 4 constructor: WP_Widget's own, reported deprecated since 4.3.0. */
+    public function WP_Widget($id_base, $name, $widget_options = [], $control_options = [])
+    {
+        _deprecated_constructor('WP_Widget', '4.3.0', get_class($this));
+        self::__construct($id_base, $name, $widget_options, $control_options);
+    }
+
     public function get_field_name($field_name)
     {
         $pos = strpos($field_name, '[');
@@ -119,8 +126,43 @@ class WP_Widget
         }
     }
 
+    /**
+     * The posted form saved, once per request: the first instance posted
+     * for this type goes through update() with the old one, then
+     * widget_update_callback (false keeps the old), and the settings are
+     * saved (probe widget-classes).
+     */
     public function update_callback($deprecated = 1)
     {
+        $posted = $this->updated ? null : $this->posted_settings();
+        if ($posted === null) {
+            return;
+        }
+        $all = $this->get_settings();
+        foreach ($posted as $number => $new_instance) {
+            $new_instance = stripslashes_deep($new_instance);
+            $this->_set($number);
+            $instance = apply_filters('widget_update_callback', $this->update($new_instance, $all[$number] ?? []), $new_instance, $all[$number] ?? [], $this);
+            if ($instance !== false) {
+                $all[$number] = $instance;
+            }
+            break;
+        }
+        $this->save_settings($all);
+        $this->updated = true;
+    }
+
+    /** The instances posted for this type (a new one by its multi_number or widget_number when only the type is named); null when none are. */
+    private function posted_settings(): ?array
+    {
+        $posted = $_POST['widget-' . $this->id_base] ?? null;
+        if (!empty($posted) && is_array($posted)) {
+            return $posted;
+        }
+        if (($_POST['id_base'] ?? null) === $this->id_base) {
+            return [(int) (!empty($_POST['multi_number']) ? $_POST['multi_number'] : ($_POST['widget_number'] ?? 0)) => []];
+        }
+        return null;
     }
 
     public function form_callback($widget_args = 1)
@@ -129,9 +171,11 @@ class WP_Widget
             $widget_args = ['number' => $widget_args];
         }
         $widget_args = wp_parse_args($widget_args, ['number' => -1]);
-        $this->_set($widget_args['number']);
+        // Number -1 is the template form a new widget copies: drawn as __i__ with no settings.
+        $template = (int) $widget_args['number'] === -1;
+        $this->_set($template ? '__i__' : $widget_args['number']);
         $instances = $this->get_settings();
-        $instance = $instances[$this->number] ?? [];
+        $instance = $template ? [] : ($instances[$this->number] ?? []);
         $instance = apply_filters('widget_form_callback', $instance, $this);
         $return = null;
         if ($instance !== false) {
@@ -141,9 +185,12 @@ class WP_Widget
         return $return;
     }
 
+    /** One instance registered: its display callback, the type's update callback, and the instance's form. */
     public function _register_one($number = -1)
     {
         wp_register_sidebar_widget($this->id, $this->name, $this->_get_display_callback(), $this->widget_options, ['number' => $number]);
+        _register_widget_update_callback($this->id_base, $this->_get_update_callback(), $this->control_options, ['multi_number' => -1]);
+        _register_widget_form_callback($this->id, $this->name, $this->_get_form_callback(), $this->control_options, ['number' => $number]);
     }
 
     public function save_settings($settings)

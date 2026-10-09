@@ -1,0 +1,446 @@
+[
+    [
+        "the widget",
+        [
+            true,
+            [
+                "zz_probe",
+                "Zz Probe",
+                "widget_zz_probe",
+                {
+                    "classname": "zz-probe-widget",
+                    "customize_selective_refresh": false,
+                    "description": "A probe widget."
+                },
+                {
+                    "id_base": "zz_probe",
+                    "width": 300
+                },
+                false,
+                false,
+                false
+            ],
+            "widget-zz_probe[][title]",
+            "widget-zz_probe[][a][b]",
+            "widget-zz_probe[][a][b][c]",
+            "widget-zz_probe--title",
+            "widget-zz_probe--a-b",
+            "widget-zz_probe--a-b-c",
+            false,
+            []
+        ]
+    ],
+    [
+        "settings saved",
+        [
+            {
+                "2": {
+                    "title": "Two"
+                },
+                "5": {
+                    "title": "Five"
+                },
+                "bad": "x",
+                "_multiwidget": 1
+            },
+            {
+                "2": {
+                    "title": "Two"
+                },
+                "5": {
+                    "title": "Five"
+                },
+                "bad": "x"
+            }
+        ]
+    ],
+    [
+        "registered",
+        [
+            [
+                "zz_probe-2",
+                "zz_probe-5"
+            ],
+            {
+                "zz_probe-2": [
+                    "Zz Probe",
+                    "zz-probe-widget",
+                    "A probe widget.",
+                    [
+                        {
+                            "number": 2
+                        }
+                    ],
+                    true
+                ],
+                "zz_probe-5": [
+                    "Zz Probe",
+                    "zz-probe-widget",
+                    "A probe widget.",
+                    [
+                        {
+                            "number": 5
+                        }
+                    ],
+                    true
+                ]
+            },
+            {
+                "zz_probe-2": [
+                    "Zz Probe",
+                    300,
+                    200,
+                    "zz_probe",
+                    [
+                        {
+                            "number": 2
+                        }
+                    ]
+                ],
+                "zz_probe-5": [
+                    "Zz Probe",
+                    300,
+                    200,
+                    "zz_probe",
+                    [
+                        {
+                            "number": 5
+                        }
+                    ]
+                ]
+            },
+            true,
+            true,
+            true,
+            true
+        ]
+    ],
+    [
+        "callbacks registered directly",
+        [
+            {
+                "callback": "strtoupper",
+                "params": [
+                    {
+                        "multi_number": -1
+                    }
+                ],
+                "width": 400
+            },
+            {
+                "name": "Zz Direct",
+                "id": "zz_direct-3",
+                "params": [
+                    {
+                        "number": 3
+                    }
+                ],
+                "width": 410,
+                "height": 0
+            },
+            false,
+            false
+        ]
+    ],
+    [
+        "displayed",
+        [
+            [
+                "<section><h2>Five</h2>[zz_probe-5]</section>",
+                null
+            ],
+            [
+                "<section><h2>Two</h2>[zz_probe-2]</section>",
+                null
+            ],
+            [
+                "",
+                null
+            ],
+            9,
+            "zz_probe-9"
+        ]
+    ],
+    [
+        "displayed, a filter can stop it",
+        [
+            "",
+            null
+        ]
+    ],
+    [
+        "updated from the form",
+        [
+            {
+                "2": {
+                    "title": "Two"
+                },
+                "5": {
+                    "title": "Five again",
+                    "was": "Five"
+                },
+                "bad": "x",
+                "_multiwidget": 1
+            },
+            true
+        ]
+    ],
+    [
+        "form drawn",
+        [
+            [
+                "<input id=\"widget-zz_probe-5-title\" name=\"widget-zz_probe[5][title]\" value=\"Five again\">",
+                "drawn"
+            ],
+            [
+                "<input id=\"widget-zz_probe-__i__-title\" name=\"widget-zz_probe[__i__][title]\" value=\"\">",
+                "drawn"
+            ]
+        ]
+    ],
+    [
+        "numbered",
+        [
+            12,
+            "zz_probe-12"
+        ]
+    ],
+    [
+        "the PHP 4 constructor",
+        [
+            "zz_probe_old",
+            "Zz Old",
+            "widget_zz_probe_old",
+            {
+                "classname": "widget_zz_probe_old",
+                "customize_selective_refresh": false,
+                "description": "Old style."
+            },
+            1,
+            "4.3.0"
+        ]
+    ],
+    [
+        "media widget",
+        [
+            true,
+            [
+                "media_image",
+                "image"
+            ],
+            [
+                "size",
+                "width",
+                "height",
+                "caption",
+                "alt",
+                "link_type",
+                "link_url",
+                "image_classes",
+                "link_classes",
+                "link_rel",
+                "link_target_blank",
+                "image_title",
+                "attachment_id",
+                "url",
+                "title"
+            ],
+            {
+                "size": {
+                    "type": "string",
+                    "enum": [
+                        "thumbnail",
+                        "medium",
+                        "medium_large",
+                        "large",
+                        "1536x1536",
+                        "2048x2048",
+                        "full",
+                        "custom"
+                    ],
+                    "default": "medium"
+                },
+                "width": {
+                    "type": "integer",
+                    "default": 0
+                },
+                "height": {
+                    "type": "integer",
+                    "default": 0
+                },
+                "caption": {
+                    "type": "string",
+                    "default": "",
+                    "should_preview_update": false
+                },
+                "alt": {
+                    "type": "string",
+                    "default": ""
+                },
+                "link_type": {
+                    "type": "string",
+                    "enum": [
+                        "none",
+                        "file",
+                        "post",
+                        "custom"
+                    ],
+                    "default": "custom",
+                    "media_prop": "link",
+                    "should_preview_update": true
+                },
+                "link_url": {
+                    "type": "string",
+                    "default": "",
+                    "media_prop": "linkUrl",
+                    "should_preview_update": true
+                },
+                "image_classes": {
+                    "type": "string",
+                    "default": "",
+                    "media_prop": "extraClasses",
+                    "should_preview_update": false
+                },
+                "link_classes": {
+                    "type": "string",
+                    "default": "",
+                    "media_prop": "linkClassName",
+                    "should_preview_update": false
+                },
+                "link_rel": {
+                    "type": "string",
+                    "default": "",
+                    "media_prop": "linkRel",
+                    "should_preview_update": false
+                },
+                "link_target_blank": {
+                    "type": "boolean",
+                    "default": false,
+                    "media_prop": "linkTargetBlank",
+                    "should_preview_update": false
+                },
+                "image_title": {
+                    "type": "string",
+                    "default": "",
+                    "media_prop": "title",
+                    "should_preview_update": false
+                },
+                "attachment_id": {
+                    "type": "integer",
+                    "default": 0,
+                    "media_prop": "id"
+                },
+                "url": {
+                    "type": "string",
+                    "default": ""
+                },
+                "title": {
+                    "type": "string",
+                    "default": "",
+                    "should_preview_update": false
+                }
+            },
+            "a b c de",
+            "x yz w",
+            false,
+            false,
+            false,
+            false,
+            false,
+            true,
+            true,
+            false,
+            true
+        ]
+    ],
+    [
+        "media widget labels",
+        [
+            [
+                "no_media_selected",
+                "add_media",
+                "replace_media",
+                "edit_media",
+                "add_to_widget",
+                "missing_attachment",
+                "media_library_state_multi",
+                "media_library_state_single",
+                "unsupported_file_type"
+            ],
+            {
+                "no_media_selected": "No image selected",
+                "add_media": "Add Image",
+                "replace_media": "Replace Image",
+                "edit_media": "Edit Image",
+                "add_to_widget": "Add to Widget",
+                "missing_attachment": "That image cannot be found. Check your <a href=\"{site}/wp-admin/upload.php\">media library</a> and make sure it was not deleted.",
+                "media_library_state_multi": {
+                    "0": "Image Widget (%d)",
+                    "1": "Image Widget (%d)",
+                    "singular": "Image Widget (%d)",
+                    "plural": "Image Widget (%d)",
+                    "context": null,
+                    "domain": null
+                },
+                "media_library_state_single": "Image Widget",
+                "unsupported_file_type": "Looks like this is not the correct kind of file. Please link to an appropriate file instead."
+            },
+            "A media item.",
+            [
+                "no_media_selected",
+                "add_media",
+                "replace_media",
+                "edit_media",
+                "add_to_widget",
+                "missing_attachment",
+                "media_library_state_multi",
+                "media_library_state_single",
+                "unsupported_file_type"
+            ],
+            "Add Image"
+        ]
+    ],
+    [
+        "media widget rendered",
+        [
+            [
+                "<img class=\"image \" src=\"https://img.example/x.png\" alt=\"An image\" width=\"100\" height=\"50\" decoding=\"async\" loading=\"lazy\" />",
+                null
+            ],
+            [
+                "<div><h3>Zz Img</h3><img class=\"image \" src=\"https://img.example/x.png\" alt=\"Alt\" width=\"\" height=\"\" decoding=\"async\" loading=\"lazy\" /></div>",
+                null
+            ],
+            [
+                "",
+                null
+            ],
+            [
+                "<img class=\"image \" src=\"https://img.example/z.png\" alt=\"\" width=\"\" height=\"\" decoding=\"async\" loading=\"lazy\" />",
+                null
+            ],
+            [
+                "<img class=\"image \" src=\"https://img.example/n.png\" alt=\"\" width=\"\" height=\"\" decoding=\"async\" loading=\"lazy\" />",
+                null
+            ],
+            [
+                "<figure style=\"width: 30px\" class=\"wp-caption alignnone\"><a href=\"https://link.example/\"><img class=\"image \" src=\"https://img.example/w.png\" alt=\"\" width=\"30\" height=\"20\" decoding=\"async\" loading=\"lazy\" /></a><figcaption class=\"wp-caption-text\">Cap</figcaption></figure>",
+                null
+            ],
+            {
+                "width": 20,
+                "url": "",
+                "title": "T"
+            },
+            [],
+            [
+                "\t\t\t<input\n\t\t\t\ttype=\"hidden\"\n\t\t\t\tdata-property=\"size\"\n\t\t\t\tclass=\"media-widget-instance-property\"\n\t\t\t\tname=\"widget-media_image[][size]\"\n\t\t\t\tid=\"widget-media_image--size\"\n\t\t\t\tvalue=\"medium\"\n\t\t\t/>\n\t\t\t\t\t\t<input\n\t\t\t\ttype=\"hidden\"\n\t\t\t\tdata-property=\"width\"\n\t\t\t\tclass=\"media-widget-instance-property\"\n\t\t\t\tname=\"widget-media_image[][width]\"\n\t\t\t\tid=\"widget-media_image--width\"\n\t\t\t\tvalue=\"0\"\n\t\t\t/>\n\t\t\t\t\t\t<input\n\t\t\t\ttype=\"hidden\"\n\t\t\t\tdata-property=\"height\"\n\t\t\t\tclass=\"media-widget-instance-property\"\n\t\t\t\tname=\"widget-media_image[][height]\"\n\t\t\t\tid=\"widget-media_image--height\"\n\t\t\t\tvalue=\"0\"\n\t\t\t/>\n\t\t\t\t\t\t<input\n\t\t\t\ttype=\"hidden\"\n\t\t\t\tdata-property=\"caption\"\n\t\t\t\tclass=\"media-widget-instance-property\"\n\t\t\t\tname=\"widget-media_image[][caption]\"\n\t\t\t\tid=\"widget-media_image--caption\"\n\t\t\t\tvalue=\"\"\n\t\t\t/>\n\t\t\t\t\t\t<input\n\t\t\t\ttype=\"hidden\"\n\t\t\t\tdata-property=\"alt\"\n\t\t\t\tclass=\"media-widget-instance-property\"\n\t\t\t\tname=\"widget-media_image[][alt]\"\n\t\t\t\tid=\"widget-media_image--alt\"\n\t\t\t\tvalue=\"\"\n\t\t\t/>\n\t\t\t\t\t\t<input\n\t\t\t\ttype=\"hidden\"\n\t\t\t\tdata-property=\"link_type\"\n\t\t\t\tclass=\"media-widget-instance-property\"\n\t\t\t\tname=\"widget-media_image[][link_type]\"\n\t\t\t\tid=\"widget-media_image--link_type\"\n\t\t\t\tvalue=\"custom\"\n\t\t\t/>\n\t\t\t\t\t\t<input\n\t\t\t\ttype=\"hidden\"\n\t\t\t\tdata-property=\"link_url\"\n\t\t\t\tclass=\"media-widget-instance-property\"\n\t\t\t\tname=\"widget-media_image[][link_url]\"\n\t\t\t\tid=\"widget-media_image--link_url\"\n\t\t\t\tvalue=\"\"\n\t\t\t/>\n\t\t\t\t\t\t<input\n\t\t\t\ttype=\"hidden\"\n\t\t\t\tdata-property=\"image_classes\"\n\t\t\t\tclass=\"media-widget-instance-property\"\n\t\t\t\tname=\"widget-media_image[][image_classes]\"\n\t\t\t\tid=\"widget-media_image--image_classes\"\n\t\t\t\tvalue=\"\"\n\t\t\t/>\n\t\t\t\t\t\t<input\n\t\t\t\ttype=\"hidden\"\n\t\t\t\tdata-property=\"link_classes\"\n\t\t\t\tclass=\"media-widget-instance-property\"\n\t\t\t\tname=\"widget-media_image[][link_classes]\"\n\t\t\t\tid=\"widget-media_image--link_classes\"\n\t\t\t\tvalue=\"\"\n\t\t\t/>\n\t\t\t\t\t\t<input\n\t\t\t\ttype=\"hidden\"\n\t\t\t\tdata-property=\"link_rel\"\n\t\t\t\tclass=\"media-widget-instance-property\"\n\t\t\t\tname=\"widget-media_image[][link_rel]\"\n\t\t\t\tid=\"widget-media_image--link_rel\"\n\t\t\t\tvalue=\"\"\n\t\t\t/>\n\t\t\t\t\t\t<input\n\t\t\t\ttype=\"hidden\"\n\t\t\t\tdata-property=\"link_target_blank\"\n\t\t\t\tclass=\"media-widget-instance-property\"\n\t\t\t\tname=\"widget-media_image[][link_target_blank]\"\n\t\t\t\tid=\"widget-media_image--link_target_blank\"\n\t\t\t\tvalue=\"\"\n\t\t\t/>\n\t\t\t\t\t\t<input\n\t\t\t\ttype=\"hidden\"\n\t\t\t\tdata-property=\"image_title\"\n\t\t\t\tclass=\"media-widget-instance-property\"\n\t\t\t\tname=\"widget-media_image[][image_title]\"\n\t\t\t\tid=\"widget-media_image--image_title\"\n\t\t\t\tvalue=\"\"\n\t\t\t/>\n\t\t\t\t\t\t<input\n\t\t\t\ttype=\"hidden\"\n\t\t\t\tdata-property=\"attachment_id\"\n\t\t\t\tclass=\"media-widget-instance-property\"\n\t\t\t\tname=\"widget-media_image[][attachment_id]\"\n\t\t\t\tid=\"widget-media_image--attachment_id\"\n\t\t\t\tvalue=\"0\"\n\t\t\t/>\n\t\t\t\t\t\t<input\n\t\t\t\ttype=\"hidden\"\n\t\t\t\tdata-property=\"url\"\n\t\t\t\tclass=\"media-widget-instance-property\"\n\t\t\t\tname=\"widget-media_image[][url]\"\n\t\t\t\tid=\"widget-media_image--url\"\n\t\t\t\tvalue=\"\"\n\t\t\t/>\n\t\t\t\t\t\t<input\n\t\t\t\ttype=\"hidden\"\n\t\t\t\tdata-property=\"title\"\n\t\t\t\tclass=\"media-widget-instance-property\"\n\t\t\t\tname=\"widget-media_image[][title]\"\n\t\t\t\tid=\"widget-media_image--title\"\n\t\t\t\tvalue=\"\"\n\t\t\t/>\n\t\t\t",
+                null
+            ],
+            [
+                "",
+                null
+            ]
+        ]
+    ]
+]

@@ -3,12 +3,12 @@
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line), placeholder (generated stub, behaviour still owed), deadend (generated stub for wp-admin, the editors, the Customizer or XML-RPC, inert by design); \"deadend\" on any entry names its dead-end area",
     "summary": {
         "minn": 755,
-        "composes": 1613,
-        "leaf": 777,
-        "noop": 2469,
+        "composes": 1618,
+        "leaf": 779,
+        "noop": 2466,
         "placeholder": 279,
         "deadend": 1659,
-        "functions": 7474,
+        "functions": 7478,
         "minnMethods": 909,
         "leafLinesOver15": 13
     },
@@ -23627,6 +23627,16 @@
             "composes": [],
             "deadend": "admin"
         },
+        "WP_Widget::WP_Widget": {
+            "file": "classes/WP_Widget.php",
+            "lines": 2,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "_deprecated_constructor",
+                "get_class"
+            ]
+        },
         "WP_Widget::__construct": {
             "file": "classes/WP_Widget.php",
             "lines": 8,
@@ -23667,10 +23677,12 @@
         },
         "WP_Widget::_register_one": {
             "file": "classes/WP_Widget.php",
-            "lines": 1,
-            "kind": "noop",
+            "lines": 3,
+            "kind": "composes",
             "minn": [],
             "composes": [
+                "_register_widget_form_callback",
+                "_register_widget_update_callback",
                 "wp_register_sidebar_widget"
             ]
         },
@@ -23700,7 +23712,7 @@
         },
         "WP_Widget::form_callback": {
             "file": "classes/WP_Widget.php",
-            "lines": 14,
+            "lines": 16,
             "kind": "composes",
             "minn": [],
             "composes": [
@@ -23744,6 +23756,13 @@
             "minn": [],
             "composes": []
         },
+        "WP_Widget::posted_settings": {
+            "file": "classes/WP_Widget.php",
+            "lines": 8,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
         "WP_Widget::save_settings": {
             "file": "classes/WP_Widget.php",
             "lines": 2,
@@ -23762,10 +23781,13 @@
         },
         "WP_Widget::update_callback": {
             "file": "classes/WP_Widget.php",
-            "lines": 0,
-            "kind": "noop",
+            "lines": 16,
+            "kind": "composes",
             "minn": [],
-            "composes": []
+            "composes": [
+                "apply_filters",
+                "stripslashes_deep"
+            ]
         },
         "WP_Widget::widget": {
             "file": "classes/WP_Widget.php",
@@ -24121,7 +24143,8 @@
             "kind": "composes",
             "minn": [],
             "composes": [
-                "get_post"
+                "get_post",
+                "wp_attachment_is"
             ]
         },
         "WP_Widget_Media::render_control_template_scripts": {
@@ -24133,7 +24156,7 @@
         },
         "WP_Widget_Media::reset_default_labels": {
             "file": "classes/WP_Widget_Media.php",
-            "lines": 1,
+            "lines": 0,
             "kind": "noop",
             "minn": [],
             "composes": []
@@ -24231,10 +24254,16 @@
         },
         "WP_Widget_Media_Image::__construct": {
             "file": "classes/WP_Widget_Media_Image.php",
-            "lines": 1,
-            "kind": "noop",
+            "lines": 10,
+            "kind": "composes",
             "minn": [],
-            "composes": []
+            "composes": [
+                "__",
+                "_n_noop",
+                "_x",
+                "admin_url",
+                "esc_url"
+            ]
         },
         "WP_Widget_Media_Image::attachmentImage": {
             "file": "classes/WP_Widget_Media_Image.php",
@@ -24276,7 +24305,6 @@
                 "esc_url",
                 "get_attachment_link",
                 "get_post",
-                "image_hwstring",
                 "img_caption_shortcode",
                 "wp_get_attachment_url",
                 "wp_list_pluck",
@@ -29444,6 +29472,23 @@
             "minn": [],
             "composes": [],
             "deadend": "admin"
+        },
+        "_register_widget_form_callback": {
+            "file": "widgets.php",
+            "lines": 11,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "did_action",
+                "wp_parse_args"
+            ]
+        },
+        "_register_widget_update_callback": {
+            "file": "widgets.php",
+            "lines": 8,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
         },
         "_relocate_children": {
             "file": "deadends.php",

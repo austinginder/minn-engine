@@ -111,6 +111,35 @@ function wp_register_widget_control($id, $name, $control_callback, $options = []
     }
 }
 
+/** A widget type's update callback, registered once per id base (an empty callback for one already there unregisters it). */
+function _register_widget_update_callback($id_base, $update_callback, $options = [], ...$params)
+{
+    global $wp_registered_widget_updates;
+    if (isset($wp_registered_widget_updates[$id_base])) {
+        if (empty($update_callback)) {
+            unset($wp_registered_widget_updates[$id_base]);
+        }
+        return;
+    }
+    $wp_registered_widget_updates[$id_base] = array_merge(['callback' => $update_callback, 'params' => $params], (array) $options);
+}
+
+/** One widget's form callback, as a control (250 by 200 unless the options say otherwise); an empty callback unregisters it. */
+function _register_widget_form_callback($id, $name, $form_callback, $options = [], ...$params)
+{
+    global $wp_registered_widget_controls;
+    $id = strtolower((string) $id);
+    if (empty($form_callback)) {
+        unset($wp_registered_widget_controls[$id]);
+        return;
+    }
+    if (isset($wp_registered_widget_controls[$id]) && !did_action('widgets_init')) {
+        return;
+    }
+    $options = wp_parse_args($options, ['width' => 250, 'height' => 200]);
+    $wp_registered_widget_controls[$id] = array_merge(['name' => $name, 'id' => $id, 'callback' => $form_callback, 'params' => $params], $options, ['width' => (int) $options['width'], 'height' => (int) $options['height']]);
+}
+
 function wp_unregister_widget_control($id)
 {
     wp_register_widget_control($id, '', '');

@@ -36,13 +36,14 @@ abstract class WP_Widget_Media extends WP_Widget
         ], $this);
     }
 
+    /** Whether an attachment is of a kind (image, audio, video), as wp_attachment_is reads it: an attachment with no file is not. */
     public function is_attachment_with_mime_type($attachment, $mime_type)
     {
         if (empty($attachment)) {
             return false;
         }
         $attachment = get_post($attachment);
-        return $attachment instanceof WP_Post && $attachment->post_type === 'attachment' && str_starts_with((string) $attachment->post_mime_type, $mime_type . '/');
+        return $attachment instanceof WP_Post && $attachment->post_type === 'attachment' && wp_attachment_is((string) $mime_type, $attachment);
     }
 
     public function sanitize_token_list($tokens)
@@ -132,9 +133,9 @@ abstract class WP_Widget_Media extends WP_Widget
     {
     }
 
+    /** The default labels are read fresh each time here, so there is no cache to clear; a widget's own labels stay. */
     public function reset_default_labels()
     {
-        $this->l10n = array_merge($this->l10n, $this->get_l10n_defaults());
     }
 
     public function has_content($instance)
