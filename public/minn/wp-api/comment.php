@@ -135,7 +135,9 @@ function wp_insert_comment($commentdata)
 function wp_update_comment_count($post_id, $do_deferred = false)
 {
     if ($do_deferred) {
-        return Deferrals::comments(false);
+        // The posts put off are counted now, and the answer is true (probe comment-remaining).
+        Deferrals::comments(false);
+        return true;
     }
     // While counting is deferred the recount waits for wp_defer_comment_counting(false).
     return Deferrals::putOffComments((int) $post_id) || wp_update_comment_count_now($post_id);
@@ -417,7 +419,13 @@ function get_lastcommentmodified($timezone = 'server')
 {
     global $wpdb;
     $timezone = strtolower((string) $timezone);
-    $value = $wpdb->get_var('SELECT ' . ($timezone === 'blog' ? 'comment_date' : 'comment_date_gmt') . " FROM {$wpdb->comments} WHERE comment_approved = '1' ORDER BY comment_date_gmt DESC LIMIT 1");
+    // Server time is the GMT date moved by the server's offset in the database, which answers with microseconds (probe comment-remaining).
+    $column = match ($timezone) {
+        'blog' => 'comment_date',
+        'gmt' => 'comment_date_gmt',
+        default => "DATE_ADD(comment_date_gmt, INTERVAL '" . (int) date('Z') . "' SECOND)",
+    };
+    $value = $wpdb->get_var("SELECT {$column} FROM {$wpdb->comments} WHERE comment_approved = '1' ORDER BY comment_date_gmt DESC LIMIT 1");
     return apply_filters('get_lastcommentmodified', $value === null ? false : $value, $timezone);
 }
 
@@ -470,7 +478,7 @@ function comment_exists($comment_author, $comment_date, $timezone = 'blog')
 function get_comment_count($post_id = 0)
 {
     $counts = wp_count_comments($post_id);
-    return ['approved' => $counts->approved, 'awaiting_moderation' => $counts->moderated, 'spam' => $counts->spam, 'trash' => $counts->trash, 'post-trashed' => $counts->{'post-trashed'}, 'total_comments' => $counts->total_comments, 'all' => $counts->all];
+    return ['approved' => $counts->approved, 'awaiting_moderation' => $counts->moderated, 'spam' => $counts->spam, 'trash' => $counts->trash, 'post-trashed' => $counts->{'post-trashed'}, 'all' => $counts->all, 'total_comments' => $counts->total_comments];
 }
 
 function get_comment_author_IP($comment_id = 0)
@@ -1414,7 +1422,8 @@ function wp_check_comment_disallowed_list($author, $email, $url, $comment, $user
             continue;
         }
         $pattern = '#' . preg_quote($word, '#') . '#iu';
-        foreach ([$author, $email, $url, $comment, $user_ip, $user_agent] as $field) {
+        // The comment is also read without its tags and entities (probe comment-remaining).
+        foreach ([$author, $email, $url, $comment, html_entity_decode(wp_strip_all_tags((string) $comment), ENT_QUOTES | ENT_HTML5, 'UTF-8'), $user_ip, $user_agent] as $field) {
             if (preg_match($pattern, (string) $field)) {
                 return true;
             }
@@ -1453,8 +1462,9 @@ function check_comment($author, $email, $url, $comment, $user_ip, $user_agent, $
             return false;
         }
     }
-    if ((string) get_option('comment_previously_approved') === '1' && !in_array($comment_type, ['trackback', 'pingback'], true)) {
-        return (string) $author !== '' && (string) $email !== '' && _minn_comments()->previouslyApproved((string) $author, (string) $email);
+    // A ping is never previously approved (probe comment-remaining).
+    if ((string) get_option('comment_previously_approved') === '1') {
+        return !in_array($comment_type, ['trackback', 'pingback'], true) && (string) $author !== '' && (string) $email !== '' && _minn_comments()->previouslyApproved((string) $author, (string) $email);
     }
     return true;
 }
@@ -1608,14 +1618,19 @@ function _clear_modified_cache_on_transition_comment_status($new_status, $old_st
 }
 
 /** The author email of the held comment ?unapproved= names, when ?moderation-hash= (wp_hash of its GMT date) proves the link came from posting it in the last ten minutes; "" otherwise. */
+/**
+ * The address of the reader whose held comment the page may show (probe
+ * comment-remaining): from a held comment's link in $_GET (its hash right,
+ * under ten minutes old), or else from the commenter's cookie.
+ */
 function wp_get_unapproved_comment_author_email()
 {
-    $query = Runtime::current()->request?->query ?? [];
-    $comment = isset($query['unapproved'], $query['moderation-hash']) ? get_comment((int) $query['unapproved']) : null;
-    if (!$comment instanceof WP_Comment || (string) $comment->comment_approved !== '0' || (int) strtotime($comment->comment_date_gmt . ' UTC') + 600 <= time()) {
-        return '';
+    $comment = isset($_GET['unapproved'], $_GET['moderation-hash']) ? get_comment((int) $_GET['unapproved']) : null;
+    $fresh = $comment instanceof WP_Comment && (string) $comment->comment_approved === '0' && (int) strtotime($comment->comment_date_gmt . ' UTC') + 600 > time();
+    if ($fresh && hash_equals(wp_hash($comment->comment_date_gmt), (string) $_GET['moderation-hash'])) {
+        return (string) $comment->comment_author_email;
     }
-    return hash_equals(wp_hash($comment->comment_date_gmt), (string) $query['moderation-hash']) ? (string) $comment->comment_author_email : '';
+    return (string) (wp_get_current_commenter()['comment_author_email'] ?? '');
 }
 
 /**

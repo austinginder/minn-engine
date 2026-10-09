@@ -1,0 +1,770 @@
+[
+    [
+        "comment meta",
+        [
+            "a",
+            false,
+            "a",
+            true,
+            false,
+            [
+                true,
+                [
+                    "y"
+                ],
+                true,
+                [],
+                false,
+                false
+            ]
+        ]
+    ],
+    [
+        "comment counts per post",
+        [
+            {
+                "approved": 2,
+                "awaiting_moderation": 1,
+                "spam": 1,
+                "trash": 1,
+                "post-trashed": 0,
+                "all": 3,
+                "total_comments": 4
+            },
+            {
+                "approved": 0,
+                "awaiting_moderation": 0,
+                "spam": 0,
+                "trash": 0,
+                "post-trashed": 0,
+                "all": 0,
+                "total_comments": 0
+            }
+        ]
+    ],
+    [
+        "default comment statuses",
+        [
+            [
+                "open",
+                "closed",
+                "open",
+                "open",
+                "open",
+                "closed",
+                "open",
+                "closed",
+                "open"
+            ],
+            [
+                "closed",
+                "closed",
+                "closed",
+                "closed",
+                "closed",
+                "closed",
+                "closed",
+                "closed",
+                "closed"
+            ]
+        ]
+    ],
+    [
+        "moderation checks",
+        [
+            [
+                true,
+                false,
+                false,
+                true,
+                false,
+                false,
+                false,
+                true
+            ],
+            [
+                true,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false
+            ],
+            [
+                true,
+                true,
+                true,
+                false,
+                false,
+                false,
+                false,
+                false
+            ],
+            [
+                true,
+                true,
+                true,
+                false,
+                true,
+                true,
+                true,
+                false
+            ],
+            [
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false
+            ]
+        ]
+    ],
+    [
+        "disallowed checks",
+        [
+            [
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false
+            ],
+            [
+                false,
+                true,
+                true,
+                true,
+                true,
+                true,
+                true,
+                false,
+                true,
+                true,
+                true
+            ]
+        ]
+    ],
+    [
+        "flood checks",
+        [
+            true,
+            false,
+            false,
+            true,
+            true,
+            false,
+            [
+                false,
+                10
+            ],
+            true,
+            false
+        ]
+    ],
+    [
+        "the current commenter",
+        [
+            [
+                {
+                    "comment_author": "",
+                    "comment_author_email": "",
+                    "comment_author_url": ""
+                },
+                {
+                    "comment_author": "Remy \\\"R\\\" Reader",
+                    "comment_author_email": "remy@zz.example",
+                    "comment_author_url": "https://remy.example"
+                },
+                {
+                    "comment_author": "<b>Remy</b>",
+                    "comment_author_email": "not an email",
+                    "comment_author_url": "javascript:alert(1)"
+                }
+            ],
+            [
+                "",
+                "",
+                "recent@zz.example",
+                "",
+                "",
+                "cookie@zz.example",
+                "cookie@zz.example",
+                "cookie@zz.example"
+            ]
+        ]
+    ],
+    [
+        "comment cookies",
+        [
+            [
+                "comment_cookie_lifetime",
+                31536000
+            ]
+        ]
+    ],
+    [
+        "new comments",
+        [
+            [
+                {
+                    "comment": "{zz-cr-new-approved}",
+                    "approved": "0",
+                    "author": "Ann",
+                    "content": "zz cr new approved",
+                    "type": "comment",
+                    "parent": "0",
+                    "user": "0"
+                },
+                [
+                    [
+                        "admin@minn-engine.localhost",
+                        "[Minn] Please moderate: \"zz cr fresh\"",
+                        "(a message)"
+                    ]
+                ]
+            ],
+            [
+                {
+                    "comment": "{zz-cr-new-held-htt}",
+                    "approved": "0",
+                    "author": "Bob",
+                    "content": "zz cr new held https://a.example https://b.example https://c.example",
+                    "type": "comment",
+                    "parent": "0",
+                    "user": "0"
+                },
+                [
+                    [
+                        "admin@minn-engine.localhost",
+                        "[Minn] Please moderate: \"zz cr fresh\"",
+                        "(a message)"
+                    ]
+                ]
+            ],
+            [
+                {
+                    "error": "comment_duplicate",
+                    "message": "Duplicate comment detected; it looks as though you&#8217;ve already said that!",
+                    "data": 409
+                },
+                []
+            ],
+            [
+                {
+                    "comment": "{zz-cr-new-reply}",
+                    "approved": "0",
+                    "author": "Cat",
+                    "content": "zz cr new reply",
+                    "type": "comment",
+                    "parent": "{zz-cr-approved}",
+                    "user": "0"
+                },
+                [
+                    [
+                        "admin@minn-engine.localhost",
+                        "[Minn] Please moderate: \"zz cr fresh\"",
+                        "(a message)"
+                    ]
+                ]
+            ],
+            [
+                {
+                    "comment": "{zz-cr-new-on-a-gue}",
+                    "approved": "0",
+                    "author": "Dee",
+                    "content": "zz cr new on a guest post",
+                    "type": "comment",
+                    "parent": "0",
+                    "user": "0"
+                },
+                [
+                    [
+                        "admin@minn-engine.localhost",
+                        "[Minn] Please moderate: \"zz cr guests\"",
+                        "(a message)"
+                    ]
+                ]
+            ],
+            [
+                {
+                    "comment": "{new-forbidden}",
+                    "approved": "trash",
+                    "author": "Eve",
+                    "content": "zz cr new zzforbidden",
+                    "type": "comment",
+                    "parent": "0",
+                    "user": "0"
+                },
+                []
+            ]
+        ]
+    ],
+    [
+        "new comment notifications",
+        [
+            [
+                "comments_notify",
+                "1",
+                true,
+                [
+                    [
+                        "admin@minn-engine.localhost",
+                        "[Minn] Comment: \"zz cr discussed\"",
+                        "(a message)"
+                    ]
+                ]
+            ],
+            [
+                "comments_notify",
+                "0",
+                false,
+                []
+            ],
+            [
+                "moderation_notify",
+                "1",
+                true,
+                [
+                    [
+                        "admin@minn-engine.localhost",
+                        "[Minn] Please moderate: \"zz cr discussed\"",
+                        "(a message)"
+                    ]
+                ]
+            ],
+            [
+                "moderation_notify",
+                "0",
+                true,
+                []
+            ],
+            [
+                "spam to the author",
+                false,
+                false,
+                []
+            ]
+        ]
+    ],
+    [
+        "comment submissions",
+        [
+            [
+                {
+                    "error": "comment_closed",
+                    "message": "Sorry, comments are closed for this item.",
+                    "data": 403
+                },
+                0
+            ],
+            [
+                {
+                    "error": "comment_closed",
+                    "message": "Sorry, comments are closed for this item.",
+                    "data": 403
+                },
+                0
+            ],
+            [
+                {
+                    "error": "comment_closed",
+                    "message": "Sorry, comments are closed for this item.",
+                    "data": 403
+                },
+                0
+            ],
+            [
+                {
+                    "error": "comment_closed",
+                    "message": "Sorry, comments are closed for this item.",
+                    "data": 403
+                },
+                0
+            ],
+            [
+                {
+                    "error": "comment_closed",
+                    "message": "Sorry, comments are closed for this item.",
+                    "data": 403
+                },
+                0
+            ],
+            [
+                {
+                    "error": "comment_id_not_found",
+                    "message": "",
+                    "data": null
+                },
+                0
+            ],
+            [
+                {
+                    "error": "comment_closed",
+                    "message": "Sorry, comments are closed for this item.",
+                    "data": 403
+                },
+                0
+            ],
+            [
+                {
+                    "error": "comment_closed",
+                    "message": "Sorry, comments are closed for this item.",
+                    "data": 403
+                },
+                0
+            ],
+            [
+                {
+                    "error": "comment_closed",
+                    "message": "Sorry, comments are closed for this item.",
+                    "data": 403
+                },
+                0
+            ],
+            [
+                {
+                    "error": "comment_closed",
+                    "message": "Sorry, comments are closed for this item.",
+                    "data": 403
+                },
+                0
+            ]
+        ]
+    ],
+    [
+        "comment status changes",
+        [
+            [
+                "hold",
+                true,
+                "0",
+                [
+                    [
+                        "wp_set_comment_status",
+                        "{zz-cr-moving}",
+                        "hold"
+                    ],
+                    [
+                        "transition_comment_status",
+                        "unapproved",
+                        "approved",
+                        "comment"
+                    ],
+                    [
+                        "comment_approved_to_unapproved",
+                        "comment"
+                    ],
+                    [
+                        "comment_unapproved_comment",
+                        "{zz-cr-moving}",
+                        "comment"
+                    ]
+                ]
+            ],
+            [
+                "approve",
+                true,
+                "1",
+                [
+                    [
+                        "wp_set_comment_status",
+                        "{zz-cr-moving}",
+                        "approve"
+                    ],
+                    [
+                        "transition_comment_status",
+                        "approved",
+                        "unapproved",
+                        "comment"
+                    ],
+                    [
+                        "comment_unapproved_to_approved",
+                        "comment"
+                    ],
+                    [
+                        "comment_approved_comment",
+                        "{zz-cr-moving}",
+                        "comment"
+                    ]
+                ]
+            ],
+            [
+                "spam",
+                true,
+                "spam",
+                [
+                    [
+                        "wp_set_comment_status",
+                        "{zz-cr-moving}",
+                        "spam"
+                    ],
+                    [
+                        "transition_comment_status",
+                        "spam",
+                        "approved",
+                        "comment"
+                    ],
+                    [
+                        "comment_approved_to_spam",
+                        "comment"
+                    ],
+                    [
+                        "comment_spam_comment",
+                        "{zz-cr-moving}",
+                        "comment"
+                    ]
+                ]
+            ],
+            [
+                "approve",
+                true,
+                "1",
+                [
+                    [
+                        "wp_set_comment_status",
+                        "{zz-cr-moving}",
+                        "approve"
+                    ],
+                    [
+                        "transition_comment_status",
+                        "approved",
+                        "spam",
+                        "comment"
+                    ],
+                    [
+                        "comment_spam_to_approved",
+                        "comment"
+                    ],
+                    [
+                        "comment_approved_comment",
+                        "{zz-cr-moving}",
+                        "comment"
+                    ]
+                ]
+            ],
+            [
+                "trash",
+                true,
+                "trash",
+                [
+                    [
+                        "wp_set_comment_status",
+                        "{zz-cr-moving}",
+                        "trash"
+                    ],
+                    [
+                        "transition_comment_status",
+                        "trash",
+                        "approved",
+                        "comment"
+                    ],
+                    [
+                        "comment_approved_to_trash",
+                        "comment"
+                    ],
+                    [
+                        "comment_trash_comment",
+                        "{zz-cr-moving}",
+                        "comment"
+                    ]
+                ]
+            ],
+            [
+                "1",
+                true,
+                "1",
+                [
+                    [
+                        "wp_set_comment_status",
+                        "{zz-cr-moving}",
+                        "1"
+                    ],
+                    [
+                        "transition_comment_status",
+                        "approved",
+                        "trash",
+                        "comment"
+                    ],
+                    [
+                        "comment_trash_to_approved",
+                        "comment"
+                    ],
+                    [
+                        "comment_approved_comment",
+                        "{zz-cr-moving}",
+                        "comment"
+                    ]
+                ]
+            ],
+            [
+                "0",
+                true,
+                "0",
+                [
+                    [
+                        "wp_set_comment_status",
+                        "{zz-cr-moving}",
+                        "0"
+                    ],
+                    [
+                        "transition_comment_status",
+                        "unapproved",
+                        "approved",
+                        "comment"
+                    ],
+                    [
+                        "comment_approved_to_unapproved",
+                        "comment"
+                    ],
+                    [
+                        "comment_unapproved_comment",
+                        "{zz-cr-moving}",
+                        "comment"
+                    ]
+                ]
+            ],
+            [
+                "zz-nonsense",
+                false,
+                "0",
+                []
+            ],
+            [
+                "approve",
+                true,
+                "1",
+                [
+                    [
+                        "wp_set_comment_status",
+                        "{zz-cr-moving}",
+                        "approve"
+                    ],
+                    [
+                        "transition_comment_status",
+                        "approved",
+                        "unapproved",
+                        "comment"
+                    ],
+                    [
+                        "comment_unapproved_to_approved",
+                        "comment"
+                    ],
+                    [
+                        "comment_approved_comment",
+                        "{zz-cr-moving}",
+                        "comment"
+                    ]
+                ]
+            ],
+            [
+                "transition by hand",
+                [
+                    [
+                        "transition_comment_status",
+                        "approved",
+                        "unapproved",
+                        "comment"
+                    ],
+                    [
+                        "comment_unapproved_to_approved",
+                        "comment"
+                    ],
+                    [
+                        "comment_approved_comment",
+                        "{zz-cr-moving}",
+                        "comment"
+                    ],
+                    [
+                        "comment_approved_comment",
+                        "{zz-cr-moving}",
+                        "comment"
+                    ],
+                    [
+                        "transition_comment_status",
+                        "spam",
+                        "zz",
+                        "comment"
+                    ],
+                    [
+                        "comment_spam_comment",
+                        "{zz-cr-moving}",
+                        "comment"
+                    ]
+                ]
+            ]
+        ]
+    ],
+    [
+        "comment counts",
+        [
+            9,
+            true,
+            2,
+            true,
+            9,
+            true,
+            2,
+            true,
+            2,
+            [
+                false,
+                false
+            ],
+            [
+                true,
+                42
+            ]
+        ]
+    ],
+    [
+        "the last comment date",
+        [
+            "2040-05-05 16:00:00.000000",
+            "2040-05-05 16:00:00",
+            "2040-05-05 12:00:00",
+            "2040-05-05 16:00:00.000000",
+            "2041-06-06 16:00:00",
+            "2041-06-06 16:00:00",
+            "2041-06-06 16:00:00"
+        ]
+    ],
+    [
+        "the initial comment meta",
+        [
+            [
+                "_wp_note_status"
+            ],
+            [],
+            [
+                "_wp_note_status"
+            ],
+            {
+                "_wp_note_status": {
+                    "type": "string",
+                    "single": true,
+                    "sanitize_callback": null,
+                    "show_in_rest": {
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "resolved",
+                                "reopen"
+                            ]
+                        }
+                    }
+                }
+            }
+        ]
+    ]
+]

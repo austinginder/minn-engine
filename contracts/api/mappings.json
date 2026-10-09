@@ -2,8 +2,8 @@
     "generated": "2026-10-09",
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line), placeholder (generated stub, behaviour still owed), deadend (generated stub for wp-admin, the editors, the Customizer or XML-RPC, inert by design); \"deadend\" on any entry names its dead-end area",
     "summary": {
-        "minn": 774,
-        "composes": 1851,
+        "minn": 773,
+        "composes": 1852,
         "leaf": 874,
         "noop": 2644,
         "placeholder": 242,
@@ -36560,7 +36560,7 @@
         },
         "check_comment": {
             "file": "comment.php",
-            "lines": 18,
+            "lines": 19,
             "kind": "minn",
             "minn": [
                 "Minn\\Content\\Comments::previouslyApproved"
@@ -42093,7 +42093,7 @@
         },
         "get_lastcommentmodified": {
             "file": "comment.php",
-            "lines": 4,
+            "lines": 10,
             "kind": "composes",
             "minn": [],
             "composes": [
@@ -58657,12 +58657,13 @@
         },
         "wp_check_comment_disallowed_list": {
             "file": "comment.php",
-            "lines": 18,
+            "lines": 19,
             "kind": "composes",
             "minn": [],
             "composes": [
                 "do_action",
-                "get_option"
+                "get_option",
+                "wp_strip_all_tags"
             ]
         },
         "wp_check_comment_flood": {
@@ -62761,13 +62762,11 @@
         "wp_get_unapproved_comment_author_email": {
             "file": "comment.php",
             "lines": 6,
-            "kind": "minn",
-            "minn": [
-                "Minn\\Runtime\\Runtime::current",
-                "Minn\\Runtime\\Runtime::request"
-            ],
+            "kind": "composes",
+            "minn": [],
             "composes": [
                 "get_comment",
+                "wp_get_current_commenter",
                 "wp_hash"
             ]
         },
@@ -69440,7 +69439,7 @@
         },
         "wp_update_comment_count": {
             "file": "comment.php",
-            "lines": 5,
+            "lines": 7,
             "kind": "minn",
             "minn": [
                 "Minn\\Runtime\\Deferrals::comments",

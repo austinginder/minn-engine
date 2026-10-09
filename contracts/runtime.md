@@ -9604,3 +9604,46 @@ Fixed to match:
 
   An explicit `default` is stored, not deleted. An empty template stores
   nothing. The engine used to store any template it was given.
+
+## The rest of comment.php (2026-10-09)
+
+Probe `comment-remaining` proves the 23 comment.php functions that were left:
+- comment meta, counts per post, and default comment statuses;
+- the moderation and disallowed checks, and the flood checks;
+- the current commenter, from cookies and from a held comment's link;
+- comment cookies;
+- new comments: approval, refusals and notifications;
+- comment form submissions;
+- status changes and their transitions;
+- comment counts, deferred and not;
+- the last comment date and its cache;
+- the initial comment meta.
+
+How the probe works:
+- Mail is caught in `pre_wp_mail`. The engine words its notices itself (they
+  point to Minn Admin, not wp-admin), so the probe compares who hears and the
+  subject, not the text.
+- Flood blocking is off while the probe inserts comments, so the two stacks
+  see the same thing whatever ran just before.
+- It puts back every comment option it changes.
+- `wp_set_comment_status` on a comment that does not exist is a fatal error
+  on the reference. That skips the probe's cleanup under WP-CLI, so the probe
+  leaves that case out.
+
+Fixed to match:
+
+- **`check_comment`**: a pingback or trackback is never previously approved.
+  With `comment_previously_approved` on, it is held.
+- **`wp_check_comment_disallowed_list`** also reads the comment without its
+  tags and entities: `sp<b>am</b>word` and `spam&#119;ord` both match
+  `spamword`. The author is read as given.
+- **`wp_get_unapproved_comment_author_email`** reads `$_GET`, not the
+  engine's request. When the link gives no address (a wrong hash, a comment
+  that is not held or is over ten minutes old, or no link), it answers the
+  commenter cookie's address.
+- **`wp_update_comment_count($post_id, true)`** counts the posts put off and
+  answers true.
+- **`get_lastcommentmodified('server')`** is the GMT date moved by the
+  server's offset in the database, which answers with microseconds
+  (`2040-05-05 16:00:00.000000`).
+- **`get_comment_count`** lists `all` before `total_comments`.
