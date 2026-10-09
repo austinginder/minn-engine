@@ -9294,3 +9294,51 @@ engine's `core update`, `core verify-checksums` (against the signed release:
 `Ops\EngineChecksums`, which needs the update service's
 `/v1/minn/releases/<version>`), a guard on `core download`, and
 `wp minn update`. `contracts/cli.md` has the wording.
+
+## rest-api.php's helpers (2026-10-09)
+
+Probe `rest-api-helpers`. It registers one route of its own
+(`zz-probe/v1/args`, in memory) and stores nothing.
+
+- **Combined schemas.** `rest_get_combining_operation_error` answers as
+  the reference does. One schema's refusal is named; with several, those
+  saying only that the value is not their type (`rest_invalid_type` for
+  the parameter itself) are set aside, and when one remains it is named:
+  "{param} is not a valid {title}. Reason: …", or "{param} does not match
+  the expected format. Reason: …", with its `position`. Otherwise "{param}
+  does not match any of the expected formats." with no data. Before, the
+  engine listed every refusal under a `details` key the reference does not
+  have. `rest_find_any_matching_schema` now refuses through it too.
+- **`rest_is_field_included`.** A parent named includes its children
+  (`title` includes `title.raw`).
+- **`rest_preload_api_request`.** An empty path asks for nothing.
+- **Shared fix: the default REST filters.** `rest_api_default_filters`
+  adds the reference's five: `rest_send_cors_headers`,
+  `rest_send_allow_header`, `rest_filter_response_fields`,
+  `rest_handle_options_request` and `rest_add_application_passwords_to_index`.
+  `_oembed_rest_pre_serve_request` and `rest_cookie_check_errors` (at 100)
+  are hooked at boot, as on the reference. The engine already does the
+  CORS headers and the Allow header itself, so those two callbacks are
+  marked done and never run twice; a plugin can still see them, and remove
+  them.
+- **`rest_cookie_check_errors`** is real: a result already reached stands;
+  a signed-in user who did not sign in by cookie is left alone; otherwise
+  no nonce makes the user 0 and lets the request on, a bad nonce is
+  `rest_cookie_invalid_nonce` (403), and a good one passes. The engine's own
+  sign-in does not set `$wp_rest_auth_cookie`, so for its requests the
+  check only meets signed-out callers.
+- **`rest_add_application_passwords_to_index`** adds the authorization
+  screen's address where application passwords are available.
+- **Shared fix: a cookie without a nonce (suite auth).** The engine refused
+  a REST request carrying a good sign-in cookie and no nonce with 403
+  `rest_cookie_invalid_nonce`. The reference treats it as signed out (401
+  `rest_not_logged_in` where a route needs a user, the public answer where
+  it does not); only a nonce that fails is refused. A nonce sent with no
+  usable cookie is refused (403), as the cookie check above does. The auth
+  suite had these two rungs written from the engine's own answers; it now
+  asks the reference for every rung of the matrix.
+
+Owed: the engine's own routes answer OPTIONS without a `schema` (the
+reference includes each route's JSON schema); seeding those schemas is a
+batch of its own. The probe's OPTIONS cases use a plugin route, which the
+facade describes.

@@ -7912,7 +7912,7 @@
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Auth/AuthFailure.php",
             "lines": 18,
-            "doc": "Why a request is not authenticated, as the reference's error code: a\nmissing or invalid cookie is rest_not_logged_in (the request is simply\nanonymous); a good cookie with a bad nonce is rest_cookie_invalid_nonce.",
+            "doc": "Why a request is not authenticated, as the reference's error code: a\nmissing or invalid cookie, or a good one sent without a nonce, is\nrest_not_logged_in (the request is simply anonymous); a good cookie with\na nonce that does not verify is rest_cookie_invalid_nonce.",
             "implements": [],
             "extends": null,
             "uses": [],
@@ -7934,8 +7934,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 14,
-                "end": 16
+                "line": 15,
+                "end": 17
             },
             "cases": [],
             "constants": [],
@@ -7960,8 +7960,8 @@
                     "doc": "No usable session.",
                     "shapes": [],
                     "params": [],
-                    "line": 19,
-                    "end": 22
+                    "line": 20,
+                    "end": 23
                 },
                 {
                     "routes": [],
@@ -7972,8 +7972,8 @@
                     "doc": "A session whose nonce did not verify.",
                     "shapes": [],
                     "params": [],
-                    "line": 25,
-                    "end": 28
+                    "line": 26,
+                    "end": 29
                 }
             ]
         },
@@ -8087,7 +8087,7 @@
             "namespace": "Minn\\Auth",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Auth/Authenticator.php",
-            "lines": 143,
+            "lines": 149,
             "doc": "Resolves the current user two ways. A page load carries the cookie alone;\na REST call must also carry a nonce bound to the same session.",
             "implements": [],
             "extends": null,
@@ -8216,7 +8216,7 @@
                     "static": false,
                     "visibility": "public",
                     "signature": "rest(array $cookies, ?string $nonce): Minn\\Auth\\Authenticated|Minn\\Auth\\AuthFailure",
-                    "doc": "The session for a REST call: the cookie, then the nonce.",
+                    "doc": "The session for a REST call: the cookie, then the nonce. A cookie sent\nwithout a nonce is no sign-in at all (the request goes on signed out,\nas the reference's cookie check makes it); one with a nonce that does\nnot verify is refused (suite auth, checked against the reference).",
                     "shapes": [
                         "@param array<string, string> $cookies"
                     ],
@@ -8236,8 +8236,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 51,
-                    "end": 61
+                    "line": 54,
+                    "end": 67
                 },
                 {
                     "routes": [],
@@ -8256,8 +8256,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 68,
-                    "end": 75
+                    "line": 74,
+                    "end": 81
                 },
                 {
                     "routes": [],
@@ -8276,8 +8276,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 78,
-                    "end": 99
+                    "line": 84,
+                    "end": 105
                 },
                 {
                     "routes": [],
@@ -8298,8 +8298,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 106,
-                    "end": 118
+                    "line": 112,
+                    "end": 124
                 },
                 {
                     "routes": [],
@@ -8318,8 +8318,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 121,
-                    "end": 128
+                    "line": 127,
+                    "end": 134
                 },
                 {
                     "routes": [],
@@ -8340,8 +8340,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 135,
-                    "end": 141
+                    "line": 141,
+                    "end": 147
                 },
                 {
                     "routes": [],
@@ -8367,8 +8367,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 147,
-                    "end": 158
+                    "line": 153,
+                    "end": 164
                 }
             ]
         },
@@ -102385,7 +102385,7 @@
             "constants": [
                 {
                     "name": "DISPATCH_DONE",
-                    "value": "array (   'rest_filter_response_fields' => 10, )",
+                    "value": "array (   'rest_filter_response_fields' => 10,   'rest_send_allow_header' => 10, )",
                     "doc": "rest_post_dispatch's defaults the engine does itself: every answer is cut to its _fields before it is served.",
                     "visibility": "private"
                 },
@@ -102397,7 +102397,7 @@
                 },
                 {
                     "name": "SERVE_DONE",
-                    "value": "array (   '_oembed_rest_pre_serve_request' => 10, )",
+                    "value": "array (   '_oembed_rest_pre_serve_request' => 10,   'rest_send_cors_headers' => 10, )",
                     "doc": "rest_pre_serve_request's defaults the engine does itself: oEmbed's XML (see oembedXml()).",
                     "visibility": "private"
                 }

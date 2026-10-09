@@ -44,7 +44,10 @@ final readonly class Authenticator
     }
 
     /**
-     * The session for a REST call: the cookie, then the nonce.
+     * The session for a REST call: the cookie, then the nonce. A cookie sent
+     * without a nonce is no sign-in at all (the request goes on signed out,
+     * as the reference's cookie check makes it); one with a nonce that does
+     * not verify is refused (suite auth, checked against the reference).
      *
      * @param array<string, string> $cookies
      */
@@ -54,7 +57,10 @@ final readonly class Authenticator
         if ($session instanceof AuthFailure) {
             return $session;
         }
-        if ($nonce === null || !Nonce::verify($nonce, $session->id(), $session->token)) {
+        if ($nonce === null) {
+            return AuthFailure::notLoggedIn();
+        }
+        if (!Nonce::verify($nonce, $session->id(), $session->token)) {
             return AuthFailure::invalidNonce();
         }
         return $session;

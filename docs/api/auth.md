@@ -8,7 +8,7 @@ passwords, sessions, cookies, nonces, roles and capabilities
 | [`AuthCookies`](#authcookies) | final readonly class | 53 | The three cookies a sign-in sets: the auth cookie on the admin and |
 | [`AuthFailure`](#authfailure) | final readonly class | 18 | Why a request is not authenticated, as the reference's error code: a |
 | [`Authenticated`](#authenticated) | final readonly class | 16 | A validated session: the user row and the raw session token behind it. |
-| [`Authenticator`](#authenticator) | final readonly class | 143 | Resolves the current user two ways. A page load carries the cookie alone; |
+| [`Authenticator`](#authenticator) | final readonly class | 149 | Resolves the current user two ways. A page load carries the cookie alone; |
 | [`Capabilities`](#capabilities) | final readonly class | 260 | The capability engine: a user's roles from {prefix}capabilities usermeta, |
 | [`Cookie`](#cookie) | final readonly class | 92 | The sign-in cookies: username\|expiration\|token\|hmac, with |
 | [`FastHash`](#fasthash) | final class | 23 | The reference's hash for high-entropy secrets ("$generic$", WordPress 6.8 |
@@ -132,8 +132,9 @@ A cookie value under any scheme's salt (auth, secure_auth, logged_in).
 `final readonly class Minn\Auth\AuthFailure` · `public/minn/src/Minn/Auth/AuthFailure.php`
 
 Why a request is not authenticated, as the reference's error code: a
-missing or invalid cookie is rest_not_logged_in (the request is simply
-anonymous); a good cookie with a bad nonce is rest_cookie_invalid_nonce.
+missing or invalid cookie, or a good one sent without a nonce, is
+rest_not_logged_in (the request is simply anonymous); a good cookie with
+a nonce that does not verify is rest_cookie_invalid_nonce.
 
 Used by: `Minn\Auth\Authenticator`, `Minn\Rest\Caller`
 
@@ -202,7 +203,10 @@ The session the cookie jar carries, or why there is none.
 
 ### `rest(array $cookies, ?string $nonce): Minn\Auth\Authenticated|Minn\Auth\AuthFailure`
 
-The session for a REST call: the cookie, then the nonce.
+The session for a REST call: the cookie, then the nonce. A cookie sent
+without a nonce is no sign-in at all (the request goes on signed out,
+as the reference's cookie check makes it); one with a nonce that does
+not verify is refused (suite auth, checked against the reference).
 
 - `@param array<string, string> $cookies`
 

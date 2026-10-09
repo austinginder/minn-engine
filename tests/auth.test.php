@@ -81,16 +81,19 @@ $cn = $mint['cookie_name'];
 // 1. The failure matrix, engine and reference agreeing on every rung.
 foreach ( array(
 	'anonymous'          => array( null, null, 401, 'rest_not_logged_in' ),
-	'cookie without nonce' => array( $mint['cookie'], null, 403, 'rest_cookie_invalid_nonce' ),
+	// A cookie with no nonce is no sign-in: the request goes on signed out (the reference, 2026-10-09).
+	'cookie without nonce' => array( $mint['cookie'], null, 401, 'rest_not_logged_in' ),
 	'cookie + bad nonce' => array( $mint['cookie'], '0123456789', 403, 'rest_cookie_invalid_nonce' ),
-	'garbage cookie'     => array( 'not|a|real|cookie', $mint['nonce'], 401, 'rest_not_logged_in' ),
+	// A nonce with no valid cookie is judged for the signed-out user, and fails: the reference answers 403 (2026-10-09).
+	'garbage cookie'     => array( 'not|a|real|cookie', $mint['nonce'], 403, 'rest_cookie_invalid_nonce' ),
 ) as $label => $case ) {
 	[ $ck, $nc, $want_status, $want_code ] = $case;
 	[ $st, $body ] = auth_get( $ENGINE, '/wp/v2/users/me', $ck, $nc, $cn );
+	[ $ref_st, $ref_body ] = auth_get( $REF, '/wp/v2/users/me', $ck, $nc, $cn );
 	check(
-		$st === $want_status && ( $body['code'] ?? '' ) === $want_code,
-		"me: $label rejected ($want_code)",
-		"got $st " . ( $body['code'] ?? '?' )
+		$st === $want_status && ( $body['code'] ?? '' ) === $want_code && $ref_st === $want_status && ( $ref_body['code'] ?? '' ) === $want_code,
+		"me: $label rejected ($want_code), as on the reference",
+		"engine $st " . ( $body['code'] ?? '?' ) . ", reference $ref_st " . ( $ref_body['code'] ?? '?' )
 	);
 }
 

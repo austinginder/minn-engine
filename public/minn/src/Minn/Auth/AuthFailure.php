@@ -6,8 +6,9 @@ namespace Minn\Auth;
 
 /**
  * Why a request is not authenticated, as the reference's error code: a
- * missing or invalid cookie is rest_not_logged_in (the request is simply
- * anonymous); a good cookie with a bad nonce is rest_cookie_invalid_nonce.
+ * missing or invalid cookie, or a good one sent without a nonce, is
+ * rest_not_logged_in (the request is simply anonymous); a good cookie with
+ * a nonce that does not verify is rest_cookie_invalid_nonce.
  */
 final readonly class AuthFailure
 {

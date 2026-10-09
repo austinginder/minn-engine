@@ -1,0 +1,712 @@
+[
+    [
+        "values compared",
+        [
+            true,
+            false,
+            true,
+            true,
+            false,
+            true,
+            false,
+            true,
+            false,
+            true,
+            false,
+            true,
+            false
+        ]
+    ],
+    [
+        "additional properties turned off",
+        [
+            {
+                "type": "object",
+                "properties": {
+                    "a": {
+                        "type": "object",
+                        "properties": {
+                            "b": {
+                                "type": "string"
+                            }
+                        },
+                        "additionalProperties": false
+                    },
+                    "c": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "additionalProperties": false
+                        }
+                    }
+                },
+                "additionalProperties": false
+            },
+            {
+                "type": "object",
+                "additionalProperties": true
+            },
+            {
+                "type": [
+                    "object",
+                    "null"
+                ],
+                "properties": [],
+                "additionalProperties": false
+            },
+            {
+                "type": "string"
+            },
+            {
+                "anyOf": [
+                    {
+                        "type": "object"
+                    },
+                    {
+                        "type": "string"
+                    }
+                ]
+            }
+        ]
+    ],
+    [
+        "pattern properties found",
+        [
+            {
+                "type": "integer"
+            },
+            null,
+            {
+                "type": "boolean"
+            },
+            null
+        ]
+    ],
+    [
+        "oneOf and anyOf matched",
+        [
+            {
+                "type": "integer",
+                "minimum": 5,
+                "title": "Big"
+            },
+            {
+                "type": "string",
+                "enum": [
+                    "a",
+                    "b"
+                ]
+            },
+            [
+                "WP_Error",
+                "rest_no_matching_schema",
+                "zz is not a valid Big. Reason: zz must be greater than or equal to 5",
+                {
+                    "position": 0
+                }
+            ],
+            [
+                "WP_Error",
+                "rest_no_matching_schema",
+                "zz does not match any of the expected formats.",
+                null
+            ],
+            [
+                "WP_Error",
+                "rest_one_of_multiple_matches",
+                "zz matches more than one of the expected formats.",
+                {
+                    "positions": [
+                        0,
+                        1
+                    ]
+                }
+            ],
+            {
+                "type": "integer"
+            },
+            {
+                "type": "integer"
+            },
+            {
+                "type": "string",
+                "format": "email"
+            },
+            [
+                "WP_Error",
+                "rest_no_matching_schema",
+                "zz does not match the expected format. Reason: Invalid email address.",
+                {
+                    "position": 1
+                }
+            ],
+            [
+                "WP_Error",
+                "rest_no_matching_schema",
+                "zz does not match the expected format. Reason: zz[x] is not of type boolean.",
+                {
+                    "position": 2
+                }
+            ],
+            [
+                "WP_Error",
+                "rest_no_matching_schema",
+                "zz does not match the expected format. Reason: zz is not of type integer.",
+                {
+                    "position": 0
+                }
+            ],
+            [
+                "WP_Error",
+                "rest_no_matching_schema",
+                "zz is not a valid Number. Reason: A",
+                {
+                    "position": 0
+                }
+            ],
+            [
+                "WP_Error",
+                "rest_no_matching_schema",
+                "zz does not match any of the expected formats.",
+                null
+            ],
+            [
+                "WP_Error",
+                "rest_no_matching_schema",
+                "zz does not match any of the expected formats.",
+                null
+            ]
+        ]
+    ],
+    [
+        "multiple types",
+        [
+            "integer",
+            "integer",
+            "boolean",
+            "object",
+            "",
+            "null",
+            "number",
+            "string"
+        ]
+    ],
+    [
+        "arrays, objects and colours sanitized",
+        [
+            [
+                [
+                    "a",
+                    "b",
+                    "c"
+                ],
+                [
+                    "x",
+                    "y"
+                ],
+                [
+                    "v"
+                ],
+                [],
+                [],
+                [
+                    "5"
+                ],
+                [],
+                [
+                    "a",
+                    "b"
+                ]
+            ],
+            [
+                [],
+                [],
+                {
+                    "a": 1
+                },
+                {
+                    "b": 2
+                },
+                [],
+                [],
+                [
+                    1,
+                    2
+                ],
+                []
+            ],
+            [
+                "#fff",
+                "#ffffff",
+                false,
+                "#FFF",
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                "#0a0B0c"
+            ]
+        ]
+    ],
+    [
+        "request arguments",
+        [
+            [
+                "count",
+                "5",
+                true,
+                5,
+                5
+            ],
+            [
+                "count",
+                "50",
+                [
+                    "WP_Error",
+                    "rest_out_of_bounds",
+                    "count must be between 1 (inclusive) and 10 (inclusive)",
+                    null
+                ],
+                50,
+                [
+                    "WP_Error",
+                    "rest_out_of_bounds",
+                    "count must be between 1 (inclusive) and 10 (inclusive)",
+                    null
+                ]
+            ],
+            [
+                "count",
+                "x",
+                [
+                    "WP_Error",
+                    "rest_invalid_type",
+                    "count is not of type integer.",
+                    {
+                        "param": "count"
+                    }
+                ],
+                0,
+                [
+                    "WP_Error",
+                    "rest_invalid_type",
+                    "count is not of type integer.",
+                    {
+                        "param": "count"
+                    }
+                ]
+            ],
+            [
+                "tags",
+                "a,b",
+                true,
+                [
+                    "a",
+                    "b"
+                ],
+                [
+                    "a",
+                    "b"
+                ]
+            ],
+            [
+                "tags",
+                [
+                    "a",
+                    "z"
+                ],
+                [
+                    "WP_Error",
+                    "rest_not_in_enum",
+                    "tags[1] is not one of a and b.",
+                    null
+                ],
+                [
+                    "a",
+                    "z"
+                ],
+                [
+                    "WP_Error",
+                    "rest_not_in_enum",
+                    "tags[1] is not one of a and b.",
+                    null
+                ]
+            ],
+            [
+                "color",
+                "#abc",
+                true,
+                "#abc",
+                "#abc"
+            ],
+            [
+                "color",
+                "blue",
+                [
+                    "WP_Error",
+                    "rest_invalid_hex_color",
+                    "Invalid hex color.",
+                    null
+                ],
+                "",
+                [
+                    "WP_Error",
+                    "rest_invalid_hex_color",
+                    "Invalid hex color.",
+                    null
+                ]
+            ],
+            [
+                "flag",
+                "false",
+                true,
+                false,
+                false
+            ],
+            [
+                "flag",
+                "maybe",
+                [
+                    "WP_Error",
+                    "rest_invalid_type",
+                    "flag is not of type boolean.",
+                    {
+                        "param": "flag"
+                    }
+                ],
+                true,
+                [
+                    "WP_Error",
+                    "rest_invalid_type",
+                    "flag is not of type boolean.",
+                    {
+                        "param": "flag"
+                    }
+                ]
+            ],
+            [
+                "mixed",
+                "7",
+                true,
+                7,
+                7
+            ],
+            [
+                "plain",
+                [
+                    "any"
+                ],
+                true,
+                [
+                    "any"
+                ],
+                [
+                    "any"
+                ]
+            ],
+            [
+                "missing",
+                "x",
+                true,
+                "x",
+                "x"
+            ]
+        ]
+    ],
+    [
+        "responses filtered by context",
+        [
+            {
+                "id": 1,
+                "meta": {
+                    "b": "B"
+                },
+                "list": [
+                    {
+                        "x": 1,
+                        "y": 2
+                    }
+                ],
+                "open": [],
+                "extra": "e"
+            },
+            {
+                "id": 1,
+                "extra": "e"
+            },
+            {
+                "id": 1,
+                "secret": "s",
+                "meta": {
+                    "a": "A",
+                    "b": "B"
+                },
+                "list": [
+                    {
+                        "x": 1,
+                        "y": 2
+                    }
+                ],
+                "extra": "e"
+            },
+            [
+                {
+                    "id": 1,
+                    "secret": "s",
+                    "meta": {
+                        "a": "A",
+                        "b": "B"
+                    },
+                    "list": [
+                        {
+                            "x": 1,
+                            "y": 2
+                        }
+                    ],
+                    "open": {
+                        "k": "v"
+                    },
+                    "extra": "e"
+                }
+            ]
+        ]
+    ],
+    [
+        "endpoint arguments from a schema",
+        [
+            {
+                "title": {
+                    "validate_callback": "rest_validate_request_arg",
+                    "sanitize_callback": "zz_cb",
+                    "default": "x",
+                    "required": true,
+                    "description": "T",
+                    "type": "string"
+                },
+                "meta": {
+                    "validate_callback": "rest_validate_request_arg",
+                    "sanitize_callback": "rest_sanitize_request_arg",
+                    "type": "object",
+                    "properties": []
+                }
+            },
+            {
+                "title": {
+                    "validate_callback": "rest_validate_request_arg",
+                    "sanitize_callback": "rest_sanitize_request_arg",
+                    "type": "string"
+                }
+            },
+            []
+        ]
+    ],
+    [
+        "fields included",
+        [
+            true,
+            true,
+            true,
+            true,
+            true,
+            false,
+            false,
+            false
+        ]
+    ],
+    [
+        "the prefix, requests and avatars",
+        [
+            "wp-json",
+            "zz-api",
+            [
+                "WP_REST_Request",
+                "GET",
+                "/wp/v2/posts",
+                []
+            ],
+            [
+                "WP_REST_Request",
+                "GET",
+                "/wp/v2/posts?per_page=2&_fields=id",
+                []
+            ],
+            [
+                "WP_REST_Request",
+                "GET",
+                "",
+                []
+            ],
+            [
+                "WP_REST_Request",
+                "GET",
+                "https://zz.example/wp-json/wp/v2/posts",
+                []
+            ],
+            [
+                "WP_REST_Request",
+                "GET",
+                "//{host}/wp-json/wp/v2/types?context=edit",
+                []
+            ],
+            true,
+            [
+                24,
+                48,
+                96
+            ],
+            [
+                32
+            ],
+            [
+                24,
+                48,
+                96
+            ],
+            {
+                "24": "https://secure.gravatar.com/avatar/{hash}?s=24&d=mm&r=g",
+                "48": "https://secure.gravatar.com/avatar/{hash}?s=48&d=mm&r=g",
+                "96": "https://secure.gravatar.com/avatar/{hash}?s=96&d=mm&r=g"
+            },
+            {
+                "24": "https://secure.gravatar.com/avatar/?s=24&d=mm&r=g",
+                "48": "https://secure.gravatar.com/avatar/?s=48&d=mm&r=g",
+                "96": "https://secure.gravatar.com/avatar/?s=96&d=mm&r=g"
+            }
+        ]
+    ],
+    [
+        "the route a queried object answers to",
+        [
+            [
+                "p",
+                "/wp/v2/posts/{id}"
+            ],
+            [
+                "page_id",
+                "/wp/v2/pages/{id}"
+            ],
+            [
+                "cat",
+                "/wp/v2/categories/{id}"
+            ],
+            [
+                "author",
+                "/wp/v2/users/{id}"
+            ],
+            [
+                "post_type",
+                ""
+            ],
+            [
+                "s",
+                ""
+            ],
+            [
+                "year",
+                ""
+            ]
+        ]
+    ],
+    [
+        "preloading",
+        {
+            "/wp/v2/types/post": {
+                "body keys": [
+                    "description",
+                    "hierarchical",
+                    "has_archive",
+                    "name",
+                    "slug",
+                    "icon",
+                    "taxonomies",
+                    "rest_base",
+                    "rest_namespace",
+                    "template",
+                    "template_lock",
+                    "_links"
+                ],
+                "headers": [
+                    "Allow"
+                ]
+            },
+            "/wp/v2/posts?per_page=1&_fields=id": {
+                "body keys": [
+                    0
+                ],
+                "headers": [
+                    "X-WP-Total",
+                    "X-WP-TotalPages",
+                    "Link",
+                    "Allow"
+                ]
+            },
+            "OPTIONS": {
+                "/zz-probe/v1/args": [
+                    "namespace",
+                    "methods",
+                    "endpoints",
+                    "_links"
+                ]
+            }
+        }
+    ],
+    [
+        "the cookie check, CORS and OPTIONS",
+        [
+            true,
+            true,
+            [
+                "WP_Error",
+                "zz",
+                "Z",
+                null
+            ],
+            "",
+            [
+                "passed through",
+                null
+            ],
+            [
+                200,
+                [
+                    "namespace",
+                    "methods",
+                    "endpoints",
+                    "_links"
+                ],
+                "/zz-probe/v1/args"
+            ],
+            "kept",
+            {
+                "data": [],
+                "headers": [],
+                "status": 200
+            }
+        ]
+    ],
+    [
+        "the index and init helpers",
+        [
+            {
+                "application-passwords": {
+                    "endpoints": {
+                        "authorization": "//{host}/wp-admin/authorize-application.php"
+                    }
+                }
+            },
+            {
+                "authentication": []
+            },
+            [
+                false,
+                10,
+                10,
+                10,
+                100
+            ],
+            true
+        ]
+    ]
+]

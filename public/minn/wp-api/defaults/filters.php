@@ -417,6 +417,8 @@ unset($minnCookieHook);
 add_action('application_password_failed_authentication', 'rest_application_password_collect_status');
 add_action('application_password_did_authenticate', 'rest_application_password_collect_status', 10, 2);
 add_filter('rest_authentication_errors', 'rest_application_password_check_errors', 90);
+add_filter('rest_authentication_errors', 'rest_cookie_check_errors', 100);
+add_filter('rest_pre_serve_request', '_oembed_rest_pre_serve_request', 10, 4);
 add_action('xmlrpc_rsd_apis', 'rest_output_rsd');
 add_action('rest_api_init', 'create_initial_rest_routes', 99);
 // While a post thumbnail is fetched its image takes wp-post-image and the the_post_thumbnail context (probe media-tags).

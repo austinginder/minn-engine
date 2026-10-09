@@ -38,9 +38,11 @@ function rest_api_register_rewrites()
  */
 function rest_api_default_filters()
 {
+    add_filter('rest_pre_serve_request', 'rest_send_cors_headers');
+    add_filter('rest_post_dispatch', 'rest_send_allow_header', 10, 3);
     add_filter('rest_post_dispatch', 'rest_filter_response_fields', 10, 3);
-    add_filter('rest_pre_serve_request', '_oembed_rest_pre_serve_request', 10, 4);
     add_filter('rest_pre_dispatch', 'rest_handle_options_request', 10, 3);
+    add_filter('rest_index', 'rest_add_application_passwords_to_index');
 }
 
 function register_rest_route($route_namespace, $route, $args = [], $override = false)
@@ -162,9 +164,30 @@ function rest_send_cors_headers($value)
     return $value;
 }
 
+/**
+ * The cookie sign-in judged for a REST request (probe rest-api-helpers): a
+ * result already reached stands; a signed-in user who did not sign in by
+ * cookie is left alone; otherwise no nonce means no cookie sign-in (the
+ * user becomes 0 and the request goes on), a bad one is refused, a good
+ * one lets it through.
+ */
 function rest_cookie_check_errors($result)
 {
-    return $result;
+    if (!empty($result)) {
+        return $result;
+    }
+    if ($GLOBALS['wp_rest_auth_cookie'] !== true && is_user_logged_in()) {
+        return $result;
+    }
+    $nonce = $_REQUEST['_wpnonce'] ?? $_SERVER['HTTP_X_WP_NONCE'] ?? null;
+    if ($nonce === null) {
+        wp_set_current_user(0);
+        return true;
+    }
+    if (!wp_verify_nonce($nonce, 'wp_rest')) {
+        return new WP_Error('rest_cookie_invalid_nonce', __('Cookie check failed'), ['status' => 403]);
+    }
+    return true;
 }
 
 function rest_get_avatar_urls($id_or_email)
@@ -432,19 +455,31 @@ function rest_filter_response_by_context($response_data, $schema, $context)
     return _minn_schema()->filterByContext($response_data, (array) $schema, (string) $context);
 }
 
+/** The first anyOf schema the value satisfies, else one refusal made of what each said (probe rest-api-helpers). */
 function rest_find_any_matching_schema($value, $args, $param)
 {
-    $schema = _minn_schema()->anyMatching($value, (array) $args, (string) $param);
-    return $schema ?? new WP_Error('rest_no_matching_schema', sprintf('%s does not match any of the expected formats.', $param));
+    $errors = [];
+    foreach ((array) ($args['anyOf'] ?? []) as $index => $schema) {
+        if (!isset($schema['type']) && isset($args['type'])) {
+            $schema['type'] = $args['type'];
+        }
+        $result = rest_validate_value_from_schema($value, $schema, $param);
+        if (!is_wp_error($result)) {
+            return $schema;
+        }
+        $errors[] = ['error_object' => $result, 'schema' => $schema, 'index' => $index];
+    }
+    return rest_get_combining_operation_error($value, $param, $errors);
 }
 
+/** Whether a field is asked for: named, or a parent or a child of it named (probe rest-api-helpers). */
 function rest_is_field_included($field, $fields)
 {
     if (in_array($field, $fields, true)) {
         return true;
     }
     foreach ($fields as $accepted_field) {
-        if (str_starts_with($accepted_field, "$field.")) {
+        if (str_starts_with($accepted_field, "$field.") || str_starts_with((string) $field, "$accepted_field.")) {
             return true;
         }
     }
@@ -476,6 +511,10 @@ function rest_filter_response_fields($response, $server, $request)
 function rest_preload_api_request($memo, $path)
 {
     $memo = is_array($memo) ? $memo : [];
+    // An empty path asks for nothing (probe rest-api-helpers).
+    if ($path === '' || $path === null) {
+        return $memo;
+    }
     $method = 'GET';
     if (is_array($path) && count($path) === 2) {
         $method = in_array(end($path), ['GET', 'OPTIONS'], true) ? (string) end($path) : 'GET';
@@ -535,8 +574,13 @@ function rest_output_link_wp_head()
     echo '<link rel="https://api.w.org/" href="' . esc_url(get_rest_url()) . '" />';
 }
 
+/** The index's application-passwords sign-in, where they are available: the authorization screen's address (probe rest-api-helpers). */
 function rest_add_application_passwords_to_index($response)
 {
+    if (!$response instanceof WP_REST_Response || !wp_is_application_passwords_available()) {
+        return $response;
+    }
+    $response->data['authentication']['application-passwords'] = ['endpoints' => ['authorization' => admin_url('authorize-application.php')]];
     return $response;
 }
 
@@ -575,18 +619,35 @@ function rest_find_one_matching_schema($value, $args, $param, $stop_after_first_
     return new WP_Error('rest_one_of_multiple_matches', $message, ['positions' => array_keys($found['matches'])]);
 }
 
-/** One refusal for a value that matched none of the combined schemas. */
+/**
+ * One refusal for a value that matched none of the combined schemas (probe
+ * rest-api-helpers): with one schema, its refusal named; otherwise the
+ * schemas whose refusal is only that the value is not their type are set
+ * aside, and when one remains its refusal is named, else none is.
+ */
 function rest_get_combining_operation_error($value, $param, $errors)
 {
     if (count($errors) === 1) {
-        return $errors[0]['error_object'];
+        return _minn_combining_refusal((string) $param, $errors[0]);
     }
-    $message = sprintf('%s does not match any of the expected formats.', $param);
-    $details = [];
-    foreach ($errors as $error) {
-        $details[] = ['index' => $error['index'], 'message' => $error['error_object']->get_error_message()];
+    $kept = array_values(array_filter($errors, static function (array $error) use ($param): bool {
+        $data = $error['error_object']->get_error_data();
+        return !($error['error_object']->get_error_code() === 'rest_invalid_type' && is_array($data) && ($data['param'] ?? null) === $param);
+    }));
+    if (count($kept) === 1) {
+        return _minn_combining_refusal((string) $param, $kept[0]);
     }
-    return new WP_Error('rest_no_matching_schema', $message, ['details' => $details]);
+    return new WP_Error('rest_no_matching_schema', sprintf(__('%s does not match any of the expected formats.'), $param));
+}
+
+/** @internal One schema's refusal as the combined one: by its title when it has one, with its position. */
+function _minn_combining_refusal(string $param, array $error): WP_Error
+{
+    $reason = $error['error_object']->get_error_message();
+    $message = isset($error['schema']['title'])
+        ? sprintf(__('%1$s is not a valid %2$s. Reason: %3$s'), $param, $error['schema']['title'], $reason)
+        : sprintf(__('%1$s does not match the expected format. Reason: %2$s'), $param, $reason);
+    return new WP_Error('rest_no_matching_schema', $message, ['position' => $error['index']]);
 }
 
 /** What an _embed value asks for: every link (true), or the named relations. */

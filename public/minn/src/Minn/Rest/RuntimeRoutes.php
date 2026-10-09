@@ -21,13 +21,13 @@ use Minn\Runtime\Runtime;
 final class RuntimeRoutes
 {
     /** rest_post_dispatch's defaults the engine does itself: every answer is cut to its _fields before it is served. */
-    private const DISPATCH_DONE = ['rest_filter_response_fields' => 10];
+    private const DISPATCH_DONE = ['rest_filter_response_fields' => 10, 'rest_send_allow_header' => 10];
 
     /** rest_post_dispatch's defaults that touch one route only: elsewhere they hand the answer back as it came, so they are left out there. */
     private const ROUTE_SCOPED = ['_wp_connectors_rest_settings_dispatch' => [10, '/wp/v2/settings']];
 
     /** rest_pre_serve_request's defaults the engine does itself: oEmbed's XML (see oembedXml()). */
-    private const SERVE_DONE = ['_oembed_rest_pre_serve_request' => 10];
+    private const SERVE_DONE = ['_oembed_rest_pre_serve_request' => 10, 'rest_send_cors_headers' => 10];
 
     /**
      * What plugin code decides before any route runs, engine routes

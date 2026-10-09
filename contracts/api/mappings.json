@@ -3,12 +3,12 @@
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line), placeholder (generated stub, behaviour still owed), deadend (generated stub for wp-admin, the editors, the Customizer or XML-RPC, inert by design); \"deadend\" on any entry names its dead-end area",
     "summary": {
         "minn": 774,
-        "composes": 1841,
-        "leaf": 876,
-        "noop": 2651,
+        "composes": 1845,
+        "leaf": 875,
+        "noop": 2649,
         "placeholder": 242,
         "deadend": 1662,
-        "functions": 7968,
+        "functions": 7969,
         "minnMethods": 939,
         "leafLinesOver15": 12
     },
@@ -30090,6 +30090,15 @@
                 "add_action"
             ]
         },
+        "_minn_combining_refusal": {
+            "file": "rest-api.php",
+            "lines": 5,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "__"
+            ]
+        },
         "_minn_comment_cookies_field": {
             "file": "comment.php",
             "lines": 2,
@@ -52093,14 +52102,17 @@
         },
         "rest_add_application_passwords_to_index": {
             "file": "rest-api.php",
-            "lines": 1,
-            "kind": "noop",
+            "lines": 5,
+            "kind": "composes",
             "minn": [],
-            "composes": []
+            "composes": [
+                "admin_url",
+                "wp_is_application_passwords_available"
+            ]
         },
         "rest_api_default_filters": {
             "file": "rest-api.php",
-            "lines": 3,
+            "lines": 5,
             "kind": "composes",
             "minn": [],
             "composes": [
@@ -52179,10 +52191,15 @@
         },
         "rest_cookie_check_errors": {
             "file": "rest-api.php",
-            "lines": 1,
-            "kind": "noop",
+            "lines": 15,
+            "kind": "composes",
             "minn": [],
-            "composes": []
+            "composes": [
+                "__",
+                "is_user_logged_in",
+                "wp_set_current_user",
+                "wp_verify_nonce"
+            ]
         },
         "rest_cookie_collect_status": {
             "file": "rest-api.php",
@@ -52250,11 +52267,13 @@
         },
         "rest_find_any_matching_schema": {
             "file": "rest-api.php",
-            "lines": 2,
+            "lines": 12,
             "kind": "composes",
             "minn": [],
             "composes": [
-                "_minn_schema"
+                "is_wp_error",
+                "rest_get_combining_operation_error",
+                "rest_validate_value_from_schema"
             ]
         },
         "rest_find_matching_pattern_property_schema": {
@@ -52333,10 +52352,13 @@
         },
         "rest_get_combining_operation_error": {
             "file": "rest-api.php",
-            "lines": 9,
-            "kind": "leaf",
+            "lines": 11,
+            "kind": "composes",
             "minn": [],
-            "composes": []
+            "composes": [
+                "__",
+                "_minn_combining_refusal"
+            ]
         },
         "rest_get_date_with_gmt": {
             "file": "rest-api.php",
@@ -52584,7 +52606,7 @@
         },
         "rest_preload_api_request": {
             "file": "rest-api.php",
-            "lines": 29,
+            "lines": 33,
             "kind": "composes",
             "minn": [],
             "composes": [
