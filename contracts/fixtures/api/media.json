@@ -702,8 +702,16 @@
     [
         "wp_reschedule_event",
         [
+            true,
+            true,
+            [
+                0,
+                3600
+            ],
+            true,
+            3600,
             false,
-            false
+            "error:invalid_schedule"
         ]
     ],
     [
