@@ -1,0 +1,137 @@
+[
+    [
+        "made once, then found",
+        [
+            null,
+            [
+                "<iframe src=\"https://zzoc.example/a\" title=\"zz 'q' &amp; more\"></iframe>",
+                [
+                    "https://zzoc.example/a"
+                ],
+                [
+                    [
+                        "https://zzoc.example/a",
+                        null
+                    ]
+                ]
+            ],
+            [
+                true,
+                true,
+                [
+                    "oembed_cache",
+                    "publish",
+                    true,
+                    "",
+                    "<iframe src=\"https://zzoc.example/a\" title=\"zz 'q' &amp; more\"></iframe>",
+                    0,
+                    0,
+                    "closed",
+                    "closed"
+                ]
+            ],
+            [
+                "<iframe src=\"https://zzoc.example/a\" title=\"zz 'q' &amp; more\"></iframe>",
+                [],
+                [
+                    [
+                        "https://zzoc.example/a",
+                        null
+                    ]
+                ]
+            ],
+            null
+        ]
+    ],
+    [
+        "reused, or refreshed when stale",
+        [
+            [
+                "<iframe src=\"https://zzoc.example/a\" title=\"zz 'q' &amp; more\"></iframe>",
+                [],
+                [
+                    [
+                        "https://zzoc.example/a",
+                        null
+                    ]
+                ]
+            ],
+            [
+                "<iframe src=\"https://zzoc.example/a\" title=\"zz 'q' &amp; more\"></iframe>",
+                [
+                    "https://zzoc.example/a"
+                ],
+                [
+                    [
+                        "https://zzoc.example/a",
+                        null
+                    ]
+                ],
+                true
+            ],
+            [
+                "<iframe src=\"https://zzoc.example/a\" title=\"zz 'q' &amp; more\"></iframe>",
+                [
+                    "https://zzoc.example/a"
+                ],
+                [
+                    [
+                        "https://zzoc.example/a",
+                        null
+                    ]
+                ]
+            ],
+            [
+                "<iframe src=\"https://zzoc.example/a\" title=\"zz 'q' &amp; more\"></iframe>",
+                [],
+                [
+                    [
+                        "https://zzoc.example/a",
+                        null
+                    ]
+                ]
+            ]
+        ]
+    ],
+    [
+        "addresses that fail",
+        [
+            [
+                "<a href=\"https://zzoc.example/fail\">https://zzoc.example/fail</a>",
+                [
+                    "https://zzoc.example/fail"
+                ],
+                []
+            ],
+            "{{unknown}}",
+            [
+                "<a href=\"https://zzoc.example/fail\">https://zzoc.example/fail</a>",
+                [],
+                []
+            ],
+            [
+                "https://zzoc.example/fail",
+                [],
+                []
+            ]
+        ]
+    ],
+    [
+        "one post per address and attributes",
+        [
+            [
+                "<iframe src=\"https://zzoc.example/a\" title=\"zz 'q' &amp; more\"></iframe>",
+                [
+                    "https://zzoc.example/a"
+                ],
+                [
+                    [
+                        "https://zzoc.example/a",
+                        null
+                    ]
+                ]
+            ],
+            3
+        ]
+    ]
+]

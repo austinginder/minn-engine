@@ -3,12 +3,12 @@
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line), placeholder (generated stub, behaviour still owed), deadend (generated stub for wp-admin, the editors, the Customizer or XML-RPC, inert by design); \"deadend\" on any entry names its dead-end area",
     "summary": {
         "minn": 773,
-        "composes": 1742,
+        "composes": 1746,
         "leaf": 850,
-        "noop": 2635,
+        "noop": 2634,
         "placeholder": 242,
         "deadend": 1661,
-        "functions": 7825,
+        "functions": 7828,
         "minnMethods": 934,
         "leafLinesOver15": 12
     },
@@ -11097,10 +11097,15 @@
         },
         "WP_Embed::find_oembed_post_id": {
             "file": "classes/WP_Embed.php",
-            "lines": 1,
-            "kind": "noop",
+            "lines": 10,
+            "kind": "composes",
             "minn": [],
-            "composes": []
+            "composes": [
+                "get_post_type",
+                "get_posts",
+                "wp_cache_get",
+                "wp_cache_set"
+            ]
         },
         "WP_Embed::get_embed_handler_html": {
             "file": "classes/WP_Embed.php",
@@ -11111,6 +11116,34 @@
                 "apply_filters",
                 "wp_embed_defaults",
                 "wp_parse_args"
+            ]
+        },
+        "WP_Embed::inside_post": {
+            "file": "classes/WP_Embed.php",
+            "lines": 18,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "apply_filters",
+                "get_post_meta",
+                "update_post_meta",
+                "wp_oembed_get"
+            ]
+        },
+        "WP_Embed::keep_outside_post": {
+            "file": "classes/WP_Embed.php",
+            "lines": 12,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "add_filter",
+                "has_filter",
+                "is_wp_error",
+                "remove_filter",
+                "wp_cache_set",
+                "wp_insert_post",
+                "wp_slash",
+                "wp_update_post"
             ]
         },
         "WP_Embed::maybe_make_link": {
@@ -11130,6 +11163,17 @@
             "kind": "noop",
             "minn": [],
             "composes": []
+        },
+        "WP_Embed::outside_post": {
+            "file": "classes/WP_Embed.php",
+            "lines": 16,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "apply_filters",
+                "get_post",
+                "wp_oembed_get"
+            ]
         },
         "WP_Embed::register_handler": {
             "file": "classes/WP_Embed.php",
@@ -11155,16 +11199,12 @@
         },
         "WP_Embed::shortcode": {
             "file": "classes/WP_Embed.php",
-            "lines": 39,
+            "lines": 23,
             "kind": "composes",
             "minn": [],
             "composes": [
-                "apply_filters",
                 "get_post",
-                "get_post_meta",
-                "update_post_meta",
                 "wp_embed_defaults",
-                "wp_oembed_get",
                 "wp_parse_args"
             ]
         },

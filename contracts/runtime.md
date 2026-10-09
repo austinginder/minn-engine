@@ -8154,7 +8154,31 @@ nothing now.
   Any other address keeps the result given.
 - **The route.** `wp_oembed_register_route` (`rest_api_init`) is a no-op:
   the engine serves `oembed/1.0` itself.
-- **Still owed.** Embeds made outside a post are not cached in
-  `oembed_cache` posts, and `WP_Embed::find_oembed_post_id` answers null.
-  The reference stores and reuses them, so a repeated YouTube address asks
-  once.
+- **Still owed then, done next.** Embeds made outside a post were not
+  cached in `oembed_cache` posts; see the next section.
+
+## oEmbed answers kept outside a post (2026-10-09)
+
+Probe `oembed-cache`, in `WP_Embed`.
+
+- **Where they live.**
+  - An embed made with no post is kept in an `oembed_cache` post named
+    by `md5(url + serialized attributes)`, the post meta key without its
+    `_oembed_` prefix.
+  - The post is published, with an empty title, author 0, parent 0, and
+    comments and pings closed. The markup is stored as it came; kses is
+    held back while it is written.
+- **find_oembed_post_id.** It answers the post's id as an int, remembered
+  in the `oembed_cache_post` cache group, or null when there is none.
+- **Reuse.**
+  - While `usecache` is on, a stored post always answers, however old.
+    With it off, only one younger than `oembed_ttl` (url, attributes,
+    null post) answers.
+  - A stale post is fetched again and brought up to date (its modified
+    time moves).
+  - Answers go through `embed_oembed_html` with a null post id; the
+    engine used to pass 0.
+- **Failures.** An address that fails is kept as `{{unknown}}` and answers
+  as a link, or the bare address with `linkifunknown` off. It is not asked
+  again.
+- **Keys.** Different attributes are a different key, so a different post.

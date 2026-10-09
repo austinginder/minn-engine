@@ -88,11 +88,18 @@ class WP_Embed
             return $html;
         }
         // The post's stored oEmbed cache (_oembed_{md5(url + attributes)}) answers before any fetch: always
-        // while usecache is on, else while younger than oembed_ttl (probe embed-classes).
+        // while usecache is on, else while younger than oembed_ttl (probe embed-classes). Outside a post the
+        // cache is an oembed_cache post named by the same md5 (probe oembed-cache).
         $post_ID = (int) ($this->post_ID ?: (get_post()->ID ?? 0));
+        return $post_ID > 0 ? $this->inside_post($post_ID, $url, $attr) : $this->outside_post($url, $attr);
+    }
+
+    /** An embed made inside a post: its post meta cache answers, else the answer is fetched and kept there. */
+    private function inside_post(int $post_ID, string $url, array $attr)
+    {
         $cachekey = '_oembed_' . md5($url . serialize($attr));
-        $cache = $post_ID > 0 ? get_post_meta($post_ID, $cachekey, true) : '';
-        if ($post_ID > 0 && ($this->usecache || time() - (int) get_post_meta($post_ID, '_oembed_time_' . substr($cachekey, 8), true) < (int) apply_filters('oembed_ttl', DAY_IN_SECONDS, $url, $attr, $post_ID))) {
+        $cache = get_post_meta($post_ID, $cachekey, true);
+        if (($this->usecache || time() - (int) get_post_meta($post_ID, '_oembed_time_' . substr($cachekey, 8), true) < (int) apply_filters('oembed_ttl', DAY_IN_SECONDS, $url, $attr, $post_ID))) {
             if ($cache === '{{unknown}}') {
                 return $this->maybe_make_link($url);
             }
@@ -101,10 +108,10 @@ class WP_Embed
             }
         }
         $html = wp_oembed_get($url, $attr + ['discover' => (bool) apply_filters('embed_oembed_discover', true)]);
-        if ($post_ID > 0 && $html) {
+        if ($html) {
             update_post_meta($post_ID, $cachekey, $html);
             update_post_meta($post_ID, '_oembed_time_' . substr($cachekey, 8), time());
-        } elseif ($post_ID > 0 && $cache === '') {
+        } elseif ($cache === '') {
             update_post_meta($post_ID, $cachekey, '{{unknown}}');
         }
         return $html ? apply_filters('embed_oembed_html', $html, $url, $attr, $post_ID) : $this->maybe_make_link($url);
@@ -158,8 +165,60 @@ class WP_Embed
         return apply_filters('embed_maybe_make_link', $output, (string) $url);
     }
 
+    /** The oembed_cache post holding an answer by its key, remembered in the oembed_cache_post cache group; null when there is none. */
     public function find_oembed_post_id($cache_key)
     {
-        return null;
+        $cached = wp_cache_get($cache_key, 'oembed_cache_post');
+        if ($cached && get_post_type($cached) === 'oembed_cache') {
+            return (int) $cached;
+        }
+        $found = get_posts(['post_type' => 'oembed_cache', 'post_status' => 'publish', 'name' => (string) $cache_key, 'posts_per_page' => 1, 'fields' => 'ids', 'no_found_rows' => true, 'suppress_filters' => true]);
+        if ($found === []) {
+            return null;
+        }
+        wp_cache_set($cache_key, (int) $found[0], 'oembed_cache_post');
+        return (int) $found[0];
+    }
+
+    /**
+     * An embed made outside any post: its oembed_cache post answers (always
+     * while usecache is on, else while younger than oembed_ttl); otherwise
+     * the answer is fetched and kept there, {{unknown}} for one that fails.
+     */
+    private function outside_post(string $url, array $attr)
+    {
+        $key = md5($url . serialize($attr));
+        $cached_id = $this->find_oembed_post_id($key);
+        $cached = $cached_id ? get_post($cached_id) : null;
+        if ($cached && ($this->usecache || time() - (int) strtotime($cached->post_modified_gmt . ' UTC') < (int) apply_filters('oembed_ttl', DAY_IN_SECONDS, $url, $attr, null))) {
+            if ($cached->post_content === '{{unknown}}') {
+                return $this->maybe_make_link($url);
+            }
+            if ($cached->post_content !== '') {
+                return apply_filters('embed_oembed_html', $cached->post_content, $url, $attr, null);
+            }
+        }
+        $html = wp_oembed_get($url, $attr + ['discover' => (bool) apply_filters('embed_oembed_discover', true)]);
+        if ($html || !$cached) {
+            $this->keep_outside_post($key, $html ? (string) $html : '{{unknown}}', $cached ? (int) $cached->ID : 0);
+        }
+        return $html ? apply_filters('embed_oembed_html', $html, $url, $attr, null) : $this->maybe_make_link($url);
+    }
+
+    /** An answer kept in its oembed_cache post (made, or brought up to date), its markup stored as it came. */
+    private function keep_outside_post(string $key, string $content, int $cached_id): void
+    {
+        $kses = has_filter('content_save_pre', 'wp_filter_post_kses');
+        if ($kses !== false) {
+            remove_filter('content_save_pre', 'wp_filter_post_kses', $kses);
+        }
+        $post = ['post_name' => $key, 'post_status' => 'publish', 'post_type' => 'oembed_cache', 'post_content' => $content];
+        $id = $cached_id > 0 ? wp_update_post(wp_slash(['ID' => $cached_id] + $post)) : wp_insert_post(wp_slash($post));
+        if ($kses !== false) {
+            add_filter('content_save_pre', 'wp_filter_post_kses', $kses);
+        }
+        if ($id && !is_wp_error($id)) {
+            wp_cache_set($key, (int) $id, 'oembed_cache_post');
+        }
     }
 }
