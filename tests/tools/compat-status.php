@@ -20,7 +20,7 @@ declare(strict_types=1);
  *
  *   php tests/tools/compat-status.php           write the file and print the summary
  *   php tests/tools/compat-status.php --check   print the summary as JSON; exit 1 when the file is stale
- *   php tests/tools/compat-status.php --list=missing|placeholder [--kind=functions|classes|methods]
+ *   php tests/tools/compat-status.php --list=missing|placeholder|unproven [--kind=functions|classes|methods]
  *   php tests/tools/compat-status.php --site    write the marketing site's content/compat.json: the
  *       summary at the last commit, dead ends by area, and the areas still owed (refuses an
  *       uncommitted facade, so the figures always describe a commit)
@@ -106,7 +106,9 @@ foreach ($classes as $name => $spec) {
 if (isset($options['list'])) {
     foreach (isset($options['kind']) ? [$options['kind']] : ['functions', 'classes', 'methods'] as $group) {
         foreach ($status[$group] as $name => $kind) {
-            if ($kind === $options['list']) {
+            // unproven: real, but no probe names it (for a method, its class).
+            $unproven = $kind === 'real' && !isset($probed[strtolower($group === 'methods' ? explode('::', $name)[0] : $name)]);
+            if ($kind === $options['list'] || ($options['list'] === 'unproven' && $unproven)) {
                 echo "{$group}\t{$name}\t" . ($functions[$name]['file'] ?? $classes[explode('::', $name)[0]]['file'] ?? '') . "\n";
             }
         }

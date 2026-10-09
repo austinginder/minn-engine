@@ -2,13 +2,13 @@
     "generated": "2026-10-09",
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line), placeholder (generated stub, behaviour still owed), deadend (generated stub for wp-admin, the editors, the Customizer or XML-RPC, inert by design); \"deadend\" on any entry names its dead-end area",
     "summary": {
-        "minn": 750,
-        "composes": 1600,
-        "leaf": 767,
-        "noop": 2459,
+        "minn": 752,
+        "composes": 1601,
+        "leaf": 766,
+        "noop": 2458,
         "placeholder": 279,
         "deadend": 1659,
-        "functions": 7436,
+        "functions": 7437,
         "minnMethods": 901,
         "leafLinesOver15": 13
     },
@@ -33712,6 +33712,15 @@
             ],
             "composes": []
         },
+        "counted": {
+            "file": "classes/WP_Object_Cache.php",
+            "lines": 8,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Runtime\\Runtime::cache"
+            ],
+            "composes": []
+        },
         "create": {
             "file": "requests/Exceptions.php",
             "lines": 1,
@@ -42519,8 +42528,8 @@
         },
         "incr": {
             "file": "classes/WP_Object_Cache.php",
-            "lines": 7,
-            "kind": "leaf",
+            "lines": 1,
+            "kind": "noop",
             "minn": [],
             "composes": []
         },
@@ -43631,10 +43640,13 @@
         },
         "is_valid_key": {
             "file": "classes/WP_Object_Cache.php",
-            "lines": 1,
-            "kind": "noop",
+            "lines": 7,
+            "kind": "composes",
             "minn": [],
-            "composes": []
+            "composes": [
+                "__",
+                "_doing_it_wrong"
+            ]
         },
         "is_wp_error": {
             "file": "functions.php",
@@ -50041,10 +50053,14 @@
         },
         "stats": {
             "file": "classes/WP_Object_Cache.php",
-            "lines": 1,
-            "kind": "noop",
-            "minn": [],
-            "composes": []
+            "lines": 5,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Runtime\\Runtime::cache"
+            ],
+            "composes": [
+                "esc_html"
+            ]
         },
         "status_header": {
             "file": "functions.php",

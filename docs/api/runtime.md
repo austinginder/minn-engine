@@ -49,7 +49,7 @@ the WordPress runtime plugins load against
 | [`NavMenu`](#navmenu) | final class | 88 | wp_nav_menu()'s menu: the one the arguments name, its items marked for |
 | [`NavMenuItems`](#navmenuitems) | final class | 154 | Classic menu items as the reference serves them to walkers and plugins |
 | [`OEmbed`](#oembed) | final class | 92 | oEmbed as data: provider matching against the wildcard table, response parsing, and the markup an oEmbed payload becomes. |
-| [`ObjectCache`](#objectcache) | final class | 52 | The per-request object cache behind wp_cache_*: groups of keys, nothing persistent. |
+| [`ObjectCache`](#objectcache) | final class | 63 | The per-request object cache behind wp_cache_*: groups of keys, nothing persistent. |
 | [`ObjectTerms`](#objectterms) | final class | 30 | wp_get_object_terms's handling of taxonomies registered with their own |
 | [`OptionSanitizer`](#optionsanitizer) | final class | 114 | A core option's value cleaned as the reference's sanitize_option cleans |
 | [`Options`](#options) | final class | 258 | Options as plugin code sees them: PHP values, decoded from the stored |
@@ -2116,6 +2116,13 @@ Removes a key.
 ### `flush(): bool`
 
 Empties the cache.
+
+### `sizes(): array`
+
+Each group's size, its entries serialized, in bytes, in the order the
+groups were first written: what WP_Object_Cache::stats prints.
+
+- `@return array<string, int>`
 
 ### `flushGroup(string $group): bool`
 

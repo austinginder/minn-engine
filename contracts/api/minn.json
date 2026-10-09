@@ -117703,7 +117703,7 @@
             "namespace": "Minn\\Runtime",
             "kind": "final class",
             "file": "public/minn/src/Minn/Runtime/ObjectCache.php",
-            "lines": 52,
+            "lines": 63,
             "doc": "The per-request object cache behind wp_cache_*: groups of keys, nothing persistent.",
             "implements": [],
             "extends": null,
@@ -117869,6 +117869,20 @@
                 },
                 {
                     "routes": [],
+                    "name": "sizes",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "sizes(): array",
+                    "doc": "Each group's size, its entries serialized, in bytes, in the order the\ngroups were first written: what WP_Object_Cache::stats prints.",
+                    "shapes": [
+                        "@return array<string, int>"
+                    ],
+                    "params": [],
+                    "line": 59,
+                    "end": 62
+                },
+                {
+                    "routes": [],
                     "name": "flushGroup",
                     "static": false,
                     "visibility": "public",
@@ -117884,8 +117898,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 54,
-                    "end": 58
+                    "line": 65,
+                    "end": 69
                 }
             ]
         },

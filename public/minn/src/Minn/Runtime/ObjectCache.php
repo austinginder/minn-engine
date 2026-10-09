@@ -50,6 +50,17 @@ final class ObjectCache
         return true;
     }
 
+    /**
+     * Each group's size, its entries serialized, in bytes, in the order the
+     * groups were first written: what WP_Object_Cache::stats prints.
+     *
+     * @return array<string, int>
+     */
+    public function sizes(): array
+    {
+        return array_map(static fn (array $entries): int => strlen(serialize($entries)), $this->groups);
+    }
+
     /** Empties one group. */
     public function flushGroup(string $group): bool
     {

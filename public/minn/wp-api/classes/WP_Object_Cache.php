@@ -45,9 +45,16 @@ if (!class_exists('WP_Object_Cache', false)) {
             unset($this->$name);
         }
 
+        /** An integer or a non-empty string; anything else is reported through _doing_it_wrong, naming the method that was handed it. */
         protected function is_valid_key($key)
         {
-            return is_int($key) || (is_string($key) && trim($key) !== '');
+            if (is_int($key) || (is_string($key) && trim($key) !== '')) {
+                return true;
+            }
+            $method = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 2)[1]['function'] ?? '';
+            $message = is_string($key) ? __('Cache key must not be an empty string.') : sprintf(__('Cache key must be an integer or a non-empty string, %s given.'), gettype($key));
+            _doing_it_wrong(__CLASS__ . '::' . $method, $message, '6.1.0');
+            return false;
         }
 
         protected function _exists($key, $group)
@@ -72,7 +79,7 @@ if (!class_exists('WP_Object_Cache', false)) {
 
         public function replace($key, $data, $group = 'default', $expire = 0)
         {
-            return $this->_exists($key, $group) && $this->set($key, $data, $group, $expire);
+            return $this->is_valid_key($key) && $this->_exists($key, $group) && $this->set($key, $data, $group, $expire);
         }
 
         public function set($key, $data, $group = 'default', $expire = 0)
@@ -122,18 +129,25 @@ if (!class_exists('WP_Object_Cache', false)) {
 
         public function incr($key, $offset = 1, $group = 'default')
         {
-            $value = $this->get($key, $group);
-            if (!is_numeric($value)) {
-                return false;
-            }
-            $value = max(0, (int) $value + (int) $offset);
-            $this->set($key, $value, $group);
-            return $value;
+            return $this->is_valid_key($key) ? $this->counted($key, (int) $offset, $group) : false;
         }
 
         public function decr($key, $offset = 1, $group = 'default')
         {
-            return $this->incr($key, -(int) $offset, $group);
+            return $this->is_valid_key($key) ? $this->counted($key, -(int) $offset, $group) : false;
+        }
+
+        /** A stored value moved by an offset (anything not numeric counting as 0, never below 0), not counted as a hit; false for a key not stored. */
+        private function counted($key, int $offset, $group)
+        {
+            $value = Runtime::cache()->get((string) $key, $this->group($group), $found);
+            if (!$found) {
+                return false;
+            }
+            $value = (is_numeric($value) ? $value : 0) + $offset;
+            $value = $value < 0 ? 0 : $value;
+            Runtime::cache()->set((string) $key, $value, $this->group($group));
+            return $value;
         }
 
         public function flush()
@@ -161,9 +175,14 @@ if (!class_exists('WP_Object_Cache', false)) {
             _deprecated_function(__FUNCTION__, '3.5.0', 'WP_Object_Cache::switch_to_blog()');
         }
 
+        /** The hits and misses, then each group's size in kilobytes. */
         public function stats()
         {
-            echo '<p><strong>Cache Hits:</strong> ' . (int) $this->cache_hits . '<br /><strong>Cache Misses:</strong> ' . (int) $this->cache_misses . '</p>';
+            echo '<p><strong>Cache Hits:</strong> ' . (int) $this->cache_hits . '<br /><strong>Cache Misses:</strong> ' . (int) $this->cache_misses . '<br /></p><ul>';
+            foreach (Runtime::cache()->sizes() as $group => $bytes) {
+                echo '<li><strong>Group:</strong> ' . esc_html((string) $group) . ' - ( ' . number_format($bytes / KB_IN_BYTES, 2) . 'k )</li>';
+            }
+            echo '</ul>';
         }
 
         private function group($group): string

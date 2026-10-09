@@ -6941,3 +6941,24 @@ request leaves: redirects answer through `pre_http_request`.
   "Too many redirects." when none are left.
 - `_get_first_available_transport` gives `WP_Http_Curl` (then
   `WP_Http_Streams`) through `http_api_transports`.
+
+## The object cache class (2026-10-08)
+
+Probe `object-cache` (`tests/tools/object-cache-probe.php`) proves
+`WP_Object_Cache` through `$wp_object_cache`. `compat-status --list=unproven`
+now lists the real symbols no probe names.
+
+- **Bad keys.** A key that is not an integer or a non-empty string is
+  refused and reported through `_doing_it_wrong`, naming the method
+  (`WP_Object_Cache::get`, `::replace`, `::incr`...). An empty string gets
+  "Cache key must not be an empty string."; anything else gets "Cache key
+  must be an integer or a non-empty string, {type} given." (6.1.0).
+  `replace`, `incr` and `decr` check the key themselves.
+- **`incr` / `decr`** read the store directly, so they aren't counted as a
+  hit. A value that isn't numeric counts as 0. A numeric string keeps its
+  arithmetic (`'7.5'` + 1 is 8.5), and the result never drops below 0. A
+  key not stored gives false.
+- **`stats()`** prints the hits and misses (each line ending `<br />`), then
+  a `<ul>` with each group in the order first written:
+  `Group: name - ( N.NNk )`, where N.NN is the serialized group's length
+  over 1024 (`ObjectCache::sizes`).

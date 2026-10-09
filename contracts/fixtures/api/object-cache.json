@@ -1,0 +1,228 @@
+[
+    [
+        "the class",
+        [
+            true,
+            true,
+            true,
+            true
+        ]
+    ],
+    [
+        "add, set, replace",
+        [
+            true,
+            false,
+            "one",
+            true,
+            false,
+            false,
+            true,
+            true,
+            {
+                "x": 2
+            },
+            false,
+            false,
+            true,
+            "int key",
+            true,
+            "default group",
+            "default group",
+            "default group"
+        ]
+    ],
+    [
+        "found",
+        [
+            [
+                "replaced",
+                true
+            ],
+            [
+                false,
+                false
+            ],
+            [
+                "replaced",
+                true
+            ],
+            [
+                false,
+                true
+            ]
+        ]
+    ],
+    [
+        "objects copied",
+        [
+            1,
+            2
+        ]
+    ],
+    [
+        "incr and decr",
+        [
+            true,
+            6,
+            16,
+            13,
+            0,
+            false,
+            [
+                2,
+                2
+            ],
+            [
+                8.5,
+                6.5
+            ]
+        ]
+    ],
+    [
+        "several at once",
+        [
+            {
+                "m1": true,
+                "m2": true,
+                "a": false
+            },
+            {
+                "m2": true,
+                "m3": true
+            },
+            {
+                "m1": 1,
+                "m2": "two",
+                "m3": 3,
+                "m4": false,
+                "a": "replaced"
+            },
+            {
+                "m1": true,
+                "m4": false
+            },
+            {
+                "m1": false,
+                "m2": "two"
+            },
+            []
+        ]
+    ],
+    [
+        "delete",
+        [
+            true,
+            false,
+            false,
+            false
+        ]
+    ],
+    [
+        "bad keys reported",
+        [
+            [
+                [
+                    "WP_Object_Cache::set",
+                    "Cache key must not be an empty string.",
+                    "6.1.0"
+                ],
+                [
+                    "WP_Object_Cache::add",
+                    "Cache key must be an integer or a non-empty string, boolean given.",
+                    "6.1.0"
+                ],
+                [
+                    "WP_Object_Cache::delete",
+                    "Cache key must not be an empty string.",
+                    "6.1.0"
+                ]
+            ],
+            [
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                [
+                    [
+                        "WP_Object_Cache::get",
+                        "Cache key must not be an empty string.",
+                        "6.1.0"
+                    ],
+                    [
+                        "WP_Object_Cache::get",
+                        "Cache key must be an integer or a non-empty string, NULL given.",
+                        "6.1.0"
+                    ],
+                    [
+                        "WP_Object_Cache::get",
+                        "Cache key must be an integer or a non-empty string, double given.",
+                        "6.1.0"
+                    ],
+                    [
+                        "WP_Object_Cache::get",
+                        "Cache key must be an integer or a non-empty string, array given.",
+                        "6.1.0"
+                    ],
+                    [
+                        "WP_Object_Cache::incr",
+                        "Cache key must not be an empty string.",
+                        "6.1.0"
+                    ],
+                    [
+                        "WP_Object_Cache::replace",
+                        "Cache key must be an integer or a non-empty string, boolean given.",
+                        "6.1.0"
+                    ]
+                ]
+            ]
+        ]
+    ],
+    [
+        "groups",
+        [
+            true,
+            false,
+            3,
+            true,
+            "v"
+        ]
+    ],
+    [
+        "hits and misses",
+        [
+            1,
+            2
+        ]
+    ],
+    [
+        "magic properties",
+        [
+            true,
+            false,
+            [
+                true,
+                "set",
+                false
+            ]
+        ]
+    ],
+    [
+        "stats printed",
+        [
+            true,
+            [
+                [
+                    "zz_oc",
+                    "0.19k"
+                ],
+                [
+                    "zz_oc_global",
+                    "0.02k"
+                ]
+            ]
+        ]
+    ]
+]
