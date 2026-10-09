@@ -26,7 +26,8 @@ function wp_check_invalid_utf8($text, $strip = false)
     if ($text === '' || preg_match('/^./us', $text) === 1) {
         return $text;
     }
-    return $strip ? (string) iconv('UTF-8', 'UTF-8//IGNORE', $text) : '';
+    // Stripping replaces each bad sequence with U+FFFD, as the reference does now (probe formatting-remaining).
+    return $strip ? wp_scrub_utf8($text) : '';
 }
 
 function _wp_specialchars($text, $quote_style = ENT_NOQUOTES, $charset = false, $double_encode = false)
@@ -71,7 +72,9 @@ function esc_js($text)
 function esc_url($url, $protocols = null, $_context = 'display')
 {
     $original = $url;
-    $url = Url::clean((string) $url);
+    // An address with no scheme takes http, or https when only https is allowed (probe formatting-remaining).
+    $scheme = is_array($protocols) && !in_array('http', $protocols, true) && in_array('https', $protocols, true) ? 'https' : 'http';
+    $url = Url::clean((string) $url, $scheme);
     if ($url === '') {
         return $url;
     }
@@ -756,6 +759,7 @@ function utf8_uri_encode($utf8_string, $length = 0, $encode_ascii_characters = f
 
 function seems_utf8($str)
 {
+    _deprecated_function(__FUNCTION__, '6.9.0', 'wp_is_valid_utf8()');
     return preg_match('/^./us', (string) $str) === 1 || $str === '';
 }
 
@@ -784,18 +788,25 @@ function _oembed_filter_feed_content($content)
     return Minn\Content\TextFilters::feedEmbeds((string) $content);
 }
 
-/** Links that open a new window (a target) gain rel="noopener" (wp_targeted_link_rel may change it), outside script and style. */
+/** Deprecated since 6.7: links that open a new window (a target) gain rel="noopener" (wp_targeted_link_rel may change it), outside script and style. */
 function wp_targeted_link_rel($text)
 {
+    _deprecated_function(__FUNCTION__, '6.7.0');
     if (stripos((string) $text, 'target') === false || stripos((string) $text, '<a ') === false || is_serialized($text)) {
         return $text;
     }
     return preg_replace_callback('/<(script|style)\b.*?<\/\1>|<a\s([^>]*target\s*=[^>]*)>/si', static fn (array $m) => ($m[2] ?? '') !== '' ? wp_targeted_link_rel_callback([$m[0], $m[2]]) : $m[0], (string) $text);
 }
 
-/** One link's attributes with the rel values merged in, or the link as it was when it has no target. */
+/**
+ * One link with the rel values merged in when it has a target (probe
+ * formatting-remaining): the tag is written again from its attributes, in
+ * their order, double-quoted and single-spaced, rel where it was or last;
+ * a link with no target comes back as it was.
+ */
 function wp_targeted_link_rel_callback($matches)
 {
+    _deprecated_function(__FUNCTION__, '6.7.0');
     $link = $matches[1];
     $escaped = !preg_match('/(^|[^\\\\])[\'"]/', $link);
     $atts = wp_kses_hair($escaped ? preg_replace('/\\\\([\'"])/', '$1', $link) : $link, wp_allowed_protocols());
@@ -803,11 +814,13 @@ function wp_targeted_link_rel_callback($matches)
     if (!$rel || !isset($atts['target'])) {
         return "<a {$link}>";
     }
-    $rel = isset($atts['rel']) ? implode(' ', array_unique(preg_split('/\s/', "{$atts['rel']['value']} {$rel}", -1, PREG_SPLIT_NO_EMPTY))) : $rel;
+    $atts['rel'] = ['name' => 'rel', 'value' => implode(' ', array_unique(preg_split('/\s/', ($atts['rel']['value'] ?? '') . " {$rel}", -1, PREG_SPLIT_NO_EMPTY))), 'vless' => 'n'];
     $quote = $escaped ? '\\"' : '"';
-    $attribute = 'rel=' . $quote . esc_attr($rel) . $quote;
-    $link = isset($atts['rel']) ? preg_replace('|rel\s*=\s*?\\\\{0,1}["\'].*?\\\\{0,1}["\']|i', $attribute, $link) : rtrim($link, ' /') . ' ' . $attribute . (str_ends_with(rtrim($link), '/') ? ' /' : '');
-    return "<a {$link}>";
+    $written = '';
+    foreach ($atts as $name => $attribute) {
+        $written .= $attribute['vless'] === 'y' ? " {$name}" : " {$name}={$quote}{$attribute['value']}{$quote}";
+    }
+    return "<a{$written}>";
 }
 
 /** Every listed tag given a target, replacing any it had (probe formatting-callbacks). */
@@ -820,7 +833,7 @@ function links_add_target($content, $target = '_blank', $tags = ['a'])
 
 function get_url_in_content($content)
 {
-    if (preg_match('/<a\s[^>]*?href=([\'"])(.+?)\1/is', (string) $content, $m)) {
+    if (preg_match('/<a\s[^>]*?href\s*=\s*([\'"])(.+?)\1/is', (string) $content, $m)) {
         return esc_url_raw($m[2]);
     }
     return false;
@@ -831,10 +844,10 @@ function wp_html_split($input)
     return Minn\Html::split((string) $input);
 }
 
-/** The pattern wp_html_split cuts markup by. */
+/** The pattern the reference cuts markup by, as it returns it (probe formatting-remaining); the engine's own split matches it. */
 function get_html_split_regex()
 {
-    return Minn\Html::SPLIT;
+    return "/(<(?(?=!--|!\\[CDATA\\[)(?(?=!-)!(?:-(?!->)[^\\-]*+)*+(?:-->)?|!\\[CDATA\\[[^\\]]*+(?:](?!]>)[^\\]]*+)*+(?:]]>)?)|[^>]*>?))/";
 }
 
 function wp_replace_in_html_tags($haystack, $replace_pairs)

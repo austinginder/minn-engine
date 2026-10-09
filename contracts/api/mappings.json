@@ -3,9 +3,9 @@
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line), placeholder (generated stub, behaviour still owed), deadend (generated stub for wp-admin, the editors, the Customizer or XML-RPC, inert by design); \"deadend\" on any entry names its dead-end area",
     "summary": {
         "minn": 774,
-        "composes": 1845,
-        "leaf": 875,
-        "noop": 2649,
+        "composes": 1847,
+        "leaf": 874,
+        "noop": 2648,
         "placeholder": 242,
         "deadend": 1662,
         "functions": 7969,
@@ -38674,7 +38674,7 @@
         },
         "esc_url": {
             "file": "formatting.php",
-            "lines": 18,
+            "lines": 20,
             "kind": "minn",
             "minn": [
                 "Minn\\Support\\Url::clean",
@@ -53286,10 +53286,13 @@
         },
         "seems_utf8": {
             "file": "formatting.php",
-            "lines": 1,
-            "kind": "noop",
+            "lines": 2,
+            "kind": "composes",
             "minn": [],
-            "composes": []
+            "composes": [
+                "_deprecated_function",
+                "wp_is_valid_utf8"
+            ]
         },
         "selected": {
             "file": "formatting.php",
@@ -58710,10 +58713,12 @@
         },
         "wp_check_invalid_utf8": {
             "file": "formatting.php",
-            "lines": 5,
-            "kind": "leaf",
+            "lines": 6,
+            "kind": "composes",
             "minn": [],
-            "composes": []
+            "composes": [
+                "wp_scrub_utf8"
+            ]
         },
         "wp_check_jsonp_callback": {
             "file": "misc.php",
@@ -68776,22 +68781,23 @@
         },
         "wp_targeted_link_rel": {
             "file": "formatting.php",
-            "lines": 4,
+            "lines": 5,
             "kind": "composes",
             "minn": [],
             "composes": [
+                "_deprecated_function",
                 "is_serialized",
                 "wp_targeted_link_rel_callback"
             ]
         },
         "wp_targeted_link_rel_callback": {
             "file": "formatting.php",
-            "lines": 12,
+            "lines": 15,
             "kind": "composes",
             "minn": [],
             "composes": [
+                "_deprecated_function",
                 "apply_filters",
-                "esc_attr",
                 "wp_allowed_protocols",
                 "wp_kses_hair"
             ]

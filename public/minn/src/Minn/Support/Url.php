@@ -26,16 +26,21 @@ final class Url
     }
 
     /** Spaces encoded, stray characters dropped, ";//" healed, a bare host given http; '' when nothing survives. */
-    public static function clean(string $url): string
+    public static function clean(string $url, string $scheme = 'http'): string
     {
         $url = str_replace(' ', '%20', ltrim($url));
         $url = (string) preg_replace('|[^a-z0-9-~+_.?#=!&;,/:%@$\|*\'()\[\]\\x80-\\xff]|i', '', $url);
+        // Encoded line breaks go too, however many it takes (probe formatting-remaining).
+        do {
+            $before = $url;
+            $url = str_ireplace(['%0d', '%0a'], '', $url);
+        } while ($url !== $before);
         if ($url === '') {
             return '';
         }
         $url = str_replace(';//', '://', $url);
         if (!str_contains($url, ':') && !in_array($url[0], ['/', '#', '?'], true) && !preg_match('/^[a-z0-9-]+?\.php/i', $url)) {
-            $url = 'http://' . $url;
+            $url = $scheme . '://' . $url;
         }
         return $url;
     }

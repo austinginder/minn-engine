@@ -804,7 +804,7 @@ function get_tag_regex($tag)
 
 function tag_escape($tag_name)
 {
-    return apply_filters('tag_escape', strtolower(preg_replace('/[^a-zA-Z0-9_:]/', '', (string) $tag_name)), $tag_name);
+    return apply_filters('tag_escape', strtolower(preg_replace('/[^a-zA-Z0-9-_:]/', '', (string) $tag_name)), $tag_name);
 }
 
 function wp_fuzzy_number_match($expected, $actual, $precision = 1)

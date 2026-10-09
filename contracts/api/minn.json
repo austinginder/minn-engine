@@ -141517,7 +141517,7 @@
             "namespace": "Minn\\Support",
             "kind": "final class",
             "file": "public/minn/src/Minn/Support/Url.php",
-            "lines": 215,
+            "lines": 220,
             "doc": "URL shaping the escaping and query helpers share: the character cleanup\nesc_url applies, bracket encoding outside the authority, and query\nargument merging. Behaviour pinned by contracts/fixtures/api/functions.json.",
             "implements": [],
             "extends": null,
@@ -141581,7 +141581,7 @@
                     "name": "clean",
                     "static": true,
                     "visibility": "public",
-                    "signature": "clean(string $url): string",
+                    "signature": "clean(string $url, string $scheme = 'http'): string",
                     "doc": "Spaces encoded, stray characters dropped, \";//\" healed, a bare host given http; '' when nothing survives.",
                     "shapes": [],
                     "params": [
@@ -141591,10 +141591,17 @@
                             "shape": "",
                             "default": null,
                             "doc": ""
+                        },
+                        {
+                            "name": "scheme",
+                            "type": "string",
+                            "shape": "",
+                            "default": "'http'",
+                            "doc": ""
                         }
                     ],
                     "line": 29,
-                    "end": 41
+                    "end": 46
                 },
                 {
                     "routes": [],
@@ -141622,8 +141629,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 44,
-                    "end": 58
+                    "line": 49,
+                    "end": 63
                 },
                 {
                     "routes": [],
@@ -141667,8 +141674,8 @@
                             "doc": "builds the query string"
                         }
                     ],
-                    "line": 69,
-                    "end": 98
+                    "line": 74,
+                    "end": 103
                 },
                 {
                     "routes": [],
@@ -141718,8 +141725,8 @@
                             "doc": "the port list for a URL that names a port"
                         }
                     ],
-                    "line": 110,
-                    "end": 140
+                    "line": 115,
+                    "end": 145
                 },
                 {
                     "routes": [],
@@ -141745,8 +141752,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 149,
-                    "end": 161
+                    "line": 154,
+                    "end": 166
                 },
                 {
                     "routes": [],
@@ -141772,8 +141779,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 164,
-                    "end": 188
+                    "line": 169,
+                    "end": 193
                 },
                 {
                     "routes": [],
@@ -141799,8 +141806,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 191,
-                    "end": 202
+                    "line": 196,
+                    "end": 207
                 },
                 {
                     "routes": [],
@@ -141828,8 +141835,8 @@
                             "doc": "the hosts allowed for the target's host"
                         }
                     ],
-                    "line": 211,
-                    "end": 227
+                    "line": 216,
+                    "end": 232
                 },
                 {
                     "routes": [],
@@ -141850,8 +141857,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 143,
-                    "end": 146
+                    "line": 148,
+                    "end": 151
                 }
             ]
         },

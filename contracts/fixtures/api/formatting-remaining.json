@@ -1,0 +1,426 @@
+[
+    [
+        "text fields",
+        [
+            [
+                "Hello World Next",
+                "Hello  World\n\nNext"
+            ],
+            [
+                "spaced tabs",
+                "spaced \t tabs"
+            ],
+            [
+                "a < b > c",
+                "a < b > c"
+            ],
+            [
+                "encoded %zz",
+                "encoded %zz"
+            ],
+            [
+                "line carriage",
+                "line\rcarriage"
+            ],
+            [
+                "x&amp;y",
+                "x&amp;y"
+            ],
+            [
+                "tail",
+                "tail"
+            ],
+            [
+                "octets dash",
+                "octets dash"
+            ],
+            [
+                "emoji 😀 here",
+                "emoji 😀 here"
+            ],
+            [
+                "null",
+                "null"
+            ],
+            [
+                "&lt;",
+                "&lt;"
+            ],
+            [
+                "a b",
+                "a  b"
+            ],
+            [
+                "%",
+                "%"
+            ],
+            [
+                "100% sure",
+                "100% sure"
+            ]
+        ]
+    ],
+    [
+        "user names",
+        [
+            [
+                "Zz User",
+                "Zz User"
+            ],
+            [
+                "zz@example.com",
+                "zz@example.com"
+            ],
+            [
+                "unicode",
+                "unicode"
+            ],
+            [
+                "tag",
+                "tag"
+            ],
+            [
+                "ab",
+                "ab"
+            ],
+            [
+                "pernt",
+                "pernt"
+            ],
+            [
+                "dots.and-dash_es",
+                "dots.and-dash_es"
+            ],
+            [
+                "trim",
+                "trim"
+            ],
+            [
+                "multi space",
+                "multi space"
+            ],
+            [
+                "jose",
+                "jose"
+            ],
+            [
+                "tab name",
+                "tabname"
+            ],
+            [
+                "日本",
+                ""
+            ]
+        ]
+    ],
+    [
+        "locale names and MIME types",
+        [
+            [
+                "en_US",
+                "de_DE_formal",
+                "zz-ZZ",
+                "pt_BReuro",
+                "badlocale",
+                "x",
+                "",
+                "en_USUTF-8"
+            ],
+            [
+                "image/jpeg",
+                "IMAGE/PNG",
+                "text/plaincharsetutf-8",
+                "application/vnd.ms-excel",
+                "badmime",
+                "a/b+c.d",
+                "",
+                "xy"
+            ],
+            [
+                "div",
+                "div",
+                "my-element",
+                "svg:rect",
+                "ab",
+                "p",
+                "h1",
+                "x_y"
+            ]
+        ]
+    ],
+    [
+        "URLs sanitized",
+        [
+            [
+                "https://zz.example/a%20b?c=d&e=f",
+                "https://zz.example/a%20b?c=d&e=f"
+            ],
+            [
+                "",
+                ""
+            ],
+            [
+                "http://zz.example/path",
+                "https://zz.example/path"
+            ],
+            [
+                "//zz.example/x",
+                "//zz.example/x"
+            ],
+            [
+                "mailto:a@b.example",
+                ""
+            ],
+            [
+                "ftp://zz.example",
+                ""
+            ],
+            [
+                "https://zz.example/script",
+                "https://zz.example/script"
+            ],
+            [
+                "http://zz.example/?a%5B%5D=1",
+                ""
+            ],
+            [
+                "",
+                ""
+            ],
+            [
+                "/relative",
+                "/relative"
+            ],
+            [
+                "https://zz.example/",
+                "https://zz.example/"
+            ],
+            [
+                "https://zz.example/bad",
+                "https://zz.example/bad"
+            ]
+        ]
+    ],
+    [
+        "characters and entities",
+        [
+            [
+                "<p>Text &#8211; dash &#150; old &#x2014;</p>",
+                "&#8364; &#128; &#159;",
+                "<title>T</title>&#038;<category>c</category>",
+                "&amp; &lt;",
+                "plain"
+            ],
+            [
+                "&#160; &#169; &#8212; &#38; &#60; &#62; &#34; &#8230; &zz;",
+                "plain",
+                "&#913;&#8501;"
+            ],
+            [
+                "a \n b\n c\n d",
+                "tab",
+                "x y"
+            ],
+            [
+                "&lt;b&gt;bold&lt;/b&gt; &amp; co",
+                "line\n"
+            ],
+            "<b>x</b>",
+            [
+                "�",
+                "�"
+            ]
+        ]
+    ],
+    [
+        "deep mappers and query strings",
+        [
+            {
+                "a": "x",
+                "b": [
+                    "y",
+                    {
+                        "c": "z"
+                    }
+                ]
+            },
+            [
+                "a+b",
+                [
+                    "c%26d",
+                    "%C3%A9"
+                ]
+            ],
+            [
+                "a%20b",
+                [
+                    "c%26d",
+                    "%C3%A9"
+                ]
+            ],
+            [
+                "a b c",
+                [
+                    "é"
+                ]
+            ],
+            "It's",
+            [
+                "a\\b"
+            ],
+            5,
+            [
+                {
+                    "a": "1",
+                    "b": [
+                        "2",
+                        "3"
+                    ],
+                    "c": {
+                        "d": "e"
+                    }
+                },
+                {
+                    "x": "a b",
+                    "y": " ",
+                    "z": ""
+                },
+                [],
+                {
+                    "dup": "2"
+                }
+            ],
+            "It\\'s \\\"quoted\\\" \\\\ back",
+            [
+                "a\\'b",
+                [
+                    "c\\\"d"
+                ]
+            ]
+        ]
+    ],
+    [
+        "UTF-8 and emoji",
+        [
+            [
+                true,
+                true,
+                false,
+                true,
+                true,
+                false,
+                true
+            ],
+            [
+                [
+                    "valid é",
+                    "valid é"
+                ],
+                [
+                    "",
+                    "bad �( seq"
+                ],
+                [
+                    "",
+                    "��"
+                ],
+                [
+                    "",
+                    ""
+                ],
+                [
+                    "x",
+                    "x"
+                ]
+            ],
+            [
+                "smile &#x1f600;",
+                "flag &#x1f1fa;&#x1f1f8; and family &#x1f468;&#x200d;&#x1f469;&#x200d;&#x1f467;",
+                "no emoji",
+                "©®&#x2122;",
+                "mix é &#x1f389;"
+            ],
+            [
+                4008,
+                1438,
+                "a7ef0b9dfb1d98c1386b6ad73c9f82dd",
+                "9faf230e73895f28238dcb48f1e3fcb8",
+                [
+                    "&#x1f468;&#x1f3fb;&#x200d;&#x2764;&#xfe0f;&#x200d;&#x1f48b;&#x200d;&#x1f468;&#x1f3fb;",
+                    "&#x1f468;&#x1f3fb;&#x200d;&#x2764;&#xfe0f;&#x200d;&#x1f48b;&#x200d;&#x1f468;&#x1f3fc;",
+                    "&#x1f468;&#x1f3fb;&#x200d;&#x2764;&#xfe0f;&#x200d;&#x1f48b;&#x200d;&#x1f468;&#x1f3fd;"
+                ],
+                [
+                    "&#x1f004;",
+                    "&#x1f0cf;",
+                    "&#x1f170;"
+                ]
+            ]
+        ]
+    ],
+    [
+        "HTML splitting and replacing",
+        [
+            "/(<(?(?=!--|!\\[CDATA\\[)(?(?=!-)!(?:-(?!->)[^\\-]*+)*+(?:-->)?|!\\[CDATA\\[[^\\]]*+(?:](?!]>)[^\\]]*+)*+(?:]]>)?)|[^>]*>?))/",
+            [
+                "a ",
+                "<b>",
+                "c",
+                "</b>",
+                " ",
+                "<!-- d -->",
+                " ",
+                "<![CDATA[ e ]]>",
+                " ",
+                "<script>",
+                "f",
+                "</script>",
+                " ",
+                "<",
+                ""
+            ],
+            "<a title=\"Q y\" data-z=\"Q\">x y</a> x",
+            "<p class=\"1 2\">one two</p><!-- 1 -->",
+            "no tags here",
+            [
+                "https://zz.example/a",
+                false,
+                "https://zz.example/single",
+                "https://zz.example/spaced",
+                false
+            ]
+        ]
+    ],
+    [
+        "targeted link rel",
+        [
+            "<a href=\"x\" target=\"_blank\" rel=\"noopener\">",
+            "<a href=\"x\" target=\"_blank\" rel=\"nofollow noopener\">",
+            "<a href=\"x\" target=\"_self\" rel=\"noopener\">",
+            "<a  href=\"x\">",
+            "<a target=\"_blank\" rel=\"noopener noreferrer\" href=\"x\">",
+            "<a href=\"x\" target=\"_blank\" rel=\"noopener\">",
+            "<a href=\"x\" target=\"_blank\" rel=\"noopener\">"
+        ]
+    ],
+    [
+        "antispambot decodes to the address",
+        [
+            [
+                true,
+                true,
+                true
+            ],
+            [
+                true,
+                true,
+                true
+            ],
+            [
+                true,
+                true,
+                true
+            ]
+        ]
+    ]
+]

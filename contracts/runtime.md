@@ -9342,3 +9342,40 @@ Owed: the engine's own routes answer OPTIONS without a `schema` (the
 reference includes each route's JSON schema); seeding those schemas is a
 batch of its own. The probe's OPTIONS cases use a plugin route, which the
 facade describes.
+
+## The rest of formatting.php (2026-10-09)
+
+Probe `formatting-remaining` proves the 27 formatting.php functions that
+were real but unprobed: the text, user, locale and MIME type sanitizers,
+`tag_escape`, `sanitize_url`, `convert_chars`, `ent2ncr`,
+`normalize_whitespace`, `format_to_edit`, the deep mappers, `wp_parse_str`,
+`esc_sql`, the UTF-8 checks, `wp_encode_emoji` and the emoji lists, the HTML
+splitter, `get_url_in_content`, the targeted link rel callback and
+`antispambot`, which is random and is judged by what it decodes to.
+
+Fixed to match:
+
+- **`tag_escape`** keeps hyphens, so a custom element name like
+  `my-element` survives.
+- **`sanitize_url` / `esc_url`**: encoded line breaks (`%0d`, `%0a`, any
+  case) are removed until none remain. An address with no scheme gets
+  `https://` when the allowed protocols include https but not http, and
+  `http://` otherwise.
+- **`wp_check_invalid_utf8($text, true)`** replaces each bad sequence with
+  U+FFFD, as `wp_scrub_utf8` does, instead of dropping it.
+- **`get_html_split_regex`** returns the reference's pattern exactly. The
+  engine's own split already cut markup the same way.
+- **`get_url_in_content`** allows spaces around the `=` after `href`.
+- **`wp_targeted_link_rel_callback`** rebuilds a targeted link from its
+  attributes: same order, single spaces, double quotes (single-quoted
+  values are converted), and rel merged with the filter's value (deduped),
+  kept where it was or added last. `rel=""` becomes `rel="noopener"`, and
+  `target="_self"` counts as a target. A link with no target comes back as
+  it was.
+- **Deprecations**: `seems_utf8` (6.9.0, use `wp_is_valid_utf8()`),
+  `wp_targeted_link_rel` and `wp_targeted_link_rel_callback` (6.7.0) call
+  `_deprecated_function`, as on the reference. `wp_targeted_link_rel` raises
+  its notice before any early return.
+
+Kept on purpose: `_wp_iso_convert` with a non-hex escape raises PHP's
+"Invalid characters" deprecation on both stacks.
