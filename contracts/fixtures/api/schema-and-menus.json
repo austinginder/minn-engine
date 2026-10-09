@@ -1,0 +1,642 @@
+[
+    [
+        "theme.json migrated",
+        {
+            "v1": [
+                {
+                    "version": 3,
+                    "settings": {
+                        "color": {
+                            "custom": false
+                        },
+                        "border": {
+                            "customColor": true,
+                            "radius": true
+                        },
+                        "spacing": {
+                            "margin": true,
+                            "padding": true
+                        },
+                        "typography": {
+                            "customFontSize": true,
+                            "dropCap": false,
+                            "lineHeight": true
+                        }
+                    },
+                    "styles": {
+                        "color": {
+                            "background": "red"
+                        }
+                    }
+                },
+                {
+                    "version": 3,
+                    "settings": {
+                        "color": {
+                            "custom": false
+                        },
+                        "border": {
+                            "customColor": true,
+                            "radius": true
+                        },
+                        "spacing": {
+                            "margin": true,
+                            "padding": true
+                        },
+                        "typography": {
+                            "customFontSize": true,
+                            "dropCap": false,
+                            "lineHeight": true
+                        }
+                    },
+                    "styles": {
+                        "color": {
+                            "background": "red"
+                        }
+                    }
+                },
+                {
+                    "version": 3,
+                    "settings": {
+                        "color": {
+                            "custom": false
+                        },
+                        "border": {
+                            "customColor": true,
+                            "radius": true
+                        },
+                        "spacing": {
+                            "margin": true,
+                            "padding": true
+                        },
+                        "typography": {
+                            "customFontSize": true,
+                            "dropCap": false,
+                            "lineHeight": true
+                        }
+                    },
+                    "styles": {
+                        "color": {
+                            "background": "red"
+                        }
+                    }
+                }
+            ],
+            "v1 blocks": [
+                {
+                    "version": 3,
+                    "settings": {
+                        "blocks": {
+                            "core/group": {
+                                "spacing": {
+                                    "padding": false
+                                }
+                            },
+                            "core/quote": {
+                                "border": {
+                                    "radius": false
+                                }
+                            }
+                        },
+                        "typography": {
+                            "lineHeight": false
+                        }
+                    },
+                    "styles": {
+                        "blocks": {
+                            "core/paragraph": {
+                                "color": {
+                                    "text": "blue"
+                                }
+                            }
+                        }
+                    }
+                },
+                {
+                    "version": 3,
+                    "settings": {
+                        "blocks": {
+                            "core/group": {
+                                "spacing": {
+                                    "padding": false
+                                }
+                            },
+                            "core/quote": {
+                                "border": {
+                                    "radius": false
+                                }
+                            }
+                        },
+                        "typography": {
+                            "lineHeight": false
+                        }
+                    },
+                    "styles": {
+                        "blocks": {
+                            "core/paragraph": {
+                                "color": {
+                                    "text": "blue"
+                                }
+                            }
+                        }
+                    }
+                },
+                {
+                    "version": 3,
+                    "settings": {
+                        "blocks": {
+                            "core/group": {
+                                "spacing": {
+                                    "padding": false
+                                }
+                            },
+                            "core/quote": {
+                                "border": {
+                                    "radius": false
+                                }
+                            }
+                        },
+                        "typography": {
+                            "lineHeight": false
+                        }
+                    },
+                    "styles": {
+                        "blocks": {
+                            "core/paragraph": {
+                                "color": {
+                                    "text": "blue"
+                                }
+                            }
+                        }
+                    }
+                }
+            ],
+            "v1 target already set": [
+                {
+                    "version": 3,
+                    "settings": {
+                        "typography": {
+                            "lineHeight": true
+                        }
+                    }
+                },
+                {
+                    "version": 3,
+                    "settings": {
+                        "typography": {
+                            "lineHeight": true
+                        }
+                    }
+                },
+                {
+                    "version": 3,
+                    "settings": {
+                        "typography": {
+                            "lineHeight": true
+                        }
+                    }
+                }
+            ],
+            "v1 as text": [
+                {
+                    "version": 3,
+                    "settings": {
+                        "typography": {
+                            "lineHeight": true
+                        }
+                    }
+                },
+                {
+                    "version": 3,
+                    "settings": {
+                        "typography": {
+                            "lineHeight": true
+                        }
+                    }
+                },
+                {
+                    "version": 3,
+                    "settings": {
+                        "typography": {
+                            "lineHeight": true
+                        }
+                    }
+                }
+            ],
+            "v1 with v2 presets": [
+                {
+                    "version": 3,
+                    "settings": {
+                        "typography": {
+                            "fontSizes": [
+                                {
+                                    "slug": "s",
+                                    "size": "1px"
+                                }
+                            ],
+                            "defaultFontSizes": false
+                        }
+                    }
+                },
+                {
+                    "version": 3,
+                    "settings": {
+                        "typography": {
+                            "fontSizes": [
+                                {
+                                    "slug": "s",
+                                    "size": "1px"
+                                }
+                            ]
+                        }
+                    }
+                },
+                {
+                    "version": 3,
+                    "settings": {
+                        "typography": {
+                            "fontSizes": [
+                                {
+                                    "slug": "s",
+                                    "size": "1px"
+                                }
+                            ],
+                            "defaultFontSizes": false
+                        }
+                    }
+                }
+            ],
+            "v2 font sizes": [
+                {
+                    "version": 3,
+                    "settings": {
+                        "appearanceTools": true,
+                        "typography": {
+                            "fontSizes": [
+                                {
+                                    "slug": "s",
+                                    "size": "12px",
+                                    "name": "S"
+                                }
+                            ],
+                            "defaultFontSizes": false
+                        }
+                    },
+                    "styles": []
+                },
+                {
+                    "version": 3,
+                    "settings": {
+                        "appearanceTools": true,
+                        "typography": {
+                            "fontSizes": [
+                                {
+                                    "slug": "s",
+                                    "size": "12px",
+                                    "name": "S"
+                                }
+                            ]
+                        }
+                    },
+                    "styles": []
+                },
+                {
+                    "version": 3,
+                    "settings": {
+                        "appearanceTools": true,
+                        "typography": {
+                            "fontSizes": [
+                                {
+                                    "slug": "s",
+                                    "size": "12px",
+                                    "name": "S"
+                                }
+                            ],
+                            "defaultFontSizes": false
+                        }
+                    },
+                    "styles": []
+                }
+            ],
+            "v2 spacing sizes": [
+                {
+                    "version": 3,
+                    "settings": {
+                        "spacing": {
+                            "spacingSizes": [
+                                {
+                                    "slug": "1",
+                                    "size": "1rem"
+                                }
+                            ],
+                            "defaultSpacingSizes": false
+                        }
+                    }
+                },
+                {
+                    "version": 3,
+                    "settings": {
+                        "spacing": {
+                            "spacingSizes": [
+                                {
+                                    "slug": "1",
+                                    "size": "1rem"
+                                }
+                            ]
+                        }
+                    }
+                },
+                {
+                    "version": 3,
+                    "settings": {
+                        "spacing": {
+                            "spacingSizes": [
+                                {
+                                    "slug": "1",
+                                    "size": "1rem"
+                                }
+                            ],
+                            "defaultSpacingSizes": false
+                        }
+                    }
+                }
+            ],
+            "v2 spacing scale": [
+                {
+                    "version": 3,
+                    "settings": {
+                        "spacing": {
+                            "spacingScale": {
+                                "steps": 5
+                            },
+                            "defaultSpacingSizes": false
+                        }
+                    }
+                },
+                {
+                    "version": 3,
+                    "settings": {
+                        "spacing": {
+                            "spacingScale": {
+                                "steps": 5
+                            }
+                        }
+                    }
+                },
+                {
+                    "version": 3,
+                    "settings": {
+                        "spacing": {
+                            "spacingScale": {
+                                "steps": 5
+                            },
+                            "defaultSpacingSizes": false
+                        }
+                    }
+                }
+            ],
+            "v2 defaults said": [
+                {
+                    "version": 3,
+                    "settings": {
+                        "typography": {
+                            "fontSizes": [],
+                            "defaultFontSizes": false
+                        },
+                        "spacing": {
+                            "spacingSizes": [],
+                            "defaultSpacingSizes": false
+                        }
+                    }
+                },
+                {
+                    "version": 3,
+                    "settings": {
+                        "typography": {
+                            "fontSizes": [],
+                            "defaultFontSizes": true
+                        },
+                        "spacing": {
+                            "spacingSizes": [],
+                            "defaultSpacingSizes": true
+                        }
+                    }
+                },
+                {
+                    "version": 3,
+                    "settings": {
+                        "typography": {
+                            "fontSizes": [],
+                            "defaultFontSizes": false
+                        },
+                        "spacing": {
+                            "spacingSizes": [],
+                            "defaultSpacingSizes": false
+                        }
+                    }
+                }
+            ],
+            "v2 block sizes": [
+                {
+                    "version": 3,
+                    "settings": {
+                        "blocks": {
+                            "core/paragraph": {
+                                "typography": {
+                                    "fontSizes": [
+                                        {
+                                            "slug": "x",
+                                            "size": "1px"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    }
+                },
+                {
+                    "version": 3,
+                    "settings": {
+                        "blocks": {
+                            "core/paragraph": {
+                                "typography": {
+                                    "fontSizes": [
+                                        {
+                                            "slug": "x",
+                                            "size": "1px"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    }
+                },
+                {
+                    "version": 3,
+                    "settings": {
+                        "blocks": {
+                            "core/paragraph": {
+                                "typography": {
+                                    "fontSizes": [
+                                        {
+                                            "slug": "x",
+                                            "size": "1px"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    }
+                }
+            ],
+            "v2 nothing": [
+                {
+                    "version": 3,
+                    "settings": {
+                        "spacing": {
+                            "padding": true
+                        }
+                    }
+                },
+                {
+                    "version": 3,
+                    "settings": {
+                        "spacing": {
+                            "padding": true
+                        }
+                    }
+                },
+                {
+                    "version": 3,
+                    "settings": {
+                        "spacing": {
+                            "padding": true
+                        }
+                    }
+                }
+            ],
+            "v3": [
+                {
+                    "version": 3,
+                    "settings": {
+                        "typography": {
+                            "customLineHeight": true,
+                            "fontSizes": []
+                        }
+                    }
+                },
+                {
+                    "version": 3,
+                    "settings": {
+                        "typography": {
+                            "customLineHeight": true,
+                            "fontSizes": []
+                        }
+                    }
+                },
+                {
+                    "version": 3,
+                    "settings": {
+                        "typography": {
+                            "customLineHeight": true,
+                            "fontSizes": []
+                        }
+                    }
+                }
+            ],
+            "no version": [
+                {
+                    "version": 3
+                },
+                {
+                    "version": 3
+                },
+                {
+                    "version": 3
+                }
+            ],
+            "version 0": [
+                {
+                    "version": 0,
+                    "settings": {
+                        "typography": {
+                            "customLineHeight": true
+                        }
+                    }
+                },
+                {
+                    "version": 0,
+                    "settings": {
+                        "typography": {
+                            "customLineHeight": true
+                        }
+                    }
+                },
+                {
+                    "version": 0,
+                    "settings": {
+                        "typography": {
+                            "customLineHeight": true
+                        }
+                    }
+                }
+            ],
+            "version 4": [
+                {
+                    "version": 4,
+                    "settings": {
+                        "typography": {
+                            "customLineHeight": true
+                        }
+                    }
+                },
+                {
+                    "version": 4,
+                    "settings": {
+                        "typography": {
+                            "customLineHeight": true
+                        }
+                    }
+                },
+                {
+                    "version": 4,
+                    "settings": {
+                        "typography": {
+                            "customLineHeight": true
+                        }
+                    }
+                }
+            ],
+            "empty": [
+                {
+                    "version": 3
+                },
+                {
+                    "version": 3
+                },
+                {
+                    "version": 3
+                }
+            ]
+        }
+    ],
+    [
+        "a classic menu as blocks",
+        [
+            "<!-- wp:navigation-submenu {\"className\":\"one two menu-item menu-item-type-custom menu-item-object-custom\",\"description\":\"Desc\",\"id\":null,\"kind\":\"custom\",\"label\":\"Custom \\u003cb\\u003eA\\u003c/b\\u003e\",\"opensInNewTab\":true,\"rel\":\"nofollow\",\"title\":\"Tip \\u0026#8220;q\\u0026#8221;\",\"type\":\"custom\",\"url\":\"https://zz.example/a?x=1\\u0026y=2\"} --><!-- wp:navigation-submenu {\"className\":\" menu-item menu-item-type-post_type menu-item-object-post\",\"description\":\"\",\"id\":\"{post}\",\"kind\":\"post-type\",\"label\":\"Zz Linked\",\"opensInNewTab\":false,\"rel\":null,\"title\":\"\",\"type\":\"post\",\"url\":\"https://{host}/zz-linked-probe/\"} --><!-- wp:navigation-link {\"className\":\" menu-item menu-item-type-taxonomy menu-item-object-category\",\"description\":\"\",\"id\":\"{category}\",\"kind\":\"taxonomy\",\"label\":\"Zz Conv Cat\",\"opensInNewTab\":false,\"rel\":null,\"title\":\"\",\"type\":\"category\",\"url\":\"https://{host}/category/zz-conv-cat-probe/\"} /--><!-- /wp:navigation-submenu --><!-- /wp:navigation-submenu --><!-- wp:navigation-link {\"className\":\" menu-item menu-item-type-custom menu-item-object-custom\",\"description\":\"\",\"id\":null,\"kind\":\"custom\",\"label\":\"Last\",\"opensInNewTab\":false,\"rel\":null,\"title\":\"\",\"type\":\"custom\",\"url\":\"/relative\"} /-->",
+            "",
+            [
+                "invalid_menu",
+                "The menu provided is not a valid menu."
+            ],
+            [
+                "invalid_menu",
+                "The menu provided is not a valid menu."
+            ],
+            [
+                "invalid_menu",
+                "The menu provided is not a valid menu."
+            ]
+        ]
+    ]
+]

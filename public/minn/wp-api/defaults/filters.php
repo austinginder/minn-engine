@@ -441,6 +441,12 @@ add_filter('rest_post_dispatch', '_wp_connectors_rest_settings_dispatch', 10, 3)
 // A new auto-draft template part gets a slug and the theme; the editor's find-template request is resolved (probe template-loader-more).
 add_action('save_post_wp_template_part', 'wp_set_unique_slug_on_create_template_part');
 add_action('wp_loaded', '_add_template_loader_filters');
+// A menu item's title attribute and description are texturized, then stripped of tags (probe schema-and-menus).
+foreach (['nav_menu_attr_title', 'nav_menu_description'] as $minnMenuText) {
+    add_filter($minnMenuText, 'wptexturize');
+    add_filter($minnMenuText, 'strip_tags');
+}
+unset($minnMenuText);
 // A tabs block gives its inner blocks its id and its tabs' ids (probe tabs-and-parts).
 add_filter('render_block_context', 'block_core_tabs_provide_context', 10, 2);
 add_action('update_option_home', 'wp_update_https_migration_required', 10, 2);

@@ -8874,3 +8874,38 @@ registers.
   it. With no manifest given, an already-registered collection is used.
 - **Omitted.** `Services_JSON_Error` joins `Services_JSON`, the omission
   Austin approved: it is the same library's error class.
+
+## theme.json schema migration, and classic menus as blocks (2026-10-09)
+
+Probe `schema-and-menus`.
+
+- **`WP_Theme_JSON_Schema::migrate($theme_json, $origin)`**, a new facade
+  class.
+  - Data with no `version` comes back as just `['version' => 3]`.
+  - Version 1 (or `'1'`) has four settings renamed, in this order:
+    `border.customRadius`, `spacing.customMargin`, `spacing.customPadding`,
+    `typography.customLineHeight`. They become `radius`, `margin`,
+    `padding` and `lineHeight`, in settings and in each block's settings.
+    The new key goes last, or replaces one already there; a null is not
+    moved. Then it carries on as version 2.
+  - Version 2 becomes 3. For any origin but `custom`, top-level
+    `typography.fontSizes` sets `defaultFontSizes` to false and
+    `spacing.spacingSizes` or `spacingScale` sets `defaultSpacingSizes` to
+    false, overriding a true. Blocks' settings are not touched.
+  - Any other version (0, 3, 4) passes as given.
+- **`WP_Classic_To_Block_Menu_Converter::convert($menu)`**, a new facade
+  class.
+  - A menu's published items, nested by parent: one with children is a
+    `core/navigation-submenu` and one without a `core/navigation-link`.
+  - The attributes, in order: `className` (the item's classes with its
+    context classes, a leading space when its own are empty),
+    `description`, `id` (the object id as a string, null for a custom
+    link), `kind` (the type with `-`), `label`, `opensInNewTab`, `rel`
+    (null when empty), `title`, `type` (the object) and `url`.
+  - An empty menu gives `''`. Anything else that is not a menu gives
+    `invalid_menu`, "The menu provided is not a valid menu."
+- **Shared fix: menu text filters.** `nav_menu_attr_title` and
+  `nav_menu_description` now have the reference's `wptexturize` and
+  `strip_tags` at 10. The engine applied the filters but hooked nothing, so
+  a menu item's title attribute and description kept straight quotes and
+  tags.
