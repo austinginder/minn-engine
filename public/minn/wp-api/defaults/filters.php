@@ -424,6 +424,11 @@ add_action('update_option_admin_email', 'wp_site_admin_email_change_notification
 // oEmbed, as the reference registers it: a post's data made rich, a provider's iframe titled.
 add_filter('oembed_response_data', 'get_oembed_response_data_rich', 10, 4);
 add_filter('oembed_dataparse', 'wp_filter_oembed_iframe_title_attribute', 5, 3);
+// Embeds (probe embed-helpers): the default handlers, untrusted answers made safe, the site's own posts answered locally.
+add_filter('oembed_dataparse', 'wp_filter_oembed_result', 10, 3);
+add_filter('pre_oembed_result', 'wp_filter_pre_oembed_result', 10, 3);
+add_action('plugins_loaded', 'wp_maybe_load_embeds', 0);
+add_action('rest_api_init', 'wp_oembed_register_route');
 // Revisions and the old-address records hang off the update hooks, as on the reference: a plugin that
 // unhooks wp_save_post_revision from post_updated turns revisions off.
 add_action('post_updated', 'wp_save_post_revision', 10, 1);

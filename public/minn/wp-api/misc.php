@@ -677,18 +677,15 @@ function wp_oembed_remove_provider($format)
     return true;
 }
 
+/** An embed handler registered on the site's WP_Embed, which runs it before the oEmbed providers. */
 function wp_embed_register_handler($id, $regex, $callback, $priority = 10)
 {
-    $handlers = Runtime::current()->get('embed_handlers', []);
-    $handlers[$priority][$id] = ['regex' => $regex, 'callback' => $callback];
-    Runtime::current()->set('embed_handlers', $handlers);
+    $GLOBALS['wp_embed']->register_handler($id, $regex, $callback, $priority);
 }
 
 function wp_embed_unregister_handler($id, $priority = 10)
 {
-    $handlers = Runtime::current()->get('embed_handlers', []);
-    unset($handlers[$priority][$id]);
-    Runtime::current()->set('embed_handlers', $handlers);
+    $GLOBALS['wp_embed']->unregister_handler($id, $priority);
 }
 
 /** A URL's embed HTML through WP_oEmbed (pre_oembed_result first, then the provider), or false. */
@@ -943,15 +940,27 @@ function _oembed_create_xml($data, $node = null)
     return is_array($data) || is_object($data) ? PostEmbed::xml((array) $data) : false;
 }
 
-/** A rich or video provider's iframe given the title its data names, when it has none (oembed_dataparse). */
+/**
+ * A rich or video answer's iframes titled (oembed_dataparse 5): the first
+ * iframe's own title (as written) or else the data's, through
+ * oembed_iframe_title_attribute, put first on every iframe; the first
+ * iframe's own title attributes go. Nothing changes for an empty title.
+ */
 function wp_filter_oembed_iframe_title_attribute($result, $data, $url)
 {
-    $title = is_object($data) ? (string) ($data->title ?? '') : '';
-    $framed = is_object($data) && in_array($data->type ?? '', ['rich', 'video'], true);
-    if (!is_string($result) || !$framed || $title === '' || !str_contains($result, '<iframe') || preg_match('/<iframe[^>]*\stitle=/i', $result)) {
+    if (!is_string($result) || !is_object($data) || !in_array($data->type ?? '', ['rich', 'video'], true)) {
         return $result;
     }
-    return (string) preg_replace('/<iframe\b/i', '<iframe title="' . esc_attr($title) . '"', $result, 1);
+    $title = !empty($data->title) ? (string) $data->title : '';
+    $titled = '/\s+title\s*=\s*(?:"([^"]*)"|\'([^\']*)\'|([^\s>]+))/i';
+    $html = preg_replace_callback('/<iframe\b[^>]*>/i', static function (array $tag) use ($titled, &$title): string {
+        if (preg_match($titled, $tag[0], $m) === 1) {
+            $title = $m[1] !== '' ? $m[1] : ($m[2] ?? '') . ($m[3] ?? '');
+        }
+        return (string) preg_replace($titled, '', $tag[0]);
+    }, $result, 1);
+    $title = (string) apply_filters('oembed_iframe_title_attribute', $title, $result, $data, $url);
+    return $title === '' ? $result : (string) preg_replace('/<iframe\b/i', '<iframe title="' . esc_attr($title) . '"', (string) $html);
 }
 
 /** The engine serves format=xml itself on the way out (Rest\RuntimeRoutes::serve); the hook is the reference's name for it. */

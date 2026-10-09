@@ -8102,3 +8102,59 @@ Probe `widgets-more`.
   - It can send an unmatched sidebar's widgets to a free slot even with
     no name in common.
   - It needs its own run of experiments before it can be written.
+
+## Embed helpers (2026-10-09)
+
+Probe `embed-helpers`. No request leaves: `pre_oembed_result` answers
+first, and `pre_http_request` refuses anything else. embed.php owes
+nothing now.
+
+- **Default handlers** (`plugins_loaded` 0, `wp_maybe_load_embeds`).
+  Nothing loads under `load_default_embeds` false. Otherwise it registers:
+  - `youtube_embed_url` (`/v/` and `/embed/` addresses) at 10;
+  - `audio` and `video` at 9999, by the audio and video extensions, each
+    callback through `wp_audio_embed_handler` / `wp_video_embed_handler`.
+
+  `wp_embed_register_handler` now registers on `$wp_embed`, as on the
+  reference. Before, it wrote to a runtime list that WP_Embed never read.
+- **YouTube embed addresses.** The id (match 2, urlencoded) becomes
+  `https://youtube.com/watch?v=…`, run through `$wp_embed->autoembed`,
+  then `wp_embed_handler_youtube` (embed, attr, url, rawattr).
+- **Audio files.** The result is `[audio src="{esc_url}" /]` through
+  `wp_embed_handler_audio`.
+- **Format.** `wp_oembed_ensure_format` passes `json` or `xml` as written;
+  anything else is `json`.
+- **Untrusted answers** (`wp_filter_oembed_result`, `oembed_dataparse`
+  10).
+  - Only a rich or video answer whose URL no provider claims is touched.
+    The HTML goes through kses (a with href; blockquote with no
+    attributes; iframe with src, the size and frame attributes, and
+    title).
+  - It keeps `(<blockquote>.*?</blockquote>)?.*(<iframe.*?></iframe>)`:
+    the first blockquote and the last empty, lowercase iframe. It is false
+    without one.
+  - One 10-character secret is shared. The blockquote becomes
+    `class="wp-embedded-content" data-secret`. The iframe gains the
+    class, `sandbox="allow-scripts"` and `security="restricted"` first,
+    then the hiding style only beside a blockquote, then its kept
+    attributes in order.
+  - The `src` is decoded, given `#?secret=` (`esc_url_raw`), escaped, and
+    followed by `data-secret`. An iframe without `src` gets neither.
+- **Iframe titles** (`wp_filter_oembed_iframe_title_attribute`,
+  `oembed_dataparse` 5), now as on the reference.
+  - The first iframe's own title (as written) beats the data's.
+    `oembed_iframe_title_attribute` (title, result, data, url) runs for
+    every rich or video answer.
+  - A non-empty result is put first on every iframe, and only the first
+    iframe loses its own title attributes. The engine used to add a
+    missing title only.
+- **The site's own posts** (`pre_oembed_result` 10). For an address that
+  is one of the site's posts, the oEmbed data is made into markup through
+  `data2html`, so both oEmbed filters run and the src carries two secrets.
+  Any other address keeps the result given.
+- **The route.** `wp_oembed_register_route` (`rest_api_init`) is a no-op:
+  the engine serves `oembed/1.0` itself.
+- **Still owed.** Embeds made outside a post are not cached in
+  `oembed_cache` posts, and `WP_Embed::find_oembed_post_id` answers null.
+  The reference stores and reuses them, so a repeated YouTube address asks
+  once.

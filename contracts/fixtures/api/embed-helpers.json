@@ -1,0 +1,330 @@
+[
+    [
+        "the hooks",
+        [
+            0,
+            10,
+            10,
+            5,
+            10
+        ]
+    ],
+    [
+        "the default handlers",
+        [
+            {
+                "10": {
+                    "youtube_embed_url": [
+                        "#https?://(www\\.)?youtube\\.com/(?:v|embed)/([^/]+)#i",
+                        "wp_embed_handler_youtube"
+                    ]
+                },
+                "9999": {
+                    "audio": [
+                        "#^https?://.+?\\.(mp3|ogg|flac|m4a|wav)$#i",
+                        "wp_embed_handler_audio"
+                    ],
+                    "video": [
+                        "#^https?://.+?\\.(mp4|m4v|webm|ogv|flv)$#i",
+                        "wp_embed_handler_video"
+                    ]
+                }
+            },
+            [
+                null,
+                {
+                    "10": {
+                        "youtube_embed_url": [
+                            "#https?://(www\\.)?youtube\\.com/(?:v|embed)/([^/]+)#i",
+                            "wp_embed_handler_youtube"
+                        ]
+                    },
+                    "9999": {
+                        "audio": [
+                            "#^https?://.+?\\.(mp3|ogg|flac|m4a|wav)$#i",
+                            "wp_embed_handler_audio"
+                        ],
+                        "video": [
+                            "#^https?://.+?\\.(mp4|m4v|webm|ogv|flv)$#i",
+                            "wp_embed_handler_video"
+                        ]
+                    }
+                }
+            ],
+            [
+                null,
+                []
+            ],
+            [
+                null,
+                {
+                    "10": {
+                        "youtube_embed_url": [
+                            "#https?://(www\\.)?youtube\\.com/(?:v|embed)/([^/]+)#i",
+                            "wp_embed_handler_youtube"
+                        ]
+                    },
+                    "9999": {
+                        "audio": [
+                            "#^https?://.+?\\.(mp3|ogg|flac|m4a|wav)$#i",
+                            "zz_handler"
+                        ],
+                        "video": [
+                            "#^https?://.+?\\.(mp4|m4v|webm|ogv|flv)$#i",
+                            "zz_handler"
+                        ]
+                    }
+                }
+            ],
+            [
+                {
+                    "5": {
+                        "zz-one": [
+                            "#zz-one#",
+                            "zz_one_cb"
+                        ]
+                    },
+                    "10": {
+                        "zz-two": [
+                            "#zz-two#",
+                            "zz_two_cb"
+                        ]
+                    }
+                },
+                {
+                    "5": [],
+                    "10": {
+                        "zz-two": [
+                            "#zz-two#",
+                            "zz_two_cb"
+                        ]
+                    }
+                }
+            ]
+        ]
+    ],
+    [
+        "youtube embed addresses",
+        [
+            [
+                "<iframe src=\"https://www.youtube.com/embed/zz-yt\"></iframe>",
+                [
+                    [
+                        "https://youtube.com/watch?v=zzyt1",
+                        {
+                            "width": 500,
+                            "height": 750,
+                            "discover": true
+                        }
+                    ]
+                ]
+            ],
+            [
+                "<iframe src=\"https://www.youtube.com/embed/zz-yt\"></iframe>",
+                [
+                    [
+                        "https://youtube.com/watch?v=zzyt2",
+                        {
+                            "width": 500,
+                            "height": 750,
+                            "discover": true
+                        }
+                    ]
+                ]
+            ],
+            [
+                "<iframe src=\"https://www.youtube.com/embed/zz-yt\"></iframe>",
+                [
+                    [
+                        "https://youtube.com/watch?v=zz+yt%262",
+                        {
+                            "width": 500,
+                            "height": 750,
+                            "discover": true
+                        }
+                    ]
+                ]
+            ],
+            [
+                "[zz:https://youtube.com/embed/zzyt3]<iframe src=\"https://www.youtube.com/embed/zz-yt\"></iframe>",
+                [
+                    [
+                        "https://youtube.com/watch?v=zzyt3",
+                        {
+                            "width": 500,
+                            "height": 750,
+                            "discover": true
+                        }
+                    ]
+                ]
+            ]
+        ]
+    ],
+    [
+        "audio files",
+        [
+            "[audio src=\"https://zz.example/a.mp3\" /]",
+            "[audio src=\"https://zz.example/a%20b.mp3?x=1&#038;y=2\" /]",
+            "[audio src=\"https://zz.example/b.ogg\" /]|[{\"w\":1},\"https:\\/\\/zz.example\\/b.ogg\",{\"r\":2}]"
+        ]
+    ],
+    [
+        "the oEmbed format",
+        [
+            "json",
+            "xml",
+            "json",
+            "json",
+            "json",
+            "json",
+            "json"
+        ]
+    ],
+    [
+        "untrusted answers made safe",
+        [
+            "<blockquote class=\"wp-embedded-content\" data-secret=\"{secret}\"><a href=\"https://zz.example/post/\">Zz Post</a></blockquote><iframe class=\"wp-embedded-content\" sandbox=\"allow-scripts\" security=\"restricted\" style=\"position: absolute; visibility: hidden;\" title=\"Zz\" src=\"https://zz.example/post/embed/#?secret={secret}\" data-secret=\"{secret}\" width=\"600\" height=\"338\" frameborder=\"0\" marginwidth=\"0\" marginheight=\"0\" scrolling=\"no\"></iframe>",
+            "<iframe class=\"wp-embedded-content\" sandbox=\"allow-scripts\" security=\"restricted\" src=\"https://v.example/1#?secret={secret}\" data-secret=\"{secret}\"></iframe>",
+            false,
+            "<img src=\"x\">",
+            "<iframe src=\"https://i.example/\"></iframe>",
+            false,
+            "<iframe class=\"wp-embedded-content\" sandbox=\"allow-scripts\" security=\"restricted\" src=\"https://i.example/#?secret={secret}\" data-secret=\"{secret}\"></iframe>",
+            "<iframe src=\"https://i.example/\"></iframe>",
+            "<iframe class=\"wp-embedded-content\" sandbox=\"allow-scripts\" security=\"restricted\" src=\"https://i.example/#?secret={secret}\" data-secret=\"{secret}\" width=\"1\" height=\"2\" frameborder=\"0\" marginwidth=\"0\" marginheight=\"0\" scrolling=\"no\" title=\"T\"></iframe>",
+            "<iframe class=\"wp-embedded-content\" sandbox=\"allow-scripts\" security=\"restricted\" src=\"https://i.example/#?secret={secret}\" data-secret=\"{secret}\"></iframe>",
+            "<iframe class=\"wp-embedded-content\" sandbox=\"allow-scripts\" security=\"restricted\" src=\"https://i.example/#?secret={secret}\" data-secret=\"{secret}\"></iframe>",
+            "<iframe class=\"wp-embedded-content\" sandbox=\"allow-scripts\" security=\"restricted\" src=\"https://i.example/b#?secret={secret}\" data-secret=\"{secret}\"></iframe>",
+            "<blockquote class=\"wp-embedded-content\" data-secret=\"{secret}\">p<a href=\"h\">a</a>bs</blockquote><iframe class=\"wp-embedded-content\" sandbox=\"allow-scripts\" security=\"restricted\" style=\"position: absolute; visibility: hidden;\" src=\"https://i.example/#?secret={secret}\" data-secret=\"{secret}\"></iframe>",
+            "<blockquote class=\"wp-embedded-content\" data-secret=\"{secret}\">one</blockquote><iframe class=\"wp-embedded-content\" sandbox=\"allow-scripts\" security=\"restricted\" style=\"position: absolute; visibility: hidden;\" src=\"https://i.example/#?secret={secret}\" data-secret=\"{secret}\"></iframe>",
+            "<iframe class=\"wp-embedded-content\" sandbox=\"allow-scripts\" security=\"restricted\" src=\"https://i.example/#?secret={secret}\" data-secret=\"{secret}\"></iframe>",
+            "<iframe class=\"wp-embedded-content\" sandbox=\"allow-scripts\" security=\"restricted\" src=\"https://i.example/inner#?secret={secret}\" data-secret=\"{secret}\"></iframe>",
+            false,
+            "<iframe class=\"wp-embedded-content\" sandbox=\"allow-scripts\" security=\"restricted\" src=\"https://i.example/?q=1#frag#?secret={secret}\" data-secret=\"{secret}\"></iframe>",
+            "<iframe class=\"wp-embedded-content\" sandbox=\"allow-scripts\" security=\"restricted\" src=\"https://i.example/?a=1&amp;b=2&amp;c=3#?secret={secret}\" data-secret=\"{secret}\"></iframe>",
+            "<iframe class=\"wp-embedded-content\" sandbox=\"allow-scripts\" security=\"restricted\" src=\"https://i.example/a%20b#?secret={secret}\" data-secret=\"{secret}\"></iframe>",
+            "<iframe class=\"wp-embedded-content\" sandbox=\"allow-scripts\" security=\"restricted\" src=\"http://alert(1)#?secret={secret}\" data-secret=\"{secret}\"></iframe>",
+            "<iframe class=\"wp-embedded-content\" sandbox=\"allow-scripts\" security=\"restricted\" src=\"#?secret={secret}\" data-secret=\"{secret}\"></iframe>",
+            "<iframe class=\"wp-embedded-content\" sandbox=\"allow-scripts\" security=\"restricted\"></iframe>",
+            "<iframe class=\"wp-embedded-content\" sandbox=\"allow-scripts\" security=\"restricted\" src=\"/relative/path#?secret={secret}\" data-secret=\"{secret}\"></iframe>",
+            "<iframe class=\"wp-embedded-content\" sandbox=\"allow-scripts\" security=\"restricted\" width=\"5\" src=\"https://i.example/#?secret={secret}\" data-secret=\"{secret}\"></iframe>",
+            false,
+            "<iframe class=\"wp-embedded-content\" sandbox=\"allow-scripts\" security=\"restricted\" src=\"https://i.example/#?secret={secret}\" data-secret=\"{secret}\"></iframe>",
+            "<iframe class=\"wp-embedded-content\" sandbox=\"allow-scripts\" security=\"restricted\" src=\"https://i.example/#?secret={secret}\" data-secret=\"{secret}\" title=\"a &quot;b&quot; &amp; c\"></iframe>",
+            "<iframe src=\"https://www.youtube.com/embed/x\" allowfullscreen></iframe>",
+            "<iframe src=\"https://www.youtube.com/embed/x\" allowfullscreen></iframe>",
+            "<iframe class=\"wp-embedded-content\" sandbox=\"allow-scripts\" security=\"restricted\" src=\"https://i.example/#?secret={secret}\" data-secret=\"{secret}\"></iframe>"
+        ]
+    ],
+    [
+        "iframes titled",
+        [
+            [
+                "<iframe title=\"Old\" src=\"s\" width=\"1\" data-x=\"y\"></iframe>",
+                [
+                    [
+                        "Old",
+                        4
+                    ]
+                ]
+            ],
+            [
+                "<iframe title=\"Old\" src=\"s\" width=\"1\"></iframe>",
+                [
+                    [
+                        "Old",
+                        4
+                    ]
+                ]
+            ],
+            [
+                "<iframe title=\"New &quot;q&quot;\" src=\"s\" width=\"1\"></iframe>",
+                [
+                    [
+                        "New \"q\"",
+                        4
+                    ]
+                ]
+            ],
+            [
+                "<iframe src=\"s\" width=\"1\"></iframe>",
+                [
+                    [
+                        "",
+                        4
+                    ]
+                ]
+            ],
+            [
+                "<p>x</p><iframe title=\"Up\" src=\"s\"></iframe><iframe title=\"Up\" src=\"t\"></iframe>",
+                [
+                    [
+                        "Up",
+                        4
+                    ]
+                ]
+            ],
+            [
+                "<iframe src=\"s\" title=\"Old\"></iframe>",
+                []
+            ],
+            [
+                "<iframe title=\"a &amp; b\" src=\"s\"></iframe>",
+                [
+                    [
+                        "a &amp; b",
+                        4
+                    ]
+                ]
+            ],
+            [
+                "<iframe title=\"Data\" src=\"s\"></iframe><iframe title=\"Data\" src=\"t\" title=\"T2\"></iframe>",
+                [
+                    [
+                        "Data",
+                        4
+                    ]
+                ]
+            ],
+            [
+                "<iframe title=\"sq\" src=\"s\"></iframe>",
+                [
+                    [
+                        "sq",
+                        4
+                    ]
+                ]
+            ],
+            [
+                "<div>no iframe</div>",
+                [
+                    [
+                        "X",
+                        4
+                    ]
+                ]
+            ],
+            "<iframe title=\"Zz &lt;title&gt; &amp; more\" src=\"s\"></iframe>"
+        ]
+    ],
+    [
+        "the site's own posts answered locally",
+        [
+            "<blockquote class=\"wp-embedded-content\" data-secret=\"{secret}\"><a href=\"https://{host}/zz-embed-target/\">Zz Embed Target</a></blockquote><iframe class=\"wp-embedded-content\" sandbox=\"allow-scripts\" security=\"restricted\" style=\"position: absolute; visibility: hidden;\" title=\"“Zz Embed Target” — Minn\" src=\"https://{host}/zz-embed-target/embed/#?secret={secret}#?secret={secret}\" data-secret=\"{secret}\" width=\"400\" height=\"225\" frameborder=\"0\" marginwidth=\"0\" marginheight=\"0\" scrolling=\"no\"></iframe>",
+            "<blockquote class=\"wp-embedded-content\" data-secret=\"{secret}\"><a href=\"https://{host}/zz-embed-target/\">Zz Embed Target</a></blockquote><iframe class=\"wp-embedded-content\" sandbox=\"allow-scripts\" security=\"restricted\" style=\"position: absolute; visibility: hidden;\" title=\"“Zz Embed Target” — Minn\" src=\"https://{host}/zz-embed-target/embed/#?secret={secret}#?secret={secret}\" data-secret=\"{secret}\" width=\"400\" height=\"225\" frameborder=\"0\" marginwidth=\"0\" marginheight=\"0\" scrolling=\"no\"></iframe>",
+            "<blockquote class=\"wp-embedded-content\" data-secret=\"{secret}\"><a href=\"https://{host}/zz-embed-target/\">Zz Embed Target</a></blockquote><iframe class=\"wp-embedded-content\" sandbox=\"allow-scripts\" security=\"restricted\" style=\"position: absolute; visibility: hidden;\" title=\"“Zz Embed Target” — Minn\" src=\"https://{host}/zz-embed-target/embed/#?secret={secret}#?secret={secret}\" data-secret=\"{secret}\" width=\"200\" height=\"200\" frameborder=\"0\" marginwidth=\"0\" marginheight=\"0\" scrolling=\"no\"></iframe>",
+            null,
+            "<zz>",
+            false,
+            null,
+            null
+        ]
+    ],
+    [
+        "the oEmbed route",
+        [
+            null,
+            true
+        ]
+    ]
+]

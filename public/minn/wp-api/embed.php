@@ -112,3 +112,77 @@ function wp_embed_handler_video($matches, $attr, $url, $rawattr)
     $size = !empty($rawattr['width']) && !empty($rawattr['height']) ? sprintf('width="%d" height="%d" ', (int) $rawattr['width'], (int) $rawattr['height']) : '';
     return apply_filters('wp_embed_handler_video', sprintf('[video %s src="%s" /]', $size, esc_url($url)), $attr, $url, $rawattr);
 }
+
+// Embed helpers (probe embed-helpers).
+
+/** The default embed handlers (plugins_loaded 0): YouTube embed addresses, then audio and video files at 9999; none under load_default_embeds false. */
+function wp_maybe_load_embeds()
+{
+    if (!apply_filters('load_default_embeds', true)) {
+        return;
+    }
+    wp_embed_register_handler('youtube_embed_url', '#https?://(www\\.)?youtube\\.com/(?:v|embed)/([^/]+)#i', 'wp_embed_handler_youtube');
+    wp_embed_register_handler('audio', '#^https?://.+?\\.(' . implode('|', wp_get_audio_extensions()) . ')$#i', apply_filters('wp_audio_embed_handler', 'wp_embed_handler_audio'), 9999);
+    wp_embed_register_handler('video', '#^https?://.+?\\.(' . implode('|', wp_get_video_extensions()) . ')$#i', apply_filters('wp_video_embed_handler', 'wp_embed_handler_video'), 9999);
+}
+
+/** A YouTube embed address embedded as its watch address, through wp_embed_handler_youtube. */
+function wp_embed_handler_youtube($matches, $attr, $url, $rawattr)
+{
+    $embed = $GLOBALS['wp_embed']->autoembed(sprintf('https://youtube.com/watch?v=%s', urlencode((string) ($matches[2] ?? ''))));
+    return apply_filters('wp_embed_handler_youtube', $embed, $attr, $url, $rawattr);
+}
+
+/** An audio address embedded as an [audio] shortcode, through wp_embed_handler_audio. */
+function wp_embed_handler_audio($matches, $attr, $url, $rawattr)
+{
+    return apply_filters('wp_embed_handler_audio', sprintf('[audio src="%s" /]', esc_url($url)), $attr, $url, $rawattr);
+}
+
+/** json or xml; anything else is json. */
+function wp_oembed_ensure_format($format)
+{
+    return in_array($format, ['json', 'xml'], true) ? $format : 'json';
+}
+
+/** The engine serves oembed/1.0 itself (Rest\OEmbedController), so there is nothing to register on rest_api_init. */
+function wp_oembed_register_route()
+{
+}
+
+/**
+ * An oEmbed answer made safe to print (oembed_dataparse 10): for a rich or
+ * video answer from a provider the site does not trust, only the first
+ * blockquote and the last empty iframe are kept, through kses, and both
+ * get a fresh secret (_minn_oembed_secured); false when there is no iframe.
+ */
+function wp_filter_oembed_result($result, $data, $url)
+{
+    if ($result === false || !is_object($data) || !in_array($data->type ?? null, ['rich', 'video'], true) || _wp_oembed_get_object()->get_provider($url, ['discover' => false]) !== false) {
+        return $result;
+    }
+    $allowed = ['a' => ['href' => true], 'blockquote' => [], 'iframe' => array_fill_keys(['src', 'width', 'height', 'frameborder', 'marginwidth', 'marginheight', 'scrolling', 'title'], true)];
+    if (!preg_match('|(<blockquote>.*?</blockquote>)?.*(<iframe.*?></iframe>)|ms', wp_kses((string) $result, $allowed), $content)) {
+        return false;
+    }
+    return _minn_oembed_secured($content[1] . $content[2]);
+}
+
+/** @internal an embed's blockquote and iframe tied to one new secret: the iframe sandboxed, hidden beside a blockquote, its src carrying the secret */
+function _minn_oembed_secured(string $html): string
+{
+    $secret = wp_generate_password(10, false);
+    $quoted = str_starts_with($html, '<blockquote>');
+    $html = str_replace('<blockquote>', sprintf('<blockquote class="wp-embedded-content" data-secret="%s">', $secret), $html);
+    return (string) preg_replace_callback('/<iframe([^>]*)>/', static function (array $m) use ($secret, $quoted): string {
+        $attributes = preg_replace_callback('/ src="([^"]*)"/', static fn (array $src) => sprintf(' src="%1$s" data-secret="%2$s"', esc_attr(esc_url_raw(html_entity_decode($src[1], ENT_QUOTES) . '#?secret=' . $secret)), $secret), $m[1]);
+        return '<iframe class="wp-embedded-content" sandbox="allow-scripts" security="restricted"' . ($quoted ? ' style="position: absolute; visibility: hidden;"' : '') . $attributes . '>';
+    }, $html, 1);
+}
+
+/** One of the site's own posts embedded without a request (pre_oembed_result 10): its oEmbed data made into markup through oembed_dataparse; any other address keeps the result given. */
+function wp_filter_pre_oembed_result($result, $url, $args)
+{
+    $data = get_oembed_response_data_for_url($url, $args);
+    return $data ? _wp_oembed_get_object()->data2html((object) $data, $url) : $result;
+}
