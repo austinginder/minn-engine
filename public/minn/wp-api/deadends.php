@@ -283,9 +283,39 @@ function _wp_ajax_menu_quick_search($request = [])
     return null;
 }
 
+function _wp_batch_split_terms()
+{
+    \Minn\Runtime\PlaceholderTrace::hit('_wp_batch_split_terms');
+    return null;
+}
+
 function _wp_block_editor_posts_page_notice()
 {
     \Minn\Runtime\PlaceholderTrace::hit('_wp_block_editor_posts_page_notice');
+    return null;
+}
+
+function _wp_check_for_scheduled_split_terms()
+{
+    \Minn\Runtime\PlaceholderTrace::hit('_wp_check_for_scheduled_split_terms');
+    return null;
+}
+
+function _wp_check_split_default_terms($term_id, $new_term_id, $term_taxonomy_id, $taxonomy)
+{
+    \Minn\Runtime\PlaceholderTrace::hit('_wp_check_split_default_terms');
+    return null;
+}
+
+function _wp_check_split_nav_menu_terms($term_id, $new_term_id, $term_taxonomy_id, $taxonomy)
+{
+    \Minn\Runtime\PlaceholderTrace::hit('_wp_check_split_nav_menu_terms');
+    return null;
+}
+
+function _wp_check_split_terms_in_menus($term_id, $new_term_id, $term_taxonomy_id, $taxonomy)
+{
+    \Minn\Runtime\PlaceholderTrace::hit('_wp_check_split_terms_in_menus');
     return null;
 }
 

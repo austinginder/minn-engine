@@ -791,6 +791,145 @@ class Language_Pack_Upgrader extends WP_Upgrader
     }
 }
 
+class POP3
+{
+    public $ERROR = '';
+    public $TIMEOUT = 60;
+    public $COUNT = -1;
+    public $BUFFER = 512;
+    public $FP = '';
+    public $MAILSERVER = '';
+    public $DEBUG = false;
+    public $BANNER = '';
+    public $ALLOWAPOP = false;
+
+    public function __construct($server = '', $timeout = '')
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('POP3::__construct');
+        return null;
+    }
+
+    public function POP3($server = '', $timeout = '')
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('POP3::POP3');
+        return null;
+    }
+
+    public function update_timer()
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('POP3::update_timer');
+        return null;
+    }
+
+    public function connect($server, $port = 110)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('POP3::connect');
+        return null;
+    }
+
+    public function user($user = '')
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('POP3::user');
+        return null;
+    }
+
+    public function pass($pass = '')
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('POP3::pass');
+        return null;
+    }
+
+    public function apop($login, $pass)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('POP3::apop');
+        return null;
+    }
+
+    public function login($login = '', $pass = '')
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('POP3::login');
+        return null;
+    }
+
+    public function top($msgNum, $numLines = '0')
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('POP3::top');
+        return null;
+    }
+
+    public function pop_list($msgNum = '')
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('POP3::pop_list');
+        return null;
+    }
+
+    public function get($msgNum)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('POP3::get');
+        return null;
+    }
+
+    public function last($type = 'count')
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('POP3::last');
+        return null;
+    }
+
+    public function reset()
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('POP3::reset');
+        return null;
+    }
+
+    public function send_cmd($cmd = '')
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('POP3::send_cmd');
+        return null;
+    }
+
+    public function quit()
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('POP3::quit');
+        return null;
+    }
+
+    public function popstat()
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('POP3::popstat');
+        return null;
+    }
+
+    public function uidl($msgNum = '')
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('POP3::uidl');
+        return null;
+    }
+
+    public function delete($msgNum = '')
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('POP3::delete');
+        return null;
+    }
+
+    public function is_ok($cmd = '')
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('POP3::is_ok');
+        return null;
+    }
+
+    public function strip_clf($text = '')
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('POP3::strip_clf');
+        return null;
+    }
+
+    public function parse_banner($server_text)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('POP3::parse_banner');
+        return null;
+    }
+}
+
 class PclZip
 {
     public $zipname = '';
@@ -1102,6 +1241,257 @@ class PclZip
     public function privSwapBackMagicQuotes()
     {
         \Minn\Runtime\PlaceholderTrace::hit('PclZip::privSwapBackMagicQuotes');
+        return null;
+    }
+}
+
+class Services_JSON
+{
+    public $use = NULL;
+    public $_mb_strlen = false;
+    public $_mb_substr = false;
+    public $_mb_convert_encoding = false;
+
+    public function __construct($use = 0)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('Services_JSON::__construct');
+        return null;
+    }
+
+    public function Services_JSON($use = 0)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('Services_JSON::Services_JSON');
+        return null;
+    }
+
+    public function utf162utf8($utf16)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('Services_JSON::utf162utf8');
+        return null;
+    }
+
+    public function utf82utf16($utf8)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('Services_JSON::utf82utf16');
+        return null;
+    }
+
+    public function encode($var)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('Services_JSON::encode');
+        return null;
+    }
+
+    public function encodeUnsafe($var)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('Services_JSON::encodeUnsafe');
+        return null;
+    }
+
+    public function _encode($var)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('Services_JSON::_encode');
+        return null;
+    }
+
+    public function name_value($name, $value)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('Services_JSON::name_value');
+        return null;
+    }
+
+    public function reduce_string($str)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('Services_JSON::reduce_string');
+        return null;
+    }
+
+    public function decode($str)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('Services_JSON::decode');
+        return null;
+    }
+
+    public function isError($data, $code = NULL)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('Services_JSON::isError');
+        return null;
+    }
+
+    public function strlen8($str)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('Services_JSON::strlen8');
+        return null;
+    }
+
+    public function substr8($string, $start, $length = false)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('Services_JSON::substr8');
+        return null;
+    }
+}
+
+class Snoopy
+{
+    public $host = 'www.php.net';
+    public $port = 80;
+    public $proxy_host = '';
+    public $proxy_port = '';
+    public $proxy_user = '';
+    public $proxy_pass = '';
+    public $agent = 'Snoopy v1.2.4';
+    public $referer = '';
+    public $cookies = [];
+    public $rawheaders = [];
+    public $maxredirs = 5;
+    public $lastredirectaddr = '';
+    public $offsiteok = true;
+    public $maxframes = 0;
+    public $expandlinks = true;
+    public $passcookies = true;
+    public $user = '';
+    public $pass = '';
+    public $accept = 'image/gif, image/x-xbitmap, image/jpeg, image/pjpeg, */*';
+    public $results = '';
+    public $error = '';
+    public $response_code = '';
+    public $headers = [];
+    public $maxlength = 500000;
+    public $read_timeout = 0;
+    public $timed_out = false;
+    public $status = 0;
+    public $temp_dir = '/tmp';
+    public $curl_path = '/usr/local/bin/curl';
+    public $_maxlinelen = 4096;
+    public $_httpmethod = 'GET';
+    public $_httpversion = 'HTTP/1.0';
+    public $_submit_method = 'POST';
+    public $_submit_type = 'application/x-www-form-urlencoded';
+    public $_mime_boundary = '';
+    public $_redirectaddr = false;
+    public $_redirectdepth = 0;
+    public $_frameurls = [];
+    public $_framedepth = 0;
+    public $_isproxy = false;
+    public $_fp_timeout = 30;
+
+    public function fetch($URI)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('Snoopy::fetch');
+        return null;
+    }
+
+    public function submit($URI, $formvars = '', $formfiles = '')
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('Snoopy::submit');
+        return null;
+    }
+
+    public function fetchlinks($URI)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('Snoopy::fetchlinks');
+        return null;
+    }
+
+    public function fetchform($URI)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('Snoopy::fetchform');
+        return null;
+    }
+
+    public function fetchtext($URI)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('Snoopy::fetchtext');
+        return null;
+    }
+
+    public function submitlinks($URI, $formvars = '', $formfiles = '')
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('Snoopy::submitlinks');
+        return null;
+    }
+
+    public function submittext($URI, $formvars = '', $formfiles = '')
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('Snoopy::submittext');
+        return null;
+    }
+
+    public function set_submit_multipart()
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('Snoopy::set_submit_multipart');
+        return null;
+    }
+
+    public function set_submit_normal()
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('Snoopy::set_submit_normal');
+        return null;
+    }
+
+    public function _striplinks($document)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('Snoopy::_striplinks');
+        return null;
+    }
+
+    public function _stripform($document)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('Snoopy::_stripform');
+        return null;
+    }
+
+    public function _striptext($document)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('Snoopy::_striptext');
+        return null;
+    }
+
+    public function _expandlinks($links, $URI)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('Snoopy::_expandlinks');
+        return null;
+    }
+
+    public function _httprequest($url, $fp, $URI, $http_method, $content_type = '', $body = '')
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('Snoopy::_httprequest');
+        return null;
+    }
+
+    public function _httpsrequest($url, $URI, $http_method, $content_type = '', $body = '')
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('Snoopy::_httpsrequest');
+        return null;
+    }
+
+    public function setcookies()
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('Snoopy::setcookies');
+        return null;
+    }
+
+    public function _check_timeout($fp)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('Snoopy::_check_timeout');
+        return null;
+    }
+
+    public function _connect(&$fp)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('Snoopy::_connect');
+        return null;
+    }
+
+    public function _disconnect($fp)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('Snoopy::_disconnect');
+        return null;
+    }
+
+    public function _prepare_post_body($formvars, $formfiles)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('Snoopy::_prepare_post_body');
         return null;
     }
 }

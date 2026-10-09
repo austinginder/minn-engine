@@ -7,8 +7,8 @@
         "leaf": 764,
         "noop": 2458,
         "placeholder": 279,
-        "deadend": 1600,
-        "functions": 7369,
+        "deadend": 1659,
+        "functions": 7428,
         "minnMethods": 899,
         "leafLinesOver15": 13
     },
@@ -3542,6 +3542,174 @@
             "minn": [],
             "composes": []
         },
+        "POP3::POP3": {
+            "file": "classes/deadends/DeadEnds.php",
+            "lines": 2,
+            "kind": "deadend",
+            "minn": [],
+            "composes": [],
+            "deadend": "omitted"
+        },
+        "POP3::__construct": {
+            "file": "classes/deadends/DeadEnds.php",
+            "lines": 2,
+            "kind": "deadend",
+            "minn": [],
+            "composes": [],
+            "deadend": "omitted"
+        },
+        "POP3::apop": {
+            "file": "classes/deadends/DeadEnds.php",
+            "lines": 2,
+            "kind": "deadend",
+            "minn": [],
+            "composes": [],
+            "deadend": "omitted"
+        },
+        "POP3::connect": {
+            "file": "classes/deadends/DeadEnds.php",
+            "lines": 2,
+            "kind": "deadend",
+            "minn": [],
+            "composes": [],
+            "deadend": "omitted"
+        },
+        "POP3::delete": {
+            "file": "classes/deadends/DeadEnds.php",
+            "lines": 2,
+            "kind": "deadend",
+            "minn": [],
+            "composes": [],
+            "deadend": "omitted"
+        },
+        "POP3::get": {
+            "file": "classes/deadends/DeadEnds.php",
+            "lines": 2,
+            "kind": "deadend",
+            "minn": [],
+            "composes": [],
+            "deadend": "omitted"
+        },
+        "POP3::is_ok": {
+            "file": "classes/deadends/DeadEnds.php",
+            "lines": 2,
+            "kind": "deadend",
+            "minn": [],
+            "composes": [],
+            "deadend": "omitted"
+        },
+        "POP3::last": {
+            "file": "classes/deadends/DeadEnds.php",
+            "lines": 2,
+            "kind": "deadend",
+            "minn": [],
+            "composes": [],
+            "deadend": "omitted"
+        },
+        "POP3::login": {
+            "file": "classes/deadends/DeadEnds.php",
+            "lines": 2,
+            "kind": "deadend",
+            "minn": [],
+            "composes": [],
+            "deadend": "omitted"
+        },
+        "POP3::parse_banner": {
+            "file": "classes/deadends/DeadEnds.php",
+            "lines": 2,
+            "kind": "deadend",
+            "minn": [],
+            "composes": [],
+            "deadend": "omitted"
+        },
+        "POP3::pass": {
+            "file": "classes/deadends/DeadEnds.php",
+            "lines": 2,
+            "kind": "deadend",
+            "minn": [],
+            "composes": [],
+            "deadend": "omitted"
+        },
+        "POP3::pop_list": {
+            "file": "classes/deadends/DeadEnds.php",
+            "lines": 2,
+            "kind": "deadend",
+            "minn": [],
+            "composes": [],
+            "deadend": "omitted"
+        },
+        "POP3::popstat": {
+            "file": "classes/deadends/DeadEnds.php",
+            "lines": 2,
+            "kind": "deadend",
+            "minn": [],
+            "composes": [],
+            "deadend": "omitted"
+        },
+        "POP3::quit": {
+            "file": "classes/deadends/DeadEnds.php",
+            "lines": 2,
+            "kind": "deadend",
+            "minn": [],
+            "composes": [],
+            "deadend": "omitted"
+        },
+        "POP3::reset": {
+            "file": "classes/deadends/DeadEnds.php",
+            "lines": 2,
+            "kind": "deadend",
+            "minn": [],
+            "composes": [],
+            "deadend": "omitted"
+        },
+        "POP3::send_cmd": {
+            "file": "classes/deadends/DeadEnds.php",
+            "lines": 2,
+            "kind": "deadend",
+            "minn": [],
+            "composes": [],
+            "deadend": "omitted"
+        },
+        "POP3::strip_clf": {
+            "file": "classes/deadends/DeadEnds.php",
+            "lines": 2,
+            "kind": "deadend",
+            "minn": [],
+            "composes": [],
+            "deadend": "omitted"
+        },
+        "POP3::top": {
+            "file": "classes/deadends/DeadEnds.php",
+            "lines": 2,
+            "kind": "deadend",
+            "minn": [],
+            "composes": [],
+            "deadend": "omitted"
+        },
+        "POP3::uidl": {
+            "file": "classes/deadends/DeadEnds.php",
+            "lines": 2,
+            "kind": "deadend",
+            "minn": [],
+            "composes": [],
+            "deadend": "omitted"
+        },
+        "POP3::update_timer": {
+            "file": "classes/deadends/DeadEnds.php",
+            "lines": 2,
+            "kind": "deadend",
+            "minn": [],
+            "composes": [],
+            "deadend": "omitted"
+        },
+        "POP3::user": {
+            "file": "classes/deadends/DeadEnds.php",
+            "lines": 2,
+            "kind": "deadend",
+            "minn": [],
+            "composes": [],
+            "deadend": "omitted"
+        },
         "PasswordHash::CheckPassword": {
             "file": "classes/PasswordHash.php",
             "lines": 1,
@@ -4757,6 +4925,110 @@
             "minn": [],
             "composes": []
         },
+        "Services_JSON::Services_JSON": {
+            "file": "classes/deadends/DeadEnds.php",
+            "lines": 2,
+            "kind": "deadend",
+            "minn": [],
+            "composes": [],
+            "deadend": "omitted"
+        },
+        "Services_JSON::__construct": {
+            "file": "classes/deadends/DeadEnds.php",
+            "lines": 2,
+            "kind": "deadend",
+            "minn": [],
+            "composes": [],
+            "deadend": "omitted"
+        },
+        "Services_JSON::_encode": {
+            "file": "classes/deadends/DeadEnds.php",
+            "lines": 2,
+            "kind": "deadend",
+            "minn": [],
+            "composes": [],
+            "deadend": "omitted"
+        },
+        "Services_JSON::decode": {
+            "file": "classes/deadends/DeadEnds.php",
+            "lines": 2,
+            "kind": "deadend",
+            "minn": [],
+            "composes": [],
+            "deadend": "omitted"
+        },
+        "Services_JSON::encode": {
+            "file": "classes/deadends/DeadEnds.php",
+            "lines": 2,
+            "kind": "deadend",
+            "minn": [],
+            "composes": [],
+            "deadend": "omitted"
+        },
+        "Services_JSON::encodeUnsafe": {
+            "file": "classes/deadends/DeadEnds.php",
+            "lines": 2,
+            "kind": "deadend",
+            "minn": [],
+            "composes": [],
+            "deadend": "omitted"
+        },
+        "Services_JSON::isError": {
+            "file": "classes/deadends/DeadEnds.php",
+            "lines": 2,
+            "kind": "deadend",
+            "minn": [],
+            "composes": [],
+            "deadend": "omitted"
+        },
+        "Services_JSON::name_value": {
+            "file": "classes/deadends/DeadEnds.php",
+            "lines": 2,
+            "kind": "deadend",
+            "minn": [],
+            "composes": [],
+            "deadend": "omitted"
+        },
+        "Services_JSON::reduce_string": {
+            "file": "classes/deadends/DeadEnds.php",
+            "lines": 2,
+            "kind": "deadend",
+            "minn": [],
+            "composes": [],
+            "deadend": "omitted"
+        },
+        "Services_JSON::strlen8": {
+            "file": "classes/deadends/DeadEnds.php",
+            "lines": 2,
+            "kind": "deadend",
+            "minn": [],
+            "composes": [],
+            "deadend": "omitted"
+        },
+        "Services_JSON::substr8": {
+            "file": "classes/deadends/DeadEnds.php",
+            "lines": 2,
+            "kind": "deadend",
+            "minn": [],
+            "composes": [],
+            "deadend": "omitted"
+        },
+        "Services_JSON::utf162utf8": {
+            "file": "classes/deadends/DeadEnds.php",
+            "lines": 2,
+            "kind": "deadend",
+            "minn": [],
+            "composes": [],
+            "deadend": "omitted"
+        },
+        "Services_JSON::utf82utf16": {
+            "file": "classes/deadends/DeadEnds.php",
+            "lines": 2,
+            "kind": "deadend",
+            "minn": [],
+            "composes": [],
+            "deadend": "omitted"
+        },
         "SimplePie::__call": {
             "file": "simplepie/SimplePie.php",
             "lines": 2,
@@ -5602,6 +5874,166 @@
             "kind": "noop",
             "minn": [],
             "composes": []
+        },
+        "Snoopy::_check_timeout": {
+            "file": "classes/deadends/DeadEnds.php",
+            "lines": 2,
+            "kind": "deadend",
+            "minn": [],
+            "composes": [],
+            "deadend": "omitted"
+        },
+        "Snoopy::_connect": {
+            "file": "classes/deadends/DeadEnds.php",
+            "lines": 2,
+            "kind": "deadend",
+            "minn": [],
+            "composes": [],
+            "deadend": "omitted"
+        },
+        "Snoopy::_disconnect": {
+            "file": "classes/deadends/DeadEnds.php",
+            "lines": 2,
+            "kind": "deadend",
+            "minn": [],
+            "composes": [],
+            "deadend": "omitted"
+        },
+        "Snoopy::_expandlinks": {
+            "file": "classes/deadends/DeadEnds.php",
+            "lines": 2,
+            "kind": "deadend",
+            "minn": [],
+            "composes": [],
+            "deadend": "omitted"
+        },
+        "Snoopy::_httprequest": {
+            "file": "classes/deadends/DeadEnds.php",
+            "lines": 2,
+            "kind": "deadend",
+            "minn": [],
+            "composes": [],
+            "deadend": "omitted"
+        },
+        "Snoopy::_httpsrequest": {
+            "file": "classes/deadends/DeadEnds.php",
+            "lines": 2,
+            "kind": "deadend",
+            "minn": [],
+            "composes": [],
+            "deadend": "omitted"
+        },
+        "Snoopy::_prepare_post_body": {
+            "file": "classes/deadends/DeadEnds.php",
+            "lines": 2,
+            "kind": "deadend",
+            "minn": [],
+            "composes": [],
+            "deadend": "omitted"
+        },
+        "Snoopy::_stripform": {
+            "file": "classes/deadends/DeadEnds.php",
+            "lines": 2,
+            "kind": "deadend",
+            "minn": [],
+            "composes": [],
+            "deadend": "omitted"
+        },
+        "Snoopy::_striplinks": {
+            "file": "classes/deadends/DeadEnds.php",
+            "lines": 2,
+            "kind": "deadend",
+            "minn": [],
+            "composes": [],
+            "deadend": "omitted"
+        },
+        "Snoopy::_striptext": {
+            "file": "classes/deadends/DeadEnds.php",
+            "lines": 2,
+            "kind": "deadend",
+            "minn": [],
+            "composes": [],
+            "deadend": "omitted"
+        },
+        "Snoopy::fetch": {
+            "file": "classes/deadends/DeadEnds.php",
+            "lines": 2,
+            "kind": "deadend",
+            "minn": [],
+            "composes": [],
+            "deadend": "omitted"
+        },
+        "Snoopy::fetchform": {
+            "file": "classes/deadends/DeadEnds.php",
+            "lines": 2,
+            "kind": "deadend",
+            "minn": [],
+            "composes": [],
+            "deadend": "omitted"
+        },
+        "Snoopy::fetchlinks": {
+            "file": "classes/deadends/DeadEnds.php",
+            "lines": 2,
+            "kind": "deadend",
+            "minn": [],
+            "composes": [],
+            "deadend": "omitted"
+        },
+        "Snoopy::fetchtext": {
+            "file": "classes/deadends/DeadEnds.php",
+            "lines": 2,
+            "kind": "deadend",
+            "minn": [],
+            "composes": [],
+            "deadend": "omitted"
+        },
+        "Snoopy::set_submit_multipart": {
+            "file": "classes/deadends/DeadEnds.php",
+            "lines": 2,
+            "kind": "deadend",
+            "minn": [],
+            "composes": [],
+            "deadend": "omitted"
+        },
+        "Snoopy::set_submit_normal": {
+            "file": "classes/deadends/DeadEnds.php",
+            "lines": 2,
+            "kind": "deadend",
+            "minn": [],
+            "composes": [],
+            "deadend": "omitted"
+        },
+        "Snoopy::setcookies": {
+            "file": "classes/deadends/DeadEnds.php",
+            "lines": 2,
+            "kind": "deadend",
+            "minn": [],
+            "composes": [],
+            "deadend": "omitted"
+        },
+        "Snoopy::submit": {
+            "file": "classes/deadends/DeadEnds.php",
+            "lines": 2,
+            "kind": "deadend",
+            "minn": [],
+            "composes": [],
+            "deadend": "omitted"
+        },
+        "Snoopy::submitlinks": {
+            "file": "classes/deadends/DeadEnds.php",
+            "lines": 2,
+            "kind": "deadend",
+            "minn": [],
+            "composes": [],
+            "deadend": "omitted"
+        },
+        "Snoopy::submittext": {
+            "file": "classes/deadends/DeadEnds.php",
+            "lines": 2,
+            "kind": "deadend",
+            "minn": [],
+            "composes": [],
+            "deadend": "omitted"
         },
         "Source::__construct": {
             "file": "simplepie/Parts.php",
@@ -29369,6 +29801,14 @@
                 "is_nav_menu"
             ]
         },
+        "_wp_batch_split_terms": {
+            "file": "deadends.php",
+            "lines": 2,
+            "kind": "deadend",
+            "minn": [],
+            "composes": [],
+            "deadend": "omitted"
+        },
         "_wp_batch_update_comment_type": {
             "file": "comment.php",
             "lines": 9,
@@ -29423,6 +29863,14 @@
             "minn": [],
             "composes": []
         },
+        "_wp_check_for_scheduled_split_terms": {
+            "file": "deadends.php",
+            "lines": 2,
+            "kind": "deadend",
+            "minn": [],
+            "composes": [],
+            "deadend": "omitted"
+        },
         "_wp_check_for_scheduled_update_comment_type": {
             "file": "comment.php",
             "lines": 3,
@@ -29433,6 +29881,30 @@
                 "wp_next_scheduled",
                 "wp_schedule_single_event"
             ]
+        },
+        "_wp_check_split_default_terms": {
+            "file": "deadends.php",
+            "lines": 2,
+            "kind": "deadend",
+            "minn": [],
+            "composes": [],
+            "deadend": "omitted"
+        },
+        "_wp_check_split_nav_menu_terms": {
+            "file": "deadends.php",
+            "lines": 2,
+            "kind": "deadend",
+            "minn": [],
+            "composes": [],
+            "deadend": "omitted"
+        },
+        "_wp_check_split_terms_in_menus": {
+            "file": "deadends.php",
+            "lines": 2,
+            "kind": "deadend",
+            "minn": [],
+            "composes": [],
+            "deadend": "omitted"
         },
         "_wp_connectors_get_api_key_source": {
             "file": "connectors.php",

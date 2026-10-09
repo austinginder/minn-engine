@@ -1,5 +1,15 @@
 {
     "about": "Symbols Minn leaves behind on purpose: too old, unneeded, or replaced. Each is a dead end in the mappings (area omitted), answered by an inert stub so a plugin that calls it does not fatal. Austin decides what goes here; every entry names its reason. tests/tools/deadends.php reads this file.",
-    "functions": {},
-    "classes": {}
+    "functions": {
+        "_wp_batch_split_terms": "WordPress 4.2 split terms shared between taxonomies once, by cron, on upgrade; a site that ran 4.2 or later has none left, and no catalogue plugin calls it.",
+        "_wp_check_for_scheduled_split_terms": "WordPress 4.2 split terms shared between taxonomies once, by cron, on upgrade; a site that ran 4.2 or later has none left, and no catalogue plugin calls it.",
+        "_wp_check_split_default_terms": "WordPress 4.2 split terms shared between taxonomies once, by cron, on upgrade; a site that ran 4.2 or later has none left, and no catalogue plugin calls it.",
+        "_wp_check_split_nav_menu_terms": "WordPress 4.2 split terms shared between taxonomies once, by cron, on upgrade; a site that ran 4.2 or later has none left, and no catalogue plugin calls it.",
+        "_wp_check_split_terms_in_menus": "WordPress 4.2 split terms shared between taxonomies once, by cron, on upgrade; a site that ran 4.2 or later has none left, and no catalogue plugin calls it."
+    },
+    "classes": {
+        "POP3": "The post-by-email mail client (wp-mail.php); Minn does not fetch mail to post it, and no catalogue plugin uses the class.",
+        "Services_JSON": "A pure-PHP JSON library kept for PHP without ext/json; json_encode and json_decode replaced it, and no catalogue plugin uses it.",
+        "Snoopy": "An old HTTP client kept for back-compat; WP_Http and the Requests library replaced it, and no catalogue plugin uses it."
+    }
 }

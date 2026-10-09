@@ -4,29 +4,29 @@
         "functions": {
             "total": 3913,
             "real": 2748,
-            "deadend": 895,
+            "deadend": 900,
             "placeholder": 24,
-            "missing": 246,
+            "missing": 241,
             "verified": 1944,
-            "resolved": 3667
+            "resolved": 3672
         },
         "classes": {
             "total": 380,
             "real": 151,
-            "deadend": 128,
+            "deadend": 131,
             "placeholder": 29,
-            "missing": 72,
+            "missing": 69,
             "verified": 84,
-            "resolved": 308
+            "resolved": 311
         },
         "methods": {
             "total": 4073,
             "real": 1397,
-            "deadend": 1561,
+            "deadend": 1615,
             "placeholder": 384,
-            "missing": 731,
+            "missing": 677,
             "verified": 853,
-            "resolved": 3342
+            "resolved": 3396
         }
     }
 }
