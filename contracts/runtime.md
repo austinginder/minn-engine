@@ -7198,3 +7198,28 @@ were generated placeholders and are now real (`classes/POMO_Streams.php`):
   the rest of the file. After `close()`, `is_resource()` is false.
 - Each class keeps its PHP 4 constructor, which runs the class's own
   constructor and reports itself deprecated (5.4.0).
+
+## The embed classes (2026-10-09)
+
+Probe `embed-classes` (`tests/tools/embed-classes-probe.php`) proves
+`WP_oEmbed` and `WP_Embed`. Every HTTP request answers through
+`pre_http_request`; the probe's post, meta and caches are removed.
+
+- **Providers.** `wp_oembed_add_provider` and `wp_oembed_remove_provider`
+  now change the live `WP_oEmbed` table once plugins have loaded, and the
+  table it starts with before that (`_add_provider_early`). They wrote to
+  a runtime list nothing read before.
+- **Discovery** (a stub before). The page is fetched with
+  `oembed_remote_get_args` (150 KB limit), and its head's `<link>` tags are
+  read by `oembed_linktypes` (`Runtime\OEmbed::discovered`). The first JSON
+  endpoint wins, else the first XML one, entity-decoded; false when there
+  is none.
+- **Markup.** `_strip_newlines` passes anything without a newline through
+  unchanged, so a photo with no size stays false rather than `''`.
+- **The `[embed]` cache.** The shortcode stores results on the post: the
+  global post when no `post_ID` is set. Keys are `_oembed_{md5(url +
+  serialized attributes with the embed defaults)}`, the same as the
+  reference, so existing caches are found. A result gets an
+  `_oembed_time_` stamp; a URL that yields nothing gets `{{unknown}}` and
+  then a plain link. The cache answers while `usecache` is on, or while it
+  is younger than `oembed_ttl`. `embed_oembed_discover` decides discovery.

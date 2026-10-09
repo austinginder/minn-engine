@@ -81,6 +81,28 @@ final class OEmbed
         };
     }
 
+    /**
+     * The provider endpoint a page names in its head: the first link of each
+     * oEmbed type (the linktypes map type to json or xml), JSON before XML,
+     * its address entity-decoded. Null when it names none.
+     *
+     * @param array<string, string> $linktypes
+     */
+    public static function discovered(string $html, array $linktypes): ?string
+    {
+        $head = ($end = stripos($html, '</head>')) === false ? $html : substr($html, 0, $end);
+        $found = [];
+        preg_match_all('/<link\b[^>]*>/i', $head, $links);
+        foreach ($links[0] as $link) {
+            $type = preg_match('/\btype=(["\'])(.*?)\1/i', $link, $t) === 1 ? html_entity_decode($t[2]) : '';
+            $href = preg_match('/\bhref=(["\'])(.*?)\1/i', $link, $h) === 1 ? html_entity_decode($h[2]) : '';
+            if ($href !== '' && isset($linktypes[$type]) && !isset($found[$linktypes[$type]])) {
+                $found[$linktypes[$type]] = $href;
+            }
+        }
+        return $found['json'] ?? $found['xml'] ?? null;
+    }
+
     /** Drops newlines from embed markup while leaving the inside of <pre> blocks untouched. */
     public static function stripNewlines(string $html): string
     {

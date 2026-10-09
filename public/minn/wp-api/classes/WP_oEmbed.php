@@ -83,9 +83,16 @@ class WP_oEmbed
         return apply_filters('oembed_result', $this->data2html($data, $url), $url, $args);
     }
 
+    /** The provider a page names in its oEmbed links (json first), fetched with oembed_remote_get_args and read by oembed_linktypes; false when it names none. */
     public function discover($url)
     {
-        return false;
+        $args = apply_filters('oembed_remote_get_args', ['limit_response_size' => 153600], $url);
+        $html = wp_remote_retrieve_body(wp_safe_remote_get($url, $args));
+        if ($html === '') {
+            return false;
+        }
+        $linktypes = apply_filters('oembed_linktypes', ['application/json+oembed' => 'json', 'text/xml+oembed' => 'xml', 'application/xml+oembed' => 'xml']);
+        return OEmbed::discovered($html, (array) $linktypes) ?? false;
     }
 
     public function fetch($provider, $url, $args = '')
@@ -148,8 +155,9 @@ class WP_oEmbed
         return apply_filters('oembed_dataparse', $html ?? false, $data, $url);
     }
 
+    /** Newlines dropped from the markup outside <pre>; anything without one (false included) comes back as it was. */
     public function _strip_newlines($html, $data, $url)
     {
-        return OEmbed::stripNewlines((string) $html);
+        return is_string($html) && str_contains($html, "\n") ? OEmbed::stripNewlines($html) : $html;
     }
 }

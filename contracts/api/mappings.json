@@ -2,14 +2,14 @@
     "generated": "2026-10-09",
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line), placeholder (generated stub, behaviour still owed), deadend (generated stub for wp-admin, the editors, the Customizer or XML-RPC, inert by design); \"deadend\" on any entry names its dead-end area",
     "summary": {
-        "minn": 759,
-        "composes": 1624,
+        "minn": 758,
+        "composes": 1626,
         "leaf": 788,
-        "noop": 2475,
+        "noop": 2474,
         "placeholder": 250,
         "deadend": 1659,
         "functions": 7477,
-        "minnMethods": 909,
+        "minnMethods": 910,
         "leafLinesOver15": 13
     },
     "functions": {
@@ -10566,12 +10566,14 @@
         },
         "WP_Embed::shortcode": {
             "file": "classes/WP_Embed.php",
-            "lines": 33,
+            "lines": 39,
             "kind": "composes",
             "minn": [],
             "composes": [
                 "apply_filters",
+                "get_post",
                 "get_post_meta",
+                "update_post_meta",
                 "wp_embed_defaults",
                 "wp_oembed_get",
                 "wp_parse_args"
@@ -24802,10 +24804,16 @@
         },
         "WP_oEmbed::discover": {
             "file": "classes/WP_oEmbed.php",
-            "lines": 1,
-            "kind": "noop",
-            "minn": [],
-            "composes": []
+            "lines": 7,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Runtime\\OEmbed::discovered"
+            ],
+            "composes": [
+                "apply_filters",
+                "wp_remote_retrieve_body",
+                "wp_safe_remote_get"
+            ]
         },
         "WP_oEmbed::fetch": {
             "file": "classes/WP_oEmbed.php",
@@ -61118,14 +61126,13 @@
         },
         "wp_oembed_add_provider": {
             "file": "misc.php",
-            "lines": 3,
-            "kind": "minn",
-            "minn": [
-                "Minn\\Runtime\\Runtime::current",
-                "Minn\\Runtime\\Runtime::get",
-                "Minn\\Runtime\\Runtime::set"
-            ],
-            "composes": []
+            "lines": 5,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "_wp_oembed_get_object",
+                "did_action"
+            ]
         },
         "wp_oembed_get": {
             "file": "misc.php",
@@ -61138,14 +61145,13 @@
         },
         "wp_oembed_remove_provider": {
             "file": "misc.php",
-            "lines": 7,
-            "kind": "minn",
-            "minn": [
-                "Minn\\Runtime\\Runtime::current",
-                "Minn\\Runtime\\Runtime::get",
-                "Minn\\Runtime\\Runtime::set"
-            ],
-            "composes": []
+            "lines": 10,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "_wp_oembed_get_object",
+                "did_action"
+            ]
         },
         "wp_old_slug_redirect": {
             "file": "query.php",

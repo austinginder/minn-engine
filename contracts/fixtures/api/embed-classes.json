@@ -1,0 +1,156 @@
+[
+    [
+        "providers",
+        [
+            true,
+            "https://www.youtube.com/oembed",
+            "https://zz-provider.example/oembed",
+            "https://zz-provider.example/oembed",
+            false,
+            false,
+            true,
+            [
+                true,
+                "https://zz-provider.example/oembed"
+            ]
+        ]
+    ],
+    [
+        "discovered and fetched",
+        [
+            "https://zz-provider.example/oembed?url=x&format=json",
+            false,
+            {
+                "type": "video",
+                "version": "1.0",
+                "title": "Zz Video",
+                "html": "<iframe src=\"https://zz-provider.example/embed/1\"\nwidth=\"640\"></iframe>",
+                "width": 640,
+                "height": 360
+            },
+            {
+                "type": "video",
+                "version": "1.0",
+                "title": "Zz Video",
+                "html": "<iframe src=\"https://zz-provider.example/embed/1\"\nwidth=\"640\"></iframe>",
+                "width": 640,
+                "height": 360
+            },
+            false,
+            {
+                "type": "video",
+                "version": "1.0",
+                "title": "Zz Video",
+                "html": "<iframe src=\"https://zz-provider.example/embed/1\"\nwidth=\"640\"></iframe>",
+                "width": 640,
+                "height": 360
+            },
+            false,
+            [
+                [
+                    "https://zz-page.example/discover",
+                    "GET"
+                ],
+                [
+                    "https://zz-page.example/plain",
+                    "GET"
+                ],
+                [
+                    "https://zz-provider.example/oembed?maxwidth=500&maxheight=750&url=https%3A%2F%2Fzz-embed.example%2Fvideo%2F1&dnt=1&format=json",
+                    "GET"
+                ],
+                [
+                    "https://zz-provider.example/oembed?maxwidth=300&maxheight=200&url=https%3A%2F%2Fzz-embed.example%2Fvideo%2F1&dnt=1&format=json",
+                    "GET"
+                ],
+                [
+                    "https://zz-provider.example/missing?maxwidth=500&maxheight=750&url=https%3A%2F%2Fzz-embed.example%2Fvideo%2F1&dnt=1&format=json",
+                    "GET"
+                ],
+                [
+                    "https://zz-provider.example/oembed?maxwidth=500&maxheight=750&url=https%3A%2F%2Fzz-embed.example%2Fvideo%2F1&dnt=1&format=json",
+                    "GET"
+                ]
+            ]
+        ]
+    ],
+    [
+        "turned into html",
+        [
+            "<iframe title=\"Zz Video\" src=\"https://zz-provider.example/embed/1\"width=\"640\"></iframe>",
+            false,
+            "<a href=\"https://zz-embed.example/p\"><img src=\"https://img.example/p.jpg\" alt=\"A &quot;photo&quot;\" width=\"100\" height=\"80\" /></a>",
+            false,
+            "<video></video>",
+            "<div>rich</div>",
+            "<a href=\"https://zz-embed.example/l\">Zz Link</a>",
+            false,
+            false,
+            "<p>ab</p><p>c</p>",
+            "<pre>a\nb</pre>",
+            ""
+        ]
+    ],
+    [
+        "handlers",
+        [
+            true,
+            "<span data-id=\"42\" data-w=\"200\">https://zz-handled.example/42</span>",
+            false,
+            "<span data-id=\"7\" data-w=\"300\">https://zz-handled.example/7</span>",
+            false
+        ]
+    ],
+    [
+        "the shortcode",
+        [
+            "<iframe title=\"Zz Video\" src=\"https://zz-provider.example/embed/1\"width=\"640\"></iframe>",
+            "<iframe title=\"Zz Video\" src=\"https://zz-provider.example/embed/1\"width=\"640\"></iframe>",
+            "",
+            "<a href=\"https://nothing.example/plain\">https://nothing.example/plain</a>",
+            "<a href=\"http://not%20a%20url\">not a url</a>",
+            [
+                6,
+                [
+                    "_oembed_{hash}",
+                    "_oembed_time_{hash}",
+                    "_oembed_{hash}",
+                    "_oembed_time_{hash}",
+                    "_oembed_{hash}",
+                    "_oembed_{hash}"
+                ]
+            ],
+            true,
+            "{{unknown}}",
+            4,
+            "<iframe title=\"Zz Video\" src=\"https://zz-provider.example/embed/1\"width=\"640\"></iframe>",
+            4,
+            "Before <iframe title=\"Zz Video\" src=\"https://zz-provider.example/embed/1\"width=\"640\"></iframe> after <a href=\"https://zz-handled.example/3\">https://zz-handled.example/3</a>"
+        ]
+    ],
+    [
+        "autoembed",
+        [
+            "Text\n<iframe title=\"Zz Video\" src=\"https://zz-provider.example/embed/1\"width=\"640\"></iframe>\nmore",
+            "<p><iframe title=\"Zz Video\" src=\"https://zz-provider.example/embed/1\"width=\"640\"></iframe></p>",
+            "Inline https://zz-embed.example/video/1 not alone",
+            "<pre>\n<iframe title=\"Zz Video\" src=\"https://zz-provider.example/embed/1\"width=\"640\"></iframe>\n</pre>",
+            "<iframe title=\"Zz Video\" src=\"https://zz-provider.example/embed/1\"width=\"640\"></iframe>",
+            "<a href=\"https://nothing.example/x\">https://nothing.example/x</a>",
+            "https://nothing.example/x",
+            false
+        ]
+    ],
+    [
+        "caches",
+        [
+            null,
+            [
+                0,
+                []
+            ],
+            [],
+            ""
+        ]
+    ]
+]

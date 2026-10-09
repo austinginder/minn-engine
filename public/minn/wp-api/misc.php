@@ -608,21 +608,28 @@ function wp_sprintf_l($pattern, $args)
     return $result . substr((string) $pattern, 2);
 }
 
+/** A provider added to the oEmbed table: to the live one once plugins are loaded, else to the one WP_oEmbed starts with. */
 function wp_oembed_add_provider($format, $provider, $regex = false)
 {
-    $providers = Runtime::current()->get('oembed_providers', []);
-    $providers[$format] = [$provider, $regex];
-    Runtime::current()->set('oembed_providers', $providers);
+    if (did_action('plugins_loaded')) {
+        _wp_oembed_get_object()->providers[$format] = [$provider, $regex];
+        return;
+    }
+    WP_oEmbed::_add_provider_early($format, $provider, $regex);
 }
 
+/** A provider taken out of the oEmbed table; true when the live table had it. */
 function wp_oembed_remove_provider($format)
 {
-    $providers = Runtime::current()->get('oembed_providers', []);
-    if (!isset($providers[$format])) {
+    if (!did_action('plugins_loaded')) {
+        WP_oEmbed::_remove_provider_early($format);
         return false;
     }
-    unset($providers[$format]);
-    Runtime::current()->set('oembed_providers', $providers);
+    $oembed = _wp_oembed_get_object();
+    if (!isset($oembed->providers[$format])) {
+        return false;
+    }
+    unset($oembed->providers[$format]);
     return true;
 }
 

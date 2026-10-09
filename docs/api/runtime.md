@@ -48,7 +48,7 @@ the WordPress runtime plugins load against
 | [`MetaTypes`](#metatypes) | final class | 21 | Meta types a plugin brought, by the table it named on $wpdb as |
 | [`NavMenu`](#navmenu) | final class | 88 | wp_nav_menu()'s menu: the one the arguments name, its items marked for |
 | [`NavMenuItems`](#navmenuitems) | final class | 154 | Classic menu items as the reference serves them to walkers and plugins |
-| [`OEmbed`](#oembed) | final class | 92 | oEmbed as data: provider matching against the wildcard table, response parsing, and the markup an oEmbed payload becomes. |
+| [`OEmbed`](#oembed) | final class | 114 | oEmbed as data: provider matching against the wildcard table, response parsing, and the markup an oEmbed payload becomes. |
 | [`ObjectCache`](#objectcache) | final class | 63 | The per-request object cache behind wp_cache_*: groups of keys, nothing persistent. |
 | [`ObjectTerms`](#objectterms) | final class | 30 | wp_get_object_terms's handling of taxonomies registered with their own |
 | [`OptionSanitizer`](#optionsanitizer) | final class | 114 | A core option's value cleaned as the reference's sanitize_option cleans |
@@ -2082,6 +2082,14 @@ The embed HTML for an oEmbed response, or null.
 
 - `@param array<string, mixed> $data the oEmbed payload`
 - `@param Closure(string): string $escUrl @param Closure(string): string $escAttr @param Closure(string): string $escHtml`
+
+### static `discovered(string $html, array $linktypes): ?string`
+
+The provider endpoint a page names in its head: the first link of each
+oEmbed type (the linktypes map type to json or xml), JSON before XML,
+its address entity-decoded. Null when it names none.
+
+- `@param array<string, string> $linktypes`
 
 ### static `stripNewlines(string $html): string`
 

@@ -117570,7 +117570,7 @@
             "namespace": "Minn\\Runtime",
             "kind": "final class",
             "file": "public/minn/src/Minn/Runtime/OEmbed.php",
-            "lines": 92,
+            "lines": 114,
             "doc": "oEmbed as data: provider matching against the wildcard table, response parsing, and the markup an oEmbed payload becomes.",
             "implements": [],
             "extends": null,
@@ -117709,6 +117709,35 @@
                 },
                 {
                     "routes": [],
+                    "name": "discovered",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "discovered(string $html, array $linktypes): ?string",
+                    "doc": "The provider endpoint a page names in its head: the first link of each\noEmbed type (the linktypes map type to json or xml), JSON before XML,\nits address entity-decoded. Null when it names none.",
+                    "shapes": [
+                        "@param array<string, string> $linktypes"
+                    ],
+                    "params": [
+                        {
+                            "name": "html",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "linktypes",
+                            "type": "array",
+                            "shape": "array<string, string>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 91,
+                    "end": 104
+                },
+                {
+                    "routes": [],
                     "name": "stripNewlines",
                     "static": true,
                     "visibility": "public",
@@ -117724,8 +117753,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 85,
-                    "end": 102
+                    "line": 107,
+                    "end": 124
                 }
             ]
         },

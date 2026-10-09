@@ -87,21 +87,27 @@ class WP_Embed
         if ($html !== false) {
             return $html;
         }
-        // The stored oEmbed cache on the post answers before any fetch, the reference's order.
-        if ($this->usecache && (int) $this->post_ID > 0) {
-            $cached = get_post_meta((int) $this->post_ID, '_oembed_' . md5($url . serialize($attr)), true);
-            if ($cached === '{{unknown}}') {
+        // The post's stored oEmbed cache (_oembed_{md5(url + attributes)}) answers before any fetch: always
+        // while usecache is on, else while younger than oembed_ttl (probe embed-classes).
+        $post_ID = (int) ($this->post_ID ?: (get_post()->ID ?? 0));
+        $cachekey = '_oembed_' . md5($url . serialize($attr));
+        $cache = $post_ID > 0 ? get_post_meta($post_ID, $cachekey, true) : '';
+        if ($post_ID > 0 && ($this->usecache || time() - (int) get_post_meta($post_ID, '_oembed_time_' . substr($cachekey, 8), true) < (int) apply_filters('oembed_ttl', DAY_IN_SECONDS, $url, $attr, $post_ID))) {
+            if ($cache === '{{unknown}}') {
                 return $this->maybe_make_link($url);
             }
-            if (is_string($cached) && $cached !== '') {
-                return apply_filters('embed_oembed_html', $cached, $url, $attr, (int) $this->post_ID);
+            if (is_string($cache) && $cache !== '') {
+                return apply_filters('embed_oembed_html', $cache, $url, $attr, $post_ID);
             }
         }
-        $html = wp_oembed_get($url, $attr);
-        if ($html) {
-            return apply_filters('embed_oembed_html', $html, $url, $attr, (int) $this->post_ID);
+        $html = wp_oembed_get($url, $attr + ['discover' => (bool) apply_filters('embed_oembed_discover', true)]);
+        if ($post_ID > 0 && $html) {
+            update_post_meta($post_ID, $cachekey, $html);
+            update_post_meta($post_ID, '_oembed_time_' . substr($cachekey, 8), time());
+        } elseif ($post_ID > 0 && $cache === '') {
+            update_post_meta($post_ID, $cachekey, '{{unknown}}');
         }
-        return $this->maybe_make_link($url);
+        return $html ? apply_filters('embed_oembed_html', $html, $url, $attr, $post_ID) : $this->maybe_make_link($url);
     }
 
     public function delete_oembed_caches($post_id)

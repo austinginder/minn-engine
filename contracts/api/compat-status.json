@@ -7,7 +7,7 @@
             "deadend": 900,
             "placeholder": 24,
             "missing": 239,
-            "verified": 1946,
+            "verified": 1947,
             "resolved": 3674
         },
         "classes": {
@@ -16,7 +16,7 @@
             "deadend": 131,
             "placeholder": 24,
             "missing": 69,
-            "verified": 107,
+            "verified": 109,
             "resolved": 311
         },
         "methods": {
@@ -25,7 +25,7 @@
             "deadend": 1615,
             "placeholder": 355,
             "missing": 631,
-            "verified": 1230,
+            "verified": 1254,
             "resolved": 3442
         }
     }
